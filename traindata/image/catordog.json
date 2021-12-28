@@ -1,0 +1,12 @@
+{
+	"loss": "categoricalCrossentropy",
+	"metric": "accuracy",
+	"optimizer": "adam",
+	"epochs": "10",
+	"batchSize": 5,
+	"validationSplit": 40,
+	"width": 150,
+	"height": 150,
+
+	"learning_rate": 0.001
+}

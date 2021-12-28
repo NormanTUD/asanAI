@@ -1,0 +1,130 @@
+{
+	"loss": "categoricalCrossentropy",
+	"metric": "accuracy",
+	"optimizer": "adam",
+	"epochs": "3",
+	"batchSize": 10,
+	"validationSplit": 40,
+
+	"learning_rate": 0.001,
+
+	"layer": [
+		{
+			"kernel_size_x": 3,
+			"kernel_size_y": 3,
+			"type": "conv2d",
+			"padding": "same",
+			"activation": "relu",
+			"filters": 32,
+			"strides_x": 1,
+			"strides_y": 1,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"trainable": 1,
+			"dilation_rate": [1, 1],
+			"use_bias": 1
+		},
+		{
+			"type": "batchNormalization"
+		},
+		{
+			"type": "maxPooling2d",
+			"pool_size_x": 2,
+			"pool_size_y": 2,
+			"strides_x": 1,
+			"strides_y": 1,
+			"trainable": 0,
+			"padding": "valid"
+		},
+		{
+			"type": "dropout",
+			"dropout_rate": 25
+		},
+		{
+			"kernel_size_x": 3,
+			"kernel_size_y": 3,
+			"type": "conv2d",
+			"padding": "same",
+			"activation": "relu",
+			"filters": 64,
+			"strides_x": 1,
+			"strides_y": 1,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"trainable": 1,
+			"dilation_rate": [1, 1],
+			"use_bias": 1
+		},
+		{
+			"type": "batchNormalization"
+		},
+		{
+			"type": "maxPooling2d",
+			"pool_size_x": 2,
+			"pool_size_y": 2,
+			"strides_x": 1,
+			"strides_y": 1,
+			"trainable": 0,
+			"padding": "valid"
+		},
+		{
+			"type": "dropout",
+			"dropout_rate": 25
+		},
+		{
+			"kernel_size_x": 3,
+			"kernel_size_y": 3,
+			"type": "conv2d",
+			"padding": "same",
+			"activation": "relu",
+			"filters": 128,
+			"strides_x": 1,
+			"strides_y": 1,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"trainable": 1,
+			"dilation_rate": [1, 1],
+			"use_bias": 1
+		},
+		{
+			"type": "batchNormalization"
+		},
+		{
+			"type": "maxPooling2d",
+			"pool_size_x": 2,
+			"pool_size_y": 2,
+			"strides_x": 1,
+			"strides_y": 1,
+			"trainable": 0,
+			"padding": "valid"
+		},
+		{
+			"type": "dropout",
+			"dropout_rate": 25
+		},
+		{
+			"type": "flatten"
+		},
+		{
+			"type": "dense",
+			"units": "512",
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation": "relu"
+		},
+		{
+			"type": "batchNormalization"
+		},
+		{
+			"type": "dropout",
+			"dropout_rate": 50
+		},
+		{
+			"type": "dense",
+			"units": "number_of_categories",
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation": "softmax"
+		}
+	]
+}

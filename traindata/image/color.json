@@ -1,0 +1,63 @@
+{
+	"loss": "categoricalCrossentropy",
+	"metric": "accuracy",
+	"optimizer": "rmsprop",
+	"epochs": 10,
+	"batchSize": 100,
+	"validationSplit": 40,
+	"width": 1,
+	"height": 1,
+
+	"learning_rate": 0.0001,
+	"rho": 0.8,
+	"decay": 0,
+	"epsilon": 0.0001,
+
+	"layer": [
+		{
+			"type": "dense",
+			"units": 128,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "relu"
+		},
+		{
+			"type": "dense",
+			"units": 64,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "relu"
+		},
+		{
+			"type": "dense",
+			"units": 32,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "relu"
+		},
+		{
+			"type": "dense",
+			"units": 16,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "relu"
+		},
+		{
+			"type": "flatten"
+		},
+		{
+			"type": "dense",
+			"units": 16,
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "relu"
+		},
+		{
+			"type": "dense",
+			"units": "number_of_categories",
+			"kernel_initializer": "glorotUniform",
+			"bias_initializer": "zeros",
+			"activation_function": "sigmoid"
+		}
+	]
+}

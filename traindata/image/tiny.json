@@ -1,0 +1,18 @@
+{
+	"comment": "model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])",
+	"old_loss": "categoricalCrossentropy",
+	"loss": "binaryCrossentropy",
+	"metric": "accuracy",
+	"optimizer": "rmsprop",
+	"epochs": 50,
+	"batchSize": 7,
+	"validationSplit": 30,
+
+	"width": 64,
+	"height": 64,
+
+	"learning_rate": 0.00001,
+	"rho": 0.8999999761581421,
+	"decay": 0,
+	"epsilon": 0.0000001
+}
