@@ -9,6 +9,8 @@ fully in your browsers.
 
 ![Screenshot](screen1.png "Other visualization at the start page")
 
+![Screenshot](screen2.png "Yet another visualization at the start page")
+
 # Status
 
 This is a very early alpha. The networks provided don't yet really work, as they're only for testing.
