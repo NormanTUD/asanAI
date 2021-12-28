@@ -5,6 +5,9 @@ fully in your browsers.
 
 # Screenshots
 
+![Screenshot](screen0.png "Visualization at the start page")
+
+![Screenshot](screen1.png "Other visualization at the start page")
 
 # Status
 
