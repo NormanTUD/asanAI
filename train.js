@@ -73,188 +73,6 @@ function load_tfvis () {
 	}
 }
 
-function create_model () {
-	var new_current_status_hash = get_current_status_hash();
-	if(new_current_status_hash == current_status_hash) {
-		return model;
-	}
-
-	current_status_hash = new_current_status_hash;
-
-	$(".warning_container").hide();
-
-	if(disable_show_python_and_create_model) {
-		return;
-	}
-	if(model !== null) {
-		tf.dispose(model);
-		model = null;
-	}
-	//header("create_model()");
-
-	model = tf.sequential();
-
-	var first_layer = true;
-
-	for (var i = 0; i < get_numberoflayers(); i++) {
-		var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
-		var type = $(layer_type).val();
-		if(typeof(type) !== "undefined") {
-			var data = {
-				"name": type + "_" + (i + 1)
-			};
-
-			if(i == 0 || first_layer) {
-				data["inputShape"] = get_input_shape();
-			}
-
-			for (var j = 0; j < layer_options[type]["options"].length; j++) {
-				var option_name = layer_options[type]["options"][j];
-				if(option_name == "pool_size") {
-					data[get_js_name(option_name)] = [parseInt(get_item_value(i, "pool_size_x")), parseInt(get_item_value(i, "pool_size_y"))];
-				} else if(option_name == "kernel_size") {
-					data[get_js_name(option_name)] = [parseInt(get_item_value(i, "kernel_size_x")), parseInt(get_item_value(i, "kernel_size_y"))];
-				} else if(option_name == "kernel_size_1d") {
-					data[get_js_name("kernel_size")] = parseInt(get_item_value(i, "kernel_size"));
-				} else if(option_name == "strides_1d") {
-					data[get_js_name("strides")] = parseInt(get_item_value(i, "strides"));
-				} else if(option_name == "trainable") {
-					data[get_js_name("trainable")] = get_item_value(i, "trainable");
-				} else if(option_name == "use_bias") {
-					data[get_js_name("useBias")] = get_item_value(i, "use_bias");
-				} else if(option_name == "pool_size_1d") {
-					data[get_js_name("pool_size")] = parseInt(get_item_value(i, "pool_size"));
-				} else if(option_name == "strides") {
-					data[get_js_name(option_name)] = [parseInt(get_item_value(i, "strides_x")), parseInt(get_item_value(i, "strides_y"))];
-				} else if(option_name == "size") {
-					data[get_js_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
-				} else if(option_name == "dilation_rate") {
-					data[get_js_name(option_name)] = eval("[" + get_item_value(i, "dilation_rate") + "]");
-				} else if(option_name == "dropout_rate") {
-					data[get_js_name(option_name)] = parseInt(get_item_value(i, "dropout_rate")) / 100;
-				} else {
-					var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
-					var value = $(elem).val();
-
-					if($(elem).is(":checkbox")) {
-						data[get_js_name(option_name)] = value == "on" ? true : false;
-					} else {
-						if(value != "") {
-							data[get_js_name(option_name)] = isNumeric(value) ? parseInt(value) : value;
-						}
-					}
-				}
-			}
-
-			try {
-				model.add(tf.layers[type](data));
-				first_layer = false;
-			} catch (e) {
-				//console.warn("Failed to add layer type ", type, ": ", e);
-				//header("DATA:");
-				//console.log(data);
-				$($(".warning_container")[i]).show()
-				$($(".warning_layer")[i]).html(e)
-			}
-
-			traindebug("tf.layers." + type + "(", data, ")");
-		}
-	}
-
-	$("#datalayers").html("");
-	$("#layerinfoscontainer").hide();
-
-	$(".layer_data").hide()
-	$(".layer_data").html("")
-
-	for (var i = 0; i < model.layers.length; i++) {
-		var code = "model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
-			"model.layers[" + i +"].apply = function (inputs, kwargs) {";
-				if($("#show_progress_through_layers").is(":checked")) {
-					code += "(function(){ setTimeout(function(){ fcnn_fill_layer(" + i + "); },1000); })();";
-				}
-
-				code += "var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-				"$($('.call_counter')[" + i + "]).html(parseInt($($('.call_counter')[" + i + "]).html()) + 1);" +
-				"return z;" +
-			"}";
-
-		eval(code);
-
-		if($("#debug_checkbox").is(":checked")) {
-			$("#layerinfoscontainer").show();
-			eval("model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
-				"model.layers[" + i +"].apply = function (inputs, kwargs) {" +
-					"var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-					"$(\"#datalayers\").append(\"============> Layer " + i + " (" + model.layers[i].name + ")\\n\");" +
-					"if(" + i + " == 0) {" +
-						"$(\"#datalayers\").append(\"Input layer " + i + ":\\n\");" +
-						"$(\"#datalayers\").append(print_tensor_to_string(inputs[0]) + \"\\n\");" +
-					"}" +
-					"$(\"#datalayers\").append(\"Output layer " + i + ":\\n\");" +
-					"$(\"#datalayers\").append(print_tensor_to_string(z) + \"\\n\");" +
-					"return z;" +
-				"}"
-			);
-		}
-
-		if ($("#show_layer_data").is(":checked")) {
-			$(".layer_data").show();
-			$(".copy_layer_data_button").show();
-			var code = "model.layers[" + i + "].original_apply_real = model.layers[" + i + "].apply;\n" +
-				"model.layers[" + i + "].apply = function (inputs, kwargs) {\n" +
-					"var bias_string = '';\n" +
-
-					"if ('bias' in this) {\n" +
-						"bias_string = \"\\n\" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, \"\\t\") + \"\\n\";\n" +
-					"}\n" +
-
-					"var weights_string = '';\n" +
-					"if ('weights' in this) {\n" +
-						"for (var j = 0; j < this['weights'].length; j++) {\n" +
-							"if (j in this['weights'] && 'val' in this['weights'][j]) {\n" +
-								"weights_string = weights_string + \"\\n\" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, \"\\t\");\n" +
-							"}\n" +
-						"}\n" +
-					"}\n" +
-
-					"var applied = model.layers[" + i + "].original_apply_real(inputs, kwargs);\n" +
-					"var output_data = applied.arraySync()[0];\n" +
-					
-					"var input_data = inputs[0].arraySync()[0];\n" +
-
-					"if (!$($(\".layer_data\")[" + i + "]).html()) {\n" +
-						"var html = '';\n" +
-						"if(" + i + " == 0) {\n" +
-							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\";\n" +
-							"html = html + JSON.stringify(input_data, null, \"\\t\") + \"\\n\";\n" +
-						"} else {\n" +
-							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\"\n" +
-						"}\n" +
-
-						"if(weights_string) {\n" +
-							"html = html + weights_string;\n" +
-						"}\n" +
-
-						"if(bias_string) {\n" +
-							"html = html + bias_string;\n" +
-						"}\n" +
-
-						"draw_images_if_possible(" + i + ", input_data, output_data);\n" +
-
-						"$('#layer_visualizations_tab_label').show();\n" +
-						"html = html + \"Output layer " + i + ": [\" + get_dim(output_data) + \"]\\n\"\n" +
-						"html = html + JSON.stringify(output_data, null, \"\\t\");\n" +
-						"$($(\".layer_data\")[" + i + "]).append(html);\n" +
-					"}\n" +
-					"return applied;\n" +
-				"}\n";
-			eval(code);
-		}
-	}
-
-	return model;
-}
 
 function get_model_data () {
 	var loss = $("#loss").val();
@@ -332,28 +150,6 @@ function show_info_after_run (h) {
 	print_memory();
 }
 
-function compile_model () {
-	reset_summary();
-	if(get_numberoflayers() >= 1) {
-		try {
-			model = create_model();
-
-			model.compile(get_model_data());
-
-			write_model_model_summary(model);
-
-			$("#outputShape").val(JSON.stringify(model.outputShape));
-		} catch (e) {
-			enable_everything();
-			console.warn("ERROR: " + e + " Resetting model");
-			console.trace();
-		}
-
-	} else {
-		console.warn("Need at least 1 layer. Not there yet...");
-	}
-}
-
 async function run_neural_network (x, y, keys) {
 	traindebug("x: ", x);
 	traindebug("y: ", y);
@@ -373,10 +169,10 @@ async function run_neural_network (x, y, keys) {
 	}
 
 	try {
-		create_model();
+		model = create_model(model);
 
 		try {
-			compile_model(0);
+			compile_model();
 
 			try {
 				show_info_pre_run();

@@ -19,7 +19,7 @@ function LeNet() {
 	var rectOpacity = 0.8;
 	var betweenSquares = 8;
 	var betweenLayers = [];
-	var betweenLayersDefault = 12;
+	var betweenLayersDefault = 40;
 
 	var architecture = [];
 	var lenet = {};

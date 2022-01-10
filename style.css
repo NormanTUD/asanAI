@@ -1,7 +1,6 @@
 html {
 	min-width: 1200px;
 	min-height:100%;
-	background-size: 100% 100%;
 	min-width: 1310px;
 	outline: none;
 	color: #000000;
@@ -12,9 +11,9 @@ html {
 	height:100%;
 	font-family:Arial, Calibri, Helvetica, Arial;
 	font-size: 15px;
-	background: rgb(127,170,229);
-	background: linear-gradient(180deg, rgba(127,170,229,1) 0%, rgba(51,70,113,1) 100%); 
-	background-repeat: repeat-y;
+	background-image: url(bg.png);
+	background-color: #324671;
+	background-repeat: repeat-x;
 	background-attachment: fixed;
 }
 
@@ -182,7 +181,7 @@ input {
 
 .glass_box {
 	position: relative;
-	background: linear-gradient(rgba(255, 255, 255, 0.6) 5px, rgba(255, 255, 255, 0.2) 10px, rgba(255, 255, 255, 0.08) 100%);
+	background: linear-gradient(rgba(255, 255, 255, 0.35) 8px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.08) 100%);
 	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
 	border-radius: 5px;
 	position: relative;
@@ -244,7 +243,6 @@ button, select, input {
 }
 
 button:hover, select:hover, input:hover {
-	font-size: 18px;
 	border:solid 1px #7da2ce; 
 	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
 	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;

@@ -984,7 +984,7 @@ a.ui-button:active,
 	//border: 1px solid #2694e8;
 	//background: #3baae3 url("images/ui-bg_glass_50_3baae3_1x400.png") 50% 50% repeat-x;
 	background: rgb(140,161,199);
-	background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%, rgb(255, 255, 255) 100%);
+	background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%);
 	font-weight: bold;
 	color: #ffffff;
 	border-top-left-radius: 10px;

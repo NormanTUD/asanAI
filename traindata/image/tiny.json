@@ -4,12 +4,12 @@
 	"loss": "binaryCrossentropy",
 	"metric": "accuracy",
 	"optimizer": "rmsprop",
-	"epochs": 50,
+	"epochs": 1,
 	"batchSize": 7,
 	"validationSplit": 30,
 
-	"width": 64,
-	"height": 64,
+	"width": 32,
+	"height": 32,
 
 	"learning_rate": 0.00001,
 	"rho": 0.8999999761581421,

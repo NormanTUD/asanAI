@@ -1,5 +1,24 @@
 "use strict";
 
+function calculate_default_target_shape (nr) {
+	var input_shape = null;
+	if(nr == 0) {
+		input_shape = get_input_shape();
+	} else {
+		input_shape = model.layers[nr - 1].getOutputAt(0).shape;
+	}
+
+	var output = [];
+
+	for (var i = 0; i < input_shape.length; i++) { 
+		if(Number.isInteger(input_shape[i])) {
+			output.push(input_shape[i]);
+		}
+	}
+
+	return output;
+}
+
 function lowercaseFirstLetter(string) {
 	return string.charAt(0).toLowerCase() + string.slice(1);
 }
@@ -16,6 +35,7 @@ var word_to_id = {};
 var max_number_words = 0;
 var max_number_characters = 0;
 var disable_show_python_and_create_model = false;
+var layer_structure_cache = null;
 
 var max_images_per_layer = 0;
 
@@ -39,10 +59,30 @@ const surface = { name: "Model Summary", tab: "Model Inspection" };
 var xy_data = null;
 
 var js_names_to_python_names = {
-	"kernel_size_1d": "kernel_size",
+	"trainable": "trainable",
+	"dilationRate": "dilation_rate",
+	"padding": "padding",
 	"kernelSize": "kernel_size",
 	"poolSize": "pool_size",
 	"biasInitializer": "bias_initializer",
+	"alpha": "alpha",
+	"axis": "axis",
+	"momentum": "momentum",
+	"epsilon": "epsilon",
+	"stddev": "stddev",
+	"implementation": "implementation",
+	"stateful": "stateful",
+	"center": "center",
+	"scale": "scale",
+	"strides": "strides",
+	"maxValue": "max_value",
+	"betaConstraint": "beta_constraint",
+	"rate": "dropout_rate",
+	"movingVarianceInitializer": "moving_variance_initializer",
+	"size": "size",
+	"interpolation": "interpolation",
+	"dropout": "dropout",
+	"gammaConstraint": "gamma_constraint",
 	"dense": "Dense",
 	"true": "True",
 	"false": "False",
@@ -102,7 +142,10 @@ var js_names_to_python_names = {
 	"pointwiseInitializer": "pointwise_initializer",
 	"pointwiseConstraint": "pointwise_constraint",
 	"betaInitializer": "beta_initializer",
-	"gammaInitializer": "gamma_initializer"
+	"gammaInitializer": "gamma_initializer",
+	"filters": "filters",
+	"units": "units",
+	"targetShape": "target_shape"
 };
 
 var python_names_to_js_names = {};
@@ -128,6 +171,13 @@ var layer_options = {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
 			"dropout_rate"
+		],
+		"category": "Basic"
+	},
+	"reshape": {
+		"description": "Reshapes an input to a certain shape.",
+		"options": [
+			'target_shape'
 		],
 		"category": "Basic"
 	},
@@ -372,15 +422,17 @@ var layer_options = {
 			"stddev", "trainable"
 		],
 		"category": "Noise"
-	},
+	}
 
-	"zeroPadding2d": {
+	/*
+	, "zeroPadding2d": {
 		"description": "Zero-padding layer for 2D input (e.g., image).",
 		"options": [
 			"padding", "trainable"
 		],
 		"category": "Padding"
 	}
+	*/
 };
 
 var model_data_structure = {
@@ -392,6 +444,7 @@ var model_data_structure = {
 };
 
 var activations = {
+	"None": "none",
 	"sigmoid": "Sigmoid",
 	"elu": "ELU",
 	"linear": "Linear",
@@ -465,4 +518,69 @@ var implementation_modes = {
 var interpolation = {
 	"nearest": "nearest",
 	"bilinear": "bilinear"
+};
+
+var layer_options_defaults = {
+	"alpha": 1,
+	"units": 2,
+	"dropout_rate": 25,
+	"rate": 25,
+	"max_features": 3,
+	"momentum": 0.99,
+	"axis": -1,
+	"filters": 32,
+	"dropout": 20,
+	"recurrent_dropout": 0,
+	"epsilon": 0.0001,
+	"depth_multiplier": 1,
+	"max_value": 1,
+	"stddev": 1,
+	"implementation": 1,
+	"kernel_size_1d": 2,
+	"pool_size_1d": 2,
+
+	"recurrent_constraint": null,
+	"bias_constraint": null,
+	"kernel_constraint": null,
+	"depthwise_constraint": null,
+	"pointwise_constraint": null,
+	"gamma_constraint": null,
+	"beta_constraint": null,
+
+	"bias_initializer": "zeros",
+	"recurrent_initializer": "zeros",
+	"beta_initializer": "zeros",
+	"gamma_initializer": "zeros",
+	"moving_mean_initializer": "zeros",
+	"moving_variance_initializer": "zeros",
+	"pointwise_initializer": "zeros",
+	"depthwise_initializer": "zeros",
+	"kernel_initializer": "zeros",
+
+	"use_bias": true,
+	"trainable": true,
+
+	"center": true,
+	"stateful": false,
+	"unroll": true,
+	"go_backwards": false,
+	"scale": true,
+	"return_sequences": true,
+	"return_state": false,
+	"unit_forget_bias": true,
+
+
+	"activation": null,
+	"recurrent_activation": null,
+
+	"padding": "valid",
+	"interpolation": "nearest",
+	"dilation_rate": "",
+	"size": "1,1",
+	"strides_1d": 2,
+	"strides": [2, 2],
+	"pool_size": [2, 2],
+	"kernel_size": [2, 2],
+
+	"target_shape": calculate_default_target_shape
 };

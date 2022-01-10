@@ -1,5 +1,25 @@
 "use strict";
 
+async function get_label_data () {
+	let imageData = await get_image_data();
+
+	labels = [];
+
+	var category_counter = 0;
+	var keys = [];
+
+	for (let [key, value] of Object.entries(imageData)) {
+		keys.push(key);
+		for (var i = 0; i < imageData[key].length; i++) {
+			var item = imageData[key][i];
+		}
+		labels[category_counter] = key;
+		category_counter++;
+	}
+
+
+}
+
 var loadFile = (function(event) {
 	var output = document.getElementById("output");
 	$("#output").removeAttr("src");
@@ -17,8 +37,11 @@ var loadFile = (function(event) {
 let predict_demo = async function (item, nr) {
 	enable_everything();
 	try {
+		if(labels.length == 0) {
+			await get_label_data();
+		}
 		let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-		var predictions = await model["model"].predict([tensorImg], [1, 1]).dataSync();
+		var predictions = await model.predict([tensorImg], [1, 1]).dataSync();
 
 		if(predictions.length) {
 			var max_i = 0;
@@ -68,11 +91,11 @@ async function predict (item) {
 	try {
 		if(category == "image") {
 			let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-			predictions = await model["model"].predict([tensorImg], [1, 1]).dataSync();
+			predictions = await model.predict([tensorImg], [1, 1]).dataSync();
 			log(predictions);
 		} else if(category == "own") {
 			var own_data = tf.tensor(eval(item));
-			predictions = await model["model"].predict([own_data], [1, 1]).dataSync();
+			predictions = await model.predict([own_data], [1, 1]).dataSync();
 			log(predictions);
 		} else {
 			alert("UNKNOWN CATEGORY: ", category);
@@ -92,6 +115,10 @@ async function predict (item) {
 						max_probability = probability;
 						max_i = i;
 					}
+				}
+
+				if(labels.length == 0) {
+					await get_label_data();
 				}
 
 				for (let i = 0; i < predictions.length; i++) {

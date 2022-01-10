@@ -2,7 +2,7 @@
 
 function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	if(model === null) {
-		compile_model(inputShape);
+		compile_model();
 	}
 	var output_size = input_size_of_first_layer;
 	for (var i = 0; i < model.layers.length; i++) {
@@ -109,7 +109,6 @@ $(document).ready(function() {
 		$("#train_data_set_group").show();
 	}
 
-
 	document.getElementById('upload_model').addEventListener('change', upload_model, false);
 	document.getElementById('upload_weights').addEventListener('change', upload_weights, false);
 });
@@ -163,10 +162,10 @@ async function upload_weights(evt) {
 	// Read in the image file as a data URL.
 	reader.readAsText(f);
 
-	var jsonUpload = document.getElementById('upload_model');
+	var modelUpload = document.getElementById('upload_model');
 	var weightsUpload = document.getElementById('upload_weights');
 
-	model = await tf.loadLayersModel(tf.io.browserFiles([jsonUpload.files[0], weightsUpload.files[0]]));
+	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();

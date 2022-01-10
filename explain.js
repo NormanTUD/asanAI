@@ -49,6 +49,10 @@ function looks_like_image_data (data) {
 		} else {
 			return "filter";
 		}
+	} else if(shape.length == 3) {
+		if(shape[2] == 3) {
+			return "kernel";
+		}
 	}
 	return "unknown";
 }
@@ -122,8 +126,9 @@ function draw_grid (canvas, pixel_size, colors) {
 	ctx.closePath();
 }
 
-function draw_images_if_possible (layer, input_data, output_data) {
+function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 	draw_image_if_possible(layer, 'input', input_data);
+	draw_image_if_possible(layer, 'kernel', kernel_data);
 	draw_image_if_possible(layer, 'output', output_data);
 
 	$($('.image_grid')[layer]).append("<hr>");
@@ -152,6 +157,20 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 				draw_grid(canvas, pixel_size, colors);
 			} else {
 				console.log('Too many images (simple) in layer ' + layer);
+			}
+		} else if(data_type == "kernel") {
+			var shape = get_dim(colors);
+
+			for (var k = 0; k < shape[3]; k++) {
+				canvas = get_canvas(layer);
+
+				$($(canvas)[0]).parent().parent().show()
+
+				if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
+					draw_grid_grayscale(canvas, pixel_size, colors, k);
+				} else {
+					console.log('Too many images (filter) in layer ' + layer);
+				}
 			}
 		} else if(data_type == "filter") {
 			var shape = get_dim(colors);
@@ -541,11 +560,11 @@ function group_layers () {
         var descs = [
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
-                { "re": "(?:(?:batch|layer)Normalization;)*((?:conv([0-9])d;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*)", "name": "Feature Ex&shy;traction" },
+                { "re": "(?:(?:batch|layer)Normalization;)*((?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*)", "name": "Feature ex&shy;traction &amp; di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
                 { "re": "((?:dropout;?)+)", "name": "Over&shy;fitting-pre&shy;vention" },
                 { "re": "((?:dense;?)+;?)", "name": "Classi&shy;fication" },
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
-                { "re": "((?:flatten;?)+;?)", "name": "Flatten Data" },
+                { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
                 { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" }
         ];
 
@@ -738,12 +757,122 @@ function identify_layers () {
 		var output_shape_string = "";
 		try {
 			if(i in model.layers) {
-				output_shape_string = "Output:&nbsp;" + JSON.stringify(model.layers[i].getOutputAt(0).shape);
+				output_shape_string = "Output&nbsp;shape:&nbsp;" + JSON.stringify(model.layers[i].getOutputAt(0).shape);
+				output_shape_string = output_shape_string.replace("null,", "");
 			}
 		} catch (e) {
 			console.warn(e);
 		}
 
-		write_layer_identification(i, new_str + output_shape_string);
+		var activation_function_string = "";
+		try {
+			if(i in model.layers) {
+				var act = $(this_layer.find(".activation")).val();
+				if("" + act != "undefined") {
+					activation_function_string = ", " + act;
+				}
+			}
+		} catch (e) {
+			console.warn(e);
+		}
+
+		write_layer_identification(i, new_str + output_shape_string + activation_function_string);
+	}
+}
+
+function add_layer_debuggers () {
+	$("#datalayers").html("");
+	$("#layerinfoscontainer").hide();
+
+	$(".layer_data").hide()
+	$(".layer_data").html("")
+
+	for (var i = 0; i < model.layers.length; i++) {
+		var code = "model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
+			"model.layers[" + i +"].apply = function (inputs, kwargs) {";
+				if($("#show_progress_through_layers").is(":checked")) {
+					code += "(function(){ setTimeout(function(){ fcnn_fill_layer(" + i + "); },1000); })();";
+				}
+
+				code += "var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
+				"$($('.call_counter')[" + i + "]).html(parseInt($($('.call_counter')[" + i + "]).html()) + 1);" +
+				"return z;" +
+			"}";
+
+		eval(code);
+
+		if($("#debug_checkbox").is(":checked")) {
+			$("#layerinfoscontainer").show();
+			eval("model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
+				"model.layers[" + i +"].apply = function (inputs, kwargs) {" +
+					"var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
+					"$(\"#datalayers\").append(\"============> Layer " + i + " (" + model.layers[i].name + ")\\n\");" +
+					"if(" + i + " == 0) {" +
+						"$(\"#datalayers\").append(\"Input layer " + i + ":\\n\");" +
+						"$(\"#datalayers\").append(print_tensor_to_string(inputs[0]) + \"\\n\");" +
+					"}" +
+					"$(\"#datalayers\").append(\"Output layer " + i + ":\\n\");" +
+					"$(\"#datalayers\").append(print_tensor_to_string(z) + \"\\n\");" +
+					"return z;" +
+				"}"
+			);
+		}
+
+		if ($("#show_layer_data").is(":checked")) {
+			$(".layer_data").show();
+			$(".copy_layer_data_button").show();
+			var code = "model.layers[" + i + "].original_apply_real = model.layers[" + i + "].apply;\n" +
+				"model.layers[" + i + "].apply = function (inputs, kwargs) {\n" +
+					"var bias_string = '';\n" +
+
+					"if ('bias' in this) {\n" +
+						"bias_string = \"\\n\" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, \"\\t\") + \"\\n\";\n" +
+					"}\n" +
+
+					"var weights_string = '';\n" +
+					"if ('weights' in this) {\n" +
+						"for (var j = 0; j < this['weights'].length; j++) {\n" +
+							"if (j in this['weights'] && 'val' in this['weights'][j]) {\n" +
+								"weights_string = weights_string + \"\\n\" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, \"\\t\");\n" +
+							"}\n" +
+						"}\n" +
+					"}\n" +
+
+					"var applied = model.layers[" + i + "].original_apply_real(inputs, kwargs);\n" +
+					"var output_data = applied.arraySync()[0];\n" +
+					
+					"var input_data = inputs[0].arraySync()[0];\n" +
+
+					"var kernel_data = [];\n" + //model.layers[" + i + "].kernel.val.arraySync();\n" + // TODO
+
+					"if (!$($(\".layer_data\")[" + i + "]).html()) {\n" +
+						"var html = '';\n" +
+						"if(" + i + " == 0) {\n" +
+							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\";\n" +
+							"html = html + JSON.stringify(input_data, null, \"\\t\") + \"\\n\";\n" +
+						"} else {\n" +
+							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\"\n" +
+						"}\n" +
+
+						"if(weights_string) {\n" +
+							"html = html + weights_string;\n" +
+						"}\n" +
+
+						"if(bias_string) {\n" +
+							"html = html + bias_string;\n" +
+						"}\n" +
+
+						"draw_images_if_possible(" + i + ", input_data, output_data, kernel_data);\n" +
+
+						"$('#layer_visualizations_tab').show();\n" +
+						"$('#layer_visualizations_tab_label').show();\n" +
+						"html = html + \"Output layer " + i + ": [\" + get_dim(output_data) + \"]\\n\"\n" +
+						"html = html + JSON.stringify(output_data, null, \"\\t\");\n" +
+						"$($(\".layer_data\")[" + i + "]).append(html);\n" +
+					"}\n" +
+					"return applied;\n" +
+				"}\n";
+			eval(code);
+		}
 	}
 }

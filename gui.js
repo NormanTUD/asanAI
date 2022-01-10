@@ -1,55 +1,134 @@
 "use strict";
 
 function md5(inputString) {
-    var hc="0123456789abcdef";
-    function rh(n) {var j,s="";for(j=0;j<=3;j++) s+=hc.charAt((n>>(j*8+4))&0x0F)+hc.charAt((n>>(j*8))&0x0F);return s;}
-    function ad(x,y) {var l=(x&0xFFFF)+(y&0xFFFF);var m=(x>>16)+(y>>16)+(l>>16);return (m<<16)|(l&0xFFFF);}
-    function rl(n,c)            {return (n<<c)|(n>>>(32-c));}
-    function cm(q,a,b,x,s,t)    {return ad(rl(ad(ad(a,q),ad(x,t)),s),b);}
-    function ff(a,b,c,d,x,s,t)  {return cm((b&c)|((~b)&d),a,b,x,s,t);}
-    function gg(a,b,c,d,x,s,t)  {return cm((b&d)|(c&(~d)),a,b,x,s,t);}
-    function hh(a,b,c,d,x,s,t)  {return cm(b^c^d,a,b,x,s,t);}
-    function ii(a,b,c,d,x,s,t)  {return cm(c^(b|(~d)),a,b,x,s,t);}
-    function sb(x) {
-        var i;var nblk=((x.length+8)>>6)+1;var blks=new Array(nblk*16);for(i=0;i<nblk*16;i++) blks[i]=0;
-        for(i=0;i<x.length;i++) blks[i>>2]|=x.charCodeAt(i)<<((i%4)*8);
-        blks[i>>2]|=0x80<<((i%4)*8);blks[nblk*16-2]=x.length*8;return blks;
-    }
-    var i,x=sb(inputString),a=1732584193,b=-271733879,c=-1732584194,d=271733878,olda,oldb,oldc,oldd;
-    for(i=0;i<x.length;i+=16) {olda=a;oldb=b;oldc=c;oldd=d;
-        a=ff(a,b,c,d,x[i+ 0], 7, -680876936);d=ff(d,a,b,c,x[i+ 1],12, -389564586);c=ff(c,d,a,b,x[i+ 2],17,  606105819);
-        b=ff(b,c,d,a,x[i+ 3],22,-1044525330);a=ff(a,b,c,d,x[i+ 4], 7, -176418897);d=ff(d,a,b,c,x[i+ 5],12, 1200080426);
-        c=ff(c,d,a,b,x[i+ 6],17,-1473231341);b=ff(b,c,d,a,x[i+ 7],22,  -45705983);a=ff(a,b,c,d,x[i+ 8], 7, 1770035416);
-        d=ff(d,a,b,c,x[i+ 9],12,-1958414417);c=ff(c,d,a,b,x[i+10],17,     -42063);b=ff(b,c,d,a,x[i+11],22,-1990404162);
-        a=ff(a,b,c,d,x[i+12], 7, 1804603682);d=ff(d,a,b,c,x[i+13],12,  -40341101);c=ff(c,d,a,b,x[i+14],17,-1502002290);
-        b=ff(b,c,d,a,x[i+15],22, 1236535329);a=gg(a,b,c,d,x[i+ 1], 5, -165796510);d=gg(d,a,b,c,x[i+ 6], 9,-1069501632);
-        c=gg(c,d,a,b,x[i+11],14,  643717713);b=gg(b,c,d,a,x[i+ 0],20, -373897302);a=gg(a,b,c,d,x[i+ 5], 5, -701558691);
-        d=gg(d,a,b,c,x[i+10], 9,   38016083);c=gg(c,d,a,b,x[i+15],14, -660478335);b=gg(b,c,d,a,x[i+ 4],20, -405537848);
-        a=gg(a,b,c,d,x[i+ 9], 5,  568446438);d=gg(d,a,b,c,x[i+14], 9,-1019803690);c=gg(c,d,a,b,x[i+ 3],14, -187363961);
-        b=gg(b,c,d,a,x[i+ 8],20, 1163531501);a=gg(a,b,c,d,x[i+13], 5,-1444681467);d=gg(d,a,b,c,x[i+ 2], 9,  -51403784);
-        c=gg(c,d,a,b,x[i+ 7],14, 1735328473);b=gg(b,c,d,a,x[i+12],20,-1926607734);a=hh(a,b,c,d,x[i+ 5], 4,    -378558);
-        d=hh(d,a,b,c,x[i+ 8],11,-2022574463);c=hh(c,d,a,b,x[i+11],16, 1839030562);b=hh(b,c,d,a,x[i+14],23,  -35309556);
-        a=hh(a,b,c,d,x[i+ 1], 4,-1530992060);d=hh(d,a,b,c,x[i+ 4],11, 1272893353);c=hh(c,d,a,b,x[i+ 7],16, -155497632);
-        b=hh(b,c,d,a,x[i+10],23,-1094730640);a=hh(a,b,c,d,x[i+13], 4,  681279174);d=hh(d,a,b,c,x[i+ 0],11, -358537222);
-        c=hh(c,d,a,b,x[i+ 3],16, -722521979);b=hh(b,c,d,a,x[i+ 6],23,   76029189);a=hh(a,b,c,d,x[i+ 9], 4, -640364487);
-        d=hh(d,a,b,c,x[i+12],11, -421815835);c=hh(c,d,a,b,x[i+15],16,  530742520);b=hh(b,c,d,a,x[i+ 2],23, -995338651);
-        a=ii(a,b,c,d,x[i+ 0], 6, -198630844);d=ii(d,a,b,c,x[i+ 7],10, 1126891415);c=ii(c,d,a,b,x[i+14],15,-1416354905);
-        b=ii(b,c,d,a,x[i+ 5],21,  -57434055);a=ii(a,b,c,d,x[i+12], 6, 1700485571);d=ii(d,a,b,c,x[i+ 3],10,-1894986606);
-        c=ii(c,d,a,b,x[i+10],15,   -1051523);b=ii(b,c,d,a,x[i+ 1],21,-2054922799);a=ii(a,b,c,d,x[i+ 8], 6, 1873313359);
-        d=ii(d,a,b,c,x[i+15],10,  -30611744);c=ii(c,d,a,b,x[i+ 6],15,-1560198380);b=ii(b,c,d,a,x[i+13],21, 1309151649);
-        a=ii(a,b,c,d,x[i+ 4], 6, -145523070);d=ii(d,a,b,c,x[i+11],10,-1120210379);c=ii(c,d,a,b,x[i+ 2],15,  718787259);
-        b=ii(b,c,d,a,x[i+ 9],21, -343485551);a=ad(a,olda);b=ad(b,oldb);c=ad(c,oldc);d=ad(d,oldd);
-    }
-    return rh(a)+rh(b)+rh(c)+rh(d);
+	var hc = "0123456789abcdef";
+	function rh(n) {var j,s="";for(j=0;j<=3;j++) s+=hc.charAt((n>>(j*8+4))&0x0F)+hc.charAt((n>>(j*8))&0x0F);return s;}
+	function ad(x,y) {var l=(x&0xFFFF)+(y&0xFFFF);var m=(x>>16)+(y>>16)+(l>>16);return (m<<16)|(l&0xFFFF);}
+	function rl(n,c)            {return (n<<c)|(n>>>(32-c));}
+	function cm(q,a,b,x,s,t)    {return ad(rl(ad(ad(a,q),ad(x,t)),s),b);}
+	function ff(a,b,c,d,x,s,t)  {return cm((b&c)|((~b)&d),a,b,x,s,t);}
+	function gg(a,b,c,d,x,s,t)  {return cm((b&d)|(c&(~d)),a,b,x,s,t);}
+	function hh(a,b,c,d,x,s,t)  {return cm(b^c^d,a,b,x,s,t);}
+	function ii(a,b,c,d,x,s,t)  {return cm(c^(b|(~d)),a,b,x,s,t);}
+	function sb(x) {
+		var i;var nblk=((x.length+8)>>6)+1;var blks=new Array(nblk*16);for(i=0;i<nblk*16;i++) blks[i]=0;
+		for(i=0;i<x.length;i++) blks[i>>2]|=x.charCodeAt(i)<<((i%4)*8);
+		blks[i>>2]|=0x80<<((i%4)*8);blks[nblk*16-2]=x.length*8;return blks;
+	}
+	var i, x = sb(inputString),
+		a = 1732584193,
+		b = -271733879,
+		c = -1732584194,
+		d = 271733878,
+		olda,
+		oldb,
+		oldc,
+		oldd;
+	for(i = 0; i < x.length; i += 16) {
+		olda = a;
+		oldb = b;
+		oldc = c;
+		oldd = d;
+		a = ff(a,b,c,d,x[i+ 0], 7, -680876936);
+		d = ff(d,a,b,c,x[i+ 1],12, -389564586);
+		c = ff(c,d,a,b,x[i+ 2],17,  606105819);
+		b = ff(b,c,d,a,x[i+ 3],22,-1044525330);
+		a = ff(a,b,c,d,x[i+ 4], 7, -176418897);
+		d = ff(d,a,b,c,x[i+ 5],12, 1200080426);
+
+		c = ff(c,d,a,b,x[i+ 6],17,-1473231341);
+		b = ff(b,c,d,a,x[i+ 7],22,  -45705983);
+		a = ff(a,b,c,d,x[i+ 8], 7, 1770035416);
+
+		d = ff(d,a,b,c,x[i+ 9],12,-1958414417);
+		c = ff(c,d,a,b,x[i+10],17,     -42063);
+		b = ff(b,c,d,a,x[i+11],22,-1990404162);
+
+		a = ff(a,b,c,d,x[i+12], 7, 1804603682);
+		d = ff(d,a,b,c,x[i+13],12,  -40341101);
+		c = ff(c,d,a,b,x[i+14],17,-1502002290);
+
+		b = ff(b,c,d,a,x[i+15],22, 1236535329);
+		a = gg(a,b,c,d,x[i+ 1], 5, -165796510);
+		d = gg(d,a,b,c,x[i+ 6], 9,-1069501632);
+
+		c = gg(c,d,a,b,x[i+11],14,  643717713);
+		b = gg(b,c,d,a,x[i+ 0],20, -373897302);
+		a = gg(a,b,c,d,x[i+ 5], 5, -701558691);
+
+		d = gg(d,a,b,c,x[i+10], 9,   38016083);
+		c = gg(c,d,a,b,x[i+15],14, -660478335);
+		b = gg(b,c,d,a,x[i+ 4],20, -405537848);
+
+		a = gg(a,b,c,d,x[i+ 9], 5,  568446438);
+		d = gg(d,a,b,c,x[i+14], 9,-1019803690);
+		c = gg(c,d,a,b,x[i+ 3],14, -187363961);
+
+		b = gg(b,c,d,a,x[i+ 8],20, 1163531501);
+		a = gg(a,b,c,d,x[i+13], 5,-1444681467);
+		d = gg(d,a,b,c,x[i+ 2], 9,  -51403784);
+
+		c = gg(c,d,a,b,x[i+ 7],14, 1735328473);
+		b = gg(b,c,d,a,x[i+12],20,-1926607734);
+		a = hh(a,b,c,d,x[i+ 5], 4,    -378558);
+
+		d = hh(d,a,b,c,x[i+ 8],11,-2022574463);
+		c = hh(c,d,a,b,x[i+11],16, 1839030562);
+		b = hh(b,c,d,a,x[i+14],23,  -35309556);
+
+		a = hh(a,b,c,d,x[i+ 1], 4,-1530992060);
+		d = hh(d,a,b,c,x[i+ 4],11, 1272893353);
+		c = hh(c,d,a,b,x[i+ 7],16, -155497632);
+
+		b = hh(b,c,d,a,x[i+10],23,-1094730640);
+		a = hh(a,b,c,d,x[i+13], 4,  681279174);
+		d = hh(d,a,b,c,x[i+ 0],11, -358537222);
+
+		c = hh(c,d,a,b,x[i+ 3],16, -722521979);
+		b = hh(b,c,d,a,x[i+ 6],23,   76029189);
+		a = hh(a,b,c,d,x[i+ 9], 4, -640364487);
+
+		d = hh(d,a,b,c,x[i+12],11, -421815835);
+		c = hh(c,d,a,b,x[i+15],16,  530742520);
+		b = hh(b,c,d,a,x[i+ 2],23, -995338651);
+
+		a = ii(a,b,c,d,x[i+ 0], 6, -198630844);
+		d = ii(d,a,b,c,x[i+ 7],10, 1126891415);
+		c = ii(c,d,a,b,x[i+14],15,-1416354905);
+
+		b = ii(b,c,d,a,x[i+ 5],21,  -57434055);
+		a = ii(a,b,c,d,x[i+12], 6, 1700485571);
+		d = ii(d,a,b,c,x[i+ 3],10,-1894986606);
+
+		c = ii(c,d,a,b,x[i+10],15,   -1051523);
+		b = ii(b,c,d,a,x[i+ 1],21,-2054922799);
+		a = ii(a,b,c,d,x[i+ 8], 6, 1873313359);
+
+		d = ii(d,a,b,c,x[i+15],10,  -30611744);
+		c = ii(c,d,a,b,x[i+ 6],15,-1560198380);
+		b = ii(b,c,d,a,x[i+13],21, 1309151649);
+
+		a = ii(a,b,c,d,x[i+ 4], 6, -145523070);
+		d = ii(d,a,b,c,x[i+11],10,-1120210379);
+		c = ii(c,d,a,b,x[i+ 2],15,  718787259);
+
+		b = ii(b,c,d,a,x[i+ 9],21, -343485551);
+		a = ad(a,olda);
+		b = ad(b,oldb);
+		c = ad(c,oldc);
+		d = ad(d,oldd);
+
+	}
+	return rh(a)+rh(b)+rh(c)+rh(d);
 }
 
 function get_current_status_hash () {
-    var html_code = '';
-    $("input,checkbox,select,textarea").each(function (e, x) {
-        html_code += ";;;;;;;" + $(x).prop("id") + ";;;;" + $(x).prop("class") + "=" + $(x).val() + ";;;;" + $(x).is(":checked");
-    })
+	var html_code = '';
+	$("input,checkbox,select,textarea").each(function (e, x) {
+		html_code += ";;;;;;;" + $(x).prop("id") + ";;;;" + $(x).prop("class") + "=" + $(x).val() + ";;;;" + $(x).is(":checked");
+	})
 
-    return md5(html_code);
+	return md5(html_code);
 }
 
 function get_item_value (layer, classname) {
@@ -158,6 +237,18 @@ function visual_help_text (filename, text) {
 	$("#visual_help_tab_label").click();
 }
 
+function visual_help_array (filenames) {
+	$("#visual_help_tab").html("<center>");
+	for (var i = 0; i < filenames.length; i++) {
+		var filename = filesnames[0];
+		$("#visual_help_tab").append("<img style='width: 80%' src='visualhelp/" + filename + "' />");
+	}
+	$("#visual_help_tab").append("</center>");
+	$("#visualization_tab_label").click();
+	$("#visual_help_tab_label").show();
+	$("#visual_help_tab_label").click();
+}
+
 function visual_help (filename) {
 	$("#visual_help_tab").html("<center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
 	$("#visualization_tab_label").click();
@@ -202,7 +293,12 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 
 			var pre_text = "";
 			if("text" in data) {
-				pre_text = " text='" + data["text"] + "' ";
+				var text = data["text"];
+				if(typeof(data["text"]) == "function") {
+					text = data["text"](nr);
+				}
+
+				pre_text = " value='" + text + "' ";
 			}
 
 			str += '<input class="input_data ' + classname + '" ' + pre_text + placeholder + ' type="text" onkeyup="show_python()"/>';
@@ -246,15 +342,19 @@ function add_theta_option (nr) {
 }
 
 function add_axis_option (nr) {
-	return get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": -1 }, nr);
+	return get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": layer_options_defaults["axis"] }, nr);
 }
 
 function add_max_value_option (nr) {
-	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "min": 0, "max": 1000, "step": 1, "value": 1 }, nr);
+	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "min": 0, "max": 1000, "step": 1, "value": layer_options_defaults["max_value"] }, nr);
 }
 
 function add_size_option (nr) {
 	return get_tr_str_for_layer_table("Size", "size", "text", { "text": "2,2", "placeholder": "2 comma-seperated numbers" }, nr);
+}
+
+function add_target_shape_option (nr) {
+	return get_tr_str_for_layer_table("Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr);
 }
 
 function add_dilation_rate_option (nr) {
@@ -273,59 +373,59 @@ function add_pool_size_1d_option (nr) {
 
 function add_pool_size_option (nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Pool-Size X", "pool_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
-	str += get_tr_str_for_layer_table("Pool-Size Y", "pool_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+	str += get_tr_str_for_layer_table("Pool-Size X", "pool_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["pool_size"][0] }, nr);
+	str += get_tr_str_for_layer_table("Pool-Size Y", "pool_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["pool_size"][1] }, nr);
 	return str;
 }
 
 function add_filters_option (nr) {
-	return get_tr_str_for_layer_table("Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": 2 }, nr);
+	return get_tr_str_for_layer_table("Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": layer_options_defaults["filters"] }, nr);
 }
 
 function add_kernel_size_1d_option (nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Kernel-Size", "kernel_size", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+	str += get_tr_str_for_layer_table("Kernel-Size", "kernel_size", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size_1d"] }, nr);
 	return str;
 }
 
 function add_kernel_size_option (nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Kernel-Size X", "kernel_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
-	str += get_tr_str_for_layer_table("Kernel-Size Y", "kernel_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+	str += get_tr_str_for_layer_table("Kernel-Size X", "kernel_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size"][0] }, nr);
+	str += get_tr_str_for_layer_table("Kernel-Size Y", "kernel_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size"][1] }, nr);
 	return str;
 }
 
 function add_strides_1d_option (nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Strides", "strides", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+	str += get_tr_str_for_layer_table("Strides", "strides", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides_1d"] }, nr);
 	return str;
 }
 
 function add_strides_option (nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Strides X", "strides_x", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
-	str += get_tr_str_for_layer_table("Strides Y", "strides_y", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+	str += get_tr_str_for_layer_table("Strides X", "strides_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides"][0] }, nr);
+	str += get_tr_str_for_layer_table("Strides Y", "strides_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides"][1] }, nr);
 	return str;
 }
 
 function add_alpha_option (nr) {
-	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "min": 0, "max": 100, "step": 0.01, "value": 1 }, nr);
+	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "min": 0, "max": 100, "step": 0.01, "value": layer_options_defaults["alpha"] }, nr);
 }
 
 function add_dropout_rate_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (in %)", "dropout_rate", "number", { "min": 0, "max": 100, "step": 5, "value": 25 }, nr);
+	return get_tr_str_for_layer_table("Dropout rate (in %)", "dropout_rate", "number", { "min": 0, "max": 100, "step": 5, "value": layer_options_defaults["dropout_rate"] }, nr);
 }
 
 function add_max_features_option (nr) {
-	return get_tr_str_for_layer_table("Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": 3 }, nr);
+	return get_tr_str_for_layer_table("Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["max_features"] }, nr);
 }
 
 function add_momentum_option (nr) {
-	return get_tr_str_for_layer_table("Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": 0.99 }, nr);
+	return get_tr_str_for_layer_table("Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": layer_options_defaults["momentum"] }, nr);
 }
 
 function add_units_option (nr) {
-	return get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": 2 }, nr);
+	return get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": layer_options_defaults["units"] }, nr);
 }
 
 function add_use_bias_option(nr) {
@@ -361,19 +461,19 @@ function add_bias_constraint_option (nr) {
 }
 
 function add_stddev_option (nr) {
-	return get_tr_str_for_layer_table("Standard-Deviation", "dropout", "number", { "min": 0, "value": 1 }, nr);
+	return get_tr_str_for_layer_table("Standard-Deviation", "stddev", "number", { "min": 0, "value": layer_options_defaults["stddev"] }, nr);
 }
 
 function add_rate_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": 0 }, nr);
+	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["dropout"] }, nr);
 }
 
 function add_dropout_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": 0 }, nr);
+	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["dropout"] }, nr);
 }
 
 function add_recurrent_dropout_option (nr) {
-	return get_tr_str_for_layer_table("Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": 0 }, nr);
+	return get_tr_str_for_layer_table("Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["recurrent_dropout"] }, nr);
 }
 
 function add_return_sequences_option (nr) {
@@ -413,11 +513,11 @@ function add_go_backwards_option (nr) {
 }
 
 function add_epsilon_option (nr) {
-	return get_tr_str_for_layer_table("Epsilon multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": 0.001 }, nr);
+	return get_tr_str_for_layer_table("Epsilon multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": layer_options_defaults["epsilon"] }, nr);
 }
 
 function add_depth_multiplier_option (nr) {
-	return get_tr_str_for_layer_table("Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": 1 }, nr);
+	return get_tr_str_for_layer_table("Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["depth_multiplier"] }, nr);
 }
 
 function add_depthwise_initializer_option (nr) {
@@ -540,12 +640,13 @@ function change_width () {
 }
 
 function show_python(no_graph_restart) {
+	show_or_hide_bias_initializer();
 	if(disable_show_python_and_create_model) {
 		return;
 	}
 
 	try {
-		compile_model(1);
+		compile_model();
 	} catch (e) {
 		log("There was an error compiling the model" + e);
 	};
@@ -642,6 +743,8 @@ function show_python(no_graph_restart) {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 				} else if(option_name == "dilation_rate") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "dilation_rate") + "]");
+				} else if(option_name == "target_shape") {
+					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
 				} else {
 					data[get_python_name(option_name)] = get_item_value(i, option_name);
 				}
@@ -706,7 +809,30 @@ function show_python(no_graph_restart) {
 
 	identify_layers();
 
+	layer_structure_cache = null;
+
+
+	//disable_all_invalid_layers();
+
+	//enable_or_disable_start_training_button();
+
 	return 1;
+}
+
+// TODO!!! Ermittelt nicht die richtige output shape (wanted output ist immer gleich got output,
+// weil beide vom Feld outputShape bestimmt werden. So ist das Netz immer "trainierbar".
+// TODO: Muss aus den Originaldaten ermitteln was die Output-Shape ist.
+function enable_or_disable_start_training_button () {
+	var wanted_output = get_output_shape();
+	var got_output = JSON.stringify(model.layers[model.layers.length - 1].getOutputAt(0).shape)
+
+	if(wanted_output == got_output) {
+		$("#train_neural_network_button").prop("disabled", false);
+		return true;
+	} else {
+		$("#train_neural_network_button").prop("disabled", true);
+		return false;
+	}
 }
 
 function change_optimizer () {
@@ -955,8 +1081,56 @@ function toggle_options (item) {
 	write_descriptions();
 }
 
+function disable_invalid_layers_event (e, thisitem) {
+	e.preventDefault();
+	var layer_nr = null;
+
+	$(thisitem).
+	parent(). // td
+	parent(). // tr
+	parent(). // tbody
+	parent(). // table
+	parent(). // layer_setting
+	parent(). // li
+	parent(). // layers_container
+	children().each(function (nr, elem) {
+		if($(elem).find(thisitem).length >= 1) {
+			layer_nr = nr;
+		}
+	});
+
+	enable_valid_layer_types(layer_nr);
+}
+
+function disable_all_invalid_layers () {
+	document.body.style.pointerEvents = "none";
+	disable_all_invalid_layers_from(0);
+	document.body.style.pointerEvents = "";
+}
+
+function disable_all_invalid_layers_from (start) {
+	favicon_spinner();
+	for (var i = start; i < get_numberoflayers(); i++) {
+		enable_valid_layer_types(i);
+	}
+	favicon_default();
+}
+
+function enable_valid_layer_types (layer_nr) {
+	var valid_layer_types = get_valid_layer_types(layer_nr);
+
+	var options = $($($('.layer_type')[layer_nr]).children().children());
+
+	for (var i = 0; i < options.length; i++) {
+		$(options[i]).prop("disabled", true);
+		if(valid_layer_types.includes($(options[i]).prop('value'))) {
+			$(options[i]).prop("disabled", false);
+		}
+	}
+}
+
 function option_for_layer (nr) {
-	var this_event = "set_option_for_layer(this); show_python()";
+	var this_event = "set_option_for_layer(this)";
 	var str = "";
 	str += "<tr>";
 		str += "<td>";
@@ -964,7 +1138,8 @@ function option_for_layer (nr) {
 			str += "<div class='whatisthis_activation' style='display:none'><a onclick='plot_activation($($(\".layer_type\")[" + nr + "]).val())'>What is this?</a></div>";
 		str += "</td>";
 		str += "<td>";
-			str += "<select onchange='" + this_event + "' class='input_data layer_type'>";
+			str += "<select onclick='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
+			//str += "<select onchange='" + this_event + "' class='input_data layer_type'>";
 				var last_category = '';
 				for (var key of Object.keys(layer_options)) {
 					var this_category = layer_options[key].category;
@@ -988,14 +1163,18 @@ function option_for_layer (nr) {
 }
 
 function remove_layer (item) {
-	$(item).parent()[0].remove()
+	$($(item).parent()[0]).parent().remove()
 
+	layer_structure_cache = null;
 	$("#numberoflayers").val(parseInt($("#numberoflayers").val()) - 1);
 
 	show_python();
+	disable_all_non_selected_layer_types();
 }
 
 function add_layer (item) {
+	layer_structure_cache = null;
+
 	$(item).parent().parent().clone().insertAfter($(item).parent().parent());
 
 	var real_nr = null;
@@ -1010,6 +1189,8 @@ function add_layer (item) {
 	set_option_for_layer($($(".layer_type")[real_nr]))
 
 	write_descriptions();
+	
+	enable_valid_layer_types(real_nr);
 }
 
 function sortable_layers_container () {
@@ -1031,6 +1212,16 @@ function sortable_layers_container () {
 		axis: 'y',
 		revert: true
 	});
+}
+
+function disable_all_non_selected_layer_types() {
+	var all_options = $(".layer_type").children().children();
+
+	for (var i = 0; i < all_options.length; i++) {
+		if(!$(all_options[i]).is(":selected")) {
+			$(all_options[i]).prop("disabled", true)
+		}
+	}
 }
 
 function show_layers (number) {
@@ -1092,13 +1283,53 @@ async function set_config () {
 	if(config) {
 		if(config["width"]) { $("#width").val(config["width"]); width = config["width"]; }
 		if(config["height"]) { $("#height").val(config["height"]); height = config["height"]; }
-		//log(config);
+
 		var keras_layers;
 		try {
 			keras_layers = config["keras"]["modelTopology"]["config"]["layers"];
 		} catch (e) {
-			console.log(e);
-			keras_layers = config["keras"]["modelTopology"]["model_config"]["layers"];
+			log(e);
+			log(config);
+			try {
+				log("Trying more...");
+				keras_layers = config["keras"]["modelTopology"]["model_config"]["layers"];
+				if(keras_layers === undefined) {
+					throw("keras_layers is undefined");
+				}
+			} catch (e) {
+				log(e);
+				try {
+					log("Trying even more...");
+					keras_layers = config["keras"]["modelTopology"]["model_config"]["config"]["layers"];
+				} catch (e) {
+					try {
+						keras_layers = config["keras"]["keras"]["modelTopology"]["config"]["layers"];
+					} catch (e) {
+						log(e);
+						log(config);
+						try {
+							log("Trying more...");
+							keras_layers = config["keras"]["keras"]["modelTopology"]["model_config"]["layers"];
+							if(keras_layers === undefined) {
+								throw("keras_layers is undefined");
+							}
+						} catch (e) {
+							log(e);
+							try {
+								log("Trying even more...");
+								keras_layers = config["keras"]["keras"]["modelTopology"]["model_config"]["config"]["layers"];
+							} catch (e) {
+								alert("Tried everything, could not load model, sorry.");
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if(keras_layers === undefined) {
+			console.warn("Error loading the model");
+			log(config);
 		}
 
 		init_numberoflayers(keras_layers.length - 1);
@@ -1233,13 +1464,16 @@ async function set_config () {
 
 	disable_show_python_and_create_model = false;
 
-	create_model();
+	model = create_model(model);
+	add_layer_debuggers();
 
 	write_descriptions();
 
 	restart_lenet();
 	restart_alexnet();
 	restart_fcnn();
+	identify_layers();
+	disable_all_non_selected_layer_types();
 }
 
 async function init_dataset () {
@@ -1343,12 +1577,12 @@ async function init_dataset_category () {
 		var dataset = "";
 		if(category == "image") {
 			//dataset += "<option value='layertest'>layertest</option>";
-			dataset += "<option value='tiny'>Cat or dog (tiny)</option>";
-			dataset += "<option value='small'>Cat or dog (small)</option>";
-			dataset += "<option value='catordog'>Cat or dog (GIANT)</option>";
+			dataset += "<option value='tiny'>Cat or dog</option>";
 			dataset += "<option value='color'>Color</option>";
 		} else if(category == "logic") {
 			dataset += "<option value='xor'>XOR</option>";
+		} else if(category == "scientific") {
+			dataset += "<option value='materialtest'>Material test</option>";
 		}
 
 		$("#train_data_set_group").show();
@@ -1496,8 +1730,8 @@ function detect_kernel_initializer (original_kernel_initializer_data) {
 			log(kernel_initializer_data);
 		}
 	} else {
-		log("No mode");
-		log(kernel_initializer_data);
+		//log("No mode");
+		//log(kernel_initializer_data);
 
 		return original_kernel_initializer_data["class_name"];
 	}
@@ -1512,4 +1746,17 @@ function updated_gui () {
 	current_status_hash = new_current_status_hash;
 
 	return true;
+}
+
+function show_or_hide_bias_initializer () {
+    for (var i = 0; i < get_numberoflayers(); i++) {
+        var use_bias_setting = $($(".layer_setting")[i]).find(".use_bias");
+        if(use_bias_setting.length) {
+            if($(use_bias_setting[0]).is(":checked")) {
+                $($(".layer_setting")[i]).find(".bias_initializer").parent().parent().show()
+            } else {
+                $($(".layer_setting")[i]).find(".bias_initializer").parent().parent().hide()
+            }
+        }
+    }
 }

@@ -21,6 +21,7 @@
 
 		<!-- my own js stuff -->
 		<script src="variables.js"></script>
+		<script src="model.js"></script>
 		<script src="explain.js"></script>
 		<script src="data.js"></script>
 		<script src="debug.js"></script>
@@ -63,7 +64,6 @@
 						<select id="dataset_category" onchange="init_dataset_category()" style="width: 100%">
 							<option value="image">Image classification</option>
 							<option value="logic">Logic</option>
-							<option value="scientific">Scientific data</option>
 							<option value="own">Own data</option>
 						</select>
 						<div id="dataset_div">
@@ -206,7 +206,7 @@
 
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar" style="width:100px">
-						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start training</button><br>
+						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start&nbsp;training</button><br>
 					</div>
 					Auto-jump to training tab? <input type="checkbox" value="1" checked="checked" id="jump_to_training_tab" /><br>
 					Auto-jump to predict tab? <input type="checkbox" value="1" checked="checked" id="jump_to_predict_tab" /><br>
@@ -226,6 +226,7 @@
 					<div class="ribbon-toolbar" style="width: 400px">
 						<input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model" />
 					</div>
+					<tt>tensorflowjs_converter \<br>--input_format=keras_saved_model \<br>--output_format=tfjs_layers_model \<br> model jsmodel</tt>
 					<div class="ribbon-group-title">Upload Model (<tt>.json</tt>)</div>
 				</div>
 				<div class="ribbon-group-sep"></div>
@@ -429,7 +430,7 @@
 							</tr>
 							<tr>
 								<td>Show layer data:</td>
-								<td><input type="checkbox" value="1" id="show_layer_data" /></td>
+								<td><input type="checkbox" value="1" checked="checked" id="show_layer_data" /></td>
 							</tr>
 						</table>
 					</div>
@@ -503,9 +504,10 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 								<li><a href="#lenet_tab" id="lenet_tab_label">LeNet</a></li>
 								<li><a href="#fcnn_tab">FCNN</a></li>
+								<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
+								<li><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
 								<li><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
 								<li><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
-								<li><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
 								<li><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 							</ul>
 							<div id="alexnet_tab">
@@ -527,6 +529,47 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<div id="activation_plot" style="display: none"></div>
 							</div>
 							<div id="visual_help_tab">
+							</div>
+							<div id="conv_explanations" style="overflow-y: scroll; max-height: 800px; background-color: #f2f5f7">
+								Blue maps are inputs, and cyan maps are outputs<br>
+
+								<center>
+									<h4>No padding, no strides:</h4>
+									<img width=244 src="conv_animations/no_padding_no_strides.gif"><br>
+									<h4>Arbitrary padding, no strides:</h4>
+									<img width=244 src="conv_animations/arbitrary_padding_no_strides.gif"><br>
+									<h4>Half padding, no strides:</h4>
+									<img width=244 src="conv_animations/same_padding_no_strides.gif"><br>
+									<h4>Full padding, no strides:</h4>
+									<img width=244 src="conv_animations/full_padding_no_strides.gif"><br>
+									<h4>No padding, strides:</h4>
+									<img width=244 src="conv_animations/no_padding_strides.gif"><br>
+									<h4>Padding, strides:</h4>
+									<img width=244 src="conv_animations/padding_strides.gif"><br>
+									<h4>Padding, strides (odd):</h4>
+									<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
+									<h2>Transposed convolution animations</h2><br>
+									<h4>No padding, no strides, transposed</h4>
+									<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
+									<h4>Arbitrary padding, no strides, transposed</h4>
+									<img width=244 src="conv_animations/arbitrary_padding_no_strides_transposed.gif"><br>
+									<h4>Half padding, no strides, transposed</h4>
+									<img width=244 src="conv_animations/same_padding_no_strides_transposed.gif"><br>
+									<h4>Full padding, no strides, transposed</h4>
+									<img width=244 src="conv_animations/full_padding_no_strides_transposed.gif"><br>
+									<h4>No padding, strides, transposed</h4>
+									<img width=244 src="conv_animations/no_padding_strides_transposed.gif"><br>
+									<h4>Padding, strides, transposed</h4>
+									<img width=244 src="conv_animations/padding_strides_transposed.gif"><br>
+									<h4>Padding, strides, transposed (odd)</h4>
+									<img width=244 src="conv_animations/padding_strides_odd_transposed.gif"><br>
+									<h2>Dilated convolution animations</h2><br>
+									<h4>No padding, no stride, dilation</h4>
+									<img width=244 src="conv_animations/dilation.gif"><br>
+								</center>
+
+								These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
+								<a href="https://github.com/vdumoulin">vdumoulin</a>.
 							</div>
 							<div id="help_tab">
 							</div>
