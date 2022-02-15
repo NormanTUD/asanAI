@@ -849,7 +849,7 @@ button.ui-button::-moz-focus-inner {
 	white-space: nowrap;
 }
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	padding: 1em 2em;
+	padding: 1em 1em;
 	text-decoration: none;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
@@ -899,15 +899,16 @@ body .ui-tooltip {
 }
 .ui-widget-content {
 	//border: 1px solid #dddddd;
-	background: #f2f5f7 url("images/ui-bg_highlight-hard_100_f2f5f7_1x100.png") 50% top repeat-x;
+	//background: #f2f5f7 url("images/ui-bg_highlight-hard_100_f2f5f7_1x100.png") 50% top repeat-x;
+	background: rgb(226,237,247);
+	background: linear-gradient(180deg, rgba(226,237,247,1) 0%, rgba(227,244,255,1) 100%);
 	color: #362b36;
 }
 .ui-widget-content a {
 	color: #362b36;
 }
 .ui-widget-header {
-	background: rgb(189,189,189);
-	background: linear-gradient(90deg, rgba(189,189,189,1) 0%, rgba(229,229,229,1) 50%, rgba(189,189,189,1) 100%);
+	//background: #bfdbff;
 	color: #222222;
 	font-weight: bold;
 }
@@ -926,7 +927,7 @@ body .ui-tooltip {
 works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	border: 1px solid #aed0ea;
+	//border: 1px solid #aed0ea;
 	//background: #d7ebf9 url("images/ui-bg_glass_80_d7ebf9_1x400.png") 50% 50% repeat-x;
 	background: rgb(222,222,222);
 	background: linear-gradient(180deg, rgba(222,222,222,0.5) 0%, rgba(194,194,194,0.5) 10%, rgba(193,193,193,0.5) 18%, rgba(242, 242, 242, 0.5) 97%);
@@ -953,7 +954,7 @@ a:visited.ui-button,
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-	border: 1px solid #74b2e2;
+	//border: 1px solid #74b2e2;
 	background: #e4f1fb url("images/ui-bg_glass_100_e4f1fb_1x400.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #0070a3;
@@ -983,8 +984,10 @@ a.ui-button:active,
 .ui-button.ui-state-active:hover {
 	//border: 1px solid #2694e8;
 	//background: #3baae3 url("images/ui-bg_glass_50_3baae3_1x400.png") 50% 50% repeat-x;
-	background: rgb(140,161,199);
-	background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%);
+	//background: rgb(140,161,199);
+	//background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%);
+	background: rgb(221,233,249);
+	background: linear-gradient(180deg, rgba(221,233,249,1) 0%, rgba(247,250,255,1) 7%, rgba(239,245,254,1) 13%, rgba(226,235,247,1) 99%); 
 	font-weight: bold;
 	color: #ffffff;
 	border-top-left-radius: 10px;
@@ -998,7 +1001,7 @@ a.ui-button:active,
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
-	color: #ffffff;
+	color: #19439c;
 	text-decoration: none;
 }
 

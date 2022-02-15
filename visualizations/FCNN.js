@@ -33,7 +33,7 @@ function FCNN() {
 	var nodeColor = "#ffffff";
 	var nodeBorderColor = "#333333";
 
-	var betweenLayers = 160;
+	var betweenLayers = 200;
 
 	var architecture = [];
 	var real_architecture = [];
@@ -54,7 +54,7 @@ function FCNN() {
 	let textFn = (layer_index, layer_width, layer_name) => (
 		(layer_index === 0 ? "Input" :
 			(
-				layer_index === architecture.length-1 ? "Output" : "Hidden"
+				layer_index === (architecture.length - 1) ? "Output" : "Hidden"
 			)
 		) + " Layer ∈ ℝ" + sup(layer_width.toString()) + "\n(" + layerTypes[layer_index] + ")"
 	);
@@ -79,7 +79,7 @@ function FCNN() {
 	/////////////////////////////////////////////////////////////////////////////
 			///////    Methods    ///////
 	/////////////////////////////////////////////////////////////////////////////
-
+	
 	function redraw(
 		{
 			architecture_=architecture,
@@ -100,9 +100,9 @@ function FCNN() {
 			(layer_width, layer_index) => range(layer_width).map(
 				node_index => {
 					return {
-						'id': layer_index + '_' + node_index, 
-						'layer': layer_index, 
-						'node_index': node_index
+						'id':		layer_index + '_' + node_index, 
+						'layer':	layer_index, 
+						'node_index':	node_index
 					}
 				}
 			)
@@ -111,10 +111,10 @@ function FCNN() {
 		graph.links = pairWise(graph.nodes).map(
 			(nodes) => nodes[0].map(left => nodes[1].map(right => {
 				return right.node_index >= 0 ? {
-					'id': left.id + '-' + right.id,
-					'source':left.id,
-					'target': right.id, 
-					'weight': randomWeight()
+					'id':		left.id + '-' + right.id,
+					'source':	left.id,
+					'target':	right.id, 
+					'weight':	randomWeight()
 				} : null }
 				)
 			)
@@ -123,9 +123,9 @@ function FCNN() {
 		graph.links = flatten(graph.links).filter(l => (l && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
 
 		var label = real_architecture.map((layer_width, layer_index) => { return {
-			'id': 'layer_' + layer_index + '_label',
-			'layer': layer_index,
-			'text': textFn(layer_index, layer_width, layerTypes[layer_index])
+			'id':		'layer_' + layer_index + '_label',
+			'layer':	layer_index,
+			'text':		textFn(layer_index, layer_width, layerTypes[layer_index])
 		}});
 
 		link = link.data(graph.links, d => d.id);
@@ -142,6 +142,7 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
+			.attr("onclick", function(d) { return "draw_maximally_activated_neuron(" + d.id.split("_").join() + ")"; })
 			.on("mousedown", set_focus)
 			.on("mouseup", remove_focus)
 			.merge(node);
@@ -166,7 +167,6 @@ function FCNN() {
 			nnDirection_=nnDirection
 		}={}
 	) {
-
 		betweenNodesInLayer = betweenNodesInLayer_;
 		betweenLayers = betweenLayers_;
 		nnDirection = nnDirection_;
@@ -195,8 +195,8 @@ function FCNN() {
 			x(...indices_from_id(d.target)) + "," +
 			y(...indices_from_id(d.target)));
 
-		text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - textWidth/2 : graph_width/2 + largest_layer_width/2 + 20 ); })
-			.attr("y", function(d) { return (nnDirection === 'right' ? h/2 + largest_layer_width/2 + 20       : y(d.layer, d.node_index) ); });
+		text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
+			.attr("y", function(d) { return (nnDirection === 'right' ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
 
 	}
 
@@ -263,10 +263,10 @@ function FCNN() {
 		});
 
 		link.attr('marker-end', showArrowheads ? "url(#arrow)" : '');
-		marker.attr('refX', nodeDiameter*1.4 + 12);
+		marker.attr('refX', (nodeDiameter * 1.4) + 12);
 		arrowhead.style("fill", arrowheadStyle === 'empty' ? "none" : defaultEdgeColor);
 
-		node.attr("r", nodeDiameter/2);
+		node.attr("r", nodeDiameter / 2);
 		node.style("fill", nodeColor);
 		node.style("stroke", nodeBorderColor);
 	}
@@ -292,7 +292,6 @@ function FCNN() {
 	/////////////////////////////////////////////////////////////////////////////
 
 	svg.call(d3.zoom()
-		.scaleExtent([1 / 4, 8])
 		.on("zoom", zoomed));
 
 	function zoomed() {

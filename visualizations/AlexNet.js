@@ -47,14 +47,16 @@ function AlexNet() {
 
 
 	var scene = new THREE.Scene();
-	scene.background = new THREE.Color(0xf2f5f7);
+	//scene.background = new THREE.Color(0xf2f5f7);
+	scene.background = new THREE.Color(0xffffff);
 
 	var factor = 10;
 	var camera = new THREE.OrthographicCamera(get_graph_width() / -factor, get_graph_width() / factor, h / factor, h / - factor, -10000000, 10000000);
 	camera.position.set(-219, 92, 84);
 
 	var renderer;
-	var rendererType = 'webgl';
+	//var rendererType = 'svg';
+	var rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 
 	var controls;
 
@@ -65,11 +67,13 @@ function AlexNet() {
 
 	function restartRenderer({rendererType_=rendererType}={}) {
 		rendererType = rendererType_;
+		rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 
 		clearThree(scene);
 
 		if (rendererType === 'webgl') {
 			renderer = new THREE.WebGLRenderer({'alpha':true });
+			renderer.setClearColor( 0xffffff, 0 );
 		} else if (rendererType === 'svg') {
 			renderer = new THREE.SVGRenderer();
 		}
@@ -90,7 +94,6 @@ function AlexNet() {
 		controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 		animate();
-
 	}
 
 	function animate() {
@@ -115,6 +118,8 @@ function AlexNet() {
 			showConvDims_=showConvDims
 		}={}
 	) {
+
+		rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 
 		architecture = architecture_;
 		architecture2 = architecture2_;
@@ -170,7 +175,7 @@ function AlexNet() {
 					new THREE.Vector3((layer['rel_x'] * wf(layer)) + (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z),  // base
 					new THREE.Vector3((layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z),  // base
 					new THREE.Vector3((layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) + (convFn(layer['filterHeight'])/2), base_z),  // base
-					new THREE.Vector3((layer['rel_x'] * next_layer_wh),                           (layer['rel_y'] * next_layer_wh),                           summit_z)  // summit
+					new THREE.Vector3((layer['rel_x'] * next_layer_wh),                                (layer['rel_y'] * next_layer_wh),                                 summit_z) // summit
 				];
 
 				pyramid_geometry.faces = [new THREE.Face3(0, 1, 2),new THREE.Face3(0, 2, 3),new THREE.Face3(1, 0, 4),new THREE.Face3(2, 1, 4),new THREE.Face3(3, 2, 4),new THREE.Face3(0, 3, 4)];
@@ -183,7 +188,7 @@ function AlexNet() {
 				pyramids.add(pyramid_edges_object);
 			}
 
-			if (showDims) {
+			if (showDims && rendererType === "webgl") {
 				// Dims
 				sprite = makeTextSprite(layer['depth'].toString());
 				sprite.position.copy(layer_object.position).sub(new THREE.Vector3(wf(layer)/2 + 2, hf(layer)/2 + 2, 0));
@@ -198,7 +203,7 @@ function AlexNet() {
 				sprites.add(sprite);
 			}
 
-			if (showConvDims && index < architecture.length - 1) {
+			if (showConvDims && index < architecture.length - 1 && rendererType === "webgl") {
 				// Conv Dims
 				var sprite = makeTextSprite(layer['filterHeight'].toString());
 				sprite.position.copy(conv_object.position).sub(new THREE.Vector3(convFn(layer['filterWidth'])/2, -3, depthFn(layer['depth'])/2));
@@ -207,7 +212,6 @@ function AlexNet() {
 				sprite = makeTextSprite(layer['filterWidth'].toString());
 				sprite.position.copy(conv_object.position).sub(new THREE.Vector3(-1, convFn(layer['filterHeight'])/2, depthFn(layer['depth'])/2));
 				sprites.add(sprite);
-
 			}
 		});
 
@@ -231,7 +235,7 @@ function AlexNet() {
 			var arrow = new THREE.ArrowHelper(direction, origin, length, 0x000000, headLength, headWidth);
 			pyramids.add(arrow);
 
-			if (showDims) {
+			if (showDims && rendererType === "webgl") {
 				// Dims
 				var sprite = makeTextSprite(layer.toString());
 				sprite.position.copy(layer_object.position).sub(new THREE.Vector3(3, depthFn(layer)/2 + 3, 3));
@@ -326,11 +330,12 @@ function AlexNet() {
 	///////////////////////////////////////////////////////////////////////////////
 
 	function onWindowResize() {
-		renderer.setSize(get_graph_width(), h);
+		var graph_width = get_graph_width();
+		renderer.setSize(graph_width, h);
 
 		var camFactor = window.devicePixelRatio || 1;
-		camera.left = -get_graph_width() / camFactor;
-		camera.right = get_graph_width() / camFactor;
+		camera.left = -graph_width / camFactor;
+		camera.right = graph_width / camFactor;
 		camera.top = h / camFactor;
 		camera.bottom = -h / camFactor;
 		camera.updateProjectionMatrix();

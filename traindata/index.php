@@ -1,65 +1,42 @@
 <?php
 header('Content-Type: application/json');
 
-class DirectoryLister implements JsonSerializable{
-	private $path;
-
-	function __construct(string $path){
-		if(file_exists($path)){
-			$this->path = $path;
-		} else {
-			die("not found: >$path<");
-		}
-	}
-
-	function walk(){
-		foreach( scandir($this->path) as $basename){
-			$new_path = $this->path.DIRECTORY_SEPARATOR.$basename ;
-			if(!in_array($basename, ['.', '..']) && file_exists($new_path) ){
-				yield $new_path;
+function list_files_in_dir ($dir, $max_number_of_files_per_category) {
+	$files = [];
+	foreach (scandir($dir) as $this_file) {
+		if($this_file != "." && $this_file != "..") {
+			if($max_number_of_files_per_category == 0 || $max_number_of_files_per_category > count($files)) {
+				$files[] = $this_file;
 			}
 		}
 	}
+	return $files;
+}
 
-	function to_a(&$directories=null):array{
-		if(!$directories){
-			$directories = [];
+function list_dir ($folder, $max_number_of_files_per_category) {
+	$struct = [];
+	foreach (scandir($folder) as $this_folder) {
+		if($this_folder != "." && $this_folder != ".." && $this_folder != "example") {
+			$struct[$this_folder] = list_files_in_dir("$folder/$this_folder", $max_number_of_files_per_category);
 		}
-
-		foreach($this->walk() as $file){
-
-			if(is_dir($file)){
-				$sub_dir = new DirectoryLister($file);
-				$name = basename($file) ;
-				if($name != "example") {
-					$directories[$name] = $sub_dir->to_a($directories[$name]);
-				}
-			} else {
-				$name = basename($file) ;
-				array_push($directories, $name);
-			}  
-		}
-		return $directories;
-
 	}
 
-	function jsonSerialize(){
-		$array = $this->to_a();
-		return $array;
-	}
-
-	function get_basename():string{
-		return basename($this->path);
-	}
+	return $struct;
 }
 
 $dataset_category = $_GET['dataset_category'];
 $dataset = $_GET['dataset'];
+$max_number_of_files_per_category = $_GET['max_number_of_files_per_category'];
+if(is_numeric($max_number_of_files_per_category)) {
+	$max_number_of_files_per_category = (int)$max_number_of_files_per_category;
+} else {
+	$max_number_of_files_per_category = 0;
+}
 
 if(preg_match("/^\w+$/", $dataset_category)) {
 	if(preg_match("/^\w+$/", $dataset)) {
 		$folder = $dataset_category."/".$dataset;
-		$dir = new DirectoryLister($folder);
+		$dir = list_dir($folder, $max_number_of_files_per_category);
 		$json = json_encode($dir, JSON_PRETTY_PRINT);
 		print $json;
 	} else {

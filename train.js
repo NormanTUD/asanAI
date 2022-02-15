@@ -17,62 +17,46 @@ function print_tensor_to_string (tensor) {
 	return return_str;
 }
 
+function gui_in_training () {
+	$("#train_neural_network_button").html("Stop training");
+	disable_everything();
+	favicon_spinner();
+}
+
+function gui_not_in_training () {
+	$("#train_neural_network_button").html("Start training");
+	enable_everything();
+	favicon_default();
+}
+
+function reset_gui_before_training () {
+	$(".call_counter").html("0");
+	$(".reset_before_train_network").html("");
+	$("#percentage").html("");
+	$("#percentage").show();
+	$(".input_image_grid").html("");
+	$(".output_image_grid").html("");
+	reset_photo_gallery();
+	reset_summary();
+	reset_history();
+}
+
 async function train_neural_network () {
 	if(model.isTraining || model.model.isTraining) {
 		model.stopTraining = true;
 		model.model.stopTraining = true;
-		$("#train_neural_network_button").html("Start training");
-		enable_everything();
+
+		gui_not_in_training();
 	} else {
-		if(!loaded_tfvis) {
-			var script = document.createElement("script");
-			script.src = "tf/tfjs-vis.js";
-			script.type = "text/javascript";
-			script.onload = function () {
-				loaded_tfvis = 1;
-				load_tfvis();
-			};
-			document.getElementsByTagName("head")[0].appendChild(script);
-		} else {
-			load_tfvis();
-		}
+		gui_in_training();
+		reset_gui_before_training();
 
-		$("#train_neural_network_button").html("Stop training");
-		favicon_spinner();
-		disable_everything();
-		$(".call_counter").html("0");
-		$(".reset_before_train_network").html("");
-		$("#percentage").html("");
-		$("#percentage").show();
-		$(".input_image_grid").html("");
-		$(".output_image_grid").html("");
-		max_number_words = 0;
-		max_number_characters = 0;
-		reset_photo_gallery();
-		reset_summary();
-		reset_history();
-
-		let xs_and_ys = await get_xs_and_ys();
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		var result = await run_neural_network(xs_and_ys["x"], xs_and_ys["y"], xs_and_ys["keys"]);
-
-		$("#train_neural_network_button").html("Start training");
-		enable_everything();
-
-		return result;
+		run_neural_network();
 	}
 }
-
-function load_tfvis () {
-	$("#tfvis_tab_layer").html("");
-	for (var i = 0; i < get_numberoflayers(); i++) {
-		$("#tfvis_tab_layer").append('<div id="tf_vis_layer_' + i + '"></div>');
-		tfvis.show.layer($("#tf_vis_layer_" + i)[0], model.getLayer(null, i));
-	}
-}
-
 
 function get_model_data () {
 	var loss = $("#loss").val();
@@ -94,34 +78,27 @@ function get_model_data () {
 	return model_data;
 }
 
-function get_fit_data (show_tfvis) {
+function get_fit_data () {
 	var epochs = get_epochs();
 	var batchSize = get_batchSize();
 	var validationSplit = parseInt($("#validationSplit").val()) / 100;
 
 	var callbacks = {};
 
-	if(show_tfvis) {
-		callbacks = tfvis.show.fitCallbacks(
-			$("#tfvis_tab_training_performance_graph")[0],
-			["loss", "acc", "val_loss", "val_acc" ],
-			{ height: 200, callbacks: ["onBatchEnd", "onEpochEnd"] }
-		);
+	callbacks = tfvis.show.fitCallbacks(
+		$("#tfvis_tab_training_performance_graph")[0],
+		["loss", "acc", "val_loss", "val_acc" ],
+		{ height: 200, callbacks: ["onBatchEnd", "onEpochEnd"] }
+	);
 
-		callbacks["onTrainBegin"] = function () {
-			$(".training_performance_tabs").show();
-			if($("#jump_to_training_tab").is(":checked")) {
-				//$('#training_performance_tab_label').click();
-				//$('a[href="#training_data_tab"]').click();
-			}
-		};
+	callbacks["onTrainBegin"] = function () {
+		$(".training_performance_tabs").show();
+	};
 
-		callbacks["onTrainEnd"] = function () {
-			restart_fcnn();
-			favicon_default();
-
-			show_prediction();
-		}
+	callbacks["onTrainEnd"] = function () {
+		restart_fcnn();
+		favicon_default();
+		show_prediction();
 	}
 
 	var fit_data = {
@@ -140,31 +117,26 @@ function get_fit_data (show_tfvis) {
 }
 
 function show_info_pre_run () {
-	write_model_model_summary(model);
+	write_model_summary();
 }
 
 function show_info_after_run (h) {
+	assert(typeof(h) == "object", "history object is not of type object");
+
 	traindebug("Showing tfvis/history/memory");
-	tfvis.show.history($("#tfvis_tab_history_graphs")[0], h, Object.keys(h["history"]));
+	//tfvis.show.history($("#tfvis_tab_history_graphs")[0], h, Object.keys(h["history"]));
 	write_history(h);
 	print_memory();
 }
 
-async function run_neural_network (x, y, keys) {
-	traindebug("x: ", x);
-	traindebug("y: ", y);
-
+async function run_neural_network () {
 	clean_gui();
-	traindebug("x-shape: ", x.shape);
-
-	var inputShape = set_input_shape("[" + x.shape.slice(1).join(", ") + "]");
-
-	traindebug("inputShape: ", inputShape);
 
 	$("#tfvis_tab_label").show();
 
 	if($("#jump_to_training_tab").is(":checked")) {
 		$('a[href="#tfvis_tab"]').click();
+		$('a[href="#tfvis_tab_training_performance"]').show();
 		$('a[href="#tfvis_tab_training_performance"]').click();
 	}
 
@@ -177,15 +149,36 @@ async function run_neural_network (x, y, keys) {
 			try {
 				show_info_pre_run();
 
-				h = await model.fit(x, y, get_fit_data(1));
+				const model_fit_task = async () => {
+					disable_everything();
+					var xs_and_ys = await get_xs_and_ys();
 
-				$("#predictcontainer").show();
-				$("#predict_error").hide();
-				$("#predict_error").html("");
+					var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
-				show_info_after_run(h);
+					if($("#jump_to_training_tab").is(":checked")) {
+						$('#training_performance_tab_label').show();
+						$('a[href="#training_data_tab"]').click();
+						$('a[href="#tfvis_tab_training_performance"').click()
+					}
 
-				return {"h": h, "model": model};
+					h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+
+					model_is_trained = true;
+
+					$("#train_neural_network_button").html("Start training");
+
+					$("#predictcontainer").show();
+					$("#predict_error").hide();
+					$("#predict_error").html("");
+
+					show_info_after_run(h);
+
+					enable_everything();
+
+					return {"h": h, "model": model};
+				}
+
+				return model_fit_task();
 			} catch (e) {
 				enable_everything();
 				$("#errorcontainer").show();

@@ -16,6 +16,13 @@ fully in your browsers.
 This is a very early alpha. The networks provided don't yet really work, as they're only for testing.
 But you can already create and use your own networks.
 
+# Screenshots
+
+![Screenshot](screen0.png "Visualization at the start page")
+
+![Screenshot](screen1.png "Other visualization at the start page")
+
+![Screenshot](screen2.png "Yet another visualization at the start page")
 
 # Installation
 
@@ -48,4 +55,6 @@ in creating this program:
 
 - [Kaggle Cats and Dogs Dataset](https://www.microsoft.com/en-us/download/details.aspx?id=54765)
 
-- The design is inspired by [Microsoft Max](https://web.archive.org/web/20051001063547/http://www.microsoft.com/max/)
+- The design is inspired by [Microsoft Max](https://web.archive.org/web/20051001063547/http://www.microsoft.com/max/) and [Windows 7](https://docs.microsoft.com/de-de/lifecycle/products/windows-7)
+
+- [TensorFlow.js Examples](https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet)

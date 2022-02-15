@@ -46,23 +46,17 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	return x;
 }
 
-async function _get_training_data_scientific_y() {
-	const data = await $.get("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/y.txt");
-	return data;
-}
+async function _get_training_data_from_filename(filename) {
+	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-async function _get_training_data_scientific_x() {
-	const data = await $.get("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/x.txt");
-	return data;
-}
-
-async function _get_training_data_text() {
-	const data = await $.getJSON("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/examples.json");
-	return data;
+	return await $.get("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/" + filename);
 }
 
 function shuffle (array) {
-	let currentIndex = array.length,  randomIndex;
+	assert(typeof(array) == "object", "shuffle can only shuffle variables with the type object, not " + typeof(array));
+
+	var randomIndex;
+	var currentIndex = array.length;
 
 	// While there remain elements to shuffle...
 	while (currentIndex != 0) {
@@ -77,42 +71,10 @@ function shuffle (array) {
 	return array;
 }
 
-async function get_logic_data() {
-	header("get_logic_data()");
-	let x = numpy_str_to_tf_tensor(await (_get_training_data_scientific_x()), 0);
-	let y = numpy_str_to_tf_tensor(await (_get_training_data_scientific_y()), 0);
 
-	return {"x": x, "y": y};
-}
+function load_image(url) {
+	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
-async function get_scientific_data () {
-	header("get_scientific_data()");
-	let x = numpy_str_to_tf_tensor(await (_get_training_data_scientific_x()), parseInt($("#max_number_values").val()));
-	let y = numpy_str_to_tf_tensor(await (_get_training_data_scientific_y()), parseInt($("#max_number_values").val()));
-
-	return {"x": x, "y": y};
-}
-
-async function get_text_data() {
-	header("get_text_data()");
-	let json = await (_get_training_data_text());
-
-	let data = [];
-
-	for (const [key, items] of Object.entries(json)) {
-		if(items.length) {
-			data[key] = [];
-			for (let i = 0; i < items.length; i++) {
-				let value = items[i];
-				data[key].push(value);
-			}
-		}
-	}
-
-	return data;
-}
-
-function loadImage(url) {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.addEventListener("load", () => resolve(img));
@@ -123,7 +85,9 @@ function loadImage(url) {
 	});
 }
 
-async function get_image_data() {
+async function get_image_data(skip_real_image_download) {
+	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
+
 	headerdatadebug("get_imageData()");
 	let json = await (_get_training_data());
 
@@ -150,10 +114,17 @@ async function get_image_data() {
 	var old_percentage = 0;
 	var start_time = Math.floor(Date.now() / 1000);
 
+	var percentage_div = $("#percentage");
+
+	if(!skip_real_image_download) {
+		percentage_div.html("");
+		percentage_div.show();
+	}
+
 	for (var i = 0; i < urls.length; i++) {
 		var percentage = parseInt((i / urls.length) * 100);
 		if(percentage != old_percentage) {
-			$("#percentage").html(percentage + "% (" + i + ") of images (" + urls.length + ") loaded...");
+			percentage_div.html(percentage + "% (" + i + ") of images (" + urls.length + ") loaded...");
 			old_percentage = percentage;
 
 			if(percentage > 20) {
@@ -164,31 +135,35 @@ async function get_image_data() {
 
 				var eta = parseInt(remaining_items * avg_time_per_image);
 
-				$("#percentage").html($("#percentage").html() + " ETA: " + eta + "s");
+				percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
 			}
 		}
 		var url = urls[i];
-		let tf_data = await url_to_tf(url);
-		if(tf_data !== null) {
+		let tf_data = null;
+		if(!skip_real_image_download) {
+			tf_data = await url_to_tf(url);
+		}
+		if(tf_data !== null || skip_real_image_download) {
 			data[keys[url]].push(tf_data);
 		}
+	}
+
+	if(!skip_real_image_download) {
+		percentage_div.html("");
+		percentage_div.hide();
 	}
 
 	return data;
 }
 
 async function get_xs_and_ys () {
-	if(!loaded_tfvis) {
-		var script = document.createElement("script");
-		script.src = "tf/tfjs-vis.js";
-		script.type = "text/javascript";
-		script.onload = function () {
-			loaded_tfvis = 1;
-			load_tfvis();
-		};
-		document.getElementsByTagName("head")[0].appendChild(script);
-	}
 	headerdatadebug("get_xs_and_ys()");
+
+	if($("#jump_to_training_tab").is(":checked")) {
+		$('a[href="#tfvis_tab"]').click();
+		$('#training_data_tab_label').show().click();
+	}
+
 	if(xy_data === null) {
 		var category = $("#dataset_category").val();
 
@@ -199,11 +174,14 @@ async function get_xs_and_ys () {
 		var classes = [];
 		var loss = $("#loss").val();
 
-		var tensor_classes = 1;
+		var tensor_classes = 0;
+
+		var max_number_values = parseInt($("#max_number_values").val());
 
 		if(category == "image") {
+			var tensor_classes = 1;
 			if(1) {
-				let imageData = await get_image_data();
+				let imageData = await get_image_data(0);
 
 				labels = [];
 
@@ -249,20 +227,12 @@ async function get_xs_and_ys () {
 
 				classes = test_classes;
 			}
-		} else if(category == "scientific") {
-			tensor_classes = 0;
-			var scientific_data = await get_scientific_data();
-			x = scientific_data["x"];
-			y = scientific_data["y"];
+		} else if(["logic"].includes(category)) {
+			x = numpy_str_to_tf_tensor(await (_get_training_data_from_filename("x.txt")), max_number_values);
+			y = numpy_str_to_tf_tensor(await (_get_training_data_from_filename("y.txt")), max_number_values);
 		} else if(category == "own") {
-			tensor_classes = 0;
-			x = numpy_str_to_tf_tensor(x_file, parseInt($("#max_number_values").val()));
-			y = numpy_str_to_tf_tensor(y_file, parseInt($("#max_number_values").val()));
-		} else if(category == "logic") {
-			tensor_classes = 0;
-			var logic_data = await get_logic_data();
-			x = logic_data["x"];
-			y = logic_data["y"];
+			x = numpy_str_to_tf_tensor(x_file, max_number_values);
+			y = numpy_str_to_tf_tensor(y_file, max_number_values);
 		} else {
 			alert("Unknown dataset category: " + category);
 		}
@@ -283,20 +253,28 @@ async function get_xs_and_ys () {
 	return xy_data;
 }
 
-function url_to_tf (imgurl) {
-	headerdatadebug("url_to_tf(" + imgurl + ")");
+function url_to_tf (url) {
+	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
+
+	headerdatadebug("url_to_tf(" + url + ")");
 	try {
-		add_photo_to_gallery(imgurl);
+		add_photo_to_gallery(url);
 		var tf_img = (async () => {
-			let img = await loadImage(imgurl);
+			let img = await load_image(url);
 			tf_img = tf.browser.fromPixels(img);
-			var resized_img = tf_img.resizeNearestNeighbor([height, width]).toFloat().expandDims();
+			var resized_img = tf_img.
+				resizeNearestNeighbor([height, width]).
+				toFloat().
+				expandDims();
+			if($("#divide_by_255").is(":checked")) {
+				resized_img = tf.div(resized_img, 255);
+			}
 			return resized_img;
 		})();
 
 		return tf_img;
 	} catch (e) {
-		header_error("url_to_tf(" + imgurl + ") failed: " + e);
+		header_error("url_to_tf(" + url + ") failed: " + e);
 	}
 	return null;
 }

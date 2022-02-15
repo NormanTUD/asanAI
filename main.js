@@ -1,5 +1,10 @@
 "use strict";
 
+function reset_page () {
+	init_dataset_category();
+	init_dataset();
+}
+
 function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	if(model === null) {
 		compile_model();
@@ -40,14 +45,14 @@ function get_shape_from_file (file) {
 }
 
 async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val());
+	const data = await $.getJSON("traindata/index.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
 	return data;
 }
 
 async function handle_x_file(evt) {
 	x_file = await evt.target.files[0].text();
 	set_input_shape("[" + get_shape_from_file(x_file) + "]");
-	show_python();
+	updated_page();
 }
 
 async function handle_y_file(evt) {
@@ -55,7 +60,7 @@ async function handle_y_file(evt) {
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
 	$("#y_shape").val(y_shape);
-	show_python();
+	updated_page();
 }
 
 function determine_input_shape () {
@@ -65,21 +70,26 @@ function determine_input_shape () {
 }
 
 $(document).ready(function() {
+	global_disable_auto_enable_valid_layer_types = true;
+	disable_show_python_and_create_model = true;
 	$("#width").val(width);
 	$("#height").val(height);
 
-	init_dataset_category().then(() => {
-		init_epochs(10);
-		init_batchsize(5);
-	});
-	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
-	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
-
-	determine_input_shape();
-
-	$("#image_resize_dimensions").hide();
 	$("#upload_own_data_group").hide();
 	$("#train_data_set_group").hide();
+
+	init_dataset_category().then(() => {
+		global_disable_auto_enable_valid_layer_types = true; // warum?!?!?!?!?!
+		init_epochs(2);
+		set_batchSize(5);
+	});
+
+	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
+	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
+	document.getElementById('upload_model').addEventListener('change', upload_model, false);
+	document.getElementById('upload_weights').addEventListener('change', upload_weights, false);
+
+	determine_input_shape();
 
 	$("#layers_container").sortable({
 		placeholder: 'sortable_placeholder',
@@ -87,7 +97,7 @@ $(document).ready(function() {
 		opacity: 0.6,
 		revert: true,
 		update: function( ) {
-			show_python();
+			updated_page();
 		}
 	});
 
@@ -104,13 +114,49 @@ $(document).ready(function() {
 	$("#right_side").tabs(); 
 	$("#visualization_tab").tabs();
 	$("#tfvis_tab").tabs();
+	$("#code_tab").tabs();
 
-	if($("#dataset_category").val() == "image" || $("#dataset_category").val() == "scientific") {
+	if(["image"].includes($("#dataset_category").val())) {
 		$("#train_data_set_group").show();
 	}
 
-	document.getElementById('upload_model').addEventListener('change', upload_model, false);
-	document.getElementById('upload_weights').addEventListener('change', upload_weights, false);
+	global_disable_auto_enable_valid_layer_types = false;
+	disable_show_python_and_create_model = false;
+
+	set_mode();
+
+	var initializer_keys = Object.keys(initializers);
+
+	for (var i = 0; i < initializer_keys.length; i++) {
+		$('#set_all_bias_initializers').append($('<option>', {
+			value: initializer_keys[i],
+			text: initializer_keys[i]
+		}));
+	}
+
+	for (var i = 0; i < initializer_keys.length; i++) {
+		$('#set_all_kernel_initializers').append($('<option>', {
+			value: initializer_keys[i],
+			text: initializer_keys[i]
+		}));
+	}
+
+	var activation_functions = Object.keys(activations);
+
+	for (var i = 0; i < activation_functions.length; i++) {
+		$('#set_all_activation_functions').append($('<option>', {
+			value: activation_functions[i],
+			text: activation_functions[i]
+		}));
+	}
+
+	document.addEventListener('keydown', function(event) {
+		if (event.ctrlKey && event.key === 'z') {
+			undo();
+		} else if (event.ctrlKey && event.key === 'y') {
+			redo();
+		}
+	});
 });
 
 function get_output_shape () {
@@ -143,6 +189,8 @@ function upload_model(evt) {
 	reader.readAsText(f);
 
 	set_config();
+
+	add_layer_debuggers();
 }
 
 async function upload_weights(evt) {
@@ -167,6 +215,10 @@ async function upload_weights(evt) {
 
 	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
+	add_layer_debuggers();
+
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();
 }
+
+

@@ -4,26 +4,23 @@ function get_number_of_images_per_layer (layer) {
 	return $($(".image_grid")[layer]).children().length + $($(".input_image_grid")[layer]).children.length;
 }
 
-// normalize_to_rgb(-1) = 0, normalize_to_rgb(1) = 255
-function normalize_to_rgb (val) {
-	return parseInt(127.5 * (1 + val));
+function normalize_to_rgb_min_max (x, min, max) {
+	var val = parseInt(255 * (x - min) / (max - min));
+	if(val > 255) {
+		val = 255;
+	} else if (val < 0) {
+		val = 0;
+	}
+
+	return val;
 }
 
-function get_input_canvas (layer) {
+function get_canvas_in_class (layer, classname) {
 	var new_canvas = $('<canvas/>', {class: "layer_image"}).prop({
 		width: 0,
 		height: 0
 	});
-	$($('.input_image_grid')[layer]).append(new_canvas);
-	return new_canvas[0];
-}
-
-function get_canvas (layer) {
-	var new_canvas = $('<canvas/>', {class: "layer_image"}).prop({
-		width: 0,
-		height: 0
-	});
-	$($('.image_grid')[layer]).append(new_canvas);
+	$($('.' + classname)[layer]).append(new_canvas);
 	return new_canvas[0];
 }
 
@@ -41,20 +38,25 @@ function get_dim(a) {
 	return dim;
 }
 
-function looks_like_image_data (data) {
-	var shape = get_dim(data);
+function shape_looks_like_image_data (shape) {
 	if(shape.length == 3) {
 		if(shape[2] == 3) {
 			return "simple";
 		} else {
 			return "filter";
 		}
-	} else if(shape.length == 3) {
-		if(shape[2] == 3) {
+	} else if(shape.length == 4) {
+		if(shape[1] <= 4 && shape[2] <= 4) {
 			return "kernel";
 		}
 	}
+
 	return "unknown";
+}
+
+function looks_like_image_data (data) {
+	var shape = get_dim(data);
+	return shape_looks_like_image_data(shape);
 }
 
 function draw_rect(ctx, rect){
@@ -65,6 +67,8 @@ function draw_rect(ctx, rect){
 }
 
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
+	var drew_something = false;
+
 	var width = colors[0].length;
 	var height = colors.length;
 
@@ -73,11 +77,31 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();
+
+	var min = -1;
+	var max = 1;
+
 	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
 		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
-			var red = normalize_to_rgb(colors[j][i][pos]);
-			var green = normalize_to_rgb(colors[j][i][pos]);
-			var blue = normalize_to_rgb(colors[j][i][pos]);
+			var red = colors[j][i][pos];
+			var green = colors[j][i][pos];
+			var blue = colors[j][i][pos];
+
+			if(red > max) { max = red; }
+			if(green > max) { max = green; }
+			if(blue > max) { max = blue; }
+
+			if(red < min) { min = red; }
+			if(green < min) { min = green; }
+			if(blue < min) { min = blue; }
+		}
+	}
+
+	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+			var red = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+			var green = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
+			var blue = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 
 			var color = 'rgb(' + red + ',' + green + ',' + blue + ')';
 			var pixel = {
@@ -89,13 +113,18 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 				stroke: color
 			};
 			draw_rect(ctx, pixel);
+			drew_something = true;
 		}
 	}
 	ctx.fill();
 	ctx.closePath();
+
+	return drew_something;
 }
 
-function draw_grid (canvas, pixel_size, colors) {
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
+	var drew_something = false;
+
 	var width = colors[0].length;
 	var height = colors.length;
 
@@ -104,11 +133,51 @@ function draw_grid (canvas, pixel_size, colors) {
 
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();    
+
+	var min = -1;
+	var max = 1;
+
+	if(denormalize) {
+		for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
+			for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+				var red, green, blue;
+
+				if(black_and_white) {
+					red = green = blue = colors[j][i];
+				} else {
+					red = colors[j][i][0];
+					green = colors[j][i][1];
+					blue = colors[j][i][2];
+				}
+
+				if(red > max) { max = red; }
+				if(green > max) { max = green; }
+				if(blue > max) { max = blue; }
+
+				if(red < min) { min = red; }
+				if(green < min) { min = green; }
+				if(blue < min) { min = blue; }
+			}
+		}
+	}
+
 	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
 		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
-			var red = colors[j][i][0];
-			var green = colors[j][i][1];
-			var blue = colors[j][i][2];
+			var red, green, blue;
+
+			if(black_and_white) {
+				red = green = blue = colors[j][i];
+			} else {
+				red = colors[j][i][0];
+				green = colors[j][i][1];
+				blue = colors[j][i][2];
+			}
+
+			if(denormalize) {
+				red = normalize_to_rgb_min_max(red, min, max);
+				green = normalize_to_rgb_min_max(green, min, max);
+				blue = normalize_to_rgb_min_max(blue, min, max);
+			}
 
 			var color = 'rgb(' + red + ',' + green + ',' + blue + ')';
 			var pixel = {
@@ -120,328 +189,105 @@ function draw_grid (canvas, pixel_size, colors) {
 				stroke: color
 			};
 			draw_rect(ctx, pixel);
+			drew_something = true;
 		}
 	}
+
 	ctx.fill();
 	ctx.closePath();
+
+	return drew_something;
 }
 
 function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
-	draw_image_if_possible(layer, 'input', input_data);
-	draw_image_if_possible(layer, 'kernel', kernel_data);
-	draw_image_if_possible(layer, 'output', output_data);
+	var drew_input = draw_image_if_possible(layer, 'input', input_data);
 
-	$($('.image_grid')[layer]).append("<hr>");
+	var drew_kernel = draw_image_if_possible(layer, 'kernel', kernel_data);
+
+	var drew_output = draw_image_if_possible(layer, 'output', output_data);
 	
 	write_descriptions();
+
+	return drew_input || drew_kernel || drew_output;
 }
 
 function draw_image_if_possible (layer, canvas_type, colors) {
-	if(canvas_type == "input" && layer != 0) {
-		return;
+	if(canvas_type != "kernel") {
+		if(canvas_type == "input" && layer != 0) {
+			return;
+		}
 	}
 
 	var canvas = null;
 
 	try {
+		var ret = false;
+
 		var data_type = looks_like_image_data(colors);
+
 		if(data_type == "simple") {
 			if(canvas_type == "input") {
-				canvas = get_input_canvas(layer);
+				canvas = get_canvas_in_class(layer, "input_image_grid");
 			} else {
-				canvas = get_canvas(layer);
+				canvas = get_canvas_in_class(layer, "image_grid");
 			}
 
 			$($(canvas)[0]).parent().parent().show()
 			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
-				draw_grid(canvas, pixel_size, colors);
+				ret = draw_grid(canvas, pixel_size, colors, 1);
 			} else {
 				console.log('Too many images (simple) in layer ' + layer);
 			}
-		} else if(data_type == "kernel") {
+
+			return ret;
+		} else if((data_type == "kernel" || canvas_type == "kernel") && $("#show_kernel_images").is(":checked") && !$("#show_kernel_images").is(":disabled")) {
 			var shape = get_dim(colors);
 
-			for (var k = 0; k < shape[3]; k++) {
-				canvas = get_canvas(layer);
+			var first_kernel = null;
 
-				$($(canvas)[0]).parent().parent().show()
+			for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
+				for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
+					canvas = get_canvas_in_class(layer, "filter_image_grid");
 
-				if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
-					draw_grid_grayscale(canvas, pixel_size, colors, k);
-				} else {
-					console.log('Too many images (filter) in layer ' + layer);
+					$($(canvas)[0]).parent().parent().show()
+
+					ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
+					if(first_kernel === null) {
+						first_kernel = colors[filter_id][channel_id];
+					}
 				}
 			}
+
+			return ret;
 		} else if(data_type == "filter") {
 			var shape = get_dim(colors);
 
 			for (var k = 0; k < shape[2]; k++) {
 				if(canvas_type == "input") {
-					canvas = get_input_canvas(layer);
+					canvas = get_canvas_in_class(layer, "input_image_grid");
 				} else {
-					canvas = get_canvas(layer);
+					canvas = get_canvas_in_class(layer, "image_grid");
 				}
 				$($(canvas)[0]).parent().parent().show()
 
 				if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
-					draw_grid_grayscale(canvas, pixel_size, colors, k);
+					ret = draw_grid_grayscale(canvas, 5, colors, k);
 				} else {
 					console.log('Too many images (filter) in layer ' + layer);
 				}
 			}
+
+			return ret;
 		}
 	} catch (e) {
 		console.warn(e);
 	}
-}
 
-function rgbToHex(r, g, b) {
-	return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-function get_image_color_data(image_element) {
-	var canvas = document.createElement("canvas");
-	var context = canvas.getContext && canvas.getContext("2d");
-
-	canvas.height = width; //image_element.naturalHeight || image_element.offsetHeight || image_element.height;
-	canvas.width = height; //image_element.naturalWidth || image_element.offsetWidth || image_element.width;
-
-	context.drawImage(image_element, 0, 0);
-
-	var data = context.getImageData(0, 0, width, height);
-
-	var length = data.data.length;
-
-	var i = 0;
-
-	var colors = [];
-
-	while (i < length) {
-		var hex = rgbToHex(data.data[i], data.data[i+1], data.data[i+2]);
-		colors.push(hex);
-		i += 4;
-	}
-
-	return colors;
-}
-
-function get_image_color_url_from_first_example () {
-	var image_element_color_data = get_image_color_data($(".preview_image")[0]);
-	return image_element_color_data.join(",");
+	return false;
 }
 
 async function Sleep(milliseconds) {
 	return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
-
-function get_random_color () {
-	var items = [
-		"Aqua", 
-		"Aquamarine", 
-		"BlanchedAlmond", 
-		"BlueViolet", 
-		"Brown", 
-		"Burlywood", 
-		"CadetBlue", 
-		"Chartreuse", 
-		"Chocolate", 
-		"Coral", 
-		"CornflowerBlue", 
-		"Crimson", 
-		"Cyan", 
-		"DeepPink", 
-		"DeepSkyBlue", 
-		"DimGray", 
-		"DodgerBlue", 
-		"FireBrick", 
-		"FireBrick", 
-		"ForestGreen", 
-		"Fuchsia", 
-		"Gold", 
-		"Goldenrod", 
-		"Gray", 
-		"Green", 
-		"GreenYellow", 
-		"HotPink", 
-		"IndianRed", 
-		"Khaki", 
-		"LawnGreen", 
-		"LightBlue", 
-		"LightCoral", 
-		"LightCoral", 
-		"LightGray", 
-		"LightGreen", 
-		"LightPink", 
-		"LightSalmon",
-		"LightSeaGreen", 
-		"LightSkyBlue", 
-		"LightSlateGray", 
-		"LightSteelBlue", 
-		"Lime", 
-		"LimeGreen", 
-		"Magenta", 
-		"Maroon", 
-		"MediumAquamarine", 
-		"MediumOrchid", 
-		"MediumPurple", 
-		"MediumSeaGreen", 
-		"MediumSeaGreen", 
-		"MediumSlateBlue", 
-		"MediumSpringGreen", 
-		"MediumVioletRed", 
-		"Olive", 
-		"OliveDrab", 
-		"Orange", 
-		"OrangeRed", 
-		"Orchid", 
-		"PaleGreen", 
-		"PaleTurquoise", 
-		"PaleVioletRed", 
-		"PeachPuff", 
-		"Peru", 
-		"Pink", 
-		"Plum", 
-		"PowderBlue", 
-		"Purple", 
-		"RebeccaPurple", 
-		"Red", 
-		"RosyBrown", 
-		"RoyalBlue", 
-		"SaddleBrown", 
-		"Salmon", 
-		"SandyBrown", 
-		"SeaGreen", 
-		"Sienna", 
-		"Sienna", 
-		"Silver", 
-		"SkyBlue", 
-		"SlateBlue", 
-		"SlateGray", 
-		"SpringGreen", 
-		"SteelBlue", 
-		"Tan", 
-		"Teal", 
-		"Thistle", 
-		"Tomato", 
-		"Turquoise", 
-		"Violet", 
-		"Yellow", 
-		"YellowGreen"
-	];
-	var item = items[Math.floor(Math.random() * items.length)];
-	return item;
-}
-
-function write_svg_to_image (imgviewer, xml) {
-	console.log($(imgviewer));
-	$(imgviewer).html(xml);
-}
-
-function show_image (draw, imgviewer) {
-	var xml = draw.node.outerHTML;
-	write_svg_to_image(imgviewer, xml);
-}
-
-async function show_dropout (n, m, imgdata, img, rectangle_size) {
-	var dropout_draw_nxm = SVG();
-
-	var img_height = $(img).attr("height");
-	var img_width = $(img).attr("width");
-
-	var x = 3;
-
-	var grid = dropout_draw_nxm.group();
-	var result_grid = dropout_draw_nxm.group();
-
-	var colors = [];
-	if(imgdata !== null) {
-		var arg_colors = imgdata.split(",");
-		for (var i = 0; i != arg_colors.length; i++) {
-			colors.push("#" + arg_colors[i]);
-		}
-	}
-
-	while (colors.length != n*m) {
-		colors.push(get_random_color());
-	}
-
-	var max_width_grid = img_width / 4;
-	rectangle_size = Math.min(max_width_grid / (n * 2), max_width_grid / (m * 2));
-
-	var j = 0;
-	for (var m_counter = m; m_counter != 0; m_counter--) {
-		for (var n_counter = n; n_counter != 0; n_counter--) {
-			var x = rectangle_size * (n - n_counter);
-			var y = rectangle_size * (m - m_counter);
-			var item = dropout_draw_nxm.rect(rectangle_size, rectangle_size).attr({"x": x, "y": y}).fill(colors[j]);
-			grid.add(item);
-
-			j++;
-		}
-	}
-
-	var k = 0;
-	for (var m_counter = m; m_counter != 0; m_counter--) {
-		for (var n_counter = n; n_counter != 0; n_counter--) {
-			var color = colors[k];
-			var x = rectangle_size * (n - n_counter);
-			var y = rectangle_size * (m - m_counter);
-			if(Math.random() >= 0.6) {
-				color = "black";
-			}
-			var item = dropout_draw_nxm.rect(rectangle_size, rectangle_size).attr({"x": x, "y": y}).fill(color);
-			result_grid.add(item);
-
-			k++;
-		}
-	}
-
-	var max_height_grid = rectangle_size * m;
-	var function_beginning_x = 150;
-	var function_beginning_width = 150;
-
-	var function_beginning = dropout_draw_nxm.text("dropout(").font({
-		family:   "Helvetica",
-		size:     25,
-		anchor:   "middle",
-		leading:  "1.5em"
-	}).attr(
-		{
-			"x": function_beginning_x,
-			"y": max_height_grid / 1.3
-		}
-	);
-
-	grid.transform({
-		scale: [1, 1],
-		translateX: rectangle_size * (m - m_counter)
-	});
-
-	var width_grid = rectangle_size * n;
-	grid.move(function_beginning_width, 40);
-
-	var function_middle = dropout_draw_nxm.text(") = ").font({
-		family:   "Helvetica",
-		size:     25,
-		anchor:   "middle",
-		leading:  "1.5em"
-	}).attr({
-		"x": function_beginning_width + function_beginning_x + width_grid,
-		"y": max_height_grid / 1.3
-	});
-
-	result_grid.transform({
-		scale: [1, 1],
-		translateX: rectangle_size * (m - m_counter)
-	});
-
-	result_grid.move(function_beginning_width + function_beginning_x + width_grid, 40);
-
-	dropout_draw_nxm.transform({
-		scale: 1.1
-	});
-
-	show_image(dropout_draw_nxm, img);
 }
 
 async function plot_activation (activation) {
@@ -465,31 +311,31 @@ async function _plot_activation (activation) {
 	let models;
 	models = [activation].map(activationFunctionName => {
 		// Create a model
-		model = tf.sequential();
-		model.add(tf.layers.dense({
+		var my_model = tf.sequential();
+		my_model.add(tf.layers.dense({
 			units: 1,
 			useBias: true,
 			activation: activationFunctionName,
 			inputDim: 1,
 		}));
-		model.compile({
+		my_model.compile({
 			loss: 'meanSquaredError',
 			optimizer: tf.train.adam(),
 		});
 
 		// this is not a valid property on LayersModel, but needed a quick way to attach some metadata
-		model.activationFunction = activationFunctionName;
-		return model;
+		my_model.activationFunction = activationFunctionName;
+		return my_model;
 	});
 
 	tf.tidy(() => {
-		models.forEach(model => model.layers[0].setWeights([tf.tensor2d([[1]]), tf.tensor1d([1])]));
+		models.forEach(my_model => my_model.layers[0].setWeights([tf.tensor2d([[1]]), tf.tensor1d([1])]));
 	});
 
 	const xs = tf.linspace(-5, 5, 100);
 
-	const series = tf.tidy(() => models.map(model => {
-		const ys = model.predict(xs.reshape([100, 1]));
+	const series = tf.tidy(() => models.map(my_model => {
+		const ys = my_model.predict(xs.reshape([100, 1]));
 
 		return {
 			x: xs.dataSync(),
@@ -537,6 +383,7 @@ async function _plot_activation (activation) {
 
 	$('a[href="#visualization_tab"]').click();
 	$("#activation_plot_tab_label").show();
+	$("#activation_plot_tab_label").parent().show();
 	$('a[href="#activation_plot_tab"]').click();
 }
 
@@ -560,7 +407,7 @@ function group_layers () {
         var descs = [
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
-                { "re": "(?:(?:batch|layer)Normalization;)*((?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*)", "name": "Feature ex&shy;traction &amp; di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
+                { "re": "(?:(?:batch|layer)Normalization;)*((?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*)", "name": "Feature ex&shy;traction" },
                 { "re": "((?:dropout;?)+)", "name": "Over&shy;fitting-pre&shy;vention" },
                 { "re": "((?:dense;?)+;?)", "name": "Classi&shy;fication" },
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
@@ -624,7 +471,9 @@ function write_descriptions () {
 		if(groups.length > 0) {
 			$(".descriptions_of_layers").remove();
 
-			var right_offset = parseInt($($(".layer")[0]).offset().left + $($(".layer")[0]).width() + 30);
+			var layer = $(".layer");
+
+			var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 30);
 
 			for (var i = 0; i < groups.length; i++) {
 				var keyname = Object.keys(groups[i])[0];
@@ -632,8 +481,8 @@ function write_descriptions () {
 				var last_layer_nr = layers[layers.length - 1];
 
 				if(keyname != "null") {
-					var first_layer_top = parseInt($($(".layer")[layers[0]]).position()["top"]);
-					var last_layer_bottom = $($('.layer')[Math.max(0, last_layer_nr - 1)]).position().top + $($('.layer')[last_layer_nr]).height();
+					var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
+					var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
 					var height = $($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 7;
 					$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;">' + keyname + '</div>').appendTo('#wizard');
 				}
@@ -645,6 +494,7 @@ function write_descriptions () {
 async function write_initializer_values (nr) {
 	$("#visualization_tab").click();
 	$("#help_tab_label").show();
+	$("#help_tab_label").parent().show();
 	$("#help_tab_label").click();
 
 	$("#help_tab").html("<pre>" + await get_model_initializer_values_str(nr) + "</pre>");
@@ -693,63 +543,34 @@ function write_layer_identification (nr, text) {
 	}
 }
 
+function get_layer_identification (i) {
+	var object_keys = Object.keys(model.layers[i]);
+	var new_str = "";
+
+	if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
+		new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
+
+	} else if(object_keys.includes("filters")) {
+		new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
+
+	} else if(object_keys.includes("units")) {
+		new_str = "Units:&nbsp;" + model.layers[i]["units"];
+
+	} else if(object_keys.includes("rate")) {
+		new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
+
+	} else if(object_keys.includes("poolSize")) {
+		new_str = model.layers[i].poolSize.join("x");
+	}
+
+	return new_str;
+}
+
 function identify_layers () {
 	for (var i = 0; i < get_numberoflayers(); i++) {
-		var this_layer = $($(".layer")[i]);
-		var new_str = "";
-		if(
-			$(this_layer.find(".filters")[0]).length &&
-			$(this_layer.find(".kernel_size_x")[0]).length &&
-			$(this_layer.find(".kernel_size_y")[0]).length &&
-			$(this_layer.find(".kernel_size_z")[0]).length
-		) {
-			new_str = 
-				$(this_layer.find(".filters")[0]).val() + "@" +
-				$(this_layer.find(".kernel_size_x")[0]).val() + "x" +
-				$(this_layer.find(".kernel_size_y")[0]).val() + "x" +
-				$(this_layer.find(".kernel_size_z")[0]).val();
-		} else if(
-			$(this_layer.find(".filters")[0]).length &&
-			$(this_layer.find(".kernel_size_x")[0]).length &&
-			$(this_layer.find(".kernel_size_y")[0]).length
-		) {
-			new_str =
-				$(this_layer.find(".filters")[0]).val() + "@" +
-				$(this_layer.find(".kernel_size_x")[0]).val() + "x" +
-				$(this_layer.find(".kernel_size_y")[0]).val();
-		} else if(
-			$(this_layer.find(".filters")[0]).length &&
-			$(this_layer.find(".kernel_size_x")[0]).length
-		) {
-			new_str =
-				$(this_layer.find(".filters")[0]).val() + "@" +
-				$(this_layer.find(".kernel_size_x")[0]).val();
-		} else if($(this_layer.find(".filters")[0]).length) {
-			new_str = "Filters:&nbsp;" + $(this_layer.find(".filters")[0]).val();
-		} else if($(this_layer.find(".units")[0]).length) {
-			new_str = "Units:&nbsp;" + $(this_layer.find(".units")[0]).val();
-		} else if($(this_layer.find(".dropout_rate")[0]).length) {
-			new_str = "Rate:&nbsp;" + $(this_layer.find(".dropout_rate")[0]).val();
-		} else if(
-			$(this_layer.find(".pool_size_x")[0]).length &&
-			$(this_layer.find(".pool_size_y")[0]).length &&
-			$(this_layer.find(".pool_size_z")[0]).length
-		) {
-			new_str =
-				$(this_layer.find(".pool_size_x")[0]).val() + "x" +
-				$(this_layer.find(".pool_size_y")[0]).val() + "x" +
-				$(this_layer.find(".pool_size_z")[0]).val()
-		} else if(
-			$(this_layer.find(".pool_size_x")[0]).length &&
-			$(this_layer.find(".pool_size_y")[0]).length
-		) {
-			new_str = "Pool-Size:&nbsp;" + 	$(this_layer.find(".pool_size_x")[0]).val() + "x" + $(this_layer.find(".pool_size_y")[0]).val()
-		} else if(
-			$(this_layer.find(".pool_size_x")[0]).length
-		) {
-			new_str = "Pool-Size:&nbsp;" + $(this_layer.find(".pool_size_x")[0]).val();
-		}
-	
+		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
+		var new_str = get_layer_identification(i);
+
 		if(new_str != "") {
 			new_str = new_str + ",&nbsp;";
 		}
@@ -757,7 +578,7 @@ function identify_layers () {
 		var output_shape_string = "";
 		try {
 			if(i in model.layers) {
-				output_shape_string = "Output&nbsp;shape:&nbsp;" + JSON.stringify(model.layers[i].getOutputAt(0).shape);
+				output_shape_string = "Output:&nbsp;" + JSON.stringify(model.layers[i].getOutputAt(0).shape);
 				output_shape_string = output_shape_string.replace("null,", "");
 			}
 		} catch (e) {
@@ -767,6 +588,7 @@ function identify_layers () {
 		var activation_function_string = "";
 		try {
 			if(i in model.layers) {
+				var this_layer = $($(".layer")[i]);
 				var act = $(this_layer.find(".activation")).val();
 				if("" + act != "undefined") {
 					activation_function_string = ", " + act;
@@ -780,14 +602,42 @@ function identify_layers () {
 	}
 }
 
+function hide_unused_layer_visualization_headers () {
+	for (var i = 0; i < get_numberoflayers(); i++) {
+		hide_layer_visualization_header_if_unused(i);
+	}
+}
+
+function hide_layer_visualization_header_if_unused (layer) {
+	var used = 0;
+	if($($(".kernel_image_grid_div")[layer]).css("display") != "none") {
+		used = 1;
+	}
+
+	if($($(".output_image_grid_div")[layer]).css("display") != "none") {
+		used = 1;
+	}
+
+	if($($(".input_image_grid_div")[layer]).css("display") != "none") {
+		used = 1;
+	}
+
+	if(used == 0) {
+		$($(".layer_data")[layer]).hide()
+	}
+}
+
 function add_layer_debuggers () {
 	$("#datalayers").html("");
 	$("#layerinfoscontainer").hide();
 
-	$(".layer_data").hide()
 	$(".layer_data").html("")
 
 	for (var i = 0; i < model.layers.length; i++) {
+		if("original_apply" in model.layers[i]) {
+			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+		}
+
 		var code = "model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
 			"model.layers[" + i +"].apply = function (inputs, kwargs) {";
 				if($("#show_progress_through_layers").is(":checked")) {
@@ -806,73 +656,185 @@ function add_layer_debuggers () {
 			eval("model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
 				"model.layers[" + i +"].apply = function (inputs, kwargs) {" +
 					"var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-					"$(\"#datalayers\").append(\"============> Layer " + i + " (" + model.layers[i].name + ")\\n\");" +
-					"if(" + i + " == 0) {" +
-						"$(\"#datalayers\").append(\"Input layer " + i + ":\\n\");" +
-						"$(\"#datalayers\").append(print_tensor_to_string(inputs[0]) + \"\\n\");" +
+					"if(!disable_layer_debuggers) {\n" +
+						"$(\"#datalayers\").append(\"============> Layer " + i + " (" + model.layers[i].name + ")\\n\");" +
+						"if(" + i + " == 0) {" +
+							"$(\"#datalayers\").append(\"Input layer " + i + ":\\n\");" +
+							"$(\"#datalayers\").append(print_tensor_to_string(inputs[0]) + \"\\n\");" +
+						"}" +
+						"$(\"#datalayers\").append(\"Output layer " + i + ":\\n\");" +
+						"$(\"#datalayers\").append(print_tensor_to_string(z) + \"\\n\");" +
 					"}" +
-					"$(\"#datalayers\").append(\"Output layer " + i + ":\\n\");" +
-					"$(\"#datalayers\").append(print_tensor_to_string(z) + \"\\n\");" +
 					"return z;" +
 				"}"
 			);
 		}
 
-		if ($("#show_layer_data").is(":checked")) {
-			$(".layer_data").show();
+		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
 			$(".copy_layer_data_button").show();
 			var code = "model.layers[" + i + "].original_apply_real = model.layers[" + i + "].apply;\n" +
 				"model.layers[" + i + "].apply = function (inputs, kwargs) {\n" +
-					"var bias_string = '';\n" +
+					"var applied = model.layers[" + i + "].original_apply_real(inputs, kwargs);\n" +
 
-					"if ('bias' in this) {\n" +
-						"bias_string = \"\\n\" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, \"\\t\") + \"\\n\";\n" +
-					"}\n" +
+					"if(!disable_layer_debuggers) {\n" +
+						"var output_data = applied.arraySync()[0];\n" +
+						"$($(\".layer_data\")[" + i + "]).html('');\n" +
+						"var input_data = inputs[0].arraySync()[0];\n" +
 
-					"var weights_string = '';\n" +
-					"if ('weights' in this) {\n" +
-						"for (var j = 0; j < this['weights'].length; j++) {\n" +
-							"if (j in this['weights'] && 'val' in this['weights'][j]) {\n" +
-								"weights_string = weights_string + \"\\n\" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, \"\\t\");\n" +
+						"var kernel_data = [];\n" +
+						"if(Object.keys(model.layers[" + i + "]).includes('kernel')) {\n" +
+							"if(model.layers[" + i + "].kernel.val.shape.length == 4) {\n" +
+								"kernel_data = model.layers[" + i + "].kernel.val.transpose([3, 2, 0, 1]).arraySync();\n" + // TODO
 							"}\n" +
 						"}\n" +
-					"}\n" +
 
-					"var applied = model.layers[" + i + "].original_apply_real(inputs, kwargs);\n" +
-					"var output_data = applied.arraySync()[0];\n" +
-					
-					"var input_data = inputs[0].arraySync()[0];\n" +
-
-					"var kernel_data = [];\n" + //model.layers[" + i + "].kernel.val.arraySync();\n" + // TODO
-
-					"if (!$($(\".layer_data\")[" + i + "]).html()) {\n" +
-						"var html = '';\n" +
-						"if(" + i + " == 0) {\n" +
-							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\";\n" +
-							"html = html + JSON.stringify(input_data, null, \"\\t\") + \"\\n\";\n" +
-						"} else {\n" +
-							"html = html + \"Input layer " + i + ": [\" + get_dim(input_data) + \"]\\n\"\n" +
+						"var html = $($(\".layer_data\")[" + i + "]).html();\n" +
+						"if($('#header_layer_visualization_" + i + "').length == 0) {\n" +
+							"html = html + \"<h2 id='header_layer_visualization_" + i + "'>Layer " + i + ": \" + $($('.layer_type')[" + i + "]).val() + ' ' + get_layer_identification(" + i + ") + \" [null,\" + get_dim(input_data) + \"] -> \" + JSON.stringify(model.layers[" + i + "].getOutputAt(0).shape) + \":</h2>\";\n" +
 						"}\n" +
 
-						"if(weights_string) {\n" +
-							"html = html + weights_string;\n" +
+			
+						"if(!draw_images_if_possible(" + i + ", input_data, output_data, kernel_data) && 0) {\n" +
+							"var weights_string = '';\n" +
+							"if ('weights' in this) {\n" +
+								"for (var j = 0; j < this['weights'].length; j++) {\n" +
+									"if (j in this['weights'] && 'val' in this['weights'][j]) {\n" +
+										"weights_string = weights_string + \"\\n\" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, \"\\t\");\n" +
+									"}\n" +
+								"}\n" +
+							"}\n" +
+							"if(weights_string) {\n" +
+								"html = html + '<pre>' + weights_string + '</pre>';\n" +
+							"}\n" +
+
+							"var bias_string = '';\n" +
+							"if ('bias' in this) {\n" +
+								"bias_string = \"\\n\" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, \"\\t\") + \"\\n\";\n" +
+							"}\n" +
+							"if(bias_string) {\n" +
+								"html = html + '<pre>' + bias_string + '</pre>';\n" +
+							"}\n" +
+							"html = html + \"<pre>Output layer " + i + ": [\" + get_dim(output_data) + \"]\\n\"\n" +
+							"html = html + JSON.stringify(output_data, null, \"\\t\") + '</pre>';\n" +
 						"}\n" +
 
-						"if(bias_string) {\n" +
-							"html = html + bias_string;\n" +
-						"}\n" +
-
-						"draw_images_if_possible(" + i + ", input_data, output_data, kernel_data);\n" +
-
-						"$('#layer_visualizations_tab').show();\n" +
+						"$('#layer_visualizations_tab_label').parent().show();\n" +
 						"$('#layer_visualizations_tab_label').show();\n" +
-						"html = html + \"Output layer " + i + ": [\" + get_dim(output_data) + \"]\\n\"\n" +
-						"html = html + JSON.stringify(output_data, null, \"\\t\");\n" +
 						"$($(\".layer_data\")[" + i + "]).append(html);\n" +
 					"}\n" +
+
 					"return applied;\n" +
 				"}\n";
 			eval(code);
 		}
+	}
+}
+
+function zoom_kernel_images (kernel_image_zoom) {
+	$(".kernel_layer_image").width($(".kernel_layer_image").width() * kernel_image_zoom);
+}
+
+function reset_zoom_kernel_images () {
+	$(".kernel_layer_image").width("auto");
+}
+
+function layers_can_be_visualized () {
+	for (var i = 0; i < get_numberoflayers(); i++) {
+		var shape = calculate_default_target_shape(i);
+
+		if(shape_looks_like_image_data(shape) != "unknown") {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/*
+ * From https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet
+ */
+
+function deprocessImage(x) {
+        return tf.tidy(() => {
+                const {mean, variance} = tf.moments(x);
+                x = x.sub(mean);
+                // Add a small positive number (EPSILON) to the denominator to prevent
+                // division-by-zero.
+                x = x.div(tf.sqrt(variance).add(tf.backend().epsilon()));
+                // Clip to [0, 1].
+                x = x.add(0.5);
+                x = tf.clipByValue(x, 0, 1);
+                x = x.mul(255);
+                return tf.clipByValue(x, 0, 255).asType('int32');
+        });
+}
+
+
+function inputGradientAscent(m, layerIndex, filterIndex, iterations = 40) {
+        return tf.tidy(() => {
+                const imageH = m.inputs[0].shape[1];
+                const imageW = m.inputs[0].shape[2];
+                const imageDepth = model.inputs[0].shape[3];
+
+                // Create an auxiliary model of which input is the same as the original
+                // model but the output is the output of the convolutional layer of
+                // interest.
+                const layerOutput = m.getLayer(null, layerIndex).output;
+                const auxModel = tf.model({inputs: m.inputs, outputs: layerOutput});
+
+                // This function calculates the value of the convolutional layer's
+                // output at the designated filter index.
+                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], 3);
+
+                // This returned function (`gradFunction`) calculates the gradient of the
+                // convolutional filter's output with respect to the input image.
+                const gradFunction = tf.grad(lossFunction);
+
+                // Form a random image as the starting point of the gradient ascent.
+                let image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1)
+                        .mul(20)
+                        .add(128);
+
+                for (let i = 0; i < iterations; ++i) {
+                        console.warn("Iteration " + (i + 1) + " of " + iterations);
+                        const scaledGrads = tf.tidy(() => {
+                                const grads = gradFunction(image);
+                                const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
+                                // Important trick: scale the gradient with the magnitude (norm)
+                                // of the gradient.
+                                return grads.div(norm);
+                        });
+                        // Perform one step of gradient ascent: Update the image along the
+                        // direction of the gradient.
+                        image = tf.clipByValue(image.add(scaledGrads), 0, 255);
+                }
+                return deprocessImage(image).arraySync();
+        });
+}
+
+function draw_maximally_activated_neuron (layer, neuron) {
+	$("#layer_visualizations_tab_label").click()
+	disable_layer_debuggers = 1;
+	try {
+		var data = inputGradientAscent(model, layer, neuron, $("#max_activation_iterations").val())[0];
+		disable_layer_debuggers = 1;
+		var canvas = get_canvas_in_class(layer, "maximally_activated_class");
+
+		var res = draw_grid(canvas, 3, data, 1, 0);
+
+		if(res) {
+			$("#maximally_activated").append(canvas);
+			$("#maximally_activated_label").parent().show();
+			$("#maximally_activated_label").show().click();
+		}
+
+		return res;
+	} catch (e) {
+		log(e);
+		$("#error").html(e)
+		$("#error").parent().show();
+		$("#visualization_tab").click();
+		$("#fcnn_tab_label").click();
+		return false;
 	}
 }

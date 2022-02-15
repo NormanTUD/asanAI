@@ -8,6 +8,7 @@
 		<link href="jquery-ui.css" rel="stylesheet">
 		<link href="style.css" rel="stylesheet">
 		<link href="prism/prism.min.css" rel="stylesheet">
+		<link href="external/sweetalert2.min.css" rel="stylesheet">
 
 		<!-- ribbon interface files -->
 		<link rel="stylesheet" type="text/css" href="ribbon.css">
@@ -16,10 +17,15 @@
 		<script src="jquery.js"></script>
 		<script src="jquery-ui.js"></script>
 
+		<!-- sweetalert -->
+		<script src="external/sweetalert2.all.js"></script>
+
 		<!-- tensorflow.js -->
 		<script src="tf/tf.js"></script>
+		<script src="tf/tfjs-vis.js"></script>
 
 		<!-- my own js stuff -->
+		<script src="safety.js"></script>
 		<script src="variables.js"></script>
 		<script src="model.js"></script>
 		<script src="explain.js"></script>
@@ -42,20 +48,25 @@
 
 		<!-- mathjax -->
 		<!--
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-		<script type="text/x-mathjax-config">
-			MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-		</script>
-		-->
+			<script type="text/x-mathjax-config">
+				MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+			</script>
+			-->
 
-		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
-		<meta name="theme-color" content="#7299d2">
-		<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
+			<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
+			<meta name="theme-color" content="#7299d2">
+			<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
 	</head>
 	<body style="margin: 0px;">
 		<div id="ribbon" style="width:100%; height: 164px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
-			<ul id="tablist">
+			<ul id="tablist" style="background: lightgray">
+				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="model.save('downloads://mymodel')">&#128190;</span></li>
+				<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+				<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
+				<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
+				<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 			</ul>
 
 			<div id="home_ribbon" class="ribbon_tab_content" title="Home">
@@ -70,6 +81,8 @@
 							<select id="dataset" onchange="init_dataset()" style="width: 100%">
 							</select>
 						</div>
+
+						<!--<button onclick="reset_page()">Reset this model</button>-->
 					</div>
 					<div class="ribbon-group-title">Example datasets</div>
 				</div>
@@ -81,7 +94,7 @@
 							<tr>
 								<td>Loss:</td>
 								<td style="width: 220px">
-									<select id="loss" onchange="show_python()" style="width: 200px">
+									<select id="loss" onchange="updated_page()" style="width: 200px">
 										<option value="meanSquaredError">MeanSquaredError</option>
 										<option value="binaryCrossentropy">BinaryCrossentropy</option>
 										<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
@@ -165,7 +178,7 @@
 
 				<div id="image_resize_dimensions">
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:140px">
+						<div class="ribbon-toolbar" style="width:320px">
 							<table>
 								<tr>
 									<td>Width:</td>
@@ -175,9 +188,13 @@
 									<td>Height:</td>
 									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 85%;" /></td>
 								</tr>
+								<tr>
+									<td>Max. images/category (0 = no limit):</td>
+									<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 85%;" /></td>
+								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Image resize dimensions</div>
+						<div class="ribbon-group-title">Image Options</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
 				</div>
@@ -202,39 +219,24 @@
 					</div>
 					<div class="ribbon-group-title">Shapes</div>
 				</div>
-				<div class="ribbon-group-sep"></div>
 
+				<div id="recompile_tab" style="display: none">
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group">
+						<button style="width: 100%" onclick="model_is_trained=false;compile_model();">Recompile model</button><br>
+						<div class="ribbon-group-title">Recompile</div>
+					</div>
+				</div>
+
+				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar" style="width:100px">
 						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start&nbsp;training</button><br>
 					</div>
-					Auto-jump to training tab? <input type="checkbox" value="1" checked="checked" id="jump_to_training_tab" /><br>
-					Auto-jump to predict tab? <input type="checkbox" value="1" checked="checked" id="jump_to_predict_tab" /><br>
+					Validation-Split (in %): <input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /><br>
+					Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
+					Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 					<div class="ribbon-group-title">Training</div>
-				</div>
-			</div>
-
-			<div id="model_ribbon" class="ribbon_tab_content" title="Model">
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width: 200px">
-						<button onclick="model['model'].save('downloads://mymodel')">Download&nbsp;Model</button>
-					</div>
-					<div class="ribbon-group-title">Download current model</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width: 400px">
-						<input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model" />
-					</div>
-					<tt>tensorflowjs_converter \<br>--input_format=keras_saved_model \<br>--output_format=tfjs_layers_model \<br> model jsmodel</tt>
-					<div class="ribbon-group-title">Upload Model (<tt>.json</tt>)</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width: 400px">
-						<input accept="application/octet-stream" type="file" id="upload_weights" onclick="set_config()" value="Upload Weights" />
-					</div>
-					<div class="ribbon-group-title">Upload Model weights (<tt>.bin</tt>)</div>
 				</div>
 			</div>
 
@@ -383,59 +385,140 @@
 				</div>
 			</div>
 
-			<div id="validation_ribbon" class="ribbon_tab_content" title="Validation">
+			<div id="tf_ribbon" class="ribbon_tab_content" title="TensorFlow">
 				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:200px">
-						Validation-Split (in %): <input type="number" min="0" max="100" step="5" value="20" id="validationSplit" />
+					<div class="ribbon-toolbar">
+						<fieldset id="backend_chooser"> 
+							<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer" checked>
+							<label for="svg_renderer">CPU</label>
+
+							<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer">
+							<label for="webgl_renderer">WebGL</label>
+						</fieldset>
 					</div>
-					<div class="ribbon-group-title">Validation</div>
+					<div class="ribbon-group-title">TensorFlow-Backend</div>
+				</div>
+
+				<div class="ribbon-group-sep"></div>
+				<div class="ribbon-group">
+					<div class="ribbon-toolbar">
+						Normalize data? (Divide Tensor by 255) <input type="checkbox" value="1" id="divide_by_255" />
+					</div>
+					<div class="ribbon-group-title">Data</div>
+				</div>
+
+				<div class="ribbon-group-sep"></div>
+				<div class="ribbon-group">
+					<div class="ribbon-toolbar">
+						<fieldset id="mode_chooser"> 
+							<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
+							<label for="amateur">Amateur</label>
+
+							<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
+							<label for="expert">Expert</label>
+						</fieldset>
+					</div>
+					<div class="ribbon-group-title">GUI-Mode</div>
+				</div>
+
+
+				<div class="ribbon-group-sep"></div>
+				<div class="ribbon-group">
+					<div class="ribbon-toolbar" style="width: 400px">
+						<table>
+							<tr>
+								<td>Kernel initializer</td>
+								<td>
+									<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()">
+										<option value="none">&mdash;</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Bias initializer</td>
+								<td>
+									<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()">
+										<option value="none">&mdash;</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Activation functions</td>
+								<td>
+									<select id="set_all_activation_functions" onchange="set_all_activation_functions()">
+										<option value="none">&mdash;</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="ribbon-group-title">Set options for all</div>
 				</div>
 			</div>
 
 			<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:400px">
+				<div class="ribbon-group" style="width: 250px">
+					<div class="ribbon-toolbar">
 						<table>
 							<tr>
 								<td>Scale down number of neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
 							</tr>
 							<tr>
-								<td>Max-Size before scaling:</td><td><input type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
+								<td>Max-Size before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
 							</tr>
 						</table>
 					</div>
 					<div class="ribbon-group-title">FCNN style settings</div>
 				</div>
 				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:400px">
+				<div class="ribbon-group" style="width: 300px;">
+					<div class="ribbon-toolbar">
 						<table>
 							<tr>
-								<td>Show progress by highlighting current layer?</td>
-								<td><input type='checkbox' value="1" checked="checked" id="show_progress_through_layers" /></td>
+								<td>Highlight current layer?</td>
+								<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
+							</tr>
+							<tr>
+								<td>AlexNet-Renderer</td>
+								<td>
+									<fieldset id="alexnet_renderer"> 
+										<!--<legend>AlexNet-renderer:</legend> -->
+										<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer" checked>
+										<label for="webgl_renderer">WebGL</label>
+										<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer">
+										<label for="svg_renderer">SVG</label>
+									</fieldset>
+								</td>
 							</tr>
 						</table>
 					</div>
-					<div class="ribbon-group-title">FCNN style settings</div>
+					<div class="ribbon-group-title">Visualization settings</div>
 				</div>
-			</div>
 
-			<div id="debug_ribbon" class="ribbon_tab_content" title="Debug">
+				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:200px">
-						<table>
-							<tr>
-								<td>Debug:</td>
-								<td><input type="checkbox" value="1" id="debug_checkbox" /></td>
-							</tr>
-							<tr>
-								<td>Show layer data:</td>
-								<td><input type="checkbox" value="1" checked="checked" id="show_layer_data" /></td>
-							</tr>
-						</table>
+					<div class="ribbon-group">
+						<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
+							<table>
+								<tr>
+									<td>Pixel size:</td>
+									<td><input type="number" min="1" max="100" value="2" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
+								</tr>
+								<tr>
+									<td>Kernel Pixel size:</td>
+									<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
+								</tr>
+
+								<tr>
+									<td>Max. nr. of images (0 = no limit):</td>
+									<td><input type="number" min="0" value="5" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
+								</tr>
+							</table>
+						</div>
 					</div>
-					<div class="ribbon-group-title">Debug</div>
+					<div class="ribbon-group-title">Data plotter</div>
 				</div>
+
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group">
 					<div class="ribbon-group">
@@ -443,21 +526,75 @@
 							<table>
 								<tr>
 									<td>Pixel size:</td>
-									<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 100%;" /></td>
+									<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
 								</tr>
 								<tr>
-									<td>Max. nr. of images (0 = no limit):</td>
-									<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 100%;"/></td>
+									<td>Iterations:</td>
+									<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
 								</tr>
 							</table>
 						</div>
 					</div>
-					<div class="ribbon-group-title">Data plotter</div>
+					<div class="ribbon-group-title">Max. activated neurons</div>
+				</div>
+
+				<div class="ribbon-group-sep"></div>
+				<div class="ribbon-group">
+					<div class="ribbon-toolbar" style="width:190px">
+						<table>
+							<tr>
+								<td>Debug:</td>
+								<td><input type="checkbox" value="1" id="debug_checkbox" /></td>
+							</tr>
+							<tr>
+								<td>Show layer images:</td>
+								<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images()" id="show_layer_data" /></td>
+							</tr>
+							<tr>
+								<td>Show kernel images:</td>
+								<td><input type="checkbox" value="1" id="show_kernel_images" /></td>
+							</tr>
+						</table>
+					</div>
+					<div class="ribbon-group-title">Debug</div>
 				</div>
 			</div>
 		</div>
 
 		<div id="wizard" style="position: relative; width: 98%">
+
+			<div id="save_dialog" style="display: none;">
+				<div class="popup_body less_transparent_glass_box">
+					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
+					</div>
+					<div> 
+						<h1>Trained in Keras</h1>
+						<p>Use this command to convert TensorFlow to TFJS-models:</p>
+						<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
+
+						<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
+
+						<table>
+							<tr>
+								<td>Upload Model (<tt>.json</tt>):</td>
+								<td><input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model"></td>
+							</tr>
+							<tr>
+								<td>Upload Model weights (<tt>.bin</tt>):</td>
+								<td><input accept="application/octet-stream" type="file" id="upload_weights" onclick="set_config()" value="Upload Weights"></td>
+							</tr>
+						</table>
+
+						<h1>Trained in the browser with this demonstrator</h1>
+
+						<p>Upload your model.json and the weights.json here.</p>
+
+						<p>TODO</p>
+						<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
+					</div>
+				</div>
+			</div>
+
 			<div class="container" id="errorcontainer" style="display: none">
 				<div class="left"></div>
 				<div class="right reset_before_train_network" id="error"></div>
@@ -490,35 +627,53 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					<ul id="layers_container" class="ui-sortable"><li></li></ul>
 				</div>
 				<div class="right_side" id="graphs_here">
-					<div id="right_side" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
+					<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
 						<ul>
 							<li><a href="#visualization_tab" id="visualization_tab_label">Visualizations</a></li>
-							<li><a href="#python_tab">Python</a></li>
+							<li><a href="#code_tab">Code</a></li>
 							<li><a href="#summary_tab">Summary</a></li>
 							<li><a href="#tfvis_tab" id="tfvis_tab_label">Training</a></li>
 							<li id="predict_tab_label"><a href="#predict_tab">Predict</a></li>
 						</ul>
 
+						<div id="code_tab">
+							<ul>
+								<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
+								<li><a href="#python_tab" id="python_tab_label">Python</a></li>
+							</ul>
+
+							<div id="node_tab">
+								<pre><code class="language-javascript" id="node" style="width: 99%"></code></pre>
+								<button onclick="copy_id_to_clipboard('node')">Copy to clipboard</button>
+							</div>
+
+							<div id="python_tab">
+								<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
+								<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
+							</div>
+						</div>
+
 						<div id="visualization_tab">
 							<ul>
-								<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
+								<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 								<li><a href="#lenet_tab" id="lenet_tab_label">LeNet</a></li>
-								<li><a href="#fcnn_tab">FCNN</a></li>
+								<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 								<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
-								<li><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
-								<li><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
-								<li><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
-								<li><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
+								<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
+								<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
+								<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
+								<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
+								<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 							</ul>
 							<div id="alexnet_tab">
 								<div id="alexnet"></div>
-								<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG</button> -->
+								<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
 							</div>
 							<div id="lenet_tab">
 								<div id="lenet"></div>
 								<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 							</div>
-							<div id="layer_visualizations_tab">
+							<div id="layer_visualizations_tab" "display: none">
 							</div>
 							<div id="fcnn_tab">
 								<div id="fcnn"></div>
@@ -528,9 +683,11 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<span id="activation_plot_name" style="display: none"></span>
 								<div id="activation_plot" style="display: none"></div>
 							</div>
+							<div id="maximally_activated" class="maximally_activated_class">
+							</div>
 							<div id="visual_help_tab">
 							</div>
-							<div id="conv_explanations" style="overflow-y: scroll; max-height: 800px; background-color: #f2f5f7">
+							<div id="conv_explanations" style="width: 99%; overflow-y: scroll; max-height: 800px; background-color: #f2f5f7">
 								Blue maps are inputs, and cyan maps are outputs<br>
 
 								<center>
@@ -548,24 +705,31 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 									<img width=244 src="conv_animations/padding_strides.gif"><br>
 									<h4>Padding, strides (odd):</h4>
 									<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
+
 									<h2>Transposed convolution animations</h2><br>
-									<h4>No padding, no strides, transposed</h4>
+									<h4>No padding, no strides, transposed:</h4>
 									<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
-									<h4>Arbitrary padding, no strides, transposed</h4>
+									<h4>Arbitrary padding, no strides, transposed:</h4>
 									<img width=244 src="conv_animations/arbitrary_padding_no_strides_transposed.gif"><br>
-									<h4>Half padding, no strides, transposed</h4>
+									<h4>Half padding, no strides, transposed:</h4>
 									<img width=244 src="conv_animations/same_padding_no_strides_transposed.gif"><br>
-									<h4>Full padding, no strides, transposed</h4>
+									<h4>Full padding, no strides, transposed:</h4>
 									<img width=244 src="conv_animations/full_padding_no_strides_transposed.gif"><br>
-									<h4>No padding, strides, transposed</h4>
+									<h4>No padding, strides, transposed:</h4>
 									<img width=244 src="conv_animations/no_padding_strides_transposed.gif"><br>
-									<h4>Padding, strides, transposed</h4>
+									<h4>Padding, strides, transposed:</h4>
 									<img width=244 src="conv_animations/padding_strides_transposed.gif"><br>
-									<h4>Padding, strides, transposed (odd)</h4>
+									<h4>Padding, strides, transposed (odd):</h4>
 									<img width=244 src="conv_animations/padding_strides_odd_transposed.gif"><br>
-									<h2>Dilated convolution animations</h2><br>
-									<h4>No padding, no stride, dilation</h4>
+									<h2>Dilated convolution animations:</h2><br>
 									<img width=244 src="conv_animations/dilation.gif"><br>
+									<h4>No padding, no stride, dilation:</h4>
+
+									<h2>Pooling</h2><br>
+									<h4>MaxPooling, Kernel-Size 3x3:</h4>
+									<img width=600 src="conv_animations/numerical_max_pooling.gif"><br>
+									<h4>AveragePooling, Kernel-Size 3x3:</h4>
+									<img width=600 src="conv_animations/numerical_average_pooling.gif"><br>
 								</center>
 
 								These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
@@ -577,9 +741,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 						<div id="tfvis_tab" style="float: right; width: 100%">
 							<ul>
-								<li><a href="#training_data_tab">Data</a></li>
+								<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
 								<li class="training_performance_tabs" style="display:none" id="training_performance_tab_label"><a href="#tfvis_tab_training_performance" >Training performance</a></li>
-								<li class="training_performance_tabs" style="display: none"><a href="#tfvis_tab_layer">Layer</a></li>
 								<li style="display: none" class="show_after_training"><a href="#history_tab">History</a></li>
 							</ul>
 
@@ -593,17 +756,12 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<div id="tfvis_tab_training_performance_graph"></div>
 								<div id="tfvis_tab_history_graphs"></div>
 							</div>
-							<div id="tfvis_tab_layer"></div>
 							<div id="history_tab">
 								<div class="reset_before_train_network" id="history"></div>
 								<div class="reset_before_train_network" id="memory"></div>
 							</div>
 						</div>
 
-						<div id="python_tab">
-							<pre><code class="language-python" id="python" style="width: 100%"></code></pre>
-							<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
-						</div>
 						<div id="summary_tab">
 							<div class="right reset_before_train_network" id="summary"></div>
 						</div>
@@ -648,9 +806,40 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 			if (window.location.href.indexOf("debug") > -1) {
 				$("#debug_checkbox").attr("checked", true);
 			}
-			
-			var layer_to_lenet_arch = {};
 
+			function get_mode() {
+				var backend = $("#mode_chooser > input[type=radio]:checked").val();
+
+				return backend;
+			}
+
+			function get_backend() {
+				var backend = $("#backend_chooser > input[type=radio]:checked").val();
+
+				return backend;
+			}
+
+			function set_mode () {
+				mode = get_mode();
+				if(mode == "amateur") {
+					throw_compile_exception = false;
+					$(".layer_type").children().children().each(function (t, l) {
+						if(!$(l).is(":checked")) {
+							$(l).attr("disabled", true);
+						}
+					});
+				} else {
+					throw_compile_exception = true;
+				}
+			}
+
+			function set_backend() {
+				var backend = get_backend();
+				tf.setBackend(backend);
+			}
+
+			set_backend();
+			
 			var clicked_on_tab = 0;
 
 			var currentLayer = 0;
@@ -673,7 +862,12 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 						if(model === null) {
 							units = 0;
 						} else {
-							units = Math.max(0, model.layers[i].countParams());
+							var filters = $($(".layer_setting")[i]).find(".filters");
+							if(filters.length) {
+								units = parseInt($(filters).val());
+							} else {
+								units = Math.max(0, model.layers[i].countvParams());
+							}
 						}
 					}
 				} catch {}
@@ -708,7 +902,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
                         }
 
 			var fcnn = FCNN();
-                        function restart_fcnn() {
+                        async function restart_fcnn() {
                                 var architecture = [];
 				var real_architecture = [];
                                 var betweenNodesInLayer = [];
@@ -736,7 +930,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
                         }
 
 			var alexnet = AlexNet();
-                        function restart_alexnet() {
+                        async function restart_alexnet() {
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
@@ -746,44 +940,49 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					if(typeof(layer_type) === 'undefined') {
 						return;
 					}
-					var category = layer_options[layer_type].category;
+					if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
+						var category = layer_options[layer_type].category;
 
-					if(category == "Convolutional" || category == "Pooling") {
-						var this_layer_arch = {};
-						var input_layer = model.layers[i].getInputAt(0);
+						if(category == "Convolutional" || category == "Pooling") {
+							var this_layer_arch = {};
+							var input_layer = model.layers[i].getInputAt(0);
 
-						var layer_config = model.layers[i].getConfig();
-						var push = 0;
+							var layer_config = model.layers[i].getConfig();
+							var push = 0;
 
-						try {
-							this_layer_arch["height"] = input_layer["shape"][1];
-							this_layer_arch["width"] = input_layer["shape"][2];
-							this_layer_arch["depth"] = input_layer["shape"][3];
-							this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
-							this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
-							this_layer_arch["rel_x"] = random(-0.1,0.1);
-							this_layer_arch["rel_y"] = random(-0.1,0.1);
-							if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
-								push = 1;
+							try {
+								this_layer_arch["height"] = input_layer["shape"][1];
+								this_layer_arch["width"] = input_layer["shape"][2];
+								this_layer_arch["depth"] = input_layer["shape"][3];
+								this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
+								this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
+								this_layer_arch["rel_x"] = random(-0.1,0.1);
+								this_layer_arch["rel_y"] = random(-0.1,0.1);
+								if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
+									push = 1;
+								}
+							} catch (e) {
+								console.warn("ERROR: ", e);
 							}
-						} catch (e) {
-							console.warn("ERROR: ", e);
-						}
 
-						if(push) {
-							architecture.push(this_layer_arch);
-						}
-					} else if (category == "Basic") {
-						try {
-							var units_at_layer = get_units_at_layer(i);
-							if(units_at_layer) {
-								architecture2.push(units_at_layer);
+							if(push) {
+								architecture.push(this_layer_arch);
 							}
-						} catch (e) {
-							return;
+						} else if (category == "Basic") {
+							try {
+								var units_at_layer = get_units_at_layer(i);
+								if(units_at_layer) {
+									architecture2.push(units_at_layer);
+								}
+							} catch (e) {
+								return;
+							}
+						} else {
+							//console.log("Unknown category: " + category);
 						}
 					} else {
-						//console.log("Unknown category: " + category);
+						log("Cannot get category of layer type of layer " + i);
+						return;
 					}
 				}
 
@@ -825,8 +1024,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 			var lenet = LeNet();
 
-                        function restart_lenet() {
-				layer_to_lenet_arch = {};
+                        async function restart_lenet() {
+				var layer_to_lenet_arch = {};
 				architecture = [];
 				architecture2 = [];
 
@@ -835,51 +1034,55 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					if(typeof(layer_type) === 'undefined') {
 						return;
 					}
-					var category = layer_options[layer_type].category;
 
-					if((category == "Convolutional" || category == "Pooling") && !layer_type.endsWith("1d")) {
-						var this_layer_arch = {};
-						this_layer_arch["op"] = layer_type;
-						this_layer_arch["layer"] = i + 1;
+					if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
+						var category = layer_options[layer_type]["category"];
 
-						var layer_config = model.layers[i].getConfig();
-						var push = 0;
-						if("filters" in layer_config) {
-							this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
-							this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
-							this_layer_arch["numberOfSquares"] = layer_config["filters"];
-							push = 1;
-						} else if("poolSize" in layer_config) {
-							var output_size_this_layer = output_size_at_layer(get_input_shape(), i);
-							this_layer_arch["filterWidth"] = output_size_this_layer[1];
-							this_layer_arch["filterHeight"] = output_size_this_layer[2];
-							this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
-							push = 1;
-						} else {
-							// TODO
-							//console.log(layer_config);
-						}
+						if((category == "Convolutional" || category == "Pooling") && !layer_type.endsWith("1d") && !layer_type.endsWith("3d")) {
+							var this_layer_arch = {};
+							this_layer_arch["op"] = layer_type;
+							this_layer_arch["layer"] = i + 1;
 
-						var input_layer = model.layers[i].getInputAt(0);
-						this_layer_arch["squareWidth"] = input_layer["shape"][1];
-						this_layer_arch["squareHeight"] = input_layer["shape"][2];
-
-						if(push) {
-							architecture.push(this_layer_arch);
-								layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
-						}
-					} else if (category == "Basic") {
-						try {
-							var units_at_layer = get_units_at_layer(i);
-							if(units_at_layer) {
-								architecture2.push(units_at_layer);
-								layer_to_lenet_arch[i] = {"arch": "architecture2", "id": architecture.length - 1};
+							var layer_config = model.layers[i].getConfig();
+							var push = 0;
+							if("filters" in layer_config) {
+								this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
+								this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
+								this_layer_arch["numberOfSquares"] = layer_config["filters"];
+								push = 1;
+							} else if("poolSize" in layer_config) {
+								var output_size_this_layer = output_size_at_layer(get_input_shape(), i);
+								this_layer_arch["filterWidth"] = output_size_this_layer[1];
+								this_layer_arch["filterHeight"] = output_size_this_layer[2];
+								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
+								push = 1;
 							}
-						} catch (e) {
-							return;
+
+							var input_layer = model.layers[i].getInputAt(0);
+							this_layer_arch["squareWidth"] = input_layer["shape"][1];
+							this_layer_arch["squareHeight"] = input_layer["shape"][2];
+
+							if(push) {
+								architecture.push(this_layer_arch);
+								layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
+							}
+						} else if (category == "Basic") {
+							try {
+								var units_at_layer = get_units_at_layer(i);
+								if(units_at_layer) {
+									architecture2.push(units_at_layer);
+									layer_to_lenet_arch[i] = {"arch": "architecture2", "id": architecture.length - 1};
+								}
+							} catch (e) {
+								return;
+							}
+						} else {
+							//console.log("Unknown category: " + category);
 						}
+
 					} else {
-						//console.log("Unknown category: " + category);
+						log("Cannot get category of layer type of layer " + i);
+						return;
 					}
 				}
 
@@ -888,8 +1091,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				try {
 					if(architecture.length + architecture2.length) {
 						var shown_input_layer = {}
-						this_layer_arch["op"] = "Input";
-						this_layer_arch["layer"] = 0;
+						//this_layer_arch["op"] = "Input";
+						//this_layer_arch["layer"] = 0;
 						shown_input_layer["filterWidth"] = get_input_shape()[0];
 						shown_input_layer["filterHeight"] = get_input_shape()[1];
 						shown_input_layer["numberOfSquares"] = 1;
@@ -898,13 +1101,16 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 						architecture.unshift(shown_input_layer);
 
 						lenet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
+
 						lenet.redistribute({'betweenLayers_': []});
 					} else {
 						console.log("ERROR");
 						disable_lenet = 1;
 					}
 				} catch (e) {
-					//console.log("ERROR: ", e);
+					log("ERROR: ");
+					log(e);
+					log(architecture);
 					disable_lenet = 1;
 				}
 
@@ -917,24 +1123,54 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				} else {
 					$("#lenet_tab_label").show();
 					if(clicked_on_tab == 0) {
-					$('#lenet_tab_label').click();
-					clicked_on_tab = 1;
+						$('#lenet_tab_label').click();
+						clicked_on_tab = 1;
 					}
 				}
 			}
 
+			
+
+			function unset_alexnet_renderer () {
+				var renderers = $("#alexnet_renderer > input[type=radio]");
+				for (var i = 0; i < renderers.length; i++) {
+					$(renderers[i]).prop("checked", false)
+				}
+			}
+
+			function set_specific_alexnet_renderer(var_type) {
+				unset_alexnet_renderer();
+				var renderers = $("#alexnet_renderer > input[type=radio]");
+				for (var i = 0; i < renderers.length; i++) {
+					if($(renderers[i]).val() == var_type) {
+						$(renderers[i]).prop("checked", true);
+					}else {
+						$(renderers[i]).prop("checked", false);
+					}
+				}
+				restart_alexnet()
+			}
+
 			function download_visualization (layer_id) {
+				var old_alexnet_renderer = $("#alexnet_renderer > input[type=radio]:checked").val();
 				if(layer_id == "alexnet") {
-					alexnet.restartRenderer({'rendererType_': 'svg'});
+					set_specific_alexnet_renderer("svg");
 					restart_alexnet()
 				}
-				var data_url = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent($('<div>').append($( $("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html())))
+				var content = $('<div>').append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
+				if(layer_id == "alexnet") {
+					var canvas = $($("#alexnet")[0]).children()[0];
+					content = canvas.toDataURL();
+				}
+							
+
+				var data_url = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(content)))
 				var a = document.createElement("a");
 				a.href = data_url;
 				a.download = layer_id + ".svg";
 				a.click();
 				if(layer_id == "alexnet") {
-					alexnet.restartRenderer({'rendererType_': 'webgl'});
+					set_specific_alexnet_renderer(old_alexnet_renderer);
 					restart_alexnet()
 				}
 			}
@@ -952,6 +1188,9 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 			});
 
 			favicon_default();
+
+			change_number_of_images();
+			enable_disable_kernel_images();
 		</script>
 
 		<script src="prism/prism.js"></script>

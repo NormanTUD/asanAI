@@ -1,5 +1,13 @@
 "use strict";
 
+function uuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	);
+}
+
+var this_guuid = uuidv4();
+
 function calculate_default_target_shape (nr) {
 	var input_shape = null;
 	if(nr == 0) {
@@ -23,7 +31,23 @@ function lowercaseFirstLetter(string) {
 	return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
-var pixel_size = 1;
+var number_of_undos = 50;
+
+var state_stack = [];
+var future_state_stack = [];
+var status_saves = {};
+
+var disabling_saving_status = false;
+var current_undo_status = 0;
+
+var mode = "amateur";
+var global_disable_auto_enable_valid_layer_types = true;
+var throw_compile_exception = false;
+var model_is_trained = false;
+var disable_layer_debuggers = 0;
+var max_activation_pixel_size = 10;
+var pixel_size = 2;
+var kernel_pixel_size = 10;
 var model = null;
 var h = null;
 var number_channels = 3;
@@ -32,10 +56,10 @@ var width = 32;
 var labels = [];
 var vector_counter = 1;
 var word_to_id = {};
-var max_number_words = 0;
-var max_number_characters = 0;
 var disable_show_python_and_create_model = false;
 var layer_structure_cache = null;
+var allowed_layer_cache = [];
+var last_allowed_layers_update = null;
 
 var max_images_per_layer = 0;
 
@@ -59,6 +83,7 @@ const surface = { name: "Model Summary", tab: "Model Inspection" };
 var xy_data = null;
 
 var js_names_to_python_names = {
+	"dtype": "dtype",
 	"trainable": "trainable",
 	"dilationRate": "dilation_rate",
 	"padding": "padding",
@@ -136,8 +161,8 @@ var js_names_to_python_names = {
 	"kernelConstraint": "kernel_constraint",
 	"returnState": "return_state",
 	"goBackwards": "go_backwards",
-	"depthMultplier": "depth_multiplier",
-	"depthwiseInitilalizer": "depthwise_initializer",
+	"depthMultiplier": "depth_multiplier",
+	"depthwiseInitializer": "depthwise_initializer",
 	"depthwiseConstraint": "depthwise_constraint",
 	"pointwiseInitializer": "pointwise_initializer",
 	"pointwiseConstraint": "pointwise_constraint",
@@ -174,6 +199,7 @@ var layer_options = {
 		],
 		"category": "Basic"
 	},
+	/*
 	"reshape": {
 		"description": "Reshapes an input to a certain shape.",
 		"options": [
@@ -181,6 +207,7 @@ var layer_options = {
 		],
 		"category": "Basic"
 	},
+	*/
 
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU).<br>It follows: <tt>f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0</tt>.",
@@ -251,7 +278,7 @@ var layer_options = {
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype'
 		],
 		"category": "Convolutional"
 	},
@@ -270,7 +297,7 @@ var layer_options = {
 		"category": "Convolutional"
 	},
 	"depthwiseConv2d": {
-		"description": "Depthwise separable 2D convolution. Depthwise Separable convolutions consists in performing just the first step in a depthwise spatial convolution (which acts on each input channel separately). The depthMultplier argument controls how many output channels are generated per input channel in the depthwise step.",
+		"description": "Depthwise separable 2D convolution. Depthwise Separable convolutions consists in performing just the first step in a depthwise spatial convolution (which acts on each input channel separately). The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
 		"options": [
 			"kernel_size", "depth_multiplier", "depthwise_initializer",
 			"depthwise_constraint", "strides", "padding", "dilation_rate",
@@ -368,6 +395,8 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
+
+	/*
 	"lstm": {
 		"description": "Long-Short Term Memory layer - Hochreiter 1997.",
 		"options": [
@@ -377,6 +406,7 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
+	*/
 	"simpleRNN": {
 		"description": "Fully-connected RNN where the output is to be fed back to input.",
 		"options": [
@@ -444,10 +474,10 @@ var model_data_structure = {
 };
 
 var activations = {
-	"None": "none",
+	//"None": "none",
+	"linear": "Linear",
 	"sigmoid": "Sigmoid",
 	"elu": "ELU",
-	"linear": "Linear",
 	"relu": "ReLu",
 	"relu6": "ReLu6",
 	"selu": "SeLu",
@@ -499,7 +529,6 @@ function get_initializer_name (name) {
 var current_status_hash = "";
 
 var loaded_plotly = 0;
-var loaded_tfvis = 0;
 
 var constraints = {
 	"": "None",
@@ -523,13 +552,13 @@ var interpolation = {
 var layer_options_defaults = {
 	"alpha": 1,
 	"units": 2,
-	"dropout_rate": 25,
-	"rate": 25,
+	"dropout_rate": 0.25,
+	"rate": 0.25,
 	"max_features": 3,
 	"momentum": 0.99,
 	"axis": -1,
 	"filters": 32,
-	"dropout": 20,
+	"dropout": 0.20,
 	"recurrent_dropout": 0,
 	"epsilon": 0.0001,
 	"depth_multiplier": 1,
@@ -584,3 +613,70 @@ var layer_options_defaults = {
 
 	"target_shape": calculate_default_target_shape
 };
+
+var valid_layer_options = {
+	"activation": ["activation", "args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"add": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"average": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"averagePooling1d": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"averagePooling2d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"averagePooling3d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"batchNormalization": ["args", "axis", "batchInputShape", "batchSize", "betaConstraint", "betaInitializer", "betaRegularizer", "center", "dtype", "epsilon", "gammaConstraint", "gammaInitializer", "gammaRegularizer", "inputDType", "inputShape", "momentum", "movingMeanInitializer", "movingVarianceInitializer", "name", "scale", "trainable", "weights"],
+	"bidirectional": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "layer", "mergeMode", "name", "trainable", "weights"],
+	"concatenate": ["args", "axis", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"conv1d": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "dilationRate", "dtype", "filters", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "strides", "trainable", "useBias", "weights"],
+	"conv2d": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "dilationRate", "dtype", "filters", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "strides", "trainable", "useBias", "weights"],
+	"conv2dTranspose": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "dilationRate", "dtype", "filters", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "strides", "trainable", "useBias", "weights"],
+	"conv3d": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "dilationRate", "dtype", "filters", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "strides", "trainable", "useBias", "weights"],
+	"convLstm2d": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "cell", "dataFormat", "dilationRate", "dropout", "dropoutFunc", "dtype", "filters", "goBackwards", "implementation", "inputDType", "inputDim", "inputLength", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "returnSequences", "returnState", "stateful", "strides", "trainable", "unitForgetBias", "unroll", "useBias", "weights"],
+	"convLstm2dCell": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "dilationRate", "dropout", "dropoutFunc", "dtype", "filters", "implementation", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "strides", "trainable", "unitForgetBias", "useBias", "weights"],
+	"cropping2D": ["args", "batchInputShape", "batchSize", "cropping", "dataFormat", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"dense": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dtype", "inputDType", "inputDim", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "trainable", "units", "useBias", "weights"],
+	"depthwiseConv2d": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "depthMultiplier", "depthwiseConstraint", "depthwiseInitializer", "depthwiseRegularizer", "dilationRate", "dtype", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "strides", "trainable", "useBias", "weights"],
+	"dot": ["args", "axes", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "normalize", "trainable", "weights"],
+	"dropout": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "noiseShape", "rate", "seed", "trainable", "weights"],
+	"elu": ["alpha", "args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"embedding": ["activityRegularizer", "args", "batchInputShape", "batchSize", "dtype", "embeddingsConstraint", "embeddingsInitializer", "embeddingsRegularizer", "inputDType", "inputDim", "inputLength", "inputShape", "maskZero", "name", "outputDim", "trainable", "weights"],
+	"flatten": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"globalAveragePooling1d": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"globalAveragePooling2d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"globalMaxPooling1d": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"globalMaxPooling2d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"gru": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "cell", "dropout", "dropoutFunc", "dtype", "goBackwards", "implementation", "inputDType", "inputDim", "inputLength", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "returnSequences", "returnState", "stateful", "trainable", "units", "unroll", "useBias", "weights"],
+	"gruCell": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dropout", "dropoutFunc", "dtype", "implementation", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "resetAfter", "trainable", "units", "useBias", "weights"],
+	"layerNormalization": ["args", "axis", "batchInputShape", "batchSize", "betaInitializer", "betaRegularizer", "center", "dtype", "epsilon", "gammaInitializer", "gammaRegularizer", "inputDType", "inputShape", "name", "scale", "trainable", "weights"],
+	"leakyReLU": ["alpha", "args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"lstm": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "cell", "dropout", "dropoutFunc", "dtype", "goBackwards", "implementation", "inputDType", "inputDim", "inputLength", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "returnSequences", "returnState", "stateful", "trainable", "unitForgetBias", "units", "unroll", "useBias", "weights"],
+	"lstmCell": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dropout", "dropoutFunc", "dtype", "implementation", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentActivation", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "trainable", "unitForgetBias", "units", "useBias", "weights"],
+	"maxPooling1d": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"maxPooling2d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"maxPooling3d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "name", "padding", "poolSize", "strides", "trainable", "weights"],
+	"maximum": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"minimum": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"multiply": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"permute": ["args", "batchInputShape", "batchSize", "dims", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"prelu": ["alphaConstraint", "alphaInitializer", "alphaRegularizer", "args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "sharedAxes", "trainable", "weights"],
+	"reLU": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "maxValue", "name", "trainable", "weights"],
+	"repeatVector": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "n", "name", "trainable", "weights"],
+	"reshape": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "targetShape", "trainable", "weights"],
+	"rnn": ["args", "batchInputShape", "batchSize", "cell", "dtype", "goBackwards", "inputDType", "inputDim", "inputLength", "inputShape", "name", "returnSequences", "returnState", "stateful", "trainable", "unroll", "weights"],
+	"separableConv2d": ["activation", "activityRegularizer", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dataFormat", "depthMultiplier", "depthwiseConstraint", "depthwiseInitializer", "depthwiseRegularizer", "dilationRate", "dtype", "filters", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "kernelSize", "name", "padding", "pointwiseConstraint", "pointwiseInitializer", "pointwiseRegularizer", "strides", "trainable", "useBias", "weights"],
+	"simpleRNN": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "cell", "dropout", "dropoutFunc", "dtype", "goBackwards", "inputDType", "inputDim", "inputLength", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "returnSequences", "returnState", "stateful", "trainable", "units", "unroll", "useBias", "weights"],
+	"simpleRNNCell": ["activation", "args", "batchInputShape", "batchSize", "biasConstraint", "biasInitializer", "biasRegularizer", "dropout", "dropoutFunc", "dtype", "inputDType", "inputShape", "kernelConstraint", "kernelInitializer", "kernelRegularizer", "name", "recurrentConstraint", "recurrentDropout", "recurrentInitializer", "recurrentRegularizer", "trainable", "units", "useBias", "weights"],
+	"softmax": ["args", "axis", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"spatialDropout1d": ["args", "batch_input_shape", "batch_size", "dtype", "input_dtype", "input_shape", "name", "rate", "seed", "trainable"],
+	"stackedRNNCells": ["args", "batchInputShape", "batchSize", "cells", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"],
+	"thresholdedReLU": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "theta", "trainable", "weights"],
+	"timeDistributed": ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "layer", "name", "trainable", "weights"],
+	"upSampling2d": ["args", "batchInputShape", "batchSize", "dataFormat", "dtype", "inputDType", "inputShape", "interpolation", "name", "size", "trainable", "weights"]
+};
+
+var dtypes = {
+	'float32': 'float32',
+	'int32': 'int32',
+	'bool': 'bool',
+	'complex64': 'complex64',
+	'string': 'string'
+};
+
+var layer_names = Object.keys(layer_options);

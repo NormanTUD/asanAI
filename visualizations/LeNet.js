@@ -19,7 +19,7 @@ function LeNet() {
 	var rectOpacity = 0.8;
 	var betweenSquares = 8;
 	var betweenLayers = [];
-	var betweenLayersDefault = 40;
+	var betweenLayersDefault = 60;
 
 	var architecture = [];
 	var lenet = {};
@@ -31,37 +31,56 @@ function LeNet() {
 
 	var rect, conv, link, poly, line, text, info;
 
+	function fit_to_screen () { 
+		var items = $($("#lenet").children()[0]).children().children();
+		var max_width = 0;
+
+		for (var i = 0; i < items.length; i++) {
+			if(parseInt(items[i].getBBox().x) > max_width) {
+				max_width = parseInt(items[i].getBBox().x);
+			}
+		}
+
+		max_width *= 2;
+
+		var max_height = 600;
+		var viewbox = [-max_height, 0, max_width, max_height];
+		$($("#lenet").children()[0]).removeAttr('viewBox');
+		$($("#lenet").children()[0]).each(function () { $(this)[0].setAttribute('viewBox', viewbox.join(" ") ) });
+	}
+
 	function redraw(
 		{
 			architecture_=architecture,
 			architecture2_=architecture2
 		}={}
 	) {
-
 		architecture = architecture_;
 
 		lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {
 			return {
-				'id': "lenet_" + layer_index + '_' + rect_index,
-				'layer': layer_index,
-				'rect_index': rect_index,
-				'width': layer['squareWidth'],
-				'height':layer['squareHeight']
+				'id':		"lenet_" + layer_index + '_' + rect_index,
+				'layer':	layer_index,
+				'rect_index':	rect_index,
+				'width':	layer['squareWidth'],
+				'height':	layer['squareHeight']
 			}
 		}));
+
 		lenet.rects = flatten(lenet.rects);
 
-		lenet.convs = architecture.map((layer, layer_index) => Object.assign({'id':'conv_'+layer_index,'layer':layer_index}, layer)); lenet.convs.pop();
-		lenet.convs = lenet.convs.map(conv => Object.assign({'x_rel':random(0.1, 0.9),'y_rel':random(0.1, 0.9)}, conv))
+		lenet.convs = architecture.map((layer, layer_index) => Object.assign({'id': 'conv_' + layer_index, 'layer': layer_index}, layer)); lenet.convs.pop();
+		seed = 1;
+		lenet.convs = lenet.convs.map(conv => Object.assign({'x_rel': random(0.1, 0.9),'y_rel': random(0.1, 0.9)}, conv))
 
 		lenet.conv_links = lenet.convs.map(conv => {
 			return [Object.assign({
-				'id': 'link_' + conv['layer'] + '_0',
-				'i': 0
+				'id':	'link_' + conv['layer'] + '_0',
+				'i':	0
 			}, conv), 
 			Object.assign({
-				'id': 'link_' + conv['layer'] + '_1',
-				'i': 1
+				'id':	'link_' + conv['layer'] + '_1',
+				'i':	1
 			}, conv)]
 		});
 
@@ -69,21 +88,21 @@ function LeNet() {
 
 		lenet.fc_layers = architecture2.map((size, fc_layer_index) => {
 				return {
-					'id': 
-					'fc_' + fc_layer_index, 
-					'layer': fc_layer_index + architecture.length,
-					'size': size/Math.sqrt(2)
+					'id':		'fc_' + fc_layer_index, 
+					'layer':	fc_layer_index + architecture.length,
+					'size':		size / Math.sqrt(2)
 				}
 		});
+
 		lenet.fc_links = lenet.fc_layers.map(fc => {
 			return [Object.assign({
-				'id': 'link_' + fc['layer'] + '_0',
-				'i': 0,
-				'prevSize': 10
+				'id':		'link_' + fc['layer'] + '_0',
+				'i':		0,
+				'prevSize':	10
 			}, fc), Object.assign({
-				'id': 'link_' + fc['layer'] + '_1',
-				'i': 1,
-				'prevSize': 10
+				'id':		'link_' + fc['layer'] + '_1',
+				'i':		1,
+				'prevSize':	10
 			}, fc)]
 		});
 		lenet.fc_links = flatten(lenet.fc_links);
@@ -169,7 +188,7 @@ function LeNet() {
 			.attr("font-family", "sans-serif");
 
 		style();
-
+		fit_to_screen();
 	}
 
 	function redistribute(
@@ -178,33 +197,33 @@ function LeNet() {
 			betweenSquares_=betweenSquares
 		}={}
 	) {
-
 		betweenLayers = betweenLayers_;
 		betweenSquares = betweenSquares_;
 
-		var layer_widths = architecture.map((layer, i) => (layer['numberOfSquares']-1) * betweenSquares + layer['squareWidth']);
+		var layer_widths = architecture.map((layer, i) => (layer['numberOfSquares'] - 1) * betweenSquares + layer['squareWidth']);
 		layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size']));
 
 		largest_layer_width = Math.max(...layer_widths);
 
-		var layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([offsets.last() + layer_width + (betweenLayers[i] || betweenLayersDefault) ]), [0]);
+		var layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([parseInt(offsets.last() + layer_width) + (betweenLayers[i] || betweenLayersDefault) ]), [0]);
 		var layer_y_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
 
-		var screen_center_x = graph_width/2 - architecture.length * largest_layer_width/2;
-		var screen_center_y = h/2 - largest_layer_width/2;
+		var screen_center_x = (graph_width / 1) - (architecture.length * (largest_layer_width / 2));
+		var screen_center_y = (h / 2) - (largest_layer_width / 2);
 
 		let x = (layer, node_index) => layer_x_offsets[layer] + (node_index * betweenSquares) + screen_center_x;
 		let y = (layer, node_index) => layer_y_offsets[layer] + (node_index * betweenSquares) + screen_center_y;
 
-		rect.attr('x', d => x(d.layer, d.rect_index))
-			.attr('y', d => y(d.layer, d.rect_index));
+		rect.attr('x', d => x(d.layer, d.rect_index)).attr('y', d => y(d.layer, d.rect_index));
 
-		let xc = (d) => (layer_x_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['x_rel'] * (d['squareWidth'] - d['filterWidth'])) + screen_center_x;
-		let yc = (d) => (layer_y_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['y_rel'] * (d['squareHeight'] - d['filterHeight'])) + screen_center_y;
+		let xc = (d) => (layer_x_offsets[d.layer]) + ((d['numberOfSquares'] - 1) * betweenSquares) + (d['x_rel'] * (d['squareWidth'] - d['filterWidth'])) + screen_center_x;
+		let yc = (d) => (layer_y_offsets[d.layer]) + ((d['numberOfSquares'] - 1) * betweenSquares) + (d['y_rel'] * (d['squareHeight'] - d['filterHeight'])) + screen_center_y;
 
-		conv.attr('x', d => xc(d))
-			.attr('y', d => yc(d));
 
+		var old_error = console.error;
+		console.error = function () { };
+
+		conv.attr('x', d => xc(d)).attr('y', d => yc(d));
 		link.attr("x1", d => xc(d) + d['filterWidth'])
 			.attr("y1", d => yc(d) + (d.i ? 0 : d['filterHeight']))
 			.attr("x2", d => (layer_x_offsets[d.layer + 1]) + ((architecture[d.layer + 1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer + 1]['squareWidth'] * d.x_rel + screen_center_x)
@@ -212,10 +231,10 @@ function LeNet() {
 
 
 		poly.attr("points", function(d) {
-			return ((layer_x_offsets[d.layer] + screen_center_x)                 + ',' + (layer_y_offsets[d.layer] + screen_center_y) +
-				' ' + (layer_x_offsets[d.layer]+screen_center_x + 10)        + ',' + (layer_y_offsets[d.layer] + screen_center_y) +
-				' ' + (layer_x_offsets[d.layer]+screen_center_x + d.size+10) + ',' + (layer_y_offsets[d.layer] + screen_center_y + d.size) +
-				' ' + (layer_x_offsets[d.layer]+screen_center_x + d.size)    + ',' + (layer_y_offsets[d.layer] + screen_center_y + d.size)
+			return ((layer_x_offsets[d.layer] + screen_center_x)                   + ',' + (layer_y_offsets[d.layer] + screen_center_y) +
+				' ' + (layer_x_offsets[d.layer]+screen_center_x + 10)          + ',' + (layer_y_offsets[d.layer] + screen_center_y) +
+				' ' + (layer_x_offsets[d.layer]+screen_center_x + d.size + 10) + ',' + (layer_y_offsets[d.layer] + screen_center_y + d.size) +
+				' ' + (layer_x_offsets[d.layer]+screen_center_x + d.size)      + ',' + (layer_y_offsets[d.layer] + screen_center_y + d.size)
 			);
 		});
 
@@ -224,12 +243,14 @@ function LeNet() {
 			.attr("x2", d => layer_x_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_x)
 			.attr("y2", d => layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y);
 
+
 		text.attr('x', d => (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer + 1] + layer_widths[d.layer + 1]/2)/2 + screen_center_x - 15)
 			.attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width);
 
-		info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x)
-			.attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
+		console.error = old_error;
 
+		info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x).attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
+		fit_to_screen();
 	}
 
 	function style(
@@ -272,9 +293,6 @@ function LeNet() {
 		info.text(d => (showLabels ? d.text : ""));
 	}
 
-	svg.call(d3.zoom()
-		.scaleExtent([1 / 10, 8])
-		.on("zoom", zoomed));
 
 	function zoomed() {
 		g.attr("transform", d3.event.transform);
@@ -286,7 +304,11 @@ function LeNet() {
 		svg.attr("width", graph_width).attr("height", h);
 	}
 
+	var bscale = 100;
+	d3.select("#lenet").attr('transform','scale('+bscale+')')
 	d3.select(window).on("resize", resize)
+
+	svg.call(d3.zoom().on("zoom", zoomed));
 
 	resize();
 
@@ -294,5 +316,6 @@ function LeNet() {
 		'redraw'         : redraw,
 		'redistribute'   : redistribute,
 		'style'          : style,
+		'fit_to_screen'  : fit_to_screen
 	}
 }

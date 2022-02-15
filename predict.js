@@ -1,7 +1,7 @@
 "use strict";
 
 async function get_label_data () {
-	let imageData = await get_image_data();
+	let imageData = await get_image_data(1);
 
 	labels = [];
 
@@ -16,8 +16,6 @@ async function get_label_data () {
 		labels[category_counter] = key;
 		category_counter++;
 	}
-
-
 }
 
 var loadFile = (function(event) {
@@ -41,6 +39,10 @@ let predict_demo = async function (item, nr) {
 			await get_label_data();
 		}
 		let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
+		if($("#divide_by_255").is(":checked")) {
+			tensorImg = tf.div(tensorImg, 255);
+		}
+
 		var predictions = await model.predict([tensorImg], [1, 1]).dataSync();
 
 		if(predictions.length) {
@@ -66,6 +68,7 @@ let predict_demo = async function (item, nr) {
 				}
 				desc.append(str);
 			}
+
 		}
 	} catch (e) {
 		console.warn(e);
@@ -73,6 +76,8 @@ let predict_demo = async function (item, nr) {
 		$("#predict_error").show();
 		$("#predict_error").html(e);
 	}
+
+	hide_unused_layer_visualization_headers();
 }
 
 async function predict (item) {
@@ -84,13 +89,19 @@ async function predict (item) {
 	$("#predict_error").html("");
 	var predictions = [];
 
+	/*
 	if(!model) {
 		model = await train_neural_network();
 	}
+	*/
 
 	try {
 		if(category == "image") {
 			let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
+			if($("#divide_by_255").is(":checked")) {
+				tensorImg = tf.div(tensorImg, 255);
+			}
+
 			predictions = await model.predict([tensorImg], [1, 1]).dataSync();
 			log(predictions);
 		} else if(category == "own") {
@@ -141,6 +152,8 @@ async function predict (item) {
 }
 
 function show_prediction () {
+	hide_unused_layer_visualization_headers();
+
 	$(".show_after_training").show();
 	$("#example_predictions").html("");
 	$("#own_files").show();
