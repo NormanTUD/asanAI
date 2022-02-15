@@ -3,14 +3,6 @@
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
 fully in your browsers.
 
-# Screenshots
-
-![Screenshot](screen0.png "Visualization at the start page")
-
-![Screenshot](screen1.png "Other visualization at the start page")
-
-![Screenshot](screen2.png "Yet another visualization at the start page")
--
 # Status
 
 This is a very early alpha. The networks provided don't yet really work, as they're only for testing.
