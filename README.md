@@ -5,8 +5,7 @@ fully in your browsers.
 
 # Status
 
-This is a very early alpha. The networks provided don't yet really work, as they're only for testing.
-But you can already create and use your own networks.
+This is a very early alpha.
 
 # Screenshots
 
