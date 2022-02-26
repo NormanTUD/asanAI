@@ -262,10 +262,6 @@ input {
 	outline: 1px dashed #0f0f0f;
 }
 
-#ribbon {
-	min-width: 1400px;
-}
-
 .input_image_grid {
 	//max-height: 500px;
 	overflow-y: auto;
@@ -276,9 +272,6 @@ button, select, input {
 	border:solid 1px #7da2ce;
 	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
 	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
-	background-color:#e1e1e1;
-	background: -moz-linear-gradient(top, #e1e1e1, #e1eaf4);
-	background: -webkit-gradient(linear, center top, center bottom, from(#e1e1e1), to(#e1eaf4));
 }
 
 button:hover, select:hover, input:hover {
@@ -349,4 +342,8 @@ select option:disabled {
 
 .layer_setting {
 	min-width: 480px;
+}
+
+.call_counter_container {
+	display: none;
 }

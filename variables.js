@@ -60,6 +60,7 @@ var disable_show_python_and_create_model = false;
 var layer_structure_cache = null;
 var allowed_layer_cache = [];
 var last_allowed_layers_update = null;
+var started_training = false;
 
 var max_images_per_layer = 0;
 
@@ -183,7 +184,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -195,7 +196,7 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate"
+			"dropout_rate", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -203,7 +204,7 @@ var layer_options = {
 	"reshape": {
 		"description": "Reshapes an input to a certain shape.",
 		"options": [
-			'target_shape'
+			'target_shape', "dtype"
 		],
 		"category": "Basic"
 	},
@@ -212,7 +213,7 @@ var layer_options = {
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU).<br>It follows: <tt>f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0</tt>.",
 		"options": [
-			"alpha", "trainable"
+			"alpha", "trainable", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -220,21 +221,21 @@ var layer_options = {
 	"leakyReLU": {
 		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: <tt>f(x) = alpha * x for x < 0. f(x) = x for x >= 0</tt>.",
 		"options": [
-			"alpha", "trainable"
+			"alpha", "trainable", "dtype"
 		],
 		"category": "Activation"
 	},
 	"reLU": {
 		"description": "Rectified Linear Unit activation function.",
 		"options": [
-			"max_value"
+			"max_value", "dtype"
 		],
 		"category": "Activation"
 	},
 	"softmax": {
 		"description": "Softmax activation layer.",
 		"options": [
-			"axis"
+			"axis", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -254,7 +255,7 @@ var layer_options = {
 		"options": [
 			"axis", "momentum", "epsilon", "center", "scale", "beta_initializer",
 			"gamma_initializer", "moving_mean_initializer", "moving_variance_initializer",
-			"beta_constraint", "gamma_constraint", "trainable"
+			"beta_constraint", "gamma_constraint", "trainable", "dtype"
 		],
 		"category": "Normalization"
 	},
@@ -262,7 +263,7 @@ var layer_options = {
 		"description": "Layer-normalization layer (Ba et al., 2016). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
 		"options": [
 			"axis", "epsilon", "center", "scale", "beta_initializer",
-			"gamma_initializer", "trainable"
+			"gamma_initializer", "trainable", "dtype"
 		],
 		"category": "Normalization"
 	},
@@ -271,7 +272,7 @@ var layer_options = {
 	"conv1d": {
 		"description": "1D convolution layer (e.g., temporal convolution).<br>This layer creates a convolution kernel that is convolved with the layer input over a single spatial (or temporal) dimension to produce a tensor of outputs.<br>If <tt>use_bias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not <tt>null</tt>, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size_1d", "strides_1d", "dilation_rate", "kernel_initializer", "bias_initializer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -285,14 +286,14 @@ var layer_options = {
 	"conv2dTranspose": {
 		"description": "Transposed convolutional layer (sometimes called Deconvolution). The need for transposed convolutions generally arises from the desire to use a transformation going in the opposite direction of a normal convolution, i.e., from something that has the shape of the output of some convolution to something that has the shape of its input while maintaining a connectivity pattern that is compatible with said convolution.",
 		"options": [
-			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", "use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", "bias_constraint", "trainable"
+			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", "use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", "bias_constraint", "trainable", "dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv3d": {
 		"description": "3D convolution layer (e.g. spatial convolution over volumes).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -303,7 +304,7 @@ var layer_options = {
 			"depthwise_constraint", "strides", "padding", "dilation_rate",
 			"activation", "use_bias", "kernel_initializer",
 			"bias_initializer", "kernel_constraint", "bias_constraint",
-			"trainable"
+			"trainable", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -315,14 +316,14 @@ var layer_options = {
 			"pointwise_constraint", "filters", "kernel_size",
 			"strides", "padding", "dilation_rate", "activation",
 			"use_bias", "bias_initializer", "bias_constraint",
-			"trainable"
+			"trainable", "dtype"
 		],
 		"category": "Convolutional"
 	},
 	"upSampling2d": {
 		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
 		"options": [
-			"size", "interpolation", "trainable"
+			"size", "interpolation", "trainable", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -330,14 +331,14 @@ var layer_options = {
 	"averagePooling1d": {
 		"description": "Average pooling operation for spatial data.",
 		"options": [
-			"padding", "pool_size", "strides"
+			"padding", "pool_size", "strides", "dtype"
 		],
 		"category": "Pooling"
 	},
 	"averagePooling2d": {
 		"description": "Average pooling operation for spatial data.",
 		"options": [
-			"padding", "pool_size", "strides"
+			"padding", "pool_size", "strides", "dtype"
 		],
 		"category": "Pooling"
 	},
@@ -345,28 +346,28 @@ var layer_options = {
 	"maxPooling1d": {
 		"description": "Max pooling operation for temporal data.",
 		"options": [
-			"pool_size_1d", "strides_1d", "padding"
+			"pool_size", "strides", "padding", "dtype"
 		],
 		"category": "Pooling"
 	},
 	"maxPooling2d": {
 		"description": "Global max pooling operation for spatial data.",
 		"options": [
-			"pool_size", "strides", "padding"
+			"pool_size", "strides", "padding", "dtype"
 		],
 		"category": "Pooling"
 	},
 	"globalAveragePooling1d": {
 		"description": "Global average pooling operation for temporal data.",
 		"options": [
-			"trainable"
+			"trainable", "dtype"
 		],
 		"category": "Pooling"
 	},
 	"globalAveragePooling2d": {
 		"description": "Global average pooling operation for temporal data.",
 		"options": [
-			"trainable"
+			"trainable", "dtype"
 		],
 		"category": "Pooling"
 	},
@@ -382,6 +383,7 @@ var layer_options = {
 		"category": "Pooling"
 	},
 
+	/*
 	"gru": {
 		"description": "Gated Recurrent Unit - Cho et al. 2014.",
 		"options": [
@@ -390,13 +392,12 @@ var layer_options = {
 			"bias_initializer", "recurrent_initializer", 
 			"kernel_constraint", "bias_constraint", "dropout",
 			"recurrent_dropout", "return_sequences", "return_state",
-			"stateful", "unroll", "trainable"
+			"stateful", "unroll", "trainable", "dtype"
 			
 		],
 		"category": "Recurrent"
 	},
 
-	/*
 	"lstm": {
 		"description": "Long-Short Term Memory layer - Hochreiter 1997.",
 		"options": [
@@ -406,18 +407,16 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
-	*/
 	"simpleRNN": {
 		"description": "Fully-connected RNN where the output is to be fed back to input.",
 		"options": [
 			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "recurrent_initializer",
 			"recurrent_constraint", "bias_constraint", "dropout", "recurrent_dropout", "return_sequences", "unroll", "kernel_constraint",
-			"return_state"
+			"return_state", "dtype"
 		],
 		"category": "Recurrent"
 	},
 
-	/*
 	"convLstm2d": {
 		"description": "Convolutional LSTM layer - Xingjian Shi 2015.",
 		"options": [
@@ -425,7 +424,7 @@ var layer_options = {
 			"bias_initializer", "dropout", "trainable", "recurrent_activation",
 			"unit_forget_bias", "implementation", "return_sequences", "return_state",
 			"go_backwards", "stateful", "unroll", "filters", "kernel_size",
-			"strides", "padding", "dilation_rate"
+			"strides", "padding", "dilation_rate", "dtype"
 		],
 		"category": "Recurrent"
 	},
@@ -435,21 +434,21 @@ var layer_options = {
 	"alphaDropout": {
 		"description": "Applies Alpha Dropout to the input. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"rate", "trainable"
+			"rate", "trainable", "dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianDropout": {
 		"description": "Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"rate", "trainable"
+			"rate", "trainable", "dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianNoise": {
 		"description": "Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"stddev", "trainable"
+			"stddev", "trainable", "dtype"
 		],
 		"category": "Noise"
 	}
@@ -466,11 +465,12 @@ var layer_options = {
 };
 
 var model_data_structure = {
-	"sgd": ["learning_rate"],
-	"rmsprop": ["learning_rate", "rho", "decay", "epsilon", "momentum"],
-	"adam": ["learning_rate", "beta1", "beta2", "epsilon"],
-	"adagrad": ["learning_rate"],
-	"adadelta": ["learning_rate", "rho", "epsilon"]
+	"sgd": ["learningRate"],
+	"rmsprop": ["learningRate", "rho", "decay", "epsilon", "momentum"],
+	"adam": ["learningRate", "beta1", "beta2", "epsilon"],
+	"adagrad": ["learningRate"],
+	"adadelta": ["learningRate", "rho", "epsilon"],
+	"adamax": ["learningRate", "beta1", "beta2", "epsilon", "decay"]
 };
 
 var activations = {
@@ -565,8 +565,8 @@ var layer_options_defaults = {
 	"max_value": 1,
 	"stddev": 1,
 	"implementation": 1,
-	"kernel_size_1d": 2,
-	"pool_size_1d": 2,
+	"kernel_size": "[]",
+	"pool_size": "[]",
 
 	"recurrent_constraint": null,
 	"bias_constraint": null,
@@ -606,10 +606,9 @@ var layer_options_defaults = {
 	"interpolation": "nearest",
 	"dilation_rate": "",
 	"size": "1,1",
-	"strides_1d": 2,
-	"strides": [2, 2],
-	"pool_size": [2, 2],
-	"kernel_size": [2, 2],
+	"strides": "[]",
+	"pool_size": "[]",
+	"kernel_size": "[]",
 
 	"target_shape": calculate_default_target_shape
 };
@@ -680,3 +679,9 @@ var dtypes = {
 };
 
 var layer_names = Object.keys(layer_options);
+
+var function_times = {};
+
+var number_of_initialized_layers = 0;
+
+var is_setting_config = false;

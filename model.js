@@ -9,11 +9,15 @@ function compile_model () {
 		recompile_now = confirm("The model has been trained. You changed something. This needs a recompile to take action. Recompiling loses the trained weights/filters. Do you want to recompile and lose the training process?");
 		if(!recompile_now) {
 			$("#recompile_tab").show();
+			set_ribbon_min_width();
+		} else {
+			model_is_trained = false;
 		}
 	}
 
 	if(recompile_now) {
 		$("#recompile_tab").hide();
+		set_ribbon_min_width();
 		model_is_trained = false;
 		reset_summary();
 		if(get_numberoflayers() >= 1) {
@@ -92,16 +96,10 @@ function get_data_for_layer (type, i, first_layer) {
 			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "pool_size_x")), parseInt(get_item_value(i, "pool_size_y"))];
 		} else if(option_name == "kernel_size") {
 			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "kernel_size_x")), parseInt(get_item_value(i, "kernel_size_y"))];
-		} else if(option_name == "kernel_size_1d") {
-			data[get_js_name("kernel_size")] = parseInt(get_item_value(i, "kernel_size"));
-		} else if(option_name == "strides_1d") {
-			data[get_js_name("strides")] = parseInt(get_item_value(i, "strides"));
 		} else if(option_name == "trainable") {
 			data[get_js_name("trainable")] = get_item_value(i, "trainable");
 		} else if(option_name == "use_bias") {
 			data[get_js_name("useBias")] = get_item_value(i, "use_bias");
-		} else if(option_name == "pool_size_1d") {
-			data[get_js_name("pool_size")] = parseInt(get_item_value(i, "pool_size"));
 		} else if(option_name == "strides") {
 			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "strides_x")), parseInt(get_item_value(i, "strides_y"))];
 		} else if(option_name == "size") {
@@ -248,6 +246,23 @@ function create_model (old_model, fake_model_structure) {
 		model_structure = get_model_structure();
 	}
 
+	var html = '';
+
+	html += '<html>' + "\n";
+	html += '        <head>' + "\n";
+	html += '                <title>Example Network</title>' + "\n";
+	html += '                <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>' + "\n";
+	html += '                <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@0.4.0"> </script>' + "\n";
+	html += '                <script src="https://code.jquery.com/jquery-3.6.0.js"></script>' + "\n";
+	html += '        </head>' + "\n";
+	html += '        <body>' + "\n";
+	html += '                <div id="results_container" style="display: none">' + "\n";
+	html += '                        <div id="results"></div>' + "\n";
+	html += '                </div>' + "\n";
+	html += '        </body>' + "\n";
+	html += '        <script>' + "\n";
+	html += 'async function train_and_predict_example () {' + "\n";
+
 	var node_js = "import * as tf from '@tensorflow/tfjs-node';\nvar model = tf.sequential();\n";
 	
 	for (var i = 0; i < model_structure.length; i++) {
@@ -303,10 +318,26 @@ function create_model (old_model, fake_model_structure) {
 		new_model.add(tf.layers[type](data));
 
 		node_js += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 2) + "));\n";
+		html += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 14) + "));\n";
 	}
+
+
+	html += '// x and y have to be tf.tensors. You have to get them yourself somehow.' + "\n";
+        html += 'await model.fit(x, y, {' + "\n";
+        html += '	epochs: ' + $("#epochs").val() + ',' + "\n";
+        html += '	callbacks: [tfvis.show.fitCallbacks(container, metrics, ftfvis_options) ]' + "\n";
+        html += '});' + "\n";
+	html += '// You need to change this here for your data' + "\n";
+        html += '//$("#results").html(model.predict(tf.tensor([[0, 1]])).arraySync());' + "\n";
+        html += '$("#results_container").show();' + "\n";
+	html += '}' + "\n";
+	html += 'train_and_predict_example();' + "\n";
+	html += '        </script>' + "\n";
+	html += '</html>' + "\n";
 
 	if(typeof(fake_model_structure) == "undefined") {
 		$("#node").html(node_js);
+		$("#html").text(html);
 	}
 
 	return new_model;
@@ -331,8 +362,7 @@ function list_all_layer_types_that_dont_have_default_options () {
 
 	for (var i = 0; i < all_options.length; i++) {
 		var key = all_options[i];
-		if(key in layer_options_defaults) {
-		} else {
+		if(!key in layer_options_defaults) {
 			no_options.push(key);
 		}
 	}
@@ -355,21 +385,22 @@ function get_fake_data_for_layertype (layer_nr, layer_type) {
 	for (var i = 0; i < options.length; i++) {
 		var this_option = options[i];
 
-		var default_value = layer_options_defaults[this_option];
 		var js_option_name = undefined;
 		if (this_option in python_names_to_js_names) {
 			js_option_name = python_names_to_js_names[this_option]
-		} else if (this_option == "strides_1d") {
+		} else if (this_option.startsWith("strides")) {
 			js_option_name = "strides";
-		} else if (this_option == "kernel_size_1d") {
+		} else if (this_option.startsWith("kernel_size")) {
 			js_option_name = "kernelSize";
 		} else if (this_option == "dropout") {
 			js_option_name = "rate";
-		} else if (this_option == "pool_size_1d") {
+		} else if (this_option.startsWith("pool_size")) {
 			js_option_name = "poolSize";
 		} else if (this_option == "dropout_rate") {
 			js_option_name = "dropoutRate";
 		}
+
+		var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
 		if(js_option_name === undefined) {
 			console.warn("Cannot map " + this_option + " to js_option_name");
@@ -383,15 +414,32 @@ function get_fake_data_for_layertype (layer_nr, layer_type) {
 			}
 		}
 
-		if(layer_type == "averagePooling1d") {
-			data["poolSize"] = layer_options_defaults["pool_size"][0];
-			data["strides"] = layer_options_defaults["strides"][0];
-		}
-
 		data = remove_empty(data);
 	}
 	
 	return data;
+}
+
+function get_default_option (layer_type, option_name) {
+	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
+	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
+
+	var match = layer_type.match(/(\d+)[dD]$/);
+
+	if(match) {
+		if(typeof(layer_options_defaults[option_name]) == "string" && layer_options_defaults[option_name] == "[]") {
+			var number_of_match_items = parseInt(match[1]);
+			var number = 2;
+			var results = [];
+			for (var i = 0; i < number_of_match_items; i++) {
+				results.push(number);
+			}
+
+			return results;
+		}
+	}
+
+	return layer_options_defaults[option_name];
 }
 
 function create_fake_model_structure (layer_nr, layer_type) {
@@ -411,11 +459,11 @@ function compile_fake_model (layer_nr, layer_type) {
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
 	var fake_model_structure = create_fake_model_structure(layer_nr, layer_type);
+
 	try {
 		var fake_model = create_model(null, fake_model_structure);
 		fake_model.compile(get_model_data());
 	} catch (e) {
-		var str_e = e + "";
 		return false;
 	}
 	return true;
@@ -423,12 +471,8 @@ function compile_fake_model (layer_nr, layer_type) {
 
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
-function heuristic_layer_possibility_check (layer_nr, layer_type) {
-	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
-	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
-	var layer_input_shape = calculate_default_target_shape(layer_nr);
-
+function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 	if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
 		if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
 			if(layer_input_shape.length == 2) {
@@ -451,7 +495,17 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 			return false;
 		}
 	}
+
 	return true;
+}
+
+function heuristic_layer_possibility_check (layer_nr, layer_type) {
+	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
+	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+
+	var layer_input_shape = calculate_default_target_shape(layer_nr);
+
+	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 }
 
 function get_valid_layer_types (layer_nr) {
@@ -496,6 +550,57 @@ function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
+function set_weights_from_json_object (json) {
+	var weights_array = [];
+
+	/*
+	if((json.length - 2) != model.layers.length) {
+		Swal.fire({
+			icon: 'error',
+			title: "Error",
+			text: 'The model weights file could not be loaded because you have a different number of layers than it has weights.'
+		});
+
+		return false;
+	}
+	*/
+
+	var tensors = [];
+
+	for (var i = 0; i < json.length; i++) {
+		tensors.push(tf.tensor(json[i]));
+	}
+
+	try {
+		model.setWeights(tensors);
+	} catch (e) {
+		Swal.fire({
+			icon: 'error',
+			title: 'Error loading weights',
+			text: e
+		});
+		return false;
+	}
+
+	model_is_trained = true;
+
+	Swal.fire(
+		'Weights loaded successfully',
+		'',
+		'success'
+	)
+
+	return true;
+}
+
+async function set_weights_from_string (string) {
+	var json = JSON.parse(string);
+
+	log(json);
+
+	return set_weights_from_json_object(json);
+}
+
 async function get_weights_as_string () {
 	var weights = await model.getWeights();
 
@@ -534,3 +639,18 @@ function download(filename, text) {
 async function download_weights_json () {
 	download("weights.json", await get_weights_as_string());
 }
+
+function output_size_at_layer (input_size_of_first_layer, layer_nr) {
+	if(model === null) {
+		compile_model();
+	}
+	var output_size = input_size_of_first_layer;
+	for (var i = 0; i < model.layers.length; i++) {
+		output_size = model.layers[i].getOutputAt(0)["shape"];
+		if(i == layer_nr) {
+			return output_size;
+		}
+	}
+	return output_size;
+}
+

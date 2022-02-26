@@ -123,6 +123,8 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 }
 
 function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
+	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
+
 	var drew_something = false;
 
 	var width = colors[0].length;
@@ -404,12 +406,15 @@ function group_layers () {
         var char_to_group = new Array(str.length);
         char_to_group.fill(null);
 
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)";
+
         var descs = [
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
-                { "re": "(?:(?:batch|layer)Normalization;)*((?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*)", "name": "Feature ex&shy;traction" },
-                { "re": "((?:dropout;?)+)", "name": "Over&shy;fitting-pre&shy;vention" },
-                { "re": "((?:dense;?)+;?)", "name": "Classi&shy;fication" },
+                { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
+                { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*)", "name": "Feature ex&shy;traction" },
+                { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*;?(?:dropout?;);?)", "name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention" },
+                { "re": "((?:dense;?)+;?(?:dropout)?)", "name": "Classi&shy;fication" },
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
                 { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" }
@@ -566,8 +571,8 @@ function get_layer_identification (i) {
 	return new_str;
 }
 
-function identify_layers () {
-	for (var i = 0; i < get_numberoflayers(); i++) {
+function identify_layers (numberoflayers) {
+	for (var i = 0; i < numberoflayers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);
 
@@ -629,7 +634,6 @@ function hide_layer_visualization_header_if_unused (layer) {
 
 function add_layer_debuggers () {
 	$("#datalayers").html("");
-	$("#layerinfoscontainer").hide();
 
 	$(".layer_data").html("")
 
@@ -651,80 +655,62 @@ function add_layer_debuggers () {
 
 		eval(code);
 
-		if($("#debug_checkbox").is(":checked")) {
-			$("#layerinfoscontainer").show();
-			eval("model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
-				"model.layers[" + i +"].apply = function (inputs, kwargs) {" +
-					"var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-					"if(!disable_layer_debuggers) {\n" +
-						"$(\"#datalayers\").append(\"============> Layer " + i + " (" + model.layers[i].name + ")\\n\");" +
-						"if(" + i + " == 0) {" +
-							"$(\"#datalayers\").append(\"Input layer " + i + ":\\n\");" +
-							"$(\"#datalayers\").append(print_tensor_to_string(inputs[0]) + \"\\n\");" +
-						"}" +
-						"$(\"#datalayers\").append(\"Output layer " + i + ":\\n\");" +
-						"$(\"#datalayers\").append(print_tensor_to_string(z) + \"\\n\");" +
-					"}" +
-					"return z;" +
-				"}"
-			);
-		}
-
 		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
 			$(".copy_layer_data_button").show();
-			var code = "model.layers[" + i + "].original_apply_real = model.layers[" + i + "].apply;\n" +
-				"model.layers[" + i + "].apply = function (inputs, kwargs) {\n" +
-					"var applied = model.layers[" + i + "].original_apply_real(inputs, kwargs);\n" +
+			$('#layer_visualizations_tab_label').parent().parent().show();
+			$('#layer_visualizations_tab_label').parent().show();
+			$('#layer_visualizations_tab_label').show();
 
-					"if(!disable_layer_debuggers) {\n" +
-						"var output_data = applied.arraySync()[0];\n" +
-						"$($(\".layer_data\")[" + i + "]).html('');\n" +
-						"var input_data = inputs[0].arraySync()[0];\n" +
+			var code = `model.layers[${i}].original_apply_real = model.layers[${i}].apply;
+				model.layers[${i}].apply = function (inputs, kwargs) {
+					var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
-						"var kernel_data = [];\n" +
-						"if(Object.keys(model.layers[" + i + "]).includes('kernel')) {\n" +
-							"if(model.layers[" + i + "].kernel.val.shape.length == 4) {\n" +
-								"kernel_data = model.layers[" + i + "].kernel.val.transpose([3, 2, 0, 1]).arraySync();\n" + // TODO
-							"}\n" +
-						"}\n" +
+					if(!disable_layer_debuggers) {
+						var output_data = applied.arraySync()[0];
+						$($(".layer_data")[${i}]).html('');
+						var input_data = inputs[0].arraySync()[0];
 
-						"var html = $($(\".layer_data\")[" + i + "]).html();\n" +
-						"if($('#header_layer_visualization_" + i + "').length == 0) {\n" +
-							"html = html + \"<h2 id='header_layer_visualization_" + i + "'>Layer " + i + ": \" + $($('.layer_type')[" + i + "]).val() + ' ' + get_layer_identification(" + i + ") + \" [null,\" + get_dim(input_data) + \"] -> \" + JSON.stringify(model.layers[" + i + "].getOutputAt(0).shape) + \":</h2>\";\n" +
-						"}\n" +
+						var kernel_data = [];
+						if(Object.keys(model.layers[${i}]).includes('kernel')) {
+							if(model.layers[${i}].kernel.val.shape.length == 4) {
+								kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
+							}
+						}
 
+						var html = $($(".layer_data")[${i}]).html();
+						if($('#header_layer_visualization_${i}').length == 0) {
+							html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
+						}
 			
-						"if(!draw_images_if_possible(" + i + ", input_data, output_data, kernel_data) && 0) {\n" +
-							"var weights_string = '';\n" +
-							"if ('weights' in this) {\n" +
-								"for (var j = 0; j < this['weights'].length; j++) {\n" +
-									"if (j in this['weights'] && 'val' in this['weights'][j]) {\n" +
-										"weights_string = weights_string + \"\\n\" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, \"\\t\");\n" +
-									"}\n" +
-								"}\n" +
-							"}\n" +
-							"if(weights_string) {\n" +
-								"html = html + '<pre>' + weights_string + '</pre>';\n" +
-							"}\n" +
+						if(!draw_images_if_possible(${i}, input_data, output_data, kernel_data) && 0) {
+							var weights_string = '';
+							if ('weights' in this) {
+								for (var j = 0; j < this['weights'].length; j++) {
+									if (j in this['weights'] && 'val' in this['weights'][j]) {
+										weights_string = weights_string + "\\n" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, "\\t");
+									}
+								}
+							}
+							if(weights_string) {
+								html = html + '<pre>' + weights_string + '</pre>';
+							}
 
-							"var bias_string = '';\n" +
-							"if ('bias' in this) {\n" +
-								"bias_string = \"\\n\" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, \"\\t\") + \"\\n\";\n" +
-							"}\n" +
-							"if(bias_string) {\n" +
-								"html = html + '<pre>' + bias_string + '</pre>';\n" +
-							"}\n" +
-							"html = html + \"<pre>Output layer " + i + ": [\" + get_dim(output_data) + \"]\\n\"\n" +
-							"html = html + JSON.stringify(output_data, null, \"\\t\") + '</pre>';\n" +
-						"}\n" +
+							var bias_string = '';
+							if ('bias' in this) {
+								bias_string = "\\n" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, "\\t") + "\\n";
+							}
+							if(bias_string) {
+								html = html + '<pre>' + bias_string + '</pre>';
+							}
+							html = html + "<pre>Output layer ${i}: [" + get_dim(output_data) + "]\\n"
+							html = html + JSON.stringify(output_data, null, "\\t") + '</pre>';
+						}
 
-						"$('#layer_visualizations_tab_label').parent().show();\n" +
-						"$('#layer_visualizations_tab_label').show();\n" +
-						"$($(\".layer_data\")[" + i + "]).append(html);\n" +
-					"}\n" +
+						$($(".layer_data")[${i}]).append(html);
+					}
 
-					"return applied;\n" +
-				"}\n";
+					return applied;
+				}`;
 			eval(code);
 		}
 	}
@@ -770,7 +756,7 @@ function deprocessImage(x) {
 }
 
 
-function inputGradientAscent(m, layerIndex, filterIndex, iterations = 40) {
+function inputGradientAscent(m, layerIndex, filterIndex, iterations, start_image) {
         return tf.tidy(() => {
                 const imageH = m.inputs[0].shape[1];
                 const imageW = m.inputs[0].shape[2];
@@ -791,11 +777,14 @@ function inputGradientAscent(m, layerIndex, filterIndex, iterations = 40) {
                 const gradFunction = tf.grad(lossFunction);
 
                 // Form a random image as the starting point of the gradient ascent.
-                let image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1)
-                        .mul(20)
-                        .add(128);
+                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);
+		if(typeof(start_image) != "undefined") {
+			image = start_image;
+		} else {
+			image = image.mul(20).add(128);
+		}
 
-                for (let i = 0; i < iterations; ++i) {
+                for (var i = 0; i < iterations; ++i) {
                         console.warn("Iteration " + (i + 1) + " of " + iterations);
                         const scaledGrads = tf.tidy(() => {
                                 const grads = gradFunction(image);
@@ -806,27 +795,62 @@ function inputGradientAscent(m, layerIndex, filterIndex, iterations = 40) {
                         });
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
-                        image = tf.clipByValue(image.add(scaledGrads), 0, 255);
+                        //image = tf.clipByValue(image.add(scaledGrads), 0, 255);
+			image = image.add(scaledGrads);
                 }
                 return deprocessImage(image).arraySync();
         });
 }
 
-function draw_maximally_activated_neuron (layer, neuron) {
-	$("#layer_visualizations_tab_label").click()
+async function get_image_from_url (url) {
+	var tf_img = (async () => {
+		let img = await load_image(url);
+		tf_img = tf.browser.fromPixels(img);
+		var resized_img = tf_img.
+			resizeNearestNeighbor([height, width]).
+			toFloat().
+			expandDims();
+		if($("#divide_by").val() != 1) {
+			resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
+		}
+		return resized_img;
+	})();
+	return tf_img;
+}
+
+async function draw_maximally_activated_neuron (layer, neuron) {
+	var current_input_shape = get_input_shape();
+
+	if(current_input_shape.length != 3) {
+		return;
+	}
+
 	disable_layer_debuggers = 1;
 	try {
-		var data = inputGradientAscent(model, layer, neuron, $("#max_activation_iterations").val())[0];
+		var start_image = undefined;
+		if($("#dataset_category").val() == "image" && $("#use_example_image_as_base").is(":checked")) {
+			var examples = [];
+			await $.ajax({url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=image&examples=1', success: function (x) { examples = x["example"]; }})
+
+			var base_url = "traindata/image/" + $("#dataset").val() + "/example/";
+
+			if(examples.length) {
+				start_image = await get_image_from_url(base_url + "/" + examples[0]);
+				start_image = start_image.div(255);
+			}
+		}
+		var data = inputGradientAscent(model, layer, neuron, $("#max_activation_iterations").val(), start_image)[0];
 		disable_layer_debuggers = 1;
 		var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-		var res = draw_grid(canvas, 3, data, 1, 0);
+		var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
 
 		if(res) {
 			$("#maximally_activated").append(canvas);
 			$("#maximally_activated_label").parent().show();
 			$("#maximally_activated_label").show().click();
 		}
+		$("[href='#maximally_activated']").click()
 
 		return res;
 	} catch (e) {
@@ -835,6 +859,15 @@ function draw_maximally_activated_neuron (layer, neuron) {
 		$("#error").parent().show();
 		$("#visualization_tab").click();
 		$("#fcnn_tab_label").click();
+		write_descriptions();
 		return false;
 	}
+}
+
+function fcnn_fill_layer (layer_nr) {
+	restart_fcnn();
+	restart_lenet();
+
+	$("[id^=fcnn_" + layer_nr + "_]").css("fill", "red");
+	$("[id^=lenet_" + layer_nr + "_]").css("fill", "red");
 }

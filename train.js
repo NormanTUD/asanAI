@@ -18,12 +18,14 @@ function print_tensor_to_string (tensor) {
 }
 
 function gui_in_training () {
+	started_training = true;
 	$("#train_neural_network_button").html("Stop training");
 	disable_everything();
 	favicon_spinner();
 }
 
 function gui_not_in_training () {
+	started_training = false;
 	$("#train_neural_network_button").html("Start training");
 	enable_everything();
 	favicon_default();
@@ -42,7 +44,7 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	if(model.isTraining || model.model.isTraining) {
+	if(started_training || model.isTraining || model.model.isTraining) {
 		model.stopTraining = true;
 		model.model.stopTraining = true;
 
@@ -91,11 +93,23 @@ function get_fit_data () {
 		{ height: 200, callbacks: ["onBatchEnd", "onEpochEnd"] }
 	);
 
-	callbacks["onTrainBegin"] = function () {
+	callbacks["onTrainBegin"] = async function () {
 		$(".training_performance_tabs").show();
 	};
 
-	callbacks["onTrainEnd"] = function () {
+	callbacks["onBatchBegin"] = async function () {
+		if(!started_training) {
+			model.stopTraining = true;
+			model.model.stopTraining = true;
+
+			this.model.stopTraining = true;
+			this.model.model.stopTraining = true;
+
+			gui_not_in_training();
+		}
+	};
+
+	callbacks["onTrainEnd"] = async function () {
 		restart_fcnn();
 		favicon_default();
 		show_prediction();
@@ -153,29 +167,52 @@ async function run_neural_network () {
 					disable_everything();
 					var xs_and_ys = await get_xs_and_ys();
 
-					var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+					if(started_training) {
+						var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
-					if($("#jump_to_training_tab").is(":checked")) {
-						$('#training_performance_tab_label').show();
-						$('a[href="#training_data_tab"]').click();
-						$('a[href="#tfvis_tab_training_performance"').click()
+						if($("#jump_to_training_tab").is(":checked")) {
+							$('#training_performance_tab_label').show();
+							$('a[href="#training_data_tab"]').click();
+							$('a[href="#tfvis_tab_training_performance"').click()
+						}
+
+						try {
+							h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+
+							model_is_trained = true;
+
+							$("#train_neural_network_button").html("Start training");
+
+							$("#predictcontainer").show();
+							$("#predict_error").hide();
+							$("#predict_error").html("");
+
+							show_info_after_run(h);
+
+							enable_everything();
+
+							return {"h": h, "model": model};
+						} catch (e) {
+							console.trace();
+							$("#error").parent().show();
+							$("#error").html(e);
+							explain_error_msg();
+
+							$('body').css('cursor', 'default');
+							$("#layers_container").sortable("enable");
+							$("#ribbon,select,input,checkbox").prop("disabled", false);
+							write_descriptions();
+							Prism.highlightAll();
+
+							var link = document.querySelector("link[rel~='icon']");
+							if (!link) {
+								link = document.createElement('link');
+								link.rel = 'icon';
+								document.getElementsByTagName('head')[0].appendChild(link);
+							}
+							link.href = 'favicon.ico';
+						}
 					}
-
-					h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
-
-					model_is_trained = true;
-
-					$("#train_neural_network_button").html("Start training");
-
-					$("#predictcontainer").show();
-					$("#predict_error").hide();
-					$("#predict_error").html("");
-
-					show_info_after_run(h);
-
-					enable_everything();
-
-					return {"h": h, "model": model};
 				}
 
 				return model_fit_task();
@@ -186,6 +223,7 @@ async function run_neural_network () {
 				explain_error_msg();
 				header_error("ERROR:");
 				header_error(e);
+				explain_error_msg();
 				console.trace();
 				favicon_default();
 			}

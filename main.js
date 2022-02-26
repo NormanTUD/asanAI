@@ -1,75 +1,64 @@
 "use strict";
 
-function reset_page () {
-	init_dataset_category();
-	init_dataset();
-}
-
-function output_size_at_layer (input_size_of_first_layer, layer_nr) {
-	if(model === null) {
-		compile_model();
-	}
-	var output_size = input_size_of_first_layer;
-	for (var i = 0; i < model.layers.length; i++) {
-		output_size = model.layers[i].getOutputAt(0)["shape"];
-		if(i == layer_nr) {
-			return output_size;
+function init_tabs () {
+	var tabs_settings = {
+		activate: function (event, ui) {
+			disable_hidden_chardin_entries();
 		}
+	};
+
+	$("#ribbon").children().each(function (i, e) {
+		var title = $(e).prop("title");
+		if(title) {
+			var named_id = $(e).prop("id");
+			$("#tablist").append("<li><a href=#" + named_id + ">" + title + "</a></li>");
+		}
+	});
+
+	$("#ribbon").tabs(tabs_settings);
+	$("#right_side").tabs(tabs_settings);
+	$("#visualization_tab").tabs(tabs_settings);
+	$("#tfvis_tab").tabs(tabs_settings);
+	$("#code_tab").tabs(tabs_settings);
+}
+
+function init_set_all_options () {
+	var initializer_keys = Object.keys(initializers);
+	var activation_functions = Object.keys(activations);
+
+	var set_all_bias_initializers = $('#set_all_bias_initializers')
+	var set_all_kernel_initializers = $('#set_all_kernel_initializers');
+	var set_all_activation_functions = $('#set_all_activation_functions');
+
+	for (var i = 0; i < initializer_keys.length; i++) {
+		set_all_bias_initializers.append($('<option>', {
+			value: initializer_keys[i],
+			text: initializer_keys[i]
+		}));
+
+		set_all_kernel_initializers.append($('<option>', {
+			value: initializer_keys[i],
+			text: initializer_keys[i]
+		}));
 	}
-	return output_size;
-}
 
-function get_full_shape_from_file (file) {
-	if(file === null) {
-		return null;
+	for (var i = 0; i < activation_functions.length; i++) {
+		set_all_activation_functions.append($('<option>', {
+			value: activation_functions[i],
+			text: activation_functions[i]
+		}));
 	}
-	var input_shape_line = file.split("\n")[0];
-	var shape_match = /^#\s*shape \((.*)\)$/.exec(input_shape_line);
-	if(1 in shape_match) {
-		return shape_match[1];
-	}
-	return null;
+
+	document.addEventListener('keydown', function(event) {
+		if (event.ctrlKey && event.key === 'z') {
+			undo();
+		} else if (event.ctrlKey && event.key === 'y') {
+			redo();
+		}
+	});
 }
 
-function get_shape_from_file (file) {
-	if(file === null) {
-		return null;
-	}
-	var input_shape_line = file.split("\n")[0];
-	var shape_match = /^#\s*shape \(\d+,\s*(.*)\)$/.exec(input_shape_line);
-
-	if(1 in shape_match) {
-		return shape_match[1];
-	}
-	return null;
-}
-
-async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
-	return data;
-}
-
-async function handle_x_file(evt) {
-	x_file = await evt.target.files[0].text();
-	set_input_shape("[" + get_shape_from_file(x_file) + "]");
-	updated_page();
-}
-
-async function handle_y_file(evt) {
-	y_file = await evt.target.files[0].text();
-	y_shape = get_shape_from_file(y_file);
-	$("#y_shape_div").show();
-	$("#y_shape").val(y_shape);
-	updated_page();
-}
-
-function determine_input_shape () {
-	if($("#dataset_category").val() == "image") {
-		set_input_shape("[" + width + ", " + height + ", 3]");
-	}
-}
-
-$(document).ready(function() {
+function init_page_contents (chosen_dataset) {
 	global_disable_auto_enable_valid_layer_types = true;
 	disable_show_python_and_create_model = true;
 	$("#width").val(width);
@@ -79,8 +68,7 @@ $(document).ready(function() {
 	$("#train_data_set_group").hide();
 
 	init_dataset_category().then(() => {
-		global_disable_auto_enable_valid_layer_types = true; // warum?!?!?!?!?!
-		init_epochs(2);
+		global_disable_auto_enable_valid_layer_types = true;
 		set_batchSize(5);
 	});
 
@@ -101,20 +89,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#ribbon").children().each(function (i, e) {
-		var title = $(e).prop("title");
-		if(title) {
-			var named_id = $(e).prop("id");
-			$("#tablist").append("<li><a href=#" + named_id + ">" + title + "</a></li>");
-		}
-	});
-
 	$("#tablist").show();
-	$("#ribbon").tabs();
-	$("#right_side").tabs(); 
-	$("#visualization_tab").tabs();
-	$("#tfvis_tab").tabs();
-	$("#code_tab").tabs();
 
 	if(["image"].includes($("#dataset_category").val())) {
 		$("#train_data_set_group").show();
@@ -123,102 +98,97 @@ $(document).ready(function() {
 	global_disable_auto_enable_valid_layer_types = false;
 	disable_show_python_and_create_model = false;
 
+	if(chosen_dataset) {
+		$("#dataset").val(chosen_dataset);
+		$("#dataset").trigger("change");
+	}
+
 	set_mode();
-
-	var initializer_keys = Object.keys(initializers);
-
-	for (var i = 0; i < initializer_keys.length; i++) {
-		$('#set_all_bias_initializers').append($('<option>', {
-			value: initializer_keys[i],
-			text: initializer_keys[i]
-		}));
-	}
-
-	for (var i = 0; i < initializer_keys.length; i++) {
-		$('#set_all_kernel_initializers').append($('<option>', {
-			value: initializer_keys[i],
-			text: initializer_keys[i]
-		}));
-	}
-
-	var activation_functions = Object.keys(activations);
-
-	for (var i = 0; i < activation_functions.length; i++) {
-		$('#set_all_activation_functions').append($('<option>', {
-			value: activation_functions[i],
-			text: activation_functions[i]
-		}));
-	}
-
-	document.addEventListener('keydown', function(event) {
-		if (event.ctrlKey && event.key === 'z') {
-			undo();
-		} else if (event.ctrlKey && event.key === 'y') {
-			redo();
-		}
-	});
-});
-
-function get_output_shape () {
-	return $("#outputShape").val();
-}
-
-function fcnn_fill_layer (layer_nr) {
-	restart_fcnn();
-	restart_lenet();
-
-	$("[id^=fcnn_" + layer_nr + "_]").css("fill", "red");
-	$("[id^=lenet_" + layer_nr + "_]").css("fill", "red");
-}
-
-function upload_model(evt) {
-	let files = evt.target.files;
-
-	let f = files[0];
-
-	let reader = new FileReader();
-
-	// Closure to capture the file information.
-	reader.onload = (function(theFile) {
-		return function(e) {
-			local_store.setItem("tensorflowjs_models/mymodel", e.target.result);
-		};
-	})(f);
-
-	// Read in the image file as a data URL.
-	reader.readAsText(f);
 
 	set_config();
 
-	add_layer_debuggers();
+	write_descriptions();
 }
 
-async function upload_weights(evt) {
-	let files = evt.target.files;
+function dataset_already_there (dataset_name) {
+	var already_there = false;
+	$("#dataset").children().each(
+		function (id, e) {
+			if(e.text == dataset_name) {
+				already_there = true;
+				return;
+			}
+		}
+	);
 
-	let f = files[0];
+	return already_there;
+}
 
-	let reader = new FileReader();
+function init_categories () {
+	var chosen_category = $("#dataset_category").val();
+	var categories = Object.keys(traindata_struct);
 
-	// Closure to capture the file information.
-	reader.onload = (() => function(theFile) {
-		return function(e) {
+	$("#dataset").html("");
 
+	for (var i = 0; i < categories.length; i++) {
+		var existing_keys = $.map($("#dataset_category option"), e => $(e).val())
+		var folder_name = traindata_struct[categories[i]]["category_name"];
+		var category = categories[i];
+		if(!existing_keys.includes(folder_name)) {
+			$("#dataset_category").prepend(`<option value="${folder_name}">${category}</option>`);
+		}
+
+		if(folder_name == chosen_category) {
+			var datasets = traindata_struct[categories[i]]["datasets"];
+
+			var dataset_names = Object.keys(datasets);
+			for (var j = 0; j < dataset_names.length; j++) {
+				var dataset_name = dataset_names[j];
+				if(!dataset_already_there(dataset_name)) {
+					var dataset_value = datasets[dataset_names[j]]["name"];
+					var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
+					if(!existing_keys_in_dataset.includes(folder_name)) {
+						$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
+					}
+				}
+			}
+		}
+	}
+
+	number_of_initialized_layers = 0;
+}
+
+$(document).ready(function() {
+	init_tabs();
+	init_set_all_options();
+	init_categories();
+
+	$("#dataset_category").val("image");
+	$("#dataset_category").trigger("change");
+
+	init_page_contents();
+
+	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
+		if(!window.FileReader) return;
+		var reader = new FileReader();
+
+		reader.onload = function(evt) {
+			if(evt.target.readyState != 2) return;
+			if(evt.target.error) {
+				alert('Error while reading file');
+				return;
+			}
+
+			var filecontent = evt.target.result;
+			set_weights_from_string(filecontent);
+
+			add_layer_debuggers();
+
+			$("#predictcontainer").show();
 		};
-	})(f);
 
-	// Read in the image file as a data URL.
-	reader.readAsText(f);
+		reader.readAsText(evt.target.files[0]);
+	};
 
-	var modelUpload = document.getElementById('upload_model');
-	var weightsUpload = document.getElementById('upload_weights');
-
-	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
-
-	add_layer_debuggers();
-
-	$("#predictcontainer").show();
-	$('a[href="#predict_tab"]').click();
-}
-
-
+	set_config();
+});

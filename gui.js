@@ -1,5 +1,39 @@
 "use strict";
 
+function get_shape_from_file (file) {
+	if(file === null) {
+		return null;
+	}
+	var input_shape_line = file.split("\n")[0];
+	var shape_match = /^#\s*shape \(\d+,\s*(.*)\)$/.exec(input_shape_line);
+
+	if(1 in shape_match) {
+		return shape_match[1];
+	}
+	return null;
+}
+
+function get_dimensionality_from_layer_name (layer_type) {
+	var match = layer_type.match(/(\d+)[dD]$/);
+
+	if(match) {
+		return match[1];
+	}
+	return null;
+}
+
+function get_full_shape_from_file (file) {
+	if(file === null) {
+		return null;
+	}
+	var input_shape_line = file.split("\n")[0];
+	var shape_match = /^#\s*shape \((.*)\)$/.exec(input_shape_line);
+	if(1 in shape_match) {
+		return shape_match[1];
+	}
+	return null;
+}
+
 function md5(inputString) {
 	var hc = "0123456789abcdef";
 	function rh(n) {var j,s="";for(j=0;j<=3;j++) s+=hc.charAt((n>>(j*8+4))&0x0F)+hc.charAt((n>>(j*8))&0x0F);return s;}
@@ -198,7 +232,7 @@ function quote_python (item) {
 	}
 
 	if(typeof(item) == "object") {
-		JSON.stringify(item);
+		return JSON.stringify(item);
 	} else {
 		if(isNumeric(item)) {
 			return item;
@@ -214,6 +248,8 @@ function quote_python (item) {
 			return '"' + item + '"';
 		}
 	}
+
+	return item;
 }
 
 function get_js_name (name) {
@@ -324,7 +360,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += '<input class="input_data ' + classname + '" ' + pre_text + placeholder + ' type="text" onkeyup="updated_page()"/>';
+			str += '<input class="input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  onchange="updated_page()" onkeyup="updated_page()" />';
 		} else if(type == "number") {
 			str += "<input class='input_data " + classname + "' type='number' ";
 			
@@ -360,234 +396,235 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 	return str;
 }
 
-function add_theta_option (nr) {
+function add_theta_option (type, nr) {
 	return get_tr_str_for_layer_table("Theta", "theta", "number", { "min": 0, "max": 1000, "step": 1, "value": -1 }, nr);
 }
 
-function add_axis_option (nr) {
-	return get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": layer_options_defaults["axis"] }, nr);
+function add_axis_option (type, nr) {
+	return get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": get_default_option(type, "axis") }, nr);
 }
 
-function add_max_value_option (nr) {
-	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "min": 0, "max": 1000, "step": 1, "value": layer_options_defaults["max_value"] }, nr);
+function add_max_value_option (type, nr) {
+	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "min": 0, "max": 1000, "step": 1, "value": get_default_option(type, "max_value") }, nr);
 }
 
-function add_size_option (nr) {
+function add_size_option (type, nr) {
 	return get_tr_str_for_layer_table("Size", "size", "text", { "text": "2,2", "placeholder": "2 comma-seperated numbers" }, nr);
 }
 
-function add_target_shape_option (nr) {
+function add_target_shape_option (type, nr) {
 	return get_tr_str_for_layer_table("Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr);
 }
 
-function add_dilation_rate_option (nr) {
+function add_dilation_rate_option (type, nr) {
 	return get_tr_str_for_layer_table("Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr);
 }
 
-function add_padding_option (nr) {
+function add_padding_option (type, nr) {
 	return get_tr_str_for_layer_table("Padding", "padding", "select", { "valid": "valid", "same": "same", "causal": "causal"}, nr);
 }
 
-function add_pool_size_1d_option (nr) {
+function add_filters_option (type, nr) {
+	return get_tr_str_for_layer_table("Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": get_default_option(type, "filters") }, nr);
+}
+
+function add_pool_size_option (type, nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Pool-Size", "pool_size", "number", { "min": 1, "max": 4096, "step": 1, "value": 2 }, nr);
+
+	var dimensionality = get_dimensionality_from_layer_name(type);
+
+	var letter_code = 'x'.charCodeAt();
+	for (var i = 0; i < dimensionality; i++) {
+		var letter = String.fromCharCode(letter_code);
+		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[i] }, nr);
+		letter_code++;
+	}
 	return str;
 }
 
-function add_pool_size_option (nr) {
+function add_kernel_size_option (type, nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Pool-Size X", "pool_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["pool_size"][0] }, nr);
-	str += get_tr_str_for_layer_table("Pool-Size Y", "pool_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["pool_size"][1] }, nr);
+	var dimensionality = get_dimensionality_from_layer_name(type);
+
+	var letter_code = 'x'.charCodeAt();
+	for (var i = 0; i < dimensionality; i++) {
+		var letter = String.fromCharCode(letter_code);
+		str += get_tr_str_for_layer_table("Kernel-Size " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
+		letter_code++;
+	}
 	return str;
 }
 
-function add_filters_option (nr) {
-	return get_tr_str_for_layer_table("Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": layer_options_defaults["filters"] }, nr);
-}
-
-function add_kernel_size_1d_option (nr) {
+function add_strides_option (type, nr) {
 	var str = "";
-	str += get_tr_str_for_layer_table("Kernel-Size", "kernel_size", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size_1d"] }, nr);
+	var dimensionality = get_dimensionality_from_layer_name(type);
+
+	var letter_code = 'x'.charCodeAt();
+	for (var i = 0; i < dimensionality; i++) {
+		var letter = String.fromCharCode(letter_code);
+		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[i] }, nr);
+		letter_code++;
+	}
 	return str;
 }
 
-function add_kernel_size_option (nr) {
-	var str = "";
-	str += get_tr_str_for_layer_table("Kernel-Size X", "kernel_size_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size"][0] }, nr);
-	str += get_tr_str_for_layer_table("Kernel-Size Y", "kernel_size_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["kernel_size"][1] }, nr);
-	return str;
+function add_alpha_option (type, nr) {
+	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "min": 0, "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr);
 }
 
-function add_strides_1d_option (nr) {
-	var str = "";
-	str += get_tr_str_for_layer_table("Strides", "strides", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides_1d"] }, nr);
-	return str;
+function add_dropout_rate_option (type, nr) {
+	return get_tr_str_for_layer_table("Dropout rate (in %)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr);
 }
 
-function add_strides_option (nr) {
-	var str = "";
-	str += get_tr_str_for_layer_table("Strides X", "strides_x", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides"][0] }, nr);
-	str += get_tr_str_for_layer_table("Strides Y", "strides_y", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["strides"][1] }, nr);
-	return str;
+function add_max_features_option (type, nr) {
+	return get_tr_str_for_layer_table("Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "max_features") }, nr);
 }
 
-function add_alpha_option (nr) {
-	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "min": 0, "max": 100, "step": 0.01, "value": layer_options_defaults["alpha"] }, nr);
+function add_momentum_option (type, nr) {
+	return get_tr_str_for_layer_table("Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": get_default_option(type, "momentum") }, nr);
 }
 
-function add_dropout_rate_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (in %)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": layer_options_defaults["dropout_rate"] }, nr);
+function add_units_option (type, nr) {
+	return get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": get_default_option(type, "units") }, nr);
 }
 
-function add_max_features_option (nr) {
-	return get_tr_str_for_layer_table("Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": layer_options_defaults["max_features"] }, nr);
-}
-
-function add_momentum_option (nr) {
-	return get_tr_str_for_layer_table("Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": layer_options_defaults["momentum"] }, nr);
-}
-
-function add_units_option (nr) {
-	return get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": layer_options_defaults["units"] }, nr);
-}
-
-function add_use_bias_option(nr) {
+function add_use_bias_option(type, nr) {
 	return get_tr_str_for_layer_table("Use Bias", "use_bias", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_scale_option (nr) {
+function add_scale_option (type, nr) {
 	return get_tr_str_for_layer_table("Scale?", "scale", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_center_option (nr) {
+function add_center_option (type, nr) {
 	return get_tr_str_for_layer_table("Center?", "center", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_trainable_option (nr) {
+function add_trainable_option (type, nr) {
 	return get_tr_str_for_layer_table("Trainable", "trainable", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_recurrent_initializer_option (nr) {
+function add_recurrent_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Recurrent Initializer", "recurrent_initializer", "select", initializers, nr);
 }
 
-function add_kernel_regularizer_option (nr) {
+function add_kernel_regularizer_option (type, nr) {
 	return get_tr_str_for_layer_table("Kernel Regularizer", "kernel_regularizer", "select", initializers, nr);
 }
 
-function add_recurrent_constraint_option (nr) {
+function add_recurrent_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Recurrent Contraint", "recurrent_constraint", "select", constraints, nr);
 }
 
-function add_dtype_option (nr) {
+function add_dtype_option (type, nr) {
 	return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr);
 }
 
-function add_bias_constraint_option (nr) {
+function add_bias_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Bias Contraint", "bias_constraint", "select", constraints, nr);
 }
 
-function add_stddev_option (nr) {
-	return get_tr_str_for_layer_table("Standard-Deviation", "stddev", "number", { "min": 0, "value": layer_options_defaults["stddev"] }, nr);
+function add_stddev_option (type, nr) {
+	return get_tr_str_for_layer_table("Standard-Deviation", "stddev", "number", { "min": 0, "value": get_default_option(type, "stddev") }, nr);
 }
 
-function add_rate_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["dropout"] }, nr);
+function add_rate_option (type, nr) {
+	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr);
 }
 
-function add_dropout_option (nr) {
-	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["dropout"] }, nr);
+function add_dropout_option (type, nr) {
+	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr);
 }
 
-function add_recurrent_dropout_option (nr) {
-	return get_tr_str_for_layer_table("Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["recurrent_dropout"] }, nr);
+function add_recurrent_dropout_option (type, nr) {
+	return get_tr_str_for_layer_table("Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "recurrent_dropout") }, nr);
 }
 
-function add_return_sequences_option (nr) {
+function add_return_sequences_option (type, nr) {
 	return get_tr_str_for_layer_table("Return sequences?", "return_sequences", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_unroll_option (nr) {
+function add_unroll_option (type, nr) {
 	return get_tr_str_for_layer_table("Unroll?", "unroll", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_recurrent_activation_option (nr) {
+function add_recurrent_activation_option (type, nr) {
 	return get_tr_str_for_layer_table("Recurrent Activation function", "recurrent_activation", "select", activations, nr);
 }
 
-function add_unit_forget_bias_option (nr) {
+function add_unit_forget_bias_option (type, nr) {
 	return get_tr_str_for_layer_table("Unit forget bias", "unit_forget_bias", "checkbox", { "status": "checked" }, nr);
 }
 
-function add_implementation_option (nr) {
+function add_implementation_option (type, nr) {
 	return get_tr_str_for_layer_table("Implementation", "implementation", "select", implementation_modes, nr);
 }
 
-function add_kernel_constraint_option (nr) {
+function add_kernel_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Kernel Contraint", "kernel_constraint", "select", constraints, nr);
 }
 
-function add_return_state_option (nr) {
+function add_return_state_option (type, nr) {
 	return get_tr_str_for_layer_table("Return state?", "return_state", "checkbox", { "status": "" }, nr);
 }
 
-function add_stateful_option (nr) {
+function add_stateful_option (type, nr) {
 	return get_tr_str_for_layer_table("Stateful?", "stateful", "checkbox", { "status": "" }, nr);
 }
 
-function add_go_backwards_option (nr) {
+function add_go_backwards_option (type, nr) {
 	return get_tr_str_for_layer_table("Go Backwards?", "go_backwards", "checkbox", { "status": "" }, nr);
 }
 
-function add_epsilon_option (nr) {
-	return get_tr_str_for_layer_table("Epsilon multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": layer_options_defaults["epsilon"] }, nr);
+function add_epsilon_option (type, nr) {
+	return get_tr_str_for_layer_table("Epsilon multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": get_default_option(type, "epsilon") }, nr);
 }
 
-function add_depth_multiplier_option (nr) {
-	return get_tr_str_for_layer_table("Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": layer_options_defaults["depth_multiplier"] }, nr);
+function add_depth_multiplier_option (type, nr) {
+	return get_tr_str_for_layer_table("Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "depth_multiplier") }, nr);
 }
 
-function add_depthwise_initializer_option (nr) {
+function add_depthwise_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Depthwise Initializer", "depthwise_initializer", "select", initializers, nr);
 }
 
-function add_gamma_constraint_option (nr) {
+function add_gamma_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Gamma contraint", "gamma_constraint", "select", constraints, nr);
 }
 
-function add_beta_constraint_option (nr) {
+function add_beta_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Beta contraint", "beta_constraint", "select", constraints, nr);
 }
 
-function add_depthwise_constraint_option (nr) {
+function add_depthwise_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Depthwise contraint", "depthwise_constraint", "select", constraints, nr);
 }
 
-function add_moving_variance_initializer_option (nr) {
+function add_moving_variance_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Moving variance Initializer", "moving_variance_initializer", "select", initializers, nr);
 }
 
-function add_moving_mean_initializer_option (nr) {
+function add_moving_mean_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Moving mean Initializer", "moving_mean_initializer", "select", initializers, nr);
 }
 
-function add_interpolation_option (nr) {
+function add_interpolation_option (type, nr) {
 	return get_tr_str_for_layer_table("Interpolation", "interpolation", "select", interpolation, nr);
 }
 
-function add_beta_initializer_option (nr) {
+function add_beta_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Beta Initializer", "beta_initializer", "select", initializers, nr);
 }
 
-function add_gamma_initializer_option (nr) {
+function add_gamma_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Gamma Initializer", "gamma_initializer", "select", initializers, nr);
 }
 
-function add_pointwise_initializer_option (nr) {
+function add_pointwise_initializer_option (type, nr) {
 	return get_tr_str_for_layer_table("Pointwise Initializer", "pointwise_initializer", "select", initializers, nr);
 }
 
-function add_pointwise_constraint_option (nr) {
+function add_pointwise_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Pointwise contraint", "pointwise_constraint", "select", constraints, nr);
 }
 
@@ -664,9 +701,12 @@ function change_number_of_images () {
 function enable_disable_kernel_images () {
 	if($("#show_layer_data").is(":checked")) {
 		$("#show_kernel_images").prop("disabled", false);
+		$("#data_plotter").show();
 	} else {
 		$("#show_kernel_images").prop("disabled", true);
+		$("#data_plotter").hide();
 	}
+	set_ribbon_min_width();
 }
 
 function change_kernel_pixel_size () {
@@ -739,7 +779,7 @@ function update_python_code () {
 		python_code += "height = " + height + "\n";
 		python_code += "width = " + width + "\n";
 		python_code += "image_data_generator = keras.preprocessing.image.ImageDataGenerator(validation_split=" + (parseInt($("#validationSplit").val()) / 100) + ")\n";
-		python_code += "image_set = image_data_generator.flow_from_directory('" + $("#dataset").val() + "', target_size=(width, height), color_mode='rgb')\n";
+		python_code += "image_set = image_data_generator.flow_from_directory('image/" + $("#dataset").val() + "', target_size=(width, height), color_mode='rgb')\n";
 
 		x_shape = "[width, height, 3]";
 	} else if(dataset_category == "own") {
@@ -786,23 +826,19 @@ function update_python_code () {
 			for (var j = 0; j < layer_options[type]["options"].length; j++) {
 				var option_name = layer_options[type]["options"][j];
 				if(option_name == "pool_size") {
-					data[get_python_name(option_name)] = [get_item_value(i, "pool_size_x"), get_item_value(i, "pool_size_y")];
+					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "pool_size_x")), parseInt(get_item_value(i, "pool_size_y"))];
 				} else if(option_name == "strides") {
-					data[get_python_name(option_name)] = [get_item_value(i, "strides_x"), get_item_value(i, "strides_y")];
-				} else if(option_name == "strides_1d") {
-					data[get_python_name("strides")] = get_item_value(i, "strides");
-				} else if(option_name == "pool_size_1d") {
-					data[get_python_name("pool_size")] = get_item_value(i, "pool_size");
+					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "strides_x")), parseInt(get_item_value(i, "strides_y"))];
 				} else if(option_name == "kernel_size") {
-					data[get_python_name(option_name)] = [get_item_value(i, "kernel_size_x"), get_item_value(i, "kernel_size_y")];
-				} else if(option_name == "kernel_size_1d") {
-					data[get_python_name("kernel_size")] = get_item_value(i, "kernel_size");
+					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "kernel_size_x")), parseInt(get_item_value(i, "kernel_size_y"))];
 				} else if(option_name == "size") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 				} else if(option_name == "dilation_rate") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "dilation_rate") + "]");
 				} else if(option_name == "target_shape") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
+				} else if(option_name == "activation") {
+					data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
 				} else {
 					data[get_python_name(option_name)] = get_item_value(i, option_name);
 				}
@@ -814,10 +850,17 @@ function update_python_code () {
 		}
 		var params = [];
 		for (const [key, value] of Object.entries(data)) {
-			params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
+			if(key == "dtype" && i == 0 || key != "dtype") {
+				if(typeof(value) != "undefined") {
+					params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
+				}
+			}
 		}
 
-		python_code += params.join(", ");
+		python_code += params.join(",\n\t");
+		if(params.length) {
+			python_code += "\n";
+		}
 		python_code += "))\n";
 	}
 
@@ -829,13 +872,13 @@ function update_python_code () {
 	};
 
 	if(optimizer_type == "sgd") {
-		model_data["learning_rate"] = document.getElementById("learning_rate_" + optimizer_type).value;
-		python_code += "opt = tf.keras.optimizers.SGD(learning_rate=" + model_data["learning_rate"] + ", momentum=" + model_data["momentum"] + ")\n";
+		model_data["learningRate"] = document.getElementById("learningRate_" + optimizer_type).value;
+		python_code += "opt = tf.keras.optimizers.SGD(learningRate=" + model_data["learningRate"] + ", momentum=" + model_data["momentum"] + ")\n";
 	} else {
 		python_code += "opt = '" + optimizer_type + "'\n";
 	}
 
-	python_code += "model.compile(optimizer=opt, loss='" + get_python_name(loss) + "', metrics=['" + metric_type + "'])\n";
+	python_code += "model.compile(optimizer=opt, loss='" + get_python_name(loss) + "', metrics=['" + get_python_name(metric_type) + "'])\n";
 	python_code += "model.summary()\n";
 
 	if(dataset_category == "image") {
@@ -846,15 +889,18 @@ function update_python_code () {
 
 	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
-
 	Prism.highlightAll();
 
 	return redo_graph;
 }
 
 function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
+	if(is_setting_config) {
+		return;
+	}
 	//console.trace();
-	show_or_hide_bias_initializer();
+	var numberoflayers = get_numberoflayers();
+	show_or_hide_bias_initializer(numberoflayers);
 	if(disable_show_python_and_create_model) {
 		return;
 	}
@@ -882,13 +928,15 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 		console.warn(e);
 	}
 
-	identify_layers();
+	identify_layers(numberoflayers);
 
 	layer_structure_cache = null;
 
+	/*
 	if((typeof(disable_auto_enable_valid_layer_types) == "undefined" || !disable_auto_enable_valid_layer_types) && !global_disable_auto_enable_valid_layer_types) {
 		disable_all_invalid_layers();
 	}
+	*/
 
 	add_layer_debuggers();
 
@@ -898,23 +946,11 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 		}
 	}
 
+	set_ribbon_min_width();
+
+	show_dtype_only_first_layer();
+
 	return 1;
-}
-
-// TODO!!! Ermittelt nicht die richtige output shape (wanted output ist immer gleich got output,
-// weil beide vom Feld outputShape bestimmt werden. So ist das Netz immer "trainierbar".
-// TODO: Muss aus den Originaldaten ermitteln was die Output-Shape ist.
-function enable_or_disable_start_training_button () {
-	var wanted_output = get_output_shape();
-	var got_output = JSON.stringify(model.layers[model.layers.length - 1].getOutputAt(0).shape)
-
-	if(wanted_output == got_output) {
-		$("#train_neural_network_button").prop("disabled", false);
-		return true;
-	} else {
-		$("#train_neural_network_button").prop("disabled", true);
-		return false;
-	}
 }
 
 function change_optimizer () {
@@ -935,7 +971,6 @@ function set_validationSplit (val) {
 }
 
 function set_epsilon (val) {
-	guidebug("#epsilon_" + $("#optimizer").val());
 	$("#epsilon_" + $("#optimizer").val()).val(val);
 }
 
@@ -947,8 +982,8 @@ function set_rho (val) {
 	$("#rho_" + $("#optimizer").val()).val(val);
 }
 
-function set_learning_rate (val) {
-	$("#learning_rate_" + $("#optimizer").val()).val(val);
+function set_learningRate (val) {
+	$("#learningRate_" + $("#optimizer").val()).val(val);
 }
 
 function byteToMB (varbyte) {
@@ -1075,10 +1110,15 @@ function init_epochs(val) {
 function init_numberoflayers(val) {
 	assert(typeof(val) == "number", "init_numberoflayers(" + val + ") is not an integer but " + typeof(val));
 
+	if(val == number_of_initialized_layers) {
+		return;
+	}
+
 	set_numberoflayers(val);
 
 	show_layers(get_numberoflayers());
 
+	number_of_initialized_layers = val;
 	updated_page();
 }
 
@@ -1122,7 +1162,7 @@ function get_option_for_layer_by_type (nr) {
 					} else if (item == "bias_initializer") {
 						str += bias_initializer_string;
 					} else {
-						eval("str += add_" + item + "_option(nr);");
+						eval("str += add_" + item + "_option(type, nr);");
 					}
 				}
 			} else {
@@ -1158,6 +1198,15 @@ function set_option_for_layer(thisitem) {
 	assert(typeof(real_nr) == "number", "found real_nr is not an integer but " + typeof(real_nr));
 
 	set_option_for_layer_by_layer_nr(real_nr);
+
+	var chosen_option = $($(".layer_setting")[real_nr]).find(".layer_type").val()
+	$($(".layer_setting")[real_nr]).find("option").each(function (i, x) {
+		if(chosen_option == $(x).val()) {
+			$(x).attr('selected','selected');
+		} else {
+			$(x).removeAttr('selected');
+		}
+	})
 
 	updated_page(null, 1);
 }
@@ -1379,6 +1428,7 @@ function sortable_layers_container (layers_container) {
 	var error_div = $("#error");
 
 	layers_container.sortable({
+		cursor: "move",
 		handle: 'div',
 		helper:	'clone',
 		forcePlaceholderSize: true,
@@ -1459,7 +1509,7 @@ function show_layers (number) {
 				remove +
 				add +
 				"Layer&nbsp;<span class='layer_nr_desc'></span>" +
-				"(<span class='call_counter'>0</span>)&nbsp;" +
+				"<span class='call_counter_container'>(<span class='call_counter'>0</span>)&nbsp;</span>" +
 				"<span class='layer_identifier'></span>" +
 				"<table class='configtable'>" + 
 					option_for_layer(i) +
@@ -1508,8 +1558,22 @@ function add_photo_to_gallery(url) {
 	$("#photos").html(html + $("#photos").html() );
 }
 
+function set_xyz_values (j, name, values) {
+	assert(typeof(j) == "number", "j must be number, is: " + typeof(number));
+	assert(typeof(name) == "string", "name must be string, is: " + typeof(number));
+	assert(typeof(values) == "object", "name must be object, is: " + typeof(number));
+
+	var letter = 'x';
+	for (var i = 0; i < values.length; i++) {
+		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + i)
+		set_item_value(j, this_name, values[i]);
+	}
+}
+
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
+
+	is_setting_config = true;
 
 	var config = await _get_configuration(index);
 
@@ -1520,10 +1584,10 @@ async function set_config (index) {
 			if(config["width"]) { $("#width").val(config["width"]); width = config["width"]; }
 			if(config["height"]) { $("#height").val(config["height"]); height = config["height"]; }
 
-			if(config["divide_by_255"]) {
-				$("#divide_by_255").prop("checked", true);
+			if(config["divide_by"]) {
+				$("#divide_by").val(config["divide_by"]);
 			} else {
-				$("#divide_by_255").prop("checked", false);
+				$("#divide_by").val(1);
 			}
 		}
 
@@ -1594,6 +1658,16 @@ async function set_config (index) {
 			set_loss(config["loss"]);
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
+			
+			if(config["width"]) {
+				$("#width").val(config["width"]);
+				change_width();
+			}
+
+			if(config["height"]) {
+				$("#height").val(config["height"]);
+				change_height();
+			}
 
 			$("#optimizer").trigger("change");
 
@@ -1604,14 +1678,14 @@ async function set_config (index) {
 			}
 
 			if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-				set_learning_rate(config["learning_rate"]);
+				set_learningRate(config["learningRate"]);
 			}
 
 			if (["monentum", "rmsprop"].includes(config["optimizer"])) {
 				set_momentum(config["momentum"]);
 			}
 
-			set_batchSize(config["batchSize"]);
+			set_batchSize(parseInt(config["batchSize"]));
 			set_validationSplit(config["validationSplit"]);
 		}
 
@@ -1661,53 +1735,11 @@ async function set_config (index) {
 					set_item_value(j, item_name, value);
 				} else {
 					//log("item_name: " + item_name);
-					if(item_name == "kernel_size" && "kernel_size" in keras_layers[i]["config"]) {
-						var kernel_size = keras_layers[i]["config"]["kernel_size"];
-						if(kernel_size.length == 1) {
-							set_item_value(j, "kernel_size_x", kernel_size[0]);
-						} else if(kernel_size.length == 2) {
-							set_item_value(j, "kernel_size_x", kernel_size[0]);
-							set_item_value(j, "kernel_size_y", kernel_size[1]);
-						} else if(kernel_size.length == 3) {
-							set_item_value(j, "kernel_size_x", kernel_size[0]);
-							set_item_value(j, "kernel_size_y", kernel_size[1]);
-							set_item_value(j, "kernel_size_z", kernel_size[2]);
-						} else {
-							log("Don't know what to do with kernel-size: ");
-							log(kernel_size);
-						}
-					} else if(item_name == "strides" && "strides" in keras_layers[i]["config"]) {
-						var strides = keras_layers[i]["config"]["strides"];
-						if(strides.length == 1) {
-							set_item_value(j, "strides_x", strides[0]);
-						} else if(strides.length == 2) {
-							set_item_value(j, "strides_x", strides[0]);
-							set_item_value(j, "strides_y", strides[1]);
-						} else if(strides.length == 3) {
-							set_item_value(j, "strides_x", strides[0]);
-							set_item_value(j, "strides_y", strides[1]);
-							set_item_value(j, "strides_z", strides[2]);
-						} else {
-							log("Don't know what to do with strides: ");
-							log(strides);
-						}
-					} else if(item_name == "pool_size" && "pool_size" in keras_layers[i]["config"]) {
-						var pool_size = keras_layers[i]["config"]["pool_size"];
-						if(pool_size.length == 1) {
-							set_item_value(j, "pool_size_x", pool_size[0]);
-						} else if(pool_size.length == 2) {
-							set_item_value(j, "pool_size_x", pool_size[0]);
-							set_item_value(j, "pool_size_y", pool_size[1]);
-						} else if(pool_size.length == 3) {
-							set_item_value(j, "pool_size_x", pool_size[0]);
-							set_item_value(j, "pool_size_y", pool_size[1]);
-							set_item_value(j, "pool_size_z", pool_size[2]);
-						} else {
-							log("Don't know what to do with pool_size: ");
-							log(pool_size);
-						}
+					if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
+						var values = keras_layers[i]["config"][item_name];
+						set_xyz_values(j, item_name, values);
 					} else if(item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
-						set_item_value(j, "dropout_rate", keras_layers[i]["config"]["rate"] * 100);
+						set_item_value(j, "dropout_rate", keras_layers[i]["config"]["rate"]);
 					} else {
 						//console.warn("Item not found in keras: " + item_name);
 					}
@@ -1736,16 +1768,36 @@ async function set_config (index) {
 	disable_show_python_and_create_model = false;
 
 	model = create_model(model);
+	compile_model();
 	add_layer_debuggers();
 
-
+	/*
 	restart_lenet();
 	restart_alexnet();
 	restart_fcnn();
-	identify_layers();
+	*/
 	disable_all_non_selected_layer_types();
 
 	write_descriptions();
+
+	is_setting_config = false;
+
+	updated_page();
+}
+
+function show_or_hide_load_weights () {
+	$("#load_weights_button").hide();
+
+	if($("#dataset_category").val() != "own") {
+		var category_text = $("#dataset_category option:selected").text();
+		var dataset = $("#dataset option:selected").text();
+		var this_struct = traindata_struct[category_text]["datasets"][dataset];
+		var keys = Object.keys(this_struct);
+
+		if(keys.includes("weights_file")) {
+			$("#load_weights_button").show();
+		}
+	}
 }
 
 async function init_dataset () {
@@ -1753,11 +1805,7 @@ async function init_dataset () {
 	init_download_link();
 	init_epochs(2);
 
-	set_batchSize(2).then(() => {
-		if($("#dataset_category").val() != "own") {
-			set_config();
-		}
-	});
+	set_batchSize(2);
 
 	$('a[href="#visualization_tab"]').click();
 
@@ -1793,10 +1841,6 @@ async function init_dataset_category () {
 	future_state_stack = [];
 
 	show_hide_undo_buttons();
-
-	//console.log("init_dataset_category!!!!!!!!!!!!!!!!!!!!!!");
-	//console.trace();
-	
 
 	clicked_on_tab = 0;
 	var category = $("#dataset_category").val();
@@ -1854,11 +1898,11 @@ async function init_dataset_category () {
 		if(category == "image") {
 			//dataset += "<option value='layertest'>layertest</option>";
 			dataset += "<option value='tiny'>Cat or dog</option>";
-			dataset += "<option value='color'>Color</option>";
 		} else if(category == "logic") {
 			dataset += "<option value='xor'>XOR</option>";
 		}
 
+		$("#inputShape").attr("readonly", true); 
 		$("#train_data_set_group").show();
 		$("#upload_own_data_group").hide();
 		$("#dataset_div").show();
@@ -1879,9 +1923,13 @@ async function init_dataset_category () {
 		$("#upload_y").show();
 		$("#upload_y").parent().show();
 		init_numberoflayers(3);
+		$("#inputShape").attr("readonly", false); 
 	}
 
 	init_download_link();
+	init_categories();
+
+	number_of_initialized_layers = 0;
 }
 
 function clean_gui () {
@@ -1971,6 +2019,7 @@ function disable_everything () {
 	$("#ribbon,select,input,checkbox").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
 	write_descriptions();
+	Prism.highlightAll();
 }
 
 function enable_everything () {
@@ -1978,6 +2027,7 @@ function enable_everything () {
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox").prop("disabled", false);
 	write_descriptions();
+	Prism.highlightAll();
 }
 
 function detect_kernel_initializer (original_kernel_initializer_data) {
@@ -2018,9 +2068,9 @@ function detect_kernel_initializer (original_kernel_initializer_data) {
 	}
 }
 
-function show_or_hide_bias_initializer () {
+function show_or_hide_bias_initializer (numberoflayers) {
 	var layer_settings = $(".layer_setting");
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < numberoflayers; i++) {
 		var this_layer = $(layer_settings[i]);
 		var use_bias_setting = this_layer.find(".use_bias");
 		if(use_bias_setting.length) {
@@ -2225,4 +2275,204 @@ function closePopup(name) {
 	var el = document.getElementById(name);
 	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = 'none';
+}
+
+function upload_model(evt) {
+	let files = evt.target.files;
+
+	let f = files[0];
+
+	let reader = new FileReader();
+
+	// Closure to capture the file information.
+	reader.onload = (function(theFile) {
+		return function(e) {
+			local_store.setItem("tensorflowjs_models/mymodel", e.target.result);
+		};
+	})(f);
+
+	reader.readAsText(f);
+
+	set_config();
+
+	add_layer_debuggers();
+}
+
+async function upload_weights(evt) {
+	let files = evt.target.files;
+
+	let f = files[0];
+
+	let reader = new FileReader();
+
+	// Closure to capture the file information.
+	reader.onload = (() => function(theFile) {
+		return function(e) {
+
+		};
+	})(f);
+
+	reader.readAsText(f);
+
+	var modelUpload = document.getElementById('upload_model');
+	var weightsUpload = document.getElementById('upload_weights');
+
+	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
+
+	add_layer_debuggers();
+
+	$("#predictcontainer").show();
+	$('a[href="#predict_tab"]').click();
+}
+
+var handle_x_file = async function (evt) {
+	x_file = await evt.target.files[0].text();
+	set_input_shape("[" + get_shape_from_file(x_file) + "]");
+	updated_page();
+}
+
+var handle_y_file = async function (evt) {
+	y_file = await evt.target.files[0].text();
+	y_shape = get_shape_from_file(y_file);
+	$("#y_shape_div").show();
+	$("#y_shape").val(y_shape);
+	updated_page();
+}
+
+function get_sum_of_items_childrens_width (item) {
+	var total_width = 0;
+
+	$(item).each(function(index) {
+		total_width += parseInt($(this).width(), 10);
+	});
+
+	return total_width;
+}
+
+function get_max_ribbon_width () {
+	return 1600;
+
+	// TODO
+	var max_width = 0;
+	$("#ribbon").children().each(function (i, el) {
+		var this_val = get_sum_of_items_childrens_width(el);
+		if(this_val > max_width) {
+			max_width = this_val;
+		}
+	});
+
+	return max_width;
+}
+
+function set_ribbon_min_width () {
+	$("#ribbon").css({"min-width": ''});
+
+	$("#ribbon").css({
+		"min-width": parseInt(get_max_ribbon_width() * 1.001) + "px"
+	});
+}
+
+function load_weights () {
+	var category_text = $("#dataset_category option:selected").text();
+	var dataset = $("#dataset option:selected").text();
+	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+
+	var weights_file = this_struct["weights_file"];
+
+	$.ajax({
+		url: weights_file,
+		success: function (data) {
+			set_weights_from_json_object(data);
+		}
+	});
+}
+
+function show_dtype_only_first_layer () {
+	for (var i = 0; i < get_numberoflayers(); i++) {
+		if(i == 0) {
+			$($(".dtype")[i]).parent().parent().show()
+		} else {
+			$($(".dtype")[i]).parent().parent().hide()
+		}
+	}
+}
+
+function attrChangeName(elem, attr, new_attr) {
+	var data = $(elem).attr(attr);
+	$(elem).attr(new_attr, data);
+	$(elem).removeAttr(attr);
+}
+
+function is_hidden_or_has_hidden_parent (element) {
+	if($(element).css("display") == "none") {
+		return true;
+	}
+
+	var parents = $(element).parents();
+
+	for (var i = 0; i < parents.length; i++) {
+		if($(parents[i]).css("display") == "none") {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function disable_hidden_chardin_entries () {
+	var items = $("[data-intro],[data-introdisabled]");
+
+	for (var i = 0; i < items.length; i++) {
+		var target = $(items[i]);
+		if(is_hidden_or_has_hidden_parent(target)) {
+			attrChangeName(target, "data-intro", "data-introdisabled");
+		} else {
+			attrChangeName(target, "data-introdisabled", "data-intro");
+		}
+	}
+
+	chardinJs = $("body").chardinJs();
+
+	var activated_items = $("[data-intro]");
+
+	if(activated_items.length > 0) {
+		$("#chardinjs_help_icon").removeClass("disabled_symbol").css("cursor", "help").click(function(){ disable_hidden_chardin_entries(); chardinJs.start(); });
+	} else {
+		$("#chardinjs_help_icon").addClass("disabled_symbol").css("cursor", "not-allowed").attr("onclick", "").unbind("click");
+	}
+
+}
+
+function create_clip_path_for_element (divname) {
+	var offset_top = $(divname).offset()["top"];
+	var offset_left = $(divname).offset()["left"];
+
+	var width = $(divname).width();
+	var height = $(divname).height();
+
+	var left = offset_left;
+	var right = left + width;
+
+	var top_y = offset_top;
+	var bottom_y = top_y + height;
+
+	var string = `polygon(
+	0 0,            /* ganz oben links */
+	0 100%,         /* ganz unten links */
+
+	${left}px 100%,       /* abschluss links */
+
+	${left}px ${top_y}px,        /* frame oben links */
+	${right}px ${top_y}px,        /* frame oben rechts*/
+
+	${right}px ${bottom_y}px,        /* frame unten rechts */
+	${left}px ${bottom_y}px,        /* frame unten links */
+
+	${left}px 100%,       /* abschluss rechts */
+
+	100% 100%,      /* ganz unten rechts */
+	100% 0          /* ganz oben rechts */
+	);
+	`;
+	return string;
 }

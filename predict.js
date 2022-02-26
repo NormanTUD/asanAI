@@ -39,8 +39,8 @@ let predict_demo = async function (item, nr) {
 			await get_label_data();
 		}
 		let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-		if($("#divide_by_255").is(":checked")) {
-			tensorImg = tf.div(tensorImg, 255);
+		if($("#divide_by").val() != 1) {
+			tensorImg = tf.div(tensorImg, parseFloat($("#divide_by").val()));
 		}
 
 		var predictions = await model.predict([tensorImg], [1, 1]).dataSync();
@@ -64,7 +64,7 @@ let predict_demo = async function (item, nr) {
 				var probability = predictions[i];
 				var str = label + ": " + probability + "<br>\n";
 				if(i == max_i) {
-					str = "<b>" + str + "</b><br>";
+					str = "<b style='color: green'>" + str + "</b>";
 				}
 				desc.append(str);
 			}
@@ -98,8 +98,8 @@ async function predict (item) {
 	try {
 		if(category == "image") {
 			let tensorImg = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-			if($("#divide_by_255").is(":checked")) {
-				tensorImg = tf.div(tensorImg, 255);
+			if($("#divide_by").val() != 1) {
+				tensorImg = tf.div(tensorImg, parseFloat($("#divide_by").val()));
 			}
 
 			predictions = await model.predict([tensorImg], [1, 1]).dataSync();
@@ -151,16 +151,27 @@ async function predict (item) {
 	}
 }
 
-function show_prediction () {
+function show_prediction (keep_show_after_training_hidden) {
 	hide_unused_layer_visualization_headers();
 
-	$(".show_after_training").show();
+	if(!keep_show_after_training_hidden) {
+		$(".show_after_training").show();
+	}
+
 	$("#example_predictions").html("");
 	$("#own_files").show();
+
 	if($("#dataset_category").val() == "image") {
 		var full_dir = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/example/";
-		$("#example_predictions").append("<img src='" + full_dir + "0.jpg' onload='predict_demo(this, 0)' /><br><div class='predict_demo_result'></div>");
-		$("#example_predictions").append("<img src='" + full_dir + "1.jpg' onload='predict_demo(this, 1)' /><br><div class='predict_demo_result'></div>");
+		$.ajax({
+			url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=' + $("#dataset_category").val() + "&examples=1",
+			success: function (x) { 
+				var examples = x["example"];
+				for (var i = 0; i < examples.length; i++) {
+					$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+				}
+			}
+		});
 	} else if ($("#dataset_category").val() == "logic") {
 		$("#own_files").hide();
 		$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");

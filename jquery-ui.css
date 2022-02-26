@@ -849,7 +849,7 @@ button.ui-button::-moz-focus-inner {
 	white-space: nowrap;
 }
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	padding: 1em 1em;
+	padding: 0em 1em;
 	text-decoration: none;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {

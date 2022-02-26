@@ -1,19 +1,20 @@
 {
+	"name": "Cat or dog",
 	"comment": "model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])",
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",
-	"epochs": 5,
-	"batchSize": 40,
+	"epochs": 30,
+	"batchSize": 20,
 	"validationSplit": 20,
 
 	"width": 32,
 	"height": 32,
 
-	"learning_rate": 0.00001,
+	"learningRate": 0.00001,
 	"rho": 0.8999999761581421,
 	"decay": 0,
 	"epsilon": 0.0000001,
 
-	"divide_by_255": 1
+	"divide_by": 255
 }

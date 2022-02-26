@@ -13,10 +13,10 @@ function list_files_in_dir ($dir, $max_number_of_files_per_category) {
 	return $files;
 }
 
-function list_dir ($folder, $max_number_of_files_per_category) {
+function list_dir ($folder, $max_number_of_files_per_category, $examples) {
 	$struct = [];
 	foreach (scandir($folder) as $this_folder) {
-		if($this_folder != "." && $this_folder != ".." && $this_folder != "example") {
+		if($this_folder != "." && $this_folder != ".." && ((!$examples && $this_folder != "example") || $examples)) {
 			$struct[$this_folder] = list_files_in_dir("$folder/$this_folder", $max_number_of_files_per_category);
 		}
 	}
@@ -26,6 +26,7 @@ function list_dir ($folder, $max_number_of_files_per_category) {
 
 $dataset_category = $_GET['dataset_category'];
 $dataset = $_GET['dataset'];
+$examples = array_key_exists("examples", $_GET);
 $max_number_of_files_per_category = $_GET['max_number_of_files_per_category'];
 if(is_numeric($max_number_of_files_per_category)) {
 	$max_number_of_files_per_category = (int)$max_number_of_files_per_category;
@@ -36,7 +37,7 @@ if(is_numeric($max_number_of_files_per_category)) {
 if(preg_match("/^\w+$/", $dataset_category)) {
 	if(preg_match("/^\w+$/", $dataset)) {
 		$folder = $dataset_category."/".$dataset;
-		$dir = list_dir($folder, $max_number_of_files_per_category);
+		$dir = list_dir($folder, $max_number_of_files_per_category, $examples);
 		$json = json_encode($dir, JSON_PRETTY_PRINT);
 		print $json;
 	} else {
