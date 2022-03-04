@@ -4,6 +4,7 @@ function init_tabs () {
 	var tabs_settings = {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
+			hide_annoying_tfjs_vis_overlays();
 		}
 	};
 
@@ -61,13 +62,14 @@ function init_set_all_options () {
 function init_page_contents (chosen_dataset) {
 	global_disable_auto_enable_valid_layer_types = true;
 	disable_show_python_and_create_model = true;
+
 	$("#width").val(width);
 	$("#height").val(height);
 
 	$("#upload_own_data_group").hide();
 	$("#train_data_set_group").hide();
 
-	init_dataset_category().then(() => {
+	init_dataset_category(1).then(() => {
 		global_disable_auto_enable_valid_layer_types = true;
 		set_batchSize(5);
 	});
@@ -107,7 +109,7 @@ function init_page_contents (chosen_dataset) {
 
 	set_config();
 
-	write_descriptions();
+	//write_descriptions();
 }
 
 function dataset_already_there (dataset_name) {
@@ -159,12 +161,13 @@ function init_categories () {
 }
 
 $(document).ready(function() {
+	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 	init_tabs();
 	init_set_all_options();
 	init_categories();
 
-	$("#dataset_category").val("image");
-	$("#dataset_category").trigger("change");
+	$("#dataset_category").val("image"); //.trigger("change");
+	//go_to_own();
 
 	init_page_contents();
 
@@ -190,5 +193,7 @@ $(document).ready(function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
-	set_config();
+	//set_config();
+	
+	show_or_hide_load_weights();
 });

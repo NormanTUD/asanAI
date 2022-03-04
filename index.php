@@ -37,6 +37,7 @@
 		<!-- my own js stuff -->
 		<script src="safety.js"></script>
 		<script src="variables.js"></script>
+		<script src="tests.js"></script>
 		<script src="model.js"></script>
 		<script src="explain.js"></script>
 		<script src="data.js"></script>
@@ -79,7 +80,7 @@
 	</head>
 	<body style="margin: 0px;" data-chardin-sequenced="true">
 		<div id="ribbon" style="width:100%; height: 164px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
-			<ul id="tablist" style="background: darkgray">
+			<ul id="tablist" style="background: #bbddfd">
 				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="model.save('downloads://mymodel')">&#128190;</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 				<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
@@ -95,11 +96,11 @@
 							<option value="own">Own data</option>
 						</select>
 						<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="dataset_div">
-							<select id="dataset" onchange="show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
+							<select id="dataset" onchange="chose_dataset();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
 							</select>
 						</div>
 
-						<button onclick="init_page_contents($('#dataset').val())">Reset model</button><br>
+						<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset model</button><br>
 						<button id="load_weights_button" style="display: none" onclick="load_weights()" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
 					</div>
 					<div class="ribbon-group-title">Example datasets</div>
@@ -131,13 +132,18 @@
 								<td>Metric:</td>
 								<td style="width: 220px">
 									<select id="metric" onchange="change_metrics()" style="width: 200px">
-										<option value="accuracy">Accuracy</option>
-										<option value="mse">MeanSquaredError</option>
-										<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
-										<option value="binaryAccuracy">BinaryAccuracy</option>
-										<option value="categoricalAccuracy">CategoricalAccuracy</option>
-										<option value="precision">Precision</option>
-										<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
+										<option value="binaryAccuracy">binaryAccuracy</option>
+										<option value="categoricalAccuracy">categoricalAccuracy</option>
+										<option value="precision">precision</option>
+										<option value="categoricalCrossentropy">categoricalCrossentropy</option>
+										<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
+										<option value="mse">mse</option>
+										<option value="MSE">MSE</option>
+										<option value="mae">mae</option>
+										<option value="MAE">MAE</option>
+										<option value="mape">mape</option>
+										<option value="MAPE">MAPE</option>
+										<option value="cosine">cosine</option>
 									</select>
 								</td>
 							</tr>
@@ -183,19 +189,19 @@
 
 				<div id="image_resize_dimensions">
 					<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-						<div class="ribbon-toolbar" style="width:320px">
+						<div class="ribbon-toolbar" style="width:200px">
 							<table>
 								<tr>
 									<td>Width:</td>
-									<td><input type="number" min="1" max="255" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 85%;" /></td>
+									<td><input type="number" min="1" max="255" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
 								</tr>
 								<tr>
 									<td>Height:</td>
-									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 85%;" /></td>
+									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 								</tr>
 								<tr>
-									<td>Max. images/category (0 = no limit):</td>
-									<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 85%;" /></td>
+									<td>Images/category:</td>
+									<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 50px" /></td>
 								</tr>
 							</table>
 						</div>
@@ -209,6 +215,7 @@
 						<table>
 							<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
 							<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
+							<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
 						</table>
 					</div>
 					<div class="ribbon-group-title">Hyperparameters</div>
@@ -218,25 +225,17 @@
 				<div class="ribbon-group" data-intro="Show shapes of tensors. Can only be edited in 'own'-data mode or via the Image options when using the dataset-category 'images'.">
 					<div class="ribbon-toolbar" style="width:180px">
 						<table>
-							<tr><td>Input:</td><td><input type="text" value="" style="width: 95px;" onchange="updated_page()" onkeyup="updated_page()" readonly id="inputShape" /></td></tr>
+							<tr><td>Input:</td><td><input type="text" value="" style="width: 95px;" onchange="update_input_shape()" readonly id="inputShape" /></td></tr>
 							<tr><td>Output:</td><td><input type="text" value="" style="width: 95px;" readonly id="outputShape" /></td></tr>
 						</table>
 					</div>
 					<div class="ribbon-group-title">Shapes</div>
 				</div>
 
-				<div id="recompile_tab" style="display: none">
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group">
-						<button style="width: 100%" onclick="model_is_trained=false;compile_model();">Recompile model</button><br>
-						<div class="ribbon-group-title">Recompile</div>
-					</div>
-				</div>
-
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 					<div class="ribbon-toolbar" style="width:100px">
-						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start&nbsp;training</button><br>
+						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start training</button><br>
 					</div>
 					Validation-Split (in %): <input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /><br>
 					Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
@@ -248,14 +247,15 @@
 			<div id="tf_ribbon" class="ribbon_tab_content" title="TensorFlow">
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar">
-						<fieldset id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
+						<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
 							<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer">
 							<label for="svg_renderer">CPU</label>
 
 							<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer" checked>
 							<label for="webgl_renderer">WebGL</label>
 						</fieldset>
-						<fieldset id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
+						<hr>
+						<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
 							<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
 							<label for="amateur">Amateur</label>
 
@@ -458,17 +458,17 @@
 					<div class="ribbon-group-title">FCNN style settings</div>
 				</div>
 				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" style="width: 400px;">
+				<div class="ribbon-group" style="width: 300px;">
 					<div class="ribbon-toolbar">
 						<table>
 							<tr data-intro="Show the current layer live in the FCNN-style-view">
-								<td>Highlight current layer?</td>
+								<td>Highlight layer?</td>
 								<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
 							</tr>
 							<tr>
 								<td>AlexNet-Renderer</td>
 								<td>
-									<fieldset id="alexnet_renderer"> 
+									<fieldset style="border-width: 0px" id="alexnet_renderer"> 
 										<!--<legend>AlexNet-renderer:</legend> -->
 										<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer" checked>
 										<label for="webgl_renderer">WebGL</label>
@@ -480,6 +480,10 @@
 							<tr data-intro="Show a counter on the layers that increases every time that layer gets called.">
 								<td>Call counter?</td>
 								<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
+							</tr>
+							<tr data-intro="Show the input layers in FCNN/AlexNet visualizations.">
+								<td>Show input layer?</td>
+								<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 							</tr>
 						</table>
 					</div>
@@ -501,7 +505,7 @@
 								</tr>
 								<tr data-intro="If this is checked, it starts with a single example image (if available)">
 									<td>Use example image as base?</td>
-									<td><input type="checkbox" value="1" id="use_example_image_as_base" checked /></td>
+									<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
 								</tr>
 							</table>
 						</div>
@@ -521,6 +525,10 @@
 							<tr>
 								<td>Show kernel images:</td>
 								<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
+							</tr>
+							<tr>
+								<td>Enable TF-Debug:</td>
+								<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
 							</tr>
 						</table>
 					</div>
@@ -677,12 +685,14 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 							</div>
 							<div id="lenet_tab">
 								<div id="lenet"></div>
+								<button onclick='reset_view()'>Reset view</button>
 								<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 							</div>
 							<div id="layer_visualizations_tab" "display: none">
 							</div>
 							<div id="fcnn_tab">
 								<div id="fcnn"></div>
+								<button onclick='reset_view()'>Reset view</button>
 								<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
 							</div>
 							<div id="activation_plot_tab">
@@ -754,7 +764,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 							<div id="training_data_tab">
 								<div id="percentage" class="reset_before_train_network"></div>
-								<div id="photos" style="max-height: 400px; overflow-y: auto" class="reset_before_train_network"></div>
+								<div id="photos" style="height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div class="container" id="download_data" style="display: none"></div>
 							</div>
 
@@ -785,7 +795,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 									</div>
 
 									<button onclick="show_prediction(1);">Show prediction or re-predict</button>
-									<h2>Examples</h2>
+									<h2 class="show_when_predicting" style="display: none">Examples</h2>
 
 									<div id="example_predictions">
 									</div>
@@ -919,6 +929,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					fcnn.redistribute({'betweenNodesInLayer_': betweenNodesInLayer});
 				} else {
 				}
+				reset_view();
                         }
 
 			var alexnet = AlexNet();
@@ -935,21 +946,21 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
 						var category = layer_options[layer_type].category;
 
-						if(category == "Convolutional" || category == "Pooling") {
+						if(category == "Convolutional") {
 							var this_layer_arch = {};
-							var input_layer = model.layers[i].getInputAt(0);
+							var input_layer_shape = model.layers[i].getOutputAt(0).shape;
 
-							var layer_config = model.layers[i].getConfig();
 							var push = 0;
 
 							try {
-								this_layer_arch["height"] = input_layer["shape"][1];
-								this_layer_arch["width"] = input_layer["shape"][2];
-								this_layer_arch["depth"] = input_layer["shape"][3];
-								this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
-								this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
-								this_layer_arch["rel_x"] = random(-0.1,0.1);
-								this_layer_arch["rel_y"] = random(-0.1,0.1);
+								this_layer_arch["height"] = input_layer_shape[1];
+								this_layer_arch["width"] = input_layer_shape[2];
+								this_layer_arch["depth"] = input_layer_shape[3];
+								this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
+								this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
+								this_layer_arch["rel_x"] = random(-0.1, 0.1);
+								this_layer_arch["rel_y"] = random(-0.1, 0.1);
+
 								if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
 									push = 1;
 								}
@@ -967,6 +978,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 									architecture2.push(units_at_layer);
 								}
 							} catch (e) {
+								log(e);
 								return;
 							}
 						} else {
@@ -982,16 +994,21 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				try {
 					if(architecture.length && architecture2.length) {
 						try {
-							var shown_input_layer = {}
-							shown_input_layer["height"] = get_input_shape()[0];
-							shown_input_layer["width"] = get_input_shape()[1];
-							shown_input_layer["depth"] = 1;
-							shown_input_layer["filterWidth"] = 1;
-							shown_input_layer["filterHeight"] = 1;
-							shown_input_layer["rel_x"] = random(-0.1,0.1);
-							shown_input_layer["rel_y"] = random(-0.1,0.1);
+							if(show_input_layer) {
+								var shown_input_layer = {};
+								var input_shape = get_input_shape();
+								shown_input_layer["height"] = input_shape[0];
+								shown_input_layer["width"] = input_shape[1];
+								shown_input_layer["depth"] = input_shape[2];
+								shown_input_layer["filterWidth"] = 1;
+								shown_input_layer["filterHeight"] = 1;
+								shown_input_layer["rel_x"] = random(-0.1,0.1);
+								shown_input_layer["rel_y"] = random(-0.1,0.1);
 
-							architecture.unshift(shown_input_layer);
+								architecture.unshift(shown_input_layer);
+							}
+
+							alexnet.restartRenderer();
 							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
 						} catch (e) {
 							console.warn(e);
@@ -1012,6 +1029,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					$("#alexnet_tab_label").show();
 					if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
 				}
+				reset_view();
                         }
 
 			var lenet = LeNet();
@@ -1021,6 +1039,10 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				architecture = [];
 				architecture2 = [];
 
+				var j = 0;
+				if(!show_input_layer) {
+					j--;
+				}
 				for (var i = 0; i < get_numberoflayers(); i++) {
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
@@ -1033,7 +1055,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 						if((category == "Convolutional" || category == "Pooling") && layer_type.endsWith("2d")) {
 							var this_layer_arch = {};
 							this_layer_arch["op"] = layer_type;
-							this_layer_arch["layer"] = i + 1;
+							this_layer_arch["layer"] = ++j;
 
 							var layer_config = model.layers[i].getConfig();
 							var push = 0;
@@ -1044,8 +1066,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								push = 1;
 							} else if("poolSize" in layer_config) {
 								var output_size_this_layer = output_size_at_layer(get_input_shape(), i);
-								this_layer_arch["filterWidth"] = output_size_this_layer[1];
-								this_layer_arch["filterHeight"] = output_size_this_layer[2];
+								this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
+								this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
 								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
 								push = 1;
 							}
@@ -1082,19 +1104,23 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 				try {
 					if(architecture.length > 1 && architecture2.length) {
-						var shown_input_layer = {}
-						shown_input_layer["filterWidth"] = get_input_shape()[0];
-						shown_input_layer["filterHeight"] = get_input_shape()[1];
-						shown_input_layer["numberOfSquares"] = 1;
-						shown_input_layer["squareWidth"] = get_input_shape()[0];
-						shown_input_layer["squareHeight"] = get_input_shape()[1];
-						architecture.unshift(shown_input_layer);
+						if(show_input_layer) {
+							var shown_input_layer = {}
+							shown_input_layer["op"] = "Input Layer";
+							shown_input_layer["layer"] = 0;
+							shown_input_layer["filterWidth"] = get_input_shape()[0];
+							shown_input_layer["filterHeight"] = get_input_shape()[1];
+							shown_input_layer["numberOfSquares"] = 1;
+							shown_input_layer["squareWidth"] = get_input_shape()[0];
+							shown_input_layer["squareHeight"] = get_input_shape()[1];
+							architecture.unshift(shown_input_layer);
+						}
 
 						try {
 							lenet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
 							lenet.redistribute({'betweenLayers_': []});
 						} catch (e) {
-
+							log(e);
 						}
 					} else {
 						disable_lenet = 1;
@@ -1102,9 +1128,9 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				} catch (e) {
 					log("ERROR: ");
 					log(e);
-					log(architecture);
 					disable_lenet = 1;
 				}
+
 
 				if(disable_lenet) {
 					$("#lenet_tab_label").hide();
@@ -1119,6 +1145,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 						clicked_on_tab = 1;
 					}
 				}
+
+				reset_view();
 			}
 
 			

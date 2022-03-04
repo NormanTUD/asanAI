@@ -2,8 +2,10 @@ function getClipPathPolygon (element) {
 	var offset_top = parseInt($(element).offset()["top"]);
 	var offset_left = parseInt($(element).offset()["left"]);
 
-	var width = parseInt($(element)[0].scrollWidth);
-	var height = parseInt($(element)[0].scrollHeight);
+	//var width = parseInt($(element)[0].scrollWidth);
+	//var height = parseInt($(element)[0].scrollHeight);
+	var width = $(element)[0].getBoundingClientRect()["width"]
+	var height = $(element)[0].getBoundingClientRect()["height"]
 
 	var left = offset_left;
 	var right = left + width;

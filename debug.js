@@ -56,6 +56,7 @@ function add_function_debugger () {
 
 	for (var i in window) {
 	    if(
+		    i != "assert" &&							// Disable assert output
 		    !["add_function_debugger", "getParamNames"].includes(i) &&		// exclude debug functions
 		    typeof(window[i]) == "function" &&					// use only functions
 		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
@@ -67,11 +68,17 @@ function add_function_debugger () {
 
 		    var args_string = param_names.join(", "); 
 
+		    var args_string_str = "";
+		    if(param_names.length)  {
+			    args_string_str = param_names.join(" + ', ' + ");
+		    }
+
 		    try {
 			    var execute_this = `
 			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
 			    window["${i}"] = function (${args_string}) {
-					console.log("${i}");
+					call_depth = call_depth + 1;
+					console.log("    ".repeat(call_depth) + "${i}(" + ${args_string_str} + ")");
 					var _start_time = + new Date();
 					if(!Object.keys(function_times).includes("${i}")) {
 						function_times["${i}"] = {};
@@ -83,6 +90,7 @@ function add_function_debugger () {
 					function_times["${i}"]["whole_time"] = function_times["${i}"]["whole_time"] + (_end_time - _start_time);
 					function_times["${i}"]["call_count"] = function_times["${i}"]["call_count"] + 1;
 
+					call_depth = call_depth - 1;
 					return result;
 			    }
 			    `;
@@ -95,5 +103,14 @@ function add_function_debugger () {
 			    window[i] = original_function;
 		    }
 	    }
+	}
+}
+
+function tf_debug () {
+	if($("#enable_tf_debug").is(":checked")) {
+		tf.enableDebugMode();
+	} else {
+		console.warn("Disabled debug mode");
+		tf.enableProdMode();
 	}
 }

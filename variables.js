@@ -200,7 +200,6 @@ var layer_options = {
 		],
 		"category": "Basic"
 	},
-	/*
 	"reshape": {
 		"description": "Reshapes an input to a certain shape.",
 		"options": [
@@ -208,7 +207,6 @@ var layer_options = {
 		],
 		"category": "Basic"
 	},
-	*/
 
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU).<br>It follows: <tt>f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0</tt>.",
@@ -565,8 +563,6 @@ var layer_options_defaults = {
 	"max_value": 1,
 	"stddev": 1,
 	"implementation": 1,
-	"kernel_size": "[]",
-	"pool_size": "[]",
 
 	"recurrent_constraint": null,
 	"bias_constraint": null,
@@ -685,3 +681,9 @@ var function_times = {};
 var number_of_initialized_layers = 0;
 
 var is_setting_config = false;
+
+var call_depth = 0;
+
+var model_config_hash = "";
+
+var show_input_layer = true;

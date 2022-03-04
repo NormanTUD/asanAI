@@ -152,6 +152,8 @@ async function predict (item) {
 }
 
 function show_prediction (keep_show_after_training_hidden) {
+	$(".show_when_predicting").show();
+
 	hide_unused_layer_visualization_headers();
 
 	if(!keep_show_after_training_hidden) {
@@ -182,5 +184,6 @@ function show_prediction (keep_show_after_training_hidden) {
 
 	if($("#jump_to_predict_tab").is(":checked")) {
 		$('a[href="#predict_tab"]').click();
+		hide_annoying_tfjs_vis_overlays();
 	}
 }

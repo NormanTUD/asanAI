@@ -174,6 +174,7 @@ function LeNet() {
 			.text(d => (showLabels ? d.op : ""))
 			.attr("class", "text")
 			.attr("dy", ".35em")
+			.attr("dx", "-6.5em")
 			.style("font-size", "16px")
 			.attr("font-family", "sans-serif");
 
@@ -247,10 +248,27 @@ function LeNet() {
 		text.attr('x', d => (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer + 1] + layer_widths[d.layer + 1]/2)/2 + screen_center_x - 15)
 			.attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width);
 
+		text.attr('x', d => (ddd("A", layer_x_offsets[d.layer]) + ddd("B", layer_widths[d.layer], d.layer) + ddd("C", layer_x_offsets[d.layer + 1], d.layer + 1) + ddd("E", layer_widths[d.layer + 1])/2)/2 + screen_center_x - 15)
+			.attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width);
+
+
 		console.error = old_error;
 
 		info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x).attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
 		fit_to_screen();
+	}
+
+	function ddd (place, d, e) {
+		if(typeof(d) === "undefined") {
+			return 0;
+			/*
+			console.log(place + ": " + d + " (" + typeof(d) + ")");
+			if(e) {
+				log(e);
+			}
+			*/
+		}
+		return d;
 	}
 
 	function style(

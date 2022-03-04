@@ -117,9 +117,6 @@ async function get_image_data(skip_real_image_download) {
 
 	urls = shuffle(urls);
 
-	var old_percentage = 0;
-	var start_time = Math.floor(Date.now() / 1000);
-
 	var percentage_div = $("#percentage");
 
 	if(!skip_real_image_download) {
@@ -127,22 +124,26 @@ async function get_image_data(skip_real_image_download) {
 		percentage_div.show();
 	}
 
-	for (var i = 1; i < urls.length; i++) {
+	var old_percentage, eta;
+
+	var times = [];
+
+	for (var i = 0; i < urls.length; i++) {
+		var start_time = Date.now();
 		if(started_training) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!skip_real_image_download) {
-				percentage_div.html(percentage + "% (" + i + " of " + urls.length + ") loaded...");
-				old_percentage = percentage;
-
-				if(percentage > 20) {
-					var current_time = Math.floor(Date.now() / 1000);
-					var time_diff = current_time - start_time;
-					var avg_time_per_image = time_diff / i;
-					var remaining_items = urls.length - i;
-
-					var eta = parseInt(remaining_items * avg_time_per_image);
-
+				percentage_div.html(percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...");
+				if(eta) {
 					percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
+				}
+
+				if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+					var remaining_items = urls.length - i;
+					var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
+
+					eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
+					old_percentage = percentage;
 				}
 			}
 			var url = urls[i];
@@ -154,6 +155,9 @@ async function get_image_data(skip_real_image_download) {
 				data[keys[url]].push(tf_data);
 			}
 		}
+		var end_time = Date.now();
+
+		times.push(end_time - start_time);
 	}
 
 	if(!skip_real_image_download) {
@@ -238,6 +242,8 @@ async function get_xs_and_ys () {
 		xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 	}
 
+	$("#reset_data").show();
+
 	return xy_data;
 }
 
@@ -278,4 +284,39 @@ function determine_input_shape () {
 async function _get_training_data() {
 	const data = await $.getJSON("traindata/index.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
 	return data;
+}
+
+
+
+function median(values){
+	if(values.length ===0) throw new Error("No inputs");
+
+	values.sort(function(a,b){
+		return a-b;
+	});
+
+	var half = Math.floor(values.length / 2);
+
+	if (values.length % 2)
+		return values[half];
+
+	return (values[half - 1] + values[half]) / 2.0;
+}
+
+
+
+function decille (arr, percentage) {
+	arr.sort();
+	var len = arr.length;
+	var per =  Math.floor(len*percentage) - 1;
+
+	return per;
+}
+
+function reset_data () {
+	xy_data["x"].dispose();
+	xy_data["y"].dispose();
+
+	xy_data = null;
+	$('#reset_data').hide();
 }

@@ -1,78 +1,90 @@
 "use strict";
 
-function compile_model () {
-	var recompile_now = true;
+function except (errname, e) {
+	enable_everything();
+	console.warn(errname + ": " + e + " Resetting model.");
+	//console.trace();
+	$("#error").html(e);
+	$("#error").parent().show();
+	if(throw_compile_exception) { throw e; }
+}
 
-	var recompiled = false;
+function get_model_config_hash () {
+	var arr = [];
+	$("#layers_container").find("input, checkbox, select").each(function (i, x) {
+		if($(x).attr("type") == "checkbox") {
+			arr.push($(x).is(":checked"));
+		} else {
+			arr.push($(x).val());
+		}
+	});
+
+	var str = arr.join(";;;;;;;;;");
+
+	return md5(str);
+}
+
+function _create_model () {
+	try {
+		model = create_model(model);
+		$("#error").html("");
+		$("#error").parent().hide();
+	} catch (e) {
+		except("ERROR1", e);
+	}
+
+	if(!disable_layer_debuggers) {
+		add_layer_debuggers();
+	}
+
+}
+
+function compile_model () {
+	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
+
+	var recreate_model = false;
+
+	if(model_config_hash != get_model_config_hash()) {
+		recreate_model = true;
+	}
 
 	if(model_is_trained) {
-		recompile_now = confirm("The model has been trained. You changed something. This needs a recompile to take action. Recompiling loses the trained weights/filters. Do you want to recompile and lose the training process?");
-		if(!recompile_now) {
-			$("#recompile_tab").show();
-			set_ribbon_min_width();
+		if(model_config_hash == get_model_config_hash()) {
+			recreate_model = false;
 		} else {
-			model_is_trained = false;
+			Swal.fire(
+				'Weights/filters lost!',
+				"The model has been trained. " +
+				"You changed something. " +
+				"This needed a recompile to take action. " +
+				"Recompiling lost the trained weights/filters.",
+				'warning'
+			)
+
+			recreate_model = true;
+			if(recreate_model) {
+				model_is_trained = false;
+			}
 		}
 	}
 
-	if(recompile_now) {
-		$("#recompile_tab").hide();
-		set_ribbon_min_width();
+	if(recreate_model) {
 		model_is_trained = false;
 		reset_summary();
-		if(get_numberoflayers() >= 1) {
-			try {
-				var go_on = false;
-
-				try {
-					model = create_model(model);
-					go_on = true;
-					$("#error").html("");
-					$("#error").parent().hide();
-				} catch (e) {
-					enable_everything();
-					console.warn("ERROR1: " + e + " Resetting model.");
-					//console.trace();
-					$("#error").html(e);
-					$("#error").parent().show();
-					if(throw_compile_exception) { throw e; }
-				}
-
-				if(!disable_layer_debuggers) {
-					add_layer_debuggers();
-				}
-
-				if(go_on) {
-					try {
-						model.compile(get_model_data());
-						write_model_summary();
-						$("#outputShape").val(JSON.stringify(model.outputShape));
-						recompiled = true;
-					} catch (e) {
-						enable_everything();
-						console.warn("ERROR2: " + e + " Resetting model.");
-						console.trace();
-						$("#error").html(e);
-						$("#error").parent().show();
-						if(throw_compile_exception) { throw e; }
-					}
-				}
-			} catch (e) {
-				enable_everything();
-				console.warn("ERROR3: " + e + " Resetting model.");
-				console.trace();
-				$("#error").html(e);
-				$("#error").parent().show();
-				if(throw_compile_exception) { throw e; }
-			}
-		} else {
-			console.warn("Need at least 1 layer. Not there yet...");
-		}
-	} else {
-		log("Not recompiling now");
+		_create_model();
 	}
 
-	return recompiled;
+	try {
+		model_config_hash = get_model_config_hash();
+		model.compile(get_model_data());
+	} catch (e) {
+		except("ERROR2", e);
+	}
+
+	$("#outputShape").val(JSON.stringify(model.outputShape));
+
+	write_model_summary();
+	set_ribbon_min_width();
 }
 
 function get_data_for_layer (type, i, first_layer) {
@@ -92,27 +104,33 @@ function get_data_for_layer (type, i, first_layer) {
 		var option_name = layer_options[type]["options"][j];
 		assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
 
-		if(option_name == "pool_size") {
-			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "pool_size_x")), parseInt(get_item_value(i, "pool_size_y"))];
-		} else if(option_name == "kernel_size") {
-			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "kernel_size_x")), parseInt(get_item_value(i, "kernel_size_y"))];
-		} else if(option_name == "trainable") {
-			data[get_js_name("trainable")] = get_item_value(i, "trainable");
-		} else if(option_name == "use_bias") {
-			data[get_js_name("useBias")] = get_item_value(i, "use_bias");
-		} else if(option_name == "strides") {
-			data[get_js_name(option_name)] = [parseInt(get_item_value(i, "strides_x")), parseInt(get_item_value(i, "strides_y"))];
-		} else if(option_name == "size") {
-			data[get_js_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
-		} else if(option_name == "dilation_rate") {
-			data[get_js_name(option_name)] = eval("[" + get_item_value(i, "dilation_rate") + "]");
+		if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
+			if(type.endsWith("1d")) {
+				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x"))];
+			} else if(type.endsWith("2d")) {
+				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y"))];
+			} else if(type.endsWith("3d")) {
+				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y")), parseInt(get_item_value(i, option_name + "_z"))];
+			} else {
+				alert("Unknown layer type: " + type);
+			}
+
+		} else if(["trainable", "use_bias"].includes(option_name) ) {
+			data[get_js_name(option_name)] = get_item_value(i, option_name);
+
+		} else if(["size", "dilation_rate"].includes(option_name)) {
+			data[get_js_name(option_name)] = eval("[" + get_item_value(i, option_name) + "]");
+
 		} else if(option_name == "rate") {
 			data["rate"] = parseFloat(get_item_value(i, "dropout"));
+
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
 			data[get_js_name(option_name)] = parseFloat(get_item_value(i, option_name));
+
 		} else if(option_name == "activation" && $($($($(".layer_setting")[i]).find("." + option_name)[0])).val() == "None") {
 			// Do nothing if activation = None 
 			data["activation"] = null;
+
 		} else {
 			var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
 			var value = $(elem).val();
@@ -177,7 +195,7 @@ function get_model_structure() {
 	return structure;
 }
 
-function is_integer_array (value) {
+function is_number_array (value) {
 	if(typeof(value) == "object") {
 		for (var i = 0; i < value.length; i++) {
 			if(typeof(value[i]) != "number") {
@@ -191,9 +209,11 @@ function is_integer_array (value) {
 }
 
 function is_valid_parameter (keyname, value, layer) {
+	/*
 	assert(typeof(keyname) == "string", "keyname " + keyname + " is not a string but " + typeof(keyname));
 	assert(["string", "number", "boolean", "object"].includes(typeof(value)), value + " is not a string/number/boolean but " + typeof(value));
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
+	*/
 
 	if(
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
@@ -203,11 +223,11 @@ function is_valid_parameter (keyname, value, layer) {
 		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
 		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
 		(keyname == "activation" && ['elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
-		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_integer_array(value) || typeof(value) == "number")) ||
+		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
-		(keyname == "inputShape" && layer == 0 && is_integer_array(value)) ||
-		(keyname == "targetShape" && is_integer_array(value)) ||
+		(keyname == "inputShape" && layer == 0 && is_number_array(value)) ||
+		(keyname == "targetShape" && is_number_array(value)) ||
 		(["alpha", "stddev", "depthMultiplier"].includes(keyname) && typeof(value) == "number") ||
 		(keyname == "axis" && typeof(value) == "number" && parseInt(value) == value) ||
 		(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
@@ -225,7 +245,31 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
+function clean_tf_model_tensors () {
+	if(Object.keys(model).includes("layers")) {
+		for (var i = 0; i < model.layers.length; i++) {
+			if(Object.keys(model.layers[i]).includes("weights")) {
+				for (var j = 0; j < model.layers[i]["weights"].length; j++) {
+					model.layers[i]["weights"][j].dispose()
+				}
+			}
+		}
+	}
+}
+
+function show_memory_info () {
+	var mem = tf.memory();
+
+	var data_struct = {
+		"MB": mem["numBytes"] / (1024 ** 2),
+		"numTensors": mem["numTensors"]
+	};
+
+	console.table(data_struct);
+}
+
 function create_model (old_model, fake_model_structure) {
+	//show_memory_info();
 	var new_current_status_hash = get_current_status_hash();
 	if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
 		return old_model;
@@ -238,6 +282,8 @@ function create_model (old_model, fake_model_structure) {
 	if(disable_show_python_and_create_model) {
 		return;
 	}
+
+	tf.disposeVariables()
 
 	var new_model = tf.sequential();
 
@@ -285,6 +331,10 @@ function create_model (old_model, fake_model_structure) {
 			has_keys = Object.keys(data);
 		}
 
+		if("targetShape" in data && typeof(data["targetShape"]) == "string") {
+			data["targetShape"] = eval("[" + data["targetShape"] + "]");
+		}
+
 		if("size" in data && typeof(data["size"]) == "string") {
 			data["size"] = eval("[" + data["size"] + "]");
 		}
@@ -318,7 +368,7 @@ function create_model (old_model, fake_model_structure) {
 		new_model.add(tf.layers[type](data));
 
 		node_js += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 2) + "));\n";
-		html += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 14) + "));\n";
+		html += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 2) + "));\n";
 	}
 
 
@@ -341,33 +391,6 @@ function create_model (old_model, fake_model_structure) {
 	}
 
 	return new_model;
-}
-
-function list_all_layer_types_that_dont_have_default_options () {
-	var no_options = [];
-
-	var all_options = [];
-
-	var keys = Object.keys(layer_options);
-
-	for (var i = 0; i < keys.length; i++) {
-		var layer_name = keys[i];
-		for (var j = 0; j < layer_options[layer_name]["options"].length; j++) {
-			var this_option = layer_options[layer_name]["options"][j];
-			if(!all_options.includes(this_option)) {
-				all_options.push(this_option);
-			}
-		}
-	}
-
-	for (var i = 0; i < all_options.length; i++) {
-		var key = all_options[i];
-		if(!key in layer_options_defaults) {
-			no_options.push(key);
-		}
-	}
-
-	log(no_options);
 }
 
 function get_fake_data_for_layertype (layer_nr, layer_type) {
@@ -521,12 +544,10 @@ function get_valid_layer_types (layer_nr) {
 
 	var valid_layer_types = [];
 
-	var layer_types = Object.keys(layer_options);
-
 	$('body').css('cursor', 'wait');
 
-	for (var i = 0; i < layer_types.length; i++) {
-		var layer_type = layer_types[i];
+	for (var i = 0; i < layer_names.length; i++) {
+		var layer_type = layer_names[i];
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
 		} else {

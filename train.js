@@ -22,6 +22,7 @@ function gui_in_training () {
 	$("#train_neural_network_button").html("Stop training");
 	disable_everything();
 	favicon_spinner();
+	write_descriptions();
 }
 
 function gui_not_in_training () {
@@ -44,6 +45,8 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
+	write_descriptions();
+
 	if(started_training || model.isTraining || model.model.isTraining) {
 		model.stopTraining = true;
 		model.model.stopTraining = true;
@@ -58,6 +61,7 @@ async function train_neural_network () {
 
 		run_neural_network();
 	}
+	write_descriptions();
 }
 
 function get_model_data () {
@@ -94,10 +98,13 @@ function get_fit_data () {
 	);
 
 	callbacks["onTrainBegin"] = async function () {
+		hide_annoying_tfjs_vis_overlays();
 		$(".training_performance_tabs").show();
+		hide_annoying_tfjs_vis_overlays();
 	};
 
 	callbacks["onBatchBegin"] = async function () {
+		hide_annoying_tfjs_vis_overlays();
 		if(!started_training) {
 			model.stopTraining = true;
 			model.model.stopTraining = true;
@@ -107,12 +114,14 @@ function get_fit_data () {
 
 			gui_not_in_training();
 		}
+		hide_annoying_tfjs_vis_overlays();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
 		restart_fcnn();
 		favicon_default();
 		show_prediction();
+		hide_annoying_tfjs_vis_overlays();
 	}
 
 	var fit_data = {

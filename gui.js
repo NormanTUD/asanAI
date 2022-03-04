@@ -278,7 +278,7 @@ function visual_help_text (text) {
 
 	$("#visual_help_tab").html("<center>" + text + "</center>");
 
-	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+	//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
 	$("#visualization_tab_label").click();
 	$("#visual_help_tab_label").show();
@@ -338,7 +338,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
 		if(type == "select") {
-			str += "<select class='input_data " + classname + "' onchange='updated_page()'>";
+			str += "<select class='input_field input_data " + classname + "' onchange='updated_page()'>";
 			for (const [key, value] of Object.entries(data)) {
 				str += '<option value="' + key + '">' + value + '</option>';
 			}
@@ -360,10 +360,10 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += '<input class="input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  onchange="updated_page()" onkeyup="updated_page()" />';
+			str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  onchange="updated_page()" onkeyup="updated_page()" />';
 		} else if(type == "number") {
-			str += "<input class='input_data " + classname + "' type='number' ";
-			
+			str += "<input class='input_field input_data " + classname + "' type='number' ";
+
 			if("min" in data) {
 				str += " min=" + data["min"] + " ";
 			}
@@ -644,7 +644,6 @@ async function _get_configuration (index) {
 	var data = undefined;
 	if(index) {
 		if(Object.keys(status_saves).includes(index)) {
-			log("getting " + index);
 			data = {};
 			data["keras"] = JSON.parse(status_saves[index]);
 		} else {
@@ -652,7 +651,8 @@ async function _get_configuration (index) {
 		}
 	}
 
-	if(typeof(data) == "undefined") {
+	//log($("#dataset_category").val());
+	if(typeof(data) == "undefined" && $("#dataset_category").val() != "own") {
 		try {
 			data = await $.getJSON("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json");
 			if(!local_store.getItem("tensorflowjs_models/mymodel")) {
@@ -737,6 +737,7 @@ function change_width_or_height (name, inputshape_index) {
 		set_input_shape("[" + inputShape.join(", ") + "]");
 		eval(name + " = " + value);
 		layer_structure_cache = null;
+		model = create_model();
 		updated_page();
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
@@ -905,10 +906,8 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 		return;
 	}
 
-	var recompiled = false;
-
 	try {
-		recompiled = compile_model();
+		compile_model();
 	} catch (e) {
 		log("There was an error compiling the model" + e);
 	};
@@ -941,9 +940,7 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	add_layer_debuggers();
 
 	if(!disabling_saving_status) {
-		if(recompiled) {
-			save_current_status();
-		}
+		save_current_status();
 	}
 
 	set_ribbon_min_width();
@@ -1110,13 +1107,9 @@ function init_epochs(val) {
 function init_numberoflayers(val) {
 	assert(typeof(val) == "number", "init_numberoflayers(" + val + ") is not an integer but " + typeof(val));
 
-	if(val == number_of_initialized_layers) {
-		return;
-	}
-
 	set_numberoflayers(val);
 
-	show_layers(get_numberoflayers());
+	show_layers(val);
 
 	number_of_initialized_layers = val;
 	updated_page();
@@ -1135,6 +1128,7 @@ function get_option_for_layer_by_type (nr) {
 		});
 		type = $($(".layer_type")[nr]).val();
 		console.log("Cannot determine type of layer " + nr);
+		return;
 	}
 
 	var str = "";
@@ -1345,7 +1339,6 @@ function remove_layer (item) {
 	var number_of_layers_element = document.getElementById("numberoflayers");
 	var old_value = parseInt(number_of_layers_element.value);
 	if(old_value > 1) {
-		save_current_status();
 		$($(item).parent()[0]).parent().remove()
 
 		layer_structure_cache = null;
@@ -1361,6 +1354,7 @@ function remove_layer (item) {
 			$(".remove_layer").prop("disabled", false)
 			$(".remove_layer").show();
 		}
+		save_current_status();
 	} else {
 		Swal.fire({
 			icon: 'error',
@@ -1369,6 +1363,8 @@ function remove_layer (item) {
 		})
 
 	}
+
+	write_descriptions();
 }
 
 function get_element_xpath (element) {
@@ -1388,7 +1384,6 @@ function get_element_xpath (element) {
 function add_layer (item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
-	save_current_status();
 	layer_structure_cache = null;
 
 	$(item).parent().parent().clone().insertAfter($(item).parent().parent());
@@ -1420,6 +1415,8 @@ function add_layer (item) {
 
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
+
+	save_current_status();
 }
 
 function sortable_layers_container (layers_container) {
@@ -1508,7 +1505,7 @@ function show_layers (number) {
 				"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
 				remove +
 				add +
-				"Layer&nbsp;<span class='layer_nr_desc'></span>" +
+				"&rarr;<span class='layer_nr_desc'></span>" +
 				"<span class='call_counter_container'>(<span class='call_counter'>0</span>)&nbsp;</span>" +
 				"<span class='layer_identifier'></span>" +
 				"<table class='configtable'>" + 
@@ -1643,9 +1640,12 @@ async function set_config (index) {
 		if(keras_layers === undefined) {
 			console.warn("Error loading the model");
 			log(config);
+			return;
 		}
 
-		init_numberoflayers(keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0));
+		var number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+
+		init_numberoflayers(number_of_layers);
 
 		if(config["input_shape"]) {
 			set_input_shape(config["input_shape"]);
@@ -1783,6 +1783,11 @@ async function set_config (index) {
 	is_setting_config = false;
 
 	updated_page();
+	if(!index) {
+		save_current_status();
+	}
+
+	restart_lenet();
 }
 
 function show_or_hide_load_weights () {
@@ -1835,7 +1840,15 @@ async function get_number_of_categories () {
 	return num;
 }
 
-async function init_dataset_category () {
+function chose_dataset() {
+	status_saves = [];
+	state_stack = [];
+	future_state_stack = [];
+
+	show_hide_undo_buttons();
+}
+
+async function init_dataset_category (disable_set_config) {
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
@@ -1911,9 +1924,13 @@ async function init_dataset_category () {
 		$("#upload_x").parent().hide();
 		$("#upload_y").hide();
 		$("#upload_y").parent().hide();
-		set_config().then(() => {
-			updated_page(0, 0);
-		});
+		if(!disable_set_config) {
+			set_config().then(() => {
+				updated_page(0, 0);
+			});
+		}
+
+		$("#reset_model").show();
 	} else {
 		$("#train_data_set_group").hide();
 		$("#upload_own_data_group").show();
@@ -1924,12 +1941,16 @@ async function init_dataset_category () {
 		$("#upload_y").parent().show();
 		init_numberoflayers(3);
 		$("#inputShape").attr("readonly", false); 
+		$("#reset_model").hide();
 	}
 
 	init_download_link();
 	init_categories();
 
 	number_of_initialized_layers = 0;
+
+	state_stack = [];
+	future_state_stack = [];
 }
 
 function clean_gui () {
@@ -1943,6 +1964,9 @@ function set_input_shape (val) {
 	assert(typeof(val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof(val));
 
 	$("#inputShape").val(val);
+
+	write_descriptions();
+
 	return get_input_shape();
 }
 
@@ -1960,8 +1984,8 @@ function change_metrics () {
 	$("#metric_equation").html("");
 
 	if(new_metric == "mse") {
-		$("#metric_equation").html("$ \\mathrm{MSE} = \\sum^{N}_{i=1}\\frac{\\left(\\hat{y} - y\\right)^2}{N} $");
-		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+		//$("#metric_equation").html("$ \\mathrm{MSE} = \\sum^{N}_{i=1}\\frac{\\left(\\hat{y} - y\\right)^2}{N} $");
+		//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 	}
 
 	updated_page(1);
@@ -2097,7 +2121,7 @@ function hide_empty_groups (layer_nr) {
 			}
 		}
 
-		log("number_of_enabled_children of " + $($($(".layer_type")[layer_nr]).children()[i]).prop("label") + ": " + number_of_enabled_children);
+		//log("number_of_enabled_children of " + $($($(".layer_type")[layer_nr]).children()[i]).prop("label") + ": " + number_of_enabled_children);
 
 		if(number_of_enabled_children) {
 			$(group).show();
@@ -2156,9 +2180,13 @@ async function save_current_status () {
 
 	var save_this_data = undefined;
 
-	await model.save(tf.io.withSaveHandler(artifacts => {
-		save_this_data = artifacts;
-	}));
+	try {
+		await model.save(tf.io.withSaveHandler(artifacts => {
+			save_this_data = artifacts;
+		}));
+	} catch (e) {
+		except("ERROR3", e);
+	}
 
 	status_saves[index] = JSON.stringify(save_this_data);
 
@@ -2173,9 +2201,11 @@ async function save_current_status () {
 
 function undo () {
 	if(state_stack.length > 1) {
-		var old_index = state_stack.pop();
+		var current_index = state_stack.pop();
 		var this_index = state_stack.pop();
-		future_state_stack.unshift(old_index); // Add to beginning of future_state_stack
+
+		future_state_stack.unshift(current_index); // Add to beginning of future_state_stack
+
 		if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != this_index) {
 			state_stack.push(this_index);
 		}
@@ -2186,7 +2216,7 @@ function undo () {
 		set_config(this_index);
 
 		disabling_saving_status = old_disabling_saving_status;
-	} else {
+	//} else {
 		//log("No undo-stack");
 	}
 
@@ -2207,7 +2237,7 @@ function redo () {
 
 		disabling_saving_status = old_disabling_saving_status;
 
-	} else {
+	//} else {
 		//log("No redo-stack");
 	}
 
@@ -2247,7 +2277,7 @@ function show_hide_undo_buttons () {
 }
 
 function debug_undo_redo_stack () {
-	console.clear();
+	//console.clear();
 
 	header("State-Stack:");
 	log(state_stack);
@@ -2352,6 +2382,7 @@ function get_sum_of_items_childrens_width (item) {
 function get_max_ribbon_width () {
 	return 1600;
 
+	/*
 	// TODO
 	var max_width = 0;
 	$("#ribbon").children().each(function (i, el) {
@@ -2362,6 +2393,7 @@ function get_max_ribbon_width () {
 	});
 
 	return max_width;
+	*/
 }
 
 function set_ribbon_min_width () {
@@ -2475,4 +2507,36 @@ function create_clip_path_for_element (divname) {
 	);
 	`;
 	return string;
+}
+
+function update_input_shape () {
+	set_input_shape("[" + get_input_shape().join() + "]");
+	layer_structure_cache = null;
+	updated_page();
+	//create_model();
+	Prism.highlightAll();
+}
+
+function go_to_own () {
+	header("go_to_own aus der main entfernen");
+	$("#dataset_category").val("own").trigger("change");
+}
+
+function hide_annoying_tfjs_vis_overlays () {
+	if(is_hidden_or_has_hidden_parent($("#tfvis_tab_training_performance_graph"))) {
+		$(".vg-tooltip").addClass("vg-tooltip-hidden");
+	} else {
+		$(".vg-tooltip").removeClass("vg-tooltip-hidden");
+	}
+}
+
+function toggle_show_input_layer () {
+	show_input_layer = !show_input_layer;
+
+	restart_lenet();
+	restart_alexnet();
+}
+
+function reset_view () {
+	$("g").attr("transform", "translate(0,0) scale(1)")
 }

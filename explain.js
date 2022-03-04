@@ -417,6 +417,7 @@ function group_layers () {
                 { "re": "((?:dense;?)+;?(?:dropout)?)", "name": "Classi&shy;fication" },
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
+                { "re": "((?:reshape;?)+;?)", "name": "Change shape" },
                 { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" }
         ];
 
@@ -478,18 +479,20 @@ function write_descriptions () {
 
 			var layer = $(".layer");
 
-			var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 30);
+			if(1 || layer.length) {
+				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 30);
 
-			for (var i = 0; i < groups.length; i++) {
-				var keyname = Object.keys(groups[i])[0];
-				var layers = groups[i][keyname];
-				var last_layer_nr = layers[layers.length - 1];
+				for (var i = 0; i < groups.length; i++) {
+					var keyname = Object.keys(groups[i])[0];
+					var layers = groups[i][keyname];
+					var last_layer_nr = layers[layers.length - 1];
 
-				if(keyname != "null") {
-					var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
-					var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
-					var height = $($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 7;
-					$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;">' + keyname + '</div>').appendTo('#wizard');
+					if(keyname != "null") {
+						var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
+						var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
+						var height = $($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 7;
+						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;">' + keyname + '</div>').appendTo('#wizard');
+					}
 				}
 			}
 		}

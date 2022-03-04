@@ -43,15 +43,6 @@ html {
 	width: 100%;
 }
 
-td {
-	width: 50%;
-}
-
-div.photopile-wrapper {
-	margin: 75px auto;
-	width: 750px;
-}
-
 #output {
 	max-width: 120px;
 	max-height: 120px;
@@ -140,13 +131,11 @@ div.photopile-wrapper {
 }
 
 .left_side {
-	width: 35%;
-	min-width: 600px;
+	min-width: 500px;
 	float: left;
 }
 
 .right_side {
-	margin-left: 37%;
 	overflow: hidden;
 }
 
@@ -171,7 +160,6 @@ input {
 }
 
 .descriptions_of_layers {
-	font-size: 18px;
 	display: flex;
 	position: absolute;
 	justify-content: center;
@@ -341,9 +329,17 @@ select option:disabled {
 }
 
 .layer_setting {
-	min-width: 480px;
+	width: 400px;
 }
 
 .call_counter_container {
 	display: none;
+}
+
+.input_field {
+	width: 100%;
+}
+
+.vg-tooltip-hidden {
+	display: none !important;
 }
