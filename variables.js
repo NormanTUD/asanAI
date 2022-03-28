@@ -898,3 +898,5 @@ var activation_options = {
 };
 
 var prev_layer_data = [];
+
+var cam = null;

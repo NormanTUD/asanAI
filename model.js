@@ -337,8 +337,10 @@ function create_model (old_model, fake_model_structure) {
 	}
 
 	if(model) {
-		old_model.optimizer.dispose();
-		dispose(old_model);
+		if(old_model) {
+			old_model.optimizer.dispose();
+			dispose(old_model);
+		}
 	}
 	tf.disposeVariables();
 

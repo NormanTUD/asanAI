@@ -903,6 +903,14 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<div class="right">
 									<div id="own_files">
 										<h2>Own files</h2>
+
+										<div id="webcam" style="display: none">
+										</div>
+
+										<div id="webcam_prediction"></div>
+
+										<br>
+										
 										<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
 										<div id="predict_own"><textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
 										<img id="output"/><br><br>

@@ -3056,6 +3056,8 @@ function change_data_origin () {
 	} else {
 		$("#training_data_tab_label").show().parent().show();
 	}
+
+	show_webcam();
 }
 
 function auto_adjust_number_of_neurons (n) {

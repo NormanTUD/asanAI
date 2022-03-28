@@ -93,8 +93,7 @@ let predict_demo = async function (item, nr) {
 	tf.engine().endScope();
 }
 
-async function predict (item) {
-	enable_everything();
+function _get_category () {
 	var category = $("#dataset_category").val();
 	if($("#data_origin").val() != "default") {
 		if($("#data_type").val() == "image") {
@@ -103,6 +102,14 @@ async function predict (item) {
 			category = "own";
 		}
 	}
+	return category;
+}
+
+async function predict (item) {
+	enable_everything();
+
+	var category = _get_category();
+
 	$("#prediction").show();
 	$("#prediction").html("");
 	$("#predict_error").hide();
@@ -217,5 +224,88 @@ function show_prediction (keep_show_after_training_hidden) {
 	if($("#jump_to_predict_tab").is(":checked")) {
 		$('a[href="#predict_tab"]').click();
 		hide_annoying_tfjs_vis_overlays();
+	}
+}
+
+function _show_webcam () {
+	if($("#dataset_category").val() == "image") {
+		return true;
+	}
+
+	if($("#data_origin").val() == "own") {
+		if($("#data_type").val() == "image") {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+async function predict_webcam () {
+	tf.engine().startScope();
+	var predict_data = await cam.capture();
+	predict_data = predict_data.resizeNearestNeighbor([width, height]).toFloat().expandDims()
+
+	var divide_by = parseFloat($("#divide_by").val());
+
+	if(divide_by != 1) {
+		predict_data = tf.div(predict_data, divide_by);
+	}
+
+	var predictions_tensor = await model.predict([predict_data], [1, 1]);
+	var predictions = predictions_tensor.dataSync();
+
+
+	var category = _get_category();
+
+	$("#webcam_prediction").html("");
+
+	if(["logic", "own"].includes(category) && labels.length == 0) {
+		var str = "[" + predictions.join(", ") + "]";
+		$("#webcam_prediction").append(str);
+	} else {
+		if(predictions.length) {
+			var max_i = 0;
+			var max_probability = -9999999;
+
+			for (let i = 0; i < predictions.length; i++) {
+				var probability = predictions[i];
+				if(probability > max_probability) {
+					max_probability = probability;
+					max_i = i;
+				}
+			}
+
+			if(labels.length == 0) {
+				await get_label_data();
+			}
+
+			for (let i = 0; i < predictions.length; i++) {
+				var label = labels[i];
+				var probability = predictions[i];
+				var str = label + ": " + probability + "\n";
+				if(i == max_i) {
+					str = "<b>" + str + "</b>";
+				}
+				$("#webcam_prediction").append(str);
+			}
+		}
+	}
+
+	tf.engine().endScope();
+}
+
+async function show_webcam () {
+	if(_show_webcam()) {
+		var videoElement = document.createElement('video');
+		videoElement.width = 256;
+		videoElement.height = 256;
+		$("#webcam").show().append(videoElement);
+
+		$("#webcam").append("<br><button onclick='predict_webcam()'>Predict webcam image</button>");
+		cam = await tf.data.webcam(videoElement);
+
+	} else {
+		$("#webcam").hide().html("");
 	}
 }
