@@ -68,17 +68,12 @@ function add_function_debugger () {
 
 		    var args_string = param_names.join(", "); 
 
-		    var args_string_str = "";
-		    if(param_names.length)  {
-			    args_string_str = param_names.join(" + ', ' + ");
-		    }
-
 		    try {
 			    var execute_this = `
 			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
 			    window["${i}"] = function (${args_string}) {
 					call_depth = call_depth + 1;
-					console.log("    ".repeat(call_depth) + "${i}(" + ${args_string_str} + ")");
+					console.log("    ".repeat(call_depth) + "${i}");
 					var _start_time = + new Date();
 					if(!Object.keys(function_times).includes("${i}")) {
 						function_times["${i}"] = {};
@@ -113,4 +108,45 @@ function tf_debug () {
 		console.warn("Disabled debug mode");
 		tf.enableProdMode();
 	}
+}
+
+function memory_debugger () {
+	var memory = tf.memory();
+
+	var bytes = memory["numBytes"];
+	var gpu_bytes = memory["numBytesInGPU"];
+
+	var num_tensors = memory["numTensors"];
+	var ram_mb = bytes / 1024 / 1024;
+	ram_mb = ram_mb.toFixed(2);
+	var gpu_mb = gpu_bytes / 1024 / 1024;
+	gpu_mb = gpu_mb.toFixed(2);
+
+	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
+
+	$("#tensor_number_debugger").html(debug_string).show();
+}
+
+function toggle_memory_debug () {
+	var enable = $("#memory_debugger").is(":checked");
+
+	if(enable) {
+		$(function(){
+			memory_debugger();
+			memory_debug_interval = setInterval(memory_debugger, 100);
+		});
+	} else {
+		clearInterval(memory_debug_interval);
+	}
+	$("#tensor_number_debugger").html("").hide();
+}
+
+function log_num_tensors () {
+	log(tf.memory()["numTensors"]);
+}
+
+function log_num_tensors_header () {
+	console.clear();
+	log("=====================");
+	log_num_tensors();
 }

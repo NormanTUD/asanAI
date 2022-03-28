@@ -1,11 +1,29 @@
 "use strict";
 
+function get_full_shape_without_batch (file) {
+	if(file === null) {
+		return null;
+	}
+
+	var input_shape_line = file.split("\n")[0];
+	var shape_match = /^#\s*shape\s*:?\s*\((.*)\)$/.exec(input_shape_line);
+
+	//shape_match[0] = null;
+	
+	var res = eval("[" + shape_match[1] + "]");
+
+	res[0] = null;
+
+	return res;
+}
+
 function get_shape_from_file (file) {
 	if(file === null) {
 		return null;
 	}
+
 	var input_shape_line = file.split("\n")[0];
-	var shape_match = /^#\s*shape \(\d+,\s*(.*)\)$/.exec(input_shape_line);
+	var shape_match = /^#\s*shape\s*:?\s*\(\d+,?\s*(.*)\)$/.exec(input_shape_line);
 
 	if(1 in shape_match) {
 		return shape_match[1];
@@ -209,9 +227,9 @@ function set_item_value (layer, classname, value) {
 	var layer_settings = $(".layer_setting");
 	var found_layer = $($(layer_settings[layer]).find("." + classname)[0]);
 	if(found_layer.attr("type") == "checkbox") {
-		found_layer.prop("checked", value == 1 ? true : false);
+		found_layer.prop("checked", value == 1 ? true : false).trigger("change");
 	} else {
-		found_layer.val(value);
+		found_layer.val(value).trigger("change");
 	}
 }
 
@@ -315,8 +333,12 @@ function visual_help (filename) {
 	$("#visual_help_tab_label").click();
 }
 
-function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
-	var str = "<tr>";
+function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) {
+	var str = "<tr";
+	if(tr_class) {
+		str += " class='" + tr_class + "'";
+	}
+	str += ">";
 
 	var help = "";
 	if(desc.toLowerCase().includes("activation function")) {
@@ -338,7 +360,24 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr) {
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
 		if(type == "select") {
-			str += "<select class='input_field input_data " + classname + "' onchange='updated_page()'>";
+			var onchange_text = "updated_page();";
+			if(classname == "kernel_initializer") {
+				onchange_text = "insert_initializer_options(find_layer_number_by_element($(this)), \"kernel\");updated_page()";
+			} else if(classname == "bias_initializer") {
+				onchange_text = "insert_initializer_options(find_layer_number_by_element($(this)), \"bias\");updated_page()";
+
+			} else if (classname == "kernel_regularizer") {
+				onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"kernel\");updated_page()";
+			} else if (classname == "bias_regularizer") {
+				onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"bias\");updated_page()";
+			} else if (classname == "activity_regularizer") {
+				onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"activity\");updated_page()";
+
+			} else if (classname == "activation") {
+				//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page()";
+			}
+
+			str += "<select class='input_field input_data " + classname + "' onchange='" + onchange_text + "'>";
 			for (const [key, value] of Object.entries(data)) {
 				str += '<option value="' + key + '">' + value + '</option>';
 			}
@@ -628,6 +667,268 @@ function add_pointwise_constraint_option (type, nr) {
 	return get_tr_str_for_layer_table("Pointwise contraint", "pointwise_constraint", "select", constraints, nr);
 }
 
+function add_kernel_regularizer_option (type, nr) {
+	return get_tr_str_for_layer_table("Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr);
+}
+
+function add_bias_regularizer_option (type, nr) {
+	return get_tr_str_for_layer_table("Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr);
+}
+
+function add_activity_regularizer_option (type, nr) {
+	return get_tr_str_for_layer_table("Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr);
+}
+
+/* kernel initializer gui functions */
+
+function add_kernel_initializer_value_option (type, nr) {
+	return get_tr_str_for_layer_table("Value", "kernel_initializer_value", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_seed_option (type, nr) {
+	return get_tr_str_for_layer_table("Seed", "kernel_initializer_seed", "text", {"value": "1"}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_stddev_option (type, nr) {
+	return get_tr_str_for_layer_table("Stddev", "kernel_initializer_stddev", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_mean_option (type, nr) {
+	return get_tr_str_for_layer_table("Mean", "kernel_initializer_mean", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_minval_option (type, nr) {
+	return get_tr_str_for_layer_table("Minval", "kernel_initializer_minval", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_maxval_option (type, nr) {
+	return get_tr_str_for_layer_table("Maxval", "kernel_initializer_maxval", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_gain_option (type, nr) {
+	return get_tr_str_for_layer_table("Gain", "kernel_initializer_gain", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_scale_option (type, nr) {
+	return get_tr_str_for_layer_table("Scale", "kernel_initializer_scale", "number", {"value": 1}, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_mode_option (type, nr) {
+	return get_tr_str_for_layer_table("Mode", "kernel_initializer_mode", "select", mode_modes, nr, "kernel_initializer_tr");
+}
+
+function add_kernel_initializer_distribution_option (type, nr) {
+	return get_tr_str_for_layer_table("Distribution", "kernel_initializer_distribution", "select", distribution_modes, nr, "kernel_initializer_tr");
+}
+
+/* kernel initializer gui functions end */
+
+/* bias initializer gui functions */
+
+function add_bias_initializer_value_option (type, nr) {
+	return get_tr_str_for_layer_table("Value", "bias_initializer_value", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_seed_option (type, nr) {
+	return get_tr_str_for_layer_table("Seed", "bias_initializer_seed", "text", {"value": "1"}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_stddev_option (type, nr) {
+	return get_tr_str_for_layer_table("Stddev", "bias_initializer_stddev", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_mean_option (type, nr) {
+	return get_tr_str_for_layer_table("Mean", "bias_initializer_mean", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_minval_option (type, nr) {
+	return get_tr_str_for_layer_table("Minval", "bias_initializer_minval", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_maxval_option (type, nr) {
+	return get_tr_str_for_layer_table("Maxval", "bias_initializer_maxval", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_gain_option (type, nr) {
+	return get_tr_str_for_layer_table("Gain", "bias_initializer_gain", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_scale_option (type, nr) {
+	return get_tr_str_for_layer_table("Scale", "bias_initializer_scale", "number", {"value": 1}, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_mode_option (type, nr) {
+	return get_tr_str_for_layer_table("Mode", "bias_initializer_mode", "select", mode_modes, nr, "bias_initializer_tr");
+}
+
+function add_bias_initializer_distribution_option (type, nr) {
+	return get_tr_str_for_layer_table("Distribution", "bias_initializer_distribution", "select", distribution_modes, nr, "bias_initializer_tr");
+}
+
+/* bias initializer gui functions end */
+
+/* regularizer gui functions */
+
+function add_bias_regularizer_l1_option (type, nr) {
+	return get_tr_str_for_layer_table("l1", "bias_regularizer_l1", "number", {"value": 0.01}, nr, "bias_regularizer_tr");
+}
+
+function add_bias_regularizer_l2_option (type, nr) {
+	return get_tr_str_for_layer_table("l2", "bias_regularizer_l2", "number", {"value": 0.01}, nr, "bias_regularizer_tr");
+}
+
+function add_activity_regularizer_l1_option (type, nr) {
+	return get_tr_str_for_layer_table("l1", "activity_regularizer_l1", "number", {"value": 0.01}, nr, "activity_regularizer_tr");
+}
+
+function add_activity_regularizer_l2_option (type, nr) {
+	return get_tr_str_for_layer_table("l2", "activity_regularizer_l2", "number", {"value": 0.01}, nr, "activity_regularizer_tr");
+}
+
+function add_kernel_regularizer_l1_option (type, nr) {
+	return get_tr_str_for_layer_table("l1", "kernel_regularizer_l1", "number", {"value": 0.01}, nr, "kernel_regularizer_tr");
+}
+
+function add_kernel_regularizer_l2_option (type, nr) {
+	return get_tr_str_for_layer_table("l2", "kernel_regularizer_l2", "number", {"value": 0.01}, nr, "kernel_regularizer_tr");
+}
+
+/* regularizer gui functions end */
+
+
+/* activation gui functions */
+
+function add_activation_theta_option (type, nr) {
+	return get_tr_str_for_layer_table("Theta", "activation_theta", "number", {"value": 0.01}, nr, "activation_tr");
+}
+
+function add_activation_alpha_option (type, nr) {
+	return get_tr_str_for_layer_table("&alpha;", "activation_alpha", "number", {"value": 1}, nr, "activation_tr");
+}
+
+function add_activation_max_value_option (type, nr) {
+	return get_tr_str_for_layer_table("Max-Value", "activation_max_value", "number", {"value": 1}, nr, "activation_tr");
+}
+
+function add_activation_axis_option (type, nr) {
+	return get_tr_str_for_layer_table("Axis", "activation_axis", "number", {"value": -1}, nr, "activation_tr");
+}
+
+/* activation gui functions end */
+
+function insert_activation_option_trs (layer_nr, option_type) {
+	assert(["alpha", "max_value", "axis", "theta", "alpha_initializer", "alpha_regularizer", "alpha_constraint", "shared_axes"].includes(option_type), "invalid option type " + option_type);
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+
+	if(option_type != "none") {
+		var eval_string = `$(add_activation_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".activation")[${layer_nr}]).parent().parent());`;
+
+		eval(eval_string);
+	} else {
+		log("option_type is '" + option_type + "'");
+	}
+	updated_page();
+}
+
+function insert_regularizer_option_trs (layer_nr, regularizer_type, option_type) {
+	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+
+	if(option_type != "none") {
+		var eval_string = `$(add_${regularizer_type}_regularizer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".${regularizer_type}_regularizer")[${layer_nr}]).parent().parent());`;
+
+		eval(eval_string);
+	} else {
+		log("option_type is '" + option_type + "'");
+	}
+	updated_page();
+}
+
+function insert_initializer_option_trs (layer_nr, initializer_type, option_type) {
+	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale"].includes(option_type), "invalid option type " + option_type);
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+
+	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".${initializer_type}_initializer")[${layer_nr}]).parent().parent());`;
+
+	eval(eval_string);
+
+	updated_page();
+}
+
+function insert_activation_options (layer_nr) {
+	// TODO NOT YET USED
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
+	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+
+	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove()
+
+	var activation_item = $($(".layer_options_internal")[layer_nr]).find(".activation");
+
+	if(activation_item.length) {
+		var activation_name = activation_item.val();
+		if(activation_name == "linear") {
+			return;
+		}
+
+		if(Object.keys(activation_options).includes(activation_name)) {
+			var options = activation_options[activation_name]["options"];
+
+			for (var i = 0; i < options.length; i++) {
+				insert_activation_option_trs(layer_nr, options[i]);	
+			}
+		}
+	} else {
+		log("Layer " + layer_nr + " does not seem to have a activation setting");
+	}
+}
+
+
+function insert_regularizer_options (layer_nr, regularizer_type) {
+	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
+	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+
+	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove()
+
+	var regularizer = $($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer");
+
+	if(regularizer.length) {
+		var regularizer_name = regularizer.val();
+
+		var options = regularizer_options[regularizer_name]["options"];
+
+		for (var i = 0; i < options.length; i++) {
+			insert_regularizer_option_trs(layer_nr, regularizer_type, options[i]);	
+		}
+	} else {
+		log("Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
+	}
+}
+
+function insert_initializer_options (layer_nr, initializer_type) {
+	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
+	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+
+	$($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr").remove()
+
+	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+
+	if(initializer.length) {
+		var initializer_name = initializer.val();
+
+		var options = initializer_options[initializer_name]["options"];
+
+		for (var i = 0; i < options.length; i++) {
+			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);	
+		}
+	} else {
+		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
+	}
+}
+
 async function get_number_of_training_items () {
 	let training_data = await _get_training_data();
 	var keys = Object.keys(training_data);
@@ -849,6 +1150,19 @@ function update_python_code () {
 
 			redo_graph++;
 		}
+
+
+		["bias", "kernel", "activity"].forEach((type) => {
+			["regularizer"].forEach((func) => {
+				var item_name = type + "_" + func;
+				if(Object.keys(data).includes(item_name)) {
+					if(data[item_name] == "none") {
+						delete data[item_name];
+					}
+				}
+			});
+		});
+
 		var params = [];
 		for (const [key, value] of Object.entries(data)) {
 			if(key == "dtype" && i == 0 || key != "dtype") {
@@ -909,7 +1223,7 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	try {
 		compile_model();
 	} catch (e) {
-		log("There was an error compiling the model" + e);
+		log("There was an error compiling the model: " + e);
 	};
 
 
@@ -920,6 +1234,8 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 		restart_lenet();
 		restart_alexnet();
 	}
+
+	prev_layer_data = [];
 
 	try {
 		write_descriptions();
@@ -946,6 +1262,10 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	set_ribbon_min_width();
 
 	show_dtype_only_first_layer();
+
+	enable_start_training_custom_tensors();
+
+	write_model_to_latex_to_page();
 
 	return 1;
 }
@@ -1169,6 +1489,9 @@ function get_option_for_layer_by_type (nr) {
 }
 
 function set_option_for_layer(thisitem) {
+	if($(thisitem).hasClass("swal2-select")) {
+		return;
+	}
 	assert(typeof(thisitem) == "object", "set_option_for_layer(" + thisitem + ") is not an object but " + typeof(thisitem));
 
 	layer_structure_cache = 0;
@@ -1210,6 +1533,10 @@ function set_option_for_layer_by_layer_nr (real_nr) {
 
 
 	$($(".layer_options_internal")[real_nr]).html(get_option_for_layer_by_type(real_nr));
+
+	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
+		$($(".layer_options_internal")[real_nr]).find("." + i).trigger("change");
+	});
 
 	if(get_activation_list().includes($($(".layer_type")[real_nr]).val())) {
 		$($(".whatisthis_activation")[real_nr]).show();
@@ -1358,9 +1685,9 @@ function remove_layer (item) {
 	} else {
 		Swal.fire({
 			icon: 'error',
-			title: 'Oops...',
+			title: 'Oops [1]...',
 			text: 'You cannot remove the last layer of your model.',
-		})
+		});
 
 	}
 
@@ -1448,7 +1775,9 @@ function sortable_layers_container (layers_container) {
 					alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
 					try {
 						compile_model();
-					} catch (e) {};
+					} catch (e) {
+						log(e);
+					};
 					error_div.html("");
 					error_div.parent().hide();
 					compile_model();
@@ -1569,6 +1898,8 @@ function set_xyz_values (j, name, values) {
 
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
+
+	prev_layer_data = [];
 
 	is_setting_config = true;
 
@@ -1732,6 +2063,7 @@ async function set_config (index) {
 					} else if (item_name == "bias_initializer") {
 						value = get_initializer_name(value["class_name"]);
 					}
+
 					set_item_value(j, item_name, value);
 				} else {
 					//log("item_name: " + item_name);
@@ -1784,7 +2116,9 @@ async function set_config (index) {
 
 	updated_page();
 	if(!index) {
-		save_current_status();
+		if(!disabling_saving_status) {
+			save_current_status();
+		}
 	}
 
 	restart_lenet();
@@ -1806,6 +2140,7 @@ function show_or_hide_load_weights () {
 }
 
 async function init_dataset () {
+	$("#tfvis_tab_label").parent().hide();
 	clicked_on_tab = 0;
 	init_download_link();
 	init_epochs(2);
@@ -1841,6 +2176,10 @@ async function get_number_of_categories () {
 }
 
 function chose_dataset() {
+	x_file = null;
+	y_file = null;
+	y_shape = null;
+
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
@@ -1849,6 +2188,10 @@ function chose_dataset() {
 }
 
 async function init_dataset_category (disable_set_config) {
+	x_file = null;
+	y_file = null;
+	y_shape = null;
+
 	status_saves = [];
 	state_stack = [];
 	future_state_stack = [];
@@ -1860,7 +2203,7 @@ async function init_dataset_category (disable_set_config) {
 
 	assert(typeof(category) == "string", "init_dataset_category -> category from $(#dataset_category).val() is not a string, but " + typeof(category));
 
-	xy_data = null;
+	reset_data();
 
 	var show_items = {
 		"image_resize_dimensions": ["image"],
@@ -1872,10 +2215,6 @@ async function init_dataset_category (disable_set_config) {
 
 		"max_values": [],
 		"max_values.parent": [],
-
-		"prepare_data": ["own"],
-		"prepare_data.parent": ["own"],
-		"predict_own": ["own"],
 
 		"tensor_type_div": ["logic", "own"],
 		"input_shape_div": ["logic", "own"],
@@ -1909,7 +2248,6 @@ async function init_dataset_category (disable_set_config) {
 	if(category != "own") {
 		var dataset = "";
 		if(category == "image") {
-			//dataset += "<option value='layertest'>layertest</option>";
 			dataset += "<option value='tiny'>Cat or dog</option>";
 		} else if(category == "logic") {
 			dataset += "<option value='xor'>XOR</option>";
@@ -1917,7 +2255,6 @@ async function init_dataset_category (disable_set_config) {
 
 		$("#inputShape").attr("readonly", true); 
 		$("#train_data_set_group").show();
-		$("#upload_own_data_group").hide();
 		$("#dataset_div").show();
 		$("#dataset").html(dataset);
 		$("#upload_x").hide();
@@ -1931,9 +2268,14 @@ async function init_dataset_category (disable_set_config) {
 		}
 
 		$("#reset_model").show();
+
+		$('#data_origin').change(function() {
+			$('#data_origin option[value="default"]').prop('disabled', false);
+		});
+
+		$("#data_origin").val("default").trigger("change");
 	} else {
 		$("#train_data_set_group").hide();
-		$("#upload_own_data_group").show();
 		$("#dataset_div").hide();
 		$("#upload_x").show();
 		$("#upload_x").parent().show();
@@ -1942,6 +2284,14 @@ async function init_dataset_category (disable_set_config) {
 		init_numberoflayers(3);
 		$("#inputShape").attr("readonly", false); 
 		$("#reset_model").hide();
+
+
+		$('#data_origin').change(function() {
+			$('#data_origin option[value="default"]').prop('disabled', true);
+		});
+
+		$("#data_origin").val("own").trigger("change");
+		$("#validationSplit").val(0);
 	}
 
 	init_download_link();
@@ -1951,6 +2301,8 @@ async function init_dataset_category (disable_set_config) {
 
 	state_stack = [];
 	future_state_stack = [];
+
+	$("#tfvis_tab_label").parent().hide();
 }
 
 function clean_gui () {
@@ -2135,7 +2487,7 @@ function set_all_kernel_initializers () {
 	var chosen_value = $("#set_all_kernel_initializers").val();
 	var initializer_keys = Object.keys(initializers);
 	if(initializer_keys.includes(chosen_value)) {
-		$(".kernel_initializer").val(chosen_value)
+		$(".kernel_initializer").val(chosen_value).trigger("change");
 	}
 
 	$("#set_all_kernel_initializers").val("none");
@@ -2185,10 +2537,17 @@ async function save_current_status () {
 			save_this_data = artifacts;
 		}));
 	} catch (e) {
-		except("ERROR3", e);
+		undo();
+		except("ERROR4", e + "\n\nUndoing last change");
+		Swal.fire({
+			icon: 'error',
+			title: 'Oops [2]...',
+			text: e + "\n\nUndoing last change"
+		});
 	}
 
 	status_saves[index] = JSON.stringify(save_this_data);
+
 
 	future_state_stack = [];
 
@@ -2199,8 +2558,10 @@ async function save_current_status () {
 	show_hide_undo_buttons();
 }
 
-function undo () {
-	if(state_stack.length > 1) {
+async function undo () {
+	var shown = get_shown_advanced();
+	if(state_stack.length >= 1) {
+		$(":focus").blur();
 		var current_index = state_stack.pop();
 		var this_index = state_stack.pop();
 
@@ -2213,18 +2574,19 @@ function undo () {
 		var old_disabling_saving_status = disabling_saving_status;
 		disabling_saving_status = true;
 
-		set_config(this_index);
+		await set_config(this_index);
 
 		disabling_saving_status = old_disabling_saving_status;
-	//} else {
-		//log("No undo-stack");
 	}
 
 	show_hide_undo_buttons();
+	set_shown_advanced(shown);
 }
 
 function redo () {
+	var shown = get_shown_advanced();
 	if(future_state_stack.length) {
+		$(":focus").blur();
 		var this_index = future_state_stack.shift();
 		if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != this_index) {
 			state_stack.push(this_index); // Add to end of state_stack
@@ -2236,12 +2598,10 @@ function redo () {
 		set_config(this_index);
 
 		disabling_saving_status = old_disabling_saving_status;
-
-	//} else {
-		//log("No redo-stack");
 	}
 
 	show_hide_undo_buttons();
+	set_shown_advanced(shown);
 }
 
 function enable_symbol (name) {
@@ -2358,7 +2718,26 @@ async function upload_weights(evt) {
 var handle_x_file = async function (evt) {
 	x_file = await evt.target.files[0].text();
 	set_input_shape("[" + get_shape_from_file(x_file) + "]");
+
+	if(!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape())) {
+		Swal.fire({
+			title: 'X-Data and first layer have incompatible shape-requirements. Set to Dense for all layers?',
+			showDenyButton: true,
+			showCancelButton: false,
+			confirmButtonText: 'Yes',
+			denyButtonText: 'No',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$(".layer_type").val("dense").trigger("change");
+				Swal.fire('Set all layers to dense', '', 'success');
+			} else if (result.isDenied) {
+				Swal.fire('The model may not work as expected', '', 'warning')
+			}
+		});
+	}
 	updated_page();
+
+	enable_start_training_custom_tensors();
 }
 
 var handle_y_file = async function (evt) {
@@ -2367,6 +2746,42 @@ var handle_y_file = async function (evt) {
 	$("#y_shape_div").show();
 	$("#y_shape").val(y_shape);
 	updated_page();
+
+	enable_start_training_custom_tensors();
+}
+
+function enable_start_training_custom_tensors () {
+	if(!$("#data_origin").val() == "own") {
+		return;
+	}
+
+	if(!$("#data_type").val() == "tensordata") {
+		return;
+	}
+
+
+	$("#train_neural_network_button").prop("disabled", false);
+
+	if(x_file && y_file) {
+		var last_layer_warning_container = $($(".warning_container")[get_numberoflayers() - 1]);
+		if(eval($("#outputShape").val()).join(",") == get_full_shape_without_batch(y_file).join(",")) {
+			$("#train_neural_network_button").prop("disabled", false);
+			last_layer_warning_container.html("").hide();
+		} else {
+			last_layer_warning_container.html(
+				"The last layer's output shape does not conform with the provided Y-data's shape. " +
+				"Try changing the number of neurons, so that the output becomes [null" +
+				get_full_shape_without_batch(y_file).join(",") + "]"
+			);
+
+			last_layer_warning_container.show();
+			$("#train_neural_network_button").prop("disabled", true);
+		}
+	}
+
+	current_status_hash = "";
+
+	write_descriptions();
 }
 
 function get_sum_of_items_childrens_width (item) {
@@ -2417,6 +2832,7 @@ function load_weights () {
 			set_weights_from_json_object(data);
 		}
 	});
+	write_model_to_latex_to_page();
 }
 
 function show_dtype_only_first_layer () {
@@ -2515,6 +2931,7 @@ function update_input_shape () {
 	updated_page();
 	//create_model();
 	Prism.highlightAll();
+	update_input_shape();
 }
 
 function go_to_own () {
@@ -2538,5 +2955,508 @@ function toggle_show_input_layer () {
 }
 
 function reset_view () {
-	$("g").attr("transform", "translate(0,0) scale(1)")
+	var items = $("g");
+
+	for (var i = 0; i < items.length; i++) {
+		var parents_parent = $($("g")[i]).parent().parent();
+		var parents_parent_id = parents_parent.prop("id");
+
+		var container_width = parents_parent[0].getBoundingClientRect().width;
+
+		var width = $("g")[i].getBoundingClientRect().width;
+
+		if(width) {
+			var translate_left = parseInt(container_width / width);
+
+			if(parents_parent_id == "lenet") {
+				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)")
+			} else if (parents_parent_id == "fcnn") {
+				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)")
+			}
+		}
+	}
+}
+
+function change_data_origin () {
+	x_file = null;
+	y_file = null;
+	y_shape = null;
+
+	$("#train_neural_network_button").prop("disabled", false);
+	var new_origin = $("#data_origin").val();
+
+	var dataset_category = $("#dataset_category").val();
+
+	var show_images_per_category = 0;
+
+	var show_own_image_data = 0;
+	var show_own_tensor_data = 0;
+	var show_own_csv_data = 0;
+	
+	if(new_origin == "default") {
+		$("#data_type_row").hide();
+		if(dataset_category == "image") {
+			show_images_per_category = 1;
+		}
+
+		labels = [];
+
+		$(".hide_when_custom_data").show();
+	} else {
+		$("#train_neural_network_button").prop("disabled", true);
+
+		$("#data_type_row").show();
+		if($("#data_type").val() == "image") {
+			show_own_image_data = 1;
+			show_images_per_category = 1;
+			set_input_shape("[" + width + ", " + height+  ", 3]");
+		} else if($("#data_type").val() == "tensordata") {
+			show_own_tensor_data = 1;
+		} else if($("#data_type").val() == "csv") {
+			show_own_csv_data = 1;
+		} else {
+			alert("Unknown data_type: " + $("#data_type").val());
+		}
+
+		if(contains_convolution()) {
+			$("#data_type option[value='csv']").attr('disabled', true);
+		} else {
+			$("#data_type option[value='csv']").attr('disabled', false);
+		}
+
+		$(".hide_when_custom_data").hide();
+	}
+
+	if(show_images_per_category) {
+		$("#max_number_of_files_per_category_tr").show();
+		$("#image_resize_dimensions").show();
+	} else {
+		$("#max_number_of_files_per_category_tr").hide();
+		$("#max_number_of_files_per_category").val(0);
+		$("#image_resize_dimensions").hide();
+	}
+
+	$("#own_tensor_data_label").parent().hide();
+	$("#training_data_tab_label").parent().hide();
+	$("#own_image_data_label").parent().hide();
+	$("#own_csv_data_label").parent().hide();
+
+	if(show_own_image_data) {
+		$("#own_image_data_label").show().click().parent().show();
+		$("#own_images_container").html("");
+		add_new_category();
+		add_new_category();
+		disable_start_training_button_custom_images();
+		$("#loss").val("categoricalCrossentropy");
+		$("#metric").val("categoricalCrossentropy");
+	} else if(show_own_tensor_data) {
+		$("#own_tensor_data_label").show().click().parent().show();
+	} else if(show_own_csv_data) {
+		$("#own_csv_data_label").show().click().parent().show();
+	} else {
+		$("#training_data_tab_label").show().parent().show();
+	}
+}
+
+function auto_adjust_number_of_neurons (n) {
+	if($("#auto_adjust_number_of_neurons").is(":checked")) {
+		var last_layer_type = $($(".layer_type")[$(".layer_type").length - 1]).val();
+		
+		if(last_layer_type == "dense") {
+			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val(n).trigger("change");
+		}
+	}
+}
+
+function delete_category (item) {
+	var category_nr = get_category_nr(item);
+
+	$($(".own_image_upload_container")[category_nr]).remove();
+
+	auto_adjust_number_of_neurons($(".own_image_label").length);
+
+	show_or_hide_hide_delete_category();
+
+	disable_start_training_button_custom_images();
+}
+
+function get_category_nr (elem) {
+	while(!$(elem).hasClass("own_image_upload_container")) {
+		elem = $(elem).parent();
+	}
+
+	var nr = -1;
+	var search_element_xpath = get_element_xpath(elem[0]);
+
+	$(".own_image_upload_container").each(
+		function (i, this_elem) {
+			if(get_element_xpath(this_elem) == search_element_xpath) {
+				nr = i;
+			}
+		}
+	);
+
+	return nr;
+}
+
+function add_new_category () {
+	var n = $(".own_image_label").length;
+
+	var imgDiv = $(".own_images");
+	if(imgDiv.length == 0 || imgDiv.length <= n) {
+		$('<div class="own_image_upload_container"><hr><button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>').appendTo("#own_images_container");
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels()" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
+		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
+	}
+	imgDiv = $(".own_images")[n];
+
+	init_own_image_files();
+
+	auto_adjust_number_of_neurons($(".own_image_label").length);
+
+	show_or_hide_hide_delete_category();
+
+	disable_start_training_button_custom_images();
+}
+
+function rename_labels () {
+	$(".own_image_label").each(function (i, x) {
+		labels[i] = $(x).val();
+	});
+}
+
+function show_or_hide_hide_delete_category () {
+	if($(".own_image_label").length > 1) {
+		$(".delete_category_button").show();
+	} else {
+		$(".delete_category_button").hide();
+	}
+}
+
+function get_shown_advanced () {
+	var layer_options_internal = $(".layer_options_internal");
+
+	var shown = [];
+
+	for (var i = 0; i < layer_options_internal.length; i++) {
+		var display = $(layer_options_internal[i]).css("display")
+		if(display == "none") {
+			shown[i] = 0;
+		} else {
+			shown[i] = 1;
+		}
+	}
+
+	return shown;
+}
+
+function set_shown_advanced (shown) {
+	for (var i = 0; i < shown.length; i++) {
+		if(shown[i]) {
+			$($(".layer_options_internal")[i]).css("display", "table-row-group");
+		} else {
+			$($(".layer_options_internal")[i]).css("display", "none");
+		}
+	}
+}
+
+function show_head_data(head) {
+	$("#csv_header_overview").html("");
+	var html = "<h2>Header-to-Training-data</h2><table>";
+
+	for (var i = 0; i < head.length; i++) {
+		var x_selected = "selected";
+		var y_selected = "";
+		if(i == head.length - 1) {
+			x_selected = "";
+			y_selected = "selected";
+		}
+		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none'>None</option></select>";
+		html += "<tr><td>" + head[i] + "</td><td>" + select + "</td></tr>";
+	}
+
+	html += "</table>";
+	$("#csv_header_overview").html(html);
+}
+
+function show_csv_file (disabled_show_head_data) {
+	tf.engine().startScope();
+	var csv = $("#csv_file").val();
+
+	var data = parse_csv_file(csv);
+
+	var head = data["head"];
+
+	$("#x_y_shape_preview").html("");
+
+	$(".hide_when_no_csv").hide();
+
+	if(head.length > 1 && data.data.length >= 1) {
+		if(!disabled_show_head_data) {
+			show_head_data(head);
+		}
+
+		var parsed_data = get_x_y_from_csv();
+
+		var y_between_0_and_1 = parsed_data["y_between_0_and_1"]
+
+		if(!y_between_0_and_1) {
+			if($("#auto_set_last_layer_activation").is(":checked")) {
+				var activations = $(".activation");
+				$(activations[activations.length - 1]).val("linear").trigger("change");
+			}
+		}
+
+		var new_input_shape = parsed_data.x.shape.slice(1);
+		set_input_shape("[" + new_input_shape.toString() + "]");
+		var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
+		if(auto_adjust && parsed_data.number_of_categories) {
+			auto_adjust_number_of_neurons(parsed_data.number_of_categories);
+		}
+
+		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "], Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
+
+		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val())
+		var shape_preview_color = "<div style='color: ";
+		var hide_error_text = true;
+		if(is_same) {
+			if(auto_adjust) {
+				updated_page();
+			}
+			shape_preview_color += "green";
+			$("#train_neural_network_button").prop("disabled", false);
+			hide_error_text = false;
+		} else {
+			shape_preview_color += "red";
+			$("#train_neural_network_button").prop("disabled", true);
+			hide_error_text = false;
+		}
+		shape_preview_color += "'>";
+
+		shape_preview = shape_preview_color + shape_preview + "</div>";
+
+		shape_preview += "<br>X: <pre>" + tensor_print_to_string(parsed_data.x) + "</pre>";
+		if(parsed_data.x.dtype == "string") {
+			write_error("The X-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
+			$("#train_neural_network_button").prop("disabled", true);
+			hide_error_text = false;
+		} else {
+			$("#train_neural_network_button").prop("disabled", false);
+		}
+
+		shape_preview += "<br>Y: <pre>" + tensor_print_to_string(parsed_data.y) + "</pre>";
+		if(parsed_data.y.dtype == "string") {
+			write_error("The Y-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
+			$("#train_neural_network_button").prop("disabled", true);
+			hide_error_text = false;
+		} else {
+			$("#train_neural_network_button").prop("disabled", false);
+		}
+
+
+		if(hide_error_text) {
+			hide_error();
+		}
+
+		$("#x_y_shape_preview").html(shape_preview);
+		$(".hide_when_no_csv").show();
+
+		dispose(parsed_data.x);
+		dispose(parsed_data.y);
+	} else {
+		$("#csv_header_overview").html("");
+		$("#train_neural_network_button").prop("disabled", true);
+	}
+	tf.engine().endScope();
+}
+
+function ensure_shape_array (shape) {
+	if(typeof(shape) == "string") {
+		return eval(shape);
+	} else if (typeof(shape) == "object") {
+		return shape;
+	}
+	console.warn("Is neither shape nor object: ", shape);
+}
+
+function output_shape_is_same (output_shape_data, output_shape_network) {
+	output_shape_data = ensure_shape_array(output_shape_data);
+	output_shape_network = ensure_shape_array(output_shape_network);
+
+	var shape_length_difference = Math.abs(output_shape_data.length - output_shape_network.length);
+
+	if(shape_length_difference <= 1) {
+		if(!shape_length_difference == 0) {
+			output_shape_data.unshift(null);
+		}
+
+		for (var i = 0; i < output_shape_network.length; i++) {
+			var is_equal = output_shape_data[i] === output_shape_network[i] || output_shape_network[i] === null || output_shape_data[i] === null;
+			if(!is_equal) {
+				return false;
+			}
+		}
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function tensor_print_to_string (tensor) {
+	var logBackup = console.log;
+	var logMessages = [];
+
+	console.log = function() {
+		logMessages.push.apply(logMessages, arguments);
+	};
+
+	tensor.print(1);
+
+	console.log = logBackup;
+
+	return logMessages.join("\n");
+}
+
+function contains_convolution () {
+	var number_of_layers = get_numberoflayers();
+	for (var j = 0; j < get_numberoflayers(); j++) {
+		var layer_type = $($(".layer_type")[j]).val();
+
+		if(layer_type.includes("conv")) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function disable_start_training_button_custom_images () {
+	if($(".own_images").children().length != 0) {
+		$("#train_neural_network_button").prop("disabled", false);
+	} else {
+		$("#train_neural_network_button").prop("disabled", true);
+	}
+}
+
+function write_error (e) {
+	console.warn(e);
+	console.trace();
+
+	$("#errorcontainer").show();
+	$("#error").html(e).show().parent().show();
+	explain_error_msg();
+	enable_everything();
+	write_descriptions();
+}
+
+function hide_error() {
+	$("#error").html("").hide().parent().hide();
+	enable_everything();
+	write_descriptions();
+	log("hide_error:::::");
+	console.trace();
+}
+
+function find_layer_number_by_element (element) {
+	var item_parent = element;
+
+	while (!$(item_parent).hasClass("layer_setting")) {
+		item_parent = $(item_parent).parent();
+		if(get_element_xpath($("body")[0]) == get_element_xpath(item_parent[0])) {
+			write_error("Infinite recursion");
+			return;
+		}
+	}
+
+	item_parent = $(item_parent).parent();
+
+	var item_parent_xpath = get_element_xpath(item_parent[0]);
+	var real_nr = null;
+
+	$("#layers_container").children().each(function (counter, element) { 
+		if(get_element_xpath(element) == item_parent_xpath) {
+			real_nr = counter;
+		}
+	});
+	return real_nr;
+}
+
+function get_layer_regularizer_config (layer_nr, regularizer_type) {
+	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof(layer_nr));
+
+	var starts_with_string = regularizer_type + "_regularizer_";
+
+	var this_regularizer_options = $($(".layer_setting")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").find(".input_data");
+
+	var option_hash = {};
+
+	for (var i = 0; i < this_regularizer_options.length; i++) {
+		var this_option = this_regularizer_options[i];
+		var classList = this_option.className.split(/\s+/);
+
+		for (var j = 0; j < classList.length; j++) {
+			if (classList[j].startsWith(starts_with_string)) {
+				var option_name = classList[j];
+				option_name = option_name.replace(starts_with_string, "");
+				var value = get_item_value(layer_nr, classList[j]);
+				if(looks_like_number(value)) {
+					value = parseFloat(value);
+				}
+				if(value != "") {
+					option_hash[option_name] = value;
+				}
+			}
+		}
+	}
+
+	return option_hash;
+}
+
+function get_layer_initializer_config (layer_nr, initializer_type) {
+	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof(layer_nr));
+
+	var starts_with_string = initializer_type + "_initializer_";
+
+	var this_initializer_options = $($(".layer_setting")[layer_nr]).find("." + initializer_type + "_initializer_tr").find(".input_data");
+
+	var option_hash = {};
+
+	for (var i = 0; i < this_initializer_options.length; i++) {
+		var this_option = this_initializer_options[i];
+		var classList = this_option.className.split(/\s+/);
+
+		for (var j = 0; j < classList.length; j++) {
+			if (classList[j].startsWith(starts_with_string)) {
+				var option_name = classList[j];
+				option_name = option_name.replace(starts_with_string, "");
+				var value = get_item_value(layer_nr, classList[j]);
+				if(looks_like_number(value)) {
+					value = parseFloat(value);
+				}
+				if(value != "") {
+					option_hash[option_name] = value;
+				}
+			}
+		}
+	}
+
+	return option_hash;
+}
+
+function looks_like_number (item) {
+	if(/^[+-]?\d+(?:\d+)?/.test(item)) {
+		return true;
+	}
+	return false;
+}
+
+function live_math_mode_toggler () {
+	if($("#update_math_on_batchend").is(":checked")) {
+		$("#update_interval_tr").show();
+	} else {
+		$("#update_interval_tr").hide();
+	}
 }

@@ -1,9 +1,10 @@
 "use strict";
 
 function except (errname, e) {
+	write_descriptions();
 	enable_everything();
-	console.warn(errname + ": " + e + " Resetting model.");
-	//console.trace();
+	console.warn(errname + ": " + e + ". Resetting model.");
+	console.trace();
 	$("#error").html(e);
 	$("#error").parent().show();
 	if(throw_compile_exception) { throw e; }
@@ -29,8 +30,20 @@ function _create_model () {
 		model = create_model(model);
 		$("#error").html("");
 		$("#error").parent().hide();
+
+		if(can_be_shown_in_latex()) {
+			$("#math_mode_settings").show();
+		} else {
+			$("#math_mode_settings").hide();
+		}
 	} catch (e) {
+		undo();
 		except("ERROR1", e);
+		Swal.fire({
+			icon: 'error',
+			title: 'Oops [3]...',
+			text: e + "\n\nUndoing last change"
+		});
 	}
 
 	if(!disable_layer_debuggers) {
@@ -44,7 +57,7 @@ function compile_model () {
 
 	var recreate_model = false;
 
-	if(model_config_hash != get_model_config_hash()) {
+	if(model_config_hash != get_model_config_hash() || current_status_hash != get_current_status_hash()) {
 		recreate_model = true;
 	}
 
@@ -76,7 +89,8 @@ function compile_model () {
 
 	try {
 		model_config_hash = get_model_config_hash();
-		model.compile(get_model_data());
+		var model_data = get_model_data();
+		model.compile(model_data);
 	} catch (e) {
 		except("ERROR2", e);
 	}
@@ -85,6 +99,7 @@ function compile_model () {
 
 	write_model_summary();
 	set_ribbon_min_width();
+
 }
 
 function get_data_for_layer (type, i, first_layer) {
@@ -111,6 +126,8 @@ function get_data_for_layer (type, i, first_layer) {
 				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y"))];
 			} else if(type.endsWith("3d")) {
 				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y")), parseInt(get_item_value(i, option_name + "_z"))];
+			} else if(type.endsWith("2dTranspose")) {
+				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y"))];
 			} else {
 				alert("Unknown layer type: " + type);
 			}
@@ -131,6 +148,41 @@ function get_data_for_layer (type, i, first_layer) {
 			// Do nothing if activation = None 
 			data["activation"] = null;
 
+		} else if(option_name == "kernel_initializer") {
+			var initializer_name = get_item_value(i, "kernel_initializer");
+			if(initializer_name) {
+				var initializer_config = get_layer_initializer_config(i, "kernel");
+				var initializer_config_string = JSON.stringify(initializer_config);
+				data["kernelInitializer"] = {"name": initializer_name, "config": initializer_config};
+			}
+		} else if(option_name == "bias_initializer") {
+			var initializer_name = get_item_value(i, "bias_initializer");
+			if(initializer_name) {
+				var initializer_config = get_layer_initializer_config(i, "bias");
+				var initializer_config_string = JSON.stringify(initializer_config);
+				data["biasInitializer"] = {"name": initializer_name, "config": initializer_config};
+			}
+		} else if(option_name == "bias_regularizer") {
+			var regularizer_name = get_item_value(i, "bias_regularizer");
+			if(regularizer_name) {
+				var regularizer_config = get_layer_regularizer_config(i, "bias");
+				var regularizer_config_string = JSON.stringify(regularizer_config);
+				data["biasRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
+			}
+		} else if(option_name == "activity_regularizer") {
+			var regularizer_name = get_item_value(i, "activity_regularizer");
+			if(regularizer_name) {
+				var regularizer_config = get_layer_regularizer_config(i, "activity");
+				var regularizer_config_string = JSON.stringify(regularizer_config);
+				data["activityRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
+			}
+		} else if(option_name == "kernel_regularizer") {
+			var regularizer_name = get_item_value(i, "kernel_regularizer");
+			if(regularizer_name) {
+				var regularizer_config = get_layer_regularizer_config(i, "kernel");
+				var regularizer_config_string = JSON.stringify(regularizer_config);
+				data["kernelRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
+			}
 		} else {
 			var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
 			var value = $(elem).val();
@@ -138,10 +190,10 @@ function get_data_for_layer (type, i, first_layer) {
 			if($(elem).is(":checkbox")) {
 				data[get_js_name(option_name)] = value == "on" ? true : false;
 			} else {
-				if(value != "") {
-					data[get_js_name(option_name)] = isNumeric(value) ? parseInt(value) : value;
+				if(value == "") {
+					//console.warn("Something may be wrong here! value is ''");
 				} else {
-					console.warn("Something may be wrong here! value is ''");
+					data[get_js_name(option_name)] = isNumeric(value) ? parseInt(value) : value;
 				}
 			}
 		}
@@ -158,7 +210,7 @@ function get_model_structure() {
 		//console.trace();
 		return JSON.parse(layer_structure_cache);
 	}
-	var first_layer = true;
+	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 
 	for (var i = 0; i < get_numberoflayers(); i++) {
@@ -209,20 +261,19 @@ function is_number_array (value) {
 }
 
 function is_valid_parameter (keyname, value, layer) {
-	/*
 	assert(typeof(keyname) == "string", "keyname " + keyname + " is not a string but " + typeof(keyname));
 	assert(["string", "number", "boolean", "object"].includes(typeof(value)), value + " is not a string/number/boolean but " + typeof(value));
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
-	*/
 
 	if(
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
+		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && typeof(value) == "object") ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(keyname == "name" && typeof(value) == "string") || 
-		(["recurrentInitializer", "biasInitializer", "kernelInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string'].includes(value)) ||
+		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
 		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
 		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
-		(keyname == "activation" && ['elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
+		(keyname == "activation" && ['LeakyReLU', 'elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
@@ -250,7 +301,7 @@ function clean_tf_model_tensors () {
 		for (var i = 0; i < model.layers.length; i++) {
 			if(Object.keys(model.layers[i]).includes("weights")) {
 				for (var j = 0; j < model.layers[i]["weights"].length; j++) {
-					model.layers[i]["weights"][j].dispose()
+					dispose(model.layers[i]["weights"][j]);
 				}
 			}
 		}
@@ -275,6 +326,8 @@ function create_model (old_model, fake_model_structure) {
 		return old_model;
 	}
 
+	//dispose(model);
+
 	current_status_hash = new_current_status_hash;
 
 	$(".warning_container").hide();
@@ -283,7 +336,11 @@ function create_model (old_model, fake_model_structure) {
 		return;
 	}
 
-	tf.disposeVariables()
+	if(model) {
+		old_model.optimizer.dispose();
+		dispose(old_model);
+	}
+	tf.disposeVariables();
 
 	var new_model = tf.sequential();
 
@@ -309,7 +366,10 @@ function create_model (old_model, fake_model_structure) {
 	html += '        <script>' + "\n";
 	html += 'async function train_and_predict_example () {' + "\n";
 
-	var node_js = "import * as tf from '@tensorflow/tfjs-node';\nvar model = tf.sequential();\n";
+	var node_js = "import * as tf from '@tensorflow/tfjs-node';\n";
+
+	node_js += "// npm install @tensorflow/tfjs-node\n";
+	node_js += "var model = tf.sequential();\n";
 	
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
@@ -355,7 +415,57 @@ function create_model (old_model, fake_model_structure) {
 			}
 		});
 
+		var node_data = JSON.parse(JSON.stringify(data));
+
+		if(has_keys.includes("kernelInitializer")) {
+			var original_name = data["kernelInitializer"]["name"];
+			var options_stringified = JSON.stringify(data["kernelInitializer"]["config"]);
+			data["kernelInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+		}
+
+		if(has_keys.includes("biasInitializer")) {
+			var original_name = data["biasInitializer"]["name"];
+			var options_stringified = JSON.stringify(data["biasInitializer"]["config"]);
+			if(original_name) {
+				data["biasInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+			}
+		}
+
+		if(has_keys.includes("biasRegularizer")) {
+			var original_name = data["biasRegularizer"]["name"];
+			var options_stringified = JSON.stringify(data["biasRegularizer"]["config"]);
+			if(original_name && original_name != "none") {
+				data["biasRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+			} else {
+				data["biasRegularizer"] = null;
+				node_data["biasRegularizer"] = null;
+			}
+		}
+
+		if(has_keys.includes("kernelRegularizer")) {
+			var original_name = data["kernelRegularizer"]["name"];
+			var options_stringified = JSON.stringify(data["kernelRegularizer"]["config"]);
+			if(original_name && original_name != "none") {
+				data["kernelRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+			} else {
+				data["kernelRegularizer"] = null;
+				node_data["kernelRegularizer"] = null;
+			}
+		}
+
+		if(has_keys.includes("activityRegularizer")) {
+			var original_name = data["activityRegularizer"]["name"];
+			var options_stringified = JSON.stringify(data["activityRegularizer"]["config"]);
+			if(original_name && original_name != "none") {
+				data["activityRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+			} else {
+				data["activityRegularizer"] = null;
+				node_data["activityRegularizer"] = null;
+			}
+		}
+
 		data = remove_empty(data);
+		node_data = remove_empty(node_data);
 
 		var data_keys = Object.keys(data);
 		for (var k = 0; k < data_keys.length; k++) {
@@ -365,12 +475,68 @@ function create_model (old_model, fake_model_structure) {
 			}
 		}
 
-		new_model.add(tf.layers[type](data));
+		try {
+			new_model.add(tf.layers[type](data));
+		} catch (e) {
+			console.error(e);
+			log("type: " + type);
+			log("data: ");
+			log(data);
+			return false;
+		}
 
-		node_js += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 2) + "));\n";
-		html += "model.add(tf.layers." + type + "(" + JSON.stringify(data, null, 2) + "));\n";
+		if(Object.keys(node_data).includes("kernelInitializer")) {
+			node_data["kernelInitializer"] = "tf.initializers." + node_data["kernelInitializer"]["name"] + "(" + JSON.stringify(node_data["kernelInitializer"]["config"]) + ")";
+		}
+
+		if(Object.keys(node_data).includes("biasInitializer")) {
+			node_data["biasInitializer"] = "tf.initializers." + node_data["biasInitializer"]["name"] + "(" + JSON.stringify(node_data["biasInitializer"]["config"]) + ")";
+		}
+
+		if(Object.keys(node_data).includes("biasRegularizer")) {
+			node_data["biasRegularizer"] = "tf.regularizers." + node_data["biasRegularizer"]["name"] + "(" + JSON.stringify(node_data["biasRegularizer"]["config"]) + ")";
+		}
+
+		if(Object.keys(node_data).includes("kernelRegularizer")) {
+			node_data["kernelRegularizer"] = "tf.regularizers." + node_data["kernelRegularizer"]["name"] + "(" + JSON.stringify(node_data["kernelRegularizer"]["config"]) + ")";
+		}
+
+		if(Object.keys(node_data).includes("activityRegularizer")) {
+			node_data["activityRegularizer"] = "tf.regularizers." + node_data["activityRegularizer"]["name"] + "(" + JSON.stringify(node_data["activityRegularizer"]["config"]) + ")";
+		}
+
+		var encoded_data_string = "";
+		var encoded_data_array = [];
+
+		if(i == 0) {
+			node_data["inputShape"] = "[" + node_data["inputShape"].join(", ") + "]";
+		} else {
+			delete node_data["inputShape"];
+			delete node_data["dtype"];
+		}
+
+		var node_data_keys = Object.keys(node_data);
+
+		for (var k = 0; k < node_data_keys.length; k++) {
+			if(["kernelInitializer", "biasInitializer", "inputShape", "kernelRegularizer", "activityRegularizer", "biasRegularizer"].includes(node_data_keys[k]) || ["number", "boolean"].includes(typeof(node_data[node_data_keys[k]]))) {
+				encoded_data_array.push('"' + node_data_keys[k] + '": ' + node_data[node_data_keys[k]]);
+			} else {
+				if(["kernelSize", "strides", "dilationRate", "poolSize"].includes(node_data_keys[k])) {
+					encoded_data_array.push('"' + node_data_keys[k] + '": ' + "[" + node_data[node_data_keys[k]] + "]");
+				} else {
+					encoded_data_array.push('"' + node_data_keys[k] + '": "' + node_data[node_data_keys[k]] + '"');
+				}
+			}
+		}
+
+		encoded_data_string = encoded_data_array.join(",\n") + "\n";
+
+		node_js += "model.add(tf.layers." + type + "({" + encoded_data_string + "}));\n";
+		html += "model.add(tf.layers." + type + "({" + encoded_data_string + "}));\n";
 	}
 
+	html += "\nmodel.summary();\n";
+	node_js += "\nmodel.summary();\n";
 
 	html += '// x and y have to be tf.tensors. You have to get them yourself somehow.' + "\n";
         html += 'await model.fit(x, y, {' + "\n";
@@ -486,6 +652,7 @@ function compile_fake_model (layer_nr, layer_type) {
 	try {
 		var fake_model = create_model(null, fake_model_structure);
 		fake_model.compile(get_model_data());
+		dispose(fake_model);
 	} catch (e) {
 		return false;
 	}
@@ -528,6 +695,9 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 
 	var layer_input_shape = calculate_default_target_shape(layer_nr);
 
+	if(layer_nr == 0 && layer_type == "flatten") {
+		return false;
+	}
 	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 }
 
@@ -594,6 +764,10 @@ function set_weights_from_json_object (json) {
 
 	try {
 		model.setWeights(tensors);
+
+		for (var i = 0; i < json.length; i++) {
+			dispose(tensors[i]);
+		}
 	} catch (e) {
 		Swal.fire({
 			icon: 'error',
@@ -675,3 +849,15 @@ function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	return output_size;
 }
 
+
+function save_model () {
+	try {
+		model.save('downloads://mymodel');
+	} catch (e) {
+		Swal.fire({
+			icon: 'error',
+			title: 'Saving model failed',
+			text: 'The model may be defective and cannot be saved. Sorry. The error is: ' + e
+		});
+	}
+}

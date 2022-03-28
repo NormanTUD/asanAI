@@ -66,13 +66,24 @@
 		</script>
 
 		<!-- mathjax -->
-		<!--
-			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-			<script type="text/x-mathjax-config">
-				MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-			</script>
-			-->
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['$','$']],
+					"preview": "none"
+				},
+				"showMathMenu": false,
+				"HTML-CSS": {
+				"EqnChunk": 150,
+					"EqnChunkDelay": 20
+				},
+				"fast-preview": {
+					"disabled": true
+				}
+			});
+		</script>
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
@@ -81,12 +92,13 @@
 	<body style="margin: 0px;" data-chardin-sequenced="true">
 		<div id="ribbon" style="width:100%; height: 164px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
 			<ul id="tablist" style="background: #bbddfd">
-				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="model.save('downloads://mymodel')">&#128190;</span></li>
+				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 				<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 				<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon">&#10067;</span></li>
+				<span id="tensor_number_debugger" style="display: none"></span>
 			</ul>
 
 			<div id="home_ribbon" class="ribbon_tab_content" title="Home">
@@ -161,35 +173,54 @@
 				</div>
 				<!--<div class="ribbon-group-sep"></div>-->
 
-				<div id="upload_own_data_group">
-					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:130px">
-							<div class="upload-btn-wrapper">
-								<button class="btn">Provide X-data</button>
-								<input id="upload_x_file" type="file" name="x_data">
-							</div>
-							<div class="upload-btn-wrapper">
-								<button class="btn">Provide Y-data</button>
-								<input id="upload_y_file" type="file" name="y_data">
-							</div>
-						</div>
-						<div class="ribbon-group-title">Data</div>
+				<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
+					<div class="ribbon-toolbar" style="width:150px">
+						<table>
+							<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
+							<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
+							<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
+							<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
+						</table>
 					</div>
-
-					<div class="ribbon-group-sep"></div>
-
-					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:200px">
-							Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;" />
-						</div>
-						<div class="ribbon-group-title">Train data limit</div>
-					</div>
-					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-title">Hyperparameters</div>
 				</div>
+				<div class="ribbon-group-sep"></div>
+
+				<div class="ribbon-group" data-intro="You can set where your training data should come from here">
+					<div class="ribbon-toolbar" style="width:220px">
+						<table>
+							<tr>
+								<td>Source:</td>
+								<td>
+									<select id="data_origin" onchange="change_data_origin(1)">
+										<option value="default">Default</option>
+										<option value="own">Own data</option>
+									</select>
+								</td>
+							</tr>
+							<tr id="data_type_row" style="display: none">
+								<td>Data Type:</td>
+								<td>
+									<select id="data_type" onchange="change_data_origin(1)">
+										<option value="csv">CSV</option>
+										<option value="image">Image</option>
+										<option value="tensordata">Tensor-Data</option>
+									</select>
+								</td>
+							</tr>
+							<tr id="max_number_of_files_per_category_tr" style="display: none">
+								<td>Images per category:</td>
+								<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 90px" /></td>
+							</tr>
+						</table>
+					</div>
+					<div class="ribbon-group-title">Training data</div>
+				</div>
+				<div class="ribbon-group-sep"></div>
 
 				<div id="image_resize_dimensions">
 					<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-						<div class="ribbon-toolbar" style="width:200px">
+						<div class="ribbon-toolbar" style="width:110px">
 							<table>
 								<tr>
 									<td>Width:</td>
@@ -199,28 +230,12 @@
 									<td>Height:</td>
 									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 								</tr>
-								<tr>
-									<td>Images/category:</td>
-									<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 50px" /></td>
-								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Image Options</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
 				</div>
-
-				<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-					<div class="ribbon-toolbar" style="width:150px">
-						<table>
-							<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
-							<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
-							<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Hyperparameters</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
 
 				<div class="ribbon-group" data-intro="Show shapes of tensors. Can only be edited in 'own'-data mode or via the Image options when using the dataset-category 'images'.">
 					<div class="ribbon-toolbar" style="width:180px">
@@ -235,9 +250,8 @@
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 					<div class="ribbon-toolbar" style="width:100px">
-						<button id="train_neural_network_button" style="width: 100%" onclick="train_neural_network()">Start training</button><br>
+						<button id="train_neural_network_button" data-intro="Starts training. Shortcut: <CTRL>+<shift>+<s>" style="width: 100%" onclick="train_neural_network()">Start training</button><br>
 					</div>
-					Validation-Split (in %): <input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /><br>
 					Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 					Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 					<div class="ribbon-group-title">Training</div>
@@ -335,6 +349,9 @@
 								<tr>
 									<td>Learning rate:</td>
 									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+
+									<td>Learning rate:</td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
 								</tr>
 							</table>
 						</div>
@@ -343,18 +360,18 @@
 							<table style="width: 80%">
 								<tr>
 									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adam" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
 									<td>beta1:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="beta1_adam" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
 								</tr>
 
 								<tr>
 									<td>beta2:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="beta2_adam" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
 
 									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="epsilon_adam" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
 								</tr>
 							</table>
 						</div>
@@ -363,13 +380,13 @@
 							<table style="width: 80%">
 								<tr>
 									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="" id="learningRate_adadelta" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
 
 									<td>Rho:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="rho_adadelta" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
 
 									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="epsilon_adadelta" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
 								</tr>
 							</table>
 						</div>
@@ -378,21 +395,21 @@
 							<table style="width: 80%">
 								<tr>
 									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="" id="learningRate_adamax" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
 
 									<td>beta1:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="beta1_adamax" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
 									<td>beta2:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="beta2_adamax" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
 								</tr>
 								<tr>
 
 									<td>Decay:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="decay_adamax" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
 
 									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="epsilon_adamax" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
 									<td></td>
 									<td></td>
@@ -404,24 +421,17 @@
 							<table style="width: 80%">
 								<tr>
 									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.0001" id="learningRate_rmsprop" /></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
 
 									<td>Decay:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="" id="decay_rmsprop" /></td>
-
-									<td>Momentum:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="" id="momentum_rmsprop" /></td>
-
+									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
 								</tr>
 								<tr>
+									<td>Momentum:</td>
+									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
+
 									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="epsilon_rmsprop" /></td>
-
-									<td>Rho:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="" id="rho_rmsprop" /></td>
-
-									<td></td>
-									<td></td>
+									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
 								</tr>
 							</table>
 						</div>
@@ -530,9 +540,40 @@
 								<td>Enable TF-Debug:</td>
 								<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
 							</tr>
+							<tr>
+								<td>Memory Debugger:</td>
+								<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" checked /></td>
+							</tr>
 						</table>
 					</div>
 					<div class="ribbon-group-title">Debug</div>
+				</div>
+
+				<div id="math_mode_settings" style="display: none">
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group">
+						<div class="ribbon-toolbar">
+							<table data-intro="Options for the math mode.">
+								<tr>
+									<td>Number of decimal points (0 = no limit):</td>
+									<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page()" id="decimal_points_math_mode" /></td>
+								</tr>
+								<tr>
+									<td>Update Math-mode on batch end?</td>
+									<td>
+										<input type="checkbox" value="1" id="update_math_on_batchend" onchange="live_math_mode_toggler()" checked />
+									</td>
+								</tr>
+								<tr id="update_interval_tr" style="display: none">
+									<td>Update-interval (ms):</td>
+									<td>
+										<input type="number" id="math_update_interval" value="300" style="width: 80px" />
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Math-Mode</div>
+					</div>
 				</div>
 
 				<div id="data_plotter" style="display: none">
@@ -607,25 +648,6 @@
 				<div class="right reset_before_train_network" id="error"></div>
 			</div>
 
-			<div class="container">
-				<div class="container">
-					<div id="prepare_data" style="display: none">
-						You must prepare your dataset yourself! You can use this piece of code to generate
-						the data file in the correct format after you pre-processed them.
-						<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
-    with open(name + '.txt', 'w') as outfile:
-	outfile.write('# shape: {0}\n'.format(data.shape))
-	for data_slice in data:
-	    np.savetxt(outfile, data_slice)
-	    outfile.write('# New slice\n')
-
-write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
-write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
-						<button onclick="copy_id_to_clipboard('convert_data_python')">Copy to clipboard</button>
-					</div>
-
-				</div>
-			</div>
 
 			<div id="help" style="display: none"></div>
 
@@ -639,9 +661,95 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 							<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
 							<li><a href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
 							<li><a href="#summary_tab" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
+								<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
+								<li><a id="own_image_data_label" href="#own_image_data">Own image data</a></li>
+								<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensor data</a></li>
+								<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV data</a></li>
 							<li><a href="#tfvis_tab" id="tfvis_tab_label" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 							<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
 						</ul>
+
+						<div id="own_csv_data">
+							<br>
+							<table border=1>
+								<tr>
+									<td>
+										
+										<table>
+											<tr>
+												<td>Auto-adjust last layer's number of neurons?</td>
+												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
+											<tr>
+											</tr>
+												<td>Auto-set last layer's activation to linear when any y-values are smaller than 0 or greater than 1?</td>
+												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
+											</tr>
+											<tr>
+												<td>Seperator:</td>
+												<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
+											</tr>
+										</table>
+
+										<br>
+										<br>
+
+										<textarea id="csv_file" style="width: 98%; height: 300px" onkeyup="show_csv_file()"></textarea>
+									</td>
+									<td class="hide_when_no_csv" style="display: none">
+										<div id="csv_header_overview"></div>
+									</td>
+									<td class="hide_when_no_csv" style="display: none">
+										<div id="x_y_shape_preview"></div>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+						<div id="own_tensor_data">
+
+								<div id="prepare_data">
+								You must prepare your dataset yourself! You can use this piece of code to generate
+								the data file in the correct format after you pre-processed them.
+								<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
+with open(name + '.txt', 'w') as outfile:
+outfile.write('# shape: {0}\n'.format(data.shape))
+for data_slice in data:
+    np.savetxt(outfile, data_slice)
+    outfile.write('# New slice\n')
+
+write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
+write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
+								<button onclick="copy_id_to_clipboard('convert_data_python')">Copy to clipboard</button>
+							</div>
+							<br>
+							<div class="upload-btn-wrapper">
+								<button class="btn">Provide X-data file</button>
+								<input id="upload_x_file" type="file" name="x_data">
+							</div>
+							<div class="upload-btn-wrapper">
+								<button class="btn">Provide Y-data file</button>
+								<input id="upload_y_file" type="file" name="y_data">
+							</div>
+							<br>
+							Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;" />
+						</div>
+
+						<div id="own_image_data">
+							<br>
+							Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
+							<br>
+							<button onclick="add_new_category();">Add new category</button>
+							<div id="own_image_data_categories">
+							</div>
+							<div class="container" id="own_images_container">
+							</div>
+						</div>
+
+						<div id="training_data_tab">
+							<div id="percentage" class="reset_before_train_network"></div>
+							<div id="photos" style="height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+							<div class="container" id="download_data" style="display: none"></div>
+						</div>
 
 						<div id="code_tab">
 							<ul>
@@ -670,8 +778,9 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 						<div id="visualization_tab">
 							<ul>
 								<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
-								<li><a href="#lenet_tab" id="lenet_tab_label">LeNet</a></li>
+								<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 								<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
+								<li><a href="#math_tab" id="math_tab_label">Math</a></li>
 								<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
 								<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 								<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
@@ -679,30 +788,41 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 								<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 							</ul>
+
 							<div id="alexnet_tab">
 								<div id="alexnet"></div>
 								<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
 							</div>
+
 							<div id="lenet_tab">
 								<div id="lenet"></div>
 								<button onclick='reset_view()'>Reset view</button>
 								<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 							</div>
+
 							<div id="layer_visualizations_tab" "display: none">
 							</div>
+
 							<div id="fcnn_tab">
 								<div id="fcnn"></div>
 								<button onclick='reset_view()'>Reset view</button>
 								<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
 							</div>
+
 							<div id="activation_plot_tab">
 								<span id="activation_plot_name" style="display: none"></span>
 								<div id="activation_plot" style="display: none"></div>
 							</div>
+
 							<div id="maximally_activated" class="maximally_activated_class">
 							</div>
+
 							<div id="visual_help_tab">
 							</div>
+
+							<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #ffffff">
+							</div>
+
 							<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
 								Blue maps are inputs, and cyan maps are outputs<br>
 
@@ -751,22 +871,18 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 								These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
 								<a href="https://github.com/vdumoulin">vdumoulin</a>.
 							</div>
+
 							<div id="help_tab">
 							</div>
 						</div>
 
 						<div id="tfvis_tab" style="float: right; width: 100%">
 							<ul>
-								<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
+
 								<li class="training_performance_tabs" style="display:none" id="training_performance_tab_label"><a href="#tfvis_tab_training_performance" >Training performance</a></li>
 								<li style="display: none" class="show_after_training"><a href="#history_tab">History</a></li>
 							</ul>
 
-							<div id="training_data_tab">
-								<div id="percentage" class="reset_before_train_network"></div>
-								<div id="photos" style="height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-								<div class="container" id="download_data" style="display: none"></div>
-							</div>
 
 							<div id="tfvis_tab_training_performance">
 								<div id="tfvis_tab_training_performance_graph"></div>
@@ -788,16 +904,18 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 									<div id="own_files">
 										<h2>Own files</h2>
 										<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-										<div id="predict_own" style="display: none"><textarea style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
+										<div id="predict_own"><textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
 										<img id="output"/><br><br>
-										<pre id="prediction" style="display: none"></pre>
-										<pre id="predict_error" style="display: none"></pre>
+										<pre id="prediction" style="overflow: scroll; display: none"></pre>
+										<div id="predict_error" style="overflow: scroll; display: none"></div>
 									</div>
 
-									<button onclick="show_prediction(1);">Show prediction or re-predict</button>
-									<h2 class="show_when_predicting" style="display: none">Examples</h2>
+									<div class="hide_when_custom_data">
+										<button onclick="show_prediction(1);">Show prediction or re-predict</button>
+										<h2 class="show_when_predicting" style="display: none">Examples</h2>
 
-									<div id="example_predictions">
+										<div id="example_predictions">
+										</div>
 									</div>
 								</div>
 							</div>
@@ -868,11 +986,13 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 							if(filters.length) {
 								units = parseInt($(filters).val());
 							} else {
-								units = Math.max(0, model.layers[i].countvParams());
+								units = Math.max(0, model.layers[i].countParams());
 							}
 						}
 					}
-				} catch {}
+				} catch (e) {
+					log(e);
+				}
 				return units;
 			}
 
@@ -1023,10 +1143,10 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				}
 
 				if(disable_alexnet) {
-					$("#alexnet_tab_label").hide();
+					$("#alexnet_tab_label").parent().hide();
 					if(clicked_on_tab == 0) { $('a[href="#fcnn_tab"]').click(); clicked_on_tab = 1; }
 				} else {
-					$("#alexnet_tab_label").show();
+					$("#alexnet_tab_label").parent().show();
 					if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
 				}
 				reset_view();
@@ -1052,7 +1172,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 					if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
 						var category = layer_options[layer_type]["category"];
 
-						if((category == "Convolutional" || category == "Pooling") && layer_type.endsWith("2d")) {
+						if((category == "Convolutional" || category == "Pooling") && layer_type.endsWith("2d") && layer_type.startsWith("conv")) {
 							var this_layer_arch = {};
 							this_layer_arch["op"] = layer_type;
 							this_layer_arch["layer"] = ++j;
@@ -1090,8 +1210,6 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 							} catch (e) {
 								return;
 							}
-						} else {
-							//console.log("Unknown category: " + category);
 						}
 
 					} else {
@@ -1103,7 +1221,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				var disable_lenet = 0;
 
 				try {
-					if(architecture.length > 1 && architecture2.length) {
+					if(architecture.length >= 1 && architecture2.length) {
 						if(show_input_layer) {
 							var shown_input_layer = {}
 							shown_input_layer["op"] = "Input Layer";
@@ -1128,18 +1246,17 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				} catch (e) {
 					log("ERROR: ");
 					log(e);
-					disable_lenet = 1;
+					disable_lenet = 2;
 				}
 
-
 				if(disable_lenet) {
-					$("#lenet_tab_label").hide();
+					$("#lenet_tab_label").parent().hide();
 					if(clicked_on_tab == 0) {
 						$('a[href="#fcnn_tab"]').click(); 
 						clicked_on_tab = 1;
 					}
 				} else {
-					$("#lenet_tab_label").show();
+					$("#lenet_tab_label").parent().show();
 					if(clicked_on_tab == 0) {
 						$('#lenet_tab_label').click();
 						clicked_on_tab = 1;
@@ -1221,6 +1338,50 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 			if(window.location.href.indexOf("function_debugger") > -1) {
 				add_function_debugger();
 			}
+
+			document.addEventListener("DOMContentLoaded", init_own_image_files, false);
+
+			function init_own_image_files() {
+				$(".own_image_files").unbind("change");
+				$(".own_image_files").change(handleFileSelect);
+				rename_labels();
+			}
+
+			function get_nr_from_own_image_files (e) {
+				var currentTarget = e.currentTarget;
+
+				var nr = null;
+
+				$(".own_image_files").each(function (x, y) { if (get_element_xpath(y) == get_element_xpath(currentTarget)) { nr = x } } )
+
+				return nr;
+			}
+
+			function handleFileSelect(e) {
+				if(!e.target.files || !window.FileReader) return;
+
+				var upload_nr = get_nr_from_own_image_files(e);
+
+				var imgDiv = $($(".own_images")[upload_nr]);
+
+				var filesArr = Array.prototype.slice.call(e.target.files);
+				filesArr.forEach(function(f) {
+					if(!f.type.match("image.*")) {
+						return;
+					}
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var html = '<img height=90 src="' + e.target.result + '">';
+						imgDiv.prepend(html);
+						disable_start_training_button_custom_images();
+					}
+					reader.readAsDataURL(f);
+				});
+
+				disable_start_training_button_custom_images();
+			}
+
+			toggle_memory_debug();
 		</script>
 
 		<script src="prism/prism.js"></script>

@@ -55,6 +55,24 @@ function init_set_all_options () {
 			undo();
 		} else if (event.ctrlKey && event.key === 'y') {
 			redo();
+		} else if (event.ctrlKey && event.key === ';') {
+			$("#jump_to_training_tab").click();
+			$("#jump_to_predict_tab").click();
+			train_neural_network();
+		} else if (event.ctrlKey && event.key === ',') {
+			train_neural_network();
+		} else if (event.ctrlKey && event.key === 'L') {
+			$("#jump_to_predict_tab").click();
+			$("#jump_to_training_tab").click();
+		} else if (event.altKey && event.key === 'h') {
+			$("[href='#home_ribbon']").click();
+		} else if (event.altKey && event.key === 't') {
+			$("[href='#tf_ribbon']").click();
+		} else if (event.altKey && event.key === 'm') {
+			$("#visualization_tab_label").click();
+			$("#math_tab_label").click();
+		} else if (event.altKey && event.key === 'v') {
+			$("[href='#visualization_ribbon']").click();
 		}
 	});
 }
@@ -66,7 +84,6 @@ function init_page_contents (chosen_dataset) {
 	$("#width").val(width);
 	$("#height").val(height);
 
-	$("#upload_own_data_group").hide();
 	$("#train_data_set_group").hide();
 
 	init_dataset_category(1).then(() => {
@@ -166,8 +183,8 @@ $(document).ready(function() {
 	init_set_all_options();
 	init_categories();
 
-	$("#dataset_category").val("image"); //.trigger("change");
-	//go_to_own();
+	//$("#dataset_category").val("image");
+	$("#dataset_category").val("logic");
 
 	init_page_contents();
 
@@ -193,7 +210,9 @@ $(document).ready(function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
-	//set_config();
-	
 	show_or_hide_load_weights();
+
+	change_data_origin(0);
+
+	window.onresize = reset_view;
 });

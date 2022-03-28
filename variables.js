@@ -109,6 +109,9 @@ var js_names_to_python_names = {
 	"interpolation": "interpolation",
 	"dropout": "dropout",
 	"gammaConstraint": "gamma_constraint",
+	"activityRegularizer": "activity_regularizer",
+	"kernelRegularizer": "kernel_regularizer",
+	"biasRegularizer": "bias_regularizer",
 	"dense": "Dense",
 	"true": "True",
 	"false": "False",
@@ -184,7 +187,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Basic"
 	},
@@ -196,7 +199,7 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate", "dtype"
+			"dropout_rate", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Basic"
 	},
@@ -270,28 +273,28 @@ var layer_options = {
 	"conv1d": {
 		"description": "1D convolution layer (e.g., temporal convolution).<br>This layer creates a convolution kernel that is convolved with the layer input over a single spatial (or temporal) dimension to produce a tensor of outputs.<br>If <tt>use_bias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not <tt>null</tt>, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype'
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
 	"conv2dTranspose": {
 		"description": "Transposed convolutional layer (sometimes called Deconvolution). The need for transposed convolutions generally arises from the desire to use a transformation going in the opposite direction of a normal convolution, i.e., from something that has the shape of the output of some convolution to something that has the shape of its input while maintaining a connectivity pattern that is compatible with said convolution.",
 		"options": [
-			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", "use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", "bias_constraint", "trainable", "dtype"
+			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", "use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", "bias_constraint", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
 	"conv3d": {
 		"description": "3D convolution layer (e.g. spatial convolution over volumes).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
@@ -314,14 +317,14 @@ var layer_options = {
 			"pointwise_constraint", "filters", "kernel_size",
 			"strides", "padding", "dilation_rate", "activation",
 			"use_bias", "bias_initializer", "bias_constraint",
-			"trainable", "dtype"
+			"trainable", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
 	"upSampling2d": {
 		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
 		"options": [
-			"size", "interpolation", "trainable", "dtype"
+			"size", "interpolation", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Convolutional"
 	},
@@ -381,7 +384,6 @@ var layer_options = {
 		"category": "Pooling"
 	},
 
-	/*
 	"gru": {
 		"description": "Gated Recurrent Unit - Cho et al. 2014.",
 		"options": [
@@ -390,7 +392,7 @@ var layer_options = {
 			"bias_initializer", "recurrent_initializer", 
 			"kernel_constraint", "bias_constraint", "dropout",
 			"recurrent_dropout", "return_sequences", "return_state",
-			"stateful", "unroll", "trainable", "dtype"
+			"stateful", "unroll", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
 			
 		],
 		"category": "Recurrent"
@@ -401,7 +403,7 @@ var layer_options = {
 		"options": [
 			"recurrent_activation", "unit_forget_bias", "implementation", "units", "activation", "use_bias", "kernel_initializer",
 			"recurrent_initializer", "bias_initializer", "kernel_constraint", "recurrent_constraint", "bias_constraint",
-			"dropout", "recurrent_dropout", "return_sequences", "return_state", "go_backwards", "unroll", "trainable"
+			"dropout", "recurrent_dropout", "return_sequences", "return_state", "go_backwards", "unroll", "trainable", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Recurrent"
 	},
@@ -422,11 +424,10 @@ var layer_options = {
 			"bias_initializer", "dropout", "trainable", "recurrent_activation",
 			"unit_forget_bias", "implementation", "return_sequences", "return_state",
 			"go_backwards", "stateful", "unroll", "filters", "kernel_size",
-			"strides", "padding", "dilation_rate", "dtype"
+			"strides", "padding", "dilation_rate", "dtype", "kernel_regularizer", "bias_regularizer"
 		],
 		"category": "Recurrent"
 	},
-	*/
 
 
 	"alphaDropout": {
@@ -449,17 +450,15 @@ var layer_options = {
 			"stddev", "trainable", "dtype"
 		],
 		"category": "Noise"
-	}
+	},
 
-	/*
-	, "zeroPadding2d": {
+	"zeroPadding2d": {
 		"description": "Zero-padding layer for 2D input (e.g., image).",
 		"options": [
 			"padding", "trainable"
 		],
 		"category": "Padding"
 	}
-	*/
 };
 
 var model_data_structure = {
@@ -489,7 +488,7 @@ var activations = {
 
 var initializers = {
 	"glorotUniform": "glorotUniform",
-	//"constant": "constant",
+	"constant": "constant",
 	"glorotNormal": "glorotNormal",
 	"heNormal": "heNormal",
 	"heUniform": "heUniform",
@@ -498,10 +497,9 @@ var initializers = {
 	"ones": "ones",
 	"randomNormal": "randomNormal",
 	"randomUniform": " randomUniform",
-	//"truncatedNormal": "truncatedNormal",
+	"truncatedNormal": "truncatedNormal",
 	"varianceScaling": "varianceScaling",
-	"zeros": "zeros",
-	//"string": "string"
+	"zeros": "zeros"
 };
 
 function get_name_case_independent (name, from_hash) {
@@ -687,3 +685,216 @@ var call_depth = 0;
 var model_config_hash = "";
 
 var show_input_layer = true;
+
+var disable_save_current_status = false;
+
+var memory_debug_interval = null;
+
+var call_from_show_csv_file = false;
+
+function dispose (item) {
+	//console.trace(item);
+	//log(item);
+	tf.dispose(item);
+}
+
+var distribution_modes = {
+	"normal": "normal",
+	"uniform": "uniform",
+	"truncatedNormal": "truncatedNormal"
+};
+
+var mode_modes = {
+	'fanIn': 'fanIn',
+	'fanOut': 'fanOut',
+	'fanAvg': 'fanAvg'
+};
+
+var initializer_options = {
+	"constant": {
+		"description": "Initializer that generates values initialized to some constant.",
+		"options": [
+			"value"
+		]
+	},
+	"glorotNormal": {
+		"description": "Glorot normal initializer, also called Xavier normal initializer. It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. Reference: Glorot & Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf",
+		"options": [
+			"seed"
+		]
+	}, 
+	"glorotUniform": {
+		"description": "Glorot uniform initializer, also called Xavier uniform initializer. It draws samples from a uniform distribution within [-limit, limit] where limit is sqrt(6 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor Reference: Glorot & Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf.",
+		"options": [
+			"seed"
+		]
+	},
+	"heNormal": {
+		"description": "He normal initializer. It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(2 / fanIn) where fanIn is the number of input units in the weight tensor. Reference: He et al., http://arxiv.org/abs/1502.01852",
+		"options": [
+			"seed"
+		]
+	},
+	"heUniform": {
+		"description": "He uniform initializer. It draws samples from a uniform distribution within [-limit, limit] where limit is sqrt(6 / fan_in) where fanIn is the number of input units in the weight tensor. Reference: He et al., http://arxiv.org/abs/1502.01852",
+		"options": [
+			"seed"
+		]
+	},
+	"identity": {
+		"description": "Initializer that generates the identity matrix. Only use for square 2D matrices.",
+		"options": [
+			"gain"
+		]
+	},
+	"leCunNormal": {
+		"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor.", // TODO References
+		"options": [
+			"seed"
+		]
+	},
+	"leCunUniform": {
+		"description": "LeCun uniform initializer. It draws samples from a uniform distribution in the interval [-limit, limit] with limit = sqrt(3 / fanIn), where fanIn is the number of input units in the weight tensor.",
+		"options": [
+			"seed"
+		]
+	},
+	"ones": {
+		"description": "Initializer that generates tensors initialized to 1.",
+		"options": []
+	},
+	"orthogonal": {
+		"description": "Initializer that generates a random orthogonal matrix.", // TODO References
+		"options": [
+			"gain", "seed"
+		]
+	},
+	"randomNormal": {
+		"description": "Initializer that generates random values initialized to a normal distribution.",
+		"options": [
+			"mean", "stddev", "seed"
+		]
+	},
+	"randomUniform": {
+		"description": "Initializer that generates random values initialized to a uniform distribution. Values will be distributed uniformly between the configured minval and maxval.",
+		"options": [
+			"minval", "maxval", "seed"
+		]
+	},
+	"truncatedNormal": {
+		"description": "Initializer that generates random values initialized to a truncated normal. distribution. These values are similar to values from a RandomNormal except that values more than two standard deviations from the mean are discarded and re-drawn. This is the recommended initializer for neural network weights and filters.",
+		"options": [
+			"mean", "stddev", "seed"
+		]
+	},
+	"varianceScaling": {
+		"description": "Initializer capable of adapting its scale to the shape of weights. With distribution=NORMAL, samples are drawn from a truncated normal distribution centered on zero, with stddev = sqrt(scale / n) where n is:number of input units in the weight tensor, if mode = FAN_IN; number of output units, if mode = FAN_OUT. average of the numbers of input and output units, if mode = FAN_AVG. With distribution=UNIFORM, samples are drawn from a uniform distribution within [-limit, limit], with limit = sqrt(3 * scale / n).",
+		"options": [
+			"scale", "mode", "distribution", "seed"
+		]
+	},
+	"zeros": {
+		"description": "Initializer that generates tensors initialized to 0.",
+		"options": []
+
+	}
+};
+
+var regularizer_options = {
+	"none": {
+		"description": "No regularizer",
+		"options": []
+	},
+	"l1": {
+		"description": "Regularizer for L1 regularization. Adds a term to the loss to penalize large weights: loss += sum(l1 * abs(x))",
+		"options": [
+			"l1"
+		]
+	},
+	"l1l2": {
+		"description": "Regularizer for L1 and L2 regularization. Adds a term to the loss to penalize large weights: loss += sum(l1 * abs(x)) + sum(l2 * x^2)",
+		"options": [
+			"l1", "l2"
+		]
+	},
+	"l2": {
+		"description": "Regularizer for L2 regularization. Adds a term to the loss to penalize large weights: loss += sum(l2 * x^2)",
+		"options": [
+			"l2"
+		]
+	}
+};
+
+var regularizer_select = {
+	"none": "none",
+	"l1": "l1",
+	"l1l2": "l1l2",
+	"l2": "l2"
+};
+
+// TODO constraint_options not yet used...
+var constraint_options = {
+	"maxNorm": {
+		"description": "MaxNorm weight constraint. Constrains the weights incident to each hidden unit to have a norm less than or equal to a desired value. References - Dropout: A Simple Way to Prevent Neural Networks from Overfitting Srivastava, Hinton, et al. 2014", 
+		"options": [
+			"maxValue", "axis"
+		]
+	},
+	"minMaxNorm": {
+		"description": "",
+		"options": [
+			"minValue", "maxValue", "axis", "rate"
+		]
+	},
+	"nonNeg": {
+		"description": "Constains the weight to be non-negative.",
+		"options": []
+	},
+	"unitNorm": {
+		"description": "Constrains the weights incident to each hidden unit to have unit norm.",
+		"options": [
+			"axis"
+		]
+	}
+};
+
+var activation_options = {
+	"elu": {
+		"description": "Exponetial Linear Unit (ELU). It follows: f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			"alpha"
+		]
+	},
+	"LeakyReLU": {
+		"description": "Leaky version of a rectified linear unit. It allows a small gradient when the unit is not active: f(x) = alpha * x for x < 0. f(x) = x for x >= 0. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			"alpha"
+		]
+	},
+	"prelu": {
+		"description": "Parameterized version of a leaky rectified linear unit. It follows f(x) = alpha * x for x < 0. f(x) = x for x >= 0. wherein alpha is a trainable weight. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			//"alpha_initializer", "alpha_regularizer", "alpha_constraint", "shared_axes"
+		]
+	},
+	"relu": {
+		"description": "Rectified Linear Unit activation function. Input shape: Arbitrary. Use the config field inputShape (Array of integers, does not include the sample axis) when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			"max_value"
+		]
+	},
+	"softmax": {
+		"description": "Softmax activation layer. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			"axis"
+		]
+	},
+	"thresholdedReLU": {
+		"description": "Thresholded Rectified Linear Unit. It follows: f(x) = x for x > theta, f(x) = 0 otherwise. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
+		"options": [
+			"theta"
+		]
+	}
+};
+
+var prev_layer_data = [];

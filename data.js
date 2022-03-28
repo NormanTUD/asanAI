@@ -168,81 +168,187 @@ async function get_image_data(skip_real_image_download) {
 	return data;
 }
 
+
+function truncate_text (fullStr, strLen, separator) {
+    if (fullStr.length <= strLen) return fullStr;
+
+    separator = separator || '...';
+
+    var sepLen = separator.length,
+        charsToShow = strLen - sepLen,
+        frontChars = Math.ceil(charsToShow/2),
+        backChars = Math.floor(charsToShow/2);
+
+    return fullStr.substr(0, frontChars) +
+           separator +
+           fullStr.substr(fullStr.length - backChars);
+};
+
 async function get_xs_and_ys () {
 	headerdatadebug("get_xs_and_ys()");
 
 	$("#photos").html("");
 
+	if($("#data_origin").val() == "default") {
+		if($("#jump_to_training_tab").is(":checked")) {
+			$("#training_data_tab_label").click();
+		}
+	} else if ($("#data_origin").val() == "own") {
+		if($("#data_type").val() == "csv") {
+			$("#own_csv_data_label").click();
+		} else if ($("#data_origin").val() == "image") {
+			$("#own_image_data_label").click();
+		} else if ($("#data_origin").val() == "tensordata") {
+			$("#own_tensor_data_label").click();
+		}
+	} else {
+		log("INVALID OPTION " + $("#data_origin").val());
+	}
+
+	/*
 	if($("#jump_to_training_tab").is(":checked")) {
 		$('a[href="#tfvis_tab"]').click();
-		$('#training_data_tab_label').show().click();
+		$("#tfvis_tab").children().each(function (a, b) {
+		    if($(b).is(":visible") && b.localName == "ul") {
+			$($(b).children().children()).each(function (c, d) {
+			    if($(d).is(":visible") && d.localName == "a") {
+				$(d).click();
+			    }
+			});
+		    }
+		})
 	}
+	*/
 
-	if(xy_data === null) {
-		var category = $("#dataset_category").val();
+	var max_number_values = parseInt($("#max_number_values").val());
+	var loss = $("#loss").val();
 
-		var keys = [];
-		var x = tf.tensor([]);
-		var y;
-		var category_counter = 0;
-		var classes = [];
-		var loss = $("#loss").val();
+	if($("#data_origin").val() == "default") {
+		if(xy_data === null) {
+			var category = $("#dataset_category").val();
 
-		var max_number_values = parseInt($("#max_number_values").val());
+			var keys = [];
+			var x = tf.tensor([]);
+			var y;
+			var category_counter = 0;
+			var classes = [];
 
-		if(category == "image") {
-			let imageData = await get_image_data(0);
+			if(category == "image") {
+				let imageData = await get_image_data(0);
 
-			labels = [];
+				labels = [];
 
-			var this_data = [];
+				var this_data = [];
 
-			for (let [key, value] of Object.entries(imageData)) {
-				keys.push(key);
-				for (var i = 0; i < imageData[key].length; i++) {
-					var item = imageData[key][i];
-					this_data.push({key: key, item: item, category_counter: category_counter});
+				for (let [key, value] of Object.entries(imageData)) {
+					keys.push(key);
+					for (var i = 0; i < imageData[key].length; i++) {
+						var item = imageData[key][i];
+						this_data.push({key: key, item: item, category_counter: category_counter});
+					}
+					labels[category_counter] = key;
+					category_counter++;
 				}
-				labels[category_counter] = key;
-				category_counter++;
-			}
 
-			this_data = shuffle(this_data);
+				this_data = shuffle(this_data);
 
-			for (var i = 0; i < this_data.length; i++) {
-				var item = this_data[i]["item"];
-				var this_category_counter = this_data[i]["category_counter"];
-				x = x.concat(item);
-				classes.push(this_category_counter);
-			}
+				for (var i = 0; i < this_data.length; i++) {
+					var item = this_data[i]["item"];
+					var this_category_counter = this_data[i]["category_counter"];
+					x = x.concat(item);
+					classes.push(this_category_counter);
+				}
 
-			datadebug(y);
+				datadebug(y);
 
-			y = tf.tensor(classes);
-		} else if(["logic", "own"].includes(category)) {
-			var x_string, y_string;
-			if(category == "own") {
-				x_string = x_file;
-				y_string = y_file;
+				y = tf.tensor(classes);
+			} else if(["logic", "own"].includes(category)) {
+				var x_string, y_string;
+				if(category == "own") {
+					x_string = x_file;
+					y_string = y_file;
+				} else {
+					x_string = await _get_training_data_from_filename("x.txt");
+					y_string = await _get_training_data_from_filename("y.txt");
+				}
+				x = numpy_str_to_tf_tensor(x_string, max_number_values);
+				y = numpy_str_to_tf_tensor(y_string, max_number_values);
 			} else {
-				x_string = await _get_training_data_from_filename("x.txt");
-				y_string = await _get_training_data_from_filename("y.txt");
+				alert("Unknown dataset category: " + category);
 			}
-			x = numpy_str_to_tf_tensor(x_string, max_number_values);
-			y = numpy_str_to_tf_tensor(y_string, max_number_values);
-		} else {
-			alert("Unknown dataset category: " + category);
-		}
 
-		if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
-			y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-			headerdatadebug("y After oneHot");
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
+				headerdatadebug("y After oneHot");
+			}
+			
+			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
-		
-		xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+		//$("#reset_data").show();
+	} else {
+		if($("#data_type").val() == "image") {
+			var category_counter = $(".own_image_label").length;
+			var keys = [];
+			var x = [];
+			var y = [];
+			var classes = [];
+
+			for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+				var img_elems = $($(".own_images")[label_nr]).children();
+				if(img_elems.length) {
+					var label_val = $($(".own_image_label")[label_nr]).val();
+					keys.push(label_val);
+					labels[label_nr] = label_val;
+
+					for (var j = 0; j < img_elems.length; j++) {
+						var img_elem = img_elems[j];
+
+						var tf_img = tf.browser.fromPixels(img_elem);
+						var resized_img = tf_img.
+							resizeNearestNeighbor([height, width]).
+							toFloat();
+
+						if($("#divide_by").val() != 1) {
+							resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
+						}
+
+						x.push(await resized_img.arraySync());
+						classes.push(label_nr);
+					}
+				}
+			}
+
+			x = tf.tensor(x);
+			y = tf.tensor(y).expandDims();
+
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+				try {
+					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
+				} catch (e) {
+					header(e);
+				}
+				headerdatadebug("y After oneHot");
+			}
+
+			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+		} else if ($("#data_type").val() == "tensordata") {
+			x = numpy_str_to_tf_tensor(x_file, max_number_values);
+			y = numpy_str_to_tf_tensor(y_file, max_number_values);
+
+			xy_data = {"x": x, "y": y};
+		} else if ($("#data_type").val() == "csv") {
+			xy_data = get_x_y_from_csv();
+		} else {
+			alert("Unknown data type: " + $("#data_type").val());
+		}
+		$("#reset_data").hide();
 	}
 
-	$("#reset_data").show();
+	try {
+		$("#predict_own_data").attr("placeholder", "[[" + truncate_text(xy_data["x"].arraySync()[0].join(", "), 500) + "]]");
+	} catch (e) {
+		write_error(e);
+	}
 
 	return xy_data;
 }
@@ -314,9 +420,166 @@ function decille (arr, percentage) {
 }
 
 function reset_data () {
-	xy_data["x"].dispose();
-	xy_data["y"].dispose();
+	if(!xy_data === null) {
+		if(Object.keys(xy_data).includes("x")) {
+			dispose(xy_data["x"]);
+		}
+		if(Object.keys(xy_data).includes("y")) {
+			dispose(xy_data["y"]);
+		}
+	}
 
 	xy_data = null;
 	$('#reset_data').hide();
+}
+
+function parse_dtype (val) {
+	if(val.match(/^[+-]?\d+$/)) {
+		return parseInt(val);
+	} else if(val.match(/^[+-]?\d+\.\d+$/)) {
+		return parseFloat(val);
+	} else {
+		return val;
+	}
+}
+
+function parse_line (line, seperator) {
+	var c = line.split("");
+
+	var i = 0;
+
+	var items = [];
+
+	var current_item = "";
+
+	while (i < c.length) {
+		if(c[i] == seperator) {
+			items.push(parse_dtype(current_item));
+			current_item = "";
+		} else {
+			current_item += c[i];
+		}
+		i++;
+	}
+
+	items.push(parse_dtype(current_item));
+
+	return items;
+}
+
+function parse_csv_file (csv_file) {
+	var seperator = get_csv_seperator();
+	
+	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
+
+	csv_file = csv_file.replace(seperator_at_end_re, "")
+
+	csv_file = csv_file
+		.split("\n")
+		.filter((item, i, allItems) => {
+			return i === allItems.indexOf(item);
+		})
+		.join("\n");
+
+	if(typeof(seperator) == "undefined") {
+		seperator = ",";
+	}
+
+	var lines = csv_file.split("\n");
+
+	var head = parse_line(lines[0], seperator);
+
+	var data = [];
+
+	for (var i = 1; i < lines.length; i++) {
+		if(!lines[i].match(/^\s*$/)) {
+			data.push(parse_line(lines[i], seperator));
+		}
+	}
+
+	return {"head": head, "data": data};
+}
+
+function get_data_struct_by_header(header, parsed) {
+	var y_between_0_and_1 = true;
+	var indices = {};
+
+	for (var i = 0; i < header.length; i++) {
+		indices[header[i]] = parsed.head.indexOf(header[i]);
+	}
+
+	var data = [];
+
+	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
+		var line = [];
+		for (var item_nr = 0; item_nr < header.length; item_nr++) {
+			var ln = parsed.data[line_nr][indices[header[item_nr]]];
+			line.push(ln);
+			if(y_between_0_and_1) {
+				if(ln < 0 || ln > 1) {
+					y_between_0_and_1 = false;
+				}
+			}
+		}
+
+		data.push(line);
+	}
+
+	return { "data": data, "y_between_0_and_1": y_between_0_and_1 };
+}
+
+function get_headers (headers) {
+	var x_headers = [];
+	var y_headers = [];
+
+	for (var i = 0; i < headers.length; i++) {
+		var data_name = $($(".header_select")[i]).attr("name");
+		var type = $($(".header_select")[i]).val();
+
+		if(type == "X") {
+			x_headers.push(data_name);
+		} else if(type == "Y") {
+			y_headers.push(data_name);
+		}
+	}
+
+	return {"x": x_headers, "y": y_headers};
+}
+
+function get_csv_seperator () {
+	var seperator = $("#seperator").val() || ",";
+
+	if(seperator == "\\t") {
+		return "\t";
+	}
+
+	return seperator;
+}
+
+function get_x_y_from_csv () {
+	reset_data();
+
+	var seperator = get_csv_seperator();
+	var csv = $("#csv_file").val();
+
+	var headers = $(".header_select");
+
+	var headers_data = get_headers(headers);
+	var x_headers = headers_data["x"];
+	var y_headers = headers_data["y"];
+
+	var parsed = parse_csv_file(csv);
+
+	var x_data = get_data_struct_by_header(x_headers, parsed);
+	var y_data = get_data_struct_by_header(y_headers, parsed);
+
+	var x = x_data["data"];
+	var y = y_data["data"];
+
+	var y_between_0_and_1 = y_data["y_between_0_and_1"];
+
+	x = tf.tensor(x);
+	y = tf.tensor(y);
+
+	return {"x": x, "y": y, "keys": y_headers, "number_of_categories": y_headers.length, "y_between_0_and_1": y_between_0_and_1};
 }

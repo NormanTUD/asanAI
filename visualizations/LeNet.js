@@ -326,7 +326,7 @@ function LeNet() {
 	d3.select("#lenet").attr('transform','scale('+bscale+')')
 	d3.select(window).on("resize", resize)
 
-	svg.call(d3.zoom().on("zoom", zoomed));
+	//svg.call(d3.zoom().on("zoom", zoomed));
 
 	resize();
 

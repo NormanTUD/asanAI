@@ -343,3 +343,29 @@ select option:disabled {
 .vg-tooltip-hidden {
 	display: none !important;
 }
+
+.kernel_initializer_tr {
+	background-color: rgba(16, 255, 147, 0.4);
+}
+
+.bias_initializer_tr {
+	background-color: rgba(147, 255, 16, 0.4);
+}
+
+.bias_regularizer_tr {
+	background-color: rgba(255, 147, 16, 0.4);
+}
+
+.activity_regularizer_tr {
+	background-color: rgba(125, 11, 125, 0.4);
+}
+
+.kernel_regularizer_tr {
+	background-color: rgba(50, 10, 155, 0.4);
+}
+
+.activation_tr {
+	background-color: rgba(52, 120, 155, 0.4);
+}
+
+
