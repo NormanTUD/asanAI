@@ -64,7 +64,7 @@ function init_set_all_options () {
 		} else if (event.ctrlKey && event.key === 'L') {
 			$("#jump_to_predict_tab").click();
 			$("#jump_to_training_tab").click();
-		} else if (event.altKey && event.key === 'h') {
+		} else if (event.ctrlKey && event.altKey && event.key === 'h') {
 			$("[href='#home_ribbon']").click();
 		} else if (event.altKey && event.key === 't') {
 			$("[href='#tf_ribbon']").click();
@@ -215,4 +215,6 @@ $(document).ready(function() {
 	change_data_origin(0);
 
 	window.onresize = reset_view;
+
+	setInterval(allow_training, 100);
 });

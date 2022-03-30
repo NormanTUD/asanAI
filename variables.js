@@ -900,3 +900,17 @@ var activation_options = {
 var prev_layer_data = [];
 
 var cam = null;
+
+var changed_data_source = false;
+
+var csv_allow_training = false;
+
+var special_reason_disable_training = false;
+
+var conv_visualizations = {};
+
+var current_epoch = 0;
+
+var original_title = document.title;
+
+var this_training_start_time = null;

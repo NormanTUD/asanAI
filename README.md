@@ -53,3 +53,5 @@ in creating this program:
 - [MNIST](http://yann.lecun.com/exdb/mnist/)
 
 - [ChardinJS](https://heelhook.github.io/chardin.js/sequential.html)
+
+- [computer-modern-web-font](https://github.com/dreampulse/computer-modern-web-font)

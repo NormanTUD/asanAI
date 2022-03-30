@@ -31,24 +31,6 @@ function LeNet() {
 
 	var rect, conv, link, poly, line, text, info;
 
-	function fit_to_screen () { 
-		var items = $($("#lenet").children()[0]).children().children();
-		var max_width = 0;
-
-		for (var i = 0; i < items.length; i++) {
-			if(parseInt(items[i].getBBox().x) > max_width) {
-				max_width = parseInt(items[i].getBBox().x);
-			}
-		}
-
-		max_width *= 2;
-
-		var max_height = 600;
-		var viewbox = [-max_height, 0, max_width, max_height];
-		$($("#lenet").children()[0]).removeAttr('viewBox');
-		$($("#lenet").children()[0]).each(function () { $(this)[0].setAttribute('viewBox', viewbox.join(" ") ) });
-	}
-
 	function redraw(
 		{
 			architecture_=architecture,
@@ -189,7 +171,6 @@ function LeNet() {
 			.attr("font-family", "sans-serif");
 
 		style();
-		fit_to_screen();
 	}
 
 	function redistribute(
@@ -255,7 +236,6 @@ function LeNet() {
 		console.error = old_error;
 
 		info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x).attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
-		fit_to_screen();
 	}
 
 	function ddd (place, d, e) {
@@ -320,20 +300,19 @@ function LeNet() {
 		h = 600;
 		graph_width = get_graph_width();
 		svg.attr("width", graph_width).attr("height", h);
+		g.attr("transform", "translate(-" + parseInt(graph_width / 2) + ",0) scale(1)");
 	}
 
 	var bscale = 100;
-	d3.select("#lenet").attr('transform','scale('+bscale+')')
 	d3.select(window).on("resize", resize)
 
-	//svg.call(d3.zoom().on("zoom", zoomed));
+	svg.call(d3.zoom().on("zoom", zoomed));
 
 	resize();
 
 	return {
 		'redraw'         : redraw,
 		'redistribute'   : redistribute,
-		'style'          : style,
-		'fit_to_screen'  : fit_to_screen
+		'style'          : style
 	}
 }

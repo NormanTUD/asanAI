@@ -16,6 +16,7 @@
 
 
 		<link href="jquery-ui.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="fonts.css">
 		<link href="style.css" rel="stylesheet">
 		<link href="prism/prism.min.css" rel="stylesheet">
 		<link href="external/sweetalert2.min.css" rel="stylesheet">
@@ -62,17 +63,21 @@
 		<link rel="stylesheet" type="text/css" href="chardinjs.css">
 
 		<script>
-			var chardinJs = $("body").chardinJs();
+			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
 		<!-- mathjax -->
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 		<script type="text/x-mathjax-config">
+			var font = "Neo-Euler";
 			MathJax.Hub.Config({
 				tex2jax: {
 					inlineMath: [['$','$']],
 					"preview": "none"
+				},
+				"SVG":{
+					font:font
 				},
 				"showMathMenu": false,
 				"HTML-CSS": {
@@ -90,14 +95,14 @@
 		<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
 	</head>
 	<body style="margin: 0px;" data-chardin-sequenced="true">
-		<div id="ribbon" style="width:100%; height: 164px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
+		<div id="ribbon" style="width:100%; height: 180px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
 			<ul id="tablist" style="background: #bbddfd">
 				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 				<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 				<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-				<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon">&#10067;</span></li>
+				<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 				<span id="tensor_number_debugger" style="display: none"></span>
 			</ul>
 
@@ -107,12 +112,14 @@
 						<select data-position="right" data-intro="Choose a category here (images, logic, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
 							<option value="own">Own data</option>
 						</select>
+						<div class="small_vskip"></div>
 						<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="dataset_div">
 							<select id="dataset" onchange="chose_dataset();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
 							</select>
 						</div>
 
-						<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset model</button><br>
+						<div class="small_vskip"></div>
+						<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
 						<button id="load_weights_button" style="display: none" onclick="load_weights()" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
 					</div>
 					<div class="ribbon-group-title">Example datasets</div>
@@ -120,7 +127,7 @@
 
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-					<div class="ribbon-toolbar" style="width: 250px">
+					<div class="ribbon-toolbar" style="width: 300px">
 						<table>
 							<tr>
 								<td>Loss:</td>
@@ -158,10 +165,41 @@
 										<option value="cosine">cosine</option>
 									</select>
 								</td>
+								<tr>
+									<td style="white-space: nowrap;">$X$-Source:</td>
+									<td>
+										<select id="data_origin" onchange="change_data_origin(1)">
+											<option value="default">Default</option>
+											<option value="own">Own data</option>
+										</select>
+									</td>
+								</tr>
 							</tr>
 						</table>
 					</div>
-					<div class="ribbon-group-title">Loss/Metric</div>
+					<div class="ribbon-group-title">Loss/Metric/Data</div>
+				</div>
+
+				<div id="custom_training_data_settings" style="display: none">
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group" data-intro="You can set where your training data should come from here">
+						<div class="ribbon-toolbar" style="width:220px">
+							<table>
+								<tr id="data_type_row" style="display: none">
+									<td>Data Type:</td>
+									<td>
+										<select id="data_type" onchange="change_data_origin(1)">
+											<option value="csv">CSV</option>
+											<option value="image">Image</option>
+											<option value="tensordata">Tensor-Data</option>
+										</select>
+									</td>
+								</tr>
+
+							</table>
+						</div>
+						<div class="ribbon-group-title">Training data</div>
+					</div>
 				</div>
 
 				<div class="ribbon-group-sep"></div>
@@ -174,7 +212,7 @@
 				<!--<div class="ribbon-group-sep"></div>-->
 
 				<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-					<div class="ribbon-toolbar" style="width:150px">
+					<div class="ribbon-toolbar" style="width:160px">
 						<table>
 							<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
 							<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
@@ -186,41 +224,11 @@
 				</div>
 				<div class="ribbon-group-sep"></div>
 
-				<div class="ribbon-group" data-intro="You can set where your training data should come from here">
-					<div class="ribbon-toolbar" style="width:220px">
-						<table>
-							<tr>
-								<td>Source:</td>
-								<td>
-									<select id="data_origin" onchange="change_data_origin(1)">
-										<option value="default">Default</option>
-										<option value="own">Own data</option>
-									</select>
-								</td>
-							</tr>
-							<tr id="data_type_row" style="display: none">
-								<td>Data Type:</td>
-								<td>
-									<select id="data_type" onchange="change_data_origin(1)">
-										<option value="csv">CSV</option>
-										<option value="image">Image</option>
-										<option value="tensordata">Tensor-Data</option>
-									</select>
-								</td>
-							</tr>
-							<tr id="max_number_of_files_per_category_tr" style="display: none">
-								<td>Images per category:</td>
-								<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 90px" /></td>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Training data</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
+
 
 				<div id="image_resize_dimensions">
 					<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-						<div class="ribbon-toolbar" style="width:110px">
+						<div class="ribbon-toolbar" style="width:180px">
 							<table>
 								<tr>
 									<td>Width:</td>
@@ -229,6 +237,10 @@
 								<tr>
 									<td>Height:</td>
 									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
+								</tr>
+								<tr id="max_number_of_files_per_category_tr" style="display: none">
+									<td>Img/category:</td>
+									<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 50px" /></td>
 								</tr>
 							</table>
 						</div>
@@ -249,11 +261,15 @@
 
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
-					<div class="ribbon-toolbar" style="width:100px">
-						<button id="train_neural_network_button" data-intro="Starts training. Shortcut: <CTRL>+<shift>+<s>" style="width: 100%" onclick="train_neural_network()">Start training</button><br>
+					<div class="ribbon-toolbar">
+						<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+						<div class="small_vskip"></div>
+						Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
+						<div class="small_vskip"></div>
+						Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
+						<div class="small_vskip"></div>
+						Divide $X$-Tensor by: <input style="width: 50px;" type="text" value="1" id="divide_by" />
 					</div>
-					Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
-					Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 					<div class="ribbon-group-title">Training</div>
 				</div>
 			</div>
@@ -280,13 +296,6 @@
 					<div class="ribbon-group-title">TF-Backend/GUI-Mode</div>
 				</div>
 
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" data-intro="Divides every value in the tensor by this value">
-					<div class="ribbon-toolbar">
-						Normalize data?<br>(Divide Tensor by this):<br><input style="width: 50px;" type="text" value="1" id="divide_by" />
-					</div>
-					<div class="ribbon-group-title">Data</div>
-				</div>
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
 					<div class="ribbon-toolbar">
@@ -468,14 +477,14 @@
 					<div class="ribbon-group-title">FCNN style settings</div>
 				</div>
 				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" style="width: 300px;">
+				<div class="ribbon-group" style="width: auto;">
 					<div class="ribbon-toolbar">
 						<table>
 							<tr data-intro="Show the current layer live in the FCNN-style-view">
 								<td>Highlight layer?</td>
 								<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
 							</tr>
-							<tr>
+							<tr class="hide_when_no_alexnet">
 								<td>AlexNet-Renderer</td>
 								<td>
 									<fieldset style="border-width: 0px" id="alexnet_renderer"> 
@@ -491,36 +500,38 @@
 								<td>Call counter?</td>
 								<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
 							</tr>
-							<tr data-intro="Show the input layers in FCNN/AlexNet visualizations.">
-								<td>Show input layer?</td>
+							<tr class="hide_when_no_conv_visualiations" data-intro="Show the input layers in LeNet/AlexNet visualizations.">
+								<td>Input&nbsp;Layer&nbsp;Alex/LeNet?</td>
 								<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 							</tr>
 						</table>
 					</div>
-					<div class="ribbon-group-title">Visualization settings</div>
+					<div class="ribbon-group-title">Visualizations</div>
 				</div>
 
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group">
+				<div class="hide_when_no_conv_visualiations">
+					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
-							<table>
-								<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
-									<td>Pixel size:</td>
-									<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
-								</tr>
-								<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
-									<td>Iterations:</td>
-									<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
-								</tr>
-								<tr data-intro="If this is checked, it starts with a single example image (if available)">
-									<td>Use example image as base?</td>
-									<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
-								</tr>
-							</table>
+						<div class="ribbon-group">
+							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+								<table>
+									<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
+										<td>Pixel size:</td>
+										<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
+									</tr>
+									<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
+										<td>Iterations:</td>
+										<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+									</tr>
+									<tr data-intro="If this is checked, it starts with a single example image (if available)">
+										<td>Use example imgs as base?</td>
+										<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
+									</tr>
+								</table>
+							</div>
 						</div>
+						<div class="ribbon-group-title">Max. activated neurons</div>
 					</div>
-					<div class="ribbon-group-title">Max. activated neurons</div>
 				</div>
 
 
@@ -528,11 +539,11 @@
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar" style="width:190px">
 						<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-							<tr>
+							<tr class="hide_when_no_conv_visualiations">
 								<td>Show layer data flow:</td>
 								<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 							</tr>
-							<tr>
+							<tr class="hide_when_no_conv_visualiations">
 								<td>Show kernel images:</td>
 								<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
 							</tr>
@@ -561,7 +572,7 @@
 								<tr>
 									<td>Update Math-mode on batch end?</td>
 									<td>
-										<input type="checkbox" value="1" id="update_math_on_batchend" onchange="live_math_mode_toggler()" checked />
+										<input type="checkbox" value="1" id="update_math_on_batchend" onchange="live_math_mode_toggler()" />
 									</td>
 								</tr>
 								<tr id="update_interval_tr" style="display: none">
@@ -655,7 +666,7 @@
 				<div class="left_side">
 					<ul id="layers_container" class="ui-sortable"><li></li></ul>
 				</div>
-				<div class="right_side" id="graphs_here">
+				<div class="right_side" id="graphs_here" style="padding-left: 10px">
 					<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
 						<ul>
 							<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
@@ -681,7 +692,7 @@
 												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
 											<tr>
 											</tr>
-												<td>Auto-set last layer's activation to linear when any y-values are smaller than 0 or greater than 1?</td>
+												<td>Auto-set last layer's activation to linear when any $Y$-values are smaller than 0 or greater than 1?</td>
 												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
 											</tr>
 											<tr>
@@ -738,6 +749,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 							<br>
 							Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
 							<br>
+							<div id="last_layer_shape_warning"></div>
 							<button onclick="add_new_category();">Add new category</button>
 							<div id="own_image_data_categories">
 							</div>
@@ -747,7 +759,8 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 						<div id="training_data_tab">
 							<div id="percentage" class="reset_before_train_network"></div>
-							<div id="photos" style="height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+							<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+							<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 							<div class="container" id="download_data" style="display: none"></div>
 						</div>
 
@@ -1061,7 +1074,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
                         }
 
 			var alexnet = AlexNet();
-                        async function restart_alexnet() {
+                        async function restart_alexnet(dont_click) {
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
@@ -1152,17 +1165,23 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 				if(disable_alexnet) {
 					$("#alexnet_tab_label").parent().hide();
-					if(clicked_on_tab == 0) { $('a[href="#fcnn_tab"]').click(); clicked_on_tab = 1; }
+					if(!dont_click) {
+						if(clicked_on_tab == 0) { $('a[href="#fcnn_tab"]').click(); clicked_on_tab = 1; }
+					}
 				} else {
 					$("#alexnet_tab_label").parent().show();
-					if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
+					if(!dont_click) {
+						if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
+					}
 				}
 				reset_view();
+
+				conv_visualizations["alexnet"] = !disable_alexnet;
                         }
 
 			var lenet = LeNet();
 
-                        async function restart_lenet() {
+                        async function restart_lenet(dont_click) {
 				var layer_to_lenet_arch = {};
 				architecture = [];
 				architecture2 = [];
@@ -1260,18 +1279,24 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				if(disable_lenet) {
 					$("#lenet_tab_label").parent().hide();
 					if(clicked_on_tab == 0) {
-						$('a[href="#fcnn_tab"]').click(); 
-						clicked_on_tab = 1;
+						if(!dont_click) {
+							$('a[href="#fcnn_tab"]').click(); 
+							clicked_on_tab = 1;
+						}
 					}
 				} else {
 					$("#lenet_tab_label").parent().show();
 					if(clicked_on_tab == 0) {
-						$('#lenet_tab_label').click();
-						clicked_on_tab = 1;
+						$('#lenet_tab_label').show();
+						if(!dont_click) {
+							$('#lenet_tab_label').click();
+							clicked_on_tab = 1;
+						}
 					}
 				}
 
 				reset_view();
+				conv_visualizations["lenet"] = !disable_lenet;
 			}
 
 			

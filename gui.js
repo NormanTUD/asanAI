@@ -1209,6 +1209,34 @@ function update_python_code () {
 	return redo_graph;
 }
 
+function hide_no_conv_stuff () {
+	var any_conv_visualizations = 0;
+
+	var keys = Object.keys(conv_visualizations);
+
+	for (var i = 0; i < keys.length; i++) {
+		if(conv_visualizations[keys[i]]) {
+			any_conv_visualizations++;
+		}
+	}
+
+	if(any_conv_visualizations) {
+		$(".hide_when_no_conv_visualiations").show();
+		$("#conv_explanations_label").show();
+	} else {
+		$(".hide_when_no_conv_visualiations").hide();
+		$("#conv_explanations_label").hide();
+		$("#show_layer_data").prop("checked", false);
+		$("#data_plotter").hide();
+	}
+
+	if(conv_visualizations["alexnet"]) {
+		$(".hide_when_no_alexnet").show();
+	} else {
+		$(".hide_when_no_alexnet").hide();
+	}
+}
+
 function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	if(is_setting_config) {
 		return;
@@ -1230,9 +1258,9 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	var redo_graph = update_python_code();
 
 	if(model && redo_graph && !no_graph_restart) {
-		restart_fcnn();
-		restart_lenet();
-		restart_alexnet();
+		restart_fcnn(1);
+		restart_lenet(1);
+		restart_alexnet(1);
 	}
 
 	prev_layer_data = [];
@@ -1266,6 +1294,10 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types) {
 	enable_start_training_custom_tensors();
 
 	write_model_to_latex_to_page();
+
+	last_shape_layer_warning();
+
+	hide_no_conv_stuff();
 
 	return 1;
 }
@@ -1834,7 +1866,7 @@ function show_layers (number) {
 				"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
 				remove +
 				add +
-				"&rarr;<span class='layer_nr_desc'></span>" +
+				"<span class='layer_nr_desc'></span>" +
 				"<span class='call_counter_container'>(<span class='call_counter'>0</span>)&nbsp;</span>" +
 				"<span class='layer_identifier'></span>" +
 				"<table class='configtable'>" + 
@@ -1881,7 +1913,7 @@ function add_photo_to_gallery(url) {
 		photoscontainer.show();
 	}
 	var html = "<img src='" + url + "' height='90' />";
-	$("#photos").html(html + $("#photos").html() );
+	$("#photos").show().html(html + $("#photos").html() );
 }
 
 function set_xyz_values (j, name, values) {
@@ -2121,7 +2153,7 @@ async function set_config (index) {
 		}
 	}
 
-	restart_lenet();
+	restart_lenet(1);
 }
 
 function show_or_hide_load_weights () {
@@ -2188,6 +2220,8 @@ function chose_dataset() {
 }
 
 async function init_dataset_category (disable_set_config) {
+	var original_is_settings_config = is_setting_config;
+	is_setting_config = true;
 	x_file = null;
 	y_file = null;
 	y_shape = null;
@@ -2303,6 +2337,10 @@ async function init_dataset_category (disable_set_config) {
 	future_state_stack = [];
 
 	$("#tfvis_tab_label").parent().hide();
+
+	is_setting_config = original_is_settings_config;
+	
+	updated_page();
 }
 
 function clean_gui () {
@@ -2765,9 +2803,10 @@ function enable_start_training_custom_tensors () {
 	if(x_file && y_file) {
 		var last_layer_warning_container = $($(".warning_container")[get_numberoflayers() - 1]);
 		if(eval($("#outputShape").val()).join(",") == get_full_shape_without_batch(y_file).join(",")) {
-			$("#train_neural_network_button").prop("disabled", false);
+			special_reason_disable_training = false;
 			last_layer_warning_container.html("").hide();
 		} else {
+			special_reason_disable_training = true;
 			last_layer_warning_container.html(
 				"The last layer's output shape does not conform with the provided Y-data's shape. " +
 				"Try changing the number of neurons, so that the output becomes [null" +
@@ -2867,6 +2906,12 @@ function is_hidden_or_has_hidden_parent (element) {
 	return false;
 }
 
+function start_chardin_tour () {
+	disable_hidden_chardin_entries();
+	chardinJs = $("body").chardinJs($("body"));
+	chardinJs.start();
+}
+
 function disable_hidden_chardin_entries () {
 	var items = $("[data-intro],[data-introdisabled]");
 
@@ -2879,12 +2924,12 @@ function disable_hidden_chardin_entries () {
 		}
 	}
 
-	chardinJs = $("body").chardinJs();
+	chardinJs = $("body").chardinJs($("body"));
 
 	var activated_items = $("[data-intro]");
 
 	if(activated_items.length > 0) {
-		$("#chardinjs_help_icon").removeClass("disabled_symbol").css("cursor", "help").click(function(){ disable_hidden_chardin_entries(); chardinJs.start(); });
+		$("#chardinjs_help_icon").removeClass("disabled_symbol").css("cursor", "help").click(start_chardin_tour);
 	} else {
 		$("#chardinjs_help_icon").addClass("disabled_symbol").css("cursor", "not-allowed").attr("onclick", "").unbind("click");
 	}
@@ -2950,8 +2995,8 @@ function hide_annoying_tfjs_vis_overlays () {
 function toggle_show_input_layer () {
 	show_input_layer = !show_input_layer;
 
-	restart_lenet();
-	restart_alexnet();
+	restart_lenet(1);
+	restart_alexnet(1);
 }
 
 function reset_view () {
@@ -3002,7 +3047,13 @@ function change_data_origin () {
 		labels = [];
 
 		$(".hide_when_custom_data").show();
+
+		set_default_input_shape();
+		changed_data_source = false;
+		
+		$("#custom_training_data_settings").hide();
 	} else {
+		$("#custom_training_data_settings").show();
 		$("#train_neural_network_button").prop("disabled", true);
 
 		$("#data_type_row").show();
@@ -3025,6 +3076,8 @@ function change_data_origin () {
 		}
 
 		$(".hide_when_custom_data").hide();
+
+		changed_data_source = true;
 	}
 
 	if(show_images_per_category) {
@@ -3057,7 +3110,9 @@ function change_data_origin () {
 		$("#training_data_tab_label").show().parent().show();
 	}
 
-	show_webcam();
+	if(window.location.href.indexOf("no_webcam") == -1) {
+		show_webcam();
+	}
 }
 
 function auto_adjust_number_of_neurons (n) {
@@ -3101,6 +3156,19 @@ function get_category_nr (elem) {
 	return nr;
 }
 
+function last_shape_layer_warning () {
+	if($("#data_origin").val() == "own" && $("#data_type").val() == "image") {
+		if(model.layers[model.layers.length - 1].outputShape.length != 2) {
+			var n = $(".own_image_label").length;
+			$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is not 2. Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
+		} else {
+			$("#last_layer_shape_warning").html("");
+		}
+	} else {
+		$("#last_layer_shape_warning").html("");
+	}
+}
+
 function add_new_category () {
 	var n = $(".own_image_label").length;
 
@@ -3118,7 +3186,7 @@ function add_new_category () {
 
 	show_or_hide_hide_delete_category();
 
-	disable_start_training_button_custom_images();
+	last_shape_layer_warning();
 }
 
 function rename_labels () {
@@ -3220,43 +3288,34 @@ function show_csv_file (disabled_show_head_data) {
 
 		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val())
 		var shape_preview_color = "<div style='color: ";
-		var hide_error_text = true;
+		csv_allow_training = true;
 		if(is_same) {
 			if(auto_adjust) {
 				updated_page();
 			}
 			shape_preview_color += "green";
-			$("#train_neural_network_button").prop("disabled", false);
-			hide_error_text = false;
 		} else {
 			shape_preview_color += "red";
-			$("#train_neural_network_button").prop("disabled", true);
-			hide_error_text = false;
+			csv_allow_training = false;
 		}
 		shape_preview_color += "'>";
 
 		shape_preview = shape_preview_color + shape_preview + "</div>";
 
 		shape_preview += "<br>X: <pre>" + tensor_print_to_string(parsed_data.x) + "</pre>";
+
 		if(parsed_data.x.dtype == "string") {
 			write_error("The X-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
-			$("#train_neural_network_button").prop("disabled", true);
-			hide_error_text = false;
-		} else {
-			$("#train_neural_network_button").prop("disabled", false);
+			csv_allow_training = false;
 		}
 
 		shape_preview += "<br>Y: <pre>" + tensor_print_to_string(parsed_data.y) + "</pre>";
 		if(parsed_data.y.dtype == "string") {
 			write_error("The Y-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
-			$("#train_neural_network_button").prop("disabled", true);
-			hide_error_text = false;
-		} else {
-			$("#train_neural_network_button").prop("disabled", false);
+			csv_allow_training = false;
 		}
 
-
-		if(hide_error_text) {
+		if(csv_allow_training) {
 			hide_error();
 		}
 
@@ -3267,7 +3326,7 @@ function show_csv_file (disabled_show_head_data) {
 		dispose(parsed_data.y);
 	} else {
 		$("#csv_header_overview").html("");
-		$("#train_neural_network_button").prop("disabled", true);
+		csv_allow_training = false;
 	}
 	tf.engine().endScope();
 }
@@ -3460,5 +3519,64 @@ function live_math_mode_toggler () {
 		$("#update_interval_tr").show();
 	} else {
 		$("#update_interval_tr").hide();
+	}
+}
+
+async function set_default_input_shape () {
+	if(!changed_data_source) {
+		return;
+	}
+	var default_config = await _get_configuration();
+
+	try {
+		var default_input_shape = default_config["input_shape"];
+
+		set_input_shape(default_input_shape);
+
+		compile_model();
+
+		identify_layers(get_numberoflayers());
+
+		write_descriptions();
+	} catch (e) {
+		log(e);
+	}
+}
+
+function allow_training () {
+	if(_allow_training()) {
+		$("#train_neural_network_button").prop("disabled", false);
+	} else {
+		$("#train_neural_network_button").prop("disabled", true);
+	}
+}
+
+function _allow_training () {
+	if($("#data_origin").val() == "default") {
+		return true;
+	}
+
+	if($("#data_origin").val() == "own") {
+		var data_type = $("#data_type").val();
+		if(data_type == "image") {
+			var number_of_training_images = $(".own_images").children().length
+			if(number_of_training_images) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if(data_type == "csv") {
+			return csv_allow_training;
+		} else if(data_type == "tensordata") {
+			if(special_reason_disable_training) {
+				return false;
+			} else {
+				if(x_file && y_file) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
 	}
 }

@@ -307,5 +307,8 @@ async function show_webcam () {
 
 	} else {
 		$("#webcam").hide().html("");
+		if(cam) {
+			cam.stop();
+		}
 	}
 }

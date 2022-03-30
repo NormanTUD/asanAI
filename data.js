@@ -187,11 +187,14 @@ function truncate_text (fullStr, strLen, separator) {
 async function get_xs_and_ys () {
 	headerdatadebug("get_xs_and_ys()");
 
-	$("#photos").html("");
+	$("#xy_display_data").html("").hide();
+	$("#photos").html("").hide();
 
 	if($("#data_origin").val() == "default") {
 		if($("#jump_to_training_tab").is(":checked")) {
-			$("#training_data_tab_label").click();
+			if($("#data_origin").val() == "default") {
+				$("#training_data_tab_label").click();
+			}
 		}
 	} else if ($("#data_origin").val() == "own") {
 		if($("#data_type").val() == "csv") {
@@ -273,6 +276,11 @@ async function get_xs_and_ys () {
 				}
 				x = numpy_str_to_tf_tensor(x_string, max_number_values);
 				y = numpy_str_to_tf_tensor(y_string, max_number_values);
+
+				var x_print_string = tensor_print_to_string(x);
+				var y_print_string = tensor_print_to_string(y);
+
+				$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 			} else {
 				alert("Unknown dataset category: " + category);
 			}

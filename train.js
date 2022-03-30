@@ -63,6 +63,7 @@ async function train_neural_network () {
 			model.model.stopTraining = true;
 		}
 
+		document.title = original_title;
 		gui_not_in_training();
 	} else {
 		gui_in_training();
@@ -128,6 +129,8 @@ function get_fit_data () {
 	);
 
 	callbacks["onTrainBegin"] = async function () {
+		current_epoch = 0;
+		this_training_start_time = Date.now()
 		hide_annoying_tfjs_vis_overlays();
 		$(".training_performance_tabs").show();
 
@@ -157,11 +160,31 @@ function get_fit_data () {
 		}
 	};
 
+	callbacks["onEpochBegin"] = async function () {
+	}
+
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
 		show_prediction();
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
+		document.title = original_title;
+	}
+
+	callbacks["onBatchEnd"] = async function () {
+		current_epoch++;
+
+		var max_number_epochs = get_epochs();
+
+		var current_time = Date.now();
+
+		var epoch_time = (current_time - this_training_start_time) / current_epoch;
+
+		var epochs_left = max_number_epochs - current_epoch;
+
+		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+
+		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "TFJS";
 	}
 
 	var fit_data = {
@@ -218,7 +241,9 @@ async function run_neural_network () {
 
 					if($("#jump_to_training_tab").is(":checked")) {
 						$('#training_performance_tab_label').show();
-						$('a[href="#training_data_tab"]').click();
+						if($("#data_origin").val() == "default") {
+							$('a[href="#training_data_tab"]').click();
+						}
 						$('a[href="#tfvis_tab_training_performance"').click()
 					}
 

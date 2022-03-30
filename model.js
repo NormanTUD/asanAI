@@ -37,13 +37,15 @@ function _create_model () {
 			$("#math_mode_settings").hide();
 		}
 	} catch (e) {
-		undo();
 		except("ERROR1", e);
-		Swal.fire({
-			icon: 'error',
-			title: 'Oops [3]...',
-			text: e + "\n\nUndoing last change"
-		});
+		if(mode == "amateur") {
+			undo();
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops [3]...',
+				text: e + "\n\nUndoing last change"
+			});
+		}
 	}
 
 	if(!disable_layer_debuggers) {
@@ -99,7 +101,6 @@ function compile_model () {
 
 	write_model_summary();
 	set_ribbon_min_width();
-
 }
 
 function get_data_for_layer (type, i, first_layer) {
@@ -267,7 +268,7 @@ function is_valid_parameter (keyname, value, layer) {
 
 	if(
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
-		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && typeof(value) == "object") ||
+		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(keyname == "name" && typeof(value) == "string") || 
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
@@ -422,7 +423,9 @@ function create_model (old_model, fake_model_structure) {
 		if(has_keys.includes("kernelInitializer")) {
 			var original_name = data["kernelInitializer"]["name"];
 			var options_stringified = JSON.stringify(data["kernelInitializer"]["config"]);
-			data["kernelInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+			if(original_name) {
+				data["kernelInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+			}
 		}
 
 		if(has_keys.includes("biasInitializer")) {
