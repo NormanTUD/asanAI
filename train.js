@@ -1,22 +1,5 @@
 "use strict";
 
-function print_tensor_to_string (tensor) {
-	var logBackup = console.log;
-	var logMessages = [];
-
-	console.log = function() {
-		logMessages.push.apply(logMessages, arguments);
-	};
-
-	tensor.print(1);
-
-	var return_str = logMessages.join("\n");
-
-	console.log = logBackup;
-
-	return return_str;
-}
-
 function gui_in_training () {
 	started_training = true;
 	$("#train_neural_network_button").html("Stop training");
@@ -152,7 +135,7 @@ function get_fit_data () {
 			gui_not_in_training();
 		}
 		hide_annoying_tfjs_vis_overlays();
-		if($("#update_math_on_batchend").is(":checked")) {
+		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			write_model_to_latex_to_page(1);
 			if(can_be_shown_in_latex()) {
 				await delay(300);

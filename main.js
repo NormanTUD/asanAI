@@ -114,6 +114,8 @@ function init_page_contents (chosen_dataset) {
 		$("#train_data_set_group").show();
 	}
 
+	set_config();
+
 	global_disable_auto_enable_valid_layer_types = false;
 	disable_show_python_and_create_model = false;
 
@@ -123,10 +125,6 @@ function init_page_contents (chosen_dataset) {
 	}
 
 	set_mode();
-
-	set_config();
-
-	//write_descriptions();
 }
 
 function dataset_already_there (dataset_name) {
@@ -183,8 +181,8 @@ $(document).ready(function() {
 	init_set_all_options();
 	init_categories();
 
-	//$("#dataset_category").val("image");
-	$("#dataset_category").val("logic");
+	$("#dataset_category").val("image");
+	//$("#dataset_category").val("logic");
 
 	init_page_contents();
 
@@ -200,7 +198,7 @@ $(document).ready(function() {
 			}
 
 			var filecontent = evt.target.result;
-			set_weights_from_string(filecontent);
+			set_weights_from_string(filecontent, 1);
 
 			add_layer_debuggers();
 
@@ -216,5 +214,7 @@ $(document).ready(function() {
 
 	window.onresize = reset_view;
 
-	setInterval(allow_training, 100);
+	setInterval(allow_training, 200);
+
+	//$("#lenet_tab_label").click();
 });

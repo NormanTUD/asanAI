@@ -836,7 +836,7 @@ function insert_regularizer_option_trs (layer_nr, regularizer_type, option_type)
 	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
 	if(option_type != "none") {
-		var eval_string = `$(add_${regularizer_type}_regularizer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".${regularizer_type}_regularizer")[${layer_nr}]).parent().parent());`;
+		var eval_string = `$(add_${regularizer_type}_regularizer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${regularizer_type}_regularizer").parent().parent())`;
 
 		eval(eval_string);
 	} else {
@@ -850,7 +850,7 @@ function insert_initializer_option_trs (layer_nr, initializer_type, option_type)
 	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
-	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".${initializer_type}_initializer")[${layer_nr}]).parent().parent());`;
+	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${initializer_type}_initializer").parent().parent())`;
 
 	eval(eval_string);
 
@@ -943,6 +943,7 @@ async function _get_configuration (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	var data = undefined;
+
 	if(index) {
 		if(Object.keys(status_saves).includes(index)) {
 			data = {};
@@ -987,11 +988,6 @@ function copy_to_clipboard (text) {
 
 function copy_id_to_clipboard (idname) {
 	var serialized = $("#" + idname).text();
-	copy_to_clipboard(serialized);
-}
-
-function copy_layer_data (layer_id) {
-	var serialized = $($(".layer_data")[layer_id]).text();
 	copy_to_clipboard(serialized);
 }
 
@@ -1517,6 +1513,8 @@ function get_option_for_layer_by_type (nr) {
 		}
 	}
 
+	lenet.resize();
+
 	return str;
 }
 
@@ -1524,32 +1522,19 @@ function set_option_for_layer(thisitem) {
 	if($(thisitem).hasClass("swal2-select")) {
 		return;
 	}
+
 	assert(typeof(thisitem) == "object", "set_option_for_layer(" + thisitem + ") is not an object but " + typeof(thisitem));
 
-	layer_structure_cache = 0;
+	layer_structure_cache = null;
 
-	var real_nr = null;
+	var nr = find_layer_number_by_element(thisitem);;
 
-	$(thisitem).
-	parent(). // td
-	parent(). // tr
-	parent(). // tbody
-	parent(). // table
-	parent(). // layer_setting
-	parent(). // li
-	parent(). // layers_container
-	children().each(function (nr, elem) {
-		if($(elem).find(thisitem).length >= 1) {
-			real_nr = nr;
-		}
-	});
+	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
 
-	assert(typeof(real_nr) == "number", "found real_nr is not an integer but " + typeof(real_nr));
+	set_option_for_layer_by_layer_nr(nr);
 
-	set_option_for_layer_by_layer_nr(real_nr);
-
-	var chosen_option = $($(".layer_setting")[real_nr]).find(".layer_type").val()
-	$($(".layer_setting")[real_nr]).find("option").each(function (i, x) {
+	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val()
+	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
 		if(chosen_option == $(x).val()) {
 			$(x).attr('selected','selected');
 		} else {
@@ -1560,20 +1545,19 @@ function set_option_for_layer(thisitem) {
 	updated_page(null, 1);
 }
 
-function set_option_for_layer_by_layer_nr (real_nr) {
-	assert(typeof(real_nr) == "number", "set_option_for_layer_by_layer_nr(" + real_nr + ") is not a number but " + typeof(real_nr));
+function set_option_for_layer_by_layer_nr (nr) {
+	assert(typeof(nr) == "number", "set_option_for_layer_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
-
-	$($(".layer_options_internal")[real_nr]).html(get_option_for_layer_by_type(real_nr));
+	$($(".layer_options_internal")[nr]).html(get_option_for_layer_by_type(nr));
 
 	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
-		$($(".layer_options_internal")[real_nr]).find("." + i).trigger("change");
+		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
 	});
 
-	if(get_activation_list().includes($($(".layer_type")[real_nr]).val())) {
-		$($(".whatisthis_activation")[real_nr]).show();
+	if(get_activation_list().includes($($(".layer_type")[nr]).val())) {
+		$($(".whatisthis_activation")[nr]).show();
 	} else {
-		$($(".whatisthis_activation")[real_nr]).hide();
+		$($(".whatisthis_activation")[nr]).hide();
 	}
 
 	var nr = 0;
@@ -1597,19 +1581,7 @@ function disable_invalid_layers_event (e, thisitem) {
 	e.preventDefault();
 	var layer_nr = null;
 
-	$(thisitem).
-	parent(). // td
-	parent(). // tr
-	parent(). // tbody
-	parent(). // table
-	parent(). // layer_setting
-	parent(). // li
-	parent(). // layers_container
-	children().each(function (nr, elem) {
-		if($(elem).find(thisitem).length >= 1) {
-			layer_nr = nr;
-		}
-	});
+	layer_nr = find_layer_number_by_element(thisitem);
 
 	enable_valid_layer_types(layer_nr);
 
@@ -1637,11 +1609,7 @@ function enable_valid_layer_types (layer_nr) {
 
 	var valid_layer_types = get_valid_layer_types(layer_nr);
 
-	var original_value = $($($($(".layer_setting")[layer_nr])).find(".layer_type")[0]).val();
-
 	var options = $($($('.layer_type')[layer_nr]).children().children());
-
-	var original_value = $($($($(".layer_setting")[layer_nr])).find(".layer_type")[0]).val();
 
 	for (var i = 0; i < options.length; i++) {
 		if(!$(options[i]).is(":selected")) {
@@ -1880,7 +1848,6 @@ function show_layers (number) {
 
 		layer_visualizations_tab_str +=
 			"<div class='layer_data'></div>" +
-			//"<button style='display: none;' class='copy_layer_data_button' onclick='copy_layer_data(" + i + ")'>Copy this to clipboard</button>" +
 			"<div class='input_image_grid_div' style='display: none'>Input: <div class='input_image_grid'></div><hr></div>" +
 			"<div class='kernel_image_grid_div' style='display: none'>Filter-Kernel: <div class='filter_image_grid'></div><hr></div>" +
 			"<div class='output_image_grid_div' style='display: none'>Output: <div class='image_grid'></div></div>"
@@ -1891,8 +1858,6 @@ function show_layers (number) {
 	layers_container.html(layers_container_str);
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
-
-	$('.layer_type').trigger("change");
 
 	sortable_layers_container(layers_container);
 
@@ -2135,11 +2100,6 @@ async function set_config (index) {
 	compile_model();
 	add_layer_debuggers();
 
-	/*
-	restart_lenet();
-	restart_alexnet();
-	restart_fcnn();
-	*/
 	disable_all_non_selected_layer_types();
 
 	write_descriptions();
@@ -2153,7 +2113,8 @@ async function set_config (index) {
 		}
 	}
 
-	restart_lenet(1);
+	get_label_data();
+	load_weights(1);
 }
 
 function show_or_hide_load_weights () {
@@ -2422,9 +2383,6 @@ function favicon_spinner () {
 	change_favicon("loading_favicon.gif");
 }
 
-var local_store = window.localStorage;
-
-local_store.clear();
 
 function disable_everything () {
 	$('body').css('cursor', 'wait');
@@ -2835,19 +2793,6 @@ function get_sum_of_items_childrens_width (item) {
 
 function get_max_ribbon_width () {
 	return 1600;
-
-	/*
-	// TODO
-	var max_width = 0;
-	$("#ribbon").children().each(function (i, el) {
-		var this_val = get_sum_of_items_childrens_width(el);
-		if(this_val > max_width) {
-			max_width = this_val;
-		}
-	});
-
-	return max_width;
-	*/
 }
 
 function set_ribbon_min_width () {
@@ -2858,7 +2803,7 @@ function set_ribbon_min_width () {
 	});
 }
 
-function load_weights () {
+function load_weights (dont_show_msg) {
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -2868,7 +2813,7 @@ function load_weights () {
 	$.ajax({
 		url: weights_file,
 		success: function (data) {
-			set_weights_from_json_object(data);
+			set_weights_from_json_object(data, dont_show_msg);
 		}
 	});
 	write_model_to_latex_to_page();
@@ -2936,45 +2881,10 @@ function disable_hidden_chardin_entries () {
 
 }
 
-function create_clip_path_for_element (divname) {
-	var offset_top = $(divname).offset()["top"];
-	var offset_left = $(divname).offset()["left"];
-
-	var width = $(divname).width();
-	var height = $(divname).height();
-
-	var left = offset_left;
-	var right = left + width;
-
-	var top_y = offset_top;
-	var bottom_y = top_y + height;
-
-	var string = `polygon(
-	0 0,            /* ganz oben links */
-	0 100%,         /* ganz unten links */
-
-	${left}px 100%,       /* abschluss links */
-
-	${left}px ${top_y}px,        /* frame oben links */
-	${right}px ${top_y}px,        /* frame oben rechts*/
-
-	${right}px ${bottom_y}px,        /* frame unten rechts */
-	${left}px ${bottom_y}px,        /* frame unten links */
-
-	${left}px 100%,       /* abschluss rechts */
-
-	100% 100%,      /* ganz unten rechts */
-	100% 0          /* ganz oben rechts */
-	);
-	`;
-	return string;
-}
-
 function update_input_shape () {
 	set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	updated_page();
-	//create_model();
 	Prism.highlightAll();
 	update_input_shape();
 }
@@ -3415,8 +3325,6 @@ function hide_error() {
 	$("#error").html("").hide().parent().hide();
 	enable_everything();
 	write_descriptions();
-	log("hide_error:::::");
-	console.trace();
 }
 
 function find_layer_number_by_element (element) {
@@ -3433,14 +3341,14 @@ function find_layer_number_by_element (element) {
 	item_parent = $(item_parent).parent();
 
 	var item_parent_xpath = get_element_xpath(item_parent[0]);
-	var real_nr = null;
+	var nr = null;
 
 	$("#layers_container").children().each(function (counter, element) { 
 		if(get_element_xpath(element) == item_parent_xpath) {
-			real_nr = counter;
+			nr = counter;
 		}
 	});
-	return real_nr;
+	return nr;
 }
 
 function get_layer_regularizer_config (layer_nr, regularizer_type) {
@@ -3514,14 +3422,6 @@ function looks_like_number (item) {
 	return false;
 }
 
-function live_math_mode_toggler () {
-	if($("#update_math_on_batchend").is(":checked")) {
-		$("#update_interval_tr").show();
-	} else {
-		$("#update_interval_tr").hide();
-	}
-}
-
 async function set_default_input_shape () {
 	if(!changed_data_source) {
 		return;
@@ -3579,4 +3479,16 @@ function _allow_training () {
 			}
 		}
 	}
+}
+
+function toggle_layer_view () {
+	if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
+		$("#layers_container_left").show();
+		$(".descriptions_of_layers").show();
+	write_descriptions();
+	} else {
+		$("#layers_container_left").hide();
+		$(".descriptions_of_layers").hide();
+	}
+
 }

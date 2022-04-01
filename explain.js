@@ -399,8 +399,7 @@ function get_layer_type_array () {
 	return r;
 }
 
-function group_layers () {
-	var layers = get_layer_type_array();
+function group_layers (layers) {
         var str = layers.join(";");
 
         var char_to_group = new Array(str.length);
@@ -472,7 +471,7 @@ function group_layers () {
 
 function write_descriptions () {
 	if(!disable_show_python_and_create_model) {
-		var groups = group_layers();
+		var groups = group_layers(get_layer_type_array());
 
 		if(groups.length > 0) {
 			$(".descriptions_of_layers").remove();
@@ -491,7 +490,11 @@ function write_descriptions () {
 						var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
 						var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
 						var height = $($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 7;
-						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;">' + keyname + '</div>').appendTo('#wizard');
+						var hidden = '';
+						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
+							hidden = "display: none;";
+						}
+						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#wizard');
 					}
 				}
 			}
@@ -525,7 +528,7 @@ function explain_error_msg () {
 	var err = $("#error").html();
 	var explanation = "";
 
-	if(model.layers.length) {
+	if(model && model.layers && model.layers.length) {
 		var last_layer_name = model.layers[model.layers.length - 1].name;
 		if(err.includes(last_layer_name) && err.includes("Error when checking target") && err.includes("but got array with shape")) {
 			explanation = "This may mean that the number of neurons in the last layer do not conform with the data structure in the training-data-outputs.";
@@ -679,7 +682,6 @@ function add_layer_debuggers () {
 		eval(code);
 
 		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
-			$(".copy_layer_data_button").show();
 			$('#layer_visualizations_tab_label').parent().parent().show();
 			$('#layer_visualizations_tab_label').parent().show();
 			$('#layer_visualizations_tab_label').show();
@@ -777,7 +779,6 @@ function deprocessImage(x) {
                 return tf.clipByValue(x, 0, 255).asType('int32');
         });
 }
-
 
 function inputGradientAscent(m, layerIndex, filterIndex, iterations, start_image) {
         return tf.tidy(() => {
@@ -985,11 +986,13 @@ function get_layer_data() {
 
 		var this_layer_weights = {};
 
-		this_layer_weights["kernel"] = Array.from(this_layer.weights[0].val.arraySync());
+		try {
+			this_layer_weights["kernel"] = Array.from(this_layer.weights[0].val.arraySync());
 
-		if(Object.keys(this_layer.weights).includes("1")) {
-			this_layer_weights["bias"] = Array.from(this_layer.weights[1].val.dataSync());
-		}
+			if(Object.keys(this_layer.weights).includes("1")) {
+				this_layer_weights["bias"] = Array.from(this_layer.weights[1].val.dataSync());
+			}
+		} catch (e) {}
 
 		layer_data.push(this_layer_weights);	
 	}
@@ -1017,43 +1020,53 @@ function model_to_latex () {
 	var activation_function_equations = {
 		"sigmoid": {
 			"equation": "\\mathrm{sigmoid}\\left(x\\right) = \\sigma\\left(x\\right) = \\frac{1}{1+e^{-x}}",
+			"equation_no_function_name": "\\sigma\\left(REPLACEME\\right) = \\frac{1}{1+e^{-REPLACEME}}",
 			"lower_limit": 0,
 			"upper_limit": 1
 		},
 		"tanh": {
 			"equation": "\\mathrm{tanh}\\left(x\\right) = \\frac{e^x-e^{-x}}{e^x+e^{-x}}",
+			"equation_no_function_name": "\\frac{e^REPLACEME-e^{-REPLACEME}}{e^REPLACEME+e^{-REPLACEME}}",
 			"lower_limit": -1,
 			"upper_limit": 1
 		},
 		"relu": {
 			"equation": "\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)",
+			"equation_no_function_name": "\\mathrm{max}\\left(0, REPLACEME\\right)",
 			"lower_limit": 0
 		},
 		"LeakyReLU": {
 			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(0.1x, x\\right)",
+			"equation_no_function_name": "\\mathrm{max}\\left(0.1REPLACEME, REPLACEME\\right)"
 		},
 		"elu": {
-			"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right."
+			"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
+			"equation_no_function_name": "\\left\\{\n\\begin{array}{ll}\nREPLACEME & REPLACEME \\geq 0 \\\\\n\\alpha\\left(e^REPLACEME - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right."
 		},
 		"softplus": {
 			"equation": "\\mathrm{softplus}\\left(x\\right) = \\ln\\left(1 + e^x\\right)",
+			"equation_no_function_name": "\\ln\\left(1 + e^REPLACEME\\right)",
 			"lower_limit": 0
 		},
 		"softmax": {
 			"equation": "\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
+			"equation_no_function_name": "\\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
 			"lower_limit": 0,
 			"upper_limit": 1,
 		},
 		"softsign": {
 			"equation": "\\mathrm{softsign}\\left(x\\right) = \\frac{x}{\\left(1 + \\left| x \\right| \\right)}",
+			"equation_no_function_name": "\\frac{REPLACEME}{\\left(1 + \\left| REPLACEME \\right| \\right)}",
 			"lower_limit": -1,
 			"upper_limit": 1
 		},
 		"selu": {
-			"equation": "\\mathrm{selu}\\left(x\\right) = \\mathrm{scale} \\cdot \\mathrm{elu}\\left(x, \\alpha\\right) = \\mathrm{scale} \\cdot \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right."
+			"equation": "\\mathrm{selu}\\left(x\\right) = \\mathrm{scale} \\cdot \\mathrm{elu}\\left(x, \\alpha\\right) = \\mathrm{scale} \\cdot \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
+			"equation_no_function_name": "\\mathrm{scale} \\cdot \\left\\{\n\\begin{array}{ll}\nREPLACEME & REPLACEME \\geq 0 \\\\\n\\alpha\\left(e^REPLACEME - 1\\right)& \\, REPLACEME \\lt 0 \\\\\n\\end{array}\n\\right."
 		},
 		"relu6": {
 			"equation": "\\mathrm{relu6}\\left(x\\right) = \\mathrm{min}\\left(\\mathrm{max}\\left(0, x\\right),6\\right)",
+			"equation_no_function_name": "\\mathrm{min}\\left(\\mathrm{max}\\left(0, REPLACEME\\right),6\\right)",
 			"lower_limit": 0,
 			"upper_limit": 6
 		}
@@ -1153,16 +1166,89 @@ function model_to_latex () {
 			if(activation_name != "linear") {
 				str += "\\right)";
 			}
-			str += "$$";
 		} else if (this_layer_type == "flatten") {
-			str += "$$";
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
 			str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
-			str += "$$";
+		} else if (this_layer_type == "reshape") {
+			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
+			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
+			if(i > 1) {
+				str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			} else {
+				str += array_to_latex(input_layer, "Input") + " = h" + "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			}
+		} else if (["elu", "leakyReLU", "reLU", "softmax"].includes(this_layer_type)) {
+			var activation_name = this_layer_type;
+			if(activation_name == "leakyReLU") {
+				activation_name = "LeakyReLU";
+			} else if(activation_name == "reLU") {
+				activation_name = "relu";
+			}
+
+			var prev_layer_name = "";
+
+			if(i == 0) {
+				prev_layer_name += array_to_latex(input_layer, "Input");
+			} else {
+				prev_layer_name += "h" + "'".repeat(i - 1);
+			}
+
+			if(i == layer_data.length - 1) {
+				str += array_to_latex(y_layer, "Output") + " = ";
+			} else {
+				str += "h" + "'".repeat(i) + " = ";
+			}
+
+			if(Object.keys(activation_function_equations).includes(activation_name)) {
+				var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
+
+				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+				var has_lower_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit");
+				var has_upper_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit")
+
+				var this_activation_array = [];
+
+				if(has_lower_limit) {
+					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+				}
+
+				if(has_upper_limit) {
+					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+				}
+
+				if(this_activation_array.length) {
+					this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+				}
+
+				str += this_activation_string + "\n";
+			} else {
+				//log("Activation name '" + activation_name + "' not found");
+			}
+		} else if (this_layer_type == "batchNormalization") {
+			// not used
+			//x* = (x - E[x]) / sqrt(var(x))
+
+			var prev_layer_name = "";
+
+			if(i == 0) {
+				prev_layer_name += array_to_latex(input_layer, "Input");
+			} else {
+				prev_layer_name += "h" + "'".repeat(i - 1);
+			}
+
+			if(i == layer_data.length - 1) {
+				str += array_to_latex(y_layer, "Output") + " = ";
+			} else {
+				str += "h" + "'".repeat(i) + " = ";
+			}
+
+			str += "\\frac{\\left(" + prev_layer_name + " - \\text{mean}\\left(" + prev_layer_name + "\\right)\\right)}{\\sqrt{\\mathrm{variance}\\left(" + prev_layer_name + "\\right)}}";
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
+		str += "$$";
 	}
 
 	prev_layer_data = layer_data;
@@ -1186,8 +1272,8 @@ function can_be_shown_in_latex () {
 	}
 
 	for (var i = 0; i < model.layers.length; i++) {
-		var layer_name = model.layers[i].name;
-		if(!(layer_name.startsWith("dense"))) {
+		var this_layer_type = $($(".layer_type")[i]).val();
+		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax"].includes(this_layer_type))) {
 			return false
 		}
 	}
@@ -1195,7 +1281,10 @@ function can_be_shown_in_latex () {
 	return true;
 }
 
-async function write_model_to_latex_to_page (delay_code) {
+async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) {
+	if(reset_prev_layer_data) {
+		prev_layer_data = [];
+	}
 	if(!can_be_shown_in_latex()) {
 		$("#math_tab_label").hide();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
@@ -1222,7 +1311,12 @@ async function write_model_to_latex_to_page (delay_code) {
 		$("#tmp_math_tab").remove();
 	} else {
 		$("#math_tab").html(latex);
-		MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+		try {
+			MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+		} catch (e) {
+			var mathjax_error_explanation = "Are you online?";
+			$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+		}
 	}
 }
 

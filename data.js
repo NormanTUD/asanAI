@@ -353,7 +353,9 @@ async function get_xs_and_ys () {
 	}
 
 	try {
-		$("#predict_own_data").attr("placeholder", "[[" + truncate_text(xy_data["x"].arraySync()[0].join(", "), 500) + "]]");
+		if(["x"].includes(Object.keys(xy_data)) && xy_data["x"]) {
+			$("#predict_own_data").attr("placeholder", "[[" + truncate_text(xy_data["x"].arraySync()[0].join(", "), 500) + "]]");
+		}
 	} catch (e) {
 		write_error(e);
 	}

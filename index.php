@@ -121,13 +121,16 @@
 						<div class="small_vskip"></div>
 						<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
 						<button id="load_weights_button" style="display: none" onclick="load_weights()" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
+
+						<div class="small_vskip"></div>
+						<button onclick="toggle_layer_view()">Toggle Layers</button>
 					</div>
 					<div class="ribbon-group-title">Example datasets</div>
 				</div>
 
 				<div class="ribbon-group-sep"></div>
 				<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-					<div class="ribbon-toolbar" style="width: 300px">
+					<div class="ribbon-toolbar" style="width: 320px">
 						<table>
 							<tr>
 								<td>Loss:</td>
@@ -166,7 +169,7 @@
 									</select>
 								</td>
 								<tr>
-									<td style="white-space: nowrap;">$X$-Source:</td>
+									<td style="white-space: nowrap;">$X$ &amp; $Y$-Source:</td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)">
 											<option value="default">Default</option>
@@ -467,10 +470,10 @@
 					<div class="ribbon-toolbar">
 						<table>
 							<tr>
-								<td>Scale number of neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
+								<td>Scale number neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
 							</tr>
 							<tr>
-								<td>Max. size before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
+								<td>Max. neurons before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
 							</tr>
 						</table>
 					</div>
@@ -567,15 +570,9 @@
 							<table data-intro="Options for the math mode.">
 								<tr>
 									<td>Number of decimal points (0 = no limit):</td>
-									<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page()" id="decimal_points_math_mode" /></td>
+									<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
 								</tr>
 								<tr>
-									<td>Update Math-mode on batch end?</td>
-									<td>
-										<input type="checkbox" value="1" id="update_math_on_batchend" onchange="live_math_mode_toggler()" />
-									</td>
-								</tr>
-								<tr id="update_interval_tr" style="display: none">
 									<td>Update-interval (ms):</td>
 									<td>
 										<input type="number" id="math_update_interval" value="300" style="width: 80px" />
@@ -663,7 +660,7 @@
 			<div id="help" style="display: none"></div>
 
 			<div class="side_by_side_container">
-				<div class="left_side">
+				<div id="layers_container_left" class="left_side">
 					<ul id="layers_container" class="ui-sortable"><li></li></ul>
 				</div>
 				<div class="right_side" id="graphs_here" style="padding-left: 10px">
@@ -920,7 +917,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 										<div id="webcam" style="display: none">
 										</div>
 
-										<div id="webcam_prediction"></div>
+										<pre id="webcam_prediction" style="overflow: scroll;"></pre>
 
 										<br>
 										
@@ -948,6 +945,9 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 
 		<script src="main.js"></script>
 		<script>
+			var local_store = window.localStorage;
+			local_store.clear();
+
 			function get_mode() {
 				var backend = $("#mode_chooser > input[type=radio]:checked").val();
 
@@ -1415,6 +1415,10 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 			}
 
 			toggle_memory_debug();
+
+			if(window.location.href.indexOf("run_tests") > -1) {
+				run_tests();
+			}
 		</script>
 
 		<script src="prism/prism.js"></script>

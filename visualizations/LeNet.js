@@ -2,7 +2,7 @@
 
 function LeNet() {
 	function get_graph_width () {
-		return 0.9 * document.getElementById("graphs_here").scrollWidth;
+		return 0.9 * document.getElementById("lenet_tab").offsetWidth;
 	}
 	var graph_width = get_graph_width();
 
@@ -300,7 +300,11 @@ function LeNet() {
 		h = 600;
 		graph_width = get_graph_width();
 		svg.attr("width", graph_width).attr("height", h);
-		g.attr("transform", "translate(-" + parseInt(graph_width / 2) + ",0) scale(1)");
+		g.attr("id", "lenet_frame");
+
+		var move_left = $("#lenet_tab")[0].scrollWidth * 0.9;
+
+		g.attr("transform", "translate(-" + move_left + ",0) scale(1)");
 	}
 
 	var bscale = 100;
@@ -311,8 +315,9 @@ function LeNet() {
 	resize();
 
 	return {
-		'redraw'         : redraw,
-		'redistribute'   : redistribute,
-		'style'          : style
+		'redraw': redraw,
+		'redistribute': redistribute,
+		'style': style,
+		'resize': resize
 	}
 }

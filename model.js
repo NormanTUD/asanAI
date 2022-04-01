@@ -297,31 +297,7 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-function clean_tf_model_tensors () {
-	if(Object.keys(model).includes("layers")) {
-		for (var i = 0; i < model.layers.length; i++) {
-			if(Object.keys(model.layers[i]).includes("weights")) {
-				for (var j = 0; j < model.layers[i]["weights"].length; j++) {
-					dispose(model.layers[i]["weights"][j]);
-				}
-			}
-		}
-	}
-}
-
-function show_memory_info () {
-	var mem = tf.memory();
-
-	var data_struct = {
-		"MB": mem["numBytes"] / (1024 ** 2),
-		"numTensors": mem["numTensors"]
-	};
-
-	console.table(data_struct);
-}
-
 function create_model (old_model, fake_model_structure) {
-	//show_memory_info();
 	var new_current_status_hash = get_current_status_hash();
 	if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
 		return old_model;
@@ -689,6 +665,10 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
 			return false;
 		}
+	} else if(["ZeroPadding2D"].includes(layer_type)) {
+		if(layer_type == "gru" && layer_input_shape.length != 4) {
+			return false;
+		}
 	}
 
 	return true;
@@ -746,20 +726,8 @@ function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-function set_weights_from_json_object (json) {
+function set_weights_from_json_object (json, dont_show_weights) {
 	var weights_array = [];
-
-	/*
-	if((json.length - 2) != model.layers.length) {
-		Swal.fire({
-			icon: 'error',
-			title: "Error",
-			text: 'The model weights file could not be loaded because you have a different number of layers than it has weights.'
-		});
-
-		return false;
-	}
-	*/
 
 	var tensors = [];
 
@@ -782,13 +750,13 @@ function set_weights_from_json_object (json) {
 		return false;
 	}
 
-	model_is_trained = true;
-
-	Swal.fire(
-		'Weights loaded successfully',
-		'',
-		'success'
-	)
+	if(!dont_show_weights) {
+		Swal.fire(
+			'Weights loaded successfully',
+			'',
+			'success'
+		);
+	}
 
 	return true;
 }
@@ -798,7 +766,7 @@ async function set_weights_from_string (string) {
 
 	log(json);
 
-	return set_weights_from_json_object(json);
+	return set_weights_from_json_object(json, 0);
 }
 
 async function get_weights_as_string () {

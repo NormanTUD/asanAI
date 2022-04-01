@@ -297,6 +297,7 @@ async function predict_webcam () {
 
 async function show_webcam () {
 	if(_show_webcam()) {
+		$("#webcam").hide().html("");
 		var videoElement = document.createElement('video');
 		videoElement.width = 256;
 		videoElement.height = 256;
@@ -304,7 +305,6 @@ async function show_webcam () {
 
 		$("#webcam").append("<br><button onclick='predict_webcam()'>Predict webcam image</button>");
 		cam = await tf.data.webcam(videoElement);
-
 	} else {
 		$("#webcam").hide().html("");
 		if(cam) {
