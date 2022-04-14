@@ -54,7 +54,7 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-	return await $.get("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/" + filename);
+	return await $.get("traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/" + filename);
 }
 
 function shuffle (array) {
@@ -101,7 +101,7 @@ async function get_image_data(skip_real_image_download) {
 	var urls = [];
 	var keys = {};
 
-	var base_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val();
+	var base_url = "traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/";
 
 	for (const [key, items] of Object.entries(json)) {
 		if(items.length) {
@@ -265,7 +265,7 @@ async function get_xs_and_ys () {
 				datadebug(y);
 
 				y = tf.tensor(classes);
-			} else if(["logic", "own"].includes(category)) {
+			} else if(["classification", "own"].includes(category)) {
 				var x_string, y_string;
 				if(category == "own") {
 					x_string = x_file;
@@ -398,7 +398,7 @@ function determine_input_shape () {
 }
 
 async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
+	const data = await $.getJSON("traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
 	return data;
 }
 

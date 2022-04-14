@@ -57,7 +57,7 @@ function add_function_debugger () {
 	for (var i in window) {
 	    if(
 		    i != "assert" &&							// Disable assert output
-		    !["add_function_debugger", "getParamNames"].includes(i) &&		// exclude debug functions
+		    !["add_function_debugger", "getParamNames", "fix_graph_color", "memory_debugger", "_allow_training", "fix_lenet_width", "allow_training", "allow_training"].includes(i) &&		// exclude debug functions
 		    typeof(window[i]) == "function" &&					// use only functions
 		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
 		    !current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions

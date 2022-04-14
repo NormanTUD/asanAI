@@ -1,5 +1,5 @@
 {
-	"name": "XOR",
+	"name": "AND/XOR",
 	"loss": "meanSquaredError",
 	"metric": "mse",
 	"optimizer": "adam",
@@ -8,5 +8,6 @@
 	"epochs": 500,
 	"batchSize": 4,
 	"validationSplit": 0,
-	"input_shape": "[2]"
+	"input_shape": "[2]",
+	"trainable_data": ["and", "xor"]
 }

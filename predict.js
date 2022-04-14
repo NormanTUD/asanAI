@@ -128,7 +128,7 @@ async function predict (item) {
 
 		if(category == "image") {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-		} else if(["logic", "own"].includes(category)) {
+		} else if(["classification", "own"].includes(category)) {
 			predict_data = tf.tensor(eval(item));
 		} else {
 			log("Invalid category for prediction: " + category);
@@ -148,7 +148,7 @@ async function predict (item) {
 
 		log(predictions);
 
-		if(["logic", "own"].includes(category) && labels.length == 0) {
+		if(["classification", "own"].includes(category) && labels.length == 0) {
 			var str = "[" + predictions.join(", ") + "]";
 			$("#prediction").append(str);
 		} else {
@@ -188,8 +188,8 @@ async function predict (item) {
 	tf.engine().endScope();
 }
 
-function show_prediction (keep_show_after_training_hidden) {
-	$(".show_when_predicting").show();
+function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+	$(".sehow_when_predicting").show();
 
 	hide_unused_layer_visualization_headers();
 
@@ -211,7 +211,7 @@ function show_prediction (keep_show_after_training_hidden) {
 					}
 				}
 			});
-		} else if ($("#dataset_category").val() == "logic") {
+		} else if ($("#dataset_category").val() == "classification") {
 			tf.tidy(() => {
 				$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
 				$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
@@ -221,9 +221,11 @@ function show_prediction (keep_show_after_training_hidden) {
 		}
 	}
 
-	if($("#jump_to_predict_tab").is(":checked")) {
-		$('a[href="#predict_tab"]').click();
-		hide_annoying_tfjs_vis_overlays();
+	if(!dont_go_to_tab) {
+		if($("#jump_to_predict_tab").is(":checked")) {
+			$('a[href="#predict_tab"]').click();
+			hide_annoying_tfjs_vis_overlays();
+		}
 	}
 }
 
@@ -258,9 +260,9 @@ async function predict_webcam () {
 
 	var category = _get_category();
 
-	$("#webcam_prediction").html("");
+	$("#webcam_prediction").html("").show();
 
-	if(["logic", "own"].includes(category) && labels.length == 0) {
+	if(["classification", "own"].includes(category) && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
 		$("#webcam_prediction").append(str);
 	} else {
@@ -303,7 +305,7 @@ async function show_webcam () {
 		videoElement.height = 256;
 		$("#webcam").show().append(videoElement);
 
-		$("#webcam").append("<br><button onclick='predict_webcam()'>Predict webcam image</button>");
+		$("#webcam").append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 		cam = await tf.data.webcam(videoElement);
 	} else {
 		$("#webcam").hide().html("");

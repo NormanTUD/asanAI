@@ -1,0 +1,114 @@
+html {
+	min-width: 1200px;
+	min-height:100%;
+	min-width: 1600px;
+	outline: none;
+	color: #ffffff;
+	font-family: 'Computer Modern Bright Semibold', sans-serif;
+	margin:0;
+	padding:0;
+	width:100%;
+	height:100%;
+	font-size: 14px;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background: rgb(5,26,113);
+	background: radial-gradient(circle, rgba(5,26,113,1) 15%, rgba(0,0,0,1) 100%);
+}
+
+.descriptions_of_layers {
+	display: flex;
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	writing-mode: vertical-rl;
+	background-color: white;
+	border-radius: 5px;
+	background: rgb(255,255,255, 0.2);
+	border: solid #a3a8ac 1px;
+	width: 40px;
+	text-align: center;
+}
+
+.less_transparent_glass_box {
+	position: relative;
+	background: rgb(12,12,12,0.9);
+	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+	border-radius: 5px;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+	border: solid #a3a8ac 1px;
+}
+
+.glass_box {
+	position: relative;
+	//background: linear-gradient(rgba(255, 255, 255, 0.35) 8px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.08) 100%);
+	background: rgb(255,255,255, 0.2);
+
+
+	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+	border-radius: 5px;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+	border: solid #a3a8ac 1px;
+}
+
+#tensor_number_debugger {
+	color: white;
+}
+
+.ui-widget-content {
+	//border: 1px solid #dddddd;
+	//background: #f2f5f7 url("images/ui-bg_highlight-hard_100_f2f5f7_1x100.png") 50% top repeat-x;
+}
+
+#ribbon {
+	background: #6b6b6b;
+}
+.ui-widget-content a {
+}
+
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited,
+a.ui-button,
+a:link.ui-button,
+a:visited.ui-button,
+.ui-button {
+	text-decoration: none;
+}
+
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+	color: #fff;
+	text-decoration: none;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	//border: 1px solid #2694e8;
+	//background: #3baae3 url("images/ui-bg_glass_50_3baae3_1x400.png") 50% 50% repeat-x;
+	//background: rgb(140,161,199);
+	//background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%);
+	background: rgb(179,179,179);
+	background: linear-gradient(180deg, rgba(179,179,179,1) 0%, rgba(0,0,0,1) 18%, rgba(107,107,107,1) 100%);
+	font-weight: bold;
+	color: #ffffff;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+button, select, input {
+	background: #DCDCDC;
+}
+
+.ui-widget-header a {
+	color: white;
+}

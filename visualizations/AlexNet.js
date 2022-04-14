@@ -5,6 +5,8 @@ function AlexNet() {
 		return 0.99 * document.getElementById("graphs_here").scrollWidth;
 	}
 
+	var rotation_number = 0;
+
 	var h = 600;
 
 	var color1 = '#eeeeee'; // Blöcke
@@ -325,6 +327,17 @@ function AlexNet() {
 		pyra_material.opacity = filterOpacity;
 	}
 
+	function rotate() {
+		// TODO!!!
+		requestAnimationFrame(rotate);
+		camera.rotation.x = -0.5854 * rotation_number + 0.4197;
+		camera.rotation.y = 0.5409 * rotation_number - 1.1625;
+		camera.rotation.z = 1.1352 * rotation_number - 2.2595
+		rotation_number += 0.01;
+		renderer.render(scene, camera);
+	}
+
+
 	///////////////////////////////////////////////////////////////////////////////
 	//                  ///////    Window Resize    ///////
 	///////////////////////////////////////////////////////////////////////////////
@@ -351,5 +364,7 @@ function AlexNet() {
 		'redraw'           : redraw,
 		'restartRenderer'  : restartRenderer,
 		'style'            : style,
+		'rotate'           : rotate,
+		'camera': camera
 	}
 }

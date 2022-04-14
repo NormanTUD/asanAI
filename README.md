@@ -55,3 +55,5 @@ in creating this program:
 - [ChardinJS](https://heelhook.github.io/chardin.js/sequential.html)
 
 - [computer-modern-web-font](https://github.com/dreampulse/computer-modern-web-font)
+
+- [Clippy.js](https://www.smore.com/clippy-js)

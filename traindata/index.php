@@ -15,9 +15,11 @@ function list_files_in_dir ($dir, $max_number_of_files_per_category) {
 
 function list_dir ($folder, $max_number_of_files_per_category, $examples) {
 	$struct = [];
-	foreach (scandir($folder) as $this_folder) {
-		if($this_folder != "." && $this_folder != ".." && ((!$examples && $this_folder != "example") || $examples)) {
-			$struct[$this_folder] = list_files_in_dir("$folder/$this_folder", $max_number_of_files_per_category);
+	if(is_dir($folder)) {
+		foreach (scandir($folder) as $this_folder) {
+			if($this_folder != "." && $this_folder != ".." && ((!$examples && $this_folder != "example") || $examples)) {
+				$struct[$this_folder] = list_files_in_dir("$folder/$this_folder", $max_number_of_files_per_category);
+			}
 		}
 	}
 

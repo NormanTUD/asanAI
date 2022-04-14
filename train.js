@@ -11,7 +11,6 @@ function gui_in_training () {
 function gui_not_in_training () {
 	started_training = false;
 	$("#train_neural_network_button").html("Start training");
-	enable_everything();
 	favicon_default();
 
 	try {
@@ -154,21 +153,18 @@ function get_fit_data () {
 		document.title = original_title;
 	}
 
-	callbacks["onBatchEnd"] = async function () {
+	callbacks["onEpochEnd"] = async function () {
 		current_epoch++;
-
 		var max_number_epochs = get_epochs();
-
 		var current_time = Date.now();
-
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
-
 		var epochs_left = max_number_epochs - current_epoch;
-
 		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
-
-		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "TFJS";
+		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "NNE";
 	}
+
+	//callbacks["onBatchEnd"] = async function () {
+	//}
 
 	var fit_data = {
 		validationSplit: validationSplit,
@@ -243,6 +239,7 @@ async function run_neural_network () {
 						show_info_after_run(h);
 
 						enable_everything();
+						gui_not_in_training();
 					} catch (e) {
 						write_error(e);
 

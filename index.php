@@ -1,8 +1,49 @@
+<?php
+	function dier ($data, $enable_html = 0) {
+		$source_data = debug_backtrace()[0];
+		@$source = 'Aufgerufen von <b>'.debug_backtrace()[1]['file'].'</b>::<i>'.debug_backtrace()[1]['function'].'</i>, line '.htmlentities($source_data['line'])."<br>\n";
+		print $source;
+
+		print "<pre>\n";
+		ob_start();
+		print_r($data);
+		$buffer = ob_get_clean();
+		if($enable_html) {
+			print $buffer;
+		} else {
+			print htmlentities($buffer);
+		}
+		print "</pre>\n";
+
+		print "Backtrace:\n";
+		print "<pre>\n";
+		foreach (debug_backtrace() as $trace) {
+			print htmlentities(sprintf("\n%s:%s %s", $trace['file'], $trace['line'], $trace['function']));
+		}
+		print "</pre>\n";
+
+		exit();
+	}
+
+	$darkmode = 0;
+
+	if($_COOKIE["darkmode"]) {
+		$darkmode = !!$_COOKIE["darkmode"];
+	}
+
+	if(array_key_exists("darkmode", $_GET)) {
+		setcookie("darkmode", 1);
+		$darkmode = 1;
+	} else if(array_key_exists("lightmode", $_GET)) {
+		setcookie("darkmode", 0);
+		$darkmode = 0;
+	}
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta name="viewport" content="width=device-width, user-scalable=yes">
-		<title>Tensorflow.js Demonstrator</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+		<title>Neural Network Editor</title>
 		<meta charset="utf-8">
 
 
@@ -11,18 +52,36 @@
 <?php
 				include("traindata.php");
 ?>
+
+			var darkmode = <?php print $darkmode; ?>;
 		</script>
 
 
-
+<?php
+		$tablist_color = "bbddfd";
+?>
 		<link href="jquery-ui.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="fonts.css">
 		<link href="style.css" rel="stylesheet">
+<?php
+		$tablist_color = "bbddfd";
+		if($darkmode) {
+			$tablist_color = "000000";
+?>
+			<link href="darkmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="ribbondarkmode.css">
+<?php
+		} else {
+?>
+
+			<link href="lightmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="ribbon.css">
+<?php
+		}
+?>
 		<link href="prism/prism.min.css" rel="stylesheet">
 		<link href="external/sweetalert2.min.css" rel="stylesheet">
 
-		<!-- ribbon interface files -->
-		<link rel="stylesheet" type="text/css" href="ribbon.css">
 
 		<!-- jquery -->
 		<script src="jquery.js"></script>
@@ -79,14 +138,22 @@
 				"SVG":{
 					font:font
 				},
-				"showMathMenu": false,
+				"showMathMenu": true,
 				"HTML-CSS": {
-				"EqnChunk": 150,
-					"EqnChunkDelay": 20
+					"EqnChunk": 50,
+					"EqnChunkDelay": 10
 				},
 				"fast-preview": {
 					"disabled": true
 				}
+			});
+		</script>
+
+		<script src="clippy/build/clippy.js"></script>
+		<script type="text/javascript">
+			var this_agent = null;
+			clippy.load('Merlin', function(agent) {
+				this_agent = agent;
 			});
 		</script>
 
@@ -95,844 +162,880 @@
 		<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
 	</head>
 	<body style="margin: 0px;" data-chardin-sequenced="true">
-		<div id="ribbon" style="width:100%; height: 180px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
-			<ul id="tablist" style="background: #bbddfd">
-				<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
-				<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
-				<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
-				<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
-				<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-				<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
-				<span id="tensor_number_debugger" style="display: none"></span>
-			</ul>
+		<div id="mainsite">
+			<div id="ribbon" style="width:100%; height: 180px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
+				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
+					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
+					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
+					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
+					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
+					<li><span class="symbol_button enabled_symbol" title="Start Clippy-Tour" onclick="clippy_tour()">&#129497;&#8205;&#9794;&#65039;</span></li>
+					<span id="tensor_number_debugger" style="display: none"></span>
+				</ul>
 
-			<div id="home_ribbon" class="ribbon_tab_content" title="Home">
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:200px">
-						<select data-position="right" data-intro="Choose a category here (images, logic, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
-							<option value="own">Own data</option>
-						</select>
-						<div class="small_vskip"></div>
-						<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="dataset_div">
-							<select id="dataset" onchange="chose_dataset();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
-							</select>
-						</div>
-
-						<div class="small_vskip"></div>
-						<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
-						<button id="load_weights_button" style="display: none" onclick="load_weights()" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
-
-						<div class="small_vskip"></div>
-						<button onclick="toggle_layer_view()">Toggle Layers</button>
-					</div>
-					<div class="ribbon-group-title">Example datasets</div>
-				</div>
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-					<div class="ribbon-toolbar" style="width: 320px">
-						<table>
-							<tr>
-								<td>Loss:</td>
-								<td style="width: 220px">
-									<select id="loss" onchange="updated_page()" style="width: 200px">
-										<option value="meanSquaredError">MeanSquaredError</option>
-										<option value="binaryCrossentropy">BinaryCrossentropy</option>
-										<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
-										<option value="categoricalHinge">CategoricalHinge</option>
-										<option value="hinge">Hinge</option>
-										<option value="meanAbsoluteError">MeanAbsoluteError</option>
-										<option value="meanAbsolutePercentageError">MeanAbsolutePercentageError</option>
-										<option value="meanSquaredLogarithmicError">MeanSquaredLogarithmicError</option>
-										<option value="poisson">Poisson</option>
-										<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
-										<option value="squaredHinge">SquaredHinge</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>Metric:</td>
-								<td style="width: 220px">
-									<select id="metric" onchange="change_metrics()" style="width: 200px">
-										<option value="binaryAccuracy">binaryAccuracy</option>
-										<option value="categoricalAccuracy">categoricalAccuracy</option>
-										<option value="precision">precision</option>
-										<option value="categoricalCrossentropy">categoricalCrossentropy</option>
-										<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
-										<option value="mse">mse</option>
-										<option value="MSE">MSE</option>
-										<option value="mae">mae</option>
-										<option value="MAE">MAE</option>
-										<option value="mape">mape</option>
-										<option value="MAPE">MAPE</option>
-										<option value="cosine">cosine</option>
-									</select>
-								</td>
+				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
+					<div class="ribbon-group">
+						<div class="ribbon-toolbar" style="width:250px">
+							<table width=240>
 								<tr>
-									<td style="white-space: nowrap;">$X$ &amp; $Y$-Source:</td>
 									<td>
-										<select id="data_origin" onchange="change_data_origin(1)">
-											<option value="default">Default</option>
+										<span class="symbol_button">&#128452;</span>
+									</td>
+									<td>
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
 											<option value="own">Own data</option>
 										</select>
 									</td>
 								</tr>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Loss/Metric/Data</div>
-				</div>
+								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
+									<tr>
+										<td>
+											<span class="symbol_button">&#128423;</span>
+										</td>
+										<td>
+											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
+											</select>
+										</td>
+									</tr>
+								</div>
+								<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="model_dataset_div">
+									<tr>
+										<td>
+											<span class="symbol_button">&#9871;</span>
+										</td>
+										<td>
+											<select id="model_dataset" onchange="change_model_dataset();" style="width: 90%">
+											</select>
+										</td>
+									</tr>
+								</div>
+							</table>
 
-				<div id="custom_training_data_settings" style="display: none">
+							<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
+							<button id="load_weights_button" style="display: none" onchange="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
+						</div>
+						<div class="ribbon-group-title">Dataset and Network</div>
+					</div>
+
 					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group" data-intro="You can set where your training data should come from here">
-						<div class="ribbon-toolbar" style="width:220px">
+					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
+						<div class="ribbon-toolbar" style="width: 350px">
 							<table>
-								<tr id="data_type_row" style="display: none">
-									<td>Data Type:</td>
-									<td>
-										<select id="data_type" onchange="change_data_origin(1)">
-											<option value="csv">CSV</option>
-											<option value="image">Image</option>
-											<option value="tensordata">Tensor-Data</option>
+								<tr>
+									<td>Loss:</td>
+									<td style="width: 220px">
+										<select id="loss" onchange="updated_page()" style="width: 200px">
+											<option value="meanSquaredError">MeanSquaredError</option>
+											<option value="binaryCrossentropy">BinaryCrossentropy</option>
+											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
+											<option value="categoricalHinge">CategoricalHinge</option>
+											<option value="hinge">Hinge</option>
+											<option value="meanAbsoluteError">MeanAbsoluteError</option>
+											<option value="meanAbsolutePercentageError">MeanAbsolutePercentageError</option>
+											<option value="meanSquaredLogarithmicError">MeanSquaredLogarithmicError</option>
+											<option value="poisson">Poisson</option>
+											<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
+											<option value="squaredHinge">SquaredHinge</option>
 										</select>
 									</td>
 								</tr>
-
-							</table>
-						</div>
-						<div class="ribbon-group-title">Training data</div>
-					</div>
-				</div>
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" style="display:none">
-					<div class="ribbon-toolbar" style="width:100px">
-						<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%" />
-					</div>
-					<div class="ribbon-group-title">Layers</div>
-				</div>
-				<!--<div class="ribbon-group-sep"></div>-->
-
-				<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-					<div class="ribbon-toolbar" style="width:160px">
-						<table>
-							<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
-							<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
-							<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
-							<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Hyperparameters</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
-
-
-
-				<div id="image_resize_dimensions">
-					<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-						<div class="ribbon-toolbar" style="width:180px">
-							<table>
 								<tr>
-									<td>Width:</td>
-									<td><input type="number" min="1" max="255" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
+									<td>Metric:</td>
+									<td style="width: 220px">
+										<select id="metric" onchange="change_metrics()" style="width: 200px">
+											<option value="binaryAccuracy">binaryAccuracy</option>
+											<option value="categoricalAccuracy">categoricalAccuracy</option>
+											<option value="precision">precision</option>
+											<option value="categoricalCrossentropy">categoricalCrossentropy</option>
+											<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
+											<option value="mse">mse</option>
+											<option value="MSE">MSE</option>
+											<option value="mae">mae</option>
+											<option value="MAE">MAE</option>
+											<option value="mape">mape</option>
+											<option value="MAPE">MAPE</option>
+											<option value="cosine">cosine</option>
+										</select>
+									</td>
+									<tr>
+										<td style="white-space: nowrap;">$X$ &amp; $Y$-Source:</td>
+										<td>
+											<select id="data_origin" onchange="change_data_origin(1)">
+												<option value="default">Default</option>
+												<option value="own">Own</option>
+											</select>
+										</td>
+									</tr>
 								</tr>
 								<tr>
-									<td>Height:</td>
-									<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
-								</tr>
-								<tr id="max_number_of_files_per_category_tr" style="display: none">
-									<td>Img/category:</td>
-									<td><input type="number" min="0" value="400" id="max_number_of_files_per_category" style="width: 50px" /></td>
+									<td>Shapes: </td>
+									<td><input type="text" value="" style="width: 80px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 80px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Image Options</div>
-					</div>
-					<div class="ribbon-group-sep"></div>
-				</div>
-
-				<div class="ribbon-group" data-intro="Show shapes of tensors. Can only be edited in 'own'-data mode or via the Image options when using the dataset-category 'images'.">
-					<div class="ribbon-toolbar" style="width:180px">
-						<table>
-							<tr><td>Input:</td><td><input type="text" value="" style="width: 95px;" onchange="update_input_shape()" readonly id="inputShape" /></td></tr>
-							<tr><td>Output:</td><td><input type="text" value="" style="width: 95px;" readonly id="outputShape" /></td></tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Shapes</div>
-				</div>
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
-					<div class="ribbon-toolbar">
-						<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
-						<div class="small_vskip"></div>
-						Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
-						<div class="small_vskip"></div>
-						Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
-						<div class="small_vskip"></div>
-						Divide $X$-Tensor by: <input style="width: 50px;" type="text" value="1" id="divide_by" />
-					</div>
-					<div class="ribbon-group-title">Training</div>
-				</div>
-			</div>
-
-			<div id="tf_ribbon" class="ribbon_tab_content" title="TensorFlow">
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar">
-						<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
-							<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer">
-							<label for="svg_renderer">CPU</label>
-
-							<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer" checked>
-							<label for="webgl_renderer">WebGL</label>
-						</fieldset>
-						<hr>
-						<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
-							<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
-							<label for="amateur">Amateur</label>
-
-							<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
-							<label for="expert">Expert</label>
-						</fieldset>
-					</div>
-					<div class="ribbon-group-title">TF-Backend/GUI-Mode</div>
-				</div>
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-					<div class="ribbon-toolbar">
-						<table>
-							<tr>
-								<td>Kernel initializer</td>
-								<td>
-									<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()">
-										<option value="none">&mdash;</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>Bias initializer</td>
-								<td>
-									<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()">
-										<option value="none">&mdash;</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>Activation functions</td>
-								<td>
-									<select id="set_all_activation_functions" onchange="set_all_activation_functions()">
-										<option value="none">&mdash;</option>
-									</select>
-								</td>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Set options for all</div>
-				</div>
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
-					<div class="ribbon-toolbar" style="width:200px">
-						<select id="optimizer" onchange='change_optimizer()' style="width: 100%">
-							<option value="adam">adam</option>
-							<option value="adadelta">adadelta</option>
-							<option value="adagrad">adagrad</option>
-							<option value="adamax">adamax</option>
-							<option value="rmsprop">rmsprop</option>
-							<option value="sgd">sgd</option>
-						</select>
-						<!--<a href="#" onclick="show_optimizer_help()">What does this mean?</a>-->
+						<div class="ribbon-group-title">Loss/Metric/Data/Shape</div>
 					</div>
 
-					<div class="ribbon-toolbar" style="max-width: 1000px; width: auto">
-						<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
-
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
-
-									<td>beta1:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
-								</tr>
-
-								<tr>
-									<td>beta2:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
-
-									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
-
-									<td>Rho:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
-
-									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
-
-									<td>beta1:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
-
-									<td>beta2:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
-								</tr>
-								<tr>
-
-									<td>Decay:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
-
-									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
-
-									<td></td>
-									<td></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
-
-									<td>Decay:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
-								</tr>
-								<tr>
-									<td>Momentum:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
-
-									<td>Epsilon:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
-								</tr>
-							</table>
-						</div>
-
-						<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
-							<table style="width: 80%">
-								<tr>
-									<td>Learning rate:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
-
-									<td>Momentum:</td>
-									<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-					<div class="ribbon-group-title">Optimizer</div>
-				</div>
-
-			</div>
-
-			<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-				<div class="ribbon-group" style="width: 250px" data-intro="Settings for the FCNN-style visualizations">
-					<div class="ribbon-toolbar">
-						<table>
-							<tr>
-								<td>Scale number neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
-							</tr>
-							<tr>
-								<td>Max. neurons before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">FCNN style settings</div>
-				</div>
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group" style="width: auto;">
-					<div class="ribbon-toolbar">
-						<table>
-							<tr data-intro="Show the current layer live in the FCNN-style-view">
-								<td>Highlight layer?</td>
-								<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
-							</tr>
-							<tr class="hide_when_no_alexnet">
-								<td>AlexNet-Renderer</td>
-								<td>
-									<fieldset style="border-width: 0px" id="alexnet_renderer"> 
-										<!--<legend>AlexNet-renderer:</legend> -->
-										<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer" checked>
-										<label for="webgl_renderer">WebGL</label>
-										<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer">
-										<label for="svg_renderer">SVG</label>
-									</fieldset>
-								</td>
-							</tr>
-							<tr data-intro="Show a counter on the layers that increases every time that layer gets called.">
-								<td>Call counter?</td>
-								<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
-							</tr>
-							<tr class="hide_when_no_conv_visualiations" data-intro="Show the input layers in LeNet/AlexNet visualizations.">
-								<td>Input&nbsp;Layer&nbsp;Alex/LeNet?</td>
-								<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Visualizations</div>
-				</div>
-
-				<div class="hide_when_no_conv_visualiations">
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group">
-						<div class="ribbon-group">
-							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+					<div id="custom_training_data_settings" style="display: none">
+						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group" data-intro="You can set where your training data should come from here">
+							<div class="ribbon-toolbar" style="width:220px">
 								<table>
-									<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
-										<td>Pixel size:</td>
-										<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
+									<tr id="data_type_row" style="display: none">
+										<td>Data Type:</td>
+										<td>
+											<select id="data_type" onchange="change_data_origin(1)">
+												<option value="csv">&#128290; CSV</option>
+												<option value="image">&#128444; Image</option>
+												<option value="tensordata">&#x2318; Tensor-Data</option>
+											</select>
+										</td>
 									</tr>
-									<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
-										<td>Iterations:</td>
-										<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+
+								</table>
+							</div>
+							<div class="ribbon-group-title">Training data</div>
+						</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group" style="display:none">
+						<div class="ribbon-toolbar" style="width:100px">
+							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%" />
+						</div>
+						<div class="ribbon-group-title">Layers</div>
+					</div>
+					<!--<div class="ribbon-group-sep"></div>-->
+
+					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
+						<div class="ribbon-toolbar" style="width:160px">
+							<table>
+								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
+								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Hyperparameters</div>
+					</div>
+					<div class="ribbon-group-sep"></div>
+
+					<div id="image_resize_dimensions">
+						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
+							<div class="ribbon-toolbar" style="width:180px">
+								<table>
+									<tr>
+										<td>Width:</td>
+										<td><input type="number" min="1" max="255" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
 									</tr>
-									<tr data-intro="If this is checked, it starts with a single example image (if available)">
-										<td>Use example imgs as base?</td>
-										<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
+									<tr>
+										<td>Height:</td>
+										<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
+									</tr>
+									<tr id="max_number_of_files_per_category_tr" style="display: none">
+										<td>Img/category:</td>
+										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
 								</table>
 							</div>
+							<div class="ribbon-group-title">Image Options</div>
 						</div>
-						<div class="ribbon-group-title">Max. activated neurons</div>
+						<div class="ribbon-group-sep"></div>
+					</div>
+
+					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
+						<div class="ribbon-toolbar">
+							<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+							<div class="small_vskip"></div>
+							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
+							<div class="small_vskip"></div>
+							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
+							<div class="small_vskip"></div>
+							Divide $X$-Tensor by: <input style="width: 50px;" type="text" value="1" id="divide_by" />
+						</div>
+						<div class="ribbon-group-title">Training</div>
 					</div>
 				</div>
 
-
-				<div class="ribbon-group-sep"></div>
-				<div class="ribbon-group">
-					<div class="ribbon-toolbar" style="width:190px">
-						<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-							<tr class="hide_when_no_conv_visualiations">
-								<td>Show layer data flow:</td>
-								<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
-							</tr>
-							<tr class="hide_when_no_conv_visualiations">
-								<td>Show kernel images:</td>
-								<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
-							</tr>
-							<tr>
-								<td>Enable TF-Debug:</td>
-								<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
-							</tr>
-							<tr>
-								<td>Memory Debugger:</td>
-								<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" checked /></td>
-							</tr>
-						</table>
-					</div>
-					<div class="ribbon-group-title">Debug</div>
-				</div>
-
-				<div id="math_mode_settings" style="display: none">
-					<div class="ribbon-group-sep"></div>
+				<div id="tf_ribbon" class="ribbon_tab_content" title="TensorFlow">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
-							<table data-intro="Options for the math mode.">
+							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer">
+								<label for="svg_renderer">CPU</label>
+
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer" checked>
+								<label for="webgl_renderer">WebGL</label>
+							</fieldset>
+							<hr>
+							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
+								<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
+								<label for="amateur">&#129466; Amateur</label>
+
+								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
+								<label for="expert">&#9760;&#65039; Expert</label>
+							</fieldset>
+							Dark mode (reloads page)? <input value=1 type="checkbox" id="darkmode_choser" <?php print $darkmode ? "checked" : ""; ?> onclick="darkmode_choser()" />
+						</div>
+						<div class="ribbon-group-title">TF-Backend/GUI-Mode</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
 								<tr>
-									<td>Number of decimal points (0 = no limit):</td>
-									<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
+									<td>Kernel initializer</td>
+									<td>
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
 								</tr>
 								<tr>
-									<td>Update-interval (ms):</td>
+									<td>Bias initializer</td>
 									<td>
-										<input type="number" id="math_update_interval" value="300" style="width: 80px" />
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Activation functions</td>
+									<td>
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()">
+											<option value="none">&mdash;</option>
+										</select>
 									</td>
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Math-Mode</div>
+						<div class="ribbon-group-title">Set options for all</div>
 					</div>
-				</div>
 
-				<div id="data_plotter" style="display: none">
 					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group">
-						<div class="ribbon-group">
-							<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
-								<table>
+					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
+						<div class="ribbon-toolbar" style="width:200px">
+							<select id="optimizer" onchange='change_optimizer()' style="width: 100%">
+								<option value="adam">adam</option>
+								<option value="adadelta">adadelta</option>
+								<option value="adagrad">adagrad</option>
+								<option value="adamax">adamax</option>
+								<option value="rmsprop">rmsprop</option>
+								<option value="sgd">sgd</option>
+							</select>
+							<!--<a href="#" onclick="show_optimizer_help()">What does this mean?</a>-->
+						</div>
+
+						<div class="ribbon-toolbar" style="max-width: 1000px; width: auto">
+							<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
+								<table style="width: 80%">
 									<tr>
-										<td>Pixel size:</td>
-										<td><input type="number" min="1" max="100" value="2" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
 									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
+								<table style="width: 80%">
 									<tr>
-										<td>Kernel Pixel size:</td>
-										<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
+									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
+								<table style="width: 80%">
+									<tr>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
+
+										<td>beta1:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
 									</tr>
 
 									<tr>
-										<td>Max. nr. of images (0 = no limit):</td>
-										<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
+										<td>beta2:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
+
+										<td>Epsilon:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
+									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
+								<table style="width: 80%">
+									<tr>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
+
+										<td>Rho:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+
+										<td>Epsilon:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
+								<table style="width: 80%">
+									<tr>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
+
+										<td>beta1:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
+
+										<td>beta2:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
+									</tr>
+									<tr>
+
+										<td>Decay:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
+
+										<td>Epsilon:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
+
+										<td></td>
+										<td></td>
+									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+								<table style="width: 80%">
+									<tr>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
+
+										<td>Decay:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
+									</tr>
+									<tr>
+										<td>Momentum:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
+
+										<td>Epsilon:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
+									</tr>
+								</table>
+							</div>
+
+							<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
+								<table style="width: 80%">
+									<tr>
+										<td>Learning rate:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+
+										<td>Momentum:</td>
+										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
 									</tr>
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title">Data plotter</div>
+						<div class="ribbon-group-title">Optimizer</div>
 					</div>
+
 				</div>
-			</div>
-		</div>
 
-		<div id="wizard" style="position: relative; width: 98%">
-
-			<div id="save_dialog" style="display: none;">
-				<div class="popup_body less_transparent_glass_box">
-					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-					</div>
-					<div> 
-						<h1>Trained in Keras</h1>
-						<p>Use this command to convert TensorFlow to TFJS-models:</p>
-						<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
-
-						<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
-
-						<table>
-							<tr>
-								<td>Upload Model (<tt>.json</tt>):</td>
-								<td><input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model"></td>
-							</tr>
-							<tr>
-								<td>Upload Model weights (<tt>.bin</tt>):</td>
-								<td><input accept="application/octet-stream" type="file" id="upload_weights" onclick="set_config()" value="Upload Weights"></td>
-							</tr>
-						</table>
-
-						<h1>Trained in the browser with this demonstrator</h1>
-
-						<p>Upload the weights.json here.</p>
-
-						<table>
-							<tr>
-								<td>Upload Model weights (<tt>.json</tt>):</td>
-								<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
-							</tr>
-						</table>
-						<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="container" id="errorcontainer" style="display: none">
-				<div class="left"></div>
-				<div class="right reset_before_train_network" id="error"></div>
-			</div>
-
-
-			<div id="help" style="display: none"></div>
-
-			<div class="side_by_side_container">
-				<div id="layers_container_left" class="left_side">
-					<ul id="layers_container" class="ui-sortable"><li></li></ul>
-				</div>
-				<div class="right_side" id="graphs_here" style="padding-left: 10px">
-					<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
-						<ul>
-							<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
-							<li><a href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
-							<li><a href="#summary_tab" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
-								<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
-								<li><a id="own_image_data_label" href="#own_image_data">Own image data</a></li>
-								<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensor data</a></li>
-								<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV data</a></li>
-							<li><a href="#tfvis_tab" id="tfvis_tab_label" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
-							<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
-						</ul>
-
-						<div id="own_csv_data">
-							<br>
-							<table border=1>
+				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
+					<div class="ribbon-group" style="width: 250px" data-intro="Settings for the FCNN-style visualizations">
+						<div class="ribbon-toolbar">
+							<table>
 								<tr>
-									<td>
-										
-										<table>
-											<tr>
-												<td>Auto-adjust last layer's number of neurons?</td>
-												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
-											<tr>
-											</tr>
-												<td>Auto-set last layer's activation to linear when any $Y$-values are smaller than 0 or greater than 1?</td>
-												<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
-											</tr>
-											<tr>
-												<td>Seperator:</td>
-												<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
-											</tr>
-										</table>
-
-										<br>
-										<br>
-
-										<textarea id="csv_file" style="width: 98%; height: 300px" onkeyup="show_csv_file()"></textarea>
-									</td>
-									<td class="hide_when_no_csv" style="display: none">
-										<div id="csv_header_overview"></div>
-									</td>
-									<td class="hide_when_no_csv" style="display: none">
-										<div id="x_y_shape_preview"></div>
-									</td>
+									<td>Scale number neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
+								</tr>
+								<tr>
+									<td>Max. neurons before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
 								</tr>
 							</table>
 						</div>
-
-						<div id="own_tensor_data">
-
-								<div id="prepare_data">
-								You must prepare your dataset yourself! You can use this piece of code to generate
-								the data file in the correct format after you pre-processed them.
-								<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
-with open(name + '.txt', 'w') as outfile:
-outfile.write('# shape: {0}\n'.format(data.shape))
-for data_slice in data:
-    np.savetxt(outfile, data_slice)
-    outfile.write('# New slice\n')
-
-write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
-write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
-								<button onclick="copy_id_to_clipboard('convert_data_python')">Copy to clipboard</button>
-							</div>
-							<br>
-							<div class="upload-btn-wrapper">
-								<button class="btn">Provide X-data file</button>
-								<input id="upload_x_file" type="file" name="x_data">
-							</div>
-							<div class="upload-btn-wrapper">
-								<button class="btn">Provide Y-data file</button>
-								<input id="upload_y_file" type="file" name="y_data">
-							</div>
-							<br>
-							Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;" />
+						<div class="ribbon-group-title">FCNN style settings</div>
+					</div>
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group" style="width: auto;">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr data-intro="Show the current layer live in the FCNN-style-view">
+									<td>Highlight layer?</td>
+									<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
+								</tr>
+								<tr class="hide_when_no_alexnet">
+									<td>AlexNet-Renderer</td>
+									<td>
+										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
+											<!--<legend>AlexNet-renderer:</legend> -->
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer" checked>
+											<label for="webgl_renderer">WebGL</label>
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer">
+											<label for="svg_renderer">SVG</label>
+										</fieldset>
+									</td>
+								</tr>
+								<tr data-intro="Show a counter on the layers that increases every time that layer gets called.">
+									<td>Call counter?</td>
+									<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
+								</tr>
+								<tr class="hide_when_no_conv_visualiations" data-intro="Show the input layers in LeNet/AlexNet visualizations.">
+									<td>Input&nbsp;Layer&nbsp;Alex/LeNet?</td>
+									<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
+								</tr>
+							</table>
 						</div>
+						<div class="ribbon-group-title">Visualizations</div>
+					</div>
 
-						<div id="own_image_data">
-							<br>
-							Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
-							<br>
-							<div id="last_layer_shape_warning"></div>
-							<button onclick="add_new_category();">Add new category</button>
-							<div id="own_image_data_categories">
+					<div class="hide_when_no_conv_visualiations">
+						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group">
+							<div class="ribbon-group">
+								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+									<table>
+										<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
+											<td>Pixel size:</td>
+											<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
+										</tr>
+										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
+											<td>Iterations:</td>
+											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+										</tr>
+										<tr data-intro="If this is checked, it starts with a single example image (if available)">
+											<td>Use example imgs as base?</td>
+											<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
+										</tr>
+									</table>
+								</div>
 							</div>
-							<div class="container" id="own_images_container">
-							</div>
+							<div class="ribbon-group-title">Max. activated neurons</div>
 						</div>
+					</div>
 
-						<div id="training_data_tab">
-							<div id="percentage" class="reset_before_train_network"></div>
-							<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-							<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-							<div class="container" id="download_data" style="display: none"></div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group">
+						<div class="ribbon-toolbar" style="width:190px">
+							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
+								<tr class="hide_when_no_conv_visualiations">
+									<td>Show layer data flow:</td>
+									<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
+								</tr>
+								<tr class="hide_when_no_conv_visualiations">
+									<td>Show kernel images:</td>
+									<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
+								</tr>
+								<tr>
+									<td>Enable TF-Debug:</td>
+									<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
+								</tr>
+								<tr>
+									<td>Memory Debugger:</td>
+									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" checked /></td>
+								</tr>
+							</table>
 						</div>
+						<div class="ribbon-group-title">Debug</div>
+					</div>
 
-						<div id="code_tab">
-							<ul>
-								<li><a href="#python_tab" id="python_tab_label">Python</a></li>
-								<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
-								<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
-							</ul>
-
-							<div id="node_tab">
-								<pre><code class="language-javascript" id="node" style="width: 99%"></code></pre>
-								<button onclick="copy_id_to_clipboard('node')">Copy to clipboard</button>
+					<div id="math_mode_settings" style="display: none">
+						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group">
+							<div class="ribbon-toolbar">
+								<table data-intro="Options for the math mode.">
+									<tr>
+										<td>No. decimal points (0 = no limit):</td>
+										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
+									</tr>
+									<tr>
+										<td>Update-interval (ms):</td>
+										<td>
+											<input type="number" id="math_update_interval" value="300" style="width: 80px" />
+										</td>
+									</tr>
+								</table>
 							</div>
-
-							<div id="html_tab">
-								<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
-								<button onclick="copy_id_to_clipboard('html')">Copy to clipboard</button>
-							</div>
-
-
-							<div id="python_tab">
-								<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
-								<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
-							</div>
+							<div class="ribbon-group-title">Math-Mode</div>
 						</div>
+					</div>
 
-						<div id="visualization_tab">
-							<ul>
-								<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
-								<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
-								<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
-								<li><a href="#math_tab" id="math_tab_label">Math</a></li>
-								<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
-								<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
-								<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
-								<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
-								<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
-								<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
-							</ul>
+					<div id="data_plotter" style="display: none">
+						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group">
+							<div class="ribbon-group">
+								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
+									<table>
+										<tr>
+											<td>Pixel size:</td>
+											<td><input type="number" min="1" max="100" value="2" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
+										</tr>
+										<tr>
+											<td>Kernel Pixel size:</td>
+											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
+										</tr>
 
-							<div id="alexnet_tab">
-								<div id="alexnet"></div>
-								<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
+										<tr>
+											<td>Max. nr. of images (0 = no limit):</td>
+											<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
+										</tr>
+									</table>
+								</div>
 							</div>
-
-							<div id="lenet_tab">
-								<div id="lenet"></div>
-								<button onclick='reset_view()'>Reset view</button>
-								<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
-							</div>
-
-							<div id="layer_visualizations_tab" "display: none">
-							</div>
-
-							<div id="fcnn_tab">
-								<div id="fcnn"></div>
-								<button onclick='reset_view()'>Reset view</button>
-								<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
-							</div>
-
-							<div id="activation_plot_tab">
-								<span id="activation_plot_name" style="display: none"></span>
-								<div id="activation_plot" style="display: none"></div>
-							</div>
-
-							<div id="maximally_activated" class="maximally_activated_class">
-							</div>
-
-							<div id="visual_help_tab">
-							</div>
-
-							<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #ffffff">
-							</div>
-
-							<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
-								Blue maps are inputs, and cyan maps are outputs<br>
-
-								<center>
-									<h4>No padding, no strides:</h4>
-									<img width=244 src="conv_animations/no_padding_no_strides.gif"><br>
-									<h4>Arbitrary padding, no strides:</h4>
-									<img width=244 src="conv_animations/arbitrary_padding_no_strides.gif"><br>
-									<h4>Half padding, no strides:</h4>
-									<img width=244 src="conv_animations/same_padding_no_strides.gif"><br>
-									<h4>Full padding, no strides:</h4>
-									<img width=244 src="conv_animations/full_padding_no_strides.gif"><br>
-									<h4>No padding, strides:</h4>
-									<img width=244 src="conv_animations/no_padding_strides.gif"><br>
-									<h4>Padding, strides:</h4>
-									<img width=244 src="conv_animations/padding_strides.gif"><br>
-									<h4>Padding, strides (odd):</h4>
-									<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
-
-									<h2>Transposed convolution animations</h2><br>
-									<h4>No padding, no strides, transposed:</h4>
-									<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
-									<h4>Arbitrary padding, no strides, transposed:</h4>
-									<img width=244 src="conv_animations/arbitrary_padding_no_strides_transposed.gif"><br>
-									<h4>Half padding, no strides, transposed:</h4>
-									<img width=244 src="conv_animations/same_padding_no_strides_transposed.gif"><br>
-									<h4>Full padding, no strides, transposed:</h4>
-									<img width=244 src="conv_animations/full_padding_no_strides_transposed.gif"><br>
-									<h4>No padding, strides, transposed:</h4>
-									<img width=244 src="conv_animations/no_padding_strides_transposed.gif"><br>
-									<h4>Padding, strides, transposed:</h4>
-									<img width=244 src="conv_animations/padding_strides_transposed.gif"><br>
-									<h4>Padding, strides, transposed (odd):</h4>
-									<img width=244 src="conv_animations/padding_strides_odd_transposed.gif"><br>
-									<h2>Dilated convolution animations:</h2><br>
-									<img width=244 src="conv_animations/dilation.gif"><br>
-									<h4>No padding, no stride, dilation:</h4>
-
-									<h2>Pooling</h2><br>
-									<h4>MaxPooling, Kernel-Size 3x3:</h4>
-									<img width=600 src="conv_animations/numerical_max_pooling.gif"><br>
-									<h4>AveragePooling, Kernel-Size 3x3:</h4>
-									<img width=600 src="conv_animations/numerical_average_pooling.gif"><br>
-								</center>
-
-								These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
-								<a href="https://github.com/vdumoulin">vdumoulin</a>.
-							</div>
-
-							<div id="help_tab">
-							</div>
+							<div class="ribbon-group-title">Data plotter</div>
 						</div>
+					</div>
+				</div>
+			</div>
 
-						<div id="tfvis_tab" style="float: right; width: 100%">
-							<ul>
+			<div id="wizard" style="position: relative; width: 98%">
 
-								<li class="training_performance_tabs" style="display:none" id="training_performance_tab_label"><a href="#tfvis_tab_training_performance" >Training performance</a></li>
-								<li style="display: none" class="show_after_training"><a href="#history_tab">History</a></li>
-							</ul>
-
-
-							<div id="tfvis_tab_training_performance">
-								<div id="tfvis_tab_training_performance_graph"></div>
-								<div id="tfvis_tab_history_graphs"></div>
-							</div>
-							<div id="history_tab">
-								<div class="reset_before_train_network" id="history"></div>
-								<div class="reset_before_train_network" id="memory"></div>
-							</div>
+				<div id="save_dialog" style="display: none;">
+					<div class="popup_body less_transparent_glass_box">
+						<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
 						</div>
+						<div> 
+							<h1>Trained in Keras</h1>
+							<p>Use this command to convert TensorFlow to TFJS-models:</p>
+							<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
 
-						<div id="summary_tab">
-							<div class="right reset_before_train_network" id="summary"></div>
+							<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
+
+							<table>
+								<tr>
+									<td>Upload Model (<tt>.json</tt>):</td>
+									<td><input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model"></td>
+								</tr>
+								<tr>
+									<td>Upload Model weights (<tt>.bin</tt>):</td>
+									<td><input accept="application/octet-stream" type="file" id="upload_weights" onclick="set_config()" value="Upload Weights"></td>
+								</tr>
+							</table>
+
+							<h1>Trained in the browser with this demonstrator</h1>
+
+							<p>Upload the weights.json here.</p>
+
+							<table>
+								<tr>
+									<td>Upload Model weights (<tt>.json</tt>):</td>
+									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
+								</tr>
+							</table>
+							<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
 						</div>
+					</div>
+				</div>
 
-						<div id="predict_tab">
-							<div class="container" id="predictcontainer">
-								<div class="right">
-									<div id="own_files">
-										<h2>Own files</h2>
+				<div class="container" id="errorcontainer" style="display: none">
+					<div class="left"></div>
+					<div class="right reset_before_train_network" id="error"></div>
+				</div>
 
-										<div id="webcam" style="display: none">
+
+				<div id="help" style="display: none"></div>
+
+				<div class="side_by_side_container">
+					<div id="layers_container_left" class="left_side">
+						<ul id="layers_container" class="ui-sortable"><li></li></ul>
+					</div>
+					<div class="right_side" id="graphs_here" style="padding-left: 10px">
+						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
+							<div style="display: block ruby">
+								<ul>
+									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
+									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
+									<li><a href="#summary_tab" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
+										<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
+										<li><a id="own_image_data_label" href="#own_image_data">Own image data</a></li>
+										<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensor data</a></li>
+										<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV data</a></li>
+									<li><a href="#tfvis_tab" id="tfvis_tab_label" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
+									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
+								</ul>
+								<span id="toggle_layer_view_button" style="position: relative; top: -6px" onclick="toggle_layer_view()">&#128470;</span>
+							</div>
+
+							<div id="own_csv_data">
+								<br>
+								<table border=1>
+									<tr>
+										<td>
+											
+											<table>
+												<tr>
+													<td>Auto-adjust last layer's number of neurons?</td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
+												<tr>
+												</tr>
+													<td>Auto-set last layer's activation to linear when any $Y$-values are smaller than 0 or greater than 1?</td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
+												</tr>
+												<tr>
+													<td>Seperator:</td>
+													<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
+												</tr>
+											</table>
+
+											<br>
+											<br>
+
+											<textarea id="csv_file" style="width: 98%; height: 300px" onkeyup="show_csv_file()"></textarea>
+										</td>
+										<td class="hide_when_no_csv" style="display: none">
+											<div id="csv_header_overview"></div>
+										</td>
+										<td class="hide_when_no_csv" style="display: none">
+											<div id="x_y_shape_preview"></div>
+										</td>
+									</tr>
+								</table>
+							</div>
+
+							<div id="own_tensor_data">
+
+									<div id="prepare_data">
+									You must prepare your dataset yourself! You can use this piece of code to generate
+									the data file in the correct format after you pre-processed them.
+									<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
+	with open(name + '.txt', 'w') as outfile:
+	outfile.write('# shape: {0}\n'.format(data.shape))
+	for data_slice in data:
+	    np.savetxt(outfile, data_slice)
+	    outfile.write('# New slice\n')
+
+	write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
+	write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
+									<button onclick="copy_id_to_clipboard('convert_data_python')">Copy to clipboard</button>
+								</div>
+								<br>
+								<div class="upload-btn-wrapper">
+									<button class="btn">Provide X-data file</button>
+									<input id="upload_x_file" type="file" name="x_data">
+								</div>
+								<div class="upload-btn-wrapper">
+									<button class="btn">Provide Y-data file</button>
+									<input id="upload_y_file" type="file" name="y_data">
+								</div>
+								<br>
+								Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;" />
+							</div>
+
+							<div id="own_image_data">
+								<br>
+								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
+								<br>
+								<div id="last_layer_shape_warning"></div>
+								<button onclick="add_new_category();">Add new category</button>
+								<div id="own_image_data_categories">
+								</div>
+								<div class="container" id="own_images_container">
+								</div>
+							</div>
+
+							<div id="training_data_tab">
+								<div id="percentage" class="reset_before_train_network"></div>
+								<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<div class="container" id="download_data" style="display: none"></div>
+							</div>
+
+							<div id="code_tab">
+								<ul>
+									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
+									<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
+									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
+								</ul>
+
+								<div id="node_tab">
+									<pre><code class="language-javascript" id="node" style="width: 99%"></code></pre>
+									<button onclick="copy_id_to_clipboard('node')">Copy to clipboard</button>
+								</div>
+
+								<div id="html_tab">
+									<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
+									<button onclick="copy_id_to_clipboard('html')">Copy to clipboard</button>
+								</div>
+
+
+								<div id="python_tab">
+									<br>
+									<button onclick="save_model()">Download model data</button>
+									<br>
+									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
+									<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
+								</div>
+							</div>
+
+							<div id="visualization_tab">
+								<ul>
+									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
+									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
+									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
+									<li><a href="#math_tab" id="math_tab_label">Math</a></li>
+									<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
+									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
+									<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
+									<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
+									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
+									<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
+								</ul>
+
+								<div id="alexnet_tab">
+									<div id="alexnet"></div>
+									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
+								</div>
+
+								<div id="lenet_tab">
+									<div id="lenet"></div>
+									<button onclick='reset_view()'>Reset view</button>
+									<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
+								</div>
+
+								<div id="layer_visualizations_tab" "display: none">
+								</div>
+
+								<div id="fcnn_tab">
+									<div id="fcnn"></div>
+									<button onclick='reset_view()'>Reset view</button>
+									<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
+								</div>
+
+								<div id="activation_plot_tab">
+									<span id="activation_plot_name" style="display: none"></span>
+									<div id="activation_plot" style="display: none"></div>
+								</div>
+
+								<div id="maximally_activated" class="maximally_activated_class">
+								</div>
+
+								<div id="visual_help_tab">
+								</div>
+
+								<?php
+									$bgcolor = "fff";
+									$textcolor = "000";
+									if($darkmode) {
+										$bgcolor = "000";
+										$textcolor = "fff";
+									}
+								?>
+								<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #<?php print $bgcolor; ?>; color: <?php $textcolor; ?>;">
+								</div>
+
+								<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
+									Blue maps are inputs, and cyan maps are outputs<br>
+
+									<center>
+										<h4>No padding, no strides:</h4>
+										<img width=244 src="conv_animations/no_padding_no_strides.gif"><br>
+										<h4>Arbitrary padding, no strides:</h4>
+										<img width=244 src="conv_animations/arbitrary_padding_no_strides.gif"><br>
+										<h4>Half padding, no strides:</h4>
+										<img width=244 src="conv_animations/same_padding_no_strides.gif"><br>
+										<h4>Full padding, no strides:</h4>
+										<img width=244 src="conv_animations/full_padding_no_strides.gif"><br>
+										<h4>No padding, strides:</h4>
+										<img width=244 src="conv_animations/no_padding_strides.gif"><br>
+										<h4>Padding, strides:</h4>
+										<img width=244 src="conv_animations/padding_strides.gif"><br>
+										<h4>Padding, strides (odd):</h4>
+										<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
+
+										<h2>Transposed convolution animations</h2><br>
+										<h4>No padding, no strides, transposed:</h4>
+										<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
+										<h4>Arbitrary padding, no strides, transposed:</h4>
+										<img width=244 src="conv_animations/arbitrary_padding_no_strides_transposed.gif"><br>
+										<h4>Half padding, no strides, transposed:</h4>
+										<img width=244 src="conv_animations/same_padding_no_strides_transposed.gif"><br>
+										<h4>Full padding, no strides, transposed:</h4>
+										<img width=244 src="conv_animations/full_padding_no_strides_transposed.gif"><br>
+										<h4>No padding, strides, transposed:</h4>
+										<img width=244 src="conv_animations/no_padding_strides_transposed.gif"><br>
+										<h4>Padding, strides, transposed:</h4>
+										<img width=244 src="conv_animations/padding_strides_transposed.gif"><br>
+										<h4>Padding, strides, transposed (odd):</h4>
+										<img width=244 src="conv_animations/padding_strides_odd_transposed.gif"><br>
+										<h2>Dilated convolution animations:</h2><br>
+										<img width=244 src="conv_animations/dilation.gif"><br>
+										<h4>No padding, no stride, dilation:</h4>
+
+										<h2>Pooling</h2><br>
+										<h4>MaxPooling, Kernel-Size 3x3:</h4>
+										<img width=600 src="conv_animations/numerical_max_pooling.gif"><br>
+										<h4>AveragePooling, Kernel-Size 3x3:</h4>
+										<img width=600 src="conv_animations/numerical_average_pooling.gif"><br>
+									</center>
+
+									These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
+									<a href="https://github.com/vdumoulin">vdumoulin</a>.
+								</div>
+
+								<div id="help_tab">
+								</div>
+							</div>
+
+							<div id="tfvis_tab" style="float: right; width: 100%">
+								<ul>
+
+									<li id="tfvis_tab_training_performance_label" class="training_performance_tabs" style="display:none" id="training_performance_tab_label"><a href="#tfvis_tab_training_performance">Training performance</a></li>
+									<li style="display: none" class="show_after_training"><a href="#history_tab">History</a></li>
+								</ul>
+
+
+								<div id="tfvis_tab_training_performance">
+									<div id="tfvis_tab_training_performance_graph"></div>
+									<div id="tfvis_tab_history_graphs"></div>
+								</div>
+								<div id="history_tab">
+									<div class="reset_before_train_network" id="history"></div>
+									<div class="reset_before_train_network" id="memory"></div>
+								</div>
+							</div>
+
+							<div id="summary_tab">
+								<div class="right reset_before_train_network" id="summary"></div>
+							</div>
+
+							<div id="predict_tab">
+								<div class="container" id="predictcontainer">
+									<div class="right">
+										<div id="own_files">
+											<h2>Own files</h2>
+
+											<button id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
+
+											<div id="webcam" style="display: none">
+											</div>
+
+											<pre id="webcam_prediction" style="display: none; overflow: scroll;"></pre>
+
+											<br>
+											
+											<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
+											<div id="predict_own"><textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
+											<img id="output"/><br><br>
+											<pre id="prediction" style="display: none"></pre>
+											<div id="predict_error" style="overflow: scroll; display: none"></div>
+
+											<hr>
 										</div>
 
-										<pre id="webcam_prediction" style="overflow: scroll;"></pre>
+										<div class="hide_when_custom_data">
+											<button onclick="show_prediction(1);">Re-predict examples</button>
+											<div class="medium_vskip"></div>
+											<h2 class="show_when_predicting" style="display: none">Examples</h2>
 
-										<br>
-										
-										<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-										<div id="predict_own"><textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
-										<img id="output"/><br><br>
-										<pre id="prediction" style="overflow: scroll; display: none"></pre>
-										<div id="predict_error" style="overflow: scroll; display: none"></div>
-									</div>
-
-									<div class="hide_when_custom_data">
-										<button onclick="show_prediction(1);">Show prediction or re-predict</button>
-										<h2 class="show_when_predicting" style="display: none">Examples</h2>
-
-										<div id="example_predictions">
+											<div id="example_predictions">
+											</div>
 										</div>
 									</div>
 								</div>
@@ -942,6 +1045,7 @@ write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
 				</div>
 			</div>
 		</div>
+		<div id="demomode" class="glass_box" style="display: none"></div>
 
 		<script src="main.js"></script>
 		<script>

@@ -889,11 +889,11 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 }
 
 function fcnn_fill_layer (layer_nr) {
-	restart_fcnn();
-	restart_lenet();
+	//restart_fcnn(1);
+	//restart_lenet(1);
 
+	$("[id^=fcnn_]").css("fill", "#ffffff");
 	$("[id^=fcnn_" + layer_nr + "_]").css("fill", "red");
-	$("[id^=lenet_" + layer_nr + "_]").css("fill", "red");
 }
 
 function array_to_fixed (array, fixnr) {
@@ -1000,6 +1000,15 @@ function get_layer_data() {
 	return layer_data;
 }
 
+function array_size (ar) {
+	var row_count = ar.length;
+	var row_sizes = []
+	for(var i=0;i<row_count;i++){
+		row_sizes.push(ar[i].length)
+	}
+	return [row_count, Math.min.apply(null, row_sizes)]
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -1080,9 +1089,11 @@ function model_to_latex () {
 		y_layer.push(["y_" + i]);
 	}
 
-	var colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
+	var colors = [];
 	if(prev_layer_data.length) {
 		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(prev_layer_data)), JSON.parse(JSON.stringify(layer_data)));
+	} else {
+		colors = color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
 	}
 
 	var input_layer = [];
@@ -1138,23 +1149,25 @@ function model_to_latex () {
 				activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
 			}
 
+			var kernel_name = "Kernel^{" + array_size(layer_data[i].kernel).join(" \\times ") + "}";
+
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, "Kernel", colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				} else {
 					var repeat_nr = i - 1;
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					str += a_times_b("h" + "'".repeat(repeat_nr), array_to_latex_color(layer_data[i].kernel, "Kernel", colors[i].kernel));
+					str += a_times_b("h" + "'".repeat(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			} else {
 				str += "h" + "'".repeat(i) + " = " + activation_start;
 				if(i == 0) {
-					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, "Kernel", colors[i].kernel));
+					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				} else {
-					str += a_times_b("h" + "'".repeat(i - 1), array_to_latex_color(layer_data[i].kernel, "Kernel", colors[i].kernel));
+					str += a_times_b("h" + "'".repeat(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			}
 
@@ -1263,6 +1276,10 @@ function model_to_latex () {
 }
 
 function can_be_shown_in_latex () {
+	if(!model) {
+		return false;
+	}
+
 	if(model.layers[0].input.shape.length != 2) {
 		return false;
 	}
@@ -1323,6 +1340,11 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 function color_compare_old_and_new_layer_data (old_data, new_data) {
 	assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");
 
+	var default_color = "black";
+	if(darkmode) {
+		default_color = "white";
+	}
+
 	var color_diff = [];
 
 	for (var layer_nr = 0; layer_nr < old_data.length; layer_nr++) {
@@ -1348,24 +1370,24 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 			for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
 				if(typeof(this_old_sub_array[item_nr]) == "number") { // sub array is all numbers
 					if(this_old_sub_array[item_nr] == this_new_sub_array[item_nr]) {
-						color_diff[layer_nr][this_key][item_nr] = "black";
+						color_diff[layer_nr][this_key][item_nr] = default_color;
 					} else {
 						if(this_old_sub_array[item_nr] > this_new_sub_array[item_nr]) {
-							color_diff[layer_nr][this_key][item_nr] = "red";
+							color_diff[layer_nr][this_key][item_nr] = "OrangeRed";
 						} else if(this_old_sub_array[item_nr] < this_new_sub_array[item_nr]) {
-							color_diff[layer_nr][this_key][item_nr] = "green";
+							color_diff[layer_nr][this_key][item_nr] = "SeaGreen";
 						}
 					}
 				} else { // sub array contains more arrays (kernels most probably))
 					color_diff[layer_nr][this_key][item_nr] = [];
 					for (var kernel_nr = 0; kernel_nr < this_old_sub_array[item_nr].length; kernel_nr++) {
 						if(this_old_sub_array[item_nr][kernel_nr] == this_new_sub_array[item_nr][kernel_nr]) {
-							color_diff[layer_nr][this_key][item_nr][kernel_nr] = "black";
+							color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
 						} else {
 							if(this_old_sub_array[item_nr][kernel_nr] > this_new_sub_array[item_nr][kernel_nr]) {
-								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "red";
+								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "OrangeRed";
 							} else if(this_old_sub_array[item_nr][kernel_nr] < this_new_sub_array[item_nr][kernel_nr]) {
-								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "green";
+								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "SeaGreen";
 							}
 						}
 					}

@@ -897,23 +897,11 @@ body .ui-tooltip {
 }
 .ui-widget.ui-widget-content {
 }
-.ui-widget-content {
-	//border: 1px solid #dddddd;
-	//background: #f2f5f7 url("images/ui-bg_highlight-hard_100_f2f5f7_1x100.png") 50% top repeat-x;
-	background: rgb(226,237,247);
-	background: linear-gradient(180deg, rgba(226,237,247,1) 0%, rgba(227,244,255,1) 100%);
-	color: #362b36;
-}
-.ui-widget-content a {
-	color: #362b36;
-}
+
 .ui-widget-header {
 	//background: #bfdbff;
 	color: #222222;
 	font-weight: bold;
-}
-.ui-widget-header a {
-	color: #222222;
 }
 
 /* Interaction states
@@ -936,16 +924,7 @@ html .ui-button.ui-state-disabled:active {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
-.ui-state-default a,
-.ui-state-default a:link,
-.ui-state-default a:visited,
-a.ui-button,
-a:link.ui-button,
-a:visited.ui-button,
-.ui-button {
-	color: #2779aa;
-	text-decoration: none;
-}
+
 .ui-state-hover,
 .ui-widget-content .ui-state-hover,
 .ui-widget-header .ui-state-hover,
@@ -976,35 +955,12 @@ a.ui-button:focus {
 .ui-visual-focus {
 	box-shadow: 0 0 3px 1px rgb(94, 158, 214);
 }
-.ui-state-active,
-.ui-widget-content .ui-state-active,
-.ui-widget-header .ui-state-active,
-a.ui-button:active,
-.ui-button:active,
-.ui-button.ui-state-active:hover {
-	//border: 1px solid #2694e8;
-	//background: #3baae3 url("images/ui-bg_glass_50_3baae3_1x400.png") 50% 50% repeat-x;
-	//background: rgb(140,161,199);
-	//background: linear-gradient(180deg, rgb(140, 161, 199) 0%, rgb(95, 116, 169) 8%, rgb(153, 185, 234) 70%);
-	background: rgb(221,233,249);
-	background: linear-gradient(180deg, rgba(221,233,249,1) 0%, rgba(247,250,255,1) 7%, rgba(239,245,254,1) 13%, rgba(226,235,247,1) 99%); 
-	font-weight: bold;
-	color: #ffffff;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
-}
+
 .ui-icon-background,
 .ui-state-active .ui-icon-background {
 	border: #2694e8;
 	background-color: #ffffff;
 }
-.ui-state-active a,
-.ui-state-active a:link,
-.ui-state-active a:visited {
-	color: #19439c;
-	text-decoration: none;
-}
-
 /* Interaction Cues
 ----------------------------------*/
 .ui-state-highlight,

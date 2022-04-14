@@ -71,6 +71,12 @@ function init_set_all_options () {
 		} else if (event.altKey && event.key === 'm') {
 			$("#visualization_tab_label").click();
 			$("#math_tab_label").click();
+		} else if (event.ctrlKey && event.key === '#') {
+			if($("#demomode").css("display") == "none") {
+				start_demo_mode();
+			} else {
+				end_demo_mode();
+			}
 		} else if (event.altKey && event.key === 'v') {
 			$("[href='#visualization_ribbon']").click();
 		}
@@ -175,14 +181,18 @@ function init_categories () {
 	number_of_initialized_layers = 0;
 }
 
+function fix_graph_color () {
+	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
+}
+
 $(document).ready(function() {
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 	init_tabs();
 	init_set_all_options();
 	init_categories();
 
-	$("#dataset_category").val("image");
-	//$("#dataset_category").val("logic");
+	//$("#dataset_category").val("image");
+	$("#dataset_category").val("classification");
 
 	init_page_contents();
 
@@ -216,5 +226,10 @@ $(document).ready(function() {
 
 	setInterval(allow_training, 200);
 
+	setInterval(fix_lenet_width, 500);
+
+	setInterval(fix_graph_color, 500);
+
 	//$("#lenet_tab_label").click();
+	//$("#code_tab_label").click()
 });

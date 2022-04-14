@@ -914,3 +914,13 @@ var current_epoch = 0;
 var original_title = document.title;
 
 var this_training_start_time = null;
+
+var clippy_current_xpath = null;
+
+var clippy_delay = 0;
+
+var demo_mode_data_origin = {};
+
+var demo_mode_data_original_css = {};
+
+var demo_interval = undefined;

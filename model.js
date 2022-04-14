@@ -726,7 +726,10 @@ function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-function set_weights_from_json_object (json, dont_show_weights) {
+function set_weights_from_json_object (json, dont_show_weights, no_error) {
+	if(!model) {
+		return;
+	}
 	var weights_array = [];
 
 	var tensors = [];
@@ -742,11 +745,14 @@ function set_weights_from_json_object (json, dont_show_weights) {
 			dispose(tensors[i]);
 		}
 	} catch (e) {
-		Swal.fire({
-			icon: 'error',
-			title: 'Error loading weights',
-			text: e
-		});
+		if(!no_error) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error loading weights',
+				text: e
+			});
+		}
+		console.trace();
 		return false;
 	}
 
@@ -761,12 +767,12 @@ function set_weights_from_json_object (json, dont_show_weights) {
 	return true;
 }
 
-async function set_weights_from_string (string) {
+async function set_weights_from_string (string, no_error) {
 	var json = JSON.parse(string);
 
 	log(json);
 
-	return set_weights_from_json_object(json, 0);
+	return set_weights_from_json_object(json, 0, no_error);
 }
 
 async function get_weights_as_string () {
@@ -825,7 +831,7 @@ function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 
 function save_model () {
 	try {
-		model.save('downloads://mymodel');
+		model.save('downloads://model');
 	} catch (e) {
 		Swal.fire({
 			icon: 'error',

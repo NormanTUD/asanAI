@@ -24,7 +24,7 @@ function FCNN() {
 	var weightedEdgeOpacity = d3.scaleLinear().domain([0, 1]).range([0, 1]);
 
 	var edgeColorProportional = false;
-	var defaultEdgeColor = "#505050";
+	var defaultEdgeColor = "#000000";
 	var negativeEdgeColor = "#0000ff";
 	var positiveEdgeColor = "#ff0000";
 	var weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
