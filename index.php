@@ -868,7 +868,7 @@
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 									<li><a href="#math_tab" id="math_tab_label">Math</a></li>
-									<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>
+									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 									<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
 									<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
@@ -918,6 +918,7 @@
 								<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #<?php print $bgcolor; ?>; color: <?php $textcolor; ?>;">
 								</div>
 
+								<!--
 								<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
 									Blue maps are inputs, and cyan maps are outputs<br>
 
@@ -966,6 +967,7 @@
 									These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
 									<a href="https://github.com/vdumoulin">vdumoulin</a>.
 								</div>
+								-->
 
 								<div id="help_tab">
 								</div>
