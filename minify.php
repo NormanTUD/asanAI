@@ -6,7 +6,14 @@
 			header("Content-Type: application/javascript");
 			system("./minify/minify/bin/minifyjs $file");
 		} else if(preg_match("/^[\/\.a-zA-Z0-9-_]+\.css$/", $file)) {
-			system("./minify/minify/bin/minifycss $file");
+			header("Content-Type: text/css");
+			$css = file_get_contents($file);
+			$css = preg_replace(
+				array('/\s*(\w)\s*{\s*/','/\s*(\S*:)(\s*)([^;]*)(\s|\n)*;(\n|\s)*/','/\n/','/\s*}\s*/'),
+				array('$1{ ','$1$3;',"",'} '),
+				$css
+			);
+			print($css);
 		} else {
 			die("Neither css nor js");
 		}

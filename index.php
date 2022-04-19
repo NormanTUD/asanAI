@@ -60,27 +60,27 @@
 <?php
 		$tablist_color = "bbddfd";
 ?>
-		<link href="jquery-ui.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="fonts.css">
-		<link href="style.css" rel="stylesheet">
+		<link href="minify.php?file=jquery-ui.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="minify.php?file=fonts.css">
+		<link href="minify.php?file=style.css" rel="stylesheet">
 <?php
 		$tablist_color = "bbddfd";
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>
-			<link href="darkmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="ribbondarkmode.css">
+			<link href="minify.php?file=darkmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbondarkmode.css">
 <?php
 		} else {
 ?>
 
-			<link href="lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="ribbon.css">
+			<link href="minify.php?file=lightmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbon.css">
 <?php
 		}
 ?>
-		<link href="prism/prism.min.css" rel="stylesheet">
-		<link href="external/sweetalert2.min.css" rel="stylesheet">
+		<link href="minify.php?file=prism/prism.min.css" rel="stylesheet">
+		<link href="minify.php?file=external/sweetalert2.min.css" rel="stylesheet">
 
 
 		<!-- jquery -->
@@ -119,7 +119,7 @@
 
 		<!-- ChardinJS -->
 		<script src="minify.php?file=chardinjs.js"></script>
-		<link rel="stylesheet" type="text/css" href="chardinjs.css">
+		<link rel="stylesheet" type="text/css" href="minify.php?file=chardinjs.css">
 
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));
