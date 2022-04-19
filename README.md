@@ -57,3 +57,5 @@ in creating this program:
 - [computer-modern-web-font](https://github.com/dreampulse/computer-modern-web-font)
 
 - [Clippy.js](https://www.smore.com/clippy-js)
+
+- [Minify](https://github.com/matthiasmullie/minify.git)

@@ -63,6 +63,7 @@
 
 #predict_error {
 	color: red;
+	background-color: white;
 }
 
 .kernel_layer_image {

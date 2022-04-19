@@ -84,41 +84,41 @@
 
 
 		<!-- jquery -->
-		<script src="jquery.js"></script>
-		<script src="jquery-ui.js"></script>
+		<script src="minify.php?file=jquery.js"></script>
+		<script src="minify.php?file=jquery-ui.js"></script>
 
 		<!-- sweetalert -->
-		<script src="external/sweetalert2.all.js"></script>
+		<script src="minify.php?file=external/sweetalert2.all.js"></script>
 
 		<!-- tensorflow.js -->
 		<script src="tf/tf.js"></script>
 		<script src="tf/tfjs-vis.js"></script>
 
 		<!-- my own js stuff -->
-		<script src="safety.js"></script>
-		<script src="variables.js"></script>
-		<script src="tests.js"></script>
-		<script src="model.js"></script>
-		<script src="explain.js"></script>
-		<script src="data.js"></script>
-		<script src="debug.js"></script>
-		<script src="gui.js"></script>
-		<script src="train.js"></script>
-		<script src="predict.js"></script>
+		<script src="minify.php?file=safety.js"></script>
+		<script src="minify.php?file=variables.js"></script>
+		<script src="minify.php?file=tests.js"></script>
+		<script src="minify.php?file=model.js"></script>
+		<script src="minify.php?file=explain.js"></script>
+		<script src="minify.php?file=data.js"></script>
+		<script src="minify.php?file=debug.js"></script>
+		<script src="minify.php?file=gui.js"></script>
+		<script src="minify.php?file=train.js"></script>
+		<script src="minify.php?file=predict.js"></script>
 
 		<!-- visualizations -->
-		<script src="visualizations/d3.v5.min.js"></script>
-		<script src="visualizations/three.min.js"></script>
-		<script src="visualizations/OrbitControls.js"></script>
-		<script src="visualizations/SVGRenderer.js"></script>
-		<script src="visualizations/Projector.js"></script>
-		<script src="visualizations/util.js"></script>
-		<script src="visualizations/AlexNet.js"></script>
-		<script src="visualizations/LeNet.js"></script>
-		<script src="visualizations/FCNN.js"></script>
+		<script src="minify.php?file=visualizations/d3.v5.min.js"></script>
+		<script src="minify.php?file=visualizations/three.min.js"></script>
+		<script src="minify.php?file=visualizations/OrbitControls.js"></script>
+		<script src="minify.php?file=visualizations/SVGRenderer.js"></script>
+		<script src="minify.php?file=visualizations/Projector.js"></script>
+		<script src="minify.php?file=visualizations/util.js"></script>
+		<script src="minify.php?file=visualizations/AlexNet.js"></script>
+		<script src="minify.php?file=visualizations/LeNet.js"></script>
+		<script src="minify.php?file=visualizations/FCNN.js"></script>
 
 		<!-- ChardinJS -->
-		<script src="chardinjs.js"></script>
+		<script src="minify.php?file=chardinjs.js"></script>
 		<link rel="stylesheet" type="text/css" href="chardinjs.css">
 
 		<script>
@@ -1035,7 +1035,7 @@
 		</div>
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
-		<script src="main.js"></script>
+		<script src="minify.php?file=main.js"></script>
 		<script>
 			var local_store = window.localStorage;
 			local_store.clear();
