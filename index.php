@@ -627,7 +627,7 @@
 								</tr>
 								<tr>
 									<td>Memory Debugger:</td>
-									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" checked /></td>
+									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" /></td>
 								</tr>
 							</table>
 						</div>

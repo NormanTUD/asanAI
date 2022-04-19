@@ -224,11 +224,11 @@ $(document).ready(function() {
 
 	window.onresize = reset_view;
 
-	setInterval(allow_training, 200);
+	setInterval(allow_training, 500);
 
-	setInterval(fix_lenet_width, 500);
+	setInterval(fix_lenet_width, 700);
 
-	setInterval(fix_graph_color, 500);
+	setInterval(fix_graph_color, 700);
 
 	//$("#lenet_tab_label").click();
 	//$("#code_tab_label").click()
