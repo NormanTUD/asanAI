@@ -91,8 +91,8 @@
 		<script src="minify.php?file=external/sweetalert2.all.js"></script>
 
 		<!-- tensorflow.js -->
-		<script src="tf/tf.js"></script>
-		<script src="tf/tfjs-vis.js"></script>
+		<script src="minify.php?file=tf/tf.js"></script>
+		<script src="minify.php?file=tf/tfjs-vis.js"></script>
 
 		<!-- my own js stuff -->
 		<script src="minify.php?file=safety.js"></script>
@@ -1520,7 +1520,7 @@
 			}
 		</script>
 
-		<script src="prism/prism.js"></script>
-		<script src="prism/prism-python.min.js"></script>
+		<script src="minify.php?file=prism/prism.js"></script>
+		<script src="minify.php?file=prism/prism-python.min.js"></script>
 	</body>
 </html>
