@@ -358,3 +358,7 @@ select option:disabled {
 	padding: 10px;
 	margin: 10px;
 }
+
+.layer_type {
+	width: 95%;
+}

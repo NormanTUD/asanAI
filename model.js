@@ -303,6 +303,12 @@ function create_model (old_model, fake_model_structure) {
 		return old_model;
 	}
 
+	if(get_current_layer_container_status_hash() == current_layer_status_hash && model) {
+		log("returning old model");
+		return model;
+	}
+	//log("creating new model");
+
 	//dispose(model);
 
 	current_status_hash = new_current_status_hash;
@@ -536,6 +542,8 @@ function create_model (old_model, fake_model_structure) {
 		$("#node").html(node_js);
 		$("#html").text(html);
 	}
+
+	current_layer_status_hash = get_current_layer_container_status_hash();
 
 	return new_model;
 }

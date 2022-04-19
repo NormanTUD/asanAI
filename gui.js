@@ -174,6 +174,14 @@ function md5(inputString) {
 	return rh(a)+rh(b)+rh(c)+rh(d);
 }
 
+function get_current_layer_container_status_hash () {
+	var html = $("#layers_container").html();
+
+	html = html.replaceAll(' disabled=""', "");
+
+	return md5(html);
+}
+
 function get_current_status_hash () {
 	var html_code = '';
 
@@ -1687,7 +1695,6 @@ function option_for_layer (nr) {
 		str += "</td>";
 		str += "<td>";
 			str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
-			//str += "<select onchange='" + this_event + "' class='input_data layer_type'>";
 				var last_category = '';
 				for (var key of layer_names) {
 					var this_category = layer_options[key].category;

@@ -924,3 +924,5 @@ var demo_mode_data_origin = {};
 var demo_mode_data_original_css = {};
 
 var demo_interval = undefined;
+
+var current_layer_status_hash = "";
