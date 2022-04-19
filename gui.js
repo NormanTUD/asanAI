@@ -1351,8 +1351,6 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 
 	hide_no_conv_stuff();
 
-	update_right_view_height()
-
 	return 1;
 }
 
@@ -3035,7 +3033,6 @@ function reset_view () {
 			}
 		}
 	}
-	update_right_view_height();
 }
 
 function change_data_origin () {
@@ -3625,17 +3622,6 @@ function darkmode_choser () {
 		window.location.href = "index.php?darkmode=1";
 	} else {
 		window.location.href = "index.php?lightmode=1";
-	}
-}
-
-function update_right_view_height () {
-	var min_height = 700;
-	$("#right_side").css("min-height", min_height);
-	var layers_scroll_height = document.getElementById("layers_container").scrollHeight;
-	if(layers_scroll_height > min_height) {
-		$("#right_side").css("min-height", layers_scroll_height);
-	} else {
-		$("#right_side").css("min-height", min_height);
 	}
 }
 
