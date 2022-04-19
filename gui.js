@@ -3008,6 +3008,7 @@ function hide_annoying_tfjs_vis_overlays () {
 function toggle_show_input_layer () {
 	show_input_layer = !show_input_layer;
 
+	restart_fcnn(1);
 	restart_lenet(1);
 	restart_alexnet(1);
 }

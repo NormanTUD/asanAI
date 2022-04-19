@@ -149,6 +149,7 @@
 			});
 		</script>
 
+		<!--
 		<script src="clippy/build/clippy.js"></script>
 		<script type="text/javascript">
 			var this_agent = null;
@@ -156,6 +157,7 @@
 				this_agent = agent;
 			});
 		</script>
+		-->
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
@@ -171,7 +173,7 @@
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
-					<li><span class="symbol_button enabled_symbol" title="Start Clippy-Tour" onclick="clippy_tour()">&#129497;&#8205;&#9794;&#65039;</span></li>
+					<!--<li><span class="symbol_button enabled_symbol" title="Start Clippy-Tour" onclick="clippy_tour()">&#129497;&#8205;&#9794;&#65039;</span></li>-->
 					<span id="tensor_number_debugger" style="display: none"></span>
 				</ul>
 
@@ -549,20 +551,6 @@
 				</div>
 
 				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-					<div class="ribbon-group" style="width: 250px" data-intro="Settings for the FCNN-style visualizations">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Scale number neurons:</td><td><input type="checkbox" value="1" id="scale_proportionally" checked="CHECKED" onchange="restart_fcnn()" /></td>
-								</tr>
-								<tr>
-									<td>Max. neurons before scaling:</td><td><input style="width: 50px;" type="number" min="0" step="1" value="20" id="max_size_before_scale" onchange="restart_fcnn()" /></td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">FCNN style settings</div>
-					</div>
-					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
 							<table>
@@ -586,8 +574,8 @@
 									<td>Call counter?</td>
 									<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
 								</tr>
-								<tr class="hide_when_no_conv_visualiations" data-intro="Show the input layers in LeNet/AlexNet visualizations.">
-									<td>Input&nbsp;Layer&nbsp;Alex/LeNet?</td>
+								<tr data-intro="Show the input layers">
+									<td>Input&nbsp;Layer?</td>
 									<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 								</tr>
 							</table>
@@ -1153,17 +1141,22 @@
                                 var architecture = [];
 				var real_architecture = [];
                                 var betweenNodesInLayer = [];
-
 				var layer_types = [];
+
+				if(show_input_layer) {
+					layer_types.push("Input layer");
+					var input_layer = Object.values(remove_empty(model.layers[0].input.shape));
+					architecture.push(input_layer[0]);
+					real_architecture.push(input_layer[0]);
+					betweenNodesInLayer.push(10);
+				}
+
 				for (var i = 0; i < get_numberoflayers(); i++) {
 					var number_of_units = get_units_at_layer(i);
 					var layer_type = $($(".layer_type")[i]).val();
 					if(parseInt(number_of_units) > 0) {
 						real_architecture.push(number_of_units);
 						architecture.push(number_of_units);
-						if($("#scale_proportionally").is(":checked")) {
-							architecture = scale_down(parseInt($("#max_size_before_scale").val()), architecture);
-						}
 						betweenNodesInLayer.push(10);
 						layer_types.push(layer_type);
 					}
