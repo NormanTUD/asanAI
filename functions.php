@@ -78,7 +78,7 @@
 		exit();
 	}
 
-    function get_expiry_date($days) {
+    function create_expiry_date($days) {
         $time = time();
         $timestamp = $days * 86400 + $time;
         return esc(date("y-m-d", $timestamp));
@@ -94,7 +94,11 @@
 
     function insert_session_id($username, $days) {
         $session_id = generateRandomString();
-        $query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id($username).', '.esc($session_id).','.get_expiry_date($days).')';
+        $query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id($username).', '.esc($session_id).','.create_expiry_date($days).')';
         run_query($query);
+    }
+
+    function get_expiry_date($username) {
+        return get_single_value_from_query('select expiry_date from tfd_db.session_ids where user_id ='.get_user_id($username));
     }
 ?>

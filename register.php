@@ -10,7 +10,7 @@
 
             insert_session_id(esc($_GET["username"]), $_GET["days"]);
 
-            $status = ["status" => "ok", "msg" => "Account created", "session_id" => get_session_id($_GET["username"]), "time" => get_single_value_from_query('select expiry_date from tfd_db.session_ids where user_id ='.get_user_id($_GET["username"]))];
+            $status = ["status" => "ok", "msg" => "Account created", "session_id" => get_session_id($_GET["username"]), "time" => get_expiry_date($_GET["username"])];
         } else {
             $status = ["status" => "error", "msg" => "Invalid input"];
         }
