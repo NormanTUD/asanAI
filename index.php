@@ -165,9 +165,9 @@
 		<meta name="theme-color" content="#7299d2">
 		<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
 	</head>
-	<body style="margin: 0px;" data-chardin-sequenced="true">
+	<body data-chardin-sequenced="true">
 		<div id="mainsite">
-			<div id="ribbon" style="">
+			<div id="ribbon">
 				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
@@ -685,7 +685,7 @@
 				</div>
 			</div>
 
-			<div id="wizard" style="position: relative; width: 98%">
+			<div id="wizard">
 
 				<div id="save_dialog" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">

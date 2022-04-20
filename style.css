@@ -322,38 +322,6 @@ select option:disabled {
 	color: red;
 }
 
-.clippy-content, .clippy-tip, .clippy-balloon, .clippy-bottom-right {
-	z-index: 99999;
-	position: absolute;
-}
-
-.bubble {
-	background: #ffffcb;
-	color: #000000;
-	font-family: Arial;
-	font-size: 20px;
-	text-align: center;
-	width: 250px;
-	height: 200px;
-	border-radius: 10px;
-	padding: 0px;
-}
-/*
-.bubble:after {
-	content: '';
-	position: absolute;
-	display: block;
-	width: 0;
-	z-index: 1;
-	border-style: solid;
-	border-color: #ffae00 transparent;
-	border-width: 20px 20px 0;
-	bottom: -20px;
-	left: 50%;
-	margin-left: -20px;
-}
-*/
-
 #demomode {
 	width: 100%;
 	padding: 10px;
@@ -373,4 +341,14 @@ select option:disabled {
 	left: 0;
 	right: 0;
 	z-index: 2
+}
+
+body {
+	margin: 0px;
+	cursor: default;
+}
+
+#wizard {
+	position: relative;
+	width: 98%
 }
