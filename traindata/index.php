@@ -3,10 +3,12 @@ header('Content-Type: application/json');
 
 function list_files_in_dir ($dir, $max_number_of_files_per_category) {
 	$files = [];
-	foreach (scandir($dir) as $this_file) {
-		if($this_file != "." && $this_file != "..") {
-			if($max_number_of_files_per_category == 0 || $max_number_of_files_per_category > count($files)) {
-				$files[] = $this_file;
+	if(is_dir($dir)) {
+		foreach (scandir($dir) as $this_file) {
+			if($this_file != "." && $this_file != "..") {
+				if($max_number_of_files_per_category == 0 || $max_number_of_files_per_category > count($files)) {
+					$files[] = $this_file;
+				}
 			}
 		}
 	}

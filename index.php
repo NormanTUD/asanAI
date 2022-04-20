@@ -27,7 +27,7 @@
 
 	$darkmode = 0;
 
-	if($_COOKIE["darkmode"]) {
+	if(array_key_exists("darkmode", $_COOKIE) && $_COOKIE["darkmode"]) {
 		$darkmode = !!$_COOKIE["darkmode"];
 	}
 
