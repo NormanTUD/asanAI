@@ -575,6 +575,11 @@ function write_layer_identification (nr, text) {
 }
 
 function get_layer_identification (i) {
+	if(model === null) {
+		write_error("model is not defined");
+		return;
+	}
+
 	var object_keys = Object.keys(model.layers[i]);
 	var new_str = "";
 

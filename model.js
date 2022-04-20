@@ -274,7 +274,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
 		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
 		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
-		(keyname == "activation" && ['LeakyReLU', 'elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
+		(["activation", "recurrentActivation"].includes(keyname) && ['LeakyReLU', 'elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
@@ -303,7 +303,7 @@ function create_model (old_model, fake_model_structure) {
 		return old_model;
 	}
 
-	if(get_current_layer_container_status_hash() == current_layer_status_hash && model) {
+	if(fake_model_structure === undefined && get_current_layer_container_status_hash() == current_layer_status_hash && model) {
 		log("returning old model");
 		return model;
 	}
@@ -551,6 +551,9 @@ function create_model (old_model, fake_model_structure) {
 function get_fake_data_for_layertype (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+	assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
+
+	write_descriptions();
 
 	var data = {};
 
@@ -691,6 +694,7 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	if(layer_nr == 0 && layer_type == "flatten") {
 		return false;
 	}
+
 	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 }
 
@@ -720,6 +724,7 @@ function get_valid_layer_types (layer_nr) {
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					if(compile_fake_model(layer_nr, layer_type)) {
+						log("Testing OK: " + layer_type);
 						valid_layer_types.push(layer_type);
 					}
 				}
