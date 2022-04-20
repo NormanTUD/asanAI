@@ -41,4 +41,40 @@
     function esc ($string) {
 	    return "'".$GLOBALS["mysqli"]->real_escape_string($string)."'";
 	}
+
+    function generateRandomString($length = 50) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    function dier ($data, $enable_html = 0) {
+		$source_data = debug_backtrace()[0];
+		@$source = 'Aufgerufen von <b>'.debug_backtrace()[1]['file'].'</b>::<i>'.debug_backtrace()[1]['function'].'</i>, line '.htmlentities($source_data['line'])."<br>\n";
+		print $source;
+
+		print "<pre>\n";
+		ob_start();
+		print_r($data);
+		$buffer = ob_get_clean();
+		if($enable_html) {
+			print $buffer;
+		} else {
+			print htmlentities($buffer);
+		}
+		print "</pre>\n";
+
+		print "Backtrace:\n";
+		print "<pre>\n";
+		foreach (debug_backtrace() as $trace) {
+			print htmlentities(sprintf("\n%s:%s %s", $trace['file'], $trace['line'], $trace['function']));
+		}
+		print "</pre>\n";
+
+		exit();
+	}
 ?>
