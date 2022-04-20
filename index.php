@@ -167,7 +167,7 @@
 	</head>
 	<body style="margin: 0px;" data-chardin-sequenced="true">
 		<div id="mainsite">
-			<div id="ribbon" style="width:100%; height: 180px; overflow-y: hidden; position: sticky; top: 0; left: 0; right: 0; z-index: 2">
+			<div id="ribbon" style="">
 				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
