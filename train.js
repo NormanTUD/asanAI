@@ -143,6 +143,13 @@ function get_fit_data () {
 	};
 
 	callbacks["onEpochBegin"] = async function () {
+		current_epoch++;
+		var max_number_epochs = get_epochs();
+		var current_time = Date.now();
+		var epoch_time = (current_time - this_training_start_time) / current_epoch;
+		var epochs_left = max_number_epochs - current_epoch;
+		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "NNE";
 	}
 
 	callbacks["onTrainEnd"] = async function () {
@@ -151,16 +158,6 @@ function get_fit_data () {
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
-	}
-
-	callbacks["onEpochEnd"] = async function () {
-		current_epoch++;
-		var max_number_epochs = get_epochs();
-		var current_time = Date.now();
-		var epoch_time = (current_time - this_training_start_time) / current_epoch;
-		var epochs_left = max_number_epochs - current_epoch;
-		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
-		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "NNE";
 	}
 
 	//callbacks["onBatchEnd"] = async function () {
