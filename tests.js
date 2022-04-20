@@ -116,13 +116,13 @@ function run_tests () {
 
 	test_equal("last_index([1,2,3])", last_index([1,2,3]), 2);
 
-	test_equal("add_bias_regularizer_l1_option('conv2d', 1)", add_bias_regularizer_l1_option("conv2d", 1), "<tr class='bias_regularizer_tr'><td>l1:</td><td><input class='input_field input_data bias_regularizer_l1' type='number'  value=0.01  onchange='updated_page()' onkeyup='updated_page()' /></td>");
+	test_equal("add_bias_regularizer_l1_option('conv2d', 1)", add_bias_regularizer_l1_option("conv2d", 1), "<tr class='bias_regularizer_tr'><td>l1:</td><td><input class='input_field input_data bias_regularizer_l1' type='number'  value=0.01  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
-	test_equal('add_bias_initializer_distribution_option("conv2d", 1)', add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td>Distribution:</td><td><select class='input_field input_data bias_initializer_distribution' onchange='updated_page();'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
+	test_equal('add_bias_initializer_distribution_option("conv2d", 1)', add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td>Distribution:</td><td><select class='input_field input_data bias_initializer_distribution' onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
 
-	test_equal('add_kernel_initializer_value_option("conv2d", 1)', add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page()' onkeyup='updated_page()' /></td>");
+	test_equal('add_kernel_initializer_value_option("conv2d", 1)', add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
-	test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option('dense', 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  onchange='updated_page()' onkeyup='updated_page()' /></td>");
+	test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option('dense', 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
 	test_equal('quote_python("abc")', quote_python("abc"), "\"abc\"");
 
@@ -133,8 +133,8 @@ function run_tests () {
 	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i>hallo</i></td></tr>");
 
 	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"black\"]}]");
-	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"red\"]}]");
-	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"green\"]}]");
+	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"OrangeRed\"]}]");
+	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"SeaGreen\"]}]");
 
 	test_equal('array_to_latex([[1],[2],[3]])', array_to_latex([[1],[2],[3]]), "\\underbrace{\\begin{pmatrix}\n1\\\\\n2\\\\\n3\n\\end{pmatrix}}_{\\mathrm{undefined}}\n");
 
