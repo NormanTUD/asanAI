@@ -31,11 +31,13 @@ function list_dir ($folder, $max_number_of_files_per_category, $examples) {
 $dataset_category = $_GET['dataset_category'];
 $dataset = $_GET['dataset'];
 $examples = array_key_exists("examples", $_GET);
-$max_number_of_files_per_category = $_GET['max_number_of_files_per_category'];
-if(is_numeric($max_number_of_files_per_category)) {
-	$max_number_of_files_per_category = (int)$max_number_of_files_per_category;
-} else {
-	$max_number_of_files_per_category = 0;
+
+$max_number_of_files_per_category = 0;
+if(array_key_exists("max_number_of_files_per_category", $_GET)) {
+	$max_number_of_files_per_category = $_GET['max_number_of_files_per_category'];
+	if(is_numeric($max_number_of_files_per_category)) {
+		$max_number_of_files_per_category = (int)$max_number_of_files_per_category;
+	}
 }
 
 if(preg_match("/^\w+$/", $dataset_category)) {
