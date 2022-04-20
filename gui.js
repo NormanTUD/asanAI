@@ -1011,7 +1011,7 @@ function enable_disable_kernel_images () {
 		$("#show_kernel_images").prop("disabled", true);
 		$("#data_plotter").hide();
 	}
-	set_ribbon_min_width();
+	//set_ribbon_min_width();
 }
 
 function change_kernel_pixel_size () {
@@ -1339,7 +1339,7 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 		save_current_status();
 	}
 
-	set_ribbon_min_width();
+	//set_ribbon_min_width();
 
 	show_dtype_only_first_layer();
 
@@ -2883,6 +2883,7 @@ function get_max_ribbon_width () {
 }
 
 function set_ribbon_min_width () {
+	console.trace();
 	return;
 	$("#ribbon").css({"min-width": ''});
 

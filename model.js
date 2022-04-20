@@ -100,7 +100,7 @@ function compile_model () {
 	$("#outputShape").val(JSON.stringify(model.outputShape));
 
 	write_model_summary();
-	set_ribbon_min_width();
+	//set_ribbon_min_width();
 }
 
 function get_data_for_layer (type, i, first_layer) {
