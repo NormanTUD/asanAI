@@ -2883,13 +2883,14 @@ function get_max_ribbon_width () {
 }
 
 function set_ribbon_min_width () {
-	console.trace();
+	/*
 	return;
 	$("#ribbon").css({"min-width": ''});
 
 	$("#ribbon").css({
 		"min-width": parseInt(get_max_ribbon_width() * 1.001) + "px"
 	});
+	*/
 }
 
 function get_chosen_dataset () {
