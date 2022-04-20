@@ -63,6 +63,7 @@
 		<link href="minify.php?file=jquery-ui.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="minify.php?file=fonts.css">
 		<link href="minify.php?file=style.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="minify.php?file=ribbon.css">
 <?php
 		$tablist_color = "bbddfd";
 		if($darkmode) {
@@ -75,7 +76,7 @@
 ?>
 
 			<link href="minify.php?file=lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbon.css">
+			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbonlightmode.css">
 <?php
 		}
 ?>
@@ -685,8 +686,7 @@
 				</div>
 			</div>
 
-			<div id="wizard">
-
+			<div id="maindiv">
 				<div id="save_dialog" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">

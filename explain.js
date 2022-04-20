@@ -494,7 +494,7 @@ function write_descriptions () {
 						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 							hidden = "display: none;";
 						}
-						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#wizard');
+						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
 					}
 				}
 			}

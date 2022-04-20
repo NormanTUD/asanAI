@@ -38,11 +38,6 @@
 	overflow: auto;
 }
 
-#wizard > .content {
-	min-height: 600px;
-	height: 80%;
-}
-
 #progressbar {
 	margin-top: 20px;
 }
@@ -348,7 +343,7 @@ body {
 	cursor: default;
 }
 
-#wizard {
+#maindiv {
 	position: relative;
 	width: 98%
 }
