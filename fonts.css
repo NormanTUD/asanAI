@@ -3,7 +3,7 @@
 @import url(./font/Bright Semibold/cmun-bright-semibold.css);
 @import url(./font/Classical Serif Italic/cmun-classical-serif-italic.css);
 */
-@import url(./font/Concrete/cmun-concrete.css);
+@import url(minify.php?file=font/Concrete/cmun-concrete.css);
 @import url(minify.php?file=font/Sans/cmun-sans.css);
 /*
 @import url(./font/Sans Demi-Condensed/cmun-sans-demicondensed.css);
