@@ -77,4 +77,24 @@
 
 		exit();
 	}
+
+    function get_expiry_date($days) {
+        $time = time();
+        $timestamp = $days * 86400 + $time;
+        return esc(date("y-m-d", $timestamp));
+    }
+
+    function get_user_id($username) {
+        return get_single_value_from_query('select id from tfd_db.login where username ='.esc($_GET["username"]));
+    }
+
+    function get_session_id($username) {
+        return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.get_user_id($username));
+    }
+
+    function insert_session_id($username, $days) {
+        $session_id = generateRandomString();
+        $query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id($username).', '.esc($session_id).','.get_expiry_date($days).')';
+        run_query($query);
+    }
 ?>

@@ -29,7 +29,7 @@ CREATE TABLE `login` (
   `pw` varchar(100) NOT NULL,
   `salt` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +39,33 @@ CREATE TABLE `login` (
 LOCK TABLES `login` WRITE;
 /*!40000 ALTER TABLE `login` DISABLE KEYS */;
 /*!40000 ALTER TABLE `login` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `session_ids`
+--
+
+DROP TABLE IF EXISTS `session_ids`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `session_ids` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `session_id` varchar(50) DEFAULT NULL,
+  `expiry_date` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `session_ids_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `login` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `session_ids`
+--
+
+LOCK TABLES `session_ids` WRITE;
+/*!40000 ALTER TABLE `session_ids` DISABLE KEYS */;
+/*!40000 ALTER TABLE `session_ids` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +77,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-20  9:53:56
+-- Dump completed on 2022-04-20 13:53:42
