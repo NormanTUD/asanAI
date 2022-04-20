@@ -186,7 +186,6 @@ function show_info_after_run (h) {
 	assert(typeof(h) == "object", "history object is not of type object");
 
 	traindebug("Showing tfvis/history/memory");
-	//tfvis.show.history($("#tfvis_tab_history_graphs")[0], h, Object.keys(h["history"]));
 	write_history(h);
 	print_memory();
 }

@@ -2879,10 +2879,11 @@ function get_sum_of_items_childrens_width (item) {
 }
 
 function get_max_ribbon_width () {
-	return 1500;
+	return 1100;
 }
 
 function set_ribbon_min_width () {
+	return;
 	$("#ribbon").css({"min-width": ''});
 
 	$("#ribbon").css({
