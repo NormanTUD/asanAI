@@ -1,5 +1,5 @@
 {
-	"name": "MNIST",
+	"name": "Digit classifier",
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",

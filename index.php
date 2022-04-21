@@ -159,8 +159,8 @@
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:250px">
-							<table width=240>
+						<div class="ribbon-toolbar" style="width:350px">
+							<table width=350>
 								<tr>
 									<td>
 										<span class="symbol_button">Category&nbsp;&#128452;</span>
@@ -174,7 +174,7 @@
 								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
 									<tr>
 										<td>
-											<span class="symbol_button">Network&nbsp;&#128423;</span>
+											<span class="symbol_button">Network&nbsp;Architecture&nbsp;&#128423;</span>
 										</td>
 										<td>
 											<select id="dataset" onchange="chose_dataset();" style="width: 90%">

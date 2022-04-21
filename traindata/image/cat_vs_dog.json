@@ -1,5 +1,5 @@
 {
-	"name": "Images",
+	"name": "Image to Category",
 	"comment": "model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])",
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
