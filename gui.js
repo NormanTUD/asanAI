@@ -861,8 +861,6 @@ function insert_initializer_option_trs (layer_nr, initializer_type, option_type)
 	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${initializer_type}_initializer").parent().parent())`;
 
 	eval(eval_string);
-
-	updated_page();
 }
 
 function insert_activation_options (layer_nr) {
@@ -935,6 +933,8 @@ function insert_initializer_options (layer_nr, initializer_type) {
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
+
+	updated_page();
 }
 
 async function get_number_of_training_items () {

@@ -794,7 +794,7 @@ async function set_weights_from_string (string, no_error) {
 }
 
 async function get_weights_as_string () {
-	if(model === undefined) {
+	if(!model) {
 		return false;
 	}
 
@@ -837,7 +837,7 @@ async function download_weights_json () {
 }
 
 function output_size_at_layer (input_size_of_first_layer, layer_nr) {
-	if(model === null) {
+	if(!model) {
 		compile_model();
 	}
 	var output_size = input_size_of_first_layer;
@@ -899,7 +899,7 @@ async function get_weights_shape (weights_as_string) {
 }
 
 async function _show_load_weights () {
-	if(model === undefined) {
+	if(!model) {
 		return false;
 	}
 	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
