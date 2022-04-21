@@ -163,7 +163,7 @@
 							<table width=300>
 								<tr>
 									<td>
-										<span class="symbol_button">Problem type&nbsp;&#128452;</span>
+										<span class="symbol_button">Problem type:</span>
 									</td>
 									<td>
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
@@ -174,7 +174,7 @@
 								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
 									<tr>
 										<td>
-											<span class="symbol_button">Architecture&nbsp;&#128423;</span>
+											<span class="symbol_button">Architecture:</span>
 										</td>
 										<td>
 											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
@@ -182,9 +182,11 @@
 										</td>
 									</tr>
 								</div>
+								<tr>
+									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button></td>
+								</tr>
 							</table>
 
-							<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
 						</div>
 						<div class="ribbon-group-title">Dataset and Network</div>
 					</div>
