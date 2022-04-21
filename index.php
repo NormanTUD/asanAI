@@ -159,11 +159,11 @@
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:350px">
-							<table width=350>
+						<div class="ribbon-toolbar" style="width:300px">
+							<table width=300>
 								<tr>
 									<td>
-										<span class="symbol_button">Category&nbsp;&#128452;</span>
+										<span class="symbol_button">Problem type&nbsp;&#128452;</span>
 									</td>
 									<td>
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
@@ -174,21 +174,10 @@
 								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
 									<tr>
 										<td>
-											<span class="symbol_button">Network&nbsp;Architecture&nbsp;&#128423;</span>
+											<span class="symbol_button">Architecture&nbsp;&#128423;</span>
 										</td>
 										<td>
 											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
-											</select>
-										</td>
-									</tr>
-								</div>
-								<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="model_dataset_div">
-									<tr>
-										<td>
-											<span class="symbol_button">Weights&nbsp;&#9871;</span>
-										</td>
-										<td>
-											<select id="model_dataset" onchange="change_model_dataset();" style="width: 90%">
 											</select>
 										</td>
 									</tr>
@@ -341,7 +330,7 @@
 					</div>
 				</div>
 
-				<div id="tf_ribbon" class="ribbon_tab_content" title="TensorFlow">
+				<div id="tf_ribbon" class="ribbon_tab_content" title="Settings">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
@@ -971,6 +960,17 @@
 							<div id="predict_tab">
 								<div class="container" id="predictcontainer">
 									<div class="right">
+										<table>
+											<tr>
+												<td>
+													<span class="symbol_button">Pretrained Weights:</span>
+												</td>
+												<td>
+													<select id="model_dataset" onchange="change_model_dataset();">
+													</select>
+												</td>
+											</tr>
+										</table>
 										<div id="own_files">
 											<h2>Own files</h2>
 
