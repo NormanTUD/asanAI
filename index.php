@@ -163,7 +163,7 @@
 							<table width=240>
 								<tr>
 									<td>
-										<span class="symbol_button">&#128452;</span>
+										<span class="symbol_button">Category&nbsp;&#128452;</span>
 									</td>
 									<td>
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
@@ -174,7 +174,7 @@
 								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
 									<tr>
 										<td>
-											<span class="symbol_button">&#128423;</span>
+											<span class="symbol_button">Network&nbsp;&#128423;</span>
 										</td>
 										<td>
 											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
@@ -185,7 +185,7 @@
 								<div data-position="right" data-intro="Choose a specific dataset/pretrained model" id="model_dataset_div">
 									<tr>
 										<td>
-											<span class="symbol_button">&#9871;</span>
+											<span class="symbol_button">Weights&nbsp;&#9871;</span>
 										</td>
 										<td>
 											<select id="model_dataset" onchange="change_model_dataset();" style="width: 90%">
