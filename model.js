@@ -794,6 +794,10 @@ async function set_weights_from_string (string, no_error) {
 }
 
 async function get_weights_as_string () {
+	if(model === undefined) {
+		return false;
+	}
+
 	var weights = await model.getWeights();
 
 	var weights_array = [];
@@ -895,6 +899,9 @@ async function get_weights_shape (weights_as_string) {
 }
 
 async function _show_load_weights () {
+	if(model === undefined) {
+		return false;
+	}
 	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
 	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
 	if(default_weights_shape === current_network_weights_shape) {

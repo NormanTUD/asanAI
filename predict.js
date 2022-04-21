@@ -80,8 +80,9 @@ let predict_demo = async function (item, nr) {
 				}
 				desc.append(str);
 			}
-
 		}
+		$("#predict_error").hide();
+		$("#predict_error").html("");
 	} catch (e) {
 		console.warn(e);
 		$("#prediction").hide();
@@ -179,6 +180,8 @@ async function predict (item) {
 				}
 			}
 		}
+		$("#predict_error").hide();
+		$("#predict_error").html("");
 	} catch (e) {
 		console.warn(e);
 		$("#prediction").hide();

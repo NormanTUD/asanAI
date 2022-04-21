@@ -2242,6 +2242,8 @@ function chose_dataset() {
 	show_or_hide_load_weights()
 	model_is_trained=false;
 	set_config();
+
+	$("#predict_error").html("");
 }
 
 function init_weight_file_list () {
