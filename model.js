@@ -898,7 +898,11 @@ async function _show_load_weights () {
 	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
 	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
 	if(default_weights_shape === current_network_weights_shape) {
-		return true;
+		if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	return false;
 }

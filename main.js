@@ -232,4 +232,6 @@ $(document).ready(function() {
 
 	//$("#lenet_tab_label").click();
 	//$("#code_tab_label").click()
+
+	setInterval(show_load_weights, 1000);
 });
