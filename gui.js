@@ -835,7 +835,6 @@ function insert_activation_option_trs (layer_nr, option_type) {
 	} else {
 		log("option_type is '" + option_type + "'");
 	}
-	updated_page();
 }
 
 function insert_regularizer_option_trs (layer_nr, regularizer_type, option_type) {
@@ -850,7 +849,6 @@ function insert_regularizer_option_trs (layer_nr, regularizer_type, option_type)
 	} else {
 		log("option_type is '" + option_type + "'");
 	}
-	updated_page();
 }
 
 function insert_initializer_option_trs (layer_nr, initializer_type, option_type) {
@@ -888,6 +886,7 @@ function insert_activation_options (layer_nr) {
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a activation setting");
 	}
+	updated_page();
 }
 
 
@@ -911,6 +910,7 @@ function insert_regularizer_options (layer_nr, regularizer_type) {
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
 	}
+	updated_page();
 }
 
 function insert_initializer_options (layer_nr, initializer_type) {
