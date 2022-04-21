@@ -623,12 +623,6 @@
 										<td>No. decimal points (0 = no limit):</td>
 										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
 									</tr>
-									<tr>
-										<td>Update-interval (ms):</td>
-										<td>
-											<input type="number" id="math_update_interval" value="300" style="width: 80px" />
-										</td>
-									</tr>
 								</table>
 							</div>
 							<div class="ribbon-group-title">Math-Mode</div>

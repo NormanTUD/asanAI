@@ -1326,8 +1326,6 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 		var math_element = document.getElementById("tmp_math_tab");
 		await MathJax.typesetPromise()
 
-		await delay(parseInt($("#math_update_interval").val()));
-
 		$("#math_tab").html($("#tmp_math_tab").html());
 
 		$("#tmp_math_tab").remove();
