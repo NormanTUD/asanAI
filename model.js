@@ -858,3 +858,18 @@ function save_model () {
 		});
 	}
 }
+
+async function get_weights_shape (weights_as_string) {
+	if(weights_as_string === undefined) {
+		weights_as_string = await get_weights_as_string();
+	}
+	var weights_array = eval(weights_as_string);
+
+	var test_tensor = tf.tensor(weights_array);
+
+	var shape = test_tensor.shape;
+	dispose(test_tensor);
+	return shape;
+
+	return JSON.stringify(weights_array);
+}

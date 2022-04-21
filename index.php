@@ -185,7 +185,6 @@
 							</table>
 
 							<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
-							<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
 						</div>
 						<div class="ribbon-group-title">Dataset and Network</div>
 					</div>
@@ -968,6 +967,7 @@
 												<td>
 													<select id="model_dataset" onchange="change_model_dataset();">
 													</select>
+													<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
 												</td>
 											</tr>
 										</table>

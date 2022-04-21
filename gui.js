@@ -1575,7 +1575,7 @@ function get_option_for_layer_by_type (nr) {
 }
 
 function set_option_for_layer(thisitem) {
-	if($(thisitem).hasClass("swal2-select")) {
+	if($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
 		return;
 	}
 
@@ -1583,7 +1583,7 @@ function set_option_for_layer(thisitem) {
 
 	layer_structure_cache = null;
 
-	var nr = find_layer_number_by_element(thisitem);;
+	var nr = find_layer_number_by_element(thisitem);
 
 	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
 
