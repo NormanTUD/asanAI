@@ -1324,7 +1324,7 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 		$("#tmp_math_tab").html(latex);
 
 		var math_element = document.getElementById("tmp_math_tab");
-		await MathJax.Hub.Queue(["Typeset", MathJax.Hub, math_element]);
+		await MathJax.typesetPromise()
 
 		await delay(parseInt($("#math_update_interval").val()));
 
@@ -1334,7 +1334,7 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 	} else {
 		$("#math_tab").html(latex);
 		try {
-			MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+			await MathJax.typesetPromise()
 		} catch (e) {
 			var mathjax_error_explanation = "Are you online?";
 			$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
