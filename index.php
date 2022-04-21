@@ -959,18 +959,20 @@
 							<div id="predict_tab">
 								<div class="container" id="predictcontainer">
 									<div class="right">
-										<table>
-											<tr>
-												<td>
-													<span class="symbol_button">Pretrained Weights:</span>
-												</td>
-												<td>
-													<select id="model_dataset" onchange="change_model_dataset();">
-													</select>
-													<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
-												</td>
-											</tr>
-										</table>
+										<div id="pretrained_weights">
+											<table>
+												<tr>
+													<td>
+														<span class="symbol_button">Pretrained Weights:</span>
+													</td>
+													<td>
+														<select id="model_dataset" onchange="change_model_dataset();">
+														</select>
+														<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
+													</td>
+												</tr>
+											</table>
+										</div>
 										<div id="own_files">
 											<h2>Own files</h2>
 

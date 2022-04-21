@@ -1351,6 +1351,8 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 
 	hide_no_conv_stuff();
 
+	show_load_weights();
+
 	return 1;
 }
 

@@ -859,6 +859,27 @@ function save_model () {
 	}
 }
 
+function get_current_chosen_object_default_weights_string () {
+	var category_text = $("#dataset_category option:selected").text();
+	var dataset = $("#dataset option:selected").text();
+	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+
+	var response = "";
+
+	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
+
+	$.ajax({
+		type: "GET",   
+		url: weights_file,
+		async: false,
+		success : function(text) {
+			response = text;
+		}
+	});
+
+	return JSON.stringify(response);
+}
+
 async function get_weights_shape (weights_as_string) {
 	if(weights_as_string === undefined) {
 		weights_as_string = await get_weights_as_string();
@@ -869,7 +890,23 @@ async function get_weights_shape (weights_as_string) {
 
 	var shape = test_tensor.shape;
 	dispose(test_tensor);
-	return shape;
 
-	return JSON.stringify(weights_array);
+	return shape;
+}
+
+async function _show_load_weights () {
+	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
+	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
+	if(default_weights_shape === current_network_weights_shape) {
+		return true;
+	}
+	return false;
+}
+
+async function show_load_weights () {
+	if(await _show_load_weights()) {
+		$("#pretrained_weights").show();
+	} else {
+		$("#pretrained_weights").hide();
+	}
 }
