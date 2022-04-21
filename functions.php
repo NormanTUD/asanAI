@@ -3,7 +3,7 @@
     $GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
     $GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
     if($GLOBALS['mysqli']->connect_errno) {
-		die("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
+		#die("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
     }
 
     if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
@@ -12,7 +12,7 @@
 			mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
 			load_sql_file_get_statements("nachweis.sql");
 		} else {
-			echo "Error creating database: " . $GLOBALS['mysqli']->error;
+			#echo "Error creating database: " . $GLOBALS['mysqli']->error;
 		}
 	}
 
