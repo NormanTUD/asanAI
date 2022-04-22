@@ -872,16 +872,20 @@ function get_current_chosen_object_default_weights_string () {
 
 	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
 
-	$.ajax({
-		type: "GET",   
-		url: weights_file,
-		async: false,
-		success : function(text) {
-			response = text;
-		}
-	});
+	if(!weights_files[weights_file]) {
+		$.ajax({
+			type: "GET",   
+			url: weights_file,
+			async: false,
+			success : function(text) {
+				response = text;
+			}
+		});
 
-	return JSON.stringify(response);
+		weights_files[weights_file] = JSON.stringify(response);
+	}
+
+	return weights_files[weights_file];
 }
 
 async function get_weights_shape (weights_as_string) {
