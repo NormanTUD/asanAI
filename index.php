@@ -726,8 +726,8 @@
 									<td><button onclick="login()">Login</button></td>
 								</tr>
 							</table>
-							<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 						</div>
+						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 					</div>
 				</div>
 

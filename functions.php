@@ -8,12 +8,29 @@
     if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
 		$sql = "CREATE DATABASE tfd_db";
 		if (run_query($sql) === TRUE) {
-			mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
-			load_sql_file_get_statements("nachweis.sql");
+			mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
+			load_sql_file_get_statements("tfd.sql");
 		} else {
 			echo "Error creating database: " . $GLOBALS['mysqli']->error;
 		}
 	}
+
+	function load_sql_file_get_statements ($file) {
+		$contents = file_get_contents($file);
+		$contents = "SET FOREIGN_KEY_CHECKS=0;\n$contents";
+		$contents = preg_replace("/--.*/", "", $contents);
+		$contents = preg_replace("/\/\*.*?\*\/;/", "", $contents);
+		$contents = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $contents);
+		$contents = "$contents\nSET FOREIGN_KEY_CHECKS=0;\n";
+
+		$queries = explode(";", $contents);
+		foreach ($queries as $query) {
+			if(!preg_match("/^\s*$/", $query)) {
+				run_query($query);
+			}
+		}
+	}
+	
     function run_query ($query) {
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);
