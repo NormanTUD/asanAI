@@ -1,5 +1,4 @@
 <?php
-/*
     $GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
     $GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
     if($GLOBALS['mysqli']->connect_errno) {
@@ -15,7 +14,6 @@
 			echo "Error creating database: " . $GLOBALS['mysqli']->error;
 		}
 	}
- */
     function run_query ($query) {
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);
