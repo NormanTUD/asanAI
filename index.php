@@ -154,6 +154,7 @@
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 					<!--<li><span class="symbol_button enabled_symbol" title="Start Clippy-Tour" onclick="clippy_tour()">&#129497;&#8205;&#9794;&#65039;</span></li>-->
+					<span id="register" onclick="open_register_dialog()">Register</span>
 					<span id="tensor_number_debugger" style="display: none"></span>
 				</ul>
 
@@ -681,6 +682,51 @@
 								</tr>
 							</table>
 							<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="register_dialog" style="display: none">
+					<div class="popup_body less_transparent_glass_box">
+					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
+					</div>
+						<div id="register_content"> 
+							<h1>Register</h1>
+
+							<table>
+								<tr>
+									<td>E-Mail</td>
+									<td><input id="register_email"></td>
+								</tr>
+								<tr>
+									<td>Username</td>
+									<td><input id="register_username"></td>
+								</tr>
+								<tr>
+									<td>Password</td>
+									<td><input id="register_password"></td>
+								</tr>
+								<tr>
+									<td><button onclick="register()">Register</button></td>
+								</tr>
+							</table>
+
+							<h1>Login</h1>
+
+							<table>
+								<tr>
+									<td>Username</td>
+									<td><input id="login_username"></td>
+								</tr>
+								<tr>
+									<td>Password</td>
+									<td><input id="login_password"></td>
+								</tr>
+								<tr>
+									<td><button onclick="login()">Login</button></td>
+								</tr>
+							</table>
+							<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 						</div>
 					</div>
 				</div>
