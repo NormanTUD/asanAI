@@ -794,6 +794,7 @@ async function set_weights_from_string (string, no_error) {
 }
 
 async function get_weights_as_string () {
+	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
@@ -803,7 +804,9 @@ async function get_weights_as_string () {
 	var weights_array = [];
 
 	for (var i = 0; i < weights.length; i++) {
-		weights_array[i] = weights[i].arraySync();
+		if(!weights[i].isDisposed) {
+			weights_array[i] = weights[i].arraySync();
+		}
 	}
 
 	return JSON.stringify(weights_array);
@@ -864,6 +867,7 @@ function save_model () {
 }
 
 function get_current_chosen_object_default_weights_string () {
+	if($("#dataset_category").val() == "own") { return; }
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -903,9 +907,15 @@ async function get_weights_shape (weights_as_string) {
 }
 
 async function _show_load_weights () {
+	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
+
+	if(Object.keys(traindata_struct[$("#dataset_category option:selected").text()].datasets[$("#dataset option:selected").text()].weights_file).length > 1) {
+		return true;
+	}
+
 	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
 	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
 	if(default_weights_shape === current_network_weights_shape) {
@@ -919,6 +929,7 @@ async function _show_load_weights () {
 }
 
 async function show_load_weights () {
+	if($("#dataset_category").val() == "own") { return; }
 	if(await _show_load_weights()) {
 		$("#pretrained_weights").show();
 	} else {
