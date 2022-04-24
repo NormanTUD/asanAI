@@ -2996,7 +2996,6 @@ function update_input_shape () {
 	layer_structure_cache = null;
 	updated_page();
 	Prism.highlightAll();
-	update_input_shape();
 }
 
 function go_to_own () {
