@@ -964,16 +964,20 @@ async function _get_configuration (index) {
 	//log($("#dataset_category").val());
 	if(typeof(data) == "undefined" && $("#dataset_category").val() != "own") {
 		try {
-			data = await $.getJSON("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json");
+			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
+			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+
+			data = await $.getJSON(data_url);
+
 			if(!local_store.getItem("tensorflowjs_models/mymodel")) {
-				data["keras"] = await $.getJSON("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json");
+				data["keras"] = await $.getJSON(keras_url);
 			} else {
 				try {
 					data["keras"] = JSON.parse(local_store.getItem("tensorflowjs_models/mymodel"));
 				} catch (e) {
 					log(e);
 					local_store.setItem("tensorflowjs_models/mymodel", null)
-					data["keras"] = await $.getJSON("traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json");
+					data["keras"] = await $.getJSON(keras_url);
 				}
 			}
 		} catch (e) {
@@ -1578,6 +1582,7 @@ function get_option_for_layer_by_type (nr) {
 
 function set_option_for_layer(thisitem) {
 	if($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
+		log(thisitem);
 		return;
 	}
 
@@ -3552,18 +3557,20 @@ async function set_default_input_shape () {
 	}
 	var default_config = await _get_configuration();
 
-	try {
-		var default_input_shape = default_config["input_shape"];
+	if(default_config) {
+		try {
+			var default_input_shape = default_config["input_shape"];
 
-		set_input_shape(default_input_shape);
+			set_input_shape(default_input_shape);
 
-		compile_model();
+			compile_model();
 
-		identify_layers(get_numberoflayers());
+			identify_layers(get_numberoflayers());
 
-		write_descriptions();
-	} catch (e) {
-		log(e);
+			write_descriptions();
+		} catch (e) {
+			log(e);
+		}
 	}
 }
 
