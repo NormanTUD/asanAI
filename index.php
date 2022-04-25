@@ -715,7 +715,7 @@
 					</div>
 					<div class="right_side" id="graphs_here" style="padding-left: 10px">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
-							<div style="display: block ruby">
+							<div style="display: flex">
 								<ul>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
@@ -727,7 +727,7 @@
 									<li><a href="#tfvis_tab" id="tfvis_tab_label" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
 								</ul>
-								<span id="toggle_layer_view_button" style="position: relative; top: -6px" onclick="toggle_layer_view()">&#128470;</span>
+								<span id="toggle_layer_view_button" style="position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
 
 							<div id="own_csv_data">

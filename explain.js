@@ -1323,14 +1323,6 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	if(!force && $("#math_tab").css("display") == "none") {
-		return;
-	}
-
-	if(reset_prev_layer_data) {
-		prev_layer_data = [];
-	}
-
 	if(!can_be_shown_in_latex()) {
 		$("#math_tab_label").hide();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
@@ -1339,8 +1331,15 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		return;
 	}
 
-
 	$("#math_tab_label").show();
+
+	if(!force && $("#math_tab").css("display") == "none") {
+		return;
+	}
+
+	if(reset_prev_layer_data) {
+		prev_layer_data = [];
+	}
 
 	var latex = model_to_latex();
 

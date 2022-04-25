@@ -2930,6 +2930,14 @@ function update_input_shape () {
 	Prism.highlightAll();
 }
 
+function toggle_tfjsvis_overlay() {
+	if($(".vg-tooltip").hasClass("vg-tooltip-hidden")) {
+		$(".vg-tooltip").removeClass("vg-tooltip-hidden");
+	} else{
+		$(".vg-tooltip").addClass("vg-tooltip-hidden");
+	}
+}
+
 function hide_annoying_tfjs_vis_overlays () {
 	if(is_hidden_or_has_hidden_parent($("#tfvis_tab_training_performance_graph"))) {
 		$(".vg-tooltip").addClass("vg-tooltip-hidden");
