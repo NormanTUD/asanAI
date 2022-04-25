@@ -1460,7 +1460,6 @@ function set_optimizer (val) {
 
 function set_metric (val) {
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-	log(val);
 	$("#metric").val(val);
 }
 

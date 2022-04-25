@@ -232,9 +232,9 @@
 											<option value="precision">precision</option>
 											<option value="categoricalCrossentropy">categoricalCrossentropy</option>
 											<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
-											<option value="mse">mse</option>
-											<option value="mae">mae</option>
-											<option value="mape">mape</option>
+											<option value="mse">MeanSquaredError</option>
+											<option value="mae">MeanAbsoluteError</option>
+											<option value="mape">MeanAbsolutePercentageError</option>
 											<option value="cosine">cosine</option>
 										</select>
 									</td>
