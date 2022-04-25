@@ -167,7 +167,6 @@
 									</td>
 									<td>
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
-											<option value="own">Own data</option>
 										</select>
 									</td>
 								</tr>

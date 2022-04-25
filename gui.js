@@ -962,7 +962,7 @@ async function _get_configuration (index) {
 	}
 
 	//log($("#dataset_category").val());
-	if(typeof(data) == "undefined" && $("#dataset_category").val() != "own") {
+	if(typeof(data) == "undefined") {
 		try {
 			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
@@ -1066,13 +1066,6 @@ async function update_python_code () {
 
 	var python_code = "";
 
-	if(dataset_category == "own") {
-		input_shape = eval("[" + get_shape_from_file(x_file) + "]");
-		if(input_shape === null) {
-			return 0;
-		}
-	}
-
 	var epochs = parseInt(document.getElementById("epochs").value);
 
 	$("#pythoncontainer").show();
@@ -1131,17 +1124,6 @@ async function update_python_code () {
 
 
 		x_shape = "[width, height, 3]";
-	} else if(dataset_category == "own") {
-		// TODO does not work for e.g. classification category!
-		var x_shape = get_full_shape_from_file(x_file);
-		var y_shape = get_full_shape_from_file(y_file);
-		if(x_shape === null) {
-			x_shape = $("#input_shape").val();
-
-		}
-
-		python_code += "x = np.loadtxt('x.txt').reshape([" + x_shape + "])\n";
-		python_code += "y = np.loadtxt('y.txt').reshape([" + y_shape + "])\n";
 	} else {
 		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
@@ -1166,7 +1148,7 @@ async function update_python_code () {
 		var data = {};
 
 		if(i == 0) {
-			if(["own", "image"].includes(dataset_category)) {
+			if(["image"].includes(dataset_category)) {
 				data["input_shape"] = x_shape;
 			} else {
 				data["input_shape"] = "get_shape('x.txt')";
@@ -2183,15 +2165,13 @@ async function set_config (index) {
 function show_or_hide_load_weights () {
 	$("#load_weights_button").hide();
 
-	if($("#dataset_category").val() != "own") {
-		var category_text = $("#dataset_category option:selected").text();
-		var dataset = $("#dataset option:selected").text();
-		var this_struct = traindata_struct[category_text]["datasets"][dataset];
-		var keys = Object.keys(this_struct);
+	var category_text = $("#dataset_category option:selected").text();
+	var dataset = $("#dataset option:selected").text();
+	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+	var keys = Object.keys(this_struct);
 
-		if(keys.includes("weights_file")) {
-			$("#load_weights_button").show();
-		}
+	if(keys.includes("weights_file")) {
+		$("#load_weights_button").show();
 	}
 }
 
@@ -2218,12 +2198,8 @@ async function init_dataset () {
 }
 
 function init_download_link () {
-	if($("#dataset_category").val() != "own") {
-		$("#download_data").html("Download the training data <a href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.");
-		$("#download_data").show();
-	} else {
-		$("#download_data").hide();
-	}
+	$("#download_data").html("Download the training data <a href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.");
+	$("#download_data").show();
 }
 
 async function get_number_of_categories () {
@@ -2254,27 +2230,13 @@ function chose_dataset() {
 function init_weight_file_list () {
 	$('#model_dataset').find('option').remove();
 
-	if($("#dataset_category").val() != "own") {
-		$("#model_dataset_div").show();
-		var weights_files = traindata_struct[$("#dataset_category").find(":selected").text()]["datasets"][$("#dataset").find(":selected").text()]["weights_file"];
-		var weight_file_names = Object.keys(weights_files);
+	$("#model_dataset_div").show();
+	var weights_files = traindata_struct[$("#dataset_category").find(":selected").text()]["datasets"][$("#dataset").find(":selected").text()]["weights_file"];
+	var weight_file_names = Object.keys(weights_files);
 
-		for (var i = 0; i < weight_file_names.length; i++) {
-			var new_option = $('<option>', {value: weight_file_names[i], text: weight_file_names[i]});
-			$("#model_dataset").append(new_option);
-		}
-	} else {
-		$("#model_dataset_div").hide();
-	}
-}
-
-function hide_or_show_own_stuff() {
-	if($("#dataset_category").val() == "own") {
-		$("#dataset").parent().parent().hide();
-		$("#model_dataset").parent().parent().hide();
-	} else {
-		$("#dataset").parent().parent().show();
-		$("#model_dataset").parent().parent().show();
+	for (var i = 0; i < weight_file_names.length; i++) {
+		var new_option = $('<option>', {value: weight_file_names[i], text: weight_file_names[i]});
+		$("#model_dataset").append(new_option);
 	}
 }
 
@@ -2309,9 +2271,9 @@ async function init_dataset_category (disable_set_config) {
 		"max_values": [],
 		"max_values.parent": [],
 
-		"tensor_type_div": ["classification", "own"],
-		"input_shape_div": ["classification", "own"],
-		"input_shape_div.parent": ["classification", "own"]
+		"tensor_type_div": ["classification"],
+		"input_shape_div": ["classification"],
+		"input_shape_div.parent": ["classification"]
 	};
 
 	var item_names = Object.keys(show_items);
@@ -2338,49 +2300,29 @@ async function init_dataset_category (disable_set_config) {
 
 	$("#input_text").hide();
 
-	if(category != "own") {
-		var dataset = "";
+	var dataset = "";
 
-		$("#inputShape").attr("readonly", true); 
-		$("#train_data_set_group").show();
-		$("#dataset_div").show();
-		$("#dataset").html(dataset);
-		$("#upload_x").hide();
-		$("#upload_x").parent().hide();
-		$("#upload_y").hide();
-		$("#upload_y").parent().hide();
-		if(!disable_set_config) {
-			set_config().then(() => {
-				updated_page(0, 0);
-			});
-		}
-
-		$("#reset_model").show();
-
-		$('#data_origin').change(function() {
-			$('#data_origin option[value="default"]').prop('disabled', false);
+	$("#inputShape").attr("readonly", true); 
+	$("#train_data_set_group").show();
+	$("#dataset_div").show();
+	$("#dataset").html(dataset);
+	$("#upload_x").hide();
+	$("#upload_x").parent().hide();
+	$("#upload_y").hide();
+	$("#upload_y").parent().hide();
+	if(!disable_set_config) {
+		set_config().then(() => {
+			updated_page(0, 0);
 		});
-
-		$("#data_origin").val("default").trigger("change");
-	} else {
-		$("#train_data_set_group").hide();
-		$("#dataset_div").hide();
-		$("#upload_x").show();
-		$("#upload_x").parent().show();
-		$("#upload_y").show();
-		$("#upload_y").parent().show();
-		init_numberoflayers(3);
-		$("#inputShape").attr("readonly", false); 
-		$("#reset_model").hide();
-
-
-		$('#data_origin').change(function() {
-			$('#data_origin option[value="default"]').prop('disabled', true);
-		});
-
-		$("#data_origin").val("own").trigger("change");
-		$("#validationSplit").val(0);
 	}
+
+	$("#reset_model").show();
+
+	$('#data_origin').change(function() {
+		$('#data_origin option[value="default"]').prop('disabled', false);
+	});
+
+	$("#data_origin").val("default").trigger("change");
 
 	init_download_link();
 	init_categories();
@@ -2396,8 +2338,6 @@ async function init_dataset_category (disable_set_config) {
 	is_setting_config = original_is_settings_config;
 	
 	updated_page();
-
-	hide_or_show_own_stuff();
 }
 
 function clean_gui () {
@@ -2911,10 +2851,6 @@ function get_chosen_dataset () {
 }
 
 function load_weights (dont_show_msg) {
-	if($("#dataset_category").val() == "own") {
-		return;
-	}
-
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -3001,11 +2937,6 @@ function update_input_shape () {
 	layer_structure_cache = null;
 	updated_page();
 	Prism.highlightAll();
-}
-
-function go_to_own () {
-	header("go_to_own aus der main entfernen");
-	$("#dataset_category").val("own").trigger("change");
 }
 
 function hide_annoying_tfjs_vis_overlays () {
@@ -3827,10 +3758,6 @@ function end_demo_mode () {
 }
 
 function change_model_dataset () {
-	if($("#dataset_category").val() != "own") {
-		$("#model_dataset_div").show();
-		load_weights(1);
-	} else {
-		$("#model_dataset_div").hide();
-	}
+	$("#model_dataset_div").show();
+	load_weights(1);
 }

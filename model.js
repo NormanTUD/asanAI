@@ -794,7 +794,6 @@ async function set_weights_from_string (string, no_error) {
 }
 
 async function get_weights_as_string () {
-	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
@@ -867,7 +866,6 @@ function save_model () {
 }
 
 function get_current_chosen_object_default_weights_string () {
-	if($("#dataset_category").val() == "own") { return; }
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -907,7 +905,6 @@ async function get_weights_shape (weights_as_string) {
 }
 
 async function _show_load_weights () {
-	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
@@ -929,7 +926,6 @@ async function _show_load_weights () {
 }
 
 async function show_load_weights () {
-	if($("#dataset_category").val() == "own") { return; }
 	if(await _show_load_weights()) {
 		$("#pretrained_weights").show();
 	} else {
