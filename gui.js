@@ -1566,7 +1566,6 @@ function get_option_for_layer_by_type (nr) {
 
 function set_option_for_layer(thisitem) {
 	if($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
-		log(thisitem);
 		return;
 	}
 
