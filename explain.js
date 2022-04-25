@@ -1303,10 +1303,15 @@ function can_be_shown_in_latex () {
 	return true;
 }
 
-async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) {
+async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+	if(!force && $("#math_tab").css("display") == "none") {
+		return;
+	}
+
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
+
 	if(!can_be_shown_in_latex()) {
 		$("#math_tab_label").hide();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
@@ -1315,28 +1320,17 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 		return;
 	}
 
+
 	$("#math_tab_label").show();
 
 	var latex = model_to_latex();
 
-	if(delay_code) {
-		$("<div id='tmp_math_tab' style='display: none'></div>").appendTo("body");
-		$("#tmp_math_tab").html(latex);
-
-		var math_element = document.getElementById("tmp_math_tab");
+	$("#math_tab").html(latex);
+	try {
 		await MathJax.typesetPromise()
-
-		$("#math_tab").html($("#tmp_math_tab").html());
-
-		$("#tmp_math_tab").remove();
-	} else {
-		$("#math_tab").html(latex);
-		try {
-			await MathJax.typesetPromise()
-		} catch (e) {
-			var mathjax_error_explanation = "Are you online?";
-			$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
-		}
+	} catch (e) {
+		var mathjax_error_explanation = "Are you online?";
+		$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 	}
 }
 

@@ -1944,8 +1944,6 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
-	console.trace();
-
 	prev_layer_data = [];
 
 	is_setting_config = true;

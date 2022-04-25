@@ -614,7 +614,7 @@
 								<table data-intro="Options for the math mode.">
 									<tr>
 										<td>No. decimal points (0 = no limit):</td>
-										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
+										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
 									</tr>
 								</table>
 							</div>
@@ -833,7 +833,7 @@
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
-									<li><a href="#math_tab" id="math_tab_label">Math</a></li>
+									<li><a href="#math_tab" onclick="write_model_to_latex_to_page(0, 1);" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 									<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
