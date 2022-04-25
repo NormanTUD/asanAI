@@ -172,28 +172,24 @@
 									<td>
 										<span class="symbol_button">Problem type:</span>
 									</td>
-									<td>
+									<td colspan=2">
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();">
 										</select>
 									</td>
 								</tr>
-								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
-									<tr>
-										<td>
-											<span class="symbol_button">Architecture:</span>
-										</td>
-										<td>
-											<select id="dataset" onchange="chose_dataset();">
-											</select>
-										</td>
-									</tr>
-								</div>
 								<tr>
-									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
+									<td>
+										<span class="symbol_button">Architecture:</span>
+									</td>
+									<td colspan=2">
+										<select id="dataset" onchange="chose_dataset();">
+										</select>
+									</td>
 								</tr>
 								<tr>
-									<td>Auto-Input-Shape?<td>
+									<td>Auto-Input-Shape?</td>
 									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
+									<td><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
 								</tr>
 							</table>
 
@@ -203,12 +199,12 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 350px">
+						<div class="ribbon-toolbar" style="width: 280px">
 							<table>
 								<tr>
 									<td>Loss:</td>
 									<td style="width: 220px">
-										<select id="loss" onchange="updated_page()" style="width: 200px">
+										<select id="loss" onchange="updated_page()" style="width: 150px">
 											<option value="meanSquaredError">MeanSquaredError</option>
 											<option value="binaryCrossentropy">BinaryCrossentropy</option>
 											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
@@ -226,7 +222,7 @@
 								<tr>
 									<td>Metric:</td>
 									<td style="width: 220px">
-										<select id="metric" onchange="change_metrics()" style="width: 200px">
+										<select id="metric" onchange="change_metrics()" style="width: 150px">
 											<option value="binaryAccuracy">binaryAccuracy</option>
 											<option value="categoricalAccuracy">categoricalAccuracy</option>
 											<option value="precision">precision</option>
@@ -250,7 +246,7 @@
 								</tr>
 								<tr>
 									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 80px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 80px;" readonly id="outputShape" /></td>
+									<td><input type="text" value="" style="width: 70px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 70px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 						</div>

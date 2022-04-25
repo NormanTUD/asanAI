@@ -2307,7 +2307,6 @@ async function init_dataset_category (disable_set_config) {
 	var dataset = "";
 
 	$("#train_data_set_group").show();
-	$("#dataset_div").show();
 	$("#dataset").html(dataset);
 	$("#upload_x").hide();
 	$("#upload_x").parent().hide();
