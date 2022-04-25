@@ -1092,6 +1092,8 @@ async function update_python_code () {
 	python_code += "   compile=True\n";
 	python_code += ")\n\n";
 	python_code += "model.summary()\n"
+	
+	var x_shape = "";
 
 	await get_label_data();
 
