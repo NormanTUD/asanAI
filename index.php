@@ -166,7 +166,7 @@
 										<span class="symbol_button">Problem type:</span>
 									</td>
 									<td>
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();">
 										</select>
 									</td>
 								</tr>
@@ -176,17 +176,17 @@
 											<span class="symbol_button">Architecture:</span>
 										</td>
 										<td>
-											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
+											<select id="dataset" onchange="chose_dataset();">
 											</select>
 										</td>
 									</tr>
 								</div>
 								<tr>
-									<td style="width: 150px">Auto-Input-Shape?<td>
-									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
+									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
 								</tr>
 								<tr>
-									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button></td>
+									<td>Auto-Input-Shape?<td>
+									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
 								</tr>
 							</table>
 
