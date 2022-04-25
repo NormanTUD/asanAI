@@ -1944,6 +1944,8 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
+	console.trace();
+
 	prev_layer_data = [];
 
 	is_setting_config = true;
@@ -2244,7 +2246,7 @@ function init_weight_file_list () {
 	}
 }
 
-async function init_dataset_category (disable_set_config) {
+async function init_dataset_category () {
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
 	x_file = null;
@@ -2312,12 +2314,6 @@ async function init_dataset_category (disable_set_config) {
 	$("#upload_x").parent().hide();
 	$("#upload_y").hide();
 	$("#upload_y").parent().hide();
-	if(!disable_set_config) {
-		set_config().then(() => {
-			updated_page(0, 0);
-		});
-	}
-
 	$("#reset_model").show();
 
 	$('#data_origin').change(function() {
