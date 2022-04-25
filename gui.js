@@ -964,6 +964,9 @@ async function _get_configuration (index) {
 	//log($("#dataset_category").val());
 	if(typeof(data) == "undefined") {
 		try {
+			while ($("#dataset").val() === null) {
+				await delay(10);
+			}
 			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
 

@@ -790,8 +790,6 @@ function set_weights_from_json_object (json, dont_show_weights, no_error) {
 async function set_weights_from_string (string, no_error) {
 	var json = JSON.parse(string);
 
-	log(json);
-
 	return set_weights_from_json_object(json, 0, no_error);
 }
 
