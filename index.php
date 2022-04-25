@@ -226,11 +226,8 @@
 											<option value="categoricalCrossentropy">categoricalCrossentropy</option>
 											<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
 											<option value="mse">mse</option>
-											<option value="MSE">MSE</option>
 											<option value="mae">mae</option>
-											<option value="MAE">MAE</option>
 											<option value="mape">mape</option>
-											<option value="MAPE">MAPE</option>
 											<option value="cosine">cosine</option>
 										</select>
 									</td>
