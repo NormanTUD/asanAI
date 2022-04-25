@@ -3016,12 +3016,6 @@ function change_data_origin () {
 			alert("Unknown data_type: " + $("#data_type").val());
 		}
 
-		if(contains_convolution()) {
-			$("#data_type option[value='csv']").attr('disabled', true);
-		} else {
-			$("#data_type option[value='csv']").attr('disabled', false);
-		}
-
 		$(".hide_when_custom_data").hide();
 
 		changed_data_source = true;

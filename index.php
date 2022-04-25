@@ -44,7 +44,6 @@
 		}
 ?>
 		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>fonts.css">
 		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
 <?php

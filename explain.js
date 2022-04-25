@@ -1086,6 +1086,12 @@ function model_to_latex () {
 		}
 	};
 
+	var loss_equations = {
+		"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}\\right|",
+		"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2",
+		"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2}"
+	};
+
 	var layer_data = get_layer_data();
 
 	var y_layer = [];
@@ -1112,8 +1118,15 @@ function model_to_latex () {
 
 	var shown_activation_equations = [];
 
+	if(Object.keys(loss_equations).includes($("#loss").val())) {
+		str += "<h2>Loss</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
+	}
+
 	for (var i = 0; i < layer_data.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
+		if(i == 0) {
+			str += "<h2>Layer-equations</h2>";
+		}
 		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
 		if(this_layer_type == "dense") {
@@ -1272,7 +1285,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return activation_string + "<hr>" + str;
+		return "<h2>Activation functions</h2> " + activation_string + "<hr>" + str;
 	} else {
 		if(str) {
 			return str;
