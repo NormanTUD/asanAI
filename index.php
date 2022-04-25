@@ -185,6 +185,18 @@
 										</select>
 									</td>
 								</tr>
+								<div id="pretrained_weights">
+									<tr>
+										<td>
+											<span class="symbol_button">Dataset:</span>
+										</td>
+										<td colspan=2>
+											<select id="model_dataset" onchange="change_model_dataset();">
+											</select>
+											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
+										</td>
+									</tr>
+								</div>
 								<tr>
 									<td>Auto-Input-Shape?</td>
 									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
@@ -965,20 +977,6 @@
 							<div id="predict_tab">
 								<div class="container" id="predictcontainer">
 									<div class="right">
-										<div id="pretrained_weights">
-											<table>
-												<tr>
-													<td>
-														<span class="symbol_button">Pretrained Weights:</span>
-													</td>
-													<td>
-														<select id="model_dataset" onchange="change_model_dataset();">
-														</select>
-														<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
-													</td>
-												</tr>
-											</table>
-										</div>
 										<div id="own_files">
 											<h2>Own files</h2>
 
