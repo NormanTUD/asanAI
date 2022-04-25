@@ -47,6 +47,7 @@ async function train_neural_network () {
 
 		document.title = original_title;
 		gui_not_in_training();
+		enable_everything();
 	} else {
 		gui_in_training();
 		reset_gui_before_training();
@@ -55,6 +56,8 @@ async function train_neural_network () {
 		$("#percentage").hide();
 
 		run_neural_network();
+
+		enable_everything();
 	}
 
 	write_descriptions();
