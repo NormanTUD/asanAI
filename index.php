@@ -1091,37 +1091,37 @@
 			}
 
 			function scale_down (max_value, architecture) {
-                                var relations = [];
-                                var new_architecture = [];
-                                for (var i = 0; i < architecture.length; i++) {
-                                        var item = architecture[i];
-                                        if(item <= max_value) {
-                                                relations.push(0);
-                                        } else {
-                                                relations.push(item / max_value);
-                                        }
-                                }
+				var relations = [];
+				var new_architecture = [];
+				for (var i = 0; i < architecture.length; i++) {
+					var item = architecture[i];
+					if(item <= max_value) {
+						relations.push(0);
+					} else {
+						relations.push(item / max_value);
+					}
+				}
 
-                                for (var i = 0; i < architecture.length; i++) {
-                                        var item = architecture[i];
-                                        var relation = relations[i];
+				for (var i = 0; i < architecture.length; i++) {
+					var item = architecture[i];
+					var relation = relations[i];
 
-                                        if(relation) {
-                                                new_architecture.push(max_value + Math.ceil(relation));
-                                        } else {
-                                                new_architecture.push(item);
-                                        }
+					if(relation) {
+						new_architecture.push(max_value + Math.ceil(relation));
+					} else {
+						new_architecture.push(item);
+					}
 
-                                }
+				}
 
-                                return new_architecture;
-                        }
+				return new_architecture;
+			}
 
 			var fcnn = FCNN();
-                        async function restart_fcnn() {
-                                var architecture = [];
+			async function restart_fcnn() {
+				var architecture = [];
 				var real_architecture = [];
-                                var betweenNodesInLayer = [];
+				var betweenNodesInLayer = [];
 				var layer_types = [];
 
 				if(show_input_layer) {
@@ -1146,10 +1146,9 @@
 				if(architecture.length + real_architecture.length) {
 					fcnn.redraw({'architecture_': architecture, 'real_architecture_': real_architecture, 'layerTypes_': layer_types, 'currentLayer_': currentLayer});
 					fcnn.redistribute({'betweenNodesInLayer_': betweenNodesInLayer});
-				} else {
 				}
 				reset_view();
-                        }
+			}
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
