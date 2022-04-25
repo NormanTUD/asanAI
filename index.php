@@ -1201,8 +1201,6 @@
 								log(e);
 								return;
 							}
-						} else {
-							//console.log("Unknown category: " + category);
 						}
 					} else {
 						log("Cannot get category of layer type of layer " + i);
@@ -1228,7 +1226,7 @@
 								architecture.unshift(shown_input_layer);
 							}
 
-							alexnet.restartRenderer();
+							alexnet.restartRenderer(1);
 							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
 						} catch (e) {
 							console.warn(e);
@@ -1423,14 +1421,6 @@
 					restart_alexnet()
 				}
 			}
-
-			/*
-			$(window).resize(function() {
-				restart_fcnn();
-				restart_lenet();
-				restart_alexnet();
-			});
-			 */
 
 			$(".show_after_training").hide();
 
