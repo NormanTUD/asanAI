@@ -470,10 +470,13 @@ function create_model (old_model, fake_model_structure) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
-			console.error(e);
-			log("type: " + type);
-			log("data: ");
-			log(data);
+			if(show_layer_trial_error) {
+				log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+				log(e);
+				log("type: " + type + ", data:");
+				log(data);
+				log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			}
 			return false;
 		}
 

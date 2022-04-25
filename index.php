@@ -30,6 +30,8 @@
 ?>
 
 			var darkmode = <?php print $darkmode; ?>;
+
+			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
 
 
