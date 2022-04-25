@@ -550,6 +550,8 @@ function explain_error_msg () {
 			} else {
 				explanation = "Are you sure your input data is numeric?";
 			}
+		} else if(err.includes("input expected a batch of elements where each example has shape")) {
+			explanation = "Does the input-shape match the data?";
 		}
 	} else {
 		explanation = "No layers."
@@ -562,8 +564,6 @@ function explain_error_msg () {
 	}
 
 	$("#train_neural_network_button").html("Start training");
-
-	//updated_page();
 }
 
 function write_layer_identification (nr, text) {
