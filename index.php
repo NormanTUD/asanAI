@@ -35,68 +35,73 @@
 
 <?php
 		$tablist_color = "bbddfd";
+
+		$minify = 1;
+		if(array_key_exists("no_minify", $_GET)) {
+			$minify = 0;
+		}
 ?>
-		<link href="minify.php?file=jquery-ui.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="minify.php?file=fonts.css">
-		<link href="minify.php?file=style.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="minify.php?file=ribbon.css">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>fonts.css">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
 <?php
 		$tablist_color = "bbddfd";
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>
-			<link href="minify.php?file=darkmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbondarkmode.css">
+			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>darkmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbondarkmode.css">
 <?php
 		} else {
 ?>
 
-			<link href="minify.php?file=lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbonlightmode.css">
+			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>lightmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbonlightmode.css">
 <?php
 		}
 ?>
-		<link href="minify.php?file=prism/prism.min.css" rel="stylesheet">
-		<link href="minify.php?file=external/sweetalert2.min.css" rel="stylesheet">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.min.css" rel="stylesheet">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.min.css" rel="stylesheet">
 
 
 		<!-- jquery -->
-		<script src="minify.php?file=jquery.js"></script>
-		<script src="minify.php?file=jquery-ui.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.js"></script>
 
 		<!-- sweetalert -->
-		<script src="minify.php?file=external/sweetalert2.all.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.all.js"></script>
 
 		<!-- tensorflow.js -->
-		<script src="minify.php?file=tf/tf.js"></script>
-		<script src="minify.php?file=tf/tfjs-vis.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tf.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tfjs-vis.js"></script>
 
 		<!-- my own js stuff -->
-		<script src="minify.php?file=safety.js"></script>
-		<script src="minify.php?file=variables.js"></script>
-		<script src="minify.php?file=tests.js"></script>
-		<script src="minify.php?file=model.js"></script>
-		<script src="minify.php?file=explain.js"></script>
-		<script src="minify.php?file=data.js"></script>
-		<script src="minify.php?file=debug.js"></script>
-		<script src="minify.php?file=gui.js"></script>
-		<script src="minify.php?file=train.js"></script>
-		<script src="minify.php?file=predict.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>safety.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>variables.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tests.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>model.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>explain.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>data.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>debug.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>gui.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>train.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>predict.js"></script>
 
 		<!-- visualizations -->
-		<script src="minify.php?file=visualizations/d3.v5.min.js"></script>
-		<script src="minify.php?file=visualizations/three.min.js"></script>
-		<script src="minify.php?file=visualizations/OrbitControls.js"></script>
-		<script src="minify.php?file=visualizations/SVGRenderer.js"></script>
-		<script src="minify.php?file=visualizations/Projector.js"></script>
-		<script src="minify.php?file=visualizations/util.js"></script>
-		<script src="minify.php?file=visualizations/AlexNet.js"></script>
-		<script src="minify.php?file=visualizations/LeNet.js"></script>
-		<script src="minify.php?file=visualizations/FCNN.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/d3.v5.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/three.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/OrbitControls.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/SVGRenderer.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/Projector.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/util.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/AlexNet.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/LeNet.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/FCNN.js"></script>
 
 		<!-- ChardinJS -->
-		<script src="minify.php?file=chardinjs.js"></script>
-		<link rel="stylesheet" type="text/css" href="minify.php?file=chardinjs.css">
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.js"></script>
+		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.css">
 
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));
@@ -1014,7 +1019,7 @@
 		</div>
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
-		<script src="minify.php?file=main.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>main.js"></script>
 		<script>
 			var local_store = window.localStorage;
 			local_store.clear();
@@ -1499,7 +1504,7 @@
 			}
 		</script>
 
-		<script src="minify.php?file=prism/prism.js"></script>
-		<script src="minify.php?file=prism/prism-python.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism-python.min.js"></script>
 	</body>
 </html>
