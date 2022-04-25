@@ -165,8 +165,8 @@
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:300px">
-							<table width=300>
+						<div class="ribbon-toolbar" style="width:370px">
+							<table width=360>
 								<tr>
 									<td>
 										<span class="symbol_button">Problem type:</span>
