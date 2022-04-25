@@ -965,7 +965,7 @@ async function _get_configuration (index) {
 	if(typeof(data) == "undefined") {
 		try {
 			while ($("#dataset").val() === null) {
-				await delay(10);
+				await delay(50);
 			}
 			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
@@ -1460,6 +1460,7 @@ function set_optimizer (val) {
 
 function set_metric (val) {
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
+	log(val);
 	$("#metric").val(val);
 }
 
@@ -2372,11 +2373,6 @@ function change_metrics () {
 	var new_metric = $("#metric").val();
 
 	$("#metric_equation").html("");
-
-	if(new_metric == "mse") {
-		//$("#metric_equation").html("$ \\mathrm{MSE} = \\sum^{N}_{i=1}\\frac{\\left(\\hat{y} - y\\right)^2}{N} $");
-		//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-	}
 
 	updated_page(1);
 }

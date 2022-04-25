@@ -1,7 +1,7 @@
 {
 	"name": "AND/XOR",
 	"loss": "meanSquaredError",
-	"metric": "meanSquaredError",
+	"metric": "mse",
 	"optimizer": "adam",
 	"learningRate": 0.0001,
 	"momentum": 0.9,
