@@ -680,6 +680,10 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 			}
 			return false;
 		}
+	} else if(["globalAveragePooling2d"].includes(layer_type)) {
+		if(layer_input_shape.length != 3) {
+			return false;
+		}
 	} else if(["gru"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
 			return false;
