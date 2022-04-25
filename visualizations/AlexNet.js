@@ -103,8 +103,6 @@ function AlexNet() {
 		renderer.render(scene, camera);
 	};
 
-	restartRenderer();
-
 	function redraw(
 		{
 			architecture_=architecture,
