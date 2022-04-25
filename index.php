@@ -216,6 +216,8 @@
 											<option value="poisson">Poisson</option>
 											<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
 											<option value="squaredHinge">SquaredHinge</option>
+											<option value="kullbackLeiblerDivergence">kullbackLeiblerDivergence</option>
+											<option value="logcosh">logcosh</option>
 										</select>
 									</td>
 								</tr>
@@ -231,7 +233,7 @@
 											<option value="mse">MeanSquaredError</option>
 											<option value="mae">MeanAbsoluteError</option>
 											<option value="mape">MeanAbsolutePercentageError</option>
-											<option value="cosine">cosine</option>
+											<option value="cosine">Cosine</option>
 										</select>
 									</td>
 									<tr>
@@ -1267,6 +1269,7 @@
 				if(!show_input_layer) {
 					j--;
 				}
+
 				for (var i = 0; i < get_numberoflayers(); i++) {
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
