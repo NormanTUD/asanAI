@@ -30,73 +30,79 @@
 ?>
 
 			var darkmode = <?php print $darkmode; ?>;
+
+			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
 
 
 <?php
 		$tablist_color = "bbddfd";
+
+		$minify = 1;
+		if(array_key_exists("no_minify", $_GET)) {
+			$minify = 0;
+		}
 ?>
-		<link href="minify.php?file=jquery-ui.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="minify.php?file=fonts.css">
-		<link href="minify.php?file=style.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="minify.php?file=ribbon.css">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.css" rel="stylesheet">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
 <?php
 		$tablist_color = "bbddfd";
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>
-			<link href="minify.php?file=darkmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbondarkmode.css">
+			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>darkmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbondarkmode.css">
 <?php
 		} else {
 ?>
 
-			<link href="minify.php?file=lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="minify.php?file=ribbonlightmode.css">
+			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>lightmode.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbonlightmode.css">
 <?php
 		}
 ?>
-		<link href="minify.php?file=prism/prism.min.css" rel="stylesheet">
-		<link href="minify.php?file=external/sweetalert2.min.css" rel="stylesheet">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.min.css" rel="stylesheet">
+		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.min.css" rel="stylesheet">
 
 
 		<!-- jquery -->
-		<script src="minify.php?file=jquery.js"></script>
-		<script src="minify.php?file=jquery-ui.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.js"></script>
 
 		<!-- sweetalert -->
-		<script src="minify.php?file=external/sweetalert2.all.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.all.js"></script>
 
 		<!-- tensorflow.js -->
-		<script src="minify.php?file=tf/tf.js"></script>
-		<script src="minify.php?file=tf/tfjs-vis.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tf.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tfjs-vis.js"></script>
 
 		<!-- my own js stuff -->
-		<script src="minify.php?file=safety.js"></script>
-		<script src="minify.php?file=variables.js"></script>
-		<script src="minify.php?file=tests.js"></script>
-		<script src="minify.php?file=model.js"></script>
-		<script src="minify.php?file=explain.js"></script>
-		<script src="minify.php?file=data.js"></script>
-		<script src="minify.php?file=debug.js"></script>
-		<script src="minify.php?file=gui.js"></script>
-		<script src="minify.php?file=train.js"></script>
-		<script src="minify.php?file=predict.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>safety.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>variables.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tests.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>model.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>explain.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>data.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>debug.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>gui.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>train.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>predict.js"></script>
 
 		<!-- visualizations -->
-		<script src="minify.php?file=visualizations/d3.v5.min.js"></script>
-		<script src="minify.php?file=visualizations/three.min.js"></script>
-		<script src="minify.php?file=visualizations/OrbitControls.js"></script>
-		<script src="minify.php?file=visualizations/SVGRenderer.js"></script>
-		<script src="minify.php?file=visualizations/Projector.js"></script>
-		<script src="minify.php?file=visualizations/util.js"></script>
-		<script src="minify.php?file=visualizations/AlexNet.js"></script>
-		<script src="minify.php?file=visualizations/LeNet.js"></script>
-		<script src="minify.php?file=visualizations/FCNN.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/d3.v5.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/three.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/OrbitControls.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/SVGRenderer.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/Projector.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/util.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/AlexNet.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/LeNet.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/FCNN.js"></script>
 
 		<!-- ChardinJS -->
-		<script src="minify.php?file=chardinjs.js"></script>
-		<link rel="stylesheet" type="text/css" href="minify.php?file=chardinjs.css">
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.js"></script>
+		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.css">
 
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));
@@ -166,25 +172,24 @@
 									<td>
 										<span class="symbol_button">Problem type:</span>
 									</td>
-									<td>
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 90%">
-											<option value="own">Own data</option>
+									<td colspan=2">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();">
 										</select>
 									</td>
 								</tr>
-								<div data-position="right" data-intro="Choose a network model" id="dataset_div">
-									<tr>
-										<td>
-											<span class="symbol_button">Architecture:</span>
-										</td>
-										<td>
-											<select id="dataset" onchange="chose_dataset();" style="width: 90%">
-											</select>
-										</td>
-									</tr>
-								</div>
 								<tr>
-									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button></td>
+									<td>
+										<span class="symbol_button">Architecture:</span>
+									</td>
+									<td colspan=2">
+										<select id="dataset" onchange="chose_dataset();">
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Auto-Input-Shape?</td>
+									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
+									<td><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
 								</tr>
 							</table>
 
@@ -194,12 +199,12 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 350px">
+						<div class="ribbon-toolbar" style="width: 280px">
 							<table>
 								<tr>
 									<td>Loss:</td>
 									<td style="width: 220px">
-										<select id="loss" onchange="updated_page()" style="width: 200px">
+										<select id="loss" onchange="updated_page()" style="width: 150px">
 											<option value="meanSquaredError">MeanSquaredError</option>
 											<option value="binaryCrossentropy">BinaryCrossentropy</option>
 											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
@@ -211,25 +216,24 @@
 											<option value="poisson">Poisson</option>
 											<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
 											<option value="squaredHinge">SquaredHinge</option>
+											<option value="kullbackLeiblerDivergence">kullbackLeiblerDivergence</option>
+											<option value="logcosh">logcosh</option>
 										</select>
 									</td>
 								</tr>
 								<tr>
 									<td>Metric:</td>
 									<td style="width: 220px">
-										<select id="metric" onchange="change_metrics()" style="width: 200px">
+										<select id="metric" onchange="change_metrics()" style="width: 150px">
 											<option value="binaryAccuracy">binaryAccuracy</option>
 											<option value="categoricalAccuracy">categoricalAccuracy</option>
 											<option value="precision">precision</option>
 											<option value="categoricalCrossentropy">categoricalCrossentropy</option>
 											<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
-											<option value="mse">mse</option>
-											<option value="MSE">MSE</option>
-											<option value="mae">mae</option>
-											<option value="MAE">MAE</option>
-											<option value="mape">mape</option>
-											<option value="MAPE">MAPE</option>
-											<option value="cosine">cosine</option>
+											<option value="mse">MeanSquaredError</option>
+											<option value="mae">MeanAbsoluteError</option>
+											<option value="mape">MeanAbsolutePercentageError</option>
+											<option value="cosine">Cosine</option>
 										</select>
 									</td>
 									<tr>
@@ -244,7 +248,7 @@
 								</tr>
 								<tr>
 									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 80px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 80px;" readonly id="outputShape" /></td>
+									<td><input type="text" value="" style="width: 70px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 70px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 						</div>
@@ -612,7 +616,7 @@
 								<table data-intro="Options for the math mode.">
 									<tr>
 										<td>No. decimal points (0 = no limit):</td>
-										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(0, 1)" id="decimal_points_math_mode" /></td>
+										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
 									</tr>
 								</table>
 							</div>
@@ -876,7 +880,7 @@
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
-									<li><a href="#math_tab" id="math_tab_label">Math</a></li>
+									<li><a href="#math_tab" onclick="write_model_to_latex_to_page(0, 1);" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 									<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
@@ -1060,7 +1064,7 @@
 		</div>
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
-		<script src="minify.php?file=main.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>main.js"></script>
 		<script>
 			var local_store = window.localStorage;
 			local_store.clear();
@@ -1244,8 +1248,6 @@
 								log(e);
 								return;
 							}
-						} else {
-							//console.log("Unknown category: " + category);
 						}
 					} else {
 						log("Cannot get category of layer type of layer " + i);
@@ -1271,7 +1273,7 @@
 								architecture.unshift(shown_input_layer);
 							}
 
-							alexnet.restartRenderer();
+							alexnet.restartRenderer(1);
 							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
 						} catch (e) {
 							console.warn(e);
@@ -1312,6 +1314,7 @@
 				if(!show_input_layer) {
 					j--;
 				}
+
 				for (var i = 0; i < get_numberoflayers(); i++) {
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
@@ -1467,14 +1470,6 @@
 				}
 			}
 
-			/*
-			$(window).resize(function() {
-				restart_fcnn();
-				restart_lenet();
-				restart_alexnet();
-			});
-			 */
-
 			$(".show_after_training").hide();
 
 			$(window).resize(function() {
@@ -1545,7 +1540,7 @@
 			}
 		</script>
 
-		<script src="minify.php?file=prism/prism.js"></script>
-		<script src="minify.php?file=prism/prism-python.min.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.js"></script>
+		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism-python.min.js"></script>
 	</body>
 </html>

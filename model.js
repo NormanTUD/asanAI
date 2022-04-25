@@ -470,10 +470,13 @@ function create_model (old_model, fake_model_structure) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
-			console.error(e);
-			log("type: " + type);
-			log("data: ");
-			log(data);
+			if(show_layer_trial_error) {
+				log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+				log(e);
+				log("type: " + type + ", data:");
+				log(data);
+				log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			}
 			return false;
 		}
 
@@ -729,7 +732,6 @@ function get_valid_layer_types (layer_nr) {
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					if(compile_fake_model(layer_nr, layer_type)) {
-						log("Testing OK: " + layer_type);
 						valid_layer_types.push(layer_type);
 					}
 				}
@@ -788,13 +790,10 @@ function set_weights_from_json_object (json, dont_show_weights, no_error) {
 async function set_weights_from_string (string, no_error) {
 	var json = JSON.parse(string);
 
-	log(json);
-
 	return set_weights_from_json_object(json, 0, no_error);
 }
 
 async function get_weights_as_string () {
-	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
@@ -867,7 +866,6 @@ function save_model () {
 }
 
 function get_current_chosen_object_default_weights_string () {
-	if($("#dataset_category").val() == "own") { return; }
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -907,7 +905,6 @@ async function get_weights_shape (weights_as_string) {
 }
 
 async function _show_load_weights () {
-	if($("#dataset_category").val() == "own") { return false; }
 	if(!model) {
 		return false;
 	}
@@ -929,7 +926,6 @@ async function _show_load_weights () {
 }
 
 async function show_load_weights () {
-	if($("#dataset_category").val() == "own") { return; }
 	if(await _show_load_weights()) {
 		$("#pretrained_weights").show();
 	} else {

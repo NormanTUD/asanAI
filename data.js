@@ -265,15 +265,10 @@ async function get_xs_and_ys () {
 				datadebug(y);
 
 				y = tf.tensor(classes);
-			} else if(["classification", "own"].includes(category)) {
+			} else if(["classification"].includes(category)) {
 				var x_string, y_string;
-				if(category == "own") {
-					x_string = x_file;
-					y_string = y_file;
-				} else {
-					x_string = await _get_training_data_from_filename("x.txt");
-					y_string = await _get_training_data_from_filename("y.txt");
-				}
+				x_string = await _get_training_data_from_filename("x.txt");
+				y_string = await _get_training_data_from_filename("y.txt");
 				x = numpy_str_to_tf_tensor(x_string, max_number_values);
 				y = numpy_str_to_tf_tensor(y_string, max_number_values);
 
@@ -285,7 +280,7 @@ async function get_xs_and_ys () {
 				alert("Unknown dataset category: " + category);
 			}
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
 				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 				headerdatadebug("y After oneHot");
 			}
@@ -329,7 +324,7 @@ async function get_xs_and_ys () {
 			x = tf.tensor(x);
 			y = tf.tensor(y).expandDims();
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
 				try {
 					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 				} catch (e) {

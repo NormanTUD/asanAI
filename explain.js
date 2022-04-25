@@ -550,6 +550,8 @@ function explain_error_msg () {
 			} else {
 				explanation = "Are you sure your input data is numeric?";
 			}
+		} else if(err.includes("input expected a batch of elements where each example has shape")) {
+			explanation = "Does the input-shape match the data?";
 		}
 	} else {
 		explanation = "No layers."
@@ -562,8 +564,6 @@ function explain_error_msg () {
 	}
 
 	$("#train_neural_network_button").html("Start training");
-
-	//updated_page();
 }
 
 function write_layer_identification (nr, text) {
@@ -1008,7 +1008,7 @@ function get_layer_data() {
 function array_size (ar) {
 	var row_count = ar.length;
 	var row_sizes = []
-	for(var i=0;i<row_count;i++){
+	for(var i = 0; i < row_count; i++){
 		row_sizes.push(ar[i].length)
 	}
 	return [row_count, Math.min.apply(null, row_sizes)]
@@ -1086,6 +1086,12 @@ function model_to_latex () {
 		}
 	};
 
+	var loss_equations = {
+		"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}\\right|",
+		"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2",
+		"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2}"
+	};
+
 	var layer_data = get_layer_data();
 
 	var y_layer = [];
@@ -1112,8 +1118,15 @@ function model_to_latex () {
 
 	var shown_activation_equations = [];
 
+	if(Object.keys(loss_equations).includes($("#loss").val())) {
+		str += "<h2>Loss</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
+	}
+
 	for (var i = 0; i < layer_data.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
+		if(i == 0) {
+			str += "<h2>Layer-equations</h2>";
+		}
 		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
 		if(this_layer_type == "dense") {
@@ -1272,7 +1285,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return activation_string + "<hr>" + str;
+		return "<h2>Activation functions</h2> " + activation_string + "<hr>" + str;
 	} else {
 		if(str) {
 			return str;
@@ -1303,10 +1316,15 @@ function can_be_shown_in_latex () {
 	return true;
 }
 
-async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) {
+async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+	if(!force && $("#math_tab").css("display") == "none") {
+		return;
+	}
+
 	if(reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
+
 	if(!can_be_shown_in_latex()) {
 		$("#math_tab_label").hide();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
@@ -1315,28 +1333,17 @@ async function write_model_to_latex_to_page (delay_code, reset_prev_layer_data) 
 		return;
 	}
 
+
 	$("#math_tab_label").show();
 
 	var latex = model_to_latex();
 
-	if(delay_code) {
-		$("<div id='tmp_math_tab' style='display: none'></div>").appendTo("body");
-		$("#tmp_math_tab").html(latex);
-
-		var math_element = document.getElementById("tmp_math_tab");
+	$("#math_tab").html(latex);
+	try {
 		await MathJax.typesetPromise()
-
-		$("#math_tab").html($("#tmp_math_tab").html());
-
-		$("#tmp_math_tab").remove();
-	} else {
-		$("#math_tab").html(latex);
-		try {
-			await MathJax.typesetPromise()
-		} catch (e) {
-			var mathjax_error_explanation = "Are you online?";
-			$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
-		}
+	} catch (e) {
+		var mathjax_error_explanation = "Are you online?";
+		$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 	}
 }
 

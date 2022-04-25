@@ -265,7 +265,7 @@ async function predict_webcam () {
 
 	$("#webcam_prediction").html("").show();
 
-	if(["classification", "own"].includes(category) && labels.length == 0) {
+	if(["classification"].includes(category) && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
 		$("#webcam_prediction").append(str);
 	} else {

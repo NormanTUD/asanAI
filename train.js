@@ -135,7 +135,7 @@ function get_fit_data () {
 		}
 		hide_annoying_tfjs_vis_overlays();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
-			write_model_to_latex_to_page(1);
+			write_model_to_latex_to_page();
 			if(can_be_shown_in_latex()) {
 				await delay(300);
 			}

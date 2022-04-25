@@ -92,7 +92,7 @@ function init_page_contents (chosen_dataset) {
 
 	$("#train_data_set_group").hide();
 
-	init_dataset_category(1).then(() => {
+	init_dataset_category().then(() => {
 		global_disable_auto_enable_valid_layer_types = true;
 		set_batchSize(5);
 	});

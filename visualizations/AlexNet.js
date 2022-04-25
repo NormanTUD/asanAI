@@ -98,9 +98,10 @@ function AlexNet() {
 		animate();
 	}
 
-	function animate() {
+	async function animate() {
 		requestAnimationFrame(animate);
 		renderer.render(scene, camera);
+		await delay(200);
 	};
 
 	restartRenderer();
