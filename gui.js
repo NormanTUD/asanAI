@@ -2302,7 +2302,6 @@ async function init_dataset_category (disable_set_config) {
 
 	var dataset = "";
 
-	$("#inputShape").attr("readonly", true); 
 	$("#train_data_set_group").show();
 	$("#dataset_div").show();
 	$("#dataset").html(dataset);
@@ -3760,4 +3759,12 @@ function end_demo_mode () {
 function change_model_dataset () {
 	$("#model_dataset_div").show();
 	load_weights(1);
+}
+
+function toggle_allow_edit_inputShape () {
+	if($("#inputShape").attr("readonly")) {
+		$("#inputShape").attr("readonly", false);
+	} else {
+		$("#inputShape").attr("readonly", true);
+	}
 }

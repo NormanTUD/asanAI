@@ -729,7 +729,6 @@ function get_valid_layer_types (layer_nr) {
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					if(compile_fake_model(layer_nr, layer_type)) {
-						log("Testing OK: " + layer_type);
 						valid_layer_types.push(layer_type);
 					}
 				}

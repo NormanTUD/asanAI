@@ -182,6 +182,10 @@
 									</tr>
 								</div>
 								<tr>
+									<td style="width: 150px">Auto-Input-Shape?<td>
+									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
+								</tr>
+								<tr>
 									<td colspan="2"><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button></td>
 								</tr>
 							</table>
