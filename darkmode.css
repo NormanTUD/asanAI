@@ -52,7 +52,7 @@ html {
 }
 
 #ribbon {
-	background: #363636;
+	background: #646464;
 }
 .ui-widget-content a {
 }
@@ -81,7 +81,7 @@ a:visited.ui-button,
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	background: #363636;
+	background: #646464;
 	border: 1px solid #585858;
 	font-weight: bold;
 	color: #b5b5b5;
