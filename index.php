@@ -107,42 +107,7 @@
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
-		<!-- mathjax -->
-		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
-		<!--<script type="text/javascript" src="MathJax-2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
 		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
-		
-
-		<script type="text/x-mathjax-config">
-			var font = "Neo-Euler";
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['$','$']],
-					"preview": "none"
-				},
-				"SVG":{
-					font:font
-				},
-				"showMathMenu": true,
-				"HTML-CSS": {
-					"EqnChunk": 50,
-					"EqnChunkDelay": 10
-				},
-				"fast-preview": {
-					"disabled": true
-				}
-			});
-		</script>
-
-		<!--
-		<script src="clippy/build/clippy.js"></script>
-		<script type="text/javascript">
-			var this_agent = null;
-			clippy.load('Merlin', function(agent) {
-				this_agent = agent;
-			});
-		</script>
-		-->
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
@@ -366,7 +331,7 @@
 							</fieldset>
 							Dark mode (reloads page)? <input value=1 type="checkbox" id="darkmode_choser" <?php print $darkmode ? "checked" : ""; ?> onclick="darkmode_choser()" />
 						</div>
-						<div class="ribbon-group-title">TF-Backend/GUI-Mode</div>
+						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
@@ -376,7 +341,7 @@
 								<tr>
 									<td>Kernel initializer</td>
 									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()">
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -384,7 +349,7 @@
 								<tr>
 									<td>Bias initializer</td>
 									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()">
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -392,7 +357,7 @@
 								<tr>
 									<td>Activation functions</td>
 									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()">
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -405,129 +370,141 @@
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar" style="width:200px">
-							<select id="optimizer" onchange='change_optimizer()' style="width: 100%">
-								<option value="adam">adam</option>
-								<option value="adadelta">adadelta</option>
-								<option value="adagrad">adagrad</option>
-								<option value="adamax">adamax</option>
-								<option value="rmsprop">rmsprop</option>
-								<option value="sgd">sgd</option>
-							</select>
-							<!--<a href="#" onclick="show_optimizer_help()">What does this mean?</a>-->
-						</div>
+							<table style="width: 80%">
+								<tr>
+									<td>Optimizer:</td>
+									<td>
+										<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
+											<option value="adam">adam</option>
+											<option value="adadelta">adadelta</option>
+											<option value="adagrad">adagrad</option>
+											<option value="adamax">adamax</option>
+											<option value="rmsprop">rmsprop</option>
+											<option value="sgd">sgd</option>
+										</select>
+									</td>
+								</tr>
+							</table>
 
-						<div class="ribbon-toolbar" style="max-width: 1000px; width: auto">
-							<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
-									</tr>
-								</table>
-							</div>
+							<div id="optimizer_table">
+								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
+										</tr>
+									</table>
+								</div>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+								<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+											<td>Initial accumulator value:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
+											<td>&beta;<sub>1</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
+										</tr>
 
-										<td>beta1:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
-									</tr>
+										<tr>
+											<td>&beta;<sub>2</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
 
-									<tr>
-										<td>beta2:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
+											<td>&rho;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+										</tr>
 
-										<td>Rho:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+										<tr>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
-									</tr>
-								</table>
-							</div>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+										</tr>
+									</table>
+								</div>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
+								<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
 
-										<td>beta1:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
+											<td>&beta;<sub>1</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
-										<td>beta2:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
-									</tr>
-									<tr>
+										</tr>
+										<tr>
 
-										<td>Decay:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
+											<td>&beta;<sub>2</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
+											<td>Decay:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
 
-										<td></td>
-										<td></td>
-									</tr>
-								</table>
-							</div>
+										</tr>
+										<tr>
 
-							<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
-										<td>Decay:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
-									</tr>
-									<tr>
-										<td>Momentum:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+											<td>Decay:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
+										</tr>
+										<tr>
+											<td>Momentum:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
 
-										<td>Momentum:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
-									</tr>
-								</table>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
+										</tr>
+									</table>
+								</div>
+
+								<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+
+											<td>Momentum:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
@@ -713,7 +690,7 @@
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
 					<div class="right_side" id="graphs_here" style="padding-left: 10px">
-						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden;">
+						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 							<div style="display: flex">
 								<ul>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
@@ -1492,5 +1469,14 @@
 
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.js"></script>
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism-python.min.js"></script>
+		
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['$','$']]
+				},
+				"showMathMenu": true
+			});
+		</script>
 	</body>
 </html>

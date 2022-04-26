@@ -2369,17 +2369,6 @@ function change_metrics () {
 	updated_page(1);
 }
 
-function show_optimizer_help () {
-	var optimizer_type = $("#optimizer").val();
-
-	$("#help").html("");
-
-	$("#help").html(optimizer_type);
-
-	$("#help").append("<br><a style='cursor: help;' onclick='$(\"#help\").hide()'>Close help</a>");
-	$("#help").show();
-}
-
 function get_activation_list () {
 	var array = [];
 	layer_names.forEach(function eachKey(key) {

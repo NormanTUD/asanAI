@@ -325,3 +325,7 @@ body {
 	left: 85px;
 	margin-top: 6px;
 }
+
+#optimizer_table {
+	margin-top: -10px;
+}
