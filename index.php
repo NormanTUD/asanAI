@@ -136,7 +136,7 @@
 										<span class="symbol_button">Problem type:</span>
 									</td>
 									<td colspan=2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 100%">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 251px">
 										</select>
 									</td>
 								</tr>
@@ -145,7 +145,7 @@
 										<span class="symbol_button">Architecture:</span>
 									</td>
 									<td colspan=2">
-										<select id="dataset" onchange="chose_dataset();" style="width: 141px">
+										<select id="dataset" onchange="chose_dataset();" style="width: 140px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
@@ -156,7 +156,7 @@
 											<span class="symbol_button">Dataset:</span>
 										</td>
 										<td colspan=2>
-											<select id="model_dataset" onchange="change_model_dataset();" style="width: 205px">
+											<select id="model_dataset" onchange="change_model_dataset();" style="width: 204px">
 											</select>
 											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 										</td>
