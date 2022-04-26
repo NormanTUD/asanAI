@@ -47,63 +47,31 @@ const IMAGENET_CLASSES = {
 	13: 'junco, snowbird'
 };
 
+async function run(model, inputImage, x) {
+	// Compute the internal activations of the conv layers' outputs.
+	const imageHeight = model.inputs[0].shape[1];
+	const imageWidth = model.inputs[0].shape[2];
+	const {modelOutput, layerName2FilePaths, layerName2ImageDims} = await writeInternalActivationAndGetOutput(model, x, args.filters);
 
-async function writeConvLayerFilters(
-	model, layerName, numFilters, iterations, outputDir) {
-	const filePaths = [];
-	const maxFilters = model.getLayer(layerName).getWeights()[0].shape[3];
-	if (numFilters > maxFilters) {
-		numFilters = maxFilters;
+	// Calculate internal activations and final output of the model.
+	const topNum = 10;
+	const {values: topKVals, indices: topKIndices} =
+		tf.topk(modelOutput, topNum);
+	const probScores = Array.from(await topKVals.data());
+	const indices = Array.from(await topKIndices.data());
+	const classNames =
+		indices.map(index => IMAGENET_CLASSES[index]);
+
+	console.log(`Top-${topNum} classes:`);
+	for (let i = 0; i < topNum; ++i) {
+		console.log(
+			`  ${classNames[i]} (index=${indices[i]}): ` +
+			`${probScores[i].toFixed(4)}`);
 	}
-	for (let i = 0; i < numFilters; ++i) {
-		console.log(`Processing layer ${layerName}, filter ${i + 1} of ${numFilters}`);
-		const imageTensor = inputGradientAscent(model, layerName, i, iterations);
-		return imageTensor;
-	}
-	return filePaths;
-}
 
-async function run(model, x, inputImage) {
-	if (inputImage != null && inputImage !== '') {
-		// Compute the internal activations of the conv layers' outputs.
-		const imageHeight = model.inputs[0].shape[1];
-		const imageWidth = model.inputs[0].shape[2];
-		const layerNames = args.convLayerNames.split(',');
-		const {modelOutput, layerName2FilePaths, layerName2ImageDims} =
-			await writeInternalActivationAndGetOutput(
-				model, layerNames, x, args.filters, args.outputDir);
-
-		// Calculate internal activations and final output of the model.
-		const topNum = 10;
-		const {values: topKVals, indices: topKIndices} =
-			tf.topk(modelOutput, topNum);
-		const probScores = Array.from(await topKVals.data());
-		const indices = Array.from(await topKIndices.data());
-		const classNames =
-			indices.map(index => IMAGENET_CLASSES[index]);
-
-		console.log(`Top-${topNum} classes:`);
-		for (let i = 0; i < topNum; ++i) {
-			console.log(
-				`  ${classNames[i]} (index=${indices[i]}): ` +
-				`${probScores[i].toFixed(4)}`);
-		}
-
-		// Calculate Grad-CAM heatmap.
-		const xWithCAMOverlay = cam.gradClassActivationMap(model, indices[0], x);
-		return xWithCAMOverlay;
-	} else {
-		const layerNames = args.convLayerNames.split(',');
-		const manifest = {layers: []};
-		for (let i = 0; i < layerNames.length; ++i) {
-			const layerName = layerNames[i];
-			console.log(`\n=== Processing layer ${i + 1} of ${layerNames.length}: ${layerName} ===`);
-			const filePaths = await writeConvLayerFilters(model, layerName, args.filters, args.iterations, args.outputDir);
-			manifest.layers.push({layerName, filePaths});
-		}
-		// Write manifest to file.
-		return manifest;
-	}
+	// Calculate Grad-CAM heatmap.
+	const xWithCAMOverlay = cam.gradClassActivationMap(model, indices[0], x);
+	return xWithCAMOverlay;
 }
 
 /**
@@ -264,7 +232,7 @@ function applyColorMap(x) {
 }
 
 async function writeInternalActivationAndGetOutput(
-	model, layerNames, inputImage, numFilters, outputDir) {
+	model, layerNames, inputImage, numFilters) {
 	const layerName2FilePaths = {};
 	const layerName2ImageDims = {};
 	const layerOutputs =
@@ -282,17 +250,13 @@ async function writeInternalActivationAndGetOutput(
 	for (let i = 0; i < outputs.length - 1; ++i) {
 		const layerName = layerNames[i];
 		// Split the activation of the convolutional layer by filter.
-		const activationTensors =
-			tf.split(outputs[i], outputs[i].shape[outputs[i].shape.length - 1], -1);
-		const actualNumFilters = numFilters <= activationTensors.length ?
-			numFilters :
-			activationTensors.length;
+		const activationTensors = tf.split(outputs[i], outputs[i].shape[outputs[i].shape.length - 1], -1);
+		const actualNumFilters = numFilters <= activationTensors.length ? numFilters : activationTensors.length;
 		const filePaths = [];
 		let imageTensorShape;
 		for (let j = 0; j < actualNumFilters; ++j) {
 			// Format activation tensors and write them to disk.
-			const imageTensor = tf.tidy(
-				() => deprocessImage(tf.tile(activationTensors[j], [1, 1, 1, 3])));
+			const imageTensor = tf.tidy(() => deprocessImage(tf.tile(activationTensors[j], [1, 1, 1, 3])));
 			return imageTensor;
 		}
 		layerName2FilePaths[layerName] = filePaths;
@@ -335,23 +299,25 @@ function inputGradientAscent(model, layerName, filterIndex, iterations = 40) {
 
 		// This function calculates the value of the convolutional layer's
 		// output at the designated filter index.
-		const lossFunction = (input) =>
-			auxModel.apply(input, {training: true}).gather([filterIndex], 3);
+		const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], 3);
 
 		// This returned function (`gradFunction`) calculates the gradient of the
 		// convolutional filter's output with respect to the input image.
 		const gradFunction = tf.grad(lossFunction);
 
 		// Form a random image as the starting point of the gradient ascent.
-		let image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1)
+		let image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);
 			.mul(20)
 			.add(128);
 
+
+
+
 		for (let i = 0; i < iterations; ++i) {
+
 			const scaledGrads = tf.tidy(() => {
 				const grads = gradFunction(image);
-				const norm =
-					tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
+				const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
 				// Important trick: scale the gradient with the magnitude (norm)
 				// of the gradient.
 				return grads.div(norm);

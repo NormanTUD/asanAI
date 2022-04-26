@@ -191,8 +191,8 @@ $(document).ready(function() {
 	init_set_all_options();
 	init_categories();
 
-	//$("#dataset_category").val("image");
-	$("#dataset_category").val("classification");
+	$("#dataset_category").val("image");
+	//$("#dataset_category").val("classification");
 
 	init_page_contents();
 
