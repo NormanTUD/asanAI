@@ -11,9 +11,11 @@ This is a very early alpha.
 
 ![Screenshot](screen0.png "Visualization at the start page")
 
-![Screenshot](screen1.png "Other visualization at the start page")
+![Screenshot](screen1.png "Math visualization of the network")
 
 ![Screenshot](screen2.png "Yet another visualization at the start page")
+
+![Screenshot](screen3.png "Dark mode")
 
 # Installation
 
