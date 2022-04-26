@@ -1343,12 +1343,12 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 
 	var latex = model_to_latex();
 
-	$("#math_tab").html(latex);
+	$("#math_tab_code").html(latex);
 	try {
 		await MathJax.typesetPromise()
 	} catch (e) {
 		var mathjax_error_explanation = "Are you online?";
-		$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+		$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 	}
 }
 

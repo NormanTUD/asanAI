@@ -385,6 +385,7 @@
 									</td>
 								</tr>
 							</table>
+							<hr>
 
 							<div id="optimizer_table">
 								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
@@ -454,6 +455,11 @@
 											<td>&beta;<sub>1</sub>:</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
+
+
+
 										</tr>
 										<tr>
 
@@ -462,13 +468,7 @@
 
 											<td>Decay:</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
-
-										</tr>
-										<tr>
-
-											<td>&epsilon;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
-
+																				</tr>
 											<td></td>
 											<td></td>
 										</tr>
@@ -594,21 +594,6 @@
 							</table>
 						</div>
 						<div class="ribbon-group-title">Debug</div>
-					</div>
-
-					<div id="math_mode_settings" style="display: none">
-						<div class="ribbon-group-sep"></div>
-						<div class="ribbon-group">
-							<div class="ribbon-toolbar">
-								<table data-intro="Options for the math mode.">
-									<tr>
-										<td>No. decimal points (0 = no limit):</td>
-										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
-									</tr>
-								</table>
-							</div>
-							<div class="ribbon-group-title">Math-Mode</div>
-						</div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
@@ -871,6 +856,13 @@
 									}
 								?>
 								<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #<?php print $bgcolor; ?>; color: <?php $textcolor; ?>;">
+									<table data-intro="Options for the math mode.">
+										<tr>
+											<td>Number of decimal points (0 = no limit):</td>
+											<td><input type="number" style="width: 50px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
+										</tr>
+									</table>
+									<div id="math_tab_code"></div>
 								</div>
 
 								<!--
