@@ -36,7 +36,7 @@
 
 
 <?php
-		$tablist_color = "bbddfd";
+		$tablist_color = "2a569b";
 
 		$minify = 1;
 		if(array_key_exists("no_minify", $_GET)) {
@@ -47,7 +47,6 @@
 		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
 <?php
-		$tablist_color = "bbddfd";
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>

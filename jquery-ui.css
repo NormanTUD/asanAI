@@ -913,7 +913,7 @@ body .ui-tooltip {
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
 	background: #232323;
-	border: 2px solid #585858;
+	border: 1px solid #585858;
 	font-weight: bold;
 	color: #2779aa;
 }
@@ -927,7 +927,7 @@ html .ui-button.ui-state-disabled:active {
 .ui-button:hover,
 .ui-button:focus {
 	background: #646464;
-	border: 2px solid #585858;
+	border: 1px solid #585858;
 	font-weight: bold;
 	color: #0070a3;
 }

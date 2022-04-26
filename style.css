@@ -314,3 +314,7 @@ body {
 #history_table>table, #history_table>th, #history_table>td {
 	border: 1px solid ;
 }
+
+#summary {
+	overflow: auto;
+}
