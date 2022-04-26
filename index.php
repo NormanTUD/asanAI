@@ -180,8 +180,9 @@
 										<span class="symbol_button">Architecture:</span>
 									</td>
 									<td colspan=2">
-										<select id="dataset" onchange="chose_dataset();" style="width: 100%">
+										<select id="dataset" onchange="chose_dataset();" style="width: 141px">
 										</select>
+										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
 								</tr>
 								<div id="pretrained_weights">
@@ -190,16 +191,15 @@
 											<span class="symbol_button">Dataset:</span>
 										</td>
 										<td colspan=2>
-											<select id="model_dataset" onchange="change_model_dataset();" style="width: 47%">
+											<select id="model_dataset" onchange="change_model_dataset();" style="width: 205px">
 											</select>
-											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
+											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 										</td>
 									</tr>
 								</div>
 								<tr>
-									<td>Auto-Input-Shape?</td>
-									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
-									<td><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
+									<td>Shapes: </td>
+									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 105px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
@@ -209,12 +209,12 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 310px">
+						<div class="ribbon-toolbar" style="width: 290px">
 							<table>
 								<tr>
 									<td>Loss:</td>
-									<td style="width: 220px">
-										<select id="loss" onchange="updated_page()" style="width: 150px">
+									<td style="width: 140px">
+										<select id="loss" onchange="updated_page()" style="width: 100%">
 											<option value="meanSquaredError">MeanSquaredError</option>
 											<option value="binaryCrossentropy">BinaryCrossentropy</option>
 											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
@@ -233,8 +233,8 @@
 								</tr>
 								<tr>
 									<td>Metric:</td>
-									<td style="width: 220px">
-										<select id="metric" onchange="change_metrics()" style="width: 150px">
+									<td style="width: 140px">
+										<select id="metric" onchange="change_metrics()" style="width: 100%">
 											<option value="binaryAccuracy">binaryAccuracy</option>
 											<option value="categoricalAccuracy">categoricalAccuracy</option>
 											<option value="precision">precision</option>
@@ -249,7 +249,7 @@
 									<tr>
 										<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
 										<td>
-											<select id="data_origin" onchange="change_data_origin(1)">
+											<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
 												<option value="default">Default</option>
 												<option value="own">Own</option>
 											</select>
@@ -257,12 +257,12 @@
 									</tr>
 								</tr>
 								<tr>
-									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 70px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 70px;" readonly id="outputShape" /></td>
+									<td>Auto-Input-Shape?</td>
+									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Loss/Metric/Data/Shape</div>
+						<div class="ribbon-group-title">Loss/Metric/Data</div>
 					</div>
 
 					<div id="custom_training_data_settings" style="display: none">

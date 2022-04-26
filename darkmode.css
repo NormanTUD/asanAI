@@ -88,7 +88,8 @@ a.ui-button:active,
 }
 
 button, select, input {
-	background: #DCDCDC;
+	background: #444444;
+	color: white;
 }
 
 .ui-widget-header a {
@@ -197,4 +198,5 @@ a.ui-button:focus {
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
 	cursor: text;
 	color: white;
+	font-style: italic;
 }

@@ -205,4 +205,5 @@ a.ui-button:focus {
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
 	cursor: text;
 	color: black;
+	font-style: italic;
 }

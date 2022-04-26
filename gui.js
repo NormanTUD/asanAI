@@ -1680,7 +1680,7 @@ function option_for_layer (nr) {
 	var this_event = "set_option_for_layer(this)";
 	var str = "";
 	str += "<tr>";
-		str += "<td style='min-width: 140px'>";
+		str += "<td style='width: 140px'>";
 			str += "<button style='cursor: context-menu' class='show_data' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
 			str += "<div class='whatisthis_activation' style='display:none'><a onclick='plot_activation($($(\".layer_type\")[" + nr + "]).val())'>What is this?</a></div>";
 		str += "</td>";
