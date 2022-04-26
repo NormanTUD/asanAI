@@ -164,7 +164,7 @@
 								</div>
 								<tr>
 									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 105px;" readonly id="outputShape" /></td>
+									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 104px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
