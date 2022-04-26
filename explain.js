@@ -479,7 +479,7 @@ function write_descriptions () {
 			var layer = $(".layer");
 
 			if(1 || layer.length) {
-				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 30);
+				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
 
 				for (var i = 0; i < groups.length; i++) {
 					var keyname = Object.keys(groups[i])[0];
@@ -1125,13 +1125,13 @@ function model_to_latex () {
 	var shown_activation_equations = [];
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
+		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
 	}
 
 	for (var i = 0; i < layer_data.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
 		if(i == 0) {
-			str += "<h2>Layer-equations</h2>";
+			str += "<h2>Layers:</h2>";
 		}
 		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
@@ -1291,7 +1291,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions</h2> " + activation_string + "<hr>" + str;
+		return "<h2>Activation functions:</h2> " + activation_string + "<hr>" + str;
 	} else {
 		if(str) {
 			return str;

@@ -1416,15 +1416,15 @@ function write_history (h) {
 	string += "</tr>";
 
 	for (var e = 0; e < h["epoch"].length; e++) {
-		string += "<tr style='border: 1px solid black;'>";
-		string += "<td style='border: 1px solid black;'>" + (e + 1) + "</td>";
+		string += "<tr>";
+		string += "<td>" + (e + 1) + "</td>";
 		for (var i = 0; i < keys.length; i++) {
-			string += "<td style='border: 1px solid black;'>" + h["history"][keys[i]][e] + "</td>";
+			string += "<td>" + h["history"][keys[i]][e] + "</td>";
 		}
 
 	}
 
-	$("#history").html("<table style='width: 100%; border: 1px solid black;'>" + string + "</table>");
+	$("#history").html("<table id='history_table' style='width: 100%; border: 1px solid #D3D3D3;'>" + string + "</table>");
 }
 
 function write_model_summary () {

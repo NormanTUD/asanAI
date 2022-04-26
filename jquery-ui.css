@@ -912,10 +912,8 @@ body .ui-tooltip {
 .ui-button,
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	//border: 1px solid #aed0ea;
-	//background: #d7ebf9 url("images/ui-bg_glass_80_d7ebf9_1x400.png") 50% 50% repeat-x;
-	background: rgb(222,222,222);
-	background: linear-gradient(180deg, rgba(222,222,222,0.5) 0%, rgba(194,194,194,0.5) 10%, rgba(193,193,193,0.5) 18%, rgba(242, 242, 242, 0.5) 97%);
+	background: #232323;
+	border: 2px solid #585858;
 	font-weight: bold;
 	color: #2779aa;
 }
@@ -928,8 +926,8 @@ html .ui-button.ui-state-disabled:active {
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-	//border: 1px solid #74b2e2;
-	background: #e4f1fb url("images/ui-bg_glass_100_e4f1fb_1x400.png") 50% 50% repeat-x;
+	background: #646464;
+	border: 2px solid #585858;
 	font-weight: bold;
 	color: #0070a3;
 }

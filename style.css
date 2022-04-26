@@ -310,3 +310,7 @@ body {
 	position: relative;
 	width: 98%
 }
+
+#history_table>table, #history_table>th, #history_table>td {
+	border: 1px solid ;
+}

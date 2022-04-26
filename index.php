@@ -714,7 +714,7 @@
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
 					<div class="right_side" id="graphs_here" style="padding-left: 10px">
-						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
+						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden;">
 							<div style="display: flex">
 								<ul>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
@@ -890,7 +890,7 @@
 									$bgcolor = "fff";
 									$textcolor = "000";
 									if($darkmode) {
-										$bgcolor = "000";
+										$bgcolor = "363636";
 										$textcolor = "fff";
 									}
 								?>
