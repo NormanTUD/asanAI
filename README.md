@@ -15,6 +15,8 @@ This is a very early alpha.
 
 ![Screenshot](screen2.png "Yet another visualization at the start page")
 
+![Screenshot](screen4.png "Training")
+
 ![Screenshot](screen3.png "Dark mode")
 
 # Installation
