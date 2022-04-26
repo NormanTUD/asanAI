@@ -17,7 +17,10 @@ This is a very early alpha.
 
 ![Screenshot](screen4.png "Training")
 
+![Screenshot](screen5.png "Predict mode")
+
 ![Screenshot](screen3.png "Dark mode")
+
 
 # Installation
 
