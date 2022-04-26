@@ -36,7 +36,7 @@
 
 
 <?php
-		$tablist_color = "2a569b";
+		$tablist_color = "254c87";
 
 		$minify = 1;
 		if(array_key_exists("no_minify", $_GET)) {

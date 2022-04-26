@@ -152,3 +152,14 @@ input:hover {
 	border: 1px solid #585858;
 	background-color:#7091b9;
 }
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+	background: #232323;
+	border: 1px solid #585858;
+	color: #2779aa;
+}

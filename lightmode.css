@@ -63,11 +63,10 @@ a.ui-button,
 a:link.ui-button,
 a:visited.ui-button,
 .ui-button {
-	color: #2779aa;
+	color: 2779aa;
 	text-decoration: none;
 }
 
-.ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
 	color: #19439c;
@@ -80,8 +79,7 @@ a:visited.ui-button,
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	background: rgb(221,233,249);
-	background: linear-gradient(180deg, rgba(221,233,249,1) 0%, rgba(247,250,255,1) 7%, rgba(239,245,254,1) 13%, rgba(226,235,247,1) 99%); 
+	background: #f5f3f3;
 	font-weight: bold;
 	color: #ffffff;
 }
@@ -151,4 +149,27 @@ select:hover {
 input:hover {
 	border: 1px solid #9a9a9a;
 	background-color:#b7c8dc;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+	background: #f5f3f3;
+	border: 1px solid #585858;
+	color: #2779aa;
+}
+
+.ui-state-default:hover {
+	background: #c2c0c0;
+	border: 1px solid #585858;
+	color: #2779aa;
+}
+
+.ui-tabs-active {
+	background: red;
+	border: 1px solid #585858;
+	color: #2779aa;
 }
