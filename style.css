@@ -171,22 +171,6 @@ input {
 	overflow-y: auto;
 }
 
-button, select, input {
-	font-size: 18px;
-	border:solid 1px #7da2ce;
-	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
-	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
-}
-
-button:hover, select:hover, input:hover {
-	border:solid 1px #7da2ce;
-	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
-	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
-	background-color:#cfe3fd;
-	background: -moz-linear-gradient(top, #dcebfd, #c2dcfd);
-	background: -webkit-gradient(linear, center top, center bottom, from(#dcebfd), to(#c2dcfd));
-}
-
 .layer_identifier {
 	/*font-variant-caps: petite-caps;*/
 	font-size: 14px;

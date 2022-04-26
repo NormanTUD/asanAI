@@ -210,7 +210,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 280px">
+						<div class="ribbon-toolbar" style="width: 290px">
 							<table>
 								<tr>
 									<td>Loss:</td>

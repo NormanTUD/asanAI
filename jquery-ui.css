@@ -910,9 +910,6 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default,
 .ui-button,
-
-/* We use html here because we need a greater specificity to make sure disabled
-works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
 	//border: 1px solid #aed0ea;
@@ -921,8 +918,6 @@ html .ui-button.ui-state-disabled:active {
 	background: linear-gradient(180deg, rgba(222,222,222,0.5) 0%, rgba(194,194,194,0.5) 10%, rgba(193,193,193,0.5) 18%, rgba(242, 242, 242, 0.5) 97%);
 	font-weight: bold;
 	color: #2779aa;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
 }
 
 .ui-state-hover,
