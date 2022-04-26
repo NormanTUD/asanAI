@@ -89,12 +89,10 @@
 	background-color: white;
 	padding: 8px 5px;
 	border-radius: 8px;
-	font-size: 20px;
 	font-weight: bold;
 }
 
 .upload-btn-wrapper input[type=file] {
-	font-size: 100px;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -135,7 +133,6 @@ ul {
 
 input {
 	line-height: 1.5em;
-	font-size: 10px;
 }
 
 .ribbon-toolbar {
@@ -173,7 +170,6 @@ input {
 
 .layer_identifier {
 	/*font-variant-caps: petite-caps;*/
-	font-size: 14px;
 }
 
 .add_remove_layer_button {

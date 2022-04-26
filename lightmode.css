@@ -8,10 +8,10 @@ html {
 	padding:0;
 	width:100%;
 	height:100%;
-	font-size: 14px;
 	background: #e5e5e5;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
+	font-size: 14px;
 }
 
 .descriptions_of_layers {
@@ -117,7 +117,6 @@ a.ui-button:active,
 }
 
 button {
-	font-size: 18px;
 	border: 1px solid #9a9a9a;
 	background-color: #ffffff;
 	outline:none;
@@ -125,14 +124,12 @@ button {
 }
 
 select {
-	font-size: 18px;
 	border: 1px solid #9a9a9a;
 	background-color: #ffffff;
 	color: black;
 }
 
 input {
-	font-size: 18px;
 	border: 1px solid #9a9a9a;
 	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
 }
@@ -183,10 +180,10 @@ html .ui-button.ui-state-disabled:active {
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-	background: #646464;
+	background: #fff;
 	border: 1px solid #585858;
 	font-weight: bold;
-	color: #0070a3;
+	color: yellow;
 }
 .ui-state-hover a,
 .ui-state-hover a:hover,

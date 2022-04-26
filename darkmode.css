@@ -8,10 +8,10 @@ html {
 	padding:0;
 	width:100%;
 	height:100%;
-	font-size: 14px;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background: #262626;
+	font-size: 14px;
 }
 
 .descriptions_of_layers {
@@ -119,7 +119,6 @@ button, select, input {
 }
 
 button {
-	font-size: 18px;
 	border: 1px solid #585858;
 	background-color: #444444;
 	outline:none;
@@ -127,14 +126,12 @@ button {
 }
 
 select {
-	font-size: 18px;
 	border: 1px solid #585858;
 	background-color: #444444;
 	color: white;
 }
 
 input {
-	font-size: 18px;
 	border: 1px solid #585858;
 	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
 }

@@ -2,6 +2,7 @@
 	background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff), to(#eaedf1));
 	padding:4px;
 }
+
 .ribbon-group{
 	position:relative;
 	float:left;
@@ -13,6 +14,7 @@
 	-webkit-box-sizing:content-box;
 	box-sizing:content-box;
 }
+
 .ribbon-group-title{
 	position: absolute;
 	left:0;
@@ -27,6 +29,7 @@
 .ribbon-group .l-btn{
 	float:left;
 }
+
 .ribbon-group-sep{
 	float:left;
 	width:0;

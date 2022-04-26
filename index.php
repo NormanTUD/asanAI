@@ -209,7 +209,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 290px">
+						<div class="ribbon-toolbar" style="width: 310px">
 							<table>
 								<tr>
 									<td>Loss:</td>
@@ -297,7 +297,7 @@
 					<!--<div class="ribbon-group-sep"></div>-->
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width:160px">
+						<div class="ribbon-toolbar" style="width:170px">
 							<table>
 								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
 								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
