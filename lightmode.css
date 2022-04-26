@@ -97,8 +97,6 @@ a.ui-button:active,
 	left: 0;
 	right: 0;
 	bottom: 0;
-	box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.6);
-	filter: blur(10px);
 	margin: -20px;
 }
 
@@ -111,8 +109,6 @@ a.ui-button:active,
 	left: 0;
 	right: 0;
 	bottom: 0;
-	box-shadow: inset 0 0 2000px rgba(255, 255, 255, .2);
-	filter: blur(10px);
 	margin: -20px;
 }
 
@@ -131,7 +127,6 @@ select {
 
 input {
 	border: 1px solid #9a9a9a;
-	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
 }
 
 button:hover {
@@ -200,3 +195,14 @@ a.ui-button:focus {
 }
 
 
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	color: white;
+	background-color: #999999;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	cursor: text;
+	color: black;
+}
