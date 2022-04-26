@@ -1246,10 +1246,10 @@ function hide_no_conv_stuff () {
 	}
 
 	if(any_conv_visualizations) {
-		$(".hide_when_no_conv_visualiations").show();
+		$(".hide_when_no_conv_visualizations").show();
 		$("#conv_explanations_label").show();
 	} else {
-		$(".hide_when_no_conv_visualiations").hide();
+		$(".hide_when_no_conv_visualizations").hide();
 		$("#conv_explanations_label").hide();
 		$("#show_layer_data").prop("checked", false);
 		$("#data_plotter").hide();
