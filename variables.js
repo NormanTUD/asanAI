@@ -68,17 +68,6 @@ var x_file = null;
 var y_file = null;
 var y_shape = null;
 
-function get_plot_activation_name (name) {
-	if(name.toLowerCase() == "leakyrelu") {
-		return "LeakyReLU";
-	} else if(name.toLowerCase() == "relu") {
-		return "ReLU";
-	} else if(name.toLowerCase() == "thresholdedrelu") {
-		return "ThresholdedReLU";
-	}
-	return name;
-}
-
 const surface = { name: "Model Summary", tab: "Model Inspection" };
 
 var xy_data = null;

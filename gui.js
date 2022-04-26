@@ -349,21 +349,6 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 	str += ">";
 
 	var help = "";
-	if(desc.toLowerCase().includes("activation function")) {
-		help = "<sup><a style='cursor: help;' onclick='plot_activation($($(this).parent().parent().parent().find(\"td\")[1]).find(\"select\").val())'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("strides")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help_text_image(\"strides.svg\", \"Stride 1: preserve resolution.<br>Stride 2+: downsample<br>\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("filter")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"filter.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("kernel-size")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"filter.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("padding")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"padding.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("dilation")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"dilation_rate.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("kernel initializer")) {
-		help = "<sup><a style='cursor: help;' onclick='write_initializer_values(" + nr + ")'>?</a></sup>";
-	}
 
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
@@ -1682,7 +1667,6 @@ function option_for_layer (nr) {
 	str += "<tr>";
 		str += "<td style='width: 140px'>";
 			str += "<button style='cursor: context-menu' class='show_data' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
-			str += "<div class='whatisthis_activation' style='display:none'><a onclick='plot_activation($($(\".layer_type\")[" + nr + "]).val())'>What is this?</a></div>";
 		str += "</td>";
 		str += "<td>";
 			str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
