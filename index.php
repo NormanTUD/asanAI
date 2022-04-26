@@ -532,10 +532,6 @@
 										</fieldset>
 									</td>
 								</tr>
-								<tr data-intro="Show a counter on the layers that increases every time that layer gets called.">
-									<td>Call counter?</td>
-									<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
-								</tr>
 								<tr data-intro="Show the input layers">
 									<td>Input&nbsp;Layer?</td>
 									<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
@@ -859,7 +855,7 @@
 									<table data-intro="Options for the math mode.">
 										<tr>
 											<td>Number of decimal points (0 = no limit):</td>
-											<td><input type="number" style="width: 50px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
+											<td><input type="number" style="width: 50px" value="0" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
 										</tr>
 									</table>
 									<div id="math_tab_code"></div>

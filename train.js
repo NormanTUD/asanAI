@@ -24,7 +24,6 @@ function gui_not_in_training () {
 
 function reset_gui_before_training () {
 	prev_layer_data = []
-	$(".call_counter").html("0");
 	$(".reset_before_train_network").html("");
 	$("#percentage").html("");
 	$("#percentage").show();
@@ -195,6 +194,13 @@ function show_info_after_run (h) {
 
 async function run_neural_network () {
 	clean_gui();
+
+	for (var i = 0; i < model.layers.length; i++) {
+		if("original_apply" in model.layers[i]) {
+			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+		}
+	}
+
 
 	$("#tfvis_tab_label").show();
 

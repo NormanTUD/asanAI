@@ -1867,7 +1867,6 @@ function show_layers (number) {
 				remove +
 				add +
 				"<span class='layer_nr_desc'></span>" +
-				"<span class='call_counter_container'>(<span class='call_counter'>0</span>)&nbsp;</span>" +
 				"<span class='layer_identifier'></span>" +
 				"<table class='configtable'>" + 
 					option_for_layer(i) +

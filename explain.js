@@ -572,23 +572,6 @@ function add_layer_debuggers () {
 	$(".layer_data").html("")
 
 	for (var i = 0; i < model.layers.length; i++) {
-		if("original_apply" in model.layers[i]) {
-			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
-		}
-
-		var code = "model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
-			"model.layers[" + i +"].apply = function (inputs, kwargs) {";
-				if($("#show_progress_through_layers").is(":checked")) {
-					code += "(function(){ setTimeout(function(){ fcnn_fill_layer(" + i + "); },1000); })();";
-				}
-
-				code += "var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-				"$($('.call_counter')[" + i + "]).html(parseInt($($('.call_counter')[" + i + "]).html()) + 1);" +
-				"return z;" +
-			"}";
-
-		eval(code);
-
 		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
 			$('#layer_visualizations_tab_label').parent().parent().show();
 			$('#layer_visualizations_tab_label').parent().show();

@@ -227,10 +227,6 @@ select option:disabled {
 	width: 400px;
 }
 
-.call_counter_container {
-	display: none;
-}
-
 .input_field {
 	width: 100%;
 }
