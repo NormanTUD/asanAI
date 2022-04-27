@@ -151,6 +151,9 @@ function FCNN() {
 			.attr("onclick", function(d) {
 				var param = d.id.split("_");
 				if(!show_input_layer || show_input_layer && param[0] > 0) {
+					if(show_input_layer) {
+						param[0]--;
+					}
 					return "draw_maximally_activated_neuron(" + param.join() + ")";
 				} else {
 					return "";
