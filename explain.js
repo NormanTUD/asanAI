@@ -695,13 +695,16 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                 var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);
 		if(typeof(start_image) != "undefined") {
 			image = start_image;
-			image = image.div(255);
+			image = image.div(parseFloat($("#divide_by").val()));
+		} else {
+			image = image.mul(20).add(128);
 		}
 
-		image = image.mul(20).add(128);
+		var original_image = tf.tensor(image.arraySync());
 
-                for (var i = 0; i < iterations; ++i) {
-                        console.warn("Iteration " + (i + 1) + " of " + iterations);
+                for (var i = 1; i <= iterations; i++) {
+                        console.warn("Iteration " + i + " of " + iterations);
+
                         const scaledGrads = tf.tidy(() => {
                                 const grads = gradFunction(image);
                                 const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
@@ -709,18 +712,33 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                                 // of the gradient.
                                 return grads.div(norm);
                         });
+
+			header("scaledGrads:");
 			scaledGrads.print();
+
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
 			image = tf.clipByValue(image.add(scaledGrads), 0, 255);
                 }
+
+		if(original_image.equal(image)) {
+			header_error("Image has not changed");
+		}
+
                 return deprocessImage(image).arraySync();
         });
 }
 
-function grad_test(j) {
-	const layerOutput = model.getLayer(null, 1).output;
-	const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
+var auxModel;
+var lossFunction;
+var gradFunction;
+
+function grad_test() {
+	auxModel = tf.sequential();
+
+	for(var i = 0; i < Math.min(2, model.layers.length); i++) {
+		auxModel.add(model.getLayer(null, i));
+	}
 
 	auxModel.summary();
 
@@ -728,13 +746,17 @@ function grad_test(j) {
 	const imageW = model.inputs[0].shape[2];
 	const imageDepth = model.inputs[0].shape[3];
 
-	const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([j]);
-	var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1).mul(20).add(128);
+	var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);//.mul(20).add(128);
 	header("image:");
 	image.print();
 
+	lossFunction = (input) => auxModel.apply(input).gather([0]);
+
+	header("lossFunction(image)");
+	lossFunction(image).print();
+
 	const gradFunction = tf.grad(lossFunction);
-	const grads = gradFunction(image);
+	const grads = gradFunction(image).mul(255);
 
 	header("Grads:");
 	grads.print();
