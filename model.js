@@ -804,7 +804,9 @@ async function get_weights_as_string () {
 
 	for (var i = 0; i < weights.length; i++) {
 		if(!weights[i].isDisposed) {
-			weights_array[i] = weights[i].arraySync();
+			try {
+				weights_array[i] = weights[i].arraySync();
+			} catch (e) {}
 		}
 	}
 

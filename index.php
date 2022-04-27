@@ -556,8 +556,8 @@
 											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
 										</tr>
 										<tr>
-											<td>Randomize at each iteration?</td>
-											<td><input type="checkbox" value="1" id="randomize_at_each_iteration" checked /></td>
+											<td>Randomizer limits:</td>
+											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
 										<tr data-intro="If this is checked, it starts with a single example image (if available)">
 											<td>Use example imgs as base?</td>

@@ -734,8 +734,9 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 			image = image.add(scaledGrads);
 			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
 			
-			if($("#randomize_at_each_iteration").is(":checked")) {
-				image.add(tf.randomUniform(image.shape, -0.001, 0.001));
+			var randomizer_limits = parseFloat($("#randomizer_limits").val());
+			if(randomizer_limits != 0) {
+				image = image.add(tf.randomUniform(image.shape, -randomizer_limits, randomizer_limits));
 			}
 
 			if(image.dataSync().join(";") == prev_img_str && i >= 5) {
