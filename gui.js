@@ -1997,7 +1997,11 @@ async function set_config (index) {
 		}
 
 		if(keras_layers === undefined) {
-			console.warn("Error loading the model");
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Error loading the model'
+			});
 			log(config);
 			return;
 		}
