@@ -148,7 +148,14 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
-			.attr("onclick", function(d) { return "draw_maximally_activated_neuron(" + d.id.split("_").join() + ")"; })
+			.attr("onclick", function(d) {
+				var param = d.id.split("_");
+				if(!show_input_layer || show_input_layer && param[0] > 0) {
+					return "draw_maximally_activated_neuron(" + param.join() + ")";
+				} else {
+					return "";
+				}
+			})
 			.on("mousedown", set_focus)
 			.on("mouseup", remove_focus)
 			.merge(node);
