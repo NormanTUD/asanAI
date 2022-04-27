@@ -553,7 +553,11 @@
 										</tr>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations:</td>
-											<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 80px;" /></td>
+											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+										</tr>
+										<tr>
+											<td>Randomize at each iteration?</td>
+											<td><input type="checkbox" value="1" id="randomize_at_each_iteration" checked /></td>
 										</tr>
 										<tr data-intro="If this is checked, it starts with a single example image (if available)">
 											<td>Use example imgs as base?</td>

@@ -2163,6 +2163,9 @@ function show_or_hide_load_weights () {
 }
 
 async function init_dataset () {
+	$("#maximally_activated").html("");
+	$("#maximally_activated_label").parent().hide();
+
 	$("#tfvis_tab_label").parent().hide();
 	clicked_on_tab = 0;
 	init_download_link();
@@ -2228,6 +2231,9 @@ function init_weight_file_list () {
 }
 
 async function init_dataset_category () {
+	$("#maximally_activated").html("");
+	$("#maximally_activated_label").parent().hide();
+	
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
 	x_file = null;
@@ -2315,7 +2321,7 @@ async function init_dataset_category () {
 	$("#tfvis_tab_label").parent().hide();
 
 	is_setting_config = original_is_settings_config;
-	
+
 	updated_page();
 }
 

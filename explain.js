@@ -671,8 +671,22 @@ function deprocessImage(x) {
         });
 }
 
+function tensor_normalize_to_rgb_min_max (x) {
+	var max = x.max().dataSync()[0];
+	var min = x.min().dataSync()[0];
+
+	var x_minus_min = x.sub(min);
+
+	x = x_minus_min.div(max - min);
+
+	return x;
+}
+
+
 function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
-        return tf.tidy(() => {
+	var worked = 0;
+        var full_data = {};
+	full_data["image"] = tf.tidy(() => {
                 const imageH = model.inputs[0].shape[1];
                 const imageW = model.inputs[0].shape[2];
                 const imageDepth = model.inputs[0].shape[3];
@@ -685,22 +699,21 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 
                 // This function calculates the value of the convolutional layer's
                 // output at the designated filter index.
-                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex]);
+                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], -1);
 
                 // This returned function (`gradFunction`) calculates the gradient of the
                 // convolutional filter's output with respect to the input image.
                 const gradFunction = tf.grad(lossFunction);
 
                 // Form a random image as the starting point of the gradient ascent.
-                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);
+                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 255);
 		if(typeof(start_image) != "undefined") {
 			image = start_image;
-			image = image.div(parseFloat($("#divide_by").val()));
-		} else {
-			image = image.mul(20).add(128);
 		}
 
-		var original_image = tf.tensor(image.arraySync());
+		image = image.div(parseFloat($("#divide_by").val()));
+
+		var prev_img_str = image.dataSync().join(";");
 
                 for (var i = 1; i <= iterations; i++) {
                         console.warn("Iteration " + i + " of " + iterations);
@@ -713,28 +726,37 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                                 return grads.div(norm);
                         });
 
-			header("scaledGrads:");
-			scaledGrads.print();
-
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
-			image = tf.clipByValue(image.add(scaledGrads), 0, 255);
+
+			image = tensor_normalize_to_rgb_min_max(image);
+
+			image = image.add(scaledGrads);
+			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
+			
+			if($("#randomize_at_each_iteration").is(":checked")) {
+				image.add(tf.randomUniform(image.shape, -0.001, 0.001));
+			}
+
+			if(image.dataSync().join(";") == prev_img_str && i >= 5) {
+				header_error("Image has not changed");
+				return deprocessImage(image).arraySync();
+			} else {
+				prev_img_str = image.dataSync().join(";");
+			}
                 }
 
-		if(original_image.equal(image)) {
-			header_error("Image has not changed");
-		}
-
+		worked = 1;
                 return deprocessImage(image).arraySync();
         });
+
+	full_data["worked"] = worked;
+
+	return full_data;
 }
 
-var auxModel;
-var lossFunction;
-var gradFunction;
-
 function grad_test() {
-	auxModel = tf.sequential();
+	const auxModel = tf.sequential();
 
 	for(var i = 0; i < Math.min(2, model.layers.length); i++) {
 		auxModel.add(model.getLayer(null, i));
@@ -750,7 +772,7 @@ function grad_test() {
 	header("image:");
 	image.print();
 
-	lossFunction = (input) => auxModel.apply(input).gather([0]);
+	const lossFunction = (input) => auxModel.apply(input).gather([0]);
 
 	header("lossFunction(image)");
 	lossFunction(image).print();
@@ -799,21 +821,29 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				start_image = start_image.div(255);
 			}
 		}
-		var data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image)[0];
-		log(data);
-		disable_layer_debuggers = 1;
-		var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-		var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
+		var full_data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
 
-		if(res) {
-			$("#maximally_activated").append(canvas);
-			$("#maximally_activated_label").parent().show();
-			$("#maximally_activated_label").show().click();
+		if(full_data["worked"]) {
+			var data = full_data["image"][0];
+			log(data);
+			disable_layer_debuggers = 1;
+			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
+
+			var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
+
+			if(res) {
+				$("#maximally_activated").append(canvas);
+				$("#maximally_activated_label").parent().show();
+				$("#maximally_activated_label").show().click();
+				$("[href='#maximally_activated']").click()
+			} else {
+				log("Res: " + res);
+			}
+
+			return res;
 		}
-		$("[href='#maximally_activated']").click()
-
-		return res;
+		return false;
 	} catch (e) {
 		log(e);
 		$("#error").html(e)
