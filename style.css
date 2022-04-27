@@ -325,3 +325,7 @@ body {
 #optimizer_table {
 	margin-top: -10px;
 }
+
+.descriptions_of_layers {
+	font-size: 12px;
+}
