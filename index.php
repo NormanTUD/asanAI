@@ -133,7 +133,7 @@
 							<table width=360>
 								<tr>
 									<td>
-										<span class="symbol_button">Problem type:</span>
+										Problem type:
 									</td>
 									<td colspan=2">
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 251px">
@@ -142,7 +142,7 @@
 								</tr>
 								<tr>
 									<td>
-										<span class="symbol_button">Architecture:</span>
+										Architecture:
 									</td>
 									<td colspan=2">
 										<select id="dataset" onchange="chose_dataset();" style="width: 140px">
@@ -153,7 +153,7 @@
 								<div id="pretrained_weights">
 									<tr>
 										<td>
-											<span class="symbol_button">Dataset:</span>
+											Dataset:
 										</td>
 										<td colspan=2>
 											<select id="model_dataset" onchange="change_model_dataset();" style="width: 204px">
