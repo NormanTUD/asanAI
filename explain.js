@@ -1088,7 +1088,7 @@ function model_to_latex () {
 	var shown_activation_equations = [];
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
+		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
 	}
 
 	for (var i = 0; i < layer_data.length; i++) {
@@ -1254,7 +1254,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions:</h2> " + activation_string + "<hr>" + str;
+		return "<h2>Activation functions:</h2> " + activation_string + str;
 	} else {
 		if(str) {
 			return str;

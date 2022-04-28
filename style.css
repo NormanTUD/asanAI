@@ -291,7 +291,8 @@ select option:disabled {
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: 2
+	z-index: 2;
+	border-bottom: 1px solid gray;
 }
 
 body {
