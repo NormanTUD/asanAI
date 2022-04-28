@@ -262,7 +262,7 @@
 					<!--<div class="ribbon-group-sep"></div>-->
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width:170px">
+						<div class="ribbon-toolbar" style="width:150px">
 							<table>
 								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
 								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
@@ -276,7 +276,7 @@
 
 					<div id="image_resize_dimensions">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:180px">
+							<div class="ribbon-toolbar" style="width:130px">
 								<table>
 									<tr>
 										<td>Width:</td>
@@ -287,7 +287,7 @@
 										<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
-										<td>Img/category:</td>
+										<td>Img/cat:</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
 								</table>

@@ -208,9 +208,13 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 			$.ajax({
 				url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=' + $("#dataset_category").val() + "&examples=1",
 				success: function (x) { 
-					var examples = x["example"];
-					for (var i = 0; i < examples.length; i++) {
-						$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+					if(x) {
+						var examples = x["example"];
+						if(examples) {
+							for (var i = 0; i < examples.length; i++) {
+								$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+							}
+						}
 					}
 				}
 			});
