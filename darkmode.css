@@ -200,3 +200,7 @@ a.ui-button:focus {
 	color: white;
 	font-style: italic;
 }
+
+.link:link, .link:active, .link:visited, .link:hover, .link:active {
+	color: white;
+}
