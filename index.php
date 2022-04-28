@@ -174,7 +174,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 290px">
+						<div class="ribbon-toolbar" style="width: 285px">
 							<table>
 								<tr>
 									<td>Loss:</td>
@@ -276,7 +276,7 @@
 
 					<div id="image_resize_dimensions">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:130px">
+							<div class="ribbon-toolbar" style="width:120px">
 								<table>
 									<tr>
 										<td>Width:</td>
