@@ -1908,7 +1908,7 @@ function add_photo_to_gallery(url) {
 	if(photoscontainer.css("display") == "none") {
 		photoscontainer.show();
 	}
-	var html = "<img src='" + url + "' height='90' />";
+	var html = "<img class='download_img' src='" + url + "' height='90' />";
 	$("#photos").show().html(html + $("#photos").html() );
 }
 

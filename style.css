@@ -329,3 +329,7 @@ body {
 .descriptions_of_layers {
 	font-size: 12px;
 }
+
+.download_img {
+	margin: 1px;
+}

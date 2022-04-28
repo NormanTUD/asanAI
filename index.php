@@ -664,7 +664,7 @@
 
 				<div class="container" id="errorcontainer" style="display: none">
 					<div class="left"></div>
-					<div class="right reset_before_train_network" id="error"></div>
+					<div class="reset_before_train_network" id="error"></div>
 				</div>
 
 
@@ -772,7 +772,7 @@
 								<div id="percentage" class="reset_before_train_network"></div>
 								<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-								<div class="container" id="download_data" style="display: none"></div>
+								<div class="" id="download_data" style="display: none"></div>
 							</div>
 
 							<div id="code_tab">
@@ -939,12 +939,12 @@
 							</div>
 
 							<div id="summary_tab">
-								<div class="right reset_before_train_network" id="summary"></div>
+								<div class="reset_before_train_network" id="summary"></div>
 							</div>
 
 							<div id="predict_tab">
 								<div class="container" id="predictcontainer">
-									<div class="right">
+									<div class="">
 										<div id="own_files">
 											<h2>Own files</h2>
 
