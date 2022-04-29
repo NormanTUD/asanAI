@@ -1547,8 +1547,6 @@ function get_option_for_layer_by_type (nr) {
 		}
 	}
 
-	lenet.resize();
-
 	return str;
 }
 
@@ -1893,6 +1891,8 @@ function show_layers (number) {
 	sortable_layers_container(layers_container);
 
 	document.getElementById("train_neural_network_button").style.display = 'block';
+
+	lenet.resize();
 }
 
 function reset_photo_gallery () {
@@ -2940,12 +2940,12 @@ function reset_view () {
 	var items = $("g");
 
 	for (var i = 0; i < items.length; i++) {
-		var parents_parent = $($("g")[i]).parent().parent();
+		var parents_parent = $(items[i]).parent().parent();
 		var parents_parent_id = parents_parent.prop("id");
 
 		var container_width = parents_parent[0].getBoundingClientRect().width;
 
-		var width = $("g")[i].getBoundingClientRect().width;
+		var width = items[i].getBoundingClientRect().width;
 
 		if(width) {
 			var translate_left = parseInt(container_width / width);
