@@ -801,6 +801,24 @@ async function get_image_from_url (url) {
 	return tf_img;
 }
 
+async function draw_maximally_activated_layer (layer, type) {
+	var neurons = 1;
+
+	if(type == "conv2d") {
+		neurons = parseInt(get_item_value(layer, "filters"));
+	} else if (type == "dense") {
+		neurons = parseInt(get_item_value(layer, "units"));
+	} else {
+		console.warn("Unknown layer " + layer);
+	}
+
+	$("#maximally_activated").append("<h2>Layer " + layer + "</h2>")
+
+	for (var i = 0; i < neurons; i++) {
+		draw_maximally_activated_neuron(layer, i);
+	}
+}
+
 async function draw_maximally_activated_neuron (layer, neuron) {
 	var current_input_shape = get_input_shape();
 
@@ -819,7 +837,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 			if(examples.length) {
 				start_image = await get_image_from_url(base_url + "/" + examples[0]);
-				start_image = start_image.div(255);
+				start_image = start_image.div(parseFloat($("#divide_by").val()));
 			}
 		}
 

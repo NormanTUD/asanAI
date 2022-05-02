@@ -428,6 +428,10 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 	return str;
 }
 
+function add_visualize_option (type, nr) {
+	return "<tr><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(" + nr + ", \"" + type + "\")'>Visualize layer</button></td></tr>";
+}
+
 function add_theta_option (type, nr) {
 	return get_tr_str_for_layer_table("Theta", "theta", "number", { "min": 0, "max": 1000, "step": 1, "value": -1 }, nr);
 }

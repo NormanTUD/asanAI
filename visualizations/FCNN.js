@@ -148,6 +148,7 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
+			/*
 			.attr("onclick", function(d) {
 				var param = d.id.split("_");
 				if(!show_input_layer || show_input_layer && param[0] > 0) {
@@ -159,6 +160,7 @@ function FCNN() {
 					return "";
 				}
 			})
+			*/
 			.on("mousedown", set_focus)
 			.on("mouseup", remove_focus)
 			.merge(node);

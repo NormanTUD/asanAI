@@ -549,7 +549,7 @@
 									<table>
 										<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
 											<td>Pixel size:</td>
-											<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
+											<td><input type="number" min="1" max="100" value="5" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
 										</tr>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations:</td>

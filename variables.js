@@ -176,7 +176,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer", "visualize"
 		],
 		"category": "Basic"
 	},
@@ -269,7 +269,7 @@ var layer_options = {
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer", "visualize"
 		],
 		"category": "Convolutional"
 	},
