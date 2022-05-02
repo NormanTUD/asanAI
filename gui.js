@@ -2213,6 +2213,8 @@ async function get_number_of_categories () {
 }
 
 function chose_dataset() {
+	$("#maximally_activated").html("")
+	$("#maximally_activated_label").parent().hide();
 	init_weight_file_list();
 	x_file = null;
 	y_file = null;
