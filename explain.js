@@ -845,7 +845,6 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 		if(full_data["worked"]) {
 			var data = full_data["image"][0];
-			log(data);
 			disable_layer_debuggers = 1;
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
