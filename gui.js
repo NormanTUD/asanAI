@@ -2189,15 +2189,15 @@ function show_or_hide_load_weights () {
 async function init_dataset () {
 	$("#maximally_activated").html("");
 	$("#maximally_activated_label").parent().hide();
-
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
 	$("#tfvis_tab_label").parent().hide();
+
 	clicked_on_tab = 0;
 	init_download_link();
 	init_epochs(2);
 
 	set_batchSize(2);
-
-	$('a[href="#visualization_tab"]').click();
 
 	$("#tfvis_tab_training_performance_graph").html("");
 	$("#tfvis_tab_history_graphs").html("");
@@ -2225,6 +2225,9 @@ async function get_number_of_categories () {
 function chose_dataset() {
 	$("#maximally_activated").html("")
 	$("#maximally_activated_label").parent().hide();
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
+
 	init_weight_file_list();
 	x_file = null;
 	y_file = null;
