@@ -520,7 +520,7 @@
 							<table>
 								<tr data-intro="Show the current layer live in the FCNN-style-view">
 									<td>Highlight layer?</td>
-									<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
+									<td><input class="show_data" type='checkbox' value="1" id="show_progress_through_layers" /></td>
 								</tr>
 								<tr class="hide_when_no_alexnet">
 									<td>AlexNet-Renderer</td>
@@ -536,7 +536,7 @@
 								</tr>
 								<tr data-intro="Show the input layers">
 									<td>Input&nbsp;Layer?</td>
-									<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
+									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 								</tr>
 							</table>
 						</div>
