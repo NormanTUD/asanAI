@@ -34,9 +34,6 @@ var loadFile = (function(event) {
 
 let predict_demo = async function (item, nr) {
 	tf.engine().startScope();
-	if(!model.isTraining) {
-		enable_everything();
-	}
 
 	try {
 		if(labels.length == 0) {

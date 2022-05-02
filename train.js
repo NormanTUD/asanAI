@@ -20,6 +20,8 @@ function gui_not_in_training () {
 	} catch (e) {
 		log(e);
 	}
+
+	enable_everything();
 }
 
 function reset_gui_before_training () {
@@ -46,7 +48,6 @@ async function train_neural_network () {
 
 		document.title = original_title;
 		gui_not_in_training();
-		enable_everything();
 	} else {
 		gui_in_training();
 		reset_gui_before_training();
@@ -54,7 +55,7 @@ async function train_neural_network () {
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		run_neural_network();
+		await run_neural_network();
 
 		enable_everything();
 	}
@@ -132,15 +133,11 @@ function get_fit_data () {
 
 			this.model.stopTraining = true;
 			this.model.model.stopTraining = true;
-
-			gui_not_in_training();
 		}
+
 		hide_annoying_tfjs_vis_overlays();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			write_model_to_latex_to_page();
-			if(can_be_shown_in_latex()) {
-				await delay(300);
-			}
 		}
 	};
 

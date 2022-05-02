@@ -1,3 +1,7 @@
+html {
+	font-family: sans-serif;
+}
+
 .container {
 	width: 80%;
 	margin: auto;
