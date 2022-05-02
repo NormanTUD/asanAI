@@ -814,6 +814,12 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	$("#maximally_activated").append("<h2>Layer " + layer + "</h2>")
 
+	await Swal.fire({
+		title: 'Generating Images',
+		timer: 2000,
+		showConfirmButton: false
+	});
+
 	for (var i = 0; i < neurons; i++) {
 		draw_maximally_activated_neuron(layer, i);
 	}
@@ -826,7 +832,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		return;
 	}
 
+	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
+
 	try {
 		var start_image = undefined;
 		if($("#dataset_category").val() == "image" && $("#use_example_image_as_base").is(":checked")) {
@@ -843,9 +851,10 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 		var full_data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
 
+		disable_layer_debuggers = original_disable_layer_debuggers;
+
 		if(full_data["worked"]) {
 			var data = full_data["image"][0];
-			disable_layer_debuggers = 1;
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
 			var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
