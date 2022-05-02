@@ -1274,9 +1274,6 @@ function hide_no_conv_stuff () {
 }
 
 function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
-	//if(item) {
-	//	log(find_layer_number_by_element(item));
-	//}
 	if(is_setting_config) {
 		return;
 	}
@@ -1303,12 +1300,6 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 	}
 
 	prev_layer_data = [];
-
-	try {
-		write_descriptions();
-	} catch (e) {
-		console.warn(e);
-	}
 
 	identify_layers(numberoflayers);
 
@@ -1340,12 +1331,17 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 
 	show_load_weights();
 
-
 	var current_input_shape = get_input_shape();
 	if(current_input_shape.length != 3) {
 		$(".visualize_button").hide();
 	} else {
 		$(".visualize_button").show();
+	}
+
+	try {
+		write_descriptions();
+	} catch (e) {
+		console.warn(e);
 	}
 
 	return 1;

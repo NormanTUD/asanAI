@@ -587,23 +587,27 @@ function get_fake_data_for_layertype (layer_nr, layer_type) {
 			js_option_name = "poolSize";
 		} else if (this_option == "dropout_rate") {
 			js_option_name = "dropoutRate";
+		} else if(this_option == "visualize") {
+			// left emtpy on purpose
 		}
 
-		var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
+		if(js_option_name) {
+			var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
-		if(js_option_name === undefined) {
-			console.warn("Cannot map " + this_option + " to js_option_name");
-		} else {
-			if(js_option_name == "dilationRate") {
-				data[js_option_name] = eval(default_value);
-			} else if (typeof(default_value) == "function") {
-				data[js_option_name] = default_value(i);
+			if(js_option_name === undefined) {
+				console.warn("Cannot map " + this_option + " to js_option_name");
 			} else {
-				data[js_option_name] = default_value;
+				if(js_option_name == "dilationRate") {
+					data[js_option_name] = eval(default_value);
+				} else if (typeof(default_value) == "function") {
+					data[js_option_name] = default_value(i);
+				} else {
+					data[js_option_name] = default_value;
+				}
 			}
-		}
 
-		data = remove_empty(data);
+			data = remove_empty(data);
+		}
 	}
 	
 	return data;
