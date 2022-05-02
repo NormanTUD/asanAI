@@ -814,13 +814,14 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	$("#maximally_activated").append("<h2>Layer " + layer + "</h2>")
 
-	await Swal.fire({
-		title: 'Generating Images',
-		timer: 2000,
-		showConfirmButton: false
-	});
-
 	for (var i = 0; i < neurons; i++) {
+		await Swal.fire({
+			title: 'Generating Image...',
+			html: "Image " + (i + 1) + " of " + neurons,
+			timer: 2000,
+			showConfirmButton: false
+		});
+
 		draw_maximally_activated_neuron(layer, i);
 	}
 }
