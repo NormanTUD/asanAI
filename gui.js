@@ -429,13 +429,14 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 }
 
 function add_visualize_option (type, nr) {
-	var current_input_shape = get_input_shape();
+	var style = "";
 
+	var current_input_shape = get_input_shape();
 	if(current_input_shape.length != 3) {
-		return;
+		style = ' style="display: none" '
 	}
 
-	return "<tr><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(" + nr + ", \"" + type + "\")'>Visualize layer</button></td></tr>";
+	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(" + nr + ", \"" + type + "\")'>Visualize layer</button></td></tr>";
 }
 
 function add_theta_option (type, nr) {
@@ -1338,6 +1339,14 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 	hide_no_conv_stuff();
 
 	show_load_weights();
+
+
+	var current_input_shape = get_input_shape();
+	if(current_input_shape.length != 3) {
+		$(".visualize_button").hide();
+	} else {
+		$(".visualize_button").show();
+	}
 
 	return 1;
 }
