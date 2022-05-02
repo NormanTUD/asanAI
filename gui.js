@@ -429,6 +429,12 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 }
 
 function add_visualize_option (type, nr) {
+	var current_input_shape = get_input_shape();
+
+	if(current_input_shape.length != 3) {
+		return;
+	}
+
 	return "<tr><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(" + nr + ", \"" + type + "\")'>Visualize layer</button></td></tr>";
 }
 
