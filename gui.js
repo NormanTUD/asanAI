@@ -3002,10 +3002,11 @@ function change_data_origin () {
 
 		$(".hide_when_custom_data").show();
 
-		set_default_input_shape();
 		changed_data_source = false;
 		
 		$("#custom_training_data_settings").hide();
+
+		set_default_input_shape();
 	} else {
 		$("#custom_training_data_settings").show();
 		$("#train_neural_network_button").prop("disabled", true);

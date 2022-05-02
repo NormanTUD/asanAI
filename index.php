@@ -174,7 +174,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 285px">
+						<div class="ribbon-toolbar" style="width: 240px">
 							<table>
 								<tr>
 									<td>Loss:</td>
@@ -222,8 +222,10 @@
 									</tr>
 								</tr>
 								<tr>
-									<td>Auto-Input-Shape?</td>
-									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
+									<td colspan=2>
+										Auto-Input-Shape?
+										<input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" />
+									</td>
 								</tr>
 							</table>
 						</div>
