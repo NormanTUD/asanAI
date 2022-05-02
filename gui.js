@@ -1334,6 +1334,11 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 	var current_input_shape = get_input_shape();
 	if(current_input_shape.length != 3) {
 		$(".visualize_button").hide();
+		if(cam) {
+			cam.stop();
+			$("#webcam").hide();
+			$("#webcam_prediction").hide();
+		}
 	} else {
 		$(".visualize_button").show();
 	}
