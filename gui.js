@@ -3653,7 +3653,7 @@ function hide_ribbon() {
 
 function human_readable_time (seconds) {
 	if(!seconds) {
-		return "0 secs";
+		return "1 sec";
 	}
 	var levels = [
 		[Math.floor(seconds / 31536000), 'years'],
