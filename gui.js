@@ -3656,3 +3656,13 @@ function toggle_allow_edit_inputShape () {
 		$("#inputShape").attr("readonly", true);
 	}
 }
+
+function show_ribbon() {
+	$("#ribbon").show();
+	$("#ribbon_shower").hide();
+}
+
+function hide_ribbon() {
+	$("#ribbon").hide();
+	$("#ribbon_shower").show();
+}
