@@ -137,7 +137,7 @@ async function get_image_data(skip_real_image_download) {
 				document.title = "Loading data " + percentage_text;
 				percentage_div.html(percentage_text);
 				if(eta) {
-					percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
+					percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
 				}
 
 				if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {

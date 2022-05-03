@@ -827,7 +827,7 @@ async function draw_maximally_activated_layer (layer, type) {
 	for (var i = 0; i < neurons; i++) {
 		var eta = "";
 		if(times.length) {
-			eta = " (" + parseInt((neurons - i) * median(times)) + "s left)";
+			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
 		}
 
 		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
