@@ -90,4 +90,8 @@ html {
 	#ribbon_shower {
 		display: none;
 	}
+
+	#ribbon {
+		display: block;
+	}
 }

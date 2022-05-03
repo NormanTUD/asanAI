@@ -1408,6 +1408,9 @@
 
 			$(window).resize(function() {
 				write_descriptions();
+				if(window.innerWidth >= 800) {
+					$("#ribbon").show();
+				}
 			});
 
 			favicon_default();
