@@ -116,19 +116,21 @@
 	</head>
 	<body data-chardin-sequenced="true">
 		<div id="mainsite">
-			<div id="ribbon_shower" style="display: none" onclick="show_ribbon()">&#9776;</div>
+			<div id="ribbon_shower" onclick="show_ribbon()">&#9776;</div>
 			<div id="ribbon">
-				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
-					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
-					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
-					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
-					<span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
-					<span id="tensor_number_debugger" style="display: none"></span>
-				</ul>
+				<span>
+					<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
+						<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
+						<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+						<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
+						<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
+						<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+						<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
+						<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
+						<span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
+						<span id="tensor_number_debugger" style="display: none"></span>
+					</ul>
+				</span>
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
@@ -176,6 +178,7 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
 						<div class="ribbon-toolbar" style="width: 240px">
 							<table>
@@ -237,6 +240,7 @@
 
 					<div id="custom_training_data_settings" style="display: none">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group" data-intro="You can set where your training data should come from here">
 							<div class="ribbon-toolbar" style="width:220px">
 								<table>
@@ -258,13 +262,13 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" style="display:none">
 						<div class="ribbon-toolbar" style="width:100px">
 							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%" />
 						</div>
 						<div class="ribbon-group-title">Layers</div>
 					</div>
-					<!--<div class="ribbon-group-sep"></div>-->
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
 						<div class="ribbon-toolbar" style="width:150px">
@@ -278,6 +282,7 @@
 						<div class="ribbon-group-title">Hyperparameters</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 
 					<div id="image_resize_dimensions">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
@@ -300,6 +305,7 @@
 							<div class="ribbon-group-title">Image Options</div>
 						</div>
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 					</div>
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
@@ -340,6 +346,7 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
 						<div class="ribbon-toolbar">
 							<table>
@@ -373,6 +380,7 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar" style="width:200px">
 							<table style="width: 80%">
@@ -544,6 +552,7 @@
 
 					<div class="hide_when_no_conv_visualizations">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group">
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
@@ -573,6 +582,7 @@
 
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
@@ -601,6 +611,7 @@
 
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group">
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">

@@ -1014,7 +1014,6 @@ function enable_disable_kernel_images () {
 		$("#show_kernel_images").prop("disabled", true);
 		$("#data_plotter").hide();
 	}
-	//set_ribbon_min_width();
 }
 
 function change_kernel_pixel_size () {
@@ -2808,21 +2807,6 @@ function get_sum_of_items_childrens_width (item) {
 	});
 
 	return total_width;
-}
-
-function get_max_ribbon_width () {
-	return 1100;
-}
-
-function set_ribbon_min_width () {
-	/*
-	return;
-	$("#ribbon").css({"min-width": ''});
-
-	$("#ribbon").css({
-		"min-width": parseInt(get_max_ribbon_width() * 1.001) + "px"
-	});
-	*/
 }
 
 function get_chosen_dataset () {

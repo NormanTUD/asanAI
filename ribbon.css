@@ -37,3 +37,51 @@
 	font-size:0;
 	margin:0 2px;
 }
+
+.ribbon-group-sep-hr {
+	display: none;
+}
+
+html {
+	min-width: 1400px;
+}
+
+@media only screen and (max-width: 800px) {
+	html {
+		min-width: auto;
+	}
+
+	#ribbon {
+		height: 100%;
+		display: none;
+		width: 100%;
+	}
+
+	#ribbon_shower {
+		display: block;
+	}
+
+	.ribbon-group {
+		float: inherit;
+	}
+
+	.ribbon-group-sep {
+		display: none;
+	}
+
+	.ribbon-group-sep-hr {
+		display: block;
+	}
+
+	.ribbon-group-title {
+		display: none;
+	}
+
+	#tablist {
+		width: 140px;
+	}
+
+	.left_side {
+		float: inherit;
+	}
+}
