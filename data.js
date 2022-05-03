@@ -133,7 +133,9 @@ async function get_image_data(skip_real_image_download) {
 		if(started_training) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!skip_real_image_download) {
-				percentage_div.html(percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...");
+				var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+				document.title = "Loading data " + percentage_text;
+				percentage_div.html(percentage_text);
 				if(eta) {
 					percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
 				}
@@ -159,6 +161,8 @@ async function get_image_data(skip_real_image_download) {
 
 		times.push(end_time - start_time);
 	}
+
+	document.title = original_title;
 
 	if(!skip_real_image_download) {
 		percentage_div.html("");

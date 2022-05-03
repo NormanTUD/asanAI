@@ -571,7 +571,6 @@ function add_layer_debuggers () {
 
 	$(".layer_data").html("")
 
-	console.trace();
 	for (var i = 0; i < model.layers.length; i++) {
 		if(get_methods(model.layers[i]).includes("original_apply_real")) {
 			model.layers[i].apply = model.layers[i].original_apply_real;
@@ -633,8 +632,6 @@ function add_layer_debuggers () {
 				} else {
 					log("Show layer data: " + $("#show_layer_data").is(":checked"));
 				}
-			} else {
-				log("disable_layer_debuggers: " + disable_layer_debuggers);
 			}
 
 			return applied;
