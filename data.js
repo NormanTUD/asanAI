@@ -156,6 +156,15 @@ async function get_image_data(skip_real_image_download) {
 			if(tf_data !== null || skip_real_image_download) {
 				data[keys[url]].push(tf_data);
 			}
+
+			if(i == urls.length - 1) {
+				await Swal.fire({
+					title: 'Generating tensors from images...',
+					html: "This may take some time, but your computer is working!",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			}
 		}
 		var end_time = Date.now();
 

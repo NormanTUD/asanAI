@@ -629,8 +629,6 @@ function add_layer_debuggers () {
 
 						$($(".layer_data")[${i}]).append(html);
 					}
-				} else {
-					log("Show layer data: " + $("#show_layer_data").is(":checked"));
 				}
 			}
 
