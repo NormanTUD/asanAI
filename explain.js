@@ -1028,6 +1028,17 @@ function array_size (ar) {
 	return [row_count, Math.min.apply(null, row_sizes)]
 }
 
+function get_layer_output_shape_as_string (i) {
+	var str = model.layers[i].outputShape.toString()
+	str = str.replace(/^,|,$/g,'');;
+	str = "[" + str + "]";
+	return str;
+}
+
+function _get_h (i) {
+	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -1198,14 +1209,14 @@ function model_to_latex () {
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					str += a_times_b("h" + "'".repeat(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			} else {
-				str += "h" + "'".repeat(i) + " = " + activation_start;
+				str += _get_h(i) + " = " + activation_start;
 				if(i == 0) {
 					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				} else {
-					str += a_times_b("h" + "'".repeat(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			}
 
@@ -1220,12 +1231,12 @@ function model_to_latex () {
 		} else if (this_layer_type == "flatten") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
-			str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			str += _get_h(i) + " = " + _get_h(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
 			if(i > 1) {
-				str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+				str += _get_h(i) + " = " + _get_h(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 			} else {
 				str += array_to_latex(input_layer, "Input") + " = h" + "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 			}
@@ -1242,13 +1253,13 @@ function model_to_latex () {
 			if(i == 0) {
 				prev_layer_name += array_to_latex(input_layer, "Input");
 			} else {
-				prev_layer_name += "h" + "'".repeat(i - 1);
+				prev_layer_name += _get_h(i - 1);
 			}
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += "h" + "'".repeat(i) + " = ";
+				str += _get_h(i) + " = ";
 			}
 
 			if(Object.keys(activation_function_equations).includes(activation_name)) {
@@ -1286,13 +1297,13 @@ function model_to_latex () {
 			if(i == 0) {
 				prev_layer_name += array_to_latex(input_layer, "Input");
 			} else {
-				prev_layer_name += "h" + "'".repeat(i - 1);
+				prev_layer_name += _get_h(i - 1);
 			}
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += "h" + "'".repeat(i) + " = ";
+				str += _get_h(i) + " = ";
 			}
 
 			str += "\\frac{\\left(" + prev_layer_name + " - \\text{mean}\\left(" + prev_layer_name + "\\right)\\right)}{\\sqrt{\\mathrm{variance}\\left(" + prev_layer_name + "\\right)}}";
