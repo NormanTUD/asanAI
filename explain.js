@@ -820,16 +820,42 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	$("#maximally_activated").append("<h2>Layer " + layer + "</h2>")
 
+	var times = [];
+
+	favicon_spinner();
+
 	for (var i = 0; i < neurons; i++) {
+		var eta = "";
+		if(times.length) {
+			eta = " (" + parseInt((neurons - i) * median(times)) + "s left)";
+		}
+
+		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		document.title = swal_msg;
+
 		await Swal.fire({
 			title: 'Generating Image...',
-			html: "Image " + (i + 1) + " of " + neurons,
+			html: swal_msg,
 			timer: 2000,
 			showConfirmButton: false
 		});
 
-		draw_maximally_activated_neuron(layer, i);
+
+		log("Set title to " + swal_msg);
+
+		var start = Date.now();
+		await draw_maximally_activated_neuron(layer, i);
+		var end = Date.now();
+
+		var time = (end - start) / 1000;
+
+		times.push(time);
+
 	}
+
+	favicon_default();
+
+	document.title = original_title;
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {

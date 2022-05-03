@@ -113,10 +113,10 @@
 	}
 
 	function minify_css ($file) {
-		if($GLOBALS["minify"]) {
-			print "<link href='minify.php?file=$file' rel='stylesheet' />";
+		if($GLOBALS["minify"] || $file == "style.css") {
+			print "<link href='minify.php?file=$file' rel='stylesheet' />\n";
 		} else {
-			print "<link href='$file' rel='stylesheet' />";
+			print "<link href='$file' rel='stylesheet' />\n";
 		}
 	}
 ?>
