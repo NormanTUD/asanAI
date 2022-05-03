@@ -147,8 +147,8 @@ function get_fit_data () {
 		var current_time = Date.now();
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
 		var epochs_left = max_number_epochs - current_epoch;
-		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
-		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "NNE";
+		var time_estimate = human_readable_time(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
+		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] " + "NNE";
 	}
 
 	callbacks["onTrainEnd"] = async function () {

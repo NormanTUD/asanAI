@@ -3652,12 +3652,15 @@ function hide_ribbon() {
 }
 
 function human_readable_time (seconds) {
+	if(!seconds) {
+		return "0 secs";
+	}
 	var levels = [
-		[Math.floor(seconds / 31536000), 'year(s)'],
-		[Math.floor((seconds % 31536000) / 86400), 'day(s)'],
-		[Math.floor(((seconds % 31536000) % 86400) / 3600), 'hour(s)'],
-		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'minute(s)'],
-		[(((seconds % 31536000) % 86400) % 3600) % 60, 'second(s)'],
+		[Math.floor(seconds / 31536000), 'years'],
+		[Math.floor((seconds % 31536000) / 86400), 'days'],
+		[Math.floor(((seconds % 31536000) % 86400) / 3600), 'hours'],
+		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'mins'],
+		[(((seconds % 31536000) % 86400) % 3600) % 60, 'secs'],
 	];
 	var returntext = '';
 
