@@ -113,7 +113,7 @@
 	}
 
 	function minify_css ($file) {
-		if($GLOBALS["minify"] || $file == "style.css") {
+		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
 			print "<link href='minify.php?file=$file' rel='stylesheet' />\n";
 		} else {
 			print "<link href='$file' rel='stylesheet' />\n";
