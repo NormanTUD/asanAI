@@ -54,6 +54,7 @@ html {
 	#ribbon {
 		height: 100%;
 		display: none;
+		min-width: 400px;
 		width: 100%;
 	}
 
@@ -78,7 +79,7 @@ html {
 	}
 
 	#tablist {
-		width: 140px;
+		width: 150px;
 	}
 
 	.left_side {
