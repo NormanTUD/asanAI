@@ -1305,19 +1305,9 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 
 	layer_structure_cache = null;
 
-	/*
-	if((typeof(disable_auto_enable_valid_layer_types) == "undefined" || !disable_auto_enable_valid_layer_types) && !global_disable_auto_enable_valid_layer_types) {
-		disable_all_invalid_layers();
-	}
-	*/
-
-	add_layer_debuggers();
-
 	if(!disabling_saving_status) {
 		save_current_status();
 	}
-
-	//set_ribbon_min_width();
 
 	show_dtype_only_first_layer();
 
@@ -2153,7 +2143,6 @@ async function set_config (index) {
 
 	model = create_model(model);
 	compile_model();
-	add_layer_debuggers();
 
 	disable_all_non_selected_layer_types();
 
@@ -2714,8 +2703,6 @@ function upload_model(evt) {
 	reader.readAsText(f);
 
 	set_config();
-
-	add_layer_debuggers();
 }
 
 async function upload_weights(evt) {
@@ -2738,8 +2725,6 @@ async function upload_weights(evt) {
 	var weightsUpload = document.getElementById('upload_weights');
 
 	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
-
-	add_layer_debuggers();
 
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();

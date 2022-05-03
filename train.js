@@ -229,6 +229,7 @@ async function run_neural_network () {
 					}
 
 					try {
+						add_layer_debuggers();
 						h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
 
 						model_is_trained = true;

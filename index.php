@@ -518,10 +518,6 @@
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
 							<table>
-								<tr data-intro="Show the current layer live in the FCNN-style-view">
-									<td>Highlight layer?</td>
-									<td><input class="show_data" type='checkbox' value="1" id="show_progress_through_layers" /></td>
-								</tr>
 								<tr class="hide_when_no_alexnet">
 									<td>AlexNet-Renderer</td>
 									<td>
@@ -990,6 +986,7 @@
 
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>main.js"></script>
 		<script>
+			var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function')
 			var local_store = window.localStorage;
 			local_store.clear();
 

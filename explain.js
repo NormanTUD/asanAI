@@ -571,33 +571,39 @@ function add_layer_debuggers () {
 
 	$(".layer_data").html("")
 
+	console.trace();
 	for (var i = 0; i < model.layers.length; i++) {
-		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
-			$('#layer_visualizations_tab_label').parent().parent().show();
-			$('#layer_visualizations_tab_label').parent().show();
-			$('#layer_visualizations_tab_label').show();
+		if(get_methods(model.layers[i]).includes("original_apply_real")) {
+			model.layers[i].apply = model.layers[i].original_apply_real;
+		}
 
-			var code = `model.layers[${i}].original_apply_real = model.layers[${i}].apply;
-				model.layers[${i}].apply = function (inputs, kwargs) {
-					var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
+		model.layers[i].original_apply_real = model.layers[i].apply
+		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
+			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
-					if(!disable_layer_debuggers) {
-						var output_data = applied.arraySync()[0];
-						$($(".layer_data")[${i}]).html('');
-						var input_data = inputs[0].arraySync()[0];
+			if(!disable_layer_debuggers) {
+				if($("#show_layer_data").is(":checked")) {
+					$('#layer_visualizations_tab_label').parent().parent().show();
+					$('#layer_visualizations_tab_label').parent().show();
+					$('#layer_visualizations_tab_label').show();
 
-						var kernel_data = [];
-						if(Object.keys(model.layers[${i}]).includes('kernel')) {
-							if(model.layers[${i}].kernel.val.shape.length == 4) {
-								kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
-							}
+					var output_data = applied.arraySync()[0];
+					$($(".layer_data")[${i}]).html('');
+					var input_data = inputs[0].arraySync()[0];
+
+					var kernel_data = [];
+					if(Object.keys(model.layers[${i}]).includes('kernel')) {
+						if(model.layers[${i}].kernel.val.shape.length == 4) {
+							kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
 						}
+					}
 
-						var html = $($(".layer_data")[${i}]).html();
-						if($('#header_layer_visualization_${i}').length == 0) {
-							html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
-						}
-			
+					var html = $($(".layer_data")[${i}]).html();
+					if($('#header_layer_visualization_${i}').length == 0) {
+						html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
+					}
+		
+					if(layers_can_be_visualized()) {
 						if(!draw_images_if_possible(${i}, input_data, output_data, kernel_data) && 0) {
 							var weights_string = '';
 							if ('weights' in this) {
@@ -624,11 +630,16 @@ function add_layer_debuggers () {
 
 						$($(".layer_data")[${i}]).append(html);
 					}
+				} else {
+					log("Show layer data: " + $("#show_layer_data").is(":checked"));
+				}
+			} else {
+				log("disable_layer_debuggers: " + disable_layer_debuggers);
+			}
 
-					return applied;
-				}`;
-			eval(code);
-		}
+			return applied;
+		}`;
+		eval(code);
 	}
 }
 
@@ -881,14 +892,6 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		write_descriptions();
 		return false;
 	}
-}
-
-function fcnn_fill_layer (layer_nr) {
-	//restart_fcnn(1);
-	//restart_lenet(1);
-
-	$("[id^=fcnn_]").css("fill", "#ffffff");
-	$("[id^=fcnn_" + layer_nr + "_]").css("fill", "red");
 }
 
 function array_to_fixed (array, fixnr) {
