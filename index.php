@@ -38,31 +38,31 @@
 <?php
 		$tablist_color = "254c87";
 
-		$minify = 1;
+		$GLOBALS['minify'] = 1;
 		if(array_key_exists("no_minify", $_GET)) {
-			$minify = 0;
+			$GLOBALS['minify'] = 0;
 		}
 ?>
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.css" rel="stylesheet">
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
+		<?php minify_css("jquery-ui.css"); ?>
+		<?php minify_css("style.css"); ?>
+		<?php minify_css("ribbon.css"); ?>
 <?php
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>
-			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>darkmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbondarkmode.css">
+			<?php minify_css("darkmode.css"); ?>
+			<?php minify_css("ribbondarkmode.css"); ?>
 <?php
 		} else {
 ?>
 
-			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbonlightmode.css">
+			<?php minify_css("lightmode.css"); ?>
+			<?php minify_css("ribbonlightmode.css"); ?>
 <?php
 		}
 ?>
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.min.css" rel="stylesheet">
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.min.css" rel="stylesheet">
+		<?php minify_css("prism/prism.min.css"); ?>
+		<?php minify_css("external/sweetalert2.min.css"); ?>
 
 
 		<!-- jquery -->
@@ -101,7 +101,8 @@
 
 		<!-- ChardinJS -->
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.js"></script>
-		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.css">
+
+		<?php minify_css("chardinjs.css"); ?>
 
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));

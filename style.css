@@ -56,7 +56,6 @@ html {
 }
 
 .layer_data {
-	//max-height: 250px;
 	overflow-y: auto;
 }
 
@@ -77,7 +76,6 @@ html {
 }
 
 .image_grid {
-	//max-height: 500px;
 	overflow-y: auto;
 }
 
@@ -168,12 +166,7 @@ input {
 }
 
 .input_image_grid {
-	//max-height: 500px;
 	overflow-y: auto;
-}
-
-.layer_identifier {
-	/*font-variant-caps: petite-caps;*/
 }
 
 .add_remove_layer_button {
@@ -191,11 +184,6 @@ input {
 .layer_data_visualizations {
 	display: flex;
 	align-items: center;
-}
-
-select option:disabled {
-	color: #efefef;
-	font-weight: bold;
 }
 
 .symbol_button {
