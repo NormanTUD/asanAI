@@ -116,7 +116,10 @@
 	</head>
 	<body data-chardin-sequenced="true">
 		<div id="mainsite">
-			<div id="ribbon_shower" class="symbol_button" onclick="show_ribbon()">&#9776;</div>
+			<div id="ribbon_shower">
+				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
+				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
+			</div>
 			<div id="ribbon">
 				<span>
 					<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
