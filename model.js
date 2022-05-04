@@ -688,12 +688,20 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 				return true;
 			}
 			return false;
-		} else if(["conv3d", "averagePooling3d", "maxPooling3d"].includes(layer_type)) {
+		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 4) {
 				return true;
 			}
 			return false;
 		}
+	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+			if(layer_input_shape.length == 3) {
+				return true;
+			}
+			return false;
+		}
+
 	} else if(["gru"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
 			return false;

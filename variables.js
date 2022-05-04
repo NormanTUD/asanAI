@@ -445,15 +445,17 @@ var layer_options = {
 			"stddev", "trainable", "dtype"
 		],
 		"category": "Noise"
-	},
+	}
 
-	"zeroPadding2d": {
+	/*
+	,"zeroPadding2d": {
 		"description": "Zero-padding layer for 2D input (e.g., image).",
 		"options": [
 			"padding", "trainable"
 		],
 		"category": "Padding"
 	}
+	*/
 };
 
 var model_data_structure = {
