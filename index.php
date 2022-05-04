@@ -233,7 +233,7 @@
 								<tr>
 									<td colspan=2>
 										Auto-Input-Shape?
-										<input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" />
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
 									</td>
 								</tr>
 							</table>

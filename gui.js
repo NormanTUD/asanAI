@@ -3647,11 +3647,11 @@ function change_model_dataset () {
 	load_weights(1);
 }
 
-function toggle_allow_edit_inputShape () {
-	if($("#inputShape").attr("readonly")) {
-		$("#inputShape").attr("readonly", false);
-	} else {
+function allow_edit_inputShape () {
+	if($("#auto_input_shape").is(":checked")) {
 		$("#inputShape").attr("readonly", true);
+	} else {
+		$("#inputShape").attr("readonly", false);
 	}
 }
 

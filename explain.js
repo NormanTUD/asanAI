@@ -1140,7 +1140,7 @@ function model_to_latex () {
 	var y_layer = [];
 
 	for (var i = 0; i < output_shape[1]; i++) {
-		y_layer.push(["y_" + i]);
+		y_layer.push(["y_{" + i + "}"]);
 	}
 
 	var colors = [];
@@ -1153,7 +1153,7 @@ function model_to_latex () {
 	var input_layer = [];
 
 	for (var i = 0; i < input_shape[1]; i++) {
-		input_layer.push(["x_" + i]);
+		input_layer.push(["x_{" + i + "}"]);
 	}
 
 	var activation_string = "";

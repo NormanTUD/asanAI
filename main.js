@@ -1,5 +1,13 @@
 "use strict";
 
+function get_get (param) {
+	const queryString = window.location.search;
+
+	const urlParams = new URLSearchParams(queryString);
+
+	return urlParams.get(param);
+}
+
 function init_tabs () {
 	var tabs_settings = {
 		activate: function (event, ui) {
@@ -191,8 +199,8 @@ $(document).ready(function() {
 	init_set_all_options();
 	init_categories();
 
-	$("#dataset_category").val("image");
-	//$("#dataset_category").val("classification");
+	//$("#dataset_category").val("image");
+	$("#dataset_category").val("classification");
 
 	init_page_contents();
 
@@ -234,4 +242,6 @@ $(document).ready(function() {
 	//$("#code_tab_label").click()
 
 	setInterval(show_load_weights, 1000);
+
+	allow_edit_inputShape();
 });
