@@ -116,7 +116,7 @@
 	</head>
 	<body data-chardin-sequenced="true">
 		<div id="mainsite">
-			<div id="ribbon_shower" onclick="show_ribbon()">&#9776;</div>
+			<div id="ribbon_shower" class="symbol_button" onclick="show_ribbon()">&#9776;</div>
 			<div id="ribbon">
 				<span>
 					<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
@@ -1004,6 +1004,17 @@
 			var local_store = window.localStorage;
 			local_store.clear();
 
+			function resize_window () {
+				write_descriptions();
+				if(window.innerWidth >= 800) {
+					$("#ribbon").show();
+					$("#ribbon_shower").hide();
+				} else {
+					$("#ribbon").hide();
+					$("#ribbon_shower").show();
+				}
+			}
+
 			function get_mode() {
 				var backend = $("#mode_chooser > input[type=radio]:checked").val();
 
@@ -1407,10 +1418,7 @@
 			$(".show_after_training").hide();
 
 			$(window).resize(function() {
-				write_descriptions();
-				if(window.innerWidth >= 800) {
-					$("#ribbon").show();
-				}
+				resize_window();
 			});
 
 			favicon_default();
@@ -1487,6 +1495,8 @@
 				},
 				"showMathMenu": true
 			});
+
+			resize_window();
 		</script>
 	</body>
 </html>
