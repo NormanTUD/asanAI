@@ -848,7 +848,6 @@ async function draw_maximally_activated_layer (layer, type) {
 			if(e.isDismissed && e.dismiss == "cancel") {
 				stop = 1;
 			}
-			log(e);		
 		});
 
 
@@ -858,7 +857,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		await draw_maximally_activated_neuron(layer, i);
 		var end = Date.now();
 
-		var time = (end - start) / 1000;
+		var time = ((end - start) / 1000) + 1;
 
 		times.push(time);
 
