@@ -6,8 +6,6 @@ function uuidv4() {
 	);
 }
 
-var this_guuid = uuidv4();
-
 function calculate_default_target_shape (nr) {
 	var input_shape = null;
 	if(nr == 0) {
