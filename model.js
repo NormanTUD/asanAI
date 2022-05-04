@@ -381,7 +381,7 @@ function create_model (old_model, fake_model_structure) {
 			has_keys = Object.keys(data);
 		}
 
-		if("targetShape" in data && typeof(data["targetShape"]) == "string") {
+		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
 			data["targetShape"] = eval("[" + data["targetShape"] + "]");
 		}
 
