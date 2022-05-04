@@ -97,6 +97,10 @@ html {
 		margin-left: 11px;
 	}
 
+	#layers_container {
+		margin-left: -2px;
+	}
+
 	.left_side {
 		min-width: auto;
 	}
