@@ -691,7 +691,7 @@
 					<div id="layers_container_left" class="left_side">
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
-					<div class="right_side" id="graphs_here" style="padding-left: 10px">
+					<div class="right_side" id="graphs_here">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 							<div style="display: flex">
 								<ul>
@@ -707,6 +707,7 @@
 								</ul>
 								<span id="toggle_layer_view_button" style="position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
+							<hr>
 
 							<div id="own_csv_data">
 								<br>
