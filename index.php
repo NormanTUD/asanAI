@@ -1022,11 +1022,16 @@
 
 			function get_mode() {
 				var mode = $("#mode_chooser > input[type=radio]:checked").val();
-				if(mode != old_mode) {
+				if(mode != old_mode && (state_stack.length > 1 || future_state_stack.length)) {
 					state_stack = [];
 					future_state_stack = [];
 
 					show_hide_undo_buttons();
+					Swal.fire(
+						'Undo/redo stack lost!',
+						"Changing the mode deletes the undo/redo stack.",
+						'warning'
+					);
 				}
 
 				return mode;
