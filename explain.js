@@ -1244,7 +1244,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "flatten") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
-			str += _get_h(i) + " = " + _get_h(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			str += _get_h(i) + " = " + _get_h(i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
