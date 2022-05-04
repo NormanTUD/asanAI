@@ -311,6 +311,7 @@ function group_layers (layers) {
 	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)";
 
         var descs = [
+		{ "re": "((?:lstm;)+)", "name": "LSTM" },
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
                 { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
@@ -320,7 +321,7 @@ function group_layers (layers) {
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
                 { "re": "((?:reshape;?)+;?)", "name": "Change shape" },
-                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" }
+                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" },
         ];
 
         for (var desc_i = 0; desc_i < descs.length; desc_i++) {
