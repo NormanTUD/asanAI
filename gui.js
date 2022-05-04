@@ -428,6 +428,14 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 	return str;
 }
 
+function add_cell_option () {
+	return "";
+}
+
+function add_number_lstm_cells_option (type, nr) {
+	return get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
+}
+
 function add_visualize_option (type, nr) {
 	var style = "";
 
@@ -2543,37 +2551,43 @@ function last_index (array) {
 }
 
 async function save_current_status () {
-	var index = get_current_status_hash();
-	if(state_stack.includes(index) || future_state_stack.includes(index)) {
-		return;
-	}
-
-	var save_this_data = undefined;
-
 	try {
-		await model.save(tf.io.withSaveHandler(artifacts => {
-			save_this_data = artifacts;
-		}));
-	} catch (e) {
-		undo();
-		except("ERROR4", e + "\n\nUndoing last change");
-		Swal.fire({
-			icon: 'error',
-			title: 'Oops [2]...',
-			text: e + "\n\nUndoing last change"
-		});
-	}
+		var index = get_current_status_hash();
+		if(state_stack.includes(index) || future_state_stack.includes(index)) {
+			return;
+		}
 
-	status_saves[index] = JSON.stringify(save_this_data);
+		var save_this_data = undefined;
+
+		try {
+			await model.save(tf.io.withSaveHandler(artifacts => {
+				save_this_data = artifacts;
+			}));
+		} catch (e) {
+			if(mode == "amateur" && 0) {
+				undo();
+				except("ERROR4", e + "\n\nUndoing last change");
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops [2]...',
+					text: e + "\n\nUndoing last change"
+				});
+			} else {
+				log(e);
+			}
+		}
+
+		status_saves[index] = JSON.stringify(save_this_data);
 
 
-	future_state_stack = [];
+		future_state_stack = [];
 
-	if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
-		state_stack.push(index);
-	}
+		if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
+			state_stack.push(index);
+		}
 
-	show_hide_undo_buttons();
+		show_hide_undo_buttons();
+	} catch (e) {}
 }
 
 async function undo () {

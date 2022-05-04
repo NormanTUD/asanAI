@@ -285,7 +285,8 @@ function is_valid_parameter (keyname, value, layer) {
 		(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
 		(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
 		(["theta"].includes(keyname) && typeof(value) == "number" && (value >= 0 || value == -1)) ||
-		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number")
+		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
+		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
 		return true;
 	}
@@ -330,6 +331,7 @@ function create_model (old_model, fake_model_structure) {
 			dispose(old_model);
 		}
 	}
+
 	tf.disposeVariables();
 
 	var new_model = tf.sequential();
@@ -456,6 +458,16 @@ function create_model (old_model, fake_model_structure) {
 			}
 		}
 
+		if(type == "rnn") {
+			// never worked...
+			var lstm_cells = [];
+			for (var index = 0; index < data["units"]; index++) {
+				lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+			}
+			data["cell"] = lstm_cells;
+			log(data);
+		}
+
 		data = remove_empty(data);
 		node_data = remove_empty(node_data);
 
@@ -470,14 +482,12 @@ function create_model (old_model, fake_model_structure) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
-			if(show_layer_trial_error) {
-				log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-				log(e);
-				log("type: " + type + ", data:");
-				log(data);
-				log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-			}
-			return false;
+			log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			log(e);
+			log("type: " + type + ", data:");
+			log(data);
+			log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			return model;
 		}
 
 		if(Object.keys(node_data).includes("kernelInitializer")) {
@@ -919,16 +929,20 @@ async function _show_load_weights () {
 		return true;
 	}
 
-	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
-	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
-	if(default_weights_shape === current_network_weights_shape) {
-		if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
-			return false;
-		} else {
-			return true;
+	try {
+		var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
+		var current_network_weights_shape = JSON.stringify(await get_weights_shape());
+		if(default_weights_shape === current_network_weights_shape) {
+			if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
+				return false;
+			} else {
+				return true;
+			}
 		}
+		return false;
+	} catch (e) {
+		return false;
 	}
-	return false;
 }
 
 async function show_load_weights () {

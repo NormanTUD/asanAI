@@ -371,6 +371,7 @@ var layer_options = {
 		"category": "Pooling"
 	},
 
+	/*
 	"gru": {
 		"description": "Gated Recurrent Unit - Cho et al. 2014.",
 		"options": [
@@ -391,6 +392,13 @@ var layer_options = {
 			"recurrent_activation", "unit_forget_bias", "implementation", "units", "activation", "use_bias", "kernel_initializer",
 			"recurrent_initializer", "bias_initializer", "kernel_constraint", "recurrent_constraint", "bias_constraint",
 			"dropout", "recurrent_dropout", "return_sequences", "return_state", "go_backwards", "unroll", "trainable", "kernel_regularizer", "bias_regularizer"
+		],
+		"category": "Recurrent"
+	},
+	"rnn": {
+		"description": "Base class for recurrent layers.",
+		"options": [
+			"units", "cell", "return_sequences", "return_state", "go_backwards", "stateful", "unroll"
 		],
 		"category": "Recurrent"
 	},
@@ -415,7 +423,7 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
-
+	*/
 
 	"alphaDropout": {
 		"description": "Applies Alpha Dropout to the input. As it is a regularization layer, it is only active at training time.",

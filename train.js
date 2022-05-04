@@ -40,6 +40,11 @@ async function train_neural_network () {
 	$("#tfvis_tab_label").parent().show();
 	write_descriptions();
 
+	if(!Object.keys(model).includes("layers")) {
+		gui_not_in_training();
+		write_error("Something went wrong with compiling the model. Please reload the site.");
+	}
+
 	if(started_training) {
 		if(model.isTraining || model.model.isTraining) {
 			model.stopTraining = true;

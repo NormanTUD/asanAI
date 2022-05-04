@@ -1512,6 +1512,8 @@
 				"showMathMenu": true
 			});
 
+			set_mode();
+
 			resize_window();
 		</script>
 	</body>
