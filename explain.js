@@ -824,7 +824,12 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
+	var stop = 0;
+
 	for (var i = 0; i < neurons; i++) {
+		if(stop) {
+			continue;
+		}
 		var eta = "";
 		if(times.length) {
 			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
@@ -837,7 +842,13 @@ async function draw_maximally_activated_layer (layer, type) {
 			title: 'Generating Image...',
 			html: swal_msg,
 			timer: 2000,
+			showCancelButton: true,
 			showConfirmButton: false
+		}).then((e)=>{
+			if(e.isDismissed && e.dismiss == "cancel") {
+				stop = 1;
+			}
+			log(e);		
 		});
 
 
