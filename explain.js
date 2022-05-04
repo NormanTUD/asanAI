@@ -398,6 +398,10 @@ function write_descriptions () {
 						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 							hidden = "display: none;";
 						}
+
+						if(window.innerWidth <= 800) {
+							height += 2;
+						}
 						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + parseInt(height) + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
 					}
 				}
