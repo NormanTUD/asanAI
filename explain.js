@@ -1075,8 +1075,8 @@ function model_to_latex () {
 			"lower_limit": 0
 		},
 		"LeakyReLU": {
-			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(0.1x, x\\right)",
-			"equation_no_function_name": "\\mathrm{max}\\left(0.1REPLACEME, REPLACEME\\right)"
+			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(\\alpha \\cdot x, x\\right)",
+			"equation_no_function_name": "\\mathrm{max}\\left(ALPHAREPL \\cdot REPLACEME, REPLACEME\\right)"
 		},
 		"elu": {
 			"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
@@ -1265,6 +1265,11 @@ function model_to_latex () {
 			if(Object.keys(activation_function_equations).includes(activation_name)) {
 				var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
 
+				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+				
+				if(get_item_value(i, "alpha")) {
+					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + get_item_value(i, "alpha") + "}");
+				}
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 				var has_lower_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit");
