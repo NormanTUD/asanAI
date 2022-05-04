@@ -86,6 +86,22 @@ html {
 	.left_side {
 		float: inherit;
 	}
+
+	.layer_type {
+		width: auto;
+	}
+
+	.layer_setting {
+		width: 300px;
+	}
+
+	.left_side {
+		min-width: auto;
+	}
+
+	.layer_identifier_activation {
+		display: none;
+	}
 }
 
 @media only screen and (min-width: 800px) {
@@ -96,4 +112,16 @@ html {
 	#ribbon {
 		display: block;
 	}
+
+	.layer_identifier_activation {
+		display: block;
+	}
+}
+
+#ribbon_shower {
+	font-size: 35px;
+}
+
+#layers_container {
+	margin-left: -62px;
 }

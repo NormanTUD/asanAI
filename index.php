@@ -1007,8 +1007,9 @@
 			var local_store = window.localStorage;
 			local_store.clear();
 
+			var old_mode = "amateur";
+
 			function resize_window () {
-				write_descriptions();
 				if(window.innerWidth >= 800) {
 					$("#ribbon").show();
 					$("#ribbon_shower").hide();
@@ -1016,12 +1017,19 @@
 					$("#ribbon").hide();
 					$("#ribbon_shower").show();
 				}
+				write_descriptions();
 			}
 
 			function get_mode() {
-				var backend = $("#mode_chooser > input[type=radio]:checked").val();
+				var mode = $("#mode_chooser > input[type=radio]:checked").val();
+				if(mode != old_mode) {
+					state_stack = [];
+					future_state_stack = [];
 
-				return backend;
+					show_hide_undo_buttons();
+				}
+
+				return mode;
 			}
 
 			function get_backend() {

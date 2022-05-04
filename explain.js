@@ -537,7 +537,7 @@ function identify_layers (numberoflayers) {
 			console.warn(e);
 		}
 
-		write_layer_identification(i, new_str + output_shape_string + activation_function_string);
+		write_layer_identification(i, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
 	}
 }
 
