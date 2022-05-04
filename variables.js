@@ -345,6 +345,7 @@ var layer_options = {
 		],
 		"category": "Pooling"
 	},
+	/*
 	"globalAveragePooling1d": {
 		"description": "Global average pooling operation for temporal data.",
 		"options": [
@@ -371,7 +372,6 @@ var layer_options = {
 		"category": "Pooling"
 	},
 
-	/*
 	"gru": {
 		"description": "Gated Recurrent Unit - Cho et al. 2014.",
 		"options": [
@@ -690,7 +690,7 @@ var memory_debug_interval = null;
 var call_from_show_csv_file = false;
 
 function dispose (item) {
-	//console.trace(item);
+	//console.trace();
 	//log(item);
 	tf.dispose(item);
 }

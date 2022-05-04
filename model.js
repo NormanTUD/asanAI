@@ -325,15 +325,6 @@ function create_model (old_model, fake_model_structure) {
 		return;
 	}
 
-	if(model) {
-		if(old_model) {
-			old_model.optimizer.dispose();
-			dispose(old_model);
-		}
-	}
-
-	tf.disposeVariables();
-
 	var new_model = tf.sequential();
 
 	var model_structure = fake_model_structure; 
@@ -482,11 +473,13 @@ function create_model (old_model, fake_model_structure) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
+			/*
 			log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			log(e);
 			log("type: " + type + ", data:");
 			log(data);
 			log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			*/
 			return model;
 		}
 
@@ -666,7 +659,6 @@ function compile_fake_model (layer_nr, layer_type) {
 	try {
 		var fake_model = create_model(null, fake_model_structure);
 		fake_model.compile(get_model_data());
-		dispose(fake_model);
 	} catch (e) {
 		return false;
 	}
@@ -721,8 +713,12 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 
 	var layer_input_shape = calculate_default_target_shape(layer_nr);
 
-	if(layer_nr == 0 && layer_type == "flatten") {
-		return false;
+	if(layer_type == "flatten") {
+		if(layer_nr == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
