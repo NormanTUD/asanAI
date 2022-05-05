@@ -57,7 +57,6 @@ function AlexNet() {
 	camera.position.set(-219, 92, 84);
 
 	var renderer;
-	//var rendererType = 'svg';
 	var rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 
 	var controls;
@@ -74,7 +73,7 @@ function AlexNet() {
 		clearThree(scene);
 
 		if (rendererType === 'webgl') {
-			renderer = new THREE.WebGLRenderer({'alpha':true });
+			renderer = new THREE.WebGLRenderer({ 'alpha': true, 'antialias': true });
 			renderer.setClearColor( 0xffffff, 0 );
 		} else if (rendererType === 'svg') {
 			renderer = new THREE.SVGRenderer();
@@ -243,10 +242,7 @@ function AlexNet() {
 				var sprite = makeTextSprite(layer.toString());
 				sprite.position.copy(layer_object.position).sub(new THREE.Vector3(3, depthFn(layer)/2 + 3, 3));
 				sprites.add(sprite);
-
 			}
-
-
 		});
 
 		scene.add(layers);

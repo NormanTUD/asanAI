@@ -1237,7 +1237,7 @@
 							}
 
 							alexnet.restartRenderer(1);
-							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
+							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2, "showDims": true});
 						} catch (e) {
 							console.warn(e);
 							disable_alexnet = 1;
