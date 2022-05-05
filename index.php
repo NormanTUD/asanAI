@@ -245,12 +245,12 @@
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group" data-intro="You can set where your training data should come from here">
-							<div class="ribbon-toolbar" style="width:220px">
+							<div class="ribbon-toolbar" style="width:170px">
 								<table>
 									<tr id="data_type_row" style="display: none">
 										<td>Data Type:</td>
 										<td>
-											<select id="data_type" onchange="change_data_origin(1)">
+											<select id="data_type" style="width: 90px" onchange="change_data_origin(1)">
 												<option value="csv">&#128290; CSV</option>
 												<option value="image">&#128444; Image</option>
 												<option value="tensordata">&#x2318; Tensor-Data</option>
@@ -272,20 +272,6 @@
 						</div>
 						<div class="ribbon-group-title">Layers</div>
 					</div>
-
-					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width:150px">
-							<table>
-								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
-								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
-								<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
-								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Hyperparameters</div>
-					</div>
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
 
 					<div id="image_resize_dimensions">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
@@ -310,6 +296,21 @@
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
 					</div>
+
+
+					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
+						<div class="ribbon-toolbar" style="width:150px">
+							<table>
+								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
+								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
+							</table>
+							<div class="ribbon-group-title">Hyperparameters</div>
+						</div>
+					</div>
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
