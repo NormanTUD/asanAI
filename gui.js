@@ -3492,7 +3492,7 @@ function _allow_training () {
 	if($("#data_origin").val() == "own") {
 		var data_type = $("#data_type").val();
 		if(data_type == "image") {
-			var number_of_training_images = $(".own_images").children().length
+			var number_of_training_images = $(".own_images").children().length;
 			if(number_of_training_images) {
 				return true;
 			} else {
@@ -3670,4 +3670,8 @@ function human_readable_time (seconds) {
 		returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length-1): levels[i][1]);
 	};
 	return returntext.trim();
+}
+
+function delete_own_image (elem) {
+	$(elem).parent().remove();
 }
