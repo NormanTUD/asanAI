@@ -779,6 +779,7 @@
 								<br>
 								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
 								<br>
+								<br>
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
 								<div id="own_image_data_categories">
