@@ -457,6 +457,10 @@ function explain_error_msg () {
 			}
 		} else if(err.includes("input expected a batch of elements where each example has shape")) {
 			explanation = "Does the input-shape match the data?";
+		} else if (err.includes("Error when checking input") && err.includes("but got array with shape")) {
+			if($("#data_type").val() == "csv" && $("#data_origin").val() == "own") {
+				explanation = "Have you chosen an 'own'-data-source with CSV-files in a network with convolutional layers?";
+			}
 		}
 	} else {
 		explanation = "No layers."
