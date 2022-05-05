@@ -46,6 +46,13 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
+		Swal.fire({
+			title: 'Stopped training',
+			html: "This may take some time...",
+			timer: 1000,
+			showConfirmButton: false
+		});
+
 		if(model.isTraining || model.model.isTraining) {
 			model.stopTraining = true;
 			model.model.stopTraining = true;
@@ -54,6 +61,12 @@ async function train_neural_network () {
 		document.title = original_title;
 		gui_not_in_training();
 	} else {
+		Swal.fire({
+			title: 'Started training',
+			html: "This may take some time...",
+			timer: 1000,
+			showConfirmButton: false
+		});
 		gui_in_training();
 		reset_gui_before_training();
 
