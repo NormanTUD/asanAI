@@ -1059,7 +1059,7 @@ function change_width_or_height (name, inputshape_index) {
 	}
 }
 
-async function update_python_code () {
+async function update_python_code (dont_reget_labels) {
 	var redo_graph = 0;
 
 	var input_shape = [width, height, number_channels];
@@ -1075,11 +1075,6 @@ async function update_python_code () {
 	var epochs = parseInt(document.getElementById("epochs").value);
 
 	$("#pythoncontainer").show();
-
-	/*
-	
-
-	*/
 
 	python_code += "# Use this command to convert a downloaded tensorflow-js-model first:\n";
 	python_code += "# tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model\n";
@@ -1101,7 +1096,9 @@ async function update_python_code () {
 	
 	var x_shape = "";
 
-	await get_label_data();
+	if(!dont_reget_labels) {
+		await get_label_data();
+	}
 
 	if(dataset_category == "image") {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
@@ -1210,40 +1207,7 @@ async function update_python_code () {
 				}
 			}
 		}
-
-		/*
-		python_code += params.join(",\n\t");
-		if(params.length) {
-			python_code += "\n";
-		}
-		python_code += "))\n";
-		*/
 	}
-
-
-	var model_data = {
-		loss: loss,
-		optimizer: optimizer_type,
-		metrics: metric_type
-	};
-
-	if(optimizer_type == "sgd") {
-		model_data["learningRate"] = document.getElementById("learningRate_" + optimizer_type).value;
-		//python_code += "opt = tf.keras.optimizers.SGD(learningRate=" + model_data["learningRate"] + ", momentum=" + model_data["momentum"] + ")\n";
-	} else {
-		//python_code += "opt = '" + optimizer_type + "'\n";
-	}
-
-	//python_code += "model.compile(optimizer=opt, loss='" + get_python_name(loss) + "', metrics=['" + get_python_name(metric_type) + "'])\n";
-	//python_code += "model.summary()\n";
-
-	/*
-	if(dataset_category == "image") {
-		python_code += "model.fit_generator(image_set, epochs=epochs)";
-	} else {
-		python_code += "model.fit(x, y, epochs=epochs)";
-	}
-	*/
 
 	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
@@ -3005,6 +2969,11 @@ function change_data_origin () {
 		$("#custom_training_data_settings").hide();
 
 		set_default_input_shape();
+
+		$("#visualization_tab_label").click();
+		$("#fcnn_tab_label").click();
+
+		update_python_code();
 	} else {
 		$("#custom_training_data_settings").show();
 		$("#train_neural_network_button").prop("disabled", true);
@@ -3046,6 +3015,7 @@ function change_data_origin () {
 		$("#own_images_container").html("");
 		add_new_category();
 		add_new_category();
+		rename_labels();
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
@@ -3136,9 +3106,10 @@ function add_new_category () {
 	var imgDiv = $(".own_images");
 	if(imgDiv.length == 0 || imgDiv.length <= n) {
 		$('<div class="own_image_upload_container"><hr><button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>').appendTo("#own_images_container");
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels()" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
 	}
+
 	imgDiv = $(".own_images")[n];
 
 	init_own_image_files();
@@ -3148,12 +3119,17 @@ function add_new_category () {
 	show_or_hide_hide_delete_category();
 
 	last_shape_layer_warning();
+
+	rename_labels();
 }
 
 function rename_labels () {
+	labels = [];
 	$(".own_image_label").each(function (i, x) {
-		labels[i] = $(x).val();
+		labels.push($(x).val());
 	});
+
+	update_python_code(1);
 }
 
 function show_or_hide_hide_delete_category () {

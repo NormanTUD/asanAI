@@ -1,20 +1,23 @@
 "use strict";
 
 async function get_label_data () {
-	let imageData = await get_image_data(1);
+	if($("#data_origin").val() == "own") {
+	} else {
+		let imageData = await get_image_data(1);
 
-	labels = [];
+		labels = [];
 
-	var category_counter = 0;
-	var keys = [];
+		var category_counter = 0;
+		var keys = [];
 
-	for (let [key, value] of Object.entries(imageData)) {
-		keys.push(key);
-		for (var i = 0; i < imageData[key].length; i++) {
-			var item = imageData[key][i];
+		for (let [key, value] of Object.entries(imageData)) {
+			keys.push(key);
+			for (var i = 0; i < imageData[key].length; i++) {
+				var item = imageData[key][i];
+			}
+			labels[category_counter] = key;
+			category_counter++;
 		}
-		labels[category_counter] = key;
-		category_counter++;
 	}
 }
 

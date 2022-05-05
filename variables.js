@@ -921,3 +921,5 @@ var demo_interval = undefined;
 var current_layer_status_hash = "";
 
 var weights_files = {};
+
+var redo_labels = true;
