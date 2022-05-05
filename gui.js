@@ -2203,6 +2203,10 @@ async function init_dataset () {
 	$("#history").html("");
 	$("#memory").html("");
 
+	$("#data_origin").val("default").trigger("change");
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
+
 	save_current_status();
 	init_weight_file_list();
 }
@@ -2332,8 +2336,6 @@ async function init_dataset_category () {
 		$('#data_origin option[value="default"]').prop('disabled', false);
 	});
 
-	$("#data_origin").val("default").trigger("change");
-
 	init_download_link();
 	init_categories();
 	init_weight_file_list();
@@ -2346,6 +2348,11 @@ async function init_dataset_category () {
 	$("#tfvis_tab_label").parent().hide();
 
 	is_setting_config = original_is_settings_config;
+
+	$("#data_origin").val("default").trigger("change");
+
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
 
 	updated_page();
 }

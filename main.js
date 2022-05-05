@@ -134,8 +134,7 @@ function init_page_contents (chosen_dataset) {
 	disable_show_python_and_create_model = false;
 
 	if(chosen_dataset) {
-		$("#dataset").val(chosen_dataset);
-		$("#dataset").trigger("change");
+		$("#dataset").val(chosen_dataset).trigger("change");
 	}
 
 	set_mode();
@@ -199,8 +198,11 @@ $(document).ready(function() {
 	init_set_all_options();
 	init_categories();
 
-	//$("#dataset_category").val("image");
-	$("#dataset_category").val("classification");
+	if(get_get("dataset_category")) {
+		$("#dataset_category").val(get_get("dataset_category"));
+	} else {
+		$("#dataset_category").val("image");
+	}
 
 	init_page_contents();
 
