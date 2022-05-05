@@ -1076,6 +1076,8 @@ async function update_python_code (dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
+	python_code += "# sudo pip3 install tensorflowjs\n";
+	python_code += "# sudo pip3 install scikit-image\n";
 	python_code += "# Use this command to convert a downloaded tensorflow-js-model first:\n";
 	python_code += "# tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
