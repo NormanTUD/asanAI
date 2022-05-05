@@ -302,6 +302,7 @@ body {
 
 #summary {
 	overflow: auto;
+	text-align: center;
 }
 
 .remove_layer {

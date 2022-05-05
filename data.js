@@ -221,21 +221,6 @@ async function get_xs_and_ys () {
 		log("INVALID OPTION " + $("#data_origin").val());
 	}
 
-	/*
-	if($("#jump_to_training_tab").is(":checked")) {
-		$('a[href="#tfvis_tab"]').click();
-		$("#tfvis_tab").children().each(function (a, b) {
-		    if($(b).is(":visible") && b.localName == "ul") {
-			$($(b).children().children()).each(function (c, d) {
-			    if($(d).is(":visible") && d.localName == "a") {
-				$(d).click();
-			    }
-			});
-		    }
-		})
-	}
-	*/
-
 	var max_number_values = parseInt($("#max_number_values").val());
 	var loss = $("#loss").val();
 
@@ -300,9 +285,15 @@ async function get_xs_and_ys () {
 			
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
-		//$("#reset_data").show();
 	} else {
 		if($("#data_type").val() == "image") {
+			Swal.fire({
+				title: 'Generating tensors from images...',
+				html: "This may take some time, but your computer is working!",
+				timer: 2000,
+				showConfirmButton: false
+			});
+
 			var category_counter = $(".own_image_label").length;
 			var keys = [];
 			var x = [];
