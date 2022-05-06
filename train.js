@@ -233,7 +233,7 @@ async function run_neural_network () {
 	}
 
 	try {
-		compile_model();
+		await compile_model();
 	} catch (e) {
 		alert("Compiling model failed: " + e);
 		return;
