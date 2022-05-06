@@ -269,10 +269,18 @@ async function run_neural_network () {
 
 		try {
 			add_layer_debuggers();
-			log("BEFORE TRAINING NUMTENSORS: " + tf.memory()["numTensors"]);
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
-			log(h);
-			log("AFTER TRAINING NUMTENSORS: " + tf.memory()["numTensors"]);
+
+			var trained_weights = await get_weights_as_string();
+
+			reset_data();
+
+			tf.disposeVariables();
+
+			model = await create_model();
+			await compile_model();
+
+			set_weights_from_string(trained_weights, 1, 1);
 
 			dispose(xs_and_ys["x"]);
 			dispose(xs_and_ys["y"]);
