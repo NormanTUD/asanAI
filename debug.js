@@ -1,5 +1,10 @@
 "use strict";
 
+function logt(msg) {
+	console.log(msg);
+	console.trace();
+}
+
 function log (msg) {
 	//console.trace();
 	console.log(msg);

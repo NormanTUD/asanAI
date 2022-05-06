@@ -241,6 +241,7 @@ function get_model_structure() {
 			header("ACHTUNG!!! IS EMPTY!!!");
 			log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
 			log($(layer_type).val());
+			console.trace();
 		}
 	}
 

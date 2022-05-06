@@ -492,26 +492,30 @@ function get_layer_identification (i) {
 		return;
 	}
 
-	var object_keys = Object.keys(model.layers[i]);
-	var new_str = "";
+	if(model.layers[i] && Object.keys(model.layers[i]).length >= 1) {
+		var object_keys = Object.keys(model.layers[i]);
+		var new_str = "";
 
-	if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
-		new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
+		if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
+			new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
 
-	} else if(object_keys.includes("filters")) {
-		new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
+		} else if(object_keys.includes("filters")) {
+			new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
 
-	} else if(object_keys.includes("units")) {
-		new_str = "Units:&nbsp;" + model.layers[i]["units"];
+		} else if(object_keys.includes("units")) {
+			new_str = "Units:&nbsp;" + model.layers[i]["units"];
 
-	} else if(object_keys.includes("rate")) {
-		new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
+		} else if(object_keys.includes("rate")) {
+			new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
 
-	} else if(object_keys.includes("poolSize")) {
-		new_str = model.layers[i].poolSize.join("x");
+		} else if(object_keys.includes("poolSize")) {
+			new_str = model.layers[i].poolSize.join("x");
+		}
+
+		return new_str;
 	}
 
-	return new_str;
+	return "";
 }
 
 function identify_layers (numberoflayers) {

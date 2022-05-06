@@ -91,7 +91,7 @@ function init_set_all_options () {
 	});
 }
 
-function init_page_contents (chosen_dataset) {
+async function init_page_contents (chosen_dataset) {
 	global_disable_auto_enable_valid_layer_types = true;
 	disable_show_python_and_create_model = true;
 
@@ -128,7 +128,9 @@ function init_page_contents (chosen_dataset) {
 		$("#train_data_set_group").show();
 	}
 
-	set_config();
+	await set_config();
+	logt("is_setting_config = false;");
+	is_setting_config = false;
 
 	global_disable_auto_enable_valid_layer_types = false;
 	disable_show_python_and_create_model = false;
@@ -138,6 +140,11 @@ function init_page_contents (chosen_dataset) {
 	}
 
 	set_mode();
+
+	rename_tmp_onchange();
+
+	updated_page();
+
 }
 
 function dataset_already_there (dataset_name) {
@@ -192,7 +199,7 @@ function fix_graph_color () {
 	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
 }
 
-$(document).ready(function() {
+$(document).ready(async function() {
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 	init_tabs();
 	init_set_all_options();
@@ -204,7 +211,7 @@ $(document).ready(function() {
 		$("#dataset_category").val("image");
 	}
 
-	init_page_contents();
+	await init_page_contents();
 
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
 		if(!window.FileReader) return;
