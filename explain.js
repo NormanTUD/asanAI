@@ -122,7 +122,7 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	return drew_something;
 }
 
-function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick) {
 	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
 
 	var drew_something = false;
@@ -132,6 +132,9 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
 
 	$(canvas).attr("width", width * pixel_size);
 	$(canvas).attr("height", height * pixel_size);
+	if(onclick) {
+		$(canvas).attr("onclick", onclick);
+	}
 
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();    
@@ -874,6 +877,14 @@ async function draw_maximally_activated_layer (layer, type) {
 	document.title = original_title;
 }
 
+async function predict_maximally_activated (item, force_category) {
+	var results = await predict(item, force_category, 1);
+	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
+		$(item).next().remove();
+	}
+	$(item).after("<pre>" + results + "</pre>");
+}
+
 async function draw_maximally_activated_neuron (layer, neuron) {
 	var current_input_shape = get_input_shape();
 
@@ -906,7 +917,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			var data = full_data["image"][0];
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-			var res = draw_grid(canvas, 1, data, 1, 0);
+			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image', 0)");
 
 			if(res) {
 				$("#maximally_activated_content").append(canvas);

@@ -106,10 +106,14 @@ function _get_category () {
 	return category;
 }
 
-async function predict (item) {
+async function predict (item, force_category, dont_write_to_predict_tab) {
 	enable_everything();
 
-	var category = _get_category();
+	var category = "";
+	if(force_category) {
+		category = force_category;
+	}
+	category = _get_category();
 
 	$("#prediction").show();
 	$("#prediction").html("");
@@ -122,6 +126,8 @@ async function predict (item) {
 		model = await train_neural_network();
 	}
 	*/
+
+	var str = "";
 
 	tf.engine().startScope();
 	try {
@@ -149,9 +155,8 @@ async function predict (item) {
 
 		log(predictions);
 
-		if(["classification", "own"].includes(category) && labels.length == 0) {
-			var str = "[" + predictions.join(", ") + "]";
-			$("#prediction").append(str);
+		if(["classification"].includes(category) && labels.length == 0) {
+			str = "[" + predictions.join(", ") + "]";
 		} else {
 			if(predictions.length) {
 				var max_i = 0;
@@ -172,13 +177,17 @@ async function predict (item) {
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i];
 					var probability = predictions[i];
-					var str = label + ": " + probability + "\n";
+					var this_str = label + ": " + probability + "\n";
 					if(i == max_i) {
-						str = "<b>" + str + "</b>";
+						str = str + "<b>" + this_str + "</b>";
+					} else {
+						str = str + this_str;
 					}
-					$("#prediction").append(str);
 				}
 			}
+		}
+		if(!dont_write_to_predict_tab) {
+			$("#prediction").append(str);
 		}
 		$("#predict_error").hide();
 		$("#predict_error").html("");
@@ -189,6 +198,9 @@ async function predict (item) {
 		$("#predict_error").html(e);
 	}
 	tf.engine().endScope();
+
+	log(str);
+	return str;
 }
 
 function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
