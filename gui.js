@@ -1049,6 +1049,7 @@ async function change_width_or_height (name, inputshape_index) {
 		eval(name + " = " + value);
 		layer_structure_cache = null;
 		model = await create_model();
+		is_setting_config = false;
 		updated_page();
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
@@ -1257,6 +1258,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	rename_tmp_onchange();
 
 	if(is_setting_config) {
+		logt("FUCK");
 		return;
 	}
 
@@ -2142,6 +2144,8 @@ async function set_config (index) {
 	get_label_data();
 
 	load_weights(1);
+
+	is_setting_config = false;
 
 	await updated_page();
 }
