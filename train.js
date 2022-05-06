@@ -271,6 +271,9 @@ async function run_neural_network () {
 			add_layer_debuggers();
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
 
+			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
+			 * then restore the model with the saved weights. Not pretty, but it works...  */
+
 			var trained_weights = await get_weights_as_string();
 
 			reset_data();
@@ -281,6 +284,8 @@ async function run_neural_network () {
 			await compile_model();
 
 			set_weights_from_string(trained_weights, 1, 1);
+
+			/* Memory leak hack end */
 
 			dispose(xs_and_ys["x"]);
 			dispose(xs_and_ys["y"]);
