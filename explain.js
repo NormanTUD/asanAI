@@ -824,7 +824,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		console.warn("Unknown layer " + layer);
 	}
 
-	$("#maximally_activated").append("<h2>Layer " + layer + "</h2>")
+	$("#maximally_activated_content").append("<h2>Layer " + layer + "</h2>")
 
 	var times = [];
 
@@ -906,10 +906,10 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			var data = full_data["image"][0];
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-			var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
+			var res = draw_grid(canvas, 1, data, 1, 0);
 
 			if(res) {
-				$("#maximally_activated").append(canvas);
+				$("#maximally_activated_content").append(canvas);
 				$("#maximally_activated_label").parent().show();
 				$("#maximally_activated_label").show().click();
 				$("[href='#maximally_activated']").click()

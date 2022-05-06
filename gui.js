@@ -1028,10 +1028,6 @@ function change_kernel_pixel_size () {
 	kernel_pixel_size = parseInt($("#kernel_pixel_size").val());
 }
 
-function change_max_activation_pixel_size () {
-	max_activation_pixel_size = parseInt($("#max_activation_pixel_size").val());
-}
-
 function change_pixel_size () {
 	pixel_size = parseInt($("#pixel_size").val());
 }
@@ -2151,7 +2147,7 @@ function show_or_hide_load_weights () {
 }
 
 async function init_dataset () {
-	$("#maximally_activated").html("");
+	$("#maximally_activated_content").html("");
 	$("#maximally_activated_label").parent().hide();
 	$("#visualization_tab_label").click();
 	$("#fcnn_tab_label").click();
@@ -2191,7 +2187,7 @@ async function get_number_of_categories () {
 }
 
 function chose_dataset() {
-	$("#maximally_activated").html("")
+	$("#maximally_activated_content").html("")
 	$("#maximally_activated_label").parent().hide();
 	$("#visualization_tab_label").click();
 	$("#fcnn_tab_label").click();
@@ -2228,7 +2224,7 @@ function init_weight_file_list () {
 }
 
 async function init_dataset_category () {
-	$("#maximally_activated").html("");
+	$("#maximally_activated_content").html("");
 	$("#maximally_activated_label").parent().hide();
 	
 	var original_is_settings_config = is_setting_config;
@@ -3674,4 +3670,19 @@ function human_readable_time (seconds) {
 
 function delete_own_image (elem) {
 	$(elem).parent().remove();
+}
+
+function larger_maximally_activated_neurons () {
+	$(".layer_image").css({height: '+=5px', width: '+=5px'})
+}
+
+function smaller_maximally_activated_neurons () {
+	$(".layer_image").css({height: '-=5px', width: '-=5px'})
+	if($(".layer_image").css("width") == "0px") {
+		$(".layer_image").css({height: 'auto', width: 'auto'})
+	}
+}
+
+function reset_maximally_activated_neurons () {
+	$(".layer_image").css({height: 'auto', width: 'auto'})
 }

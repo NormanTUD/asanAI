@@ -561,10 +561,6 @@
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
-										<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
-											<td>Pixel size:</td>
-											<td><input type="number" min="1" max="100" value="5" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
-										</tr>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations:</td>
 											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
@@ -862,6 +858,11 @@
 								</div>
 
 								<div id="maximally_activated" class="maximally_activated_class">
+									<br>
+									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
+									<button onclick="larger_maximally_activated_neurons()">Larger</button>
+									<button onclick="reset_maximally_activated_neurons()">Reset</button>
+									<div id="maximally_activated_content"></div>
 								</div>
 
 								<div id="visual_help_tab">

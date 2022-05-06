@@ -43,7 +43,6 @@ var global_disable_auto_enable_valid_layer_types = true;
 var throw_compile_exception = false;
 var model_is_trained = false;
 var disable_layer_debuggers = 0;
-var max_activation_pixel_size = 10;
 var pixel_size = 2;
 var kernel_pixel_size = 10;
 var model = null;
