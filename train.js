@@ -285,11 +285,11 @@ async function run_neural_network () {
 
 			set_weights_from_string(trained_weights, 1, 1);
 
-			/* Memory leak hack end */
-
 			dispose(xs_and_ys["x"]);
 			dispose(xs_and_ys["y"]);
 			xs_and_ys = null;
+
+			/* Memory leak hack end */
 
 			model_is_trained = true;
 
