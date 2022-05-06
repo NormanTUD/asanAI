@@ -226,7 +226,7 @@ async function run_neural_network () {
 	}
 
 	try {
-		model = create_model(model);
+		model = await create_model(model);
 	} catch (e) {
 		alert("Creating model failed: " + e);
 		return;
