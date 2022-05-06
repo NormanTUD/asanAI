@@ -370,7 +370,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 			}
 
-			str += "<select class='input_field input_data " + classname + "' onchange='" + onchange_text + "'>";
+			str += "<select class='input_field input_data " + classname + "' _onchange='" + onchange_text + "'>";
 			for (const [key, value] of Object.entries(data)) {
 				str += '<option value="' + key + '">' + value + '</option>';
 			}
@@ -392,7 +392,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  onchange="updated_page()" onkeyup="updated_page(null, null, this)" />';
+			str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />';
 		} else if(type == "number") {
 			str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -412,9 +412,9 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				str += " value=" + data["value"] + " ";
 			}
 
-			str += " onchange='updated_page()' onkeyup='updated_page(null, null, this)' />";
+			str += " _onchange='updated_page()' onkeyup='updated_page(null, null, this)' />";
 		} else if(type == "checkbox") {
-			str += "<input type='checkbox' class='input_data " + classname + "' onchange='updated_page(null, null, this);' ";
+			str += "<input type='checkbox' class='input_data " + classname + "' _onchange='updated_page(null, null, this);' ";
 			if("status" in data && data["status"] == "checked") {
 				str += " checked='CHECKED' ";
 			}
@@ -1040,7 +1040,7 @@ function change_width () {
 	change_width_or_height("width", 0);
 }
 
-function change_width_or_height (name, inputshape_index) {
+async function change_width_or_height (name, inputshape_index) {
 	if(["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
 		var inputShape = get_input_shape();
@@ -1048,7 +1048,7 @@ function change_width_or_height (name, inputshape_index) {
 		set_input_shape("[" + inputShape.join(", ") + "]");
 		eval(name + " = " + value);
 		layer_structure_cache = null;
-		model = create_model();
+		model = await create_model();
 		updated_page();
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
@@ -1254,10 +1254,8 @@ async function get_shape_from_array (array) {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
-	var new_layers_container_md5 = await get_layers_container_md5();
-	if(!layers_container_md5) {
-		layers_container_md5 = new_layers_container_md5;
-	}
+	rename_tmp_onchange();
+
 	if(is_setting_config) {
 		return;
 	}
@@ -1270,19 +1268,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	try {
-		var old_weights = eval(await get_weights_as_string());
-		compile_model();
-		var new_weights = eval(await get_weights_as_string());
+		await compile_model();
 
-		if(layers_container_md5 == new_layers_container_md5) {
-			var old_shape_string = (await get_shape_from_array(old_weights)).toString();
-			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
-			if(old_shape_string == new_shape_string) {
-				set_weights_from_string(JSON.stringify(old_weights), 0, 1);
-			}
-		} else {
-			layers_container_md5 = new_layers_container_md5;
-		}
+		console.trace();
 	} catch (e) {
 		log("There was an error compiling the model: " + e);
 	};
@@ -1501,7 +1489,7 @@ function init_numberoflayers(val) {
 	show_layers(val);
 
 	number_of_initialized_layers = val;
-	updated_page();
+	//updated_page();
 }
 
 function get_option_for_layer_by_type (nr) {
@@ -1581,7 +1569,7 @@ function set_option_for_layer(thisitem) {
 		}
 	})
 
-	updated_page(null, 1);
+	//updated_page(null, 1);
 }
 
 function set_option_for_layer_by_layer_nr (nr) {
@@ -1603,7 +1591,7 @@ function set_option_for_layer_by_layer_nr (nr) {
 	var current_type = $($(".layer_type")[0]).val();
 
 	write_descriptions();
-	updated_page(null, 1);
+	//updated_page(null, 1);
 }
 
 function toggle_options (item) {
@@ -1613,7 +1601,7 @@ function toggle_options (item) {
 	write_descriptions();
 }
 
-function disable_invalid_layers_event (e, thisitem) {
+async function disable_invalid_layers_event (e, thisitem) {
 	assert(typeof(e) == "object", "disable_all_invalid_layers(e -> " + e + " is not an object but " + typeof(e));
 	assert(typeof(thisitem) == "object", "disable_all_invalid_layers(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
 
@@ -1622,31 +1610,31 @@ function disable_invalid_layers_event (e, thisitem) {
 
 	layer_nr = find_layer_number_by_element(thisitem);
 
-	enable_valid_layer_types(layer_nr);
+	await enable_valid_layer_types(layer_nr);
 
 	//hide_empty_groups(layer_nr);
 }
 
-function disable_all_invalid_layers () {
+async function disable_all_invalid_layers () {
 	document.body.style.pointerEvents = "none";
-	disable_all_invalid_layers_from(0);
+	await disable_all_invalid_layers_from(0);
 	document.body.style.pointerEvents = "";
 }
 
-function disable_all_invalid_layers_from (start) {
+async function disable_all_invalid_layers_from (start) {
 	assert(typeof(start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof(start));
 
 	favicon_spinner();
 	for (var i = start; i < get_numberoflayers(); i++) {
-		enable_valid_layer_types(i);
+		await enable_valid_layer_types(i);
 	}
 	favicon_default();
 }
 
-function enable_valid_layer_types (layer_nr) {
+async function enable_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof(layer_nr));
 
-	var valid_layer_types = get_valid_layer_types(layer_nr);
+	var valid_layer_types = await get_valid_layer_types(layer_nr);
 
 	var options = $($($('.layer_type')[layer_nr]).children().children());
 
@@ -1803,7 +1791,7 @@ function sortable_layers_container (layers_container) {
 			var prev_throw_compile_exception = throw_compile_exception;
 			throw_compile_exception = true;
 			try {
-				compile_model();
+				await compile_model();
 				error_div.html("");
 				error_div.parent().hide();
 			} catch (e) {
@@ -1811,13 +1799,12 @@ function sortable_layers_container (layers_container) {
 					$("#layers_container").sortable('cancel');
 					alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
 					try {
-						compile_model();
+						await compile_model();
 					} catch (e) {
 						log(e);
 					};
 					error_div.html("");
 					error_div.parent().hide();
-					compile_model();
 				} else {
 					error_div.html(e);
 					error_div.parent().show();
@@ -2028,7 +2015,7 @@ async function set_config (index) {
 			set_loss(config["loss"]);
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
-			
+
 			if(config["width"]) {
 				$("#width").val(config["width"]);
 				change_width();
@@ -2138,16 +2125,12 @@ async function set_config (index) {
 
 	disable_show_python_and_create_model = false;
 
-	model = create_model(model);
-	compile_model();
+	model = await create_model(model);
+	await compile_model();
 
 	disable_all_non_selected_layer_types();
 
 	write_descriptions();
-
-	is_setting_config = false;
-
-	await updated_page();
 
 	if(!index) {
 		if(!disabling_saving_status) {
@@ -2213,7 +2196,7 @@ async function get_number_of_categories () {
 	return num;
 }
 
-function chose_dataset() {
+async function chose_dataset() {
 	$("#maximally_activated_content").html("")
 	$("#maximally_activated_label").parent().hide();
 	$("#visualization_tab_label").click();
@@ -2232,7 +2215,8 @@ function chose_dataset() {
 
 	show_or_hide_load_weights()
 	model_is_trained=false;
-	set_config();
+	await set_config();
+	is_setting_config = false;
 
 	$("#predict_error").html("");
 }
@@ -2345,7 +2329,7 @@ async function init_dataset_category () {
 	$("#visualization_tab_label").click();
 	$("#fcnn_tab_label").click();
 
-	updated_page();
+	//updated_page();
 }
 
 function clean_gui () {
@@ -2605,6 +2589,7 @@ async function undo () {
 		disabling_saving_status = true;
 
 		await set_config(this_index);
+		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
 	}
@@ -2613,7 +2598,7 @@ async function undo () {
 	set_shown_advanced(shown);
 }
 
-function redo () {
+async function redo () {
 	var shown = get_shown_advanced();
 	if(future_state_stack.length) {
 		$(":focus").blur();
@@ -2625,7 +2610,8 @@ function redo () {
 		var old_disabling_saving_status = disabling_saving_status;
 		disabling_saving_status = true;
 
-		set_config(this_index);
+		await set_config(this_index);
+		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
 	}
@@ -2697,7 +2683,7 @@ function closePopup(name) {
 	el.style.display = 'none';
 }
 
-function upload_model(evt) {
+async function upload_model(evt) {
 	let files = evt.target.files;
 
 	let f = files[0];
@@ -2713,7 +2699,8 @@ function upload_model(evt) {
 
 	reader.readAsText(f);
 
-	set_config();
+	await set_config();
+	is_setting_config = false;
 }
 
 async function upload_weights(evt) {
@@ -3488,7 +3475,7 @@ async function set_default_input_shape () {
 
 			set_input_shape(default_input_shape);
 
-			compile_model();
+			await compile_model();
 
 			identify_layers(get_numberoflayers());
 
@@ -3727,4 +3714,12 @@ async function get_layers_container_md5() {
 	})
 
 	return md5(layers_container_str);
+}
+
+function rename_tmp_onchange() {
+	$("*[_onchange]").each(function (i, x) {
+		var elem = $(this);
+		elem.attr("onchange", elem.attr('_onchange'));
+		elem.removeAttr('_onchange');
+	})
 }

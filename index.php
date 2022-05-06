@@ -1303,7 +1303,7 @@
 								this_layer_arch["numberOfSquares"] = layer_config["filters"];
 								push = 1;
 							} else if("poolSize" in layer_config) {
-								var output_size_this_layer = output_size_at_layer(get_input_shape(), i);
+								var output_size_this_layer = await output_size_at_layer(get_input_shape(), i);
 								this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
 								this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
 								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
