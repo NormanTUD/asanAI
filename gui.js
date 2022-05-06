@@ -1244,19 +1244,42 @@ function hide_no_conv_stuff () {
 	}
 }
 
-function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
+async function get_shape_from_array (array) {
+	tf.engine().startScope();
+	var x = tf.tensor(array);
+	var shape = x.shape;
+	tf.engine().endScope();
+
+	return shape;
+}
+
+async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
+	if(!layers_container_md5) {
+		layers_container_md5 = get_layers_container_md5();
+	}
 	if(is_setting_config) {
 		return;
 	}
-	//console.trace();
+
 	var numberoflayers = get_numberoflayers();
 	show_or_hide_bias_initializer(numberoflayers);
+
 	if(disable_show_python_and_create_model) {
 		return;
 	}
 
 	try {
+		var old_weights = eval(await get_weights_as_string());
 		compile_model();
+		var new_weights = eval(await get_weights_as_string());
+
+		if(layers_container_md5 == get_layers_container_md5()) {
+			if((await get_shape_from_array(old_weights)).toString() == (await get_shape_from_array(new_weights)).toString()) {
+				set_weights_from_string(JSON.stringify(old_weights), 0, 1);
+			}
+		} else {
+			layers_container_md5 = get_layers_container_md5();
+		}
 	} catch (e) {
 		log("There was an error compiling the model: " + e);
 	};
@@ -1671,7 +1694,7 @@ function option_for_layer (nr) {
 	return str;
 }
 
-function remove_layer (item) {
+async function remove_layer (item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	var number_of_layers_element = document.getElementById("numberoflayers");
@@ -1682,7 +1705,7 @@ function remove_layer (item) {
 		layer_structure_cache = null;
 		number_of_layers_element.value = old_value - 1;
 
-		updated_page();
+		await updated_page();
 		disable_all_non_selected_layer_types();
 
 		if(get_numberoflayers() - 1 == 0) {
@@ -1719,7 +1742,7 @@ function get_element_xpath (element) {
 	return segs(element).join('/');
 }
 
-function add_layer (item) {
+async function add_layer (item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	layer_structure_cache = null;
@@ -1747,7 +1770,7 @@ function add_layer (item) {
 	}
 	$($($($(".layer_setting")[real_nr + 1])).find(".layer_type")[0]).val(new_layer_type);
 
-	updated_page();
+	await updated_page();
 
 	write_descriptions();
 
@@ -1773,7 +1796,7 @@ function sortable_layers_container (layers_container) {
 			ui.placeholder.css('visibility', 'visible');
 			$(".descriptions_of_layers").hide();
 		},
-		update: function(e, ui){
+		update: async function(e, ui){
 			var prev_throw_compile_exception = throw_compile_exception;
 			throw_compile_exception = true;
 			try {
@@ -1800,7 +1823,7 @@ function sortable_layers_container (layers_container) {
 			throw_compile_exception = prev_throw_compile_exception;
 
 			$(".descriptions_of_layers").show();
-			updated_page();
+			await updated_page();
 			write_descriptions();
 		},
 		axis: 'y',
@@ -2121,7 +2144,8 @@ async function set_config (index) {
 
 	is_setting_config = false;
 
-	updated_page();
+	await updated_page();
+
 	if(!index) {
 		if(!disabling_saving_status) {
 			save_current_status();
@@ -2131,6 +2155,8 @@ async function set_config (index) {
 	get_label_data();
 
 	load_weights(1);
+
+	layers_container_md5 = get_layers_container_md5();
 }
 
 function show_or_hide_load_weights () {
@@ -2734,7 +2760,7 @@ var handle_x_file = async function (evt) {
 			}
 		});
 	}
-	updated_page();
+	await updated_page();
 
 	enable_start_training_custom_tensors();
 }
@@ -2744,7 +2770,7 @@ var handle_y_file = async function (evt) {
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
 	$("#y_shape").val(y_shape);
-	updated_page();
+	await updated_page();
 
 	enable_start_training_custom_tensors();
 }
@@ -2884,10 +2910,10 @@ function disable_hidden_chardin_entries () {
 
 }
 
-function update_input_shape () {
+async function update_input_shape () {
 	set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
-	updated_page();
+	await updated_page();
 	Prism.highlightAll();
 }
 
@@ -3689,4 +3715,8 @@ function reset_maximally_activated_neurons () {
 
 function delete_maximally_activated_predictions () {
 	$(".maximally_activated_predictions").remove();
+}
+
+function get_layers_container_md5() {
+	return md5($("#layers_container").html());
 }

@@ -312,6 +312,8 @@ function create_model (old_model, fake_model_structure) {
 		return;
 	}
 
+	console.trace();
+
 	var new_model = tf.sequential();
 
 	var model_structure = fake_model_structure; 
@@ -792,18 +794,21 @@ function set_weights_from_json_object (json, dont_show_weights, no_error) {
 	return true;
 }
 
-async function set_weights_from_string (string, no_error) {
+async function set_weights_from_string (string, no_error, no_warning) {
 	var json = JSON.parse(string);
 
-	return set_weights_from_json_object(json, 0, no_error);
+	return set_weights_from_json_object(json, no_warning, no_error);
 }
 
-async function get_weights_as_string () {
+async function get_weights_as_string (m) {
+	if(!m) {
+		m = model;
+	}
 	if(!model) {
 		return false;
 	}
 
-	var weights = await model.getWeights();
+	var weights = await m.getWeights();
 
 	var weights_array = [];
 
@@ -897,9 +902,12 @@ function get_current_chosen_object_default_weights_string () {
 	return weights_files[weights_file];
 }
 
-async function get_weights_shape (weights_as_string) {
+async function get_weights_shape (weights_as_string, m) {
+	if(!m) {
+		m = model;
+	}
 	if(weights_as_string === undefined) {
-		weights_as_string = await get_weights_as_string();
+		weights_as_string = await get_weights_as_string(m);
 	}
 	var weights_array = eval(weights_as_string);
 
