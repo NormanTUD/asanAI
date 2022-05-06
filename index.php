@@ -602,7 +602,7 @@
 								</tr>
 								<tr>
 									<td>Memory Debugger:</td>
-									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" /></td>
+									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" class="show_data" id="memory_debugger" /></td>
 								</tr>
 							</table>
 						</div>
@@ -862,6 +862,7 @@
 									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
 									<button onclick="larger_maximally_activated_neurons()">Larger</button>
 									<button onclick="reset_maximally_activated_neurons()">Reset</button>
+									<!--<button onclick="predict_all_maximally_activated_neurons()">Predict all visible images</button>-->
 									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
 									<div id="maximally_activated_content"></div>
 								</div>

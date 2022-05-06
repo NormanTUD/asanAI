@@ -921,7 +921,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			var data = full_data["image"][0];
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image', 0)");
+			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')");
 
 			if(res) {
 				$("#maximally_activated_content").append(canvas);

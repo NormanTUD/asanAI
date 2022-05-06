@@ -375,6 +375,7 @@ function url_to_tf (url) {
 				resizeNearestNeighbor([height, width]).
 				toFloat().
 				expandDims();
+			dispose(tf_img);
 
 			if($("#divide_by").val() != 1) {
 				resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));

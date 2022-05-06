@@ -238,11 +238,16 @@ async function run_neural_network () {
 		alert("Compiling model failed: " + e);
 		return;
 	}
+
+	tf.engine().startScope();
+
+	var xs_and_ys;
+
 	try {
 		show_info_pre_run();
 
 		disable_everything();
-		var xs_and_ys = await get_xs_and_ys();
+		xs_and_ys = await get_xs_and_ys();
 
 	} catch (e) {
 		write_error(e);
@@ -265,6 +270,10 @@ async function run_neural_network () {
 		try {
 			add_layer_debuggers();
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+
+			dispose(xs_and_ys["x"]);
+			dispose(xs_and_ys["y"]);
+			xs_and_ys = null;
 
 			model_is_trained = true;
 
@@ -297,4 +306,6 @@ async function run_neural_network () {
 	}
 
 	reset_data();
+
+	tf.engine().endScope();
 }

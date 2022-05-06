@@ -3708,6 +3708,12 @@ function delete_maximally_activated_predictions () {
 	$(".maximally_activated_predictions").remove();
 }
 
+async function predict_all_maximally_activated_neurons () {
+	await $(".layer_image").each(async function (i,x) { 
+		await predict_maximally_activated(x, 'image');
+	});
+}
+
 async function get_layers_container_md5() {
 	await delay(1);
 	var layers_container_str = "";
