@@ -312,8 +312,6 @@ function create_model (old_model, fake_model_structure) {
 		return;
 	}
 
-	console.trace();
-
 	var new_model = tf.sequential();
 
 	var model_structure = fake_model_structure; 
