@@ -3686,3 +3686,7 @@ function smaller_maximally_activated_neurons () {
 function reset_maximally_activated_neurons () {
 	$(".layer_image").css({height: 'auto', width: 'auto'})
 }
+
+function delete_maximally_activated_predictions () {
+	$(".maximally_activated_predictions").remove();
+}

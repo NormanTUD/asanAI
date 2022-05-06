@@ -563,7 +563,7 @@
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations:</td>
-											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;" /></td>
 										</tr>
 										<tr>
 											<td>Randomizer limits:</td>
@@ -862,6 +862,7 @@
 									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
 									<button onclick="larger_maximally_activated_neurons()">Larger</button>
 									<button onclick="reset_maximally_activated_neurons()">Reset</button>
+									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
 									<div id="maximally_activated_content"></div>
 								</div>
 

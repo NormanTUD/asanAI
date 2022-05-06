@@ -882,7 +882,7 @@ async function predict_maximally_activated (item, force_category) {
 	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
 		$(item).next().remove();
 	}
-	$(item).after("<pre>" + results + "</pre>");
+	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {
