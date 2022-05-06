@@ -327,3 +327,7 @@ body {
 .download_img {
 	margin: 1px;
 }
+
+.max_prediction {
+	color: green;
+}

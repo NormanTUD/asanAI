@@ -179,7 +179,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					var probability = predictions[i];
 					var this_str = label + ": " + probability + "\n";
 					if(i == max_i) {
-						str = str + "<b>" + this_str + "</b>";
+						str = str + "<b class='max_prediction'>" + this_str + "</b>";
 					} else {
 						str = str + this_str;
 					}
@@ -199,7 +199,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	}
 	tf.engine().endScope();
 
-	log(str);
 	return str;
 }
 
