@@ -269,7 +269,10 @@ async function run_neural_network () {
 
 		try {
 			add_layer_debuggers();
+			log("BEFORE TRAINING NUMTENSORS: " + tf.memory()["numTensors"]);
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+			log(h);
+			log("AFTER TRAINING NUMTENSORS: " + tf.memory()["numTensors"]);
 
 			dispose(xs_and_ys["x"]);
 			dispose(xs_and_ys["y"]);
@@ -283,6 +286,8 @@ async function run_neural_network () {
 			$("#predict_error").html("");
 
 			show_info_after_run(h);
+
+			dispose(h);
 
 			enable_everything();
 			gui_not_in_training();

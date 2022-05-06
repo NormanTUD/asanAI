@@ -2200,6 +2200,7 @@ async function get_number_of_categories () {
 }
 
 async function chose_dataset() {
+	tf.disposeVariables();
 	$("#maximally_activated_content").html("")
 	$("#maximally_activated_label").parent().hide();
 	$("#visualization_tab_label").click();
@@ -2238,6 +2239,7 @@ function init_weight_file_list () {
 }
 
 async function init_dataset_category () {
+	tf.disposeVariables();
 	$("#maximally_activated_content").html("");
 	$("#maximally_activated_label").parent().hide();
 

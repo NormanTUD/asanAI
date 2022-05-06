@@ -449,7 +449,7 @@ function explain_error_msg () {
 		} else if(err.includes("texShape is undefined")) {
 			explanation = "Please check if any of the output-dimensions contain '0' and if so, try to minimize the dimensionality reduction so that all zeroes disappear.";
 		} else if(err.includes("info is undefined")) {
-			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.";
+			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.<br><br>This might also be caused by calling `tf.disposeVariables()` somewhere...";
 		} else if(err.includes("expects targets to be binary matrices")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
 		} else if(err.includes("numeric tensor, but got string tensor")) {
