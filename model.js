@@ -557,7 +557,6 @@ async function create_model (old_model, fake_model_structure) {
 	if(old_weights_string) {
 		if(layers_container_md5 == new_layers_container_md5) {
 			var new_weights_string = await get_weights_as_string(new_model);
-			log("layers_container_md5 and new_layers_container_md5 equal");
 			var old_weights = eval(old_weights_string);
 			var new_weights = eval(new_weights_string);
 
@@ -565,15 +564,10 @@ async function create_model (old_model, fake_model_structure) {
 			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
 
 			if(old_shape_string == new_shape_string) {
-				log("old_shape_string == new_shape_string");
 				if(old_weights_string != new_weights_string) {
 					log("Setting old weights...");
 					set_weights_from_string(JSON.stringify(old_weights), 0, 1, new_model);
-				} else {
-					log("Old weights and new weights are the same");
 				}
-			} else {
-				log("Shapes differ: " + old_shape_string + " vs. " + new_shape_string);
 			}
 		} else {
 			log("new_layers_container_md5 new!!!");

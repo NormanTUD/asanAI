@@ -129,7 +129,6 @@ async function init_page_contents (chosen_dataset) {
 	}
 
 	await set_config();
-	logt("is_setting_config = false;");
 	is_setting_config = false;
 
 	global_disable_auto_enable_valid_layer_types = false;

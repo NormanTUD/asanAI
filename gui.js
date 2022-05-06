@@ -1258,7 +1258,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	rename_tmp_onchange();
 
 	if(is_setting_config) {
-		logt("FUCK");
 		return;
 	}
 
@@ -1271,8 +1270,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	try {
 		await compile_model();
-
-		console.trace();
 	} catch (e) {
 		log("There was an error compiling the model: " + e);
 	};
@@ -1925,7 +1922,6 @@ async function set_config (index) {
 
 	prev_layer_data = [];
 
-	logt("is_setting_config = true;");
 	is_setting_config = true;
 
 	var config = await _get_configuration(index);
@@ -2246,7 +2242,6 @@ async function init_dataset_category () {
 	$("#maximally_activated_label").parent().hide();
 
 	var original_is_settings_config = is_setting_config;
-	logt("is_setting_config = true;");
 	is_setting_config = true;
 	x_file = null;
 	y_file = null;
@@ -2330,7 +2325,6 @@ async function init_dataset_category () {
 
 	$("#tfvis_tab_label").parent().hide();
 
-	logt("is_setting_config = " + original_is_settings_config);
 	is_setting_config = original_is_settings_config;
 
 	$("#data_origin").val("default").trigger("change");
@@ -2598,7 +2592,6 @@ async function undo () {
 		disabling_saving_status = true;
 
 		await set_config(this_index);
-		logt("is_setting_config = false;");
 		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
@@ -2621,7 +2614,6 @@ async function redo () {
 		disabling_saving_status = true;
 
 		await set_config(this_index);
-		logt("is_setting_config = false;");
 		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
@@ -2711,7 +2703,6 @@ async function upload_model(evt) {
 	reader.readAsText(f);
 
 	await set_config();
-	logt("is_setting_config = false;");
 	is_setting_config = false;
 }
 
