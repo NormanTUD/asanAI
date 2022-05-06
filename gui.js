@@ -1254,9 +1254,11 @@ async function get_shape_from_array (array) {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
+	var new_layers_container_md5 = get_layers_container_md5();
 	if(!layers_container_md5) {
-		layers_container_md5 = get_layers_container_md5();
+		layers_container_md5 = new_layers_container_md5;
 	}
+	log("old: " + layers_container_md5);
 	if(is_setting_config) {
 		return;
 	}
@@ -1273,12 +1275,14 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		compile_model();
 		var new_weights = eval(await get_weights_as_string());
 
-		if(layers_container_md5 == get_layers_container_md5()) {
+		if(layers_container_md5 == get_layers_container_md5) {
 			if((await get_shape_from_array(old_weights)).toString() == (await get_shape_from_array(new_weights)).toString()) {
 				set_weights_from_string(JSON.stringify(old_weights), 0, 1);
 			}
+			log("layers_container_md5 unchanged");
 		} else {
-			layers_container_md5 = get_layers_container_md5();
+			layers_container_md5 = new_layers_container_md5;
+			log("new: " + layers_container_md5);
 		}
 	} catch (e) {
 		log("There was an error compiling the model: " + e);
@@ -2155,8 +2159,6 @@ async function set_config (index) {
 	get_label_data();
 
 	load_weights(1);
-
-	layers_container_md5 = get_layers_container_md5();
 }
 
 function show_or_hide_load_weights () {
@@ -3718,5 +3720,11 @@ function delete_maximally_activated_predictions () {
 }
 
 function get_layers_container_md5() {
-	return md5($("#layers_container").html());
+	var layers_container_str = "";
+	$("#layers_container").find("select,input,checkbox").each(function (i, x) {
+		x = $(x);
+		layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
+	})
+
+	return md5(layers_container_str);
 }

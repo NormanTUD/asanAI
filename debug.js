@@ -1,8 +1,8 @@
 "use strict";
 
 function log (msg) {
-	console.log(msg);
 	//console.trace();
+	console.log(msg);
 }
 
 function header_error (msg) {
