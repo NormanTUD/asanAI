@@ -76,6 +76,8 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		enable_everything();
+
+		show_prediction();
 	}
 
 	write_descriptions();
@@ -171,7 +173,6 @@ function get_fit_data () {
 
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
-		show_prediction();
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
@@ -280,10 +281,10 @@ async function run_neural_network () {
 
 			tf.disposeVariables();
 
-			model = await create_model();
+			model = await create_model(null, get_model_structure(), 1);
 			await compile_model();
 
-			set_weights_from_string(trained_weights, 1, 1);
+			await set_weights_from_string(trained_weights, 1, 1);
 
 			dispose(xs_and_ys["x"]);
 			dispose(xs_and_ys["y"]);

@@ -89,6 +89,10 @@ async function compile_model () {
 		await _create_model();
 	}
 
+	if(!model) {
+		model = await create_model(null, get_model_structure());
+	}
+
 	try {
 		model_config_hash = get_model_config_hash();
 		var model_data = get_model_data();
@@ -299,15 +303,17 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-async function create_model (old_model, fake_model_structure) {
+async function create_model (old_model, fake_model_structure, force) {
 	var new_layers_container_md5 = await get_layers_container_md5();
-	if(!layers_container_md5) {
+	if(!layers_container_md5 || force) {
 		layers_container_md5 = new_layers_container_md5;
 	}
 
 	var new_current_status_hash = get_current_status_hash();
-	if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-		return old_model;
+	if(!force) {
+		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
+			return old_model;
+		}
 	}
 
 	var old_weights_string = false;
@@ -319,8 +325,10 @@ async function create_model (old_model, fake_model_structure) {
 
 	$(".warning_container").hide();
 
-	if(disable_show_python_and_create_model) {
-		return;
+	if(!force) {
+		if(disable_show_python_and_create_model) {
+			return;
+		}
 	}
 
 	var new_model = tf.sequential();
