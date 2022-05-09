@@ -22,6 +22,7 @@ function gui_not_in_training () {
 	}
 
 	enable_everything();
+	$(".show_after_training").show();
 }
 
 function reset_gui_before_training () {
