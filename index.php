@@ -838,6 +838,7 @@
 							<div id="training_data_tab">
 								<div id="percentage" class="reset_before_train_network"></div>
 								<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<button id="stop_downloading" onclick="stop_downloading_data=true" style="display: none">Stop downloading and start training</button>
 								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div class="" id="download_data" style="display: none"></div>
 							</div>

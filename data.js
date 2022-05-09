@@ -130,47 +130,54 @@ async function get_image_data(skip_real_image_download) {
 
 	var times = [];
 
+	$("#stop_downloading").show();
+
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training) {
 			var percentage = parseInt((i / urls.length) * 100);
-			if(!skip_real_image_download) {
-				var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
-				document.title = "Loading data " + percentage_text;
-				percentage_div.html(percentage_text);
-				if(eta) {
-					percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+			if(!stop_downloading_data) {
+				if(!skip_real_image_download) {
+					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+					document.title = "Loading data " + percentage_text;
+					percentage_div.html(percentage_text);
+					if(eta) {
+						percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+					}
+
+					if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+						var remaining_items = urls.length - i;
+						var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
+
+						eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
+						old_percentage = percentage;
+					}
 				}
-
-				if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
-					var remaining_items = urls.length - i;
-					var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
-
-					eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
-					old_percentage = percentage;
+				var url = urls[i];
+				let tf_data = null;
+				if(!skip_real_image_download) {
+					tf_data = await url_to_tf(url);
 				}
-			}
-			var url = urls[i];
-			let tf_data = null;
-			if(!skip_real_image_download) {
-				tf_data = await url_to_tf(url);
-			}
-			if(tf_data !== null || skip_real_image_download) {
-				data[keys[url]].push(tf_data);
-			}
-
-			if(i == urls.length - 1) {
-				await Swal.fire({
-					title: 'Generating tensors from images...',
-					html: "This may take some time, but your computer is working!",
-					timer: 2000,
-					showConfirmButton: false
-				});
+				if(tf_data !== null || skip_real_image_download) {
+					data[keys[url]].push(tf_data);
+				}
 			}
 		}
 		var end_time = Date.now();
 
 		times.push(end_time - start_time);
+	}
+
+	stop_downloading_data = false;
+	$("#stop_downloading").hide();
+
+	if(!skip_real_image_download) {
+		await Swal.fire({
+			title: 'Generating tensors from images...',
+			html: "This may take some time, but your computer is working!",
+			timer: 2000,
+			showConfirmButton: false
+		});
 	}
 
 	document.title = original_title;

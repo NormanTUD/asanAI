@@ -573,7 +573,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 			if(old_shape_string == new_shape_string) {
 				if(old_weights_string != new_weights_string) {
-					set_weights_from_string(JSON.stringify(old_weights), 0, 1, new_model);
+					set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
 				}
 			}
 		} else {

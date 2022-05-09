@@ -926,3 +926,5 @@ var redo_labels = true;
 var layers_container_md5 = "";
 
 var _cached_json = {};
+
+var stop_downloading_data = false;
