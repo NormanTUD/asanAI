@@ -203,7 +203,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 }
 
 function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
-	$(".sehow_when_predicting").show();
+	$(".show_when_predicting").show();
 
 	hide_unused_layer_visualization_headers();
 
