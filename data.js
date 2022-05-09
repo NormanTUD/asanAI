@@ -54,6 +54,8 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
+	console.trace();
+
 	return await $.get("traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/" + filename);
 }
 
@@ -399,13 +401,7 @@ function determine_input_shape () {
 
 async function _get_training_data() {
 	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
-	if(Object.keys(_data_cache).includes(url)) {
-		return _data_cache[url];
-	}
-	_data_cache = {};
-	const data = await $.getJSON(url);
-	_data_cache[url] = data;
-	return data;
+	return await get_cached_json(url);
 }
 
 

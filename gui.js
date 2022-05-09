@@ -928,6 +928,15 @@ async function get_number_of_training_items () {
 	return number;
 }
 
+async function get_cached_json (url) {
+	if(Object.keys(_cached_json).includes(url)) {
+		return _cached_json[url];
+	}
+	var data = await $.getJSON(url);
+	_cached_json[url] = data;
+	return data;
+}
+
 async function _get_configuration (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -951,17 +960,17 @@ async function _get_configuration (index) {
 			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
 
-			data = await $.getJSON(data_url);
+			data = await get_cached_json(data_url);
 
 			if(!local_store.getItem("tensorflowjs_models/mymodel")) {
-				data["keras"] = await $.getJSON(keras_url);
+				data["keras"] = await get_cached_json(keras_url);
 			} else {
 				try {
 					data["keras"] = JSON.parse(local_store.getItem("tensorflowjs_models/mymodel"));
 				} catch (e) {
 					log(e);
 					local_store.setItem("tensorflowjs_models/mymodel", null)
-					data["keras"] = await $.getJSON(keras_url);
+					data["keras"] = await get_cached_json(keras_url);
 				}
 			}
 		} catch (e) {

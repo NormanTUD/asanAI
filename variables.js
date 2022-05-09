@@ -925,4 +925,4 @@ var redo_labels = true;
 
 var layers_container_md5 = "";
 
-var _data_cache = {};
+var _cached_json = {};
