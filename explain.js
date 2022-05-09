@@ -805,8 +805,10 @@ async function draw_maximally_activated_layer (layer, type) {
 		neurons = parseInt(get_item_value(layer, "units"));
 	} else {
 		console.warn("Unknown layer " + layer);
+		return;
 	}
 
+	log("Layer: " + layer);
 	$("#maximally_activated_content").append("<h2>Layer " + layer + "</h2>")
 
 	var times = [];

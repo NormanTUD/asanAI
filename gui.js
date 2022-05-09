@@ -421,7 +421,7 @@ function add_visualize_option (type, nr) {
 		style = ' style="display: none" '
 	}
 
-	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(" + nr + ", \"" + type + "\")'>Visualize layer</button></td></tr>";
+	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
 }
 
 function add_theta_option (type, nr) {
