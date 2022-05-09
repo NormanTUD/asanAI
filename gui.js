@@ -2155,7 +2155,6 @@ async function init_dataset () {
 	hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
-	init_download_link();
 	init_epochs(2);
 
 	set_batchSize(2);
@@ -2174,11 +2173,12 @@ async function init_dataset () {
 
 	save_current_status();
 	init_weight_file_list();
+	init_download_link();
 }
 
 function init_download_link () {
-	$("#download_data").html("Download the training data <a href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.");
-	$("#download_data").show();
+	let html = "Download the training data <a href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.";
+	$("#download_data").html(html).show();
 }
 
 async function get_number_of_categories () {
@@ -2324,6 +2324,7 @@ async function init_dataset_category () {
 	$("#fcnn_tab_label").click();
 
 	//updated_page();
+	init_download_link();
 }
 
 function clean_gui () {
