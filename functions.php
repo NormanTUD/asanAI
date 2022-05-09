@@ -6,7 +6,6 @@
 		if($GLOBALS['mysqli']->connect_errno) {
 			throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
 		}
-
 		if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
 			$sql = "CREATE DATABASE tfd_db";
 			$GLOBALS["use_db"] = 1;
@@ -21,6 +20,7 @@
 	} catch (Exception $e) {
 		error_log($e);
 	}
+
 	function run_query ($query) {
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);

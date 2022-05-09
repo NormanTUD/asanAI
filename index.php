@@ -121,19 +121,19 @@
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon">
-				<span>
-					<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
-						<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
-						<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
-						<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
-						<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
-						<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-						<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
-						<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
-						<span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
-						<span id="tensor_number_debugger" style="display: none"></span>
-					</ul>
-				</span>
+        <ul id="tablist" style="background: #<?php print $tablist_color; ?>">
+            <li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+            <li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+            <li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
+            <li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
+            <span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
+            <span id="register" onclick="open_register_dialog()">Register</span>
+            <span id="tensor_number_debugger" style="display: none"></span>
+        </ul>
+
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
@@ -673,6 +673,51 @@
 							</table>
 							<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
 						</div>
+					</div>
+				</div>
+
+				<div id="register_dialog" style="display: none">
+					<div class="popup_body less_transparent_glass_box">
+					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
+					</div>
+						<div id="register_content"> 
+							<h1>Register</h1>
+
+							<table>
+								<tr>
+									<td>E-Mail</td>
+									<td><input id="register_email"></td>
+								</tr>
+								<tr>
+									<td>Username</td>
+									<td><input id="register_username"></td>
+								</tr>
+								<tr>
+									<td>Password</td>
+									<td><input id="register_password"></td>
+								</tr>
+								<tr>
+									<td><button onclick="register()">Register</button></td>
+								</tr>
+							</table>
+
+							<h1>Login</h1>
+
+							<table>
+								<tr>
+									<td>Username</td>
+									<td><input id="login_username"></td>
+								</tr>
+								<tr>
+									<td>Password</td>
+									<td><input id="login_password"></td>
+								</tr>
+								<tr>
+									<td><button onclick="login()">Login</button></td>
+								</tr>
+							</table>
+						</div>
+						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 					</div>
 				</div>
 
