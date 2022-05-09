@@ -6,8 +6,6 @@ function uuidv4() {
 	);
 }
 
-var this_guuid = uuidv4();
-
 function calculate_default_target_shape (nr) {
 	var input_shape = null;
 	if(nr == 0) {
@@ -45,7 +43,6 @@ var global_disable_auto_enable_valid_layer_types = true;
 var throw_compile_exception = false;
 var model_is_trained = false;
 var disable_layer_debuggers = 0;
-var max_activation_pixel_size = 10;
 var pixel_size = 2;
 var kernel_pixel_size = 10;
 var model = null;
@@ -67,17 +64,6 @@ var max_images_per_layer = 0;
 var x_file = null;
 var y_file = null;
 var y_shape = null;
-
-function get_plot_activation_name (name) {
-	if(name.toLowerCase() == "leakyrelu") {
-		return "LeakyReLU";
-	} else if(name.toLowerCase() == "relu") {
-		return "ReLU";
-	} else if(name.toLowerCase() == "thresholdedrelu") {
-		return "ThresholdedReLU";
-	}
-	return name;
-}
 
 const surface = { name: "Model Summary", tab: "Model Inspection" };
 
@@ -187,7 +173,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer", "visualize"
 		],
 		"category": "Basic"
 	},
@@ -280,7 +266,7 @@ var layer_options = {
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer", "visualize"
 		],
 		"category": "Convolutional"
 	},
@@ -358,6 +344,7 @@ var layer_options = {
 		],
 		"category": "Pooling"
 	},
+	/*
 	"globalAveragePooling1d": {
 		"description": "Global average pooling operation for temporal data.",
 		"options": [
@@ -407,6 +394,13 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
+	"rnn": {
+		"description": "Base class for recurrent layers.",
+		"options": [
+			"units", "cell", "return_sequences", "return_state", "go_backwards", "stateful", "unroll"
+		],
+		"category": "Recurrent"
+	},
 	"simpleRNN": {
 		"description": "Fully-connected RNN where the output is to be fed back to input.",
 		"options": [
@@ -428,7 +422,7 @@ var layer_options = {
 		],
 		"category": "Recurrent"
 	},
-
+	*/
 
 	"alphaDropout": {
 		"description": "Applies Alpha Dropout to the input. As it is a regularization layer, it is only active at training time.",
@@ -450,15 +444,17 @@ var layer_options = {
 			"stddev", "trainable", "dtype"
 		],
 		"category": "Noise"
-	},
+	}
 
-	"zeroPadding2d": {
+	/*
+	,"zeroPadding2d": {
 		"description": "Zero-padding layer for 2D input (e.g., image).",
 		"options": [
 			"padding", "trainable"
 		],
 		"category": "Padding"
 	}
+	*/
 };
 
 var model_data_structure = {
@@ -693,7 +689,7 @@ var memory_debug_interval = null;
 var call_from_show_csv_file = false;
 
 function dispose (item) {
-	//console.trace(item);
+	//console.trace();
 	//log(item);
 	tf.dispose(item);
 }
@@ -915,10 +911,6 @@ var original_title = document.title;
 
 var this_training_start_time = null;
 
-var clippy_current_xpath = null;
-
-var clippy_delay = 0;
-
 var demo_mode_data_origin = {};
 
 var demo_mode_data_original_css = {};
@@ -928,3 +920,9 @@ var demo_interval = undefined;
 var current_layer_status_hash = "";
 
 var weights_files = {};
+
+var redo_labels = true;
+
+var layers_container_md5 = "";
+
+var _cached_json = {};

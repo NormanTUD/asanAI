@@ -1,3 +1,7 @@
+html {
+	font-family: sans-serif;
+}
+
 .container {
 	width: 80%;
 	margin: auto;
@@ -52,7 +56,6 @@
 }
 
 .layer_data {
-	//max-height: 250px;
 	overflow-y: auto;
 }
 
@@ -73,7 +76,6 @@
 }
 
 .image_grid {
-	//max-height: 500px;
 	overflow-y: auto;
 }
 
@@ -89,12 +91,10 @@
 	background-color: white;
 	padding: 8px 5px;
 	border-radius: 8px;
-	font-size: 20px;
 	font-weight: bold;
 }
 
 .upload-btn-wrapper input[type=file] {
-	font-size: 100px;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -112,7 +112,7 @@
 	float: left;
 }
 
- @media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) {
 	.left_side {
 		min-width: 500px;
 		float: none;
@@ -135,7 +135,6 @@ ul {
 
 input {
 	line-height: 1.5em;
-	font-size: 10px;
 }
 
 .ribbon-toolbar {
@@ -167,29 +166,7 @@ input {
 }
 
 .input_image_grid {
-	//max-height: 500px;
 	overflow-y: auto;
-}
-
-button, select, input {
-	font-size: 18px;
-	border:solid 1px #7da2ce;
-	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
-	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
-}
-
-button:hover, select:hover, input:hover {
-	border:solid 1px #7da2ce;
-	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
-	box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff;
-	background-color:#cfe3fd;
-	background: -moz-linear-gradient(top, #dcebfd, #c2dcfd);
-	background: -webkit-gradient(linear, center top, center bottom, from(#dcebfd), to(#c2dcfd));
-}
-
-.layer_identifier {
-	/*font-variant-caps: petite-caps;*/
-	font-size: 14px;
 }
 
 .add_remove_layer_button {
@@ -207,11 +184,6 @@ button:hover, select:hover, input:hover {
 .layer_data_visualizations {
 	display: flex;
 	align-items: center;
-}
-
-select option:disabled {
-	color: #efefef;
-	font-weight: bold;
 }
 
 .symbol_button {
@@ -245,10 +217,6 @@ select option:disabled {
 
 .layer_setting {
 	width: 400px;
-}
-
-.call_counter_container {
-	display: none;
 }
 
 .input_field {
@@ -314,7 +282,8 @@ select option:disabled {
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: 2
+	z-index: 2;
+	border-bottom: 1px solid gray;
 }
 
 body {
@@ -324,5 +293,41 @@ body {
 
 #maindiv {
 	position: relative;
-	width: 98%
+	width: 98%;
+}
+
+#history_table>table, #history_table>th, #history_table>td {
+	border: 1px solid ;
+}
+
+#summary {
+	overflow: auto;
+	text-align: center;
+}
+
+.remove_layer {
+	position: absolute;
+	left: 47px;
+}
+
+.layer_identifier {
+	position: absolute;
+	left: 85px;
+	margin-top: 6px;
+}
+
+#optimizer_table {
+	margin-top: -10px;
+}
+
+.descriptions_of_layers {
+	font-size: 12px;
+}
+
+.download_img {
+	margin: 1px;
+}
+
+.max_prediction {
+	color: green;
 }

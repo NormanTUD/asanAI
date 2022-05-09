@@ -122,7 +122,7 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	return drew_something;
 }
 
-function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick) {
 	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
 
 	var drew_something = false;
@@ -132,6 +132,9 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white) {
 
 	$(canvas).attr("width", width * pixel_size);
 	$(canvas).attr("height", height * pixel_size);
+	if(onclick) {
+		$(canvas).attr("onclick", onclick);
+	}
 
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();    
@@ -292,103 +295,6 @@ async function Sleep(milliseconds) {
 	return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-async function plot_activation (activation) {
-	if(!loaded_plotly) {
-		var script = document.createElement("script");
-		script.src = "plotly-latest.min.js";
-		script.type = "text/javascript";
-		script.onload = function () {
-			loaded_plotly = 1;
-			_plot_activation(activation);
-		};
-		document.getElementsByTagName("head")[0].appendChild(script);
-	} else {
-		_plot_activation(activation);
-	}
-
-}
-
-async function _plot_activation (activation) {
-	activation = get_plot_activation_name(activation); 
-	let models;
-	models = [activation].map(activationFunctionName => {
-		// Create a model
-		var my_model = tf.sequential();
-		my_model.add(tf.layers.dense({
-			units: 1,
-			useBias: true,
-			activation: activationFunctionName,
-			inputDim: 1,
-		}));
-		my_model.compile({
-			loss: 'meanSquaredError',
-			optimizer: tf.train.adam(),
-		});
-
-		// this is not a valid property on LayersModel, but needed a quick way to attach some metadata
-		my_model.activationFunction = activationFunctionName;
-		return my_model;
-	});
-
-	tf.tidy(() => {
-		models.forEach(my_model => my_model.layers[0].setWeights([tf.tensor2d([[1]]), tf.tensor1d([1])]));
-	});
-
-	const xs = tf.linspace(-5, 5, 100);
-
-	const series = tf.tidy(() => models.map(my_model => {
-		const ys = my_model.predict(xs.reshape([100, 1]));
-
-		return {
-			x: xs.dataSync(),
-			y: ys.dataSync(),
-			type: 'scatter',
-			name: model.activationFunction,
-		};
-	}));
-
-	dispose(xs);
-
-	const functionColors = {
-		sigmoid: '#8ed081',
-		hardSigmoid: '#430ade',
-		softplus: '#f33',
-		softsign: '#8af',
-		tanh: '#f4c095',
-		softmax: '#e2c044',
-		linear: '#d2d6ef',
-		relu: '#f19a3e',
-		relu6: '#b9ffb7',
-		selu: '#a846a0',
-		elu: '#d30c7b',
-	};
-	let options = {
-		colorway: [activation].map(name => functionColors[name]),
-		margin: {
-			l: 40,
-			r: 20,
-			b: 20,
-			t: 10,
-			pad: 0,
-		},
-	};
-	const plotElement = document.getElementById("plot");
-
-	Plotly.newPlot("activation_plot", series, options, { displaylogo: false });
-
-	$("#activation_plot").show();
-	$("#activation_plot").parent().show();
-	$("#activation_plot_name").html("Activation-function: " + activation);
-	$("#activation_plot_name").show();
-
-	write_descriptions();
-
-	$('a[href="#visualization_tab"]').click();
-	$("#activation_plot_tab_label").show();
-	$("#activation_plot_tab_label").parent().show();
-	$('a[href="#activation_plot_tab"]').click();
-}
-
 function get_layer_type_array () {
 	var r = [];
 
@@ -408,6 +314,7 @@ function group_layers (layers) {
 	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)";
 
         var descs = [
+		{ "re": "((?:lstm;)+)", "name": "LSTM" },
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
                 { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
@@ -417,7 +324,7 @@ function group_layers (layers) {
                 { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
                 { "re": "((?:reshape;?)+;?)", "name": "Change shape" },
-                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" }
+                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" },
         ];
 
         for (var desc_i = 0; desc_i < descs.length; desc_i++) {
@@ -478,8 +385,8 @@ function write_descriptions () {
 
 			var layer = $(".layer");
 
-			if(1 || layer.length) {
-				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 30);
+			if(layer.length) {
+				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
 
 				for (var i = 0; i < groups.length; i++) {
 					var keyname = Object.keys(groups[i])[0];
@@ -494,34 +401,13 @@ function write_descriptions () {
 						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 							hidden = "display: none;";
 						}
-						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
+
+						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + parseInt(height) + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
 					}
 				}
 			}
 		}
 	}
-}
-
-async function write_initializer_values (nr) {
-	$("#visualization_tab").click();
-	$("#help_tab_label").show();
-	$("#help_tab_label").parent().show();
-	$("#help_tab_label").click();
-
-	$("#help_tab").html("<pre>" + await get_model_initializer_values_str(nr) + "</pre>");
-}
-
-async function get_model_initializer_values_str (nr) {
-	var x;
-	try {
-		x = await model.layers[nr].getWeights()[0]
-		x = x.toString(1)
-	} catch (e) {
-		console.warn("Could not get model_initializer values for " + nr + ", error: " + e);
-		x = "";
-	}
-
-	return x;
 }
 
 function explain_error_msg () {
@@ -541,7 +427,7 @@ function explain_error_msg () {
 		} else if(err.includes("texShape is undefined")) {
 			explanation = "Please check if any of the output-dimensions contain '0' and if so, try to minimize the dimensionality reduction so that all zeroes disappear.";
 		} else if(err.includes("info is undefined")) {
-			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.";
+			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.<br><br>This might also be caused by calling `tf.disposeVariables()` somewhere...";
 		} else if(err.includes("expects targets to be binary matrices")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
 		} else if(err.includes("numeric tensor, but got string tensor")) {
@@ -552,6 +438,10 @@ function explain_error_msg () {
 			}
 		} else if(err.includes("input expected a batch of elements where each example has shape")) {
 			explanation = "Does the input-shape match the data?";
+		} else if (err.includes("Error when checking input") && err.includes("but got array with shape")) {
+			if($("#data_type").val() == "csv" && $("#data_origin").val() == "own") {
+				explanation = "Have you chosen an 'own'-data-source with CSV-files in a network with convolutional layers?";
+			}
 		}
 	} else {
 		explanation = "No layers."
@@ -580,26 +470,30 @@ function get_layer_identification (i) {
 		return;
 	}
 
-	var object_keys = Object.keys(model.layers[i]);
-	var new_str = "";
+	if(model.layers[i] && Object.keys(model.layers[i]).length >= 1) {
+		var object_keys = Object.keys(model.layers[i]);
+		var new_str = "";
 
-	if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
-		new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
+		if(object_keys.includes("filters") && object_keys.includes("kernelSize")) {
+			new_str = model.layers[i]["filters"] + "@" + model.layers[i].kernelSize.join("x");
 
-	} else if(object_keys.includes("filters")) {
-		new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
+		} else if(object_keys.includes("filters")) {
+			new_str = "Filters:&nbsp;" + model.layers[i]["filters"];
 
-	} else if(object_keys.includes("units")) {
-		new_str = "Units:&nbsp;" + model.layers[i]["units"];
+		} else if(object_keys.includes("units")) {
+			new_str = "Units:&nbsp;" + model.layers[i]["units"];
 
-	} else if(object_keys.includes("rate")) {
-		new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
+		} else if(object_keys.includes("rate")) {
+			new_str = "Rate:&nbsp;" + model.layers[i]["rate"];
 
-	} else if(object_keys.includes("poolSize")) {
-		new_str = model.layers[i].poolSize.join("x");
+		} else if(object_keys.includes("poolSize")) {
+			new_str = model.layers[i].poolSize.join("x");
+		}
+
+		return new_str;
 	}
 
-	return new_str;
+	return "";
 }
 
 function identify_layers (numberoflayers) {
@@ -634,7 +528,7 @@ function identify_layers (numberoflayers) {
 			console.warn(e);
 		}
 
-		write_layer_identification(i, new_str + output_shape_string + activation_function_string);
+		write_layer_identification(i, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
 	}
 }
 
@@ -669,49 +563,35 @@ function add_layer_debuggers () {
 	$(".layer_data").html("")
 
 	for (var i = 0; i < model.layers.length; i++) {
-		if("original_apply" in model.layers[i]) {
-			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+		if(get_methods(model.layers[i]).includes("original_apply_real")) {
+			model.layers[i].apply = model.layers[i].original_apply_real;
 		}
 
-		var code = "model.layers[" + i + "].original_apply = model.layers[" + i + "].apply;" +
-			"model.layers[" + i +"].apply = function (inputs, kwargs) {";
-				if($("#show_progress_through_layers").is(":checked")) {
-					code += "(function(){ setTimeout(function(){ fcnn_fill_layer(" + i + "); },1000); })();";
-				}
+		model.layers[i].original_apply_real = model.layers[i].apply
+		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
+			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
-				code += "var z = model.layers[" + i + "].original_apply(inputs, kwargs);" +
-				"$($('.call_counter')[" + i + "]).html(parseInt($($('.call_counter')[" + i + "]).html()) + 1);" +
-				"return z;" +
-			"}";
+			if(!disable_layer_debuggers) {
+				if($("#show_layer_data").is(":checked")) {
+					show_tab_label('layer_visualizations_tab_label');
 
-		eval(code);
+					var output_data = applied.arraySync()[0];
+					$($(".layer_data")[${i}]).html('');
+					var input_data = inputs[0].arraySync()[0];
 
-		if ($("#show_layer_data").is(":checked") && layers_can_be_visualized()) {
-			$('#layer_visualizations_tab_label').parent().parent().show();
-			$('#layer_visualizations_tab_label').parent().show();
-			$('#layer_visualizations_tab_label').show();
-
-			var code = `model.layers[${i}].original_apply_real = model.layers[${i}].apply;
-				model.layers[${i}].apply = function (inputs, kwargs) {
-					var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
-
-					if(!disable_layer_debuggers) {
-						var output_data = applied.arraySync()[0];
-						$($(".layer_data")[${i}]).html('');
-						var input_data = inputs[0].arraySync()[0];
-
-						var kernel_data = [];
-						if(Object.keys(model.layers[${i}]).includes('kernel')) {
-							if(model.layers[${i}].kernel.val.shape.length == 4) {
-								kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
-							}
+					var kernel_data = [];
+					if(Object.keys(model.layers[${i}]).includes('kernel')) {
+						if(model.layers[${i}].kernel.val.shape.length == 4) {
+							kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
 						}
+					}
 
-						var html = $($(".layer_data")[${i}]).html();
-						if($('#header_layer_visualization_${i}').length == 0) {
-							html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
-						}
-			
+					var html = $($(".layer_data")[${i}]).html();
+					if($('#header_layer_visualization_${i}').length == 0) {
+						html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
+					}
+		
+					if(layers_can_be_visualized()) {
 						if(!draw_images_if_possible(${i}, input_data, output_data, kernel_data) && 0) {
 							var weights_string = '';
 							if ('weights' in this) {
@@ -738,11 +618,12 @@ function add_layer_debuggers () {
 
 						$($(".layer_data")[${i}]).append(html);
 					}
+				}
+			}
 
-					return applied;
-				}`;
-			eval(code);
-		}
+			return applied;
+		}`;
+		eval(code);
 	}
 }
 
@@ -785,36 +666,53 @@ function deprocessImage(x) {
         });
 }
 
-function inputGradientAscent(m, layerIndex, filterIndex, iterations, start_image) {
-        return tf.tidy(() => {
-                const imageH = m.inputs[0].shape[1];
-                const imageW = m.inputs[0].shape[2];
+function tensor_normalize_to_rgb_min_max (x) {
+	var max = x.max().dataSync()[0];
+	var min = x.min().dataSync()[0];
+
+	var x_minus_min = x.sub(min);
+
+	x = x_minus_min.div(max - min);
+
+	return x;
+}
+
+
+function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
+	var worked = 0;
+        var full_data = {};
+	full_data["image"] = tf.tidy(() => {
+                const imageH = model.inputs[0].shape[1];
+                const imageW = model.inputs[0].shape[2];
                 const imageDepth = model.inputs[0].shape[3];
 
                 // Create an auxiliary model of which input is the same as the original
                 // model but the output is the output of the convolutional layer of
                 // interest.
-                const layerOutput = m.getLayer(null, layerIndex).output;
-                const auxModel = tf.model({inputs: m.inputs, outputs: layerOutput});
+                const layerOutput = model.getLayer(null, layerIndex).output;
+                const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
 
                 // This function calculates the value of the convolutional layer's
                 // output at the designated filter index.
-                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], 3);
+                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], -1);
 
                 // This returned function (`gradFunction`) calculates the gradient of the
                 // convolutional filter's output with respect to the input image.
                 const gradFunction = tf.grad(lossFunction);
 
                 // Form a random image as the starting point of the gradient ascent.
-                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);
+                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 255);
 		if(typeof(start_image) != "undefined") {
 			image = start_image;
-		} else {
-			image = image.mul(20).add(128);
 		}
 
-                for (var i = 0; i < iterations; ++i) {
-                        console.warn("Iteration " + (i + 1) + " of " + iterations);
+		image = image.div(parseFloat($("#divide_by").val()));
+
+		var prev_img_str = image.dataSync().join(";");
+
+                for (var i = 1; i <= iterations; i++) {
+                        console.warn("Iteration " + i + " of " + iterations);
+
                         const scaledGrads = tf.tidy(() => {
                                 const grads = gradFunction(image);
                                 const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
@@ -822,13 +720,64 @@ function inputGradientAscent(m, layerIndex, filterIndex, iterations, start_image
                                 // of the gradient.
                                 return grads.div(norm);
                         });
+
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
-                        //image = tf.clipByValue(image.add(scaledGrads), 0, 255);
+
+			image = tensor_normalize_to_rgb_min_max(image);
+
 			image = image.add(scaledGrads);
+			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
+			
+			var randomizer_limits = parseFloat($("#randomizer_limits").val());
+			if(randomizer_limits != 0) {
+				image = image.add(tf.randomUniform(image.shape, -randomizer_limits, randomizer_limits));
+			}
+
+			if(image.dataSync().join(";") == prev_img_str && i >= 5) {
+				header_error("Image has not changed");
+				return deprocessImage(image).arraySync();
+			} else {
+				prev_img_str = image.dataSync().join(";");
+			}
                 }
+
+		worked = 1;
                 return deprocessImage(image).arraySync();
         });
+
+	full_data["worked"] = worked;
+
+	return full_data;
+}
+
+function grad_test() {
+	const auxModel = tf.sequential();
+
+	for(var i = 0; i < Math.min(2, model.layers.length); i++) {
+		auxModel.add(model.getLayer(null, i));
+	}
+
+	auxModel.summary();
+
+	const imageH = model.inputs[0].shape[1];
+	const imageW = model.inputs[0].shape[2];
+	const imageDepth = model.inputs[0].shape[3];
+
+	var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);//.mul(20).add(128);
+	header("image:");
+	image.print();
+
+	const lossFunction = (input) => auxModel.apply(input).gather([0]);
+
+	header("lossFunction(image)");
+	lossFunction(image).print();
+
+	const gradFunction = tf.grad(lossFunction);
+	const grads = gradFunction(image).mul(255);
+
+	header("Grads:");
+	grads.print();
 }
 
 async function get_image_from_url (url) {
@@ -847,6 +796,77 @@ async function get_image_from_url (url) {
 	return tf_img;
 }
 
+async function draw_maximally_activated_layer (layer, type) {
+	var neurons = 1;
+
+	if(type == "conv2d") {
+		neurons = parseInt(get_item_value(layer, "filters"));
+	} else if (type == "dense") {
+		neurons = parseInt(get_item_value(layer, "units"));
+	} else {
+		console.warn("Unknown layer " + layer);
+		return;
+	}
+
+	log("Layer: " + layer);
+	$("#maximally_activated_content").append("<h2>Layer " + layer + "</h2>")
+
+	var times = [];
+
+	favicon_spinner();
+
+	var stop = 0;
+
+	for (var i = 0; i < neurons; i++) {
+		if(stop) {
+			continue;
+		}
+		var eta = "";
+		if(times.length) {
+			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
+		}
+
+		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		document.title = swal_msg;
+
+		await Swal.fire({
+			title: 'Generating Image...',
+			html: swal_msg,
+			timer: 2000,
+			showCancelButton: true,
+			showConfirmButton: false
+		}).then((e)=>{
+			if(e.isDismissed && e.dismiss == "cancel") {
+				stop = 1;
+			}
+		});
+
+
+		log("Set title to " + swal_msg);
+
+		var start = Date.now();
+		await draw_maximally_activated_neuron(layer, i);
+		var end = Date.now();
+
+		var time = ((end - start) / 1000) + 1;
+
+		times.push(time);
+
+	}
+
+	favicon_default();
+
+	document.title = original_title;
+}
+
+async function predict_maximally_activated (item, force_category) {
+	var results = await predict(item, force_category, 1);
+	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
+		$(item).next().remove();
+	}
+	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+}
+
 async function draw_maximally_activated_neuron (layer, neuron) {
 	var current_input_shape = get_input_shape();
 
@@ -854,7 +874,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		return;
 	}
 
+	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
+
 	try {
 		var start_image = undefined;
 		if($("#dataset_category").val() == "image" && $("#use_example_image_as_base").is(":checked")) {
@@ -865,40 +887,37 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 			if(examples.length) {
 				start_image = await get_image_from_url(base_url + "/" + examples[0]);
-				start_image = start_image.div(255);
+				start_image = start_image.div(parseFloat($("#divide_by").val()));
 			}
 		}
-		var data = inputGradientAscent(model, layer, neuron, $("#max_activation_iterations").val(), start_image)[0];
-		disable_layer_debuggers = 1;
-		var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-		var res = draw_grid(canvas, parseInt($("#max_activation_pixel_size").val()), data, 1, 0);
+		var full_data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
 
-		if(res) {
-			$("#maximally_activated").append(canvas);
-			$("#maximally_activated_label").parent().show();
-			$("#maximally_activated_label").show().click();
+		disable_layer_debuggers = original_disable_layer_debuggers;
+
+		if(full_data["worked"]) {
+			var data = full_data["image"][0];
+			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
+
+			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')");
+
+			if(res) {
+				$("#maximally_activated_content").append(canvas);
+				show_tab_label("maximally_activated_label", 1)
+			} else {
+				log("Res: " + res);
+			}
+
+			return res;
 		}
-		$("[href='#maximally_activated']").click()
-
-		return res;
+		return false;
 	} catch (e) {
 		log(e);
-		$("#error").html(e)
-		$("#error").parent().show();
-		$("#visualization_tab").click();
-		$("#fcnn_tab_label").click();
-		write_descriptions();
+		$("#error").html(e).parent().show();
+		show_tab_label("visualization_tab", 1);
+		show_tab_label("fcnn_tab_label", 1);
 		return false;
 	}
-}
-
-function fcnn_fill_layer (layer_nr) {
-	//restart_fcnn(1);
-	//restart_lenet(1);
-
-	$("[id^=fcnn_]").css("fill", "#ffffff");
-	$("[id^=fcnn_" + layer_nr + "_]").css("fill", "red");
 }
 
 function array_to_fixed (array, fixnr) {
@@ -1014,6 +1033,17 @@ function array_size (ar) {
 	return [row_count, Math.min.apply(null, row_sizes)]
 }
 
+function get_layer_output_shape_as_string (i) {
+	var str = model.layers[i].outputShape.toString()
+	str = str.replace(/^,|,$/g,'');;
+	str = "[" + str + "]";
+	return str;
+}
+
+function _get_h (i) {
+	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+}
+
 function model_to_latex () {
 	var layers = model.layers;
 
@@ -1050,8 +1080,8 @@ function model_to_latex () {
 			"lower_limit": 0
 		},
 		"LeakyReLU": {
-			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(0.1x, x\\right)",
-			"equation_no_function_name": "\\mathrm{max}\\left(0.1REPLACEME, REPLACEME\\right)"
+			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(\\alpha \\cdot x, x\\right)",
+			"equation_no_function_name": "\\mathrm{max}\\left(ALPHAREPL \\cdot REPLACEME, REPLACEME\\right)"
 		},
 		"elu": {
 			"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
@@ -1087,9 +1117,16 @@ function model_to_latex () {
 	};
 
 	var loss_equations = {
-		"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}\\right|",
-		"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2",
-		"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}\\right)^2}"
+		"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}_i\\right|",
+		"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2",
+		"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2}",
+		"categoricalCrossentropy": "\\text{Categorical Crossentropy:} -\\sum_{i=1}^n y_i \\log\\left(\\hat{y}_i\\right)",
+		"binaryCrossentropy": "\\text{Binary Crossentropy:} -\\frac{1}{n} \\sum_{i=1}^n y_i \\cdot \\log\\left(\\hat{y}_i\\right) + 1\\left(-y_i\\right) \\cdot \\log\\left(1 - \\hat{y}_i\\right)",
+		"meanSquaredLogarithmicError": "\\text{Mean Squared Logarithmic Error:} \\frac{1}{n} \\sum_{i=0}^n \\left(log\\left(y_i + 1\\right)- \\log\\left(\\hat{x}_i + 1\\right)\\right)^2",
+		"poisson": "\\text{Poisson:} \\frac{1}{n} \\sum_{i=0}^n \\left(\\hat{x}_i - y_i\\cdot \\log\\left(\\hat{y}_i\\right)\\right)",
+		"squaredHinge": "\\text{Squared Hinge:} \\sum_{i=0}^n \\left(\\mathrm{max}\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)^ 2\\right)",
+		"logcosh": "\\text{logcosh:} \\sum_{i=0}^n \\log(\\cosh\\left(\\hat{y}_i - y_i\\right))",
+		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
 	};
 
 	var layer_data = get_layer_data();
@@ -1097,7 +1134,7 @@ function model_to_latex () {
 	var y_layer = [];
 
 	for (var i = 0; i < output_shape[1]; i++) {
-		y_layer.push(["y_" + i]);
+		y_layer.push(["y_{" + i + "}"]);
 	}
 
 	var colors = [];
@@ -1110,7 +1147,7 @@ function model_to_latex () {
 	var input_layer = [];
 
 	for (var i = 0; i < input_shape[1]; i++) {
-		input_layer.push(["x_" + i]);
+		input_layer.push(["x_{" + i + "}"]);
 	}
 
 	var activation_string = "";
@@ -1119,13 +1156,13 @@ function model_to_latex () {
 	var shown_activation_equations = [];
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss</h2>$$" + loss_equations[$("#loss").val()] + "$$ <hr>";
+		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
 	}
 
 	for (var i = 0; i < layer_data.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
 		if(i == 0) {
-			str += "<h2>Layer-equations</h2>";
+			str += "<h2>Layers:</h2>";
 		}
 		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
@@ -1178,14 +1215,14 @@ function model_to_latex () {
 					if(repeat_nr < 0) {
 						repeat_nr = 0;
 					}
-					str += a_times_b("h" + "'".repeat(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(repeat_nr), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			} else {
-				str += "h" + "'".repeat(i) + " = " + activation_start;
+				str += _get_h(i) + " = " + activation_start;
 				if(i == 0) {
 					str += a_times_b(array_to_latex(input_layer, "Input"), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				} else {
-					str += a_times_b("h" + "'".repeat(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					str += a_times_b(_get_h(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			}
 
@@ -1200,12 +1237,12 @@ function model_to_latex () {
 		} else if (this_layer_type == "flatten") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
-			str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			str += _get_h(i) + " = " + _get_h(i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[1].getOutputAt(0).shape.filter(Number));
 			if(i > 1) {
-				str += "h" + "'".repeat(i) + " = h" + "'".repeat(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+				str += _get_h(i) + " = " + _get_h(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 			} else {
 				str += array_to_latex(input_layer, "Input") + " = h" + "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 			}
@@ -1222,18 +1259,23 @@ function model_to_latex () {
 			if(i == 0) {
 				prev_layer_name += array_to_latex(input_layer, "Input");
 			} else {
-				prev_layer_name += "h" + "'".repeat(i - 1);
+				prev_layer_name += _get_h(i - 1);
 			}
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += "h" + "'".repeat(i) + " = ";
+				str += _get_h(i) + " = ";
 			}
 
 			if(Object.keys(activation_function_equations).includes(activation_name)) {
 				var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
 
+				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+				
+				if(get_item_value(i, "alpha")) {
+					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + get_item_value(i, "alpha") + "}");
+				}
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 				var has_lower_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit");
@@ -1266,13 +1308,13 @@ function model_to_latex () {
 			if(i == 0) {
 				prev_layer_name += array_to_latex(input_layer, "Input");
 			} else {
-				prev_layer_name += "h" + "'".repeat(i - 1);
+				prev_layer_name += _get_h(i - 1);
 			}
 
 			if(i == layer_data.length - 1) {
 				str += array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += "h" + "'".repeat(i) + " = ";
+				str += _get_h(i) + " = ";
 			}
 
 			str += "\\frac{\\left(" + prev_layer_name + " - \\text{mean}\\left(" + prev_layer_name + "\\right)\\right)}{\\sqrt{\\mathrm{variance}\\left(" + prev_layer_name + "\\right)}}";
@@ -1285,7 +1327,7 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
-		return "<h2>Activation functions</h2> " + activation_string + "<hr>" + str;
+		return "<h2>Activation functions:</h2> " + activation_string + str;
 	} else {
 		if(str) {
 			return str;
@@ -1317,7 +1359,15 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
-	if(!force && $("#math_tab").css("display") == "none") {
+	hide_tab_label("math_tab_label");
+	if(!can_be_shown_in_latex()) {
+		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
+			$("#fcnn_tab_label").click();
+		}
+		return;
+	}
+
+	if(!force && $("#math_tab_label").css("display") == "none") {
 		return;
 	}
 
@@ -1325,25 +1375,15 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		prev_layer_data = [];
 	}
 
-	if(!can_be_shown_in_latex()) {
-		$("#math_tab_label").hide();
-		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
-			$("#fcnn_tab_label").click();
-		}
-		return;
-	}
-
-
-	$("#math_tab_label").show();
-
 	var latex = model_to_latex();
 
-	$("#math_tab").html(latex);
+	$("#math_tab_code").html(latex);
 	try {
 		await MathJax.typesetPromise()
+		show_tab_label("math_tab_label");
 	} catch (e) {
 		var mathjax_error_explanation = "Are you online?";
-		$("#math_tab").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+		$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 	}
 }
 

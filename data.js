@@ -54,6 +54,8 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
+	console.trace();
+
 	return await $.get("traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/" + filename);
 }
 
@@ -133,9 +135,11 @@ async function get_image_data(skip_real_image_download) {
 		if(started_training) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!skip_real_image_download) {
-				percentage_div.html(percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...");
+				var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+				document.title = "Loading data " + percentage_text;
+				percentage_div.html(percentage_text);
 				if(eta) {
-					percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
+					percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
 				}
 
 				if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
@@ -154,11 +158,22 @@ async function get_image_data(skip_real_image_download) {
 			if(tf_data !== null || skip_real_image_download) {
 				data[keys[url]].push(tf_data);
 			}
+
+			if(i == urls.length - 1) {
+				await Swal.fire({
+					title: 'Generating tensors from images...',
+					html: "This may take some time, but your computer is working!",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			}
 		}
 		var end_time = Date.now();
 
 		times.push(end_time - start_time);
 	}
+
+	document.title = original_title;
 
 	if(!skip_real_image_download) {
 		percentage_div.html("");
@@ -207,21 +222,6 @@ async function get_xs_and_ys () {
 	} else {
 		log("INVALID OPTION " + $("#data_origin").val());
 	}
-
-	/*
-	if($("#jump_to_training_tab").is(":checked")) {
-		$('a[href="#tfvis_tab"]').click();
-		$("#tfvis_tab").children().each(function (a, b) {
-		    if($(b).is(":visible") && b.localName == "ul") {
-			$($(b).children().children()).each(function (c, d) {
-			    if($(d).is(":visible") && d.localName == "a") {
-				$(d).click();
-			    }
-			});
-		    }
-		})
-	}
-	*/
 
 	var max_number_values = parseInt($("#max_number_values").val());
 	var loss = $("#loss").val();
@@ -287,9 +287,15 @@ async function get_xs_and_ys () {
 			
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
-		//$("#reset_data").show();
 	} else {
 		if($("#data_type").val() == "image") {
+			Swal.fire({
+				title: 'Generating tensors from images...',
+				html: "This may take some time, but your computer is working!",
+				timer: 2000,
+				showConfirmButton: false
+			});
+
 			var category_counter = $(".own_image_label").length;
 			var keys = [];
 			var x = [];
@@ -371,6 +377,7 @@ function url_to_tf (url) {
 				resizeNearestNeighbor([height, width]).
 				toFloat().
 				expandDims();
+			dispose(tf_img);
 
 			if($("#divide_by").val() != 1) {
 				resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
@@ -393,8 +400,8 @@ function determine_input_shape () {
 }
 
 async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
-	return data;
+	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	return await get_cached_json(url);
 }
 
 

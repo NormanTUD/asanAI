@@ -25,9 +25,9 @@ function get_model_config_hash () {
 	return md5(str);
 }
 
-function _create_model () {
+async function _create_model () {
 	try {
-		model = create_model(model);
+		model = await create_model(model);
 		$("#error").html("");
 		$("#error").parent().hide();
 
@@ -54,7 +54,7 @@ function _create_model () {
 
 }
 
-function compile_model () {
+async function compile_model () {
 	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
 
 	var recreate_model = false;
@@ -86,7 +86,11 @@ function compile_model () {
 	if(recreate_model) {
 		model_is_trained = false;
 		reset_summary();
-		_create_model();
+		await _create_model();
+	}
+
+	if(!model) {
+		model = await create_model(null, get_model_structure());
 	}
 
 	try {
@@ -111,7 +115,7 @@ function get_data_for_layer (type, i, first_layer) {
 	var data = {
 		"name": type + "_" + (i + 1)
 	};
-	
+
 	if(i == 0 || first_layer) {
 		data["inputShape"] = get_input_shape();
 	}
@@ -241,6 +245,7 @@ function get_model_structure() {
 			header("ACHTUNG!!! IS EMPTY!!!");
 			log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
 			log($(layer_type).val());
+			console.trace();
 		}
 	}
 
@@ -285,7 +290,8 @@ function is_valid_parameter (keyname, value, layer) {
 		(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
 		(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
 		(["theta"].includes(keyname) && typeof(value) == "number" && (value >= 0 || value == -1)) ||
-		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number")
+		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
+		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
 		return true;
 	}
@@ -297,40 +303,33 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-function create_model (old_model, fake_model_structure) {
-	var new_current_status_hash = get_current_status_hash();
-	if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-		return old_model;
+async function create_model (old_model, fake_model_structure, force) {
+	var new_layers_container_md5 = await get_layers_container_md5();
+	if(!layers_container_md5 || force) {
+		layers_container_md5 = new_layers_container_md5;
 	}
 
-	/*
-	if(fake_model_structure === undefined && get_current_layer_container_status_hash() == current_layer_status_hash && model) {
-		log(fake_model_structure);
-		log(get_current_layer_container_status_hash());
-		log(current_layer_status_hash);
-		log(model);
-		log("returning old model");
-		return model;
+	var new_current_status_hash = get_current_status_hash();
+	if(!force) {
+		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
+			return old_model;
+		}
 	}
-	//log("creating new model");
-	//dispose(model);
-	*/
+
+	var old_weights_string = false;
+	if(model && Object.keys(model).includes("layers") && !fake_model_structure) {
+		old_weights_string = await get_weights_as_string(model);
+	}
 
 	current_status_hash = new_current_status_hash;
 
 	$(".warning_container").hide();
 
-	if(disable_show_python_and_create_model) {
-		return;
-	}
-
-	if(model) {
-		if(old_model) {
-			old_model.optimizer.dispose();
-			dispose(old_model);
+	if(!force) {
+		if(disable_show_python_and_create_model) {
+			return;
 		}
 	}
-	tf.disposeVariables();
 
 	var new_model = tf.sequential();
 
@@ -360,7 +359,7 @@ function create_model (old_model, fake_model_structure) {
 
 	node_js += "// npm install @tensorflow/tfjs-node\n";
 	node_js += "var model = tf.sequential();\n";
-	
+
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];
@@ -381,7 +380,7 @@ function create_model (old_model, fake_model_structure) {
 			has_keys = Object.keys(data);
 		}
 
-		if("targetShape" in data && typeof(data["targetShape"]) == "string") {
+		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
 			data["targetShape"] = eval("[" + data["targetShape"] + "]");
 		}
 
@@ -456,6 +455,16 @@ function create_model (old_model, fake_model_structure) {
 			}
 		}
 
+		if(type == "rnn") {
+			// never worked...
+			var lstm_cells = [];
+			for (var index = 0; index < data["units"]; index++) {
+				lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+			}
+			data["cell"] = lstm_cells;
+			log(data);
+		}
+
 		data = remove_empty(data);
 		node_data = remove_empty(node_data);
 
@@ -470,14 +479,14 @@ function create_model (old_model, fake_model_structure) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
-			if(show_layer_trial_error) {
-				log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-				log(e);
-				log("type: " + type + ", data:");
-				log(data);
-				log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-			}
-			return false;
+			/*
+			log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			log(e);
+			log("type: " + type + ", data:");
+			log(data);
+			log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			*/
+			return model;
 		}
 
 		if(Object.keys(node_data).includes("kernelInitializer")) {
@@ -534,13 +543,13 @@ function create_model (old_model, fake_model_structure) {
 	node_js += "\nmodel.summary();\n";
 
 	html += '// x and y have to be tf.tensors. You have to get them yourself somehow.' + "\n";
-        html += 'await model.fit(x, y, {' + "\n";
-        html += '	epochs: ' + $("#epochs").val() + ',' + "\n";
-        html += '	callbacks: [tfvis.show.fitCallbacks(container, metrics, ftfvis_options) ]' + "\n";
-        html += '});' + "\n";
+	html += 'await model.fit(x, y, {' + "\n";
+	html += '	epochs: ' + $("#epochs").val() + ',' + "\n";
+	html += '	callbacks: [tfvis.show.fitCallbacks(container, metrics, ftfvis_options) ]' + "\n";
+	html += '});' + "\n";
 	html += '// You need to change this here for your data' + "\n";
-        html += '//$("#results").html(model.predict(tf.tensor([[0, 1]])).arraySync());' + "\n";
-        html += '$("#results_container").show();' + "\n";
+	html += '//$("#results").html(model.predict(tf.tensor([[0, 1]])).arraySync());' + "\n";
+	html += '$("#results_container").show();' + "\n";
 	html += '}' + "\n";
 	html += 'train_and_predict_example();' + "\n";
 	html += '        </script>' + "\n";
@@ -552,6 +561,25 @@ function create_model (old_model, fake_model_structure) {
 	}
 
 	current_layer_status_hash = get_current_layer_container_status_hash();
+
+	if(old_weights_string) {
+		if(layers_container_md5 == new_layers_container_md5) {
+			var new_weights_string = await get_weights_as_string(new_model);
+			var old_weights = eval(old_weights_string);
+			var new_weights = eval(new_weights_string);
+
+			var old_shape_string = (await get_shape_from_array(old_weights)).toString();
+			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
+
+			if(old_shape_string == new_shape_string) {
+				if(old_weights_string != new_weights_string) {
+					set_weights_from_string(JSON.stringify(old_weights), 0, 1, new_model);
+				}
+			}
+		} else {
+			layers_container_md5 = new_layers_container_md5;
+		}
+	}
 
 	return new_model;
 }
@@ -587,25 +615,29 @@ function get_fake_data_for_layertype (layer_nr, layer_type) {
 			js_option_name = "poolSize";
 		} else if (this_option == "dropout_rate") {
 			js_option_name = "dropoutRate";
+		} else if(this_option == "visualize") {
+			// left emtpy on purpose
 		}
 
-		var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
+		if(js_option_name) {
+			var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
-		if(js_option_name === undefined) {
-			console.warn("Cannot map " + this_option + " to js_option_name");
-		} else {
-			if(js_option_name == "dilationRate") {
-				data[js_option_name] = eval(default_value);
-			} else if (typeof(default_value) == "function") {
-				data[js_option_name] = default_value(i);
+			if(js_option_name === undefined) {
+				console.warn("Cannot map " + this_option + " to js_option_name");
 			} else {
-				data[js_option_name] = default_value;
+				if(js_option_name == "dilationRate") {
+					data[js_option_name] = eval(default_value);
+				} else if (typeof(default_value) == "function") {
+					data[js_option_name] = default_value(i);
+				} else {
+					data[js_option_name] = default_value;
+				}
 			}
-		}
 
-		data = remove_empty(data);
+			data = remove_empty(data);
+		}
 	}
-	
+
 	return data;
 }
 
@@ -643,16 +675,15 @@ function create_fake_model_structure (layer_nr, layer_type) {
 	return fake_model_structure;
 }
 
-function compile_fake_model (layer_nr, layer_type) {
+async function compile_fake_model (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
 	var fake_model_structure = create_fake_model_structure(layer_nr, layer_type);
 
 	try {
-		var fake_model = create_model(null, fake_model_structure);
+		var fake_model = await create_model(null, fake_model_structure);
 		fake_model.compile(get_model_data());
-		dispose(fake_model);
 	} catch (e) {
 		return false;
 	}
@@ -674,12 +705,20 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 				return true;
 			}
 			return false;
-		} else if(["conv3d", "averagePooling3d", "maxPooling3d"].includes(layer_type)) {
+		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 4) {
 				return true;
 			}
 			return false;
 		}
+	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+			if(layer_input_shape.length == 3) {
+				return true;
+			}
+			return false;
+		}
+
 	} else if(["gru"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
 			return false;
@@ -699,14 +738,18 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 
 	var layer_input_shape = calculate_default_target_shape(layer_nr);
 
-	if(layer_nr == 0 && layer_type == "flatten") {
-		return false;
+	if(layer_type == "flatten") {
+		if(layer_nr == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 }
 
-function get_valid_layer_types (layer_nr) {
+async function get_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 
 	if(!typeof(last_allowed_layers_update) == "undefined" &&  last_allowed_layers_update == get_current_status_hash() && Object.keys(allowed_layer_cache).includes(layer_nr)) {
@@ -731,7 +774,7 @@ function get_valid_layer_types (layer_nr) {
 			} else {
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
-					if(compile_fake_model(layer_nr, layer_type)) {
+					if(await compile_fake_model(layer_nr, layer_type)) {
 						valid_layer_types.push(layer_type);
 					}
 				}
@@ -746,10 +789,16 @@ function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-function set_weights_from_json_object (json, dont_show_weights, no_error) {
-	if(!model) {
+function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+	if(!m) {
+		m = model;
+	}
+
+	if(!m) {
+		log("No model");
 		return;
 	}
+
 	var weights_array = [];
 
 	var tensors = [];
@@ -759,7 +808,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error) {
 	}
 
 	try {
-		model.setWeights(tensors);
+		m.setWeights(tensors);
 
 		for (var i = 0; i < json.length; i++) {
 			dispose(tensors[i]);
@@ -787,24 +836,29 @@ function set_weights_from_json_object (json, dont_show_weights, no_error) {
 	return true;
 }
 
-async function set_weights_from_string (string, no_error) {
+async function set_weights_from_string (string, no_error, no_warning, m) {
 	var json = JSON.parse(string);
 
-	return set_weights_from_json_object(json, 0, no_error);
+	return set_weights_from_json_object(json, no_warning, no_error, m);
 }
 
-async function get_weights_as_string () {
+async function get_weights_as_string (m) {
+	if(!m) {
+		m = model;
+	}
 	if(!model) {
 		return false;
 	}
 
-	var weights = await model.getWeights();
+	var weights = await m.getWeights();
 
 	var weights_array = [];
 
 	for (var i = 0; i < weights.length; i++) {
 		if(!weights[i].isDisposed) {
-			weights_array[i] = weights[i].arraySync();
+			try {
+				weights_array[i] = weights[i].arraySync();
+			} catch (e) {}
 		}
 	}
 
@@ -838,9 +892,9 @@ async function download_weights_json () {
 	download("weights.json", await get_weights_as_string());
 }
 
-function output_size_at_layer (input_size_of_first_layer, layer_nr) {
+async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	if(!model) {
-		compile_model();
+		await compile_model();
 	}
 	var output_size = input_size_of_first_layer;
 	for (var i = 0; i < model.layers.length; i++) {
@@ -890,9 +944,12 @@ function get_current_chosen_object_default_weights_string () {
 	return weights_files[weights_file];
 }
 
-async function get_weights_shape (weights_as_string) {
+async function get_weights_shape (weights_as_string, m) {
+	if(!m) {
+		m = model;
+	}
 	if(weights_as_string === undefined) {
-		weights_as_string = await get_weights_as_string();
+		weights_as_string = await get_weights_as_string(m);
 	}
 	var weights_array = eval(weights_as_string);
 
@@ -913,16 +970,20 @@ async function _show_load_weights () {
 		return true;
 	}
 
-	var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
-	var current_network_weights_shape = JSON.stringify(await get_weights_shape());
-	if(default_weights_shape === current_network_weights_shape) {
-		if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
-			return false;
-		} else {
-			return true;
+	try {
+		var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
+		var current_network_weights_shape = JSON.stringify(await get_weights_shape());
+		if(default_weights_shape === current_network_weights_shape) {
+			if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
+				return false;
+			} else {
+				return true;
+			}
 		}
+		return false;
+	} catch (e) {
+		return false;
 	}
-	return false;
 }
 
 async function show_load_weights () {

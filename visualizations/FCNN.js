@@ -25,6 +25,9 @@ function FCNN() {
 
 	var edgeColorProportional = false;
 	var defaultEdgeColor = "#000000";
+	if(darkmode) {
+		var defaultEdgeColor = "#ffffff";
+	}
 	var negativeEdgeColor = "#0000ff";
 	var positiveEdgeColor = "#ff0000";
 	var weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
@@ -122,11 +125,14 @@ function FCNN() {
 		graph.nodes = flatten(graph.nodes);
 		graph.links = flatten(graph.links).filter(l => (l && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
 
-		var label = real_architecture.map((layer_width, layer_index) => { return {
-			'id':		'layer_' + layer_index + '_label',
-			'layer':	layer_index,
-			'text':		textFn(layer_index, layer_width, layerTypes[layer_index])
-		}});
+		var label = real_architecture.map((layer_width, layer_index) => {
+			var text = textFn(layer_index, layer_width, layerTypes[layer_index]);
+			return {
+				'id':		'layer_' + layer_index + '_label',
+				'layer':	layer_index,
+				'text':		text
+			}
+		});
 
 		link = link.data(graph.links, d => d.id);
 		link.exit().remove();
@@ -142,7 +148,19 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
-			.attr("onclick", function(d) { return "draw_maximally_activated_neuron(" + d.id.split("_").join() + ")"; })
+			/*
+			.attr("onclick", function(d) {
+				var param = d.id.split("_");
+				if(!show_input_layer || show_input_layer && param[0] > 0) {
+					if(show_input_layer) {
+						param[0]--;
+					}
+					return "draw_maximally_activated_neuron(" + param.join() + ")";
+				} else {
+					return "";
+				}
+			})
+			*/
 			.on("mousedown", set_focus)
 			.on("mouseup", remove_focus)
 			.merge(node);

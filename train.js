@@ -20,11 +20,12 @@ function gui_not_in_training () {
 	} catch (e) {
 		log(e);
 	}
+
+	enable_everything();
 }
 
 function reset_gui_before_training () {
 	prev_layer_data = []
-	$(".call_counter").html("0");
 	$(".reset_before_train_network").html("");
 	$("#percentage").html("");
 	$("#percentage").show();
@@ -36,10 +37,22 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	$("#tfvis_tab_label").parent().show();
+	show_tab_label("tfvis_tab_label");
 	write_descriptions();
 
+	if(!Object.keys(model).includes("layers")) {
+		gui_not_in_training();
+		write_error("Something went wrong with compiling the model. Please reload the site.");
+	}
+
 	if(started_training) {
+		Swal.fire({
+			title: 'Stopped training',
+			html: "This may take some time...",
+			timer: 1000,
+			showConfirmButton: false
+		});
+
 		if(model.isTraining || model.model.isTraining) {
 			model.stopTraining = true;
 			model.model.stopTraining = true;
@@ -48,13 +61,23 @@ async function train_neural_network () {
 		document.title = original_title;
 		gui_not_in_training();
 	} else {
+		Swal.fire({
+			title: 'Started training',
+			html: "This may take some time...",
+			timer: 1000,
+			showConfirmButton: false
+		});
 		gui_in_training();
 		reset_gui_before_training();
 
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		run_neural_network();
+		await run_neural_network();
+
+		enable_everything();
+
+		show_prediction();
 	}
 
 	write_descriptions();
@@ -116,10 +139,12 @@ function get_fit_data () {
 		hide_annoying_tfjs_vis_overlays();
 		$(".training_performance_tabs").show();
 
-		$("#tfvis_tab_label").parent().show();
 		if($("#jump_to_training_tab").is(":checked")) {
-			$("#tfvis_tab_label").click();
+			show_tab_label("tfvis_tab_label", 1);
+		} else {
+			show_tab_label("tfvis_tab_label");
 		}
+
 		hide_annoying_tfjs_vis_overlays();
 	};
 
@@ -130,15 +155,11 @@ function get_fit_data () {
 
 			this.model.stopTraining = true;
 			this.model.model.stopTraining = true;
-
-			gui_not_in_training();
 		}
+
 		hide_annoying_tfjs_vis_overlays();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			write_model_to_latex_to_page();
-			if(can_be_shown_in_latex()) {
-				await delay(300);
-			}
 		}
 	};
 
@@ -148,13 +169,12 @@ function get_fit_data () {
 		var current_time = Date.now();
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
 		var epochs_left = max_number_epochs - current_epoch;
-		var time_estimate = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
-		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "s] " + "NNE";
+		var time_estimate = human_readable_time(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
+		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] " + "NNE";
 	}
 
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
-		show_prediction();
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
@@ -193,78 +213,117 @@ function show_info_after_run (h) {
 async function run_neural_network () {
 	clean_gui();
 
-	$("#tfvis_tab_label").show();
+	for (var i = 0; i < model.layers.length; i++) {
+		if("original_apply" in model.layers[i]) {
+			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+		}
+	}
+
+	show_tab_label("tfvis_tab_label");
 
 	if($("#jump_to_training_tab").is(":checked")) {
-		$('a[href="#tfvis_tab"]').click();
-		$('a[href="#tfvis_tab_training_performance"]').show();
-		$('a[href="#tfvis_tab_training_performance"]').click();
+		show_tab_label("tfvis_tab_label", 1);
+		show_tab_label("tfvis_tab_training_performance_label", 1);
 	}
 
 	try {
-		model = create_model(model);
-		try {
-			compile_model();
-			try {
-				show_info_pre_run();
-
-				disable_everything();
-				var xs_and_ys = await get_xs_and_ys();
-
-				if(started_training) {
-					var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
-
-					if($("#jump_to_training_tab").is(":checked")) {
-						$('#training_performance_tab_label').show();
-						if($("#data_origin").val() == "default") {
-							$('a[href="#training_data_tab"]').click();
-						}
-						$('a[href="#tfvis_tab_training_performance"').click()
-					}
-
-					try {
-						h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
-
-						model_is_trained = true;
-
-						$("#train_neural_network_button").html("Start training");
-						$("#predictcontainer").show();
-						$("#predict_error").hide();
-						$("#predict_error").html("");
-
-						show_info_after_run(h);
-
-						enable_everything();
-						gui_not_in_training();
-					} catch (e) {
-						write_error(e);
-
-						$('body').css('cursor', 'default');
-						$("#layers_container").sortable("enable");
-						$("#ribbon,select,input,checkbox").prop("disabled", false);
-						write_descriptions();
-						Prism.highlightAll();
-
-						var link = document.querySelector("link[rel~='icon']");
-						if (!link) {
-							link = document.createElement('link');
-							link.rel = 'icon';
-							document.getElementsByTagName('head')[0].appendChild(link);
-						}
-						link.href = 'favicon.ico';
-					}
-				}
-			} catch (e) {
-				write_error(e);
-				console.trace();
-				favicon_default();
-			}
-		} catch (e) {
-			alert("Compiling model failed: " + e);
-		}
+		model = await create_model(model);
 	} catch (e) {
 		alert("Creating model failed: " + e);
+		return;
+	}
+
+	try {
+		await compile_model();
+	} catch (e) {
+		alert("Compiling model failed: " + e);
+		return;
+	}
+
+	tf.engine().startScope();
+
+	var xs_and_ys;
+
+	try {
+		show_info_pre_run();
+
+		disable_everything();
+		xs_and_ys = await get_xs_and_ys();
+
+	} catch (e) {
+		write_error(e);
+		console.trace();
+		favicon_default();
+		return;
+	}
+
+	if(started_training) {
+		var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+
+		if($("#jump_to_training_tab").is(":checked")) {
+			show_tab_label("training_performance_tab_label");
+			if($("#data_origin").val() == "default") {
+				show_tab_label("training_data_tab_label", 1);
+			}
+			show_tab_label("tfvis_tab_training_performance_label", 1);
+		}
+
+		try {
+			add_layer_debuggers();
+			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+
+			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
+			 * then restore the model with the saved weights. Not pretty, but it works...  */
+
+			var trained_weights = await get_weights_as_string();
+
+			reset_data();
+
+			tf.disposeVariables();
+
+			model = await create_model(null, get_model_structure(), 1);
+			await compile_model();
+
+			await set_weights_from_string(trained_weights, 1, 1);
+
+			dispose(xs_and_ys["x"]);
+			dispose(xs_and_ys["y"]);
+			xs_and_ys = null;
+
+			/* Memory leak hack end */
+
+			model_is_trained = true;
+
+			$("#train_neural_network_button").html("Start training");
+			$("#predictcontainer").show();
+			$("#predict_error").hide().html("");
+
+			show_info_after_run(h);
+
+			dispose(h);
+
+			enable_everything();
+			gui_not_in_training();
+		} catch (e) {
+			write_error(e);
+
+			$('body').css('cursor', 'default');
+			$("#layers_container").sortable("enable");
+			$("#ribbon,select,input,checkbox").prop("disabled", false);
+			write_descriptions();
+			Prism.highlightAll();
+
+			var link = document.querySelector("link[rel~='icon']");
+			if (!link) {
+				link = document.createElement('link');
+				link.rel = 'icon';
+				document.getElementsByTagName('head')[0].appendChild(link);
+			}
+			link.href = 'favicon.ico';
+		}
 	}
 
 	reset_data();
+
+	tf.engine().endScope();
 }

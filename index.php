@@ -36,34 +36,33 @@
 
 
 <?php
-		$tablist_color = "bbddfd";
+		$tablist_color = "254c87";
 
-		$minify = 1;
+		$GLOBALS['minify'] = 1;
 		if(array_key_exists("no_minify", $_GET)) {
-			$minify = 0;
+			$GLOBALS['minify'] = 0;
 		}
 ?>
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.css" rel="stylesheet">
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>style.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbon.css">
+		<?php minify_css("jquery-ui.css"); ?>
+		<?php minify_css("style.css"); ?>
+		<?php minify_css("ribbon.css"); ?>
 <?php
-		$tablist_color = "bbddfd";
 		if($darkmode) {
 			$tablist_color = "000000";
 ?>
-			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>darkmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbondarkmode.css">
+			<?php minify_css("darkmode.css"); ?>
+			<?php minify_css("ribbondarkmode.css"); ?>
 <?php
 		} else {
 ?>
 
-			<link href="<?php print $minify ? "minify.php?file=" : ""; ?>lightmode.css" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>ribbonlightmode.css">
+			<?php minify_css("lightmode.css"); ?>
+			<?php minify_css("ribbonlightmode.css"); ?>
 <?php
 		}
 ?>
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.min.css" rel="stylesheet">
-		<link href="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.min.css" rel="stylesheet">
+		<?php minify_css("prism/prism.min.css"); ?>
+		<?php minify_css("external/sweetalert2.min.css"); ?>
 
 
 		<!-- jquery -->
@@ -102,48 +101,14 @@
 
 		<!-- ChardinJS -->
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.js"></script>
-		<link rel="stylesheet" type="text/css" href="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.css">
+
+		<?php minify_css("chardinjs.css"); ?>
 
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
-		<!-- mathjax -->
-		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
-		<!--<script type="text/javascript" src="MathJax-2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
 		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
-		
-
-		<script type="text/x-mathjax-config">
-			var font = "Neo-Euler";
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['$','$']],
-					"preview": "none"
-				},
-				"SVG":{
-					font:font
-				},
-				"showMathMenu": true,
-				"HTML-CSS": {
-					"EqnChunk": 50,
-					"EqnChunkDelay": 10
-				},
-				"fast-preview": {
-					"disabled": true
-				}
-			});
-		</script>
-
-		<!--
-		<script src="clippy/build/clippy.js"></script>
-		<script type="text/javascript">
-			var this_agent = null;
-			clippy.load('Merlin', function(agent) {
-				this_agent = agent;
-			});
-		</script>
-		-->
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
@@ -151,45 +116,63 @@
 	</head>
 	<body data-chardin-sequenced="true">
 		<div id="mainsite">
+			<div id="ribbon_shower">
+				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
+				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
+			</div>
 			<div id="ribbon">
-				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
-					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
-					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
-					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
-					<!--<li><span class="symbol_button enabled_symbol" title="Start Clippy-Tour" onclick="clippy_tour()">&#129497;&#8205;&#9794;&#65039;</span></li>-->
-					<span id="register" onclick="open_register_dialog()">Register</span>
-					<span id="tensor_number_debugger" style="display: none"></span>
-				</ul>
+        <ul id="tablist" style="background: #<?php print $tablist_color; ?>">
+            <li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+            <li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
+            <li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+            <li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
+            <li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
+            <span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
+            <span id="register" onclick="open_register_dialog()">Register</span>
+            <span id="tensor_number_debugger" style="display: none"></span>
+        </ul>
+
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:300px">
-							<table width=300>
+						<div class="ribbon-toolbar" style="width:370px">
+							<table width=360>
 								<tr>
 									<td>
-										<span class="symbol_button">Problem type:</span>
+										Problem type:
 									</td>
 									<td colspan=2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 251px">
 										</select>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<span class="symbol_button">Architecture:</span>
+										Architecture:
 									</td>
 									<td colspan=2">
-										<select id="dataset" onchange="chose_dataset();">
+										<select id="dataset" onchange="chose_dataset(1);" style="width: 140px">
 										</select>
+										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
 								</tr>
+								<div id="pretrained_weights">
+									<tr>
+										<td>
+											Dataset:
+										</td>
+										<td colspan=2>
+											<select id="model_dataset" onchange="change_model_dataset();" style="width: 204px">
+											</select>
+											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										</td>
+									</tr>
+								</div>
 								<tr>
-									<td>Auto-Input-Shape?</td>
-									<td><input type="checkbox" value=1 checked onchange="toggle_allow_edit_inputShape()" id="auto_input_shape" /></td>
-									<td><button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button></td>
+									<td>Shapes: </td>
+									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 104px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
@@ -198,13 +181,14 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 280px">
+						<div class="ribbon-toolbar" style="width: 240px">
 							<table>
 								<tr>
 									<td>Loss:</td>
-									<td style="width: 220px">
-										<select id="loss" onchange="updated_page()" style="width: 150px">
+									<td style="width: 140px">
+										<select id="loss" onchange="updated_page()" style="width: 100%">
 											<option value="meanSquaredError">MeanSquaredError</option>
 											<option value="binaryCrossentropy">BinaryCrossentropy</option>
 											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
@@ -223,8 +207,8 @@
 								</tr>
 								<tr>
 									<td>Metric:</td>
-									<td style="width: 220px">
-										<select id="metric" onchange="change_metrics()" style="width: 150px">
+									<td style="width: 140px">
+										<select id="metric" onchange="change_metrics()" style="width: 100%">
 											<option value="binaryAccuracy">binaryAccuracy</option>
 											<option value="categoricalAccuracy">categoricalAccuracy</option>
 											<option value="precision">precision</option>
@@ -239,7 +223,7 @@
 									<tr>
 										<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
 										<td>
-											<select id="data_origin" onchange="change_data_origin(1)">
+											<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
 												<option value="default">Default</option>
 												<option value="own">Own</option>
 											</select>
@@ -247,23 +231,26 @@
 									</tr>
 								</tr>
 								<tr>
-									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 70px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 70px;" readonly id="outputShape" /></td>
+									<td colspan=2>
+										Auto-Input-Shape?
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
+									</td>
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Loss/Metric/Data/Shape</div>
+						<div class="ribbon-group-title">Loss/Metric/Data</div>
 					</div>
 
 					<div id="custom_training_data_settings" style="display: none">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group" data-intro="You can set where your training data should come from here">
-							<div class="ribbon-toolbar" style="width:220px">
+							<div class="ribbon-toolbar" style="width:170px">
 								<table>
 									<tr id="data_type_row" style="display: none">
 										<td>Data Type:</td>
 										<td>
-											<select id="data_type" onchange="change_data_origin(1)">
+											<select id="data_type" style="width: 90px" onchange="change_data_origin(1)">
 												<option value="csv">&#128290; CSV</option>
 												<option value="image">&#128444; Image</option>
 												<option value="tensordata">&#x2318; Tensor-Data</option>
@@ -278,30 +265,17 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" style="display:none">
 						<div class="ribbon-toolbar" style="width:100px">
 							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%" />
 						</div>
 						<div class="ribbon-group-title">Layers</div>
 					</div>
-					<!--<div class="ribbon-group-sep"></div>-->
-
-					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width:160px">
-							<table>
-								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
-								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
-								<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
-								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Hyperparameters</div>
-					</div>
-					<div class="ribbon-group-sep"></div>
 
 					<div id="image_resize_dimensions">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:180px">
+							<div class="ribbon-toolbar" style="width:120px">
 								<table>
 									<tr>
 										<td>Width:</td>
@@ -312,7 +286,7 @@
 										<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
-										<td>Img/category:</td>
+										<td>Img/cat:</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
 								</table>
@@ -320,15 +294,31 @@
 							<div class="ribbon-group-title">Image Options</div>
 						</div>
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 					</div>
+
+
+					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
+						<div class="ribbon-toolbar" style="width:150px">
+							<table>
+								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 50px;" /></td></tr>
+								<tr><td colspan="2"><button id="reset_data" style="display: none" onclick="reset_data()">Reset training data</button></td></tr>
+								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 50px;" id="validationSplit" /></td></tr>
+							</table>
+							<div class="ribbon-group-title">Hyperparameters</div>
+						</div>
+					</div>
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
 							<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 							<div class="small_vskip"></div>
-							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
+							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 							<div class="small_vskip"></div>
-							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
+							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input class="show_data" type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 							<div class="small_vskip"></div>
 							Divide <i>X</i>-Tensor by: <input style="width: 50px;" type="text" value="1" id="divide_by" />
 						</div>
@@ -356,17 +346,18 @@
 							</fieldset>
 							Dark mode (reloads page)? <input value=1 type="checkbox" id="darkmode_choser" <?php print $darkmode ? "checked" : ""; ?> onclick="darkmode_choser()" />
 						</div>
-						<div class="ribbon-group-title">TF-Backend/GUI-Mode</div>
+						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
 									<td>Kernel initializer</td>
 									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()">
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -374,7 +365,7 @@
 								<tr>
 									<td>Bias initializer</td>
 									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()">
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -382,7 +373,7 @@
 								<tr>
 									<td>Activation functions</td>
 									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()">
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
 											<option value="none">&mdash;</option>
 										</select>
 									</td>
@@ -393,131 +384,144 @@
 					</div>
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar" style="width:200px">
-							<select id="optimizer" onchange='change_optimizer()' style="width: 100%">
-								<option value="adam">adam</option>
-								<option value="adadelta">adadelta</option>
-								<option value="adagrad">adagrad</option>
-								<option value="adamax">adamax</option>
-								<option value="rmsprop">rmsprop</option>
-								<option value="sgd">sgd</option>
-							</select>
-							<!--<a href="#" onclick="show_optimizer_help()">What does this mean?</a>-->
-						</div>
+							<table style="width: 80%">
+								<tr>
+									<td>Optimizer:</td>
+									<td>
+										<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
+											<option value="adam">adam</option>
+											<option value="adadelta">adadelta</option>
+											<option value="adagrad">adagrad</option>
+											<option value="adamax">adamax</option>
+											<option value="rmsprop">rmsprop</option>
+											<option value="sgd">sgd</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+							<hr>
 
-						<div class="ribbon-toolbar" style="max-width: 1000px; width: auto">
-							<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
-									</tr>
-								</table>
-							</div>
+							<div id="optimizer_table">
+								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
+										</tr>
+									</table>
+								</div>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+								<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+											<td>Initial accumulator value:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
+											<td>&beta;<sub>1</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
+										</tr>
 
-										<td>beta1:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
-									</tr>
+										<tr>
+											<td>&beta;<sub>2</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
 
-									<tr>
-										<td>beta2:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
+											<td>&rho;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+										</tr>
 
-										<td>Rho:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+										<tr>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
-									</tr>
-								</table>
-							</div>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+										</tr>
+									</table>
+								</div>
 
-							<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
+								<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
 
-										<td>beta1:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
+											<td>&beta;<sub>1</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
-										<td>beta2:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
-									</tr>
-									<tr>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
-										<td>Decay:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
-										<td></td>
-										<td></td>
-									</tr>
-								</table>
-							</div>
+										</tr>
+										<tr>
 
-							<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
+											<td>&beta;<sub>2</sub>:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
 
-										<td>Decay:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
-									</tr>
-									<tr>
-										<td>Momentum:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
+											<td>Decay:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
+																				</tr>
+											<td></td>
+											<td></td>
+										</tr>
+									</table>
+								</div>
 
-										<td>Epsilon:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
-									</tr>
-								</table>
-							</div>
+								<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
 
-							<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
-								<table style="width: 80%">
-									<tr>
-										<td>Learning rate:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+											<td>Decay:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
+										</tr>
+										<tr>
+											<td>Momentum:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
 
-										<td>Momentum:</td>
-										<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
-									</tr>
-								</table>
+											<td>&epsilon;:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
+										</tr>
+									</table>
+								</div>
+
+								<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
+									<table style="width: 80%">
+										<tr>
+											<td>Learning rate:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+
+											<td>Momentum:</td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
@@ -529,10 +533,6 @@
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
 							<table>
-								<tr data-intro="Show the current layer live in the FCNN-style-view">
-									<td>Highlight layer?</td>
-									<td><input type='checkbox' value="1" id="show_progress_through_layers" /></td>
-								</tr>
 								<tr class="hide_when_no_alexnet">
 									<td>AlexNet-Renderer</td>
 									<td>
@@ -545,32 +545,29 @@
 										</fieldset>
 									</td>
 								</tr>
-								<tr data-intro="Show a counter on the layers that increases every time that layer gets called.">
-									<td>Call counter?</td>
-									<td><input type='checkbox' value="1" onclick="$('.call_counter_container').toggle()" id="show_call_counter" /></td>
-								</tr>
 								<tr data-intro="Show the input layers">
 									<td>Input&nbsp;Layer?</td>
-									<td><input type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
+									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Visualizations</div>
 					</div>
 
-					<div class="hide_when_no_conv_visualiations">
+					<div class="hide_when_no_conv_visualizations">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group">
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
-										<tr data-intro="The pixel-size for the 'maximally activated'-neuron-patterns (doable in the FCNN views by clicking on a single neuron)">
-											<td>Pixel size:</td>
-											<td><input type="number" min="1" max="100" value="10" onchange="change_max_activation_pixel_size()" onkeyup="change_max_activation_pixel_size()" id="max_activation_pixel_size" style="width: 80px;" /></td>
-										</tr>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations:</td>
-											<td><input type="number" min="1" value="80" id="max_activation_iterations" style="width: 80px;" /></td>
+											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;" /></td>
+										</tr>
+										<tr>
+											<td>Randomizer limits:</td>
+											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
 										<tr data-intro="If this is checked, it starts with a single example image (if available)">
 											<td>Use example imgs as base?</td>
@@ -585,47 +582,36 @@
 
 
 					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-								<tr class="hide_when_no_conv_visualiations">
+								<tr class="hide_when_no_conv_visualizations">
 									<td>Show layer data flow:</td>
 									<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 								</tr>
-								<tr class="hide_when_no_conv_visualiations">
+								<!--
+								<tr class="hide_when_no_conv_visualizations">
 									<td>Show kernel images:</td>
 									<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
 								</tr>
+								-->
 								<tr>
 									<td>Enable TF-Debug:</td>
 									<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
 								</tr>
 								<tr>
 									<td>Memory Debugger:</td>
-									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" id="memory_debugger" /></td>
+									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" class="show_data" id="memory_debugger" /></td>
 								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Debug</div>
 					</div>
 
-					<div id="math_mode_settings" style="display: none">
-						<div class="ribbon-group-sep"></div>
-						<div class="ribbon-group">
-							<div class="ribbon-toolbar">
-								<table data-intro="Options for the math mode.">
-									<tr>
-										<td>No. decimal points (0 = no limit):</td>
-										<td><input type="number" style="width: 30px" value="0" min="0" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
-									</tr>
-								</table>
-							</div>
-							<div class="ribbon-group-title">Math-Mode</div>
-						</div>
-					</div>
-
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group">
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
@@ -737,7 +723,7 @@
 
 				<div class="container" id="errorcontainer" style="display: none">
 					<div class="left"></div>
-					<div class="right reset_before_train_network" id="error"></div>
+					<div class="reset_before_train_network" id="error"></div>
 				</div>
 
 
@@ -747,22 +733,23 @@
 					<div id="layers_container_left" class="left_side">
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
-					<div class="right_side" id="graphs_here" style="padding-left: 10px">
-						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; border-radius: 5px">
-							<div style="display: block ruby">
+					<div class="right_side" id="graphs_here">
+						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
+							<div style="display: flex">
 								<ul>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
 									<li><a href="#summary_tab" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
-										<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
-										<li><a id="own_image_data_label" href="#own_image_data">Own image data</a></li>
-										<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensor data</a></li>
-										<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV data</a></li>
-									<li><a href="#tfvis_tab" id="tfvis_tab_label" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
+									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
+									<li><a id="own_image_data_label" href="#own_image_data">Own image data</a></li>
+									<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensor data</a></li>
+									<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV data</a></li>
+									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
 								</ul>
-								<span id="toggle_layer_view_button" style="position: relative; top: -6px" onclick="toggle_layer_view()">&#128470;</span>
+								<span id="toggle_layer_view_button" style="position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
+							<hr>
 
 							<div id="own_csv_data">
 								<br>
@@ -833,6 +820,7 @@
 								<br>
 								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
 								<br>
+								<br>
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
 								<div id="own_image_data_categories">
@@ -845,7 +833,7 @@
 								<div id="percentage" class="reset_before_train_network"></div>
 								<div id="photos" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-								<div class="container" id="download_data" style="display: none"></div>
+								<div class="" id="download_data" style="display: none"></div>
 							</div>
 
 							<div id="code_tab">
@@ -915,6 +903,13 @@
 								</div>
 
 								<div id="maximally_activated" class="maximally_activated_class">
+									<br>
+									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
+									<button onclick="larger_maximally_activated_neurons()">Larger</button>
+									<button onclick="reset_maximally_activated_neurons()">Reset</button>
+									<!--<button onclick="predict_all_maximally_activated_neurons()">Predict all visible images</button>-->
+									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
+									<div id="maximally_activated_content"></div>
 								</div>
 
 								<div id="visual_help_tab">
@@ -924,11 +919,18 @@
 									$bgcolor = "fff";
 									$textcolor = "000";
 									if($darkmode) {
-										$bgcolor = "000";
+										$bgcolor = "363636";
 										$textcolor = "fff";
 									}
 								?>
 								<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #<?php print $bgcolor; ?>; color: <?php $textcolor; ?>;">
+									<table data-intro="Options for the math mode.">
+										<tr>
+											<td>Number of decimal points (0 = no limit):</td>
+											<td><input class="show_data" type="number" style="width: 50px" value="0" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
+										</tr>
+									</table>
+									<div id="math_tab_code"></div>
 								</div>
 
 								<!--
@@ -1005,26 +1007,12 @@
 							</div>
 
 							<div id="summary_tab">
-								<div class="right reset_before_train_network" id="summary"></div>
+								<div class="reset_before_train_network" id="summary"></div>
 							</div>
 
 							<div id="predict_tab">
 								<div class="container" id="predictcontainer">
-									<div class="right">
-										<div id="pretrained_weights">
-											<table>
-												<tr>
-													<td>
-														<span class="symbol_button">Pretrained Weights:</span>
-													</td>
-													<td>
-														<select id="model_dataset" onchange="change_model_dataset();">
-														</select>
-														<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load weights</button>
-													</td>
-												</tr>
-											</table>
-										</div>
+									<div class="">
 										<div id="own_files">
 											<h2>Own files</h2>
 
@@ -1066,13 +1054,38 @@
 
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>main.js"></script>
 		<script>
+			var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function')
 			var local_store = window.localStorage;
 			local_store.clear();
 
-			function get_mode() {
-				var backend = $("#mode_chooser > input[type=radio]:checked").val();
+			var old_mode = "amateur";
 
-				return backend;
+			function resize_window () {
+				if(window.innerWidth >= 800) {
+					$("#ribbon").show();
+					$("#ribbon_shower").hide();
+				} else {
+					$("#ribbon").hide();
+					$("#ribbon_shower").show();
+				}
+				write_descriptions();
+			}
+
+			function get_mode() {
+				var mode = $("#mode_chooser > input[type=radio]:checked").val();
+				if(mode != old_mode && (state_stack.length > 1 || future_state_stack.length)) {
+					state_stack = [];
+					future_state_stack = [];
+
+					show_hide_undo_buttons();
+					Swal.fire(
+						'Undo/redo stack lost!',
+						"Changing the mode deletes the undo/redo stack.",
+						'warning'
+					);
+				}
+
+				return mode;
 			}
 
 			function get_backend() {
@@ -1139,37 +1152,37 @@
 			}
 
 			function scale_down (max_value, architecture) {
-                                var relations = [];
-                                var new_architecture = [];
-                                for (var i = 0; i < architecture.length; i++) {
-                                        var item = architecture[i];
-                                        if(item <= max_value) {
-                                                relations.push(0);
-                                        } else {
-                                                relations.push(item / max_value);
-                                        }
-                                }
+				var relations = [];
+				var new_architecture = [];
+				for (var i = 0; i < architecture.length; i++) {
+					var item = architecture[i];
+					if(item <= max_value) {
+						relations.push(0);
+					} else {
+						relations.push(item / max_value);
+					}
+				}
 
-                                for (var i = 0; i < architecture.length; i++) {
-                                        var item = architecture[i];
-                                        var relation = relations[i];
+				for (var i = 0; i < architecture.length; i++) {
+					var item = architecture[i];
+					var relation = relations[i];
 
-                                        if(relation) {
-                                                new_architecture.push(max_value + Math.ceil(relation));
-                                        } else {
-                                                new_architecture.push(item);
-                                        }
+					if(relation) {
+						new_architecture.push(max_value + Math.ceil(relation));
+					} else {
+						new_architecture.push(item);
+					}
 
-                                }
+				}
 
-                                return new_architecture;
-                        }
+				return new_architecture;
+			}
 
 			var fcnn = FCNN();
-                        async function restart_fcnn() {
-                                var architecture = [];
+			async function restart_fcnn() {
+				var architecture = [];
 				var real_architecture = [];
-                                var betweenNodesInLayer = [];
+				var betweenNodesInLayer = [];
 				var layer_types = [];
 
 				if(show_input_layer) {
@@ -1194,10 +1207,9 @@
 				if(architecture.length + real_architecture.length) {
 					fcnn.redraw({'architecture_': architecture, 'real_architecture_': real_architecture, 'layerTypes_': layer_types, 'currentLayer_': currentLayer});
 					fcnn.redistribute({'betweenNodesInLayer_': betweenNodesInLayer});
-				} else {
 				}
 				reset_view();
-                        }
+			}
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
@@ -1274,7 +1286,7 @@
 							}
 
 							alexnet.restartRenderer(1);
-							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
+							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2, "showDims": true});
 						} catch (e) {
 							console.warn(e);
 							disable_alexnet = 1;
@@ -1288,12 +1300,12 @@
 				}
 
 				if(disable_alexnet) {
-					$("#alexnet_tab_label").parent().hide();
+					hide_tab_label("alexnet_tab_label");
 					if(!dont_click) {
 						if(clicked_on_tab == 0) { $('a[href="#fcnn_tab"]').click(); clicked_on_tab = 1; }
 					}
 				} else {
-					$("#alexnet_tab_label").parent().show();
+					show_tab_label("alexnet_tab_label");
 					if(!dont_click) {
 						if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
 					}
@@ -1337,7 +1349,7 @@
 								this_layer_arch["numberOfSquares"] = layer_config["filters"];
 								push = 1;
 							} else if("poolSize" in layer_config) {
-								var output_size_this_layer = output_size_at_layer(get_input_shape(), i);
+								var output_size_this_layer = await output_size_at_layer(get_input_shape(), i);
 								this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
 								this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
 								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
@@ -1402,17 +1414,16 @@
 				}
 
 				if(disable_lenet) {
-					$("#lenet_tab_label").parent().hide();
+					hide_tab_label("lenet_tab_label");
 					if(clicked_on_tab == 0) {
 						if(!dont_click) {
-							$('a[href="#fcnn_tab"]').click(); 
+							$('#fcnn_tab_label').click(); 
 							clicked_on_tab = 1;
 						}
 					}
 				} else {
-					$("#lenet_tab_label").parent().show();
+					show_tab_label("lenet_tab_label");
 					if(clicked_on_tab == 0) {
-						$('#lenet_tab_label').show();
 						if(!dont_click) {
 							$('#lenet_tab_label').click();
 							clicked_on_tab = 1;
@@ -1473,7 +1484,7 @@
 			$(".show_after_training").hide();
 
 			$(window).resize(function() {
-				write_descriptions();
+				resize_window();
 			});
 
 			favicon_default();
@@ -1523,7 +1534,7 @@
 					}
 					var reader = new FileReader();
 					reader.onload = function (e) {
-						var html = '<img height=90 src="' + e.target.result + '">';
+						var html = '<span style="user-select: none;"><img height="90" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 						imgDiv.prepend(html);
 						disable_start_training_button_custom_images();
 					}
@@ -1542,5 +1553,18 @@
 
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.js"></script>
 		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism-python.min.js"></script>
+		
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['$','$']]
+				},
+				"showMathMenu": true
+			});
+
+			set_mode();
+
+			resize_window();
+		</script>
 	</body>
 </html>

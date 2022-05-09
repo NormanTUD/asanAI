@@ -307,37 +307,14 @@ function visual_help_text (text) {
 	//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
 	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
-	$("#visual_help_tab_label").click();
-}
-
-function visual_help_text_image (filename, text) {
-	$("#visual_help_tab").html(text + "<br><center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
-	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
-	$("#visual_help_tab_label").click();
-}
-
-function visual_help_array (filenames) {
-	$("#visual_help_tab").html("<center>");
-	for (var i = 0; i < filenames.length; i++) {
-		var filename = filesnames[0];
-		$("#visual_help_tab").append("<img style='width: 80%' src='visualhelp/" + filename + "' />");
-	}
-	$("#visual_help_tab").append("</center>");
-	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
+	show_tab_label("visual_help_tab_label");
 	$("#visual_help_tab_label").click();
 }
 
 function visual_help (filename) {
 	$("#visual_help_tab").html("<center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
 	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
+	show_tab_label("visual_help_tab_label");
 	$("#visual_help_tab_label").click();
 }
 
@@ -349,21 +326,6 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 	str += ">";
 
 	var help = "";
-	if(desc.toLowerCase().includes("activation function")) {
-		help = "<sup><a style='cursor: help;' onclick='plot_activation($($(this).parent().parent().parent().find(\"td\")[1]).find(\"select\").val())'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("strides")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help_text_image(\"strides.svg\", \"Stride 1: preserve resolution.<br>Stride 2+: downsample<br>\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("filter")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"filter.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("kernel-size")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"filter.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("padding")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"padding.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("dilation")) {
-		help = "<sup><a style='cursor: help;' onclick='visual_help(\"dilation_rate.svg\")'>?</a></sup>";
-	} else if (desc.toLowerCase().includes("kernel initializer")) {
-		help = "<sup><a style='cursor: help;' onclick='write_initializer_values(" + nr + ")'>?</a></sup>";
-	}
 
 	str += "<td>" + desc + help + ":</td>";
 	str += "<td>";
@@ -385,7 +347,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 			}
 
-			str += "<select class='input_field input_data " + classname + "' onchange='" + onchange_text + "'>";
+			str += "<select class='input_field input_data " + classname + "' _onchange='" + onchange_text + "'>";
 			for (const [key, value] of Object.entries(data)) {
 				str += '<option value="' + key + '">' + value + '</option>';
 			}
@@ -407,7 +369,7 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  onchange="updated_page()" onkeyup="updated_page(null, null, this)" />';
+			str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />';
 		} else if(type == "number") {
 			str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -427,9 +389,9 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 				str += " value=" + data["value"] + " ";
 			}
 
-			str += " onchange='updated_page()' onkeyup='updated_page(null, null, this)' />";
+			str += " _onchange='updated_page()' onkeyup='updated_page(null, null, this)' />";
 		} else if(type == "checkbox") {
-			str += "<input type='checkbox' class='input_data " + classname + "' onchange='updated_page(null, null, this);' ";
+			str += "<input type='checkbox' class='input_data " + classname + "' _onchange='updated_page(null, null, this);' ";
 			if("status" in data && data["status"] == "checked") {
 				str += " checked='CHECKED' ";
 			}
@@ -441,6 +403,25 @@ function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) 
 	str += "</td>";
 
 	return str;
+}
+
+function add_cell_option () {
+	return "";
+}
+
+function add_number_lstm_cells_option (type, nr) {
+	return get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
+}
+
+function add_visualize_option (type, nr) {
+	var style = "";
+
+	var current_input_shape = get_input_shape();
+	if(current_input_shape.length != 3) {
+		style = ' style="display: none" '
+	}
+
+	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
 }
 
 function add_theta_option (type, nr) {
@@ -947,6 +928,15 @@ async function get_number_of_training_items () {
 	return number;
 }
 
+async function get_cached_json (url) {
+	if(Object.keys(_cached_json).includes(url)) {
+		return _cached_json[url];
+	}
+	var data = await $.getJSON(url);
+	_cached_json[url] = data;
+	return data;
+}
+
 async function _get_configuration (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -970,17 +960,17 @@ async function _get_configuration (index) {
 			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
 
-			data = await $.getJSON(data_url);
+			data = await get_cached_json(data_url);
 
 			if(!local_store.getItem("tensorflowjs_models/mymodel")) {
-				data["keras"] = await $.getJSON(keras_url);
+				data["keras"] = await get_cached_json(keras_url);
 			} else {
 				try {
 					data["keras"] = JSON.parse(local_store.getItem("tensorflowjs_models/mymodel"));
 				} catch (e) {
 					log(e);
 					local_store.setItem("tensorflowjs_models/mymodel", null)
-					data["keras"] = await $.getJSON(keras_url);
+					data["keras"] = await get_cached_json(keras_url);
 				}
 			}
 		} catch (e) {
@@ -1018,15 +1008,10 @@ function enable_disable_kernel_images () {
 		$("#show_kernel_images").prop("disabled", true);
 		$("#data_plotter").hide();
 	}
-	//set_ribbon_min_width();
 }
 
 function change_kernel_pixel_size () {
 	kernel_pixel_size = parseInt($("#kernel_pixel_size").val());
-}
-
-function change_max_activation_pixel_size () {
-	max_activation_pixel_size = parseInt($("#max_activation_pixel_size").val());
 }
 
 function change_pixel_size () {
@@ -1041,7 +1026,7 @@ function change_width () {
 	change_width_or_height("width", 0);
 }
 
-function change_width_or_height (name, inputshape_index) {
+async function change_width_or_height (name, inputshape_index) {
 	if(["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
 		var inputShape = get_input_shape();
@@ -1049,14 +1034,15 @@ function change_width_or_height (name, inputshape_index) {
 		set_input_shape("[" + inputShape.join(", ") + "]");
 		eval(name + " = " + value);
 		layer_structure_cache = null;
-		model = create_model();
+		model = await create_model();
+		is_setting_config = false;
 		updated_page();
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
 }
 
-async function update_python_code () {
+async function update_python_code (dont_reget_labels) {
 	var redo_graph = 0;
 
 	var input_shape = [width, height, number_channels];
@@ -1073,11 +1059,10 @@ async function update_python_code () {
 
 	$("#pythoncontainer").show();
 
-	/*
-	
-
-	*/
-
+	python_code += "# sudo pip3 install tensorflowjs\n";
+	if(dataset_category == "image") {
+		python_code += "# sudo pip3 install scikit-image\n";
+	}
 	python_code += "# Use this command to convert a downloaded tensorflow-js-model first:\n";
 	python_code += "# tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
@@ -1098,7 +1083,9 @@ async function update_python_code () {
 	
 	var x_shape = "";
 
-	await get_label_data();
+	if(!dont_reget_labels) {
+		await get_label_data();
+	}
 
 	if(dataset_category == "image") {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
@@ -1207,40 +1194,7 @@ async function update_python_code () {
 				}
 			}
 		}
-
-		/*
-		python_code += params.join(",\n\t");
-		if(params.length) {
-			python_code += "\n";
-		}
-		python_code += "))\n";
-		*/
 	}
-
-
-	var model_data = {
-		loss: loss,
-		optimizer: optimizer_type,
-		metrics: metric_type
-	};
-
-	if(optimizer_type == "sgd") {
-		model_data["learningRate"] = document.getElementById("learningRate_" + optimizer_type).value;
-		//python_code += "opt = tf.keras.optimizers.SGD(learningRate=" + model_data["learningRate"] + ", momentum=" + model_data["momentum"] + ")\n";
-	} else {
-		//python_code += "opt = '" + optimizer_type + "'\n";
-	}
-
-	//python_code += "model.compile(optimizer=opt, loss='" + get_python_name(loss) + "', metrics=['" + get_python_name(metric_type) + "'])\n";
-	//python_code += "model.summary()\n";
-
-	/*
-	if(dataset_category == "image") {
-		python_code += "model.fit_generator(image_set, epochs=epochs)";
-	} else {
-		python_code += "model.fit(x, y, epochs=epochs)";
-	}
-	*/
 
 	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
@@ -1261,11 +1215,9 @@ function hide_no_conv_stuff () {
 	}
 
 	if(any_conv_visualizations) {
-		$(".hide_when_no_conv_visualiations").show();
-		$("#conv_explanations_label").show();
+		$(".hide_when_no_conv_visualizations").show();
 	} else {
-		$(".hide_when_no_conv_visualiations").hide();
-		$("#conv_explanations_label").hide();
+		$(".hide_when_no_conv_visualizations").hide();
 		$("#show_layer_data").prop("checked", false);
 		$("#data_plotter").hide();
 	}
@@ -1277,22 +1229,31 @@ function hide_no_conv_stuff () {
 	}
 }
 
-function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
-	//if(item) {
-	//	log(find_layer_number_by_element(item));
-	//}
+async function get_shape_from_array (array) {
+	tf.engine().startScope();
+	var x = tf.tensor(array);
+	var shape = x.shape;
+	tf.engine().endScope();
+
+	return shape;
+}
+
+async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
+	rename_tmp_onchange();
+
 	if(is_setting_config) {
 		return;
 	}
-	//console.trace();
+
 	var numberoflayers = get_numberoflayers();
 	show_or_hide_bias_initializer(numberoflayers);
+
 	if(disable_show_python_and_create_model) {
 		return;
 	}
 
 	try {
-		compile_model();
+		await compile_model();
 	} catch (e) {
 		log("There was an error compiling the model: " + e);
 	};
@@ -1308,29 +1269,13 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 
 	prev_layer_data = [];
 
-	try {
-		write_descriptions();
-	} catch (e) {
-		console.warn(e);
-	}
-
 	identify_layers(numberoflayers);
 
 	layer_structure_cache = null;
 
-	/*
-	if((typeof(disable_auto_enable_valid_layer_types) == "undefined" || !disable_auto_enable_valid_layer_types) && !global_disable_auto_enable_valid_layer_types) {
-		disable_all_invalid_layers();
-	}
-	*/
-
-	add_layer_debuggers();
-
 	if(!disabling_saving_status) {
 		save_current_status();
 	}
-
-	//set_ribbon_min_width();
 
 	show_dtype_only_first_layer();
 
@@ -1343,6 +1288,24 @@ function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, i
 	hide_no_conv_stuff();
 
 	show_load_weights();
+
+	var current_input_shape = get_input_shape();
+	if(current_input_shape.length != 3) {
+		$(".visualize_button").hide();
+		if(cam) {
+			cam.stop();
+			$("#webcam").hide();
+			$("#webcam_prediction").hide();
+		}
+	} else {
+		$(".visualize_button").show();
+	}
+
+	try {
+		write_descriptions();
+	} catch (e) {
+		console.warn(e);
+	}
 
 	return 1;
 }
@@ -1416,15 +1379,15 @@ function write_history (h) {
 	string += "</tr>";
 
 	for (var e = 0; e < h["epoch"].length; e++) {
-		string += "<tr style='border: 1px solid black;'>";
-		string += "<td style='border: 1px solid black;'>" + (e + 1) + "</td>";
+		string += "<tr>";
+		string += "<td>" + (e + 1) + "</td>";
 		for (var i = 0; i < keys.length; i++) {
-			string += "<td style='border: 1px solid black;'>" + h["history"][keys[i]][e] + "</td>";
+			string += "<td>" + h["history"][keys[i]][e] + "</td>";
 		}
 
 	}
 
-	$("#history").html("<table style='width: 100%; border: 1px solid black;'>" + string + "</table>");
+	$("#history").html("<table id='history_table' style='width: 100%; border: 1px solid #D3D3D3;'>" + string + "</table>");
 }
 
 function write_model_summary () {
@@ -1509,7 +1472,7 @@ function init_numberoflayers(val) {
 	show_layers(val);
 
 	number_of_initialized_layers = val;
-	updated_page();
+	//updated_page();
 }
 
 function get_option_for_layer_by_type (nr) {
@@ -1562,8 +1525,6 @@ function get_option_for_layer_by_type (nr) {
 		}
 	}
 
-	lenet.resize();
-
 	return str;
 }
 
@@ -1591,7 +1552,7 @@ function set_option_for_layer(thisitem) {
 		}
 	})
 
-	updated_page(null, 1);
+	//updated_page(null, 1);
 }
 
 function set_option_for_layer_by_layer_nr (nr) {
@@ -1613,7 +1574,7 @@ function set_option_for_layer_by_layer_nr (nr) {
 	var current_type = $($(".layer_type")[0]).val();
 
 	write_descriptions();
-	updated_page(null, 1);
+	//updated_page(null, 1);
 }
 
 function toggle_options (item) {
@@ -1623,7 +1584,7 @@ function toggle_options (item) {
 	write_descriptions();
 }
 
-function disable_invalid_layers_event (e, thisitem) {
+async function disable_invalid_layers_event (e, thisitem) {
 	assert(typeof(e) == "object", "disable_all_invalid_layers(e -> " + e + " is not an object but " + typeof(e));
 	assert(typeof(thisitem) == "object", "disable_all_invalid_layers(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
 
@@ -1632,31 +1593,31 @@ function disable_invalid_layers_event (e, thisitem) {
 
 	layer_nr = find_layer_number_by_element(thisitem);
 
-	enable_valid_layer_types(layer_nr);
+	await enable_valid_layer_types(layer_nr);
 
 	//hide_empty_groups(layer_nr);
 }
 
-function disable_all_invalid_layers () {
+async function disable_all_invalid_layers () {
 	document.body.style.pointerEvents = "none";
-	disable_all_invalid_layers_from(0);
+	await disable_all_invalid_layers_from(0);
 	document.body.style.pointerEvents = "";
 }
 
-function disable_all_invalid_layers_from (start) {
+async function disable_all_invalid_layers_from (start) {
 	assert(typeof(start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof(start));
 
 	favicon_spinner();
 	for (var i = start; i < get_numberoflayers(); i++) {
-		enable_valid_layer_types(i);
+		await enable_valid_layer_types(i);
 	}
 	favicon_default();
 }
 
-function enable_valid_layer_types (layer_nr) {
+async function enable_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof(layer_nr));
 
-	var valid_layer_types = get_valid_layer_types(layer_nr);
+	var valid_layer_types = await get_valid_layer_types(layer_nr);
 
 	var options = $($($('.layer_type')[layer_nr]).children().children());
 
@@ -1680,9 +1641,8 @@ function option_for_layer (nr) {
 	var this_event = "set_option_for_layer(this)";
 	var str = "";
 	str += "<tr>";
-		str += "<td style='min-width: 140px'>";
+		str += "<td style='width: 140px'>";
 			str += "<button style='cursor: context-menu' class='show_data' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
-			str += "<div class='whatisthis_activation' style='display:none'><a onclick='plot_activation($($(\".layer_type\")[" + nr + "]).val())'>What is this?</a></div>";
 		str += "</td>";
 		str += "<td>";
 			str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
@@ -1708,7 +1668,7 @@ function option_for_layer (nr) {
 	return str;
 }
 
-function remove_layer (item) {
+async function remove_layer (item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	var number_of_layers_element = document.getElementById("numberoflayers");
@@ -1719,15 +1679,13 @@ function remove_layer (item) {
 		layer_structure_cache = null;
 		number_of_layers_element.value = old_value - 1;
 
-		updated_page();
+		await updated_page();
 		disable_all_non_selected_layer_types();
 
 		if(get_numberoflayers() - 1 == 0) {
-			$(".remove_layer").prop("disabled", true)
-			$(".remove_layer").hide();
+			$(".remove_layer").prop("disabled", true).hide();
 		} else {
-			$(".remove_layer").prop("disabled", false)
-			$(".remove_layer").show();
+			$(".remove_layer").prop("disabled", false).show();
 		}
 		save_current_status();
 	} else {
@@ -1756,7 +1714,7 @@ function get_element_xpath (element) {
 	return segs(element).join('/');
 }
 
-function add_layer (item) {
+async function add_layer (item) {
 	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	layer_structure_cache = null;
@@ -1784,7 +1742,7 @@ function add_layer (item) {
 	}
 	$($($($(".layer_setting")[real_nr + 1])).find(".layer_type")[0]).val(new_layer_type);
 
-	updated_page();
+	await updated_page();
 
 	write_descriptions();
 
@@ -1810,11 +1768,11 @@ function sortable_layers_container (layers_container) {
 			ui.placeholder.css('visibility', 'visible');
 			$(".descriptions_of_layers").hide();
 		},
-		update: function(e, ui){
+		update: async function(e, ui){
 			var prev_throw_compile_exception = throw_compile_exception;
 			throw_compile_exception = true;
 			try {
-				compile_model();
+				await compile_model();
 				error_div.html("");
 				error_div.parent().hide();
 			} catch (e) {
@@ -1822,13 +1780,12 @@ function sortable_layers_container (layers_container) {
 					$("#layers_container").sortable('cancel');
 					alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
 					try {
-						compile_model();
+						await compile_model();
 					} catch (e) {
 						log(e);
 					};
 					error_div.html("");
 					error_div.parent().hide();
-					compile_model();
 				} else {
 					error_div.html(e);
 					error_div.parent().show();
@@ -1837,8 +1794,7 @@ function sortable_layers_container (layers_container) {
 			throw_compile_exception = prev_throw_compile_exception;
 
 			$(".descriptions_of_layers").show();
-			updated_page();
-			write_descriptions();
+			await updated_page();
 		},
 		axis: 'y',
 		revert: true
@@ -1883,7 +1839,6 @@ function show_layers (number) {
 				remove +
 				add +
 				"<span class='layer_nr_desc'></span>" +
-				"<span class='call_counter_container'>(<span class='call_counter'>0</span>)&nbsp;</span>" +
 				"<span class='layer_identifier'></span>" +
 				"<table class='configtable'>" + 
 					option_for_layer(i) +
@@ -1910,6 +1865,8 @@ function show_layers (number) {
 	sortable_layers_container(layers_container);
 
 	document.getElementById("train_neural_network_button").style.display = 'block';
+
+	lenet.resize();
 }
 
 function reset_photo_gallery () {
@@ -1925,7 +1882,7 @@ function add_photo_to_gallery(url) {
 	if(photoscontainer.css("display") == "none") {
 		photoscontainer.show();
 	}
-	var html = "<img src='" + url + "' height='90' />";
+	var html = "<img class='download_img' src='" + url + "' height='90' />";
 	$("#photos").show().html(html + $("#photos").html() );
 }
 
@@ -2014,7 +1971,11 @@ async function set_config (index) {
 		}
 
 		if(keras_layers === undefined) {
-			console.warn("Error loading the model");
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Error loading the model'
+			});
 			log(config);
 			return;
 		}
@@ -2034,7 +1995,7 @@ async function set_config (index) {
 			set_loss(config["loss"]);
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
-			
+
 			if(config["width"]) {
 				$("#width").val(config["width"]);
 				change_width();
@@ -2144,17 +2105,13 @@ async function set_config (index) {
 
 	disable_show_python_and_create_model = false;
 
-	model = create_model(model);
-	compile_model();
-	add_layer_debuggers();
+	model = await create_model(model);
+	await compile_model();
 
 	disable_all_non_selected_layer_types();
 
 	write_descriptions();
 
-	is_setting_config = false;
-
-	updated_page();
 	if(!index) {
 		if(!disabling_saving_status) {
 			save_current_status();
@@ -2164,6 +2121,10 @@ async function set_config (index) {
 	get_label_data();
 
 	load_weights(1);
+
+	is_setting_config = false;
+
+	await updated_page();
 }
 
 function show_or_hide_load_weights () {
@@ -2180,14 +2141,18 @@ function show_or_hide_load_weights () {
 }
 
 async function init_dataset () {
-	$("#tfvis_tab_label").parent().hide();
+	$("#maximally_activated_content").html("");
+	hide_tab_label("maximally_activated_label");
+	show_tab_label("visualization_tab_label", 1)
+
+	show_tab_label("fcnn_tab_label", 1);
+	hide_tab_label("tfvis_tab_label");
+
 	clicked_on_tab = 0;
 	init_download_link();
 	init_epochs(2);
 
 	set_batchSize(2);
-
-	$('a[href="#visualization_tab"]').click();
 
 	$("#tfvis_tab_training_performance_graph").html("");
 	$("#tfvis_tab_history_graphs").html("");
@@ -2196,6 +2161,10 @@ async function init_dataset () {
 
 	$("#history").html("");
 	$("#memory").html("");
+
+	$("#data_origin").val("default").trigger("change");
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
 
 	save_current_status();
 	init_weight_file_list();
@@ -2212,7 +2181,14 @@ async function get_number_of_categories () {
 	return num;
 }
 
-function chose_dataset() {
+async function chose_dataset(no_set_config) {
+	tf.disposeVariables();
+
+	$("#maximally_activated_content").html("")
+	hide_tab_label("maximally_activated_label");
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
+
 	init_weight_file_list();
 	x_file = null;
 	y_file = null;
@@ -2225,8 +2201,11 @@ function chose_dataset() {
 	show_hide_undo_buttons();
 
 	show_or_hide_load_weights()
-	model_is_trained=false;
-	set_config();
+	model_is_trained = false;
+	if(!no_set_config) {
+		await set_config();
+	}
+	is_setting_config = false;
 
 	$("#predict_error").html("");
 }
@@ -2245,6 +2224,10 @@ function init_weight_file_list () {
 }
 
 async function init_dataset_category () {
+	tf.disposeVariables();
+	$("#maximally_activated_content").html("");
+	hide_tab_label("maximally_activated_label");
+
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
 	x_file = null;
@@ -2308,17 +2291,13 @@ async function init_dataset_category () {
 
 	$("#train_data_set_group").show();
 	$("#dataset").html(dataset);
-	$("#upload_x").hide();
-	$("#upload_x").parent().hide();
-	$("#upload_y").hide();
-	$("#upload_y").parent().hide();
+	$("#upload_x").hide().parent().hide();
+	$("#upload_y").hide().parent().hide();
 	$("#reset_model").show();
 
 	$('#data_origin').change(function() {
 		$('#data_origin option[value="default"]').prop('disabled', false);
 	});
-
-	$("#data_origin").val("default").trigger("change");
 
 	init_download_link();
 	init_categories();
@@ -2329,11 +2308,16 @@ async function init_dataset_category () {
 	state_stack = [];
 	future_state_stack = [];
 
-	$("#tfvis_tab_label").parent().hide();
+	hide_tab_label("tfvis_tab_label");
 
 	is_setting_config = original_is_settings_config;
-	
-	updated_page();
+
+	$("#data_origin").val("default").trigger("change");
+
+	$("#visualization_tab_label").click();
+	$("#fcnn_tab_label").click();
+
+	//updated_page();
 }
 
 function clean_gui () {
@@ -2367,17 +2351,6 @@ function change_metrics () {
 	$("#metric_equation").html("");
 
 	updated_page(1);
-}
-
-function show_optimizer_help () {
-	var optimizer_type = $("#optimizer").val();
-
-	$("#help").html("");
-
-	$("#help").html(optimizer_type);
-
-	$("#help").append("<br><a style='cursor: help;' onclick='$(\"#help\").hide()'>Close help</a>");
-	$("#help").show();
 }
 
 function get_activation_list () {
@@ -2548,37 +2521,43 @@ function last_index (array) {
 }
 
 async function save_current_status () {
-	var index = get_current_status_hash();
-	if(state_stack.includes(index) || future_state_stack.includes(index)) {
-		return;
-	}
-
-	var save_this_data = undefined;
-
 	try {
-		await model.save(tf.io.withSaveHandler(artifacts => {
-			save_this_data = artifacts;
-		}));
-	} catch (e) {
-		undo();
-		except("ERROR4", e + "\n\nUndoing last change");
-		Swal.fire({
-			icon: 'error',
-			title: 'Oops [2]...',
-			text: e + "\n\nUndoing last change"
-		});
-	}
+		var index = get_current_status_hash();
+		if(state_stack.includes(index) || future_state_stack.includes(index)) {
+			return;
+		}
 
-	status_saves[index] = JSON.stringify(save_this_data);
+		var save_this_data = undefined;
+
+		try {
+			await model.save(tf.io.withSaveHandler(artifacts => {
+				save_this_data = artifacts;
+			}));
+		} catch (e) {
+			if(mode == "amateur" && 0) {
+				undo();
+				except("ERROR4", e + "\n\nUndoing last change");
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops [2]...',
+					text: e + "\n\nUndoing last change"
+				});
+			} else {
+				log(e);
+			}
+		}
+
+		status_saves[index] = JSON.stringify(save_this_data);
 
 
-	future_state_stack = [];
+		future_state_stack = [];
 
-	if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
-		state_stack.push(index);
-	}
+		if(last_index(state_stack) == -1 || state_stack[last_index(state_stack)] != index) {
+			state_stack.push(index);
+		}
 
-	show_hide_undo_buttons();
+		show_hide_undo_buttons();
+	} catch (e) {}
 }
 
 async function undo () {
@@ -2598,6 +2577,7 @@ async function undo () {
 		disabling_saving_status = true;
 
 		await set_config(this_index);
+		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
 	}
@@ -2606,7 +2586,7 @@ async function undo () {
 	set_shown_advanced(shown);
 }
 
-function redo () {
+async function redo () {
 	var shown = get_shown_advanced();
 	if(future_state_stack.length) {
 		$(":focus").blur();
@@ -2618,7 +2598,8 @@ function redo () {
 		var old_disabling_saving_status = disabling_saving_status;
 		disabling_saving_status = true;
 
-		set_config(this_index);
+		await set_config(this_index);
+		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
 	}
@@ -2690,7 +2671,7 @@ function closePopup(name) {
 	el.style.display = 'none';
 }
 
-function upload_model(evt) {
+async function upload_model(evt) {
 	let files = evt.target.files;
 
 	let f = files[0];
@@ -2706,9 +2687,8 @@ function upload_model(evt) {
 
 	reader.readAsText(f);
 
-	set_config();
-
-	add_layer_debuggers();
+	await set_config();
+	is_setting_config = false;
 }
 
 async function upload_weights(evt) {
@@ -2731,8 +2711,6 @@ async function upload_weights(evt) {
 	var weightsUpload = document.getElementById('upload_weights');
 
 	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
-
-	add_layer_debuggers();
 
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();
@@ -2758,7 +2736,7 @@ var handle_x_file = async function (evt) {
 			}
 		});
 	}
-	updated_page();
+	await updated_page();
 
 	enable_start_training_custom_tensors();
 }
@@ -2768,7 +2746,7 @@ var handle_y_file = async function (evt) {
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
 	$("#y_shape").val(y_shape);
-	updated_page();
+	await updated_page();
 
 	enable_start_training_custom_tensors();
 }
@@ -2816,21 +2794,6 @@ function get_sum_of_items_childrens_width (item) {
 	});
 
 	return total_width;
-}
-
-function get_max_ribbon_width () {
-	return 1100;
-}
-
-function set_ribbon_min_width () {
-	/*
-	return;
-	$("#ribbon").css({"min-width": ''});
-
-	$("#ribbon").css({
-		"min-width": parseInt(get_max_ribbon_width() * 1.001) + "px"
-	});
-	*/
 }
 
 function get_chosen_dataset () {
@@ -2923,11 +2886,19 @@ function disable_hidden_chardin_entries () {
 
 }
 
-function update_input_shape () {
+async function update_input_shape () {
 	set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
-	updated_page();
+	await updated_page();
 	Prism.highlightAll();
+}
+
+function toggle_tfjsvis_overlay() {
+	if($(".vg-tooltip").hasClass("vg-tooltip-hidden")) {
+		$(".vg-tooltip").removeClass("vg-tooltip-hidden");
+	} else{
+		$(".vg-tooltip").addClass("vg-tooltip-hidden");
+	}
 }
 
 function hide_annoying_tfjs_vis_overlays () {
@@ -2950,12 +2921,12 @@ function reset_view () {
 	var items = $("g");
 
 	for (var i = 0; i < items.length; i++) {
-		var parents_parent = $($("g")[i]).parent().parent();
+		var parents_parent = $(items[i]).parent().parent();
 		var parents_parent_id = parents_parent.prop("id");
 
 		var container_width = parents_parent[0].getBoundingClientRect().width;
 
-		var width = $("g")[i].getBoundingClientRect().width;
+		var width = items[i].getBoundingClientRect().width;
 
 		if(width) {
 			var translate_left = parseInt(container_width / width);
@@ -2995,10 +2966,16 @@ function change_data_origin () {
 
 		$(".hide_when_custom_data").show();
 
-		set_default_input_shape();
 		changed_data_source = false;
 		
 		$("#custom_training_data_settings").hide();
+
+		set_default_input_shape();
+
+		$("#visualization_tab_label").click();
+		$("#fcnn_tab_label").click();
+
+		update_python_code();
 	} else {
 		$("#custom_training_data_settings").show();
 		$("#train_neural_network_button").prop("disabled", true);
@@ -3030,13 +3007,13 @@ function change_data_origin () {
 		$("#image_resize_dimensions").hide();
 	}
 
-	$("#own_tensor_data_label").parent().hide();
-	$("#training_data_tab_label").parent().hide();
-	$("#own_image_data_label").parent().hide();
-	$("#own_csv_data_label").parent().hide();
+	hide_tab_label("own_tensor_data_label");
+	hide_tab_label("training_data_tab_label");
+	hide_tab_label("own_image_data_label");
+	hide_tab_label("own_csv_data_label");
 
 	if(show_own_image_data) {
-		$("#own_image_data_label").show().click().parent().show();
+		show_tab_label("own_image_data_label", 1);
 		$("#own_images_container").html("");
 		add_new_category();
 		add_new_category();
@@ -3044,11 +3021,11 @@ function change_data_origin () {
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
 	} else if(show_own_tensor_data) {
-		$("#own_tensor_data_label").show().click().parent().show();
+		show_tab_label("own_tensor_data_label", 1);
 	} else if(show_own_csv_data) {
-		$("#own_csv_data_label").show().click().parent().show();
+		show_tab_label("own_csv_data_label", 1);
 	} else {
-		$("#training_data_tab_label").show().parent().show();
+		show_tab_label("training_data_tab_label");
 	}
 
 	if(window.location.href.indexOf("no_webcam") == -1) {
@@ -3058,16 +3035,6 @@ function change_data_origin () {
 			$("#show_webcam_button").hide();
 		}
 	}
-
-	/*
-	var has_chosen = 0;
-	$("#data_type").children().each(function (i, e) {
-		if(!$(e).prop("disabled") && !has_chosen) {
-			$("#data_type").val($(e).attr("value"));
-			has_chosen = 1;
-		}
-	});
-	*/
 }
 
 function auto_adjust_number_of_neurons (n) {
@@ -3130,9 +3097,10 @@ function add_new_category () {
 	var imgDiv = $(".own_images");
 	if(imgDiv.length == 0 || imgDiv.length <= n) {
 		$('<div class="own_image_upload_container"><hr><button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>').appendTo("#own_images_container");
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels()" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
 	}
+
 	imgDiv = $(".own_images")[n];
 
 	init_own_image_files();
@@ -3142,12 +3110,17 @@ function add_new_category () {
 	show_or_hide_hide_delete_category();
 
 	last_shape_layer_warning();
+
+	rename_labels();
 }
 
 function rename_labels () {
+	labels = [];
 	$(".own_image_label").each(function (i, x) {
-		labels[i] = $(x).val();
+		labels.push($(x).val());
 	});
+
+	update_python_code(1);
 }
 
 function show_or_hide_hide_delete_category () {
@@ -3479,7 +3452,7 @@ async function set_default_input_shape () {
 
 			set_input_shape(default_input_shape);
 
-			compile_model();
+			await compile_model();
 
 			identify_layers(get_numberoflayers());
 
@@ -3506,7 +3479,7 @@ function _allow_training () {
 	if($("#data_origin").val() == "own") {
 		var data_type = $("#data_type").val();
 		if(data_type == "image") {
-			var number_of_training_images = $(".own_images").children().length
+			var number_of_training_images = $(".own_images").children().length;
 			if(number_of_training_images) {
 				return true;
 			} else {
@@ -3553,105 +3526,6 @@ function darkmode_choser () {
 	} else {
 		window.location.href = "index.php?lightmode=1";
 	}
-}
-
-function clippy_speak (text) {
-	if(this_agent._hidden) {
-		this_agent.show();
-	}
-	this_agent.stopCurrent()
-	this_agent.speak(text);
-}
-
-async function clippy_move_to_item (item) {
-	if(this_agent._hidden) {
-		this_agent.show();
-	}
-
-	var offsets = $(item).offset();
-
-	var x = parseInt(offsets["left"]);
-	var y = parseInt(offsets["top"]);
-
-	var scroll_width = $(item)[0].scrollWidth;
-
-	var move_to_x = parseInt(Math.max(0, x + scroll_width));
-	var move_to_y = parseInt(Math.max(0, y - (this_agent._el.height() / 3)));
-
-	var current_location = $(this_agent._el[0]).offset();
-
-	var this_element_xpath = get_element_xpath(item);
-
-	if(!clippy_current_xpath || clippy_current_xpath != this_element_xpath) {
-		log("Moving, xpath from " + clippy_current_xpath + " to " + this_element_xpath + "(x: " + x + ", y: " + y + ", move_to_x: " + move_to_x + ", move_to_y: " + move_to_y + ")");
-		this_agent.moveTo(move_to_x, move_to_y, clippy_delay);
-		clippy_current_xpath = this_element_xpath;
-		await delay(clippy_delay + 100);
-		clippy_delay = 800;
-		this_agent._updateLocation();
-		this_agent.reposition();
-		this_agent.resume();
-		await delay(100);
-	} else {
-		log("NOT moving, xpath from " + clippy_current_xpath + " to " + this_element_xpath);
-	}
-}
-
-async function clippy_gesture_at_item (item) {
-	if(this_agent._hidden) {
-		this_agent.show();
-	} else {
-		this_agent.stopCurrent();
-	}
-
-	var offsets = $(item).offset();
-
-	var x = offsets["left"];
-	var y = offsets["top"];
-
-	this_agent.gestureAt(x, y);
-	await delay(1500);
-}
-
-async function clippy_gesture_and_speak (item, text) {
-	await clippy_move_to_item(item);
-	await delay(1000);
-	await clippy_gesture_at_item(item);
-	await delay(2000);
-	clippy_speak(text);
-	await delay(5000);
-}
-
-async function clippy_wave () {
-	this_agent.play("Wave");
-	await delay(1500);
-}
-
-async function clippy_tour () {
-	await clippy_move_to_item($(".layer_type")[0]);
-	clippy_wave();
-	clippy_speak("Hi! I'd love to help you on your journey of creating neural networks");
-	clippy_speak("Let's go through the basics of this tool");
-
-	await clippy_gesture_and_speak($("#dataset_category"), "Here you can choose the basic type of network. Options are 'Data Classification' for data from CSV-like structures and 'Image Classification' for images");
-
-	await clippy_gesture_and_speak($("#dataset"), "Here you can choose specific examples to see how things can be done");
-
-	await clippy_gesture_and_speak($(".layer_type")[0], "Here you can set the layers. Click 'advanced' to adjust settings or the '+' or '-' to add or remove layers.");
-
-	await clippy_gesture_and_speak($("#data_origin"), "Here you can choose your own data, like your own images or CSV, that the neural network should train on.");
-
-	await clippy_gesture_and_speak($("#train_neural_network_button"), "When you are done, simply press this button to start training");
-
-	clippy_speak("Have fun!");
-
-	await delay(2000);
-
-	clippy_wave();
-
-	await delay(2000);
-
-	this_agent.hide();
 }
 
 function move_to_demo_mode (element) {
@@ -3747,10 +3621,119 @@ function change_model_dataset () {
 	load_weights(1);
 }
 
-function toggle_allow_edit_inputShape () {
-	if($("#inputShape").attr("readonly")) {
-		$("#inputShape").attr("readonly", false);
-	} else {
+function allow_edit_inputShape () {
+	if($("#auto_input_shape").is(":checked")) {
 		$("#inputShape").attr("readonly", true);
+	} else {
+		$("#inputShape").attr("readonly", false);
 	}
+}
+
+function show_ribbon() {
+	$("#ribbon").show();
+	$("#ribbon_shower").hide();
+}
+
+function hide_ribbon() {
+	$("#ribbon").hide();
+	$("#ribbon_shower").show();
+}
+
+function human_readable_time (seconds) {
+	if(!seconds) {
+		return "1 sec";
+	}
+	var levels = [
+		[Math.floor(seconds / 31536000), 'years'],
+		[Math.floor((seconds % 31536000) / 86400), 'days'],
+		[Math.floor(((seconds % 31536000) % 86400) / 3600), 'hours'],
+		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'mins'],
+		[(((seconds % 31536000) % 86400) % 3600) % 60, 'secs'],
+	];
+	var returntext = '';
+
+	for (var i = 0, max = levels.length; i < max; i++) {
+		if ( levels[i][0] === 0 ) continue;
+		returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length-1): levels[i][1]);
+	};
+	return returntext.trim();
+}
+
+function delete_own_image (elem) {
+	$(elem).parent().remove();
+}
+
+function larger_maximally_activated_neurons () {
+	$(".layer_image").css({height: '+=5px', width: '+=5px'})
+}
+
+function smaller_maximally_activated_neurons () {
+	$(".layer_image").css({height: '-=5px', width: '-=5px'})
+	if($(".layer_image").css("width") == "0px") {
+		$(".layer_image").css({height: 'auto', width: 'auto'})
+	}
+}
+
+function reset_maximally_activated_neurons () {
+	$(".layer_image").css({height: 'auto', width: 'auto'})
+}
+
+function delete_maximally_activated_predictions () {
+	$(".maximally_activated_predictions").remove();
+}
+
+async function predict_all_maximally_activated_neurons () {
+	await $(".layer_image").each(async function (i,x) { 
+		await predict_maximally_activated(x, 'image');
+	});
+}
+
+async function get_layers_container_md5() {
+	await delay(1);
+	var layers_container_str = "";
+	$("#layers_container").find("select,input,checkbox").each(function (i, x) {
+		x = $(x);
+		layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
+	})
+
+	return md5(layers_container_str);
+}
+
+function rename_tmp_onchange() {
+	$("*[_onchange]").each(function (i, x) {
+		var elem = $(this);
+		elem.attr("onchange", elem.attr('_onchange'));
+		elem.removeAttr('_onchange');
+	})
+}
+
+function hide_tab_label (label) {
+	$("#" + label).parent().hide();
+	var children = $("#" + label).parent().parent().children();
+
+	var currently_selected = null;
+	var first_displayable = null;
+
+	for (var i = 0; i <= children.length; i++) {
+		if(!currently_selected && $(children[i]).attr("aria-expanded") == "true") {
+			currently_selected = children[i];
+		}
+
+		if(!first_displayable && $(children[i]).css("display") != "none") {
+			first_displayable = children[i];
+		}
+	}
+
+	if(first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
+		$($(first_displayable).children()[0]).click()
+	}
+	write_descriptions();
+}
+
+function show_tab_label (label, click) {
+	$("#" + label).show().parent().show();
+	if(click) {
+		$("#" + label).click();
+	}
+	write_descriptions();
 }
