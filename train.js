@@ -45,10 +45,7 @@ async function train_neural_network () {
 		write_error("Something went wrong with compiling the model. Please reload the site.");
 	}
 
-	log("A");
-
 	if(started_training) {
-		log("B");
 		Swal.fire({
 			title: 'Stopped training',
 			html: "This may take some time...",
@@ -64,7 +61,6 @@ async function train_neural_network () {
 		document.title = original_title;
 		gui_not_in_training();
 	} else {
-		log("C");
 		gui_in_training();
 		reset_gui_before_training();
 
@@ -80,7 +76,6 @@ async function train_neural_network () {
 
 	write_descriptions();
 	write_model_to_latex_to_page();
-	log("D");
 }
 
 function get_model_data () {
