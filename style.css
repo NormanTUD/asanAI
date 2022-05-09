@@ -338,3 +338,13 @@ body {
 	margin-right: 5px;
 	border: 1px solid #747474;
 }
+
+button:disabled {
+	color: #555555;
+}
+
+button:disabled:hover {
+	color: #555555;
+	background-color: #222222;
+	cursor: not-allowed;
+}

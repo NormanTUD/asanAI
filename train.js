@@ -38,7 +38,6 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	show_tab_label("tfvis_tab_label");
 	write_descriptions();
 
 	if(!Object.keys(model).includes("layers")) {
@@ -46,7 +45,10 @@ async function train_neural_network () {
 		write_error("Something went wrong with compiling the model. Please reload the site.");
 	}
 
+	log("A");
+
 	if(started_training) {
+		log("B");
 		Swal.fire({
 			title: 'Stopped training',
 			html: "This may take some time...",
@@ -62,12 +64,7 @@ async function train_neural_network () {
 		document.title = original_title;
 		gui_not_in_training();
 	} else {
-		Swal.fire({
-			title: 'Started training',
-			html: "This may take some time...",
-			timer: 1000,
-			showConfirmButton: false
-		});
+		log("C");
 		gui_in_training();
 		reset_gui_before_training();
 
@@ -83,6 +80,7 @@ async function train_neural_network () {
 
 	write_descriptions();
 	write_model_to_latex_to_page();
+	log("D");
 }
 
 function get_model_data () {
@@ -244,6 +242,7 @@ async function run_neural_network () {
 	tf.engine().startScope();
 
 	var xs_and_ys;
+	var error_string = "";
 
 	try {
 		show_info_pre_run();
@@ -251,10 +250,36 @@ async function run_neural_network () {
 		disable_everything();
 		xs_and_ys = await get_xs_and_ys();
 
+		if(Object.keys(xs_and_ys).includes("x")) {
+			if(xs_and_ys["x"].shape.toString() == "0") {
+				error_string += "No X-data! ";
+			}
+		} else {
+			error_string += "No X-data! ";
+		}
+
+		if(Object.keys(xs_and_ys).includes("y")) {
+			if(xs_and_ys["y"].shape.toString() == "0") {
+				error_string += "No Y-data! ";
+			}
+		} else {
+			error_string += "No Y-data! ";
+		}
+
+		if(error_string) {
+			throw new Error(error_string);
+		}
 	} catch (e) {
-		write_error(e);
+		Swal.fire(
+			'Error while training',
+			error_string,
+			'warning'
+		);
+		log(e);
+		write_error(error_string);
 		console.trace();
 		favicon_default();
+		write_descriptions();
 		return;
 	}
 
