@@ -219,7 +219,6 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 function draw_image_if_possible (layer, canvas_type, colors) {
 	if(canvas_type != "kernel") {
 		if(canvas_type == "input" && layer != 0) {
-			return;
 		}
 	}
 
@@ -245,7 +244,7 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 			}
 
 			return ret;
-		} else if((data_type == "kernel" || canvas_type == "kernel") && $("#show_kernel_images").is(":checked") && !$("#show_kernel_images").is(":disabled")) {
+		} else if((data_type == "kernel" || canvas_type == "kernel")) {
 			var shape = get_dim(colors);
 
 			var first_kernel = null;
