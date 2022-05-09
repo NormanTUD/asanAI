@@ -1558,7 +1558,7 @@ function set_option_for_layer(thisitem) {
 		}
 	})
 
-	//updated_page(null, 1);
+	updated_page(null, 1);
 }
 
 function set_option_for_layer_by_layer_nr (nr) {
@@ -2478,8 +2478,6 @@ function hide_empty_groups (layer_nr) {
 				number_of_enabled_children += 1;
 			}
 		}
-
-		//log("number_of_enabled_children of " + $($($(".layer_type")[layer_nr]).children()[i]).prop("label") + ": " + number_of_enabled_children);
 
 		if(number_of_enabled_children) {
 			$(group).show();
