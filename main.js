@@ -136,8 +136,6 @@ async function init_page_contents (chosen_dataset) {
 		$("#dataset").val(chosen_dataset).trigger("change");
 	}
 
-	set_mode();
-
 	rename_tmp_onchange();
 
 	updated_page();
