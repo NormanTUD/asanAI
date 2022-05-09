@@ -1683,11 +1683,9 @@ async function remove_layer (item) {
 		disable_all_non_selected_layer_types();
 
 		if(get_numberoflayers() - 1 == 0) {
-			$(".remove_layer").prop("disabled", true)
-			$(".remove_layer").hide();
+			$(".remove_layer").prop("disabled", true).hide();
 		} else {
-			$(".remove_layer").prop("disabled", false)
-			$(".remove_layer").show();
+			$(".remove_layer").prop("disabled", false).show();
 		}
 		save_current_status();
 	} else {
@@ -1902,6 +1900,7 @@ function set_xyz_values (j, name, values) {
 }
 
 async function set_config (index) {
+	console.trace();
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	prev_layer_data = [];
@@ -2184,8 +2183,9 @@ async function get_number_of_categories () {
 	return num;
 }
 
-async function chose_dataset() {
+async function chose_dataset(no_set_config) {
 	tf.disposeVariables();
+
 	$("#maximally_activated_content").html("")
 	hide_tab_label("maximally_activated_label");
 	$("#visualization_tab_label").click();
@@ -2203,8 +2203,10 @@ async function chose_dataset() {
 	show_hide_undo_buttons();
 
 	show_or_hide_load_weights()
-	model_is_trained=false;
-	await set_config();
+	model_is_trained = false;
+	if(!no_set_config) {
+		await set_config();
+	}
 	is_setting_config = false;
 
 	$("#predict_error").html("");
