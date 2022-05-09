@@ -215,9 +215,11 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 
 	if($("#data_origin").val() == "default") {
 		if($("#dataset_category").val() == "image") {
-			var full_dir = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/example/";
+			var dataset = $("#dataset").val();
+			var dataset_category = $("#dataset_category").val();
+			var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
 			$.ajax({
-				url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=' + $("#dataset_category").val() + "&examples=1",
+				url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
 				success: function (x) { 
 					if(x) {
 						var examples = x["example"];
