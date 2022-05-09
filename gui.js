@@ -1866,11 +1866,8 @@ function show_layers (number) {
 	layers_container.html(layers_container_str);
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
-	if(layer_visualizations_tab_str != "") {
-		show_tab_label("layer_visualizations_tab_label");
-	} else {
-		hide_tab_label("layer_visualizations_tab_label");
-	}
+	hide_tab_label("layer_visualizations_tab_label");
+	log(layer_visualizations_tab_str);
 
 	sortable_layers_container(layers_container);
 
