@@ -1534,7 +1534,7 @@
 					}
 					var reader = new FileReader();
 					reader.onload = function (e) {
-						var html = '<span style="user-select: none;"><img height="90" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+						var html = '<span class="own_image_span"><img height="90" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 						imgDiv.prepend(html);
 						disable_start_training_button_custom_images();
 					}

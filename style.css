@@ -331,3 +331,10 @@ body {
 .max_prediction {
 	color: green;
 }
+
+.own_image_span {
+	user-select: none;
+	display: inline-block;
+	margin-right: 5px;
+	border: 1px solid #747474;
+}
