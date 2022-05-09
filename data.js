@@ -398,7 +398,12 @@ function determine_input_shape () {
 }
 
 async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
+	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	if(Object.keys(_data_cache).includes(url)) {
+		return _data_cache[url];
+	}
+	const data = await $.getJSON(url);
+	_data_cache[url] = data;
 	return data;
 }
 

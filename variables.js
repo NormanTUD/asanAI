@@ -924,3 +924,5 @@ var weights_files = {};
 var redo_labels = true;
 
 var layers_container_md5 = "";
+
+var _data_cache = {};
