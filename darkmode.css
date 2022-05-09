@@ -85,7 +85,7 @@ a.ui-button:active,
 	color: #b5b5b5;
 }
 
-button, select, input {
+button, select, input, #predict_own_data {
 	background: #444444;
 	color: white;
 }
@@ -201,4 +201,8 @@ a.ui-button:focus {
 
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
 	color: white;
+}
+
+.vega-embed {
+	filter: invert(0.791);
 }
