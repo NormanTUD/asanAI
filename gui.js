@@ -3108,7 +3108,6 @@ function add_new_category () {
 		current_labels.push($(x).val());
 	})
 
-	log(current_labels);
 	while (current_labels.includes("label " + label_nr)) {
 		label_nr++;
 	}
