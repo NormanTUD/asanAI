@@ -1867,7 +1867,6 @@ function show_layers (number) {
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
 	hide_tab_label("layer_visualizations_tab_label");
-	log(layer_visualizations_tab_str);
 
 	sortable_layers_container(layers_container);
 

@@ -241,7 +241,7 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
 				ret = draw_grid(canvas, pixel_size, colors, 1);
 			} else {
-				console.log('Too many images (simple) in layer ' + layer);
+				log('Too many images (simple) in layer ' + layer);
 			}
 
 			return ret;
@@ -250,15 +250,17 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 
 			var first_kernel = null;
 
-			for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
-				for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-					canvas = get_canvas_in_class(layer, "filter_image_grid");
+			if($($(".filter_image_grid")[layer]).children().length <= parseInt($($(".layer_setting")[0]).find(".filters").val())) {
+				for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
+					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
+						canvas = get_canvas_in_class(layer, "filter_image_grid");
 
-					$($(canvas)[0]).parent().parent().show()
+						$($(canvas)[0]).parent().parent().show()
 
-					ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
-					if(first_kernel === null) {
-						first_kernel = colors[filter_id][channel_id];
+						ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
+						if(first_kernel === null) {
+							first_kernel = colors[filter_id][channel_id];
+						}
 					}
 				}
 			}
