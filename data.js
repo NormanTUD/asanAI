@@ -262,9 +262,15 @@ async function get_xs_and_ys () {
 					classes.push(this_category_counter);
 				}
 
-				datadebug(y);
-
 				y = tf.tensor(classes);
+
+				for (let [key, value] of Object.entries(imageData)) {
+					for (var i = 0; i < imageData[key].length; i++) {
+						var item = imageData[key][i];
+						dispose(item);
+					}
+				}
+				imageData = null;
 			} else if(["classification"].includes(category)) {
 				var x_string, y_string;
 				x_string = await _get_training_data_from_filename("x.txt");
