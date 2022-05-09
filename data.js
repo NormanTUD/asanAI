@@ -402,6 +402,7 @@ async function _get_training_data() {
 	if(Object.keys(_data_cache).includes(url)) {
 		return _data_cache[url];
 	}
+	_data_cache = {};
 	const data = await $.getJSON(url);
 	_data_cache[url] = data;
 	return data;
