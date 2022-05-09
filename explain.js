@@ -410,28 +410,6 @@ function write_descriptions () {
 	}
 }
 
-async function write_initializer_values (nr) {
-	$("#visualization_tab").click();
-	$("#help_tab_label").show();
-	$("#help_tab_label").parent().show();
-	$("#help_tab_label").click();
-
-	$("#help_tab").html("<pre>" + await get_model_initializer_values_str(nr) + "</pre>");
-}
-
-async function get_model_initializer_values_str (nr) {
-	var x;
-	try {
-		x = await model.layers[nr].getWeights()[0]
-		x = x.toString(1)
-	} catch (e) {
-		console.warn("Could not get model_initializer values for " + nr + ", error: " + e);
-		x = "";
-	}
-
-	return x;
-}
-
 function explain_error_msg () {
 	var err = $("#error").html();
 	var explanation = "";
@@ -595,9 +573,7 @@ function add_layer_debuggers () {
 
 			if(!disable_layer_debuggers) {
 				if($("#show_layer_data").is(":checked")) {
-					$('#layer_visualizations_tab_label').parent().parent().show();
-					$('#layer_visualizations_tab_label').parent().show();
-					$('#layer_visualizations_tab_label').show();
+					show_tab_label('layer_visualizations_tab_label');
 
 					var output_data = applied.arraySync()[0];
 					$($(".layer_data")[${i}]).html('');
@@ -925,9 +901,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 			if(res) {
 				$("#maximally_activated_content").append(canvas);
-				$("#maximally_activated_label").parent().show();
-				$("#maximally_activated_label").show().click();
-				$("[href='#maximally_activated']").click()
+				show_tab_label("maximally_activated_label", 1)
 			} else {
 				log("Res: " + res);
 			}
@@ -937,10 +911,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		return false;
 	} catch (e) {
 		log(e);
-		$("#error").html(e)
-		$("#error").parent().show();
-		$("#visualization_tab").click();
-		$("#fcnn_tab_label").click();
+		$("#error").html(e).parent().show();
+		show_tab_label("visualization_tab", 1);
+		show_tab_label("fcnn_tab_label", 1);
 		write_descriptions();
 		return false;
 	}
@@ -1385,17 +1358,15 @@ function can_be_shown_in_latex () {
 }
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+	hide_tab_label("math_tab_label");
 	if(!can_be_shown_in_latex()) {
-		$("#math_tab_label").hide();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			$("#fcnn_tab_label").click();
 		}
 		return;
 	}
 
-	$("#math_tab_label").show();
-
-	if(!force && $("#math_tab").css("display") == "none") {
+	if(!force && $("#math_tab_label").css("display") == "none") {
 		return;
 	}
 
@@ -1408,6 +1379,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	$("#math_tab_code").html(latex);
 	try {
 		await MathJax.typesetPromise()
+		show_tab_label("math_tab_label");
 	} catch (e) {
 		var mathjax_error_explanation = "Are you online?";
 		$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);

@@ -307,37 +307,14 @@ function visual_help_text (text) {
 	//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
 	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
-	$("#visual_help_tab_label").click();
-}
-
-function visual_help_text_image (filename, text) {
-	$("#visual_help_tab").html(text + "<br><center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
-	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
-	$("#visual_help_tab_label").click();
-}
-
-function visual_help_array (filenames) {
-	$("#visual_help_tab").html("<center>");
-	for (var i = 0; i < filenames.length; i++) {
-		var filename = filesnames[0];
-		$("#visual_help_tab").append("<img style='width: 80%' src='visualhelp/" + filename + "' />");
-	}
-	$("#visual_help_tab").append("</center>");
-	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
+	show_tab_label("visual_help_tab_label");
 	$("#visual_help_tab_label").click();
 }
 
 function visual_help (filename) {
 	$("#visual_help_tab").html("<center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
 	$("#visualization_tab_label").click();
-	$("#visual_help_tab_label").show();
-	$("#visual_help_tab_label").parent().show();
+	show_tab_label("visual_help_tab_label");
 	$("#visual_help_tab_label").click();
 }
 
@@ -1230,10 +1207,8 @@ function hide_no_conv_stuff () {
 
 	if(any_conv_visualizations) {
 		$(".hide_when_no_conv_visualizations").show();
-		$("#conv_explanations_label").show();
 	} else {
 		$(".hide_when_no_conv_visualizations").hide();
-		$("#conv_explanations_label").hide();
 		$("#show_layer_data").prop("checked", false);
 		$("#data_plotter").hide();
 	}
@@ -2161,10 +2136,11 @@ function show_or_hide_load_weights () {
 
 async function init_dataset () {
 	$("#maximally_activated_content").html("");
-	$("#maximally_activated_label").parent().hide();
-	$("#visualization_tab_label").click();
-	$("#fcnn_tab_label").click();
-	$("#tfvis_tab_label").parent().hide();
+	hide_tab_label("maximally_activated_label");
+	show_tab_label("visualization_tab_label", 1)
+
+	show_tab_label("fcnn_tab_label", 1);
+	hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
 	init_download_link();
@@ -2202,7 +2178,7 @@ async function get_number_of_categories () {
 async function chose_dataset() {
 	tf.disposeVariables();
 	$("#maximally_activated_content").html("")
-	$("#maximally_activated_label").parent().hide();
+	hide_tab_label("maximally_activated_label");
 	$("#visualization_tab_label").click();
 	$("#fcnn_tab_label").click();
 
@@ -2241,7 +2217,7 @@ function init_weight_file_list () {
 async function init_dataset_category () {
 	tf.disposeVariables();
 	$("#maximally_activated_content").html("");
-	$("#maximally_activated_label").parent().hide();
+	hide_tab_label("maximally_activated_label");
 
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
@@ -2306,10 +2282,8 @@ async function init_dataset_category () {
 
 	$("#train_data_set_group").show();
 	$("#dataset").html(dataset);
-	$("#upload_x").hide();
-	$("#upload_x").parent().hide();
-	$("#upload_y").hide();
-	$("#upload_y").parent().hide();
+	$("#upload_x").hide().parent().hide();
+	$("#upload_y").hide().parent().hide();
 	$("#reset_model").show();
 
 	$('#data_origin').change(function() {
@@ -2325,7 +2299,7 @@ async function init_dataset_category () {
 	state_stack = [];
 	future_state_stack = [];
 
-	$("#tfvis_tab_label").parent().hide();
+	hide_tab_label("tfvis_tab_label");
 
 	is_setting_config = original_is_settings_config;
 
@@ -3024,26 +2998,25 @@ function change_data_origin () {
 		$("#image_resize_dimensions").hide();
 	}
 
-	$("#own_tensor_data_label").parent().hide();
-	$("#training_data_tab_label").parent().hide();
-	$("#own_image_data_label").parent().hide();
-	$("#own_csv_data_label").parent().hide();
+	hide_tab_label("own_tensor_data_label");
+	hide_tab_label("training_data_tab_label");
+	hide_tab_label("own_image_data_label");
+	hide_tab_label("own_csv_data_label");
 
 	if(show_own_image_data) {
-		$("#own_image_data_label").show().click().parent().show();
+		show_tab_label("own_image_data_label", 1);
 		$("#own_images_container").html("");
 		add_new_category();
 		add_new_category();
-		rename_labels();
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
 	} else if(show_own_tensor_data) {
-		$("#own_tensor_data_label").show().click().parent().show();
+		show_tab_label("own_tensor_data_label", 1);
 	} else if(show_own_csv_data) {
-		$("#own_csv_data_label").show().click().parent().show();
+		show_tab_label("own_csv_data_label", 1);
 	} else {
-		$("#training_data_tab_label").show().parent().show();
+		show_tab_label("training_data_tab_label");
 	}
 
 	if(window.location.href.indexOf("no_webcam") == -1) {
@@ -3053,16 +3026,6 @@ function change_data_origin () {
 			$("#show_webcam_button").hide();
 		}
 	}
-
-	/*
-	var has_chosen = 0;
-	$("#data_type").children().each(function (i, e) {
-		if(!$(e).prop("disabled") && !has_chosen) {
-			$("#data_type").val($(e).attr("value"));
-			has_chosen = 1;
-		}
-	});
-	*/
 }
 
 function auto_adjust_number_of_neurons (n) {
@@ -3733,4 +3696,33 @@ function rename_tmp_onchange() {
 		elem.attr("onchange", elem.attr('_onchange'));
 		elem.removeAttr('_onchange');
 	})
+}
+
+function hide_tab_label (label) {
+	$("#" + label).parent().hide();
+	var children = $("#" + label).parent().parent().children();
+
+	var currently_selected = null;
+	var first_displayable = null;
+
+	for (var i = 0; i <= children.length; i++) {
+		if(!currently_selected && $(children[i]).attr("aria-expanded") == "true") {
+			currently_selected = children[i];
+		}
+
+		if(!first_displayable && $(children[i]).css("display") != "none") {
+			first_displayable = children[i];
+		}
+	}
+
+	if(first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
+		$($(first_displayable).children()[0]).click()
+	}
+}
+
+function show_tab_label (label, click) {
+	$("#" + label).show().parent().show();
+	if(click) {
+		$("#" + label).click();
+	}
 }

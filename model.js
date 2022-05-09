@@ -577,7 +577,6 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			}
 		} else {
-			log("new_layers_container_md5 new!!!");
 			layers_container_md5 = new_layers_container_md5;
 		}
 	}

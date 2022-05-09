@@ -37,7 +37,7 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	$("#tfvis_tab_label").parent().show();
+	show_tab_label("tfvis_tab_label");
 	write_descriptions();
 
 	if(!Object.keys(model).includes("layers")) {
@@ -139,10 +139,12 @@ function get_fit_data () {
 		hide_annoying_tfjs_vis_overlays();
 		$(".training_performance_tabs").show();
 
-		$("#tfvis_tab_label").parent().show();
 		if($("#jump_to_training_tab").is(":checked")) {
-			$("#tfvis_tab_label").click();
+			show_tab_label("tfvis_tab_label", 1);
+		} else {
+			show_tab_label("tfvis_tab_label");
 		}
+
 		hide_annoying_tfjs_vis_overlays();
 	};
 
@@ -217,13 +219,11 @@ async function run_neural_network () {
 		}
 	}
 
-
-	$("#tfvis_tab_label").show();
+	show_tab_label("tfvis_tab_label");
 
 	if($("#jump_to_training_tab").is(":checked")) {
-		$('a[href="#tfvis_tab"]').click();
-		$('a[href="#tfvis_tab_training_performance"]').show();
-		$('a[href="#tfvis_tab_training_performance"]').click();
+		show_tab_label("tfvis_tab_label", 1);
+		show_tab_label("tfvis_tab_training_performance_label", 1);
 	}
 
 	try {
@@ -261,11 +261,11 @@ async function run_neural_network () {
 		var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
 		if($("#jump_to_training_tab").is(":checked")) {
-			$('#training_performance_tab_label').show();
+			show_tab_label("training_performance_tab_label");
 			if($("#data_origin").val() == "default") {
-				$('a[href="#training_data_tab"]').click();
+				show_tab_label("training_data_tab_label", 1);
 			}
-			$('a[href="#tfvis_tab_training_performance"').click()
+			show_tab_label("tfvis_tab_training_performance_label", 1);
 		}
 
 		try {
@@ -296,8 +296,7 @@ async function run_neural_network () {
 
 			$("#train_neural_network_button").html("Start training");
 			$("#predictcontainer").show();
-			$("#predict_error").hide();
-			$("#predict_error").html("");
+			$("#predict_error").hide().html("");
 
 			show_info_after_run(h);
 

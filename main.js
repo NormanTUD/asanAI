@@ -100,10 +100,8 @@ async function init_page_contents (chosen_dataset) {
 
 	$("#train_data_set_group").hide();
 
-	init_dataset_category().then(() => {
-		global_disable_auto_enable_valid_layer_types = true;
-		set_batchSize(5);
-	});
+	await init_dataset_category();
+	global_disable_auto_enable_valid_layer_types = true;
 
 	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
 	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
