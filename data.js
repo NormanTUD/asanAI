@@ -96,6 +96,9 @@ async function get_image_data(skip_real_image_download) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	headerdatadebug("get_imageData()");
+	if(!skip_real_image_download) {
+		$("#stop_downloading").show();
+	}
 
 	let json = await (_get_training_data());
 
@@ -129,8 +132,6 @@ async function get_image_data(skip_real_image_download) {
 	var old_percentage, eta;
 
 	var times = [];
-
-	$("#stop_downloading").show();
 
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
