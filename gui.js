@@ -3062,6 +3062,8 @@ function delete_category (item) {
 	show_or_hide_hide_delete_category();
 
 	disable_start_training_button_custom_images();
+
+	rename_labels();
 }
 
 function get_category_nr (elem) {
