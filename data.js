@@ -303,7 +303,7 @@ async function get_xs_and_ys () {
 			var classes = [];
 
 			for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-				var img_elems = $($(".own_images")[label_nr]).children();
+				var img_elems = $($(".own_images")[label_nr]).children().find("img");
 				if(img_elems.length) {
 					var label_val = $($(".own_image_label")[label_nr]).val();
 					keys.push(label_val);

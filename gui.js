@@ -1843,7 +1843,6 @@ function show_layers (number) {
 				"<table class='configtable'>" + 
 					option_for_layer(i) +
 				"</table>" +
-				//"<span class='layer_data_visualizations' style='display: none'><span class='input_visualization'></span><span class='kernel_visualization'></span> = <span class='filter_visualization'></span></span>" +
 			"</div>" +
 			"<span class='layer_end_marker'></span>" +
 			"</li>"
@@ -1861,6 +1860,11 @@ function show_layers (number) {
 	layers_container.html(layers_container_str);
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
+	if(layer_visualizations_tab_str != "") {
+		show_tab_label("layer_visualizations_tab_label");
+	} else {
+		hide_tab_label("layer_visualizations_tab_label");
+	}
 
 	sortable_layers_container(layers_container);
 
