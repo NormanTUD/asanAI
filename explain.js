@@ -219,6 +219,7 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 function draw_image_if_possible (layer, canvas_type, colors) {
 	if(canvas_type != "kernel") {
 		if(canvas_type == "input" && layer != 0) {
+			return;
 		}
 	}
 
