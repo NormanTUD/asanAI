@@ -3100,9 +3100,22 @@ function add_new_category () {
 	var n = $(".own_image_label").length;
 
 	var imgDiv = $(".own_images");
+	var current_labels = [];
+
+	var label_nr = n;
+
+	$(".own_image_label").each(function (i, x) { 
+		current_labels.push($(x).val());
+	})
+
+	log(current_labels);
+	while (current_labels.includes("label " + label_nr)) {
+		label_nr++;
+	}
+
 	if(imgDiv.length == 0 || imgDiv.length <= n) {
 		$('<div class="own_image_upload_container"><hr><button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>').appendTo("#own_images_container");
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label_' + n + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label ' + label_nr + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
 	}
 
