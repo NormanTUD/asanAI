@@ -385,7 +385,7 @@ function write_descriptions () {
 
 			var layer = $(".layer");
 
-			if(1 || layer.length) {
+			if(layer.length) {
 				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
 
 				for (var i = 0; i < groups.length; i++) {
@@ -914,7 +914,6 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		$("#error").html(e).parent().show();
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
-		write_descriptions();
 		return false;
 	}
 }

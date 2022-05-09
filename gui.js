@@ -1795,7 +1795,6 @@ function sortable_layers_container (layers_container) {
 
 			$(".descriptions_of_layers").show();
 			await updated_page();
-			write_descriptions();
 		},
 		axis: 'y',
 		revert: true
@@ -3728,6 +3727,7 @@ function hide_tab_label (label) {
 	if(first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
 		$($(first_displayable).children()[0]).click()
 	}
+	write_descriptions();
 }
 
 function show_tab_label (label, click) {
@@ -3735,4 +3735,5 @@ function show_tab_label (label, click) {
 	if(click) {
 		$("#" + label).click();
 	}
+	write_descriptions();
 }
