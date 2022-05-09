@@ -319,14 +319,19 @@ async function predict_webcam () {
 
 async function show_webcam () {
 	if(_show_webcam()) {
-		$("#webcam").hide().html("");
-		var videoElement = document.createElement('video');
-		videoElement.width = 256;
-		videoElement.height = 256;
-		$("#webcam").show().append(videoElement);
+		$("#show_webcam_button").html("Stop webcam");
+		if(cam) {
+			stop_webcam();
+		} else {
+			$("#webcam").hide().html("");
+			var videoElement = document.createElement('video');
+			videoElement.width = 256;
+			videoElement.height = 256;
+			$("#webcam").show().append(videoElement);
 
-		$("#webcam").append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
-		cam = await tf.data.webcam(videoElement);
+			$("#webcam").append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
+			cam = await tf.data.webcam(videoElement);
+		}
 	} else {
 		$("#webcam").hide().html("");
 		if(cam) {

@@ -1238,6 +1238,14 @@ async function get_shape_from_array (array) {
 	return shape;
 }
 
+function stop_webcam () {
+	$("#show_webcam_button").html("Show webcam");
+	cam.stop();
+	$("#webcam").hide();
+	$("#webcam_prediction").hide();
+	cam = undefined;
+}
+
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
 	rename_tmp_onchange();
 
@@ -1293,9 +1301,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	if(current_input_shape.length != 3) {
 		$(".visualize_button").hide();
 		if(cam) {
-			cam.stop();
-			$("#webcam").hide();
-			$("#webcam_prediction").hide();
+			stop_webcam();
 		}
 	} else {
 		$(".visualize_button").show();
@@ -3037,6 +3043,7 @@ function change_data_origin () {
 			$("#show_webcam_button").show();
 		} else {
 			$("#show_webcam_button").hide();
+			stop_webcam();
 		}
 	}
 }
