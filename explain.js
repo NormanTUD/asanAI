@@ -914,8 +914,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		}
 		return false;
 	} catch (e) {
-		log(e);
-		$("#error").html(e).parent().show();
+		write_error(e);
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
 		return false;

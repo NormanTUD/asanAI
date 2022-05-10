@@ -328,6 +328,8 @@ async function run_neural_network () {
 		} catch (e) {
 			write_error(e);
 
+			started_training = false;
+
 			$('body').css('cursor', 'default');
 			$("#layers_container").sortable("enable");
 			$("#ribbon,select,input,checkbox").prop("disabled", false);

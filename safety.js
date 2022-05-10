@@ -8,8 +8,7 @@ function assertationFailed (message) {
 function assert(boolean_value, exception_message) {
 	if(!boolean_value) {
 		console.trace();
-		$("#error").parent().show();
-		$("#error").html(exception_message);
+		write_error(exception_message);
 
 		$('body').css('cursor', 'default');
 		$("#layers_container").sortable("enable");
@@ -27,9 +26,6 @@ function assert(boolean_value, exception_message) {
 
 		throw new assertationFailed(exception_message);
 	} else {
-		var error_div = $("#error");
-		error_div.parent().hide();
-		error_div.html("");
 		$("body").css("cursor", "default");
 	}
 }

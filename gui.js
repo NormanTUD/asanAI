@@ -2330,8 +2330,7 @@ async function init_dataset_category () {
 
 function clean_gui () {
 	reset_summary();
-	$("#errorcontainer").hide();
-	$("#error").html("");
+	write_error("");
 	write_descriptions();
 }
 
@@ -3353,8 +3352,11 @@ function write_error (e) {
 	console.warn(e);
 	console.trace();
 
-	$("#errorcontainer").show();
-	$("#error").html(e).show().parent().show();
+	if(e) {
+		$("#error").html(e).show().parent().show();
+	} else {
+		$("#error").html(e).show().parent().hide();
+	}
 	explain_error_msg();
 	enable_everything();
 	write_descriptions();

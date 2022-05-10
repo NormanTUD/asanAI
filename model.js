@@ -5,8 +5,7 @@ function except (errname, e) {
 	enable_everything();
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
-	$("#error").html(e);
-	$("#error").parent().show();
+	write_error(e);
 	if(throw_compile_exception) { throw e; }
 }
 
@@ -28,8 +27,6 @@ function get_model_config_hash () {
 async function _create_model () {
 	try {
 		model = await create_model(model);
-		$("#error").html("");
-		$("#error").parent().hide();
 
 		if(can_be_shown_in_latex()) {
 			$("#math_mode_settings").show();

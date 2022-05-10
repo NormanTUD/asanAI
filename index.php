@@ -729,7 +729,7 @@
 
 				<div class="container" id="errorcontainer" style="display: none">
 					<div class="left"></div>
-					<div class="reset_before_train_network" id="error"></div>
+					<div id="error"></div>
 				</div>
 
 
