@@ -753,35 +753,6 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 	return full_data;
 }
 
-function grad_test() {
-	const auxModel = tf.sequential();
-
-	for(var i = 0; i < Math.min(2, model.layers.length); i++) {
-		auxModel.add(model.getLayer(null, i));
-	}
-
-	auxModel.summary();
-
-	const imageH = model.inputs[0].shape[1];
-	const imageW = model.inputs[0].shape[2];
-	const imageDepth = model.inputs[0].shape[3];
-
-	var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 1);//.mul(20).add(128);
-	header("image:");
-	image.print();
-
-	const lossFunction = (input) => auxModel.apply(input).gather([0]);
-
-	header("lossFunction(image)");
-	lossFunction(image).print();
-
-	const gradFunction = tf.grad(lossFunction);
-	const grads = gradFunction(image).mul(255);
-
-	header("Grads:");
-	grads.print();
-}
-
 async function get_image_from_url (url) {
 	var tf_img = (async () => {
 		let img = await load_image(url);
