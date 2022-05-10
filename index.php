@@ -66,41 +66,41 @@
 
 
 		<!-- jquery -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>jquery-ui.js"></script>
+		<?php minify_js("jquery.js"); ?>
+		<?php minify_js("jquery-ui.js"); ?>
 
 		<!-- sweetalert -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>external/sweetalert2.all.js"></script>
+		<?php minify_js("external/sweetalert2.all.js"); ?>
 
 		<!-- tensorflow.js -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tf.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tf/tfjs-vis.js"></script>
+		<?php minify_js("tf/tf.js"); ?>
+		<?php minify_js("tf/tfjs-vis.js"); ?>
 
 		<!-- my own js stuff -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>safety.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>variables.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>tests.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>model.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>explain.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>data.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>debug.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>gui.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>train.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>predict.js"></script>
+		<?php minify_js("safety.js"); ?>
+		<?php minify_js("variables.js"); ?>
+		<?php minify_js("tests.js"); ?>
+		<?php minify_js("model.js"); ?>
+		<?php minify_js("explain.js"); ?>
+		<?php minify_js("data.js"); ?>
+		<?php minify_js("debug.js"); ?>
+		<?php minify_js("gui.js"); ?>
+		<?php minify_js("train.js"); ?>
+		<?php minify_js("predict.js"); ?>
 
 		<!-- visualizations -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/d3.v5.min.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/three.min.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/OrbitControls.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/SVGRenderer.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/Projector.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/util.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/AlexNet.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/LeNet.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>visualizations/FCNN.js"></script>
+		<?php minify_js("visualizations/d3.v5.min.js"); ?>
+		<?php minify_js("visualizations/three.min.js"); ?>
+		<?php minify_js("visualizations/OrbitControls.js"); ?>
+		<?php minify_js("visualizations/SVGRenderer.js"); ?>
+		<?php minify_js("visualizations/Projector.js"); ?>
+		<?php minify_js("visualizations/util.js"); ?>
+		<?php minify_js("visualizations/AlexNet.js"); ?>
+		<?php minify_js("visualizations/LeNet.js"); ?>
+		<?php minify_js("visualizations/FCNN.js"); ?>
 
 		<!-- ChardinJS -->
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>chardinjs.js"></script>
+		<?php minify_js("chardinjs.js"); ?>
 
 		<?php minify_css("chardinjs.css"); ?>
 
@@ -1059,7 +1059,7 @@
 		</div>
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>main.js"></script>
+		<?php minify_js("main.js"); ?>
 		<script>
 			var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function')
 			var local_store = window.localStorage;
@@ -1558,8 +1558,8 @@
 			}
 		</script>
 
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism.js"></script>
-		<script src="<?php print $minify ? "minify.php?file=" : ""; ?>prism/prism-python.min.js"></script>
+		<?php minify_js("prism/prism.js"); ?>
+		<?php minify_js("prism/prism-python.min.js"); ?>
 		
 		<script type="text/x-mathjax-config">
 			MathJax.Hub.Config({

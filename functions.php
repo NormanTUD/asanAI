@@ -112,6 +112,14 @@
 		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where user_id ='.get_user_id($username));
 	}
 
+	function minify_js ($file) {
+		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
+			print "<script src='minify.php?file=$file'></script>";
+		} else {
+			print "<script src='$file'></script>";
+		}
+	}
+
 	function minify_css ($file) {
 		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
 			print "<link href='minify.php?file=$file' rel='stylesheet' />\n";
