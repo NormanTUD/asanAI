@@ -3349,11 +3349,10 @@ function disable_start_training_button_custom_images () {
 }
 
 function write_error (e) {
-	console.warn(e);
-	console.trace();
-
 	if(e) {
 		$("#error").html(e).show().parent().show();
+		console.warn(e);
+		console.trace();
 	} else {
 		$("#error").html(e).show().parent().hide();
 	}

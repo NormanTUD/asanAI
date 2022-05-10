@@ -2,7 +2,6 @@
 
 function gui_in_training () {
 	started_training = true;
-	$("#train_neural_network_button").html("Stop training");
 	disable_everything();
 	favicon_spinner();
 	write_descriptions();
@@ -206,6 +205,7 @@ function show_info_after_run (h) {
 
 async function run_neural_network () {
 	clean_gui();
+	$("#train_neural_network_button").html("Stop training");
 
 	for (var i = 0; i < model.layers.length; i++) {
 		if("original_apply" in model.layers[i]) {
