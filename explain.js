@@ -1380,6 +1380,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	var latex = model_to_latex();
 
 	$("#math_tab_code").html(latex);
+
 	try {
 		await MathJax.typesetPromise()
 		show_tab_label("math_tab_label");

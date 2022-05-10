@@ -54,8 +54,6 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-	console.trace();
-
 	return await $.get("traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/" + filename);
 }
 

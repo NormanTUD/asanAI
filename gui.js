@@ -1240,7 +1240,9 @@ async function get_shape_from_array (array) {
 
 function stop_webcam () {
 	$("#show_webcam_button").html("Show webcam");
-	cam.stop();
+	if(cam) {
+		cam.stop();
+	}
 	$("#webcam").hide();
 	$("#webcam_prediction").hide();
 	cam = undefined;
