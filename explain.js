@@ -814,7 +814,6 @@ async function draw_maximally_activated_layer (layer, type) {
 			}
 		});
 
-
 		log("Set title to " + swal_msg);
 
 		var start = Date.now();
