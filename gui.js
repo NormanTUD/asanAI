@@ -3752,8 +3752,6 @@ function hide_tab_label (label) {
 }
 
 function show_tab_label (label, click) {
-	header("============================");
-	logt("show_tab_label(" + label + ", " + click + ")");
 	$("#" + label).show().parent().show();
 	if(click) {
 		$("#" + label).click();
