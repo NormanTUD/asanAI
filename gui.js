@@ -2171,7 +2171,6 @@ async function init_dataset () {
 
 	$("#data_origin").val("default").trigger("change");
 	$("#visualization_tab_label").click();
-	$("#fcnn_tab_label").click();
 
 	save_current_status();
 	init_weight_file_list();
@@ -2195,7 +2194,7 @@ async function chose_dataset(no_set_config) {
 	$("#maximally_activated_content").html("")
 	hide_tab_label("maximally_activated_label");
 	$("#visualization_tab_label").click();
-	$("#fcnn_tab_label").click();
+	show_tab_label("fcnn_tab_label", 1);
 
 	init_weight_file_list();
 	x_file = null;
@@ -2323,7 +2322,7 @@ async function init_dataset_category () {
 	$("#data_origin").val("default").trigger("change");
 
 	$("#visualization_tab_label").click();
-	$("#fcnn_tab_label").click();
+	show_tab_label("fcnn_tab_label", 1);
 
 	//updated_page();
 	init_download_link();
@@ -2980,7 +2979,7 @@ function change_data_origin () {
 		set_default_input_shape();
 
 		$("#visualization_tab_label").click();
-		$("#fcnn_tab_label").click();
+		show_tab_label("fcnn_tab_label", 1);
 
 		update_python_code();
 	} else {
@@ -3753,6 +3752,8 @@ function hide_tab_label (label) {
 }
 
 function show_tab_label (label, click) {
+	header("============================");
+	logt("show_tab_label(" + label + ", " + click + ")");
 	$("#" + label).show().parent().show();
 	if(click) {
 		$("#" + label).click();

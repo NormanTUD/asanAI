@@ -1309,12 +1309,12 @@
 				if(disable_alexnet) {
 					hide_tab_label("alexnet_tab_label");
 					if(!dont_click) {
-						if(clicked_on_tab == 0) { $('a[href="#fcnn_tab"]').click(); clicked_on_tab = 1; }
+						if(clicked_on_tab == 0) { show_tab_label("fcnn_tab_label", 1); clicked_on_tab = 1; }
 					}
 				} else {
 					show_tab_label("alexnet_tab_label");
 					if(!dont_click) {
-						if(clicked_on_tab == 0) { $('#alexnet_tab_label').click(); clicked_on_tab = 1; }
+						if(clicked_on_tab == 0) { show_tab_label('alexnet_tab_label', 1); clicked_on_tab = 1; }
 					}
 				}
 				reset_view();
@@ -1424,7 +1424,7 @@
 					hide_tab_label("lenet_tab_label");
 					if(clicked_on_tab == 0) {
 						if(!dont_click) {
-							$('#fcnn_tab_label').click(); 
+							show_tab_label("fcnn_tab_label", 1);
 							clicked_on_tab = 1;
 						}
 					}
@@ -1432,7 +1432,7 @@
 					show_tab_label("lenet_tab_label");
 					if(clicked_on_tab == 0) {
 						if(!dont_click) {
-							$('#lenet_tab_label').click();
+							show_tab_label("lenet_tab_label", 1);
 							clicked_on_tab = 1;
 						}
 					}
