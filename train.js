@@ -315,7 +315,6 @@ async function run_neural_network () {
 
 			model_is_trained = true;
 
-			$("#train_neural_network_button").html("Start training");
 			$("#predictcontainer").show();
 			$("#predict_error").hide().html("");
 
@@ -324,7 +323,6 @@ async function run_neural_network () {
 			dispose(h);
 
 			enable_everything();
-			gui_not_in_training();
 		} catch (e) {
 			write_error(e);
 
@@ -345,6 +343,8 @@ async function run_neural_network () {
 			link.href = 'favicon.ico';
 		}
 	}
+
+	gui_not_in_training();
 
 	reset_data();
 
