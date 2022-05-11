@@ -220,7 +220,7 @@ $(document).ready(async function() {
 			}
 
 			var filecontent = evt.target.result;
-			set_weights_from_string(filecontent, 1);
+			set_weights_from_string(filecontent, 0, 1);
 
 			add_layer_debuggers();
 

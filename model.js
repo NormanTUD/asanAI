@@ -833,7 +833,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	return true;
 }
 
-async function set_weights_from_string (string, no_error, no_warning, m) {
+async function set_weights_from_string (string, no_warning, no_error, m) {
 	var json = JSON.parse(string);
 
 	return set_weights_from_json_object(json, no_warning, no_error, m);

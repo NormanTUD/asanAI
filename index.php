@@ -172,7 +172,7 @@
 										<td colspan=2>
 											<select id="model_dataset" onchange="change_model_dataset();" style="width: 204px">
 											</select>
-											<button id="load_weights_button" style="display: none" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+											<button id="load_weights_button" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 										</td>
 									</tr>
 								</div>

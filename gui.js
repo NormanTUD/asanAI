@@ -2136,7 +2136,7 @@ async function set_config (index) {
 }
 
 function show_or_hide_load_weights () {
-	$("#load_weights_button").hide();
+	$("#load_weights_button").attr("disabled", "true");
 
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
@@ -2144,7 +2144,7 @@ function show_or_hide_load_weights () {
 	var keys = Object.keys(this_struct);
 
 	if(keys.includes("weights_file")) {
-		$("#load_weights_button").show();
+		$("#load_weights_button").removeAttr("disabled");
 	}
 }
 
