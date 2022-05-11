@@ -842,7 +842,6 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 				text: e
 			});
 		}
-		console.trace();
 		return false;
 	}
 
