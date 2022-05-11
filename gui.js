@@ -2128,7 +2128,7 @@ async function set_config (index) {
 
 	get_label_data();
 
-	load_weights(1);
+	await load_weights(1);
 
 	is_setting_config = false;
 
@@ -2809,7 +2809,7 @@ function get_chosen_dataset () {
 	return val;
 }
 
-function load_weights (dont_show_msg) {
+async function load_weights (dont_show_msg) {
 	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
@@ -2824,11 +2824,10 @@ function load_weights (dont_show_msg) {
 				prev_layer_data = [];
 				show_prediction(0, 1);
 				write_model_to_latex_to_page();
+				show_or_hide_load_weights();
 			}
 		});
 	}
-
-	show_or_hide_load_weights();
 }
 
 function show_dtype_only_first_layer () {

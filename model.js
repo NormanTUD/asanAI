@@ -963,8 +963,8 @@ async function _show_load_weights () {
 		return false;
 	}
 
-	if(Object.keys(traindata_struct[$("#dataset_category option:selected").text()].datasets[$("#dataset option:selected").text()].weights_file).length > 1) {
-		return true;
+	if(!(Object.keys(traindata_struct[$("#dataset_category option:selected").text()].datasets[$("#dataset option:selected").text()].weights_file).length > 1)) {
+		return false;
 	}
 
 	try {
