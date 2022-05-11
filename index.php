@@ -1572,7 +1572,8 @@
 
 			resize_window();
 		</script>
-		<footer class="footer" style="position: sticky; bottom: 0; width: 100%; height: 50px;">
+		<div style="clear: both"></div>
+		<footer class="footer" style="height: 50px;">
 			<p>
 				<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" /></a>
 				contact: <button onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
