@@ -960,12 +960,10 @@ async function get_weights_shape (weights_as_string, m) {
 
 async function _show_load_weights () {
 	if(!model) {
-		log("A");
 		return false;
 	}
 
 	if(Object.keys(traindata_struct[$("#dataset_category option:selected").text()].datasets[$("#dataset option:selected").text()].weights_file).length > 1) {
-		log("B");
 		return true;
 	}
 
@@ -974,17 +972,13 @@ async function _show_load_weights () {
 		var current_network_weights_shape = JSON.stringify(await get_weights_shape());
 		if(default_weights_shape === current_network_weights_shape) {
 			if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
-				log("C");
 				return false;
 			} else {
-				log("D");
 				return true;
 			}
 		}
-		log("E");
 		return false;
 	} catch (e) {
-		log("F");
 		return false;
 	}
 }

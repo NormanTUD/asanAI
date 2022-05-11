@@ -2827,6 +2827,8 @@ function load_weights (dont_show_msg) {
 			}
 		});
 	}
+
+	show_or_hide_load_weights();
 }
 
 function show_dtype_only_first_layer () {
