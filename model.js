@@ -85,16 +85,21 @@ async function compile_model (keep_weights) {
 		}
 	}
 
+	var recompiled_model = false;
+	var recreated_model = false;
+
 	if(recreate_model) {
 		model_is_trained = false;
 		reset_summary();
 		await _create_model();
+		recreated_model = true;
 	}
 
 	try {
 		model_config_hash = get_model_config_hash();
 		var model_data = get_model_data();
 		model.compile(model_data);
+		recompiled_model = true;
 	} catch (e) {
 		except("ERROR2", e);
 	}
@@ -132,7 +137,7 @@ async function compile_model (keep_weights) {
 		log("Dont keep weights");
 	}
 
-	if(didnt_keep_weights && recreate_model && model_was_trained_previously) {
+	if(didnt_keep_weights && (recreate_model || recompiled_model || recreated_model) && model_was_trained_previously) {
 		Swal.fire(
 			'Weights/filters lost!',
 			"The model has been trained. " +
