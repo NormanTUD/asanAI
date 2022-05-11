@@ -21,6 +21,8 @@ This is a very early alpha.
 
 ![Screenshot](screen3.png "Dark mode")
 
+![Screenshot](screen6.png "Maximally activated neurons")
+
 
 # Installation
 
