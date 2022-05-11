@@ -206,3 +206,7 @@ a.ui-button:focus {
 .vega-embed {
 	filter: invert(0.791);
 }
+
+.footer>a:visited, .footer>a, .footer>a:link {
+	color: white;
+}

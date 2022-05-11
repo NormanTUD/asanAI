@@ -129,7 +129,6 @@
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" style="cursor: help" onclick="hide_ribbon()">&#9776;</span></li>
-					<span><a class="link" target="_blank" href='https://scads.ai/imprint/'>Imprint</a></span>
 <?php
 					if($GLOBALS["use_db"]) {
 ?>
@@ -1573,5 +1572,11 @@
 
 			resize_window();
 		</script>
+		<footer class="footer" style="position: absolute; bottom: 0; width: 100%; height: 50px;">
+			<p>
+				<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" /></a>
+				contact: <button onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
+			</p>
+		</footer>
 	</body>
 </html>
