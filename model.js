@@ -45,14 +45,15 @@ async function _create_model () {
 		}
 	}
 
-	if(!disable_layer_debuggers) {
+	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
 	}
 
 }
 
-async function compile_model () {
+async function compile_model (keep_weights) {
 	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
+	log("compile_model");
 
 	var recreate_model = false;
 
@@ -60,19 +61,23 @@ async function compile_model () {
 		recreate_model = true;
 	}
 
+	var old_weights_string = false;
+
+	if(!model) {
+		model = await create_model(null, get_model_structure());
+	} else {
+		if(keep_weights && model && Object.keys(model).includes("layers")) {
+			old_weights_string = await get_weights_as_string(model);
+			log("got old weights_string: " + old_weights_string);
+		}
+	}
+
+	var model_was_trained_previously = model_is_trained;
+
 	if(model_is_trained) {
 		if(model_config_hash == get_model_config_hash()) {
 			recreate_model = false;
 		} else {
-			Swal.fire(
-				'Weights/filters lost!',
-				"The model has been trained. " +
-				"You changed something. " +
-				"This needed a recompile to take action. " +
-				"Recompiling lost the trained weights/filters.",
-				'warning'
-			)
-
 			recreate_model = true;
 			if(recreate_model) {
 				model_is_trained = false;
@@ -86,10 +91,6 @@ async function compile_model () {
 		await _create_model();
 	}
 
-	if(!model) {
-		model = await create_model(null, get_model_structure());
-	}
-
 	try {
 		model_config_hash = get_model_config_hash();
 		var model_data = get_model_data();
@@ -101,7 +102,46 @@ async function compile_model () {
 	$("#outputShape").val(JSON.stringify(model.outputShape));
 
 	write_model_summary();
-	//set_ribbon_min_width();
+
+	var didnt_keep_weights = 1;
+
+	if(keep_weights) {
+		if(old_weights_string) {
+			log("old weights string exists");
+			var new_weights_string = await get_weights_as_string(model);
+			var old_weights = eval(old_weights_string);
+			var new_weights = eval(new_weights_string);
+
+			var old_shape_string = (await get_shape_from_array(old_weights)).toString();
+			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
+
+			if(old_shape_string == new_shape_string) {
+				if(old_weights_string != new_weights_string) {
+					log(old_weights);
+					set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
+					model_is_trained = true;
+					didnt_keep_weights = 0;
+				} else {
+					log("old_weights_string and new_weights_string are equal");
+				}
+			} else {
+				log("old_shape_string != new_shape_string");
+			}
+		}
+	} else {
+		log("Dont keep weights");
+	}
+
+	if(didnt_keep_weights && recreate_model && model_was_trained_previously) {
+		Swal.fire(
+			'Weights/filters lost!',
+			"The model has been trained. " +
+			"You changed something. " +
+			"This needed a recompile to take action. " +
+			"Recompiling lost the trained weights/filters.",
+			'warning'
+		)
+	}
 }
 
 function get_data_for_layer (type, i, first_layer) {
@@ -314,7 +354,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	var old_weights_string = false;
-	if(model && Object.keys(model).includes("layers") && !fake_model_structure) {
+	if(model && Object.keys(model).includes("layers")) {
 		old_weights_string = await get_weights_as_string(model);
 	}
 
@@ -843,23 +883,28 @@ async function get_weights_as_string (m) {
 	if(!m) {
 		m = model;
 	}
+
 	if(!model) {
 		return false;
 	}
 
-	var weights = await m.getWeights();
+	if(m) {
+		var weights = await m.getWeights();
 
-	var weights_array = [];
+		var weights_array = [];
 
-	for (var i = 0; i < weights.length; i++) {
-		if(!weights[i].isDisposed) {
-			try {
-				weights_array[i] = weights[i].arraySync();
-			} catch (e) {}
+		for (var i = 0; i < weights.length; i++) {
+			if(!weights[i].isDisposed) {
+				try {
+					weights_array[i] = weights[i].arraySync();
+				} catch (e) {}
+			}
 		}
-	}
 
-	return JSON.stringify(weights_array);
+		return JSON.stringify(weights_array);
+	} else {
+		return false;
+	}
 }
 
 async function copy_weights_to_clipboard () {
