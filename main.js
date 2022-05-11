@@ -230,7 +230,7 @@ $(document).ready(async function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
-	show_or_hide_load_weights();
+	await show_or_hide_load_weights();
 
 	change_data_origin(0);
 
@@ -244,8 +244,6 @@ $(document).ready(async function() {
 
 	//$("#lenet_tab_label").click();
 	//$("#code_tab_label").click()
-
-	setInterval(show_load_weights, 1000);
 
 	allow_edit_inputShape();
 });

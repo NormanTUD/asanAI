@@ -1297,8 +1297,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	hide_no_conv_stuff();
 
-	show_load_weights();
-
 	var current_input_shape = get_input_shape();
 	if(current_input_shape.length != 3) {
 		$(".visualize_button").hide();
@@ -1314,6 +1312,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	} catch (e) {
 		console.warn(e);
 	}
+
+	await show_or_hide_load_weights()
 
 	return 1;
 }
@@ -2135,7 +2135,7 @@ async function set_config (index) {
 	await updated_page();
 }
 
-function show_or_hide_load_weights () {
+async function show_or_hide_load_weights () {
 	$("#load_weights_button").attr("disabled", "true");
 
 	var category_text = $("#dataset_category option:selected").text();
@@ -2143,7 +2143,7 @@ function show_or_hide_load_weights () {
 	var this_struct = traindata_struct[category_text]["datasets"][dataset];
 	var keys = Object.keys(this_struct);
 
-	if(keys.includes("weights_file")) {
+	if(keys.includes("weights_file") && await _show_load_weights()) {
 		$("#load_weights_button").removeAttr("disabled");
 	}
 }
@@ -2207,7 +2207,7 @@ async function chose_dataset(no_set_config) {
 
 	show_hide_undo_buttons();
 
-	show_or_hide_load_weights()
+	await show_or_hide_load_weights()
 	model_is_trained = false;
 	if(!no_set_config) {
 		await set_config();
