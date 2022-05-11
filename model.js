@@ -53,7 +53,6 @@ async function _create_model () {
 
 async function compile_model (keep_weights) {
 	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
-	log("compile_model");
 
 	var recreate_model = false;
 
@@ -68,7 +67,6 @@ async function compile_model (keep_weights) {
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
 			old_weights_string = await get_weights_as_string(model);
-			log("got old weights_string: " + old_weights_string);
 		}
 	}
 
@@ -112,7 +110,6 @@ async function compile_model (keep_weights) {
 
 	if(keep_weights) {
 		if(old_weights_string) {
-			log("old weights string exists");
 			var new_weights_string = await get_weights_as_string(model);
 			var old_weights = eval(old_weights_string);
 			var new_weights = eval(new_weights_string);
@@ -122,30 +119,12 @@ async function compile_model (keep_weights) {
 
 			if(old_shape_string == new_shape_string) {
 				if(old_weights_string != new_weights_string) {
-					log(old_weights);
 					set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
 					model_is_trained = true;
 					didnt_keep_weights = 0;
-				} else {
-					log("old_weights_string and new_weights_string are equal");
 				}
-			} else {
-				log("old_shape_string != new_shape_string");
 			}
 		}
-	} else {
-		log("Dont keep weights");
-	}
-
-	if(didnt_keep_weights && (recreate_model || recompiled_model || recreated_model) && model_was_trained_previously) {
-		Swal.fire(
-			'Weights/filters lost!',
-			"The model has been trained. " +
-			"You changed something. " +
-			"This needed a recompile to take action. " +
-			"Recompiling lost the trained weights/filters.",
-			'warning'
-		)
 	}
 }
 
