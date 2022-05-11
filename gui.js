@@ -1262,9 +1262,42 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		return;
 	}
 
+	var keep_weights = 0;
+	if($(item).length) {
+		var caller_classes = $(item).attr("class").split(/\s+/);
+		var keep_classes = [
+			"activation",
+			"padding",
+			"strides_x",
+			"strides_y",
+			"strides_z",
+			"dilation_rate",
+			"kernel_regularizer",
+			"bias_regularizer",
+			"kernel_regularizer_l1",
+			"kernel_regularizer_l2",
+			"bias_regularizer_l1",
+			"bias_regularizer_l2",
+			"trainable",
+			"dropout_rate"
+		];
+		for (var i = 0; i < caller_classes.length; i++) {
+			if(!keep_weights) {
+				for (var j = 0; j < keep_classes.length; j++) {
+					if(!keep_weights) {
+						if(caller_classes[i] == keep_classes[j]) {
+							keep_weights = 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	try {
-		await compile_model();
+		await compile_model(keep_weights);
 	} catch (e) {
+		log(e);
 		log("There was an error compiling the model: " + e);
 	};
 
@@ -1314,6 +1347,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	await show_or_hide_load_weights()
+
+	allow_training();
 
 	return 1;
 }
