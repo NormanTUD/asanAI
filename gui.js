@@ -1968,7 +1968,6 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
-
 	Swal.fire({
 		title: 'Loading model...',
 		showConfirmButton: false
