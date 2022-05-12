@@ -2709,6 +2709,7 @@ function openPopup(name) {
 	var el = document.getElementById(name);
 	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
 	el.style.display = 'block';
+	write_descriptions();
 }
 
 function closePopup(name) {

@@ -592,6 +592,8 @@ function get_x_y_from_csv () {
 	var x_headers = headers_data["x"];
 	var y_headers = headers_data["y"];
 
+	labels = y_headers;
+
 	var parsed = parse_csv_file(csv);
 
 	var x_data = get_data_struct_by_header(x_headers, parsed);
