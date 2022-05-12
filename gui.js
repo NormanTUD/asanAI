@@ -1370,6 +1370,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	allow_training();
 
+	show_prediction(1);
+
 	return 1;
 }
 
