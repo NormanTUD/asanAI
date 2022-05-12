@@ -2651,6 +2651,8 @@ async function undo () {
 
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
+
+	write_descriptions();
 }
 
 async function redo () {
@@ -2673,6 +2675,7 @@ async function redo () {
 
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
+	write_descriptions();
 }
 
 function enable_symbol (name) {
