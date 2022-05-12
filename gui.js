@@ -1372,7 +1372,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	allow_training();
 
-	show_prediction(1);
+	show_prediction(1, 1);
 
 	return 1;
 }
@@ -2599,6 +2599,7 @@ function last_index (array) {
 async function save_current_status () {
 	try {
 		var index = await get_current_status_hash();
+
 		if(state_stack.includes(index) || future_state_stack.includes(index)) {
 			return;
 		}
