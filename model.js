@@ -63,7 +63,7 @@ async function compile_model (keep_weights) {
 	var old_weights_string = false;
 
 	if(!model) {
-		model = await create_model(null, await get_model_structure());
+		model = await create_model(model, await get_model_structure());
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
 			old_weights_string = await get_weights_as_string(model);
@@ -106,8 +106,6 @@ async function compile_model (keep_weights) {
 
 	write_model_summary();
 
-	var didnt_keep_weights = 1;
-
 	if(keep_weights) {
 		if(old_weights_string) {
 			var new_weights_string = await get_weights_as_string(model);
@@ -121,7 +119,6 @@ async function compile_model (keep_weights) {
 				if(old_weights_string != new_weights_string) {
 					set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
 					model_is_trained = true;
-					didnt_keep_weights = 0;
 				}
 			}
 		}
@@ -335,7 +332,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	var new_current_status_hash = await get_current_status_hash();
 	if(!force) {
 		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-			return old_model;
+			//return old_model;
 		}
 	}
 

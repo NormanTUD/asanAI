@@ -2165,8 +2165,6 @@ async function set_config (index) {
 						var value = config["model_structure"][i]["data"][keys[j]];
 
 						if(["kernelSize", "strides"].includes(keys[j])) {
-							//log("set " + keys[j] + " to ");
-							//log(value);
 							set_xyz_values(j, keys[j], value);
 						} else if(["dilationRate"].includes(keys[j])) {
 							set_item_value(i, keys[j], value.join(", "));
