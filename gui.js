@@ -1968,6 +1968,11 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
+	Swal.fire({
+		title: 'Loading model...',
+		showConfirmButton: false
+	});
+
 	prev_layer_data = [];
 
 	is_setting_config = true;
@@ -2204,6 +2209,8 @@ async function set_config (index) {
 	is_setting_config = false;
 
 	await updated_page();
+
+	Swal.close();
 }
 
 async function show_or_hide_load_weights () {
