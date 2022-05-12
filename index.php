@@ -655,7 +655,7 @@
 				</div>
 			</div>
 
-			<div id="maindiv">
+			<div id="maindiv" style="display: none">
 
 				<div id="sources_popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
