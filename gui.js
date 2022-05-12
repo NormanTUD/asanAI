@@ -964,7 +964,9 @@ async function _get_configuration (index) {
 	if(index) {
 		if(Object.keys(status_saves).includes(index)) {
 			data = {};
-			data["keras"] = JSON.parse(status_saves[index]);
+			log(status_saves[index]);
+			data["model_structure"] = status_saves[index]["model_structure"];
+			data["weights"] = status_saves[index]["weights"];
 		} else {
 			log("Index " + index + " could not be found");
 		}
@@ -1981,47 +1983,7 @@ async function set_config (index) {
 			} else {
 				$("#divide_by").val(1);
 			}
-		}
 
-		var keras_layers;
-
-		var paths = [
-			["keras", "modelTopology", "config", "layers"],
-			["keras", "modelTopology", "model_config", "layers"],
-			["keras", "modelTopology", "model_config", "config", "layers"],
-			["keras", "keras", "modelTopology", "config", "layers"],
-			["keras", "keras", "modelTopology", "model_config", "layers"],
-			["keras", "keras", "modelTopology", "model_config", "config", "layers"],
-			["layers"]
-		];
-
-		for (var i = 0; i < paths.length; i++) {
-			if(!keras_layers) {
-				keras_layers = get_key_from_path(config, paths[i]);
-			}
-		}
-
-		if(keras_layers === undefined) {
-			Swal.fire({
-				icon: 'error',
-				title: 'Oops...',
-				text: 'Error loading the model'
-			});
-			log(config);
-			return;
-		}
-
-		var number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
-
-		init_numberoflayers(number_of_layers);
-
-		if(config["input_shape"]) {
-			set_input_shape(config["input_shape"]);
-		} else {
-			determine_input_shape();
-		}
-
-		if(!index) {
 			set_epochs(config["epochs"]);
 			set_loss(config["loss"]);
 			set_metric(config["metric"]);
@@ -2057,80 +2019,165 @@ async function set_config (index) {
 			set_validationSplit(config["validationSplit"]);
 		}
 
-		var j = 0;
-		for (var i = 0; i < keras_layers.length; i++) {
-			if(keras_layers[i]["class_name"] == "InputLayer") {
-				continue;
-			}
-			var layer_type = $($($(".layer_setting")[j]).find(".layer_type")[0]);
-			layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
-			layer_type.trigger("change");
-			layer_type.trigger("slide");
-			j++;
-		}
+		var number_of_layers = 0;
 
-		j = 0;
-		for (var i = 0; i < keras_layers.length; i++) {
-			if(keras_layers[i]["class_name"] == "InputLayer") {
-				continue;
-			}
-
-			//log("i: " + i + ", " + keras_layers[i]["class_name"]);
-
-			var datapoints = [
-				"kernel_initializer",
-				"bias_initializer",
-				"activation",
-				"pool_size",
-				"padding", 
-				"strides",
-				"filters", 
-				"kernel_size",
-				"dropout_rate", 
-				"max_features",
-				"trainable",
-				"use_bias"
+		var keras_layers;
+		if(!config["model_structure"]) {
+			var paths = [
+				["keras", "modelTopology", "config", "layers"],
+				["keras", "modelTopology", "model_config", "layers"],
+				["keras", "modelTopology", "model_config", "config", "layers"],
+				["keras", "keras", "modelTopology", "config", "layers"],
+				["keras", "keras", "modelTopology", "model_config", "layers"],
+				["keras", "keras", "modelTopology", "model_config", "config", "layers"],
+				["layers"]
 			];
 
-			datapoints.forEach(function (item_name) {
-				if(item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-					var value = keras_layers[i]["config"][item_name];
-					if(item_name == "kernel_initializer") {
-						value = detect_kernel_initializer(value);
-					} else if (item_name == "bias_initializer") {
-						value = get_initializer_name(value["class_name"]);
-					}
+			for (var i = 0; i < paths.length; i++) {
+				if(!keras_layers) {
+					keras_layers = get_key_from_path(config, paths[i]);
+				}
+			}
 
-					set_item_value(j, item_name, value);
-				} else {
-					//log("item_name: " + item_name);
-					if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
-						var values = keras_layers[i]["config"][item_name];
-						set_xyz_values(j, item_name, values);
-					} else if(item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
-						set_item_value(j, "dropout_rate", keras_layers[i]["config"]["rate"]);
+			if(keras_layers === undefined) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Error loading the model'
+				});
+				log(config);
+				return;
+			}
+
+			number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+		} else {
+			number_of_layers = config["model_structure"].length;
+		}
+
+		init_numberoflayers(number_of_layers);
+
+		if(config["input_shape"]) {
+			set_input_shape(config["input_shape"]);
+		} else {
+			determine_input_shape();
+		}
+
+		if(!config["model_structure"]) {
+			var j = 0;
+			for (var i = 0; i < keras_layers.length; i++) {
+				if(keras_layers[i]["class_name"] == "InputLayer") {
+					continue;
+				}
+				var layer_type = $($($(".layer_setting")[j]).find(".layer_type")[0]);
+				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
+				layer_type.trigger("change");
+				layer_type.trigger("slide");
+				j++;
+			}
+
+			j = 0;
+			for (var i = 0; i < keras_layers.length; i++) {
+				if(keras_layers[i]["class_name"] == "InputLayer") {
+					continue;
+				}
+
+				//log("i: " + i + ", " + keras_layers[i]["class_name"]);
+
+				var datapoints = [
+					"kernel_initializer",
+					"bias_initializer",
+					"activation",
+					"pool_size",
+					"padding", 
+					"strides",
+					"filters", 
+					"kernel_size",
+					"dropout_rate", 
+					"max_features",
+					"trainable",
+					"use_bias"
+				];
+
+				datapoints.forEach(function (item_name) {
+					if(item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+						var value = keras_layers[i]["config"][item_name];
+						if(item_name == "kernel_initializer") {
+							value = detect_kernel_initializer(value);
+						} else if (item_name == "bias_initializer") {
+							value = get_initializer_name(value["class_name"]);
+						}
+
+						set_item_value(j, item_name, value);
 					} else {
-						//console.warn("Item not found in keras: " + item_name);
+						//log("item_name: " + item_name);
+						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
+							var values = keras_layers[i]["config"][item_name];
+							set_xyz_values(j, item_name, values);
+						} else if(item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
+							set_item_value(j, "dropout_rate", keras_layers[i]["config"]["rate"]);
+						} else {
+							//console.warn("Item not found in keras: " + item_name);
+						}
+					}
+				});
+
+				var units = keras_layers[i]["config"]["units"];
+				if(units == "number_of_categories") {
+					var number_of_categories = await get_number_of_categories();
+					set_item_value(j, "units", number_of_categories);
+				} else {
+					if(Object.keys(keras_layers[i]["config"]).includes("units")) {
+						set_item_value(j, "units", units);
 					}
 				}
-			});
 
-			var units = keras_layers[i]["config"]["units"];
-			if(units == "number_of_categories") {
-				var number_of_categories = await get_number_of_categories();
-				set_item_value(j, "units", number_of_categories);
-			} else {
-				if(Object.keys(keras_layers[i]["config"]).includes("units")) {
-					set_item_value(j, "units", units);
+				if("dilation_rate" in keras_layers[i]["config"]) {
+					var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
+					var dilation_rate_str = dilation_rate.join(",");
+					set_item_value(j, "dilation_rate", dilation_rate_str);
+				}
+				j++;
+			}
+			save_current_status();
+		} else {
+			for (var i = 0; i < config["model_structure"].length; i++) {
+				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+				layer_type.val(config["model_structure"][i]["type"]);
+				layer_type.trigger("change");
+				layer_type.trigger("slide");
+
+				var keys = Object.keys(config["model_structure"][i]["data"]);
+				for (var j = 0; j < keys.length; j++) {
+					if(!["inputShape"].includes(keys[j])) {
+						var value = config["model_structure"][i]["data"][keys[j]];
+
+						if(["kernelSize", "strides"].includes(keys[j])) {
+							//log("set " + keys[j] + " to ");
+							//log(value);
+							set_xyz_values(j, keys[j], value);
+						} else if(["dilationRate"].includes(keys[j])) {
+							set_item_value(i, keys[j], value.join(", "));
+						} else {
+							if((typeof(value)).includes("object")) {
+								if(Object.keys(value).includes("name")) {
+									value = value["name"];
+								}
+							}
+
+							//log("set " + keys[j] + " to " + value);
+							set_item_value(i, keys[j], value);
+						}
+					}
 				}
 			}
 
-			if("dilation_rate" in keras_layers[i]["config"]) {
-				var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
-				var dilation_rate_str = dilation_rate.join(",");
-				set_item_value(j, "dilation_rate", dilation_rate_str);
+			if(config["weights"]) {
+				var weights_string = JSON.stringify(config["weights"]);
+				log("A>");
+				log(weights_string);
+				log("<A");
+				set_weights_from_string(weights_string)
 			}
-			j++;
 		}
 	}
 
@@ -2555,31 +2602,9 @@ async function save_current_status () {
 			return;
 		}
 
-		var save_this_data = undefined;
-
-		try {
-			await model.save(
-				tf.io.withSaveHandler(artifacts => {
-					save_this_data = artifacts;
-				})
-			);
-		} catch (e) {
-			if(mode == "amateur" && 0) {
-				undo();
-				except("ERROR4", e + "\n\nUndoing last change");
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops [2]...',
-					text: e + "\n\nUndoing last change"
-				});
-			} else {
-				log(model);
-				log(e);
-			}
-		}
-
-		status_saves[index] = JSON.stringify(save_this_data);
-
+		log("saving index " + index);
+		status_saves[index] = {"model_structure": get_model_structure(), "weights": await get_weights_as_string()};
+		log(status_saves[index]);
 
 		future_state_stack = [];
 
@@ -2588,7 +2613,9 @@ async function save_current_status () {
 		}
 
 		show_hide_undo_buttons();
-	} catch (e) {}
+	} catch (e) {
+		log(e);
+	}
 }
 
 async function undo () {

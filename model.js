@@ -225,6 +225,8 @@ function get_data_for_layer (type, i, first_layer) {
 		}
 	}
 
+	delete data["visualize"];
+
 	return data;
 }
 
@@ -824,6 +826,10 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 
 	var tensors = [];
 
+	if(typeof(json) == "string") {
+		json = JSON.parse(json);
+	}
+
 	for (var i = 0; i < json.length; i++) {
 		tensors.push(tf.tensor(json[i]));
 	}
@@ -839,7 +845,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 			Swal.fire({
 				icon: 'error',
 				title: 'Error loading weights',
-				text: e
+				text: "e"
 			});
 		}
 		return false;
