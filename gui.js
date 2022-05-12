@@ -1,5 +1,24 @@
 "use strict";
 
+
+function get_key_from_path (array, keypath) {
+	if(keypath.length == 0) {
+		return array;
+	}
+
+	var this_key = undefined;
+	var tmp = array;
+
+	for (var i = 0; i < keypath.length; i++) {
+		this_key = keypath[i];
+		tmp = tmp[this_key];
+	}
+
+	return tmp;
+}
+
+
+
 function get_full_shape_without_batch (file) {
 	if(file === null) {
 		return null;
@@ -1965,51 +1984,20 @@ async function set_config (index) {
 		}
 
 		var keras_layers;
-		try {
-			keras_layers = config["keras"]["modelTopology"]["config"]["layers"];
-		} catch (e) {
-			log(e);
-			log(config);
-			try {
-				log("Trying more...");
-				keras_layers = config["keras"]["modelTopology"]["model_config"]["layers"];
-				if(keras_layers === undefined) {
-					throw("keras_layers is undefined");
-				}
-			} catch (e) {
-				log(e);
-				try {
-					log("Trying even more...");
-					keras_layers = config["keras"]["modelTopology"]["model_config"]["config"]["layers"];
-				} catch (e) {
-					try {
-						keras_layers = config["keras"]["keras"]["modelTopology"]["config"]["layers"];
-					} catch (e) {
-						log(e);
-						log(config);
-						try {
-							log("Trying more...");
-							keras_layers = config["keras"]["keras"]["modelTopology"]["model_config"]["layers"];
-							if(keras_layers === undefined) {
-								throw("keras_layers is undefined");
-							}
-						} catch (e) {
-							log(e);
-							try {
-								log("Trying even more...");
-								keras_layers = config["keras"]["keras"]["modelTopology"]["model_config"]["config"]["layers"];
-							} catch (e) {
-								try {
-									log("Last ressort...");
-									keras_layers = config["layers"];
-								} catch (e) {
-									log(e)
-									alert("Tried everything, could not load model, sorry.");
-								}
-							}
-						}
-					}
-				}
+
+		var paths = [
+			["keras", "modelTopology", "config", "layers"],
+			["keras", "modelTopology", "model_config", "layers"],
+			["keras", "modelTopology", "model_config", "config", "layers"],
+			["keras", "keras", "modelTopology", "config", "layers"],
+			["keras", "keras", "modelTopology", "model_config", "layers"],
+			["keras", "keras", "modelTopology", "model_config", "config", "layers"],
+			["layers"]
+		];
+
+		for (var i = 0; i < paths.length; i++) {
+			if(!keras_layers) {
+				keras_layers = get_key_from_path(config, paths[i]);
 			}
 		}
 
