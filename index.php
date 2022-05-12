@@ -1247,7 +1247,10 @@
 				var architecture = [];
 				var architecture2 = [];
 
+				var disable_alexnet = 0;
+
 				for (var i = 0; i < get_numberoflayers(); i++) {
+					if(disable_alexnet) { continue; }
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
 						return;
@@ -1264,7 +1267,11 @@
 							try {
 								this_layer_arch["height"] = input_layer_shape[1];
 								this_layer_arch["width"] = input_layer_shape[2];
-								this_layer_arch["depth"] = input_layer_shape[3];
+								if(input_layer_shape.length >= 2) {
+									this_layer_arch["depth"] = input_layer_shape[3];
+								} else {
+									disable_alexnet = 1;
+								}
 								this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
 								this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
 								this_layer_arch["rel_x"] = random(-0.1, 0.1);
@@ -1297,36 +1304,41 @@
 					}
 				}
 
-				var disable_alexnet = 0;
-				try {
-					if(architecture.length && architecture2.length) {
-						try {
-							if(show_input_layer) {
-								var shown_input_layer = {};
-								var input_shape = get_input_shape();
-								shown_input_layer["height"] = input_shape[0];
-								shown_input_layer["width"] = input_shape[1];
-								shown_input_layer["depth"] = input_shape[2];
-								shown_input_layer["filterWidth"] = 1;
-								shown_input_layer["filterHeight"] = 1;
-								shown_input_layer["rel_x"] = random(-0.1,0.1);
-								shown_input_layer["rel_y"] = random(-0.1,0.1);
+				if(!disable_alexnet) {
+					try {
+						if(architecture.length && architecture2.length) {
+							try {
+								if(show_input_layer) {
+									var shown_input_layer = {};
+									var input_shape = get_input_shape();
+									shown_input_layer["height"] = input_shape[0];
+									shown_input_layer["width"] = input_shape[1];
+									if(input_shape.length >= 3) {
+										shown_input_layer["depth"] = input_shape[2];
+									} else {
+										disable_alexnet = 1;
+									}
+									shown_input_layer["filterWidth"] = 1;
+									shown_input_layer["filterHeight"] = 1;
+									shown_input_layer["rel_x"] = random(-0.1,0.1);
+									shown_input_layer["rel_y"] = random(-0.1,0.1);
 
-								architecture.unshift(shown_input_layer);
+									architecture.unshift(shown_input_layer);
+								}
+
+								alexnet.restartRenderer(1);
+								alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2, "showDims": true});
+							} catch (e) {
+								console.warn(e);
+								disable_alexnet = 1;
 							}
-
-							alexnet.restartRenderer(1);
-							alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2, "showDims": true});
-						} catch (e) {
-							console.warn(e);
+						} else {
 							disable_alexnet = 1;
 						}
-					} else {
+					} catch (e) {
+						console.warn(e);
 						disable_alexnet = 1;
 					}
-				} catch (e) {
-					console.warn(e);
-					disable_alexnet = 1;
 				}
 
 				if(disable_alexnet) {
