@@ -63,7 +63,7 @@ async function compile_model (keep_weights) {
 	var old_weights_string = false;
 
 	if(!model) {
-		model = await create_model(null, get_model_structure());
+		model = await create_model(null, await get_model_structure());
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
 			old_weights_string = await get_weights_as_string(model);
@@ -230,9 +230,9 @@ function get_data_for_layer (type, i, first_layer) {
 	return data;
 }
 
-function get_model_structure() {
+async function get_model_structure() {
 	//console.trace();
-	var new_current_status_hash = get_current_status_hash();
+	var new_current_status_hash = await get_current_status_hash();
 	if(layer_structure_cache && current_status_hash == new_current_status_hash) {
 		//log("Using cache");
 		//console.trace();
@@ -332,7 +332,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		layers_container_md5 = new_layers_container_md5;
 	}
 
-	var new_current_status_hash = get_current_status_hash();
+	var new_current_status_hash = await get_current_status_hash();
 	if(!force) {
 		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
 			return old_model;
@@ -358,7 +358,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var model_structure = fake_model_structure; 
 	if(model_structure === undefined) {
-		model_structure = get_model_structure();
+		model_structure = await get_model_structure();
 	}
 
 	var html = '';
@@ -686,11 +686,11 @@ function get_default_option (layer_type, option_name) {
 	return layer_options_defaults[option_name];
 }
 
-function create_fake_model_structure (layer_nr, layer_type) {
+async function create_fake_model_structure (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
-	var fake_model_structure = get_model_structure();
+	var fake_model_structure = await get_model_structure();
 
 	fake_model_structure[layer_nr]["type"] = layer_type;
 	fake_model_structure[layer_nr]["data"] = get_fake_data_for_layertype(layer_nr, layer_type);
@@ -702,7 +702,7 @@ async function compile_fake_model (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
-	var fake_model_structure = create_fake_model_structure(layer_nr, layer_type);
+	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
 	try {
 		var fake_model = await create_model(null, fake_model_structure);
@@ -775,13 +775,13 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 async function get_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 
-	if(!typeof(last_allowed_layers_update) == "undefined" &&  last_allowed_layers_update == get_current_status_hash() && Object.keys(allowed_layer_cache).includes(layer_nr)) {
+	if(!typeof(last_allowed_layers_update) == "undefined" &&  last_allowed_layers_update == await get_current_status_hash() && Object.keys(allowed_layer_cache).includes(layer_nr)) {
 		return allowed_layer_cache[layer_nr];
 	}
 
 	allowed_layer_cache[layer_nr] = null;
 
-	last_allowed_layers_update = get_current_status_hash();
+	last_allowed_layers_update = await get_current_status_hash();
 
 	var valid_layer_types = [];
 

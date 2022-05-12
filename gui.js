@@ -201,7 +201,7 @@ function get_current_layer_container_status_hash () {
 	return md5(html);
 }
 
-function get_current_status_hash () {
+async function get_current_status_hash () {
 	var html_code = '';
 
 	var allitems = [];
@@ -214,6 +214,8 @@ function get_current_status_hash () {
 		var item = $(x);
 		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked
 	})
+
+	html_code += await get_weights_as_string();
 
 	return md5(html_code);
 }
@@ -1337,7 +1339,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	layer_structure_cache = null;
 
 	if(!disabling_saving_status) {
-		save_current_status();
+		await save_current_status();
 	}
 
 	show_dtype_only_first_layer();
@@ -1752,7 +1754,7 @@ async function remove_layer (item) {
 		} else {
 			$(".remove_layer").prop("disabled", false).show();
 		}
-		save_current_status();
+		await save_current_status();
 	} else {
 		Swal.fire({
 			icon: 'error',
@@ -1814,7 +1816,7 @@ async function add_layer (item) {
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
 
-	save_current_status();
+	await save_current_status();
 }
 
 function sortable_layers_container (layers_container) {
@@ -2139,7 +2141,8 @@ async function set_config (index) {
 				}
 				j++;
 			}
-			save_current_status();
+
+			await save_current_status();
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
 				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
@@ -2190,7 +2193,7 @@ async function set_config (index) {
 
 	if(!index) {
 		if(!disabling_saving_status) {
-			save_current_status();
+			await save_current_status();
 		}
 	}
 
@@ -2240,7 +2243,7 @@ async function init_dataset () {
 	$("#data_origin").val("default").trigger("change");
 	$("#visualization_tab_label").click();
 
-	save_current_status();
+	await save_current_status();
 	init_weight_file_list();
 	init_download_link();
 }
@@ -2595,12 +2598,12 @@ function last_index (array) {
 
 async function save_current_status () {
 	try {
-		var index = get_current_status_hash();
+		var index = await get_current_status_hash();
 		if(state_stack.includes(index) || future_state_stack.includes(index)) {
 			return;
 		}
 
-		status_saves[index] = {"model_structure": get_model_structure(), "weights": await get_weights_as_string()};
+		status_saves[index] = {"model_structure": await get_model_structure(), "weights": await get_weights_as_string()};
 
 		future_state_stack = [];
 

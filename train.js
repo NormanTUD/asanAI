@@ -349,4 +349,6 @@ async function run_neural_network () {
 	reset_data();
 
 	tf.engine().endScope();
+
+	save_current_status();
 }
