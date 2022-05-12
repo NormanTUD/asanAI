@@ -2570,9 +2570,11 @@ async function save_current_status () {
 		var save_this_data = undefined;
 
 		try {
-			await model.save(tf.io.withSaveHandler(artifacts => {
-				save_this_data = artifacts;
-			}));
+			await model.save(
+				tf.io.withSaveHandler(artifacts => {
+					save_this_data = artifacts;
+				})
+			);
 		} catch (e) {
 			if(mode == "amateur" && 0) {
 				undo();
@@ -2583,6 +2585,7 @@ async function save_current_status () {
 					text: e + "\n\nUndoing last change"
 				});
 			} else {
+				log(model);
 				log(e);
 			}
 		}
@@ -2693,6 +2696,10 @@ function debug_undo_redo_stack () {
 	log(Object.keys(status_saves));
 }
 
+function sources_popup() {
+	openPopup("sources_popup");
+}
+
 function open_save_dialog () {
 	openPopup("save_dialog");
 }
@@ -2709,6 +2716,7 @@ function closePopup(name) {
 	var el = document.getElementById(name);
 	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = 'none';
+	write_descriptions();
 }
 
 async function upload_model(evt) {

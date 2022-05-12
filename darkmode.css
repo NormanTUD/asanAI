@@ -210,3 +210,7 @@ a.ui-button:focus {
 .footer>a:visited, .footer>a, .footer>a:link {
 	color: white;
 }
+
+.sources_popup_link {
+	filter: invert(1);
+}

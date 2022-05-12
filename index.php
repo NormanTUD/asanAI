@@ -641,13 +641,37 @@
 						</div>
 					</div>
 				</div>
+
+				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
+					<div class="ribbon-group" style="width: auto;">
+						<div class="ribbon-toolbar">
+							<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" /></a><br>
+							contact: <button onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br>
+							<button onclick="sources_popup()">Sources and used programs</button>
+						</div>
+						<div class="ribbon-group-title">Imprint</div>
+					</div>
+
+				</div>
 			</div>
 
 			<div id="maindiv">
+
+				<div id="sources_popup" style="display: none;">
+					<div class="popup_body less_transparent_glass_box">
+						<div> 
+<?php
+							$file = file_get_contents("README.md");
+							print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
+?>
+							<button class="close_button" onclick="closePopup('sources_popup')">Close</button>
+						</div>
+					</div>
+				</div>
+
+
 				<div id="save_dialog" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
-						<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-						</div>
 						<div> 
 							<h1>Trained in Keras</h1>
 							<p>Use this command to convert TensorFlow to TFJS-models:</p>
@@ -1572,12 +1596,5 @@
 
 			resize_window();
 		</script>
-		<div style="clear: both"></div>
-		<footer class="footer" style="height: 50px;">
-			<p>
-				<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" /></a>
-				contact: <button onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
-			</p>
-		</footer>
 	</body>
 </html>

@@ -127,4 +127,26 @@
 			print "<link href='$file' rel='stylesheet' />\n";
 		}
 	}
+
+	function get_string_between($string, $start, $end){
+		$string = ' ' . $string;
+		$ini = strpos($string, $start);
+		if ($ini == 0) return '';
+		$ini += strlen($start);
+		$len = strpos($string, $end, $ini) - $ini;
+		return substr($string, $ini, $len);
+	}
+
+	function parse_markdown_links ($markdown) {
+		$str = "<ul>\n";
+		foreach(preg_split("/((\r?\n)|(\r\n?))/", $markdown) as $line){
+			if(!preg_match("/^\s*$/", $line)) {
+				if(preg_match("/^\s*-\s*\[(.*?)\]\((.*?)\)\s*$/", $line, $matches)) {
+					$str .= "<li><a class='sources_popup_link' href='".$matches[2]."'>".$matches[1]."</a></li>\n";
+				}
+			}
+		}
+		$str .= "</ul>\n";
+		return $str;
+	}
 ?>

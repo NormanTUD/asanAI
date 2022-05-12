@@ -37,6 +37,8 @@ offers. Everything else is just HTML/CSS/JS.
 I use many different libraries to achieve this. This is a list of all the modules that I used
 in creating this program:
 
+[comment]: <> (BeginSources)
+
 - [TensorFlow.js](https://www.tensorflow.org/js)
 
 - [NN-SVG](http://alexlenail.me/NN-SVG/LeNet.html)
@@ -61,6 +63,6 @@ in creating this program:
 
 - [ChardinJS](https://heelhook.github.io/chardin.js/sequential.html)
 
-- [computer-modern-web-font](https://github.com/dreampulse/computer-modern-web-font)
-
 - [Minify](https://github.com/matthiasmullie/minify.git)
+
+[comment]: <> (EndSources)
