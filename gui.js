@@ -1968,7 +1968,7 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
-	$("#maindiv").hide();
+	$("#maindiv").css("filter", "blur(50px)");
 
 	Swal.fire({
 		title: 'Loading model...',
@@ -2055,7 +2055,7 @@ async function set_config (index) {
 					title: 'Oops...',
 					text: 'Error loading the model'
 				});
-				$("#maindiv").show();
+				$("#maindiv").css("filter", "blur(0px)");
 				write_descriptions();
 				log(config);
 				return;
@@ -2216,7 +2216,7 @@ async function set_config (index) {
 
 	Swal.close();
 
-	$("#maindiv").show();
+	$("#maindiv").css("filter", "blur(0px)");
 	write_descriptions();
 }
 

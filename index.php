@@ -655,7 +655,7 @@
 				</div>
 			</div>
 
-			<div id="maindiv" style="display: none">
+			<div id="maindiv" style="filter: blur(50px)">
 
 				<div id="sources_popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
