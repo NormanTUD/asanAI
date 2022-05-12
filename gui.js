@@ -3511,6 +3511,7 @@ async function set_default_input_shape () {
 	if(!changed_data_source) {
 		return;
 	}
+
 	var default_config = await _get_configuration();
 
 	if(default_config) {
