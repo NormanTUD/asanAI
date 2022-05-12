@@ -1969,6 +1969,7 @@ async function set_config (index) {
 
 	is_setting_config = true;
 
+	log(index);
 	var config = await _get_configuration(index);
 
 	disable_show_python_and_create_model = true;
@@ -2170,14 +2171,6 @@ async function set_config (index) {
 					}
 				}
 			}
-
-			if(config["weights"]) {
-				var weights_string = JSON.stringify(config["weights"]);
-				log("A>");
-				log(weights_string);
-				log("<A");
-				set_weights_from_string(weights_string)
-			}
 		}
 	}
 
@@ -2185,6 +2178,14 @@ async function set_config (index) {
 
 	model = await create_model(model);
 	await compile_model();
+
+	if(config["weights"]) {
+		var weights_string = JSON.stringify(config["weights"]);
+		log("A>");
+		log(weights_string);
+		log("<A");
+		set_weights_from_string(weights_string, 1, 1)
+	}
 
 	disable_all_non_selected_layer_types();
 
