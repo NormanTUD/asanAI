@@ -964,7 +964,6 @@ async function _get_configuration (index) {
 	if(index) {
 		if(Object.keys(status_saves).includes(index)) {
 			data = {};
-			log(status_saves[index]);
 			data["model_structure"] = status_saves[index]["model_structure"];
 			data["weights"] = status_saves[index]["weights"];
 		} else {
@@ -1969,7 +1968,6 @@ async function set_config (index) {
 
 	is_setting_config = true;
 
-	log(index);
 	var config = await _get_configuration(index);
 
 	disable_show_python_and_create_model = true;
@@ -2181,9 +2179,6 @@ async function set_config (index) {
 
 	if(config["weights"]) {
 		var weights_string = JSON.stringify(config["weights"]);
-		log("A>");
-		log(weights_string);
-		log("<A");
 		set_weights_from_string(weights_string, 1, 1)
 	}
 
@@ -2603,9 +2598,7 @@ async function save_current_status () {
 			return;
 		}
 
-		log("saving index " + index);
 		status_saves[index] = {"model_structure": get_model_structure(), "weights": await get_weights_as_string()};
-		log(status_saves[index]);
 
 		future_state_stack = [];
 
