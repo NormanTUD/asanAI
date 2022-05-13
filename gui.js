@@ -2127,7 +2127,9 @@ async function set_config (index) {
 							value = get_initializer_name(value["class_name"]);
 						}
 
-						set_item_value(j, item_name, value);
+						if(!(keras_layers[j]["class_name"] == "Flatten" && item_name == "trainable")) {
+							set_item_value(j, item_name, value);
+						}
 					} else {
 						//log("item_name: " + item_name);
 						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[j]["config"]) {
