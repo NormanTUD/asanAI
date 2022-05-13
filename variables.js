@@ -137,7 +137,6 @@ var js_names_to_python_names = {
 	"softmax": "SoftMax",
 	"kernelInitializer": "kernel_initializer",
 	"meanSquaredError": "mean_squared_error",
-	"rate": "rate",
 	"useBias": "use_bias",
 	"recurrentInitializer": "recurrent_initializer",
 	"kernelRegularizer": "kernel_regularizer",
