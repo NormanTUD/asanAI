@@ -529,7 +529,7 @@ function add_alpha_option (type, nr) {
 }
 
 function add_dropout_rate_option (type, nr) {
-	return get_tr_str_for_layer_table("Dropout rate (in %)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr);
+	return get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr);
 }
 
 function add_max_features_option (type, nr) {

@@ -493,11 +493,13 @@ async function create_model (old_model, fake_model_structure, force) {
 		var data_keys = Object.keys(data);
 		for (var k = 0; k < data_keys.length; k++) {
 			var this_key = data_keys[k];
+			var layer_setting = $($(".layer_setting")[i]);
+			var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 			if(!is_valid_parameter(this_key, data[this_key], i)) {
 				header("INVALID PARAMETER: " + this_key + ": " + data[this_key] + " (" + typeof(data[this_key]) + ")");
-				$($(".layer_setting")[i]).find("." + js_names_to_python_names[this_key]).css("background-color", "red");
+				current_setting.css("background-color", "red");
 			} else {
-				$($(".layer_setting")[i]).find("." + js_names_to_python_names[this_key]).css("background-color", "transparent");
+				current_setting.css("background-color", "");
 			}
 		}
 
