@@ -1258,8 +1258,7 @@ function model_to_latex () {
 
 
 				if(max_value_item.length) {
-					var max_value = "\\infty";
-					max_value = max_value_item.val();
+					var max_value = max_value_item.val();
 					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");		
 				}
 
