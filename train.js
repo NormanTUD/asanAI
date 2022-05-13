@@ -304,7 +304,7 @@ async function run_neural_network () {
 
 			tf.disposeVariables();
 
-			model = await create_model(null, get_model_structure(), 1);
+			model = await create_model(null, await get_model_structure(), 1);
 			await compile_model();
 
 			await set_weights_from_string(trained_weights, 1, 1);
