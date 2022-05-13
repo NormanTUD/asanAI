@@ -226,7 +226,6 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
-	/*
 	"thresholdedReLU": {
 		"description": "Thresholded Rectified Linear Unit. It follows: <tt>f(x) = x</tt> for <tt>x > theta</tt>, <tt>f(x) = 0</tt> otherwise.",
 		"options": [
@@ -234,7 +233,6 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
-	*/
 
 
 	"batchNormalization": {

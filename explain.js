@@ -1044,6 +1044,10 @@ function model_to_latex () {
 			"equation_no_function_name": "\\mathrm{max}\\left(0, REPLACEME\\right)",
 			"lower_limit": 0
 		},
+		"thresholdedReLU": {
+			"equation": "\\mathrm{thresholdedReLU}\\left(x\\right) = \\begin{cases}\nx & x > \\theta \\\\ \n 0 & \\mathrm{otherwise}\n\\end{cases}\n",
+			"equation_no_function_name": "\\begin{cases}\nx & x > \\theta \\\\ \n 0 & \\mathrm{otherwise}\n\\end{cases}\n"
+		},
 		"LeakyReLU": {
 			"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(\\alpha \\cdot x, x\\right)",
 			"equation_no_function_name": "\\mathrm{max}\\left(ALPHAREPL \\cdot REPLACEME, REPLACEME\\right)"
@@ -1209,7 +1213,7 @@ function model_to_latex () {
 			} else {
 				str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
 			}
-		} else if (["elu", "leakyReLU", "reLU", "softmax"].includes(this_layer_type)) {
+		} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
 			var activation_name = this_layer_type;
 			if(activation_name == "leakyReLU") {
 				activation_name = "LeakyReLU";
@@ -1236,10 +1240,15 @@ function model_to_latex () {
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 				
-				var alpha = get_item_value(i, "alpha");
-				if(alpha) {
+				var alpha = parseFloat(get_item_value(i, "alpha"));
+				if(typeof(alpha) == "number") {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
-					this_activation_string = this_activation_string.replaceAll("\\alpha", "{" + alpha + "} \\cdot ");
+					this_activation_string = this_activation_string.replaceAll("\\alpha", "{\\alpha = " + alpha + "} \\cdot ");
+				}
+
+				var theta = parseFloat(get_item_value(i, "theta"));
+				if(typeof(theta) == "number") {
+					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
 				}
 
 				var max_value_item = $($(".layer_setting")[i]).find(".max_value");
@@ -1324,7 +1333,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "dropout"].includes(this_layer_type))) {
+		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
 			return false
 		}
 	}
