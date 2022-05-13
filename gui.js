@@ -2676,6 +2676,7 @@ async function redo () {
 		disabling_saving_status = true;
 
 		await set_config(this_index);
+
 		is_setting_config = false;
 
 		disabling_saving_status = old_disabling_saving_status;
