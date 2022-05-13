@@ -71,6 +71,7 @@ let predict_demo = async function (item, nr) {
 
 			var desc = $($(".predict_demo_result")[nr]);
 
+			desc.html("");
 			for (let i = 0; i < predictions.length; i++) {
 				var label = labels[i];
 				var probability = predictions[i];
