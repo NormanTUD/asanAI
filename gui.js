@@ -2582,7 +2582,7 @@ function set_all_bias_initializers () {
 	var chosen_value = $("#set_all_bias_initializers").val();
 	var initializer_keys = Object.keys(initializers);
 	if(initializer_keys.includes(chosen_value)) {
-		$(".bias_initializer").val(chosen_value)
+		$(".bias_initializer").val(chosen_value).trigger("change");
 	}
 
 	$("#set_all_bias_initializers").val("none");
@@ -2594,7 +2594,7 @@ function set_all_activation_functions () {
 	var chosen_value = $("#set_all_activation_functions").val();
 	var keys = Object.keys(activations);
 	if(keys.includes(chosen_value)) {
-		$(".activation").val(chosen_value)
+		$(".activation").val(chosen_value).trigger("change");
 	}
 
 	$("#set_all_activation_functions").val("none");
