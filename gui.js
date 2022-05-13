@@ -1270,7 +1270,7 @@ function stop_webcam () {
 	cam = undefined;
 }
 
-async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item) {
+async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	rename_tmp_onchange();
 
 	if(is_setting_config) {
@@ -1372,7 +1372,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	allow_training();
 
-	show_prediction(1, 1);
+	if(!no_prediction) {
+		show_prediction(1, 1);
+	}
 
 	return 1;
 }
@@ -2208,11 +2210,13 @@ async function set_config (index) {
 
 	is_setting_config = false;
 
-	await updated_page();
+	await updated_page(null, null, null, 1);
 
 	Swal.close();
 
 	write_descriptions();
+
+	show_prediction(1, 1);
 }
 
 async function show_or_hide_load_weights () {
