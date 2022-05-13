@@ -2628,8 +2628,6 @@ async function save_current_status () {
 		}
 
 		show_hide_undo_buttons();
-
-		console.trace();
 	} catch (e) {
 		log(e);
 	}
