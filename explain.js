@@ -1236,8 +1236,10 @@ function model_to_latex () {
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 				
-				if(get_item_value(i, "alpha")) {
-					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + get_item_value(i, "alpha") + "}");
+				var alpha = get_item_value(i, "alpha");
+				if(alpha) {
+					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
+					this_activation_string = this_activation_string.replaceAll("\\alpha", "{" + alpha + "} \\cdot ");
 				}
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
