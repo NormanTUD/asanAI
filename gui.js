@@ -2084,7 +2084,7 @@ async function set_config (index) {
 		}
 
 		if(!config["model_structure"]) {
-			if(Object.keys(keras_layers[0]["config"]).includes("batch_input_shape")) {
+			if(keras_layers[0]["class_name"] == "InputLayer") {
 				keras_layers.shift();
 			}
 
