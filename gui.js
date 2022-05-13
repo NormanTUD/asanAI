@@ -2149,8 +2149,6 @@ async function set_config (index) {
 				}
 				j++;
 			}
-
-			await save_current_status();
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
 				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
