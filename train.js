@@ -75,6 +75,8 @@ async function train_neural_network () {
 
 	write_descriptions();
 	write_model_to_latex_to_page();
+
+	save_current_status();
 }
 
 function get_model_data () {

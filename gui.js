@@ -249,6 +249,9 @@ function get_item_value (layer, classname) {
 }
 
 function set_item_value (layer, classname, value) {
+	if(classname == "name") {
+		return;
+	}
 	assert(typeof(layer) == "number", "Layer is not an integer, but " + typeof(layer));
 	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof(value));
@@ -2166,9 +2169,9 @@ async function set_config (index) {
 						var value = config["model_structure"][i]["data"][keys[j]];
 
 						if(["kernelSize", "strides"].includes(keys[j])) {
-							set_xyz_values(j, keys[j], value);
+							set_xyz_values(j, get_python_name(keys[j]), value);
 						} else if(["dilationRate"].includes(keys[j])) {
-							set_item_value(i, keys[j], value.join(","));
+							set_item_value(i, get_python_name(keys[j]), value.join(","));
 						} else {
 							if((typeof(value)).includes("object")) {
 								if(Object.keys(value).includes("name")) {
@@ -2177,7 +2180,7 @@ async function set_config (index) {
 							}
 
 							//log("set " + keys[j] + " to " + value);
-							set_item_value(i, keys[j], value);
+							set_item_value(i, get_python_name(keys[j]), value);
 						}
 					}
 				}
