@@ -2084,24 +2084,18 @@ async function set_config (index) {
 		}
 
 		if(!config["model_structure"]) {
-			var j = 0;
-			for (var i = 0; i < keras_layers.length; i++) {
-				if(keras_layers[j]["class_name"] == "InputLayer") {
-					continue;
-				}
-				var layer_type = $($($(".layer_setting")[j]).find(".layer_type")[0]);
-				layer_type.val(python_names_to_js_names[keras_layers[j]["class_name"]]);
-				layer_type.trigger("change");
-				layer_type.trigger("slide");
-				j++;
+			if(Object.keys(keras_layers[0]["config"]).includes("batch_input_shape")) {
+				keras_layers.shift();
 			}
 
-			j = 0;
 			for (var i = 0; i < keras_layers.length; i++) {
-				if(keras_layers[i]["class_name"] == "InputLayer") {
-					continue;
-				}
+				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
+				layer_type.trigger("change");
+				layer_type.trigger("slide");
+			}
 
+			for (var i = 0; i < keras_layers.length; i++) {
 				var datapoints = [
 					"kernel_initializer",
 					"bias_initializer",
@@ -2118,46 +2112,44 @@ async function set_config (index) {
 				];
 
 				datapoints.forEach(function (item_name) {
-					if(item_name in keras_layers[j]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-						var value = keras_layers[j]["config"][item_name];
+					if(item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+						var value = keras_layers[i]["config"][item_name];
 						if(item_name == "kernel_initializer") {
 							value = detect_kernel_initializer(value);
 						} else if (item_name == "bias_initializer") {
 							value = get_initializer_name(value["class_name"]);
 						}
 
-						if(!(keras_layers[j]["class_name"] == "Flatten" && item_name == "trainable")) {
-							set_item_value(j, item_name, value);
+						if(!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
+							set_item_value(i, item_name, value);
 						}
 					} else {
-						//log("item_name: " + item_name);
-						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[j]["config"]) {
-							var values = keras_layers[j]["config"][item_name];
-							set_xyz_values(j, item_name, values);
-						} else if(item_name == "dropout_rate" && keras_layers[j]["class_name"] == "Dropout") {
-							set_item_value(j, "dropout_rate", keras_layers[j]["config"]["rate"]);
+						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
+							var values = keras_layers[i]["config"][item_name];
+							set_xyz_values(i, item_name, values);
+						} else if(item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
+							set_item_value(i, "dropout_rate", keras_layers[i]["config"]["rate"]);
 						} else {
 							//console.warn("Item not found in keras: " + item_name);
 						}
 					}
 				});
 
-				var units = keras_layers[j]["config"]["units"];
+				var units = keras_layers[i]["config"]["units"];
 				if(units == "number_of_categories") {
 					var number_of_categories = await get_number_of_categories();
-					set_item_value(j, "units", number_of_categories);
+					set_item_value(i, "units", number_of_categories);
 				} else {
-					if(Object.keys(keras_layers[j]["config"]).includes("units")) {
-						set_item_value(j, "units", units);
+					if(Object.keys(keras_layers[i]["config"]).includes("units")) {
+						set_item_value(i, "units", units);
 					}
 				}
 
-				if("dilation_rate" in keras_layers[j]["config"]) {
-					var dilation_rate = keras_layers[j]["config"]["dilation_rate"];
+				if("dilation_rate" in keras_layers[i]["config"]) {
+					var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
 					var dilation_rate_str = dilation_rate.join(",");
-					set_item_value(j, "dilation_rate", dilation_rate_str);
+					set_item_value(i, "dilation_rate", dilation_rate_str);
 				}
-				j++;
 			}
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {

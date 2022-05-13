@@ -6,7 +6,7 @@ function logt(msg) {
 }
 
 function log (msg) {
-	console.trace();
+	//console.trace();
 	console.log(msg);
 }
 
