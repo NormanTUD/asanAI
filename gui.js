@@ -1293,6 +1293,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	var keep_weights = 0;
 	if($(item).length) {
+		var changed_layer = find_layer_number_by_element($(item));
+		// TODO!!! Only change weights from this specific layer if changing weights is neccessary
+
 		var caller_classes = $(item).attr("class").split(/\s+/);
 		var keep_classes = [
 			"activation",
