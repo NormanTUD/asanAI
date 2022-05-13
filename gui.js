@@ -1760,7 +1760,7 @@ async function remove_layer (item) {
 	} else {
 		Swal.fire({
 			icon: 'error',
-			title: 'Oops [1]...',
+			title: 'Oops [2]...',
 			text: 'You cannot remove the last layer of your model.',
 		});
 
@@ -2062,7 +2062,7 @@ async function set_config (index) {
 			if(keras_layers === undefined) {
 				Swal.fire({
 					icon: 'error',
-					title: 'Oops...',
+					title: 'Oops [1]...',
 					text: 'Error loading the model'
 				});
 				write_descriptions();

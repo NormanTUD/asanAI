@@ -39,7 +39,7 @@ async function _create_model () {
 			undo();
 			Swal.fire({
 				icon: 'error',
-				title: 'Oops [3]...',
+				title: 'Oops [4]...',
 				text: e + "\n\nUndoing last change"
 			});
 		}
@@ -501,13 +501,17 @@ async function create_model (old_model, fake_model_structure, force) {
 		try {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
-			/*
-			log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			log(e);
-			log("type: " + type + ", data:");
-			log(data);
-			log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-			*/
+			if(!fake_model_structure) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops [3]...',
+					text: e + "\n\nUndoing last change"
+				}).then(() => {
+					future_state_stack = [];
+					undo();
+					show_hide_undo_buttons();
+				});
+			}
 			return model;
 		}
 
@@ -764,7 +768,11 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 		if(layer_nr == 0) {
 			return false;
 		} else {
-			return true;
+			if(layer_input_shape.length > 1) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
