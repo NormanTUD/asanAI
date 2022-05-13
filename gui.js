@@ -2103,8 +2103,6 @@ async function set_config (index) {
 					continue;
 				}
 
-				//log("i: " + i + ", " + keras_layers[i]["class_name"]);
-
 				var datapoints = [
 					"kernel_initializer",
 					"bias_initializer",
@@ -2121,8 +2119,8 @@ async function set_config (index) {
 				];
 
 				datapoints.forEach(function (item_name) {
-					if(item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-						var value = keras_layers[i]["config"][item_name];
+					if(item_name in keras_layers[j]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+						var value = keras_layers[j]["config"][item_name];
 						if(item_name == "kernel_initializer") {
 							value = detect_kernel_initializer(value);
 						} else if (item_name == "bias_initializer") {
@@ -2132,29 +2130,29 @@ async function set_config (index) {
 						set_item_value(j, item_name, value);
 					} else {
 						//log("item_name: " + item_name);
-						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
-							var values = keras_layers[i]["config"][item_name];
+						if(["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[j]["config"]) {
+							var values = keras_layers[j]["config"][item_name];
 							set_xyz_values(j, item_name, values);
-						} else if(item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
-							set_item_value(j, "dropout_rate", keras_layers[i]["config"]["rate"]);
+						} else if(item_name == "dropout_rate" && keras_layers[j]["class_name"] == "Dropout") {
+							set_item_value(j, "dropout_rate", keras_layers[j]["config"]["rate"]);
 						} else {
 							//console.warn("Item not found in keras: " + item_name);
 						}
 					}
 				});
 
-				var units = keras_layers[i]["config"]["units"];
+				var units = keras_layers[j]["config"]["units"];
 				if(units == "number_of_categories") {
 					var number_of_categories = await get_number_of_categories();
 					set_item_value(j, "units", number_of_categories);
 				} else {
-					if(Object.keys(keras_layers[i]["config"]).includes("units")) {
+					if(Object.keys(keras_layers[j]["config"]).includes("units")) {
 						set_item_value(j, "units", units);
 					}
 				}
 
-				if("dilation_rate" in keras_layers[i]["config"]) {
-					var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
+				if("dilation_rate" in keras_layers[j]["config"]) {
+					var dilation_rate = keras_layers[j]["config"]["dilation_rate"];
 					var dilation_rate_str = dilation_rate.join(",");
 					set_item_value(j, "dilation_rate", dilation_rate_str);
 				}
