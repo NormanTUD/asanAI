@@ -2087,11 +2087,11 @@ async function set_config (index) {
 		if(!config["model_structure"]) {
 			var j = 0;
 			for (var i = 0; i < keras_layers.length; i++) {
-				if(keras_layers[i]["class_name"] == "InputLayer") {
+				if(keras_layers[j]["class_name"] == "InputLayer") {
 					continue;
 				}
 				var layer_type = $($($(".layer_setting")[j]).find(".layer_type")[0]);
-				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
+				layer_type.val(python_names_to_js_names[keras_layers[j]["class_name"]]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
 				j++;
