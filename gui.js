@@ -1604,16 +1604,19 @@ function get_option_for_layer_by_type (nr) {
 	return str;
 }
 
-function set_option_for_layer(thisitem) {
+function initializer_layer_options(thisitem) {
 	if($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
 		return;
 	}
 
-	assert(typeof(thisitem) == "object", "set_option_for_layer(" + thisitem + ") is not an object but " + typeof(thisitem));
+	//assert(typeof(thisitem) == "object", "initializer_layer_options(" + thisitem + ") is not an object but " + typeof(thisitem));
 
 	layer_structure_cache = null;
 
-	var nr = find_layer_number_by_element(thisitem);
+	var nr = thisitem;
+	if(typeof(nr) != "number") {
+		nr = find_layer_number_by_element(thisitem);
+	}
 
 	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
 
@@ -1632,7 +1635,7 @@ function set_option_for_layer(thisitem) {
 }
 
 function set_option_for_layer_by_layer_nr (nr) {
-	assert(typeof(nr) == "number", "set_option_for_layer_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
+	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
 	$($(".layer_options_internal")[nr]).html(get_option_for_layer_by_type(nr));
 
@@ -1640,17 +1643,10 @@ function set_option_for_layer_by_layer_nr (nr) {
 		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
 	});
 
-	if(get_activation_list().includes($($(".layer_type")[nr]).val())) {
-		$($(".whatisthis_activation")[nr]).show();
-	} else {
-		$($(".whatisthis_activation")[nr]).hide();
-	}
-
 	var nr = 0;
 	var current_type = $($(".layer_type")[0]).val();
 
 	write_descriptions();
-	//updated_page(null, 1);
 }
 
 function toggle_options (item) {
@@ -1714,7 +1710,7 @@ async function enable_valid_layer_types (layer_nr) {
 function option_for_layer (nr) {
 	assert(typeof(nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
 
-	var this_event = "set_option_for_layer(this)";
+	var this_event = "initializer_layer_options(this)";
 	var str = "";
 	str += "<tr>";
 		str += "<td style='width: 140px'>";
@@ -1736,7 +1732,6 @@ function option_for_layer (nr) {
 				}
 				str += "</optgroup>";
 			str += "</select>";
-			str += "<script>set_option_for_layer($('select').last());</script>";
 		str += "</td>";
 	str += "</tr>";
 	str += "<tbody class='layer_options_internal' style='display: none'></tbody>";
@@ -1934,6 +1929,10 @@ function show_layers (number) {
 	}
 
 	layers_container.html(layers_container_str);
+
+	for (var i = 0; i < number; i++) {
+		initializer_layer_options(i);
+	}
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
 	hide_tab_label("layer_visualizations_tab_label");
