@@ -230,11 +230,13 @@ function get_data_for_layer (type, i, first_layer) {
 async function get_model_structure() {
 	//console.trace();
 	var new_current_status_hash = await get_current_status_hash();
+	/*
 	if(layer_structure_cache && current_status_hash == new_current_status_hash) {
 		//log("Using cache");
 		//console.trace();
 		return JSON.parse(layer_structure_cache);
 	}
+	*/
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 

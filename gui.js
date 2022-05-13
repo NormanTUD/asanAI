@@ -253,12 +253,16 @@ function set_item_value (layer, classname, value) {
 	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof(value));
 
-	var layer_settings = $(".layer_setting");
-	var found_layer = $($(layer_settings[layer]).find("." + classname)[0]);
-	if(found_layer.attr("type") == "checkbox") {
-		found_layer.prop("checked", value == 1 ? true : false).trigger("change");
+	var layer_setting = $(".layer_setting")[layer];
+	var found_setting = $($(layer_setting).find("." + classname)[0]);
+	if(found_setting.length) {
+		if(found_setting.attr("type") == "checkbox") {
+			found_setting.prop("checked", value == 1 ? true : false).trigger("change");
+		} else {
+			found_setting.val(value).trigger("change");
+		}
 	} else {
-		found_layer.val(value).trigger("change");
+		log("Unknown classname '" + classname + "' in layer " + layer);
 	}
 }
 
@@ -2164,7 +2168,7 @@ async function set_config (index) {
 						if(["kernelSize", "strides"].includes(keys[j])) {
 							set_xyz_values(j, keys[j], value);
 						} else if(["dilationRate"].includes(keys[j])) {
-							set_item_value(i, keys[j], value.join(", "));
+							set_item_value(i, keys[j], value.join(","));
 						} else {
 							if((typeof(value)).includes("object")) {
 								if(Object.keys(value).includes("name")) {
