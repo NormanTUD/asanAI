@@ -684,8 +684,8 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 	var worked = 0;
         var full_data = {};
 	full_data["image"] = tf.tidy(() => {
-                const imageH = model.inputs[0].shape[1];
-                const imageW = model.inputs[0].shape[2];
+                var imageH = model.inputs[0].shape[1];
+                var imageW = model.inputs[0].shape[2];
                 const imageDepth = model.inputs[0].shape[3];
 
                 // Create an auxiliary model of which input is the same as the original
@@ -703,6 +703,11 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                 const gradFunction = tf.grad(lossFunction);
 
                 // Form a random image as the starting point of the gradient ascent.
+		
+		if(parseInt($("#max_activated_neuron_image_size").val()) && $($(".layer_type")[layerIndex]).val() != "dense") {
+			imageH = imageW = parseInt($("#max_activated_neuron_image_size").val());
+		}
+
                 var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 255);
 		if(typeof(start_image) != "undefined") {
 			image = start_image;
@@ -851,17 +856,6 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 	try {
 		var start_image = undefined;
-		if($("#dataset_category").val() == "image" && $("#use_example_image_as_base").is(":checked")) {
-			var examples = [];
-			await $.ajax({url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=image&examples=1', success: function (x) { examples = x["example"]; }})
-
-			var base_url = "traindata/image/" + $("#dataset").val() + "/example/";
-
-			if(examples.length) {
-				start_image = await get_image_from_url(base_url + "/" + examples[0]);
-				start_image = start_image.div(parseFloat($("#divide_by").val()));
-			}
-		}
 
 		var full_data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
 

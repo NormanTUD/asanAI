@@ -574,9 +574,9 @@
 											<td>Randomizer limits:</td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
-										<tr data-intro="If this is checked, it starts with a single example image (if available)">
-											<td>Use example imgs as base?</td>
-											<td><input type="checkbox" value="1" id="use_example_image_as_base" /></td>
+										<tr>
+											<td>Image-Size (w&amp;h, 0 = auto):</td>
+											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;" /></td>
 										</tr>
 									</table>
 								</div>
