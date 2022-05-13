@@ -1345,9 +1345,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	layer_structure_cache = null;
 
-	if(!disabling_saving_status) {
-		await save_current_status();
-	}
+	await save_current_status();
 
 	show_dtype_only_first_layer();
 
@@ -1985,6 +1983,9 @@ async function set_config (index) {
 		showConfirmButton: false
 	});
 
+	var original_disabling_saving_status = disabling_saving_status;
+	disabling_saving_status = true;
+
 	prev_layer_data = [];
 
 	is_setting_config = true;
@@ -1995,6 +1996,7 @@ async function set_config (index) {
 
 	if(config) {
 		if(!index) {
+
 			if(config["width"]) { $("#width").val(config["width"]); width = config["width"]; }
 			if(config["height"]) { $("#height").val(config["height"]); height = config["height"]; }
 
@@ -2010,13 +2012,11 @@ async function set_config (index) {
 			set_optimizer(config["optimizer"]);
 
 			if(config["width"]) {
-				$("#width").val(config["width"]);
-				change_width();
+				$("#width").val(config["width"]).trigger("change");
 			}
 
 			if(config["height"]) {
-				$("#height").val(config["height"]);
-				change_height();
+				$("#height").val(config["height"]).trigger("change");
 			}
 
 			$("#optimizer").trigger("change");
@@ -2183,6 +2183,7 @@ async function set_config (index) {
 		}
 	}
 
+	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
 	model = await create_model(model);
@@ -2198,9 +2199,7 @@ async function set_config (index) {
 	write_descriptions();
 
 	if(!index) {
-		if(!disabling_saving_status) {
-			await save_current_status();
-		}
+		await save_current_status();
 	}
 
 	get_label_data();
@@ -2609,6 +2608,10 @@ function last_index (array) {
 }
 
 async function save_current_status () {
+	if(disabling_saving_status) {
+		return;
+	}
+
 	try {
 		var index = await get_current_status_hash();
 
@@ -2625,6 +2628,8 @@ async function save_current_status () {
 		}
 
 		show_hide_undo_buttons();
+
+		console.trace();
 	} catch (e) {
 		log(e);
 	}
