@@ -507,8 +507,8 @@ async function create_model (old_model, fake_model_structure, force) {
 					title: 'Oops [3]...',
 					text: e + "\n\nUndoing last change"
 				}).then(() => {
-					future_state_stack = [];
 					undo();
+					future_state_stack = [];
 					show_hide_undo_buttons();
 				});
 			}
