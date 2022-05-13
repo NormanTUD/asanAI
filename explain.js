@@ -1242,6 +1242,8 @@ function model_to_latex () {
 					this_activation_string = this_activation_string.replaceAll("\\alpha", "{" + alpha + "} \\cdot ");
 				}
 
+				var max_value_item = $($(".layer_setting")[i]).find(".max_value");
+
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 				var this_activation_array = [];
@@ -1252,6 +1254,13 @@ function model_to_latex () {
 
 				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+				}
+
+
+				if(max_value_item.length) {
+					var max_value = "\\infty";
+					max_value = max_value_item.val();
+					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");		
 				}
 
 				if(this_activation_array.length) {

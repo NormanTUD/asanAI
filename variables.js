@@ -200,7 +200,7 @@ var layer_options = {
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU).<br>It follows: <tt>f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0</tt>.",
 		"options": [
-			"alpha", "trainable", "dtype"
+			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -208,7 +208,7 @@ var layer_options = {
 	"leakyReLU": {
 		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: <tt>f(x) = alpha * x for x < 0. f(x) = x for x >= 0</tt>.",
 		"options": [
-			"alpha", "trainable", "dtype"
+			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -242,7 +242,7 @@ var layer_options = {
 		"options": [
 			"axis", "momentum", "epsilon", "center", "scale", "beta_initializer",
 			"gamma_initializer", "moving_mean_initializer", "moving_variance_initializer",
-			"beta_constraint", "gamma_constraint", "trainable", "dtype"
+			"beta_constraint", "gamma_constraint", "dtype"
 		],
 		"category": "Normalization"
 	},
@@ -250,7 +250,7 @@ var layer_options = {
 		"description": "Layer-normalization layer (Ba et al., 2016). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
 		"options": [
 			"axis", "epsilon", "center", "scale", "beta_initializer",
-			"gamma_initializer", "trainable", "dtype"
+			"gamma_initializer", "dtype"
 		],
 		"category": "Normalization"
 	},
@@ -427,21 +427,21 @@ var layer_options = {
 	"alphaDropout": {
 		"description": "Applies Alpha Dropout to the input. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"rate", "trainable", "dtype"
+			"rate", "dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianDropout": {
 		"description": "Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"rate", "trainable", "dtype"
+			"rate", "dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianNoise": {
 		"description": "Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 		"options": [
-			"stddev", "trainable", "dtype"
+			"stddev", "dtype"
 		],
 		"category": "Noise"
 	}
