@@ -1138,16 +1138,13 @@ function model_to_latex () {
 				if(!shown_activation_equations.includes(activation_name)) {
 					var this_activation_string = activation_function_equations[activation_name]["equation"];
 
-					var has_lower_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit");
-					var has_upper_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit")
-
 					var this_activation_array = [];
 
-					if(has_lower_limit) {
+					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 						this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
 					}
 
-					if(has_upper_limit) {
+					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 						this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
 					}
 
@@ -1206,10 +1203,11 @@ function model_to_latex () {
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
+			var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 			if(i > 1) {
-				str += _get_h(i) + " = " + _get_h(i - 1) +"_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+				str += _get_h(i) + " = " + _get_h(i - 1) + general_reshape_string;
 			} else {
-				str += array_to_latex(input_layer, "Input") + " = h" + "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+				str += array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
 			}
 		} else if (["elu", "leakyReLU", "reLU", "softmax"].includes(this_layer_type)) {
 			var activation_name = this_layer_type;
@@ -1241,18 +1239,16 @@ function model_to_latex () {
 				if(get_item_value(i, "alpha")) {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + get_item_value(i, "alpha") + "}");
 				}
-				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
-				var has_lower_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit");
-				var has_upper_limit = Object.keys(activation_function_equations[activation_name]).includes("upper_limit")
+				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
 				var this_activation_array = [];
 
-				if(has_lower_limit) {
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 					this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
 				}
 
-				if(has_upper_limit) {
+				if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
 					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
 				}
 
