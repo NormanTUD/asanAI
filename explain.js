@@ -1279,6 +1279,9 @@ function model_to_latex () {
 			}
 
 			str += "\\frac{\\left(" + prev_layer_name + " - \\text{mean}\\left(" + prev_layer_name + "\\right)\\right)}{\\sqrt{\\mathrm{variance}\\left(" + prev_layer_name + "\\right)}}";
+		} else if (this_layer_type == "dropout") {
+			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
+			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
@@ -1311,7 +1314,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax"].includes(this_layer_type))) {
+		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "dropout"].includes(this_layer_type))) {
 			return false
 		}
 	}
