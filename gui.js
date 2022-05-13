@@ -1977,8 +1977,12 @@ function set_xyz_values (j, name, values) {
 async function set_config (index) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
+	var swal_msg = "Loading model";
+	if(index) {
+		swal_msg = "Undoing/redoing";
+	}
 	Swal.fire({
-		title: 'Loading model...',
+		title: swal_msg + '...',
 		showConfirmButton: false
 	});
 
@@ -2169,7 +2173,7 @@ async function set_config (index) {
 						var value = config["model_structure"][i]["data"][keys[j]];
 
 						if(["kernelSize", "strides"].includes(keys[j])) {
-							set_xyz_values(j, get_python_name(keys[j]), value);
+							set_xyz_values(i, get_python_name(keys[j]), value);
 						} else if(["dilationRate"].includes(keys[j])) {
 							set_item_value(i, get_python_name(keys[j]), value.join(","));
 						} else {
