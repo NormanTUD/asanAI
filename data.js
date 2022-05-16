@@ -229,7 +229,11 @@ async function get_xs_and_ys () {
 		log("INVALID OPTION " + $("#data_origin").val());
 	}
 
-	var max_number_values = parseInt($("#max_number_values").val());
+	var max_number_values = 0;
+	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
+		max_number_values = parseInt($("#max_number_values").val());
+	}
+
 	var loss = $("#loss").val();
 
 	if($("#data_origin").val() == "default") {
