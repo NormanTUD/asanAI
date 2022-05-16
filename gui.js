@@ -703,7 +703,7 @@ function add_kernel_initializer_value_option (type, nr) {
 }
 
 function add_kernel_initializer_seed_option (type, nr) {
-	return get_tr_str_for_layer_table("Seed", "kernel_initializer_seed", "text", {"value": "1"}, nr, "kernel_initializer_tr");
+	return get_tr_str_for_layer_table("Seed", "kernel_initializer_seed", "number", {"value": "1"}, nr, "kernel_initializer_tr");
 }
 
 function add_kernel_initializer_stddev_option (type, nr) {
@@ -747,7 +747,7 @@ function add_bias_initializer_value_option (type, nr) {
 }
 
 function add_bias_initializer_seed_option (type, nr) {
-	return get_tr_str_for_layer_table("Seed", "bias_initializer_seed", "text", {"value": "1"}, nr, "bias_initializer_tr");
+	return get_tr_str_for_layer_table("Seed", "bias_initializer_seed", "number", {"value": "1"}, nr, "bias_initializer_tr");
 }
 
 function add_bias_initializer_stddev_option (type, nr) {
@@ -3856,26 +3856,26 @@ function check_number_values () {
 	$("input[type=number]").each((x, item) => {
 		var val = $(item).val();
 
-		if(!isNumeric(val)) {
-			$(item).css("background-color", "red");
-		} else {
-			val = parseFloat(val);
-			$(item).css("background-color", "transparent");
+			if(!isNumeric(val)) {
+				$(item).css("background-color", "red");
+			} else {
+				val = parseFloat(val);
+				$(item).css("background-color", "transparent");
 
-			var max = parseFloat($(item).attr("max"));
-			var min = parseFloat($(item).attr("min"));
+				var max = parseFloat($(item).attr("max"));
+				var min = parseFloat($(item).attr("min"));
 
-			if(max) {
-				if(val > max) {
-					$(item).val(max);
+				if(max) {
+					if(val > max) {
+						$(item).val(max);
+					}
+				}
+
+				if(min) {
+					if(val < min) {
+						$(item).val(min);
+					}
 				}
 			}
-
-			if(min) {
-				if(val < min) {
-					$(item).val(min);
-				}
-			}
-		}
 	});
 }
