@@ -113,7 +113,7 @@
 	}
 
 	function minify_js ($file) {
-		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
+		if(0 && ($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css" && $file != 'visualizations/d3.v5.min.js' && $file != "visualizations/three.min.js") {
 			print "<script src='minify.php?file=$file'></script>";
 		} else {
 			print "<script src='$file'></script>";

@@ -1278,7 +1278,6 @@ function stop_webcam () {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
-	check_number_values();
 	rename_tmp_onchange();
 
 	if(is_setting_config) {
@@ -3854,12 +3853,29 @@ function show_tab_label (label, click) {
 }
 
 function check_number_values () {
-	$("input[type=number]").each((x, e) => {
-		var val = $(e).val();
+	$("input[type=number]").each((x, item) => {
+		var val = $(item).val();
+
 		if(!isNumeric(val)) {
-			$(e).css("background-color", "red");
+			$(item).css("background-color", "red");
 		} else {
-			$(e).css("background-color", "transparent");
+			val = parseFloat(val);
+			$(item).css("background-color", "transparent");
+
+			var max = parseFloat($(item).attr("max"));
+			var min = parseFloat($(item).attr("min"));
+
+			if(max) {
+				if(val > max) {
+					$(item).val(max);
+				}
+			}
+
+			if(min) {
+				if(val < min) {
+					$(item).val(min);
+				}
+			}
 		}
-	})
+	});
 }
