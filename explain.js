@@ -412,8 +412,7 @@ function write_descriptions () {
 	}
 }
 
-function explain_error_msg () {
-	var err = $("#error").html();
+function explain_error_msg (err) {
 	var explanation = "";
 
 	if(model && model.layers && model.layers.length) {
@@ -431,6 +430,8 @@ function explain_error_msg () {
 		} else if(err.includes("info is undefined")) {
 			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.<br><br>This might also be caused by calling `tf.disposeVariables()` somewhere...";
 		} else if(err.includes("expects targets to be binary matrices")) {
+			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
+		} else if(err.includes("oneHot: depth must be")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
 		} else if(err.includes("numeric tensor, but got string tensor")) {
 			if($("#data_type").val() == "csv" && $("#data_origin").val() == "own") {
@@ -450,12 +451,9 @@ function explain_error_msg () {
 	}
 
 	if(explanation.length) {
-		$("#error").append("<br><br>" + explanation)
-
-		write_descriptions();
+		return explanation;
 	}
-
-	$("#train_neural_network_button").html("Start training");
+	return "";
 }
 
 function write_layer_identification (nr, text) {

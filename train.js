@@ -239,9 +239,9 @@ async function run_neural_network () {
 	tf.engine().startScope();
 
 	var xs_and_ys;
-	var error_string = "";
 
 	try {
+		var error_string = "";
 		show_info_pre_run();
 
 		disable_everything();
@@ -263,20 +263,29 @@ async function run_neural_network () {
 			error_string += "No Y-data! ";
 		}
 
+
 		if(error_string) {
 			throw new Error(error_string);
 		}
 	} catch (e) {
+		var explanation = explain_error_msg(e.toString());
+		if(explanation) {
+			explanation = "<br><br>" + explain_error_msg(e.toString());
+		} else {
+			explanation = "";
+		}
 		Swal.fire(
 			'Error while training',
-			error_string,
+			e.toString() + explanation,
 			'warning'
 		);
+		header("ERROR");
 		log(e);
-		write_error(error_string);
+		header("ERROR END");
 		console.trace();
 		favicon_default();
 		write_descriptions();
+		$("#train_neural_network_button").html("Start training");
 		return;
 	}
 

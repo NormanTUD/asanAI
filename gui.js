@@ -3433,12 +3433,20 @@ function disable_start_training_button_custom_images () {
 function write_error (e) {
 	if(e) {
 		$("#error").html(e).show().parent().show();
+
+		var explanation = explain_error_msg(e);
+		if(explanation) {
+			$("#error").append("<br><br>" + explanation)
+		}
+
+		$("#train_neural_network_button").html("Start training");
+		write_descriptions();
 		console.warn(e);
 		console.trace();
 	} else {
 		$("#error").html(e).show().parent().hide();
 	}
-	explain_error_msg();
+
 	enable_everything();
 	write_descriptions();
 }
