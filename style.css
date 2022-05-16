@@ -349,3 +349,7 @@ button:disabled:hover {
 	cursor: not-allowed;
 }
 
+
+.ui-tabs-tab, .ribbon-toolbar, .ribbon-group-title, .descriptions_of_layers, .layer_identifier, .layer_options_internal, .layer_setting {
+	user-select: none;
+}
