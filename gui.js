@@ -3435,6 +3435,7 @@ function write_error (e) {
 		$("#error").html(e).show().parent().show();
 
 		var explanation = explain_error_msg(e);
+
 		if(explanation) {
 			$("#error").append("<br><br>" + explanation)
 		}

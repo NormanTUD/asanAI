@@ -413,6 +413,16 @@ function write_descriptions () {
 }
 
 function explain_error_msg (err) {
+	if(!err) {
+		return "";
+	}
+
+	if(typeof(err) == "object") {
+		err = err.toString();
+	}
+
+	log(err);
+
 	var explanation = "";
 
 	if(model && model.layers && model.layers.length) {
