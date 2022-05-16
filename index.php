@@ -325,7 +325,7 @@
 							<div class="small_vskip"></div>
 							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input class="show_data" type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 							<div class="small_vskip"></div>
-							Divide <i>X</i>-Tensor by: <input style="width: 50px;" type="text" value="1" id="divide_by" />
+							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" />
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>

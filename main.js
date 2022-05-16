@@ -240,6 +240,8 @@ $(document).ready(async function() {
 
 	setInterval(fix_lenet_width, 700);
 
+	setInterval(check_number_values, 200);
+
 	setInterval(fix_graph_color, 700);
 
 	//$("#lenet_tab_label").click();

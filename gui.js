@@ -1278,6 +1278,7 @@ function stop_webcam () {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+	check_number_values();
 	rename_tmp_onchange();
 
 	if(is_setting_config) {
@@ -3850,4 +3851,15 @@ function show_tab_label (label, click) {
 		$("#" + label).click();
 	}
 	write_descriptions();
+}
+
+function check_number_values () {
+	$("input[type=number]").each((x, e) => {
+		var val = $(e).val();
+		if(!isNumeric(val)) {
+			$(e).css("background-color", "red");
+		} else {
+			$(e).css("background-color", "transparent");
+		}
+	})
 }
