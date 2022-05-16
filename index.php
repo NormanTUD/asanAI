@@ -776,7 +776,7 @@
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
 								</ul>
-								<span id="toggle_layer_view_button" style="position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
+								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
 							<hr>
 
