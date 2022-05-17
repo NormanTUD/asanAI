@@ -3341,13 +3341,11 @@ function show_csv_file (disabled_show_head_data) {
 		shape_preview += "<br>X: <pre>" + tensor_print_to_string(parsed_data.x) + "</pre>";
 
 		if(parsed_data.x.dtype == "string") {
-			write_error("The X-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
 			csv_allow_training = false;
 		}
 
 		shape_preview += "<br>Y: <pre>" + tensor_print_to_string(parsed_data.y) + "</pre>";
 		if(parsed_data.y.dtype == "string") {
-			write_error("The Y-values contain strings. The tensors must be either consisting of integers or float numbers, not strings");
 			csv_allow_training = false;
 		}
 
