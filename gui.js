@@ -3437,18 +3437,24 @@ function disable_start_training_button_custom_images () {
 
 function write_error (e) {
 	if(e) {
-		$("#error").html(e).show().parent().show();
+		var msg = e;
 
 		var explanation = explain_error_msg(e);
 
 		if(explanation) {
-			$("#error").append("<br><br>" + explanation)
+			msg = msg + "\n<br><br>\n" + explanation;
 		}
 
 		$("#train_neural_network_button").html("Start training");
 		write_descriptions();
 		console.warn(e);
 		console.trace();
+		
+		Swal.fire({
+			icon: 'error',
+			title: 'Oops [5]...',
+			html: msg
+		});
 	} else {
 		$("#error").html(e).show().parent().hide();
 	}
