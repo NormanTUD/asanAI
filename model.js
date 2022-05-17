@@ -313,7 +313,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(keyname == "axis" && typeof(value) == "number" && parseInt(value) == value) ||
 		(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
 		(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
-		(["theta"].includes(keyname) && typeof(value) == "number" && (value >= 0 || value == -1)) ||
+		(["theta"].includes(keyname) && typeof(value) == "number") ||
 		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
 		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {

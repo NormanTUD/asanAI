@@ -453,7 +453,7 @@ function add_visualize_option (type, nr) {
 }
 
 function add_theta_option (type, nr) {
-	return get_tr_str_for_layer_table("Theta", "theta", "number", { "min": 0, "max": 1000, "step": 1, "value": -1 }, nr);
+	return get_tr_str_for_layer_table("Theta", "theta", "number", { "step": 1, "value": -1 }, nr);
 }
 
 function add_axis_option (type, nr) {
