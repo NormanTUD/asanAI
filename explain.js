@@ -313,7 +313,7 @@ function group_layers (layers) {
         var char_to_group = new Array(str.length);
         char_to_group.fill(null);
 
-	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)";
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*";
 
 	var layer_names = Object.keys(layer_options);
 
@@ -326,19 +326,57 @@ function group_layers (layers) {
 		}
 	}
 
+	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
+
         var descs = [
-		{ "re": "((?:lstm;)+)", "name": "LSTM" },
-		{ "re": "((?:upSampling2d;)+)", "name": "Scaling up" },
-                { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
-		{ "re": "((?:" + list_activation_layers.join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
-                { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
-                { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
-                { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*)", "name": "Feature ex&shy;traction" },
-                { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*;?(?:dropout?;);?)", "name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention" },
-                { "re": "((?:dense;?)+;?(?:dropout)?)", "name": "Classi&shy;fication" },
-                { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
-                { "re": "((?:reshape;?)+;?)", "name": "Change shape" },
-                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "Relia&shy;bility for real data" },
+		{
+			"re": "((?:lstm;)+)",
+			"name": "LSTM"
+		},
+		{ 
+			"re": "((?:upSampling2d;)+)", 
+			"name": "Scaling up"
+		},
+                { 
+			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)", 
+			"name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion"
+		},
+		{
+			"re": "((?:" + list_activation_layers.join("|") + ")+)", 
+			"name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction"
+		},
+                {
+			"re": "((?:dropout;?)+)", 
+			"name": "Pre&shy;vent Over&shy;fit&shy;ting" 
+		},
+                {
+			"re": batch_or_layer_normalization, 
+			"name": "Re-scale and re-center data" 
+		},
+                {
+			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))", 
+			"name": "Feature ex&shy;traction"
+		},
+                {
+			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + ";?(?:dropout?;);?))", 
+			"name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention"
+		},
+                { 
+			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)", 
+			"name": "Classi&shy;fication" 
+		},
+                { 
+			"re": "((?:flatten;?)+;?)", 
+			"name": "Flatten" 
+		},
+                {
+			"re": "((?:reshape;?)+;?)", 
+			"name": "Change shape" 
+		},
+                {
+			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
+			"name": "Relia&shy;bility for real data"
+		}
         ];
 
         for (var desc_i = 0; desc_i < descs.length; desc_i++) {

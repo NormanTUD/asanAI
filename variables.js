@@ -904,8 +904,6 @@ var conv_visualizations = {};
 
 var current_epoch = 0;
 
-var original_title = document.title;
-
 var this_training_start_time = null;
 
 var demo_mode_data_origin = {};

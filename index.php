@@ -24,6 +24,8 @@
 
 
 		<script>
+			var original_title = document.title;
+
 			var traindata_struct =
 <?php
 				include("traindata.php");
