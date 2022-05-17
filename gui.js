@@ -461,7 +461,7 @@ function add_axis_option (type, nr) {
 }
 
 function add_max_value_option (type, nr) {
-	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "min": 0, "max": 1000, "step": 1, "value": get_default_option(type, "max_value") }, nr);
+	return get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "step": 1, "value": get_default_option(type, "max_value") }, nr);
 }
 
 function add_size_option (type, nr) {
@@ -525,7 +525,7 @@ function add_strides_option (type, nr) {
 }
 
 function add_alpha_option (type, nr) {
-	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "min": 0, "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr);
+	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr);
 }
 
 function add_dropout_rate_option (type, nr) {
