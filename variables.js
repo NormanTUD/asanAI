@@ -16,7 +16,7 @@ function calculate_default_target_shape (nr) {
 
 	var output = [];
 
-	for (var i = 0; i < input_shape.length; i++) { 
+	for (var i = 0; i < input_shape.length; i++) {
 		if(Number.isInteger(input_shape[i])) {
 			output.push(input_shape[i]);
 		}
@@ -235,9 +235,9 @@ var layer_options = {
 	"batchNormalization": {
 		"description": "Batch normalization layer (Ioffe and Szegedy, 2014).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
 		"options": [
-			"center", "scale", "axis", "epsilon", 
-			"beta_initializer", "beta_constraint", 
-			"gamma_initializer", "gamma_constraint", 
+			"center", "scale", "axis", "epsilon",
+			"beta_initializer", "beta_constraint",
+			"gamma_initializer", "gamma_constraint",
 			"moving_mean_initializer", "moving_variance_initializer",
 			"dtype"
 		],
@@ -257,7 +257,7 @@ var layer_options = {
 		"description": "1D convolution layer (e.g., temporal convolution).<br>This layer creates a convolution kernel that is convolved with the layer input over a single spatial (or temporal) dimension to produce a tensor of outputs.<br>If <tt>use_bias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not <tt>null</tt>, it is applied to the outputs as well.",
 		"options": [
 			"trainable", "use_bias", "activation", "padding", "filters",
-			"kernel_size", "strides", "dilation_rate", "kernel_initializer", 
+			"kernel_size", "strides", "dilation_rate", "kernel_initializer",
 			"bias_initializer", "kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
@@ -265,8 +265,8 @@ var layer_options = {
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", 
-			"strides", "dilation_rate", "kernel_initializer", "bias_initializer", 
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size",
+			"strides", "dilation_rate", "kernel_initializer", "bias_initializer",
 			"kernel_regularizer", "bias_regularizer", "visualize", "dtype"
 		],
 		"category": "Convolutional"
@@ -274,8 +274,8 @@ var layer_options = {
 	"conv2dTranspose": {
 		"description": "Transposed convolutional layer (sometimes called Deconvolution). The need for transposed convolutions generally arises from the desire to use a transformation going in the opposite direction of a normal convolution, i.e., from something that has the shape of the output of some convolution to something that has the shape of its input while maintaining a connectivity pattern that is compatible with said convolution.",
 		"options": [
-			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", 
-			"use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", 
+			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation",
+			"use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint",
 			"bias_constraint", "trainable", "kernel_regularizer", "bias_regularizer",
 			"dtype"
 		],
@@ -284,8 +284,8 @@ var layer_options = {
 	"conv3d": {
 		"description": "3D convolution layer (e.g. spatial convolution over volumes).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", 
-			"strides", "dilation_rate", "kernel_initializer", "bias_initializer", 
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size",
+			"strides", "dilation_rate", "kernel_initializer", "bias_initializer",
 			"kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
@@ -293,23 +293,23 @@ var layer_options = {
 	"depthwiseConv2d": {
 		"description": "Depthwise separable 2D convolution. Depthwise Separable convolutions consists in performing just the first step in a depthwise spatial convolution (which acts on each input channel separately). The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
 		"options": [
-			"kernel_size", "depth_multiplier", "depthwise_initializer",
-			"depthwise_constraint", "strides", "padding", "dilation_rate",
-			"activation", "use_bias", "kernel_initializer",
-			"bias_initializer", "kernel_constraint", "bias_constraint",
-			"trainable", "dtype"
+			"trainable", "use_bias", "activation", "kernel_size",
+			"strides", "depth_multiplier", "depthwise_initializer",
+			"depthwise_constraint", "padding", "dilation_rate",
+			 "kernel_initializer", "bias_initializer",
+			"kernel_constraint", "bias_constraint", "dtype"
 		],
 		"category": "Convolutional"
 	},
 	"separableConv2d": {
 		"description": "Depthwise separable 2D convolution. Separable convolution consists of first performing a depthwise spatial convolution (which acts on each input channel separately) followed by a pointwise convolution which mixes together the resulting output channels. The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
 		"options": [
-			"trainable", "use_bias", "depth_multiplier", "depthwise_initializer", 
+			"trainable", "use_bias", "depth_multiplier", "depthwise_initializer",
 			"pointwise_initializer", "depthwise_constraint",
 			"pointwise_constraint", "filters", "kernel_size",
 			"strides", "padding", "dilation_rate", "activation",
 			"bias_initializer", "bias_constraint",
-			"kernel_regularizer", "bias_regularizer", 
+			"kernel_regularizer", "bias_regularizer",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -317,7 +317,7 @@ var layer_options = {
 	"upSampling2d": {
 		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
 		"options": [
-			"size", "interpolation", "trainable", 
+			"trainable", "size", "interpolation",
 			"kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
@@ -384,7 +384,7 @@ var layer_options = {
 		"options": [
 			"recurrent_activation", "implementation", "units", "activation",
 			"use_bias", "kernel_initializer", "recurrent_initializer",
-			"bias_initializer", "recurrent_initializer", 
+			"bias_initializer", "recurrent_initializer",
 			"kernel_constraint", "bias_constraint", "dropout",
 			"recurrent_dropout", "return_sequences", "return_state",
 			"stateful", "unroll", "trainable", "kernel_regularizer", "bias_regularizer",
@@ -728,7 +728,7 @@ var initializer_options = {
 		"options": [
 			"seed"
 		]
-	}, 
+	},
 	"glorotUniform": {
 		"description": "Glorot uniform initializer, also called Xavier uniform initializer. It draws samples from a uniform distribution within [-limit, limit] where limit is sqrt(6 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor Reference: Glorot & Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf.",
 		"options": [
@@ -841,7 +841,7 @@ var regularizer_select = {
 // TODO constraint_options not yet used...
 var constraint_options = {
 	"maxNorm": {
-		"description": "MaxNorm weight constraint. Constrains the weights incident to each hidden unit to have a norm less than or equal to a desired value. References - Dropout: A Simple Way to Prevent Neural Networks from Overfitting Srivastava, Hinton, et al. 2014", 
+		"description": "MaxNorm weight constraint. Constrains the weights incident to each hidden unit to have a norm less than or equal to a desired value. References - Dropout: A Simple Way to Prevent Neural Networks from Overfitting Srivastava, Hinton, et al. 2014",
 		"options": [
 			"maxValue", "axis"
 		]

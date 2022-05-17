@@ -210,7 +210,7 @@ async function get_current_status_hash () {
 	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('select'));
 	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('textarea'));
 
-	allitems.forEach(function (x) { 
+	allitems.forEach(function (x) {
 		var item = $(x);
 		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked
 	})
@@ -1437,7 +1437,7 @@ function print_memory () {
 
 	var mem = tf.memory();
 
-	var msg = 
+	var msg =
 		"numBytes: " + byteToMB(mem.numBytes) + "\n" +
 		"numBytesInGPU: " + byteToMB(mem.numBytes) + "\n" +
 		"numDataBuffers: " + mem.numDataBuffers + "\n" +
@@ -1911,14 +1911,14 @@ function show_layers (number) {
 	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
 
 	for (var i = 0; i < number; i++) {
-		layers_container_str += 
+		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
 				"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
 				remove +
 				add +
 				"<span class='layer_nr_desc'></span>" +
 				"<span class='layer_identifier'></span>" +
-				"<table class='configtable'>" + 
+				"<table class='configtable'>" +
 					option_for_layer(i) +
 				"</table>" +
 			"</div>" +
@@ -2110,11 +2110,11 @@ async function set_config (index) {
 					"bias_initializer",
 					"activation",
 					"pool_size",
-					"padding", 
+					"padding",
 					"strides",
-					"filters", 
+					"filters",
 					"kernel_size",
-					"dropout_rate", 
+					"dropout_rate",
 					"max_features",
 					"trainable",
 					"use_bias"
@@ -3198,7 +3198,7 @@ function add_new_category () {
 
 	var label_nr = n;
 
-	$(".own_image_label").each(function (i, x) { 
+	$(".own_image_label").each(function (i, x) {
 		current_labels.push($(x).val());
 	})
 
@@ -3487,7 +3487,7 @@ function find_layer_number_by_element (element) {
 	var item_parent_xpath = get_element_xpath(item_parent[0]);
 	var nr = null;
 
-	$("#layers_container").children().each(function (counter, element) { 
+	$("#layers_container").children().each(function (counter, element) {
 		if(get_element_xpath(element) == item_parent_xpath) {
 			nr = counter;
 		}
@@ -3810,7 +3810,7 @@ function delete_maximally_activated_predictions () {
 }
 
 async function predict_all_maximally_activated_neurons () {
-	await $(".layer_image").each(async function (i,x) { 
+	await $(".layer_image").each(async function (i,x) {
 		await predict_maximally_activated(x, 'image');
 	});
 }
