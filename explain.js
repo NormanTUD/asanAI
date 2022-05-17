@@ -1399,7 +1399,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		if(!(["dense", "flatten", "reshape", "elu", "batchNormalization", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
+		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
 			return false
 		}
 	}
