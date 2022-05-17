@@ -65,8 +65,6 @@ var x_file = null;
 var y_file = null;
 var y_shape = null;
 
-const surface = { name: "Model Summary", tab: "Model Inspection" };
-
 var xy_data = null;
 
 var js_names_to_python_names = {
