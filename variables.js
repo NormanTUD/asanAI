@@ -168,7 +168,7 @@ for (var key of Object.keys(js_names_to_python_names)) {
 
 var layer_options = {
 	"dense": {
-		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
+		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: $$\\mathrm{output} = \\mathrm{activation}\\left(\\mathrm{input} \\cdot \\mathrm{kernel} + \\text{bias}\\right)$$ activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
 			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "kernel_regularizer", "bias_regularizer", "visualize", "dtype"
 		],
@@ -233,7 +233,7 @@ var layer_options = {
 
 
 	"batchNormalization": {
-		"description": "Batch normalization layer (Ioffe and Szegedy, 2014).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
+		"description": "Batch normalization layer (<a href='https://arxiv.org/abs/1502.03167' target='_blank'>Ioffe and Szegedy, 2014</a>).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
 		"options": [
 			"center", "scale", "axis", "epsilon",
 			"beta_initializer", "beta_constraint",
@@ -244,7 +244,7 @@ var layer_options = {
 		"category": "Normalization"
 	},
 	"layerNormalization": {
-		"description": "Layer-normalization layer (Ba et al., 2016). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
+		"description": "Layer-normalization layer (<a target='_blank' href='https://arxiv.org/abs/1607.06450'>Ba et al., 2016</a>). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
 		"options": [
 			"center", "scale", "axis", "epsilon",  "beta_initializer",
 			"gamma_initializer", "dtype"
