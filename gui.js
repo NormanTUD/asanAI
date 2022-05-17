@@ -572,7 +572,7 @@ function add_kernel_regularizer_option (type, nr) {
 }
 
 function add_recurrent_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Recurrent Contraint", "recurrent_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("Recurrent Constraint", "recurrent_constraint", "select", constraints, nr);
 }
 
 function add_dtype_option (type, nr) {
@@ -580,7 +580,7 @@ function add_dtype_option (type, nr) {
 }
 
 function add_bias_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Bias Contraint", "bias_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("Bias Constraint", "bias_constraint", "select", constraints, nr);
 }
 
 function add_stddev_option (type, nr) {
@@ -620,7 +620,7 @@ function add_implementation_option (type, nr) {
 }
 
 function add_kernel_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Kernel Contraint", "kernel_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("Kernel Constraint", "kernel_constraint", "select", constraints, nr);
 }
 
 function add_return_state_option (type, nr) {
@@ -648,15 +648,15 @@ function add_depthwise_initializer_option (type, nr) {
 }
 
 function add_gamma_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("&gamma; contraint", "gamma_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("&gamma; Constraint", "gamma_constraint", "select", constraints, nr);
 }
 
 function add_beta_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("&beta; contraint", "beta_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("&beta; Constraint", "beta_constraint", "select", constraints, nr);
 }
 
 function add_depthwise_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Depthwise contraint", "depthwise_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("Depthwise Constraint", "depthwise_constraint", "select", constraints, nr);
 }
 
 function add_moving_variance_initializer_option (type, nr) {
@@ -684,7 +684,7 @@ function add_pointwise_initializer_option (type, nr) {
 }
 
 function add_pointwise_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Pointwise contraint", "pointwise_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("Pointwise Constraint", "pointwise_constraint", "select", constraints, nr);
 }
 
 function add_kernel_regularizer_option (type, nr) {

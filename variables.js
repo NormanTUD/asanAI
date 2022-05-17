@@ -184,7 +184,7 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate", "kernel_regularizer", "bias_regularizer", "dtype"
+			"dropout_rate", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -306,12 +306,12 @@ var layer_options = {
 	"separableConv2d": {
 		"description": "Depthwise separable 2D convolution. Separable convolution consists of first performing a depthwise spatial convolution (which acts on each input channel separately) followed by a pointwise convolution which mixes together the resulting output channels. The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
 		"options": [
-			"depth_multiplier", "depthwise_initializer", 
+			"trainable", "use_bias", "depth_multiplier", "depthwise_initializer", 
 			"pointwise_initializer", "depthwise_constraint",
 			"pointwise_constraint", "filters", "kernel_size",
 			"strides", "padding", "dilation_rate", "activation",
-			"use_bias", "bias_initializer", "bias_constraint",
-			"trainable", "kernel_regularizer", "bias_regularizer", 
+			"bias_initializer", "bias_constraint",
+			"kernel_regularizer", "bias_regularizer", 
 			"dtype"
 		],
 		"category": "Convolutional"
