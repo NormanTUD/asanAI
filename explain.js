@@ -328,6 +328,7 @@ function group_layers (layers) {
 
         var descs = [
 		{ "re": "((?:lstm;)+)", "name": "LSTM" },
+		{ "re": "((?:upSampling2d;)+)", "name": "Scaling up" },
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + list_activation_layers.join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
                 { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
