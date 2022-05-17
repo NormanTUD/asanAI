@@ -226,22 +226,28 @@ $GLOBALS['minify'] = 0;
 											<option value="cosine">Cosine</option>
 										</select>
 									</td>
-									<tr>
-										<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
+								</tr>
+								<tr>
+									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
+									<td>
+										<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
+											<option value="default">Default</option>
+											<option value="own">Own</option>
+										</select>
+									</td>
+								</tr>
+								<div id="custom_training_data_settings">
+									<tr id="data_type_row" style="display: none">
+										<td>Data Type:</td>
 										<td>
-											<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
-												<option value="default">Default</option>
-												<option value="own">Own</option>
+											<select id="data_type" style="width: 140px" onchange="change_data_origin(1)">
+												<option value="image">&#128444; Image</option>
+												<option value="csv">&#128290; CSV</option>
+												<option value="tensordata">&#x2318; Tensor-Data</option>
 											</select>
 										</td>
 									</tr>
-								</tr>
-								<tr>
-									<td colspan=2>
-										Auto-Input-Shape?
-										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
-									</td>
-								</tr>
+								</div>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Loss/Metric/Data</div>
@@ -264,18 +270,13 @@ $GLOBALS['minify'] = 0;
 								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 80px;" /></td></tr>
 								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 80px;" /></td></tr>
 								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 80px;" id="validationSplit" /></td></tr>
-								<div id="custom_training_data_settings">
-									<tr id="data_type_row" style="display: none">
-										<td>Data Type:</td>
-										<td>
-											<select id="data_type" style="width: 87px" onchange="change_data_origin(1)">
-												<option value="image">&#128444; Image</option>
-												<option value="csv">&#128290; CSV</option>
-												<option value="tensordata">&#x2318; Tensor-Data</option>
-											</select>
-										</td>
-									</tr>
-								</div>
+								<tr>
+									<td colspan=2>
+										Auto-Input-Shape?
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
+									</td>
+								</tr>
+
 							</table>
 							<div class="ribbon-group-title">Hyperparameters, Data</div>
 						</div>
