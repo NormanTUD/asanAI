@@ -213,7 +213,7 @@ async function get_current_status_hash () {
 	allitems.forEach(function (x) {
 		var item = $(x);
 		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked
-	})
+	});
 
 	html_code += await get_weights_as_string();
 
