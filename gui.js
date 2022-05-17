@@ -1646,6 +1646,8 @@ function set_option_for_layer_by_layer_nr (nr) {
 
 	$($(".layer_options_internal")[nr]).html(get_option_for_layer_by_type(nr));
 
+	MathJax.typesetPromise();
+
 	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
 		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
 	});

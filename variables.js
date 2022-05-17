@@ -195,7 +195,7 @@ var layer_options = {
 	},
 
 	"elu": {
-		"description": "Exponetial Linear Unit (ELU).<br>It follows: <tt>f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0</tt>.",
+		"description": "Exponetial Linear Unit (ELU).<br>It follows: $$\\text{elu}\\left(x\\right) = \\left\\{\\begin{array}{ll} \\alpha * \\left(e^x - 1\\right) & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0\\end{array}\\right.$$",
 		"options": [
 			"alpha", "dtype"
 		],
@@ -203,28 +203,28 @@ var layer_options = {
 	},
 
 	"leakyReLU": {
-		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: <tt>f(x) = alpha * x for x < 0. f(x) = x for x >= 0</tt>.",
+		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: $$ \\text{leakyReLU}(x) = \\left\\{\\begin{array}{ll} \\alpha * x & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0 \\end{array}\\right.$$",
 		"options": [
 			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
 	"reLU": {
-		"description": "Rectified Linear Unit activation function.",
+		"description": "Rectified Linear Unit activation function. $$\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)$$",
 		"options": [
 			"max_value", "dtype"
 		],
 		"category": "Activation"
 	},
 	"softmax": {
-		"description": "Softmax activation layer.",
+		"description": "Softmax activation layer. $$\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}$$",
 		"options": [
 			"axis", "dtype"
 		],
 		"category": "Activation"
 	},
 	"thresholdedReLU": {
-		"description": "Thresholded Rectified Linear Unit. It follows: <tt>f(x) = x</tt> for <tt>x > theta</tt>, <tt>f(x) = 0</tt> otherwise.",
+		"description": "Thresholded Rectified Linear Unit. It follows: $$f(x) = \\left\\{\\begin{array}{ll} x & \\text{for } x > \\theta \\\\\n 0 & \\text{otherwise}\\end{array}\\right.$$",
 		"options": [
 			"theta"
 		],
