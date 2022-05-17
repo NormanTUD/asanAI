@@ -286,6 +286,7 @@ async function run_neural_network () {
 		favicon_default();
 		write_descriptions();
 		$("#train_neural_network_button").html("Start training");
+		started_training = false;
 		return;
 	}
 
