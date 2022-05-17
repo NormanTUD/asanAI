@@ -43,7 +43,7 @@
 }
 
 html {
-	min-width: 1400px;
+	min-width: 1150px;
 }
 
 @media only screen and (max-width: 800px) {
