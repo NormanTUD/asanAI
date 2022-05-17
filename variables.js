@@ -925,3 +925,5 @@ var layers_container_md5 = "";
 var _cached_json = {};
 
 var stop_downloading_data = false;
+
+var no_update_math = false;

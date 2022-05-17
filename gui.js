@@ -1354,7 +1354,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	enable_start_training_custom_tensors();
 
-	write_model_to_latex_to_page();
+	if(!no_update_math) {
+		write_model_to_latex_to_page();
+	}
 
 	last_shape_layer_warning();
 
@@ -3130,7 +3132,10 @@ function auto_adjust_number_of_neurons (n) {
 		var last_layer_type = $($(".layer_type")[$(".layer_type").length - 1]).val();
 		
 		if(last_layer_type == "dense") {
+			var original_no_update_math = no_update_math;
+			no_update_math = true;
 			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val(n).trigger("change");
+			no_update_math = original_no_update_math;
 		}
 	}
 }
