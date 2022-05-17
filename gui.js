@@ -346,10 +346,13 @@ function visual_help (filename) {
 	$("#visual_help_tab_label").click();
 }
 
-function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class) {
+function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class, hidden) {
 	var str = "<tr";
 	if(tr_class) {
 		str += " class='" + tr_class + "'";
+	}
+	if(hidden) {
+		str += " style='display: none' ";
 	}
 	str += ">";
 
@@ -453,7 +456,7 @@ function add_visualize_option (type, nr) {
 }
 
 function add_theta_option (type, nr) {
-	return get_tr_str_for_layer_table("Theta", "theta", "number", { "step": 1, "value": -1 }, nr);
+	return get_tr_str_for_layer_table("&theta;", "theta", "number", { "step": 1, "value": -1 }, nr);
 }
 
 function add_axis_option (type, nr) {
@@ -525,7 +528,7 @@ function add_strides_option (type, nr) {
 }
 
 function add_alpha_option (type, nr) {
-	return get_tr_str_for_layer_table("Alpha", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr);
+	return get_tr_str_for_layer_table("&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr);
 }
 
 function add_dropout_rate_option (type, nr) {
@@ -573,7 +576,7 @@ function add_recurrent_constraint_option (type, nr) {
 }
 
 function add_dtype_option (type, nr) {
-	return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr);
+	return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr, null, 1);
 }
 
 function add_bias_constraint_option (type, nr) {
@@ -633,7 +636,7 @@ function add_go_backwards_option (type, nr) {
 }
 
 function add_epsilon_option (type, nr) {
-	return get_tr_str_for_layer_table("Epsilon multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": get_default_option(type, "epsilon") }, nr);
+	return get_tr_str_for_layer_table("&epsilon; multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": get_default_option(type, "epsilon") }, nr);
 }
 
 function add_depth_multiplier_option (type, nr) {
@@ -645,11 +648,11 @@ function add_depthwise_initializer_option (type, nr) {
 }
 
 function add_gamma_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Gamma contraint", "gamma_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("&gamma; contraint", "gamma_constraint", "select", constraints, nr);
 }
 
 function add_beta_constraint_option (type, nr) {
-	return get_tr_str_for_layer_table("Beta contraint", "beta_constraint", "select", constraints, nr);
+	return get_tr_str_for_layer_table("&beta; contraint", "beta_constraint", "select", constraints, nr);
 }
 
 function add_depthwise_constraint_option (type, nr) {
@@ -669,11 +672,11 @@ function add_interpolation_option (type, nr) {
 }
 
 function add_beta_initializer_option (type, nr) {
-	return get_tr_str_for_layer_table("Beta Initializer", "beta_initializer", "select", initializers, nr);
+	return get_tr_str_for_layer_table("&beta; Initializer", "beta_initializer", "select", initializers, nr);
 }
 
 function add_gamma_initializer_option (type, nr) {
-	return get_tr_str_for_layer_table("Gamma Initializer", "gamma_initializer", "select", initializers, nr);
+	return get_tr_str_for_layer_table("&gamma; Initializer", "gamma_initializer", "select", initializers, nr);
 }
 
 function add_pointwise_initializer_option (type, nr) {
@@ -816,7 +819,7 @@ function add_kernel_regularizer_l2_option (type, nr) {
 /* activation gui functions */
 
 function add_activation_theta_option (type, nr) {
-	return get_tr_str_for_layer_table("Theta", "activation_theta", "number", {"value": 0.01}, nr, "activation_tr");
+	return get_tr_str_for_layer_table("&theta;", "activation_theta", "number", {"value": 0.01}, nr, "activation_tr");
 }
 
 function add_activation_alpha_option (type, nr) {

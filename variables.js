@@ -172,7 +172,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: <tt>output = activation(dot(input, kernel) + bias)</tt> activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer", "visualize"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "kernel_regularizer", "bias_regularizer", "visualize", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -184,7 +184,7 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate", "dtype", "kernel_regularizer", "bias_regularizer"
+			"dropout_rate", "kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -237,16 +237,18 @@ var layer_options = {
 	"batchNormalization": {
 		"description": "Batch normalization layer (Ioffe and Szegedy, 2014).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
 		"options": [
-			"axis", "epsilon", "center", "scale", "beta_initializer",
-			"gamma_initializer", "moving_mean_initializer", "moving_variance_initializer",
-			"beta_constraint", "gamma_constraint", "dtype"
+			"center", "scale", "axis", "epsilon", 
+			"beta_initializer", "beta_constraint", 
+			"gamma_initializer", "gamma_constraint", 
+			"moving_mean_initializer", "moving_variance_initializer",
+			"dtype"
 		],
 		"category": "Normalization"
 	},
 	"layerNormalization": {
 		"description": "Layer-normalization layer (Ba et al., 2016). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
 		"options": [
-			"axis", "epsilon", "center", "scale", "beta_initializer",
+			"center", "scale", "axis", "epsilon",  "beta_initializer",
 			"gamma_initializer", "dtype"
 		],
 		"category": "Normalization"
@@ -256,28 +258,37 @@ var layer_options = {
 	"conv1d": {
 		"description": "1D convolution layer (e.g., temporal convolution).<br>This layer creates a convolution kernel that is convolved with the layer input over a single spatial (or temporal) dimension to produce a tensor of outputs.<br>If <tt>use_bias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not <tt>null</tt>, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "activation", "padding", "filters",
+			"kernel_size", "strides", "dilation_rate", "kernel_initializer", 
+			"bias_initializer", "kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv2d": {
 		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", 'dtype', "kernel_regularizer", "bias_regularizer", "visualize"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", 
+			"strides", "dilation_rate", "kernel_initializer", "bias_initializer", 
+			"kernel_regularizer", "bias_regularizer", "visualize", "dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv2dTranspose": {
 		"description": "Transposed convolutional layer (sometimes called Deconvolution). The need for transposed convolutions generally arises from the desire to use a transformation going in the opposite direction of a normal convolution, i.e., from something that has the shape of the output of some convolution to something that has the shape of its input while maintaining a connectivity pattern that is compatible with said convolution.",
 		"options": [
-			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", "use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", "bias_constraint", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
+			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation", 
+			"use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint", 
+			"bias_constraint", "trainable", "kernel_regularizer", "bias_regularizer",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv3d": {
 		"description": "3D convolution layer (e.g. spatial convolution over volumes).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", "strides", "dilation_rate", "kernel_initializer", "bias_initializer", "dtype", "kernel_regularizer", "bias_regularizer"
+			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size", 
+			"strides", "dilation_rate", "kernel_initializer", "bias_initializer", 
+			"kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -300,14 +311,16 @@ var layer_options = {
 			"pointwise_constraint", "filters", "kernel_size",
 			"strides", "padding", "dilation_rate", "activation",
 			"use_bias", "bias_initializer", "bias_constraint",
-			"trainable", "dtype", "kernel_regularizer", "bias_regularizer"
+			"trainable", "kernel_regularizer", "bias_regularizer", 
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"upSampling2d": {
 		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
 		"options": [
-			"size", "interpolation", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
+			"size", "interpolation", "trainable", 
+			"kernel_regularizer", "bias_regularizer", "dtype"
 		],
 		"category": "Convolutional"
 	},
@@ -376,7 +389,8 @@ var layer_options = {
 			"bias_initializer", "recurrent_initializer", 
 			"kernel_constraint", "bias_constraint", "dropout",
 			"recurrent_dropout", "return_sequences", "return_state",
-			"stateful", "unroll", "trainable", "dtype", "kernel_regularizer", "bias_regularizer"
+			"stateful", "unroll", "trainable", "kernel_regularizer", "bias_regularizer",
+			"dtype"
 			
 		],
 		"category": "Recurrent"
@@ -415,7 +429,8 @@ var layer_options = {
 			"bias_initializer", "dropout", "trainable", "recurrent_activation",
 			"unit_forget_bias", "implementation", "return_sequences", "return_state",
 			"go_backwards", "stateful", "unroll", "filters", "kernel_size",
-			"strides", "padding", "dilation_rate", "dtype", "kernel_regularizer", "bias_regularizer"
+			"strides", "padding", "dilation_rate", "kernel_regularizer", "bias_regularizer",
+			"dtype"
 		],
 		"category": "Recurrent"
 	},
