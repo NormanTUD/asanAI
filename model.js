@@ -54,6 +54,8 @@ async function _create_model () {
 async function compile_model (keep_weights) {
 	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
 
+	keep_weights = keep_weights && $("#keep_weights").is(":checked");
+
 	var recreate_model = false;
 
 	if(model_config_hash != get_model_config_hash() || current_status_hash != get_current_status_hash()) {

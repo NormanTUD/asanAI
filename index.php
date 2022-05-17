@@ -374,6 +374,10 @@ $GLOBALS['minify'] = 0;
 										</select>
 									</td>
 								</tr>
+								<tr>
+									<td>Keep weights when possible?</td>
+									<td><input type="checkbox" value=1 checked id="keep_weights" /></td>
+								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Set options for all</div>
