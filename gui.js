@@ -3664,13 +3664,13 @@ function move_element_to_another_div (element, new_element_id) {
 function repeat_while_demo () {
 	show_prediction()
 
-	if(!(model.isTraining || model.model.isTraining || started_training)) {
+	if(!(model.isTraining || started_training)) {
 		train_neural_network();
 	}
 }
 
 async function start_demo_mode () {
-	if(!(model.isTraining || model.model.isTraining || started_training)) {
+	if(!(model.isTraining || started_training)) {
 		train_neural_network();
 	}
 
@@ -3720,7 +3720,7 @@ function end_demo_mode () {
 		window.clearInterval(demo_interval);
 	}
 
-	if(!(model.isTraining || model.model.isTraining || started_training)) {
+	if(!(model.isTraining || started_training)) {
 		train_neural_network();
 	}
 	var demo_mode_keys = Object.keys(demo_mode_data_origin);

@@ -52,9 +52,9 @@ async function train_neural_network () {
 			showConfirmButton: false
 		});
 
-		if(model.isTraining || model.model.isTraining) {
+		if(model.isTraining || model.isTraining) {
 			model.stopTraining = true;
-			model.model.stopTraining = true;
+			model.stopTraining = true;
 		}
 
 		document.title = original_title;
@@ -146,10 +146,6 @@ function get_fit_data () {
 	callbacks["onBatchBegin"] = async function () {
 		if(!started_training) {
 			model.stopTraining = true;
-			model.model.stopTraining = true;
-
-			this.model.stopTraining = true;
-			this.model.model.stopTraining = true;
 		}
 
 		hide_annoying_tfjs_vis_overlays();
