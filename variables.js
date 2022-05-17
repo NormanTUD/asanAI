@@ -237,7 +237,7 @@ var layer_options = {
 	"batchNormalization": {
 		"description": "Batch normalization layer (Ioffe and Szegedy, 2014).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
 		"options": [
-			"axis", "momentum", "epsilon", "center", "scale", "beta_initializer",
+			"axis", "epsilon", "center", "scale", "beta_initializer",
 			"gamma_initializer", "moving_mean_initializer", "moving_variance_initializer",
 			"beta_constraint", "gamma_constraint", "dtype"
 		],

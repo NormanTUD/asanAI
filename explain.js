@@ -1343,19 +1343,27 @@ function model_to_latex () {
 
 			var prev_layer_name = "";
 
-			if(i == 0) {
-				prev_layer_name += array_to_latex(input_layer, "Input");
-			} else {
-				prev_layer_name += _get_h(i - 1);
-			}
+			var outname = "";
 
 			if(i == layer_data.length - 1) {
-				str += array_to_latex(y_layer, "Output") + " = ";
+				outname = array_to_latex(y_layer, "Output") + " = ";
 			} else {
-				str += _get_h(i) + " = ";
+				outname += _get_h(i) + " = ";
 			}
 
-			str += "\\frac{\\left(" + prev_layer_name + " - \\text{mean}\\left(" + prev_layer_name + "\\right)\\right)}{\\sqrt{\\mathrm{variance}\\left(" + prev_layer_name + "\\right)}}";
+			var mini_batch_mean = "\\text{Mini-Batch mean: } \\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i";
+
+			var mini_batch_variance = "\\text{Mini-Batch variance: }\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2";
+
+			var new_x = "\\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+
+			//var new_y = "\\underbrace{y_i}_\\text{Scale and shift} = \\gamma\\hat{x}_i + \\beta";
+
+			str += "$$\n$$";
+
+			str += mini_batch_mean + "$$\n$$";
+			str += mini_batch_variance + "$$\n$$";
+			str += outname + new_x; // + "$$\n$$" + new_y;
 		} else if (this_layer_type == "dropout") {
 			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
@@ -1391,7 +1399,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
+		if(!(["dense", "flatten", "reshape", "elu", "batchNormalization", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
 			return false
 		}
 	}
