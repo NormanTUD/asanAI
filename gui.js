@@ -1313,6 +1313,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			"trainable",
 			"dropout_rate"
 		];
+
 		for (var i = 0; i < caller_classes.length; i++) {
 			if(!keep_weights) {
 				for (var j = 0; j < keep_classes.length; j++) {
