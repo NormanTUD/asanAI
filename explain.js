@@ -315,10 +315,21 @@ function group_layers (layers) {
 
 	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)";
 
+	var layer_names = Object.keys(layer_options);
+
+	var list_activation_layers = [];
+
+	for (var i = 0; i < layer_names.length; i++) {
+		var category = layer_options[layer_names[i]]["category"];
+		if(category == "Activation") {
+			list_activation_layers.push(layer_names[i]);
+		}
+	}
+
         var descs = [
 		{ "re": "((?:lstm;)+)", "name": "LSTM" },
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
-		{ "re": "((?:" + Object.keys(activations).join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
+		{ "re": "((?:" + list_activation_layers.join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
                 { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
                 { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*)", "name": "Feature ex&shy;traction" },
                 { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*;?(?:dropout?;);?)", "name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention" },
