@@ -204,48 +204,50 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 }
 
 function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
-	$(".show_when_predicting").show();
+	if(model) {
+		$(".show_when_predicting").show();
 
-	hide_unused_layer_visualization_headers();
+		hide_unused_layer_visualization_headers();
 
-	if(!keep_show_after_training_hidden) {
-		$(".show_after_training").show();
-	}
+		if(!keep_show_after_training_hidden) {
+			$(".show_after_training").show();
+		}
 
-	$("#example_predictions").html("");
+		$("#example_predictions").html("");
 
-	if($("#data_origin").val() == "default") {
-		if($("#dataset_category").val() == "image") {
-			var dataset = $("#dataset").val();
-			var dataset_category = $("#dataset_category").val();
-			var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
-			$.ajax({
-				url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
-				success: function (x) { 
-					if(x) {
-						var examples = x["example"];
-						if(examples) {
-							for (var i = 0; i < examples.length; i++) {
-								$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+		if($("#data_origin").val() == "default") {
+			if($("#dataset_category").val() == "image") {
+				var dataset = $("#dataset").val();
+				var dataset_category = $("#dataset_category").val();
+				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
+				$.ajax({
+					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
+					success: function (x) { 
+						if(x) {
+							var examples = x["example"];
+							if(examples) {
+								for (var i = 0; i < examples.length; i++) {
+									$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+								}
 							}
 						}
 					}
-				}
-			});
-		} else if ($("#dataset_category").val() == "classification") {
-			tf.tidy(() => {
-				$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
-				$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
-				$("#example_predictions").append("[1, 0] = " + model.predict(tf.tensor([[1, 0]])).dataSync() + "<br>");
-				$("#example_predictions").append("[1, 1] = " + model.predict(tf.tensor([[1, 1]])).dataSync() + "<br>");
-			});
+				});
+			} else if ($("#dataset_category").val() == "classification") {
+				tf.tidy(() => {
+					$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
+					$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
+					$("#example_predictions").append("[1, 0] = " + model.predict(tf.tensor([[1, 0]])).dataSync() + "<br>");
+					$("#example_predictions").append("[1, 1] = " + model.predict(tf.tensor([[1, 1]])).dataSync() + "<br>");
+				});
+			}
 		}
-	}
 
-	if(!dont_go_to_tab) {
-		if($("#jump_to_predict_tab").is(":checked")) {
-			$('a[href="#predict_tab"]').click();
-			hide_annoying_tfjs_vis_overlays();
+		if(!dont_go_to_tab) {
+			if($("#jump_to_predict_tab").is(":checked")) {
+				$('a[href="#predict_tab"]').click();
+				hide_annoying_tfjs_vis_overlays();
+			}
 		}
 	}
 }
