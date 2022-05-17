@@ -150,7 +150,7 @@ $GLOBALS['minify'] = 0;
 										Problem type:
 									</td>
 									<td colspan=2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 246px">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 244px">
 										</select>
 									</td>
 								</tr>
@@ -159,7 +159,7 @@ $GLOBALS['minify'] = 0;
 										Architecture:
 									</td>
 									<td colspan=2">
-										<select id="dataset" onchange="chose_dataset();" style="width: 150px">
+										<select id="dataset" onchange="chose_dataset();" style="width: 148px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
@@ -178,7 +178,7 @@ $GLOBALS['minify'] = 0;
 								</div>
 								<tr>
 									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 104px;" readonly id="outputShape" /></td>
+									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 102px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
