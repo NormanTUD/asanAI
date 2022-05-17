@@ -332,13 +332,13 @@ function group_layers (layers) {
                 { "re": "((?:[^;]+Pooling[0-9]D;?)+;?)", "name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion" },
 		{ "re": "((?:" + list_activation_layers.join("|") + ")+)", "name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction" },
                 { "re": "((?:dropout;?)+)", "name": "Pre&shy;vent Over&shy;fit&shy;ting" },
+                { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*)", "name": "Feature ex&shy;traction" },
                 { "re": "(?:(?:batch|layer)Normalization;)*(" + feature_extraction_base + "*;?(?:dropout?;);?)", "name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention" },
                 { "re": "((?:dense;?)+;?(?:dropout)?)", "name": "Classi&shy;fication" },
-                { "re": "((?:(?:batch|layer)Normalization;?)+)", "name": "Re-scale and re-center data" },
                 { "re": "((?:flatten;?)+;?)", "name": "Flatten" },
                 { "re": "((?:reshape;?)+;?)", "name": "Change shape" },
-                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "More relia&shy;bility for real-world-data" },
+                { "re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", "name": "Relia&shy;bility for real data" },
         ];
 
         for (var desc_i = 0; desc_i < descs.length; desc_i++) {
