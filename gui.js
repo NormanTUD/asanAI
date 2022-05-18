@@ -1248,8 +1248,10 @@ function hide_no_conv_stuff () {
 
 	if(any_conv_visualizations) {
 		$(".hide_when_no_conv_visualizations").show();
+		$(".hide_when_conv_visualizations").hide();
 	} else {
 		$(".hide_when_no_conv_visualizations").hide();
+		$(".hide_when_conv_visualizations").show();
 		$("#show_layer_data").prop("checked", false);
 		$("#data_plotter").hide();
 	}
@@ -2268,6 +2270,9 @@ async function init_dataset () {
 	await save_current_status();
 	init_weight_file_list();
 	init_download_link();
+
+	$("#predict_error").html("");
+	$("#prediction").html("");
 }
 
 function init_download_link () {
@@ -2308,6 +2313,7 @@ async function chose_dataset(no_set_config) {
 	is_setting_config = false;
 
 	$("#predict_error").html("");
+	$("#prediction").html("");
 }
 
 function init_weight_file_list () {

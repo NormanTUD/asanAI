@@ -1050,12 +1050,25 @@ $GLOBALS['minify'] = 0;
 											</div>
 
 											<pre id="webcam_prediction" style="display: none; overflow: scroll;"></pre>
-
 											<br>
 											
-											<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-											<div id="predict_own"><textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea><br><button onclick="predict($('#predict_own_data').val())">Predict</button></div>
-											<img id="output"/><br><br>
+											<div class="hide_when_conv_visualizations">
+												<div id="predict_own">
+													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
+													<br>
+													<button onclick="predict($('#predict_own_data').val())">Predict</button>
+												</div>
+											</div>
+
+											<br>
+
+											<div class="hide_when_no_conv_visualizations">
+												<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
+												<img id="output"/>
+											</div>
+
+											<br>
+
 											<pre id="prediction" style="display: none"></pre>
 											<div id="predict_error" style="overflow: scroll; display: none"></div>
 
