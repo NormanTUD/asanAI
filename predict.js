@@ -33,6 +33,8 @@ var loadFile = (function(event) {
 
 		predict(output);
 	};
+
+	$("#output").show();
 });
 
 let predict_demo = async function (item, nr) {

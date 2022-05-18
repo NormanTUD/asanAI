@@ -1065,7 +1065,7 @@ $GLOBALS['minify'] = 0;
 
 											<div class="hide_when_no_conv_visualizations">
 												<div id="upload_file" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-												<img id="output"/>
+												<img style="display: none" id="output"/>
 											</div>
 
 											<br>

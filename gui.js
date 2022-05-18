@@ -1072,6 +1072,9 @@ async function change_width_or_height (name, inputshape_index) {
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
+
+	$("#output").width($("#width").val())
+	$("#output").height($("#height").val())
 }
 
 async function update_python_code (dont_reget_labels) {
