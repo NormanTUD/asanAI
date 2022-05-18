@@ -14,7 +14,7 @@ declare -a FILES=(
 )
 
 for i in "${FILES[@]}"; do
-	echo $i
+	rm $i
 	FILENAME=$(echo $i | sed -e 's#.*/##' | sed -e 's/$/.js/' | sed -e 's/\.js\.js/\.js/')
-	echo $FILENAME
+	wget $i -O $FILENAME
 done
