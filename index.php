@@ -293,11 +293,11 @@ $GLOBALS['minify'] = 0;
 								<table>
 									<tr>
 										<td>Width:</td>
-										<td><input type="number" min="1" max="255" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
 									</tr>
 									<tr>
 										<td>Height:</td>
-										<td><input type="number" min="1" max="255" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
 										<td>Img/cat:</td>

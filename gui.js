@@ -1058,6 +1058,13 @@ function change_width () {
 	change_width_or_height("width", 0);
 }
 
+function change_output_and_example_image_size () {
+	$("#output").width($("#width").val())
+	$("#output").height($("#height").val())
+	$(".example_images").width($("#width").val())
+	$(".example_images").height($("#height").val())
+}
+
 async function change_width_or_height (name, inputshape_index) {
 	if(["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
@@ -1073,8 +1080,7 @@ async function change_width_or_height (name, inputshape_index) {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
 
-	$("#output").width($("#width").val())
-	$("#output").height($("#height").val())
+	change_output_and_example_image_size();
 }
 
 async function update_python_code (dont_reget_labels) {

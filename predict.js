@@ -95,6 +95,8 @@ let predict_demo = async function (item, nr) {
 
 	hide_unused_layer_visualization_headers();
 	tf.engine().endScope();
+
+	change_output_and_example_image_size();
 }
 
 function _get_category () {
@@ -259,7 +261,7 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 							var examples = x["example"];
 							if(examples) {
 								for (var i = 0; i < examples.length; i++) {
-									$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+									$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
 								}
 							}
 						}
