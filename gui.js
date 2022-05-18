@@ -2452,6 +2452,12 @@ function set_input_shape (val) {
 	return get_input_shape();
 }
 
+function get_input_shape_with_batch_size () {
+	var shape = get_input_shape();
+	shape.unshift(parseInt($("#batchSize").val()));
+	return shape;
+}
+
 function get_input_shape () {
 	var code = $("#inputShape").val();
 	if(!code.startsWith("[")) {
