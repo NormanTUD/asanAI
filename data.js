@@ -4,6 +4,10 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 
+	if(!numpy_str.endsWith("\n")) {
+		numpy_str += "\n";
+	}
+
 	var lines = numpy_str.split("\n");
 
 	var tensor_type = $($(".dtype")[0]).val();

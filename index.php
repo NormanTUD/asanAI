@@ -1056,6 +1056,7 @@ $GLOBALS['minify'] = 0;
 												<div id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 													<br>
+													<br>
 													<button onclick="predict($('#predict_own_data').val())">Predict</button>
 												</div>
 											</div>

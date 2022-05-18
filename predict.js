@@ -137,7 +137,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(category == "image") {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
 		} else if(["classification", "own"].includes(category)) {
-			predict_data = tf.tensor(eval(item));
+			var data = "";
+			if(item.startsWith("# shape:")) {
+				data = numpy_str_to_tf_tensor(item, 0).arraySync();
+			} else {
+				data = eval(item)
+			}
+			predict_data = tf.tensor(data);
 		} else {
 			log("Invalid category for prediction: " + category);
 		}
