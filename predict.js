@@ -151,6 +151,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				item = item.replaceAll(regex_space_end, '');
 				item = item.replaceAll(regex_comma, ', ');
 
+				item = item.replaceAll(/\btrue\b/ig, '1');
+				item = item.replaceAll(/\bfalse\b/ig, '0');
+
 				if(!item.startsWith("[")) {
 					item = "[" + item + "]";
 				}
