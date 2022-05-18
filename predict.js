@@ -142,9 +142,19 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				data = numpy_str_to_tf_tensor(item, 0).arraySync();
 			} else {
 				var original_item = item;
+
+				var regex_space_start = /^\s+/ig;
+				var regex_space_end = /\s+$/ig;
+				var regex_comma = /,?\s+/ig;
+
+				item = item.replaceAll(regex_space_start, '');
+				item = item.replaceAll(regex_space_end, '');
+				item = item.replaceAll(regex_comma, ', ');
+
 				if(!item.startsWith("[")) {
 					item = "[" + item + "]";
 				}
+
 				data = eval(item)
 
 				if(!original_item.startsWith("[[")) {
