@@ -141,7 +141,24 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			if(item.startsWith("# shape:")) {
 				data = numpy_str_to_tf_tensor(item, 0).arraySync();
 			} else {
+				var original_item = item;
+				if(!item.startsWith("[")) {
+					item = "[" + item + "]";
+				}
 				data = eval(item)
+
+				if(!original_item.startsWith("[[")) {
+					var data_input_shape = await get_shape_from_array(data);
+
+					var input_shape = model.layers[0].input.shape;
+					if(input_shape[0] === null) {
+						var original_input_shape = input_shape;
+						input_shape = remove_empty(input_shape);
+						if(input_shape.length != data_input_shape.length) {
+							data = [data];
+						}
+					}
+				}
 			}
 			predict_data = tf.tensor(data);
 		} else {
