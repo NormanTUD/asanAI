@@ -122,12 +122,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	$("#predict_error").html("");
 	var predictions = [];
 
-	/*
-	if(!model) {
-		model = await train_neural_network();
-	}
-	*/
-
 	var str = "";
 
 	tf.engine().startScope();
