@@ -3058,7 +3058,7 @@ function change_data_origin () {
 	$("#train_neural_network_button").prop("disabled", false);
 	var new_origin = $("#data_origin").val();
 
-	var dataset_category = $("#dataset_category").val();
+	var dataset_category = _get_category();
 
 	var show_images_per_category = 0;
 
