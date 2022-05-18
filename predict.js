@@ -75,7 +75,7 @@ let predict_demo = async function (item, nr) {
 
 			desc.html("");
 			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i];
+				var label = labels[i % labels.length];
 				var probability = predictions[i];
 				var str = label + ": " + probability + "<br>\n";
 				if(i == max_i) {
@@ -210,7 +210,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				}
 
 				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i];
+					var label = labels[i % labels.length];
 					var probability = predictions[i];
 					var this_str = label + ": " + probability + "\n";
 					if(i == max_i) {
@@ -340,7 +340,7 @@ async function predict_webcam () {
 			}
 
 			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i];
+				var label = labels[i % labels.length];
 				var probability = predictions[i];
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {

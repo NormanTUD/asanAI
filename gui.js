@@ -3352,7 +3352,7 @@ function show_csv_file (disabled_show_head_data) {
 			shape_preview_color += "green";
 		} else {
 			shape_preview_color += "red";
-			csv_allow_training = false;
+			//csv_allow_training = false;
 		}
 		shape_preview_color += "'>";
 
