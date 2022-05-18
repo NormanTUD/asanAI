@@ -152,7 +152,7 @@ $GLOBALS['minify'] = 0;
 										Problem type:
 									</td>
 									<td colspan=2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();" style="width: 244px">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');" style="width: 244px">
 										</select>
 									</td>
 								</tr>
@@ -161,7 +161,7 @@ $GLOBALS['minify'] = 0;
 										Architecture:
 									</td>
 									<td colspan=2">
-										<select id="dataset" onchange="chose_dataset();" style="width: 148px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('')" style="width: 148px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
