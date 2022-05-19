@@ -48,7 +48,7 @@ function test_equal (name, is, should_be) {
 		//console.log("%c" + name + ": OK", "background: green; color: white");
 		return true;
 	} else {
-		console.log("%c" + name + ": ERROR. Is: " + JSON.stringify(is) + ", should be: " + JSON.stringify(should_be), "background: red; color: white");
+		console.log("%c" + name + ": ERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be), "background: red; color: white");
 		num_tests_failed++;
 		return false;
 	}
@@ -116,13 +116,13 @@ function run_tests () {
 
 	test_equal("last_index([1,2,3])", last_index([1,2,3]), 2);
 
-	test_equal("add_bias_regularizer_l1_option('conv2d', 1)", add_bias_regularizer_l1_option("conv2d", 1), "<tr class='bias_regularizer_tr'><td>l1:</td><td><input class='input_field input_data bias_regularizer_l1' type='number'  value=0.01  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
+	test_equal("add_bias_regularizer_l1_option('conv2d', 1)", add_bias_regularizer_l1_option("conv2d", 1), "<tr class='bias_regularizer_tr'><td>l1:</td><td><input class='input_field input_data bias_regularizer_l1' type='number'  value=0.01  _onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
-	test_equal('add_bias_initializer_distribution_option("conv2d", 1)', add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td>Distribution:</td><td><select class='input_field input_data bias_initializer_distribution' onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
+	test_equal('add_bias_initializer_distribution_option("conv2d", 1)', add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td>Distribution:</td><td><select class='input_field input_data bias_initializer_distribution' _onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
 
-	test_equal('add_kernel_initializer_value_option("conv2d", 1)', add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
+	test_equal('add_kernel_initializer_value_option("conv2d", 1)', add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  _onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
-	test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option('dense', 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
+	test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option('dense', 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  _onchange='updated_page()' onkeyup='updated_page(null, null, this)' /></td>");
 
 	test_equal('quote_python("abc")', quote_python("abc"), "\"abc\"");
 
