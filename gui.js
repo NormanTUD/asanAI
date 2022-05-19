@@ -3572,7 +3572,8 @@ function get_layer_initializer_config (layer_nr, initializer_type) {
 				if(looks_like_number(value)) {
 					value = parseFloat(value);
 				}
-				if(value != "") {
+
+				if(value !== "") {
 					option_hash[option_name] = value;
 				}
 			}
