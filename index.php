@@ -904,7 +904,6 @@ $GLOBALS['minify'] = 0;
 									<li><a href="#math_tab" onclick="write_model_to_latex_to_page(0, 1);" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
-									<li style="display: none"><a href="#visual_help_tab" id="visual_help_tab_label" style="display: none">Visual Help</a></li>
 									<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 									<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
@@ -943,9 +942,6 @@ $GLOBALS['minify'] = 0;
 									<!--<button onclick="predict_all_maximally_activated_neurons()">Predict all visible images</button>-->
 									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
 									<div id="maximally_activated_content"></div>
-								</div>
-
-								<div id="visual_help_tab">
 								</div>
 
 								<?php

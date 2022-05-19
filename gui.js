@@ -320,32 +320,6 @@ function get_python_name (name) {
 	return name;
 }
 
-function visual_help_text (text) {
-	if(text == "initializer") {
-		text = "";
-		text += "<h2>ones</h2>"
-		text += "$$ \\begin{pmatrix} 1 & 1 & 1 \\\\ \n 1 & 1 & 1 \\\\ \n 1 & 1 & 1 \\end{pmatrix} $$";
-
-		text += "<h2>zeros</h2>"
-		text += "$$ \\begin{pmatrix} 0 & 0 & 0 \\\\ \n 0 & 0 & 0 \\\\ \n 0 & 0 & 0 \\end{pmatrix} $$";
-	}
-
-	$("#visual_help_tab").html("<center>" + text + "</center>");
-
-	//MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-
-	$("#visualization_tab_label").click();
-	show_tab_label("visual_help_tab_label");
-	$("#visual_help_tab_label").click();
-}
-
-function visual_help (filename) {
-	$("#visual_help_tab").html("<center><img style='width: 80%' src='visualhelp/" + filename + "' /></center>");
-	$("#visualization_tab_label").click();
-	show_tab_label("visual_help_tab_label");
-	$("#visual_help_tab_label").click();
-}
-
 function get_tr_str_for_layer_table (desc, classname, type, data, nr, tr_class, hidden) {
 	var str = "<tr";
 	if(tr_class) {
