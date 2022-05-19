@@ -662,10 +662,12 @@ $GLOBALS['minify'] = 0;
 
 			<div id="maindiv">
 				<div id="losses_popup" style="display: none">
-					<div id="table_div"></div>
+					<div class="popup_body less_transparent_glass_box">
+						<div id="table_div"></div>
 
-					<div class="loss_explanation" id="explanation"></div>
-					<button onclick="close_losses()">Close</button>
+						<div class="loss_explanation" id="explanation"></div>
+						<button onclick="close_losses()">Close</button>
+					</div>
 				</div>
 
 				<div id="sources_popup" style="display: none;">

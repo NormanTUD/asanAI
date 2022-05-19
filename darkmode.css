@@ -218,3 +218,7 @@ a.ui-button:focus {
 .fcnn_desc_text {
 	color: white;
 }
+
+#explanation {
+	filter: invert(0.79);
+}
