@@ -689,9 +689,9 @@ $GLOBALS['minify'] = 0;
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" /></a><br>
-							contact: <button onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br>
-							<button onclick="sources_popup()">Sources and used programs</button>
+							<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" style="width: 200px" /></a><br><br>
+							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
+							<button style="width: 200px" onclick="sources_popup()">Sources and used programs</button>
 						</div>
 						<div class="ribbon-group-title">Imprint</div>
 					</div>
