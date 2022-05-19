@@ -3935,3 +3935,79 @@ function summary_to_table (t) {
 	table += "</table>\n";
 	return "<center>" + table + "</center>";
 }
+
+function plotly_show_loss_graph (name, fn) {
+	tf.tidy(() => {
+		var y_true_table = [];
+		$("." + name + "_data_table_y_true").each((i, x) => {
+			y_true_table[i] = [i, parseFloat($(x).val())]
+		});
+
+		log(y_true_table);
+
+		var y_pred_table = [];
+		$("." + name + "_data_table_y_pred").each((i, x) => {
+			y_pred_table[i] = [i, parseFloat($(x).val())]
+		});
+
+		log(y_pred_table);
+
+		var y_true = tf.tensor2d(y_true_table);
+		var y_pred = tf.tensor2d(y_pred_table);
+
+		var loss = fn(y_true, y_pred);
+
+		var trace1 = {
+			x: y_true.arraySync().map(x => x[0]),
+			y: y_true.arraySync().map(x => x[1]),
+			mode: 'markers',
+			type: 'scatter',
+			name: "Ground Thruth"
+		};
+
+		var trace2 = {
+			x: y_pred.arraySync().map(x => x[0]),
+			y: y_pred.arraySync().map(x => x[1]),
+			mode: 'markers',
+			type: 'scatter',
+			name: "Prediction"
+		};
+
+		var trace3 = {
+			x: y_pred.arraySync().map(x => x[0]),
+			y: loss.arraySync(),
+			mode: 'markers',
+			type: 'scatter',
+			name: name
+		};
+
+		var data = [trace1, trace2, trace3];
+
+		Plotly.newPlot(name + '_explanation', data);
+	});
+}
+
+function create_plotly_table (name, fn_name, standard_data) {
+	var str = `<table id="${name}_data_table">` +
+	`	<tr>` +
+	`		<th>Y true</th>` +
+	`		<th>Y pred</th>` +
+	`		<th>Delete this row</th>` +
+	`	</tr>`;
+
+	for (var i = 0; i < standard_data.length; i++) {
+		str += `	<tr>` +
+			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_true" value="${standard_data[i][0]}" /></td>` +
+			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_pred" value="${standard_data[i][1]}" /></td>` +
+			`		<td>` +
+			`			<button onclick="$(this).parent().parent().remove()">Delete this row</button>` +
+			`		</td>` +
+			`	</tr>`;
+	}
+	
+	str += `</table>`;
+
+	$("#" + name + "_table_div").html(str);
+
+	write_descriptions();
+}

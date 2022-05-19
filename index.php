@@ -116,6 +116,8 @@ $GLOBALS['minify'] = 0;
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
+		<?php minify_js("plotly-latest.min.js"); ?>
+
 		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
@@ -659,6 +661,30 @@ $GLOBALS['minify'] = 0;
 			</div>
 
 			<div id="maindiv">
+				<div id="losses_popup">
+					<table border=1>
+						<tr>
+							<th>Loss name</th>
+							<th>Use case</th>
+							<th>Example</th>
+						</tr>
+						<tr>
+							<td>Mean Absolute Error</td>
+							<td>Regression where outliers don't play a big role.</td>
+							<td>
+								<div id="mae_table_div"></div>
+
+								<div class="loss_explanation" id="mae_explanation"></div>
+
+								<script>
+
+									create_plotly_table("mae", "tf.metrics.meanSquaredError", [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01]]);
+									plotly_show_loss_graph("mae", tf.metrics.meanSquaredError);
+								</script>
+							</td>
+						</tr>
+					</table>
+				</div>
 
 				<div id="sources_popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
