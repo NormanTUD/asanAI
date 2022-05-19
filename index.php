@@ -671,7 +671,7 @@ $GLOBALS['minify'] = 0;
 					</table>
 
 					<script>
-						add_loss_function_to_plotly_visualizer("mae", "Mean Absolute Error", "Regression where outliers don't play a big role.", "tf.metrics.meanSquaredError");
+						add_loss_function_to_plotly_visualizer("mae", "Mean Absolute Error", "Regression where outliers don't play a big role.", "tf.metrics.meanAbsoluteError");
 					</script>
 				</div>
 

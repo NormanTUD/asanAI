@@ -3943,14 +3943,10 @@ function plotly_show_loss_graph (name, fn) {
 			y_true_table[i] = [i, parseFloat($(x).val())]
 		});
 
-		log(y_true_table);
-
 		var y_pred_table = [];
 		$("." + name + "_data_table_y_pred").each((i, x) => {
 			y_pred_table[i] = [i, parseFloat($(x).val())]
 		});
-
-		log(y_pred_table);
 
 		var y_true = tf.tensor2d(y_true_table);
 		var y_pred = tf.tensor2d(y_pred_table);
@@ -3989,6 +3985,31 @@ function plotly_show_loss_graph (name, fn) {
 	write_descriptions();
 }
 
+function add_row_to_plotly_loss (name, fn_name) {
+	$('#' + name + '_data_table tbody tr:last').clone().insertAfter('#' + name + '_data_table tbody tr:last');
+
+	eval(`plotly_show_loss_graph('${name}', ${fn_name})`);
+
+	if($($($($("#" + name + "_table_div").children()[0])[0]).children()[0]).children().length > 3) {
+		$(".delete_row_" + name).prop("disabled", false);
+	} else {
+		$(".delete_row_" + name).prop("disabled", true);
+	}
+
+	write_descriptions();
+}
+
+function remove_plotly_table_element (item, name, fn) {
+	var item_parent_parent = $(item).parent().parent();
+	if(item_parent_parent.parent().children().length <= 4) {
+		$(".delete_row_" + name).prop("disabled", true);
+	} else {
+		$(".delete_row_" + name).prop("disabled", false);
+	}
+	item_parent_parent.remove();
+	plotly_show_loss_graph(name, fn);
+}
+
 function create_plotly_table (name, fn_name, standard_data) {
 	var str = `<table id="${name}_data_table" border=1>` +
 	`	<tr>` +
@@ -3997,7 +4018,7 @@ function create_plotly_table (name, fn_name, standard_data) {
 	`		<th>Delete this row</th>` +
 	`	</tr>` +
 	`	<tr>` +
-	`		<td colspan=3><button onclick="$('#${name}_data_table tbody tr:last').clone().insertAfter('#${name}_data_table tbody tr:last');plotly_show_loss_graph('${name}', ${fn_name}); write_descriptions()">Add new data</button></td>` +
+	`		<td colspan=3><button onclick="add_row_to_plotly_loss('${name}', '${fn_name}')">Add new data</button></td>` +
 	`	</tr>`;
 
 	for (var i = 0; i < standard_data.length; i++) {
@@ -4005,7 +4026,7 @@ function create_plotly_table (name, fn_name, standard_data) {
 			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_true" value="${standard_data[i][0]}" /></td>` +
 			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_pred" value="${standard_data[i][1]}" /></td>` +
 			`		<td>` +
-			`			<button onclick="$(this).parent().parent().remove();plotly_show_loss_graph('${name}', ${fn_name})">Delete this row</button>` +
+			`			<button class='delete_row_${name}' onclick="remove_plotly_table_element(this, '${name}', ${fn_name})">Delete this row</button>` +
 			`		</td>` +
 			`	</tr>`;
 	}
