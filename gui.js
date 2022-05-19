@@ -4049,7 +4049,7 @@ function create_plotly_table () {
 	`	<tr>` +
 	`		<th>Y true</th>` +
 	`		<th>Y pred</th>` +
-	`		<th>Delete this row</th>` +
+	`		<th>Delete</th>` +
 	`	</tr>` +
 	`	<tr>` +
 	`		<td colspan=3><button onclick="add_row_to_plotly_loss()">Add new data</button></td>` +
@@ -4060,7 +4060,7 @@ function create_plotly_table () {
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[i][0]}" /></td>` +
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[i][1]}" /></td>` +
 			`		<td>` +
-			`			<button class='delete_row' onclick="remove_plotly_table_element(this)">Delete this row</button>` +
+			`			<button class='delete_row' onclick="remove_plotly_table_element(this)">&#10060;</button>` +
 			`		</td>` +
 			`	</tr>`;
 	}
