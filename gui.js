@@ -2740,6 +2740,14 @@ function sources_popup() {
 	openPopup("sources_popup");
 }
 
+function losses_popup () {
+	openPopup("losses_popup");
+}
+
+function close_losses() {
+	closePopup("losses_popup");
+}
+
 function open_save_dialog () {
 	openPopup("save_dialog");
 }

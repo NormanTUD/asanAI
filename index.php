@@ -201,7 +201,7 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-toolbar" style="width: 220px">
 							<table>
 								<tr>
-									<td>Loss:</td>
+									<td>Loss<sup onclick="losses_popup()">?</sup>:</td>
 									<td style="width: 140px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
 											<option value="meanSquaredError">MeanSquaredError</option>
@@ -661,7 +661,7 @@ $GLOBALS['minify'] = 0;
 			</div>
 
 			<div id="maindiv">
-				<div id="losses_popup">
+				<div id="losses_popup" style="display: none">
 					<table id="losses_visualizations" border=1>
 						<tr>
 							<th>Loss name</th>
@@ -676,6 +676,7 @@ $GLOBALS['minify'] = 0;
 						add_loss_function_to_plotly_visualizer("mse", "Mean Squared Error", "Regression on normally distributed data where large errors are quadratically more penalized.", "tf.metrics.meanSquaredError");
 
 					</script>
+					<button onclick="close_losses()">Close</button>
 				</div>
 
 				<div id="sources_popup" style="display: none;">
