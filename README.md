@@ -26,11 +26,10 @@ This is a very early alpha.
 
 # Installation
 
-## Apache2 + PHP
+## Apache2 + PHP + MongoDB + MySQL
 
-Nothing more is needed. TensorFlow.js does not need any server-Backend because it runs fully in
-the browser. The only thing PHP is needed for is to download the datasets for the default networks
-offers. Everything else is just HTML/CSS/JS.
+A MySQL instance is only needed for the login functionality. MongoDB will be used for saving
+models. Apache and PHP serve the JS-files. All calculations are done within the browser.
 
 # Standing on the shoulders of giants
 

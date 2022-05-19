@@ -142,7 +142,7 @@
 		foreach(preg_split("/((\r?\n)|(\r\n?))/", $markdown) as $line){
 			if(!preg_match("/^\s*$/", $line)) {
 				if(preg_match("/^\s*-\s*\[(.*?)\]\((.*?)\)\s*$/", $line, $matches)) {
-					$str .= "<li><a class='sources_popup_link' href='".$matches[2]."'>".$matches[1]."</a></li>\n";
+					$str .= "<li><a target='_blank' class='sources_popup_link' href='".$matches[2]."'>".$matches[1]."</a></li>\n";
 				}
 			}
 		}
