@@ -576,8 +576,8 @@ function add_recurrent_constraint_option (type, nr) {
 }
 
 function add_dtype_option (type, nr) {
-return;
-	return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr, null, 1);
+	return;
+	//return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr, null, 1);
 }
 
 function add_bias_constraint_option (type, nr) {
