@@ -3904,7 +3904,6 @@ function check_number_values () {
 	});
 }
 
-
 function summary_to_table (t) {
 	var lines = t.split("\n");
 
@@ -3949,22 +3948,20 @@ function summary_to_table (t) {
 	return "<center>" + table + "</center>";
 }
 
-function plotly_show_loss_graph (name, fn) {
+function plotly_show_loss_graph () {
 	tf.tidy(() => {
 		var y_true_table = [];
-		$("." + name + "_data_table_y_true").each((i, x) => {
+		$(".data_table_y_true").each((i, x) => {
 			y_true_table[i] = [i, parseFloat($(x).val())]
 		});
 
 		var y_pred_table = [];
-		$("." + name + "_data_table_y_pred").each((i, x) => {
+		$(".data_table_y_pred").each((i, x) => {
 			y_pred_table[i] = [i, parseFloat($(x).val())]
 		});
 
 		var y_true = tf.tensor2d(y_true_table);
 		var y_pred = tf.tensor2d(y_pred_table);
-
-		var loss = fn(y_true, y_pred);
 
 		var trace1 = {
 			x: y_true.arraySync().map(x => x[0]),
@@ -3982,89 +3979,89 @@ function plotly_show_loss_graph (name, fn) {
 			name: "Prediction"
 		};
 
-		var trace3 = {
-			x: y_pred.arraySync().map(x => x[0]),
-			y: loss.arraySync(),
-			mode: 'markers',
-			type: 'scatter',
-			name: name
-		};
+		var plot_data = [trace1, trace2];
 
-		var data = [trace1, trace2, trace3];
+		var data = [
+			{"name": "mae", "fn": tf.metrics.meanAbsoluteError},
+			{"name": "mse", "fn": tf.metrics.meanSquaredError}
+		];
 
-		Plotly.newPlot(name + '_explanation', data);
+		for (var i = 0; i < data.length; i++) {
+			var fn = data[i]["fn"];
+			var name = data[i]["name"]
+
+			var loss = fn(y_true, y_pred);
+
+			plot_data.push({
+				x: y_pred.arraySync().map(x => x[0]),
+				y: loss.arraySync(),
+				mode: 'markers',
+				type: 'scatter',
+				name: name
+			});
+		}
+
+
+		Plotly.newPlot('explanation', plot_data);
 	});
 
 	write_descriptions();
 }
 
-function add_row_to_plotly_loss (name, fn_name) {
-	$('#' + name + '_data_table tbody tr:last').clone().insertAfter('#' + name + '_data_table tbody tr:last');
+function add_row_to_plotly_loss () {
+	$('#data_table tbody tr:last').clone().insertAfter('#data_table tbody tr:last');
 
-	eval(`plotly_show_loss_graph('${name}', ${fn_name})`);
+	eval(`plotly_show_loss_graph()`);
 
-	if($($($($("#" + name + "_table_div").children()[0])[0]).children()[0]).children().length > 3) {
-		$(".delete_row_" + name).prop("disabled", false);
+	if($($($($("#table_div").children()[0])[0]).children()[0]).children().length > 3) {
+		$(".delete_row").prop("disabled", false);
 	} else {
-		$(".delete_row_" + name).prop("disabled", true);
+		$(".delete_row").prop("disabled", true);
 	}
 
 	write_descriptions();
 }
 
-function remove_plotly_table_element (item, name, fn) {
+function remove_plotly_table_element (item) {
 	var item_parent_parent = $(item).parent().parent();
 	if(item_parent_parent.parent().children().length <= 4) {
-		$(".delete_row_" + name).prop("disabled", true);
+		$(".delete_row").prop("disabled", true);
 	} else {
-		$(".delete_row_" + name).prop("disabled", false);
+		$(".delete_row").prop("disabled", false);
 	}
 	item_parent_parent.remove();
-	plotly_show_loss_graph(name, fn);
+	plotly_show_loss_graph();
 }
 
-function create_plotly_table (name, fn_name, standard_data) {
-	var str = `<table id="${name}_data_table" border=1>` +
+function create_plotly_table () {
+	var str = `<table id="data_table" border=1>` +
 	`	<tr>` +
 	`		<th>Y true</th>` +
 	`		<th>Y pred</th>` +
 	`		<th>Delete this row</th>` +
 	`	</tr>` +
 	`	<tr>` +
-	`		<td colspan=3><button onclick="add_row_to_plotly_loss('${name}', '${fn_name}')">Add new data</button></td>` +
+	`		<td colspan=3><button onclick="add_row_to_plotly_loss()">Add new data</button></td>` +
 	`	</tr>`;
 
-	for (var i = 0; i < standard_data.length; i++) {
+	for (var i = 0; i < example_plotly_data.length; i++) {
 		str += `	<tr>` +
-			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_true" value="${standard_data[i][0]}" /></td>` +
-			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_pred" value="${standard_data[i][1]}" /></td>` +
+			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[i][0]}" /></td>` +
+			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[i][1]}" /></td>` +
 			`		<td>` +
-			`			<button class='delete_row_${name}' onclick="remove_plotly_table_element(this, '${name}', ${fn_name})">Delete this row</button>` +
+			`			<button class='delete_row' onclick="remove_plotly_table_element(this)">Delete this row</button>` +
 			`		</td>` +
 			`	</tr>`;
 	}
 	
 	str += `</table>`;
 
-	$("#" + name + "_table_div").html(str);
+	$("#table_div").html(str);
 
 	write_descriptions();
 }
 
-function add_loss_function_to_plotly_visualizer(shortname, fullname, desc, fn_name) {
-	var str = 
-	`<tr>` +
-	`	<td>${fullname}</td>` +
-	`	<td>${desc}</td>` +
-	`	<td>` +
-	`		<div id="${shortname}_table_div"></div>` +
-	`		<div class="loss_explanation" id="${shortname}_explanation"></div>` +
-	`		<script>` +
-	`			create_plotly_table("${shortname}", "${fn_name}", example_plotly_data);` +
-	`			plotly_show_loss_graph("${shortname}", ${fn_name});` +
-	`		</script>` +
-	`	</td>` +
-	`</tr>`;
-
-	$('#losses_visualizations>tbody').after(str);
+function add_loss_functions_to_plotly_visualizer(data) {
+	create_plotly_table();
+	plotly_show_loss_graph();	
 }
