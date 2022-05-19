@@ -3959,5 +3959,5 @@ function summary_to_table (t) {
 	}
 
 	table += "</table>\n";
-	return table;
+	return "<center>" + table + "</center>";
 }
