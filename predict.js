@@ -91,6 +91,7 @@ let predict_demo = async function (item, nr) {
 		$("#prediction").hide();
 		$("#predict_error").show();
 		$("#predict_error").html(e);
+		$("#example_predictions").html("");
 	}
 
 	hide_unused_layer_visualization_headers();
