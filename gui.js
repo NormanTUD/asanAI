@@ -3985,14 +3985,19 @@ function plotly_show_loss_graph (name, fn) {
 
 		Plotly.newPlot(name + '_explanation', data);
 	});
+
+	write_descriptions();
 }
 
 function create_plotly_table (name, fn_name, standard_data) {
-	var str = `<table id="${name}_data_table">` +
+	var str = `<table id="${name}_data_table" border=1>` +
 	`	<tr>` +
 	`		<th>Y true</th>` +
 	`		<th>Y pred</th>` +
 	`		<th>Delete this row</th>` +
+	`	</tr>` +
+	`	<tr>` +
+	`		<td colspan=3><button onclick="$('#${name}_data_table tbody tr:last').clone().insertAfter('#${name}_data_table tbody tr:last');plotly_show_loss_graph('${name}', ${fn_name}); write_descriptions()">Add new data</button></td>` +
 	`	</tr>`;
 
 	for (var i = 0; i < standard_data.length; i++) {
@@ -4000,7 +4005,7 @@ function create_plotly_table (name, fn_name, standard_data) {
 			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_true" value="${standard_data[i][0]}" /></td>` +
 			`		<td><input onchange="plotly_show_loss_graph('${name}', ${fn_name})" type="number" class="${name}_data_table_y_pred" value="${standard_data[i][1]}" /></td>` +
 			`		<td>` +
-			`			<button onclick="$(this).parent().parent().remove()">Delete this row</button>` +
+			`			<button onclick="$(this).parent().parent().remove();plotly_show_loss_graph('${name}', ${fn_name})">Delete this row</button>` +
 			`		</td>` +
 			`	</tr>`;
 	}
