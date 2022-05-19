@@ -169,7 +169,7 @@ function FCNN() {
 		text.exit().remove();
 		text = text.enter()
 			.append("text")
-			.attr("class", "text")
+			.attr("class", "text fcnn_desc_text")
 			.attr("dy", ".35em")
 			.style("font-size", nominal_text_size+"px")
 			.merge(text)

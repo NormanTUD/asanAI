@@ -1507,7 +1507,7 @@ function reset_summary () {
 
 function write_to_summary (val) {
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-	$("#summary").html("<pre>" + val + "</pre>");
+	$("#summary").html(summary_to_table(val));
 }
 
 function set_optimizer (val) {
@@ -3915,4 +3915,49 @@ function check_number_values () {
 				}
 			}
 	});
+}
+
+
+function summary_to_table (t) {
+	var lines = t.split("\n");
+
+	var new_array = [];
+
+	var colspan_nr = 0;
+
+	for (var i = 0; i < lines.length; i++) {
+		var line = lines[i];
+
+		if(line.match(/^=+$/)) {
+		} else if (line.match(/\s{2,}/)) {
+			var splitted = line.split(/\s{2,}/).filter(n => n);
+			for (var j = 0; j < splitted.length; j++) {
+				if(splitted[j].startsWith("[")) {
+					splitted[j] = "<pre>" + splitted[j] + "</pre>";
+				}
+			}
+			new_array.push(splitted);
+			if(splitted.length > colspan_nr) {
+				colspan_nr = splitted.length;
+			}
+		} else if(!line.match(/^_+$/) && line) {
+			new_array.push(line);
+		}
+	}
+
+	var table = "<table border=1>\n";
+	for (var i = 0; i < new_array.length; i++) {
+		var d_or_h = "d";
+		if(i == 0) {
+			d_or_h = "h";
+		}
+		if(typeof(new_array[i]) == "object") {
+			table += "<tr><t" + d_or_h +">" + new_array[i].join("</t" + d_or_h +"><t" + d_or_h +">") + "</t" + d_or_h +"></tr>\n"
+		} else {
+			table += "<tr><td colspan=" + colspan_nr + ">" + new_array[i] + "</td></tr>\n";
+		}
+	}
+
+	table += "</table>\n";
+	return table;
 }

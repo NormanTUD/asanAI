@@ -214,3 +214,7 @@ a.ui-button:focus {
 .sources_popup_link {
 	filter: invert(1);
 }
+
+.fcnn_desc_text {
+	color: white;
+}
