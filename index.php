@@ -7,11 +7,16 @@
 		$darkmode = !!$_COOKIE["darkmode"];
 	}
 
+	$cookie_data = [
+		'secure' => true,
+		'samesite' => 'None'
+	];
+
 	if(array_key_exists("darkmode", $_GET)) {
-		setcookie("darkmode", 1);
+		setcookie("darkmode", 1, $cookie_data);
 		$darkmode = 1;
 	} else if(array_key_exists("lightmode", $_GET)) {
-		setcookie("darkmode", 0);
+		setcookie("darkmode", 0, $cookie_data);
 		$darkmode = 0;
 	}
 ?>
