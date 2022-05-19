@@ -937,3 +937,5 @@ var _cached_json = {};
 var stop_downloading_data = false;
 
 var no_update_math = false;
+
+var example_plotly_data = [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01]];

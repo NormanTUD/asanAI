@@ -4016,3 +4016,21 @@ function create_plotly_table (name, fn_name, standard_data) {
 
 	write_descriptions();
 }
+
+function add_loss_function_to_plotly_visualizer(shortname, fullname, desc, fn_name) {
+	var str = 
+	`<tr>` +
+	`	<td>${fullname}</td>` +
+	`	<td>${desc}</td>` +
+	`	<td>` +
+	`		<div id="${shortname}_table_div"></div>` +
+	`		<div class="loss_explanation" id="${shortname}_explanation"></div>` +
+	`		<script>` +
+	`			create_plotly_table("${shortname}", "tf.metrics.meanSquaredError", example_plotly_data);` +
+	`			plotly_show_loss_graph("${shortname}", ${fn_name});` +
+	`		</script>` +
+	`	</td>` +
+	`</tr>`;
+
+	$('#losses_visualizations tr:last').after(str);
+}

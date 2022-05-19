@@ -662,28 +662,17 @@ $GLOBALS['minify'] = 0;
 
 			<div id="maindiv">
 				<div id="losses_popup">
-					<table border=1>
+					<table id="losses_visualizations" border=1>
 						<tr>
 							<th>Loss name</th>
 							<th>Use case</th>
 							<th>Example</th>
 						</tr>
-						<tr>
-							<td>Mean Absolute Error</td>
-							<td>Regression where outliers don't play a big role.</td>
-							<td>
-								<div id="mae_table_div"></div>
-
-								<div class="loss_explanation" id="mae_explanation"></div>
-
-								<script>
-
-									create_plotly_table("mae", "tf.metrics.meanSquaredError", [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01]]);
-									plotly_show_loss_graph("mae", tf.metrics.meanSquaredError);
-								</script>
-							</td>
-						</tr>
 					</table>
+
+					<script>
+						add_loss_function_to_plotly_visualizer("mae", "Mean Absolute Error", "Regression where outliers don't play a big role.", "tf.metrics.meanSquaredError");
+					</script>
 				</div>
 
 				<div id="sources_popup" style="display: none;">
