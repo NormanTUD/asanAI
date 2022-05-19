@@ -171,6 +171,14 @@ function get_fit_data () {
 		document.title = original_title;
 	}
 
+	if($("#enable_early_stopping").is(":checked")) {
+		callbacks["earlyStopping"] = tf.callbacks.earlyStopping({
+			monitor: $("#what_to_monitor_early_stopping").val(),
+			minDelta: parseFloat($("#min_delta_early_stopping").val()),
+			patience: parseInt($("#patience_early_stopping").val()),
+		});
+	}
+
 	//callbacks["onBatchEnd"] = async function () {
 	//}
 
@@ -299,7 +307,10 @@ async function run_neural_network () {
 
 		try {
 			add_layer_debuggers();
-			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], get_fit_data());
+
+			var fit_data = get_fit_data();
+
+			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */

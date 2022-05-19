@@ -393,6 +393,45 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-group-title">Set options for all</div>
 					</div>
 
+					<!--
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Options regarding Early Stopping.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td>Enable Early Stopping?</td>
+									<td>
+										<input type="checkbox" value=1 id="enable_early_stopping" />
+									</td>
+								</tr>
+								<tr>
+									<td>What to monitor?</td>
+									<td>
+										<select id="what_to_monitor_early_stopping">
+											<option value="val_loss">val_loss</option>
+											<option value="val_acc">val_acc</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>minDelta</td>
+									<td>
+										<input style="width: 60px" type="number" value=0.1 min=0 id="min_delta_early_stopping" />
+									</td>
+								</tr>
+								<tr>
+									<td>Patience?</td>
+									<td>
+										<input style="width: 60px" type="number" value=1 min=0 step=1 id="patience_early_stopping" />
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Early Stopping</div>
+					</div>
+					-->
+
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
