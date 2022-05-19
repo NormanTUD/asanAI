@@ -317,8 +317,7 @@ var layer_options = {
 	"upSampling2d": {
 		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
 		"options": [
-			"trainable", "size", "interpolation",
-			"kernel_regularizer", "bias_regularizer", "dtype"
+			"trainable", "size", "interpolation", "dtype"
 		],
 		"category": "Convolutional"
 	},
