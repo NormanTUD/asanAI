@@ -3983,7 +3983,9 @@ function plotly_show_loss_graph () {
 
 		var data = [
 			{"name": "mae", "fn": tf.metrics.meanAbsoluteError},
-			{"name": "mse", "fn": tf.metrics.meanSquaredError}
+			{"name": "mse", "fn": tf.metrics.meanSquaredError},
+			{"name": "mape", "fn": tf.metrics.MAPE},
+			{"name": "precision", "fn": tf.metrics.precision},
 		];
 
 		for (var i = 0; i < data.length; i++) {
