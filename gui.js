@@ -576,6 +576,7 @@ function add_recurrent_constraint_option (type, nr) {
 }
 
 function add_dtype_option (type, nr) {
+return;
 	return get_tr_str_for_layer_table("DType", "dtype", "select", dtypes, nr, null, 1);
 }
 
@@ -1365,7 +1366,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	await save_current_status();
 
-	show_dtype_only_first_layer();
+	//show_dtype_only_first_layer();
 
 	enable_start_training_custom_tensors();
 
