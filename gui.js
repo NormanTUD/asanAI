@@ -2756,7 +2756,12 @@ function openPopup(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
 	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
-	el.style.display = 'block';
+
+	if($(el).css("display") == "none") {
+		el.style.display = 'block';
+	} else {
+		el.style.display = 'none';
+	}
 	write_descriptions();
 }
 
