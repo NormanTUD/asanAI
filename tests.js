@@ -48,7 +48,7 @@ function test_equal (name, is, should_be) {
 		//console.log("%c" + name + ": OK", "background: green; color: white");
 		return true;
 	} else {
-		console.log("%c" + name + ": ERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be), "background: red; color: white");
+		console.log("%c" + name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be), "background: red; color: white");
 		num_tests_failed++;
 		return false;
 	}
@@ -145,7 +145,7 @@ function run_tests () {
 
 	test_equal("array_to_fixed([1.555,2.555,3.555], 2)", JSON.stringify(array_to_fixed([1.555,2.555,3.555], 2)), "[1.55,2.56,3.56]");
 
-	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"Feature ex&shy;traction\":[0,1,2,3]},{\"Flatten\":[4]},{\"Pre&shy;vent Over&shy;fit&shy;ting\":[5]},{\"Classi&shy;fication\":[6,7]}]");
+	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"Feature ex&shy;traction\":[0]},{\"Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion\":[1]},{\"Feature ex&shy;traction\":[2]},{\"Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion\":[3]},{\"Flatten\":[4]},{\"Pre&shy;vent Over&shy;fit&shy;ting\":[5]},{\"Classi&shy;fication\":[6,7]}]");
 
 	test_equal('decille([1,2,3,4,5,6,7,8,9,10, 11], 1)', decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
 
