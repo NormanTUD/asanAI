@@ -3982,10 +3982,14 @@ function plotly_show_loss_graph () {
 		var plot_data = [trace1, trace2];
 
 		var data = [
-			{"name": "mae", "fn": tf.metrics.meanAbsoluteError},
-			{"name": "mse", "fn": tf.metrics.meanSquaredError},
-			{"name": "mape", "fn": tf.metrics.MAPE},
+			{"name": "meanAbsoluteError", "fn": tf.metrics.meanAbsoluteError},
+			{"name": "meanSquaredError", "fn": tf.metrics.meanSquaredError},
+			{"name": "meanAbsolutePercentageError", "fn": tf.metrics.MAPE},
 			{"name": "precision", "fn": tf.metrics.precision},
+			{"name": "recall", "fn": tf.metrics.recall},
+			{"name": "cosineProximity", "fn": tf.metrics.cosineProximity},
+			{"name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy},
+			{"name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy}
 		];
 
 		for (var i = 0; i < data.length; i++) {
