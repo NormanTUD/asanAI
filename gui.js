@@ -4047,11 +4047,11 @@ function add_loss_function_to_plotly_visualizer(shortname, fullname, desc, fn_na
 	`		<div id="${shortname}_table_div"></div>` +
 	`		<div class="loss_explanation" id="${shortname}_explanation"></div>` +
 	`		<script>` +
-	`			create_plotly_table("${shortname}", "tf.metrics.meanSquaredError", example_plotly_data);` +
+	`			create_plotly_table("${shortname}", "${fn_name}", example_plotly_data);` +
 	`			plotly_show_loss_graph("${shortname}", ${fn_name});` +
 	`		</script>` +
 	`	</td>` +
 	`</tr>`;
 
-	$('#losses_visualizations tr:last').after(str);
+	$('#losses_visualizations>tbody').after(str);
 }
