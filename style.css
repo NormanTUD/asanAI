@@ -355,5 +355,5 @@ button:disabled:hover {
 }
 
 .loss_explanation {
-	min-width: 500px;
+	width: 100%;
 }

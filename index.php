@@ -665,10 +665,6 @@ $GLOBALS['minify'] = 0;
 					<div id="table_div"></div>
 
 					<div class="loss_explanation" id="explanation"></div>
-
-					<script>
-						add_loss_functions_to_plotly_visualizer();
-					</script>
 					<button onclick="close_losses()">Close</button>
 				</div>
 

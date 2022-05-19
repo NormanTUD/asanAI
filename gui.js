@@ -2741,6 +2741,9 @@ function sources_popup() {
 }
 
 function losses_popup () {
+	if($("#explanation").children().length == 0) {
+		add_loss_functions_to_plotly_visualizer();
+	}
 	openPopup("losses_popup");
 }
 
@@ -3989,7 +3992,9 @@ function plotly_show_loss_graph () {
 			{"name": "recall", "fn": tf.metrics.recall},
 			{"name": "cosineProximity", "fn": tf.metrics.cosineProximity},
 			{"name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy},
-			{"name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy}
+			{"name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy},
+			{"name": "categoricalCrossentropy", "fn": tf.metrics.categoricalCrossentropy},
+			{"name": "categoricalAccuracy", "fn": tf.metrics.categoricalAccuracy},
 		];
 
 		for (var i = 0; i < data.length; i++) {
