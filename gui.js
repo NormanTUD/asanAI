@@ -4006,7 +4006,7 @@ function plotly_show_loss_graph () {
 			plot_data.push({
 				x: y_pred.arraySync().map(x => x[0]),
 				y: loss.arraySync(),
-				mode: 'markers',
+				mode: 'lines',
 				type: 'scatter',
 				name: name
 			});
@@ -4022,7 +4022,7 @@ function plotly_show_loss_graph () {
 function add_row_to_plotly_loss () {
 	$('#data_table tbody tr:last').clone().insertAfter('#data_table tbody tr:last');
 
-	eval(`plotly_show_loss_graph()`);
+	plotly_show_loss_graph();
 
 	if($($($($("#table_div").children()[0])[0]).children()[0]).children().length > 3) {
 		$(".delete_row").prop("disabled", false);
