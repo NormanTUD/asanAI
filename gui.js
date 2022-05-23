@@ -2736,6 +2736,30 @@ function debug_undo_redo_stack () {
 	log(Object.keys(status_saves));
 }
 
+function show_register_button(elem) {
+	if (elem.checked) {
+		document.getElementById("register_button").style = "display: block";
+	} else {
+		document.getElementById("register_button").style = "display: none";
+	}
+}
+
+function register() {
+	var email = document.getElementById("register_email").value;
+	var username = document.getElementById("register_username").value;
+	var password = document.getElementById("register_password").value;
+	$.ajax({
+		url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
+		success: function (data) {
+			log(data)
+			document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+		},
+		error: function (a, b, c) {
+			log("error" + a + b + c)
+		}
+	});
+}
+	
 function sources_popup() {
 	openPopup("sources_popup");
 }
