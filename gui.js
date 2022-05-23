@@ -2749,6 +2749,8 @@ function register() {
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
 	if (email.includes("@")) {
+	$("#register_form").submit(function(e) {
+		e.preventDefault();
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
@@ -2758,6 +2760,8 @@ function register() {
 				log("error" + a + b + c)
 			}
 		});
+	});
+	
 	} else {
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
