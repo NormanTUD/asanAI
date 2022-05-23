@@ -2748,7 +2748,7 @@ function register() {
 	var email = document.getElementById("register_email").value;
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
-	if (check_password_length(password) && email.includes("@")) {
+	if (email.includes("@") && $GLOBALS["use_db"] != 0) {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
@@ -2759,15 +2759,8 @@ function register() {
 			}
 		});
 	} else {
-		document.getElementById("register_error_msg").innerHTML = "Password must be 8 characters long.\nEmail is not valid.";
+		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
-}
-
-function check_password_length(password) {
-	if (password.length > 7) {
-		return true;
-	}
-	return false;
 }
 
 function login() {
@@ -2801,6 +2794,7 @@ function close_losses() {
 
 function open_register_dialog() {
 	openPopup("register_dialog");
+	write_descriptions();
 }
 
 function open_save_dialog() {

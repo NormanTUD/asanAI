@@ -775,7 +775,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 								<tr>
 									<td>Password</td>
-									<td><input id="register_password"></td>
+									<td><input type="password" id="register_password" minlength="8" required></td>
 								</tr>
 								<tr>
 									<td colspan=2>Do you agree with our terms of license? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
@@ -796,7 +796,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 								<tr>
 									<td>Password</td>
-									<td><input id="login_password"></td>
+									<td><input type="password" id="login_password"></td>
 								</tr>
 								<tr>
 									<td><button onclick="login()">Login</button></td>
