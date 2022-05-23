@@ -1,12 +1,17 @@
 <?php
-    //einloggen
+    //login in existing account
     include('functions.php');
 
     $status = ["status" => "error", "msg" => "Missing information"];
     if(array_key_exists("username", $_GET) && array_key_exists("pw", $_GET)) {
-        if(get_single_value_from_query('select username from tfd_db.login where username ='.esc($_GET["username"])) && get_single_value_from_query('select email from tfd_db.login where email ='.esc($_GET["email"]))) {
-            insert_session_id($_GET["username"], $_GET["days"]);
-            $status = ["status" => "ok", "msg" => "Login succesful", "session_id" => get_session_id($_GET["username"]), "time" => get_expiry_date($_GET["username"])];
+        if(get_single_value_from_query('select username from tfd_db.login where username ='.esc($_GET["username"])) && get_single_value_from_query('select pw from tfd_db.login where username ='.esc($_GET["username"]))) {
+            
+            $hash_password = esc(hash("sha256", $_GET["pw"].get_single_value_from_query('select salt from login where username = '.esc($_GET["username"]))));
+            //esc(hash("sha256", $_GET["pw"].$salt))
+            if($hash_password == esc(get_single_value_from_query('select pw from login where username = '.esc($_GET["username"]).''))) {
+                $status = ["status" => "ok", "msg" => "Login succesful", "session_id" => get_session_id($_GET["username"]), "time" => get_expiry_date($_GET["username"])];
+                insert_session_id($_GET["username"], $_GET["days"]);
+            }
         } else {
             $status = ["status" => "error", "msg" => "Login failed"];
         }

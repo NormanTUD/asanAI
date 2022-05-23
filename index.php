@@ -782,6 +782,9 @@ $GLOBALS['minify'] = 0;
 								<tr>
 									<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
 								</tr>
+								<tr>
+									<span id="register_error_msg"></span>
+								</tr>
 							</table>
 
 							<h1>Login</h1>
@@ -797,6 +800,9 @@ $GLOBALS['minify'] = 0;
 								</tr>
 								<tr>
 									<td><button onclick="login()">Login</button></td>
+								</tr>
+								<tr>
+									<span id="login_error_msg"></span>
 								</tr>
 							</table>
 						</div>
@@ -1016,7 +1022,6 @@ $GLOBALS['minify'] = 0;
 								<!--
 								<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
 									Blue maps are inputs, and cyan maps are outputs<br>
-
 									<center>
 										<h4>No padding, no strides:</h4>
 										<img width=244 src="conv_animations/no_padding_no_strides.gif"><br>
@@ -1032,7 +1037,6 @@ $GLOBALS['minify'] = 0;
 										<img width=244 src="conv_animations/padding_strides.gif"><br>
 										<h4>Padding, strides (odd):</h4>
 										<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
-
 										<h2>Transposed convolution animations</h2><br>
 										<h4>No padding, no strides, transposed:</h4>
 										<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
@@ -1051,14 +1055,12 @@ $GLOBALS['minify'] = 0;
 										<h2>Dilated convolution animations:</h2><br>
 										<img width=244 src="conv_animations/dilation.gif"><br>
 										<h4>No padding, no stride, dilation:</h4>
-
 										<h2>Pooling</h2><br>
 										<h4>MaxPooling, Kernel-Size 3x3:</h4>
 										<img width=600 src="conv_animations/numerical_max_pooling.gif"><br>
 										<h4>AveragePooling, Kernel-Size 3x3:</h4>
 										<img width=600 src="conv_animations/numerical_average_pooling.gif"><br>
 									</center>
-
 									These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
 									<a href="https://github.com/vdumoulin">vdumoulin</a>.
 								</div>
