@@ -1,20 +1,23 @@
 "use strict";
 
 async function get_label_data () {
-	let imageData = await get_image_data(1);
+	if($("#data_origin").val() == "own") {
+	} else {
+		let imageData = await get_image_data(1);
 
-	labels = [];
+		labels = [];
 
-	var category_counter = 0;
-	var keys = [];
+		var category_counter = 0;
+		var keys = [];
 
-	for (let [key, value] of Object.entries(imageData)) {
-		keys.push(key);
-		for (var i = 0; i < imageData[key].length; i++) {
-			var item = imageData[key][i];
+		for (let [key, value] of Object.entries(imageData)) {
+			keys.push(key);
+			for (var i = 0; i < imageData[key].length; i++) {
+				var item = imageData[key][i];
+			}
+			labels[category_counter] = key;
+			category_counter++;
 		}
-		labels[category_counter] = key;
-		category_counter++;
 	}
 }
 
@@ -30,13 +33,12 @@ var loadFile = (function(event) {
 
 		predict(output);
 	};
+
+	$("#output").show();
 });
 
 let predict_demo = async function (item, nr) {
 	tf.engine().startScope();
-	if(!model.isTraining) {
-		enable_everything();
-	}
 
 	try {
 		if(labels.length == 0) {
@@ -71,8 +73,9 @@ let predict_demo = async function (item, nr) {
 
 			var desc = $($(".predict_demo_result")[nr]);
 
+			desc.html("");
 			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i];
+				var label = labels[i % labels.length];
 				var probability = predictions[i];
 				var str = label + ": " + probability + "<br>\n";
 				if(i == max_i) {
@@ -88,10 +91,13 @@ let predict_demo = async function (item, nr) {
 		$("#prediction").hide();
 		$("#predict_error").show();
 		$("#predict_error").html(e);
+		$("#example_predictions").html("");
 	}
 
 	hide_unused_layer_visualization_headers();
 	tf.engine().endScope();
+
+	change_output_and_example_image_size();
 }
 
 function _get_category () {
@@ -106,10 +112,14 @@ function _get_category () {
 	return category;
 }
 
-async function predict (item) {
+async function predict (item, force_category, dont_write_to_predict_tab) {
 	enable_everything();
 
-	var category = _get_category();
+	var category = "";
+	if(force_category) {
+		category = force_category;
+	}
+	category = _get_category();
 
 	$("#prediction").show();
 	$("#prediction").html("");
@@ -117,11 +127,7 @@ async function predict (item) {
 	$("#predict_error").html("");
 	var predictions = [];
 
-	/*
-	if(!model) {
-		model = await train_neural_network();
-	}
-	*/
+	var str = "";
 
 	tf.engine().startScope();
 	try {
@@ -130,7 +136,43 @@ async function predict (item) {
 		if(category == "image") {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
 		} else if(["classification", "own"].includes(category)) {
-			predict_data = tf.tensor(eval(item));
+			var data = "";
+			if(item.startsWith("# shape:")) {
+				data = numpy_str_to_tf_tensor(item, 0).arraySync();
+			} else {
+				var original_item = item;
+
+				var regex_space_start = /^\s+/ig;
+				var regex_space_end = /\s+$/ig;
+				var regex_comma = /,?\s+/ig;
+
+				item = item.replaceAll(regex_space_start, '');
+				item = item.replaceAll(regex_space_end, '');
+				item = item.replaceAll(regex_comma, ', ');
+
+				item = item.replaceAll(/\btrue\b/ig, '1');
+				item = item.replaceAll(/\bfalse\b/ig, '0');
+
+				if(!item.startsWith("[")) {
+					item = "[" + item + "]";
+				}
+
+				data = eval(item)
+
+				if(!original_item.startsWith("[[")) {
+					var data_input_shape = await get_shape_from_array(data);
+
+					var input_shape = model.layers[0].input.shape;
+					if(input_shape[0] === null) {
+						var original_input_shape = input_shape;
+						input_shape = remove_empty(input_shape);
+						if(input_shape.length != data_input_shape.length) {
+							data = [data];
+						}
+					}
+				}
+			}
+			predict_data = tf.tensor(data);
 		} else {
 			log("Invalid category for prediction: " + category);
 		}
@@ -149,9 +191,8 @@ async function predict (item) {
 
 		log(predictions);
 
-		if(["classification", "own"].includes(category) && labels.length == 0) {
-			var str = "[" + predictions.join(", ") + "]";
-			$("#prediction").append(str);
+		if(["classification"].includes(category) && labels.length == 0) {
+			str = "[" + predictions.join(", ") + "]";
 		} else {
 			if(predictions.length) {
 				var max_i = 0;
@@ -170,15 +211,19 @@ async function predict (item) {
 				}
 
 				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i];
+					var label = labels[i % labels.length];
 					var probability = predictions[i];
-					var str = label + ": " + probability + "\n";
+					var this_str = label + ": " + probability + "\n";
 					if(i == max_i) {
-						str = "<b>" + str + "</b>";
+						str = str + "<b class='max_prediction'>" + this_str + "</b>";
+					} else {
+						str = str + this_str;
 					}
-					$("#prediction").append(str);
 				}
 			}
+		}
+		if(!dont_write_to_predict_tab) {
+			$("#prediction").append(str);
 		}
 		$("#predict_error").hide();
 		$("#predict_error").html("");
@@ -189,45 +234,55 @@ async function predict (item) {
 		$("#predict_error").html(e);
 	}
 	tf.engine().endScope();
+
+	return str;
 }
 
 function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
-	$(".sehow_when_predicting").show();
+	if(model) {
+		$(".show_when_predicting").show();
 
-	hide_unused_layer_visualization_headers();
+		hide_unused_layer_visualization_headers();
 
-	if(!keep_show_after_training_hidden) {
-		$(".show_after_training").show();
-	}
-
-	$("#example_predictions").html("");
-
-	if($("#data_origin").val() == "default") {
-		if($("#dataset_category").val() == "image") {
-			var full_dir = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "/example/";
-			$.ajax({
-				url: 'traindata/index.php?dataset=' + $("#dataset").val() + '&dataset_category=' + $("#dataset_category").val() + "&examples=1",
-				success: function (x) { 
-					var examples = x["example"];
-					for (var i = 0; i < examples.length; i++) {
-						$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
-					}
-				}
-			});
-		} else if ($("#dataset_category").val() == "classification") {
-			tf.tidy(() => {
-				$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
-				$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
-				$("#example_predictions").append("[1, 0] = " + model.predict(tf.tensor([[1, 0]])).dataSync() + "<br>");
-				$("#example_predictions").append("[1, 1] = " + model.predict(tf.tensor([[1, 1]])).dataSync() + "<br>");
-			});
+		if(!keep_show_after_training_hidden) {
+			$(".show_after_training").show();
 		}
-	}
 
-	if(!dont_go_to_tab) {
-		if($("#jump_to_predict_tab").is(":checked")) {
-			$('a[href="#predict_tab"]').click();
-			hide_annoying_tfjs_vis_overlays();
+		$("#example_predictions").html("");
+
+		if($("#data_origin").val() == "default") {
+			if($("#dataset_category").val() == "image") {
+				var dataset = $("#dataset").val();
+				var dataset_category = $("#dataset_category").val();
+				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
+				$.ajax({
+					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
+					success: function (x) { 
+						if(x) {
+							var examples = x["example"];
+							if(examples) {
+								for (var i = 0; i < examples.length; i++) {
+									$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+								}
+							}
+						}
+					}
+				});
+			} else if ($("#dataset_category").val() == "classification") {
+				tf.tidy(() => {
+					$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
+					$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
+					$("#example_predictions").append("[1, 0] = " + model.predict(tf.tensor([[1, 0]])).dataSync() + "<br>");
+					$("#example_predictions").append("[1, 1] = " + model.predict(tf.tensor([[1, 1]])).dataSync() + "<br>");
+				});
+			}
+		}
+
+		if(!dont_go_to_tab) {
+			if($("#jump_to_predict_tab").is(":checked")) {
+				$('a[href="#predict_tab"]').click();
+				hide_annoying_tfjs_vis_overlays();
+			}
 		}
 	}
 }
@@ -265,7 +320,7 @@ async function predict_webcam () {
 
 	$("#webcam_prediction").html("").show();
 
-	if(["classification", "own"].includes(category) && labels.length == 0) {
+	if(["classification"].includes(category) && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
 		$("#webcam_prediction").append(str);
 	} else {
@@ -286,7 +341,7 @@ async function predict_webcam () {
 			}
 
 			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i];
+				var label = labels[i % labels.length];
 				var probability = predictions[i];
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {
@@ -302,14 +357,19 @@ async function predict_webcam () {
 
 async function show_webcam () {
 	if(_show_webcam()) {
-		$("#webcam").hide().html("");
-		var videoElement = document.createElement('video');
-		videoElement.width = 256;
-		videoElement.height = 256;
-		$("#webcam").show().append(videoElement);
+		$("#show_webcam_button").html("Stop webcam");
+		if(cam) {
+			stop_webcam();
+		} else {
+			$("#webcam").hide().html("");
+			var videoElement = document.createElement('video');
+			videoElement.width = 256;
+			videoElement.height = 256;
+			$("#webcam").show().append(videoElement);
 
-		$("#webcam").append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
-		cam = await tf.data.webcam(videoElement);
+			$("#webcam").append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
+			cam = await tf.data.webcam(videoElement);
+		}
 	} else {
 		$("#webcam").hide().html("");
 		if(cam) {

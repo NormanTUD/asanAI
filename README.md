@@ -11,22 +11,32 @@ This is a very early alpha.
 
 ![Screenshot](screen0.png "Visualization at the start page")
 
-![Screenshot](screen1.png "Other visualization at the start page")
+![Screenshot](screen1.png "Math visualization of the network")
 
 ![Screenshot](screen2.png "Yet another visualization at the start page")
 
+![Screenshot](screen4.png "Training")
+
+![Screenshot](screen5.png "Predict mode")
+
+![Screenshot](screen3.png "Dark mode")
+
+![Screenshot](screen6.png "Maximally activated neurons")
+
+
 # Installation
 
-## Apache2 + PHP
+## Apache2 + PHP + MongoDB + MySQL
 
-Nothing more is needed. TensorFlow.js does not need any server-Backend because it runs fully in
-the browser. The only thing PHP is needed for is to download the datasets for the default networks
-offers. Everything else is just HTML/CSS/JS.
+A MySQL instance is only needed for the login functionality. MongoDB will be used for saving
+models. Apache and PHP serve the JS-files. All calculations are done within the browser.
 
 # Standing on the shoulders of giants
 
 I use many different libraries to achieve this. This is a list of all the modules that I used
 in creating this program:
+
+[comment]: <> (BeginSources)
 
 - [TensorFlow.js](https://www.tensorflow.org/js)
 
@@ -46,16 +56,12 @@ in creating this program:
 
 - [Kaggle Cats and Dogs Dataset](https://www.microsoft.com/en-us/download/details.aspx?id=54765)
 
-- The design is inspired by [Microsoft Max](https://web.archive.org/web/20051001063547/http://www.microsoft.com/max/) and [Windows 7](https://docs.microsoft.com/de-de/lifecycle/products/windows-7)
-
 - [TensorFlow.js Examples](https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet)
 
 - [MNIST](http://yann.lecun.com/exdb/mnist/)
 
 - [ChardinJS](https://heelhook.github.io/chardin.js/sequential.html)
 
-- [computer-modern-web-font](https://github.com/dreampulse/computer-modern-web-font)
-
-- [Clippy.js](https://www.smore.com/clippy-js)
-
 - [Minify](https://github.com/matthiasmullie/minify.git)
+
+[comment]: <> (EndSources)

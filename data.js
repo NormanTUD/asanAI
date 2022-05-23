@@ -4,6 +4,10 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 
+	if(!numpy_str.endsWith("\n")) {
+		numpy_str += "\n";
+	}
+
 	var lines = numpy_str.split("\n");
 
 	var tensor_type = $($(".dtype")[0]).val();
@@ -94,6 +98,9 @@ async function get_image_data(skip_real_image_download) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	headerdatadebug("get_imageData()");
+	if(!skip_real_image_download) {
+		$("#stop_downloading").show();
+	}
 
 	let json = await (_get_training_data());
 
@@ -132,33 +139,51 @@ async function get_image_data(skip_real_image_download) {
 		var start_time = Date.now();
 		if(started_training) {
 			var percentage = parseInt((i / urls.length) * 100);
-			if(!skip_real_image_download) {
-				percentage_div.html(percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...");
-				if(eta) {
-					percentage_div.html(percentage_div.html() + " ETA: " + eta + "s");
-				}
+			if(!stop_downloading_data) {
+				if(!skip_real_image_download) {
+					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+					document.title = "Loading data " + percentage_text;
+					percentage_div.html(percentage_text);
+					if(eta) {
+						percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+					}
 
-				if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
-					var remaining_items = urls.length - i;
-					var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
+					if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+						var remaining_items = urls.length - i;
+						var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-					eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
-					old_percentage = percentage;
+						eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
+						old_percentage = percentage;
+					}
 				}
-			}
-			var url = urls[i];
-			let tf_data = null;
-			if(!skip_real_image_download) {
-				tf_data = await url_to_tf(url);
-			}
-			if(tf_data !== null || skip_real_image_download) {
-				data[keys[url]].push(tf_data);
+				var url = urls[i];
+				let tf_data = null;
+				if(!skip_real_image_download) {
+					tf_data = await url_to_tf(url);
+				}
+				if(tf_data !== null || skip_real_image_download) {
+					data[keys[url]].push(tf_data);
+				}
 			}
 		}
 		var end_time = Date.now();
 
 		times.push(end_time - start_time);
 	}
+
+	stop_downloading_data = false;
+	$("#stop_downloading").hide();
+
+	if(!skip_real_image_download) {
+		await Swal.fire({
+			title: 'Generating tensors from images...',
+			html: "This may take some time, but your computer is working!",
+			timer: 2000,
+			showConfirmButton: false
+		});
+	}
+
+	document.title = original_title;
 
 	if(!skip_real_image_download) {
 		percentage_div.html("");
@@ -208,22 +233,11 @@ async function get_xs_and_ys () {
 		log("INVALID OPTION " + $("#data_origin").val());
 	}
 
-	/*
-	if($("#jump_to_training_tab").is(":checked")) {
-		$('a[href="#tfvis_tab"]').click();
-		$("#tfvis_tab").children().each(function (a, b) {
-		    if($(b).is(":visible") && b.localName == "ul") {
-			$($(b).children().children()).each(function (c, d) {
-			    if($(d).is(":visible") && d.localName == "a") {
-				$(d).click();
-			    }
-			});
-		    }
-		})
+	var max_number_values = 0;
+	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
+		max_number_values = parseInt($("#max_number_values").val());
 	}
-	*/
 
-	var max_number_values = parseInt($("#max_number_values").val());
 	var loss = $("#loss").val();
 
 	if($("#data_origin").val() == "default") {
@@ -262,18 +276,19 @@ async function get_xs_and_ys () {
 					classes.push(this_category_counter);
 				}
 
-				datadebug(y);
-
 				y = tf.tensor(classes);
-			} else if(["classification", "own"].includes(category)) {
-				var x_string, y_string;
-				if(category == "own") {
-					x_string = x_file;
-					y_string = y_file;
-				} else {
-					x_string = await _get_training_data_from_filename("x.txt");
-					y_string = await _get_training_data_from_filename("y.txt");
+
+				for (let [key, value] of Object.entries(imageData)) {
+					for (var i = 0; i < imageData[key].length; i++) {
+						var item = imageData[key][i];
+						dispose(item);
+					}
 				}
+				imageData = null;
+			} else if(["classification"].includes(category)) {
+				var x_string, y_string;
+				x_string = await _get_training_data_from_filename("x.txt");
+				y_string = await _get_training_data_from_filename("y.txt");
 				x = numpy_str_to_tf_tensor(x_string, max_number_values);
 				y = numpy_str_to_tf_tensor(y_string, max_number_values);
 
@@ -285,16 +300,22 @@ async function get_xs_and_ys () {
 				alert("Unknown dataset category: " + category);
 			}
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
 				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 				headerdatadebug("y After oneHot");
 			}
 			
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
-		//$("#reset_data").show();
 	} else {
 		if($("#data_type").val() == "image") {
+			Swal.fire({
+				title: 'Generating tensors from images...',
+				html: "This may take some time, but your computer is working!",
+				timer: 2000,
+				showConfirmButton: false
+			});
+
 			var category_counter = $(".own_image_label").length;
 			var keys = [];
 			var x = [];
@@ -302,7 +323,7 @@ async function get_xs_and_ys () {
 			var classes = [];
 
 			for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-				var img_elems = $($(".own_images")[label_nr]).children();
+				var img_elems = $($(".own_images")[label_nr]).children().find("img");
 				if(img_elems.length) {
 					var label_val = $($(".own_image_label")[label_nr]).val();
 					keys.push(label_val);
@@ -329,7 +350,7 @@ async function get_xs_and_ys () {
 			x = tf.tensor(x);
 			y = tf.tensor(y).expandDims();
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy") && $("dataset_category").val() != "own") {
+			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
 				try {
 					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 				} catch (e) {
@@ -376,6 +397,7 @@ function url_to_tf (url) {
 				resizeNearestNeighbor([height, width]).
 				toFloat().
 				expandDims();
+			dispose(tf_img);
 
 			if($("#divide_by").val() != 1) {
 				resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
@@ -398,8 +420,8 @@ function determine_input_shape () {
 }
 
 async function _get_training_data() {
-	const data = await $.getJSON("traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val() + "&t=" + Math.floor(Date.now() / 1000));
-	return data;
+	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	return await get_cached_json(url);
 }
 
 
@@ -577,6 +599,8 @@ function get_x_y_from_csv () {
 	var headers_data = get_headers(headers);
 	var x_headers = headers_data["x"];
 	var y_headers = headers_data["y"];
+
+	labels = y_headers;
 
 	var parsed = parse_csv_file(csv);
 

@@ -1,8 +1,13 @@
 "use strict";
 
-function log (msg) {
+function logt(msg) {
 	console.log(msg);
+	console.trace();
+}
+
+function log (msg) {
 	//console.trace();
+	console.log(msg);
 }
 
 function header_error (msg) {
@@ -57,7 +62,7 @@ function add_function_debugger () {
 	for (var i in window) {
 	    if(
 		    i != "assert" &&							// Disable assert output
-		    !["add_function_debugger", "getParamNames", "fix_graph_color", "memory_debugger", "_allow_training", "fix_lenet_width", "allow_training", "allow_training"].includes(i) &&		// exclude debug functions
+		    !["delay", "Swal", "add_function_debugger", "getParamNames", "fix_graph_color", "memory_debugger", "_allow_training", "fix_lenet_width", "allow_training", "allow_training", "get_current_chosen_object_default_weights_string", "get_chosen_dataset", "get_weights_as_string", "show_load_weights", "_show_load_weights", "get_current_chosen_object_default_weights_string", "get_chosen_dataset", "get_weights_shape", "dispose", "get_weights_shape", "get_weights_as_string", "dispose"].includes(i) &&		// exclude debug functions
 		    typeof(window[i]) == "function" &&					// use only functions
 		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
 		    !current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions

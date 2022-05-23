@@ -2,6 +2,7 @@
 	background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff), to(#eaedf1));
 	padding:4px;
 }
+
 .ribbon-group{
 	position:relative;
 	float:left;
@@ -13,6 +14,7 @@
 	-webkit-box-sizing:content-box;
 	box-sizing:content-box;
 }
+
 .ribbon-group-title{
 	position: absolute;
 	left:0;
@@ -21,16 +23,111 @@
 	width:100%;
 	height:14px;
 	line-height:14px;
-	top: 130px;
+	top: 115px;
 }
 
 .ribbon-group .l-btn{
 	float:left;
 }
+
 .ribbon-group-sep{
 	float:left;
 	width:0;
 	height:180px;
 	font-size:0;
 	margin:0 2px;
+}
+
+.ribbon-group-sep-hr {
+	display: none;
+}
+
+html {
+	min-width: 1150px;
+}
+
+@media only screen and (max-width: 800px) {
+	html {
+		min-width: auto;
+	}
+
+	#ribbon {
+		height: 100%;
+		display: none;
+		width: 100%;
+	}
+
+	#ribbon_shower {
+		display: block;
+	}
+
+	.ribbon-group {
+		float: inherit;
+	}
+
+	.ribbon-group-sep {
+		display: none;
+	}
+
+	.ribbon-group-sep-hr {
+		display: block;
+	}
+
+	.ribbon-group-title {
+		display: none;
+	}
+
+	#tablist {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.left_side {
+		float: inherit;
+	}
+
+	.layer_type {
+		width: auto;
+	}
+
+	.layer_setting {
+		min-width: 266px;
+		width: calc(100% - 78px);
+		margin-left: 11px;
+	}
+
+	#layers_container {
+		margin-left: -2px;
+	}
+
+	.left_side {
+		min-width: auto;
+	}
+
+	.layer_identifier_activation {
+		display: none;
+	}
+}
+
+@media only screen and (min-width: 800px) {
+	#ribbon_shower {
+		display: none;
+	}
+
+	#ribbon {
+		display: block;
+	}
+
+	.layer_identifier_activation {
+		display: content;
+	}
+}
+
+#ribbon_shower {
+	font-size: 35px;
+}
+
+#graphs_here {
+	padding-left: 10px
 }
