@@ -2748,7 +2748,7 @@ function register() {
 	var email = document.getElementById("register_email").value;
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
-	if (email.includes("@") && $GLOBALS["use_db"] != 0) {
+	if (email.includes("@")) {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
@@ -2761,6 +2761,7 @@ function register() {
 	} else {
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
+	write_descriptions();
 }
 
 function login() {
@@ -2775,6 +2776,7 @@ function login() {
 			log("error" + a + b + c)
 		}
 	});
+	write_descriptions();
 }
 
 function sources_popup() {
@@ -2794,7 +2796,6 @@ function close_losses() {
 
 function open_register_dialog() {
 	openPopup("register_dialog");
-	write_descriptions();
 }
 
 function open_save_dialog() {
