@@ -3989,7 +3989,7 @@ function plotly_show_loss_graph () {
 			{"name": "meanSquaredError", "fn": tf.metrics.meanSquaredError},
 			{"name": "meanAbsolutePercentageError", "fn": tf.metrics.MAPE},
 			{"name": "precision", "fn": tf.metrics.precision},
-			{"name": "recall", "fn": tf.metrics.recall},
+			//{"name": "recall", "fn": tf.metrics.recall},
 			{"name": "cosineProximity", "fn": tf.metrics.cosineProximity},
 			{"name": "binaryCrossentropy", "fn": tf.metrics.binaryCrossentropy},
 			{"name": "binaryAccuracy", "fn": tf.metrics.binaryAccuracy},
