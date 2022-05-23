@@ -6,9 +6,9 @@
 		if($GLOBALS['mysqli']->connect_errno) {
 			throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
 		}
+		$GLOBALS["use_db"] = 1;
 		if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
 			$sql = "CREATE DATABASE tfd_db";
-			$GLOBALS["use_db"] = 1;
 			if (run_query($sql) === TRUE) {
 				mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
 				load_sql_file_get_statements("nachweis.sql");
