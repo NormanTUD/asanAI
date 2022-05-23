@@ -707,7 +707,9 @@
 									<td><input id="register_password"></td>
 								</tr>
 								<tr>
-									<td><button onclick="register()">Register</button></td>
+									<td colspan=2>Do you agree with our terms of license? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
+								<tr>
+									<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
 								</tr>
 							</table>
 
