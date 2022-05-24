@@ -143,6 +143,7 @@ $GLOBALS['minify'] = 0;
 					if($GLOBALS["use_db"]) {
 ?>
 						<span id="register" onclick="open_register_dialog()">Register/Login</span>
+						<span id="logout" style="display: None">Logout</span>
 <?php
 					}
 ?>
