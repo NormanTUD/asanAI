@@ -749,6 +749,13 @@ $GLOBALS['minify'] = 0;
 										<h3 class="multisteps-form__title">Network Type</h3>
 										<div class="multisteps-form__content">
 											Hallo
+
+											<div id="wizard_lr">
+												<div></div>
+												<div></div>
+												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+											</div>
+
 										</div>
 									</div>
 
@@ -756,6 +763,12 @@ $GLOBALS['minify'] = 0;
 										<h3 class="multisteps-form__title">Data</h3>
 										<div class="multisteps-form__content">
 											Data
+
+											<div id="wizard_lr">
+												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
+												<div></div>
+												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+											</div>
 										</div>
 									</div>
 
@@ -763,6 +776,12 @@ $GLOBALS['minify'] = 0;
 										<h3 class="multisteps-form__title">Hyperparameters</h3>
 										<div class="multisteps-form__content">
 											Hyperparameters
+
+											<div id="wizard_lr">
+												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
+												<div></div>
+												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+											</div>
 										</div>
 									</div>
 
@@ -770,6 +789,12 @@ $GLOBALS['minify'] = 0;
 										<h3 class="multisteps-form__title">Train</h3>
 										<div class="multisteps-form__content">
 											Train
+
+											<div id="wizard_lr">
+												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
+												<div></div>
+												<div></div>
+											</div>
 										</div>
 									</div>
 								</form>
