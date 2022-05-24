@@ -42,6 +42,10 @@ html {
 	border: solid #a3a8ac 1px;
 }
 
+#register {
+	color: white;
+}
+
 #tensor_number_debugger {
 	color: black;
 }

@@ -142,7 +142,7 @@ $GLOBALS['minify'] = 0;
 <?php
 					if($GLOBALS["use_db"]) {
 ?>
-						<span id="register" onclick="open_register_dialog()">Register</span>
+						<span id="register" onclick="open_register_dialog()">Register/Login</span>
 <?php
 					}
 ?>
