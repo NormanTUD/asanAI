@@ -782,6 +782,9 @@ $GLOBALS['minify'] = 0;
 												<tr>
 													<td>Batch-Size:</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
 												</tr>
+												<tr>
+													<td>Validation-Split (in %):</td><td><input type="number" class="copy_values" data-from_and_to="validationSplit" id="validationSplit_wizard"></input></td>
+												</tr>
 											</table>
 
 											<div id="wizard_lr">

@@ -4188,6 +4188,14 @@ function copy_values() {
 		var origin = $("#" + $(inputs[i]).data("from_and_to"));
 		$(sink).val(origin.val());
 
+		var possible_values = ["min", "max", "step"];
+
+		for (var j = 0; j < possible_values.length; j++) {
+			if(origin.attr(possible_values[j])) {
+				sink.attr(possible_values[j], origin.attr(possible_values[j]));
+			}
+		}
+
 		sink.change(function (e) {
 			$(origin).val($(sink).val());
 		});
