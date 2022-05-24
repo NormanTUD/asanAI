@@ -737,7 +737,7 @@ $GLOBALS['minify'] = 0;
 								<div class="multisteps-form__progress">
 									<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Data</button>
-									<button class="multisteps-form__progress-btn" type="button" title="Comments">Loss</button>
+									<button class="multisteps-form__progress-btn" type="button" title="Comments">Hyperparameters</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
 								</div>
 							</div>
@@ -751,45 +751,25 @@ $GLOBALS['minify'] = 0;
 											Hallo
 										</div>
 									</div>
+
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-										<h3 class="multisteps-form__title">Your Order Info</h3>
+										<h3 class="multisteps-form__title">Data</h3>
 										<div class="multisteps-form__content">
-											<div class="row">
-												<div class="col-12 col-md-6 mt-4">
-													<div class="card shadow-sm">
-														<div class="card-body">
-															<h5 class="card-title">Item Title</h5>
-															<p class="card-text">Small and nice item description</p><a class="btn btn-primary" href="#" title="Item Link">Item Link</a>
-														</div>
-													</div>
-												</div>
-												<div class="col-12 col-md-6 mt-4">
-													<div class="card shadow-sm">
-														<div class="card-body">
-															<h5 class="card-title">Item Title</h5>
-															<p class="card-text">Small and nice item description</p><a class="btn btn-primary" href="#" title="Item Link">Item Link</a>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="button-row d-flex mt-4 col-12">
-													<button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button>
-													<button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button>
-												</div>
-											</div>
+											Data
 										</div>
 									</div>
+
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-										<h3 class="multisteps-form__title">Additional Comments</h3>
+										<h3 class="multisteps-form__title">Hyperparameters</h3>
 										<div class="multisteps-form__content">
-											<div class="form-row mt-4">
-												<textarea class="multisteps-form__textarea form-control" placeholder="Additional Comments and Requirements"></textarea>
-											</div>
-											<div class="button-row d-flex mt-4">
-												<button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button>
-												<button class="btn btn-success ml-auto" type="button" title="Send">Send</button>
-											</div>
+											Hyperparameters
+										</div>
+									</div>
+
+									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
+										<h3 class="multisteps-form__title">Train</h3>
+										<div class="multisteps-form__content">
+											Train
 										</div>
 									</div>
 								</form>
