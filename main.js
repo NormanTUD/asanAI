@@ -249,3 +249,8 @@ $(document).ready(async function() {
 
 	setInterval(check_number_values, 200);
 });
+
+$("#register_form").submit(function(e) {
+	e.preventDefault();
+	register();
+});

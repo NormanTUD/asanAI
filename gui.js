@@ -2749,19 +2749,18 @@ function register() {
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
 	if (email.includes("@")) {
-	$("#register_form").submit(function(e) {
-		e.preventDefault();
+		document.getElementById("register_error_msg").innerHTML = "";
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
+				log("sucess")
 				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			},
 			error: function (a, b, c) {
 				log("error" + a + b + c)
+				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			}
 		});
-	});
-	
 	} else {
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
