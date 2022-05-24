@@ -322,7 +322,7 @@ $GLOBALS['minify'] = 0;
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 							<div class="small_vskip"></div>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 							<div class="small_vskip"></div>
@@ -744,7 +744,7 @@ $GLOBALS['minify'] = 0;
 						</div>
 						<div class="row">
 							<div class="col-12 col-lg-8 m-auto">
-								<form class="multisteps-form__form">
+								<div class="multisteps-form__form">
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
 										<h3 class="multisteps-form__title">Network Type</h3>
 										<div class="multisteps-form__content">
@@ -798,7 +798,7 @@ $GLOBALS['minify'] = 0;
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
 										<h3 class="multisteps-form__title">Train</h3>
 										<div class="multisteps-form__content">
-											Train
+											<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 
 											<div id="wizard_lr">
 												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
@@ -807,7 +807,7 @@ $GLOBALS['minify'] = 0;
 											</div>
 										</div>
 									</div>
-								</form>
+								</div>
 							</div>
 						</div>
 					</div>
