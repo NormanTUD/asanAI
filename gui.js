@@ -4196,7 +4196,11 @@ function copy_values() {
 			}
 		}
 
+		var origin_id = origin.attr("id");
+		var sink_id = sink.attr("id");
+
 		sink.change(function (e) {
+			log(sink_id);
 			$(origin).val($(sink).val());
 		});
 	}
