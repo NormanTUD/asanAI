@@ -4185,6 +4185,7 @@ function copy_options () {
 			return function (e) {
 				$("#" + o).val($("#" + s).val()).trigger("change");
 				copy_options();
+				$("#" + s).val($("#" + o).val());
 			};
 		}(origin_id, sink_id));
 	}
