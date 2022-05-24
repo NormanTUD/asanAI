@@ -42,6 +42,10 @@ html {
 	border: solid #a3a8ac 1px;
 }
 
+#logout {
+	color: red;
+}
+
 #register {
 	color: white;
 }
