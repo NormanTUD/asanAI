@@ -21,6 +21,45 @@
 		error_log($e);
 	}
 
+	$GLOBALS["manager"] = null;
+
+	try {
+		$port = 27017;
+		$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
+	} catch (Exception $e) {
+		error_log($e);
+	}
+
+	function save_mongo ($collection, $data) {
+		if (!is_string($collection) || strlen($collection) < 3 || strpos($collection, '.') < 1) {
+			throw new \InvalidArgumentException('The collection name to be filled on the database must be given as "database.collection"');
+		}
+		if (!is_array($data) && !$data instanceof CollectionInterface) {
+			throw new \InvalidArgumentException('The data to be written on the database must be given as a collection');
+		}
+		$adaptedData = $data instanceof GenericCollection ? $data->all() : $data;
+		$bulk = new \MongoDB\Driver\BulkWrite();
+		try {
+			$nativeID = $bulk->insert($adaptedData);
+			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
+		} catch (\MongoDB\Driver\Exception\BulkWriteException $ex) {
+			throw new DatabaseException('Insertion failed due to a write error', 3);
+		} catch (\MongoDB\Driver\Exception\InvalidArgumentException $ex) {
+			throw new DatabaseException('Insertion failed due to an error occurred while parsing data', 3);
+		} catch (\MongoDB\Driver\Exception\ConnectionException $ex) {
+			throw new DatabaseException('Insertion failed due to an error on authentication', 3);
+		} catch (\MongoDB\Driver\Exception\AuthenticationException $ex) {
+			throw new DatabaseException('Insertion failed due to an error on connection', 3);
+		} catch (\MongoDB\Driver\Exception\RuntimeException $ex) {
+			throw new DatabaseException('Insertion failed due to an unknown error', 3);
+		}
+		if ($result->getInsertedCount() <= 0) {
+			throw new DatabaseException('Insertion failed due to an unknown error', 3);
+		}
+	}
+
+	#save_mongo("abc.testabc", array("hallo" => 123));
+
 	function run_query ($query) {
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);
