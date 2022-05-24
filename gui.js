@@ -4176,14 +4176,15 @@ function copy_options () {
 		var origin = $("#" + $(selects[i]).data("from_and_to"));
 		var origin_id = origin.attr("id");
 
+		sink.html("");
+
 		var options = $("#" + origin_id + " > option").clone();
 		sink.append(options);
 
 		sink.change(function (o, s) {
 			return function (e) {
-				logt(o);
-				logt(s);
 				$("#" + o).val($("#" + s).val()).trigger("change");
+				copy_options();
 			};
 		}(origin_id, sink_id));
 	}
