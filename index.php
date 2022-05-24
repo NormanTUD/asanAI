@@ -737,8 +737,8 @@ $GLOBALS['minify'] = 0;
 							<div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
 								<div class="multisteps-form__progress">
 									<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
-									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Data</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Comments">Hyperparameters</button>
+									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Data</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
 								</div>
 							</div>
@@ -752,24 +752,11 @@ $GLOBALS['minify'] = 0;
 											Hallo
 
 											<div id="wizard_lr">
-												<div></div>
-												<div></div>
+												<div>&nbsp;</div>
+												<div>&nbsp;</div>
 												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 											</div>
 
-										</div>
-									</div>
-
-									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-										<h3 class="multisteps-form__title">Data</h3>
-										<div class="multisteps-form__content">
-											Data
-
-											<div id="wizard_lr">
-												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div></div>
-												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
-											</div>
 										</div>
 									</div>
 
@@ -780,7 +767,20 @@ $GLOBALS['minify'] = 0;
 
 											<div id="wizard_lr">
 												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div></div>
+												<div>&nbsp;</div>
+												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
+										<h3 class="multisteps-form__title">Data</h3>
+										<div class="multisteps-form__content">
+											Data
+
+											<div id="wizard_lr">
+												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
+												<div>&nbsp;</div>
 												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 											</div>
 										</div>
@@ -793,8 +793,8 @@ $GLOBALS['minify'] = 0;
 
 											<div id="wizard_lr">
 												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div></div>
-												<div></div>
+												<div>&nbsp;</div>
+												<div>&nbsp;</div>
 											</div>
 										</div>
 									</div>
