@@ -24,6 +24,10 @@ html {
 	background-color: white;
 }
 
+#logout {
+	color: red;
+}
+
 .configtable {
 	width: 100%;
 }
