@@ -2753,8 +2753,9 @@ function register() {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
-				log("sucess")
+				log("sucess" + data["session_id"])
 				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
 			},
@@ -2782,6 +2783,12 @@ function login() {
 		}
 	});
 	write_descriptions();
+}
+
+function logout() {
+	eraseCookie('session_id');
+	$("#logout").hide();
+	$("#register").show();
 }
 
 function sources_popup() {
