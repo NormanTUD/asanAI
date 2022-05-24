@@ -761,6 +761,11 @@ $GLOBALS['minify'] = 0;
 												<tr>
 													<td>Data-Source:</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
 												</tr>
+												<!--
+												<tr>
+													<td>Data-Type:</td><td><select class="copy_options" data-from_and_to="data_type" id="data_type_wizard"></select></td>
+												</tr>
+												-->
 											</table>
 
 											<div id="wizard_lr">
