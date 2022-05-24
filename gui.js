@@ -2482,8 +2482,7 @@ function favicon_spinner() {
 function disable_everything() {
 	$('body').css('cursor', 'wait');
 	$("#layers_container").sortable("disable");
-	$("#ribbon,select,input,checkbox").prop("disabled", true);
-	$("#ribbon,select,input,checkbox").prop("disabled", true);
+	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
 	write_descriptions();
 	Prism.highlightAll();
@@ -2492,7 +2491,7 @@ function disable_everything() {
 function enable_everything() {
 	$('body').css('cursor', 'default');
 	$("#layers_container").sortable("enable");
-	$("#ribbon,select,input,checkbox").prop("disabled", false);
+	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
 	write_descriptions();
 	Prism.highlightAll();
 }
