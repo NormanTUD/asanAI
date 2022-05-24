@@ -738,7 +738,6 @@ $GLOBALS['minify'] = 0;
 								<div class="multisteps-form__progress">
 									<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Comments">Hyperparameters</button>
-									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Data</button>
 									<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
 								</div>
 							</div>
@@ -749,11 +748,24 @@ $GLOBALS['minify'] = 0;
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
 										<h3 class="multisteps-form__title">Network Type</h3>
 										<div class="multisteps-form__content">
-											Hallo
+											<table>
+												<tr>
+													<td>Problem type:</td><td><select class="copy_options" data-from_and_to="dataset_category" id="dataset_category_wizard"></select></td>
+												</tr>
+												<tr>
+													<td>Architecture:</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
+												</tr>
+												<tr>
+													<td>Dataset:</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
+												</tr>
+												<tr>
+													<td>Data-Source:</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
+												</tr>
+											</table>
 
 											<div id="wizard_lr">
 												<div>&nbsp;</div>
-												<div>&nbsp;</div>
+												<div></div>
 												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 											</div>
 
@@ -763,24 +775,18 @@ $GLOBALS['minify'] = 0;
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
 										<h3 class="multisteps-form__title">Hyperparameters</h3>
 										<div class="multisteps-form__content">
-											Hyperparameters
+											<table>
+												<tr>
+													<td>Epochs:</td><td><input type="number" class="copy_values" data-from_and_to="epochs" id="epochs_wizard"></input></td>
+												</tr>
+												<tr>
+													<td>Batch-Size:</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
+												</tr>
+											</table>
 
 											<div id="wizard_lr">
 												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div>&nbsp;</div>
-												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
-											</div>
-										</div>
-									</div>
-
-									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-										<h3 class="multisteps-form__title">Data</h3>
-										<div class="multisteps-form__content">
-											Data
-
-											<div id="wizard_lr">
-												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div>&nbsp;</div>
+												<div></div>
 												<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 											</div>
 										</div>
@@ -793,7 +799,7 @@ $GLOBALS['minify'] = 0;
 
 											<div id="wizard_lr">
 												<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Prev</button></div>
-												<div>&nbsp;</div>
+												<div></div>
 												<div>&nbsp;</div>
 											</div>
 										</div>

@@ -4166,3 +4166,30 @@ function getCookie(name) {
 function eraseCookie(name) {
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+
+function copy_options () {
+	var selects = $(".copy_options");
+	for (var i = 0; i  < selects.length; i++) {
+		var sink = $(selects[i]);
+		var origin = $(selects[i]).data("from_and_to");
+		var options = $("#" + origin + " > option").clone();
+		sink.append(options);
+
+		sink.change(function (e) {
+			$("#" + origin).val(sink.val()).trigger("change");
+		});
+	}
+}
+
+function copy_values() {
+	var inputs = $(".copy_values");
+	for (var i = 0; i  < inputs.length; i++) {
+		var sink = $(inputs[i]);
+		var origin = $("#" + $(inputs[i]).data("from_and_to"));
+		$(sink).val(origin.val());
+
+		sink.change(function (e) {
+			$(origin).val($(sink).val());
+		});
+	}
+}
