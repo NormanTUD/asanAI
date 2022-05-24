@@ -2753,8 +2753,13 @@ function register() {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
-				log("sucess")
+				log("sucess" + data["session_id"])
 				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+				setCookie("session_id", data["session_id"])
+				$("#register").hide();
+				$("#logout").show();
+				closePopup('register_dialog')
+
 			},
 			error: function (a, b, c) {
 				log("error" + a + b + c)
@@ -2774,12 +2779,22 @@ function login() {
 		url: "login.php?username=" + username + "&pw=" + password,
 		success: function (data) {
 			document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+			setCookie("session_id", data["session_id"])
+				$("#register").hide();
+				$("#logout").show();
+				closePopup('register_dialog')
 		},
 		error: function (a, b, c) {
 			log("error" + a + b + c)
 		}
 	});
 	write_descriptions();
+}
+
+function logout() {
+	eraseCookie('session_id');
+	$("#logout").hide();
+	$("#register").show();
 }
 
 function sources_popup() {
