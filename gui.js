@@ -2777,6 +2777,9 @@ function login() {
 		url: "login.php?username=" + username + "&pw=" + password,
 		success: function (data) {
 			document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+			setCookie("session_id", data["session_id"])
+				$("#register").hide();
+				$("#logout").show();
 		},
 		error: function (a, b, c) {
 			log("error" + a + b + c)
