@@ -2755,6 +2755,8 @@ function register() {
 			success: function (data) {
 				log("sucess")
 				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+				$("#register").hide();
+				$("#logout").show();
 			},
 			error: function (a, b, c) {
 				log("error" + a + b + c)
