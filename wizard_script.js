@@ -177,3 +177,5 @@ const setAnimationType = newType => {
 //selector onchange - changing animation
 
 setAnimationType("scaleIn");
+
+write_descriptions();

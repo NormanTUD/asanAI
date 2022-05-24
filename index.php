@@ -138,6 +138,7 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+					<li><span class="symbol_button" title="Show wizard" id="show_wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -726,6 +727,7 @@ $GLOBALS['minify'] = 0;
 
 
 
+		<div id="wizard" style="display: none">
 		<div class="content">
 			<div class="content__inner">
 				<div class="container overflow-hidden">
@@ -821,6 +823,7 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 
 
