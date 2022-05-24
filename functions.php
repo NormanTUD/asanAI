@@ -196,8 +196,8 @@
 
 	function is_logged_in () {
 		if(is_in_array("session_id", $_COOKIE)) {
-			if(get_user_id_from_session_id != "") {
-				return get_user_id_from_session_id();
+			if(get_user_id_from_session_id($_COOKIE["session_id"]) != "") {
+				return get_user_id_from_session_id($_COOKIE["session_id"]);
 			}
 		}
 		return null;
