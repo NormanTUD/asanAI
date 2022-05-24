@@ -3947,11 +3947,15 @@ function check_number_values() {
 	$("input[type=number]").each((x, item) => {
 		var val = $(item).val();
 
+		if(!$(item).data("bgcolor")) {
+			$(item).data("bgcolor", $(item).css("background-color"));
+		}
+
 		if (!isNumeric(val)) {
 			$(item).css("background-color", "red");
 		} else {
 			val = parseFloat(val);
-			$(item).css("background-color", "transparent");
+			$(item).css("background-color", $(item).data("bgcolor"));
 
 			var max = parseFloat($(item).attr("max"));
 			var min = parseFloat($(item).attr("min"));
