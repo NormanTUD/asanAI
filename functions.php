@@ -193,5 +193,14 @@
 		$user_id = get_single_value_from_query("select user_id from tfd_db.session_ids where session_id = ".esc($session_id));
 		return $user_id;
 	}
+
+	function is_logged_in () {
+		if(is_in_array("session_id", $_COOKIE)) {
+			if(get_user_id_from_session_id != "") {
+				return get_user_id_from_session_id();
+			}
+		}
+		return null;
+	}
 	 
 ?>
