@@ -2758,6 +2758,8 @@ function register() {
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
+				$("#register_content").hide();
+
 			},
 			error: function (a, b, c) {
 				log("error" + a + b + c)
@@ -2780,6 +2782,7 @@ function login() {
 			setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
+				$("#register_content").hide();
 		},
 		error: function (a, b, c) {
 			log("error" + a + b + c)
