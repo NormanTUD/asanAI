@@ -197,6 +197,11 @@ function fix_graph_color () {
 }
 
 $(document).ready(async function() {
+	$("#register_form").submit(function(e) {
+		e.preventDefault();
+		register();
+	});
+	
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 	init_tabs();
 	init_set_all_options();
@@ -250,7 +255,3 @@ $(document).ready(async function() {
 	setInterval(check_number_values, 200);
 });
 
-$("#register_form").submit(function(e) {
-	e.preventDefault();
-	register();
-});
