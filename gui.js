@@ -4171,15 +4171,20 @@ function copy_options () {
 	var selects = $(".copy_options");
 	for (var i = 0; i  < selects.length; i++) {
 		var sink = $(selects[i]);
+		var sink_id = sink.attr("id");
+
 		var origin = $("#" + $(selects[i]).data("from_and_to"));
 		var origin_id = origin.attr("id");
+
 		var options = $("#" + origin_id + " > option").clone();
 		sink.append(options);
 
-		var sink_id = sink.attr("id");
-
 		sink.change(function (o, s) {
-			$("#" + s).val($("#" + s).val()).trigger("change");
+			return function (e) {
+				logt(o);
+				logt(s);
+				$("#" + o).val($("#" + s).val()).trigger("change");
+			};
 		}(origin_id, sink_id));
 	}
 }
