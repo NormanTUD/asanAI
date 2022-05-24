@@ -222,3 +222,7 @@ a.ui-button:focus {
 #explanation {
 	filter: invert(0.79);
 }
+
+#register {
+	color: white;
+}
