@@ -127,6 +127,8 @@ DOMstrings.stepsBar.addEventListener('click', e => {
 
   //open active panel
   setActivePanel(activeStep);
+
+  write_descriptions();
 });
 
 //PREV/NEXT BTNS CLICK
@@ -158,6 +160,7 @@ DOMstrings.stepsForm.addEventListener('click', e => {
   setActiveStep(activePanelNum);
   setActivePanel(activePanelNum);
 
+  write_descriptions();
 });
 
 //SETTING PROPER FORM HEIGHT ONLOAD

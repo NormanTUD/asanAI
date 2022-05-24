@@ -727,7 +727,7 @@ $GLOBALS['minify'] = 0;
 
 
 
-		<div id="wizard" style="display: none">
+		<div id="wizard"><!-- style="display: none">-->
 		<div class="content">
 			<div class="content__inner">
 				<div class="container overflow-hidden">
@@ -735,9 +735,10 @@ $GLOBALS['minify'] = 0;
 						<div class="row">
 							<div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
 								<div class="multisteps-form__progress">
-									<button class="multisteps-form__progress-btn js-active" type="button" title="User Info">User Info</button>
-									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Order Info</button>
-									<button class="multisteps-form__progress-btn" type="button" title="Comments">Comments        </button>
+									<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
+									<button class="multisteps-form__progress-btn" type="button" title="Order Info">Data</button>
+									<button class="multisteps-form__progress-btn" type="button" title="Comments">Loss</button>
+									<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
 								</div>
 							</div>
 						</div>
@@ -745,35 +746,9 @@ $GLOBALS['minify'] = 0;
 							<div class="col-12 col-lg-8 m-auto">
 								<form class="multisteps-form__form">
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
-										<h3 class="multisteps-form__title">Your User Info</h3>
+										<h3 class="multisteps-form__title">Network Type</h3>
 										<div class="multisteps-form__content">
-											<div class="form-row mt-4">
-												<div class="col-12 col-sm-6">
-													<input class="multisteps-form__input form-control" type="text" placeholder="First Name"/>
-												</div>
-												<div class="col-12 col-sm-6 mt-4 mt-sm-0">
-													<input class="multisteps-form__input form-control" type="text" placeholder="Last Name"/>
-												</div>
-											</div>
-											<div class="form-row mt-4">
-												<div class="col-12 col-sm-6">
-													<input class="multisteps-form__input form-control" type="text" placeholder="Login"/>
-												</div>
-												<div class="col-12 col-sm-6 mt-4 mt-sm-0">
-													<input class="multisteps-form__input form-control" type="email" placeholder="Email"/>
-												</div>
-											</div>
-											<div class="form-row mt-4">
-												<div class="col-12 col-sm-6">
-													<input class="multisteps-form__input form-control" type="password" placeholder="Password"/>
-												</div>
-												<div class="col-12 col-sm-6 mt-4 mt-sm-0">
-													<input class="multisteps-form__input form-control" type="password" placeholder="Repeat Password"/>
-												</div>
-											</div>
-											<div class="button-row d-flex mt-4">
-												<button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button>
-											</div>
+											Hallo
 										</div>
 									</div>
 									<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
