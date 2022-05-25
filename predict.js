@@ -48,7 +48,7 @@ let predict_demo = async function (item, nr) {
 
 		let tensor_img = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
 		if($("#divide_by").val() != 1) {
-			var new_tensor_img = tf.div(tensor_img, parseFloat($("#divide_by").val()));
+			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
 			dispose(tensor_img);
 			tensor_img = new_tensor_img;
 		}
@@ -180,7 +180,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var divide_by = parseFloat($("#divide_by").val());
 
 		if(divide_by != 1) {
-			predict_data = tf.div(predict_data, divide_by);
+			predict_data = tf.divNoNan(predict_data, divide_by);
 		}
 
 		var predictions_tensor = await model.predict([predict_data], [1, 1]);
@@ -309,7 +309,7 @@ async function predict_webcam () {
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		predict_data = tf.div(predict_data, divide_by);
+		predict_data = tf.divNoNan(predict_data, divide_by);
 	}
 
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);

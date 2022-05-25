@@ -338,7 +338,7 @@ async function get_xs_and_ys () {
 							toFloat();
 
 						if($("#divide_by").val() != 1) {
-							resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
+							resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
 						}
 
 						x.push(await resized_img.arraySync());
@@ -400,7 +400,7 @@ function url_to_tf (url) {
 			dispose(tf_img);
 
 			if($("#divide_by").val() != 1) {
-				resized_img = tf.div(resized_img, parseFloat($("#divide_by").val()));
+				resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
 			}
 
 			return resized_img;
