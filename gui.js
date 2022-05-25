@@ -4001,7 +4001,7 @@ function summary_to_table(t) {
 		}
 	}
 
-	var table = "<table border=1>\n";
+	var table = "<table border=1 style='border-collapse: collapse;'>\n";
 	for (var i = 0; i < new_array.length; i++) {
 		var d_or_h = "d";
 		if (i == 0) {
@@ -4112,7 +4112,7 @@ function remove_plotly_table_element(item) {
 }
 
 function create_plotly_table() {
-	var str = `<table id="data_table" border=1>` +
+	var str = `<table id="data_table" border=1 style="border-collapse: collapse;">` +
 		`	<tr>` +
 		`		<th>Y true</th>` +
 		`		<th>Y pred</th>` +
