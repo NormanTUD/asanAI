@@ -202,6 +202,11 @@ $(document).ready(async function() {
 		register();
 	});
 	
+	if(getCookie("session_id") != null) {
+		$("#register").hide();
+		$("#logout").show();
+	}
+
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 	init_tabs();
 	init_set_all_options();

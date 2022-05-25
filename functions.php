@@ -21,6 +21,60 @@
 		error_log($e);
 	}
 
+	$GLOBALS["manager"] = null;
+
+	try {
+		$port = 27017;
+		$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
+	} catch (Exception $e) {
+		error_log($e);
+	}
+
+	function save_mongo ($collection, $data) {
+		if (!is_string($collection) || strlen($collection) < 3 || strpos($collection, '.') < 1) {
+			throw new \InvalidArgumentException('The collection name to be filled on the database must be given as "database.collection"');
+		}
+		if (!is_array($data) && !$data instanceof CollectionInterface) {
+			throw new \InvalidArgumentException('The data to be written on the database must be given as a collection');
+		}
+		$adaptedData = $data instanceof GenericCollection ? $data->all() : $data;
+		$bulk = new \MongoDB\Driver\BulkWrite();
+		try {
+			$nativeID = $bulk->insert($adaptedData);
+			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
+		} catch (\MongoDB\Driver\Exception\BulkWriteException $ex) {
+			throw new DatabaseException('Insertion failed due to a write error', 3);
+		} catch (\MongoDB\Driver\Exception\InvalidArgumentException $ex) {
+			throw new DatabaseException('Insertion failed due to an error occurred while parsing data', 3);
+		} catch (\MongoDB\Driver\Exception\ConnectionException $ex) {
+			throw new DatabaseException('Insertion failed due to an error on authentication', 3);
+		} catch (\MongoDB\Driver\Exception\AuthenticationException $ex) {
+			throw new DatabaseException('Insertion failed due to an error on connection', 3);
+		} catch (\MongoDB\Driver\Exception\RuntimeException $ex) {
+			throw new DatabaseException('Insertion failed due to an unknown error', 3);
+		}
+		if ($result->getInsertedCount() <= 0) {
+			throw new DatabaseException('Insertion failed due to an unknown error', 3);
+		}
+	}
+
+	function find_mongo ($table, $filter, $options) {
+		$query = new MongoDB\Driver\Query($filter, $options);
+
+		$rows = $GLOBALS["manager"]->executeQuery($table, $query);
+
+		$r = array();
+		foreach($rows as $row){
+			$r[] = json_decode(json_encode($row), true);
+
+		}
+
+		return $r;
+	}
+
+	#save_mongo("abc.testabc", array("hallo" => 12323));
+	#dier(find_mongo("abc.testabc", array("hallo" => array('$exists' => true)), array()));
+
 	function run_query ($query) {
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);
@@ -149,4 +203,20 @@
 		$str .= "</ul>\n";
 		return $str;
 	}
+
+	function get_user_id_from_session_id ($session_id) {
+		$user_id = get_single_value_from_query("select user_id from tfd_db.session_ids where session_id = ".esc($session_id));
+		return $user_id;
+	}
+
+	function is_logged_in () {
+		if(is_in_array("session_id", $_COOKIE)) {
+			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+			if($user != "") {
+				return $user;
+			}
+		}
+		return null;
+	}
+	 
 ?>

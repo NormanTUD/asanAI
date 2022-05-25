@@ -2793,6 +2793,14 @@ function logout() {
 	eraseCookie('session_id');
 	$("#logout").hide();
 	$("#register").show();
+	$("#register_email").val(""); 
+	$("#register_username").val("");
+	$("#register_password").val("");
+	$("#login_username").val("");
+	$("#login_username").val("");
+	$("#login_error_msg").val("");
+	$("#register_error_msg").val("");
+	$("#license").val("");
 }
 
 function sources_popup() {
