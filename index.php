@@ -133,7 +133,7 @@ $GLOBALS['minify'] = 0;
 			<div id="ribbon">
 				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
-					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
+					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="manage_download()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
@@ -905,6 +905,22 @@ $GLOBALS['minify'] = 0;
 							</table>
 						</div>
 						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
+					</div>
+				</div>
+
+				<div id="save_model_dialog" style="display: none">
+					<div class="popup_body less_transparent_glass_box">
+					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
+					</div>
+						<div id="register_content"> 
+							<h1>Download</h1>
+							<button onclick="save_model()">Download</button>
+
+							<h1>Save to Mongodb</h1>
+							<button onclick="save_to_mongodb(await get_model_structure(), await get_model_data(), false, 'category')">Save</button>
+							
+						</div>
+						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
 					</div>
 				</div>
 

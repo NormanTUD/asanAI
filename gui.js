@@ -2751,17 +2751,21 @@ function register() {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
-				log("sucess" + data["session_id"])
-				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-				setCookie("session_id", data["session_id"])
-				$("#register").hide();
-				$("#logout").show();
-				closePopup('register_dialog')
+				log(data)
+				if(data["status"] == "ok") {
+					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+					setCookie("session_id", data["session_id"]);
+					$("#register").hide();
+					$("#logout").show();
+					closePopup('register_dialog');
+				}
+				if(data["status"] == "error") {
+					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+				}
 
 			},
-			error: function (a, b, c) {
-				log("error" + a + b + c)
-				document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+			error: function (object, error, msg) {
+				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
 			}
 		});
 	} else {
@@ -2776,14 +2780,16 @@ function login() {
 	$.ajax({
 		url: "login.php?username=" + username + "&pw=" + password,
 		success: function (data) {
-			document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-			setCookie("session_id", data["session_id"])
+			if(data["status"] == "ok") {
+				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
-				closePopup('register_dialog')
-		},
-		error: function (a, b, c) {
-			log("error" + a + b + c)
+				closePopup('register_dialog');
+			}
+			if(data["status"] == "error") {
+				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
+			}
 		}
 	});
 	write_descriptions();
@@ -2797,10 +2803,10 @@ function logout() {
 	$("#register_username").val("");
 	$("#register_password").val("");
 	$("#login_username").val("");
-	$("#login_username").val("");
-	$("#login_error_msg").val("");
-	$("#register_error_msg").val("");
-	$("#license").val("");
+	$("#login_password").val("");
+	document.getElementById("login_error_msg").innerHTML = ""
+	document.getElementById("register_error_msg").innerHTML = ""
+	document.getElementById("license").checked = false
 }
 
 function sources_popup() {
@@ -2816,6 +2822,25 @@ function losses_popup() {
 
 function close_losses() {
 	closePopup("losses_popup");
+}
+
+function manage_download() {
+	if(getCookie("session_id") == null) {
+		save_model();
+	} else if(getCookie("session_id").match(/[A-z]/)) {
+		open_save_model_dialog();
+	}
+}
+
+function save_to_mongodb(model_structure, model_weights, is_public, category) {
+	$.ajax({
+		url: "save_to_mongo.php?model_structure=" + model_structure + "&model_weights=" + model_weights + "&is_public=" + is_public + "&category=" + category,
+
+	});
+}
+
+function open_save_model_dialog() {
+	openPopup("save_model_dialog");
 }
 
 function open_register_dialog() {
