@@ -1927,6 +1927,8 @@ function show_layers(number) {
 		initializer_layer_options(i);
 	}
 
+	MathJax.typesetPromise();
+
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
 	hide_tab_label("layer_visualizations_tab_label");
 
