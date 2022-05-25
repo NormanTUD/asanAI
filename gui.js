@@ -2834,8 +2834,14 @@ function manage_download() {
 
 function save_to_mongodb(model_structure, model_weights, is_public, category) {
 	$.ajax({
-		url: "save_to_mongo.php?model_structure=" + model_structure + "&model_weights=" + model_weights + "&is_public=" + is_public + "&category=" + category,
-
+		url: "save_to_mongodb.php?model_structure=" + model_structure + "&model_weights=" + model_weights + "&is_public=" + is_public + "&category=" + category,
+		success: function (data) {
+			log("saved to mongodb");
+			log(data)
+		},
+		error: function (object, error, msg) {
+			log(msg);
+		}
 	});
 }
 
