@@ -75,6 +75,10 @@
 		return $r;
 	}
 
+	function save_mongo_models ($array) {
+		save_mongo("tfd.models", $array);
+	}
+
 	#save_mongo("abc.testabc", array("hallo" => 12323));
 	#dier(find_mongo("abc.testabc", array("hallo" => array('$exists' => true)), array()));
 

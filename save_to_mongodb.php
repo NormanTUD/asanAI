@@ -9,6 +9,8 @@
         "category" => $_GET["category"]
     ];
 
+    save_mongo("tfd.models", $array);
+
     header('Content-Type: application/json');
         print json_encode($array);
 
