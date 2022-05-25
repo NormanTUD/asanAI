@@ -1630,8 +1630,6 @@ function set_option_for_layer_by_layer_nr(nr) {
 
 	$($(".layer_options_internal")[nr]).html(get_option_for_layer_by_type(nr));
 
-	MathJax.typesetPromise();
-
 	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
 		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
 	});
@@ -1926,6 +1924,8 @@ function show_layers(number) {
 	for (var i = 0; i < number; i++) {
 		initializer_layer_options(i);
 	}
+
+	MathJax.typesetPromise();
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
 	hide_tab_label("layer_visualizations_tab_label");
