@@ -151,10 +151,6 @@ input {
 }
 
 .ribbon_tab_content {
-	background: rgb(156,183,233);
-	background: linear-gradient(180deg, rgba(156,183,233,1) 0%, rgba(77,103,164,1) 20%);
-	background-repeat: no-repeat;
-	background-attachment: fixed;
 }
 
 .warning_container {
