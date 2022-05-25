@@ -76,8 +76,10 @@
 		save_mongo("tfd.models", $array);
 	}
 
+	#save_mongo_models(array("hallo" => 12323));                                                                                                                                                                                     
+	#dier(find_mongo("tfd.models", array("hallo" => array('$exists' => true)), array()));   
 	#save_mongo("abc.testabc", array("hallo" => 12323));
-	#dier(find_mongo("abc.testabc", array("hallo" => array('$exists' => true)), array()));
+	#dier(find_mongo("tfd.models", array(), array()));
 
 	function run_query ($query) {
 		$start_time = microtime(true);

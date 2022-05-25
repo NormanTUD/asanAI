@@ -9,9 +9,12 @@
         "category" => $_GET["category"]
     ];
 
-    save_mongo("tfd.models", $array);
+    save_mongo_models($array);
 
     header('Content-Type: application/json');
         print json_encode($array);
 
 ?>
+
+// die save_to_mongodb() sollte beim klicken auf "Save" aufgerufen werden, aber bisher werden
+// die Daten noch nicht in der DB gespeichert
