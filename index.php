@@ -41,7 +41,7 @@
 			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
 
-
+		<link rel="stylesheet" href="./wizard_style.css">
 <?php
 		$tablist_color = "254c87";
 
@@ -138,6 +138,7 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
+					<li><span class="symbol_button" title="Show wizard" id="show_wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -321,7 +322,7 @@ $GLOBALS['minify'] = 0;
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button id="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 							<div class="small_vskip"></div>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 							<div class="small_vskip"></div>
@@ -701,6 +702,99 @@ $GLOBALS['minify'] = 0;
 			</div>
 
 			<div id="maindiv">
+				<div id="wizard" style="height: 250px; display: none">
+					<div class="content">
+						<div class="content__inner">
+							<div class="container overflow-hidden">
+								<div class="multisteps-form">
+									<div class="row">
+										<div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
+											<div class="multisteps-form__progress">
+												<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
+												<button class="multisteps-form__progress-btn" type="button" title="Comments">Hyperparameters</button>
+												<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 col-lg-8 m-auto">
+											<div class="multisteps-form__form">
+												<div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
+													<h3 class="multisteps-form__title">Network Type</h3>
+													<div class="multisteps-form__content">
+														<table>
+															<tr>
+																<td>Problem type:</td><td><select class="copy_options" data-from_and_to="dataset_category" id="dataset_category_wizard"></select></td>
+															</tr>
+															<tr>
+																<td>Architecture:</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
+															</tr>
+															<tr>
+																<td>Dataset:</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
+															</tr>
+															<tr>
+																<td>Data-Source:</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
+															</tr>
+															<!--
+															<tr>
+																<td>Data-Type:</td><td><select class="copy_options" data-from_and_to="data_type" id="data_type_wizard"></select></td>
+															</tr>
+															-->
+														</table>
+
+														<div id="wizard_lr">
+															<div>&nbsp;</div>
+															<div></div>
+															<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+														</div>
+
+													</div>
+												</div>
+
+												<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
+													<h3 class="multisteps-form__title">Hyperparameters</h3>
+													<div class="multisteps-form__content">
+														<table>
+															<tr>
+																<td>Epochs:</td><td><input type="number" class="copy_values" data-from_and_to="epochs" id="epochs_wizard"></input></td>
+															</tr>
+															<tr>
+																<td>Batch-Size:</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
+															</tr>
+															<tr>
+																<td>Validation-Split (in %):</td><td><input type="number" class="copy_values" data-from_and_to="validationSplit" id="validationSplit_wizard"></input></td>
+															</tr>
+														</table>
+
+														<div id="wizard_lr">
+															<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
+															<div></div>
+															<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+														</div>
+													</div>
+												</div>
+
+												<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
+													<h3 class="multisteps-form__title">Train</h3>
+													<div class="multisteps-form__content">
+														<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+
+														<div id="wizard_lr">
+															<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
+															<div></div>
+															<div>&nbsp;</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div id="losses_popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
 						<div id="table_div"></div>
@@ -1678,5 +1772,6 @@ $GLOBALS['minify'] = 0;
 
 			resize_window();
 		</script>
+		<script src="./wizard_script.js"></script>
 	</body>
 </html>

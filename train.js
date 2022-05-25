@@ -9,7 +9,7 @@ function gui_in_training () {
 
 function gui_not_in_training () {
 	started_training = false;
-	$("#train_neural_network_button").html("Start training");
+	$(".train_neural_network_button").html("Start training");
 	favicon_default();
 
 	try {
@@ -211,7 +211,7 @@ function show_info_after_run (h) {
 
 async function run_neural_network () {
 	clean_gui();
-	$("#train_neural_network_button").html("Stop training");
+	$(".train_neural_network_button").html("Stop training");
 
 	for (var i = 0; i < model.layers.length; i++) {
 		if("original_apply" in model.layers[i]) {
@@ -289,7 +289,7 @@ async function run_neural_network () {
 		console.trace();
 		favicon_default();
 		write_descriptions();
-		$("#train_neural_network_button").html("Start training");
+		$(".train_neural_network_button").html("Start training");
 		started_training = false;
 		return;
 	}

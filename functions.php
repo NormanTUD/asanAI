@@ -58,7 +58,22 @@
 		}
 	}
 
-	#save_mongo("abc.testabc", array("hallo" => 123));
+	function find_mongo ($table, $filter, $options) {
+		$query = new MongoDB\Driver\Query($filter, $options);
+
+		$rows = $GLOBALS["manager"]->executeQuery($table, $query);
+
+		$r = array();
+		foreach($rows as $row){
+			$r[] = json_decode(json_encode($row), true);
+
+		}
+
+		return $r;
+	}
+
+	#save_mongo("abc.testabc", array("hallo" => 12323));
+	#dier(find_mongo("abc.testabc", array("hallo" => array('$exists' => true)), array()));
 
 	function run_query ($query) {
 		$start_time = microtime(true);

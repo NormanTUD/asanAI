@@ -275,9 +275,8 @@ function get_tr_str_for_description(desc) {
 }
 
 function isNumeric(str) {
-	if (typeof str != "string") return false; // we only process strings!
-	return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-		!isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
+	if (typeof str != "string") return false;
+	return !isNaN(str) && !isNaN(parseFloat(str));
 }
 
 function quote_python(item) {
@@ -1933,7 +1932,7 @@ function show_layers(number) {
 
 	sortable_layers_container(layers_container);
 
-	document.getElementById("train_neural_network_button").style.display = 'block';
+	$(".train_neural_network_button").show();
 
 	lenet.resize();
 }
@@ -2482,8 +2481,7 @@ function favicon_spinner() {
 function disable_everything() {
 	$('body').css('cursor', 'wait');
 	$("#layers_container").sortable("disable");
-	$("#ribbon,select,input,checkbox").prop("disabled", true);
-	$("#ribbon,select,input,checkbox").prop("disabled", true);
+	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
 	write_descriptions();
 	Prism.highlightAll();
@@ -2492,7 +2490,7 @@ function disable_everything() {
 function enable_everything() {
 	$('body').css('cursor', 'default');
 	$("#layers_container").sortable("enable");
-	$("#ribbon,select,input,checkbox").prop("disabled", false);
+	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
 	write_descriptions();
 	Prism.highlightAll();
 }
@@ -2931,7 +2929,7 @@ function enable_start_training_custom_tensors() {
 	}
 
 
-	$("#train_neural_network_button").prop("disabled", false);
+	$(".train_neural_network_button").prop("disabled", false);
 
 	if (x_file && y_file) {
 		var last_layer_warning_container = $($(".warning_container")[get_numberoflayers() - 1]);
@@ -2947,7 +2945,7 @@ function enable_start_training_custom_tensors() {
 			);
 
 			last_layer_warning_container.show();
-			$("#train_neural_network_button").prop("disabled", true);
+			$(".train_neural_network_button").prop("disabled", true);
 		}
 	}
 
@@ -3116,7 +3114,7 @@ function change_data_origin() {
 	y_file = null;
 	y_shape = null;
 
-	$("#train_neural_network_button").prop("disabled", false);
+	$(".train_neural_network_button").prop("disabled", false);
 	var new_origin = $("#data_origin").val();
 
 	var dataset_category = _get_category();
@@ -3149,7 +3147,7 @@ function change_data_origin() {
 		update_python_code();
 	} else {
 		$("#custom_training_data_settings").show();
-		$("#train_neural_network_button").prop("disabled", true);
+		$(".train_neural_network_button").prop("disabled", true);
 
 		$("#data_type_row").show();
 		if ($("#data_type").val() == "image") {
@@ -3509,9 +3507,9 @@ function contains_convolution() {
 
 function disable_start_training_button_custom_images() {
 	if ($(".own_images").children().length != 0) {
-		$("#train_neural_network_button").prop("disabled", false);
+		$(".train_neural_network_button").prop("disabled", false);
 	} else {
-		$("#train_neural_network_button").prop("disabled", true);
+		$(".train_neural_network_button").prop("disabled", true);
 	}
 }
 
@@ -3525,7 +3523,7 @@ function write_error(e) {
 			msg = msg + "\n<br><br>\n" + explanation;
 		}
 
-		$("#train_neural_network_button").html("Start training");
+		$(".train_neural_network_button").html("Start training");
 		write_descriptions();
 		console.warn(e);
 		console.trace();
@@ -3671,9 +3669,9 @@ async function set_default_input_shape() {
 
 function allow_training() {
 	if (_allow_training()) {
-		$("#train_neural_network_button").prop("disabled", false);
+		$(".train_neural_network_button").prop("disabled", false);
 	} else {
-		$("#train_neural_network_button").prop("disabled", true);
+		$(".train_neural_network_button").prop("disabled", true);
 	}
 }
 
@@ -3948,11 +3946,15 @@ function check_number_values() {
 	$("input[type=number]").each((x, item) => {
 		var val = $(item).val();
 
+		if(!$(item).data("bgcolor")) {
+			$(item).data("bgcolor", $(item).css("background-color"));
+		}
+
 		if (!isNumeric(val)) {
 			$(item).css("background-color", "red");
 		} else {
 			val = parseFloat(val);
-			$(item).css("background-color", "transparent");
+			$(item).css("background-color", $(item).data("bgcolor"));
 
 			var max = parseFloat($(item).attr("max"));
 			var min = parseFloat($(item).attr("min"));
@@ -4165,4 +4167,55 @@ function getCookie(name) {
 
 function eraseCookie(name) {
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function copy_options () {
+	var selects = $(".copy_options");
+	for (var i = 0; i  < selects.length; i++) {
+		var sink = $(selects[i]);
+		var sink_id = sink.attr("id");
+
+		var origin = $("#" + $(selects[i]).data("from_and_to"));
+		var origin_id = origin.attr("id");
+
+		sink.html("");
+
+		var options = $("#" + origin_id + " > option").clone();
+		sink.append(options);
+
+		sink.change(function (o, s) {
+			return function (e) {
+				$("#" + o).val($("#" + s).val()).trigger("change");
+				copy_options();
+				$("#" + s).val($("#" + o).val());
+			};
+		}(origin_id, sink_id));
+	}
+}
+
+function copy_values() {
+	var inputs = $(".copy_values");
+	for (var i = 0; i  < inputs.length; i++) {
+		var sink = $(inputs[i]);
+		var origin = $("#" + $(inputs[i]).data("from_and_to"));
+		$(sink).val(origin.val());
+
+		var possible_values = ["min", "max", "step"];
+
+		for (var j = 0; j < possible_values.length; j++) {
+			if(origin.attr(possible_values[j])) {
+				sink.attr(possible_values[j], origin.attr(possible_values[j]));
+			}
+		}
+
+		var origin_id = origin.attr("id");
+		var sink_id = sink.attr("id");
+
+		sink.change(function(o, s){
+			return function(e){
+				$("#" + o).val($("#" + s).val());
+			};
+		}(origin_id, sink_id));
+
+	}
 }
