@@ -130,7 +130,7 @@ $GLOBALS['minify'] = 0;
 				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
-			<div id="ribbon">
+			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="save_model()">&#128190;</span></li>
@@ -437,7 +437,7 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
-						<div class="ribbon-toolbar" style="width:200px">
+						<div class="ribbon-toolbar">
 							<table style="width: 80%">
 								<tr>
 									<td>Optimizer:</td>
