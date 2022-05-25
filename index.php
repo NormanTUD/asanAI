@@ -649,7 +649,7 @@ $GLOBALS['minify'] = 0;
 								-->
 								<tr>
 									<td>Enable TF-Debug:</td>
-									<td><input type="checkbox" value="1" onclick="tf_debug();" id="enable_tf_debug" /></td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
 								</tr>
 								<tr>
 									<td>Memory Debugger:</td>

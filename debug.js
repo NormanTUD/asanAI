@@ -109,9 +109,7 @@ function add_function_debugger () {
 function tf_debug () {
 	if($("#enable_tf_debug").is(":checked")) {
 		tf.enableDebugMode();
-	} else {
-		console.warn("Disabled debug mode");
-		tf.enableProdMode();
+		$("#enable_tf_debug").prop("disabled", true);
 	}
 }
 
