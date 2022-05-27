@@ -917,7 +917,7 @@ $GLOBALS['minify'] = 0;
 							<button onclick="save_model()">Download</button>
 
 							<h1>Save to Mongodb</h1>
-							<button onclick="save_to_mongodb(await get_model_structure(), await get_model_data(), false, 'category')">Save</button>
+							<button onclick="save_to_mongodb_wrapper()">Save</button>
 							
 						</div>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
