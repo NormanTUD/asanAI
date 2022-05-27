@@ -28,8 +28,9 @@
 	try {
 		$port = 27017;
 		$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
-	} catch (Exception $e) {
+	} catch (\Throwable $e) {
 		error_log($e);
+		$GLOBALS["use_db"] = 0;
 	}
 
 	function save_mongo ($collection, $data) {
