@@ -133,7 +133,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	try {
 		var predict_data = null;
 
-		if(category == "image") {
+		log(item);
+
+		if(category == "image" || $(item).get(0).tagName == "IMG") {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
 		} else if(["classification", "own"].includes(category)) {
 			var data = "";
