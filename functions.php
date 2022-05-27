@@ -1,24 +1,26 @@
 <?php
 	$GLOBALS["use_db"] = 0;
-	try {
-		$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
-		$GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
-		if($GLOBALS['mysqli']->connect_errno) {
-			throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
-		}
-		$GLOBALS["use_db"] = 1;
-		if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
-			$sql = "CREATE DATABASE tfd_db";
-			if (run_query($sql) === TRUE) {
-				mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
-				load_sql_file_get_statements("nachweis.sql");
-			} else {
-				echo "Error creating database: " . $GLOBALS['mysqli']->error;
-				$GLOBALS["use_db"] = 0;
+	if(file_exists('/etc/dbpw')) {
+		try {
+			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
+			$GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
+			if($GLOBALS['mysqli']->connect_errno) {
+				throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
 			}
+			$GLOBALS["use_db"] = 1;
+			if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
+				$sql = "CREATE DATABASE tfd_db";
+				if (run_query($sql) === TRUE) {
+					mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
+					load_sql_file_get_statements("nachweis.sql");
+				} else {
+					echo "Error creating database: " . $GLOBALS['mysqli']->error;
+					$GLOBALS["use_db"] = 0;
+				}
+			}
+		} catch (Exception $e) {
+			error_log($e);
 		}
-	} catch (Exception $e) {
-		error_log($e);
 	}
 
 	$GLOBALS["manager"] = null;
