@@ -29,7 +29,7 @@
                 $names_and_sets[$category_full]["category_name"] = $category;
                 $names_and_sets[$category_full]["datasets"][$doc["network_name"]] = array(
                     "name" => $doc["network_name"],
-                    "filename" => "get_model.php?id=".$doc["_id"]['$oid'],
+                    "filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
                     "weights_file" => array(
                         $doc["network_name"] => "get_weights.php?id=".$doc["_id"]['$oid']
                     )
