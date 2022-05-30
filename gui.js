@@ -962,8 +962,16 @@ async function _get_configuration(index) {
 			while ($("#dataset").val() === null) {
 				await delay(50);
 			}
-			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
-			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+
+			var data_url, keras_url;
+			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
+			
+			if(filename.startsWith("./get_")) {
+				data_url = filename;	
+			} else {
+				data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
+				keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+			}
 
 			data = await get_cached_json(data_url);
 
