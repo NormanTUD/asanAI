@@ -9,6 +9,7 @@
             $array = [
                 "model_structure" => json_decode($_POST["model_structure"], true),
                 "model_weights" => json_decode($_POST["model_weights"], true),
+                "model_data" => json_decode($_POST["model_data"], true),
                 "user" => $user,
                 "is_public" => $_POST["is_public"],
                 "category" => $_POST["category"],
