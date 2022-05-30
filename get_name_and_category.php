@@ -31,7 +31,7 @@
                     "name" => $doc["network_name"],
                     "filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
                     "weights_file" => array(
-                        $doc["network_name"] => "get_weights.php?id=".$doc["_id"]['$oid']
+                        $doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
                     )
                 );
                 $doc["network_name"];
