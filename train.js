@@ -83,11 +83,22 @@ function get_model_data () {
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
+	var epochs = parseInt($("#epochs").val());
+	var batchSize = parseInt($("#batchSize").val());
+	var validationSplit = parseInt($("#validationSplit").val());
+	var height = parseInt($("#height").val());
+	var width = parseInt($("#width").val());
 
 	var model_data = {
 		loss: loss,
 		optimizer: optimizer_type,
-		metrics: metric_type
+		metrics: metric_type,
+		metric: metric_type,
+		epochs: epochs,
+		batchSize: batchSize,
+		validationSplit: validationSplit,
+		width: width,
+		height: height
 	};
 
 	var optimizer_data_names = model_data_structure[optimizer_type];

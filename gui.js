@@ -1496,6 +1496,7 @@ function write_to_summary(val) {
 }
 
 function set_optimizer(val) {
+	log(val);
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 	$("#optimizer").val(val);
 }
