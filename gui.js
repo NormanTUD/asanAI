@@ -2092,8 +2092,6 @@ async function set_config(index) {
 			determine_input_shape();
 		}
 
-		log(keras_layers);
-
 		if (!config["model_structure"]) {
 			if (keras_layers[0]["class_name"] == "InputLayer") {
 				keras_layers.shift();

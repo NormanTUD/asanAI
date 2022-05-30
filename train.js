@@ -88,6 +88,7 @@ function get_model_data (optimizer_name_only) {
 	var validationSplit = parseInt($("#validationSplit").val());
 	var height = parseInt($("#height").val());
 	var width = parseInt($("#width").val());
+	var divide_by = parseFloat($("#divide_by").val());
 
 	var model_data = {
 		loss: loss,
@@ -97,9 +98,13 @@ function get_model_data (optimizer_name_only) {
 		epochs: epochs,
 		batchSize: batchSize,
 		validationSplit: validationSplit,
-		width: width,
-		height: height
+		divide_by: divide_by
 	};
+
+	if(!is_hidden_or_has_hidden_parent($("#height"))) {
+		model_data["width"] = width;
+		model_data["height"] = height;
+	}
 
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
