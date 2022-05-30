@@ -62,17 +62,22 @@
 	}
 
 	function find_mongo ($table, $filter, $options) {
-		$query = new MongoDB\Driver\Query($filter, $options);
+		try {
+			$query = new MongoDB\Driver\Query($filter, $options);
 
-		$rows = $GLOBALS["manager"]->executeQuery($table, $query);
+			$rows = $GLOBALS["manager"]->executeQuery($table, $query);
 
-		$r = array();
-		foreach($rows as $row){
-			$r[] = json_decode(json_encode($row), true);
+			$r = array();
+			foreach($rows as $row){
+				$r[] = json_decode(json_encode($row), true);
 
+			}
+
+			return $r;
+		} catch (\Throwable $e) {
+			$GLOBALS["use_db"] = 0;
+			return null;
 		}
-
-		return $r;
 	}
 
 	function save_mongo_models ($array) {
