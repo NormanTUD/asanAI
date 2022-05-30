@@ -933,6 +933,7 @@ async function get_number_of_training_items() {
 }
 
 async function get_cached_json(url) {
+	console.trace();
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
 	}
@@ -966,7 +967,7 @@ async function _get_configuration(index) {
 			var data_url, keras_url;
 			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
 			
-			if(filename.startsWith("./get_")) {
+			if(filename.startsWith("get_")) {
 				data_url = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["data"];
 				keras_url = filename;
 			} else {
