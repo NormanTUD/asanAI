@@ -7,30 +7,32 @@
         if(is_null($user)) {
             print "User doesn't exist.";
         } else {
-            $filters = array(
-                '$or' => array(
-                    array("user" => array('$eq' => $user)),
-                    array("is_public" => array('$eq' => 'true')),
-            
-                )
-            );
-            $options = array(
-                "category" => true,
-                "network_name" => true
-            );
-            
-            $results = find_mongo("tfd.models", $filters, $options);
-            
-            $type = $_GET["type"];
-            foreach($results as $doc) {
-                if($doc["_id"]['$oid'] == $_GET["id"]) {
-                    $model_weights = $doc["model_weights"];
-                    print json_encode($model_weights);
-                }
-            }
+		$filters = [
+			'$and' => [
+				[
+					'$or' => [
+						["user" => ['$eq' => $user]],
+						["is_public" => ['$eq' => 'true']],
+					],
+				],
+				['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
+			]
+		];
 
-        }
+		$options = array(
+			"category" => true,
+			"network_name" => true
+		);
+
+		$results = find_mongo("tfd.models", $filters, $options);
+
+		foreach($results as $doc) {
+			$model_weights = $doc["model_weights"];
+			print json_encode($model_weights);
+		}
+
+	}
     } else {
-        print "You are not logged in.";
+	    print "You are not logged in.";
     }
 ?>
