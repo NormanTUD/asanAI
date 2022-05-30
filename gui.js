@@ -967,7 +967,8 @@ async function _get_configuration(index) {
 			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
 			
 			if(filename.startsWith("./get_")) {
-				data_url = filename;	
+				data_url = filename;
+				keras_url = filename;
 			} else {
 				data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
 				keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
