@@ -1032,3 +1032,11 @@ async function _show_load_weights () {
 		return false;
 	}
 }
+
+async function get_tfjs_model () {
+	await model.save('localstorage://demo/management/model1');
+	
+	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
+
+	return str;
+}

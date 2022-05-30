@@ -33,6 +33,7 @@
 
 			var traindata_struct =
 <?php
+				#include("get_name_and_category.php");
 				include("traindata.php");
 ?>
 
@@ -918,7 +919,8 @@ $GLOBALS['minify'] = 0;
 							<button onclick="save_model()">Download</button>
 
 							<h1>Save to Mongodb</h1>
-							<button onclick="save_to_mongodb_wrapper()">Save</button>
+							<input id="network_name" onkeyup="has_network_name()" placeholder="Network name" />
+							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()">Save</button>
 							
 						</div>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
@@ -1772,6 +1774,7 @@ $GLOBALS['minify'] = 0;
 			if(window.location.href.indexOf("run_tests") > -1) {
 				run_tests();
 			}
+
 		</script>
 
 		<?php minify_js("prism/prism.js"); ?>

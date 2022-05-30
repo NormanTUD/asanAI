@@ -12,6 +12,9 @@ function get_key_from_path(array, keypath) {
 	for (var i = 0; i < keypath.length; i++) {
 		this_key = keypath[i];
 		tmp = tmp[this_key];
+		if(!tmp) {
+			return null;
+		}
 	}
 
 	return tmp;
@@ -962,8 +965,17 @@ async function _get_configuration(index) {
 			while ($("#dataset").val() === null) {
 				await delay(50);
 			}
-			var data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
-			var keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+
+			var data_url, keras_url;
+			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
+			
+			if(filename.startsWith("get_")) {
+				data_url = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["data"];
+				keras_url = filename;
+			} else {
+				data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
+				keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+			}
 
 			data = await get_cached_json(data_url);
 
@@ -2039,13 +2051,15 @@ async function set_config(index) {
 		var keras_layers;
 		if (!config["model_structure"]) {
 			var paths = [
+				["keras", "config", "layers"],
 				["keras", "modelTopology", "config", "layers"],
 				["keras", "modelTopology", "model_config", "layers"],
 				["keras", "modelTopology", "model_config", "config", "layers"],
 				["keras", "keras", "modelTopology", "config", "layers"],
 				["keras", "keras", "modelTopology", "model_config", "layers"],
 				["keras", "keras", "modelTopology", "model_config", "config", "layers"],
-				["layers"]
+				["layers"],
+				["keras"]
 			];
 
 			for (var i = 0; i < paths.length; i++) {
@@ -2832,15 +2846,39 @@ function manage_download() {
 	}
 }
 
+<<<<<<< HEAD
 function save_to_mongodb(model_structure, model_weights, is_public, category) {
+=======
+function has_network_name() {
+	if($("#network_name").val() == "") {
+		$("#save_to_mongodb").prop("disabled", true);
+	} else {
+		$("#save_to_mongodb").prop("disabled", false);
+	}
+}
+
+// function get_classifications() {
+// 	var op = "";
+// 	for(var i = 0; i < Object.keys(traindata_struct).length; i++) {
+// 		op = document.createElement("option");
+// 		op.innerText = Object.keys(traindata_struct)[i];
+// 		op.value = traindata_struct[Object.keys(traindata_struct)[i]]["category_name"];
+// 		$("#select_classification").append(op);
+// 	}
+// }
+
+function save_to_mongodb(model_structure, model_weights, model_data, is_public, category, category_full) {
 	$.ajax({
 		url: "save_to_mongodb.php",
 		//"&is_public=" + is_public + "&category=" + category,
 		data: {
 			model_structure: model_structure,
 			model_weights: model_weights,
+			model_data: model_data,
 			is_public: is_public,
-			category: category	
+			category: category,
+			category_full: category_full,
+			network_name: $("#network_name").val()
 		},
 		method: "POST",
 		success: function (data) {
@@ -2854,7 +2892,7 @@ function save_to_mongodb(model_structure, model_weights, is_public, category) {
 }
 
 async function save_to_mongodb_wrapper () {
-	save_to_mongodb(JSON.stringify(await get_model_structure()), await get_weights_as_string(), false, 'category');
+	save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), false, $("#dataset_category").val(), $("#dataset_category option:selected").text());
 }
 
 function open_save_model_dialog() {

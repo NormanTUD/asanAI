@@ -79,16 +79,32 @@ async function train_neural_network () {
 	save_current_status();
 }
 
-function get_model_data () {
+function get_model_data (optimizer_name_only) {
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
+	var epochs = parseInt($("#epochs").val());
+	var batchSize = parseInt($("#batchSize").val());
+	var validationSplit = parseInt($("#validationSplit").val());
+	var height = parseInt($("#height").val());
+	var width = parseInt($("#width").val());
+	var divide_by = parseFloat($("#divide_by").val());
 
 	var model_data = {
 		loss: loss,
 		optimizer: optimizer_type,
-		metrics: metric_type
+		metrics: metric_type,
+		metric: metric_type,
+		epochs: epochs,
+		batchSize: batchSize,
+		validationSplit: validationSplit,
+		divide_by: divide_by
 	};
+
+	if(!is_hidden_or_has_hidden_parent($("#height"))) {
+		model_data["width"] = width;
+		model_data["height"] = height;
+	}
 
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
@@ -106,7 +122,9 @@ function get_model_data () {
 		"sgd": "sgd(model_data['learningRate'])"
 	};
 
-	model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+	if(!optimizer_name_only) {
+		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+	}
 
 	return model_data;
 }
