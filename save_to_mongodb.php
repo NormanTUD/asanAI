@@ -11,7 +11,9 @@
                 "model_weights" => json_decode($_POST["model_weights"], true),
                 "user" => $user,
                 "is_public" => $_POST["is_public"],
-                "category" => $_POST["category"]
+                "category" => $_POST["category"],
+                "category_full" => $_POST["category_full"],
+                "network_name" => $_POST["network_name"]
             ];
     
             #dier($array);

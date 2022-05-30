@@ -26,11 +26,16 @@
                 'user' => true,
                 'is_public' => true,
                 'category' => true,
-                'model_weights' => true,
-                'model_structure' => true
+                'model_weights' => 0,
+                'model_structure' => 0,
+                'network_name' => true
             );
 
-            dier(find_mongo("tfd.models", $filters, $options));
+            $results = find_mongo("tfd.models", $filters, $options);
+
+            foreach ($results as $doc) {
+                dier($doc["category"]);
+            }
         }
     } else {
         print "You are not logged in.";

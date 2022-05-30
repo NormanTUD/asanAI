@@ -908,7 +908,7 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="save_model_dialog" style="display: none">
+				<div id="save_model_dialog" style="/*display: none*/">
 					<div class="popup_body less_transparent_glass_box">
 					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
 					</div>
@@ -917,7 +917,8 @@ $GLOBALS['minify'] = 0;
 							<button onclick="save_model()">Download</button>
 
 							<h1>Save to Mongodb</h1>
-							<button onclick="save_to_mongodb_wrapper()">Save</button>
+							<input id="network_name" onkeyup="has_network_name()" placeholder="Network name" />
+							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()">Save</button>
 							
 						</div>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
@@ -1771,6 +1772,8 @@ $GLOBALS['minify'] = 0;
 			if(window.location.href.indexOf("run_tests") > -1) {
 				run_tests();
 			}
+
+			get_classifications();
 		</script>
 
 		<?php minify_js("prism/prism.js"); ?>

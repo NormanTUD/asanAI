@@ -2832,7 +2832,25 @@ function manage_download() {
 	}
 }
 
-function save_to_mongodb(model_structure, model_weights, is_public, category) {
+function has_network_name() {
+	if($("#network_name").val() == "") {
+		$("#save_to_mongodb").prop("disabled", true);
+	} else {
+		$("#save_to_mongodb").prop("disabled", false);
+	}
+}
+
+// function get_classifications() {
+// 	var op = "";
+// 	for(var i = 0; i < Object.keys(traindata_struct).length; i++) {
+// 		op = document.createElement("option");
+// 		op.innerText = Object.keys(traindata_struct)[i];
+// 		op.value = traindata_struct[Object.keys(traindata_struct)[i]]["category_name"];
+// 		$("#select_classification").append(op);
+// 	}
+// }
+
+function save_to_mongodb(model_structure, model_weights, is_public, category, category_full) {
 	$.ajax({
 		url: "save_to_mongodb.php",
 		//"&is_public=" + is_public + "&category=" + category,
@@ -2840,7 +2858,9 @@ function save_to_mongodb(model_structure, model_weights, is_public, category) {
 			model_structure: model_structure,
 			model_weights: model_weights,
 			is_public: is_public,
-			category: category	
+			category: category,
+			category_full: category_full,
+			network_name: $("#network_name").val()
 		},
 		method: "POST",
 		success: function (data) {
@@ -2854,7 +2874,7 @@ function save_to_mongodb(model_structure, model_weights, is_public, category) {
 }
 
 async function save_to_mongodb_wrapper () {
-	save_to_mongodb(JSON.stringify(await get_model_structure()), await get_weights_as_string(), false, 'category');
+	save_to_mongodb(JSON.stringify(await get_model_structure()), await get_weights_as_string(), false, $("#dataset_category").val(), $("#dataset_category option:selected").text());
 }
 
 function open_save_model_dialog() {
