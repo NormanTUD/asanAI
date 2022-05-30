@@ -1773,7 +1773,6 @@ $GLOBALS['minify'] = 0;
 				run_tests();
 			}
 
-			get_classifications();
 		</script>
 
 		<?php minify_js("prism/prism.js"); ?>
