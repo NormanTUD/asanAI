@@ -2846,9 +2846,6 @@ function manage_download() {
 	}
 }
 
-<<<<<<< HEAD
-function save_to_mongodb(model_structure, model_weights, is_public, category) {
-=======
 function has_network_name() {
 	if($("#network_name").val() == "") {
 		$("#save_to_mongodb").prop("disabled", true);
