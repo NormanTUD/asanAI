@@ -12,6 +12,9 @@ function get_key_from_path(array, keypath) {
 	for (var i = 0; i < keypath.length; i++) {
 		this_key = keypath[i];
 		tmp = tmp[this_key];
+		if(!tmp) {
+			return null;
+		}
 	}
 
 	return tmp;
@@ -933,7 +936,6 @@ async function get_number_of_training_items() {
 }
 
 async function get_cached_json(url) {
-	console.trace();
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
 	}
@@ -1496,7 +1498,6 @@ function write_to_summary(val) {
 }
 
 function set_optimizer(val) {
-	log(val);
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 	$("#optimizer").val(val);
 }
@@ -2050,13 +2051,15 @@ async function set_config(index) {
 		var keras_layers;
 		if (!config["model_structure"]) {
 			var paths = [
+				["keras", "config", "layers"],
 				["keras", "modelTopology", "config", "layers"],
 				["keras", "modelTopology", "model_config", "layers"],
 				["keras", "modelTopology", "model_config", "config", "layers"],
 				["keras", "keras", "modelTopology", "config", "layers"],
 				["keras", "keras", "modelTopology", "model_config", "layers"],
 				["keras", "keras", "modelTopology", "model_config", "config", "layers"],
-				["layers"]
+				["layers"],
+				["keras"]
 			];
 
 			for (var i = 0; i < paths.length; i++) {
@@ -2088,6 +2091,8 @@ async function set_config(index) {
 		} else {
 			determine_input_shape();
 		}
+
+		log(keras_layers);
 
 		if (!config["model_structure"]) {
 			if (keras_layers[0]["class_name"] == "InputLayer") {
@@ -2886,7 +2891,7 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 }
 
 async function save_to_mongodb_wrapper () {
-	save_to_mongodb(JSON.stringify(await get_model_structure()), await get_weights_as_string(), JSON.stringify(await get_model_data()), false, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+	save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), false, $("#dataset_category").val(), $("#dataset_category option:selected").text());
 }
 
 function open_save_model_dialog() {

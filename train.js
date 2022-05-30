@@ -79,7 +79,7 @@ async function train_neural_network () {
 	save_current_status();
 }
 
-function get_model_data () {
+function get_model_data (optimizer_name_only) {
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
@@ -117,7 +117,9 @@ function get_model_data () {
 		"sgd": "sgd(model_data['learningRate'])"
 	};
 
-	model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+	if(!optimizer_name_only) {
+		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+	}
 
 	return model_data;
 }
