@@ -933,6 +933,7 @@ async function get_number_of_training_items() {
 }
 
 async function get_cached_json(url) {
+	console.trace();
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
 	}

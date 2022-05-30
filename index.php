@@ -34,6 +34,7 @@
 			var traindata_struct =
 <?php
 				include("get_name_and_category.php");
+				#include("traindata.php");
 ?>
 
 			var darkmode = <?php print $darkmode; ?>;
