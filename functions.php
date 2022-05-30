@@ -75,6 +75,7 @@
 
 			return $r;
 		} catch (\Throwable $e) {
+			$GLOBALS["use_db"] = 0;
 			return null;
 		}
 	}
