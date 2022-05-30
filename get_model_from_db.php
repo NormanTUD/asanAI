@@ -7,15 +7,6 @@
         if(is_null($user)) {
             print "User doesn't exist.";
         } else {
-            /*
-            db.models.find(
-                {
-                    $or: [{user: {$eq: 62}}, {is_public: {$eq: "true"}}]
-                }, 
-                
-                
-                {"user": true, "is_public": true, "category": true, "model_weights": true, "model_structure": true});
-            */
             $filters = array(
                 '$or' => array(
                     array("user" => array('$eq' => $user)),

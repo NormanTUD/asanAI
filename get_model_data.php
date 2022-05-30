@@ -15,20 +15,22 @@
                 )
             );
             $options = array(
-                "category" => true,
-                "network_name" => true
+                'user' => true,
+                'is_public' => true,
+                'category' => true,
+                'model_data' => true,
+                'model_weights' => 0,
+                'model_structure' => 0,
+                'network_name' => true
             );
             
             $results = find_mongo("tfd.models", $filters, $options);
-            
-            $type = $_GET["type"];
+
             foreach($results as $doc) {
                 if($doc["_id"]['$oid'] == $_GET["id"]) {
-                    $model_weights = $doc["model_weights"];
-                    print json_encode($model_weights);
+                    print json_encode($doc["model_data"]);
                 }
             }
-
         }
     } else {
         print "You are not logged in.";
