@@ -34,7 +34,9 @@
             $results = find_mongo("tfd.models", $filters, $options);
 
             foreach ($results as $doc) {
-                json_encode($doc["category"]);
+                #dier($doc["model_structure"]);
+                #header('Content-Type: application/json');
+                print json_encode($doc["model_structure"]);
             }
         }
     } else {
