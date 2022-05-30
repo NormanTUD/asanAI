@@ -7,12 +7,17 @@
         if(is_null($user)) {
             print "User doesn't exist.";
         } else {
-            $filters = array(
-                '$or' => array(
-                    array("user" => array('$eq' => $user)),
-                    array("is_public" => array('$eq' => 'true'))
-                )
-                );
+            $filters = [
+                '$and' => [
+                    [
+                        '$or' => [
+                            ["user" => ['$eq' => $user]],
+                            ["is_public" => ['$eq' => 'true']],
+                        ],
+                    ],
+                    ['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
+                ]
+            ];
             $options = array(
                 'user' => true,
                 'is_public' => true,
