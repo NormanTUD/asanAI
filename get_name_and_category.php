@@ -7,17 +7,12 @@
         if(is_null($user)) {
             print "User doesn't exist.";
         } else {
-            $filters = [
-                '$and' => [
-                    [
-                        '$or' => [
-                            ["user" => ['$eq' => $user]],
-                            ["is_public" => ['$eq' => 'true']],
-                        ],
-                    ],
-                    ['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
-                ]
-            ];
+            $filters = array(
+                '$or' => array(
+                    array("user" => array('$eq' => $user)),
+                    array("is_public" => array('$eq' => 'true'))
+                )
+            );
             $options = array(
                 "category" => true,
                 "network_name" => true
