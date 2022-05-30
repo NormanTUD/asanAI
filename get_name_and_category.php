@@ -37,7 +37,7 @@
                 $doc["network_name"];
             }
 
-            dier(json_encode($names_and_sets, JSON_PRETTY_PRINT));
+            print json_encode($names_and_sets, JSON_PRETTY_PRINT);
         }
     } else {
         print "You are not logged in.";
