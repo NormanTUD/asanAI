@@ -2839,23 +2839,38 @@ function close_losses() {
 	closePopup("losses_popup");
 }
 
-function display_delete_button() {
-	$("#delete_model").hide();
+function delete_model() {
+	var id = get_user_id_from_train_data_struct();
+	log(id)
+	$.ajax({
+		url: "delete_from_mongodb.php?id=" + id
+	});
+}
 
+function get_user_id_from_train_data_struct() {
 	var dataset_index = document.getElementById("dataset").selectedIndex;
 	var classification_index = document.getElementById("dataset_category").selectedIndex;
-
+	
 	if((dataset_index >= 0) && (classification_index >= 0)) {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
 		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
 		if((dataset != undefined) && (classification != undefined)) {
-			var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"].toString();
-			if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
-				$("#delete_model").show();
-			}
+			var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"];
+			return user_id;
 		}
 	}
+	return false;
+}
 
+function display_delete_button() {
+	$("#delete_model").addClass("disabled_symbol");
+	$("#delete_model").html("&#10060");
+	var user_id = get_user_id_from_train_data_struct().toString();
+	log(user_id.toString())
+	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
+		$("#delete_model").html("&#10060");
+		$("#delete_model").removeClass("disabled_symbol");
+	}
 }
 
 function manage_download() {
