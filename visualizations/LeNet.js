@@ -171,6 +171,13 @@ function LeNet() {
 			.attr("font-family", "sans-serif");
 
 		style();
+
+		/*
+		var width = parseInt(Math.abs($("#visualization_tab").width()));
+		var height = $("#visualization_tab").height();
+
+		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
+		*/
 	}
 
 	function redistribute(
