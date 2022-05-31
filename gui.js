@@ -2796,6 +2796,9 @@ function login() {
 		url: "login.php?username=" + username + "&pw=" + password,
 		success: function (data) {
 			if(data["status"] == "ok") {
+				user_id = data["user_id"];
+				log("set USER ID")
+				log(user_id)
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
@@ -2811,6 +2814,7 @@ function login() {
 }
 
 function logout() {
+	user_id = null;
 	eraseCookie('session_id');
 	$("#logout").hide();
 	$("#register").show();

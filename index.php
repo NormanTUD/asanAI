@@ -95,7 +95,7 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("gui.js"); ?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
-
+		
 		<!-- visualizations -->
 		<?php minify_js("visualizations/d3.v5.min.js"); ?>
 		<?php minify_js("visualizations/three.min.js"); ?>
@@ -106,12 +106,14 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("visualizations/AlexNet.js"); ?>
 		<?php minify_js("visualizations/LeNet.js"); ?>
 		<?php minify_js("visualizations/FCNN.js"); ?>
-
+		
 		<!-- ChardinJS -->
 		<?php minify_js("chardinjs.js"); ?>
-
+		
 		<?php minify_css("chardinjs.css"); ?>
-
+		
+		<?php print "user_id = ".get_user_id_from_session_id($_COOKIE["session_id"]); ?>
+		
 		<script>
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
