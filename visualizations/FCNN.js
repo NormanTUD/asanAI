@@ -176,6 +176,11 @@ function FCNN() {
 			.text(function(d) { return (showLabels ? d.text : ""); });
 
 		style();
+
+		var width = parseInt(Math.abs($("#fcnn").width() * 2));
+		var height = parseInt(Math.abs($($($("#fcnn").children()[0]).children()[0]).offset().top));
+
+		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMinYMin meet");
 	}
 
 	function redistribute(
@@ -216,6 +221,9 @@ function FCNN() {
 		text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
 			.attr("y", function(d) { return (nnDirection === 'right' ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
 
+
+
+		var rightmost = $($($("#fcnn").children()[0]).children()[0]).children().last().position().left
 	}
 
 	function style(
