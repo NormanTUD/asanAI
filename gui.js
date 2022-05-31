@@ -2889,7 +2889,7 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 }
 
 async function save_to_mongodb_wrapper () {
-	save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), false, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+	save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
 }
 
 function open_save_model_dialog() {

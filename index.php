@@ -918,11 +918,13 @@ $GLOBALS['minify'] = 0;
 							<h1>Download</h1>
 							<button onclick="save_model()">Download</button>
 
-							<h1>Save to Mongodb</h1>
-							<input id="network_name" onkeyup="has_network_name()" placeholder="Network name" />
+							<h1>Save to DB</h1>
+							<input id="network_name" onkeyup="has_network_name()" placeholder="Network name" /><br/>
+							Public: <input id="is_public" type="checkbox"><br/>
 							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()">Save</button>
 							
 						</div>
+						<br/>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
 					</div>
 				</div>
