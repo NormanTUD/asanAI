@@ -33,6 +33,17 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function delete_mongo ($collection, $id) {
+		$bulk = new \MongoDB\Driver\BulkWrite();
+		$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
+		$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
+		return $result;
+	}
+
+	function delete_mongo_models ($id) {
+		delete_mongo('tfd.models', $id);
+	}
+
 	function save_mongo ($collection, $data) {
 		if (!is_string($collection) || strlen($collection) < 3 || strpos($collection, '.') < 1) {
 			throw new \InvalidArgumentException('The collection name to be filled on the database must be given as "database.collection"');
