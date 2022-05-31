@@ -1795,8 +1795,5 @@ $GLOBALS['minify'] = 0;
 			resize_window();
 		</script>
 		<script src="./wizard_script.js"></script>
-		<script> 
-			display_delete_button(<?php print array_key_exists("session_id", $_COOKIE) ?>);
-		</script>
 	</body>
 </html>

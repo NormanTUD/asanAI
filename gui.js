@@ -1388,6 +1388,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	MathJax.typeset();
 
+	display_delete_button();
+
 	return 1;
 }
 
@@ -2839,12 +2841,12 @@ function close_losses() {
 	closePopup("losses_popup");
 }
 
-function display_delete_button(session_id_exists) {
+function display_delete_button() {
 	var dataset = document.getElementById("dataset").value;
 	var classification = document.getElementById("dataset_category").value;
 	// dataset could be undefined
 	var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"];
-	if(user_id.match(/^[0-9]*$/) && session_id_exists) {
+	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		document.getElementById("delete_button").show();
 	}
 	document.getElementById("delete_button").hide();
