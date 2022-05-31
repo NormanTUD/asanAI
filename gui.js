@@ -2770,6 +2770,7 @@ function register() {
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 					setCookie("session_id", data["session_id"]);
 					$("#register").hide();
+					$("#delete_button").hide();
 					$("#logout").show();
 					closePopup('register_dialog');
 				}
@@ -2836,6 +2837,17 @@ function losses_popup() {
 
 function close_losses() {
 	closePopup("losses_popup");
+}
+
+function display_delete_button(session_id_exists) {
+	var dataset = document.getElementById("dataset").value;
+	var classification = document.getElementById("dataset_category").value;
+	// dataset could be undefined
+	var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"];
+	if(user_id.match(/^[0-9]*$/) && session_id_exists) {
+		document.getElementById("delete_button").show();
+	}
+	document.getElementById("delete_button").hide();
 }
 
 function manage_download() {

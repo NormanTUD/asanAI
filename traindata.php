@@ -63,6 +63,7 @@
 
 						$data[$content_name]["datasets"][$name] = [
 							"name" => $file_basename,
+							"user_id" => "get_user_id_from_session_id()",
 							"filename" => "$this_path/$this_category_contents"
 						];
 
@@ -113,6 +114,7 @@
 				$data[$category_full]["category_name"] = $category;
 				$data[$category_full]["datasets"][$doc["network_name"]] = array(
 					"name" => $doc["network_name"],
+					"user_id" => $doc["user"],
 					"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
 					"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
 					"weights_file" => array(

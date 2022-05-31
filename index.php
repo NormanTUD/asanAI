@@ -33,7 +33,6 @@
 
 			var traindata_struct =
 <?php
-				#include("get_name_and_category.php");
 				include("traindata.php");
 ?>
 
@@ -141,6 +140,7 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
+					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -1795,5 +1795,8 @@ $GLOBALS['minify'] = 0;
 			resize_window();
 		</script>
 		<script src="./wizard_script.js"></script>
+		<script> 
+			display_delete_button(<?php print array_key_exists("session_id", $_COOKIE) ?>);
+		</script>
 	</body>
 </html>
