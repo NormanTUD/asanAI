@@ -63,7 +63,7 @@
 
 						$data[$content_name]["datasets"][$name] = [
 							"name" => $file_basename,
-							"user_id" => "get_user_id_from_session_id()",
+							"user_id" => "has no user",
 							"filename" => "$this_path/$this_category_contents"
 						];
 

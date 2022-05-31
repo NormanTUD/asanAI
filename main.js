@@ -258,7 +258,8 @@ $(document).ready(async function() {
 	allow_edit_inputShape();
 
 	setInterval(check_number_values, 200);
-
+	setInterval(display_delete_button, 200);
+	
 	copy_options();
 	copy_values();
 });

@@ -1388,8 +1388,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	MathJax.typeset();
 
-	display_delete_button();
-
 	return 1;
 }
 
@@ -2842,14 +2840,22 @@ function close_losses() {
 }
 
 function display_delete_button() {
-	var dataset = document.getElementById("dataset").value;
-	var classification = document.getElementById("dataset_category").value;
-	// dataset could be undefined
-	var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"];
-	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
-		document.getElementById("delete_button").show();
+	$("#delete_model").hide();
+
+	var dataset_index = document.getElementById("dataset").selectedIndex;
+	var classification_index = document.getElementById("dataset_category").selectedIndex;
+
+	if((dataset_index >= 0) && (classification_index >= 0)) {
+		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
+		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
+		if((dataset != undefined) && (classification != undefined)) {
+			var user_id = traind
+			if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
+				$("#delete_model").show();
+			}
+		}
 	}
-	document.getElementById("delete_button").hide();
+
 }
 
 function manage_download() {
