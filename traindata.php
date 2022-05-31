@@ -116,6 +116,7 @@
 					"name" => $doc["network_name"],
 					"user_id" => $doc["user"],
 					"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
+					"id" => $doc["_id"]['$oid'],
 					"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
 					"weights_file" => array(
 						$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']

@@ -148,19 +148,6 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
-			/*
-			.attr("onclick", function(d) {
-				var param = d.id.split("_");
-				if(!show_input_layer || show_input_layer && param[0] > 0) {
-					if(show_input_layer) {
-						param[0]--;
-					}
-					return "draw_maximally_activated_neuron(" + param.join() + ")";
-				} else {
-					return "";
-				}
-			})
-			*/
 			.on("mousedown", set_focus)
 			.on("mouseup", remove_focus)
 			.merge(node);
@@ -176,6 +163,11 @@ function FCNN() {
 			.text(function(d) { return (showLabels ? d.text : ""); });
 
 		style();
+
+		var width = parseInt(Math.abs($("#fcnn").width() * 2));
+		var height = $("#fcnn").height() * 2;
+
+		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
 	}
 
 	function redistribute(
@@ -216,6 +208,9 @@ function FCNN() {
 		text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
 			.attr("y", function(d) { return (nnDirection === 'right' ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
 
+
+
+		var rightmost = $($($("#fcnn").children()[0]).children()[0]).children().last().position().left
 	}
 
 	function style(

@@ -50,8 +50,6 @@ in creating this program:
 
 - [MathJax](https://www.mathjax.org/)
 
-- [tfjs-activation-functions](https://github.com/Polarisation/tfjs-activation-functions)
-
 - [Convolution arithmetic](https://github.com/vdumoulin/conv_arithmetic)
 
 - [Kaggle Cats and Dogs Dataset](https://www.microsoft.com/en-us/download/details.aspx?id=54765)
