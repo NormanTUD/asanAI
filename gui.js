@@ -2849,7 +2849,7 @@ function display_delete_button() {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
 		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
 		if((dataset != undefined) && (classification != undefined)) {
-			var user_id = traind
+			var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"].toString();
 			if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 				$("#delete_model").show();
 			}
