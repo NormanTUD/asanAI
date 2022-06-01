@@ -2765,7 +2765,6 @@ function register() {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
-				log(data)
 				if(data["status"] == "ok") {
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 					setCookie("session_id", data["session_id"]);
@@ -2798,8 +2797,6 @@ function login() {
 		success: function (data) {
 			if(data["status"] == "ok") {
 				user_id = data["user_id"];
-				log("set USER ID")
-				log(user_id)
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
@@ -2847,7 +2844,6 @@ function close_losses() {
 
 function delete_model() {
 	var id = get_user_id_from_train_data_struct();
-	log(id)
 	$.ajax({
 		url: "delete_from_mongodb.php?id=" + id
 	});
@@ -2872,7 +2868,6 @@ function display_delete_button() {
 	$("#delete_model").addClass("disabled_symbol");
 	$("#delete_model").html("&#10060");
 	var user_id = get_user_id_from_train_data_struct().toString();
-	log(user_id.toString())
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		$("#delete_model").html("&#10060");
 		$("#delete_model").removeClass("disabled_symbol");
