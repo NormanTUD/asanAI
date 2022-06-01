@@ -256,4 +256,11 @@
 		return null;
 	}
 	 
+	function filter_str_int ($data) {
+		if(is_array($data)) {
+			return null;
+		}
+
+		return $data;
+	}
 ?>
