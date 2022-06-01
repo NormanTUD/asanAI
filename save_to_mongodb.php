@@ -17,8 +17,13 @@
                 "network_name" => $_POST["network_name"]
             ];
     
-            #dier($array);
-            save_mongo_models($array);
+            if(!!$_POST["model_structure"] && !!$_POST["model_weights"] && !!$_POST["model_data"] && !!$_POST["is_public"]
+            && !!$_POST["category"] && !!$_POST["category_full"] && !!$_POST["network_name"]) {
+                save_mongo_models($array);
+                $array["msg"] = "Saving data was successful.";
+            } else {
+                $array["msg"] = "Some data is missing.";
+            }
             
             header('Content-Type: application/json');
             print json_encode($array);
@@ -27,6 +32,4 @@
         print "You are not logged in.";
     }
 
-    // die save_to_mongodb() sollte beim klicken auf "Save" aufgerufen werden, aber bisher werden
-    // die Daten noch nicht in der DB gespeichert
 ?>

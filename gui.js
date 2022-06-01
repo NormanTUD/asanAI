@@ -2924,11 +2924,11 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 		},
 		method: "POST",
 		success: function (data) {
-			log("saved to mongodb");
-			log(data)
+			log(data["msg"])
+			document.getElementById("save_model_msg").innerHTML = data["msg"];
 		},
 		error: function (object, error, msg) {
-			log(msg);
+			document.getElementById("save_model_msg").innerHTML = msg;
 		}
 	});
 }
