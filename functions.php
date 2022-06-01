@@ -34,7 +34,7 @@
 	}
 
 	function delete_expiry_dates() {
-		$query = "delete from session_ids where expiry_date < (select expiry_date from session_ids where datediff(expiry_date, now()) < 0 limit 1)";
+		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
 	}
 
