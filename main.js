@@ -161,6 +161,13 @@ function dataset_already_there (dataset_name) {
 async function get_traindata_and_init_categories () {
 	traindata_struct = await get_json("traindata.php");
 	init_categories();
+	if(get_get("dataset_category")) {
+		$("#dataset_category").val(get_get("dataset_category"));
+	} else {
+		$("#dataset_category").val("image");
+	}
+
+	await init_page_contents();
 	write_descriptions();
 }
 
