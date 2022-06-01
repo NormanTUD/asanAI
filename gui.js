@@ -935,6 +935,11 @@ async function get_number_of_training_items() {
 	return number;
 }
 
+async function get_json(url) {
+	var data = await $.getJSON(url);
+	return data;
+}
+
 async function get_cached_json(url) {
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
@@ -2790,7 +2795,7 @@ function register() {
 	write_descriptions();
 }
 
-function login() {
+async function login() {
 	var username = document.getElementById("login_username").value;
 	var password = document.getElementById("login_password").value;
 	$.ajax({
@@ -2804,7 +2809,9 @@ function login() {
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
-				$("#register_dialog").delay(400).fadeOut();
+				$("#register_dialog").delay(400).fadeOut(400, () => {
+					get_traindata_and_init_categories();
+				});
 				//closePopup('register_dialog');
 			}
 			if(data["status"] == "error") {
@@ -2812,10 +2819,9 @@ function login() {
 			}
 		}
 	});
-	write_descriptions();
 }
 
-function logout() {
+async function logout() {
 	user_id = null;
 	eraseCookie('session_id');
 	$("#logout").hide();
@@ -2825,9 +2831,11 @@ function logout() {
 	$("#register_password").val("");
 	$("#login_username").val("");
 	$("#login_password").val("");
-	document.getElementById("login_error_msg").innerHTML = ""
-	document.getElementById("register_error_msg").innerHTML = ""
-	document.getElementById("license").checked = false
+	document.getElementById("login_error_msg").innerHTML = "";
+	document.getElementById("register_error_msg").innerHTML = "";
+	document.getElementById("license").checked = false;
+
+	await get_traindata_and_init_categories();
 }
 
 function sources_popup() {
@@ -2872,7 +2880,7 @@ function display_delete_button() {
 	$("#delete_model").addClass("disabled_symbol");
 	$("#delete_model").html("&#10060");
 	var user_id = get_user_id_from_train_data_struct().toString();
-	log(user_id.toString())
+	//log(user_id.toString())
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		$("#delete_model").html("&#10060");
 		$("#delete_model").removeClass("disabled_symbol");
