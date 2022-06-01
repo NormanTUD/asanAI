@@ -17,8 +17,8 @@
                 "network_name" => $_POST["network_name"]
             ];
     
-            if(!!$_POST["model_structure"] && !!$_POST["model_weights"] && !!$_POST["model_data"] && !!$_POST["is_public"]
-            && !!$_POST["category"] && !!$_POST["category_full"] && !!$_POST["network_name"]) {
+            if($_POST["model_structure"] && $_POST["model_weights"] && $_POST["model_data"] && $_POST["is_public"]
+            && $_POST["category"] && $_POST["category_full"] && $_POST["network_name"]) {
                 save_mongo_models($array);
                 $array["msg"] = "Saving data was successful.";
             } else {
