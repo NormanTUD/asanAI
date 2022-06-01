@@ -15,7 +15,7 @@
 						["is_public" => ['$eq' => 'true']],
 					],
 				],
-				['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
+				['_id' => new MongoDB\BSON\ObjectID(filter_str_int($_GET["id"]))]
 			]
 		];
 

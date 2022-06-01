@@ -16,7 +16,8 @@
                 
                             insert_session_id(esc($_GET["username"]), $_GET["days"]);
                             
-                            $status = ["status" => "ok", "msg" => "Account created", "session_id" => get_session_id($_GET["username"]), "time" => get_expiry_date($_GET["username"])];
+                            $session_id = get_session_id(esc($_GET["username"]));
+                            $status = ["status" => "ok", "msg" => "Account created", "session_id" => $session_id, "time" => get_expiry_date($session_id)];
                         } else {
                             $status = ["status" => "error", "msg" => "Did you forget your password? Link: get_new_password.php"];
                         }

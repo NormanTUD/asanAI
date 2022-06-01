@@ -935,6 +935,11 @@ async function get_number_of_training_items() {
 	return number;
 }
 
+async function get_json(url) {
+	var data = await $.getJSON(url);
+	return data;
+}
+
 async function get_cached_json(url) {
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
@@ -2765,52 +2770,62 @@ function register() {
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
-				log(data)
 				if(data["status"] == "ok") {
+					document.getElementById("register_error_msg").style = "background-color: #4b8545";
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 					setCookie("session_id", data["session_id"]);
 					$("#register").hide();
 					$("#delete_button").hide();
 					$("#logout").show();
-					closePopup('register_dialog');
+					$("#register_dialog").delay(400).fadeOut();
+					//closePopup('register_dialog');
 				}
 				if(data["status"] == "error") {
+					document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				}
 
 			},
 			error: function (object, error, msg) {
+				document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
 			}
 		});
 	} else {
+		document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
 	write_descriptions();
 }
 
-function login() {
+async function login() {
 	var username = document.getElementById("login_username").value;
 	var password = document.getElementById("login_password").value;
 	$.ajax({
 		url: "login.php?username=" + username + "&pw=" + password,
 		success: function (data) {
 			if(data["status"] == "ok") {
+				user_id = data["user_id"];
+				document.getElementById("login_error_msg").style = "background-color: #4b8545";
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
-				closePopup('register_dialog');
+				$("#register_dialog").delay(400).fadeOut(400, () => {
+					get_traindata_and_init_categories();
+				});
+				//closePopup('register_dialog');
 			}
 			if(data["status"] == "error") {
+				document.getElementById("login_error_msg").style = "background-color: #c21f1f";
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			}
 		}
 	});
-	write_descriptions();
 }
 
-function logout() {
+async function logout() {
+	user_id = null;
 	eraseCookie('session_id');
 	$("#logout").hide();
 	$("#register").show();
@@ -2819,9 +2834,11 @@ function logout() {
 	$("#register_password").val("");
 	$("#login_username").val("");
 	$("#login_password").val("");
-	document.getElementById("login_error_msg").innerHTML = ""
-	document.getElementById("register_error_msg").innerHTML = ""
-	document.getElementById("license").checked = false
+	document.getElementById("login_error_msg").innerHTML = "";
+	document.getElementById("register_error_msg").innerHTML = "";
+	document.getElementById("license").checked = false;
+
+	await get_traindata_and_init_categories();
 }
 
 function sources_popup() {
@@ -2839,23 +2856,37 @@ function close_losses() {
 	closePopup("losses_popup");
 }
 
-function display_delete_button() {
-	$("#delete_model").hide();
+function delete_model() {
+	var id = get_id_from_train_data_struct("id");
+	$.ajax({
+		url: "delete_from_mongodb.php?id=" + id
+	});
+}
 
+function get_id_from_train_data_struct(index) {
 	var dataset_index = document.getElementById("dataset").selectedIndex;
 	var classification_index = document.getElementById("dataset_category").selectedIndex;
-
+	
 	if((dataset_index >= 0) && (classification_index >= 0)) {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
 		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
 		if((dataset != undefined) && (classification != undefined)) {
-			var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"].toString();
-			if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
-				$("#delete_model").show();
-			}
+			var id = traindata_struct[classification]["datasets"][dataset][index];
+			return id;
 		}
 	}
+	return false;
+}
 
+function display_delete_button() {
+	$("#delete_model").addClass("disabled_symbol");
+	$("#delete_model").html("&#10060");
+	var user_id = get_id_from_train_data_struct("user_id").toString();
+	//log(user_id.toString())
+	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
+		$("#delete_model").html("&#10060");
+		$("#delete_model").removeClass("disabled_symbol");
+	}
 }
 
 function manage_download() {
@@ -2899,11 +2930,11 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 		},
 		method: "POST",
 		success: function (data) {
-			log("saved to mongodb");
-			log(data)
+			log(data["msg"])
+			document.getElementById("save_model_msg").innerHTML = data["msg"];
 		},
 		error: function (object, error, msg) {
-			log(msg);
+			document.getElementById("save_model_msg").innerHTML = msg;
 		}
 	});
 }
@@ -4257,7 +4288,7 @@ function setCookie(name,value,days) {
 		date.setTime(date.getTime() + (days*24*60*60*1000));
 		expires = "; expires=" + date.toUTCString();
 	}
-	document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+	document.cookie = name + "=" + (value || "")  + expires + "; path=/; samesite=lax";
 }
 
 function getCookie(name) {
@@ -4272,7 +4303,7 @@ function getCookie(name) {
 }
 
 function eraseCookie(name) {
-	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; samesite=lax';
 }
 
 function copy_options () {

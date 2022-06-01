@@ -33,6 +33,20 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function delete_expiry_dates() {
+		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
+		run_query($query);
+	}
+
+	function contains_null_values ($array) {
+		foreach ($array as $key => $value) {
+			if(is_null($value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function delete_mongo ($collection, $id) {
 		$bulk = new \MongoDB\Driver\BulkWrite();
 		$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
@@ -173,22 +187,31 @@
 		return esc(date("y-m-d", $timestamp));
 	}
 
-	function get_user_id($username) {
+	function get_user_id() {
 		return get_single_value_from_query('select id from tfd_db.login where username ='.esc($_GET["username"]));
 	}
 
-	function get_session_id($username) {
-		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.get_user_id($username));
+	function get_session_id() {
+		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.get_user_id());
 	}
 
 	function insert_session_id($username, $days) {
 		$session_id = generateRandomString();
-		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id($username).', '.esc($session_id).','.create_expiry_date($days).')';
+		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id().', '.esc($session_id).','.create_expiry_date($days).')';
 		run_query($query);
 	}
 
-	function get_expiry_date($username) {
-		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where user_id ='.get_user_id($username));
+	function get_expiry_date($session_id) {
+		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.$session_id.'"');
+	}
+
+	function get_js_user_id_from_session_id($session_id) {
+		$user_id = get_user_id_from_session_id($session_id);
+		if(is_null($user_id)) {
+			return "null";
+		} else {
+			return $user_id;
+		}
 	}
 
 	function minify_js ($file) {
@@ -263,4 +286,13 @@
 		}
 	}
 
+	function filter_str_int ($data) {
+		if(is_array($data)) {
+			return null;
+		}
+
+		return $data;
+	}
+
+	delete_expiry_dates();
 ?>

@@ -19,10 +19,10 @@
 
 			$results = find_mongo("tfd.models", $filters, $options);
 
-			if($results[0]["user"] == $user) {
+			if(array_key_exists(0, $results)) {
 				delete_mongo_models($_GET["id"]);
 			} else {
-				print "You do not own this model. You cannot delete models you don't own";
+				print "No model found by the given ID -- OR -- you do not own this model. You cannot delete models you don't own";
 			}
 		}
 	} else {

@@ -1,7 +1,7 @@
 # TensorFlow.js Demonstrator
 
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
-fully in your browsers.
+fully in your browser.
 
 # Status
 

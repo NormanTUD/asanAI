@@ -95,7 +95,7 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("gui.js"); ?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
-
+		
 		<!-- visualizations -->
 		<?php minify_js("visualizations/d3.v5.min.js"); ?>
 		<?php minify_js("visualizations/three.min.js"); ?>
@@ -106,13 +106,15 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("visualizations/AlexNet.js"); ?>
 		<?php minify_js("visualizations/LeNet.js"); ?>
 		<?php minify_js("visualizations/FCNN.js"); ?>
-
+		
 		<!-- ChardinJS -->
 		<?php minify_js("chardinjs.js"); ?>
-
+		
 		<?php minify_css("chardinjs.css"); ?>
 
+		
 		<script>
+			<?php print "user_id = ".get_js_user_id_from_session_id($_COOKIE["session_id"]); ?>;
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
@@ -163,7 +165,7 @@ $GLOBALS['minify'] = 0;
 										Problem type:
 									</td>
 									<td colspan="2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();" model_is_trained=false;set_config();$('#prediction').html('');" style="width: 244px">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');" style="width: 244px">
 										</select>
 									</td>
 								</tr>
@@ -883,7 +885,7 @@ $GLOBALS['minify'] = 0;
 									<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
 								</tr>
 								<tr>
-									<span id="register_error_msg"></span>
+									<span id="register_error_msg" style="background-color: #4b8545"></span>
 								</tr>
 							</table>
 
@@ -902,7 +904,7 @@ $GLOBALS['minify'] = 0;
 									<td><button onclick="login()">Login</button></td>
 								</tr>
 								<tr>
-									<span id="login_error_msg"></span>
+									<span id="login_error_msg" style="background-color: #4b8545"></span>
 								</tr>
 							</table>
 						</div>
@@ -919,9 +921,10 @@ $GLOBALS['minify'] = 0;
 							<button onclick="save_model()">Download</button>
 
 							<h1>Save to DB</h1>
+							<span id="save_model_msg" style="background-color: #4b8545"></span><br/>
 							<input id="network_name" onkeyup="has_network_name()" placeholder="Network name" /><br/>
 							Public: <input id="is_public" type="checkbox"><br/>
-							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()">Save</button>
+							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()" disabled>Save</button>
 							
 						</div>
 						<br/>
