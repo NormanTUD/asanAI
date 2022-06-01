@@ -2851,13 +2851,13 @@ function close_losses() {
 }
 
 function delete_model() {
-	var id = get_user_id_from_train_data_struct();
+	var id = get_id_from_train_data_struct("id");
 	$.ajax({
 		url: "delete_from_mongodb.php?id=" + id
 	});
 }
 
-function get_user_id_from_train_data_struct() {
+function get_id_from_train_data_struct(index) {
 	var dataset_index = document.getElementById("dataset").selectedIndex;
 	var classification_index = document.getElementById("dataset_category").selectedIndex;
 	
@@ -2865,8 +2865,8 @@ function get_user_id_from_train_data_struct() {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
 		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
 		if((dataset != undefined) && (classification != undefined)) {
-			var user_id = traindata_struct[classification]["datasets"][dataset]["user_id"];
-			return user_id;
+			var id = traindata_struct[classification]["datasets"][dataset][index];
+			return id;
 		}
 	}
 	return false;
@@ -2875,7 +2875,7 @@ function get_user_id_from_train_data_struct() {
 function display_delete_button() {
 	$("#delete_model").addClass("disabled_symbol");
 	$("#delete_model").html("&#10060");
-	var user_id = get_user_id_from_train_data_struct().toString();
+	var user_id = get_id_from_train_data_struct("user_id").toString();
 	//log(user_id.toString())
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		$("#delete_model").html("&#10060");
