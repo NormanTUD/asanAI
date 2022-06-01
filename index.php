@@ -165,7 +165,7 @@ $GLOBALS['minify'] = 0;
 										Problem type:
 									</td>
 									<td colspan="2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();" model_is_trained=false;set_config();$('#prediction').html('');" style="width: 244px">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');" style="width: 244px">
 										</select>
 									</td>
 								</tr>
