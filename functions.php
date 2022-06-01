@@ -187,8 +187,8 @@
 		run_query($query);
 	}
 
-	function get_expiry_date($username) {
-		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where user_id ='.get_user_id());
+	function get_expiry_date($session_id) {
+		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.$session_id.'"');
 	}
 
 	function minify_js ($file) {
