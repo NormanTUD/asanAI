@@ -114,7 +114,7 @@ $GLOBALS['minify'] = 0;
 
 		
 		<script>
-			<?php print "user_id = ".get_user_id_from_session_id($_COOKIE["session_id"]); ?>;
+			<?php print "user_id = ".get_js_user_id_from_session_id($_COOKIE["session_id"]); ?>;
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
@@ -885,7 +885,7 @@ $GLOBALS['minify'] = 0;
 									<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
 								</tr>
 								<tr>
-									<span id="register_error_msg"></span>
+									<span id="register_error_msg" style="background-color: #4b8545"></span>
 								</tr>
 							</table>
 
@@ -904,7 +904,7 @@ $GLOBALS['minify'] = 0;
 									<td><button onclick="login()">Login</button></td>
 								</tr>
 								<tr>
-									<span id="login_error_msg"></span>
+									<span id="login_error_msg" style="background-color: #4b8545"></span>
 								</tr>
 							</table>
 						</div>

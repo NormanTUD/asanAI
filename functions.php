@@ -191,6 +191,15 @@
 		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.$session_id.'"');
 	}
 
+	function get_js_user_id_from_session_id($session_id) {
+		$user_id = get_user_id_from_session_id($session_id);
+		if(is_null($user_id)) {
+			return "null";
+		} else {
+			return $user_id;
+		}
+	}
+
 	function minify_js ($file) {
 		if(0 && ($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css" && $file != 'visualizations/d3.v5.min.js' && $file != "visualizations/three.min.js") {
 			print "<script src='minify.php?file=$file'></script>";

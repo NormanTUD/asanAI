@@ -2772,7 +2772,8 @@ function register() {
 					$("#register").hide();
 					$("#delete_button").hide();
 					$("#logout").show();
-					closePopup('register_dialog');
+					$("#register_dialog").delay(400).fadeOut();
+					//closePopup('register_dialog');
 				}
 				if(data["status"] == "error") {
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
@@ -2803,7 +2804,8 @@ function login() {
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
 				$("#logout").show();
-				closePopup('register_dialog');
+				$("#register_dialog").delay(400).fadeOut();
+				//closePopup('register_dialog');
 			}
 			if(data["status"] == "error") {
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
