@@ -24,110 +24,111 @@
 				print htmlentities(sprintf("\n%s:%s %s", $trace['file'], $trace['line'], $trace['function']));
 			}
 			print "</pre>\n";
-
+			
 			exit();
 		}
 	}
-
+	
 	$start_dir = "./traindata";
 	$traindata_contents = scandir($start_dir);
+	
+	if(!contains_null_values($traindata_contents)) {
 
-	$data = [];
+		$data = [];
 
-	foreach ($traindata_contents as $content) {
-		if(!preg_match("/^\.{1,2}$/", $content)) {
-			$this_path = "$start_dir/$content";
-			if(is_dir($this_path)) {
-				$content_name = $content;
-				if(is_file("$this_path/desc.txt")) {
-					$content_name = trim(file_get_contents("$this_path/desc.txt"));
-				}
-				$data[$content_name]["category_name"] = $content;
-				$category_contents = scandir($this_path);
-				$category_contents = array_reverse($category_contents);
-				foreach ($category_contents as $this_category_contents) {
-					if(
-						!preg_match("/^\.{1,2}$/", $this_category_contents) &&
-						!preg_match("/_keras.json/", $this_category_contents) &&
-						!preg_match("/_weights.json/", $this_category_contents) &&
-						preg_match("/\.json$/", $this_category_contents) &&
-						$this_category_contents != "default.json"
-					) {
-						$file_basename = $this_category_contents;
-						$file_basename = preg_replace("/\.json$/", "", $file_basename);
+		foreach ($traindata_contents as $content) {
+			if(!preg_match("/^\.{1,2}$/", $content)) {
+				$this_path = "$start_dir/$content";
+				if(is_dir($this_path)) {
+					$content_name = $content;
+					if(is_file("$this_path/desc.txt")) {
+						$content_name = trim(file_get_contents("$this_path/desc.txt"));
+					}
+					$data[$content_name]["category_name"] = $content;
+					$category_contents = scandir($this_path);
+					$category_contents = array_reverse($category_contents);
+					foreach ($category_contents as $this_category_contents) {
+						if(
+							!preg_match("/^\.{1,2}$/", $this_category_contents) &&
+							!preg_match("/_keras.json/", $this_category_contents) &&
+							!preg_match("/_weights.json/", $this_category_contents) &&
+							preg_match("/\.json$/", $this_category_contents) &&
+							$this_category_contents != "default.json"
+						) {
+							$file_basename = $this_category_contents;
+							$file_basename = preg_replace("/\.json$/", "", $file_basename);
 
 
-						$json_data = json_decode(file_get_contents("$this_path/$this_category_contents"), true);
+							$json_data = json_decode(file_get_contents("$this_path/$this_category_contents"), true);
 
-						$name = $json_data["name"];
+							$name = $json_data["name"];
 
-						$data[$content_name]["datasets"][$name] = [
-							"name" => $file_basename,
-							"user_id" => "has no user",
-							"filename" => "$this_path/$this_category_contents"
-						];
+							$data[$content_name]["datasets"][$name] = [
+								"name" => $file_basename,
+								"user_id" => "has no user",
+								"filename" => "$this_path/$this_category_contents"
+							];
 
-						$trainable_data = [];
+							$trainable_data = [];
 
-						if(array_key_exists("trainable_data", $json_data)) {
-							$trainable_data = $json_data["trainable_data"];
-						}
-
-						$trainable_data[] = $file_basename;
-
-						foreach ($trainable_data as $this_trainable_data) {
-							$weights_file = "$this_path/${this_trainable_data}_weights.json";
-							if(!is_file($weights_file)) {
-								$weights_file = "";
+							if(array_key_exists("trainable_data", $json_data)) {
+								$trainable_data = $json_data["trainable_data"];
 							}
 
-							if($weights_file) {
-								$data[$content_name]["datasets"][$name]["weights_file"][$this_trainable_data] = $weights_file;
+							$trainable_data[] = $file_basename;
+
+							foreach ($trainable_data as $this_trainable_data) {
+								$weights_file = "$this_path/${this_trainable_data}_weights.json";
+								if(!is_file($weights_file)) {
+									$weights_file = "";
+								}
+
+								if($weights_file) {
+									$data[$content_name]["datasets"][$name]["weights_file"][$this_trainable_data] = $weights_file;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-	}
 
 
-	if(array_key_exists("session_id", $_COOKIE)) {
-		$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-		if(!is_null($user)) {
-			$filters = array(
-				'$or' => array(
-					array("user" => array('$eq' => $user)),
-					array("is_public" => array('$eq' => 'true'))
-				)
-			);
-			$options = array(
-				"category" => true,
-				"network_name" => true
-			);
-
-			$results = find_mongo("tfd.models", $filters, $options);
-
-			foreach ($results as $doc) {
-				$category = $doc["category"];
-				$category_full = $doc["category_full"];
-				$data[$category_full]["category_name"] = $category;
-				$data[$category_full]["datasets"][$doc["network_name"]] = array(
-					"name" => $doc["network_name"],
-					"user_id" => $doc["user"],
-					"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
-					"id" => $doc["_id"]['$oid'],
-					"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
-					"weights_file" => array(
-						$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
+		if(array_key_exists("session_id", $_COOKIE)) {
+			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+			if(!is_null($user)) {
+				$filters = array(
+					'$or' => array(
+						array("user" => array('$eq' => $user)),
+						array("is_public" => array('$eq' => 'true'))
 					)
 				);
-				$doc["network_name"];
+				$options = array(
+					"category" => true,
+					"network_name" => true
+				);
+
+				$results = find_mongo("tfd.models", $filters, $options);
+
+				foreach ($results as $doc) {
+					$category = $doc["category"];
+					$category_full = $doc["category_full"];
+					$data[$category_full]["category_name"] = $category;
+					$data[$category_full]["datasets"][$doc["network_name"]] = array(
+						"name" => $doc["network_name"],
+						"user_id" => $doc["user"],
+						"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
+						"id" => $doc["_id"]['$oid'],
+						"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
+						"weights_file" => array(
+							$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
+						)
+					);
+					$doc["network_name"];
+				}
 			}
 		}
-	}
 
-	
-	#dier($data);
-	print json_encode($data, JSON_PRETTY_PRINT);
+		print json_encode($data, JSON_PRETTY_PRINT);
+	}
 ?>

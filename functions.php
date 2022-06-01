@@ -33,6 +33,15 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function contains_null_values ($array) {
+		foreach ($array as $key => $value) {
+			if(is_null($value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function delete_mongo ($collection, $id) {
 		$bulk = new \MongoDB\Driver\BulkWrite();
 		$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
