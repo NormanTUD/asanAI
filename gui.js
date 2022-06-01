@@ -2771,6 +2771,7 @@ function register() {
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
 			success: function (data) {
 				if(data["status"] == "ok") {
+					document.getElementById("register_error_msg").style = "background-color: #4b8545";
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 					setCookie("session_id", data["session_id"]);
 					$("#register").hide();
@@ -2780,15 +2781,18 @@ function register() {
 					//closePopup('register_dialog');
 				}
 				if(data["status"] == "error") {
+					document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				}
 
 			},
 			error: function (object, error, msg) {
+				document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
 			}
 		});
 	} else {
+		document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
 	write_descriptions();
@@ -2802,6 +2806,7 @@ async function login() {
 		success: function (data) {
 			if(data["status"] == "ok") {
 				user_id = data["user_id"];
+				document.getElementById("login_error_msg").style = "background-color: #4b8545";
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
@@ -2812,6 +2817,7 @@ async function login() {
 				//closePopup('register_dialog');
 			}
 			if(data["status"] == "error") {
+				document.getElementById("login_error_msg").style = "background-color: #c21f1f";
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			}
 		}

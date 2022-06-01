@@ -33,6 +33,11 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function delete_expiry_dates() {
+		$query = "delete from session_ids where expiry_date < (select expiry_date from session_ids where datediff(expiry_date, now()) < 0 limit 1)";
+		run_query($query);
+	}
+
 	function contains_null_values ($array) {
 		foreach ($array as $key => $value) {
 			if(is_null($value)) {
@@ -272,4 +277,6 @@
 
 		return $data;
 	}
+
+	delete_expiry_dates();
 ?>
