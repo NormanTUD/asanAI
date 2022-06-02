@@ -448,13 +448,13 @@ function write_descriptions () {
 					if(keyname != "null") {
 						var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
 						var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
-						var height = $($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 7;
+						var height = parseInt($($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 6.5);
 						var hidden = '';
 						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 							hidden = "display: none;";
 						}
 
-						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + parseInt(height) + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
+						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
 					}
 				}
 			}
