@@ -95,7 +95,6 @@
 			$r = array();
 			foreach($rows as $row){
 				$r[] = json_decode(json_encode($row), true);
-
 			}
 
 			return $r;

@@ -2834,9 +2834,12 @@ async function logout() {
 	$("#register_password").val("");
 	$("#login_username").val("");
 	$("#login_password").val("");
+	$("#register_button").hide();
 	document.getElementById("login_error_msg").innerHTML = "";
 	document.getElementById("register_error_msg").innerHTML = "";
+	document.getElementById("network_name").innerHTML = "";
 	document.getElementById("license").checked = false;
+	document.getElementById("is_public").checked = false;
 
 	await get_traindata_and_init_categories();
 }
@@ -2856,11 +2859,24 @@ function close_losses() {
 	closePopup("losses_popup");
 }
 
+function model_name_already_exists() {
+	var model_names = Object.keys(traindata_struct["Image Classification"]["datasets"]);
+	var network_name = document.getElementById("network_name").value;
+	for(var i = 0; i < model_names.length; i++) {
+		if(model_names[i] == network_name) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function delete_model() {
 	var id = get_id_from_train_data_struct("id");
 	$.ajax({
-		url: "delete_from_mongodb.php?id=" + id
+		url: "delete_from_mongodb.php?id=" + id,
+		async: false
 	});
+	get_traindata_and_init_categories();
 }
 
 function get_id_from_train_data_struct(index) {
@@ -2930,8 +2946,9 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 		},
 		method: "POST",
 		success: function (data) {
-			log(data["msg"])
+			document.getElementById("save_model_msg").style = "background-color: #4b8545";
 			document.getElementById("save_model_msg").innerHTML = data["msg"];
+			$("#save_model_msg").show().delay(500).fadeOut();
 		},
 		error: function (object, error, msg) {
 			document.getElementById("save_model_msg").innerHTML = msg;
@@ -2940,7 +2957,13 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 }
 
 async function save_to_mongodb_wrapper () {
-	save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+	if(!model_name_already_exists()) {
+		save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+	} else {
+		document.getElementById("save_model_msg").style = "background-color: #c21f1f";
+		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
+		$("#save_model_msg").show();
+	}
 }
 
 function open_save_model_dialog() {

@@ -907,7 +907,7 @@ $GLOBALS['minify'] = 0;
 									<span id="login_error_msg" style="background-color: #4b8545"></span>
 								</tr>
 							</table>
-						</div>
+						</div><br/>
 						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 					</div>
 				</div>

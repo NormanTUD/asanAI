@@ -31,7 +31,7 @@
 			print json_encode($model_weights);
 		}
 
-	}
+		}
     } else {
 	    print "You are not logged in.";
     }

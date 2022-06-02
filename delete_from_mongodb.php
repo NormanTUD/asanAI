@@ -7,9 +7,9 @@
 			print "User doesn't exist.";
 		} else {
 			$filters = [
-				'$and' => [
+				//'$and' => [
 					['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
-				]
+				//]
 			];
 
 			$options = array(
@@ -18,6 +18,7 @@
 			);
 
 			$results = find_mongo("tfd.models", $filters, $options);
+			dier($results);
 
 			if(array_key_exists(0, $results)) {
 				delete_mongo_models($_GET["id"]);
