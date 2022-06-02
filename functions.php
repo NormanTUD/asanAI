@@ -260,7 +260,7 @@
 	}
 
 	function is_logged_in () {
-		if(is_in_array("session_id", $_COOKIE)) {
+		if(array_key_exists("session_id", $_COOKIE)) {
 			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
 			if($user != "") {
 				return $user;
@@ -269,6 +269,22 @@
 		return null;
 	}
 	 
+	function load_sql_file_get_statements ($file) {
+		$contents = file_get_contents($file);
+		$contents = "SET FOREIGN_KEY_CHECKS=0;\n$contents";
+		$contents = preg_replace("/--.*/", "", $contents);
+		$contents = preg_replace("/\/\*.*?\*\/;/", "", $contents);
+		$contents = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $contents);
+		$contents = "$contents\nSET FOREIGN_KEY_CHECKS=0;\n";
+
+		$queries = explode(";", $contents);
+		foreach ($queries as $query) {
+			if(!preg_match("/^\s*$/", $query)) {
+				run_query($query);
+			}
+		}
+	}
+
 	function filter_str_int ($data) {
 		if(is_array($data)) {
 			return null;
