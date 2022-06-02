@@ -2870,6 +2870,19 @@ function model_name_already_exists() {
 	return false;
 }
 
+function insert_test_users() {
+	var users = ["eins", "zwei", "drei", "vier", "fünf"];
+	for(var i = 0; i < users.length; i++) {
+		$.ajax({
+			url: "register.php?email=" + users[i] + "@&username=" + users[i] + "&pw=" + users[i] + users[i]
+		});
+		// document.getElementById("register_email").value = users[i] + "@";
+		// document.getElementById("register_username").value = users[i];
+		// document.getElementById("register_password").value = users[i] + users[i];
+		// document.getElementById("license").checked = true;
+		// register();
+	}
+}
 function delete_model() {
 	var id = get_id_from_train_data_struct("id");
 	$.ajax({
