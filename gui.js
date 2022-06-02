@@ -2913,11 +2913,41 @@ function manage_download() {
 	}
 }
 
-function has_network_name() {
-	if($("#network_name").val() == "") {
-		$("#save_to_mongodb").prop("disabled", true);
+function has_network_name(elem) {
+	var name = elem.value;
+	log(name);
+	$(elem).val(name.replaceAll(/\s/g, ""));
+	name = elem.value;
+	log(name);
+
+	if(!network_name_is_empty(name)) {
+		$.ajax({
+			url: "get_number_of_model_names.php?name=" + name,
+			success(data) {
+				if(data == '{"number":0}') {
+					$("#save_to_mongodb").prop("disabled", false);
+					document.getElementById("save_model_msg").innerHTML = "";		
+				} else {
+					$("#save_to_mongodb").prop("disabled", true);
+					color_msg_red("save_model_msg");
+					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";	
+				}
+			}
+		});
 	} else {
-		$("#save_to_mongodb").prop("disabled", false);
+		$("#save_to_mongodb").prop("disabled", true);
+	}
+}
+
+function color_msg_red(id) {
+	document.getElementById(id).style = "background-color: #c21f1f";
+}
+
+function network_name_is_empty(name) {
+	if(name.match(/^ *$/) || (name == "")) {
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -2959,8 +2989,9 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 async function save_to_mongodb_wrapper () {
 	if(!model_name_already_exists()) {
 		save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+		$("#save_to_mongodb").prop("disabled", true);
 	} else {
-		document.getElementById("save_model_msg").style = "background-color: #c21f1f";
+		color_msg_red("save_model_msg");
 		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
 		$("#save_model_msg").show();
 	}
@@ -4311,7 +4342,7 @@ function setCookie(name,value,days) {
 		date.setTime(date.getTime() + (days*24*60*60*1000));
 		expires = "; expires=" + date.toUTCString();
 	}
-	document.cookie = name + "=" + (value || "")  + expires + "; path=/; samesite=lax";
+	document.cookie = name + "=" + (value || "")  + expires + "; path=/;";
 }
 
 function getCookie(name) {
@@ -4326,7 +4357,7 @@ function getCookie(name) {
 }
 
 function eraseCookie(name) {
-	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; samesite=lax';
+	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 function copy_options () {

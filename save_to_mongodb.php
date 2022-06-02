@@ -23,6 +23,7 @@
                 $array["msg"] = "Saving data was successful.";
             } else {
                 $array["msg"] = "Some data is missing.";
+                dier($_POST);
             }
             
             header('Content-Type: application/json');
