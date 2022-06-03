@@ -1911,7 +1911,7 @@ function show_layers(number) {
 	var layer_visualizations_tab_str = "";
 
 	var remove = "<button class='add_remove_layer_button remove_layer' onclick='remove_layer(this)'>-</button>&thinsp;";
-	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
+	var add = "<button style='margin-left: 1px' class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
 
 	for (var i = 0; i < number; i++) {
 		layers_container_str +=
