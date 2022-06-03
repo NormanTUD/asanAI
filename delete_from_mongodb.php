@@ -1,5 +1,6 @@
 <?php
 	include("functions.php");
+
 	if(array_key_exists("session_id", $_COOKIE)) {
 
 		$user = get_user_id_from_session_id($_COOKIE["session_id"]);
@@ -7,9 +8,7 @@
 			print "User doesn't exist.";
 		} else {
 			$filters = [
-				//'$and' => [
-					['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
-				//]
+				['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
 			];
 
 			$options = array(

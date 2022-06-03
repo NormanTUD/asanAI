@@ -28,6 +28,10 @@
     <body>
         <h1>User Administration</h1>
 
+<?php
+    if(array_key_exists(0, get_usernames())) {
+?>
+
         <h2>Change User Data</h2>
         <span id="change_user_msg"></span><br/>
         <select id="user_select">
@@ -44,6 +48,7 @@
         <input id="new_password" type="password" placeholder="New password"><br/>
         <button onclick="change_password()">Change passwort</button><br/>
 
+
         <h2>User table</h2>
             <table id="user_table">
                 <tr>
@@ -59,7 +64,11 @@
     }
 ?>
             </table>
-
+<?php
+} else {
+    print "There are no userers.";
+}
+?>
             <script>
             
             function get_user() {
@@ -72,9 +81,20 @@
                 $.ajax({
                     url: "change_password.php?username=" + username + "&password=" + password,
                     success(data) {
-                        document.getElementById("change_user_msg").innerText = data;
+                        if(data["status"] == "ok") {
+                            color_msg("change_user_msg", "green");
+                            $("#change_user_msg").delay(1000).fadeOut();
+                        }
+                        if(data["status"] == "error") {
+                            color_msg("change_user_msg", "red");
+                        }
+                        document.getElementById("change_user_msg").innerText = data["msg"];
                     }
                 });
+            }
+
+            function color_msg(id, color) {
+                document.getElementById(id).style = "background-color: " + color;
             }
 
             function delete_user() {
@@ -85,7 +105,6 @@
                         if(data["status"] == "ok") {
                             window.location.href = "user.php";
                             document.getElementById("change_user_msg").style = "background-color: green";    
-
                         }
                         if(data["status"] == "error") {
                             document.getElementById("change_user_msg").style = "background-color: red";    

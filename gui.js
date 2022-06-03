@@ -2871,7 +2871,7 @@ function model_name_already_exists() {
 }
 
 function insert_test_users() {
-	var users = ["eins", "zwei", "drei", "vier", "fünf"];
+	var users = ["eins", "zwei", "drei", "vier", "fünf", "vier", "test"];
 	for(var i = 0; i < users.length; i++) {
 		$.ajax({
 			url: "register.php?email=" + users[i] + "@&username=" + users[i] + "&pw=" + users[i] + users[i]
@@ -2936,7 +2936,7 @@ function has_network_name(elem) {
 	if(!network_name_is_empty(name)) {
 		$.ajax({
 			url: "get_number_of_model_names.php?name=" + name,
-			success(data) {
+			success: function (data) {
 				if(data == '{"number":0}') {
 					$("#save_to_mongodb").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";		
