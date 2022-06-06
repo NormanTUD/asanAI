@@ -133,9 +133,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	try {
 		var predict_data = null;
 
-		log(item);
+		logt(item);
 
-		if(category == "image" || $(item).get(0).tagName == "IMG") {
+		if(category == "image" || (typeof(item) == "object" && $(item)[0].tagName == "IMG")) {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
 		} else if(["classification", "own"].includes(category)) {
 			var data = "";
@@ -159,7 +159,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					item = "[" + item + "]";
 				}
 
+				logt(item);
 				data = eval(item)
+				logt(data);
 
 				if(!original_item.startsWith("[[")) {
 					var data_input_shape = await get_shape_from_array(data);
