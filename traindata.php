@@ -110,21 +110,23 @@
 
 				$results = find_mongo("tfd.models", $filters, $options);
 
-				foreach ($results as $doc) {
-					$category = $doc["category"];
-					$category_full = $doc["category_full"];
-					$data[$category_full]["category_name"] = $category;
-					$data[$category_full]["datasets"][$doc["network_name"]] = array(
-						"name" => $doc["network_name"],
-						"user_id" => $doc["user"],
-						"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
-						"id" => $doc["_id"]['$oid'],
-						"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
-						"weights_file" => array(
-							$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
-						)
-					);
-					$doc["network_name"];
+				if($results) {
+					foreach ($results as $doc) {
+						$category = $doc["category"];
+						$category_full = $doc["category_full"];
+						$data[$category_full]["category_name"] = $category;
+						$data[$category_full]["datasets"][$doc["network_name"]] = array(
+							"name" => $doc["network_name"],
+							"user_id" => $doc["user"],
+							"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
+							"id" => $doc["_id"]['$oid'],
+							"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
+							"weights_file" => array(
+								$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
+							)
+						);
+						$doc["network_name"];
+					}
 				}
 			}
 		}

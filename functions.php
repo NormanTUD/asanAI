@@ -11,8 +11,8 @@
 			if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
 				$sql = "CREATE DATABASE tfd_db";
 				if (run_query($sql) === TRUE) {
-					mysqli_select_db($GLOBALS["mysqli"], "nachweis_db");
-					load_sql_file_get_statements("nachweis.sql");
+					mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
+					load_sql_file_get_statements("tfd.sql");
 				} else {
 					echo "Error creating database: " . $GLOBALS['mysqli']->error;
 					$GLOBALS["use_db"] = 0;
@@ -136,6 +136,10 @@
 	}
 
 	function esc ($string) {
+		if(!$GLOBALS["mysqli"]) {
+			$GLOBALS["use_db"] = 0;
+			return;
+		}
 		return "'".$GLOBALS["mysqli"]->real_escape_string($string)."'";
 	}
 
