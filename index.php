@@ -114,7 +114,14 @@ $GLOBALS['minify'] = 0;
 
 		
 		<script>
-			<?php print "user_id = ".get_js_user_id_from_session_id($_COOKIE["session_id"]); ?>;
+			<?php
+				print "user_id = ";
+				if(array_key_exists("session_id", $_COOKIE)) {
+					print get_js_user_id_from_session_id($_COOKIE["session_id"]);
+				} else {
+					print " null";
+				}
+			?>;
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
 
