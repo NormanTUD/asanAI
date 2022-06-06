@@ -114,6 +114,10 @@
 	#dier(find_mongo("tfd.models", array(), array()));
 
 	function run_query ($query) {
+		if(!$GLOBALS['mysqli'] || $GLOBALS["use_db"] == 0) {
+			$GLOBALS["use_db"] = 0;
+			return;
+		}
 		$start_time = microtime(true);
 		$result = $GLOBALS['mysqli']->query($query);
 		if($result === false) {
