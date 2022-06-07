@@ -70,7 +70,7 @@ async function train_neural_network () {
 
 		enable_everything();
 
-		show_prediction();
+		await show_prediction();
 	}
 
 	write_descriptions();
@@ -182,11 +182,18 @@ function get_fit_data () {
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] " + "NNE";
 	}
 
+	callbacks["onBatchEnd"] = async function () {
+		show_prediction(1);
+	}
+
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
+		restart_fcnn();
+		restart_lenet();
+		restart_alexnet();
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {

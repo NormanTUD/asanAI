@@ -1405,6 +1405,9 @@ $GLOBALS['minify'] = 0;
 
 			var fcnn = FCNN();
 			async function restart_fcnn() {
+				if(!model) {
+					return;
+				}
 				var architecture = [];
 				var real_architecture = [];
 				var betweenNodesInLayer = [];

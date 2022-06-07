@@ -364,3 +364,7 @@ button:disabled:hover {
 	flex-wrap: nowrap;              /* default value; can be omitted */
 	justify-content: space-between; /* switched from default (flex-start, see below) */
 }
+
+#tensor_number_debugger {
+	color: white;
+}
