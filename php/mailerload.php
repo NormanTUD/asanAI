@@ -1,22 +1,10 @@
 <?php
 	namespace PHPMailer\PHPMailer;
 
-	if(!isset($GLOBALS['base'])) {
-		if(isset($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
-			$GLOBALS['base'] = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
-		} else {
-			$GLOBALS['base'] = $_SERVER['DOCUMENT_ROOT'];
-		}
-
-		if(!is_dir($GLOBALS['base'])) {
-			die("Document base `".$GLOBALS['base']."` is not an existing folder!");
-		}
-	}
-
 	include_once("functions.php");
-	include_once($GLOBALS['base'].'/php/src/PHPMailer.php');
-	include_once($GLOBALS['base'].'/php/src/SMTP.php');
-	include_once($GLOBALS['base'].'/php/src/Exception.php');
+	include_once('php/src/PHPMailer.php');
+	include_once('php/src/SMTP.php');
+	include_once('php/src/Exception.php');
 
 	function oMailerSend ($to = array(), $subject, $body) {
 		$oMailer = new PHPMailer;

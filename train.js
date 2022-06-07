@@ -183,7 +183,9 @@ function get_fit_data () {
 	}
 
 	callbacks["onBatchEnd"] = async function () {
-		show_prediction(1);
+		if($("#auto_update_predictions").is(":checked")) {
+			show_prediction(0, 1);
+		}
 	}
 
 	callbacks["onTrainEnd"] = async function () {
