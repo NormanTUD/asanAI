@@ -3300,7 +3300,7 @@ function reset_view() {
 	}
 }
 
-function change_data_origin() {
+async function change_data_origin() {
 	x_file = null;
 	y_file = null;
 	y_shape = null;
@@ -3382,10 +3382,16 @@ function change_data_origin() {
 		$("#metric").val("categoricalCrossentropy");
 	} else if (show_own_tensor_data) {
 		show_tab_label("own_tensor_data_label", 1);
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
 		show_tab_label("own_csv_data_label", 1);
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	} else {
 		show_tab_label("training_data_tab_label");
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {

@@ -257,7 +257,7 @@ $(document).ready(async function() {
 
 	await show_or_hide_load_weights();
 
-	change_data_origin(0);
+	await change_data_origin();
 
 	window.onresize = reset_view;
 
