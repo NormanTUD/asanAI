@@ -2900,10 +2900,13 @@ function display_delete_button() {
 	$("#delete_model").addClass("disabled_symbol");
 	$("#delete_model").html("&#10060");
 	var user_id = get_id_from_train_data_struct("user_id").toString();
-	//log(user_id.toString())
+	//log(user_id.toString());
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		$("#delete_model").html("&#10060");
 		$("#delete_model").removeClass("disabled_symbol");
+	} else {
+		$("#delete_model").html("&#10006;");
+		$("#delete_model").addClass("disabled_symbol");
 	}
 }
 
