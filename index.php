@@ -611,6 +611,10 @@ $GLOBALS['minify'] = 0;
 									<td>Input&nbsp;Layer?</td>
 									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 								</tr>
+								<tr data-intro="Live update example predictions while training">
+									<td>Live update example predictions?</td>
+									<td><input class="show_data" type='checkbox' value="1" id="auto_update_predictions" checked /></td>
+								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Visualizations</div>
