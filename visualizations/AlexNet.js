@@ -49,8 +49,11 @@ function AlexNet() {
 
 
 	var scene = new THREE.Scene();
-	//scene.background = new THREE.Color(0xf2f5f7);
-	scene.background = new THREE.Color(0xffffff);
+	if(darkmode) {
+		scene.background = new THREE.Color(0x363636);
+	} else {
+		scene.background = new THREE.Color(0xffffff);
+	}
 
 	var factor = 10;
 	var camera = new THREE.OrthographicCamera(get_graph_width() / -factor, get_graph_width() / factor, h / factor, h / - factor, -10000000, 10000000);
