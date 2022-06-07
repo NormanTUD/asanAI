@@ -187,6 +187,9 @@ function get_fit_data () {
 		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
+		restart_fcnn();
+		restart_lenet();
+		restart_alexnet();
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {

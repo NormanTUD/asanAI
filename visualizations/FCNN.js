@@ -304,8 +304,7 @@ function FCNN() {
 				  ///////    Zoom & Resize   ///////
 	/////////////////////////////////////////////////////////////////////////////
 
-	svg.call(d3.zoom()
-		.on("zoom", zoomed));
+	//svg.call(d3.zoom().on("zoom", zoomed));
 
 	function zoomed() {
 		g.attr("transform", d3.event.transform);
