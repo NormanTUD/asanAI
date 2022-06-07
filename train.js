@@ -183,7 +183,7 @@ function get_fit_data () {
 	}
 
 	callbacks["onBatchEnd"] = async function () {
-		show_prediction(1);
+		show_prediction(0, 1);
 	}
 
 	callbacks["onTrainEnd"] = async function () {
