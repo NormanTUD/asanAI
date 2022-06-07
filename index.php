@@ -1084,8 +1084,8 @@ $GLOBALS['minify'] = 0;
 
 							<div id="visualization_tab">
 								<ul>
-									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
-									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
+									<li><a onclick="restart_fcnn()" id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
+									<li><a onclick="restart_lenet()" href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 									<li><a href="#math_tab" onclick="write_model_to_latex_to_page(0, 1);" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
@@ -1405,6 +1405,9 @@ $GLOBALS['minify'] = 0;
 
 			var fcnn = FCNN();
 			async function restart_fcnn() {
+				if(!model) {
+					return;
+				}
 				var architecture = [];
 				var real_architecture = [];
 				var betweenNodesInLayer = [];
