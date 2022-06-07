@@ -53,13 +53,7 @@ let predict_demo = async function (item, nr) {
 			tensor_img = new_tensor_img;
 		}
 
-		var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
-		input_layer_shape.shift();
-
-		var tensor_shape = eval(JSON.stringify(tensor_img.shape));
-		tensor_shape.shift();
-
-		if(tensor_shape.join(",") != input_layer_shape.join(",")) {
+		if(!tensor_shape_matches_model(tensor_img)) {
 			return;
 		}
 
@@ -169,9 +163,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					item = "[" + item + "]";
 				}
 
-				logt(item);
 				data = eval(item)
-				logt(data);
 
 				if(!original_item.startsWith("[[")) {
 					var data_input_shape = await get_shape_from_array(data);
@@ -189,6 +181,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			predict_data = tf.tensor(data);
 		} else {
 			log("Invalid category for prediction: " + category);
+		}
+
+		if(!tensor_shape_matches_model(predict_data)) {
+			var expected = eval(JSON.stringify(model.layers[0].input.shape));
+			expected[0] = "null";
+			throw new Error('Expected input shape: [' + eval(JSON.stringify(expected)).join(', ') + '], but got [' + predict_data.shape.join(', ') + ']');
+			return;
 		}
 
 		var divide_by = parseFloat($("#divide_by").val());
@@ -252,7 +251,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	return str;
 }
 
-function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 	if(model) {
 		$(".show_when_predicting").show();
 
@@ -283,28 +282,27 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 					}
 				});
 			} else if ($("#dataset_category").val() == "classification") {
-				var example_predict_data = [
-					[[0, 0]],
-					[[0, 1]],
-					[[1, 0]],
-					[[1, 1]]
-				];
+				var example_url = "traindata/" + $("#dataset_category").val() + "/" + $("#model_dataset").val() + "/examples.json"
+				var example_predict_data = await get_cached_json(example_url)
+				var count = 0;
 
-				tf.tidy(() => {
-					var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
-					input_layer_shape.shift();
-
-					for (var i = 0; i < example_predict_data.length; i++) {
-						var tensor = tf.tensor(example_predict_data[i]);
-
-						var tensor_shape = eval(JSON.stringify(tensor.shape));
-						tensor_shape.shift();
-
-						if(tensor_shape.join(",") == input_layer_shape.join(",")) {
-							$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
+					tf.tidy(() => {
+						for (var i = 0; i < example_predict_data.length; i++) {
+							var tensor = tf.tensor(example_predict_data[i]);
+							if(tensor_shape_matches_model(tensor)) {
+								$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+								count++;
+							}
 						}
-					}
-				});
+					});
+				}
+
+				if(count) {
+					$("#show_when_predicting,#example_predictions").show();
+				} else {
+					$("#show_when_predicting,#example_predictions").hide();
+				}
 			}
 		}
 
@@ -406,4 +404,18 @@ async function show_webcam () {
 			cam.stop();
 		}
 	}
+}
+
+function tensor_shape_matches_model (tensor) {
+	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
+	input_layer_shape.shift();
+
+	var tensor_shape = eval(JSON.stringify(tensor.shape));
+	tensor_shape.shift();
+
+	if(tensor_shape.join(",") != input_layer_shape.join(",")) {
+		return false;
+	}
+
+	return true;
 }
