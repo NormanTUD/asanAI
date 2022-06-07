@@ -182,6 +182,10 @@ function get_fit_data () {
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] " + "NNE";
 	}
 
+	callbacks["onBatchEnd"] = async function () {
+		show_prediction(1);
+	}
+
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
 		hide_annoying_tfjs_vis_overlays();
