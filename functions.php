@@ -297,5 +297,13 @@
 		return $data;
 	}
 
+	function _assert ($condition, $message) {
+		if(!$condition) {
+			die($message);
+		}
+	}
+
+	#_assert(false, "hallo");
+
 	delete_expiry_dates();
 ?>
