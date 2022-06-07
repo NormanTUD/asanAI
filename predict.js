@@ -184,7 +184,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		if(!tensor_shape_matches_model(predict_data)) {
-			throw new Error('Expected input shape: [' + eval(JSON.stringify(model.layers[0].input.shape)).join(', ') + '], but got [' + predict_data.shape.join(', ') + ']');
+			var expected = eval(JSON.stringify(model.layers[0].input.shape));
+			expected[0] = "null";
+			throw new Error('Expected input shape: [' + eval(JSON.stringify(expected)).join(', ') + '], but got [' + predict_data.shape.join(', ') + ']');
 			return;
 		}
 
