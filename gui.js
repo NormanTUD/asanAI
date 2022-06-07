@@ -1992,6 +1992,7 @@ async function set_config(index) {
 	}
 	Swal.fire({
 		title: swal_msg + '...',
+		allowOutsideClick: false,
 		showConfirmButton: false
 	});
 
