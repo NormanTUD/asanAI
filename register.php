@@ -19,13 +19,13 @@
                             $session_id = get_session_id(esc($_GET["username"]));
                             $status = ["status" => "ok", "msg" => "Account created", "session_id" => $session_id, "time" => get_expiry_date($session_id)];
                         } else {
-                            $status = ["status" => "error", "msg" => "Did you forget your password? Link: get_new_password.php"];
+                            $status = ["status" => "error", "msg" => "Did you forget your password? Link: <a href='user_changes_password.php'>Change password</a>"];
                         }
                     } else {
                         $status = ["status" => "error", "msg" => "Username already exists choose another one."];
                     }
                 } else {
-                    $status = ["status" => "error", "msg" => "Password is empty. Please choose a password. Password is too short: ".strlen($_GET["pw"])];
+                    $status = ["status" => "error", "msg" => "Password is too short it needs at least 8 characters."];
                 }
             } else {
                 $status = ["status" => "error", "msg" => "Username is empty. Please choose a username."];
