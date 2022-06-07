@@ -3,6 +3,7 @@
 	include_once('php/mailerload.php');
 	$GLOBALS['smtpuser'] = "scads";
 	$GLOBALS['smtppass'] = "test123";
+	$GLOBALS['smtphost'] = "scads";
 	if(file_exists('/etc/dbpw')) {
 		try {
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));

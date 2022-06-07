@@ -32,11 +32,11 @@
 			}
 		}
 
-		$oMailer->sign(
-			$GLOBALS['certificate_file'],
-			$GLOBALS['private_key_file'],
-			$GLOBALS['key_password']
-		);
+		// $oMailer->sign(
+		// 	$GLOBALS['certificate_file'],
+		// 	$GLOBALS['private_key_file'],
+		// 	$GLOBALS['key_password']
+		// );
 
 		if (!$oMailer->send()) {
 			return 0;

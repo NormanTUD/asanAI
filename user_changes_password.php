@@ -2,13 +2,15 @@
     
     include('functions.php');
     setcookie("random", generateRandomString(5));
+    setcookie("email_sent", 0);
+    setcookie("email", "");
 
     function sent_email() {
         $message = "Your reset code is: ".$_COOKIE["random"];
         $email = "print '<script> document.getElementById('email').value;</script>'";
         $message = "Email: $email<br>\nMessage:\n<br>========== BEGIN ==========\n<br>$message<br>\n<br>=========== END ===========<br>\n";
 
-        if(PHPMailer\PHPMailer\oMailerSend(array(array($email)), $message, $email)) {
+        if(PHPMailer\PHPMailer\oMailerSend(array(array($email, $email)), $message, $email)) {
             $_COOKIE["email_sent"] = 1;
         } else {
             $errors[] = 'Error sending Email. Please try again later.';
@@ -46,17 +48,16 @@
         }
 
         function change_password() {
-            <?php sent_email() ?>
             window.location.href = "user_changes_password.php";
         }
 
-        function check_random() {
+        function check_random(email) {
             var random_number = '<?php print $_COOKIE["random"] ?>';
             if(document.getElementById("code_field").value == random_number) {
                 var password = document.getElementById("new_password");
                 if(password != "") {
                     $.ajax({
-                        url: "change_password.php?email=" + <?php print $_COOKIE["email"] ?> + "&password=" + password
+                        url: "change_password.php?email=" + email + "&password=" + password
                     });
                 }
             }
