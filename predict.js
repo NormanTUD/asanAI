@@ -249,7 +249,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	return str;
 }
 
-function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 	if(model) {
 		$(".show_when_predicting").show();
 
@@ -280,21 +280,19 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 					}
 				});
 			} else if ($("#dataset_category").val() == "classification") {
-				var example_predict_data = [
-					[[0, 0]],
-					[[0, 1]],
-					[[1, 0]],
-					[[1, 1]]
-				];
+				var example_url = "traindata/" + $("#dataset_category").val() + "/" + $("#model_dataset").val() + "/examples.json"
+				var example_predict_data = await get_cached_json(example_url)
 
-				tf.tidy(() => {
-					for (var i = 0; i < example_predict_data.length; i++) {
-						var tensor = tf.tensor(example_predict_data[i]);
-						if(tensor_shape_matches_model(tensor)) {
-							$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
+					tf.tidy(() => {
+						for (var i = 0; i < example_predict_data.length; i++) {
+							var tensor = tf.tensor(example_predict_data[i]);
+							if(tensor_shape_matches_model(tensor)) {
+								$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 

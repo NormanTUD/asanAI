@@ -1388,7 +1388,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	allow_training();
 
 	if (!no_prediction) {
-		show_prediction(1, 1);
+		await show_prediction(1, 1);
 	}
 
 	MathJax.typeset();
@@ -2230,7 +2230,7 @@ async function set_config(index) {
 
 	write_descriptions();
 
-	show_prediction(1, 1);
+	await show_prediction(1, 1);
 }
 
 async function show_or_hide_load_weights() {
@@ -3181,7 +3181,7 @@ async function load_weights(dont_show_msg) {
 			success: async function (data) {
 				set_weights_from_json_object(data, dont_show_msg, 1);
 				prev_layer_data = [];
-				show_prediction(0, 1);
+				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
 				show_or_hide_load_weights();
 			}

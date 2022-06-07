@@ -70,7 +70,7 @@ async function train_neural_network () {
 
 		enable_everything();
 
-		show_prediction();
+		await show_prediction();
 	}
 
 	write_descriptions();
