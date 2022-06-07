@@ -1360,7 +1360,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	enable_start_training_custom_tensors();
 
 	if (!no_update_math) {
-		write_model_to_latex_to_page();
+		await write_model_to_latex_to_page();
 	}
 
 	last_shape_layer_warning();
@@ -1992,6 +1992,8 @@ async function set_config(index) {
 	}
 	Swal.fire({
 		title: swal_msg + '...',
+		allowEscapeKey: false,
+		allowOutsideClick: false,
 		showConfirmButton: false
 	});
 
@@ -2205,7 +2207,9 @@ async function set_config(index) {
 
 	if (config["weights"]) {
 		var weights_string = JSON.stringify(config["weights"]);
-		set_weights_from_string(weights_string, 1, 1)
+		await set_weights_from_string(weights_string, 1, 1)
+	} else {
+		await load_weights(1);
 	}
 
 	disable_all_non_selected_layer_types();
@@ -2216,9 +2220,7 @@ async function set_config(index) {
 		await save_current_status();
 	}
 
-	get_label_data();
-
-	await load_weights(1);
+	await get_label_data();
 
 	is_setting_config = false;
 
@@ -2911,10 +2913,13 @@ function display_delete_button() {
 	$("#delete_model").addClass("disabled_symbol");
 	$("#delete_model").html("&#10060");
 	var user_id = get_id_from_train_data_struct("user_id").toString();
-	//log(user_id.toString())
+	//log(user_id.toString());
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
 		$("#delete_model").html("&#10060");
 		$("#delete_model").removeClass("disabled_symbol");
+	} else {
+		$("#delete_model").html("&#10006;");
+		$("#delete_model").addClass("disabled_symbol");
 	}
 }
 
@@ -3186,11 +3191,11 @@ async function load_weights(dont_show_msg) {
 	if (weights_file) {
 		$.ajax({
 			url: weights_file,
-			success: function (data) {
+			success: async function (data) {
 				set_weights_from_json_object(data, dont_show_msg, 1);
 				prev_layer_data = [];
 				show_prediction(0, 1);
-				write_model_to_latex_to_page();
+				await write_model_to_latex_to_page();
 				show_or_hide_load_weights();
 			}
 		});
@@ -3313,7 +3318,7 @@ function reset_view() {
 	}
 }
 
-function change_data_origin() {
+async function change_data_origin() {
 	x_file = null;
 	y_file = null;
 	y_shape = null;
@@ -3395,10 +3400,16 @@ function change_data_origin() {
 		$("#metric").val("categoricalCrossentropy");
 	} else if (show_own_tensor_data) {
 		show_tab_label("own_tensor_data_label", 1);
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
 		show_tab_label("own_csv_data_label", 1);
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	} else {
 		show_tab_label("training_data_tab_label");
+		var config = await _get_configuration();
+		$("#loss").val(config["loss"]);
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
@@ -4024,9 +4035,10 @@ function end_demo_mode() {
 	write_descriptions();
 }
 
-function change_model_dataset() {
+async function change_model_dataset() {
 	$("#model_dataset_div").show();
-	load_weights(1);
+	await load_weights(1);
+	display_delete_button();
 }
 
 function allow_edit_inputShape() {
