@@ -125,7 +125,7 @@ function memory_debugger () {
 	var gpu_mb = gpu_bytes / 1024 / 1024;
 	gpu_mb = gpu_mb.toFixed(2);
 
-	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
+	var debug_string = "| Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
 
 	$("#tensor_number_debugger").html(debug_string).show();
 }
