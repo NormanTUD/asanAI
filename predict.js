@@ -53,39 +53,51 @@ let predict_demo = async function (item, nr) {
 			tensor_img = new_tensor_img;
 		}
 
-		var predictions_tensor = await model.predict([tensor_img], [1, 1]);
-		dispose(tensor_img);
+		var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
+		input_layer_shape.shift();
 
-		var predictions = predictions_tensor.dataSync();
-		dispose(predictions_tensor);
+		var tensor_shape = eval(JSON.stringify(tensor_img.shape));
+		tensor_shape.shift();
 
-		if(predictions.length) {
-			var max_i = 0;
-			var max_probability = -9999999;
-
-			for (let i = 0; i < predictions.length; i++) {
-				var probability = predictions[i];
-				if(probability > max_probability) {
-					max_probability = probability;
-					max_i = i;
-				}
-			}
-
-			var desc = $($(".predict_demo_result")[nr]);
-
-			desc.html("");
-			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i % labels.length];
-				var probability = predictions[i];
-				var str = label + ": " + probability + "<br>\n";
-				if(i == max_i) {
-					str = "<b style='color: green'>" + str + "</b>";
-				}
-				desc.append(str);
-			}
+		if(tensor_shape.join(",") != input_layer_shape.join(",")) {
+			return;
 		}
-		$("#predict_error").hide();
-		$("#predict_error").html("");
+
+		if(model) {
+			var predictions_tensor = await model.predict([tensor_img]);
+			dispose(tensor_img);
+
+			var predictions = predictions_tensor.dataSync();
+			dispose(predictions_tensor);
+
+			if(predictions.length) {
+				var max_i = 0;
+				var max_probability = -9999999;
+
+				for (let i = 0; i < predictions.length; i++) {
+					var probability = predictions[i];
+					if(probability > max_probability) {
+						max_probability = probability;
+						max_i = i;
+					}
+				}
+
+				var desc = $($(".predict_demo_result")[nr]);
+
+				desc.html("");
+				for (let i = 0; i < predictions.length; i++) {
+					var label = labels[i % labels.length];
+					var probability = predictions[i];
+					var str = label + ": " + probability + "<br>\n";
+					if(i == max_i) {
+						str = "<b style='color: green'>" + str + "</b>";
+					}
+					desc.append(str);
+				}
+			}
+			$("#predict_error").hide();
+			$("#predict_error").html("");
+		}
 	} catch (e) {
 		console.warn(e);
 		$("#prediction").hide();
@@ -273,11 +285,27 @@ function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
 					}
 				});
 			} else if ($("#dataset_category").val() == "classification") {
+				var example_predict_data = [
+					[[0, 0]],
+					[[0, 1]],
+					[[1, 0]],
+					[[1, 1]]
+				];
+
 				tf.tidy(() => {
-					$("#example_predictions").append("[0, 0] = " + model.predict(tf.tensor([[0, 0]])).dataSync() + "<br>");
-					$("#example_predictions").append("[0, 1] = " + model.predict(tf.tensor([[0, 1]])).dataSync() + "<br>");
-					$("#example_predictions").append("[1, 0] = " + model.predict(tf.tensor([[1, 0]])).dataSync() + "<br>");
-					$("#example_predictions").append("[1, 1] = " + model.predict(tf.tensor([[1, 1]])).dataSync() + "<br>");
+					var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
+					input_layer_shape.shift();
+
+					for (var i = 0; i < example_predict_data.length; i++) {
+						var tensor = tf.tensor(example_predict_data[i]);
+
+						var tensor_shape = eval(JSON.stringify(tensor.shape));
+						tensor_shape.shift();
+
+						if(tensor_shape.join(",") == input_layer_shape.join(",")) {
+							$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+						}
+					}
 				});
 			}
 		}

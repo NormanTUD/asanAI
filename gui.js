@@ -1360,7 +1360,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	enable_start_training_custom_tensors();
 
 	if (!no_update_math) {
-		write_model_to_latex_to_page();
+		await write_model_to_latex_to_page();
 	}
 
 	last_shape_layer_warning();
@@ -2205,7 +2205,9 @@ async function set_config(index) {
 
 	if (config["weights"]) {
 		var weights_string = JSON.stringify(config["weights"]);
-		set_weights_from_string(weights_string, 1, 1)
+		await set_weights_from_string(weights_string, 1, 1)
+	} else {
+		await load_weights(1);
 	}
 
 	disable_all_non_selected_layer_types();
@@ -2216,9 +2218,7 @@ async function set_config(index) {
 		await save_current_status();
 	}
 
-	get_label_data();
-
-	await load_weights(1);
+	await get_label_data();
 
 	is_setting_config = false;
 
@@ -3173,11 +3173,11 @@ async function load_weights(dont_show_msg) {
 	if (weights_file) {
 		$.ajax({
 			url: weights_file,
-			success: function (data) {
+			success: async function (data) {
 				set_weights_from_json_object(data, dont_show_msg, 1);
 				prev_layer_data = [];
 				show_prediction(0, 1);
-				write_model_to_latex_to_page();
+				await write_model_to_latex_to_page();
 				show_or_hide_load_weights();
 			}
 		});
@@ -4017,9 +4017,10 @@ function end_demo_mode() {
 	write_descriptions();
 }
 
-function change_model_dataset() {
+async function change_model_dataset() {
 	$("#model_dataset_div").show();
-	load_weights(1);
+	await load_weights(1);
+	display_delete_button();
 }
 
 function allow_edit_inputShape() {
