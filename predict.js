@@ -282,6 +282,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 					}
 				});
 			} else if ($("#dataset_category").val() == "classification") {
+				$("#example_predictions").html("");
 				var example_url = "traindata/" + $("#dataset_category").val() + "/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
 				var count = 0;
