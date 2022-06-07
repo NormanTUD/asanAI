@@ -613,7 +613,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 								<tr data-intro="Live update example predictions while training">
 									<td>Live update example predictions?</td>
-									<td><input class="show_data" type='checkbox' value="1" id="auto_update_predictions" checked /></td>
+									<td><input class="show_data" type='checkbox' value="1" id="auto_update_predictions" /></td>
 								</tr>
 							</table>
 						</div>
