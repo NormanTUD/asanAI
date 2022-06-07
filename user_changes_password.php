@@ -1,10 +1,10 @@
 <?php
     
     include('functions.php');
+    setcookie("random", generateRandomString(5));
 
     function sent_email() {
-        $_COOKIE["random"] = generateRandomString(5);
-        $message = "Your reset code is: ".$random;
+        $message = "Your reset code is: ".$_COOKIE["random"];
         $email = "print '<script> document.getElementById('email').value;</script>'";
         $message = "Email: $email<br>\nMessage:\n<br>========== BEGIN ==========\n<br>$message<br>\n<br>=========== END ===========<br>\n";
 
@@ -24,12 +24,34 @@
         <title>Reset password</title>
     </head>
     <script>
+        function setCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/;";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
         function change_password() {
             <?php sent_email() ?>
             window.location.href = "user_changes_password.php";
         }
+
         function check_random() {
-            var random_number = <?php print $_COOKIE["random"] ?>;
+            var random_number = '<?php print $_COOKIE["random"] ?>';
             if(document.getElementById("code_field").value == random_number) {
                 var password = document.getElementById("new_password");
                 if(password != "") {
