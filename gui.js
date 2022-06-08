@@ -1416,8 +1416,6 @@ function typeset() {
 		}
 
 		if(retypeset) {
-			log("retypeset ");
-			log(math_elements[i]);
 			MathJax.typeset([math_elements[i]]);
 			math_items_hashes[xpath] = new_md5;
 		}
