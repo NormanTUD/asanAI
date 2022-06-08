@@ -58,6 +58,7 @@ let predict_demo = async function (item, nr) {
 		}
 
 		if(model) {
+			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
 			var predictions_tensor = await model.predict([tensor_img]);
 			dispose(tensor_img);
 
@@ -83,7 +84,7 @@ let predict_demo = async function (item, nr) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
 					var str = label + ": " + probability + "<br>\n";
-					if(i == max_i) {
+					if(i == max_i && show_green) {
 						str = "<b style='color: green'>" + str + "</b>";
 					}
 					desc.append(str);
@@ -207,6 +208,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(["classification"].includes(category) && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
+			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
 			if(predictions.length) {
 				var max_i = 0;
 				var max_probability = -9999999;
@@ -227,11 +229,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
 					var this_str = label + ": " + probability + "\n";
-					if(i == max_i) {
+					if(i == max_i && show_green) {
 						str = str + "<b class='max_prediction'>" + this_str + "</b>";
 					} else {
 						str = str + this_str;
 					}
+					str += "<br>";
 				}
 			}
 		}
@@ -275,7 +278,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							var examples = x["example"];
 							if(examples) {
 								for (var i = 0; i < examples.length; i++) {
-									$("#example_predictions").append("<img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+									$("#example_predictions").append("<hr><img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
 								}
 							}
 						}

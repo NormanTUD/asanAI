@@ -263,9 +263,9 @@ $GLOBALS['minify'] = 0;
 										<td>Data Type:</td>
 										<td>
 											<select id="data_type" style="width: 140px" onchange="change_data_origin(1)">
+												<option value="tensordata">&#x2318; Tensor-Data</option>
 												<option value="csv">&#128290; CSV</option>
 												<option value="image">&#128444; Image</option>
-												<option value="tensordata">&#x2318; Tensor-Data</option>
 											</select>
 										</td>
 									</tr>
@@ -611,10 +611,7 @@ $GLOBALS['minify'] = 0;
 									<td>Input&nbsp;Layer?</td>
 									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
 								</tr>
-								<tr data-intro="Live update example predictions while training">
-									<td>Live update example predictions?</td>
-									<td><input class="show_data" type='checkbox' value="1" id="auto_update_predictions" /></td>
-								</tr>
+
 							</table>
 						</div>
 						<div class="ribbon-group-title">Visualizations</div>
@@ -1226,6 +1223,8 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="predict_tab">
+									Live update example predictions while training?
+									<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
 								<div class="container" id="predictcontainer">
 									<div class="">
 										<div id="own_files">
@@ -1257,7 +1256,7 @@ $GLOBALS['minify'] = 0;
 
 											<br>
 
-											<pre id="prediction" style="display: none"></pre>
+											<div id="prediction" style="display: none"></div>
 											<div id="predict_error" style="overflow: scroll; display: none"></div>
 
 											<hr>

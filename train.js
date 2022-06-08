@@ -184,6 +184,9 @@ function get_fit_data () {
 
 	callbacks["onBatchEnd"] = async function () {
 		if($("#auto_update_predictions").is(":checked")) {
+			if($('#predict_own_data').val()) {
+				predict($('#predict_own_data').val());
+			}
 			show_prediction(0, 1);
 		}
 	}
