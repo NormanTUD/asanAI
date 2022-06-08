@@ -1,18 +1,5 @@
 <?php
     include('functions.php');
-
-    function get_network_names() {
-        $filters = [];
-        $options = [];
-
-        $results = find_mongo("tfd.models", $filters, $options);
-
-        foreach($results as $doc) {
-            $array[] = $doc["network_name"];
-        }
-
-        return $array;
-    }
     
 ?>
 
@@ -71,9 +58,6 @@
     }
 ?>
         <script>
-            function log(msg) {
-                console.log(msg)
-            }
 
             function delete_network() {
                 network_name = document.getElementById("network_select").value;
@@ -84,15 +68,6 @@
                     }
                 });
             }
-
-            // function get_network_names() {
-            //     $.ajax({
-            //         url: "get_network_names.php",
-            //         success: function (data) {
-            //             log(data)
-            //         }
-            //     });
-            // }
 
         </script>
     </body>

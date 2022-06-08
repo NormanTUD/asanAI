@@ -37,10 +37,25 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function get_network_names() {
+        $filters = [];
+        $options = [];
+
+        $results = find_mongo("tfd.models", $filters, $options);
+
+        foreach($results as $doc) {
+            $array[] = $doc["network_name"];
+        }
+
+        return $array;
+    }
+
 	function can_edit($model_user_id) {
 		$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
 		_assert($user_id > 0, "id is too low");
-		if(get_single_value_from_query("select role_id from login where id = ".$user_id) == 1){
+		$role = get_single_value_from_query("select role_id from login where id = ".$user_id);
+		dier($role);
+		if($role == 1){
 			return true;
 		}
 		//$model_user_id = 101;
@@ -64,8 +79,8 @@
 		return false;
 	}
 
-	function delete_mongo ($collection, $id) {
-		if(can_edit($id)) {
+	function delete_mongo ($collection, $id, $user_id) {
+		if(can_edit($user_id)) {
 			$bulk = new \MongoDB\Driver\BulkWrite();
 			$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
 			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
@@ -73,8 +88,8 @@
 		}
 	}
 
-	function delete_mongo_models ($id) {
-		delete_mongo('tfd.models', $id);
+	function delete_mongo_models ($id, $user_id) {
+		delete_mongo('tfd.models', $id, $user_id);
 	}
 
 	function save_mongo ($collection, $data) {
@@ -108,7 +123,8 @@
 	function find_mongo ($table, $filter, $options) {
 		try {
 			$query = new MongoDB\Driver\Query($filter, $options);
-
+			//find_mongo funktioniert nicht richtig, es wird nichts ausgegeben obwohl die daten in
+			// der datenbank existieren
 			$rows = $GLOBALS["manager"]->executeQuery($table, $query);
 
 			$r = array();

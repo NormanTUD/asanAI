@@ -8,7 +8,7 @@
 			print "User doesn't exist.";
 		} else {
 			$filters = [
-				['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
+				//['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
 			];
 
 			$options = array(
