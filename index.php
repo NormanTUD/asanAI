@@ -1256,7 +1256,7 @@ $GLOBALS['minify'] = 0;
 
 											<br>
 
-											<pre id="prediction" style="display: none"></pre>
+											<div id="prediction" style="display: none"></div>
 											<div id="predict_error" style="overflow: scroll; display: none"></div>
 
 											<hr>
