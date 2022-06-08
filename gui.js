@@ -2770,7 +2770,7 @@ function register() {
 	if (email.includes("@")) {
 		document.getElementById("register_error_msg").innerHTML = "";
 		$.ajax({
-			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password,
+			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password + "&days=7",
 			success: function (data) {
 				if(data["status"] == "ok") {
 					document.getElementById("register_error_msg").style = "background-color: #4b8545";
@@ -2804,7 +2804,7 @@ async function login() {
 	var username = document.getElementById("login_username").value;
 	var password = document.getElementById("login_password").value;
 	$.ajax({
-		url: "login.php?username=" + username + "&pw=" + password,
+		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
 		success: function (data) {
 			if(data["status"] == "ok") {
 				user_id = data["user_id"];
@@ -2887,8 +2887,9 @@ function insert_test_users() {
 }
 function delete_model() {
 	var id = get_id_from_train_data_struct("id");
+	var user_id = get_id_from_train_data_struct("user_id");
 	$.ajax({
-		url: "delete_from_mongodb.php?id=" + id,
+		url: "delete_from_mongodb.php?id=" + id + "&user_id=" + user_id,
 		async: false
 	});
 	get_traindata_and_init_categories();

@@ -20,7 +20,7 @@
 			dier($results);
 
 			if(array_key_exists(0, $results)) {
-				delete_mongo_models($_GET["id"]);
+				delete_mongo_models($_GET["id"], $_GET["user_id"]);
 			} else {
 				print "No model found by the given ID -- OR -- you do not own this model. You cannot delete models you don't own";
 			}
