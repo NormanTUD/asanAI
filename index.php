@@ -1149,53 +1149,6 @@ $GLOBALS['minify'] = 0;
 									<div class="typeset_me" id="math_tab_code"></div>
 								</div>
 
-								<!--
-								<div id="conv_explanations" style="width: 99%; max-height: 100%; background-color: #ffffff">
-									Blue maps are inputs, and cyan maps are outputs<br>
-									<center>
-										<h4>No padding, no strides:</h4>
-										<img width=244 src="conv_animations/no_padding_no_strides.gif"><br>
-										<h4>Arbitrary padding, no strides:</h4>
-										<img width=244 src="conv_animations/arbitrary_padding_no_strides.gif"><br>
-										<h4>Half padding, no strides:</h4>
-										<img width=244 src="conv_animations/same_padding_no_strides.gif"><br>
-										<h4>Full padding, no strides:</h4>
-										<img width=244 src="conv_animations/full_padding_no_strides.gif"><br>
-										<h4>No padding, strides:</h4>
-										<img width=244 src="conv_animations/no_padding_strides.gif"><br>
-										<h4>Padding, strides:</h4>
-										<img width=244 src="conv_animations/padding_strides.gif"><br>
-										<h4>Padding, strides (odd):</h4>
-										<img width=244 src="conv_animations/padding_strides_odd.gif"><br>
-										<h2>Transposed convolution animations</h2><br>
-										<h4>No padding, no strides, transposed:</h4>
-										<img width=244 src="conv_animations/no_padding_no_strides_transposed.gif"><br>
-										<h4>Arbitrary padding, no strides, transposed:</h4>
-										<img width=244 src="conv_animations/arbitrary_padding_no_strides_transposed.gif"><br>
-										<h4>Half padding, no strides, transposed:</h4>
-										<img width=244 src="conv_animations/same_padding_no_strides_transposed.gif"><br>
-										<h4>Full padding, no strides, transposed:</h4>
-										<img width=244 src="conv_animations/full_padding_no_strides_transposed.gif"><br>
-										<h4>No padding, strides, transposed:</h4>
-										<img width=244 src="conv_animations/no_padding_strides_transposed.gif"><br>
-										<h4>Padding, strides, transposed:</h4>
-										<img width=244 src="conv_animations/padding_strides_transposed.gif"><br>
-										<h4>Padding, strides, transposed (odd):</h4>
-										<img width=244 src="conv_animations/padding_strides_odd_transposed.gif"><br>
-										<h2>Dilated convolution animations:</h2><br>
-										<img width=244 src="conv_animations/dilation.gif"><br>
-										<h4>No padding, no stride, dilation:</h4>
-										<h2>Pooling</h2><br>
-										<h4>MaxPooling, Kernel-Size 3x3:</h4>
-										<img width=600 src="conv_animations/numerical_max_pooling.gif"><br>
-										<h4>AveragePooling, Kernel-Size 3x3:</h4>
-										<img width=600 src="conv_animations/numerical_average_pooling.gif"><br>
-									</center>
-									These graphics are from <a href="https://github.com/vdumoulin/conv_arithmetic">Convolution arithmetic</a> by
-									<a href="https://github.com/vdumoulin">vdumoulin</a>.
-								</div>
-								-->
-
 								<div id="help_tab">
 								</div>
 							</div>
