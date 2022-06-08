@@ -37,6 +37,13 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function can_edit($id) {
+		if(get_single_value_from_query("select role_id from login where id = ".$id) == 1){
+			return true;
+		}
+		return false;
+	}
+
 	function delete_expiry_dates() {
 		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
