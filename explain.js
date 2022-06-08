@@ -1431,8 +1431,14 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			await MathJax.typesetPromise()
-			show_tab_label("math_tab_label");
+			var xpath = get_element_xpath($("#math_tab_code")[0]);
+			var new_md5 = md5($($(".math_tab_code")[0]).html());
+			var old_md5 = math_items_hashes[xpath];
+
+			if(new_md5 != old_md5) {
+				await MathJax.typesetPromise($("#math_tab_code")[0])
+				show_tab_label("math_tab_label");
+			}
 		} catch (e) {
 			var mathjax_error_explanation = "Are you online?";
 			$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
