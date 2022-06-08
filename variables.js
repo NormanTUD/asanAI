@@ -941,3 +941,5 @@ var no_update_math = false;
 var example_plotly_data = [[1,1], [1,1.5], [1.9,2.1], [3.95, 1.01], [6, 20]];
 
 var user_id = null;
+
+var math_items_hashes = {};

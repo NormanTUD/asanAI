@@ -274,7 +274,7 @@ function set_item_value(layer, classname, value) {
 
 function get_tr_str_for_description(desc) {
 	assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
-	return "<tr><td>Description:</td><td><i>" + desc + "</i></td></tr>";
+	return "<tr><td>Description:</td><td><i class='typeset_me'>" + desc + "</i></td></tr>";
 }
 
 function isNumeric(str) {
@@ -1391,9 +1391,37 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await show_prediction(1, 1);
 	}
 
-	MathJax.typeset();
+	typeset();
 
 	return 1;
+}
+
+function typeset() {
+	var math_elements = $(".typeset_me");
+
+	for (var i = 0; i < math_elements.length; i++) {
+		var xpath = get_element_xpath(math_elements[i]);
+		var new_md5 = md5($(math_elements[i]).html());
+		var old_md5 = math_items_hashes[xpath];
+
+		var retypeset = 0;
+		if(new_md5 != old_md5) {
+			retypeset = 1;
+		}
+
+		if($(math_elements[i]).attr("id") == "math_tab_code") {
+			if(is_hidden_or_has_hidden_parent($("#math_tab_code")[0])) {
+				retypeset = 0;
+			}
+		}
+
+		if(retypeset) {
+			log("retypeset ");
+			log(math_elements[i]);
+			MathJax.typeset([math_elements[i]]);
+			math_items_hashes[xpath] = new_md5;
+		}
+	}
 }
 
 function change_optimizer() {
