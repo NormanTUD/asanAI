@@ -1223,7 +1223,7 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="predict_tab">
-									Live update example predictions?
+									Live update example predictions while training?
 									<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
 								<div class="container" id="predictcontainer">
 									<div class="">
