@@ -1386,11 +1386,18 @@ $GLOBALS['minify'] = 0;
 						betweenNodesInLayer.push(10);
 						layer_types.push(layer_type);
 					}
-				}	
+				}
+
+				var redraw_data = {'architecture_': architecture, 'real_architecture_': real_architecture, 'layerTypes_': layer_types, 'currentLayer_': currentLayer};
+				var redistribute_data = {'betweenNodesInLayer_': betweenNodesInLayer};
+				var new_hash = md5(JSON.stringify(redraw_data) + JSON.stringify(redistribute_data));
 
 				if(architecture.length + real_architecture.length) {
-					fcnn.redraw({'architecture_': architecture, 'real_architecture_': real_architecture, 'layerTypes_': layer_types, 'currentLayer_': currentLayer});
-					fcnn.redistribute({'betweenNodesInLayer_': betweenNodesInLayer});
+					if(graph_hashes["fcnn"] != new_hash) {
+						fcnn.redraw(redraw_data);
+						fcnn.redistribute(redistribute_data);
+						graph_hashes["fcnn"] = new_hash;
+					}
 				}
 				reset_view();
 			}
@@ -1480,8 +1487,15 @@ $GLOBALS['minify'] = 0;
 									architecture.unshift(shown_input_layer);
 								}
 
-								alexnet.restartRenderer(1);
-								alexnet.redraw({'architecture_': architecture, 'architecture2_': architecture2, "showDims": true});
+								var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2, "showDims": true};
+
+								var new_hash = md5(JSON.stringify(redraw_data));
+
+								if(graph_hashes["alexnet"] != new_hash) {
+									alexnet.restartRenderer(1);
+									alexnet.redraw(redraw_data);
+									graph_hashes["alexnet"] = new_hash;
+								}
 							} catch (e) {
 								console.warn(e);
 								disable_alexnet = 1;
@@ -1595,8 +1609,13 @@ $GLOBALS['minify'] = 0;
 						}
 
 						try {
-							lenet.redraw({'architecture_': architecture, 'architecture2_': architecture2});
-							lenet.redistribute({'betweenLayers_': []});
+							var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2};
+							var new_hash = md5(JSON.stringify(redraw_data));
+							if(graph_hashes["lenet"] != new_hash) {
+								lenet.redraw(redraw_data);
+								lenet.redistribute({'betweenLayers_': []});
+								graph_hashes["lenet"] = new_hash;
+							}
 						} catch (e) {
 							log(e);
 						}
