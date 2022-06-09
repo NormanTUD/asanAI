@@ -1,5 +1,21 @@
 <?php
+			/*
+				$options= [
+				    'skip' => 20,
+				    'limit' => 20,
+				    'batchSize' => 20   
+				];
+
+				$filter= [
+				'_id' => '5a8adcf335f6d112d00e46c8'
+				];
+
+				$query= new MongoDB\Driver\Query($filter, $options);
+			 */
 	include("functions.php");
+
+
+
 
 	if(array_key_exists("session_id", $_COOKIE)) {
 
@@ -7,14 +23,16 @@
 		if(is_null($user)) {
 			print "User doesn't exist.";
 		} else {
-			$filters = [
-				'_id' => new MongoDB\BSON\ObjectID($_GET["id"])
+			$filters = ['_id' => new MongoDB\BSON\ObjectID($_GET["id"])];
+			$options = [
+				'projection' => ['_id' => 1]
 			];
 
-			//$options = ['model_weights' => 'true', 'model_data' => 'false', 'model_structure' => 'false'];
-			//$options = [ '_id' => 1];
-			$options = [new \MongoDB\Driver\Command(['_id' => true])];
-			//dier($options);
+			$query = new MongoDB\Driver\Query($filters, $options);
+			$cursor = $manager->executeQuery('tfd.models', $query);
+			dier($cursor->toArray());
+
+			// alter code ab hier:
 			$results = find_mongo("tfd.models", $filters, $options);
 			dier($results);
 
