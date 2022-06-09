@@ -274,7 +274,7 @@ function set_item_value(layer, classname, value) {
 
 function get_tr_str_for_description(desc) {
 	assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
-	return "<tr><td>Description:</td><td><i>" + desc + "</i></td></tr>";
+	return "<tr><td>Description:</td><td><i class='typeset_me'>" + desc + "</i></td></tr>";
 }
 
 function isNumeric(str) {
@@ -1391,9 +1391,35 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await show_prediction(1, 1);
 	}
 
-	MathJax.typeset();
+	typeset();
 
 	return 1;
+}
+
+function typeset() {
+	var math_elements = $(".typeset_me");
+
+	for (var i = 0; i < math_elements.length; i++) {
+		var xpath = get_element_xpath(math_elements[i]);
+		var new_md5 = md5($(math_elements[i]).html());
+		var old_md5 = math_items_hashes[xpath];
+
+		var retypeset = 0;
+		if(new_md5 != old_md5) {
+			retypeset = 1;
+		}
+
+		if($(math_elements[i]).attr("id") == "math_tab_code") {
+			if(is_hidden_or_has_hidden_parent($("#math_tab_code")[0])) {
+				retypeset = 0;
+			}
+		}
+
+		if(retypeset) {
+			MathJax.typeset([math_elements[i]]);
+			math_items_hashes[xpath] = new_md5;
+		}
+	}
 }
 
 function change_optimizer() {
@@ -3362,7 +3388,28 @@ async function change_data_origin() {
 		} else if ($("#data_type").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_type").val() == "csv") {
-			show_own_csv_data = 1;
+			if(contains_convolution() && mode != "expert") {
+				await Swal.fire({
+					title: 'Are you sure?',
+					text: "Using CSV in a network that contains convolutions is probably not what you want. Only continue if you really know what you are doing!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					cancelButtonText: 'Yes, switch to expert mode and use CSV with this network!',
+					confirmButtonText: 'No, keep me safe from tons of errors!'
+				}).then((result) => {
+					if (!result.isConfirmed) {
+						$('#mode_chooser').children().attr("checked", "checked").trigger("change");
+						show_own_csv_data = 1;
+					} else {
+						show_own_tensor_data = 1;
+						$("#data_type").val("tensordata").trigger("change");
+					}
+				});
+			} else {
+				show_own_csv_data = 1;
+			}
 		} else {
 			alert("Unknown data_type: " + $("#data_type").val());
 		}
