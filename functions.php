@@ -50,24 +50,29 @@
         return $array;
     }
 
-	function can_edit($model_user_id) {
-		$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-		_assert($user_id > 0, "id is too low");
-		$role = get_single_value_from_query("select role_id from login where id = ".$user_id);
-		//dier($role);
-		if($role == 1){
-			return true;
+	function can_edit($model_user_id = 0) {
+		if(array_key_exists("session_id", $_COOKIE)) {
+			$user_id = get_user_id_from_session_id(esc($_COOKIE["session_id"]));
+			_assert($user_id >= 0, "id is too low");
+			$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
+			if($role == 1){
+				return true;
+			}
+			if($user_id == $model_user_id) {
+				return true;
+			}
+			return false;
+		} else {
+			return false;
 		}
-		//$model_user_id = 101;
-		if($user_id == $model_user_id) {
-			return true;
-		}
-		return false;
 	}
 
 	function delete_expiry_dates() {
 		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
+		if(get_single_value_from_query("select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"])) == "") {
+			return null;
+		}
 	}
 
 	function contains_null_values ($array) {
@@ -234,6 +239,7 @@
 
 	function insert_session_id($username, $days) {
 		$session_id = generateRandomString();
+		// müssen diese funktionen get_user_id und create_expiry_date auch escaped werden?
 		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id().', '.esc($session_id).','.create_expiry_date($days).')';
 		run_query($query);
 	}
@@ -299,7 +305,7 @@
 
 	function is_logged_in () {
 		if(array_key_exists("session_id", $_COOKIE)) {
-			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+			$user = get_user_id_from_session_id(esc($_COOKIE["session_id"]));
 			if($user != "") {
 				return $user;
 			}

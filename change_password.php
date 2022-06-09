@@ -7,6 +7,12 @@
         $status["msg"] = "Password or email doesn't exist.";
     } else if (array_key_exists("username", $_GET)) {
         $username = $_GET["username"];
+
+        if(array_key_exists("role", $_GET) && $_GET["role"] == "") {
+            $role_number = "select id from tfd_db.role_table where name = ".esc($_GET["role"]);
+            $query = "update tfd_db.login set role_id = ".esc($role_number)." where username = ".esc($_GET["username"]);
+            run_query($query);
+        }
     }
     if(($_GET["password"] != "")) {
         if($username != "") {

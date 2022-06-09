@@ -11,7 +11,7 @@
                     if(!get_single_value_from_query('select username from tfd_db.login where username = '.esc($_GET["username"]))) {
                         if(!get_single_value_from_query('select email from tfd_db.login where email = '.esc($_GET["email"]))) {
                             $salt = generateRandomString();
-                            $query = 'insert into tfd_db.login (username, email, pw, salt) values ('.esc($_GET["username"]).', '.esc($_GET["email"]).', '.esc(hash("sha256", $_GET["pw"].$salt)).', '.esc($salt).')';
+                            $query = 'insert into tfd_db.login (username, email, pw, salt, role_id) values ('.esc($_GET["username"]).', '.esc($_GET["email"]).', '.esc(hash("sha256", $_GET["pw"].$salt)).', '.esc($salt).', 2)';
                             run_query ($query);
                 
                             insert_session_id(esc($_GET["username"]), $_GET["days"]);

@@ -2,8 +2,8 @@
     
     include('functions.php');
     setcookie("random", generateRandomString(5));
-    setcookie("email_sent", 0);
-    setcookie("email", "");
+    //setcookie("email_sent", 0);
+    //setcookie("email", "");
 
     function sent_email() {
         $message = "Your reset code is: ".$_COOKIE["random"];
@@ -25,6 +25,29 @@
     <head>
         <title>Reset password</title>
     </head>
+    
+    <body>
+        <h1>Reset your password</h1>
+<?php
+    if($_COOKIE["email_sent"] != 1) {
+?>
+        <input name="email" id="email" type="text" placeholder="email" value="email">
+        <button onclick="change_password()">Submit</button>
+<?php
+    //print "<script>console.log(document.getElementById('email').value);</script>";
+    }
+?>
+
+<?php
+    if($_COOKIE["email_sent"] == 1) {
+?>
+        <input id="new_password" type="password" placeholder="new password">
+        <input id="code_field" type="text" placeholder="Your code">
+        <button onclick="check_random()">Submit</button>
+<?php
+    }
+?>
+    </body>
     <script>
         function setCookie(name,value,days) {
             var expires = "";
@@ -48,7 +71,7 @@
         }
 
         function change_password() {
-            window.location.href = "user_changes_password.php";
+            //window.location.href = "user_changes_password.php";
         }
 
         function check_random(email) {
@@ -63,26 +86,4 @@
             }
         }
     </script>
-    <body>
-        <h1>Reset your password</h1>
-<?php
-    if($_COOKIE["email_sent"] != 1) {
-?>
-        <input name="email" id="email" type="text" placeholder="email" value="email">
-        <button onclick="change_password()">Submit</button>
-<?php
-    //print "<script>console.log(document.getElementById('email').value);</script>";
-    }
-?>
-
-<?php
-    if($_COOKIE["email_sent"] == 1) {
-?>
-        <input id="new_password" type="password" placeholder="new password">
-        <input id="code_field" type="text" placeholder="Your code">
-        <button onclick="check_random()">Submit</button>
-<?php
-    }
-?>
-    </body>
 </html>
