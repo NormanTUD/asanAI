@@ -1409,7 +1409,7 @@ function can_be_shown_in_latex () {
 
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	if(!can_be_shown_in_latex()) {
-		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
+		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
 			show_tab_label("fcnn_tab_label", 1);
 		} else {
 			hide_tab_label("math_tab_label");
@@ -1431,10 +1431,22 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			await MathJax.typesetPromise()
 			show_tab_label("math_tab_label");
+
+			var math_tab_code_elem = $("#math_tab_code")[0];
+
+			var xpath = get_element_xpath(math_tab_code_elem);
+			var new_md5 = md5($(math_tab_code_elem).html());
+			var old_md5 = math_items_hashes[xpath];
+
+			if(new_md5 != old_md5 || force) {
+				await MathJax.typesetPromise([math_tab_code_elem]);
+				show_tab_label("math_tab_label");
+				math_items_hashes[xpath] = new_md5;
+			}
 		} catch (e) {
 			var mathjax_error_explanation = "Are you online?";
+			console.warn(e);
 			$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 		}
 	} else {
