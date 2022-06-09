@@ -28,13 +28,13 @@
 				'projection' => ['_id' => 1]
 			];
 
-			$query = new MongoDB\Driver\Query($filters, $options);
-			$cursor = $manager->executeQuery('tfd.models', $query);
-			dier($cursor->toArray());
+			// $query = new MongoDB\Driver\Query($filters, $options);
+			// $cursor = $manager->executeQuery('tfd.models', $query);
+			// dier($cursor->toArray());
 
 			// alter code ab hier:
 			$results = find_mongo("tfd.models", $filters, $options);
-			dier($results);
+			//dier($results);
 
 			if(array_key_exists("user_id", $_GET)) {
 				if(array_key_exists(0, $results)) {
