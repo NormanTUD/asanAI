@@ -509,14 +509,20 @@ async function create_model (old_model, fake_model_structure, force) {
 			new_model.add(tf.layers[type](data));
 		} catch (e) {
 			if(!fake_model_structure) {
+				var msg = e;
+				if(mode != "expert") {
+					msg = msg + "\n\nUndoing last change"
+				}
 				Swal.fire({
 					icon: 'error',
 					title: 'Oops [3]...',
-					text: e + "\n\nUndoing last change"
+					text: msg
 				}).then(() => {
-					undo();
-					future_state_stack = [];
-					show_hide_undo_buttons();
+					if(mode != "expert") {
+						undo();
+						future_state_stack = [];
+						show_hide_undo_buttons();
+					}
 				});
 			}
 			return model;
