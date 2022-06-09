@@ -8,21 +8,25 @@
 			print "User doesn't exist.";
 		} else {
 			$filters = [
-				//['_id' => new MongoDB\BSON\ObjectID($_GET["id"])]
+				'_id' => new MongoDB\BSON\ObjectID($_GET["id"])
 			];
 
-			$options = array(
-				"category" => true,
-				"network_name" => true
-			);
-
+			//$options = ['model_weights' => 'true', 'model_data' => 'false', 'model_structure' => 'false'];
+			//$options = [ '_id' => 1];
+			$options = [new \MongoDB\Driver\Command(['_id' => true])];
+			//dier($options);
 			$results = find_mongo("tfd.models", $filters, $options);
 			dier($results);
 
-			if(array_key_exists(0, $results)) {
-				delete_mongo_models($_GET["id"], $_GET["user_id"]);
+			if(array_key_exists("user_id", $_GET)) {
+				if(array_key_exists(0, $results)) {
+					delete_mongo_models($_GET["id"], $_GET["user_id"]);
+					print "A model was found.";
+				} else {
+					print "No model found by the given ID -- OR -- you do not own this model. You cannot delete models you don't own";
+				}
 			} else {
-				print "No model found by the given ID -- OR -- you do not own this model. You cannot delete models you don't own";
+				print "User is missing.";
 			}
 		}
 	} else {

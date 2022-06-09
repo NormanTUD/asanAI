@@ -52,9 +52,10 @@
 
 	function can_edit($model_user_id) {
 		$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+		print $model_user_id." == ".$user_id;
 		_assert($user_id > 0, "id is too low");
 		$role = get_single_value_from_query("select role_id from login where id = ".$user_id);
-		dier($role);
+		//dier($role);
 		if($role == 1){
 			return true;
 		}
@@ -81,11 +82,13 @@
 
 	function delete_mongo ($collection, $id, $user_id) {
 		if(can_edit($user_id)) {
+			print "passed can edit";
 			$bulk = new \MongoDB\Driver\BulkWrite();
 			$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
 			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
 			return $result;
 		}
+		print "did not pass can edit";
 	}
 
 	function delete_mongo_models ($id, $user_id) {
@@ -123,8 +126,6 @@
 	function find_mongo ($table, $filter, $options) {
 		try {
 			$query = new MongoDB\Driver\Query($filter, $options);
-			//find_mongo funktioniert nicht richtig, es wird nichts ausgegeben obwohl die daten in
-			// der datenbank existieren
 			$rows = $GLOBALS["manager"]->executeQuery($table, $query);
 
 			$r = array();
