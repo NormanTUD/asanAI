@@ -3379,7 +3379,28 @@ async function change_data_origin() {
 		} else if ($("#data_type").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_type").val() == "csv") {
-			show_own_csv_data = 1;
+			if(contains_convolution() && mode != "expert") {
+				await Swal.fire({
+					title: 'Are you sure?',
+					text: "Using CSV in a network that contains convolutions is probably not what you want. Only continue if you really know what you are doing!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					cancelButtonText: 'Yes, switch to expert mode and use CSV with this network!',
+					confirmButtonText: 'No, keep me safe from tons of errors!'
+				}).then((result) => {
+					if (!result.isConfirmed) {
+						$('#mode_chooser').children().attr("checked", "checked").trigger("change");
+						show_own_csv_data = 1;
+					} else {
+						show_own_tensor_data = 1;
+						$("#data_type").val("tensordata").trigger("change");
+					}
+				});
+			} else {
+				show_own_csv_data = 1;
+			}
 		} else {
 			alert("Unknown data_type: " + $("#data_type").val());
 		}
