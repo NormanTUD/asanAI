@@ -16,7 +16,8 @@
                 ['_id' => new MongoDB\BSON\ObjectID(filter_str_int($id))]
             ];
             $options = [];
-            $results = delete_mongo_models($id);
+            $user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+            $results = delete_mongo_models($id, $user_id);
         
             print $_GET["network_name"]." was deleted";
         }

@@ -9,7 +9,7 @@
         $username = $_GET["username"];
     }
     if(($_GET["password"] != "")) {
-        if($user != "") {
+        if($username != "") {
             $salt = get_single_value_from_query("select salt from tfd_db.login where username = ".esc($username));
             $query = "update tfd_db.login set pw = ".esc(hash("sha256", $_GET["password"].$salt))." where username = ".esc($username);
             run_query($query);

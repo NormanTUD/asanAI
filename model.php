@@ -22,7 +22,7 @@
     if(array_key_exists(0, $network_names)) {
 ?>
         <h2>Delete Model</h2>
-        
+        <span id="delete_model_msg"></span><br/>
         <select id="network_select">
 <?php
         foreach($network_names as $name) {
@@ -64,6 +64,8 @@
                 $.ajax({
                     url: "delete_network.php?network_name=" + network_name,
                     success: function(data) {
+                        document.getElementById("delete_model_msg").style = "background-color: green";
+                        document.getElementById("delete_model_msg").innerText = data;
                         window.location.href = "model.php";
                     }
                 });
