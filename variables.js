@@ -945,3 +945,5 @@ var user_id = null;
 var math_items_hashes = {};
 
 var graph_hashes = {};
+
+var force_download = 0;

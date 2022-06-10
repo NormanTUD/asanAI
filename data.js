@@ -137,7 +137,7 @@ async function get_image_data(skip_real_image_download) {
 
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
-		if(started_training) {
+		if(started_training || force_download) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
@@ -616,4 +616,16 @@ function get_x_y_from_csv () {
 	y = tf.tensor(y);
 
 	return {"x": x, "y": y, "keys": y_headers, "number_of_categories": y_headers.length, "y_between_0_and_1": y_between_0_and_1};
+}
+
+/*
+ * This function is for saving X and Y data later on to an external DB.
+*/
+
+async function get_x_y_as_array () {
+	force_download = 1;
+	var data = await get_xs_and_ys();
+	force_download = 0;
+
+	return { x: data.x.arraySync(), y: data.y.arraySync() };
 }
