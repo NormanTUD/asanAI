@@ -545,7 +545,7 @@ function get_data_struct_by_header(header, parsed) {
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
 		for (var item_nr = 0; item_nr < header.length; item_nr++) {
-			var ln = parsed.data[line_nr][indices[header[item_nr]]];
+			var ln = parseFloat(parsed.data[line_nr][indices[header[item_nr]]]);
 			line.push(ln);
 			if(y_between_0_and_1) {
 				if(ln < 0 || ln > 1) {
