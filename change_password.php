@@ -23,7 +23,7 @@
             if(array_key_exists("username", $_GET)) {
                 $username = $_GET["username"];
             }
-            if(username_exists($_GET["username"])) {
+            if(username_exists($username)) {
                 if($username != "") {
                     $salt = get_single_value_from_query("select salt from tfd_db.login where username = ".esc($username));
                     $query = "update tfd_db.login set pw = ".esc(hash("sha256", $password.$salt))." where username = ".esc($username);
