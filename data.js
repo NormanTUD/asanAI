@@ -213,7 +213,7 @@ async function get_xs_and_ys () {
 	headerdatadebug("get_xs_and_ys()");
 
 	$("#xy_display_data").html("").hide();
-	$("#photos").html("").hide();
+	//$("#photos").html("").hide();
 
 	if($("#data_origin").val() == "default") {
 		if($("#jump_to_training_tab").is(":checked")) {

@@ -2273,6 +2273,7 @@ async function show_or_hide_load_weights() {
 }
 
 async function init_dataset() {
+	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
 	show_tab_label("visualization_tab_label", 1)
@@ -2359,6 +2360,7 @@ function init_weight_file_list() {
 }
 
 async function init_dataset_category() {
+	$("#photos").html("").hide();
 	tf.disposeVariables();
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
