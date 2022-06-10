@@ -28,8 +28,11 @@ CREATE TABLE `login` (
   `email` varchar(50) NOT NULL,
   `pw` varchar(100) NOT NULL,
   `salt` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+  `role_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `login_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role_table` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +42,30 @@ CREATE TABLE `login` (
 LOCK TABLES `login` WRITE;
 /*!40000 ALTER TABLE `login` DISABLE KEYS */;
 /*!40000 ALTER TABLE `login` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role_table`
+--
+
+DROP TABLE IF EXISTS `role_table`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `role_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role_table`
+--
+
+LOCK TABLES `role_table` WRITE;
+/*!40000 ALTER TABLE `role_table` DISABLE KEYS */;
+INSERT INTO `role_table` VALUES (1,'admin'),(2,'user');
+/*!40000 ALTER TABLE `role_table` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -77,4 +104,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-20 13:53:42
+-- Dump completed on 2022-06-09 14:03:46

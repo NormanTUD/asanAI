@@ -234,18 +234,18 @@
 	}
 
 	function get_session_id() {
-		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.get_user_id());
+		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.esc(get_user_id()));
 	}
 
 	function insert_session_id($username, $days) {
 		$session_id = generateRandomString();
 		// müssen diese funktionen get_user_id und create_expiry_date auch escaped werden?
-		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.get_user_id().', '.esc($session_id).','.create_expiry_date($days).')';
+		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.esc(get_user_id()).', '.esc($session_id).','.create_expiry_date($days).')';
 		run_query($query);
 	}
 
 	function get_expiry_date($session_id) {
-		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.$session_id.'"');
+		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.esc($session_id).'"');
 	}
 
 	function get_js_user_id_from_session_id($session_id) {
