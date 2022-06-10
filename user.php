@@ -19,7 +19,6 @@
     }
 
 ?>
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -37,7 +36,7 @@
         <h1>User Administration</h1>
 
 <?php
-    if(can_edit()) {
+    if(is_admin()) {
         if(array_key_exists(0, get_usernames())) {
 ?>
     
@@ -98,10 +97,6 @@
         } else {
             print "There are no userers.";
         }
-        
-    } else {
-        print "You don't have permission to edit.";
-    }
 ?>
             <script>
             
@@ -171,12 +166,15 @@
                             document.getElementById("change_user_msg").style = "background-color: red";    
                         }
                         document.getElementById("change_user_msg").innerText = data["msg"];
-                        log(data)
-                        log(data["msg"])
                     }
                 });
             }
 
         </script>
+<?php
+    } else {
+        print "You don't have permission to edit.";
+    }
+?>
     </body>
 </html>

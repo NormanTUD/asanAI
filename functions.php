@@ -50,37 +50,55 @@
         return $array;
     }
 
-	function can_edit($model_user_id = 0) {
+	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
-			$user_id = get_user_id_from_session_id(esc($_COOKIE["session_id"]));
-			_assert($user_id >= 0, "id is too low");
-			$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
-			if($role == 1){
+			$query = "select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);
+			if(get_single_value_from_query($query) != "") {
 				return true;
 			}
-			if($user_id == $model_user_id) {
-				return true;
-			}
-			return false;
-		} else {
-			return false;
 		}
+		return false;
+	}
+
+	function is_admin() {
+		if(array_key_exists("session_id", $_COOKIE)) {
+
+			if(session_id_exists($_COOKIE["session_id"])) {
+				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+				_assert($user_id > 0, "id is too low");
+				$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
+				if($role == 1){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function can_edit_models($model_user_id = 0) {
+		if(is_admin()) {
+			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function can_edit_user($username) {
+		if(session_id_exists($_COOKIE["session_id"])) {
+			$session_user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+			$username_user_id = get_single_value_from_query("select id from tfd_db.login where username = ".esc($username));
+			if($session_user_id == $username_user_id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function delete_expiry_dates() {
 		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
 	}
-
-	// function session_id_exists() {
-	// 	if(!array_key_exists("session_id", $_COOKIE)) {
-	// 		return false;
-	// 	}
-	// 	if(get_single_value_from_query("select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"])) == "") {
-	// 		return false;
-	// 	}
-	// 	return true;
-	// }
 
 	function contains_null_values ($array) {
 		foreach ($array as $key => $value) {
@@ -98,7 +116,6 @@
 			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
 			return $result;
 		}
-		print "did not pass can edit";
 	}
 
 	function delete_mongo_models ($id, $user_id) {

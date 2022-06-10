@@ -2,7 +2,7 @@
     include('functions.php');
 
     $status["status"] = "error";
-    if($_GET["username"]) {
+    if($_GET["username"] && can_edit_user($_GET["username"])) {
         $query = "select id from tfd_db.login where username = ".esc($_GET["username"]);
         $id = get_single_value_from_query($query);
         if($id) {
