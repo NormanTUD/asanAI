@@ -70,10 +70,17 @@
 	function delete_expiry_dates() {
 		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
-		if(get_single_value_from_query("select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"])) == "") {
-			return null;
-		}
 	}
+
+	// function session_id_exists() {
+	// 	if(!array_key_exists("session_id", $_COOKIE)) {
+	// 		return false;
+	// 	}
+	// 	if(get_single_value_from_query("select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"])) == "") {
+	// 		return false;
+	// 	}
+	// 	return true;
+	// }
 
 	function contains_null_values ($array) {
 		foreach ($array as $key => $value) {
@@ -239,7 +246,6 @@
 
 	function insert_session_id($username, $days) {
 		$session_id = generateRandomString();
-		// müssen diese funktionen get_user_id und create_expiry_date auch escaped werden?
 		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.esc(get_user_id()).', '.esc($session_id).','.create_expiry_date($days).')';
 		run_query($query);
 	}
