@@ -37,6 +37,20 @@
 		$GLOBALS["use_db"] = 0;
 	}
 
+	function admin_exists() {
+		if(get_single_value_from_query("select * from tfd_db.login where role_id = 1")== "") {
+			return false;
+		}
+		return true;
+	}
+
+	function show_admin_site()  {
+		if(!admin_exists()) {
+			print "<script> window.location.href = 'register_admin.php' </script>";
+		}
+	}
+	show_admin_site();
+
 	function get_network_names() {
         $filters = [];
         $options = [];
