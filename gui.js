@@ -2908,6 +2908,7 @@ function insert_test_users() {
 		});
 	}
 }
+
 function delete_model() {
 	var id = get_id_from_train_data_struct("id");
 	var user_id = get_id_from_train_data_struct("user_id");

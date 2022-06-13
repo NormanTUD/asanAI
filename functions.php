@@ -17,14 +17,44 @@
 				if (run_query($sql) === TRUE) {
 					mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
 					load_sql_file_get_statements("tfd.sql");
+
 				} else {
 					echo "Error creating database: " . $GLOBALS['mysqli']->error;
 					$GLOBALS["use_db"] = 0;
 				}
 			}
+			show_admin_register();
+
 		} catch (Exception $e) {
 			error_log($e);
 		}
+	}
+
+	function show_admin_register() {
+		if(!admin_exists()) {
+			print "<p>There is no admin yet. Please set an admin.</p>";
+			print "<form action='register_admin.php'>";
+			print "<input name='email' placeholder='email'>";
+			print "<input name='admin_name' placeholder='username'>";
+			print "<input name='password' type='password' placeholder='password'>";
+			print "<input type='submit' value='Submit'>";
+			print "</form>";
+
+			print "<script src='jquery.js'></script>";
+			//Daten mit ajax übertragen anstatt form
+
+			// print "<script> function set_admin() {
+			// 	var email = document.getElementById('admin_email').value;
+			// 	var name = document.getElementById('admin_name').value;
+			// 	var password = document.getElementById('admin_password').value;
+			// 	$.ajax({
+			// 		url: 'register_admin.php?email=' + email + '&name=' + name + '&password=' + password
+			// 	});
+			// }
+			// </script>";
+			exit(0);
+		}
+		return;
 	}
 
 	$GLOBALS["manager"] = null;
@@ -38,18 +68,8 @@
 	}
 
 	function admin_exists() {
-		if(get_single_value_from_query("select * from tfd_db.login where role_id = 1")== "") {
-			return false;
-		}
-		return true;
+		return !!get_single_value_from_query("select count(*) from tfd_db.login where role_id = 1");
 	}
-
-	function show_admin_site()  {
-		if(!admin_exists()) {
-			print "<script> window.location.href = 'register_admin.php' </script>";
-		}
-	}
-	show_admin_site();
 
 	function get_network_names() {
         $filters = [];
