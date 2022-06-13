@@ -29,6 +29,28 @@
 
 
 		<script>
+			function hasWebGL() {
+				var supported;
+
+				try {
+					var canvas = document.createElement('canvas');
+					supported = !! window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+				} catch(e) { supported = false; }
+
+				try {
+					// let is by no means required, but will help us rule out some old browsers/devices with potentially buggy implementations: http://caniuse.com/#feat=let
+					eval('let foo = 123;');
+				} catch (e) { supported = false; }
+
+				if (supported === false) {
+					console.log("WebGL is not supported");
+				}
+
+				canvas = undefined;
+
+				return supported;
+			}
+
 			var original_title = document.title;
 
 			var traindata_struct =
@@ -349,10 +371,10 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer">
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend">
 								<label for="svg_renderer">CPU</label>
 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer" checked>
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend" checked>
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
 							<hr>
@@ -816,7 +838,7 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="sources_popup" style="display: none;">
+				<div id="sources_popup" class="popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 <?php
@@ -829,7 +851,7 @@ $GLOBALS['minify'] = 0;
 				</div>
 
 
-				<div id="save_dialog" style="display: none;">
+				<div id="save_dialog" class="popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 							<h1>Trained in Keras</h1>
@@ -864,10 +886,8 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="register_dialog" style="display: none">
+				<div id="register_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
-					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-					</div>
 						<div id="register_content"> 
 							<h1>Register</h1>
 
@@ -920,11 +940,9 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="save_model_dialog" style="display: none">
+				<div id="save_model_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
-					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-					</div>
-						<div id="register_content"> 
+						<div id="save_model_content"> 
 							<h1>Download</h1>
 							<button onclick="save_model()">Download</button>
 
@@ -1404,6 +1422,9 @@ $GLOBALS['minify'] = 0;
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
+				if(!hasWebGL()) {
+					return;
+				}
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];

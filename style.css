@@ -201,7 +201,7 @@ input {
 	opacity: 0.7;
 }
 
-#save_dialog {
+.popup {
 	position: absolute;
 	min-width: 600px;
 	width: 99%;
