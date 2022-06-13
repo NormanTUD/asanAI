@@ -838,7 +838,7 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="sources_popup" style="display: none;">
+				<div id="sources_popup" class="popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 <?php
@@ -851,7 +851,7 @@ $GLOBALS['minify'] = 0;
 				</div>
 
 
-				<div id="save_dialog" style="display: none;">
+				<div id="save_dialog" class="popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 							<h1>Trained in Keras</h1>
@@ -886,10 +886,8 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="register_dialog" style="display: none">
+				<div id="register_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
-					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-					</div>
 						<div id="register_content"> 
 							<h1>Register</h1>
 
@@ -942,11 +940,9 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="save_model_dialog" style="display: none">
+				<div id="save_model_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
-					<div style="position: relative; width: 100%; height: 100%; filter: blur(20px)">
-					</div>
-						<div id="register_content"> 
+						<div id="save_model_content"> 
 							<h1>Download</h1>
 							<button onclick="save_model()">Download</button>
 
