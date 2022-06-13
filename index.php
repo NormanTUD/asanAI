@@ -29,6 +29,28 @@
 
 
 		<script>
+			function hasWebGL() {
+				var supported;
+
+				try {
+					var canvas = document.createElement('canvas');
+					supported = !! window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+				} catch(e) { supported = false; }
+
+				try {
+					// let is by no means required, but will help us rule out some old browsers/devices with potentially buggy implementations: http://caniuse.com/#feat=let
+					eval('let foo = 123;');
+				} catch (e) { supported = false; }
+
+				if (supported === false) {
+					console.log("WebGL is not supported");
+				}
+
+				canvas = undefined;
+
+				return supported;
+			}
+
 			var original_title = document.title;
 
 			var traindata_struct =
@@ -349,10 +371,10 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="svg_renderer">
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend">
 								<label for="svg_renderer">CPU</label>
 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_renderer" checked>
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend" checked>
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
 							<hr>
@@ -1404,6 +1426,9 @@ $GLOBALS['minify'] = 0;
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
+				if(!hasWebGL()) {
+					return;
+				}
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
