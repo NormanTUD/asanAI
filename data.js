@@ -623,6 +623,9 @@ function get_x_y_from_csv () {
 */
 
 async function get_x_y_as_array () {
+	while (started_training) {
+		await delay(1000)
+	}
 	force_download = 1;
 	var data = await get_xs_and_ys();
 	force_download = 0;
