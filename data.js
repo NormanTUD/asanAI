@@ -624,6 +624,7 @@ function get_x_y_from_csv () {
 
 async function get_x_y_as_array () {
 	while (started_training) {
+		log("Awaiting finishing of training");
 		await delay(1000)
 	}
 	force_download = 1;
