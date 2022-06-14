@@ -223,6 +223,8 @@ async function get_current_status_hash() {
 	return md5(html_code);
 }
 
+/* This function returns the value of an item in a given layer, specified by classname. If the item is a checkbox, it returns whether or not the box is checked. Otherwise, it returns the value of the item. */
+
 function get_item_value(layer, classname) {
 	assert(typeof (layer) == "number", "Layer is not an integer, but " + typeof (layer));
 	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
@@ -948,6 +950,8 @@ async function get_cached_json(url) {
 	_cached_json[url] = data;
 	return data;
 }
+
+/* This function gets the configuration for the index passed in. If no index is passed in, it gets the configuration for the currently selected dataset. */
 
 async function _get_configuration(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
