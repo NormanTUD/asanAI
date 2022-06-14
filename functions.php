@@ -114,16 +114,19 @@
 	#dier(find_mongo("tfd.models", array(), array()));
 
 	function run_query ($query) {
-		$start_time = microtime(true);
-		$result = $GLOBALS['mysqli']->query($query);
-		if($result === false) {
-			dier("Query failed:\n$query\nError:\n".$GLOBALS["mysqli"]->error);
+		if($GLOBALS['mysqli']) {
+			$start_time = microtime(true);
+			$result = $GLOBALS['mysqli']->query($query);
+			if($result === false) {
+				dier("Query failed:\n$query\nError:\n".$GLOBALS["mysqli"]->error);
+			}
+			$end_time = microtime(true);
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+			$GLOBALS["queries"][] = ["query" => $query, "runtime" => ($end_time - $start_time), "location" => $caller['file'].', '.$caller['line']];
+			return $result;
 		}
-		$end_time = microtime(true);
-		$bt = debug_backtrace();
-		$caller = array_shift($bt);
-		$GLOBALS["queries"][] = ["query" => $query, "runtime" => ($end_time - $start_time), "location" => $caller['file'].', '.$caller['line']];
-		return $result;
+		return null;
 	}
 
 	function get_single_value_from_query ($query, $default = NULL) {
