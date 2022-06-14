@@ -292,7 +292,7 @@ async function get_xs_and_ys () {
 					}
 				}
 				imageData = null;
-			} else if(["classification"].includes(category)) {
+			} else if(category == "classification") {
 				var x_string, y_string;
 				x_string = await _get_training_data_from_filename("x.txt");
 				y_string = await _get_training_data_from_filename("y.txt");
@@ -377,14 +377,6 @@ async function get_xs_and_ys () {
 		}
 
 		$("#reset_data").hide();
-	}
-
-	try {
-		if(["x"].includes(Object.keys(xy_data)) && xy_data["x"]) {
-			$("#predict_own_data").attr("placeholder", "[[" + truncate_text(xy_data["x"].arraySync()[0].join(", "), 500) + "]]");
-		}
-	} catch (e) {
-		write_error(e);
 	}
 
 	return xy_data;
