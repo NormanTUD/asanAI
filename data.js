@@ -215,22 +215,29 @@ async function get_xs_and_ys () {
 	$("#xy_display_data").html("").hide();
 	//$("#photos").html("").hide();
 
-	if($("#data_origin").val() == "default") {
-		if($("#jump_to_training_tab").is(":checked")) {
-			if($("#data_origin").val() == "default") {
+	var data_origin = $("#data_origin").val();
+	var data_type_val = $("#data_type").val();
+
+	if($("#jump_to_training_tab").is(":checked")) {
+		if(data_origin == "default") {
+			if(data_origin == "default") {
 				$("#training_data_tab_label").click();
+			} else {
+				log("Invalid option " + data_origin);
 			}
+		} else if (data_origin == "own") {
+			if(data_type_val == "csv") {
+				$("#own_csv_data_label").click();
+			} else if (data_type_val == "image") {
+				$("#own_image_data_label").click();
+			} else if (data_type_val == "tensordata") {
+				$("#own_tensor_data_label").click();
+			} else {
+				log("Invalid option " + data_type_val);
+			}
+		} else {
+			log("INVALID OPTION " + data_origin);
 		}
-	} else if ($("#data_origin").val() == "own") {
-		if($("#data_type").val() == "csv") {
-			$("#own_csv_data_label").click();
-		} else if ($("#data_origin").val() == "image") {
-			$("#own_image_data_label").click();
-		} else if ($("#data_origin").val() == "tensordata") {
-			$("#own_tensor_data_label").click();
-		}
-	} else {
-		log("INVALID OPTION " + $("#data_origin").val());
 	}
 
 	var max_number_values = 0;
@@ -240,7 +247,7 @@ async function get_xs_and_ys () {
 
 	var loss = $("#loss").val();
 
-	if($("#data_origin").val() == "default") {
+	if(data_origin == "default") {
 		if(xy_data === null) {
 			var category = $("#dataset_category").val();
 
@@ -300,16 +307,13 @@ async function get_xs_and_ys () {
 				alert("Unknown dataset category: " + category);
 			}
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
+			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-				headerdatadebug("y After oneHot");
 			}
 			
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
 	} else {
-		var data_type_val = $("#data_type").val();
-
 		if(data_type_val == "image") {
 			Swal.fire({
 				title: 'Generating tensors from images...',
@@ -352,13 +356,12 @@ async function get_xs_and_ys () {
 			x = tf.tensor(x);
 			y = tf.tensor(y).expandDims();
 
-			if((loss == "categoricalCrossentropy" || loss == "binaryCrossentropy")) {
+			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 				try {
 					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 				} catch (e) {
 					header(e);
 				}
-				headerdatadebug("y After oneHot");
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
@@ -370,7 +373,7 @@ async function get_xs_and_ys () {
 		} else if (data_type_val == "csv") {
 			xy_data = get_x_y_from_csv();
 		} else {
-			alert("Unknown data type: " + $("#data_type").val());
+			alert("Unknown data type: " + data_type_val);
 		}
 
 		$("#reset_data").hide();
