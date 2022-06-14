@@ -779,7 +779,7 @@ $GLOBALS['minify'] = 0;
 														<div id="wizard_lr">
 															<div>&nbsp;</div>
 															<div></div>
-															<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+															<div><button class="btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 														</div>
 
 													</div>
@@ -801,9 +801,9 @@ $GLOBALS['minify'] = 0;
 														</table>
 
 														<div id="wizard_lr">
-															<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
+															<div><button class="btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
 															<div></div>
-															<div><button class="btn btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
+															<div><button class="btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
 														</div>
 													</div>
 												</div>
@@ -814,7 +814,7 @@ $GLOBALS['minify'] = 0;
 														<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 
 														<div id="wizard_lr">
-															<div><button class="btn btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
+															<div><button class="btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
 															<div></div>
 															<div>&nbsp;</div>
 														</div>
@@ -1042,11 +1042,11 @@ $GLOBALS['minify'] = 0;
 								</div>
 								<br>
 								<div class="upload-btn-wrapper">
-									<button class="btn">Provide X-data file</button>
+									<button class="">Provide X-data file</button>
 									<input id="upload_x_file" type="file" name="x_data">
 								</div>
 								<div class="upload-btn-wrapper">
-									<button class="btn">Provide Y-data file</button>
+									<button class="">Provide Y-data file</button>
 									<input id="upload_y_file" type="file" name="y_data">
 								</div>
 								<br>
