@@ -9,17 +9,14 @@
     <head>
         <title>Model Administration</title>
         <meta charset="UTF-8">
-        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-        <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+        <script src="jquery.js"></script>
     </head>
 
     <body>
         <h1>Model Administration</h1>
 <?php
     $network_names = get_network_names();
-    if(array_key_exists(0, $network_names)) {
+    if(count($network_names)) {
 ?>
         <h2>Delete Model</h2>
         <span id="delete_model_msg"></span><br/>
@@ -27,7 +24,7 @@
 <?php
         foreach($network_names as $name) {
 ?>
-            <option><?php print $name; ?></option>
+            <option><?php print htmlentities($name); ?></option>
 <?php
         }
 ?>
@@ -46,7 +43,7 @@
         foreach($network_names as $name) {
 ?>
             <tr>
-                <td><?php print $name; ?></td>
+                <td><?php print htmlentities($name); ?></td>
             </tr>
 <?php
         }

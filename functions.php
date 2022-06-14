@@ -30,6 +30,25 @@
 		}
 	}
 
+	function get_number_model_names($name) {
+		$filters = [
+		];
+	
+		$options = array(
+			'network_name' => true
+		);
+	
+		$results = find_mongo("tfd.models", $filters, $options);
+	
+		$nr = 0;
+	
+		foreach ($results as $doc) {
+			if($name == $doc["network_name"]) {
+				$nr++;
+			}
+		}
+		return $nr;
+	}
 	function show_admin_register() {
 		if(!admin_exists()) {
 			print "<p>There is no admin yet. Please set an admin.</p>";
