@@ -120,7 +120,7 @@ html {
 	}
 
 	.layer_identifier_activation {
-		display: content;
+		display: block;
 	}
 }
 
