@@ -23,7 +23,7 @@
 					$GLOBALS["use_db"] = 0;
 				}
 			}
-			//show_admin_register();
+			show_admin_register();
 
 		} catch (Exception $e) {
 			error_log($e);
@@ -31,15 +31,11 @@
 	}
 
 	function get_number_model_names($name) {
-		$filters = [
-		];
+		$filters = [];
 	
-		$options = array(
-			'network_name' => true
-		);
+		$options = ['projection' => ['network_name' => true]];
 	
 		$results = find_mongo("tfd.models", $filters, $options);
-	
 		$nr = 0;
 	
 		foreach ($results as $doc) {
@@ -49,28 +45,32 @@
 		}
 		return $nr;
 	}
+
 	function show_admin_register() {
 		if(!admin_exists()) {
-			print "<p>There is no admin yet. Please set an admin.</p>";
-			print "<form action='register_admin.php'>";
-			print "<input name='email' placeholder='email'>";
-			print "<input name='admin_name' placeholder='username'>";
-			print "<input name='password' type='password' placeholder='password'>";
-			print "<input type='submit' value='Submit'>";
-			print "</form>";
+			print "<!DOCTYPE html>\n<h1>Set Admin</h1>\n";
+			print "<p>There is no admin yet. Please set an admin.</p>\n";
+			print "<input id='admin_email' placeholder='email'>\n";
+			print "<input id='admin_name' placeholder='username'>\n";
+			print "<input id='admin_password' type='password' placeholder='password'>\n";
+			print "<button onclick='set_admin()'>Save</button><br/>\n";
+			print "<span id='msg'></span>\n";
 
-			print "<script src='jquery.js'></script>";
+			print "<script src='jquery.js'></script>\n";
 			//Daten mit ajax übertragen anstatt form
 
-			// print "<script> function set_admin() {
-			// 	var email = document.getElementById('admin_email').value;
-			// 	var name = document.getElementById('admin_name').value;
-			// 	var password = document.getElementById('admin_password').value;
-			// 	$.ajax({
-			// 		url: 'register_admin.php?email=' + email + '&name=' + name + '&password=' + password
-			// 	});
-			// }
-			// </script>";
+			print "<script>\n function set_admin() {
+				var email = document.getElementById('admin_email').value;
+				var name = document.getElementById('admin_name').value;
+				var password = document.getElementById('admin_password').value;
+				$.ajax({
+					url: 'register_admin.php?email=' + email + '&admin_name=' + name + '&password=' + password,
+					success: function(data) {
+						document.getElementById('msg').innerText = data;
+					}
+				});
+			}
+			</script>";
 			exit(0);
 		}
 		return;
@@ -95,12 +95,13 @@
         $options = [];
 
         $results = find_mongo("tfd.models", $filters, $options);
-
-        foreach($results as $doc) {
-            $array[] = $doc["network_name"];
-        }
-
-        return $array;
+		$array = [];
+		if($results) {
+			foreach($results as $doc) {
+				$array[] = $doc["network_name"];
+			}
+		}
+		return $array;
     }
 
 	function session_id_exists() {

@@ -24,7 +24,7 @@
 <?php
         foreach($network_names as $name) {
 ?>
-            <option><?php print htmlentities($name); ?></option>
+            <option id="<?php print htmlentities($name); ?>"><?php print htmlentities($name); ?></option>
 <?php
         }
 ?>
@@ -43,7 +43,7 @@
         foreach($network_names as $name) {
 ?>
             <tr>
-                <td><?php print htmlentities($name); ?></td>
+                <td id="<?php print htmlentities($name); ?>"><?php print htmlentities($name); ?></td>
             </tr>
 <?php
         }
@@ -63,7 +63,8 @@
                     success: function(data) {
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
-                        //window.location.href = "model.php";
+                        document.getElementById(network_name).remove();
+                        document.getElementById(network_name).remove();
                     }
                 });
             }
