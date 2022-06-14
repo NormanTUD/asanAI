@@ -308,7 +308,9 @@ async function get_xs_and_ys () {
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
 	} else {
-		if($("#data_type").val() == "image") {
+		var data_type_val = $("#data_type").val();
+
+		if(data_type_val == "image") {
 			Swal.fire({
 				title: 'Generating tensors from images...',
 				html: "This may take some time, but your computer is working!",
@@ -360,16 +362,17 @@ async function get_xs_and_ys () {
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
-		} else if ($("#data_type").val() == "tensordata") {
+		} else if (data_type_val == "tensordata") {
 			x = numpy_str_to_tf_tensor(x_file, max_number_values);
 			y = numpy_str_to_tf_tensor(y_file, max_number_values);
 
 			xy_data = {"x": x, "y": y};
-		} else if ($("#data_type").val() == "csv") {
+		} else if (data_type_val == "csv") {
 			xy_data = get_x_y_from_csv();
 		} else {
 			alert("Unknown data type: " + $("#data_type").val());
 		}
+
 		$("#reset_data").hide();
 	}
 
