@@ -275,7 +275,6 @@ function FCNN() {
 			}
 		});
 
-		link.attr('marker-end', showArrowheads ? "url(#arrow)" : '');
 		marker.attr('refX', (nodeDiameter * 1.4) + 12);
 		arrowhead.style("fill", arrowheadStyle === 'empty' ? "none" : defaultEdgeColor);
 
