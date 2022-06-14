@@ -2,17 +2,19 @@
     include('functions.php');
 
     $status["status"] = "error";
-    if($_GET["username"] && can_edit_user($_GET["username"])) {
-        $query = "select id from tfd_db.login where username = ".esc($_GET["username"]);
+    if(array_key_exists("username", $_GET) && can_edit_user($_GET["username"])) {
+        $username = $_GET["username"];
+        $query = "select id from tfd_db.login where username = ".esc($username);
         $id = get_single_value_from_query($query);
         if($id) {
-            $query = "delete from tfd_db.session_ids where user_id = ".esc($id);
-            run_query($query);
-            $query = "delete from tfd_db.login where username = ".esc($_GET["username"]);
-            run_query($query);
+            $query = "delete from tfd_db.login where username = ".esc($username);
+            if(run_query($query)) {
+                $status["status"] = "ok";
+                $status["msg"] = "User was deleted.";
+            } else {
+                $status["msg"] = "User could not be deleted.";
+            }
             
-            $status["status"] = "ok";
-            $status["msg"] = "User was deleted.";
         } else {
             $status["msg"] = "The user doesen't exist.";
         }

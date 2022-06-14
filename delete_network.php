@@ -1,6 +1,5 @@
 <?php
 
-    //die object id mit dem network_name suchen, mit der id das model löschen
     include('functions.php');
 
     $search_filters = [];
@@ -19,7 +18,7 @@
             $user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
             $results = delete_mongo_models($id, $user_id);
         
-            print $_GET["network_name"]." was deleted";
+            print htmlentities($_GET["network_name"])." was deleted";
         }
     }
 

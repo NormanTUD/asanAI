@@ -1,21 +1,5 @@
 <?php
-			/*
-				$options= [
-				    'skip' => 20,
-				    'limit' => 20,
-				    'batchSize' => 20   
-				];
-
-				$filter= [
-				'_id' => '5a8adcf335f6d112d00e46c8'
-				];
-
-				$query= new MongoDB\Driver\Query($filter, $options);
-			 */
 	include("functions.php");
-
-
-
 
 	if(array_key_exists("session_id", $_COOKIE)) {
 
@@ -28,13 +12,7 @@
 				'projection' => ['_id' => 1]
 			];
 
-			// $query = new MongoDB\Driver\Query($filters, $options);
-			// $cursor = $manager->executeQuery('tfd.models', $query);
-			// dier($cursor->toArray());
-
-			// alter code ab hier:
 			$results = find_mongo("tfd.models", $filters, $options);
-			//dier($results);
 
 			if(array_key_exists("user_id", $_GET)) {
 				if(array_key_exists(0, $results)) {

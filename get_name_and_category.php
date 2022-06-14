@@ -12,14 +12,13 @@
 					array("is_public" => array('$eq' => 'true'))
 				)
 			);
+			// TODO
 			$options = array(
 				"category" => true,
 				"network_name" => true
 			);
 
 			$results = find_mongo("tfd.models", $filters, $options);
-
-			#dier($results);
 
 			$names_and_sets = array();
 			foreach ($results as $doc) {

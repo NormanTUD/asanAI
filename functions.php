@@ -23,7 +23,7 @@
 					$GLOBALS["use_db"] = 0;
 				}
 			}
-			show_admin_register();
+			//show_admin_register();
 
 		} catch (Exception $e) {
 			error_log($e);
