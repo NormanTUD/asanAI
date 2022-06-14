@@ -5,21 +5,31 @@
     $status_code = 200;
     
     try{
+        $days = 7;
+        if(array_key_exists("days", $_GET) && is_numeric($_GET["days"])) {
+            $days = $_GET["days"];
+        }
         if(array_key_exists("username", $_GET) && array_key_exists("email", $_GET) && array_key_exists("pw", $_GET)) {
-            if($_GET["username"] != "") {
-                if($_GET["pw"] != "" && (strlen($_GET["pw"]) > 7)) {
-                    if(!get_single_value_from_query('select username from tfd_db.login where username = '.esc($_GET["username"]))) {
-                        if(!get_single_value_from_query('select email from tfd_db.login where email = '.esc($_GET["email"]))) {
+            $username = $_GET["username"];
+            $email = $_GET["email"];
+            $password = $_GET["pw"];
+            if($username != "") {
+                if($password != "" && (strlen($password) > 7)) {
+                    if(!get_single_value_from_query('select username from tfd_db.login where username = '.esc($username))) {
+                        if(!get_single_value_from_query('select email from tfd_db.login where email = '.esc($email))) {
                             $salt = generateRandomString();
-                            $query = 'insert into tfd_db.login (username, email, pw, salt, role_id) values ('.esc($_GET["username"]).', '.esc($_GET["email"]).', '.esc(hash("sha256", $_GET["pw"].$salt)).', '.esc($salt).', 2)';
+                            $query = 'insert into tfd_db.login (username, email, pw, salt, role_id) values ('.esc($username).', '.esc($email).', '.esc(hash("sha256", $password.$salt)).', '.esc($salt).', 2)';
                             run_query ($query);
                 
-                            insert_session_id(esc($_GET["username"]), $_GET["days"]);
+                            insert_session_id($username, $days);
                             
-                            $session_id = get_session_id(esc($_GET["username"]));
+                            $session_id = get_session_id($username);
                             $status = ["status" => "ok", "msg" => "Account created", "session_id" => $session_id, "time" => get_expiry_date($session_id)];
                         } else {
-                            $status = ["status" => "error", "msg" => "Did you forget your password? Link: <a href='user_changes_password.php'>Change password</a>"];
+                            $status = [
+                                "status" => "error", 
+                                "msg" => "Did you forget your password? Link: <a href='user_changes_password.php'>Change password</a>"
+                            ];
                         }
                     } else {
                         $status = ["status" => "error", "msg" => "Username already exists choose another one."];

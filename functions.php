@@ -86,40 +86,38 @@
 
 	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
-			$query = "select * from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);
-			if(get_single_value_from_query($query) != "") {
-				return true;
-			}
+			$query = "select count(*) from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);
+			return !!get_single_value_from_query($query);
 		}
 		return false;
 	}
 
 	function is_admin() {
-		if(array_key_exists("session_id", $_COOKIE)) {
-
-			if(session_id_exists($_COOKIE["session_id"])) {
-				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-				_assert($user_id > 0, "id is too low");
-				$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
-				if($role == 1){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	function can_edit_models($model_user_id = 0) {
-		if(is_admin()) {
-			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+		if(session_id_exists()) {
+			$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+			_assert($user_id > 0, "id is too low");
+			$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
+			if($role == 1){
 				return true;
 			}
 		}
 		return false;
 	}
 
+	// function can_edit_models($model_user_id = 0) {
+	// 	if(is_admin()) {
+	// 		if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
 	function can_edit_user($username) {
-		if(session_id_exists($_COOKIE["session_id"])) {
+		if(is_admin()) {
+			return true;
+		}
+		if(session_id_exists()) {
 			$session_user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
 			$username_user_id = get_single_value_from_query("select id from tfd_db.login where username = ".esc($username));
 			if($session_user_id == $username_user_id) {
@@ -287,22 +285,22 @@
 		return esc(date("y-m-d", $timestamp));
 	}
 
-	function get_user_id() {
-		return get_single_value_from_query('select id from tfd_db.login where username ='.esc($_GET["username"]));
+	function get_user_id($username) {
+		return get_single_value_from_query('select id from tfd_db.login where username ='.esc($username));
 	}
 
-	function get_session_id() {
-		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.esc(get_user_id()));
+	function get_session_id($username) {
+		return get_single_value_from_query('select session_id from tfd_db.session_ids where user_id ='.esc(get_user_id($username)));
 	}
 
 	function insert_session_id($username, $days) {
 		$session_id = generateRandomString();
-		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.esc(get_user_id()).', '.esc($session_id).','.create_expiry_date($days).')';
+		$query = 'insert into tfd_db.session_ids (user_id, session_id, expiry_date) values ('.esc(get_user_id($username)).', '.esc($session_id).','.create_expiry_date($days).')';
 		run_query($query);
 	}
 
 	function get_expiry_date($session_id) {
-		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = "'.esc($session_id).'"');
+		return get_single_value_from_query('select expiry_date from tfd_db.session_ids where session_id = '.esc($session_id));
 	}
 
 	function get_js_user_id_from_session_id($session_id) {
@@ -362,13 +360,17 @@
 
 	function is_logged_in () {
 		if(array_key_exists("session_id", $_COOKIE)) {
-			$user = get_user_id_from_session_id(esc($_COOKIE["session_id"]));
+			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
 			if($user != "") {
 				return $user;
 			}
 		}
 		return null;
 	}
+
+	function username_exists($username) {
+        return !!get_single_value_from_query("select count(*) from tfd_db.login where username = ".esc($username));
+    }
 	 
 	function load_sql_file_get_statements ($file) {
 		$contents = file_get_contents($file);
