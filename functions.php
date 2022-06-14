@@ -66,7 +66,13 @@
 				$.ajax({
 					url: 'register_admin.php?email=' + email + '&admin_name=' + name + '&password=' + password,
 					success: function(data) {
-						document.getElementById('msg').innerText = data;
+						if(data['status'] = 'ok') {
+							document.getElementById('msg').style = 'background-color: green';
+						}
+						if(data['status'] = 'error') {
+							document.getElementById('msg').style = 'background-color: red';
+						}
+						document.getElementById('msg').innerText = data['msg'];
 					}
 				});
 			}
