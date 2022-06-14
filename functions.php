@@ -123,14 +123,16 @@
 		return false;
 	}
 
-	// function can_edit_models($model_user_id = 0) {
-	// 	if(is_admin()) {
-	// 		if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
+	function can_edit_models($model_user_id) {
+		if(is_admin()) {
+			return true;
+		} else {
+			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	function can_edit_user($username) {
 		if(is_admin()) {
@@ -161,11 +163,13 @@
 	}
 
 	function delete_mongo ($collection, $id, $user_id) {
-		if(can_edit($user_id)) {
+		if(can_edit_models($user_id)) {
 			$bulk = new \MongoDB\Driver\BulkWrite();
 			$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
 			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
 			return $result;
+		} else {
+			dier("Cannot edit model");
 		}
 	}
 

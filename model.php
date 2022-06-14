@@ -63,7 +63,7 @@
                     success: function(data) {
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
-                        window.location.href = "model.php";
+                        //window.location.href = "model.php";
                     }
                 });
             }
