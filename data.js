@@ -631,5 +631,5 @@ async function get_x_y_as_array () {
 	var data = await get_xs_and_ys();
 	force_download = 0;
 
-	return { x: data.x.arraySync(), y: data.y.arraySync() };
+	return JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
 }
