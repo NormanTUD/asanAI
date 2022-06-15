@@ -2982,8 +2982,12 @@ function has_network_name(elem) {
 	}
 }
 
+function color_msg_green(id) {
+	document.getElementById(id).style = "background-color: green";
+}
+
 function color_msg_red(id) {
-	document.getElementById(id).style = "background-color: #c21f1f";
+	document.getElementById(id).style = "background-color: red";
 }
 
 function network_name_is_empty(name) {
@@ -3024,6 +3028,7 @@ function save_to_mongodb(model_structure, model_weights, model_data, is_public, 
 			$("#save_model_msg").show().delay(500).fadeOut();
 		},
 		error: function (object, error, msg) {
+			color_msg_red("save_model_msg");
 			document.getElementById("save_model_msg").innerHTML = msg;
 		}
 	});
