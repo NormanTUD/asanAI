@@ -97,12 +97,12 @@
 		return !!get_single_value_from_query("select count(*) from tfd_db.login where role_id = 1");
 	}
 
-    function update_is_public($network_name) {
+    function change_is_public($network_name, $value) {
         $collection = "tfd.models";
         $bulk = new \MongoDB\Driver\BulkWrite();
         $bulk->update(
             ['network_name' => $network_name],
-            ['$set' => ['is_public' => 'true']],
+            ['$set' => ['is_public' => $value]],
         );
         $result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
         return $result;
@@ -161,14 +161,27 @@
 		if(is_admin()) {
 			return true;
 		} else {
-			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
-				return true;
+			if(array_key_exists("session_id", $_COOKIE)) {
+				if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	function get_model_user_id($network_name) {
+		$filters = ['network_name' => $network_name];
+        $options = ['projection' => ['user' => true]];
+        $results = find_mongo("tfd.models", $filters, $options);
+		if($results) {
+			return $results[0]["user"];
+		} 
+		return false;
+	}
+
 	function can_edit_user($username) {
+		_assert($username === "", "Variable username has wrong datatype must be string.");
 		if(is_admin()) {
 			return true;
 		}

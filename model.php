@@ -10,6 +10,15 @@
         <title>Model Administration</title>
         <meta charset="UTF-8">
         <script src="jquery.js"></script>
+        <style>
+            .red1 {
+                background-color: red;
+            }
+            .green1 {
+                background-color: green;
+                color: white;
+            }
+        </style>
     </head>
 
     <body>
@@ -17,63 +26,57 @@
 <?php
     $network_names = get_network_names();
     $is_public = get_network_data("is_public");
-    if(count($network_names)) {
+    if(is_admin()) {
+        if(count($network_names)) {
 ?>
-        <h2>Delete Model</h2>
-        <span id="delete_model_msg"></span><br/>
-        <select id="network_select">
+            <h2>Delete Model</h2>
+            <span id="delete_model_msg"></span><br/>
+            <select id="network_select">
 <?php
-        foreach($network_names as $name) {
+            foreach($network_names as $name) {
 ?>
-            <option id="<?php print htmlentities($name); ?>"><?php print htmlentities($name); ?></option>
+                <option id="<?php print htmlentities($name);?>"><?php print htmlentities($name);?></option>
 <?php
-        }
+            }
 ?>
-        </select>
+            </select>
 
-        <button onclick="delete_network()">Delete</button>
-            
-        <h2>Model Table</h2>
+            <button onclick="delete_network()">Delete</button>
+                
+            <h2>Model Table</h2>
 
-        <table>
-            <tr>
-                <th>Name</th>
-            </tr>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Public</th>
+                    <th>Requests public</th>
+                </tr>
 <?php
-        $network_names = get_network_names();
-        foreach($network_names as $name) {
+            $network_data = get_network_data();
+            foreach($network_data as $data) {
 ?>
-            <tr>
-                <td id="<?php print htmlentities($name); ?>"><?php print htmlentities($name); ?></td>
-            </tr>
+                <tr>
+                    <td><?php print htmlentities($data["network_name"]);?></td>
+                    <td class="<?php print $red = ($data["is_public"] == "true") ? print "green" : print "red";?>"><?php print htmlentities($data["is_public"]);?></td>
+                    <td class="<?php print $red = ($data["requests_public"] == "true") ? print "green" : print "red";?>"><?php print htmlentities($data["requests_public"]);?></td>
 <?php
+                if($data["requests_public"] == "true") {
+?>
+                    <td><button id="<?php print htmlentities($data["network_name"]);?>" onclick="change_to_public(this)" >Change</button></td> 
+<?php
+                }
+?>
+                </tr>
+<?php
+            }
+?>
+            </table>
+<?php
+        } else {
+            print "No models found.";
         }
-?>
-        </table>
-
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Public</th>
-                <th>Requests public</th>
-            </tr>
-<?php
-        $network_data = get_network_data();
-        foreach($network_data as $data) {
-            //dier($data["is_public"]);
-?>
-            <tr>
-                <td onclick="change_to_public(this)" id="<?php print htmlentities($data["network_name"]); ?>"><?php print htmlentities($data["network_name"]); ?></td>
-                <td><?php print htmlentities($data["is_public"]); ?></td>
-                <td><?php print htmlentities($data["requests_public"]); ?></td>
-            </tr>
-<?php
-        }
-?>
-        </table>
-<?php
     } else {
-        print "No models found.";
+        print "You don't have the permission to edit.";
     }
 ?>
         <script>
@@ -85,8 +88,8 @@
                     success: function(data) {
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
-                        document.getElementById(network_name).remove();
-                        document.getElementById(network_name).remove();
+                        window.location.href = "model.php";
+
                     }
                 });
             }
@@ -94,7 +97,11 @@
             function change_to_public(elem) {
                 console.log(elem);
                 $.ajax({
-                    url: "update_is_public.php?network_name=" + elem.id
+                    url: "update_is_public.php?network_name=" + elem.id,
+                    success: function (data) {
+                        console.log(data)
+                        window.location.href = "model.php";
+                    }
                 });
             }
 
