@@ -53,7 +53,7 @@
 			print "<input id='admin_email' placeholder='email'>\n";
 			print "<input id='admin_name' placeholder='username'>\n";
 			print "<input id='admin_password' type='password' placeholder='password'>\n";
-			print "<button onclick='set_admin()'>Save</button><br/>\n";
+			print "<button onclick='set_admin()'>Save</button><br/><br/>\n";
 			print "<span id='msg'></span>\n";
 
 			print "<script src='jquery.js'></script>\n";
@@ -66,12 +66,13 @@
 				$.ajax({
 					url: 'register_admin.php?email=' + email + '&admin_name=' + name + '&password=' + password,
 					success: function(data) {
-						if(data['status'] = 'ok') {
+						if(data['status'] == 'ok') {
 							document.getElementById('msg').style = 'background-color: green';
 						}
-						if(data['status'] = 'error') {
+						if(data['status'] == 'error') {
 							document.getElementById('msg').style = 'background-color: red';
 						}
+						console.log(data);
 						document.getElementById('msg').innerText = data['msg'];
 					}
 				});

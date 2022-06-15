@@ -104,7 +104,7 @@
     if(!admin_exists()) {
         if(array_key_exists("email", $_GET) && ($_GET["email"] != "")) {
             $email = $_GET["email"];
-            if($email.preg_match("/^.*@.*\..*/")) {
+            if(preg_match("/^.+@.*\..+/", $email)) {
                 if(array_key_exists("admin_name", $_GET) && ($_GET["admin_name"] != "")) {
                     $name = $_GET["admin_name"];
                     if(array_key_exists("password", $_GET) && (strlen($_GET["password"]) > 7)) {
