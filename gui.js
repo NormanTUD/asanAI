@@ -3012,28 +3012,32 @@ function network_name_is_empty(name) {
 // 	}
 // }
 
-function save_to_mongodb(model_structure, model_weights, model_data, is_public, category, category_full) {
+function save_to_mongodb(model_structure, model_weights, model_data, requests_public, category, category_full) {
 	$.ajax({
 		url: "save_to_mongodb.php",
-		//"&is_public=" + is_public + "&category=" + category,
 		data: {
 			model_structure: model_structure,
 			model_weights: model_weights,
 			model_data: model_data,
-			is_public: is_public,
+			requests_public: requests_public,
 			category: category,
 			category_full: category_full,
 			network_name: $("#network_name").val()
 		},
 		method: "POST",
 		success: function (data) {
-			document.getElementById("save_model_msg").style = "background-color: #4b8545";
-			document.getElementById("save_model_msg").innerHTML = data["msg"];
+			if(data["status"] == "ok") {
+				color_msg_green("save_model_msg");
+			}
+			if(data["status"] == "error") {
+				color_msg_red("save_model_msg");
+			}
+			document.getElementById("save_model_msg").innerText = data["msg"];
 			$("#save_model_msg").show().delay(500).fadeOut();
 		},
 		error: function (object, error, msg) {
 			color_msg_red("save_model_msg");
-			document.getElementById("save_model_msg").innerHTML = msg;
+			document.getElementById("save_model_msg").innerText = msg;
 		}
 	});
 }

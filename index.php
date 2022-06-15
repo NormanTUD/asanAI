@@ -932,7 +932,7 @@ $GLOBALS['minify'] = 0;
 									<td><button onclick="login()">Login</button></td>
 								</tr>
 								<tr>
-									<span id="login_error_msg" style="background-color: #4b8545"></span>
+									<span id="login_error_msg" style="background-color: green"></span>
 								</tr>
 							</table>
 						</div><br/>
@@ -947,7 +947,7 @@ $GLOBALS['minify'] = 0;
 							<button onclick="save_model()">Download</button>
 
 							<h1>Save to DB</h1>
-							<span id="save_model_msg" style="background-color: #4b8545"></span><br/>
+							<span id="save_model_msg" style="background-color: green"></span><br/>
 							<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
 							Public: <input id="is_public" type="checkbox"><br/>
 							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()" disabled>Save</button>

@@ -111,6 +111,21 @@
 		return $array;
     }
 
+	function get_network_data() {
+        $filters = [];
+        $options = [];
+
+        $results = find_mongo("tfd.models", $filters, $options);
+		$array = [];
+		if($results) {
+			foreach($results as $doc) {
+				$array[] = $doc;
+			}
+		}
+		// dier($array);
+		return $array;
+    }
+
 	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
 			$query = "select count(*) from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);

@@ -16,6 +16,7 @@
         <h1>Model Administration</h1>
 <?php
     $network_names = get_network_names();
+    $is_public = get_network_data("is_public");
     if(count($network_names)) {
 ?>
         <h2>Delete Model</h2>
@@ -44,6 +45,27 @@
 ?>
             <tr>
                 <td id="<?php print htmlentities($name); ?>"><?php print htmlentities($name); ?></td>
+            </tr>
+<?php
+        }
+?>
+        </table>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Public</th>
+                <th>Requests public</th>
+            </tr>
+<?php
+        $network_data = get_network_data();
+        foreach($network_data as $data) {
+            //dier($data["is_public"]);
+?>
+            <tr>
+                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["network_name"]); ?></td>
+                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["is_public"]); ?></td>
+                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["requests_public"]); ?></td>
             </tr>
 <?php
         }
