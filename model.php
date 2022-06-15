@@ -63,9 +63,9 @@
             //dier($data["is_public"]);
 ?>
             <tr>
-                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["network_name"]); ?></td>
-                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["is_public"]); ?></td>
-                <td id="<?php print htmlentities($data); ?>"><?php print htmlentities($data["requests_public"]); ?></td>
+                <td onclick="change_to_public(this)" id="<?php print htmlentities($data["network_name"]); ?>"><?php print htmlentities($data["network_name"]); ?></td>
+                <td><?php print htmlentities($data["is_public"]); ?></td>
+                <td><?php print htmlentities($data["requests_public"]); ?></td>
             </tr>
 <?php
         }
@@ -88,6 +88,13 @@
                         document.getElementById(network_name).remove();
                         document.getElementById(network_name).remove();
                     }
+                });
+            }
+
+            function change_to_public(elem) {
+                console.log(elem);
+                $.ajax({
+                    url: "update_is_public.php?network_name=" + elem.id
                 });
             }
 

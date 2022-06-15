@@ -97,6 +97,17 @@
 		return !!get_single_value_from_query("select count(*) from tfd_db.login where role_id = 1");
 	}
 
+    function update_is_public($network_name) {
+        $collection = "tfd.models";
+        $bulk = new \MongoDB\Driver\BulkWrite();
+        $bulk->update(
+            ['network_name' => $network_name],
+            ['$set' => ['is_public' => 'true']],
+        );
+        $result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
+        return $result;
+    }
+
 	function get_network_names() {
         $filters = [];
         $options = [];

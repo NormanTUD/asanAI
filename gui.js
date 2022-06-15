@@ -2962,10 +2962,8 @@ function manage_download() {
 
 function has_network_name(elem) {
 	var name = elem.value;
-	log(name);
 	$(elem).val(name.replaceAll(/\s/g, ""));
 	name = elem.value;
-	log(name);
 
 	if(!network_name_is_empty(name)) {
 		$.ajax({
