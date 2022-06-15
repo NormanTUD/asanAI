@@ -516,6 +516,7 @@ function explain_error_msg (err) {
 	return "";
 }
 
+/* This function will write the given text to the layer identification of the given number. If the text is empty, it will clear the layer identification. */
 function write_layer_identification (nr, text) {
 	if(text.length) {
 		$($(".layer_identifier")[nr]).html(text);
@@ -617,6 +618,8 @@ function hide_layer_visualization_header_if_unused (layer) {
 	}
 }
 
+/* This code is responsible for adding a debugger to a layer in order to visualize the data that is being passed through it. This can be helpful in understanding what is happening in a model and how it is making predictions. */
+
 function add_layer_debuggers () {
 	$("#datalayers").html("");
 
@@ -711,6 +714,8 @@ function layers_can_be_visualized () {
  * From https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet
  */
 
+/* The deprocessImage function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
+
 function deprocessImage(x) {
         return tf.tidy(() => {
                 const {mean, variance} = tf.moments(x);
@@ -726,6 +731,8 @@ function deprocessImage(x) {
         });
 }
 
+/* This function normalizes a given tensor so that it's minimum value is 0 and it's maximum value is 1. This is done by subtracting the minimum value from the tensor, and then dividing by the difference between the maximum and minimum values. */
+
 function tensor_normalize_to_rgb_min_max (x) {
 	var max = x.max().dataSync()[0];
 	var min = x.min().dataSync()[0];
@@ -737,6 +744,7 @@ function tensor_normalize_to_rgb_min_max (x) {
 	return x;
 }
 
+/* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
 function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 	var worked = 0;
@@ -815,6 +823,8 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 
 	return full_data;
 }
+
+/* This function gets an image from a URL. It uses the load_image function to load the image, and then uses tf.browser.fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
 
 async function get_image_from_url (url) {
 	var tf_img = (async () => {
@@ -1453,6 +1463,8 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		hide_tab_label("math_tab_label");
 	}
 }
+
+/* This function is used to compare old and new layer data to see if there are any differences. The default color is black, but if darkmode is true, the default color will be white. The color diff variable will contain an array of objects, with each object representing a layer. The keys of each object represent the different data sets within that layer, and the values are arrays of colors, with each color representing the difference between the old and new data for that particular data set. */
 
 function color_compare_old_and_new_layer_data (old_data, new_data) {
 	assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");

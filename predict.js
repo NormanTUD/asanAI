@@ -410,6 +410,8 @@ async function show_webcam () {
 	}
 }
 
+/* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
+
 function tensor_shape_matches_model (tensor) {
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
 	input_layer_shape.shift();
