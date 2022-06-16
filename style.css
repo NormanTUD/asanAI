@@ -368,3 +368,7 @@ button:disabled:hover {
 #tensor_number_debugger {
 	color: white;
 }
+
+.layer_nr_desc {
+	display: none;
+}
