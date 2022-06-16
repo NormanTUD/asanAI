@@ -1449,7 +1449,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			var new_md5 = md5($(math_tab_code_elem).html());
 			var old_md5 = math_items_hashes[xpath];
 
-			if(new_md5 != old_md5 || force) {
+			if(new_md5 != old_md5 || force || 1) {
 				await MathJax.typesetPromise([math_tab_code_elem]);
 				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
