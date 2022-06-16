@@ -42,12 +42,15 @@
 		$results = find_mongo("tfd.models", $filters, $options);
 		$nr = 0;
 	
-		foreach ($results as $doc) {
-			if($name == $doc["network_name"]) {
-				$nr++;
+		if(!is_null($results)) {
+			foreach ($results as $doc) {
+				if($name == $doc["network_name"]) {
+					$nr++;
+				}
 			}
+			return $nr;
 		}
-		return $nr;
+		return 0;
 	}
 
 	function show_admin_register() {
