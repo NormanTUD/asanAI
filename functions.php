@@ -4,6 +4,7 @@
 	$GLOBALS['smtpuser'] = "scads";
 	$GLOBALS['smtppass'] = "test123";
 	$GLOBALS['smtphost'] = "scads";
+	$GLOBALS["mysqli"] = null;
 	if(file_exists('/etc/dbpw')) {
 		try {
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
@@ -28,6 +29,15 @@
 				}
 			}
 
+			if($GLOBALS["use_db"]) {
+				try {
+					$listdatabases = new MongoDB\Driver\Command(["listCollections" => 1]);
+					$res = $manager->executeCommand("mydatabasename", $listdatabases);
+					$collections = current($res->toArray());
+				} catch (throwable $e) {
+					$GLOBALS["use_db"] = 1;
+				}
+			}
 		} catch (Exception $e) {
 			error_log($e);
 		}
