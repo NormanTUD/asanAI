@@ -12,12 +12,16 @@
 				throw new Exception("Verbindung fehlgeschlagen: " . $GLOBALS['mysqli']->connect_error);
 			}
 			$GLOBALS["use_db"] = 1;
-			if (!mysqli_select_db($GLOBALS["mysqli"], "tfd_db")){
+			DBCONNECT:
+			try {
+				mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
+			} catch (Exception $e) {
 				$sql = "CREATE DATABASE tfd_db";
 				if (run_query($sql) === TRUE) {
 					mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
 					load_sql_file_get_statements("tfd.sql");
 
+					goto DBCONNECT;
 				} else {
 					echo "Error creating database: " . $GLOBALS['mysqli']->error;
 					$GLOBALS["use_db"] = 0;
@@ -98,6 +102,7 @@
 	}
 
     function change_is_public($network_name, $value) {
+	    _assert($value == 'true' || $value == "false", "value must be 'true'/'false'");
         $collection = "tfd.models";
         $bulk = new \MongoDB\Driver\BulkWrite();
         $bulk->update(
