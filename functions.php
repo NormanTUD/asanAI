@@ -23,7 +23,6 @@
 					$GLOBALS["use_db"] = 0;
 				}
 			}
-			show_admin_register();
 
 		} catch (Exception $e) {
 			error_log($e);
@@ -98,6 +97,7 @@
 	}
 
     function change_is_public($network_name, $value) {
+		_assert(($value == 'true') || ($value == 'false'), "Variable value is not a bool.");
         $collection = "tfd.models";
         $bulk = new \MongoDB\Driver\BulkWrite();
         $bulk->update(
@@ -151,6 +151,15 @@
 			_assert($user_id > 0, "id is too low");
 			$role = get_single_value_from_query("select role_id from login where id = ".esc($user_id));
 			if($role == 1){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function can_edit_or_is_public($model_user_id) {
+		if(can_edit_models($model_user_id))	{
+			if(is_public()) {
 				return true;
 			}
 		}

@@ -1,6 +1,8 @@
 <?php
 	include("functions.php");
 	
+	show_admin_register();
+	
 	$darkmode = 0;
 
 	if(array_key_exists("darkmode", $_COOKIE) && $_COOKIE["darkmode"]) {
