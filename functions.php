@@ -317,6 +317,7 @@
 
 	function run_query ($query) {
 		if($GLOBALS['mysqli']) {
+			mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
 			$start_time = microtime(true);
 			$result = $GLOBALS['mysqli']->query($query);
 			if($result === false) {
