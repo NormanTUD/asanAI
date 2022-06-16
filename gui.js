@@ -2953,7 +2953,7 @@ function display_delete_button() {
 }
 
 function manage_download() {
-	if(getCookie("session_id").match(/^[a-zA-Z0-9]+$/)) {
+	if(!getCookie("session_id") === null) {
 		save_model();
 	} else {
 		open_save_model_dialog();
