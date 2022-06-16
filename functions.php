@@ -35,7 +35,7 @@
 					$res = $manager->executeCommand("mydatabasename", $listdatabases);
 					$collections = current($res->toArray());
 				} catch (throwable $e) {
-					$GLOBALS["use_db"] = 1;
+					$GLOBALS["use_db"] = 0;
 				}
 			}
 		} catch (Exception $e) {
