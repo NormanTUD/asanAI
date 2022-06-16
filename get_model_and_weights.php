@@ -28,10 +28,14 @@
 				);
 	
 				$results = find_mongo("tfd.models", $filters, $options);
-	
-				foreach($results as $doc) {
-					$model_weights = $doc["model_weights"];
-					print json_encode($model_weights);
+
+				if(count($results) > 0) {
+					foreach($results as $doc) {
+						$model_weights = $doc["model_weights"];
+						print json_encode($model_weights);
+					}
+				} else {
+					print "No data was found.";
 				}
 			} else {
 				print "No id given.";

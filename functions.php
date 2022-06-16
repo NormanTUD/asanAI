@@ -171,6 +171,7 @@
 	}
 
 	function get_model_user_id($network_name) {
+		_assert($network_name != "", "Network name must contain a value.");
 		$filters = ['network_name' => $network_name];
         $options = ['projection' => ['user' => true]];
         $results = find_mongo("tfd.models", $filters, $options);
@@ -181,7 +182,7 @@
 	}
 
 	function can_edit_user($username) {
-		_assert($username === "", "Variable username has wrong datatype must be string.");
+		_assert(is_string($username), "Variable username has wrong datatype must be string.");
 		if(is_admin()) {
 			return true;
 		}
@@ -215,9 +216,8 @@
 			$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
 			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
 			return $result;
-		} else {
-			dier("Cannot edit model");
 		}
+		return false;
 	}
 
 	function delete_mongo_models ($id, $user_id) {

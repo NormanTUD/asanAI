@@ -6,7 +6,7 @@
 		if(is_null($user)) {
 			print "User doesn't exist.";
 		} else {
-			if(array_key_exists("id", $_GET["id"])) {
+			if(array_key_exists("id", $_GET)) {
 				$id = $_GET["id"];
 				$filters = [
 					'$and' => [
@@ -31,11 +31,14 @@
 				);
 	
 				$results = find_mongo("tfd.models", $filters, $options);
-	
-				foreach($results as $doc) {
-					if($doc["_id"]['$oid'] == filter_str_int($id)) {
-						print json_encode($doc["model_data"]);
+				if(count($results) > 0) {
+					foreach($results as $doc) {
+						if($doc["_id"]['$oid'] == filter_str_int($id)) {
+							print json_encode($doc["model_data"]);
+						}
 					}
+				} else {
+					print "No data was found.";
 				}
 			} else {
 				print "No id given.";
