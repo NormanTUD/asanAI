@@ -3,7 +3,7 @@
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",
-	"epochs": 5,
+	"epochs": 100,
 	"batchSize": 40,
 	"validationSplit": 20,
 
