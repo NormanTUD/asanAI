@@ -1,4 +1,5 @@
 <?php
+	// wird nicht benutzt?
 	include_once("functions.php");
 
 	if(array_key_exists("session_id", $_COOKIE)) {
@@ -36,7 +37,8 @@
 				$doc["network_name"];
 			}
 
-			print json_encode($names_and_sets, JSON_PRETTY_PRINT);
+			header('Content-type: application/json');
+			print json_encode($names_and_sets);
 		}
 	} else {
 		print "You are not logged in.";
