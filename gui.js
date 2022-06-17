@@ -977,7 +977,7 @@ async function _get_configuration(index) {
 
 			var data_url, keras_url;
 			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
-			
+
 			if(filename.startsWith("get_")) {
 				data_url = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["data"];
 				keras_url = filename;
@@ -2863,7 +2863,7 @@ async function logout() {
 	eraseCookie('session_id');
 	$("#logout").hide();
 	$("#register").show();
-	$("#register_email").val(""); 
+	$("#register_email").val("");
 	$("#register_username").val("");
 	$("#register_password").val("");
 	$("#login_username").val("");
@@ -2926,7 +2926,7 @@ function delete_model() {
 function get_id_from_train_data_struct(index) {
 	var dataset_index = document.getElementById("dataset").selectedIndex;
 	var classification_index = document.getElementById("dataset_category").selectedIndex;
-	
+
 	if((dataset_index >= 0) && (classification_index >= 0)) {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
 		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
@@ -2971,11 +2971,11 @@ function has_network_name(elem) {
 			success: function (data) {
 				if(data == '{"number":0}') {
 					$("#save_to_mongodb").prop("disabled", false);
-					document.getElementById("save_model_msg").innerHTML = "";		
+					document.getElementById("save_model_msg").innerHTML = "";
 				} else {
 					$("#save_to_mongodb").prop("disabled", true);
 					color_msg_red("save_model_msg");
-					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";	
+					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";
 				}
 			}
 		});
