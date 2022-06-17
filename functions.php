@@ -202,14 +202,23 @@
 	function can_edit_models($model_user_id) {
 		if(is_admin()) {
 			return true;
-		} else {
-			if(array_key_exists("session_id", $_COOKIE)) {
-				if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
-					return true;
-				}
+		}
+		if(array_key_exists("session_id", $_COOKIE)) {
+			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+				return true;
 			}
 		}
 		return false;
+	}
+
+	function get_user_from_model_id($model_id) {
+		$filter = ['_id' => new MongoDB\BSON\ObjectID(filter_str_int($model_id))];
+		$options = ['projection' => ['user' => true]];
+		$result = find_mongo_wrapper($filter, $options);
+		if($result) {
+			return $result[0]["user"];
+		}
+		return null;
 	}
 
 	function get_model_user_id($network_name) {
@@ -294,7 +303,11 @@
 		}
 	}
 
-	function find_mongo ($table, $filter, $options) {
+	function find_mongo_wrapper($filters, $options) {
+		return find_mongo("tfd.models", $filters, $options);
+	}
+
+	function find_mongo($table, $filter, $options) {
 		try {
 			$query = new MongoDB\Driver\Query($filter, $options);
 			$rows = $GLOBALS["manager"]->executeQuery($table, $query);
@@ -314,6 +327,47 @@
 	function save_mongo_models ($array) {
 		save_mongo("tfd.models", $array);
 	}
+
+	function get_usernames() {
+        $query = "select username, role_id from login";
+        $result = run_query($query);
+        while($row = $result->fetch_assoc()) {
+            $usernames[] = $row["username"];
+        }
+        return $usernames;
+    }
+
+    function get_category_from_table($query, $column) {
+        $result = run_query($query);
+        while($row = $result->fetch_assoc()) {
+            $category_array[] = $row[$column];
+        }
+        return $category_array;
+    }
+
+	function model_is_is_valid($model_id) {
+		if(preg_match('/^[0-9a-f]{24}$/', $model_id)) {
+			return true;
+		}
+		return false;
+	}
+
+	function public_is_requested($network_name) {
+        $filters = ['network_name' => $network_name];
+        $options = ['projection' => ['requests_public' => true]];
+        $results = find_mongo("tfd.models", $filters, $options);
+        return $results[0]["requests_public"];
+    }
+
+    function set_is_public_true($network_name) {
+        $filters = ['network_name' => $network_name];
+        $options = ['projection' => ['is_public' => true]];
+        $results = find_mongo("tfd.models", $filters, $options);
+        if($results[0]["is_public"] == "true") {
+            return false;
+        }
+        return true;
+    }
 
 	#save_mongo_models(array("hallo" => 12323));                                                                                                                                                                                     
 	#dier(find_mongo("tfd.models", array("hallo" => array('$exists' => true)), array()));   

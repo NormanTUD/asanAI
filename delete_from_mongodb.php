@@ -9,7 +9,7 @@
 			if(is_null($user)) {
 				print "User doesn't exist.";
 			} else {
-				if(preg_match('/^[0-9a-f]{24}$/', $id)) {
+				if(model_id_is_valid($id)) {
 					$filters = ['_id' => new MongoDB\BSON\ObjectID($id)];
 					$options = [
 						'projection' => ['_id' => 1]

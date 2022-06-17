@@ -1,8 +1,6 @@
 <?php
 	include('functions.php');
 
-	function show_model_data() {}
-
 	if(array_key_exists("id", $_GET)) {
 		$model_id = $_GET["id"];
 		if(model_is_public($model_id) || can_edit_models($model_id)) {

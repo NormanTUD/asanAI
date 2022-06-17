@@ -1,23 +1,5 @@
 <?php
     include('functions.php');
-
-    function get_usernames() {
-        $query = "select username, role_id from login";
-        $result = run_query($query);
-        while($row = $result->fetch_assoc()) {
-            $usernames[] = $row["username"];
-        }
-        return $usernames;
-    }
-
-    function get_category_from_table($query, $column) {
-        $result = run_query($query);
-        while($row = $result->fetch_assoc()) {
-            $category_array[] = $row[$column];
-        }
-        return $category_array;
-    }
-
 ?>
 <!DOCTYPE html>
 
