@@ -3671,21 +3671,22 @@ function show_csv_file(disabled_show_head_data) {
 			auto_adjust_number_of_neurons(parsed_data.number_of_categories);
 		}
 
-		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "], Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
+		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
 
 		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val())
-		var shape_preview_color = "<div style='color: ";
+		var shape_preview_color = "<div>";
 		csv_allow_training = true;
+		//shape_preview_color += "black";
 		if (is_same) {
 			if (auto_adjust) {
 				updated_page();
 			}
-			shape_preview_color += "green";
+			//shape_preview_color += "green";
 		} else {
-			shape_preview_color += "red";
+			//shape_preview_color += "red";
 			//csv_allow_training = false;
 		}
-		shape_preview_color += "'>";
+		//shape_preview_color += ">";
 
 		shape_preview = shape_preview_color + shape_preview + "</div>";
 
