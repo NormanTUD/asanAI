@@ -310,7 +310,7 @@ async function get_xs_and_ys () {
 			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
 			}
-			
+
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		}
 	} else {
@@ -499,7 +499,7 @@ function parse_line (line, seperator) {
 
 function parse_csv_file (csv_file) {
 	var seperator = get_csv_seperator();
-	
+
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
 
 	csv_file = csv_file.replace(seperator_at_end_re, "")
@@ -613,7 +613,14 @@ function get_x_y_from_csv () {
 	x = tf.tensor(x);
 	y = tf.tensor(y);
 
-	return {"x": x, "y": y, "keys": y_headers, "number_of_categories": y_headers.length, "y_between_0_and_1": y_between_0_and_1};
+	return {
+		"x": x,
+		"y": y,
+		"keys": y_headers,
+		"number_of_categories":
+		y_headers.length,
+		"y_between_0_and_1": y_between_0_and_1
+	};
 }
 
 /*

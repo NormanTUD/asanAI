@@ -169,7 +169,7 @@ function get_data_for_layer (type, i, first_layer) {
 			data[get_js_name(option_name)] = parseFloat(get_item_value(i, option_name));
 
 		} else if(option_name == "activation" && $($($($(".layer_setting")[i]).find("." + option_name)[0])).val() == "None") {
-			// Do nothing if activation = None 
+			// Do nothing if activation = None
 			data["activation"] = null;
 
 		} else if(option_name == "kernel_initializer") {
@@ -298,7 +298,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
 		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
-		(keyname == "name" && typeof(value) == "string") || 
+		(keyname == "name" && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
 		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
 		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
@@ -356,7 +356,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var new_model = tf.sequential();
 
-	var model_structure = fake_model_structure; 
+	var model_structure = fake_model_structure;
 	if(model_structure === undefined) {
 		model_structure = await get_model_structure();
 	}
@@ -980,7 +980,7 @@ function get_current_chosen_object_default_weights_string () {
 
 	if(!weights_files[weights_file]) {
 		$.ajax({
-			type: "GET",   
+			type: "GET",
 			url: weights_file,
 			async: false,
 			success : function(text) {
@@ -1040,7 +1040,7 @@ async function _show_load_weights () {
 
 async function get_tfjs_model () {
 	await model.save('localstorage://demo/management/model1');
-	
+
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
 
 	return str;

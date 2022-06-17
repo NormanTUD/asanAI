@@ -214,7 +214,7 @@ $(document).ready(async function() {
 		e.preventDefault();
 		register();
 	});
-	
+
 	if(getCookie("session_id") != null) {
 		$("#register").hide();
 		$("#logout").show();
@@ -273,7 +273,7 @@ $(document).ready(async function() {
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
 	setInterval(restart_fcnn, 500);
-	
+
 	copy_options();
 	copy_values();
 });
