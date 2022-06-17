@@ -26,7 +26,7 @@
 <html lang="en" style="font-size: 0.75em;">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-		<title>Neural Network Editor</title>
+		<title>asanAI</title>
 		<meta charset="utf-8">
 
 
