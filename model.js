@@ -48,7 +48,6 @@ async function _create_model () {
 	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
 	}
-
 }
 
 async function compile_model (keep_weights) {
