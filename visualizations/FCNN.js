@@ -89,8 +89,7 @@ function FCNN() {
 			real_architecture_=real_architecture,
 			showBias_=showBias,
 			showLabels_=showLabels={},
-			layerTypes_=layerTypes,
-			currentLayer_=null
+			layerTypes_=layerTypes
 	}) {
 		architecture = architecture_;
 		real_architecture = real_architecture_;
