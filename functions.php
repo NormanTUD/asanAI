@@ -150,7 +150,6 @@
 				$array[] = $doc;
 			}
 		}
-		// dier($array);
 		return $array;
     }
 
@@ -174,21 +173,22 @@
 		return false;
 	}
 
-	// funktion unfertig morgen weiter siehe notizen
+	function model_is_public($model_id) {
+		$filters = ['_id' => new MongoDB\BSON\ObjectId($model_id)];
+		$options = ['projection' => ['is_public' => true]];
+		$result = find_mongo("tfd.models", $filters, $options);
+		dier($result);
+		return $result;
+	}
+
+	// is_public, is_admin, is_owner
 	function can_edit_or_is_public($model_id) {
 		if(session_id_exists($user_id)) {
-			$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-
-			if(can_edit_models($user_id, $model_id)) {
-				if(can_edit_models()) {
-					return true;
-				}
-				$filters = ['_id' => new MongoDB\BSON\ObjectId($model_id)];
-				$options = ['projection' => ['is_public' => true, '']];
-				$result = find_mongo("tfd.models", $filters, $options);
-				if(is_public()) {
-					return true;
-				}
+			if(model_is_public($model_id)) {
+				return true;
+			}
+			if(can_edit_models()) {
+				return true;
 			}
 		}
 		return false;
