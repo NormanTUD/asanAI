@@ -180,22 +180,24 @@
 		$filters = ['_id' => new MongoDB\BSON\ObjectId($model_id)];
 		$options = ['projection' => ['is_public' => true]];
 		$result = find_mongo("tfd.models", $filters, $options);
-		dier($result);
-		return $result;
-	}
-
-	// is_public, is_admin, is_owner
-	function can_edit_or_is_public($model_id) {
-		if(session_id_exists($user_id)) {
-			if(model_is_public($model_id)) {
-				return true;
-			}
-			if(can_edit_models()) {
-				return true;
-			}
+		if($result[0]["is_public"] == "true") {
+			return true;
 		}
 		return false;
 	}
+
+	// is_public, is_admin, is_owner
+	// function can_edit_or_is_public($model_id) {
+	// 	if(session_id_exists($user_id)) {
+	// 		if(model_is_public($model_id)) {
+	// 			return true;
+	// 		}
+	// 		if(can_edit_models()) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
 	function can_edit_models($model_user_id) {
 		if(is_admin()) {
