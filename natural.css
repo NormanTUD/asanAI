@@ -29,7 +29,6 @@ html {
 	position: relative;
 	z-index: 1;
 	overflow: hidden;
-	border: solid rgb(0, 200, 140) 1px;
 }
 
 .glass_box {
@@ -114,26 +113,36 @@ a.ui-button:active,
 }
 
 button {
-	background-color: rgba(255,255,255,0.9);
+	background-color: rgba(255,255,255,0.5);
+	border: none;
+	border-radius: 5px;
 	outline:none;
 	color: black;
 }
 
-input {
-	background-color: rgba(255,255,255,25%);
-	border: 1px solid rgba(255,255,255,0%);
-	border-radius: 10px;
-}
-
 button:hover {
-	background-color:#b7c8dc;
+	background-color:rgba(255,255,255,0.75);
+	border: none;
+	border-radius: 5px;
 }
 
+select {
+	background-color: rgba(255,255,255,0.5);
+	border: none;
+  border-radius: 5px;
+}
 
 select:hover {
-	border: 1px solid #9a9a9a;
-	background-color:#b7c8dc;
+	background-color:rgba(255, 255, 255, 0.75);
 }
+
+input {
+	background-color: rgba(255,255,255,0.5);
+	border: none;
+	border-radius: 5px;
+}
+
+
 
 input:hover {
 	border: 1px solid rgb(255,255,255,0.8);
