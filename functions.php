@@ -44,7 +44,6 @@
 						$res = $GLOBALS["manager"]->executeCommand("tfd_db", $listdatabases);
 						$collections = current($res->toArray());
 					} catch (throwable $e) {
-						dier($e);
 						$GLOBALS["use_db"] = 0;
 					}
 				} else {
