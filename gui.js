@@ -458,7 +458,7 @@ function add_dilation_rate_option(type, nr) {
 }
 
 function add_padding_option(type, nr) {
-	return get_tr_str_for_layer_table("Padding", "padding", "select", { "valid": "valid", "same": "same", "causal": "causal" }, nr);
+	return get_tr_str_for_layer_table("Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr);
 }
 
 function add_filters_option(type, nr) {

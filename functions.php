@@ -29,12 +29,24 @@
 				}
 			}
 
+			try {
+				$port = 27017;
+				$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
+			} catch (\Throwable $e) {
+				error_log($e);
+				$GLOBALS["use_db"] = 0;
+			}
+
 			if($GLOBALS["use_db"]) {
-				try {
-					$listdatabases = new MongoDB\Driver\Command(["listCollections" => 1]);
-					$res = $manager->executeCommand("mydatabasename", $listdatabases);
-					$collections = current($res->toArray());
-				} catch (throwable $e) {
+				if($GLOBALS["manager"]) {
+					try {
+						$listdatabases = new MongoDB\Driver\Command(["listCollections" => 1]);
+						$res = $GLOBALS["manager"]->executeCommand("tfd_db", $listdatabases);
+						$collections = current($res->toArray());
+					} catch (throwable $e) {
+						$GLOBALS["use_db"] = 0;
+					}
+				} else {
 					$GLOBALS["use_db"] = 0;
 				}
 			}
@@ -99,15 +111,6 @@
 		return;
 	}
 
-	$GLOBALS["manager"] = null;
-
-	try {
-		$port = 27017;
-		$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
-	} catch (\Throwable $e) {
-		error_log($e);
-		$GLOBALS["use_db"] = 0;
-	}
 
 	function admin_exists() {
 		return !!get_single_value_from_query("select count(*) from tfd_db.login where role_id = 1");
