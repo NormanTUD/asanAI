@@ -188,6 +188,13 @@ $GLOBALS['minify'] = 0;
 
 
 				<div id="home_ribbon" class="ribbon_tab_content" title="Home">
+					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
+						<div class="ribbon-group">
+							<div class="ribbon-toolbar" style="width:100px">
+								<img height=100 src="logo.svg" />
+							</div>
+						</div>
+					</div>
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:350px">
 							<table width=360>
