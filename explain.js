@@ -855,7 +855,13 @@ async function draw_maximally_activated_layer (layer, type) {
 	}
 
 	log("Layer: " + layer);
-	$("#maximally_activated_content").append("<h2>Layer " + layer + "</h2>")
+	var types_in_order = "";
+	if(get_numberoflayers() - 1 == layer) {
+		if(labels && labels.length) {
+			types_in_order = " (" + labels.join(", ") + ")";
+		}
+	}
+	$("#maximally_activated_content").append("<h2>Layer " + layer + types_in_order + "</h2>")
 
 	var times = [];
 
