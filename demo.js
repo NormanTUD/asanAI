@@ -132,7 +132,7 @@ const pickr = Pickr.create({
           hsva: true,
           cmyk: true,
           input: true,
-          clear: true,
+          clear: false,
           save: true
       }
   },
