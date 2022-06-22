@@ -432,7 +432,7 @@ async function predict_handdrawn () {
 
 		$("#handdrawn_predictions").html("");
 
-		var html = "<div class='predict_demo_result'>";
+		var html = "<div>";
 
 		var max = 0;
 
