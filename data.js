@@ -356,6 +356,12 @@ async function get_xs_and_ys () {
 			x = tf.tensor(x);
 			y = tf.tensor(y).expandDims();
 
+			var indices = Array.from(Array(x.shape[0]).keys());
+			var shuffled_indices = shuffle(indices);
+			shuffled_indices = tf.tensor(shuffled_indices, null, 'int32');
+			x = tf.gather(x, shuffled_indices);
+			y = tf.gather(y, shuffled_indices);
+
 			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 				try {
 					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
