@@ -130,7 +130,7 @@ function run_tests () {
 
 	test_equal('quote_python(123)', quote_python(123), "[123]");
 
-	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i>hallo</i></td></tr>");
+	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
 
 	var color = "black";
 	if(darkmode) {
