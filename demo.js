@@ -35,8 +35,7 @@ atrament.addEventListener('fillend', () => {
   log('event: fillend');
 });
 
-atrament.addEventListener('strokestart', () => log('event: strokestart'));
-atrament.addEventListener('strokeend', () => { log('event: strokeend'); predict_handdrawn(); } );
+atrament.addEventListener('strokeend', () => { predict_handdrawn(); } );
 
 atrament.addEventListener('strokerecorded', ({ stroke }) => {
   log(`event: strokerecorded - ${stroke.points.length} points`);
