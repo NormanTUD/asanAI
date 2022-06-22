@@ -425,3 +425,33 @@ function tensor_shape_matches_model (tensor) {
 
 	return true;
 }
+
+async function predict_handdrawn () {
+	tf.tidy(() => {
+		var predictions = model.predict(tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [parseInt($("#width").val()), parseInt($("#height").val())]).expandDims()).arraySync();
+
+		$("#handdrawn_predictions").html("");
+
+		var html = "<div class='predict_demo_result'>";
+
+		var max = 0;
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			if(max < predictions[0][i]) {
+				max = predictions[0][i];
+			}
+		}
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			var label = labels[i % labels.length];
+			if(predictions[0][i] == max) {
+				html += "<b style='color: green'>" + label + ": " + predictions[0][i] + "</b><br>\n";
+			} else {
+				html += label + ": " + predictions[0][i] + "<br>\n";
+			}
+		}
+		html += "<div>";
+
+		$("#handdrawn_predictions").html(html);
+	});
+}

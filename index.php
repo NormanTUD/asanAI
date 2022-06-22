@@ -136,6 +136,10 @@ $GLOBALS['minify'] = 0;
 		
 		<?php minify_css("chardinjs.css"); ?>
 
+
+		<?php minify_css("classic.min.css"); ?>
+		<?php minify_js("pickr.min.js"); ?>
+		<?php minify_js("atrament.min.js"); ?>
 		
 		<script>
 			<?php
@@ -148,6 +152,19 @@ $GLOBALS['minify'] = 0;
 			?>;
 			var chardinJs = $("body").chardinJs($("body"));
 		</script>
+
+		<style>
+			.pickr {
+				display: inline-block;
+				height: 1.75em;
+				overflow: hidden;
+				border: solid 2px;
+				border-radius: 5px;
+				margin-bottom: 0;
+				vertical-align: middle;
+				margin-left: 5px;
+			}
+		</style>
 
 		<?php minify_js("plotly-latest.min.js"); ?>
 
@@ -1206,8 +1223,9 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="predict_tab">
-									Live update example predictions while training?
-									<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
+								Live update example predictions while training?
+								<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
+
 								<div class="container" id="predictcontainer">
 									<div class="">
 										<div id="own_files">
@@ -1244,6 +1262,36 @@ $GLOBALS['minify'] = 0;
 
 											<hr>
 										</div>
+
+										<div class="handdrawn hide_when_no_alexnet">
+											<form>
+												<button id="clear" onclick="event.preventDefault(); atrament.clear();">
+													clear
+												</button>
+												<label>Thickness</label><br />
+												<input
+													type="range"
+													min="1"
+													oninput="atrament.weight = parseFloat(event.target.value);"
+													value="2"
+													step="0.1"
+													autocomplete="off"
+												/><br />
+												<label>Mode</label>
+												<select onchange="atrament.mode = event.target.value;" autocomplete="off">
+													<option value="draw" default>Draw</option>
+													<option value="erase" default>Erase</option>
+												</select><br />
+												<label>Colour</label>
+												<div id="color-picker"></div><br />
+											</form>
+											<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" id="sketcher"></canvas>
+
+											<div id="handdrawn_predictions"></div>
+
+											<hr>
+										</div>
+
 
 										<div class="hide_when_custom_data">
 											<button onclick="show_prediction(1);">Re-predict examples</button>
@@ -1827,5 +1875,9 @@ $GLOBALS['minify'] = 0;
 			resize_window();
 		</script>
 		<script src="./wizard_script.js"></script>
+		<?php minify_js("demo.js"); ?>
+		<script>
+			atrament.adaptiveStroke = true;
+		</script>
 	</body>
 </html>
