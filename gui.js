@@ -2329,6 +2329,7 @@ async function get_number_of_categories() {
 }
 
 async function chose_dataset(no_set_config) {
+	$("#data_origin").val("default").trigger("change")
 	tf.disposeVariables();
 
 	$("#maximally_activated_content").html("")
