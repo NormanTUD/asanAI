@@ -1265,9 +1265,6 @@ $GLOBALS['minify'] = 0;
 
 										<div class="handdrawn hide_when_no_alexnet">
 											<form>
-												<button id="clear" onclick="event.preventDefault(); atrament.clear();">
-													clear
-												</button>
 												<label>Thickness</label><br />
 												<input
 													type="range"
@@ -1284,6 +1281,10 @@ $GLOBALS['minify'] = 0;
 												</select><br />
 												<label>Colour</label>
 												<div id="color-picker"></div><br />
+												<br>
+												<button id="clear" onclick="event.preventDefault(); atrament.clear();">
+													Clear image
+												</button>
 											</form>
 											<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" id="sketcher"></canvas>
 

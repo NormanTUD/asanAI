@@ -173,10 +173,21 @@ function LeNet() {
 		style();
 
 		/*
-		var width = parseInt(Math.abs($("#visualization_tab").width()));
-		var height = $("#visualization_tab").height();
+		var lenet_width = realWidth($("#lenet"));
+		var lenet_height = realHeight($("#lenet"));
+		var g_width = realWidthG();
+		var g_height = $("#lenet_frame")[0].getBoundingClientRect().height;
 
-		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
+		var center_x_position = g_width / 2;
+		var center_y_position = 0;
+
+		$("#lenet_frame").attr("transform", "translate(" + center_x_position + "," + center_y_position + ")");
+		log("translate(" + center_x_position + "," + center_y_position + ")");
+
+		if(lenet_width < g_width || lenet_height < g_height) {
+			log("lenet_width: " + lenet_width);
+			log("lenet_height: " + lenet_height);
+		}
 		*/
 	}
 
