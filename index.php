@@ -448,9 +448,29 @@ $GLOBALS['minify'] = 0;
 										</select>
 									</td>
 								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Set options for all</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Set options regarding the weights here.">
+						<div class="ribbon-toolbar">
+							<table>
+                                                                <tr>
+								       <td>Keep weights when possible?</td>
+								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
+								</tr>
+
 								<tr>
-									<td>Keep weights when possible?</td>
-									<td><input type="checkbox" value=1 checked id="keep_weights" /></td>
+									<td>Reinit weights on data source change</td>
+									<td>
+										<input type="checkbox" value="1" checked id="reinit_weights_on_data_source_change" />
+									</td>
+								</tr>
+								<tr>
+									<td colspan=2><button onclick="force_reinit()">Reinitialize network's weight</button></td>
 								</tr>
 							</table>
 						</div>

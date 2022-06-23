@@ -3363,6 +3363,10 @@ function reset_view() {
 }
 
 async function change_data_origin() {
+	if($("#reinit_weights_on_data_source_change").is(":checked")) {
+		force_reinit();
+	}
+
 	x_file = null;
 	y_file = null;
 	y_shape = null;

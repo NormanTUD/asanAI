@@ -947,3 +947,5 @@ var math_items_hashes = {};
 var graph_hashes = {};
 
 var force_download = 0;
+
+var force_dont_keep_weights = false;

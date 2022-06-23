@@ -50,10 +50,13 @@ async function _create_model () {
 	}
 }
 
-async function compile_model (keep_weights) {
+async function compile_model (keep_weights, force_dont_keep_weights) {
 	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
 
 	keep_weights = keep_weights && $("#keep_weights").is(":checked");
+	if(force_dont_keep_weights) {
+		keep_weights = 0;
+	}
 
 	var recreate_model = false;
 
@@ -600,22 +603,24 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	current_layer_status_hash = get_current_layer_container_status_hash();
 
-	if(old_weights_string) {
-		if(layers_container_md5 == new_layers_container_md5) {
-			var new_weights_string = await get_weights_as_string(new_model);
-			var old_weights = eval(old_weights_string);
-			var new_weights = eval(new_weights_string);
+	if(!force_dont_keep_weights) {
+		if(old_weights_string) {
+			if(layers_container_md5 == new_layers_container_md5) {
+				var new_weights_string = await get_weights_as_string(new_model);
+				var old_weights = eval(old_weights_string);
+				var new_weights = eval(new_weights_string);
 
-			var old_shape_string = (await get_shape_from_array(old_weights)).toString();
-			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
+				var old_shape_string = (await get_shape_from_array(old_weights)).toString();
+				var new_shape_string = (await get_shape_from_array(new_weights)).toString();
 
-			if(old_shape_string == new_shape_string) {
-				if(old_weights_string != new_weights_string) {
-					set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
+				if(old_shape_string == new_shape_string) {
+					if(old_weights_string != new_weights_string) {
+						set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
+					}
 				}
+			} else {
+				layers_container_md5 = new_layers_container_md5;
 			}
-		} else {
-			layers_container_md5 = new_layers_container_md5;
 		}
 	}
 
@@ -1044,4 +1049,19 @@ async function get_tfjs_model () {
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
 
 	return str;
+}
+
+async function force_reinit () {
+	if(!model) {
+		return;
+	}
+	var old_force_dont_keep_weights = force_dont_keep_weights;
+
+	force_dont_keep_weights = true;
+
+	await compile_model(0, 1);
+
+	force_dont_keep_weights = old_force_dont_keep_weights;
+
+	updated_page();
 }
