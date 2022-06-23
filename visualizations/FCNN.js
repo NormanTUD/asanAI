@@ -163,8 +163,8 @@ function FCNN() {
 
 		style();
 
-		var width = parseInt(Math.abs($("#fcnn").width() * 2));
-		var height = $("#fcnn").height() * 2;
+		var width = realWidth($("#fcnn"));
+		var height = realHeight($("#fcnn"));
 
 		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
 	}

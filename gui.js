@@ -4501,3 +4501,21 @@ function copy_values() {
 
 	}
 }
+
+function realWidth(obj){
+	var clone = obj.clone();
+	clone.css("visibility","hidden");
+	$('body').append(clone);
+	var width = clone.outerWidth();
+	clone.remove();
+	return width;
+}
+
+function realHeight(obj){
+	var clone = obj.clone();
+	clone.css("visibility","hidden");
+	$('body').append(clone);
+	var height = clone.outerHeight();
+	clone.remove();
+	return height;
+}
