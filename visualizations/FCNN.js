@@ -90,7 +90,7 @@ function FCNN() {
 			showBias_=showBias,
 			showLabels_=showLabels={},
 			layerTypes_=layerTypes
-	}) {
+		}) {
 		architecture = architecture_;
 		real_architecture = real_architecture_;
 		showBias = showBias_;
@@ -118,7 +118,7 @@ function FCNN() {
 					'target':	right.id, 
 					'weight':	randomWeight()
 				} : null }
-				)
+			)
 			)
 		);
 		graph.nodes = flatten(graph.nodes);
