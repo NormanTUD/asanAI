@@ -23,6 +23,7 @@ atrament.addEventListener('dirty', () => {
 
 atrament.addEventListener('clean', () => {
   log('event: clean');
+  predict_handdrawn();
 });
 
 atrament.addEventListener('fillstart', ({ x, y }) => {
