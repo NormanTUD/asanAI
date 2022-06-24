@@ -56,7 +56,7 @@
 	}
 
 	function get_number_model_names($name) {
-		$result = get_single_value_from_query("select count(*) where name = ".esc($name));
+		$result = get_single_value_from_query("select count(*) from model where name = ".esc($name));
 	}
 
 	function show_admin_register() {
@@ -207,40 +207,14 @@
 		return get_single_value_from_query("delete from models where id = ".esc($id)." and ".esc($user_id));
 	}
 
-	function save_to_db () {
-
-	}
-
-	function save_mongo ($collection, $data) {
-		if (!is_string($collection) || strlen($collection) < 3 || strpos($collection, '.') < 1) {
-			throw new \InvalidArgumentException('The collection name to be filled on the database must be given as "database.collection"');
+	function save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $name) {
+		if($is_public == "true") {
+			$is_public = 1;
+		} else {
+			$is_public = 0;
 		}
-		if (!is_array($data) && !$data instanceof CollectionInterface) {
-			throw new \InvalidArgumentException('The data to be written on the database must be given as a collection');
-		}
-		$adaptedData = $data instanceof GenericCollection ? $data->all() : $data;
-		$bulk = new \MongoDB\Driver\BulkWrite();
-		try {
-			$nativeID = $bulk->insert($adaptedData);
-			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
-		} catch (\MongoDB\Driver\Exception\BulkWriteException $ex) {
-			throw new DatabaseException('Insertion failed due to a write error', 3);
-		} catch (\MongoDB\Driver\Exception\InvalidArgumentException $ex) {
-			throw new DatabaseException('Insertion failed due to an error occurred while parsing data', 3);
-		} catch (\MongoDB\Driver\Exception\ConnectionException $ex) {
-			throw new DatabaseException('Insertion failed due to an error on authentication', 3);
-		} catch (\MongoDB\Driver\Exception\AuthenticationException $ex) {
-			throw new DatabaseException('Insertion failed due to an error on connection', 3);
-		} catch (\MongoDB\Driver\Exception\RuntimeException $ex) {
-			throw new DatabaseException('Insertion failed due to an unknown error', 3);
-		}
-		if ($result->getInsertedCount() <= 0) {
-			throw new DatabaseException('Insertion failed due to an unknown error', 3);
-		}
-	}
-
-	function find_mongo_wrapper($filters, $options) {
-		return find_mongo("tfd.models", $filters, $options);
+		$query = "insert into model (model_structure, model_weights, model_data, user_id, is_public, category, category_full, name) values (".esc($model_structure).", ".esc($model_weights).", ".esc($model_data).", ".esc($user).", ".esc($is_public).", ".esc($category).", ".esc($category_full).", ".esc($name).")";
+		return run_query($query);
 	}
 
 	function find_mongo($table, $filter, $options) {
@@ -258,10 +232,6 @@
 			$GLOBALS["use_db"] = 0;
 			return null;
 		}
-	}
-
-	function save_mongo_models ($array) {
-		save_mongo("tfd.models", $array);
 	}
 
 	function get_usernames() {
@@ -467,7 +437,8 @@
 	}
 
 	function get_user_id_from_session_id ($session_id) {
-		$user_id = get_single_value_from_query("select user_id from tfd_db.session_ids where session_id = ".esc($session_id));
+		$query = "select user_id from tfd_db.session_ids where session_id = ".esc($session_id);
+		$user_id = get_single_value_from_query($query);
 		if(is_null($user_id)) {
 			return null;
 		}

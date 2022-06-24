@@ -88,10 +88,14 @@ CREATE TABLE `session_ids` (
 
 drop table if exists model;
 create table model (
-	id int primary key, 
+	id int primary key AUTO_INCREMENT, 
 	name varchar(200), 
 	user_id int not null, 
-	json blob, 
+	model_structure LONGBLOB, 
+	model_weights LONGBLOB, 
+	model_data LONGBLOB, 
+	category varchar(200),
+	category_full varchar(200),
 	is_public bool not null default false,
 	reviewed bool not null default false,
 	foreign key(user_id) references login(id) on delete cascade
@@ -99,9 +103,9 @@ create table model (
 
 drop table if exists training_data;
 create table training_data (
-	id int primary key, 
+	id int primary key AUTO_INCREMENT, 
 	model_id int not null, 
-	data blob, 
+	data LONGBLOB, 
 	foreign key(model_id) references model(id) on delete cascade
 );
 

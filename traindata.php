@@ -97,36 +97,28 @@
 		if(array_key_exists("session_id", $_COOKIE)) {
 			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
 			if(!is_null($user)) {
-				$filters = array(
-					'$or' => array(
-						array("user" => array('$eq' => $user)),
-						array("is_public" => array('$eq' => 'true'))
-					)
-				);
-				$options = array(
-					"category" => true,
-					"network_name" => true
-				);
+				$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
 
-				$results = find_mongo("tfd.models", $filters, $options);
+				$result = run_query($query);
 
-				if($results) {
-					foreach ($results as $doc) {
-						$category = $doc["category"];
-						$category_full = $doc["category_full"];
-						$data[$category_full]["category_name"] = $category;
-						$data[$category_full]["datasets"][$doc["network_name"]] = array(
-							"name" => $doc["network_name"],
-							"user_id" => $doc["user"],
-							"data" => "get_model_data.php?id=".$doc["_id"]['$oid'],
-							"id" => $doc["_id"]['$oid'],
-							"filename" => "get_model_from_db.php?id=".$doc["_id"]['$oid'],
-							"weights_file" => array(
-								$doc["network_name"] => "get_model_and_weights.php?id=".$doc["_id"]['$oid']
-							)
-						);
-						$doc["network_name"];
-					}
+				while ($row = $result->fetch_row()) {
+					$id = $row[0];
+					$category = $row[1];
+					$category_full = $row[2];
+					$network_name = $row[3];
+					$user = $row[4];
+
+					$data[$category_full]["category_name"] = $category;
+					$data[$category_full]["datasets"]["network_name"] = array(
+						"name" => $network_name,
+						"user_id" => $user,
+						"data" => "get_model_data.php?id=".$id,
+						"id" => $id,
+						"filename" => "get_model_from_db.php?id=".$id,
+						"weights_file" => array(
+							$network_name => "get_model_and_weights.php?id=".$id
+						)
+					);
 				}
 			}
 		}
