@@ -1101,13 +1101,14 @@ async function update_python_code(dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
-	python_code += "# sudo pip3 install tensorflow tensorflowjs";
+	python_code += "# sudo pip3 install tensorflow tensorflowjs ";
 	if (dataset_category == "image") {
 		python_code += " scikit-image";
 	}
 	python_code += "\n";
-	python_code += "# Use this command to convert a downloaded tensorflow-js-model first:\n";
-	python_code += "# tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model\n";
+	python_code += "import os\n";
+	python_code += "if not os.path.exists('keras_model'):\n";
+	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
 	if (dataset_category == "image") {
 		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
