@@ -32,8 +32,9 @@
 			$category_full = $data["category_full"];
 			$network_name = $data["network_name"];
 
-			if(save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $network_name)) {
-				$status = [ "status" => "ok", "msg" => "Saving data was successful." ];
+			$new_id = save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $network_name);
+			if($new_id) {
+				$status = [ "status" => "ok", "msg" => "Saving data was successful.", "id" => $new_id ];
 			} else {
 				$status["msg"] = "Failed to save to the DB.";
 			}

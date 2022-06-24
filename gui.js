@@ -3033,21 +3033,34 @@ function save_to_db(model_structure, model_weights, model_data, requests_public,
 			network_name: $("#network_name").val()
 		},
 		method: "POST",
-		success: function (data) {
+		success: async function (data) {
+			log(data);
 			if(data["status"] == "ok") {
 				color_msg_green("save_model_msg");
+				$.ajax({
+					url: "save_training_data.php",
+					data: {
+						data: await get_training_data_as_json(),
+						model_id: data["id"]
+					},
+					method: "POST",
+					error: function (object, error, msg) {
+						color_msg_red("save_model_msg");
+						document.getElementById("save_model_msg").innerText = msg;
+					}
+				});
 			}
 			if(data["status"] == "error") {
 				color_msg_red("save_model_msg");
 			}
-			document.getElementById("save_model_msg").innerText = data["msg"];
-			$("#save_model_msg").show().delay(500).fadeOut();
 		},
 		error: function (object, error, msg) {
 			color_msg_red("save_model_msg");
 			document.getElementById("save_model_msg").innerText = msg;
 		}
 	});
+
+
 }
 
 async function save_to_db_wrapper () {
@@ -4539,8 +4552,13 @@ function shuffle_before_training () {
 	return retval;
 }
 
-async function save_training_data () {
+async function get_training_data_as_json () {
 	force_download = 1;
 	var training_data = await get_xs_and_ys()
 	force_download = 0;
+
+	training_data.x = await training_data.x.arraySync()
+	training_data.y = await training_data.y.arraySync()
+
+	return JSON.stringify(training_data);
 }

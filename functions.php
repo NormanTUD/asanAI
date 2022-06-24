@@ -109,15 +109,15 @@
 	}
 
 	function model_is_public($model_id) {
-		$query = !!"select is_public from model where id = ".esc($model_id);
+		$query = !!"select count(*) from model where is_public = 1 and reviewed = 1 and id = ".esc($model_id);
 	}
 
-	function can_edit_models($model_user_id) {
+	function can_edit_model($user_id, $model_id) {
 		if(is_admin()) {
 			return true;
 		}
 		if(array_key_exists("session_id", $_COOKIE)) {
-			if(get_user_id_from_session_id($_COOKIE["session_id"]) == $model_user_id) {
+			if(get_user_id_from_session_id($_COOKIE["session_id"]) == get_user_id_from_model_id($model_id)) {
 				return true;
 			}
 		}
@@ -161,6 +161,11 @@
 		return get_single_value_from_query("delete from model where id = ".esc($id)." and ".esc($user_id));
 	}
 
+	function save_to_training_db ($model_id, $data) {
+		$query = "insert into training_data (model_id, data) values (".esc($model_id).", ".esc($data).")";
+		return run_query($query);
+	}
+
 	function save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $name) {
 		if($is_public == "true") {
 			$is_public = 1;
@@ -168,7 +173,8 @@
 			$is_public = 0;
 		}
 		$query = "insert into model (model_structure, model_weights, model_data, user_id, is_public, category, category_full, name) values (".esc($model_structure).", ".esc($model_weights).", ".esc($model_data).", ".esc($user).", ".esc($is_public).", ".esc($category).", ".esc($category_full).", ".esc($name).")";
-		return run_query($query);
+		run_query($query);
+		return mysqli_insert_id($GLOBALS["mysqli"]);
 	}
 
 	function get_usernames() {

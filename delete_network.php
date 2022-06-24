@@ -5,7 +5,7 @@
 	if(is_admin()) {
 		if(array_key_exists("id", $_GET)) {
 			$id = $_GET["id"];
-			if(can_edit_models(get_user_id_from_model_id($id))) {
+			if(can_edit_model(get_user_id_from_model_id($id), $id)) {
 				if($id == "") {
 					print "This network doesn't exist.";
 				} else {
