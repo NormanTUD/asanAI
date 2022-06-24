@@ -247,144 +247,152 @@ async function get_xs_and_ys () {
 
 	var loss = $("#loss").val();
 
-	if(data_origin == "default") {
-		if(xy_data === null) {
-			var category = $("#dataset_category").val();
+	if(traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["has_custom_data"]) {
+		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
+		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
-			var keys = [];
-			var x = tf.tensor([]);
-			var y;
-			var category_counter = 0;
-			var classes = [];
-
-			if(category == "image") {
-				let imageData = await get_image_data(0);
-
-				labels = [];
-
-				var this_data = [];
-
-				for (let [key, value] of Object.entries(imageData)) {
-					keys.push(key);
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
-						this_data.push({key: key, item: item, category_counter: category_counter});
-					}
-					labels[category_counter] = key;
-					category_counter++;
-				}
-
-				this_data = shuffle(this_data);
-
-				for (var i = 0; i < this_data.length; i++) {
-					var item = this_data[i]["item"];
-					var this_category_counter = this_data[i]["category_counter"];
-					x = x.concat(item);
-					classes.push(this_category_counter);
-				}
-
-				y = tf.tensor(classes);
-
-				for (let [key, value] of Object.entries(imageData)) {
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
-						dispose(item);
-					}
-				}
-				imageData = null;
-			} else if(category == "classification") {
-				var x_string, y_string;
-				x_string = await _get_training_data_from_filename("x.txt");
-				y_string = await _get_training_data_from_filename("y.txt");
-				x = numpy_str_to_tf_tensor(x_string, max_number_values);
-				y = numpy_str_to_tf_tensor(y_string, max_number_values);
-
-				var x_print_string = tensor_print_to_string(x);
-				var y_print_string = tensor_print_to_string(y);
-
-				$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-			} else {
-				alert("Unknown dataset category: " + category);
-			}
-
-			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-				y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-			}
-
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
-		}
+		xy_data.x = tf.tensor(xy_data.x);
+		xy_data.y = tf.tensor(xy_data.y);
 	} else {
-		if(data_type_val == "image") {
-			Swal.fire({
-				title: 'Generating tensors from images...',
-				html: "This may take some time, but your computer is working!",
-				timer: 2000,
-				showConfirmButton: false
-			});
+		if(data_origin == "default") {
+			if(xy_data === null) {
+				var category = $("#dataset_category").val();
 
-			var category_counter = $(".own_image_label").length;
-			var keys = [];
-			var x = [];
-			var y = [];
-			var classes = [];
+				var keys = [];
+				var x = tf.tensor([]);
+				var y;
+				var category_counter = 0;
+				var classes = [];
 
-			for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-				var img_elems = $($(".own_images")[label_nr]).children().find("img");
-				if(img_elems.length) {
-					var label_val = $($(".own_image_label")[label_nr]).val();
-					keys.push(label_val);
-					labels[label_nr] = label_val;
+				if(category == "image") {
+					let imageData = await get_image_data(0);
 
-					for (var j = 0; j < img_elems.length; j++) {
-						var img_elem = img_elems[j];
+					labels = [];
 
-						var tf_img = tf.browser.fromPixels(img_elem);
-						var resized_img = tf_img.
-							resizeNearestNeighbor([height, width]).
-							toFloat();
+					var this_data = [];
 
-						if($("#divide_by").val() != 1) {
-							resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+					for (let [key, value] of Object.entries(imageData)) {
+						keys.push(key);
+						for (var i = 0; i < imageData[key].length; i++) {
+							var item = imageData[key][i];
+							this_data.push({key: key, item: item, category_counter: category_counter});
 						}
+						labels[category_counter] = key;
+						category_counter++;
+					}
 
-						x.push(await resized_img.arraySync());
-						classes.push(label_nr);
+					this_data = shuffle(this_data);
+
+					for (var i = 0; i < this_data.length; i++) {
+						var item = this_data[i]["item"];
+						var this_category_counter = this_data[i]["category_counter"];
+						x = x.concat(item);
+						classes.push(this_category_counter);
+					}
+
+					y = tf.tensor(classes);
+
+					for (let [key, value] of Object.entries(imageData)) {
+						for (var i = 0; i < imageData[key].length; i++) {
+							var item = imageData[key][i];
+							dispose(item);
+						}
+					}
+					imageData = null;
+				} else if(category == "classification") {
+					var x_string, y_string;
+					x_string = await _get_training_data_from_filename("x.txt");
+					y_string = await _get_training_data_from_filename("y.txt");
+					x = numpy_str_to_tf_tensor(x_string, max_number_values);
+					y = numpy_str_to_tf_tensor(y_string, max_number_values);
+
+					var x_print_string = tensor_print_to_string(x);
+					var y_print_string = tensor_print_to_string(y);
+
+					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+				} else {
+					alert("Unknown dataset category: " + category);
+				}
+
+				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
+				}
+
+				xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			}
+		} else {
+			if(data_type_val == "image") {
+				Swal.fire({
+					title: 'Generating tensors from images...',
+					html: "This may take some time, but your computer is working!",
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+				var category_counter = $(".own_image_label").length;
+				var keys = [];
+				var x = [];
+				var y = [];
+				var classes = [];
+
+				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+					var img_elems = $($(".own_images")[label_nr]).children().find("img");
+					if(img_elems.length) {
+						var label_val = $($(".own_image_label")[label_nr]).val();
+						keys.push(label_val);
+						labels[label_nr] = label_val;
+
+						for (var j = 0; j < img_elems.length; j++) {
+							var img_elem = img_elems[j];
+
+							var tf_img = tf.browser.fromPixels(img_elem);
+							var resized_img = tf_img.
+								resizeNearestNeighbor([height, width]).
+								toFloat();
+
+							if($("#divide_by").val() != 1) {
+								resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+							}
+
+							x.push(await resized_img.arraySync());
+							classes.push(label_nr);
+						}
 					}
 				}
-			}
 
-			x = tf.tensor(x);
-			y = tf.tensor(y).expandDims();
+				x = tf.tensor(x);
+				y = tf.tensor(y).expandDims();
 
-			if(shuffle_before_training()) {
-				var indices = Array.from(Array(x.shape[0]).keys());
-				var shuffled_indices = shuffle(indices);
-				shuffled_indices = tf.tensor(shuffled_indices, null, 'int32');
-				x = tf.gather(x, shuffled_indices);
-				y = tf.gather(y, shuffled_indices);
-			}
-
-			if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-				try {
-					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-				} catch (e) {
-					header(e);
+				if(shuffle_before_training()) {
+					var indices = Array.from(Array(x.shape[0]).keys());
+					var shuffled_indices = shuffle(indices);
+					shuffled_indices = tf.tensor(shuffled_indices, null, 'int32');
+					x = tf.gather(x, shuffled_indices);
+					y = tf.gather(y, shuffled_indices);
 				}
+
+				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+					try {
+						y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
+					} catch (e) {
+						header(e);
+					}
+				}
+
+				xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			} else if (data_type_val == "tensordata") {
+				x = numpy_str_to_tf_tensor(x_file, max_number_values);
+				y = numpy_str_to_tf_tensor(y_file, max_number_values);
+
+				xy_data = {"x": x, "y": y};
+			} else if (data_type_val == "csv") {
+				xy_data = get_x_y_from_csv();
+			} else {
+				alert("Unknown data type: " + data_type_val);
 			}
 
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
-		} else if (data_type_val == "tensordata") {
-			x = numpy_str_to_tf_tensor(x_file, max_number_values);
-			y = numpy_str_to_tf_tensor(y_file, max_number_values);
-
-			xy_data = {"x": x, "y": y};
-		} else if (data_type_val == "csv") {
-			xy_data = get_x_y_from_csv();
-		} else {
-			alert("Unknown data type: " + data_type_val);
+			$("#reset_data").hide();
 		}
-
-		$("#reset_data").hide();
 	}
 
 	return xy_data;
