@@ -63,3 +63,12 @@ in creating this program:
 - [Minify](https://github.com/matthiasmullie/minify.git)
 
 [comment]: <> (EndSources)
+
+# PHP Settings
+
+In php.ini, set
+
+```
+upload_max_filesize = 1000M;
+post_max_size = 1000M;
+```

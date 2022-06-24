@@ -8,9 +8,10 @@
 		} else {
 			if(array_key_exists("id", $_GET)) {
 				$id = $_GET["id"];
-				$query = "select model_structure from model where (is_public = true or user_id = ".esc($id).") and id = ".esc($id);
+				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+				$query = "select model_structure from model where ((is_public = true and reviewed = true) or user_id = ".esc($user_id).") and id = ".esc($id);
 				$doc = get_single_value_from_query($query);
-				print json_encode($doc);
+				print $doc;
 			} else {
 				print "No id given.";
 			}

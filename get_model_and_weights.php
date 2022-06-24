@@ -3,52 +3,15 @@
 
 	if(array_key_exists("id", $_GET)) {
 		$model_id = $_GET["id"];
-		if(model_is_is_valid($model_id)) {
-			//dier($model_id);
-			if(model_is_public($model_id) || can_edit_models(get_user_from_model_id($model_id))) {
-				$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-				if(is_null($user)) {
-					print "User doesn't exist.";
-				} else {
-					$filters = [
-						'$and' => [
-							[
-								'$or' => [
-									["user" => ['$eq' => $user]],
-									["is_public" => ['$eq' => 'true']],
-								],
-							],
-							['_id' => new MongoDB\BSON\ObjectID(filter_str_int($model_id))]
-						]
-					];
-		
-					//TODO
-					$options = array(
-						"category" => true,
-						"network_name" => true
-					);
-		
-					$results = find_mongo("tfd.models", $filters, $options);
-
-					$result = run_query($query);
-					while($row = $result->fetch_assoc()) {
-						$usernames[] = $row["username"];
-					}
-		
-					if(count($results) > 0) {
-						foreach($results as $doc) {
-							$model_weights = $doc["model_weights"];
-							print json_encode($model_weights);
-						}
-					} else {
-						print "No data was found.";
-					}
-				}
+		if(model_is_public($model_id) || can_edit_models(get_user_from_model_id($model_id))) {
+			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+			if(is_null($user)) {
+				print "User doesn't exist.";
 			} else {
-				print "You don't have the permission.";
+				print get_single_value_from_query("select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).")");
 			}
 		} else {
-			print "Id is not valid";
+			print "You don't have the permission.";
 		}
 	} else {
 		print "No id given.";
