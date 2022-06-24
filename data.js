@@ -253,6 +253,12 @@ async function get_xs_and_ys () {
 
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
+
+		labels = xy_data.keys;
+
+		if(xy_data.x.shape.length == 4 && xy_data.x.shape[xy_data.x.shape.length - 1] == 3) {
+			log("plot images"); // TODO!!!
+		}
 	} else {
 		if(data_origin == "default") {
 			if(xy_data === null) {
