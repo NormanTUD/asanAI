@@ -25,10 +25,10 @@
         <h1>Model Administration</h1>
 <?php
     $network_names = [];
-    $query = "select name from model";
+    $query = "select id, name from model";
     $result = run_query($query);
     while ($row = $result->fetch_row()) {
-	    $network_names[] = $row[0];
+	    $network_names[] = array("id" => $row[0], "name" => $row[1]);
     }
     if(is_admin()) {
         if(count($network_names)) {
@@ -37,9 +37,9 @@
             <span id="delete_model_msg"></span><br/>
             <select id="network_select">
 <?php
-            foreach($network_names as $name) {
+            foreach($network_names as $network) {
 ?>
-                <option id="<?php print htmlentities($name);?>"><?php print htmlentities($name);?></option>
+                <option value="<?php print htmlentities($network["id"]);?>"><?php print htmlentities($network["name"]);?></option>
 <?php
             }
 ?>
@@ -58,7 +58,7 @@
 <?php
 	    $network_data = [];
 	    $network_data_query = "select id, is_public, reviewed, name from model";
-	    $result = run_query($query);
+	    $result = run_query($network_data_query);
 	    while ($row = $result->fetch_row()) {
 		    $this_data = array(
 			    "id" => $row[0],
@@ -66,10 +66,12 @@
 			    "reviewed" => $row[2],
 			    "network_name" => $row[3]
 		    );
-		    $this_data["requests_public"] = false;
+		    $this_data["requests_public"] = 0;
+
 		    if($this_data["is_public"] && !$this_data["reviewed"]) {
-			    $this_data["requests_public"] = true;
+			    $this_data["requests_public"] = 1;
 		    }
+
 		    $network_data[] = $this_data;
 	    }
 
@@ -80,9 +82,9 @@
                     <td class="<?php print $red = $data["is_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["is_public"]);?></td>
                     <td class="<?php print $red = $data["requests_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["requests_public"]);?></td>
 <?php
-                if($data["requests_public"] == "true") {
+                if($data["requests_public"]) {
 ?>
-                    <td><button id="<?php print htmlentities($data["network_name"]);?>" onclick="change_to_public(this)" >Change</button></td> 
+                    <td><button id="<?php print htmlentities($data["id"]);?>" onclick="change_to_public(this)" >Change</button></td> 
 <?php
                 }
 ?>
@@ -104,7 +106,7 @@
             function delete_network() {
                 network_name = document.getElementById("network_select").value;
                 $.ajax({
-                    url: "delete_network.php?network_name=" + network_name,
+                    url: "delete_network.php?id=" + network_name,
                     success: function(data) {
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
@@ -117,7 +119,7 @@
             function change_to_public(elem) {
                 console.log(elem);
                 $.ajax({
-                    url: "update_is_public.php?network_name=" + elem.id,
+                    url: "update_is_public.php?id=" + elem.id + "&is_public=1",
                     success: function (data) {
                         console.log(data)
                         window.location.href = "model.php";

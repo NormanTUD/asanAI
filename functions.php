@@ -28,28 +28,6 @@
 					$GLOBALS["use_db"] = 0;
 				}
 			}
-
-			try {
-				$port = 27017;
-				$GLOBALS["manager"] = new MongoDB\Driver\Manager("mongodb://localhost:$port");
-			} catch (\Throwable $e) {
-				error_log($e);
-				$GLOBALS["use_db"] = 0;
-			}
-
-			if($GLOBALS["use_db"]) {
-				if($GLOBALS["manager"]) {
-					try {
-						$listdatabases = new MongoDB\Driver\Command(["listCollections" => 1]);
-						$res = $GLOBALS["manager"]->executeCommand("tfd_db", $listdatabases);
-						$collections = current($res->toArray());
-					} catch (throwable $e) {
-						$GLOBALS["use_db"] = 0;
-					}
-				} else {
-					$GLOBALS["use_db"] = 0;
-				}
-			}
 		} catch (Exception $e) {
 			error_log($e);
 		}
@@ -176,7 +154,7 @@
 	}
 
 	function delete_model ($id, $user_id) {
-		return get_single_value_from_query("delete from models where id = ".esc($id)." and ".esc($user_id));
+		return get_single_value_from_query("delete from model where id = ".esc($id)." and ".esc($user_id));
 	}
 
 	function save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $name) {
@@ -214,7 +192,7 @@
 	}
 
 	function public_is_requested($id) {
-		return !!get_single_value_from_query("select 1 where reviewed = false and is_public = true id = ".esc($id));
+		return !!get_single_value_from_query("select count(*) from model where reviewed = false and is_public = true and id = ".esc($id));
 	}
 
 	function set_is_public($model_id, $status) {
@@ -225,7 +203,8 @@
 			} else {
 				$status = "false";
 			}
-			run_query("update model set is_public = $status where id = ".esc($model_id));
+			$query = "update model set is_public = $status where id = ".esc($model_id);
+			run_query($query);
 		}
 	}
 

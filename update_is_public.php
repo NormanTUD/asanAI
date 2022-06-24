@@ -6,14 +6,8 @@
 			if(array_key_exists("is_public", $_GET)) {
 				$id = $_GET["id"];
 				$is_public = $_GET["is_public"];
-				if(public_is_requested($id) == "true") {
-					if($is_public) {
-						set_is_public_true($id, 1);
-						print "ok public is true";
-					} else {
-						set_is_public_true($id, 0);
-						print "ok public is false";
-					}
+				if(public_is_requested($id)) {
+					set_is_public($id, !$is_public);
 				} else {
 					print "The user don't requested this network to be made public.";
 				}
