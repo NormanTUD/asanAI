@@ -3365,7 +3365,7 @@ function reset_view() {
 }
 
 async function change_data_origin() {
-	if($("#reinit_weights_on_data_source_change").is(":checked")) {
+	if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 		force_reinit();
 	}
 
