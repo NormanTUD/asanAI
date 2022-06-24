@@ -33,7 +33,6 @@
 	$traindata_contents = scandir($start_dir);
 	
 	if(!contains_null_values($traindata_contents)) {
-
 		$data = [];
 
 		foreach ($traindata_contents as $content) {
@@ -96,31 +95,31 @@
 
 		if(array_key_exists("session_id", $_COOKIE)) {
 			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-			if(!is_null($user)) {
-				$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
+			$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
+		} else { 
+			$query = "select id, category, category_full, name, user_id from model where (is_public = true and reviewed = true)";
+		}
 
-				$result = run_query($query);
+		$result = run_query($query);
 
-				while ($row = $result->fetch_row()) {
-					$id = $row[0];
-					$category = $row[1];
-					$category_full = $row[2];
-					$network_name = $row[3];
-					$user = $row[4];
+		while ($row = $result->fetch_row()) {
+			$id = $row[0];
+			$category = $row[1];
+			$category_full = $row[2];
+			$network_name = $row[3];
+			$user = $row[4];
 
-					$data[$category_full]["category_name"] = $category;
-					$data[$category_full]["datasets"][$network_name] = array(
-						"name" => $network_name,
-						"user_id" => $user,
-						"data" => "get_model_data.php?id=".$id,
-						"id" => $id,
-						"filename" => "get_model_from_db.php?id=".$id,
-						"weights_file" => array(
-							$network_name => "get_model_and_weights.php?id=".$id
-						)
-					);
-				}
-			}
+			$data[$category_full]["category_name"] = $category;
+			$data[$category_full]["datasets"][$network_name] = array(
+				"name" => $network_name,
+				"user_id" => $user,
+				"data" => "get_model_data.php?id=".$id,
+				"id" => $id,
+				"filename" => "get_model_from_db.php?id=".$id,
+				"weights_file" => array(
+					$network_name => "get_model_and_weights.php?id=".$id
+				)
+			);
 		}
 
 		print json_encode($data, JSON_PRETTY_PRINT);

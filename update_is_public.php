@@ -7,7 +7,7 @@
 				$id = $_GET["id"];
 				$is_public = $_GET["is_public"];
 				if(public_is_requested($id)) {
-					set_is_public($id, !$is_public);
+					set_is_public($id, 1);
 				} else {
 					print "The user don't requested this network to be made public.";
 				}

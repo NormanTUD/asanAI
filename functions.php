@@ -197,13 +197,7 @@
 
 	function set_is_public($model_id, $status) {
 		if(is_admin()) {
-			$status = !!$status;
-			if($status) {
-				$status = "true";
-			} else {
-				$status = "false";
-			}
-			$query = "update model set is_public = $status where id = ".esc($model_id);
+			$query = "update model set reviewed = 1 where id = ".esc($model_id);
 			run_query($query);
 		}
 	}
