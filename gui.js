@@ -4524,3 +4524,16 @@ function realHeight(obj){
 	clone.remove();
 	return height;
 }
+
+function shuffle_before_training () {
+	var retval = false;
+	$(".shuffle_data_before_training").each((i, x) => {
+		if(!is_hidden_or_has_hidden_parent(x)) {
+			if($(x).is(":checked")) {
+				retval = true;
+			}
+		}
+	});
+
+	return retval;
+}
