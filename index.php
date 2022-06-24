@@ -1305,7 +1305,7 @@ $GLOBALS['minify'] = 0;
 												<label>Colour</label>
 												<div id="color-picker"></div><br />
 												<br>
-												<button id="clear" onclick="event.preventDefault(); atrament.clear();">
+												<button id="clear" onclick="event.preventDefault();atrament.clear();predict_handdrawn();">
 													Clear image
 												</button>
 											</form>

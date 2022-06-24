@@ -188,6 +188,7 @@ function get_fit_data () {
 				predict($('#predict_own_data').val());
 			}
 			show_prediction(0, 1);
+			predict_handdrawn();
 		}
 	}
 
