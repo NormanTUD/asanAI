@@ -144,7 +144,7 @@
 	}
 
 	function delete_expiry_dates() {
-		$query = "delete from session_ids where datediff(expiry_date, now()) < 0";
+		$query = "delete from tfd_db.session_ids where datediff(expiry_date, now()) < 0";
 		run_query($query);
 	}
 
