@@ -4,7 +4,6 @@
 	if(array_key_exists("id", $_GET)) {
 		$model_id = $_GET["id"];
 		if(model_is_public($model_id) || can_edit_models($model_id)) {
-
 			$filters = ['_id' => new MongoDB\BSON\ObjectID(filter_str_int($model_id))];
 			$options = ['projection' => ['_id' => true, 'model_data' => true]];
 

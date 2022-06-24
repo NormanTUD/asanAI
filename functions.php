@@ -56,22 +56,7 @@
 	}
 
 	function get_number_model_names($name) {
-		$filters = [];
-	
-		$options = ['projection' => ['network_name' => true]];
-	
-		$results = find_mongo("tfd.models", $filters, $options);
-		$nr = 0;
-	
-		if(!is_null($results)) {
-			foreach ($results as $doc) {
-				if($name == $doc["network_name"]) {
-					$nr++;
-				}
-			}
-			return $nr;
-		}
-		return 0;
+		$result = get_single_value_from_query("select count(*) where name = ".esc($name));
 	}
 
 	function show_admin_register() {
@@ -118,13 +103,6 @@
 
 	function change_is_public($network_name, $value) {
 		_assert(($value == 'true') || ($value == 'false'), "Variable value is not a bool.");
-		$collection = "tfd.models";
-		$bulk = new \MongoDB\Driver\BulkWrite();
-		$bulk->update(
-		    ['network_name' => $network_name],
-		    ['$set' => ['is_public' => $value]],
-		);
-		$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
 		return $result;
 	}
 
@@ -177,13 +155,7 @@
 	}
 
 	function model_is_public($model_id) {
-		$filters = ['_id' => new MongoDB\BSON\ObjectId($model_id)];
-		$options = ['projection' => ['is_public' => true]];
-		$result = find_mongo("tfd.models", $filters, $options);
-		if($result[0]["is_public"] == "true") {
-			return true;
-		}
-		return false;
+		$query = !!"select is_public from model where id = ".esc($model_id);
 	}
 
 	function can_edit_models($model_user_id) {
@@ -199,24 +171,7 @@
 	}
 
 	function get_user_from_model_id($model_id) {
-		$filter = ['_id' => new MongoDB\BSON\ObjectID(filter_str_int($model_id))];
-		$options = ['projection' => ['user' => true]];
-		$result = find_mongo_wrapper($filter, $options);
-		if($result) {
-			return $result[0]["user"];
-		}
-		return null;
-	}
-
-	function get_model_user_id($network_name) {
-		_assert($network_name != "", "Network name must contain a value.");
-		$filters = ['network_name' => $network_name];
-		$options = ['projection' => ['user' => true]];
-		$results = find_mongo("tfd.models", $filters, $options);
-		if($results) {
-			return $results[0]["user"];
-		} 
-		return false;
+		return get_single_value_from_query("select user_id from model where id = ".esc($model_id));
 	}
 
 	function can_edit_user($username) {
@@ -248,18 +203,12 @@
 		return false;
 	}
 
-	function delete_mongo ($collection, $id, $user_id) {
-		if(can_edit_models($user_id)) {
-			$bulk = new \MongoDB\Driver\BulkWrite();
-			$bulk->delete(array('_id' => new MongoDB\BSON\ObjectId($id)));
-			$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
-			return $result;
-		}
-		return false;
+	function delete_model ($id, $user_id) {
+		return get_single_value_from_query("delete from models where id = ".esc($id)." and ".esc($user_id));
 	}
 
-	function delete_mongo_models ($id, $user_id) {
-		delete_mongo('tfd.models', $id, $user_id);
+	function save_to_db () {
+
 	}
 
 	function save_mongo ($collection, $data) {
@@ -339,21 +288,20 @@
 		return false;
 	}
 
-	function public_is_requested($network_name) {
-		$filters = ['network_name' => $network_name];
-		$options = ['projection' => ['requests_public' => true]];
-		$results = find_mongo("tfd.models", $filters, $options);
-		return $results[0]["requests_public"];
+	function public_is_requested($id) {
+		return !!get_single_value_from_query("select 1 where reviewed = false and is_public = true id = ".esc($id));
 	}
 
-	function set_is_public_true($network_name) {
-		$filters = ['network_name' => $network_name];
-		$options = ['projection' => ['is_public' => true]];
-		$results = find_mongo("tfd.models", $filters, $options);
-		if($results[0]["is_public"] == "true") {
-			return false;
+	function set_is_public($model_id, $status) {
+		if(is_admin()) {
+			$status = !!$status;
+			if($status) {
+				$status = "true";
+			} else {
+				$status = "false";
+			}
+			run_query("update model set is_public = $status where id = ".esc($model_id));
 		}
-		return true;
 	}
 
 	function run_query_safe ($query) {
@@ -568,6 +516,10 @@
 		if(!$condition) {
 			die($message);
 		}
+	}
+
+	function get_user_id_from_model_id($model_id) {
+		return get_single_value_from_query("select user_id from model where id = ".esc($model_id));
 	}
 
 	delete_expiry_dates();

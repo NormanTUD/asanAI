@@ -8,33 +8,9 @@
 		} else {
 			if(array_key_exists("id", $_GET)) {
 				$id = $_GET["id"];
-				$filters = [
-					'$and' => [
-						[
-							'$or' => [
-								["user" => ['$eq' => $user]],
-								["is_public" => ['$eq' => 'true']],
-							],
-						],
-						['_id' => new MongoDB\BSON\ObjectID(filter_str_int($id))]
-					]
-				];
-				// TODO
-				$options = array(
-					'user' => true,
-					'is_public' => true,
-					'category' => true,
-	
-					'model_weights' => 0,
-					'model_structure' => 0,
-					'network_name' => true
-				);
-	
-				$results = find_mongo("tfd.models", $filters, $options);
-	
-				foreach ($results as $doc) {
-					print json_encode($doc["model_structure"]);
-				}
+				$query = "select json from model where (is_public = true or user_id = ".esc($id).") and id = ".esc($id);
+				$doc = get_single_value_from_query($query);
+				print json_encode($doc);
 			} else {
 				print "No id given.";
 			}

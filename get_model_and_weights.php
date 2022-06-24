@@ -6,12 +6,10 @@
 		if(model_is_is_valid($model_id)) {
 			//dier($model_id);
 			if(model_is_public($model_id) || can_edit_models(get_user_from_model_id($model_id))) {
-	
 				$user = get_user_id_from_session_id($_COOKIE["session_id"]);
 				if(is_null($user)) {
 					print "User doesn't exist.";
 				} else {
-					
 					$filters = [
 						'$and' => [
 							[
@@ -31,7 +29,6 @@
 					);
 		
 					$results = find_mongo("tfd.models", $filters, $options);
-
 
 					$result = run_query($query);
 					while($row = $result->fetch_assoc()) {

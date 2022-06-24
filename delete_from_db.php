@@ -9,28 +9,15 @@
 			if(is_null($user)) {
 				print "User doesn't exist.";
 			} else {
-				if(model_id_is_valid($id)) {
-					$filters = ['_id' => new MongoDB\BSON\ObjectID($id)];
-					$options = [
-						'projection' => ['_id' => 1]
-					];
-		
-					$results = find_mongo("tfd.models", $filters, $options);
-					if(array_key_exists("user_id", $_GET)) {
-						if(array_key_exists(0, $results)) {
-							if(delete_mongo_models($_GET["id"], $_GET["user_id"])) {
-								print "A model was found.";
-							} else {
-								print "You can not edit this model.";
-							}
-						} else {
-							print "No model found by the given ID -- OR -- you do not own this model. You cannot delete models you don't own";
-						}
+				if(is_admin() || get_user_id_from_model_id($id) == $user) {
+					$query = "delete from model where id = ".esc($id);
+					if(run_query($query)) {
+						print "Successfully deleted";
 					} else {
-						print "User is missing.";
+						print "NOT successfully deleted";
 					}
 				} else {
-					print "The id of the model is not valid.";
+					print "You cannot edit this model";
 				}
 			}
 		} else {
