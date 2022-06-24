@@ -31,6 +31,12 @@
 					);
 		
 					$results = find_mongo("tfd.models", $filters, $options);
+
+
+					$result = run_query($query);
+					while($row = $result->fetch_assoc()) {
+						$usernames[] = $row["username"];
+					}
 		
 					if(count($results) > 0) {
 						foreach($results as $doc) {

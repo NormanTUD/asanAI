@@ -18,7 +18,7 @@
 				mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
 			} catch (Exception $e) {
 				$sql = "CREATE DATABASE tfd_db";
-				if (run_query($sql) === TRUE) {
+				if (run_query_safe($sql) === TRUE) {
 					mysqli_select_db($GLOBALS["mysqli"], "tfd_db");
 					load_sql_file_get_statements("tfd.sql");
 
@@ -116,17 +116,17 @@
 		return !!get_single_value_from_query("select count(*) from tfd_db.login where role_id = 1");
 	}
 
-    function change_is_public($network_name, $value) {
-	_assert(($value == 'true') || ($value == 'false'), "Variable value is not a bool.");
-        $collection = "tfd.models";
-        $bulk = new \MongoDB\Driver\BulkWrite();
-        $bulk->update(
-            ['network_name' => $network_name],
-            ['$set' => ['is_public' => $value]],
-        );
-        $result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
-        return $result;
-    }
+	function change_is_public($network_name, $value) {
+		_assert(($value == 'true') || ($value == 'false'), "Variable value is not a bool.");
+		$collection = "tfd.models";
+		$bulk = new \MongoDB\Driver\BulkWrite();
+		$bulk->update(
+		    ['network_name' => $network_name],
+		    ['$set' => ['is_public' => $value]],
+		);
+		$result = $GLOBALS["manager"]->executeBulkWrite($collection, $bulk);
+		return $result;
+	}
 
 	function get_network_names() {
         $filters = [];
@@ -140,13 +140,13 @@
 			}
 		}
 		return $array;
-    }
+	}
 
 	function get_network_data() {
-        $filters = [];
-        $options = [];
+		$filters = [];
+		$options = [];
 
-        $results = find_mongo("tfd.models", $filters, $options);
+		$results = find_mongo("tfd.models", $filters, $options);
 		$array = [];
 		if($results) {
 			foreach($results as $doc) {
@@ -154,7 +154,7 @@
 			}
 		}
 		return $array;
-    }
+	}
 
 	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
@@ -186,19 +186,6 @@
 		return false;
 	}
 
-	// is_public, is_admin, is_owner
-	// function can_edit_or_is_public($model_id) {
-	// 	if(session_id_exists($user_id)) {
-	// 		if(model_is_public($model_id)) {
-	// 			return true;
-	// 		}
-	// 		if(can_edit_models()) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-
 	function can_edit_models($model_user_id) {
 		if(is_admin()) {
 			return true;
@@ -224,8 +211,8 @@
 	function get_model_user_id($network_name) {
 		_assert($network_name != "", "Network name must contain a value.");
 		$filters = ['network_name' => $network_name];
-        $options = ['projection' => ['user' => true]];
-        $results = find_mongo("tfd.models", $filters, $options);
+		$options = ['projection' => ['user' => true]];
+		$results = find_mongo("tfd.models", $filters, $options);
 		if($results) {
 			return $results[0]["user"];
 		} 
@@ -329,21 +316,21 @@
 	}
 
 	function get_usernames() {
-        $query = "select username, role_id from login";
-        $result = run_query($query);
-        while($row = $result->fetch_assoc()) {
-            $usernames[] = $row["username"];
-        }
-        return $usernames;
-    }
+		$query = "select username, role_id from login";
+		$result = run_query($query);
+		while($row = $result->fetch_assoc()) {
+			$usernames[] = $row["username"];
+		}
+		return $usernames;
+	}
 
-    function get_category_from_table($query, $column) {
-        $result = run_query($query);
-        while($row = $result->fetch_assoc()) {
-            $category_array[] = $row[$column];
-        }
-        return $category_array;
-    }
+	function get_category_from_table($query, $column) {
+		$result = run_query($query);
+		while($row = $result->fetch_assoc()) {
+			$category_array[] = $row[$column];
+		}
+		return $category_array;
+	}
 
 	function model_is_is_valid($model_id) {
 		if(preg_match('/^[0-9a-f]{24}$/', $model_id)) {
@@ -353,26 +340,37 @@
 	}
 
 	function public_is_requested($network_name) {
-        $filters = ['network_name' => $network_name];
-        $options = ['projection' => ['requests_public' => true]];
-        $results = find_mongo("tfd.models", $filters, $options);
-        return $results[0]["requests_public"];
-    }
+		$filters = ['network_name' => $network_name];
+		$options = ['projection' => ['requests_public' => true]];
+		$results = find_mongo("tfd.models", $filters, $options);
+		return $results[0]["requests_public"];
+	}
 
-    function set_is_public_true($network_name) {
-        $filters = ['network_name' => $network_name];
-        $options = ['projection' => ['is_public' => true]];
-        $results = find_mongo("tfd.models", $filters, $options);
-        if($results[0]["is_public"] == "true") {
-            return false;
-        }
-        return true;
-    }
+	function set_is_public_true($network_name) {
+		$filters = ['network_name' => $network_name];
+		$options = ['projection' => ['is_public' => true]];
+		$results = find_mongo("tfd.models", $filters, $options);
+		if($results[0]["is_public"] == "true") {
+			return false;
+		}
+		return true;
+	}
 
-	#save_mongo_models(array("hallo" => 12323));                                                                                                                                                                                     
-	#dier(find_mongo("tfd.models", array("hallo" => array('$exists' => true)), array()));   
-	#save_mongo("abc.testabc", array("hallo" => 12323));
-	#dier(find_mongo("tfd.models", array(), array()));
+	function run_query_safe ($query) {
+		if($GLOBALS['mysqli']) {
+			$start_time = microtime(true);
+			$result = $GLOBALS['mysqli']->query($query);
+			if($result === false) {
+				dier("Query failed:\n$query\nError:\n".$GLOBALS["mysqli"]->error);
+			}
+			$end_time = microtime(true);
+			$bt = debug_backtrace();
+			$caller = array_shift($bt);
+			$GLOBALS["queries"][] = ["query" => $query, "runtime" => ($end_time - $start_time), "location" => $caller['file'].', '.$caller['line']];
+			return $result;
+		}
+		return null;
+	}
 
 	function run_query ($query) {
 		if($GLOBALS['mysqli']) {
@@ -539,8 +537,8 @@
 	}
 
 	function username_exists($username) {
-        return !!get_single_value_from_query("select count(*) from tfd_db.login where username = ".esc($username));
-    }
+		return !!get_single_value_from_query("select count(*) from tfd_db.login where username = ".esc($username));
+	}
 	 
 	function load_sql_file_get_statements ($file) {
 		$contents = file_get_contents($file);
@@ -571,8 +569,6 @@
 			die($message);
 		}
 	}
-
-	#_assert(false, "hallo");
 
 	delete_expiry_dates();
 ?>

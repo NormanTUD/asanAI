@@ -999,7 +999,7 @@ $GLOBALS['minify'] = 0;
 							<span id="save_model_msg" style="background-color: green"></span><br/>
 							<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
 							Public: <input id="is_public" type="checkbox"><br/>
-							<button id="save_to_mongodb" onclick="save_to_mongodb_wrapper()" disabled>Save</button>
+							<button id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
 							
 						</div>
 						<br/>

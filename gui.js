@@ -2927,7 +2927,7 @@ function delete_model() {
 	var id = get_id_from_train_data_struct("id");
 	var user_id = get_id_from_train_data_struct("user_id");
 	$.ajax({
-		url: "delete_from_mongodb.php?id=" + id + "&user_id=" + user_id,
+		url: "delete_from_db.php?id=" + id + "&user_id=" + user_id,
 		async: false
 	});
 	get_traindata_and_init_categories();
@@ -2980,17 +2980,17 @@ function has_network_name(elem) {
 			url: "get_number_of_model_names.php?name=" + name,
 			success: function (data) {
 				if(data == '{"number":0}') {
-					$("#save_to_mongodb").prop("disabled", false);
+					$("#save_to_db").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";
 				} else {
-					$("#save_to_mongodb").prop("disabled", true);
+					$("#save_to_db").prop("disabled", true);
 					color_msg_red("save_model_msg");
 					document.getElementById("save_model_msg").innerText = "Please choose a different network name. There is already a network with this name.";
 				}
 			}
 		});
 	} else {
-		$("#save_to_mongodb").prop("disabled", true);
+		$("#save_to_db").prop("disabled", true);
 	}
 }
 
@@ -3020,9 +3020,9 @@ function network_name_is_empty(name) {
 // 	}
 // }
 
-function save_to_mongodb(model_structure, model_weights, model_data, requests_public, category, category_full) {
+function save_to_db(model_structure, model_weights, model_data, requests_public, category, category_full) {
 	$.ajax({
-		url: "save_to_mongodb.php",
+		url: "save_to_db.php",
 		data: {
 			model_structure: model_structure,
 			model_weights: model_weights,
@@ -3050,10 +3050,10 @@ function save_to_mongodb(model_structure, model_weights, model_data, requests_pu
 	});
 }
 
-async function save_to_mongodb_wrapper () {
+async function save_to_db_wrapper () {
 	if(!model_name_already_exists()) {
-		save_to_mongodb(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
-		$("#save_to_mongodb").prop("disabled", true);
+		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+		$("#save_to_db").prop("disabled", true);
 	} else {
 		color_msg_red("save_model_msg");
 		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
