@@ -430,4 +430,9 @@
 	function get_user_id_from_model_id($model_id) {
 		return get_single_value_from_query("select user_id from model where id = ".esc($model_id));
 	}
+
+	function has_custom_data ($id) {
+		$query = "select count(*) from training_data where model_id = ".esc($id);
+		return !!get_single_value_from_query($query);
+	}
 ?>
