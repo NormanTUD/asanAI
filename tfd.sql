@@ -19,6 +19,9 @@
 -- Table structure for table `login`
 --
 
+create database tfd_db;
+use tfd_db;
+
 DROP TABLE IF EXISTS `login`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
