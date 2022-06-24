@@ -4538,3 +4538,9 @@ function shuffle_before_training () {
 
 	return retval;
 }
+
+async function save_training_data () {
+	force_download = 1;
+	var training_data = await get_xs_and_ys()
+	force_download = 0;
+}
