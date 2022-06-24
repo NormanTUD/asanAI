@@ -24,8 +24,12 @@
     <body>
         <h1>Model Administration</h1>
 <?php
-    $network_names = get_network_names();
-    $is_public = get_network_data("is_public");
+    $network_names = [];
+    $query = "select name from model";
+    $result = run_query($query);
+    while ($row = $result->fetch_row()) {
+	    $network_names[] = $row[0];
+    }
     if(is_admin()) {
         if(count($network_names)) {
 ?>
@@ -52,13 +56,29 @@
                     <th>Requests public</th>
                 </tr>
 <?php
-            $network_data = get_network_data();
-            foreach($network_data as $data) {
+	    $network_data = [];
+	    $network_data_query = "select id, is_public, reviewed, name from model";
+	    $result = run_query($query);
+	    while ($row = $result->fetch_row()) {
+		    $this_data = array(
+			    "id" => $row[0],
+			    "is_public" => $row[1],
+			    "reviewed" => $row[2],
+			    "network_name" => $row[3]
+		    );
+		    $this_data["requests_public"] = false;
+		    if($this_data["is_public"] && !$this_data["reviewed"]) {
+			    $this_data["requests_public"] = true;
+		    }
+		    $network_data[] = $this_data;
+	    }
+
+	    foreach($network_data as $data) {
 ?>
                 <tr>
                     <td><?php print htmlentities($data["network_name"]);?></td>
-                    <td class="<?php print $red = ($data["is_public"] == "true") ? print "green" : print "red";?>"><?php print htmlentities($data["is_public"]);?></td>
-                    <td class="<?php print $red = ($data["requests_public"] == "true") ? print "green" : print "red";?>"><?php print htmlentities($data["requests_public"]);?></td>
+                    <td class="<?php print $red = $data["is_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["is_public"]);?></td>
+                    <td class="<?php print $red = $data["requests_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["requests_public"]);?></td>
 <?php
                 if($data["requests_public"] == "true") {
 ?>

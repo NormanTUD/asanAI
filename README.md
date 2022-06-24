@@ -69,6 +69,6 @@ in creating this program:
 In php.ini, set
 
 ```
-upload_max_filesize = 1000M;
-post_max_size = 1000M;
+upload_max_filesize = 100M;
+post_max_size = 100M;
 ```

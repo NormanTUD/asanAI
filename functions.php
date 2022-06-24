@@ -106,34 +106,6 @@
 		return $result;
 	}
 
-	function get_network_names() {
-        $filters = [];
-        $options = [];
-
-        $results = find_mongo("tfd.models", $filters, $options);
-		$array = [];
-		if($results) {
-			foreach($results as $doc) {
-				$array[] = $doc["network_name"];
-			}
-		}
-		return $array;
-	}
-
-	function get_network_data() {
-		$filters = [];
-		$options = [];
-
-		$results = find_mongo("tfd.models", $filters, $options);
-		$array = [];
-		if($results) {
-			foreach($results as $doc) {
-				$array[] = $doc;
-			}
-		}
-		return $array;
-	}
-
 	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
 			$query = "select count(*) from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);
@@ -215,23 +187,6 @@
 		}
 		$query = "insert into model (model_structure, model_weights, model_data, user_id, is_public, category, category_full, name) values (".esc($model_structure).", ".esc($model_weights).", ".esc($model_data).", ".esc($user).", ".esc($is_public).", ".esc($category).", ".esc($category_full).", ".esc($name).")";
 		return run_query($query);
-	}
-
-	function find_mongo($table, $filter, $options) {
-		try {
-			$query = new MongoDB\Driver\Query($filter, $options);
-			$rows = $GLOBALS["manager"]->executeQuery($table, $query);
-
-			$r = array();
-			foreach($rows as $row){
-				$r[] = json_decode(json_encode($row), true);
-			}
-
-			return $r;
-		} catch (\Throwable $e) {
-			$GLOBALS["use_db"] = 0;
-			return null;
-		}
 	}
 
 	function get_usernames() {

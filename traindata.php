@@ -109,7 +109,7 @@
 					$user = $row[4];
 
 					$data[$category_full]["category_name"] = $category;
-					$data[$category_full]["datasets"]["network_name"] = array(
+					$data[$category_full]["datasets"][$network_name] = array(
 						"name" => $network_name,
 						"user_id" => $user,
 						"data" => "get_model_data.php?id=".$id,
