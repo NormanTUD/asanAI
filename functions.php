@@ -31,6 +31,10 @@
 		} catch (Exception $e) {
 			error_log($e);
 		}
+
+		if($GLOBALS["use_db"]) {
+			delete_expiry_dates();
+		}
 	}
 
 	function get_number_model_names($name) {
@@ -420,6 +424,4 @@
 	function get_user_id_from_model_id($model_id) {
 		return get_single_value_from_query("select user_id from model where id = ".esc($model_id));
 	}
-
-	delete_expiry_dates();
 ?>
