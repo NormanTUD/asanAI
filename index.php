@@ -474,7 +474,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Set options for all</div>
+						<div class="ribbon-group-title">Weights</div>
 					</div>
 
 					<!--
