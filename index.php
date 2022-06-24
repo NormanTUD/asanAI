@@ -1108,7 +1108,7 @@ $GLOBALS['minify'] = 0;
 								<br>
 								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
 								<br>
-								Shuffle data before training? <input type="checkbox" value="1" checked class="shuffle_data_before_training" />
+								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
