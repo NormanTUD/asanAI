@@ -257,7 +257,7 @@ async function get_xs_and_ys () {
 
 		labels = xy_data.keys;
 
-		if(xy_data.x.shape.length == 4 && xy_data.x.shape[xy_data.x.shape.length - 1] == 3) {
+		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 			$("#photos").show();
 			for (var i = 0; i < xy_data.x.shape[0]; i++) {
 				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
