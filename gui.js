@@ -4035,6 +4035,7 @@ function mode_choser () {
 	setCookie("theme", theme)
 
 	write_descriptions();
+	write_model_to_latex_to_page();
 	restart_fcnn();
 	restart_alexnet();
 }

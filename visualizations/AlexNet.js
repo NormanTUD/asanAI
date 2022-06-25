@@ -51,13 +51,6 @@ function AlexNet() {
 	var scene = new THREE.Scene();
 	scene.background = new THREE.Color(0xffffff);
 
-	var cookie_theme = getCookie("theme");
-	if(cookie_theme == "darkmode") {
-		scene.background = new THREE.Color(0x363636);
-	} else {
-		scene.background = new THREE.Color(0xffffff);
-	}
-
 	var factor = 10;
 	var camera = new THREE.OrthographicCamera(get_graph_width() / -factor, get_graph_width() / factor, h / factor, h / - factor, -10000000, 10000000);
 	camera.position.set(-219, 92, 84);
@@ -73,6 +66,13 @@ function AlexNet() {
 	// /////////////////////////////////////////////////////////////////////////////
 
 	function restartRenderer({rendererType_=rendererType}={}) {
+		var cookie_theme = getCookie("theme");
+		if(cookie_theme == "darkmode") {
+			scene.background = new THREE.Color(0x363636);
+		} else {
+			scene.background = new THREE.Color(0xffffff);
+		}
+
 		rendererType = rendererType_;
 		rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 
@@ -105,6 +105,12 @@ function AlexNet() {
 
 	async function animate() {
 		requestAnimationFrame(animate);
+		var cookie_theme = getCookie("theme");
+		if(cookie_theme == "darkmode") {
+			scene.background = new THREE.Color(0x363636);
+		} else {
+			scene.background = new THREE.Color(0xffffff);
+		}
 		renderer.render(scene, camera);
 		await delay(200);
 	};
@@ -126,6 +132,12 @@ function AlexNet() {
 			showConvDims_=showConvDims
 		}={}
 	) {
+		var cookie_theme = getCookie("theme");
+		if(cookie_theme == "darkmode") {
+			scene.background = new THREE.Color(0x363636);
+		} else {
+			scene.background = new THREE.Color(0xffffff);
+		}
 
 		rendererType = $("#alexnet_renderer > input[type=radio]:checked").val();
 

@@ -1592,12 +1592,18 @@ $GLOBALS['minify'] = 0;
 				if(disable_alexnet) {
 					hide_tab_label("alexnet_tab_label");
 					if(!dont_click) {
-						if(clicked_on_tab == 0) { show_tab_label("fcnn_tab_label", 1); clicked_on_tab = 1; }
+						if(clicked_on_tab == 0) {
+							show_tab_label("fcnn_tab_label", 1);
+							clicked_on_tab = 1
+						}
 					}
 				} else {
 					show_tab_label("alexnet_tab_label");
 					if(!dont_click) {
-						if(clicked_on_tab == 0) { show_tab_label('alexnet_tab_label', 1); clicked_on_tab = 1; }
+						if(clicked_on_tab == 0) {
+							show_tab_label('alexnet_tab_label', 1);
+							clicked_on_tab = 1;
+						}
 					}
 				}
 				reset_view();

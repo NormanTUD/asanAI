@@ -129,7 +129,7 @@ button:hover {
 select {
 	background-color: rgba(255,255,255,0.5);
 	border: none;
-  border-radius: 5px;
+	border-radius: 5px;
 }
 
 select:hover {
@@ -220,4 +220,9 @@ a.ui-button:focus {
 
 #tablist {
 	background-color: #151B54;
+}
+
+#predict_own_data {
+	background: #444444;
+	color: white;
 }
