@@ -258,6 +258,11 @@ async function get_xs_and_ys () {
 
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[xy_data.x.shape.length - 1] == 3) {
 			log("plot images"); // TODO!!!
+		} else {
+			var x_print_string = tensor_print_to_string(xy_data.x);
+			var y_print_string = tensor_print_to_string(xy_data.y);
+
+			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 		}
 	} else {
 		if(data_origin == "default") {
