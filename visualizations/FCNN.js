@@ -93,6 +93,14 @@ function FCNN() {
 			showLabels_=showLabels={},
 			layerTypes_=layerTypes
 		}) {
+
+		cookie_theme = getCookie("theme");
+		if(cookie_theme == "darkmode") {
+			defaultEdgeColor = "#ffffff";
+		} else {
+			defaultEdgeColor = "#000000";
+		}
+
 		architecture = architecture_;
 		real_architecture = real_architecture_;
 		showBias = showBias_;
