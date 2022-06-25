@@ -4244,35 +4244,38 @@ function show_tab_label(label, click) {
 }
 
 function check_number_values() {
-	$("input[type=number]").each((x, item) => {
-		var val = $(item).val();
+	var all_fields = document.querySelectorAll('input[type="number"]');
 
-		if(!$(item).data("bgcolor")) {
-			$(item).data("bgcolor", $(item).css("background-color"));
+	for (var i = 0; i < all_fields.length; i++) {
+		var item = $(all_fields[i]);
+		var val = item.val();
+
+		if(!item.data("bgcolor")) {
+			item.data("bgcolor", item.css("background-color"));
 		}
 
 		if (!isNumeric(val)) {
-			$(item).css("background-color", "red");
+			item.css("background-color", "red");
 		} else {
 			val = parseFloat(val);
-			$(item).css("background-color", $(item).data("bgcolor"));
+			item.css("background-color", item.data("bgcolor"));
 
-			var max = parseFloat($(item).attr("max"));
-			var min = parseFloat($(item).attr("min"));
+			var max = parseFloat(item.attr("max"));
+			var min = parseFloat(item.attr("min"));
 
 			if (max) {
 				if (val > max) {
-					$(item).val(max);
+					item.val(max);
 				}
 			}
 
 			if (min) {
 				if (val < min) {
-					$(item).val(min);
+					item.val(min);
 				}
 			}
 		}
-	});
+	};
 }
 
 function summary_to_table(t) {
