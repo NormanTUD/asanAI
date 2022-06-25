@@ -230,20 +230,23 @@ function get_item_value(layer, classname) {
 	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
 
 	var layer_settings = $(".layer_setting");
-	if (typeof (classname) == "string") {
-		if ($($(layer_settings[layer]).find("." + classname)[0]).attr("type") == "checkbox") {
-			return $($(layer_settings[layer]).find("." + classname)[0]).is(":checked");
+	var layer = $(layer_settings[layer]);
+	if (typeof(classname) == "string") {
+		var found = $(layer.find("." + classname)[0]);
+		if (found.attr("type") == "checkbox") {
+			return found.is(":checked");
 		} else {
-			var data = $($(layer_settings[layer]).find("." + classname)[0]).val();
+			var data = found.val();
 			return data;
 		}
 	} else {
 		for (var this_classname in classname) {
-			if ($($(layer_settings[layer]).find("." + this_classname)[0]).attr("type") == "checkbox") {
-				var data = $($(layer_settings[layer]).find("." + this_classname)[0]).is(":checked");
+			var found = $($layer.find("." + this_classname)[0])
+			if (found.attr("type") == "checkbox") {
+				return found.is(":checked");
 				return data;
 			} else {
-				var data = $($(layer_settings[layer]).find("." + this_classname)[0]).val();
+				var data = found.val();
 				if (data) {
 					return data;
 				}
