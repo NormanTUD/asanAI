@@ -4028,7 +4028,15 @@ function fix_lenet_width() {
 }
 
 function mode_choser () {
+	currently_chosing_theme = true;
 	var theme = $("#theme_choser").val();
+
+	var all_fields = document.querySelectorAll('input[type="number"]');
+
+	for (var i = 0; i < all_fields.length; i++) {
+		$(all_fields[i]).removeAttr("bgcolor");
+	}
+
 	document.getElementById('css_mode').href = theme + '.css';
 	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
 
@@ -4038,6 +4046,7 @@ function mode_choser () {
 	write_model_to_latex_to_page();
 	restart_fcnn();
 	restart_alexnet();
+	currently_chosing_theme = false;
 }
 
 function move_to_demo_mode(element) {
@@ -4252,6 +4261,10 @@ function show_tab_label(label, click) {
 }
 
 function check_number_values() {
+	if(currently_chosing_theme) {
+		return;
+	}
+
 	var all_fields = document.querySelectorAll('input[type="number"]');
 
 	for (var i = 0; i < all_fields.length; i++) {
