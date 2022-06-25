@@ -4027,15 +4027,8 @@ function fix_lenet_width() {
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
 
-function mode_choser () {
-	currently_chosing_theme = true;
+async function theme_choser () {
 	var theme = $("#theme_choser").val();
-
-	var all_fields = document.querySelectorAll('input[type="number"]');
-
-	for (var i = 0; i < all_fields.length; i++) {
-		$(all_fields[i]).removeAttr("bgcolor");
-	}
 
 	document.getElementById('css_mode').href = theme + '.css';
 	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
@@ -4046,7 +4039,6 @@ function mode_choser () {
 	write_model_to_latex_to_page();
 	restart_fcnn();
 	restart_alexnet();
-	currently_chosing_theme = false;
 }
 
 function move_to_demo_mode(element) {
@@ -4261,25 +4253,17 @@ function show_tab_label(label, click) {
 }
 
 function check_number_values() {
-	if(currently_chosing_theme) {
-		return;
-	}
-
 	var all_fields = document.querySelectorAll('input[type="number"]');
 
 	for (var i = 0; i < all_fields.length; i++) {
 		var item = $(all_fields[i]);
 		var val = item.val();
 
-		if(!item.data("bgcolor")) {
-			item.data("bgcolor", item.css("background-color"));
-		}
-
 		if (!isNumeric(val)) {
 			item.css("background-color", "red");
 		} else {
 			val = parseFloat(val);
-			item.css("background-color", item.data("bgcolor"));
+			item.css("background-color", $("input").css("background-color"));
 
 			var max = parseFloat(item.attr("max"));
 			var min = parseFloat(item.attr("min"));

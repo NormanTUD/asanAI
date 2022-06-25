@@ -382,7 +382,7 @@ $GLOBALS['minify'] = 0;
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
 								<label for="expert">&#9760;&#65039; Expert</label>
 							</fieldset>
-							Theme: <select id="theme_choser" onchange="mode_choser()">
+							Theme: <select id="theme_choser" onchange="theme_choser()">
 								<option value="lightmode">Light Mode</option>
 								<option value="darkmode">Dark Mode</option>
 								<option value="natural">Natural</option>
