@@ -42,7 +42,7 @@
 	}
 
 	function show_admin_register() {
-		if(!admin_exists()) {
+		if($GLOBALS["use_db"] && !admin_exists()) {
 			print "<!DOCTYPE html>\n<h1>Set Admin</h1>\n";
 			print "<p>There is no admin yet. Please set an admin.</p>\n";
 			print "<input id='admin_email' placeholder='email'>\n";
