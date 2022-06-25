@@ -19,7 +19,7 @@ html {
 	align-items: center;
 	writing-mode: vertical-rl;
 	background: #363636;
-	border: solid #a3a8ac 1px;
+	border: solid #626567 1px;
 	width: 40px;
 	text-align: center;
 }
@@ -30,7 +30,7 @@ html {
 	position: relative;
 	z-index: 1;
 	overflow: hidden;
-	border: solid #a3a8ac 1px;
+	border: solid #626567 1px;
 }
 
 .glass_box {
@@ -39,7 +39,7 @@ html {
 	position: relative;
 	z-index: 1;
 	overflow: hidden;
-	border: solid #a3a8ac 1px;
+	border: solid #626567 1px;
 }
 
 .ui-widget-content {
