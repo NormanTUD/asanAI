@@ -344,11 +344,19 @@
 		}
 	}
 
-	function minify_css ($file) {
+	function minify_css ($file, $id=null) {
 		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
-			print "<link href='minify.php?file=$file' rel='stylesheet' />\n";
+			if($id) {
+				print "<link href='minify.php?file=$file' rel='stylesheet alternative' id='$id' />\n";
+			} else {
+				print "<link href='minify.php?file=$file' rel='stylesheet' />\n";
+			}
 		} else {
-			print "<link href='$file' rel='stylesheet' />\n";
+			if($id) {
+				print "<link href='$file' rel='stylesheet alternative' id='$id' />\n";
+			} else {
+				print "<link href='$file' rel='stylesheet' />\n";
+			}
 		}
 	}
 

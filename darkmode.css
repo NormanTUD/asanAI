@@ -222,3 +222,15 @@ a.ui-button:focus {
 #register {
 	color: white;
 }
+
+#tablist {
+	background: #000000; 
+}
+
+#math_tab {
+	overflow: scroll;
+	width: 99%; 
+	max-height: 100%; 
+	background-color: #363636;
+	color: #fff;
+}

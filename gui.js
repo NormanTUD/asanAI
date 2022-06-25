@@ -4027,12 +4027,16 @@ function fix_lenet_width() {
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
 
-function darkmode_choser() {
-	if ($("#darkmode_choser").is(":checked")) {
-		window.location.href = "index.php?darkmode=1";
-	} else {
-		window.location.href = "index.php?lightmode=1";
-	}
+function mode_choser () {
+	var theme = $("#theme_choser").val();
+	document.getElementById('css_mode').href = theme + '.css';
+	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
+
+	setCookie("theme", theme)
+
+	write_descriptions();
+	restart_fcnn();
+	restart_alexnet();
 }
 
 function move_to_demo_mode(element) {

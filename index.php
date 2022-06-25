@@ -3,24 +3,10 @@
 	
 	show_admin_register();
 	
-	$darkmode = 0;
-
-	if(array_key_exists("darkmode", $_COOKIE) && $_COOKIE["darkmode"]) {
-		$darkmode = !!$_COOKIE["darkmode"];
-	}
-
 	$cookie_data = [
 		'secure' => true,
 		'samesite' => 'None'
 	];
-
-	if(array_key_exists("darkmode", $_GET)) {
-		setcookie("darkmode", 1, $cookie_data);
-		$darkmode = 1;
-	} else if(array_key_exists("lightmode", $_GET)) {
-		setcookie("darkmode", 0, $cookie_data);
-		$darkmode = 0;
-	}
 ?>
 <!DOCTYPE html>
 <html lang="en" style="font-size: 0.75em;">
@@ -60,15 +46,11 @@
 				include("traindata.php");
 ?>
 
-			var darkmode = <?php print $darkmode; ?>;
-
 			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
 
 		<link rel="stylesheet" href="./wizard_style.css">
 <?php
-		$tablist_color = "254c87";
-
 		$GLOBALS['minify'] = 1;
 		if(array_key_exists("no_minify", $_GET)) {
 			$GLOBALS['minify'] = 0;
@@ -78,21 +60,8 @@ $GLOBALS['minify'] = 0;
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
 		<?php minify_css("ribbon.css"); ?>
-<?php
-		if($darkmode) {
-			$tablist_color = "000000";
-?>
-			<?php minify_css("darkmode.css"); ?>
-			<?php minify_css("ribbondarkmode.css"); ?>
-<?php
-		} else {
-?>
-
-			<?php minify_css("lightmode.css"); ?>
-			<?php minify_css("ribbonlightmode.css"); ?>
-<?php
-		}
-?>
+		<?php minify_css("lightmode.css", "css_mode"); ?>
+		<?php minify_css("ribbonlightmode.css", "css_ribbon"); ?>
 		<?php minify_css("prism/prism.min.css"); ?>
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
@@ -165,7 +134,6 @@ $GLOBALS['minify'] = 0;
 				margin-left: 5px;
 			}
 		</style>
-
 		<?php minify_js("plotly-latest.min.js"); ?>
 
 		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -182,7 +150,7 @@ $GLOBALS['minify'] = 0;
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
-				<ul id="tablist" style="background: #<?php print $tablist_color; ?>">
+				<ul id="tablist">
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="manage_download()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
@@ -414,7 +382,11 @@ $GLOBALS['minify'] = 0;
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
 								<label for="expert">&#9760;&#65039; Expert</label>
 							</fieldset>
-							Dark mode (reloads page)? <input value=1 type="checkbox" id="darkmode_choser" <?php print $darkmode ? "checked" : ""; ?> onclick="darkmode_choser()" />
+							Theme: <select id="theme_choser" onchange="mode_choser()">
+								<option value="lightmode">Light Mode</option>
+								<option value="darkmode">Dark Mode</option>
+								<option value="natural">Natural</option>
+							</select>
 						</div>
 						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 					</div>
@@ -1201,15 +1173,7 @@ $GLOBALS['minify'] = 0;
 									<div id="maximally_activated_content"></div>
 								</div>
 
-								<?php
-									$bgcolor = "fff";
-									$textcolor = "000";
-									if($darkmode) {
-										$bgcolor = "363636";
-										$textcolor = "fff";
-									}
-								?>
-								<div id="math_tab" style="overflow: scroll; width: 99%; max-height: 100%; background-color: #<?php print $bgcolor; ?>; color: <?php $textcolor; ?>;">
+								<div id="math_tab">
 									<table data-intro="Options for the math mode.">
 										<tr>
 											<td>Number of decimal points (0 = no limit):</td>
@@ -1902,6 +1866,11 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("demo.js"); ?>
 		<script>
 			atrament.adaptiveStroke = true;
+
+			var cookie_theme = getCookie("theme");
+			if(cookie_theme) {
+				$("#theme_choser").val(cookie_theme).trigger("change")
+			}
 		</script>
 	</body>
 </html>

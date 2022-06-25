@@ -110,6 +110,11 @@ a.ui-button:active,
 	margin: -20px;
 }
 
+button, select, input, #predict_own_data {
+	background-color: #ffffff;
+	color: black;
+}
+
 button {
 	border: 1px solid #9a9a9a;
 	background-color: #ffffff;
@@ -208,4 +213,16 @@ a.ui-button:focus {
 
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
 	color: white;
+}
+
+#tablist {
+	background: #254c87; 
+}
+
+#math_tab {
+	overflow: scroll;
+	width: 99%; 
+	max-height: 100%; 
+	background-color: #fff;
+	color: #000;
 }

@@ -25,8 +25,10 @@ function FCNN() {
 
 	var edgeColorProportional = false;
 	var defaultEdgeColor = "#000000";
-	if(darkmode) {
-		var defaultEdgeColor = "#ffffff";
+
+	var cookie_theme = getCookie("theme");
+	if(cookie_theme == "darkmode") {
+		defaultEdgeColor = "#ffffff";
 	}
 	var negativeEdgeColor = "#0000ff";
 	var positiveEdgeColor = "#ff0000";

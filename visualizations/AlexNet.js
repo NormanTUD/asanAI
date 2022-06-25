@@ -49,7 +49,10 @@ function AlexNet() {
 
 
 	var scene = new THREE.Scene();
-	if(darkmode) {
+	scene.background = new THREE.Color(0xffffff);
+
+	var cookie_theme = getCookie("theme");
+	if(cookie_theme == "darkmode") {
 		scene.background = new THREE.Color(0x363636);
 	} else {
 		scene.background = new THREE.Color(0xffffff);
