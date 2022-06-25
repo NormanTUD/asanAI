@@ -122,8 +122,11 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	return drew_something;
 }
 
-function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick) {
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by) {
 	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
+	if(!multiply_by) {
+		multiply_by = 1;
+	}
 
 	var drew_something = false;
 
@@ -171,11 +174,11 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 			var red, green, blue;
 
 			if(black_and_white) {
-				red = green = blue = colors[j][i];
+				red = green = blue = colors[j][i] * multiply_by;
 			} else {
-				red = colors[j][i][0];
-				green = colors[j][i][1];
-				blue = colors[j][i][2];
+				red = colors[j][i][0] * multiply_by;
+				green = colors[j][i][1] * multiply_by;
+				blue = colors[j][i][2] * multiply_by;
 			}
 
 			if(denormalize) {

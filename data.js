@@ -251,13 +251,18 @@ async function get_xs_and_ys () {
 		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
+		var x = xy_data.x;
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
 
 		labels = xy_data.keys;
 
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[xy_data.x.shape.length - 1] == 3) {
-			log("plot images"); // TODO!!!
+			$("#photos").show();
+			for (var i = 0; i < xy_data.x.shape[0]; i++) {
+				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
+				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
+			}
 		} else {
 			var x_print_string = tensor_print_to_string(xy_data.x);
 			var y_print_string = tensor_print_to_string(xy_data.y);
