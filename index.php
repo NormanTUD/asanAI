@@ -1345,6 +1345,8 @@ $GLOBALS['minify'] = 0;
 					);
 				}
 
+				l("Changed mode " + old_mode + " to " + mode);
+
 				return mode;
 			}
 
