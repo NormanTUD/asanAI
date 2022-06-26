@@ -22,6 +22,7 @@ html {
 	border: solid #a3a8ac 1px;
 	width: 40px;
 	text-align: center;
+	border-radius: 4px;
 }
 
 .less_transparent_glass_box {
@@ -40,6 +41,7 @@ html {
 	z-index: 1;
 	overflow: hidden;
 	border: solid #a3a8ac 1px;
+	border-radius: 4px;
 }
 
 #register {
@@ -113,6 +115,7 @@ a.ui-button:active,
 button, select, input, #predict_own_data {
 	background-color: #ffffff;
 	color: black;
+	border-radius: 4px;
 }
 
 button {

@@ -202,7 +202,7 @@ $GLOBALS['minify'] = 0;
 										Architecture:
 									</td>
 									<td colspan="2">
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 148px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 144px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>

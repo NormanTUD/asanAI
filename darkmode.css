@@ -22,6 +22,7 @@ html {
 	border: solid #626567 1px;
 	width: 40px;
 	text-align: center;
+	border-radius: 4px;
 }
 
 .less_transparent_glass_box {
@@ -84,6 +85,7 @@ a.ui-button:active,
 button, select, input, #predict_own_data {
 	background: #444444;
 	color: white;
+	border-radius: 4px;
 }
 
 .ui-widget-header a {
