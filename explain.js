@@ -1412,7 +1412,9 @@ function can_be_shown_in_latex () {
 	}
 
 	if(model.layers[0].input.shape.length != 2) {
-		l("Hiding math tab because the input tensor is too large.");
+		if($("#math_tab_label").is(":visible")) {
+			l("Hiding math tab because the input tensor is too large.");
+		}
 		return false;
 	}
 

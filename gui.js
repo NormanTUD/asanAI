@@ -4573,7 +4573,8 @@ async function get_training_data_as_json () {
 
 function l(msg) {
 	if(last_l != msg) {
-		$("#log").prepend(msg + "\n")
+		var load_time = Date().toLocaleString();
+		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
 	}
 }

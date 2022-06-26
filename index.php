@@ -748,7 +748,7 @@ $GLOBALS['minify'] = 0;
 				<div id="log_ribbon" class="ribbon_tab_content" title="Log">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<textarea style="width: 800px; height: 90px; font-size: 16px" readonly id="log"></textarea>
+							<textarea style="width: 800px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
 						<div class="ribbon-group-title">Imprint</div>
 					</div>
@@ -1343,9 +1343,10 @@ $GLOBALS['minify'] = 0;
 						"Changing the mode deletes the undo/redo stack.",
 						'warning'
 					);
+					l("Changed mode " + old_mode + " to " + mode + ", lost undo/redo stack");
+				} else {
+					l("Changed mode " + old_mode + " to " + mode);
 				}
-
-				l("Changed mode " + old_mode + " to " + mode);
 
 				return mode;
 			}
@@ -1893,9 +1894,7 @@ $GLOBALS['minify'] = 0;
 				$("#theme_choser").val(cookie_theme).trigger("change")
 			}
 
-			var load_time = Date().toLocaleString();
-			l("Reading direction: ↑");
-			l("Load time: " + load_time);
+			load_time = Date().toLocaleString();
 		</script>
 	</body>
 </html>
