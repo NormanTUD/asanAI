@@ -216,3 +216,16 @@ a.ui-button:focus {
 	background: #444444;
 	color: white;
 }
+
+.descriptions_of_layers {
+	display: flex;
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	writing-mode: vertical-rl;
+	background-color: #c5ebe0;
+	border: solid #a3a8ac 0px;
+	width: 40px;
+	text-align: center;
+	border-radius: 4px;
+}
