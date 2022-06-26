@@ -4570,3 +4570,10 @@ async function get_training_data_as_json () {
 
 	return JSON.stringify(training_data);
 }
+
+function l(msg) {
+	if(last_l != msg) {
+		$("#log").prepend(msg + "\n")
+		last_l = msg;
+	}
+}

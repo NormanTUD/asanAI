@@ -1405,20 +1405,27 @@ function model_to_latex () {
 
 function can_be_shown_in_latex () {
 	if(!model) {
+		if(load_time != "") {
+			l("Hiding Math tab because there is no model. This might be a bug.");
+		}
 		return false;
 	}
 
 	if(model.layers[0].input.shape.length != 2) {
+		l("Hiding math tab because the input tensor is too large.");
 		return false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
+		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
 		return false;
 	}
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		if(!(["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"].includes(this_layer_type))) {
+		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"];
+		if(!(valid_layers.includes(this_layer_type))) {
+			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false
 		}
 	}

@@ -120,6 +120,8 @@ $GLOBALS['minify'] = 0;
 				}
 			?>;
 			var chardinJs = $("body").chardinJs($("body"));
+
+			var load_time = "";
 		</script>
 
 		<style>
@@ -742,6 +744,17 @@ $GLOBALS['minify'] = 0;
 						</div>
 					</div>
 				</div>
+
+				<div id="log_ribbon" class="ribbon_tab_content" title="Log">
+					<div class="ribbon-group" style="width: auto;">
+						<div class="ribbon-toolbar">
+							<textarea style="width: 800px; height: 90px; font-size: 16px" readonly id="log"></textarea>
+						</div>
+						<div class="ribbon-group-title">Imprint</div>
+					</div>
+
+				</div>
+
 
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
 					<div class="ribbon-group" style="width: auto;">
@@ -1877,6 +1890,10 @@ $GLOBALS['minify'] = 0;
 			if(cookie_theme) {
 				$("#theme_choser").val(cookie_theme).trigger("change")
 			}
+
+			var load_time = Date().toLocaleString();
+			l("Reading direction: ↑");
+			l("Load time: " + load_time);
 		</script>
 	</body>
 </html>

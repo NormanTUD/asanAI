@@ -949,3 +949,5 @@ var graph_hashes = {};
 var force_download = 0;
 
 var force_dont_keep_weights = false;
+
+var last_l = "";
