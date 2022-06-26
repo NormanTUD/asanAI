@@ -52,8 +52,6 @@ in creating this program:
 
 - [Convolution arithmetic](https://github.com/vdumoulin/conv_arithmetic)
 
-- [Kaggle Cats and Dogs Dataset](https://www.microsoft.com/en-us/download/details.aspx?id=54765)
-
 - [TensorFlow.js Examples](https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet)
 
 - [MNIST](http://yann.lecun.com/exdb/mnist/)
