@@ -12,17 +12,6 @@ html {
 	font-size: 14px;
 }
 
-.descriptions_of_layers {
-	display: flex;
-	position: absolute;
-	justify-content: center;
-	align-items: center;
-	writing-mode: vertical-rl;
-	background-color: rgba(0, 200, 140, 0.3);
-	width: 40px;
-	text-align: center;
-}
-
 .less_transparent_glass_box {
 	position: relative;
 	background: rgb(0, 200, 140);
@@ -38,6 +27,7 @@ html {
 	z-index: 1;
 	overflow: hidden;
 	border: solid rgba(0, 200, 140, 0.1) 1px;
+	border-radius: 4px;
 }
 
 #register {

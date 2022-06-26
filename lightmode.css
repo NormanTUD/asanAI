@@ -12,19 +12,6 @@ html {
 	font-size: 14px;
 }
 
-.descriptions_of_layers {
-	display: flex;
-	position: absolute;
-	justify-content: center;
-	align-items: center;
-	writing-mode: vertical-rl;
-	background-color: white;
-	border: solid #a3a8ac 1px;
-	width: 40px;
-	text-align: center;
-	border-radius: 4px;
-}
-
 .less_transparent_glass_box {
 	position: relative;
 	background: white;
@@ -115,7 +102,6 @@ a.ui-button:active,
 button, select, input, #predict_own_data {
 	background-color: #ffffff;
 	color: black;
-	border-radius: 4px;
 }
 
 button {

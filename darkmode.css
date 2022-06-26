@@ -12,19 +12,6 @@ html {
 	font-size: 14px;
 }
 
-.descriptions_of_layers {
-	display: flex;
-	position: absolute;
-	justify-content: center;
-	align-items: center;
-	writing-mode: vertical-rl;
-	background: #363636;
-	border: solid #626567 1px;
-	width: 40px;
-	text-align: center;
-	border-radius: 4px;
-}
-
 .less_transparent_glass_box {
 	position: relative;
 	background: #363636;
@@ -85,7 +72,11 @@ a.ui-button:active,
 button, select, input, #predict_own_data {
 	background: #444444;
 	color: white;
-	border-radius: 4px;
+}
+
+.descriptions_of_layers {
+	background: #363636;
+	border: solid #626567 1px;
 }
 
 .ui-widget-header a {
