@@ -132,11 +132,16 @@ function run_tests () {
 
 	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
 
+	var cookie_theme = getCookie("theme");
+	var darkmode = 0;
+	if(cookie_theme == "darkmode") {
+		darkmode = 1;
+	}
+
 	var color = "black";
 	if(darkmode) {
 		color = "white";
 	}
-
 	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"" + color + "\"]}]");
 	test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"OrangeRed\"]}]");
 	test_equal('color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"SeaGreen\"]}]");
