@@ -1277,14 +1277,13 @@ $GLOBALS['minify'] = 0;
 												<label>Mode</label>
 												<select onchange="atrament.mode = event.target.value;" autocomplete="off">
 													<option value="draw" default>Draw</option>
+													<option value="fill" default>Fill</option>
 													<option value="erase" default>Erase</option>
 												</select><br />
 												<label>Colour</label>
 												<div id="color-picker"></div><br />
 												<br>
-												<button id="clear" onclick="event.preventDefault();atrament.clear();predict_handdrawn();">
-													Clear image
-												</button>
+												<button id="clear" onclick="event.preventDefault();atrament.clear();predict_handdrawn();">Clear</button>
 											</form>
 											<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" id="sketcher"></canvas>
 
