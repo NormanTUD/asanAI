@@ -512,6 +512,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		} catch (e) {
 			if(!fake_model_structure) {
 				var msg = e;
+				console.trace();
 				if(mode != "expert") {
 					msg = msg + "\n\nUndoing last change"
 				}

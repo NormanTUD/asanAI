@@ -428,7 +428,7 @@ function tensor_shape_matches_model (tensor) {
 
 async function predict_handdrawn () {
 	tf.tidy(() => {
-		var predictions = model.predict(tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [parseInt($("#width").val()), parseInt($("#height").val())]).expandDims()).arraySync();
+		var predictions = model.predict(tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [width, height]).expandDims()).arraySync();
 
 		$("#handdrawn_predictions").html("");
 

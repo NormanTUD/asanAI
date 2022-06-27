@@ -1055,6 +1055,10 @@ function change_width() {
 }
 
 function change_output_and_example_image_size() {
+	if($("#width").val() == "" || $("#height").val() == "") {
+		return;
+	}
+
 	$("#output").width($("#width").val())
 	$("#output").height($("#height").val())
 	$(".example_images").width($("#width").val())
@@ -1064,19 +1068,22 @@ function change_output_and_example_image_size() {
 async function change_width_or_height(name, inputshape_index) {
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
-		var inputShape = get_input_shape();
-		inputShape[inputshape_index] = value;
-		set_input_shape("[" + inputShape.join(", ") + "]");
-		eval(name + " = " + value);
-		layer_structure_cache = null;
-		model = await create_model();
-		is_setting_config = false;
-		updated_page();
+		log(value);
+		if(value) {
+			var inputShape = get_input_shape();
+			inputShape[inputshape_index] = value;
+			set_input_shape("[" + inputShape.join(", ") + "]");
+			eval(name + " = " + value);
+			layer_structure_cache = null;
+			model = await create_model();
+			is_setting_config = false;
+			updated_page();
+			change_output_and_example_image_size();
+		}
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
 
-	change_output_and_example_image_size();
 }
 
 async function update_python_code(dont_reget_labels) {
@@ -1298,6 +1305,10 @@ function stop_webcam() {
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	rename_tmp_onchange();
+
+	if($("#width").val() == "" || $("#height").val() == "") {
+		return;
+	}
 
 	if (is_setting_config) {
 		return;
@@ -4532,18 +4543,18 @@ function realWidth(obj){
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
-	var width = clone.outerWidth();
+	var w = clone.outerWidth();
 	clone.remove();
-	return width;
+	return w;
 }
 
 function realHeight(obj){
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
-	var height = clone.outerHeight();
+	var h = clone.outerHeight();
 	clone.remove();
-	return height;
+	return h;
 }
 
 function shuffle_before_training () {

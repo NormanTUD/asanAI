@@ -88,8 +88,6 @@ function get_model_data (optimizer_name_only) {
 	var epochs = parseInt($("#epochs").val());
 	var batchSize = parseInt($("#batchSize").val());
 	var validationSplit = parseInt($("#validationSplit").val());
-	var height = parseInt($("#height").val());
-	var width = parseInt($("#width").val());
 	var divide_by = parseFloat($("#divide_by").val());
 
 	var model_data = {
