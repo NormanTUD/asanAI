@@ -1068,7 +1068,6 @@ function change_output_and_example_image_size() {
 async function change_width_or_height(name, inputshape_index) {
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
-		log(value);
 		if(value) {
 			var inputShape = get_input_shape();
 			inputShape[inputshape_index] = value;
@@ -2066,7 +2065,6 @@ async function set_config(index) {
 			if (config["width"]) { $("#width").val(config["width"]).trigger("change"); }
 			if (config["height"]) { $("#height").val(config["height"]).trigger("change"); }
 
-			log(config);
 			if (config["max_number_of_files_per_category"]) { $("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]).trigger("change"); }
 
 			if (config["divide_by"]) {
