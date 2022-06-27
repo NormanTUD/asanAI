@@ -244,7 +244,6 @@ function get_item_value(layer, classname) {
 			var found = $($layer.find("." + this_classname)[0])
 			if (found.attr("type") == "checkbox") {
 				return found.is(":checked");
-				return data;
 			} else {
 				var data = found.val();
 				if (data) {
