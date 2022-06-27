@@ -105,9 +105,9 @@ $GLOBALS['minify'] = 0;
 		
 		<?php minify_css("chardinjs.css"); ?>
 
-
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("pickr.min.js"); ?>
+		<?php minify_js("color-picker.js"); ?>
+		<?php minify_css("color-picker.css"); ?>
 		<?php minify_js("atrament.min.js"); ?>
 		
 		<script>
@@ -1280,9 +1280,14 @@ $GLOBALS['minify'] = 0;
 													<option value="fill" default>Fill</option>
 													<option value="erase" default>Erase</option>
 												</select><br />
-												<label>Colour</label>
-												<div id="color-picker"></div><br />
-												<br>
+												<div id="color_grid" style="display: block ruby">
+<?php
+														$colors = ["#FFFFFF", "#C0C0C0", "#808080", "#000000", "#FF0000", "#800000", "#FFFF00", "#808000", "#00FF00", "#008000", "#00FFFF", "#008080", "#0000FF", "#000080", "#FF00FF", "#800080"];
+														foreach ($colors as $color) {
+															print "<button type='button' onclick='atrament.color=\"$color\"' style='width: 30px; height: 30px; background-color: $color;'>&nbsp;</button>";
+														}
+?>
+												</div>
 												<button id="clear" onclick="event.preventDefault();atrament.clear();predict_handdrawn();">Clear</button>
 											</form>
 											<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" id="sketcher"></canvas>

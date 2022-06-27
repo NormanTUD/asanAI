@@ -99,6 +99,7 @@ async function playRecorded() {
 }
 
 // Simple example, see optional options for more configuration.
+/*
 const pickr = Pickr.create({
   el: '#color-picker',
   theme: 'classic',
@@ -141,3 +142,25 @@ const pickr = Pickr.create({
 pickr.on('save', color => {
   atrament.color = color.toRGBA().toString();
 });
+*/
+
+/*
+var picker = new CP($("#color_picker")[0]);
+
+function on_start() {
+	console.log('start');
+}
+
+function on_drag(v, instance) {
+	instance.target.value = '#' + v;
+	atrament.color = "#" + v;
+}
+
+function on_create(v, instance) {
+	on_drag(v, instance);
+}
+
+picker.on("start", on_start);
+picker.on("drag", on_drag);
+picker.on("create", on_create);
+*/
