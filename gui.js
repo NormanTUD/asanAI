@@ -2063,8 +2063,11 @@ async function set_config(index) {
 	if (config) {
 		if (!index) {
 
-			if (config["width"]) { $("#width").val(config["width"]); width = config["width"]; }
-			if (config["height"]) { $("#height").val(config["height"]); height = config["height"]; }
+			if (config["width"]) { $("#width").val(config["width"]).trigger("change"); }
+			if (config["height"]) { $("#height").val(config["height"]).trigger("change"); }
+
+			log(config);
+			if (config["max_number_of_files_per_category"]) { $("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]).trigger("change"); }
 
 			if (config["divide_by"]) {
 				$("#divide_by").val(config["divide_by"]);

@@ -9,6 +9,7 @@
 
 	"width": 64,
 	"height": 64,
+	"max_number_of_files_per_category": 10,
 
 	"learningRate": 0.00001,
 	"rho": 0.8999999761581421,
