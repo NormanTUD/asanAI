@@ -3989,6 +3989,10 @@ function allow_training() {
 }
 
 function _allow_training() {
+	if(has_missing_values) {
+		return false;
+	}
+
 	if ($("#data_origin").val() == "default") {
 		return true;
 	}
@@ -4265,12 +4269,15 @@ function show_tab_label(label, click) {
 function check_number_values() {
 	var all_fields = document.querySelectorAll('input[type="number"]');
 
+	var missing_values = 0;
+
 	for (var i = 0; i < all_fields.length; i++) {
 		var item = $(all_fields[i]);
 		var val = item.val();
 
 		if (!isNumeric(val)) {
 			item.css("background-color", "red");
+			missing_values++;
 		} else {
 			val = parseFloat(val);
 			item.css("background-color", $("input").css("background-color"));
@@ -4289,8 +4296,17 @@ function check_number_values() {
 					item.val(min);
 				}
 			}
+
 		}
 	};
+	
+	if(missing_values) {
+		has_missing_values = true;
+		$(".train_neural_network_button").prop("disabled", true);
+	} else {
+		has_missing_values = false;
+		$(".train_neural_network_button").prop("disabled", false);
+	}
 }
 
 function summary_to_table(t) {
