@@ -4,9 +4,12 @@ canvas.style.cursor = 'crosshair';
 // instantiate Atrament
 const atrament = new Atrament(canvas, {
   width: canvas.offsetWidth,
-  height: canvas.offsetHeight,
+  height: canvas.offsetHeight
 });
 
+var ctx = canvas.getContext("2d");
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 // a little helper tool for logging events
 const eventsLog = [];
@@ -97,70 +100,3 @@ async function playRecorded() {
 
   atrament.endStroke(prev_point.x, prev_point.y);
 }
-
-// Simple example, see optional options for more configuration.
-/*
-const pickr = Pickr.create({
-  el: '#color-picker',
-  theme: 'classic',
-  default: 'rgb(0,0,0)',
-  swatches: [
-      'rgb(244, 67, 54)',
-      'rgb(233, 30, 99)',
-      'rgb(156, 39, 176)',
-      'rgb(103, 58, 183)',
-      'rgb(63, 81, 181)',
-      'rgb(33, 150, 243)',
-      'rgb(3, 169, 244)',
-      'rgb(0, 188, 212)',
-      'rgb(0, 150, 136)',
-      'rgb(76, 175, 80)',
-      'rgb(139, 195, 74)',
-      'rgb(205, 220, 57)',
-      'rgb(255, 235, 59)',
-      'rgb(255, 193, 7)'
-  ],
-  components: {
-      // Main components
-      preview: true,
-      opacity: true,
-      hue: true,
-      // Input / output Options
-      interaction: {
-          hex: true,
-          rgb: true,
-          hsla: true,
-          hsva: true,
-          cmyk: true,
-          input: true,
-          clear: false,
-          save: true
-      }
-  },
-});
-
-pickr.on('save', color => {
-  atrament.color = color.toRGBA().toString();
-});
-*/
-
-/*
-var picker = new CP($("#color_picker")[0]);
-
-function on_start() {
-	console.log('start');
-}
-
-function on_drag(v, instance) {
-	instance.target.value = '#' + v;
-	atrament.color = "#" + v;
-}
-
-function on_create(v, instance) {
-	on_drag(v, instance);
-}
-
-picker.on("start", on_start);
-picker.on("drag", on_drag);
-picker.on("create", on_create);
-*/
