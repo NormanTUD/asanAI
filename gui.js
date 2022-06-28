@@ -3511,7 +3511,7 @@ async function change_data_origin() {
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
-		if (_show_webcam()) {
+		if (input_shape_is_image()) {
 			$("#show_webcam_button").show();
 		} else {
 			$("#show_webcam_button").hide();

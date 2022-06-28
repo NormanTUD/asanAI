@@ -1066,3 +1066,11 @@ async function force_reinit () {
 
 	updated_page();
 }
+
+function input_shape_is_image () {
+	var shape = get_input_shape();
+	if(shape.length == 3 && shape[2] == 3) {
+		return true;
+	}
+	return false;
+}

@@ -319,20 +319,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 }
 
-function _show_webcam () {
-	if($("#dataset_category").val() == "image") {
-		return true;
-	}
-
-	if($("#data_origin").val() == "own") {
-		if($("#data_type").val() == "image") {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 async function predict_webcam () {
 	tf.engine().startScope();
 	var predict_data = await cam.capture();
@@ -388,7 +374,7 @@ async function predict_webcam () {
 }
 
 async function show_webcam () {
-	if(_show_webcam()) {
+	if(input_shape_is_image()) {
 		$("#show_webcam_button").html("Stop webcam");
 		if(cam) {
 			stop_webcam();
