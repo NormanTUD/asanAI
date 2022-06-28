@@ -328,7 +328,7 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group-sep-hr"><hr></div>
 
 
-					<div id="image_resize_dimensions">
+					<div id="image_resize_dimensions" class="hide_when_no_image">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
 							<div class="ribbon-toolbar" style="width:120px">
 								<table>
@@ -694,7 +694,7 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-								<tr class="hide_when_no_conv_visualizations">
+								<tr class="hide_when_no_image">
 									<td>Show layer data flow:</td>
 									<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 								</tr>
@@ -1230,7 +1230,7 @@ $GLOBALS['minify'] = 0;
 								<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
 
 								<div class="container" id="predictcontainer">
-									<div class="">
+									<div>
 										<div id="own_files">
 											<h2>Own files</h2>
 
@@ -1242,7 +1242,7 @@ $GLOBALS['minify'] = 0;
 											<pre id="webcam_prediction" style="display: none; overflow: scroll;"></pre>
 											<br>
 											
-											<div class="hide_when_conv_visualizations">
+											<div class="hide_when_image">
 												<div id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 													<br>
@@ -1253,9 +1253,9 @@ $GLOBALS['minify'] = 0;
 
 											<br>
 
-											<div class="hide_when_no_conv_visualizations">
-												<div id="upload_file" class="show_data" style="display: none"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-												<img style="display: none" id="output"/>
+											<div class="hide_when_no_image">
+												<div id="upload_file" class="show_data"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
+												<img id="output"/>
 											</div>
 
 											<br>
@@ -1266,7 +1266,7 @@ $GLOBALS['minify'] = 0;
 											<hr>
 										</div>
 
-										<div class="handdrawn hide_when_no_alexnet">
+										<div class="handdrawn hide_when_no_image">
 											<form>
 												<label>Thickness</label><br />
 												<input

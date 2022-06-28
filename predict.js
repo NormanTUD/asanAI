@@ -419,7 +419,7 @@ async function predict_handdrawn () {
 
 		$("#handdrawn_predictions").html("");
 
-		var html = "<div>";
+		var html = "<pre>";
 
 		var max = 0;
 
@@ -431,13 +431,21 @@ async function predict_handdrawn () {
 
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
-			if(predictions[0][i] == max) {
-				html += "<b style='color: green'>" + label + ": " + predictions[0][i] + "</b><br>\n";
+			if(label) {
+				if(predictions[0][i] == max) {
+					html += "<b style='color: green'>" + label + ": " + predictions[0][i] + "</b>\n";
+				} else {
+					html += label + ": " + predictions[0][i] + "\n";
+				}
 			} else {
-				html += label + ": " + predictions[0][i] + "<br>\n";
+				if(predictions[0][i] == max) {
+					html += "<b style='color: green'>" + predictions[0][i] + "</b>\n";
+				} else {
+					html += predictions[0][i] + "<br>\n";
+				}
 			}
 		}
-		html += "<div>";
+		html += "</pre>";
 
 		$("#handdrawn_predictions").html(html);
 	});

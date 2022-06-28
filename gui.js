@@ -1276,6 +1276,14 @@ function hide_no_conv_stuff() {
 		$("#data_plotter").hide();
 	}
 
+	if(input_shape_is_image()) {
+		$(".hide_when_no_image").show();
+		$(".hide_when_image").hide();
+	} else {
+		$(".hide_when_no_image").hide();
+		$(".hide_when_image").show();
+	}
+
 	if (conv_visualizations["alexnet"]) {
 		$(".hide_when_no_alexnet").show();
 	} else {
@@ -2413,8 +2421,6 @@ async function init_dataset_category() {
 	reset_data();
 
 	var show_items = {
-		"image_resize_dimensions": ["image"],
-		"upload_file": ["image"],
 		"imageresizecontainer": ["image"],
 		"black_and_white": ["image"],
 		"resizedimensions": ["image"],
@@ -3476,11 +3482,9 @@ async function change_data_origin() {
 
 	if (show_images_per_category) {
 		$("#max_number_of_files_per_category_tr").show();
-		$("#image_resize_dimensions").show();
 	} else {
 		$("#max_number_of_files_per_category_tr").hide();
 		$("#max_number_of_files_per_category").val(0);
-		$("#image_resize_dimensions").hide();
 	}
 
 	hide_tab_label("own_tensor_data_label");
