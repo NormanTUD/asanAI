@@ -1124,6 +1124,7 @@ $GLOBALS['minify'] = 0;
 								</div>
 
 								<div id="html_tab">
+									<button onclick="save_model()">Download model data</button>
 									<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
 									<button onclick="copy_id_to_clipboard('html')">Copy to clipboard</button>
 								</div>
