@@ -3347,6 +3347,13 @@ async function update_input_shape() {
 	set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	await updated_page();
+	if(input_shape_is_image()) {
+		var this_shape = get_input_shape();
+		$("#width").val(this_shape[0]);
+		$("#height").val(this_shape[1]);
+		change_width();
+		change_height();
+	}
 	Prism.highlightAll();
 }
 
