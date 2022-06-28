@@ -38,7 +38,7 @@ var status_saves = {};
 var disabling_saving_status = false;
 var current_undo_status = 0;
 
-var mode = "amateur";
+var mode = "beginner";
 var global_disable_auto_enable_valid_layer_types = true;
 var throw_compile_exception = false;
 var model_is_trained = false;

@@ -1916,7 +1916,7 @@ function sortable_layers_container(layers_container) {
 				error_div.html("");
 				error_div.parent().hide();
 			} catch (e) {
-				if (mode == "amateur") {
+				if (mode == "beginner") {
 					$("#layers_container").sortable('cancel');
 					alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
 					try {

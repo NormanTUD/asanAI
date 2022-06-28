@@ -35,7 +35,7 @@ async function _create_model () {
 		}
 	} catch (e) {
 		except("ERROR1", e);
-		if(mode == "amateur") {
+		if(mode == "beginner") {
 			undo();
 			Swal.fire({
 				icon: 'error',

@@ -377,11 +377,25 @@ $GLOBALS['minify'] = 0;
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
 							<hr>
-							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
-								<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
-								<label for="amateur">&#129466; Beginner</label>
+							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The beginner settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
+								<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
+									$checked = 1;
+									if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+										$checked = 0;
+									}
 
-								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
+									if($checked) { print "checked"; }
+
+?>>
+								<label for="beginner">&#129466; Beginner</label>
+
+								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert"<?php
+									$checked = 0;
+									if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+										$checked = 1;
+									}
+									if($checked) { print "checked"; }
+?>>
 								<label for="expert">&#9760;&#65039; Expert</label>
 							</fieldset>
 							Theme: <select id="theme_choser" onchange="theme_choser()">
@@ -1325,7 +1339,7 @@ $GLOBALS['minify'] = 0;
 			var local_store = window.localStorage;
 			local_store.clear();
 
-			var old_mode = "amateur";
+			var old_mode = "beginner";
 
 			function resize_window () {
 				if(window.innerWidth >= 800) {
@@ -1355,6 +1369,10 @@ $GLOBALS['minify'] = 0;
 					l("Changed mode " + old_mode + " to " + mode);
 				}
 
+				if(old_mode != mode) {
+					setCookie("mode", mode)
+				}
+
 				return mode;
 			}
 
@@ -1366,7 +1384,10 @@ $GLOBALS['minify'] = 0;
 
 			function set_mode () {
 				mode = get_mode();
-				if(mode == "amateur") {
+				if(old_mode != mode) {
+					setCookie("mode", mode)
+				}
+				if(mode == "beginner") {
 					throw_compile_exception = false;
 					$(".layer_type").children().children().each(function (t, l) {
 						if(!$(l).is(":checked")) {
