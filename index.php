@@ -313,7 +313,7 @@ $GLOBALS['minify'] = 0;
 								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 80px;" /></td></tr>
 								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 80px;" /></td></tr>
 								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 80px;" id="validationSplit" /></td></tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td colspan=2>
 										Auto-Input-Shape?
 										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
@@ -379,7 +379,7 @@ $GLOBALS['minify'] = 0;
 							<hr>
 							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The amateur settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="amateur" id="amateur" checked>
-								<label for="amateur">&#129466; Amateur</label>
+								<label for="amateur">&#129466; Beginner</label>
 
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert">
 								<label for="expert">&#9760;&#65039; Expert</label>
@@ -1373,8 +1373,11 @@ $GLOBALS['minify'] = 0;
 							$(l).attr("disabled", true);
 						}
 					});
+					$("#auto_input_shape").prop('checked', true);
+					$(".expert_mode_only").hide();
 				} else {
 					throw_compile_exception = true;
+					$(".expert_mode_only").show();
 				}
 			}
 
@@ -1909,6 +1912,8 @@ $GLOBALS['minify'] = 0;
 			}
 
 			load_time = Date().toLocaleString();
+
+			set_mode();
 		</script>
 	</body>
 </html>
