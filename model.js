@@ -367,66 +367,67 @@ async function create_model (old_model, fake_model_structure, force) {
 	var html = '';
 
 	html += '<html>' + "\n";
-	html += "        <head>\n";
+	html += "	<head>\n";
 	html += "		<meta charset='UTF-8'>\n";
-	html += "                <title>Example Network</title>\n";
-	html += "                <script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
-	html += "                <script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
-	html += "        </head>\n";
-	html += "        <body>\n";
-	html += "			<script type='text/javascript'>\n";
-	html += "				var model;\n";
-	html += "				var labels = ['" + labels.join("', '") + "'];\n";
-	html += "				var divide_by = " + $("#divide_by").val() + ";\n";
-	html += "				async function load_model () {\n";
-	html += "					model = await tf.loadLayersModel('./model.json');\n";
-	html += "				}\n";
+	html += "		<title>Example Network</title>\n";
+	html += "		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
+	html += "		<script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
+	html += "		<!--<link href='main.css' rel='stylesheet' />-->\n";
+	html += "	</head>\n";
+	html += "	<body>\n";
+	html += "		<script type='text/javascript'>\n";
+	html += "			var model;\n";
+	html += "			var labels = ['" + labels.join("', '") + "'];\n";
+	html += "			var divide_by = " + $("#divide_by").val() + ";\n";
+	html += "			async function load_model () {\n";
+	html += "				model = await tf.loadLayersModel('./model.json');\n";
+	html += "			}\n";
 	if(input_shape_is_image()) {
-		html += "				var load_file = (function(event) {\n";
-		html += "					var output = document.getElementById('output');\n";
-		html += "					$('#output').removeAttr('src');\n";
-		html += "					output.src = URL.createObjectURL(event.target.files[0]);\n";
-		html += "					output.onload = async function() {\n";
-		html += "						await load_model();\n";
-		html += "					URL.revokeObjectURL(output.src);\n";
-		html += "						var img = $('#output')[0];\n";
-		html += "						img.height = model.layers[0].input.shape[1];\n";
-		html += "						img.width = model.layers[0].input.shape[2];\n";
-		html += "						var tensor = tf.browser.fromPixels(img);\n";
-		html += "						tensor = tf.divNoNan(tensor, divide_by);\n";
-		html += "						var results_tensor = await model.predict(tensor.expandDims());\n";
-		html += "						var results = results_tensor.dataSync();\n";
-		html += "						var html = '<pre>';\n";
-		html += "						for (var i = 0; i < results.length; i++) {\n";
-		html += "							var label = labels[i % labels.length];\n";
-		html += "							html += label + ': ' + results[i] + \"\\n\";\n";
-		html += "						}\n";
-		html += "						html += '</pre>';\n";
-		html += "						$('#results').html(html);\n";
-		html += "						$('#results_container').show();\n";
-		html += "					};\n";
-		html += "					$('#output').show();\n";
-		html += "				});\n";
-	} else {
-		html += "				async function predict() {\n"
-		html +=	"					await load_model();\n";
-		html += "					var input = $('#inputtensor').val()\n"
-		html += "					var tensor = tf.tensor(eval(input));\n"
+		html += "			var load_file = (function(event) {\n";
+		html += "				var output = document.getElementById('output');\n";
+		html += "				$('#output').removeAttr('src');\n";
+		html += "				output.src = URL.createObjectURL(event.target.files[0]);\n";
+		html += "				output.onload = async function() {\n";
+		html += "					await load_model();\n";
+		html += "				URL.revokeObjectURL(output.src);\n";
+		html += "					var img = $('#output')[0];\n";
+		html += "					img.height = model.layers[0].input.shape[1];\n";
+		html += "					img.width = model.layers[0].input.shape[2];\n";
+		html += "					var tensor = tf.browser.fromPixels(img);\n";
 		html += "					tensor = tf.divNoNan(tensor, divide_by);\n";
-		html += "					var prediction_tensor = await model.predict(tensor);\n"
-		html += "					var results = await prediction_tensor.dataSync();\n"
+		html += "					var results_tensor = await model.predict(tensor.expandDims());\n";
+		html += "					var results = results_tensor.dataSync();\n";
 		html += "					var html = '<pre>';\n";
 		html += "					for (var i = 0; i < results.length; i++) {\n";
 		html += "						var label = labels[i % labels.length];\n";
-		html += "						if(label) {\n";
-		html += "							html += label + ': ' + results[i] + \"\\n\";\n";
-		html += "						} else {\n";
-		html += "							html += results[i] + '\\n';\n";
-		html += "						}\n";
+		html += "						html += label + ': ' + results[i] + \"\\n\";\n";
 		html += "					}\n";
 		html += "					html += '</pre>';\n";
 		html += "					$('#results').html(html);\n";
-		html += "				}\n"
+		html += "					$('#results_container').show();\n";
+		html += "				};\n";
+		html += "				$('#output').show();\n";
+		html += "			});\n";
+	} else {
+		html += "			async function predict() {\n"
+		html +=	"				await load_model();\n";
+		html += "				var input = $('#inputtensor').val()\n"
+		html += "				var tensor = tf.tensor(eval(input));\n"
+		html += "				tensor = tf.divNoNan(tensor, divide_by);\n";
+		html += "				var prediction_tensor = await model.predict(tensor);\n"
+		html += "				var results = await prediction_tensor.dataSync();\n"
+		html += "				var html = '<pre>';\n";
+		html += "				for (var i = 0; i < results.length; i++) {\n";
+		html += "					var label = labels[i % labels.length];\n";
+		html += "					if(label) {\n";
+		html += "						html += label + ': ' + results[i] + \"\\n\";\n";
+		html += "					} else {\n";
+		html += "						html += results[i] + '\\n';\n";
+		html += "					}\n";
+		html += "				}\n";
+		html += "				html += '</pre>';\n";
+		html += "				$('#results').html(html);\n";
+		html += "			}\n"
 	}
 	html += "			</script>\n";
 	if(input_shape_is_image()) {

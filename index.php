@@ -1114,8 +1114,8 @@ $GLOBALS['minify'] = 0;
 							<div id="code_tab">
 								<ul>
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
-									<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
+									<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
 								</ul>
 
 								<div id="node_tab">
@@ -1124,7 +1124,9 @@ $GLOBALS['minify'] = 0;
 								</div>
 
 								<div id="html_tab">
+									<br>
 									<button onclick="save_model()">Download model data</button>
+									<br>
 									<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
 									<button onclick="copy_id_to_clipboard('html')">Copy to clipboard</button>
 								</div>
