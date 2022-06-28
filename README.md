@@ -1,3 +1,7 @@
+# Dedication
+
+This software is dedicated to my mother, who died on the 31st of march 2022 after a long struggle with cancer.
+
 # TensorFlow.js Demonstrator
 
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
