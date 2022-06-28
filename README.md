@@ -1,6 +1,6 @@
 # Dedication
 
-This software is dedicated to my mother, who died on the 31st of march 2022 after a long struggle with cancer.
+This software is dedicated to my mother, who died on the 31st of march 2022 after a long struggle against cancer.
 
 # TensorFlow.js Demonstrator
 
