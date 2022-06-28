@@ -1447,13 +1447,16 @@ $GLOBALS['minify'] = 0;
 
 			var fcnn = FCNN();
 			async function restart_fcnn(force) {
+
 				if(!model) {
 					log("FCNN: No model");
 					return;
 				}
 				if(force) {
+					logt("Forcing redo");
 					graph_hashes["fcnn"] = "";
 				}
+
 				var architecture = [];
 				var real_architecture = [];
 				var betweenNodesInLayer = [];
@@ -1489,12 +1492,16 @@ $GLOBALS['minify'] = 0;
 				};
 				var new_hash = md5(JSON.stringify(redraw_data) + JSON.stringify(redistribute_data));
 
-				if(architecture.length + real_architecture.length) {
-					fcnn.redraw(redraw_data);
-					fcnn.redistribute(redistribute_data);
-					graph_hashes["fcnn"] = new_hash;
+				if(graph_hashes["fcnn"] != new_hash) {
+					if(architecture.length + real_architecture.length) {
+						fcnn.redraw(redraw_data);
+						fcnn.redistribute(redistribute_data);
+						graph_hashes["fcnn"] = new_hash;
+					} else {
+						log("invalid architecture lengths");
+					}
 				} else {
-					log("invalid architecture lengths");
+					log("dont redo fcnn, because the hash has not changed");
 				}
 				reset_view();
 			}

@@ -1367,9 +1367,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var redo_graph = update_python_code();
 
 	if (model && redo_graph && !no_graph_restart) {
-		restart_fcnn(1);
-		restart_lenet(1);
-		restart_alexnet(1);
+		restart_fcnn();
+		restart_lenet();
+		restart_alexnet();
 	}
 
 	prev_layer_data = [];
