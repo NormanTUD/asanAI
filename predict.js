@@ -197,6 +197,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			predict_data = tf.divNoNan(predict_data, divide_by);
 		}
 
+		log(predict_data.arraySync());
 		var predictions_tensor = await model.predict([predict_data], [1, 1]);
 		predictions = predictions_tensor.dataSync();
 

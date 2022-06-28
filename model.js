@@ -379,9 +379,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	html += "				var labels = ['" + labels.join("', '") + "'];\n";
 	html += "				var divide_by = " + $("#divide_by").val() + ";\n";
 	html += "				async function load_model () {\n";
-	html += "					if(!model) {\n";
-	html += "						model = await tf.loadLayersModel('./model.json');\n";
-	html += "					}\n";
+	html += "					model = await tf.loadLayersModel('./model.json');\n";
 	html += "				}\n";
 	if(input_shape_is_image()) {
 		html += "				var load_file = (function(event) {\n";
@@ -401,7 +399,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		html += "						var html = '<pre>';\n";
 		html += "						for (var i = 0; i < results.length; i++) {\n";
 		html += "							var label = labels[i % labels.length];\n";
-		html += "							html += label + ': ' + results[i] + '\n';\n";
+		html += "							html += label + ': ' + results[i] + \"\\n\";\n";
 		html += "						}\n";
 		html += "						html += '</pre>';\n";
 		html += "						$('#results').html(html);\n";
