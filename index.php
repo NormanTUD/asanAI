@@ -1366,7 +1366,9 @@ $GLOBALS['minify'] = 0;
 					);
 					l("Changed mode " + old_mode + " to " + mode + ", lost undo/redo stack");
 				} else {
-					l("Changed mode " + old_mode + " to " + mode);
+					if(mode != old_mode) {
+						l("Changed mode " + old_mode + " to " + mode);
+					}
 				}
 
 				if(old_mode != mode) {
