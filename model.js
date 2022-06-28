@@ -421,7 +421,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		html += "					for (var i = 0; i < results.length; i++) {\n";
 		html += "						var label = labels[i % labels.length];\n";
 		html += "						if(label) {\n";
-		html += "							html += label + ': ' + results[i] + '\\n';\n";
+		html += "							html += label + ': ' + results[i] + \"\\n\";\n";
 		html += "						} else {\n";
 		html += "							html += results[i] + '\\n';\n";
 		html += "						}\n";
@@ -438,7 +438,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		html += "				<div id='results'></div>\n";
 		html += "			</div>\n";
 	} else {
-		html += "			<textarea id='inputtensor'></textarea>\n";
+		html += "			<textarea style='width: 500px; height: 200px;' id='inputtensor'></textarea><br>\n";
 		html += "			<button onclick='predict()'>Predict</button>\n";
 		html += "			<div id='results'></div>\n";
 		html +=	"			<script>\n";
