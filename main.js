@@ -16,11 +16,12 @@ function init_tabs () {
 		}
 	};
 
+	var tablist = $("#tablist");
 	$("#ribbon").children().each(function (i, e) {
 		var title = $(e).prop("title");
 		if(title) {
 			var named_id = $(e).prop("id");
-			$("#tablist").append("<li><a href=#" + named_id + ">" + title + "</a></li>");
+			tablist.append("<li><a href=#" + named_id + ">" + title + "</a></li>");
 		}
 	});
 
