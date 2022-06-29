@@ -1712,9 +1712,6 @@ function set_option_for_layer_by_layer_nr(nr) {
 		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
 	});
 
-	var nr = 0;
-	var current_type = $($(".layer_type")[0]).val();
-
 	write_descriptions();
 }
 
@@ -1997,7 +1994,7 @@ function show_layers(number) {
 		;
 	}
 
-	layers_container.html(layers_container_str);
+	layers_container[0].innerHTML = layers_container_str;
 
 	for (var i = 0; i < number; i++) {
 		initializer_layer_options(i);
