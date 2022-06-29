@@ -1054,7 +1054,7 @@ $GLOBALS['minify'] = 0;
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
 												</tr>
 												<tr>
-													<td>Seperator:</td>
+													<td>Separator:</td>
 													<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
 												</tr>
 											</table>
