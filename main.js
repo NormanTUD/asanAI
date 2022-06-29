@@ -162,6 +162,7 @@ async function get_traindata_and_init_categories () {
 	traindata_struct = await get_json("traindata.php");
 	init_categories();
 	if(getCookie("dataset_category")) {
+		l("Setting dataset_category to " + getCookie("dataset_category") + " from cookie");
 		$("#dataset_category").val(getCookie("dataset_category"));
 	} else if(get_get("dataset_category")) {
 		$("#dataset_category").val(get_get("dataset_category"));
@@ -228,6 +229,7 @@ $(document).ready(async function() {
 	init_categories();
 
 	if(getCookie("dataset_category")) {
+		l("Setting dataset_category to " + getCookie("dataset_category") + " from cookie");
 		$("#dataset_category").val(getCookie("dataset_category"));
 	} else if(get_get("dataset_category")) {
 		$("#dataset_category").val(get_get("dataset_category"));
