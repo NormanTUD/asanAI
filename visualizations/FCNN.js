@@ -173,8 +173,8 @@ function FCNN() {
 
 		style();
 
-		var width = realWidth($("#fcnn"));
-		var height = realHeight($("#fcnn"));
+		var width = parseInt($("#graphs_here").css("width")); // realWidth($("#fcnn"));
+		var height = parseInt($("#graphs_here").css("height")); //realHeight($("#fcnn"));
 
 		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
 	}
