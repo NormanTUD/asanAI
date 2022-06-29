@@ -2162,8 +2162,9 @@ async function set_config(index) {
 				keras_layers.shift();
 			}
 
+			var layer_settings = $(".layer_setting");
 			for (var i = 0; i < keras_layers.length; i++) {
-				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+				var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
 				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
@@ -2227,7 +2228,7 @@ async function set_config(index) {
 			}
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
-				var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+				var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
 				layer_type.val(config["model_structure"][i]["type"]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
