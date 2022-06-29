@@ -1530,8 +1530,6 @@ $GLOBALS['minify'] = 0;
 					} else {
 						log("invalid architecture lengths");
 					}
-				} else {
-					log("dont redo fcnn, because the hash has not changed");
 				}
 				reset_view();
 			}
