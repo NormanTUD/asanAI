@@ -278,6 +278,7 @@ $(document).ready(async function() {
 
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
+	setInterval(write_descriptions, 500);
 	//setInterval(restart_fcnn, 500);
 
 	copy_options();
