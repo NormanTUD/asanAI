@@ -658,30 +658,7 @@ function add_layer_debuggers () {
 					}
 		
 					if(layers_can_be_visualized()) {
-						if(!draw_images_if_possible(${i}, input_data, output_data, kernel_data) && 0) {
-							var weights_string = '';
-							if ('weights' in this) {
-								for (var j = 0; j < this['weights'].length; j++) {
-									if (j in this['weights'] && 'val' in this['weights'][j]) {
-										weights_string = weights_string + "\\n" + 'Weights ' + j + ': ' + JSON.stringify(this['weights'][j]['val'].arraySync(), null, "\\t");
-									}
-								}
-							}
-							if(weights_string) {
-								html = html + '<pre>' + weights_string + '</pre>';
-							}
-
-							var bias_string = '';
-							if ('bias' in this) {
-								bias_string = "\\n" + 'Bias: ' + JSON.stringify(this['bias']['val'].arraySync(), null, "\\t") + "\\n";
-							}
-							if(bias_string) {
-								html = html + '<pre>' + bias_string + '</pre>';
-							}
-							html = html + "<pre>Output layer ${i}: [" + get_dim(output_data) + "]\\n"
-							html = html + JSON.stringify(output_data, null, "\\t") + '</pre>';
-						}
-
+						draw_images_if_possible(${i}, input_data, output_data, kernel_data);
 						$($(".layer_data")[${i}]).append(html);
 					}
 				}
