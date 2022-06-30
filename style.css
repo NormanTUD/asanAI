@@ -221,6 +221,15 @@ input {
 
 .input_field {
 	width: 100%;
+	border-radius: 5px;
+}
+
+button {
+	border-radius: 5px;
+}
+
+.layer_type {
+	border-radius: 5px;
 }
 
 .vg-tooltip-hidden {
