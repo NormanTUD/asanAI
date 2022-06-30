@@ -95,7 +95,11 @@
 		if($GLOBALS["use_db"]) {
 			if(array_key_exists("session_id", $_COOKIE)) {
 				$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-				$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
+				if(is_admin()) {
+					$query = "select id, category, category_full, name, user_id from model";
+				} else {
+					$query = "select id, category, category_full, name, user_id from model where (user_id = ".esc($user)." or (is_public = true and reviewed = true))";
+				}
 			} else { 
 				$query = "select id, category, category_full, name, user_id from model where (is_public = true and reviewed = true)";
 			}
