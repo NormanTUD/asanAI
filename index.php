@@ -178,7 +178,7 @@ $GLOBALS['minify'] = 0;
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img height=110 src="favico_tb.png" />
+								<img height=110 alt="asanAI Logo" src="favico_tb.png" />
 							</div>
 						</div>
 					</div>
