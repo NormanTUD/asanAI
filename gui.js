@@ -259,6 +259,7 @@ function set_item_value(layer, classname, value) {
 	if (classname == "name") {
 		return;
 	}
+
 	assert(typeof (layer) == "number", "Layer is not an integer, but " + typeof (layer));
 	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
 	assert(["string", "number", "boolean"].includes(typeof (value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof (value));
@@ -4266,7 +4267,6 @@ function hide_tab_label(label) {
 	if (first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
 		$($(first_displayable).children()[0]).click()
 	}
-	write_descriptions();
 }
 
 function show_tab_label(label, click) {
@@ -4274,7 +4274,6 @@ function show_tab_label(label, click) {
 	if (click) {
 		$("#" + label).click();
 	}
-	write_descriptions();
 }
 
 function check_number_values() {
