@@ -74,7 +74,7 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("external/sweetalert2.all.js"); ?>
 
 		<!-- tensorflow.js -->
-		<?php minify_js("tf/tf.js"); ?>
+		<?php minify_js("tf/tf.min.js"); ?>
 		<?php minify_js("tf/tfjs-vis.js"); ?>
 
 		<!-- my own js stuff -->
