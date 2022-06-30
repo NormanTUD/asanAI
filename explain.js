@@ -570,8 +570,14 @@ function identify_layers (numberoflayers) {
 		var output_shape_string = "";
 		try {
 			if(i in model.layers) {
-				output_shape_string = "Output:&nbsp;" + JSON.stringify(model.layers[i].getOutputAt(0).shape);
-				output_shape_string = output_shape_string.replace("null,", "");
+				var shape = model.layers[i].getOutputAt(0).shape;
+				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape)) {
+					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + JSON.stringify(shape) + "</span>";
+					output_shape_string = output_shape_string.replace("null,", "");
+				} else {
+					output_shape_string = "Output:&nbsp;" + JSON.stringify(shape);
+					output_shape_string = output_shape_string.replace("null,", "");
+				}
 			}
 		} catch (e) {
 			console.warn(e);
