@@ -4005,6 +4005,10 @@ function _allow_training() {
 		return false;
 	}
 
+	if(has_zero_output_shape) {
+		return false;
+	}
+
 	if ($("#data_origin").val() == "default") {
 		return true;
 	}

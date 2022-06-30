@@ -583,12 +583,15 @@ function identify_layers (numberoflayers) {
 			}
 
 			if(has_zero_output_shape) {
-				var msg = "There are zeroes in the output shapes. This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red.";
+				$(".train_neural_network_button").prop("disabled", true);
+				var msg = "There are zeroes in the output shapes. This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red. Training and saving is disabled.";
 				Swal.fire({
 					icon: 'error',
 					title: 'Oops [6]...',
 					html: msg
 				});
+			} else {
+				$(".train_neural_network_button").prop("disabled", false);
 			}
 		} catch (e) {
 			console.warn(e);
