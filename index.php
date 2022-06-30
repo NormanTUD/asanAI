@@ -902,33 +902,29 @@ $GLOBALS['minify'] = 0;
 				<div id="save_dialog" class="popup" style="display: none;">
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
-							<h1>Trained in Keras</h1>
-							<p>Use this command to convert TensorFlow to TFJS-models:</p>
-							<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
+							<div class="expert_mode_only">
+								<h1>Trained in Keras</h1>
+								<p>Use this command to convert TensorFlow to TFJS-models:</p>
+								<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
 
-							<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
+								<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
+							</div>
 
 							<table>
 								<tr>
 									<td>Upload Model (<tt>.json</tt>):</td>
 									<td><input accept="application/json" type="file" id="upload_model" onclick="set_config()" value="Upload Model"></td>
 								</tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>Upload Model weights (<tt>.bin</tt>):</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_weights" onclick="set_config()" value="Upload Weights"></td>
 								</tr>
-							</table>
-
-							<h1>Trained in the browser with this demonstrator</h1>
-
-							<p>Upload the weights.json here.</p>
-
-							<table>
 								<tr>
 									<td>Upload Model weights (<tt>.json</tt>):</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
 								</tr>
 							</table>
+
 							<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
 						</div>
 					</div>
@@ -992,7 +988,7 @@ $GLOBALS['minify'] = 0;
 					<div class="popup_body less_transparent_glass_box">
 						<div id="save_model_content"> 
 							<h1>Download</h1>
-							<button onclick="save_model()">Download</button>
+							<button onclick="save_model();download_weights_json();">Download</button>
 
 							<h1>Save to DB</h1>
 							<span id="save_model_msg" style="background-color: green"></span><br/>
