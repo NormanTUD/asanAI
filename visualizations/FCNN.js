@@ -157,8 +157,8 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
-			.on("mousedown", set_focus)
-			.on("mouseup", remove_focus)
+			//.on("mousedown", set_focus)
+			//.on("mouseup", remove_focus)
 			.merge(node);
 
 		text = text.data(label, d => d.id);
@@ -296,6 +296,7 @@ function FCNN() {
 				  ///////    Focus    ///////
 	/////////////////////////////////////////////////////////////////////////////
 
+	/*
 	function set_focus(d) {
 		d3.event.stopPropagation();
 		node.style("opacity", function(o) { return (d == o || o.layer == d.layer - 1) ? 1 : 0.1; });
@@ -307,6 +308,7 @@ function FCNN() {
 		node.style("opacity", 1);
 		link.style("opacity", function () { return edgeOpacity; })
 	}
+	*/
 
 	/////////////////////////////////////////////////////////////////////////////
 				  ///////    Zoom & Resize   ///////
