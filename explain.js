@@ -569,15 +569,26 @@ function identify_layers (numberoflayers) {
 
 		var output_shape_string = "";
 		try {
+			has_zero_output_shape = false;
 			if(i in model.layers) {
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
 				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
 					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
 					output_shape_string = output_shape_string.replace("null,", "");
+					has_zero_output_shape = true;
 				} else {
 					output_shape_string = "Output:&nbsp;" + shape;
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
+			}
+
+			if(has_zero_output_shape) {
+				var msg = "There are zeroes in the output shapes. This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red.";
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops [6]...',
+					html: msg
+				});
 			}
 		} catch (e) {
 			console.warn(e);

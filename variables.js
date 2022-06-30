@@ -953,3 +953,5 @@ var force_dont_keep_weights = false;
 var last_l = "";
 
 var has_missing_values = false;
+
+var has_zero_output_shape = false;
