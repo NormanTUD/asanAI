@@ -265,7 +265,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			$(".show_after_training").show();
 		}
 
-		$("#example_predictions").html("");
+		var example_predictions = $("#example_predictions");
+		example_predictions.html("");
 
 		if($("#data_origin").val() == "default") {
 			if($("#dataset_category").val() == "image") {
@@ -279,14 +280,14 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							var examples = x["example"];
 							if(examples) {
 								for (var i = 0; i < examples.length; i++) {
-									$("#example_predictions").append("<hr><img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+									example_predictions.append("<hr><img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
 								}
 							}
 						}
 					}
 				});
 			} else if ($("#dataset_category").val() == "classification") {
-				$("#example_predictions").html("");
+				example_predictions.html("");
 				var example_url = "traindata/" + $("#dataset_category").val() + "/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
 				var count = 0;
@@ -296,7 +297,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						for (var i = 0; i < example_predict_data.length; i++) {
 							var tensor = tf.tensor(example_predict_data[i]);
 							if(tensor_shape_matches_model(tensor)) {
-								$("#example_predictions").append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
 								count++;
 							}
 						}
