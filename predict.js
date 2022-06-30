@@ -268,10 +268,11 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		var example_predictions = $("#example_predictions");
 		example_predictions.html("");
 
+		var dataset_category = $("#dataset_category").val();
+
 		if($("#data_origin").val() == "default") {
-			if($("#dataset_category").val() == "image") {
+			if(dataset_category == "image") {
 				var dataset = $("#dataset").val();
-				var dataset_category = $("#dataset_category").val();
 				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
 				$.ajax({
 					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
@@ -286,9 +287,9 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						}
 					}
 				});
-			} else if ($("#dataset_category").val() == "classification") {
+			} else if (dataset_category == "classification") {
 				example_predictions.html("");
-				var example_url = "traindata/" + $("#dataset_category").val() + "/" + $("#model_dataset").val() + "/examples.json"
+				var example_url = "traindata/" + dataset_category + "/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
 				var count = 0;
 
