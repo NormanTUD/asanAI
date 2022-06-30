@@ -156,7 +156,6 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="manage_download()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
-					<li><span class="symbol_button enabled_symbol" title="Download current weights as json-file" onclick="download_weights_json()">⇓</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
