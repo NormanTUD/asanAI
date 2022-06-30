@@ -1171,12 +1171,14 @@ $GLOBALS['minify'] = 0;
 								<div id="alexnet_tab">
 									<div id="alexnet"></div>
 									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
+									<button onclick="restart_alexnet(1)">Restart AlexNet</button>
 								</div>
 
 								<div id="lenet_tab">
 									<div id="lenet"></div>
 									<button onclick='reset_view()'>Reset view</button>
 									<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
+									<button onclick="restart_lenet(1)">Restart LeNet</button>
 								</div>
 
 								<div id="layer_visualizations_tab">
@@ -1186,6 +1188,7 @@ $GLOBALS['minify'] = 0;
 									<div id="fcnn"></div>
 									<button onclick='reset_view()'>Reset view</button>
 									<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
+									<button onclick="restart_fcnn(1)">Restart FCNN</button>
 								</div>
 
 								<div id="activation_plot_tab">
