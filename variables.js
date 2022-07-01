@@ -955,3 +955,5 @@ var last_l = "";
 var has_missing_values = false;
 
 var has_zero_output_shape = false;
+
+var uploaded_model = "";

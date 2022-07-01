@@ -991,16 +991,11 @@ async function _get_configuration(index) {
 
 			data = await get_cached_json(data_url);
 
-			if (!local_store.getItem("tensorflowjs_models/mymodel")) {
+			if (uploaded_model == "") {
 				data["keras"] = await get_cached_json(keras_url);
 			} else {
-				try {
-					data["keras"] = JSON.parse(local_store.getItem("tensorflowjs_models/mymodel"));
-				} catch (e) {
-					log(e);
-					local_store.setItem("tensorflowjs_models/mymodel", null)
-					data["keras"] = await get_cached_json(keras_url);
-				}
+				data["keras"] = JSON.parse(JSON.stringify(uploaded_model));
+				uploaded_model = "";
 			}
 		} catch (e) {
 			log(e);
@@ -3137,7 +3132,7 @@ async function upload_model(evt) {
 	// Closure to capture the file information.
 	reader.onload = (function (theFile) {
 		return function (e) {
-			local_store.setItem("tensorflowjs_models/mymodel", e.target.result);
+			uploaded_model = e.target.result;
 
 		};
 	})(f);
