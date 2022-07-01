@@ -972,7 +972,7 @@ async function _get_configuration(index) {
 	}
 
 	//log($("#dataset_category").val());
-	if (typeof (data) == "undefined") {
+	if (typeof(data) == "undefined") {
 		try {
 			while ($("#dataset").val() === null) {
 				await delay(50);
@@ -3138,6 +3138,7 @@ async function upload_model(evt) {
 	reader.onload = (function (theFile) {
 		return function (e) {
 			local_store.setItem("tensorflowjs_models/mymodel", e.target.result);
+
 		};
 	})(f);
 
