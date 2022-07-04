@@ -1268,7 +1268,7 @@ $GLOBALS['minify'] = 0;
 
 											<div class="hide_when_no_image">
 												<div id="upload_file" class="show_data"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
-												<img id="output"/>
+												<img style="display:none" id="output"/>
 											</div>
 
 											<br>
