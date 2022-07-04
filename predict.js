@@ -388,7 +388,7 @@ async function show_webcam () {
 
 			cam = await tf.data.webcam(videoElement);
 
-			auto_predict_webcam_interval = setInterval(predict_webcam, 1000);
+			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
 
 			//webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 		}
