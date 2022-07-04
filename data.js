@@ -689,6 +689,7 @@ async function get_data_from_webcam () {
 			$("#webcam_data").hide().html("");
 			if(cam_data) {
 				cam_data.stop();
+				cam_data = null;
 			}
 		} else {
 			$("#webcam_start_stop").html("Disable webcam");

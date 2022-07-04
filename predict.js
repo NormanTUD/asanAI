@@ -368,7 +368,7 @@ async function predict_webcam () {
 				var probability = predictions[i];
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {
-					str = "<b>" + str + "</b>";
+					str = "<b class='max_prediction'>" + str + "</b>";
 				}
 				webcam_prediction.append(str);
 			}
