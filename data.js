@@ -685,6 +685,7 @@ async function get_data_from_webcam () {
 		if(cam_data) {
 			$("#webcam_start_stop").html("Enable webcam");
 			stop_webcam();
+			$(".webcam_data_button").hide();
 		} else {
 			$("#webcam_start_stop").html("Disable webcam");
 			var webcam = $("#webcam_data");
@@ -695,8 +696,10 @@ async function get_data_from_webcam () {
 			webcam.show().append(videoElement);
 
 			cam_data = await tf.data.webcam(videoElement);
+			$(".webcam_data_button").show();
 		}
 	} else {
+		$(".webcam_data_button").hide();
 		$("#webcam_data").hide().html("");
 		if(cam_data) {
 			cam_data.stop();
