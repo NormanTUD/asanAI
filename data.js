@@ -711,17 +711,20 @@ async function take_image_from_webcam (elem) {
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = md5($(category).find(".own_image_label").val());
-	var id = base_id;
 
 	var i = 1;
-	while ($("#" + id).length) {
+	var id = base_id + "_" + i;;
+
+	while ($("#" + id + "_img").length != 0) {
 		id = base_id + "_" + i;
 		i++;
 	}
 
-	$(category).append('<span class="own_image_span"><canvas id="' + id + '" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+	log(id);
 
-	var c = document.getElementById(id);
+	$(category).append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+
+	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
 
 	for(var i = 0; i< cam_image.length; i++){
@@ -733,4 +736,9 @@ async function take_image_from_webcam (elem) {
 			ctx.fillRect(j, i, 1, 1);
 		}
 	}
+
+	var canvas = document.getElementById(id + "_canvas");
+	var data_url = canvas.toDataURL();
+	var img_tag = document.getElementById(id + '_img');
+	img_tag.src = data_url;
 }
