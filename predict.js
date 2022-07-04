@@ -319,7 +319,12 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 }
 
 async function predict_webcam () {
+	if(!cam) {
+		return;
+	}
+
 	tf.engine().startScope();
+
 	var predict_data = await cam.capture();
 	predict_data = predict_data.resizeNearestNeighbor([width, height]).toFloat().expandDims()
 
