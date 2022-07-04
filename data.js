@@ -722,7 +722,7 @@ async function take_image_from_webcam (elem) {
 
 	log(id);
 
-	$(category).append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+	$(category).find(".own_images").append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
 
 	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
