@@ -159,8 +159,8 @@
 		return false;
 	}
 
-	function delete_model ($model_id, $user_id) {
-		return get_single_value_from_query("delete from model where id = ".esc($model_id)." and ".esc($user_id));
+	function delete_model ($model_id) {
+		return get_single_value_from_query("delete from model where id = ".esc($model_id));
 	}
 
 	function save_to_training_db ($model_id, $data) {
@@ -194,13 +194,6 @@
 			$category_array[] = $row[$column];
 		}
 		return $category_array;
-	}
-
-	function model_is_is_valid($model_id) {
-		if(preg_match('/^[0-9a-f]{24}$/', $model_id)) {
-			return true;
-		}
-		return false;
 	}
 
 	function public_is_requested($id) {
@@ -250,6 +243,7 @@
 	function get_single_value_from_query ($query, $default = NULL) {
 		$result = run_query($query);
 		$return_value = $default;
+		//fehler beim aufrufen von delete_network.php in /var/log/apache2/error.log
 		while ($row = $result->fetch_row()) {
 			$return_value = $row[0];
 		}

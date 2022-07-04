@@ -9,8 +9,7 @@
 				print "This network doesn't exist.";
 			} else {
 				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-				print ">";
-				delete_model($model_id, $user_id);
+				delete_model($model_id);
 				print "Model was deleted.";
 			}
 		} else {

@@ -40,10 +40,10 @@
         <h2>User table</h2>
             <table id="user_table">
                 <tr>
-                    <th>username</th>
-                    <th>password</th>
-                    <th>role</th>
-                    <th>save</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                    <th>Save</th>
                 </tr>
 <?php
             foreach(get_usernames() as $name) {

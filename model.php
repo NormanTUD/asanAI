@@ -102,9 +102,11 @@
                 $.ajax({
                     url: "delete_network.php?id=" + network_id,
                     success: function(data) {
+                        console.log(data)
+                        document.getElementById("delete_model_msg").style = "color: white";
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
-                        window.location.href = "model.php";
+                        //window.location.href = "model.php";
 
                     }
                 });
