@@ -38,7 +38,8 @@
 	}
 
 	function get_number_model_names($name) {
-		$result = get_single_value_from_query("select count(*) from model where name = ".esc($name));
+		_assert($name != "", "Parameter is empty.");
+		return get_single_value_from_query("select count(*) from model where name = ".esc($name));
 	}
 
 	function show_admin_register() {
@@ -112,7 +113,8 @@
 		$query = !!"select count(*) from model where is_public = 1 and reviewed = 1 and id = ".esc($model_id);
 	}
 
-	function can_edit_model($user_id, $model_id) {
+	function can_edit_model($model_id) {
+		_assert($model_id != "", "Parameter is empty.");
 		if(is_admin()) {
 			return true;
 		}
@@ -157,8 +159,8 @@
 		return false;
 	}
 
-	function delete_model ($id, $user_id) {
-		return get_single_value_from_query("delete from model where id = ".esc($id)." and ".esc($user_id));
+	function delete_model ($model_id, $user_id) {
+		return get_single_value_from_query("delete from model where id = ".esc($model_id)." and ".esc($user_id));
 	}
 
 	function save_to_training_db ($model_id, $data) {

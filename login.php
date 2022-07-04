@@ -13,18 +13,20 @@
             if(get_single_value_from_query('select username from tfd_db.login where username = '.esc($username).' and pw = '.$hash_password)) {
                 
                 if($hash_password == esc(get_single_value_from_query('select pw from tfd_db.login where username = '.esc($username)))) {
+                    
                     if(array_key_exists("days", $_GET) && is_numeric($_GET["days"])) {
+                        
                         $days = $_GET["days"];
+                        insert_session_id($username, $days);
                         $session_id = get_session_id($username);
                         $status = [
-                            "status" => "ok", 
-                            "msg" => "Login succesful ", 
-                            "username" => $username, 
-                            "session_id" => $session_id, 
-                            "time" => get_expiry_date($session_id), 
+                            "status" => "ok",
+                            "msg" => "Login succesful ",
+                            "username" => $username,
+                            "session_id" => $session_id,
+                            "time" => get_expiry_date($session_id),
                             "user_id" => get_user_id($username)
                         ];
-                        insert_session_id($username, $days);
                     }
                 }
             } else {

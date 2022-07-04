@@ -101,6 +101,7 @@ create table model (
 	category_full varchar(200),
 	is_public bool not null default false,
 	reviewed bool not null default false,
+  UNIQUE key name (name),
 	foreign key(user_id) references login(id) on delete cascade
 );
 

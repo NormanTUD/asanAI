@@ -1,24 +1,22 @@
 <?php
 	include('functions.php');
 
-	$id = "";
-	if(is_admin()) {
-		if(array_key_exists("id", $_GET)) {
-			$id = $_GET["id"];
-			if(can_edit_model(get_user_id_from_model_id($id), $id)) {
-				if($id == "") {
-					print "This network doesn't exist.";
-				} else {
-					$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-					delete_model($id, $user_id);
-				}
+	$model_id = "";
+	if(array_key_exists("id", $_GET)) {
+		$model_id = $_GET["id"];
+		if(can_edit_model($model_id)) {
+			if($model_id == "") {
+				print "This network doesn't exist.";
 			} else {
-				print "You don't have the permission to delete.";
+				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
+				print ">";
+				delete_model($model_id, $user_id);
+				print "Model was deleted.";
 			}
 		} else {
-			print "Network name doesn't exist.";
+			print "You don't have the permission to delete.";
 		}
 	} else {
-		print "Only admins cat set models to public";
+		print "Network name doesn't exist.";
 	}
 ?>

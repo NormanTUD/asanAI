@@ -2929,6 +2929,15 @@ function model_name_already_exists() {
 	return false;
 }
 
+function model_name_exists() {
+	$.ajax({
+		url: "get_model_names.php",
+		success: function (data) {
+			log(data)
+		}
+	});
+}
+
 function insert_test_users() {
 	var users = ["eins", "zwei", "drei", "vier", "fünf", "vier", "test"];
 	for(var i = 0; i < users.length; i++) {
@@ -2994,7 +3003,8 @@ function has_network_name(elem) {
 		$.ajax({
 			url: "get_number_of_model_names.php?name=" + name,
 			success: function (data) {
-				if(data == '{"number":0}') {
+				log(data["number"])
+				if(data["number"] == 0) {
 					$("#save_to_db").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";
 				} else {
@@ -3079,7 +3089,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public,
 }
 
 async function save_to_db_wrapper () {
-	if(!model_name_already_exists()) {
+	if(!model_name_exists()) {
 		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
 		$("#save_to_db").prop("disabled", true);
 	} else {

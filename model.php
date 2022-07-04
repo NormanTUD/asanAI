@@ -1,6 +1,5 @@
 <?php
     include('functions.php');
-    
 ?>
 
 <!DOCTYPE html>
@@ -10,15 +9,6 @@
         <title>Model Administration</title>
         <meta charset="UTF-8">
         <script src="jquery.js"></script>
-        <style>
-            .red1 {
-                background-color: red;
-            }
-            .green1 {
-                background-color: green;
-                color: white;
-            }
-        </style>
     </head>
 
     <body>
@@ -53,7 +43,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Public</th>
-                    <th>Requests public</th>
+                    <th>Requests Public</th>
+                    <th>Reviewed</th>
                 </tr>
 <?php
 	    $network_data = [];
@@ -79,8 +70,11 @@
 ?>
                 <tr>
                     <td><?php print htmlentities($data["network_name"]);?></td>
-                    <td class="<?php print $red = $data["is_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["is_public"]);?></td>
-                    <td class="<?php print $red = $data["requests_public"] ? print "green" : print "red";?>"><?php print htmlentities($data["requests_public"]);?></td>
+                    <!-- <td class="<?php //print $red = $data["is_public"] ? print "green" : print "red";?>"><?php //print htmlentities($data["is_public"]);?></td> -->
+                    <td><input type="checkbox" <?php $red = $data["is_public"] ? print "checked" : print "";?>></td>
+                    <!-- <td class="<?php //print $red = $data["requests_public"] ? print "green" : print "red";?>"><?php //print htmlentities($data["requests_public"]);?></td> -->
+                    <td><input type="checkbox" <?php $red = $data["requests_public"] ? print "checked" : print "";?>></td>
+                    <td><input type="checkbox" <?php $red = $data["reviewed"] ? print "checked" : print "";?>></td>
 <?php
                 if($data["requests_public"]) {
 ?>
@@ -104,9 +98,9 @@
         <script>
 
             function delete_network() {
-                network_name = document.getElementById("network_select").value;
+                var network_id = document.getElementById("network_select").value;
                 $.ajax({
-                    url: "delete_network.php?id=" + network_name,
+                    url: "delete_network.php?id=" + network_id,
                     success: function(data) {
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
