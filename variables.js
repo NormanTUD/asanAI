@@ -906,6 +906,8 @@ var prev_layer_data = [];
 
 var cam = null;
 
+var cam_data = null;
+
 var changed_data_source = false;
 
 var csv_allow_training = false;

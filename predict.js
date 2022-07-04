@@ -332,7 +332,6 @@ async function predict_webcam () {
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);
 	var predictions = predictions_tensor.dataSync();
 
-
 	var category = _get_category();
 
 	var webcam_prediction = $("#webcam_prediction");

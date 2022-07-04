@@ -1104,12 +1104,13 @@ $GLOBALS['minify'] = 0;
 								<br>
 								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
+								<button id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								<div id="webcam_data" style="display: none"></div>
+								<br>
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
-								<div id="own_image_data_categories">
-								</div>
-								<div class="container" id="own_images_container">
-								</div>
+								<div id="own_image_data_categories"></div>
+								<div class="container" id="own_images_container"></div>
 							</div>
 
 							<div id="training_data_tab">
