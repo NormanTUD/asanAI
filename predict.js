@@ -387,14 +387,18 @@ async function show_webcam () {
 			videoElement.height = 256;
 			webcam.show().append(videoElement);
 
-			webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
+			//webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 			cam = await tf.data.webcam(videoElement);
+
+			auto_predict_webcam_interval = setInterval(predict_webcam, 1000);
 		}
 	} else {
 		$("#webcam").hide().html("");
 		if(cam) {
 			cam.stop();
 		}
+
+		clearInterval(auto_predict_webcam_interval);
 	}
 }
 

@@ -957,3 +957,5 @@ var has_missing_values = false;
 var has_zero_output_shape = false;
 
 var uploaded_model = "";
+
+var auto_predict_webcam_interval = null;
