@@ -684,8 +684,12 @@ async function get_data_from_webcam () {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
 			$("#webcam_start_stop").html("Enable webcam");
-			stop_webcam();
+
 			$(".webcam_data_button").hide();
+			$("#webcam_data").hide().html("");
+			if(cam_data) {
+				cam_data.stop();
+			}
 		} else {
 			$("#webcam_start_stop").html("Disable webcam");
 			var webcam = $("#webcam_data");
