@@ -122,6 +122,8 @@ $GLOBALS['minify'] = 0;
 			var chardinJs = $("body").chardinJs($("body"));
 
 			var load_time = "";
+
+			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
 		<style>
