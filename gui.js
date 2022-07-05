@@ -2838,6 +2838,7 @@ function register() {
 					$("#delete_button").hide();
 					$("#logout").show();
 					$("#register_dialog").delay(400).fadeOut();
+					$(".show_when_logged_in").show();
 				}
 				if(data["status"] == "error") {
 					color_msg_red("register_error_msg");
@@ -2874,6 +2875,7 @@ async function login() {
 				$("#register_dialog").delay(400).fadeOut(400, () => {
 					get_traindata_and_init_categories();
 				});
+				$(".show_when_logged_in").show();
 			}
 			if(data["status"] == "error") {
 				color_msg_red("login_error_msg");
@@ -2900,6 +2902,7 @@ async function logout() {
 	document.getElementById("network_name").innerHTML = "";
 	document.getElementById("license").checked = false;
 	document.getElementById("is_public").checked = false;
+	$(".show_when_logged_in").hide();
 	l("Logged out.");
 
 	await get_traindata_and_init_categories();

@@ -539,6 +539,7 @@ $GLOBALS['minify'] = 0;
 										<tr>
 											<td>Learning rate:</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+
 											<td>Initial accumulator value:</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
 										</tr>
@@ -989,12 +990,13 @@ $GLOBALS['minify'] = 0;
 							<h1>Download</h1>
 							<button onclick="save_model();download_weights_json();">Download</button>
 
-							<h1>Save to DB</h1>
-							<span id="save_model_msg" style="display: none"></span><br/>
-							<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
-							Public: <input id="is_public" type="checkbox"><br/>
-							<button id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
-							
+							<div style="display: none" class="show_when_logged_in">
+								<h1>Save to DB</h1>
+								<span id="save_model_msg" style="display: none"></span><br/>
+								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
+								Public: <input id="is_public" type="checkbox"><br/>
+								<button id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
+							</div>
 						</div>
 						<br/>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
