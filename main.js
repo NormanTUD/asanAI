@@ -222,6 +222,7 @@ $(document).ready(async function() {
 	if(getCookie("session_id") != null) {
 		$("#register").hide();
 		$("#logout").show();
+		$(".show_when_logged_in").show();
 	}
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
