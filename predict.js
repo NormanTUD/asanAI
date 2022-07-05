@@ -259,7 +259,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		return;
 	}
 
-	logt("show_prediction");
 	if(model) {
 		$(".show_when_predicting").show();
 
