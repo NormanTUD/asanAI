@@ -9,8 +9,11 @@
 				print "This network doesn't exist.";
 			} else {
 				$user_id = get_user_id_from_session_id($_COOKIE["session_id"]);
-				delete_model($model_id);
-				print "Model was deleted.";
+				if(delete_model($model_id)) {
+					print "Model was deleted.";
+				} else {
+					print "Deleting the model failed.";
+				}
 			}
 		} else {
 			print "You don't have the permission to delete.";

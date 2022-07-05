@@ -160,7 +160,7 @@
 	}
 
 	function delete_model ($model_id) {
-		return get_single_value_from_query("delete from model where id = ".esc($model_id));
+		return run_query("delete from model where id = ".esc($model_id));
 	}
 
 	function save_to_training_db ($model_id, $data) {

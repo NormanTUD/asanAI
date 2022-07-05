@@ -70,9 +70,7 @@
 ?>
                 <tr>
                     <td><?php print htmlentities($data["network_name"]);?></td>
-                    <!-- <td class="<?php //print $red = $data["is_public"] ? print "green" : print "red";?>"><?php //print htmlentities($data["is_public"]);?></td> -->
                     <td><input type="checkbox" <?php $red = $data["is_public"] ? print "checked" : print "";?>></td>
-                    <!-- <td class="<?php //print $red = $data["requests_public"] ? print "green" : print "red";?>"><?php //print htmlentities($data["requests_public"]);?></td> -->
                     <td><input type="checkbox" <?php $red = $data["requests_public"] ? print "checked" : print "";?>></td>
                     <td><input type="checkbox" <?php $red = $data["reviewed"] ? print "checked" : print "";?>></td>
 <?php
@@ -106,7 +104,7 @@
                         document.getElementById("delete_model_msg").style = "color: white";
                         document.getElementById("delete_model_msg").style = "background-color: green";
                         document.getElementById("delete_model_msg").innerText = data;
-                        //window.location.href = "model.php";
+                        window.location.href = "model.php";
 
                     }
                 });
