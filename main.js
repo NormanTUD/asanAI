@@ -93,6 +93,7 @@ function init_set_all_options () {
 }
 
 async function init_page_contents (chosen_dataset) {
+	skip_predictions = true;
 	disabling_saving_status = true;
 	global_disable_auto_enable_valid_layer_types = true;
 	disable_show_python_and_create_model = true;
@@ -143,6 +144,8 @@ async function init_page_contents (chosen_dataset) {
 	updated_page();
 
 	disabling_saving_status = false;
+	skip_predictions = false;
+	show_prediction(1);
 }
 
 function dataset_already_there (dataset_name) {
