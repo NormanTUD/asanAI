@@ -70,11 +70,11 @@
 ?>
                 <tr>
                     <td><?php print htmlentities($data["network_name"]);?></td>
-                    <td><input type="checkbox" <?php $red = $data["is_public"] ? print "checked" : print "";?>></td>
+                    <td><input id="is_public<?php print $data["id"] ?>" type="checkbox" <?php $red = $data["is_public"] && $data["reviewed"] ? print "checked" : print "";?>></td>
                     <td><input type="checkbox" <?php $red = $data["requests_public"] ? print "checked" : print "";?>></td>
                     <td><input type="checkbox" <?php $red = $data["reviewed"] ? print "checked" : print "";?>></td>
 <?php
-                if($data["requests_public"]) {
+                if($data["is_public"]) {
 ?>
                     <td><button id="<?php print htmlentities($data["id"]);?>" onclick="change_to_public(this)" >Change</button></td> 
 <?php
@@ -112,10 +112,15 @@
 
             function change_to_public(elem) {
                 console.log(elem);
+                if(document.getElementById("is_public" + elem.id).checked) {
+                    reviewed = 1;
+                } else {
+                    reviewed = 0;
+                }
                 $.ajax({
-                    url: "update_is_public.php?id=" + elem.id + "&is_public=1",
+                    url: "update_is_public.php?id=" + elem.id + "&is_public=" + reviewed,
                     success: function (data) {
-                        console.log(data)
+                        console.log(data);
                         window.location.href = "model.php";
                     }
                 });

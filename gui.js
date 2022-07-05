@@ -2824,13 +2824,14 @@ function register() {
 	var email = document.getElementById("register_email").value;
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
+	document.getElementById("register_error_msg").style.display = 'visible';
 	if (email.includes("@")) {
 		document.getElementById("register_error_msg").innerHTML = "";
 		$.ajax({
 			url: "register.php?email=" + email + "&username=" + username + "&pw=" + password + "&days=7",
 			success: function (data) {
 				if(data["status"] == "ok") {
-					document.getElementById("register_error_msg").style = "background-color: #4b8545";
+					color_msg_green("register_error_msg");
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 					setCookie("session_id", data["session_id"]);
 					$("#register").hide();
@@ -2839,18 +2840,18 @@ function register() {
 					$("#register_dialog").delay(400).fadeOut();
 				}
 				if(data["status"] == "error") {
-					document.getElementById("register_error_msg").style = "background-color: #c21f1f";
+					color_msg_red("register_error_msg");
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				}
 				l(data["msg"]);
 			},
 			error: function (object, error, msg) {
-				document.getElementById("register_error_msg").style = "background-color: #c21f1f";
+				color_msg_red("register_error_msg");
 				document.getElementById("register_error_msg").innerHTML = error + ": " + msg;
 			}
 		});
 	} else {
-		document.getElementById("register_error_msg").style = "background-color: #c21f1f";
+		color_msg_red("register_error_msg");
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
 	write_descriptions();
@@ -2859,12 +2860,13 @@ function register() {
 async function login() {
 	var username = document.getElementById("login_username").value;
 	var password = document.getElementById("login_password").value;
+	document.getElementById("login_error_msg").style.display = 'visible';
 	$.ajax({
 		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
 		success: function (data) {
 			if(data["status"] == "ok") {
 				user_id = data["user_id"];
-				document.getElementById("login_error_msg").style = "background-color: #4b8545";
+				color_msg_green("login_error_msg");
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				setCookie("session_id", data["session_id"])
 				$("#register").hide();
@@ -2874,7 +2876,7 @@ async function login() {
 				});
 			}
 			if(data["status"] == "error") {
-				document.getElementById("login_error_msg").style = "background-color: #c21f1f";
+				color_msg_red("login_error_msg");
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			}
 			l(data["msg"]);
@@ -3046,6 +3048,7 @@ function network_name_is_empty(name) {
 // }
 
 function save_to_db(model_structure, model_weights, model_data, requests_public, category, category_full) {
+	document.getElementById("save_model_msg").style.display = 'visible';
 	$.ajax({
 		url: "save_to_db.php",
 		data: {

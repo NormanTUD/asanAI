@@ -14,7 +14,7 @@ html {
 
 .less_transparent_glass_box {
 	position: relative;
-	background: rgb(0, 200, 140);
+	background: rgba(255, 255, 255, 0.8);
 	position: relative;
 	z-index: 1;
 	overflow: hidden;
@@ -30,18 +30,34 @@ html {
 	border-radius: 4px;
 }
 
+#log {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
 #register {
 	color: white;
 }
 
+#save_model_content {
+	background: rgba(0, 200, 140, 0.4);
+	border: 2px solid rgba(0, 200, 140, 0.4);
+}
+
 #register_content {
-	background-color: rgba(0, 200, 140,0.7);
+	background: rgba(0, 200, 140, 0.4);
+	border: 2px solid rgba(0, 200, 140, 0.4);
 }
 
 #ribbon {
-	background: rgb(0, 200, 140);
+	background: rgb(0, 200, 140, 0.3);
 	color: #151B54;
 }
+
+#save_model_msg, #login_error_msg, #register_error_msg {
+	border: 1px solid white;
+	border-radius: 5px;
+}
+
 .ui-widget-content a {
 	color: #151B54;
 }
@@ -111,9 +127,14 @@ button {
 }
 
 button:hover {
-	background-color:rgba(255,255,255,0.75);
-	border: none;
+	background-color:rgba(255,255,255,0.9);
 	border-radius: 5px;
+}
+
+.close_button {
+	width: 100%;
+	background-color: rgba(0, 200, 140, 0.2);
+	border: solid 1px rgba(0, 200, 140, 0.5);
 }
 
 select {
@@ -123,7 +144,7 @@ select {
 }
 
 select:hover {
-	background-color:rgba(255, 255, 255, 0.75);
+	background-color:rgba(255, 255, 255, 0.9);
 }
 
 input {
@@ -132,10 +153,7 @@ input {
 	border-radius: 5px;
 }
 
-
-
 input:hover {
-	border: 1px solid rgb(255,255,255,0.8);
 	background-color:rgb(255,255,255,0.8);
 }
 

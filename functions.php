@@ -197,12 +197,12 @@
 	}
 
 	function public_is_requested($id) {
-		return !!get_single_value_from_query("select count(*) from model where reviewed = false and is_public = true and id = ".esc($id));
+		return !!get_single_value_from_query("select count(*) from model where is_public = true and id = ".esc($id));
 	}
 
 	function set_is_public($model_id, $status) {
 		if(is_admin()) {
-			$query = "update model set reviewed = 1 where id = ".esc($model_id);
+			$query = "update model set reviewed = ".esc($status)." where id = ".esc($model_id);
 			run_query($query);
 		}
 	}
