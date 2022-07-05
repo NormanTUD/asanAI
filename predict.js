@@ -319,7 +319,12 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 }
 
 async function predict_webcam () {
+	if(!cam) {
+		return;
+	}
+
 	tf.engine().startScope();
+
 	var predict_data = await cam.capture();
 	predict_data = predict_data.resizeNearestNeighbor([width, height]).toFloat().expandDims()
 
@@ -331,7 +336,6 @@ async function predict_webcam () {
 
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);
 	var predictions = predictions_tensor.dataSync();
-
 
 	var category = _get_category();
 
@@ -364,7 +368,7 @@ async function predict_webcam () {
 				var probability = predictions[i];
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {
-					str = "<b>" + str + "</b>";
+					str = "<b class='max_prediction'>" + str + "</b>";
 				}
 				webcam_prediction.append(str);
 			}
@@ -387,14 +391,19 @@ async function show_webcam () {
 			videoElement.height = 256;
 			webcam.show().append(videoElement);
 
-			webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 			cam = await tf.data.webcam(videoElement);
+
+			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
+
+			//webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 		}
 	} else {
 		$("#webcam").hide().html("");
 		if(cam) {
 			cam.stop();
 		}
+
+		clearInterval(auto_predict_webcam_interval);
 	}
 }
 

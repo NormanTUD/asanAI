@@ -394,3 +394,20 @@ button:disabled:hover {
 	text-align: center;
 	border-radius: 4px;
 }
+
+#webcam_prediction {
+	font-size: 20px;
+}
+
+#prediction {
+	font-size: 20px;
+}
+
+
+#handdrawn_predictions {
+	font-size: 20px;
+}
+
+.predict_demo_result {
+	font-size: 20px;
+}
