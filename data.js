@@ -678,3 +678,75 @@ async function get_x_y_as_array () {
 
 	return JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
 }
+
+async function get_data_from_webcam () {
+	if(input_shape_is_image()) {
+		$("#show_webcam_button_data").html("Stop webcam");
+		if(cam_data) {
+			$("#webcam_start_stop").html("Enable webcam");
+
+			$(".webcam_data_button").hide();
+			$("#webcam_data").hide().html("");
+			if(cam_data) {
+				cam_data.stop();
+				cam_data = null;
+			}
+		} else {
+			$("#webcam_start_stop").html("Disable webcam");
+			var webcam = $("#webcam_data");
+			webcam.hide().html("");
+			var videoElement = document.createElement('video');
+			videoElement.width = width;
+			videoElement.height = height;
+			webcam.show().append(videoElement);
+
+			cam_data = await tf.data.webcam(videoElement);
+			$(".webcam_data_button").show();
+		}
+	} else {
+		$(".webcam_data_button").hide();
+		$("#webcam_data").hide().html("");
+		if(cam_data) {
+			cam_data.stop();
+		}
+	}
+}
+
+async function take_image_from_webcam (elem) {
+	var category = $(elem).parent();
+	var cam_image = await cam_data.capture();
+	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
+	cam_image = await cam_image.arraySync()[0];
+
+	var base_id = md5($(category).find(".own_image_label").val());
+
+	var i = 1;
+	var id = base_id + "_" + i;;
+
+	while ($("#" + id + "_img").length != 0) {
+		id = base_id + "_" + i;
+		i++;
+	}
+
+	log(id);
+
+	$(category).find(".own_images").append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+
+	var c = document.getElementById(id + "_canvas");
+	var ctx = c.getContext("2d");
+
+	for(var i = 0; i< cam_image.length; i++){
+		for(var j = 0; j< cam_image[0].length; j++){
+			var r = cam_image[i][j][0];
+			var g = cam_image[i][j][1];
+			var b = cam_image[i][j][2];
+			ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ", 1)";
+			ctx.fillRect(j, i, 1, 1);
+		}
+	}
+
+	var canvas = document.getElementById(id + "_canvas");
+	var data_url = canvas.toDataURL();
+	var img_tag = document.getElementById(id + '_img');
+	img_tag.src = data_url;
+}
