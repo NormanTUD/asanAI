@@ -243,7 +243,6 @@
 	function get_single_value_from_query ($query, $default = NULL) {
 		$result = run_query($query);
 		$return_value = $default;
-		//fehler beim aufrufen von delete_network.php in /var/log/apache2/error.log
 		while ($row = $result->fetch_row()) {
 			$return_value = $row[0];
 		}

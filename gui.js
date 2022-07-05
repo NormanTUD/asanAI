@@ -2837,13 +2837,12 @@ function register() {
 					$("#delete_button").hide();
 					$("#logout").show();
 					$("#register_dialog").delay(400).fadeOut();
-					//closePopup('register_dialog');
 				}
 				if(data["status"] == "error") {
 					document.getElementById("register_error_msg").style = "background-color: #c21f1f";
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 				}
-
+				l(data["msg"]);
 			},
 			error: function (object, error, msg) {
 				document.getElementById("register_error_msg").style = "background-color: #c21f1f";
@@ -2873,12 +2872,12 @@ async function login() {
 				$("#register_dialog").delay(400).fadeOut(400, () => {
 					get_traindata_and_init_categories();
 				});
-				//closePopup('register_dialog');
 			}
 			if(data["status"] == "error") {
 				document.getElementById("login_error_msg").style = "background-color: #c21f1f";
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
 			}
+			l(data["msg"]);
 		}
 	});
 }
@@ -2899,6 +2898,7 @@ async function logout() {
 	document.getElementById("network_name").innerHTML = "";
 	document.getElementById("license").checked = false;
 	document.getElementById("is_public").checked = false;
+	l("Logged out.");
 
 	await get_traindata_and_init_categories();
 }
