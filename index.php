@@ -1287,6 +1287,7 @@ $GLOBALS['minify'] = 0;
 											<form>
 												<label>Thickness</label><br />
 												<input
+													class="show_data"
 													type="range"
 													min="1"
 													oninput="atrament.weight = parseFloat(event.target.value);"
