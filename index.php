@@ -151,6 +151,7 @@ $GLOBALS['minify'] = 0;
 			<div id="ribbon_shower">
 				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
 				<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>
+				<span id="custom_webcam_training_data" class="symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">

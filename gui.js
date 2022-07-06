@@ -4634,3 +4634,9 @@ function l(msg) {
 		last_l = msg;
 	}
 }
+
+function set_custom_webcam_training_data() {
+	$("#data_origin").val("own").trigger("change");
+	$("#data_type").val("image").trigger("change");
+	get_data_from_webcam();
+}
