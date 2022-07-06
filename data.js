@@ -700,7 +700,7 @@ async function get_data_from_webcam () {
 			videoElement.height = height;
 			webcam.show().append(videoElement);
 
-			cam_data = await tf.data.webcam(videoElement);
+			cam_data = await tf.data.webcam(videoElement, { facingMode: 'environment' });
 			$(".webcam_data_button").show();
 		}
 	} else {
