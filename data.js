@@ -352,7 +352,7 @@ async function get_xs_and_ys () {
 				var classes = [];
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img");
+					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 					if(img_elems.length) {
 						var label_val = $($(".own_image_label")[label_nr]).val();
 						keys.push(label_val);
@@ -713,7 +713,7 @@ async function get_data_from_webcam () {
 }
 
 async function take_image_from_webcam (elem) {
-	l("Start image taking");
+	l("Took photo from webcam");
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
@@ -729,14 +729,12 @@ async function take_image_from_webcam (elem) {
 		i++;
 	}
 
-	//log(id);
-
-	$(category).find(".own_images").append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+	$(category).find(".own_images").append('<span class="own_image_span"><canvas id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
 
 	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
 
-	for(var i = 0; i< cam_image.length; i++){
+	for(var i = 0; i < cam_image.length; i++){
 		for(var j = 0; j < cam_image[0].length; j++){
 			var r = cam_image[i][j][0];
 			var g = cam_image[i][j][1];
@@ -746,23 +744,5 @@ async function take_image_from_webcam (elem) {
 		}
 	}
 
-	l(JSON.stringify(cam_image));
-
-	var canvas = document.getElementById(id + "_canvas");
-
-	canvas.toBlob(function(blob) {
-		var img_tag = document.getElementById(id + '_img');
-
-		const url = URL.createObjectURL(blob);
-		log(url);
-
-		img_tag.onload = function() {
-			// no longer need to read the blob so it's revoked
-			URL.revokeObjectURL(url);
-		};
-
-		img_tag.src = url;
-	});
-
-	l("End image taking");
+	enable_train();
 }
