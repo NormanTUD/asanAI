@@ -408,7 +408,7 @@ async function show_webcam () {
 			videoElement.height = 256;
 			webcam.show().append(videoElement);
 
-			cam = await tf.data.webcam(videoElement, { facingMode: 'environment' });
+			cam = await tf.data.webcam(videoElement); //, { facingMode: 'environment' });
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
 
