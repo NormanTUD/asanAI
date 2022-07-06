@@ -37,8 +37,6 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	write_descriptions();
-
 	if(!Object.keys(model).includes("layers")) {
 		gui_not_in_training();
 		write_error("Something went wrong with compiling the model. Please reload the site.");
@@ -281,6 +279,7 @@ async function run_neural_network () {
 		show_info_pre_run();
 
 		disable_everything();
+		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
 
 		if(Object.keys(xs_and_ys).includes("x")) {
@@ -342,6 +341,7 @@ async function run_neural_network () {
 
 			var fit_data = get_fit_data();
 
+			log("STARTED TRAINING");
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
