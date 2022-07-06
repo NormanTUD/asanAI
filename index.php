@@ -146,7 +146,6 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("color-picker.js"); ?>
 		<?php minify_css("color-picker.css"); ?>
 		<?php minify_js("atrament.min.js"); ?>
-		<?php minify_js("canvas-to-blob.min.js"); /* Polyfill for iOS generation of camera blobs */ ?>
 		
 		<script>
 			<?php
