@@ -98,7 +98,8 @@ function get_model_data (optimizer_name_only) {
 		epochs: epochs,
 		batchSize: batchSize,
 		validationSplit: validationSplit,
-		divide_by: divide_by
+		divide_by: divide_by,
+		labels: labels
 	};
 
 	if(!is_hidden_or_has_hidden_parent($("#height"))) {

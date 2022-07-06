@@ -2063,9 +2063,9 @@ async function set_config(index) {
 
 	if (config) {
 		if (!index) {
-
 			if (config["width"]) { $("#width").val(config["width"]).trigger("change"); }
 			if (config["height"]) { $("#height").val(config["height"]).trigger("change"); }
+			if (config["labels"]) { labels = config["labels"]; }
 
 			if (config["max_number_of_files_per_category"]) { $("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]).trigger("change"); }
 
