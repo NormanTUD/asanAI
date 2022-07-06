@@ -746,7 +746,7 @@ async function take_image_from_webcam (elem) {
 		}
 	}
 
-	l(JSON.stringify(await cam_image.arraySync()))
+	l(JSON.stringify(cam_image));
 
 	var canvas = document.getElementById(id + "_canvas");
 	var data_url = canvas.toDataURL();
