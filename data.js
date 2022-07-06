@@ -729,7 +729,7 @@ async function take_image_from_webcam (elem) {
 		i++;
 	}
 
-	log(id);
+	//log(id);
 
 	$(category).find(".own_images").append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
 
@@ -754,7 +754,7 @@ async function take_image_from_webcam (elem) {
 		var img_tag = document.getElementById(id + '_img');
 
 		const url = URL.createObjectURL(blob);
-		log(url);
+		//log(url);
 
 		img_tag.onload = function() {
 			// no longer need to read the blob so it's revoked

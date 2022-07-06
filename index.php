@@ -106,23 +106,27 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("data.js"); ?>
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
-<script>
-(function(){
-    var oldLog = console.log;
-    console.log = function (message) {
-	    l(message);
-        oldLog.apply(console, arguments);
-    };
-})();
+<?php
+		/*
+			<script>
+			(function(){
+			    var oldLog = console.log;
+			    console.log = function (message) {
+				    l(message);
+				oldLog.apply(console, arguments);
+			    };
+			})();
 
-(function(){
-    var oldWarn = console.warn;
-    console.warn = function (message) {
-	    l("WARNING: " + message);
-        oldWarn.apply(console, arguments);
-    };
-})();
-</script>
+			(function(){
+			    var oldWarn = console.warn;
+			    console.warn = function (message) {
+				    l("WARNING: " + message);
+				oldWarn.apply(console, arguments);
+			    };
+			})();
+			</script>
+		*/
+?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
 		
