@@ -256,7 +256,6 @@ async function run_neural_network () {
 		show_tab_label("tfvis_tab_training_performance_label", 1);
 	}
 
-	/*
 	try {
 		log("BEFORE");
 		model = await create_model(model);
@@ -266,14 +265,12 @@ async function run_neural_network () {
 		return;
 	}
 
-	log("a");
 	try {
 		await compile_model();
 	} catch (e) {
 		alert("Compiling model failed: " + e);
 		return;
 	}
-	*/
 
 	tf.engine().startScope();
 
