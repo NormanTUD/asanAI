@@ -1,5 +1,12 @@
 "use strict";
 
+function enable_train () {
+	$(".train_neural_network_button").prop("disabled", false);
+}
+
+function disable_train () {
+	$(".train_neural_network_button").prop("disabled", true);
+}
 
 function get_key_from_path(array, keypath) {
 	if (keypath.length == 0) {
@@ -3228,8 +3235,7 @@ function enable_start_training_custom_tensors() {
 		return;
 	}
 
-
-	$(".train_neural_network_button").prop("disabled", false);
+	enable_train();
 
 	if (x_file && y_file) {
 		var last_layer_warning_container = $($(".warning_container")[get_numberoflayers() - 1]);
@@ -3245,7 +3251,7 @@ function enable_start_training_custom_tensors() {
 			);
 
 			last_layer_warning_container.show();
-			$(".train_neural_network_button").prop("disabled", true);
+			disable_train();
 		}
 	}
 
@@ -3425,7 +3431,8 @@ async function change_data_origin() {
 	y_file = null;
 	y_shape = null;
 
-	$(".train_neural_network_button").prop("disabled", false);
+	enable_train();
+
 	var new_origin = $("#data_origin").val();
 
 	var dataset_category = _get_category();
@@ -3458,7 +3465,7 @@ async function change_data_origin() {
 		update_python_code();
 	} else {
 		$("#custom_training_data_settings").show();
-		$(".train_neural_network_button").prop("disabled", true);
+		disable_train();
 
 		$("#data_type_row").show();
 		if ($("#data_type").val() == "image") {
@@ -3848,9 +3855,9 @@ function contains_convolution() {
 
 function disable_start_training_button_custom_images() {
 	if ($(".own_images").children().length != 0) {
-		$(".train_neural_network_button").prop("disabled", false);
+		enable_train();
 	} else {
-		$(".train_neural_network_button").prop("disabled", true);
+		disable_train();
 	}
 }
 
@@ -4010,9 +4017,9 @@ async function set_default_input_shape() {
 
 function allow_training() {
 	if (_allow_training()) {
-		$(".train_neural_network_button").prop("disabled", false);
+		enable_train();
 	} else {
-		$(".train_neural_network_button").prop("disabled", true);
+		disable_train();
 	}
 }
 
@@ -4332,10 +4339,10 @@ function check_number_values() {
 	
 	if(missing_values) {
 		has_missing_values = true;
-		$(".train_neural_network_button").prop("disabled", true);
+		disable_train();
 	} else {
 		has_missing_values = false;
-		$(".train_neural_network_button").prop("disabled", false);
+		enable_train();
 	}
 }
 
