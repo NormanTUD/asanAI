@@ -1057,6 +1057,7 @@ $GLOBALS['minify'] = 0;
 
 
 				<div id="help" style="display: none"></div>
+				<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()">Show layers</button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side">
