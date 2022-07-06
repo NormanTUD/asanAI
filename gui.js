@@ -4640,3 +4640,7 @@ function set_custom_webcam_training_data() {
 	$("#data_type").val("image").trigger("change");
 	get_data_from_webcam();
 }
+
+function toggle_layers() {
+	$(".left_side").toggle();
+}
