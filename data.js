@@ -713,6 +713,7 @@ async function get_data_from_webcam () {
 }
 
 async function take_image_from_webcam (elem) {
+	l("Start image taking");
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
@@ -745,8 +746,12 @@ async function take_image_from_webcam (elem) {
 		}
 	}
 
+	l(JSON.stringify(await cam_image.arraySync()))
+
 	var canvas = document.getElementById(id + "_canvas");
 	var data_url = canvas.toDataURL();
+	l(data_url);
 	var img_tag = document.getElementById(id + '_img');
 	img_tag.src = data_url;
+	l("End image taking");
 }
