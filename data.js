@@ -737,7 +737,7 @@ async function take_image_from_webcam (elem) {
 	var ctx = c.getContext("2d");
 
 	for(var i = 0; i< cam_image.length; i++){
-		for(var j = 0; j< cam_image[0].length; j++){
+		for(var j = 0; j < cam_image[0].length; j++){
 			var r = cam_image[i][j][0];
 			var g = cam_image[i][j][1];
 			var b = cam_image[i][j][2];
@@ -749,9 +749,20 @@ async function take_image_from_webcam (elem) {
 	l(JSON.stringify(cam_image));
 
 	var canvas = document.getElementById(id + "_canvas");
-	var data_url = canvas.toDataURL();
-	l(data_url);
-	var img_tag = document.getElementById(id + '_img');
-	img_tag.src = data_url;
+
+	canvas.toBlob(function(blob) {
+		var img_tag = document.getElementById(id + '_img');
+
+		const url = URL.createObjectURL(blob);
+		log(url);
+
+		img_tag.onload = function() {
+			// no longer need to read the blob so it's revoked
+			URL.revokeObjectURL(url);
+		};
+
+		img_tag.src = url;
+	});
+
 	l("End image taking");
 }
