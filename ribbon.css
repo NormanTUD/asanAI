@@ -63,6 +63,7 @@ html {
 
 	.ribbon-group {
 		float: inherit;
+		font-size: 20px;
 	}
 
 	.ribbon-group-sep {
@@ -89,6 +90,11 @@ html {
 
 	.layer_type {
 		width: auto;
+		font-size: 24px;
+	}
+
+	body {
+		font-size: 16px;
 	}
 
 	.layer_setting {
@@ -115,6 +121,15 @@ html {
 	  
 	.symbol_button {
 		font-size: 40px;
+	}
+
+	.close_button {
+		width: 100%;
+		font-size: 30px;
+	}
+
+	div {
+		font-size: 20px;
 	}
 }
 
