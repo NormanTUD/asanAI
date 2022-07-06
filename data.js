@@ -724,7 +724,7 @@ async function take_image_from_webcam (elem) {
 	var i = 1;
 	var id = base_id + "_" + i;;
 
-	while ($("#" + id + "_img").length != 0) {
+	while ($("#" + id + "_canvas").length != 0) {
 		id = base_id + "_" + i;
 		i++;
 	}
