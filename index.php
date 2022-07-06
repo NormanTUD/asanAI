@@ -31,7 +31,7 @@
 				} catch (e) { supported = false; }
 
 				if (supported === false) {
-					console.log("WebGL is not supported");
+					l("WebGL is not supported");
 				}
 
 				canvas = undefined;
@@ -75,6 +75,26 @@ $GLOBALS['minify'] = 0;
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
+		<script>
+			var force_cpu_backend = 0;
+
+			function get_backend() {
+				var backend = $("#backend_chooser > input[type=radio]:checked").val();
+
+				return backend;
+			}
+
+			function set_backend() {
+				var backend = get_backend();
+				tf.setBackend(backend);
+			}
+
+
+			if(!hasWebGL()) {
+				tf.setBackend('cpu');
+				force_cpu_backend = 1;
+			}
+		</script>
 		<?php minify_js("tf/tfjs-vis.js"); ?>
 
 		<!-- my own js stuff -->
@@ -395,6 +415,11 @@ $GLOBALS['minify'] = 0;
 								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend" checked>
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
+							<script>
+								if(force_cpu_backend) {
+									$($("input[name='backend_chooser']")[0]).click().trigger("change")
+								}
+							</script>
 							<hr>
 							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The beginner settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
@@ -679,9 +704,9 @@ $GLOBALS['minify'] = 0;
 									<td>
 										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
 											<!--<legend>AlexNet-renderer:</legend> -->
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer" checked>
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
 											<label for="webgl_renderer">WebGL</label>
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer">
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
 											<label for="svg_renderer">SVG</label>
 										</fieldset>
 									</td>
@@ -1400,11 +1425,6 @@ $GLOBALS['minify'] = 0;
 				return mode;
 			}
 
-			function get_backend() {
-				var backend = $("#backend_chooser > input[type=radio]:checked").val();
-
-				return backend;
-			}
 
 			function set_mode () {
 				mode = get_mode();
@@ -1425,11 +1445,6 @@ $GLOBALS['minify'] = 0;
 					throw_compile_exception = true;
 					$(".expert_mode_only").show();
 				}
-			}
-
-			function set_backend() {
-				var backend = get_backend();
-				tf.setBackend(backend);
 			}
 
 			set_backend();
@@ -1561,6 +1576,11 @@ $GLOBALS['minify'] = 0;
 				if(!hasWebGL()) {
 					return;
 				}
+
+				if(force_cpu_backend) {
+					return;
+				}
+
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
