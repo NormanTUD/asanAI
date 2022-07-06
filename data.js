@@ -748,8 +748,6 @@ async function take_image_from_webcam (elem) {
 
 	l(JSON.stringify(cam_image));
 
-	l(canvas.toDataURL());
-
 	var canvas = document.getElementById(id + "_canvas");
 
 	canvas.toBlob(function(blob) {
