@@ -79,7 +79,9 @@ let predict_demo = async function (item, nr) {
 
 				var desc = $($(".predict_demo_result")[nr]);
 
-				desc.html("");
+
+				var fullstr = "";
+
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
@@ -87,8 +89,9 @@ let predict_demo = async function (item, nr) {
 					if(i == max_i && show_green) {
 						str = "<b style='color: green'>" + str + "</b>";
 					}
-					desc.append(str);
+					fullstr += str;
 				}
+				desc.html(fullstr);
 			}
 			$("#predict_error").hide();
 			$("#predict_error").html("");
@@ -252,6 +255,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 }
 
 async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+	if(skip_predictions) {
+		return;
+	}
+
 	if(model) {
 		$(".show_when_predicting").show();
 
@@ -276,9 +283,17 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						if(x) {
 							var examples = x["example"];
 							if(examples) {
+								var str = "";
 								for (var i = 0; i < examples.length; i++) {
-									example_predictions.append("<hr><img src='" + full_dir + "/" + examples[i] + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>");
+									var url = full_dir + "/" + examples[i];
+									var img_elem = $("img[src$='" + url + "']");
+									if(img_elem.length) {
+										predict_demo(img_elem[0], i);
+									} else {
+										str += "<hr><img src='" + url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
+									}
 								}
+								example_predictions.html(str);
 							}
 						}
 					}
@@ -315,6 +330,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				hide_annoying_tfjs_vis_overlays();
 			}
 		}
+	} else {
+		log("No model given for show_prediction");
 	}
 }
 

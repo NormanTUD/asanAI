@@ -122,6 +122,8 @@ $GLOBALS['minify'] = 0;
 			var chardinJs = $("body").chardinJs($("body"));
 
 			var load_time = "";
+
+			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
 		<style>
@@ -1285,6 +1287,7 @@ $GLOBALS['minify'] = 0;
 											<form>
 												<label>Thickness</label><br />
 												<input
+													class="show_data"
 													type="range"
 													min="1"
 													oninput="atrament.weight = parseFloat(event.target.value);"
