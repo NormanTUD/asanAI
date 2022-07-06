@@ -256,19 +256,24 @@ async function run_neural_network () {
 		show_tab_label("tfvis_tab_training_performance_label", 1);
 	}
 
+	/*
 	try {
+		log("BEFORE");
 		model = await create_model(model);
+		log("AFTER");
 	} catch (e) {
 		alert("Creating model failed: " + e);
 		return;
 	}
 
+	log("a");
 	try {
 		await compile_model();
 	} catch (e) {
 		alert("Compiling model failed: " + e);
 		return;
 	}
+	*/
 
 	tf.engine().startScope();
 
@@ -347,6 +352,7 @@ async function run_neural_network () {
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */
 
+			log("Training done, getting weights");
 			var trained_weights = await get_weights_as_string();
 
 			reset_data();
