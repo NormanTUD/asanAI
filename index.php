@@ -107,7 +107,6 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
 <?php
-		/*
 			<script>
 			(function(){
 			    var oldLog = console.log;
@@ -125,7 +124,6 @@ $GLOBALS['minify'] = 0;
 			    };
 			})();
 			</script>
-		*/
 ?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>

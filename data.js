@@ -748,13 +748,15 @@ async function take_image_from_webcam (elem) {
 
 	l(JSON.stringify(cam_image));
 
+	l(canvas.toDataURL());
+
 	var canvas = document.getElementById(id + "_canvas");
 
 	canvas.toBlob(function(blob) {
 		var img_tag = document.getElementById(id + '_img');
 
 		const url = URL.createObjectURL(blob);
-		//log(url);
+		log(url);
 
 		img_tag.onload = function() {
 			// no longer need to read the blob so it's revoked
