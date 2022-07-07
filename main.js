@@ -1,5 +1,39 @@
 "use strict";
 
+async function hasFrontBack() {
+	let result = {hasBack: false, hasFront: false, videoDevices: []}
+	try {
+		const stream = await navigator.mediaDevices.getUserMedia(
+			{video: true, audio: false})
+		let devices = await navigator.mediaDevices.enumerateDevices()
+		const videoDevices = devices.filter(device => {
+			if (device.kind === 'videoinput') {
+				if (device.label && device.label.length > 0) {
+					if (device.label.toLowerCase().indexOf('back') >= 0) {
+						result.hasBack = true
+					} else if (device.label.toLowerCase().indexOf('front') >= 0) {
+						result.hasFront = true
+					} else { /* some other device label ... desktop browser? */ }
+				}
+				return true
+			}
+			return false
+		})
+		result.videoDevices = videoDevices
+		/* drop stream */
+		const tracks = stream.getTracks()
+		if (tracks) {
+			for (let t = 0; t < tracks.length; t++) tracks[t].stop()
+		}
+		return result
+	}
+	catch (ex) {
+		/* log and swallow exception, this is a probe only */
+		console.error(ex)
+		return result
+	}
+}
+
 function get_get (param) {
 	const queryString = window.location.search;
 
@@ -225,15 +259,16 @@ $(document).ready(async function() {
 		l("Webcam(s) were found. Enabling webcam related features.");
 		l("List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
+
+		var has_front_and_back_facing_camera = await hasFrontBack();
+		if(has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront) {
+			$(".only_when_front_and_back_camera").show();
+		} else {
+			$(".only_when_front_and_back_camera").hide();
+		}
 	} else {
 		l("No webcams were found. Disabling webcam related features.");
 		$(".only_when_webcam").hide();
-
-		if(available_webcams.length >= 2) {
-			$(".only_when_multiple_webcams").show();
-		} else {
-			$(".only_when_multiple_webcams").hide();
-		}
 	}
 
 	$("#register_form").submit(function(e) {

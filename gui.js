@@ -4659,7 +4659,6 @@ async function get_available_cams () {
 		for(var i = 0; i < devices.length; i++){
 			var device = devices[i];
 			if (device.kind === 'videoinput') {
-				alert("label: >>>" + device.label + "<<<");
 				webcams.push(device.label);
 			}
 		};
@@ -4670,6 +4669,6 @@ async function get_available_cams () {
 
 async function switch_to_next_camera () {
 	webcam_id++;
-	webcam_id = webcam_id % (available_webcams.length);
+	webcam_id = webcam_id % (webcam_modes.length);
 	await get_data_from_webcam(1);
 }

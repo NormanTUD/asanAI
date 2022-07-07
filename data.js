@@ -713,7 +713,7 @@ async function get_data_from_webcam (force_restart) {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam_data = await tf.data.webcam(videoElement, { deviceId: available_webcams[webcam_id] }); //, { facingMode: 'environment' });
+			cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
 			$(".webcam_data_button").show();
 		}
 	} else {

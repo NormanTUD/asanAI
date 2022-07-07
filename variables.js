@@ -967,3 +967,5 @@ var skip_predictions = false;
 var available_webcams = [];
 
 var webcam_id = 0;
+
+var webcam_modes = ["user", "environment"];
