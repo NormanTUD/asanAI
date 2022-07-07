@@ -690,6 +690,7 @@ async function get_data_from_webcam (force_restart) {
 	if(input_shape_is_image()) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
+			l("Stopping webcam");
 			$("#webcam_start_stop").html("Enable webcam");
 
 			$(".webcam_data_button").hide();
@@ -700,6 +701,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 			stopped = 1;
 		} else {
+			l("Starting webcam");
 			$("#webcam_start_stop").html("Disable webcam");
 			var webcam = $("#webcam_data");
 			webcam.hide().html("");
