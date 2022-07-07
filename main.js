@@ -3,34 +3,36 @@
 async function hasFrontBack() {
 	let result = {hasBack: false, hasFront: false, videoDevices: []}
 	try {
-		const stream = await navigator.mediaDevices.getUserMedia(
-			{video: true, audio: false})
-		let devices = await navigator.mediaDevices.enumerateDevices()
+		const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+		let devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(device => {
 			if (device.kind === 'videoinput') {
+				l("Found camera: " + device.label);
 				if (device.label && device.label.length > 0) {
 					if (device.label.toLowerCase().indexOf('back') >= 0) {
-						result.hasBack = true
+						result.hasBack = true;
 					} else if (device.label.toLowerCase().indexOf('front') >= 0) {
-						result.hasFront = true
-					} else { /* some other device label ... desktop browser? */ }
+						result.hasFront = true;
+					} else {
+						/* some other device label ... desktop browser? */
+					}
 				}
-				return true
+				return true;
 			}
-			return false
-		})
-		result.videoDevices = videoDevices
-		/* drop stream */
-		const tracks = stream.getTracks()
+			return false;
+		});
+		result.videoDevices = videoDevices;
+		const tracks = stream.getTracks();
 		if (tracks) {
-			for (let t = 0; t < tracks.length; t++) tracks[t].stop()
+			for (let t = 0; t < tracks.length; t++) {
+				tracks[t].stop();
+			}
 		}
-		return result
-	}
-	catch (ex) {
+		return result;
+	} catch (ex) {
 		/* log and swallow exception, this is a probe only */
-		console.error(ex)
-		return result
+		l("ERROR: " + ex);
+		return result;
 	}
 }
 
