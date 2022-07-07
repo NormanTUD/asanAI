@@ -222,7 +222,8 @@ $(document).ready(async function() {
 	log("Number of available cams: " + available_webcams.length);
 
 	if(available_webcams.length) {
-		l("Webcams were found. Enabling webcam related features.");
+		l("Webcam(s) were found. Enabling webcam related features.");
+		l("List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
 	} else {
 		l("No webcams were found. Disabling webcam related features.");
