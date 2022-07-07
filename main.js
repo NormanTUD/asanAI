@@ -9,9 +9,14 @@ async function hasFrontBack() {
 			if (device.kind === 'videoinput') {
 				l("Found camera: " + device.label);
 				if (device.label && device.label.length > 0) {
-					if (device.label.toLowerCase().indexOf('back') >= 0) {
+					if (
+						device.label.toLowerCase().indexOf('back') >= 0 ||
+						device.label.toLowerCase().indexOf('rück') >= 0
+					) {
 						result.hasBack = true;
-					} else if (device.label.toLowerCase().indexOf('front') >= 0) {
+					} else if (
+						device.label.toLowerCase().indexOf('front') >= 0
+					) {
 						result.hasFront = true;
 					} else {
 						/* some other device label ... desktop browser? */
