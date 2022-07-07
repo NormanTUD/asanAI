@@ -713,7 +713,12 @@ async function get_data_from_webcam (force_restart) {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			if(await hasBothFrontAndBack()) {
+				cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			} else {
+				cam_data = await tf.data.webcam(videoElement);
+			}
+
 			$(".webcam_data_button").show();
 		}
 	} else {

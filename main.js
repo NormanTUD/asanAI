@@ -250,6 +250,15 @@ function fix_graph_color () {
 	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
 }
 
+async function hasBothFrontAndBack () {
+	if(hasBothFrontAndBackCached === undefined) {
+		var has_front_and_back_facing_camera = await hasFrontBack();
+		hasBothFrontAndBackCached = has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront;
+	}
+
+	return hasBothFrontAndBackCached;
+}
+
 $(document).ready(async function() {
 	available_webcams = await get_available_cams();
 
@@ -260,8 +269,7 @@ $(document).ready(async function() {
 		l("List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
 
-		var has_front_and_back_facing_camera = await hasFrontBack();
-		if(has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront) {
+		if(hasBothFrontAndBack()) {
 			$(".only_when_front_and_back_camera").show();
 		} else {
 			$(".only_when_front_and_back_camera").hide();

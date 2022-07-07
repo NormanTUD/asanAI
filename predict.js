@@ -422,7 +422,11 @@ async function show_webcam (force_restart) {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			if(await hasBothFrontAndBack()) {
+				cam = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			} else {
+				cam = await tf.data.webcam(videoElement);
+			}
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
 
