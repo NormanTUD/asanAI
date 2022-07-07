@@ -704,8 +704,8 @@ async function get_data_from_webcam (force_restart) {
 			var webcam = $("#webcam_data");
 			webcam.hide().html("");
 			var videoElement = document.createElement('video');
-			videoElement.width = width;
-			videoElement.height = height;
+			videoElement.width = Math.max(width * 2, 256);
+			videoElement.height = Math.max(height * 2, 256);
 			videoElement.playsInline = true;
 			videoElement.playsinline = true;
 			videoElement.muted = true;
