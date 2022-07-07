@@ -699,6 +699,10 @@ async function get_data_from_webcam () {
 			videoElement.width = width;
 			videoElement.height = height;
 			videoElement.playsInline = true;
+			videoElement.playsinline = true;
+			videoElement.muted = true;
+			videoElement.controls = true;
+			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
 			cam_data = await tf.data.webcam(videoElement); //, { facingMode: 'environment' });
