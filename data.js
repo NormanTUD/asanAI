@@ -713,9 +713,12 @@ async function get_data_from_webcam (force_restart) {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
+
 			if(await hasBothFrontAndBack()) {
+				l("Using camera " + webcam_modes[webcam_id]);
 				cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
 			} else {
+				l("Has only one camera, no front and back camera");
 				cam_data = await tf.data.webcam(videoElement);
 			}
 
