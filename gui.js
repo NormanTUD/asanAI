@@ -4643,8 +4643,14 @@ function l(msg) {
 }
 
 function set_custom_webcam_training_data() {
-	$("#data_origin").val("own").trigger("change");
-	$("#data_type").val("image").trigger("change");
+	if($("#data_origin").val() != "own") {
+		$("#data_origin").val("own").trigger("change");
+	}
+
+	if($("#data_type").val() != "image") {
+		$("#data_type").val("image").trigger("change");
+	}
+
 	if(!cam_data) {
 		get_data_from_webcam();
 	}
