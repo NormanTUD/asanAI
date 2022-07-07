@@ -679,7 +679,14 @@ async function get_x_y_as_array () {
 	return JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
 }
 
-async function get_data_from_webcam () {
+async function get_data_from_webcam (force_restart) {
+	if(!available_webcams.length) {
+		alert("No webcams found");
+		return;
+	}
+
+	var stopped = 0;
+
 	if(input_shape_is_image()) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
@@ -691,6 +698,7 @@ async function get_data_from_webcam () {
 				cam_data.stop();
 				cam_data = null;
 			}
+			stopped = 1;
 		} else {
 			$("#webcam_start_stop").html("Disable webcam");
 			var webcam = $("#webcam_data");
@@ -705,7 +713,7 @@ async function get_data_from_webcam () {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam_data = await tf.data.webcam(videoElement); //, { facingMode: 'environment' });
+			cam_data = await tf.data.webcam(videoElement, { deviceId: available_webcams[webcam_id] }); //, { facingMode: 'environment' });
 			$(".webcam_data_button").show();
 		}
 	} else {
@@ -714,6 +722,10 @@ async function get_data_from_webcam () {
 		if(cam_data) {
 			cam_data.stop();
 		}
+	}
+
+	if(force_restart && stopped) {
+		await get_data_from_webcam();
 	}
 }
 

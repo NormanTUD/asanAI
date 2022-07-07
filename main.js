@@ -227,6 +227,12 @@ $(document).ready(async function() {
 	} else {
 		l("No webcams were found. Disabling webcam related features.");
 		$(".only_when_webcam").hide();
+
+		if(available_webcams.length >= 2) {
+			$(".only_when_multiple_webcams").show();
+		} else {
+			$(".only_when_multiple_webcams").hide();
+		}
 	}
 
 	$("#register_form").submit(function(e) {

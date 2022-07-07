@@ -4666,3 +4666,9 @@ async function get_available_cams () {
 
 	return webcams;
 }
+
+async function switch_to_next_camera () {
+	webcam_id++;
+	webcam_id = webcam_id % (available_webcams.length);
+	await get_data_from_webcam(1);
+}
