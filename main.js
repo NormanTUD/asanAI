@@ -269,7 +269,7 @@ $(document).ready(async function() {
 		l("List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
 
-		if(hasBothFrontAndBack()) {
+		if(await hasBothFrontAndBack()) {
 			$(".only_when_front_and_back_camera").show();
 		} else {
 			$(".only_when_front_and_back_camera").hide();
