@@ -1157,7 +1157,7 @@ $GLOBALS['minify'] = 0;
 								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
 								<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
-								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()">Switch to other cam</button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 								<div id="webcam_data" style="display: none"></div>
 								<br>
 								<div id="last_layer_shape_warning"></div>
@@ -1301,7 +1301,7 @@ $GLOBALS['minify'] = 0;
 											<h2>Own files</h2>
 
 											<button class="only_when_webcam" id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
-											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()">Switch to other cam</button>
+											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
 											<div id="webcam" style="display: none">
 											</div>
