@@ -1395,17 +1395,6 @@ $GLOBALS['minify'] = 0;
 
 			var old_mode = "beginner";
 
-			function resize_window () {
-				if(window.innerWidth >= 800) {
-					$("#ribbon").show();
-					$("#ribbon_shower").hide();
-				} else {
-					$("#ribbon").hide();
-					$("#ribbon_shower").show();
-				}
-				write_descriptions();
-			}
-
 			function get_mode() {
 				var mode = $("#mode_chooser > input[type=radio]:checked").val();
 				if(mode != old_mode && (state_stack.length > 1 || future_state_stack.length)) {
@@ -1888,10 +1877,6 @@ $GLOBALS['minify'] = 0;
 
 			$(".show_after_training").hide();
 
-			$(window).resize(function() {
-				resize_window();
-			});
-
 			favicon_default();
 
 			change_number_of_images();
@@ -1969,8 +1954,6 @@ $GLOBALS['minify'] = 0;
 			});
 
 			set_mode();
-
-			resize_window();
 		</script>
 		<script src="./wizard_script.js"></script>
 		<?php minify_js("demo.js"); ?>
