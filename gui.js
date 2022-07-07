@@ -4651,3 +4651,18 @@ function set_custom_webcam_training_data() {
 function toggle_layers() {
 	$(".left_side").toggle();
 }
+
+async function get_available_cams () {
+	var webcams = [];
+
+	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
+	    for(var i = 0; i < devices.length; i++){
+		var device = devices[i];
+		if (device.kind === 'videoinput') {
+		    webcams.push(device.label);
+		}
+	    };
+	});
+
+	return webcams;
+}

@@ -107,23 +107,23 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
 			<script>
-			/*
-			(function(){
-			    var oldLog = console.log;
-			    console.log = function (message) {
-				    l(message);
-				oldLog.apply(console, arguments);
-			    };
-			})();
+				/*
+				(function(){
+				    var oldLog = console.log;
+				    console.log = function (message) {
+					    l(message);
+					oldLog.apply(console, arguments);
+				    };
+				})();
 
-			(function(){
-			    var oldWarn = console.warn;
-			    console.warn = function (message) {
-				    l("WARNING: " + message);
-				oldWarn.apply(console, arguments);
-			    };
-			})();
-			 */
+				(function(){
+				    var oldWarn = console.warn;
+				    console.warn = function (message) {
+					    l("WARNING: " + message);
+					oldWarn.apply(console, arguments);
+				    };
+				})();
+				 */
 			</script>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
@@ -190,7 +190,7 @@ $GLOBALS['minify'] = 0;
 			<div id="ribbon_shower">
 				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
 				<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>
-				<span id="custom_webcam_training_data" class="symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
+				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
@@ -202,7 +202,7 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
-					<li><span id="custom_webcam_training_data_small" class="symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
+					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -1156,7 +1156,7 @@ $GLOBALS['minify'] = 0;
 								<br>
 								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
-								<button id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
 								<div id="webcam_data" style="display: none"></div>
 								<br>
 								<div id="last_layer_shape_warning"></div>
@@ -1299,7 +1299,7 @@ $GLOBALS['minify'] = 0;
 										<div id="own_files">
 											<h2>Own files</h2>
 
-											<button id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
+											<button class="only_when_webcam" id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
 
 											<div id="webcam" style="display: none">
 											</div>

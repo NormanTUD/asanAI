@@ -963,3 +963,5 @@ var uploaded_model = "";
 var auto_predict_webcam_interval = null;
 
 var skip_predictions = false;
+
+var available_webcams = [];

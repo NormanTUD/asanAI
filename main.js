@@ -217,6 +217,18 @@ function fix_graph_color () {
 }
 
 $(document).ready(async function() {
+	available_webcams = await get_available_cams();
+
+	log("Number of available cams: " + available_webcams.length);
+
+	if(available_webcams.length) {
+		l("Webcams were found. Enabling webcam related features.");
+		$(".only_when_webcam").show();
+	} else {
+		l("No webcams were found. Disabling webcam related features.");
+		$(".only_when_webcam").hide();
+	}
+
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
 		register();
@@ -289,4 +301,3 @@ $(document).ready(async function() {
 	copy_options();
 	copy_values();
 });
-
