@@ -963,3 +963,11 @@ var uploaded_model = "";
 var auto_predict_webcam_interval = null;
 
 var skip_predictions = false;
+
+var available_webcams = [];
+
+var webcam_id = 0;
+
+var webcam_modes = ["user", "environment"];
+
+var hasBothFrontAndBackCached = undefined;

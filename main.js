@@ -1,5 +1,46 @@
 "use strict";
 
+async function hasFrontBack() {
+	let result = {hasBack: false, hasFront: false, videoDevices: []}
+	try {
+		const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+		let devices = await navigator.mediaDevices.enumerateDevices();
+		const videoDevices = devices.filter(device => {
+			if (device.kind === 'videoinput') {
+				l("Found camera: " + device.label);
+				if (device.label && device.label.length > 0) {
+					if (
+						device.label.toLowerCase().indexOf('back') >= 0 ||
+						device.label.toLowerCase().indexOf('rück') >= 0
+					) {
+						result.hasBack = true;
+					} else if (
+						device.label.toLowerCase().indexOf('front') >= 0
+					) {
+						result.hasFront = true;
+					} else {
+						/* some other device label ... desktop browser? */
+					}
+				}
+				return true;
+			}
+			return false;
+		});
+		result.videoDevices = videoDevices;
+		const tracks = stream.getTracks();
+		if (tracks) {
+			for (let t = 0; t < tracks.length; t++) {
+				tracks[t].stop();
+			}
+		}
+		return result;
+	} catch (ex) {
+		/* log and swallow exception, this is a probe only */
+		l("ERROR: " + ex);
+		return result;
+	}
+}
+
 function get_get (param) {
 	const queryString = window.location.search;
 
@@ -216,7 +257,35 @@ function fix_graph_color () {
 	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
 }
 
+async function hasBothFrontAndBack () {
+	if(hasBothFrontAndBackCached === undefined) {
+		var has_front_and_back_facing_camera = await hasFrontBack();
+		hasBothFrontAndBackCached = has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront;
+	}
+
+	return hasBothFrontAndBackCached;
+}
+
 $(document).ready(async function() {
+	available_webcams = await get_available_cams();
+
+	log("Number of available cams: " + available_webcams.length);
+
+	if(available_webcams.length) {
+		l("Webcam(s) were found. Enabling webcam related features.");
+		l("List of found webcams: " + available_webcams.join(", "));
+		$(".only_when_webcam").show();
+
+		if(await hasBothFrontAndBack()) {
+			$(".only_when_front_and_back_camera").show();
+		} else {
+			$(".only_when_front_and_back_camera").hide();
+		}
+	} else {
+		l("No webcams were found. Disabling webcam related features.");
+		$(".only_when_webcam").hide();
+	}
+
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
 		register();
@@ -289,4 +358,3 @@ $(document).ready(async function() {
 	copy_options();
 	copy_values();
 });
-

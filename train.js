@@ -37,8 +37,6 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	write_descriptions();
-
 	if(!Object.keys(model).includes("layers")) {
 		gui_not_in_training();
 		write_error("Something went wrong with compiling the model. Please reload the site.");
@@ -98,7 +96,8 @@ function get_model_data (optimizer_name_only) {
 		epochs: epochs,
 		batchSize: batchSize,
 		validationSplit: validationSplit,
-		divide_by: divide_by
+		divide_by: divide_by,
+		labels: labels
 	};
 
 	if(!is_hidden_or_has_hidden_parent($("#height"))) {
@@ -258,7 +257,9 @@ async function run_neural_network () {
 	}
 
 	try {
+		log("BEFORE");
 		model = await create_model(model);
+		log("AFTER");
 	} catch (e) {
 		alert("Creating model failed: " + e);
 		return;
@@ -280,6 +281,7 @@ async function run_neural_network () {
 		show_info_pre_run();
 
 		disable_everything();
+		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
 
 		if(Object.keys(xs_and_ys).includes("x")) {
@@ -341,11 +343,13 @@ async function run_neural_network () {
 
 			var fit_data = get_fit_data();
 
+			log("STARTED TRAINING");
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */
 
+			log("Training done, getting weights");
 			var trained_weights = await get_weights_as_string();
 
 			reset_data();

@@ -14,7 +14,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 		<title>asanAI</title>
 		<meta charset="utf-8">
-
+		<link rel="manifest" href="manifest.json" />
 
 		<script>
 			function hasWebGL() {
@@ -106,27 +106,25 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("data.js"); ?>
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
-<?php
-		/*
 			<script>
-			(function(){
-			    var oldLog = console.log;
-			    console.log = function (message) {
-				    l(message);
-				oldLog.apply(console, arguments);
-			    };
-			})();
+				/*
+				(function(){
+				    var oldLog = console.log;
+				    console.log = function (message) {
+					    l(message);
+					oldLog.apply(console, arguments);
+				    };
+				})();
 
-			(function(){
-			    var oldWarn = console.warn;
-			    console.warn = function (message) {
-				    l("WARNING: " + message);
-				oldWarn.apply(console, arguments);
-			    };
-			})();
+				(function(){
+				    var oldWarn = console.warn;
+				    console.warn = function (message) {
+					    l("WARNING: " + message);
+					oldWarn.apply(console, arguments);
+				    };
+				})();
+				 */
 			</script>
-		*/
-?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
 		
@@ -192,7 +190,7 @@ $GLOBALS['minify'] = 0;
 			<div id="ribbon_shower">
 				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
 				<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>
-				<span id="custom_webcam_training_data" class="symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
+				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
@@ -204,6 +202,7 @@ $GLOBALS['minify'] = 0;
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
+					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -811,8 +810,9 @@ $GLOBALS['minify'] = 0;
 				<div id="log_ribbon" class="ribbon_tab_content" title="Log">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<textarea style="width: 1200px; height: 90px; font-size: 14px" readonly id="log"></textarea>
+							<textarea style="width: 300px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
+						<button onclick="copy_to_clipboard($('#log').val());">Copy to clipboard</button>
 						<div class="ribbon-group-title">Imprint</div>
 					</div>
 
@@ -1059,6 +1059,7 @@ $GLOBALS['minify'] = 0;
 
 
 				<div id="help" style="display: none"></div>
+				<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()">Show layers</button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side">
@@ -1155,7 +1156,8 @@ $GLOBALS['minify'] = 0;
 								<br>
 								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
-								<button id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 								<div id="webcam_data" style="display: none"></div>
 								<br>
 								<div id="last_layer_shape_warning"></div>
@@ -1298,7 +1300,8 @@ $GLOBALS['minify'] = 0;
 										<div id="own_files">
 											<h2>Own files</h2>
 
-											<button id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
+											<button class="only_when_webcam" id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
+											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
 											<div id="webcam" style="display: none">
 											</div>
@@ -1391,17 +1394,6 @@ $GLOBALS['minify'] = 0;
 			local_store.clear();
 
 			var old_mode = "beginner";
-
-			function resize_window () {
-				if(window.innerWidth >= 800) {
-					$("#ribbon").show();
-					$("#ribbon_shower").hide();
-				} else {
-					$("#ribbon").hide();
-					$("#ribbon_shower").show();
-				}
-				write_descriptions();
-			}
 
 			function get_mode() {
 				var mode = $("#mode_chooser > input[type=radio]:checked").val();
@@ -1885,10 +1877,6 @@ $GLOBALS['minify'] = 0;
 
 			$(".show_after_training").hide();
 
-			$(window).resize(function() {
-				resize_window();
-			});
-
 			favicon_default();
 
 			change_number_of_images();
@@ -1966,8 +1954,6 @@ $GLOBALS['minify'] = 0;
 			});
 
 			set_mode();
-
-			resize_window();
 		</script>
 		<script src="./wizard_script.js"></script>
 		<?php minify_js("demo.js"); ?>

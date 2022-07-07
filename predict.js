@@ -1,5 +1,11 @@
 "use strict";
 
+async function switch_to_next_camera_predict () {
+	webcam_id++;
+	webcam_id = webcam_id % (webcam_modes.length);
+	await show_webcam(1);
+}
+
 async function get_label_data () {
 	if($("#data_origin").val() == "own") {
 	} else {
@@ -395,20 +401,34 @@ async function predict_webcam () {
 	tf.engine().endScope();
 }
 
-async function show_webcam () {
+async function show_webcam (force_restart) {
+	var stopped = 0;
+
 	if(input_shape_is_image()) {
 		$("#show_webcam_button").html("Stop webcam");
 		if(cam) {
 			stop_webcam();
+			stopped = 1;
 		} else {
 			var webcam = $("#webcam");
 			webcam.hide().html("");
 			var videoElement = document.createElement('video');
 			videoElement.width = 256;
 			videoElement.height = 256;
+			videoElement.playsInline = true;
+			videoElement.playsinline = true;
+			videoElement.muted = true;
+			videoElement.controls = true;
+			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam = await tf.data.webcam(videoElement);
+			if(await hasBothFrontAndBack()) {
+				l("Using camera " + webcam_modes[webcam_id]);
+				cam = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			} else {
+				l("Has only one camera, no front and back camera");
+				cam = await tf.data.webcam(videoElement);
+			}
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
 
@@ -421,6 +441,10 @@ async function show_webcam () {
 		}
 
 		clearInterval(auto_predict_webcam_interval);
+	}
+
+	if(force_restart && stopped) {
+		show_webcam();
 	}
 }
 

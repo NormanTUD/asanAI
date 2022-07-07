@@ -162,9 +162,26 @@ html {
 	.ui-tabs-nav {
 		font-size: 30px;
 	}
+
+	.left_side {
+		display: none;
+	}
+
+	#toggle_layers_button {
+		display: block;
+	}
+
+	#fcnn {
+		pointer-events: none;
+	}
 }
 
 @media only screen and (min-width: 1100px) {
+	#toggle_layers_button {
+		display: none;
+	}
+
+
 	#ribbon_shower {
 		display: none;
 	}
@@ -175,6 +192,10 @@ html {
 
 	.layer_identifier_activation {
 		display: display;
+	}
+
+	.left_side {
+		display: block;
 	}
 }
 

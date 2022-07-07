@@ -1,0 +1,13 @@
+{
+  "short_name": "asanAI",
+  "name": "asanAI",
+  "start_url": "asanai.scads.ai",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "permissions": {
+    "video-capture": {
+      "description": "Camera is needed for training data"
+    }
+  }
+}

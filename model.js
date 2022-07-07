@@ -956,7 +956,7 @@ async function get_weights_as_string (m) {
 		m = model;
 	}
 
-	if(!model) {
+	if(!m) {
 		return false;
 	}
 

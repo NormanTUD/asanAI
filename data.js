@@ -352,7 +352,7 @@ async function get_xs_and_ys () {
 				var classes = [];
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img");
+					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 					if(img_elems.length) {
 						var label_val = $($(".own_image_label")[label_nr]).val();
 						keys.push(label_val);
@@ -679,10 +679,18 @@ async function get_x_y_as_array () {
 	return JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
 }
 
-async function get_data_from_webcam () {
+async function get_data_from_webcam (force_restart) {
+	if(!available_webcams.length) {
+		alert("No webcams found");
+		return;
+	}
+
+	var stopped = 0;
+
 	if(input_shape_is_image()) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
+			l("Stopping webcam");
 			$("#webcam_start_stop").html("Enable webcam");
 
 			$(".webcam_data_button").hide();
@@ -691,16 +699,31 @@ async function get_data_from_webcam () {
 				cam_data.stop();
 				cam_data = null;
 			}
+			stopped = 1;
 		} else {
+			l("Starting webcam");
 			$("#webcam_start_stop").html("Disable webcam");
 			var webcam = $("#webcam_data");
 			webcam.hide().html("");
 			var videoElement = document.createElement('video');
 			videoElement.width = width;
 			videoElement.height = height;
+			videoElement.playsInline = true;
+			videoElement.playsinline = true;
+			videoElement.muted = true;
+			videoElement.controls = true;
+			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
-			cam_data = await tf.data.webcam(videoElement);
+
+			if(await hasBothFrontAndBack()) {
+				l("Using camera " + webcam_modes[webcam_id]);
+				cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+			} else {
+				l("Has only one camera, no front and back camera");
+				cam_data = await tf.data.webcam(videoElement);
+			}
+
 			$(".webcam_data_button").show();
 		}
 	} else {
@@ -710,10 +733,14 @@ async function get_data_from_webcam () {
 			cam_data.stop();
 		}
 	}
+
+	if(force_restart && stopped) {
+		await get_data_from_webcam();
+	}
 }
 
 async function take_image_from_webcam (elem) {
-	l("Start image taking");
+	l("Took photo from webcam");
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
@@ -724,19 +751,17 @@ async function take_image_from_webcam (elem) {
 	var i = 1;
 	var id = base_id + "_" + i;;
 
-	while ($("#" + id + "_img").length != 0) {
+	while ($("#" + id + "_canvas").length != 0) {
 		id = base_id + "_" + i;
 		i++;
 	}
 
-	//log(id);
-
-	$(category).find(".own_images").append('<span class="own_image_span"><img id="' + id + '_img" /><canvas style="display: none;" id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+	$(category).find(".own_images").append('<span class="own_image_span"><canvas id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
 
 	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
 
-	for(var i = 0; i< cam_image.length; i++){
+	for(var i = 0; i < cam_image.length; i++){
 		for(var j = 0; j < cam_image[0].length; j++){
 			var r = cam_image[i][j][0];
 			var g = cam_image[i][j][1];
@@ -746,23 +771,5 @@ async function take_image_from_webcam (elem) {
 		}
 	}
 
-	l(JSON.stringify(cam_image));
-
-	var canvas = document.getElementById(id + "_canvas");
-
-	canvas.toBlob(function(blob) {
-		var img_tag = document.getElementById(id + '_img');
-
-		const url = URL.createObjectURL(blob);
-		//log(url);
-
-		img_tag.onload = function() {
-			// no longer need to read the blob so it's revoked
-			URL.revokeObjectURL(url);
-		};
-
-		img_tag.src = url;
-	});
-
-	l("End image taking");
+	enable_train();
 }

@@ -24,10 +24,12 @@
 				$green = round($image[$x][$y][1] * $divide_by);
 				$blue = round($image[$x][$y][2] * $divide_by);
 
-				//$abc[$x][$y][0] = $red;
-				//$abc[$x][$y][1] = $green;
-				//$abc[$x][$y][2] = $blue;
-
+				/*
+				$abc[$x][$y][0] = $red;
+				$abc[$x][$y][1] = $green;
+				$abc[$x][$y][2] = $blue;
+				*/
+				
 				$pixel_color = imagecolorallocate($gd, $red, $green, $blue);
 
 				imagesetpixel(
