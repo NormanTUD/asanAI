@@ -406,6 +406,11 @@ async function show_webcam () {
 			var videoElement = document.createElement('video');
 			videoElement.width = 256;
 			videoElement.height = 256;
+			videoElement.playsInline = true;
+			videoElement.playsinline = true;
+			videoElement.muted = true;
+			videoElement.controls = true;
+			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
 			cam = await tf.data.webcam(videoElement); //, { facingMode: 'environment' });
