@@ -1022,7 +1022,7 @@ $GLOBALS['minify'] = 0;
 									<td><input type="password" id="login_password"></td>
 								</tr>
 								<tr>
-									<td><button onclick="login()">Login</button></td>
+									<td><button class="save_button" onclick="login()">Login</button></td>
 								</tr>
 								<tr>
 									<span style="display: none" id="login_error_msg" style="background-color: green"></span>
@@ -1037,14 +1037,14 @@ $GLOBALS['minify'] = 0;
 					<div class="popup_body less_transparent_glass_box">
 						<div id="save_model_content"> 
 							<h1>Download</h1>
-							<button onclick="save_model();download_weights_json();">Download</button>
+							<button class="save_button" onclick="save_model();download_weights_json();">Download</button>
 
 							<div style="display: none" class="show_when_logged_in">
 								<h1>Save to DB</h1>
 								<span id="save_model_msg" style="display: none"></span><br/>
 								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
 								Public: <input id="is_public" type="checkbox"><br/>
-								<button id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
+								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
 							</div>
 						</div>
 						<br/>
