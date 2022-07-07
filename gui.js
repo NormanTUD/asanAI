@@ -4659,7 +4659,7 @@ async function get_available_cams () {
 		for(var i = 0; i < devices.length; i++){
 			var device = devices[i];
 			if (device.kind === 'videoinput') {
-				alert(device.label);
+				alert("label: >>>" + device.label + "<<<");
 				webcams.push(device.label);
 			}
 		};
