@@ -454,6 +454,20 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 					</div>
 
+					<div class="only_when_multiple_webcams">
+						<div class="ribbon-group-sep"></div>
+						<div class="ribbon-group-sep-hr"><hr></div>
+						<div class="ribbon-group" data-intro="Here you can set the webcam">
+							<div class="ribbon-toolbar">
+								<select id="which_webcam">
+								</select>
+							</div>
+							<div class="ribbon-group-title">Webcam options</div>
+						</div>
+					</div>
+
+
+
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
@@ -810,7 +824,7 @@ $GLOBALS['minify'] = 0;
 				<div id="log_ribbon" class="ribbon_tab_content" title="Log">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<textarea style="width: 300px; height: 90px; font-size: 14px" readonly id="log"></textarea>
+							<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
 						<button onclick="copy_to_clipboard($('#log').val());">Copy to clipboard</button>
 						<div class="ribbon-group-title">Imprint</div>

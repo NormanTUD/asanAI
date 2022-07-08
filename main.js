@@ -281,9 +281,23 @@ $(document).ready(async function() {
 		} else {
 			$(".only_when_front_and_back_camera").hide();
 		}
+
+		if(available_webcams.length > 1) {
+			$(".only_when_multiple_webcams").show();
+			for (var i = 0; i < available_webcams.length; i++) {
+				$('#which_webcam').append($('<option>', {
+					value: i,
+					text: available_webcams[i]
+				}));
+			}
+		} else {
+			$(".only_when_multiple_webcams").hide();
+		}
 	} else {
 		l("No webcams were found. Disabling webcam related features.");
 		$(".only_when_webcam").hide();
+		$(".only_when_multiple_webcams").hide();
+		$(".only_when_front_and_back_camera").hide();
 	}
 
 	$("#register_form").submit(function(e) {

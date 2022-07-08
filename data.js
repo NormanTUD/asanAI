@@ -715,14 +715,21 @@ async function get_data_from_webcam (force_restart) {
 			videoElement.autoplay = true;
 			webcam.show().append(videoElement);
 
+			var cam_config = {};
 
 			if(await hasBothFrontAndBack()) {
 				l("Using camera " + webcam_modes[webcam_id]);
-				cam_data = await tf.data.webcam(videoElement, { facingMode: webcam_modes[webcam_id] });
+				cam_config["facingMode"] = webcam_modes[webcam_id];
 			} else {
 				l("Has only one camera, no front and back camera");
-				cam_data = await tf.data.webcam(videoElement);
 			}
+
+			if(available_webcams.length > 1) {
+				cam_config["deviceId"] = available_webcams[parseInt($("#which_webcam").val())];
+			}
+
+			log(cam_config);
+			cam_data = await tf.data.webcam(videoElement, cam_config);
 
 			$(".webcam_data_button").show();
 		}
