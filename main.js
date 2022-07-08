@@ -266,6 +266,16 @@ async function hasBothFrontAndBack () {
 	return hasBothFrontAndBackCached;
 }
 
+function restart_webcams () {
+	if(cam) {
+		show_webcam(1);
+	}
+
+	if(cam_data) {
+		get_data_from_webcam(1);
+	}
+}
+
 $(document).ready(async function() {
 	var available_webcam_data = await get_available_cams();
 	available_webcams = available_webcam_data[0];

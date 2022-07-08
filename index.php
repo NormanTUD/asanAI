@@ -459,7 +459,7 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group" data-intro="Here you can set the webcam">
 							<div class="ribbon-toolbar">
-								<select id="which_webcam">
+								<select id="which_webcam" onchange="restart_webcams()">
 								</select>
 							</div>
 							<div class="ribbon-group-title">Webcam options</div>
