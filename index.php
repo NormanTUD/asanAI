@@ -326,9 +326,9 @@ $GLOBALS['minify'] = 0;
 										<td>Data Type:</td>
 										<td>
 											<select id="data_type" style="width: 140px" onchange="change_data_origin(1)">
+												<option class="input_shape_is_image" value="image">&#128444; Image</option>
 												<option value="tensordata">&#x2318; Tensor-Data</option>
 												<option value="csv">&#128290; CSV</option>
-												<option value="image">&#128444; Image</option>
 											</select>
 										</td>
 									</tr>
