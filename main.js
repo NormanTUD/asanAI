@@ -267,7 +267,9 @@ async function hasBothFrontAndBack () {
 }
 
 $(document).ready(async function() {
-	available_webcams = await get_available_cams();
+	var available_webcam_data = await get_available_cams();
+	available_webcams = available_webcam_data[0];
+	available_webcams_ids = available_webcam_data[1];
 
 	log("Number of available cams: " + available_webcams.length);
 

@@ -725,7 +725,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 
 			if(available_webcams.length > 1) {
-				cam_config["deviceId"] = available_webcams[parseInt($("#which_webcam").val())];
+				cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
 			}
 
 			log(cam_config);

@@ -4666,17 +4666,19 @@ function toggle_layers() {
 
 async function get_available_cams () {
 	var webcams = [];
+	var ids = [];
 
 	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
 		for(var i = 0; i < devices.length; i++){
 			var device = devices[i];
 			if (device.kind === 'videoinput') {
 				webcams.push(device.label);
+				ids.push(device.deviceId);
 			}
 		};
 	});
 
-	return webcams;
+	return [webcams, ids];
 }
 
 async function switch_to_next_camera () {
