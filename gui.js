@@ -1081,6 +1081,8 @@ async function change_width_or_height(name, inputshape_index) {
 			is_setting_config = false;
 			updated_page();
 			change_output_and_example_image_size();
+
+			restart_webcams();
 		}
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
