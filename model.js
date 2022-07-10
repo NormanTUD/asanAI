@@ -350,7 +350,6 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var old_weights_string = false;
 	if(model && Object.keys(model).includes("layers")) {
-		swalmsg("Saving old weights");
 		old_weights_string = await get_weights_as_string(model);
 	}
 
@@ -667,8 +666,6 @@ async function create_model (old_model, fake_model_structure, force) {
 	if(!force_dont_keep_weights) {
 		if(old_weights_string) {
 			if(layers_container_md5 == new_layers_container_md5) {
-				console.trace();
-				swalmsg("Setting weights");
 				var new_weights_string = await get_weights_as_string(new_model);
 				var old_weights = eval(old_weights_string);
 				var new_weights = eval(new_weights_string);

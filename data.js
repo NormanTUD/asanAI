@@ -156,6 +156,7 @@ async function get_image_data(skip_real_image_download) {
 						old_percentage = percentage;
 					}
 				}
+
 				var url = urls[i];
 				let tf_data = null;
 				if(!skip_real_image_download) {
