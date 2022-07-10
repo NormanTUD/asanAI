@@ -973,3 +973,5 @@ var webcam_id = 0;
 var webcam_modes = ["user", "environment"];
 
 var hasBothFrontAndBackCached = undefined;
+
+var last_highlighting_md5 = "";

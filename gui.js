@@ -1137,7 +1137,7 @@ async function update_python_code(dont_reget_labels) {
 
 	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
-	Prism.highlightAll();
+	highlight_code();
 
 	return redo_graph;
 }
@@ -2456,7 +2456,7 @@ function disable_everything() {
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
 	write_descriptions();
-	Prism.highlightAll();
+	highlight_code();
 }
 
 function enable_everything() {
@@ -2464,7 +2464,7 @@ function enable_everything() {
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
 	write_descriptions();
-	Prism.highlightAll();
+	highlight_code();
 }
 
 function detect_kernel_initializer(original_kernel_initializer_data) {
@@ -3259,7 +3259,7 @@ async function update_input_shape() {
 		change_width();
 		change_height();
 	}
-	Prism.highlightAll();
+	highlight_code();
 }
 
 function toggle_tfjsvis_overlay() {
@@ -4583,4 +4583,19 @@ function swalmsg (msg) {
 		allowOutsideClick: false,
 		showConfirmButton: false
 	});
+}
+
+async function highlight_code () {
+	var python = $("#python").text();
+	var html = $("#html").text();
+	var node = $("#node").text();
+
+	var all_codes = python + "================" + html + "================" + node;
+
+	var all_codes_md5 = await md5(all_codes);
+
+	if(all_codes_md5 != last_highlighting_md5) {
+		Prism.highlightAll();
+		last_highlighting_md5 = all_codes_md5;
+	}
 }

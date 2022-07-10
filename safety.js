@@ -14,7 +14,7 @@ function assert(boolean_value, exception_message) {
 		$("#layers_container").sortable("enable");
 		$("#ribbon,select,input,checkbox").prop("disabled", false);
 		write_descriptions();
-		Prism.highlightAll();
+		highlight_code();
 
 		var link = document.querySelector("link[rel~='icon']");
 		if (!link) {
