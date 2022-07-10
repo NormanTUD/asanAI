@@ -67,6 +67,7 @@ $GLOBALS['minify'] = 0;
 
 
 		<!-- jquery -->
+		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>
 		<?php minify_js("jquery-ui.js"); ?>
 
@@ -1524,8 +1525,8 @@ $GLOBALS['minify'] = 0;
 			}
 
 			var fcnn = FCNN();
-			async function restart_fcnn(force) {
 
+			async function restart_fcnn(force) {
 				if(!model) {
 					log("FCNN: No model");
 					return;
@@ -1568,7 +1569,7 @@ $GLOBALS['minify'] = 0;
 				var redistribute_data = {
 					'betweenNodesInLayer_': betweenNodesInLayer
 				};
-				var new_hash = md5(JSON.stringify(redraw_data) + JSON.stringify(redistribute_data));
+				var new_hash = await md5(JSON.stringify(redraw_data) + JSON.stringify(redistribute_data));
 
 				if(graph_hashes["fcnn"] != new_hash) {
 					if(architecture.length + real_architecture.length) {
@@ -1677,7 +1678,7 @@ $GLOBALS['minify'] = 0;
 
 								var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2, "showDims": true};
 
-								var new_hash = md5(JSON.stringify(redraw_data));
+								var new_hash = await md5(JSON.stringify(redraw_data));
 
 								if(graph_hashes["alexnet"] != new_hash) {
 									alexnet.restartRenderer(1);
@@ -1804,7 +1805,7 @@ $GLOBALS['minify'] = 0;
 
 						try {
 							var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2};
-							var new_hash = md5(JSON.stringify(redraw_data));
+							var new_hash = await md5(JSON.stringify(redraw_data));
 							if(graph_hashes["lenet"] != new_hash) {
 								lenet.redraw(redraw_data);
 								lenet.redistribute({'betweenLayers_': []});

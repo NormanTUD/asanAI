@@ -9,7 +9,7 @@ function except (errname, e) {
 	if(throw_compile_exception) { throw e; }
 }
 
-function get_model_config_hash () {
+async function get_model_config_hash () {
 	var arr = [];
 	$("#layers_container").find("input, checkbox, select").each(function (i, x) {
 		if($(x).attr("type") == "checkbox") {
@@ -21,7 +21,7 @@ function get_model_config_hash () {
 
 	var str = arr.join(";;;;;;;;;");
 
-	return md5(str);
+	return await md5(str);
 }
 
 async function _create_model () {
@@ -60,7 +60,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 	var recreate_model = false;
 
-	if(model_config_hash != get_model_config_hash() || current_status_hash != get_current_status_hash()) {
+	if(model_config_hash != await get_model_config_hash() || current_status_hash != get_current_status_hash()) {
 		recreate_model = true;
 	}
 
@@ -77,7 +77,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	var model_was_trained_previously = model_is_trained;
 
 	if(model_is_trained) {
-		if(model_config_hash == get_model_config_hash()) {
+		if(model_config_hash == await get_model_config_hash()) {
 			recreate_model = false;
 		} else {
 			recreate_model = true;
@@ -98,7 +98,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	}
 
 	try {
-		model_config_hash = get_model_config_hash();
+		model_config_hash = await get_model_config_hash();
 		var model_data = get_model_data();
 		model.compile(model_data);
 		recompiled_model = true;
@@ -661,7 +661,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		$("#html").text(html);
 	}
 
-	current_layer_status_hash = get_current_layer_container_status_hash();
+	current_layer_status_hash = await get_current_layer_container_status_hash();
 
 	if(!force_dont_keep_weights) {
 		if(old_weights_string) {

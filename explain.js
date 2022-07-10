@@ -1459,7 +1459,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			var math_tab_code_elem = $("#math_tab_code")[0];
 
 			var xpath = get_element_xpath(math_tab_code_elem);
-			var new_md5 = md5($(math_tab_code_elem).html());
+			var new_md5 = await md5($(math_tab_code_elem).html());
 			var old_md5 = math_items_hashes[xpath];
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {

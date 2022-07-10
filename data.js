@@ -754,7 +754,7 @@ async function take_image_from_webcam (elem) {
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
 	cam_image = await cam_image.arraySync()[0];
 
-	var base_id = md5($(category).find(".own_image_label").val());
+	var base_id = await md5($(category).find(".own_image_label").val());
 
 	var i = 1;
 	var id = base_id + "_" + i;;
