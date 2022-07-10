@@ -2072,11 +2072,13 @@ async function set_config(index) {
 
 	if (config) {
 		if (!index) {
-			if (config["width"]) { $("#width").val(config["width"]).trigger("change"); }
-			if (config["height"]) { $("#height").val(config["height"]).trigger("change"); }
+			if (config["width"]) { $("#width").val(config["width"]); }
+			if (config["height"]) { $("#height").val(config["height"]); }
 			if (config["labels"]) { labels = config["labels"]; }
 
-			if (config["max_number_of_files_per_category"]) { $("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]).trigger("change"); }
+			if (config["max_number_of_files_per_category"]) {
+				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
+			}
 
 			if (config["divide_by"]) {
 				$("#divide_by").val(config["divide_by"]);
@@ -2090,14 +2092,14 @@ async function set_config(index) {
 			set_optimizer(config["optimizer"]);
 
 			if (config["width"]) {
-				$("#width").val(config["width"]).trigger("change");
+				$("#width").val(config["width"]);
 			}
 
 			if (config["height"]) {
-				$("#height").val(config["height"]).trigger("change");
+				$("#height").val(config["height"]);
 			}
 
-			$("#optimizer").trigger("change");
+			$("#optimizer");
 
 			if (config["optimizer"] == "rmsprop") {
 				set_rho(config["rho"]);
@@ -2266,6 +2268,8 @@ async function set_config(index) {
 
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
+
+	await updated_page();
 
 	model = await create_model(model);
 	await compile_model();
@@ -4690,6 +4694,8 @@ async function switch_to_next_camera () {
 }
 
 function swalmsg (msg) {
+	l(msg);
+	log(msg);
 	Swal.fire({
 		title: msg,
 		allowEscapeKey: false,
