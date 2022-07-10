@@ -338,7 +338,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	var new_current_status_hash = await get_current_status_hash();
 	if(!force) {
 		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-			//return old_model;
+			return old_model;
 		}
 	}
 
