@@ -1591,12 +1591,13 @@ function initializer_layer_options(thisitem) {
 }
 
 function set_option_for_layer_by_layer_nr(nr) {
-	assert(typeof (nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof (nr));
+	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
-	$(".layer_options_internal")[nr].innerHTML = get_option_for_layer_by_type(nr);
+	var layer = $(".layer_options_internal")[nr];
+	layer.innerHTML = get_option_for_layer_by_type(nr);
 
 	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
-		$($(".layer_options_internal")[nr]).find("." + i).trigger("change");
+		$(layer).find("." + i).trigger("change");
 	});
 
 	write_descriptions();
