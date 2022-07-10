@@ -277,6 +277,8 @@ function restart_webcams () {
 }
 
 $(document).ready(async function() {
+	swalmsg("Checking webcams");
+
 	var available_webcam_data = await get_available_cams();
 	available_webcams = available_webcam_data[0];
 	available_webcams_ids = available_webcam_data[1];
@@ -324,8 +326,15 @@ $(document).ready(async function() {
 	}
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
+
+
+	swalmsg("Initializing tabs");
 	init_tabs();
+
+	swalmsg("Initializing options tabs");
 	init_set_all_options();
+
+	swalmsg("Initializing categories");
 	init_categories();
 
 	if(getCookie("dataset_category")) {
@@ -337,6 +346,7 @@ $(document).ready(async function() {
 		$("#dataset_category").val("image");
 	}
 
+	swalmsg("Initializing page contents");
 	await init_page_contents();
 
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {

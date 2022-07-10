@@ -4688,3 +4688,12 @@ async function switch_to_next_camera () {
 	webcam_id = webcam_id % (webcam_modes.length);
 	await get_data_from_webcam(1);
 }
+
+function swalmsg (msg) {
+	Swal.fire({
+		title: msg,
+		allowEscapeKey: false,
+		allowOutsideClick: false,
+		showConfirmButton: false
+	});
+}
