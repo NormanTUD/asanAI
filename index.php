@@ -89,6 +89,7 @@ $GLOBALS['minify'] = 0;
 				tf.setBackend(backend);
 			}
 
+			tf.env().set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
 
 			if(!hasWebGL()) {
 				tf.setBackend('cpu');
