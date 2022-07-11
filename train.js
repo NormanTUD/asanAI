@@ -61,6 +61,27 @@ async function train_neural_network () {
 	} else {
 		l("Started training")
 		gui_in_training();
+
+		training_logs_batch = {
+			"loss": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'Loss'
+			}
+		};
+
+		training_logs_epoch = {
+			"loss": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'Loss'
+			}
+		};
+
 		reset_gui_before_training();
 
 		$("#percentage").html("");
@@ -139,12 +160,6 @@ function get_fit_data () {
 
 	var callbacks = {};
 
-	callbacks = tfvis.show.fitCallbacks(
-		$("#tfvis_tab_training_performance_graph")[0],
-		["loss", "acc", "val_loss", "val_acc" ],
-		{ height: 200, callbacks: ["onBatchEnd", "onEpochEnd"] }
-	);
-
 	callbacks["onTrainBegin"] = async function () {
 		current_epoch = 0;
 		this_training_start_time = Date.now()
@@ -181,7 +196,22 @@ function get_fit_data () {
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
 	}
 
-	callbacks["onBatchEnd"] = async function () {
+	callbacks["onBatchEnd"] = async function (batch, logs) {
+		delete logs["batch"];
+		delete logs["size"];
+
+		var batchNr = 1;
+		var loss = logs["loss"];
+		if(training_logs_batch["loss"]["x"].length) {
+			batchNr = Math.max(...training_logs_batch["loss"]["x"]) + 1;
+		}
+		training_logs_batch["loss"]["x"].push(batchNr);
+		training_logs_batch["loss"]["y"].push(loss);
+
+		var this_plot_data = [training_logs_batch["loss"]];
+
+		Plotly.newPlot('plotly_batch_history', this_plot_data);
+
 		if($("#auto_update_predictions").is(":checked")) {
 			if($('#predict_own_data').val()) {
 				predict($('#predict_own_data').val());
@@ -189,6 +219,46 @@ function get_fit_data () {
 			show_prediction(0, 1);
 			predict_handdrawn();
 		}
+	};
+
+	callbacks["onEpochEnd"] = async function (batch, logs) {
+		delete logs["epoch"];
+		delete logs["size"];
+
+		var epochNr = 1;
+		var loss = logs["loss"];
+		if(training_logs_epoch["loss"]["x"].length) {
+			epochNr = Math.max(...training_logs_epoch["loss"]["x"]) + 1;
+		}
+		training_logs_epoch["loss"]["x"].push(epochNr);
+		training_logs_epoch["loss"]["y"].push(loss);
+
+
+		var other_key_name = "val_loss";
+
+		var this_plot_data = [training_logs_epoch["loss"]];
+
+		if(Object.keys(logs).includes(other_key_name)) {
+			if(epochNr == 1) {
+				training_logs_epoch[other_key_name] = {
+					"x": [],
+					"y": [],
+					"type": "scatter",
+					"mode": 'lines+markers',
+					"name": 'Loss'
+				};
+			}
+
+			loss = logs[other_key_name];
+			training_logs_epoch[other_key_name]["x"].push(epochNr);
+			training_logs_epoch[other_key_name]["y"].push(loss);
+			training_logs_epoch[other_key_name]["mode"] = "lines+markers";
+			training_logs_epoch[other_key_name]["name"] = other_key_name;
+
+			this_plot_data.push(training_logs_epoch[other_key_name]);
+		}
+
+		Plotly.newPlot('plotly_epoch_history', this_plot_data);
 	}
 
 	callbacks["onTrainEnd"] = async function () {

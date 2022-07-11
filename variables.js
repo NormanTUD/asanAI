@@ -975,3 +975,23 @@ var webcam_modes = ["user", "environment"];
 var hasBothFrontAndBackCached = undefined;
 
 var last_highlighting_md5 = "";
+
+var training_logs_batch = {
+	"loss": {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'Loss'
+	}
+};
+
+var training_logs_epoch = {
+	"loss": {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'Loss'
+	}
+};

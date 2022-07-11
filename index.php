@@ -97,7 +97,6 @@ $GLOBALS['minify'] = 0;
 				force_cpu_backend = 1;
 			}
 		</script>
-		<?php minify_js("tf/tfjs-vis.js"); ?>
 
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
@@ -1294,6 +1293,10 @@ $GLOBALS['minify'] = 0;
 
 
 								<div id="tfvis_tab_training_performance">
+									<h1>Epoches</h1>
+									<div id="plotly_epoch_history"></div>
+									<h1>Batches</h1>
+									<div id="plotly_batch_history"></div>
 									<div id="tfvis_tab_training_performance_graph"></div>
 									<div id="tfvis_tab_history_graphs"></div>
 								</div>
