@@ -3586,7 +3586,7 @@ function show_head_data(head) {
 			x_selected = "";
 			y_selected = "selected";
 		}
-		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none'>None</option></select>";
+		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none'>None</option></select>, divide by: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />";
 		html += "<tr><td>" + head[i] + "</td><td>" + select + "</td></tr>";
 	}
 
