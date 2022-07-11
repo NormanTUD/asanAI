@@ -929,7 +929,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 			Swal.fire({
 				icon: 'error',
 				title: 'Error loading weights',
-				text: "e"
+				text: e
 			});
 		}
 		return false;
