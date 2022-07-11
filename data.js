@@ -571,7 +571,7 @@ function parse_csv_file (csv_file) {
 	return {"head": head, "data": data};
 }
 
-function get_data_struct_by_header(header, parsed) {
+function get_data_struct_by_header(header, parsed, skip_nr) {
 	var y_between_0_and_1 = true;
 	var indices = {};
 
@@ -584,7 +584,7 @@ function get_data_struct_by_header(header, parsed) {
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
 		for (var item_nr = 0; item_nr < header.length; item_nr++) {
-			var header_multiply = parseFloat($($(".header_divide_by")[item_nr]).val());
+			var header_multiply = parseFloat($($(".header_divide_by")[item_nr+skip_nr]).val());
 			var ln = parseFloat(parsed.data[line_nr][indices[header[item_nr]]]) / header_multiply;
 			line.push(ln);
 			if(y_between_0_and_1) {
@@ -644,8 +644,8 @@ function get_x_y_from_csv () {
 
 	var parsed = parse_csv_file(csv);
 
-	var x_data = get_data_struct_by_header(x_headers, parsed);
-	var y_data = get_data_struct_by_header(y_headers, parsed);
+	var x_data = get_data_struct_by_header(x_headers, parsed, 0);
+	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length);
 
 	var x = x_data["data"];
 	var y = y_data["data"];
