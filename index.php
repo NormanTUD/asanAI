@@ -22,13 +22,17 @@
 
 				try {
 					var canvas = document.createElement('canvas');
-					supported = !! window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-				} catch(e) { supported = false; }
+					supported = !!window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+				} catch(e) {
+					supported = false;
+				}
 
 				try {
 					// let is by no means required, but will help us rule out some old browsers/devices with potentially buggy implementations: http://caniuse.com/#feat=let
 					eval('let foo = 123;');
-				} catch (e) { supported = false; }
+				} catch (e) {
+					supported = false;
+				}
 
 				if (supported === false) {
 					l("WebGL is not supported");
