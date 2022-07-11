@@ -186,7 +186,6 @@ async function init_page_contents (chosen_dataset) {
 
 	disabling_saving_status = false;
 	skip_predictions = false;
-	show_prediction(1);
 }
 
 function dataset_already_there (dataset_name) {
