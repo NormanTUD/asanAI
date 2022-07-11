@@ -1955,9 +1955,17 @@ async function set_config(index) {
 
 	if (config) {
 		if (!index) {
-			if (config["width"]) { $("#width").val(config["width"]); }
-			if (config["height"]) { $("#height").val(config["height"]); }
-			if (config["labels"]) { labels = config["labels"]; }
+			if (config["width"]) {
+				$("#width").val(config["width"]).trigger("change");
+			}
+
+			if (config["height"]) {
+				$("#height").val(config["height"]).trigger("change");
+			}
+
+			if (config["labels"]) {
+				labels = config["labels"];
+			}
 
 			if (config["max_number_of_files_per_category"]) {
 				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
@@ -1973,16 +1981,6 @@ async function set_config(index) {
 			set_loss(config["loss"]);
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
-
-			if (config["width"]) {
-				$("#width").val(config["width"]);
-			}
-
-			if (config["height"]) {
-				$("#height").val(config["height"]);
-			}
-
-			$("#optimizer");
 
 			if (config["optimizer"] == "rmsprop") {
 				set_rho(config["rho"]);
