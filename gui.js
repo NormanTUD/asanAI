@@ -2070,7 +2070,9 @@ async function set_config(index) {
 					"dropout_rate",
 					"max_features",
 					"trainable",
-					"use_bias"
+					"use_bias",
+					"stddev",
+					"rate"
 				];
 
 				datapoints.forEach(function (item_name) {

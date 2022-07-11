@@ -876,7 +876,7 @@ async function get_valid_layer_types (layer_nr) {
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
 		} else {
-			if(["dense", "reshape", "dropout"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category)) {
+			if(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category)) {
 				valid_layer_types.push(layer_type);
 			} else {
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
