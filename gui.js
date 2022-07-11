@@ -2176,6 +2176,8 @@ async function set_config(index) {
 
 	is_setting_config = false;
 
+	await updated_page(null, null, null, 1);
+
 	Swal.close();
 
 	write_descriptions();
