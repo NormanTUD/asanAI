@@ -53,7 +53,6 @@ function init_tabs () {
 	var tabs_settings = {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
-			hide_annoying_tfjs_vis_overlays();
 		}
 	};
 

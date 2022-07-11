@@ -163,7 +163,6 @@ function get_fit_data () {
 	callbacks["onTrainBegin"] = async function () {
 		current_epoch = 0;
 		this_training_start_time = Date.now()
-		hide_annoying_tfjs_vis_overlays();
 		$(".training_performance_tabs").show();
 
 		if($("#jump_to_training_tab").is(":checked")) {
@@ -172,7 +171,6 @@ function get_fit_data () {
 			show_tab_label("tfvis_tab_label");
 		}
 
-		hide_annoying_tfjs_vis_overlays();
 	};
 
 	callbacks["onBatchBegin"] = async function () {
@@ -180,7 +178,6 @@ function get_fit_data () {
 			model.stopTraining = true;
 		}
 
-		hide_annoying_tfjs_vis_overlays();
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			write_model_to_latex_to_page();
 		}
@@ -263,7 +260,6 @@ function get_fit_data () {
 
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
-		hide_annoying_tfjs_vis_overlays();
 		write_model_to_latex_to_page();
 		document.title = original_title;
 		restart_fcnn();

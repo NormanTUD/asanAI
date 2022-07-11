@@ -3274,14 +3274,6 @@ function toggle_tfjsvis_overlay() {
 	}
 }
 
-function hide_annoying_tfjs_vis_overlays() {
-	if (is_hidden_or_has_hidden_parent($("#tfvis_tab_training_performance_graph"))) {
-		$(".vg-tooltip").addClass("vg-tooltip-hidden");
-	} else {
-		$(".vg-tooltip").removeClass("vg-tooltip-hidden");
-	}
-}
-
 function toggle_show_input_layer() {
 	show_input_layer = !show_input_layer;
 
