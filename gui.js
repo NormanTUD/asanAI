@@ -3180,7 +3180,7 @@ async function load_weights(dont_show_msg) {
 		$.ajax({
 			url: weights_file,
 			success: async function (data) {
-				set_weights_from_json_object(data, dont_show_msg, 1);
+				set_weights_from_json_object(data, dont_show_msg, 1, model);
 				prev_layer_data = [];
 				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
