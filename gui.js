@@ -2269,6 +2269,8 @@ async function chose_dataset(no_set_config) {
 
 	$("#predict_error").html("");
 	$("#prediction").html("");
+
+	identify_layers(get_numberoflayers());
 }
 
 function init_weight_file_list() {
@@ -2377,7 +2379,7 @@ async function init_dataset_category() {
 	$("#visualization_tab_label").click();
 	show_tab_label("fcnn_tab_label", 1);
 
-	//updated_page();
+	updated_page();
 	init_download_link();
 }
 

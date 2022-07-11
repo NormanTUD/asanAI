@@ -404,6 +404,14 @@ async function get_xs_and_ys () {
 				xy_data = {"x": x, "y": y};
 			} else if (data_type_val == "csv") {
 				xy_data = get_x_y_from_csv();
+
+				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+					try {
+						y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
+					} catch (e) {
+						header(e);
+					}
+				}
 			} else {
 				alert("Unknown data type: " + data_type_val);
 			}
