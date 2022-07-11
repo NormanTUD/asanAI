@@ -210,7 +210,7 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
-		Plotly.newPlot('plotly_batch_history', this_plot_data);
+		Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
 
 		if($("#auto_update_predictions").is(":checked")) {
 			if($('#predict_own_data').val()) {
@@ -258,7 +258,7 @@ function get_fit_data () {
 			this_plot_data.push(training_logs_epoch[other_key_name]);
 		}
 
-		Plotly.newPlot('plotly_epoch_history', this_plot_data);
+		Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
 	}
 
 	callbacks["onTrainEnd"] = async function () {

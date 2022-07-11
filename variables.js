@@ -995,3 +995,14 @@ var training_logs_epoch = {
 		"name": 'Loss'
 	}
 };
+
+var plotly_color = {
+	paper_bgcolor: "rgba(0, 0, 0, 0)",
+	plot_bgcolor: "rgba(0, 0, 0, 0)",
+	gridcolor: "#7c7c7c",
+	font: {
+		family: 'Courier New, monospace',
+		size: 18,
+		color: '#7f7f7f'
+	}
+};
