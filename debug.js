@@ -6,8 +6,8 @@ function logt(msg) {
 }
 
 function log (msg) {
-	//console.trace();
 	console.log(msg);
+	//console.trace();
 }
 
 function header_error (msg) {

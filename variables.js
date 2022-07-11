@@ -157,7 +157,11 @@ var js_names_to_python_names = {
 	"gammaInitializer": "gamma_initializer",
 	"filters": "filters",
 	"units": "units",
-	"targetShape": "target_shape"
+	"targetShape": "target_shape",
+	"GaussianNoise": "gaussianNoise",
+	"gaussianNoise": "GaussianNoise",
+	"gaussianDropout": "GaussianDropout",
+	"GaussianDropout": "gaussianDropout"
 };
 
 var python_names_to_js_names = {};

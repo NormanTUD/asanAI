@@ -27,8 +27,6 @@ function get_key_from_path(array, keypath) {
 	return tmp;
 }
 
-
-
 function get_full_shape_without_batch(file) {
 	if (file === null) {
 		return null;
