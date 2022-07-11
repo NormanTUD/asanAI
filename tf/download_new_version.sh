@@ -9,8 +9,6 @@ declare -a FILES=(
 	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
 	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.js"
 	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.js.map"
-	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis/dist/tfjs-vis.umd.min.js.map"
-	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"
 )
 
 for i in "${FILES[@]}"; do
