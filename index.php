@@ -150,8 +150,6 @@ $GLOBALS['minify'] = 0;
 		<?php minify_css("chardinjs.css"); ?>
 
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("color-picker.js"); ?>
-		<?php minify_css("color-picker.css"); ?>
 		<?php minify_js("atrament.min.js"); ?>
 		
 		<script>
