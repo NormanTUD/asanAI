@@ -483,7 +483,7 @@ function explain_error_msg (err) {
 		} else if(err.includes("Failed to compile fragment shader")) {
 			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
 		} else if(err.includes("target expected a batch of elements where each example")) {
-			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try chosing other losses, like categoricalCrossentropy.";
+			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try chosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
 		} else if(err.includes("but got array with shape 0,")) {
 			explanation = "Have you forgotten to add your own training data?";
 		} else if(err.includes("texShape is undefined")) {
