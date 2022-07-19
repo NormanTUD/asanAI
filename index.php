@@ -168,18 +168,6 @@ $GLOBALS['minify'] = 0;
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
-		<style>
-			.pickr {
-				display: inline-block;
-				height: 1.75em;
-				overflow: hidden;
-				border: solid 2px;
-				border-radius: 5px;
-				margin-bottom: 0;
-				vertical-align: middle;
-				margin-left: 5px;
-			}
-		</style>
 		<?php minify_js("plotly-latest.min.js"); ?>
 
 		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
