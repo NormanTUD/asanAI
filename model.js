@@ -880,7 +880,11 @@ async function get_valid_layer_types (layer_nr) {
 
 	$('body').css('cursor', 'wait');
 
+	var pb = $($(".progressbar")[layer_nr])
+	pb.show();
+
 	for (var i = 0; i < layer_names.length; i++) {
+
 		var layer_type = layer_names[i];
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
@@ -888,6 +892,9 @@ async function get_valid_layer_types (layer_nr) {
 			if(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category)) {
 				valid_layer_types.push(layer_type);
 			} else {
+				var pb_string = "Checking layer type "  + (i + 1) + " of " + layer_names.length;
+				l(pb_string);
+				pb.html(pb_string);
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					if(await compile_fake_model(layer_nr, layer_type)) {
@@ -897,6 +904,8 @@ async function get_valid_layer_types (layer_nr) {
 			}
 		}
 	}
+
+	pb.hide();
 
 	$('body').css('cursor', 'default');
 

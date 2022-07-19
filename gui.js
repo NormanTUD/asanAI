@@ -1674,6 +1674,7 @@ function option_for_layer(nr) {
 	str += "<button style='cursor: context-menu' class='show_data' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
 	str += "</td>";
 	str += "<td>";
+	str += "<div style='display: none' class='progressbar'>a</div>";
 	str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
 	var last_category = '';
 	for (var key of layer_names) {
