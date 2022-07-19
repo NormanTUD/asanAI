@@ -4186,6 +4186,7 @@ function show_tab_label(label, click) {
 
 function check_number_values() {
 	var all_fields = document.querySelectorAll('input[type="number"]');
+	var default_bg_color = $("input").css("background-color");
 
 	var missing_values = 0;
 
@@ -4198,7 +4199,7 @@ function check_number_values() {
 			missing_values++;
 		} else {
 			val = parseFloat(val);
-			item.css("background-color", $("input").css("background-color"));
+			item.css("background-color", default_bg_color);
 
 			var max = parseFloat(item.attr("max"));
 			var min = parseFloat(item.attr("min"));
