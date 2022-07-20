@@ -379,7 +379,7 @@ $GLOBALS['minify'] = 0;
 									</tr>
 									<tr>
 										<td>Auto-Augment?</td>
-										<td><input type="checkbox" id="auto_augment" checked /></td>
+										<td><input type="checkbox" id="auto_augment" /></td>
 									</tr>
 								</table>
 							</div>

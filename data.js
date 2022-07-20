@@ -307,7 +307,7 @@ async function get_xs_and_ys () {
 						classes.push(this_category_counter);
 
 						if($("#auto_augment").is(":checked")) {
-							for (var j = 2; j < 10; j++) {
+							for (var j = 1; j < 4; j++) {
 								var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
 								x = x.concat(augmented_img);
 								classes.push(label_nr);
@@ -384,7 +384,7 @@ async function get_xs_and_ys () {
 							classes.push(label_nr);
 
 							if($("#auto_augment").is(":checked")) {
-								for (var j = 2; j < 10; j++) {
+								for (var j = 1; j < 4; j++) {
 									var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
 									x.push(await augmented_img.arraySync());
 									classes.push(label_nr);
