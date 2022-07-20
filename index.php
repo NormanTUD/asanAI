@@ -1589,6 +1589,7 @@ $GLOBALS['minify'] = 0;
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
+				var colors = [];
 
 				var disable_alexnet = 0;
 
@@ -1719,6 +1720,7 @@ $GLOBALS['minify'] = 0;
 				var layer_to_lenet_arch = {};
 				architecture = [];
 				architecture2 = [];
+				colors = [];
 
 				var j = 0;
 				if(!show_input_layer) {
@@ -1761,6 +1763,7 @@ $GLOBALS['minify'] = 0;
 							if(push) {
 								architecture.push(this_layer_arch);
 								layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
+								colors.push("#ffffff");
 							}
 						} else if (category == "Basic") {
 							try {
@@ -1797,7 +1800,7 @@ $GLOBALS['minify'] = 0;
 						}
 
 						try {
-							var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2};
+							var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2, 'colors': colors};
 							var new_hash = await md5(JSON.stringify(redraw_data));
 							if(graph_hashes["lenet"] != new_hash) {
 								lenet.redraw(redraw_data);
