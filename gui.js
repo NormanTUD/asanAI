@@ -4123,11 +4123,11 @@ function delete_own_image(elem) {
 }
 
 function larger_maximally_activated_neurons() {
-	$(".layer_image").css({ height: '+=5px', width: '+=5px' })
+	$(".layer_image").css({ height: '+=50px', width: '+=50px' })
 }
 
 function smaller_maximally_activated_neurons() {
-	$(".layer_image").css({ height: '-=5px', width: '-=5px' })
+	$(".layer_image").css({ height: '-=50px', width: '-=50px' })
 	if ($(".layer_image").css("width") == "0px") {
 		$(".layer_image").css({ height: 'auto', width: 'auto' })
 	}
