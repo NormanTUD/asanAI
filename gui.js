@@ -1282,8 +1282,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	enable_start_training_custom_tensors();
 
+	var wait_for_latex_model = Promise.resolve(1);
+
 	if (!no_update_math) {
-		await write_model_to_latex_to_page();
+		wait_for_latex_model = write_model_to_latex_to_page();
 	}
 
 	last_shape_layer_warning();
@@ -1306,7 +1308,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		console.warn(e);
 	}
 
-	await show_or_hide_load_weights()
+	var wait_for_show_hide_load_weights = show_or_hide_load_weights()
 
 	allow_training();
 
@@ -1315,6 +1317,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	await typeset();
+
+	await wait_for_latex_model;
+	await wait_for_show_hide_load_weights;
 
 	return 1;
 }
