@@ -363,7 +363,7 @@ $GLOBALS['minify'] = 0;
 
 					<div id="image_resize_dimensions" class="hide_when_no_image">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:120px">
+							<div class="ribbon-toolbar" style="width:170px">
 								<table>
 									<tr>
 										<td>Width:</td>
@@ -376,6 +376,10 @@ $GLOBALS['minify'] = 0;
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
 										<td>Img/cat:</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
+									</tr>
+									<tr>
+										<td>Auto-Augment?</td>
+										<td><input type="checkbox" id="auto_augment" checked /></td>
 									</tr>
 								</table>
 							</div>

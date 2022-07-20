@@ -305,6 +305,14 @@ async function get_xs_and_ys () {
 						var this_category_counter = this_data[i]["category_counter"];
 						x = x.concat(item);
 						classes.push(this_category_counter);
+
+						if($("#auto_augment").is(":checked")) {
+							for (var j = 2; j < 10; j++) {
+								var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
+								x = x.concat(augmented_img);
+								classes.push(label_nr);
+							}
+						}
 					}
 
 					y = tf.tensor(classes);
@@ -371,8 +379,17 @@ async function get_xs_and_ys () {
 								resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
 							}
 
-							x.push(await resized_img.arraySync());
+							var this_img = await resized_img.arraySync();
+							x.push(this_img);
 							classes.push(label_nr);
+
+							if($("#auto_augment").is(":checked")) {
+								for (var j = 2; j < 10; j++) {
+									var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
+									x.push(await augmented_img.arraySync());
+									classes.push(label_nr);
+								}
+							}
 						}
 					}
 				}
@@ -420,6 +437,7 @@ async function get_xs_and_ys () {
 		}
 	}
 
+
 	return xy_data;
 }
 
@@ -463,8 +481,6 @@ async function _get_training_data() {
 	return await get_cached_json(url);
 }
 
-
-
 function median(values){
 	if(values.length ===0) throw new Error("No inputs");
 
@@ -479,8 +495,6 @@ function median(values){
 
 	return (values[half - 1] + values[half]) / 2.0;
 }
-
-
 
 function decille (arr, percentage) {
 	arr.sort();
