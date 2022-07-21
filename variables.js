@@ -36,7 +36,6 @@ var future_state_stack = [];
 var status_saves = {};
 
 var disabling_saving_status = false;
-var current_undo_status = 0;
 
 var mode = "beginner";
 var global_disable_auto_enable_valid_layer_types = true;
@@ -52,7 +51,6 @@ var height = 32;
 var width = 32;
 var labels = [];
 var vector_counter = 1;
-var word_to_id = {};
 var disable_show_python_and_create_model = false;
 var layer_structure_cache = null;
 var allowed_layer_cache = [];
@@ -933,8 +931,6 @@ var demo_interval = undefined;
 var current_layer_status_hash = "";
 
 var weights_files = {};
-
-var redo_labels = true;
 
 var layers_container_md5 = "";
 

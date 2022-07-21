@@ -323,9 +323,7 @@ async function run_neural_network () {
 	}
 
 	try {
-		log("BEFORE");
 		model = await create_model(model);
-		log("AFTER");
 	} catch (e) {
 		alert("Creating model failed: " + e);
 		return;
@@ -409,7 +407,6 @@ async function run_neural_network () {
 
 			var fit_data = get_fit_data();
 
-			log("STARTED TRAINING");
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
