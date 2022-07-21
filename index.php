@@ -822,7 +822,7 @@ $GLOBALS['minify'] = 0;
 							<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
 						<button onclick="copy_to_clipboard($('#log').val());">Copy to clipboard</button>
-						<div class="ribbon-group-title">Imprint</div>
+						<div class="ribbon-group-title">Log</div>
 					</div>
 
 				</div>
