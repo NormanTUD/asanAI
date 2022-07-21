@@ -1458,7 +1458,7 @@ function write_to_summary(val) {
 
 function set_optimizer(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#optimizer").val(val);
+	$("#optimizer").val(val).trigger("change");
 }
 
 function set_metric(val) {
