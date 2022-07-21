@@ -1010,3 +1010,5 @@ var plotly_color = {
 		color: '#7f7f7f'
 	}
 };
+
+var stop_generating_images = false;

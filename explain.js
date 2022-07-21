@@ -782,6 +782,9 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 		var prev_img_str = image.dataSync().join(";");
 
                 for (var i = 1; i <= iterations; i++) {
+			if(stop_generating_images) {
+				continue;
+			}
                         console.warn("Iteration " + i + " of " + iterations);
 
                         const scaledGrads = tf.tidy(() => {
@@ -865,10 +868,8 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	var stop = 0;
-
 	for (var i = 0; i < neurons; i++) {
-		if(stop) {
+		if(stop_generating_images) {
 			continue;
 		}
 		var eta = "";
@@ -887,7 +888,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			showConfirmButton: false
 		}).then((e)=>{
 			if(e.isDismissed && e.dismiss == "cancel") {
-				stop = 1;
+				stop_generating_images = 1;
 			}
 		});
 
@@ -902,6 +903,8 @@ async function draw_maximally_activated_layer (layer, type) {
 		times.push(time);
 
 	}
+
+	stop_generating_images = false;
 
 	favicon_default();
 
