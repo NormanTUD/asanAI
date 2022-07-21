@@ -4619,6 +4619,6 @@ async function easter_egg_fireworks () {
 		await delay(10000);
 		fw.stop();
 		in_fireworks = false;
-		$(".fireworks-container").hide();
+		$(".fireworks-container").html("").hide();
 	}
 }
