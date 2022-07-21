@@ -1463,12 +1463,12 @@ function set_optimizer(val) {
 
 function set_metric(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#metric").val(val);
+	$("#metric").val(val).trigger("change");
 }
 
 function set_loss(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#loss").val(val);
+	$("#loss").val(val).trigger("change");
 }
 
 function get_epochs() {
