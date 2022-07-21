@@ -417,3 +417,13 @@ button:disabled:hover {
 	left: 10px;
 	bottom: 10px;
 }
+
+.fireworks-container {
+	z-index: 10;
+	top: 0;
+	left: 0;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	display: none;
+}

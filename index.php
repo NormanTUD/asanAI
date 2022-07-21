@@ -102,6 +102,8 @@ $GLOBALS['minify'] = 0;
 			}
 		</script>
 
+		<!-- Easter Egg -->
+		<?php minify_js("fireworks.js"); ?>
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
 		<?php minify_js("variables.js"); ?>
@@ -177,6 +179,7 @@ $GLOBALS['minify'] = 0;
 		<meta name="description" content="A tool for learning how to use TensorFlow without writing a single line of code">
 	</head>
 	<body data-chardin-sequenced="true">
+		<div class="fireworks-container"></div>
 		<div id="mainsite">
 			<div id="ribbon_shower">
 				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
@@ -211,7 +214,7 @@ $GLOBALS['minify'] = 0;
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img height=110 alt="asanAI Logo" src="favico_tb.png" />
+								<img height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="favico_tb.png" />
 							</div>
 						</div>
 					</div>

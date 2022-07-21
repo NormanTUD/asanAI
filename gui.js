@@ -4602,3 +4602,23 @@ function swalmsg (msg) {
 async function highlight_code () {
 	Prism.highlightAll();
 }
+
+async function easter_egg_fireworks () {
+	if(in_fireworks) {
+		return;
+	}
+
+	fireworks_counter++;
+	console.warn(fireworks_counter);
+
+	if(fireworks_counter && fireworks_counter % 10 == 0) {
+		$(".fireworks-container").show();
+		in_fireworks = true;
+		var fw = new Fireworks(document.querySelector('.fireworks-container'))
+		fw.start();
+		await delay(10000);
+		fw.stop();
+		in_fireworks = false;
+		$(".fireworks-container").hide();
+	}
+}
