@@ -4600,16 +4600,5 @@ function swalmsg (msg) {
 }
 
 async function highlight_code () {
-	var python = $("#python").text();
-	var html = $("#html").text();
-	var node = $("#node").text();
-
-	var all_codes = python + "================" + html + "================" + node;
-
-	var all_codes_md5 = await md5(all_codes);
-
-	if(all_codes_md5 != last_highlighting_md5) {
-		Prism.highlightAll();
-		last_highlighting_md5 = all_codes_md5;
-	}
+	Prism.highlightAll();
 }
