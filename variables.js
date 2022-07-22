@@ -996,6 +996,16 @@ var training_logs_epoch = {
 	}
 };
 
+var time_per_batch = {
+	"time": {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'Time per batch (in seconds)'
+	}
+};
+
 var training_memory_history = {
 	numBytes: {
 		"x": [],
@@ -1040,3 +1050,5 @@ var in_fireworks = 0;
 var predict_examples_hash = "";
 
 var inited_webcams = false;
+
+var last_batch_time = 0;

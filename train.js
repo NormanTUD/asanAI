@@ -81,6 +81,18 @@ async function train_neural_network () {
 			}
 		};
 
+		last_batch_time = 0;
+
+		time_per_batch = {
+			"time": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'Time per batch (in seconds)'
+			}
+		}
+
 		training_memory_history = {
 			numBytes: {
 				"x": [],
@@ -234,6 +246,15 @@ function get_fit_data () {
 		training_logs_batch["loss"]["x"].push(batchNr);
 		training_logs_batch["loss"]["y"].push(loss);
 
+		if(!last_batch_time) {
+			last_batch_time = +new Date();
+		} else {
+			var current_time = +new Date();
+			time_per_batch["time"]["x"].push(batchNr);
+			time_per_batch["time"]["y"].push((current_time - last_batch_time) / 1000);
+			last_batch_time = current_time;
+		}
+
 		var this_plot_data = [training_logs_batch["loss"]];
 
 		var memory_status = tf.memory();
@@ -256,6 +277,9 @@ function get_fit_data () {
 
 		$("#plotly_memory_history").parent().show();
 		Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
+
+		$("#plotly_time_per_batch").parent().show();
+		Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
 
 		if($("#auto_update_predictions").is(":checked")) {
 			if($('#predict_own_data').val()) {

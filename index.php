@@ -1294,7 +1294,12 @@ $GLOBALS['minify'] = 0;
 								</div>
 
 								<div style="display: none">
-									<h1>Memory usage while training:</h1>
+									<h1>Time per batch (in seconds):</h1>
+									<div id="plotly_time_per_batch"></div>
+								</div>
+
+								<div style="display: none">
+									<h1>Memory usage while training (per batch):</h1>
 									<div id="plotly_memory_history"></div>
 								</div>
 							</div>
