@@ -883,8 +883,9 @@ async function get_valid_layer_types (layer_nr) {
 	var pb = $($(".progressbar")[layer_nr])
 	pb.show();
 
-	for (var i = 0; i < layer_names.length; i++) {
+	var checked_layers = false;
 
+	for (var i = 0; i < layer_names.length; i++) {
 		var layer_type = layer_names[i];
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
@@ -901,8 +902,13 @@ async function get_valid_layer_types (layer_nr) {
 						valid_layer_types.push(layer_type);
 					}
 				}
+				checked_layers = true;
 			}
 		}
+	}
+
+	if(checked_layers) {
+		l("Checked possible layer types");
 	}
 
 	pb.hide();
