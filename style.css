@@ -108,6 +108,7 @@ html {
 .side_by_side_container {
 	width: 99%;
 	margin: auto;
+	margin-bottom: 30px;
 	padding: 10px;
 }
 
@@ -440,7 +441,7 @@ button:disabled:hover {
 #data_progressbar {
 	margin-top: 4px;
 	display: none;
-	height: 8px;
+	height: 3px;
 	background-color: #909090;
 	border-radius: 3px;
 	padding: 3px;
@@ -450,14 +451,14 @@ button:disabled:hover {
 #data_progressbar>div{
 	background-color: orange;
 	width: 0%;
-	height: 8px;
+	height: 3px;
 	border-radius: 10px;
 }
 
 #training_progressbar {
 	margin-top: 4px;
 	display: inline-block;
-	height: 8px;
+	height: 3px;
 	background-color: #909090;
 	border-radius: 3px;
 	padding: 3px;
@@ -467,7 +468,7 @@ button:disabled:hover {
 #training_progressbar>div{
 	background-color: orange;
 	width: 0%;
-	height: 8px;
+	height: 3px;
 	border-radius: 10px;
 }
 
