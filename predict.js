@@ -413,6 +413,8 @@ async function predict_webcam () {
 }
 
 async function show_webcam (force_restart) {
+	await init_webcams();
+
 	var stopped = 0;
 
 	if(input_shape_is_image()) {

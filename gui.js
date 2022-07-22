@@ -4551,7 +4551,8 @@ function l(msg) {
 	}
 }
 
-function set_custom_webcam_training_data() {
+async function set_custom_webcam_training_data() {
+	await init_webcams();
 	if($("#data_origin").val() != "own") {
 		$("#data_origin").val("own").trigger("change");
 	}
@@ -4629,4 +4630,50 @@ async function easter_egg_fireworks () {
 		in_fireworks = false;
 		$(".fireworks-container").html("").hide();
 	}
+}
+
+async function init_webcams () {
+	if(inited_webcams) {
+		return;
+	}
+
+	inited_webcams = true;
+	l("Checking webcams");
+
+	var available_webcam_data = await get_available_cams();
+	available_webcams = available_webcam_data[0];
+	available_webcams_ids = available_webcam_data[1];
+
+	log("Number of available cams: " + available_webcams.length);
+
+	if(available_webcams.length) {
+		l("Webcam(s) were found. Enabling webcam related features.");
+		l("List of found webcams: " + available_webcams.join(", "));
+		$(".only_when_webcam").show();
+
+		if(await hasBothFrontAndBack()) {
+			$(".only_when_front_and_back_camera").show();
+		} else {
+			$(".only_when_front_and_back_camera").hide();
+		}
+
+		if(available_webcams.length > 1) {
+			$(".only_when_multiple_webcams").show();
+			for (var i = 0; i < available_webcams.length; i++) {
+				$('#which_webcam').append($('<option>', {
+					value: i,
+					text: available_webcams[i]
+				}));
+			}
+		} else {
+			$(".only_when_multiple_webcams").hide();
+		}
+	} else {
+		l("No webcams were found. Disabling webcam related features.");
+		$(".only_when_webcam").hide();
+		$(".only_when_multiple_webcams").hide();
+		$(".only_when_front_and_back_camera").hide();
+	}
+
+	l("Done checking webcams");
 }
