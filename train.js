@@ -81,6 +81,30 @@ async function train_neural_network () {
 			}
 		};
 
+		training_memory_history = {
+			numBytes: {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'RAM (MB)'
+			},
+			numBytesInGPU: {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'GPU (MB)'
+			},
+			numTensors: {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": 'lines+markers',
+				"name": 'Number of Tensors'
+			}
+		}
+
 		reset_gui_before_training();
 
 		$("#percentage").html("");
@@ -212,8 +236,26 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
+		var memory_status = tf.memory();
+
+		var objects_in_training_memory_history = Object.keys(training_memory_history);
+
+		for (var i = 0; i < objects_in_training_memory_history.length; i++) {
+			var name = objects_in_training_memory_history[i];
+
+			training_memory_history[name]["x"].push(batchNr);
+			if(["numBytes", "numBytesInGPU"].includes(name)) {
+				training_memory_history[name]["y"].push(memory_status[name] / 1048576);
+			} else {
+				training_memory_history[name]["y"].push(memory_status[name]);
+			}
+		}
+
 		$("#plotly_batch_history").parent().show();
 		Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
+
+		$("#plotly_memory_history").parent().show();
+		Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
 
 		if($("#auto_update_predictions").is(":checked")) {
 			if($('#predict_own_data').val()) {

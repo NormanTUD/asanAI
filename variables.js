@@ -996,6 +996,30 @@ var training_logs_epoch = {
 	}
 };
 
+var training_memory_history = {
+	numBytes: {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'RAM (MB)'
+	},
+	numBytesInGPU: {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'GPU (MB)'
+	},
+	numTensors: {
+		"x": [],
+		"y": [],
+		"type": "scatter",
+		"mode": 'lines+markers',
+		"name": 'Number of Tensors'
+	}
+};
+
 var plotly_color = {
 	paper_bgcolor: "rgba(0, 0, 0, 0)",
 	plot_bgcolor: "rgba(0, 0, 0, 0)",
