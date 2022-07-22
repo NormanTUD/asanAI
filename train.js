@@ -212,6 +212,7 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
+		$("#plotly_batch_history").parent().show();
 		Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
 
 		if($("#auto_update_predictions").is(":checked")) {
@@ -260,6 +261,7 @@ function get_fit_data () {
 			this_plot_data.push(training_logs_epoch[other_key_name]);
 		}
 
+		$("#plotly_epoch_history").parent().show();
 		Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
 	}
 

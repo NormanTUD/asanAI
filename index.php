@@ -1283,12 +1283,15 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
-								<h1>Epoches</h1>
-								<div id="plotly_epoch_history"></div>
-								<h1>Batches</h1>
-								<div id="plotly_batch_history"></div>
-								<div id="tfvis_tab_training_performance_graph"></div>
-								<div id="tfvis_tab_history_graphs"></div>
+								<div style="display: none">
+									<h1>Epoches</h1>
+									<div id="plotly_epoch_history"></div>
+								</div>
+
+								<div style="display: none">
+									<h1>Batches</h1>
+									<div id="plotly_batch_history"></div>
+								</div>
 							</div>
 
 							<div id="summary_tab">

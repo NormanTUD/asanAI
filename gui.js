@@ -2182,9 +2182,6 @@ async function init_dataset() {
 
 	set_batchSize(2);
 
-	$("#tfvis_tab_training_performance_graph").html("");
-	$("#tfvis_tab_history_graphs").html("");
-
 	$(".training_performance_tabs").hide();
 
 	$("#data_origin").val("default").trigger("change");
