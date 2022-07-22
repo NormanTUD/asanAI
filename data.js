@@ -362,6 +362,8 @@ async function get_xs_and_ys () {
 					showConfirmButton: false
 				});
 
+				l("Generating data from images");
+
 				var category_counter = $(".own_image_label").length;
 				var keys = [];
 				var x = [];
@@ -420,6 +422,9 @@ async function get_xs_and_ys () {
 						header(e);
 					}
 				}
+
+
+				l("Done generating data from images");
 
 				xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 			} else if (data_type_val == "tensordata") {
