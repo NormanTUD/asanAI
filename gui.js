@@ -1388,48 +1388,6 @@ function byteToMB(varbyte) {
 	return varbyte + " (" + mb + "MB)";
 }
 
-function print_memory() {
-	$("#memorycontainer").show();
-	$("#memory").html();
-
-	var mem = tf.memory();
-
-	var msg =
-		"numBytes: " + byteToMB(mem.numBytes) + "\n" +
-		"numBytesInGPU: " + byteToMB(mem.numBytes) + "\n" +
-		"numDataBuffers: " + mem.numDataBuffers + "\n" +
-		"numTensors: " + mem.numTensors + "\n" +
-		"unreliable? " + mem.unreliable;
-
-	$("#memory").html("<pre>" + msg + "</pre>");
-}
-
-function reset_history() {
-	$("#history").html("");
-	$("#historycontainer").hide();
-}
-
-function write_history(h) {
-	var keys = Object.keys(h["history"])
-
-	var string = "<tr><td>Epoch</td>";
-	for (var i = 0; i < keys.length; i++) {
-		string += "<th>" + keys[i] + "</th>";
-	}
-	string += "</tr>";
-
-	for (var e = 0; e < h["epoch"].length; e++) {
-		string += "<tr>";
-		string += "<td>" + (e + 1) + "</td>";
-		for (var i = 0; i < keys.length; i++) {
-			string += "<td>" + h["history"][keys[i]][e] + "</td>";
-		}
-
-	}
-
-	$("#history").html("<table id='history_table' style='width: 100%; border: 1px solid #D3D3D3;'>" + string + "</table>");
-}
-
 function write_model_summary() {
 	$("#summarycontainer").show();
 	var logBackup = console.log;
@@ -2228,9 +2186,6 @@ async function init_dataset() {
 	$("#tfvis_tab_history_graphs").html("");
 
 	$(".training_performance_tabs").hide();
-
-	$("#history").html("");
-	$("#memory").html("");
 
 	$("#data_origin").val("default").trigger("change");
 	$("#visualization_tab_label").click();
@@ -4028,7 +3983,6 @@ async function start_demo_mode() {
 		"alexnet_tab_label": "alexnet",
 		"math_tab_label": "math_tab",
 		"training_data_tab_label": "training_data_tab",
-		"tfvis_tab_training_performance": "tfvis_tab_training_performance",
 		"predictcontainer": "predictcontainer"
 	};
 

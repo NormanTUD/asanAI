@@ -33,7 +33,6 @@ function reset_gui_before_training () {
 	$(".output_image_grid").html("");
 	reset_photo_gallery();
 	reset_summary();
-	reset_history();
 }
 
 async function train_neural_network () {
@@ -307,8 +306,6 @@ function show_info_after_run (h) {
 	assert(typeof(h) == "object", "history object is not of type object");
 
 	traindebug("Showing tfvis/history/memory");
-	write_history(h);
-	print_memory();
 }
 
 async function run_neural_network () {
@@ -325,7 +322,6 @@ async function run_neural_network () {
 
 	if($("#jump_to_training_tab").is(":checked")) {
 		show_tab_label("tfvis_tab_label", 1);
-		show_tab_label("tfvis_tab_training_performance_label", 1);
 	}
 
 	try {
@@ -406,7 +402,6 @@ async function run_neural_network () {
 			if($("#data_origin").val() == "default") {
 				show_tab_label("training_data_tab_label", 1);
 			}
-			show_tab_label("tfvis_tab_training_performance_label", 1);
 		}
 
 		try {
