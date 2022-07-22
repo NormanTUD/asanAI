@@ -1731,6 +1731,7 @@ async function remove_layer(item) {
 
 	}
 
+	l("Removed layer");
 	write_descriptions();
 }
 
@@ -1782,6 +1783,8 @@ async function add_layer(item) {
 
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
+
+	l("Added layer");
 
 	await save_current_status();
 }
@@ -2648,6 +2651,8 @@ async function undo() {
 	set_shown_advanced(shown);
 
 	write_descriptions();
+
+	l("Undone last change");
 }
 
 async function redo() {
@@ -2672,6 +2677,8 @@ async function redo() {
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
 	write_descriptions();
+
+	l("Redone last undone change");
 }
 
 function enable_symbol(name) {
