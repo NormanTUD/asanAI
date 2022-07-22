@@ -247,3 +247,7 @@ a.ui-button:focus {
 	text-align: center;
 	border-radius: 4px;
 }
+
+#status_bar {
+	background-color: #f5f5f5;
+}
