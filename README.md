@@ -66,6 +66,8 @@ in creating this program:
 
 - [atrament.js](https://www.fiala.space/atrament.js/demo/)
 
+- [Magic Wand](https://codepen.io/averyhw/pen/xyxKjO/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
