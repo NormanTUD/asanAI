@@ -453,7 +453,7 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
 					</div>
 
-					<div class="only_when_multiple_webcams">
+					<div class="only_when_multiple_webcams" style="display: none">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group" data-intro="Here you can set the webcam">
