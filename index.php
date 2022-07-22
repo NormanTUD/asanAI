@@ -444,7 +444,7 @@ $GLOBALS['minify'] = 0;
 ?>>
 								<label for="expert">&#9760;&#65039; Expert</label>
 							</fieldset>
-							Theme: <select id="theme_choser" onchange="theme_choser()">
+							Theme: <select id="theme_choser" class="show_data" onchange="theme_choser()">
 								<option value="lightmode">Light Mode</option>
 								<option value="darkmode">Dark Mode</option>
 								<option value="natural">Natural</option>
@@ -1402,7 +1402,26 @@ $GLOBALS['minify'] = 0;
 				</div>
 			</div>
 		</div>
+
 		<div id="demomode" class="glass_box" style="display: none"></div>
+
+		<div id="status_bar">
+			<span id="status_bar_log"></span>
+
+			<span id="data_loading_progress_bar" style="display: none">
+				| Loading data:
+				<span id="data_progressbar">
+					<div></div>
+				</span>
+			</span>
+
+			<span id="training_progress_bar" style="display: none">
+				| Training:
+				<span id="training_progressbar">
+					<div></div>
+				</span>
+			</span>
+		</div>
 
 		<?php minify_js("main.js"); ?>
 		<script>

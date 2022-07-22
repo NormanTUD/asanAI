@@ -227,3 +227,7 @@ a.ui-button:focus {
 	background-color: #363636;
 	color: #fff;
 }
+
+#status_bar {
+	background-color: #262626;
+}

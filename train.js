@@ -190,7 +190,13 @@ function get_fit_data () {
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
 		var epochs_left = max_number_epochs - current_epoch;
 		var time_estimate = human_readable_time(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
+
+		$("#training_progress_bar").show();
+
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
+
+		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
+		$("#training_progressbar>div").css("width", percentage + "%")
 	}
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -347,6 +353,7 @@ async function run_neural_network () {
 		disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
+		l("Got data!");
 
 		if(Object.keys(xs_and_ys).includes("x")) {
 			if(xs_and_ys["x"].shape.toString() == "0") {
@@ -407,7 +414,9 @@ async function run_neural_network () {
 
 			var fit_data = get_fit_data();
 
+			l("Started model.fit");
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+			l("Finished model.fit");
 
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */
@@ -440,6 +449,8 @@ async function run_neural_network () {
 			dispose(h);
 
 			enable_everything();
+
+			$("#training_progress_bar").hide();
 		} catch (e) {
 			write_error(e);
 

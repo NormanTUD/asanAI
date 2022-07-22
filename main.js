@@ -387,4 +387,6 @@ $(document).ready(async function() {
 
 	copy_options();
 	copy_values();
+
+	l("Site is ready");
 });

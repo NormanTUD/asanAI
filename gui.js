@@ -4540,6 +4540,7 @@ function l(msg) {
 		var load_time = Date().toLocaleString();
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
+		$("#status_bar_log").html("Last log: " + msg);
 	}
 }
 

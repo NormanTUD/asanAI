@@ -135,6 +135,8 @@ async function get_image_data(skip_real_image_download) {
 
 	var times = [];
 
+	$("#data_loading_progress_bar").show();
+	$("#data_progressbar").css("display", "inline-block");
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
@@ -143,6 +145,7 @@ async function get_image_data(skip_real_image_download) {
 				if(!skip_real_image_download) {
 					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
 					document.title = "Loading data " + percentage_text;
+					$("#data_progressbar>div").css("width", percentage + "%")
 					percentage_div.html(percentage_text);
 					if(eta) {
 						percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
@@ -171,6 +174,8 @@ async function get_image_data(skip_real_image_download) {
 
 		times.push(end_time - start_time);
 	}
+	$("#data_progressbar").css("display", "none");
+	$("#data_loading_progress_bar").hide();
 
 	stop_downloading_data = false;
 	$("#stop_downloading").hide();

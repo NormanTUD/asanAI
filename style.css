@@ -427,3 +427,50 @@ button:disabled:hover {
 	width: 100%;
 	display: none;
 }
+
+#status_bar {
+	height: 20px;
+	width: 100%;
+	position: fixed;
+	bottom: 0px;
+	border: 1px groove #626262;
+	z-index: 99999;
+}
+
+#data_progressbar {
+	margin-top: 4px;
+	display: none;
+	height: 8px;
+	background-color: #909090;
+	border-radius: 3px;
+	padding: 3px;
+	width: 100px;
+}
+
+#data_progressbar>div{
+	background-color: orange;
+	width: 0%;
+	height: 8px;
+	border-radius: 10px;
+}
+
+#training_progressbar {
+	margin-top: 4px;
+	display: inline-block;
+	height: 8px;
+	background-color: #909090;
+	border-radius: 3px;
+	padding: 3px;
+	width: 100px;
+}
+
+#training_progressbar>div{
+	background-color: orange;
+	width: 0%;
+	height: 8px;
+	border-radius: 10px;
+}
+
+#status_bar_log {
+	margin-top: 4px;
+}
