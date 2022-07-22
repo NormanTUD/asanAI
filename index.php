@@ -61,6 +61,7 @@
 		}
 $GLOBALS['minify'] = 0;
 ?>
+		<?php minify_css("wand.css"); ?>
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
 		<?php minify_css("ribbon.css"); ?>
