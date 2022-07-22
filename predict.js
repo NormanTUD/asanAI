@@ -44,7 +44,7 @@ var loadFile = (function(event) {
 });
 
 let predict_demo = async function (item, nr) {
-	tf.engine().startScope();
+	//tf.engine().startScope();
 
 	try {
 		if(labels.length == 0) {
@@ -56,20 +56,19 @@ let predict_demo = async function (item, nr) {
 		if($("#divide_by").val() != 1) {
 			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
 			dispose(tensor_img);
-			tensor_img = new_tensor_img;
+			tensor_img = tf.tensor(await new_tensor_img.arraySync());
+			dispose(new_tensor_img);
 		}
 
 		if(!tensor_shape_matches_model(tensor_img)) {
+			dispose(tensor_img);
 			return;
 		}
 
 		if(model) {
 			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
 			var predictions_tensor = await model.predict([tensor_img]);
-			dispose(tensor_img);
-
 			var predictions = predictions_tensor.dataSync();
-			dispose(predictions_tensor);
 
 			if(predictions.length) {
 				var max_i = 0;
@@ -85,7 +84,6 @@ let predict_demo = async function (item, nr) {
 
 				var desc = $($(".predict_demo_result")[nr]);
 
-
 				var fullstr = "";
 
 				for (let i = 0; i < predictions.length; i++) {
@@ -99,19 +97,26 @@ let predict_demo = async function (item, nr) {
 				}
 				desc.html(fullstr);
 			}
+
 			$("#predict_error").hide();
 			$("#predict_error").html("");
+
+			dispose(predictions_tensor);
 		}
+
+		dispose(tensor_img);
 	} catch (e) {
 		console.warn(e);
+		l(e);
 		$("#prediction").hide();
 		$("#predict_error").show();
 		$("#predict_error").html(e);
 		$("#example_predictions").html("");
 	}
 
+	//tf.engine().endScope();
+
 	hide_unused_layer_visualization_headers();
-	tf.engine().endScope();
 
 	change_output_and_example_image_size();
 }
@@ -275,7 +280,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		}
 
 		var example_predictions = $("#example_predictions");
-		example_predictions.html("");
 
 		var dataset_category = $("#dataset_category").val();
 
@@ -285,21 +289,29 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
 				$.ajax({
 					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
-					success: function (x) { 
+					success: async function (x) { 
 						if(x) {
+							var this_examples_hash = await md5(JSON.stringify(x["example"]));
+							if(this_examples_hash != predict_examples_hash) {
+								example_predictions.html("");
+								predict_examples_hash = this_examples_hash;
+							}
 							var examples = x["example"];
 							if(examples) {
 								var str = "";
 								for (var i = 0; i < examples.length; i++) {
-									var url = full_dir + "/" + examples[i];
-									var img_elem = $("img[src$='" + url + "']");
+									var img_url = full_dir + "/" + examples[i];
+									var img_elem = $("img[src$='" + img_url + "']");
 									if(img_elem.length) {
 										predict_demo(img_elem[0], i);
 									} else {
-										str += "<hr><img src='" + url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
+										str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
 									}
 								}
-								example_predictions.html(str);
+
+								if(str) {
+									example_predictions.html(str);
+								}
 							}
 						}
 					}
