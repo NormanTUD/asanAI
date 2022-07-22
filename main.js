@@ -53,7 +53,9 @@ function init_tabs () {
 	var tabs_settings = {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
-		}
+		},
+		hide: { effect: "fade", duration: 100 },
+		show: { effect: "fade", duration: 100 }
 	};
 
 	var tablist = $("#tablist");
