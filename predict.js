@@ -52,7 +52,10 @@ let predict_demo = async function (item, nr) {
 		}
 
 
-		let tensor_img = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
+		let tensor_img = tf.tidy(() => {
+			return tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims()
+		});
+
 		if($("#divide_by").val() != 1) {
 			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
 			dispose(tensor_img);
@@ -69,6 +72,7 @@ let predict_demo = async function (item, nr) {
 			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
 			var predictions_tensor = await model.predict([tensor_img]);
 			var predictions = predictions_tensor.dataSync();
+			dispose(predictions_tensor);
 
 			if(predictions.length) {
 				var max_i = 0;
@@ -100,8 +104,6 @@ let predict_demo = async function (item, nr) {
 
 			$("#predict_error").hide();
 			$("#predict_error").html("");
-
-			dispose(predictions_tensor);
 		}
 
 		dispose(tensor_img);
