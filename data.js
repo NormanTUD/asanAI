@@ -305,7 +305,7 @@ async function get_xs_and_ys () {
 						category_counter++;
 					}
 
-					this_data = shuffle(this_data);
+					//this_data = shuffle(this_data);
 
 					for (var i = 0; i < this_data.length; i++) {
 						var item = this_data[i]["item"];
@@ -406,14 +406,6 @@ async function get_xs_and_ys () {
 
 				x = tf.tensor(x);
 				y = tf.tensor(y).expandDims();
-
-				if(shuffle_before_training()) {
-					var indices = Array.from(Array(x.shape[0]).keys());
-					var shuffled_indices = shuffle(indices);
-					shuffled_indices = tf.tensor(shuffled_indices, null, 'int32');
-					x = tf.gather(x, shuffled_indices);
-					y = tf.gather(y, shuffled_indices);
-				}
 
 				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 					try {
@@ -681,14 +673,6 @@ function get_x_y_from_csv () {
 
 	x = tf.tensor(x);
 	y = tf.tensor(y);
-
-	if(shuffle_before_training()) {
-		var indices = Array.from(Array(x.shape[0]).keys());
-		var shuffled_indices = shuffle(indices);
-		shuffled_indices = tf.tensor(shuffled_indices, null, 'int32');
-		x = tf.gather(x, shuffled_indices);
-		y = tf.gather(y, shuffled_indices);
-	}
 
 	return {
 		"x": x,

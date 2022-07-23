@@ -510,7 +510,6 @@ $GLOBALS['minify'] = 0;
 								       <td>Keep weights when possible?</td>
 								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
 								</tr>
-
 								<tr>
 									<td>Reinit weights on data source change</td>
 									<td>
@@ -520,9 +519,13 @@ $GLOBALS['minify'] = 0;
 								<tr>
 									<td colspan=2><button onclick="force_reinit()">Reinitialize network's weight</button></td>
 								</tr>
+                                                                <tr>
+								       <td>Shuffle before each epoch?</td>
+								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
+								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Weights</div>
+						<div class="ribbon-group-title">Weights/Shuffle</div>
 					</div>
 
 					<!--
@@ -1098,8 +1101,6 @@ $GLOBALS['minify'] = 0;
 
 							<div id="own_csv_data">
 								<br>
-								Shuffle data before training? <input type="checkbox" value="1" checked class="shuffle_data_before_training" />
-								<br>
 								<table border=1>
 									<tr>
 										<td>
@@ -1166,8 +1167,6 @@ $GLOBALS['minify'] = 0;
 							<div id="own_image_data">
 								<br>
 								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
-								<br>
-								Shuffle data before training? <input type="checkbox" value="1" class="shuffle_data_before_training" />
 								<br>
 								<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
 								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>

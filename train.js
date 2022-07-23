@@ -355,7 +355,7 @@ function get_fit_data () {
 		validationSplit: validationSplit,
 		batchSize: batchSize,
 		epochs: epochs,
-		shuffle: true,
+		shuffle: $("#shuffle_before_each_epoch").is(":checked"),
 		verbose: 0,
 		callbacks: callbacks
 	};
