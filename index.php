@@ -173,7 +173,7 @@ $GLOBALS['minify'] = 0;
 
 		<?php minify_js("plotly-latest.min.js"); ?>
 
-		<script type="text/javascript" src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
