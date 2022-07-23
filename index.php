@@ -244,18 +244,16 @@ $GLOBALS['minify'] = 0;
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
 								</tr>
-								<div>
-									<tr>
-										<td>
-											Dataset:
-										</td>
-										<td colspan=2>
-											<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 204px">
-											</select>
-											<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
-										</td>
-									</tr>
-								</div>
+								<tr>
+									<td>
+										Dataset:
+									</td>
+									<td colspan=2>
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 204px">
+										</select>
+										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+									</td>
+								</tr>
 								<tr>
 									<td>Shapes: </td>
 									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 102px;" readonly id="outputShape" /></td>
