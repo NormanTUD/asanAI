@@ -1906,6 +1906,7 @@ async function set_config(index) {
 		swal_msg = "Undoing/redoing";
 	}
 
+	l(swal_msg);
 	Swal.fire({
 		title: swal_msg + '...',
 		allowEscapeKey: false,
