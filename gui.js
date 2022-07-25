@@ -1390,6 +1390,7 @@ function byteToMB(varbyte) {
 
 function write_model_summary() {
 	$("#summarycontainer").show();
+	assert(typeof(model) == "object", "model is not an object");
 	var logBackup = console.log;
 	var logMessages = [];
 
@@ -1397,7 +1398,7 @@ function write_model_summary() {
 		logMessages.push.apply(logMessages, arguments);
 	};
 
-	model.summary();
+	model.summary(200);
 
 	write_to_summary(logMessages.join("\n"));
 
