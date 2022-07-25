@@ -104,7 +104,6 @@ function FCNN() {
 
 		architecture = architecture_;
 		real_architecture = real_architecture_;
-		log(colors_);
 		showBias = showBias_;
 		showLabels = showLabels_;
 
