@@ -257,10 +257,6 @@ function init_categories () {
 	number_of_initialized_layers = 0;
 }
 
-function fix_graph_color () {
-	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
-}
-
 async function hasBothFrontAndBack () {
 	if(hasBothFrontAndBackCached === undefined) {
 		var has_front_and_back_facing_camera = await hasFrontBack();
@@ -342,7 +338,6 @@ $(document).ready(async function() {
 	window.onresize = reset_view;
 
 	setInterval(fix_lenet_width, 700);
-	setInterval(fix_graph_color, 700);
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
 	setInterval(write_descriptions, 500);

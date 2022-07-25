@@ -67,7 +67,6 @@ function add_function_debugger () {
 			    "Swal", 
 			    "add_function_debugger", 
 			    "getParamNames", 
-			    "fix_graph_color", 
 			    "memory_debugger", 
 			    "_allow_training", 
 			    "fix_lenet_width", 
