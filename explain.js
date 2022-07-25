@@ -359,7 +359,7 @@ function group_layers (layers) {
 			"name": "Feature ex&shy;traction"
 		},
                 {
-			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + ";?(?:dropout?;);?))", 
+			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))", 
 			"name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention"
 		},
                 { 
