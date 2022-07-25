@@ -91,7 +91,8 @@ function FCNN() {
 			real_architecture_=real_architecture,
 			showBias_=showBias,
 			showLabels_=showLabels={},
-			layerTypes_=layerTypes
+			layerTypes_=layerTypes,
+			colors_=colors
 		}) {
 
 		cookie_theme = getCookie("theme");
@@ -103,6 +104,7 @@ function FCNN() {
 
 		architecture = architecture_;
 		real_architecture = real_architecture_;
+		log(colors_);
 		showBias = showBias_;
 		showLabels = showLabels_;
 
