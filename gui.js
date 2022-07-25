@@ -881,7 +881,7 @@ async function _get_configuration(index) {
 			if (uploaded_model == "") {
 				data["keras"] = await get_cached_json(keras_url);
 			} else {
-				data["keras"] = JSON.parse(JSON.stringify(uploaded_model));
+				data["keras"] = JSON.parse(uploaded_model);
 				uploaded_model = "";
 			}
 		} catch (e) {
@@ -2008,6 +2008,7 @@ async function set_config(index) {
 			number_of_layers = config["model_structure"].length;
 		}
 
+		log("number_of_layers: " + number_of_layers);
 		init_numberoflayers(number_of_layers);
 
 		if (config["input_shape"]) {
@@ -3014,16 +3015,15 @@ async function upload_model(evt) {
 
 	// Closure to capture the file information.
 	reader.onload = (function (theFile) {
-		return function (e) {
+		return async function (e) {
 			uploaded_model = e.target.result;
 
+			await set_config();
+			is_setting_config = false;
 		};
 	})(f);
 
 	reader.readAsText(f);
-
-	await set_config();
-	is_setting_config = false;
 }
 
 async function upload_weights(evt) {
