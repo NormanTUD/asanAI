@@ -2382,6 +2382,7 @@ function get_input_shape() {
 function change_metrics() {
 	var new_metric = $("#metric").val();
 
+	l("Changed metrics");
 	$("#metric_equation").html("");
 
 	updated_page(1);
@@ -3274,6 +3275,7 @@ function reset_view() {
 }
 
 async function change_data_origin() {
+	l("Change data origin");
 	if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 		force_reinit();
 	}

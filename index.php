@@ -91,6 +91,7 @@ $GLOBALS['minify'] = 0;
 			}
 
 			function set_backend() {
+				l("Setting backend");
 				var backend = get_backend();
 				tf.setBackend(backend);
 			}
