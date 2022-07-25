@@ -157,8 +157,6 @@ function FCNN() {
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
 			.attr("id", function(d) { return "fcnn_" + d.id; })
-			//.on("mousedown", set_focus)
-			//.on("mouseup", remove_focus)
 			.merge(node);
 
 		text = text.data(label, d => d.id);
