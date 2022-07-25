@@ -889,6 +889,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			showConfirmButton: false
 		}).then((e)=>{
 			if(e.isDismissed && e.dismiss == "cancel") {
+				l("Stopped generating new images, this may take a while");
 				stop_generating_images = 1;
 			}
 		});
