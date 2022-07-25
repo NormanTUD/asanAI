@@ -4043,6 +4043,7 @@ async function change_model_dataset() {
 }
 
 function allow_edit_inputShape() {
+	l("Checking whether to allow editing input shape or not");
 	if ($("#auto_input_shape").is(":checked")) {
 		$("#inputShape").attr("readonly", true);
 	} else {
