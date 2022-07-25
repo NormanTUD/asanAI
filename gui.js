@@ -2516,6 +2516,7 @@ function hide_empty_groups(layer_nr) {
 
 function set_all_kernel_initializers() {
 	var chosen_value = $("#set_all_kernel_initializers").val();
+	l("Setting all kernel initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".kernel_initializer").val(chosen_value).trigger("change");
@@ -2528,6 +2529,7 @@ function set_all_kernel_initializers() {
 
 function set_all_bias_initializers() {
 	var chosen_value = $("#set_all_bias_initializers").val();
+	l("Setting all bias initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".bias_initializer").val(chosen_value).trigger("change");
@@ -2540,6 +2542,7 @@ function set_all_bias_initializers() {
 
 function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
+	l("Setting all activation functions to " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		$(".activation").val(chosen_value).trigger("change");

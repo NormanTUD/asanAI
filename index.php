@@ -344,11 +344,11 @@ $GLOBALS['minify'] = 0;
 
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width: 180px">
+						<div class="ribbon-toolbar" style="width: 165px">
 							<table>
 								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 80px;" /></td></tr>
 								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 80px;" /></td></tr>
-								<tr><td>Val.-Split %:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 80px;" id="validationSplit" /></td></tr>
+								<tr><td>Val.-Split&nbsp;%:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 80px;" id="validationSplit" /></td></tr>
 								<tr class="expert_mode_only">
 									<td colspan=2>
 										Auto-Input-Shape?
