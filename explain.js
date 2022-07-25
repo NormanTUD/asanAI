@@ -878,6 +878,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		}
 
 		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		l(swal_msg);
 		document.title = swal_msg;
 
 		await Swal.fire({
@@ -901,8 +902,9 @@ async function draw_maximally_activated_layer (layer, type) {
 		var time = ((end - start) / 1000) + 1;
 
 		times.push(time);
-
 	}
+
+	l("Done generating images");
 
 	stop_generating_images = false;
 
