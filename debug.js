@@ -69,7 +69,7 @@ function add_function_debugger () {
 			    "getParamNames", 
 			    "memory_debugger", 
 			    "_allow_training", 
-			    "fix_lenet_width", 
+			    "fix_viz_width", 
 			    "allow_training", 
 			    "allow_training", 
 			    "get_current_chosen_object_default_weights_string", 

@@ -337,7 +337,7 @@ $(document).ready(async function() {
 
 	window.onresize = reset_view;
 
-	setInterval(fix_lenet_width, 700);
+	setInterval(fix_viz_width, 700);
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
 	setInterval(write_descriptions, 500);

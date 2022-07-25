@@ -3928,7 +3928,7 @@ function toggle_layer_view() {
 
 }
 
-function fix_lenet_width() {
+function fix_viz_width () {
 	$("#lenet").find("svg").attr("width", $("#lenet").css("width"));
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
