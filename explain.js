@@ -314,7 +314,7 @@ function group_layers (layers) {
         var char_to_group = new Array(str.length);
         char_to_group.fill(null);
 
-	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*";
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
 
 	var layer_names = Object.keys(layer_options);
 
