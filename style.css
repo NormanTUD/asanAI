@@ -391,7 +391,7 @@ button:disabled:hover {
 	writing-mode: vertical-rl;
 	background-color: white;
 	border: solid #a3a8ac 1px;
-	width: 45px;
+	width: 43px;
 	text-align: center;
 	border-radius: 4px;
 }
@@ -475,4 +475,8 @@ button:disabled:hover {
 
 #status_bar_log {
 	margin-top: 4px;
+}
+
+#layers_container_left {
+	padding-bottom: 50px;
 }
