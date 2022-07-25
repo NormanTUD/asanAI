@@ -156,7 +156,9 @@ function FCNN() {
 			.append("circle")
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
-			.attr("id", function(d) { return "fcnn_" + d.id; })
+			.attr("id", function(d) {
+				return "fcnn_" + d.id; 
+			})
 			.merge(node);
 
 		text = text.data(label, d => d.id);
