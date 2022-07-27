@@ -1,5 +1,9 @@
 "use strict";
 
+function degrees_to_radians(degrees) {
+	return degrees * (Math.PI / 180);
+}
+
 function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
@@ -314,9 +318,23 @@ async function get_xs_and_ys () {
 						classes.push(this_category_counter);
 
 						if($("#auto_augment").is(":checked")) {
-							for (var j = 1; j < 4; j++) {
-								var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
-								x = x.concat(augmented_img);
+							if($("#augment_rotate_images").is(":checked")) {
+									for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
+									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
+									x = x.concat(augmented_img);
+									classes.push(this_category_counter);
+								}
+							}
+
+							if($("#augment_invert_images").is(":checked")) {
+								var add_value = (-255 / parseFloat($("#divide_by").val()));
+								var inverted = tf.abs(tf.add(item, add_value));
+								x = x.concat(inverted);
+								classes.push(this_category_counter);
+							}
+
+							if($("#augment_flip_left_right").is(":checked")) {
+								x = x.concat(tf.image.flipLeftRight(item));
 								classes.push(label_nr);
 							}
 						}
@@ -394,9 +412,21 @@ async function get_xs_and_ys () {
 							classes.push(label_nr);
 
 							if($("#auto_augment").is(":checked")) {
-								for (var j = 1; j < 4; j++) {
-									var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
-									x.push(await augmented_img.arraySync());
+								if($("#augment_rotate_images").is(":checked")) {
+									for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
+										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
+										x.push(await augmented_img.arraySync());
+										classes.push(label_nr);
+									}
+								}
+
+								if($("#augment_invert_images").is(":checked")) {
+									x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+									classes.push(label_nr);
+								}
+
+								if($("#augment_flip_left_right").is(":checked")) {
+									x.push(await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0]);
 									classes.push(label_nr);
 								}
 							}
@@ -441,7 +471,6 @@ async function get_xs_and_ys () {
 			$("#reset_data").hide();
 		}
 	}
-
 
 	return xy_data;
 }

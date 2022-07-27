@@ -91,7 +91,8 @@ function FCNN() {
 			real_architecture_=real_architecture,
 			showBias_=showBias,
 			showLabels_=showLabels={},
-			layerTypes_=layerTypes
+			layerTypes_=layerTypes,
+			colors_=colors
 		}) {
 
 		cookie_theme = getCookie("theme");
@@ -156,9 +157,9 @@ function FCNN() {
 			.append("circle")
 			.attr("r", nodeDiameter/2)
 			.attr("class", "node")
-			.attr("id", function(d) { return "fcnn_" + d.id; })
-			//.on("mousedown", set_focus)
-			//.on("mouseup", remove_focus)
+			.attr("id", function(d) {
+				return "fcnn_" + d.id; 
+			})
 			.merge(node);
 
 		text = text.data(label, d => d.id);

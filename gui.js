@@ -881,7 +881,7 @@ async function _get_configuration(index) {
 			if (uploaded_model == "") {
 				data["keras"] = await get_cached_json(keras_url);
 			} else {
-				data["keras"] = JSON.parse(JSON.stringify(uploaded_model));
+				data["keras"] = JSON.parse(uploaded_model);
 				uploaded_model = "";
 			}
 		} catch (e) {
@@ -1390,6 +1390,7 @@ function byteToMB(varbyte) {
 
 function write_model_summary() {
 	$("#summarycontainer").show();
+	assert(typeof(model) == "object", "model is not an object");
 	var logBackup = console.log;
 	var logMessages = [];
 
@@ -1397,7 +1398,7 @@ function write_model_summary() {
 		logMessages.push.apply(logMessages, arguments);
 	};
 
-	model.summary();
+	model.summary(200);
 
 	write_to_summary(logMessages.join("\n"));
 
@@ -1905,6 +1906,7 @@ async function set_config(index) {
 		swal_msg = "Undoing/redoing";
 	}
 
+	l(swal_msg);
 	Swal.fire({
 		title: swal_msg + '...',
 		allowEscapeKey: false,
@@ -2008,6 +2010,7 @@ async function set_config(index) {
 			number_of_layers = config["model_structure"].length;
 		}
 
+		log("number_of_layers: " + number_of_layers);
 		init_numberoflayers(number_of_layers);
 
 		if (config["input_shape"]) {
@@ -2382,6 +2385,7 @@ function get_input_shape() {
 function change_metrics() {
 	var new_metric = $("#metric").val();
 
+	l("Changed metrics");
 	$("#metric_equation").html("");
 
 	updated_page(1);
@@ -2512,6 +2516,7 @@ function hide_empty_groups(layer_nr) {
 
 function set_all_kernel_initializers() {
 	var chosen_value = $("#set_all_kernel_initializers").val();
+	l("Setting all kernel initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".kernel_initializer").val(chosen_value).trigger("change");
@@ -2524,6 +2529,7 @@ function set_all_kernel_initializers() {
 
 function set_all_bias_initializers() {
 	var chosen_value = $("#set_all_bias_initializers").val();
+	l("Setting all bias initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
 	if (initializer_keys.includes(chosen_value)) {
 		$(".bias_initializer").val(chosen_value).trigger("change");
@@ -2536,6 +2542,7 @@ function set_all_bias_initializers() {
 
 function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
+	l("Setting all activation functions to " + chosen_value);
 	var keys = Object.keys(activations);
 	if (keys.includes(chosen_value)) {
 		$(".activation").val(chosen_value).trigger("change");
@@ -2844,16 +2851,14 @@ function get_id_from_train_data_struct(index) {
 }
 
 function display_delete_button() {
-	$("#delete_model").addClass("disabled_symbol");
-	$("#delete_model").html("&#10060");
+	$("#delete_model").addClass("disabled_symbol").html("&#10060");
+
 	var user_id = get_id_from_train_data_struct("user_id").toString();
-	//log(user_id.toString());
+
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
-		$("#delete_model").html("&#10060");
-		$("#delete_model").removeClass("disabled_symbol");
+		$("#delete_model").html("&#10060").removeClass("disabled_symbol");
 	} else {
-		$("#delete_model").html("&#10006;");
-		$("#delete_model").addClass("disabled_symbol");
+		$("#delete_model").html("&#10006;").addClass("disabled_symbol");
 	}
 }
 
@@ -3013,16 +3018,15 @@ async function upload_model(evt) {
 
 	// Closure to capture the file information.
 	reader.onload = (function (theFile) {
-		return function (e) {
+		return async function (e) {
 			uploaded_model = e.target.result;
 
+			await set_config();
+			is_setting_config = false;
 		};
 	})(f);
 
 	reader.readAsText(f);
-
-	await set_config();
-	is_setting_config = false;
 }
 
 async function upload_weights(evt) {
@@ -3274,6 +3278,7 @@ function reset_view() {
 }
 
 async function change_data_origin() {
+	l("Change data origin");
 	if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 		force_reinit();
 	}
@@ -3926,7 +3931,7 @@ function toggle_layer_view() {
 
 }
 
-function fix_lenet_width() {
+function fix_viz_width () {
 	$("#lenet").find("svg").attr("width", $("#lenet").css("width"));
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
@@ -4039,6 +4044,7 @@ async function change_model_dataset() {
 }
 
 function allow_edit_inputShape() {
+	l("Checking whether to allow editing input shape or not");
 	if ($("#auto_input_shape").is(":checked")) {
 		$("#inputShape").attr("readonly", true);
 	} else {
@@ -4614,4 +4620,14 @@ async function init_webcams () {
 	}
 
 	l("Done checking webcams");
+}
+
+function show_hide_augment_tab () {
+	if($("#auto_augment").is(":checked")) {
+		l("Showing Augmentation tab");
+		$('a[href*="tf_ribbon_augmentation"]').show();
+	} else {
+		l("Hiding Augmentation tab");
+		$('a[href*="tf_ribbon_augmentation"]').hide();
+	}
 }

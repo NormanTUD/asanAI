@@ -314,7 +314,7 @@ function group_layers (layers) {
         var char_to_group = new Array(str.length);
         char_to_group.fill(null);
 
-	var feature_extraction_base = "(?:(?:depthwise|separable)?conv([0-9])d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling\\2d;?)*";
+	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
 
 	var layer_names = Object.keys(layer_options);
 
@@ -359,7 +359,7 @@ function group_layers (layers) {
 			"name": "Feature ex&shy;traction"
 		},
                 {
-			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + ";?(?:dropout?;);?))", 
+			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))", 
 			"name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention"
 		},
                 { 
@@ -878,6 +878,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		}
 
 		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		l(swal_msg);
 		document.title = swal_msg;
 
 		await Swal.fire({
@@ -888,6 +889,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			showConfirmButton: false
 		}).then((e)=>{
 			if(e.isDismissed && e.dismiss == "cancel") {
+				l("Stopped generating new images, this may take a while");
 				stop_generating_images = 1;
 			}
 		});
@@ -901,8 +903,9 @@ async function draw_maximally_activated_layer (layer, type) {
 		var time = ((end - start) / 1000) + 1;
 
 		times.push(time);
-
 	}
+
+	l("Done generating images");
 
 	stop_generating_images = false;
 

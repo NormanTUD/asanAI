@@ -50,6 +50,7 @@ function get_get (param) {
 }
 
 function init_tabs () {
+	l("Initializing tabs");
 	var tabs_settings = {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
@@ -75,6 +76,7 @@ function init_tabs () {
 }
 
 function init_set_all_options () {
+	l("Initializing 'set options for all'");
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
 
@@ -135,6 +137,7 @@ function init_set_all_options () {
 }
 
 async function init_page_contents (chosen_dataset) {
+	l("Initializing page contents");
 	skip_predictions = true;
 	disabling_saving_status = true;
 	global_disable_auto_enable_valid_layer_types = true;
@@ -220,6 +223,7 @@ async function get_traindata_and_init_categories () {
 }
 
 function init_categories () {
+	l("Initializing categories");
 	var chosen_category = $("#dataset_category").val();
 	var categories = Object.keys(traindata_struct);
 
@@ -253,10 +257,6 @@ function init_categories () {
 	number_of_initialized_layers = 0;
 }
 
-function fix_graph_color () {
-	$(".subsurface-title").css("background-color", "transparent").css("border-bottom", "transparent");
-}
-
 async function hasBothFrontAndBack () {
 	if(hasBothFrontAndBackCached === undefined) {
 		var has_front_and_back_facing_camera = await hasFrontBack();
@@ -278,6 +278,11 @@ function restart_webcams () {
 
 $(document).ready(async function() {
 	swalmsg("Loading page");
+
+
+	window.onbeforeunload = function() {
+		return "You're leaving the site.";
+	};
 
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
@@ -330,28 +335,24 @@ $(document).ready(async function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
+	l("Show or hide 'load weights'-button");
 	await show_or_hide_load_weights();
 
 	await change_data_origin();
 
 	window.onresize = reset_view;
 
-	setInterval(fix_lenet_width, 700);
-
-	setInterval(fix_graph_color, 700);
-
-	//$("#lenet_tab_label").click();
-	//$("#code_tab_label").click()
-
-	allow_edit_inputShape();
-
+	setInterval(fix_viz_width, 700);
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
 	setInterval(write_descriptions, 500);
-	//setInterval(restart_fcnn, 500);
+
+	allow_edit_inputShape();
 
 	copy_options();
 	copy_values();
+
+	show_hide_augment_tab();
 
 	l("Site is ready");
 });
