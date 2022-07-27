@@ -314,16 +314,20 @@ async function get_xs_and_ys () {
 						classes.push(this_category_counter);
 
 						if($("#auto_augment").is(":checked")) {
-							for (var j = 1; j < 4; j++) {
-								var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
-								x = x.concat(augmented_img);
-								classes.push(this_category_counter);
+							if($("#augment_rotate_images").is(":checked")) {
+								for (var j = 1; j < 4; j++) {
+									var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
+									x = x.concat(augmented_img);
+									classes.push(this_category_counter);
+								}
 							}
 
-							var add_value = (-255 / parseFloat($("#divide_by").val()));
-							var inverted = tf.abs(tf.add(item, add_value));
-							x = x.concat(inverted);
-							classes.push(this_category_counter);
+							if($("#augment_invert_images").is(":checked")) {
+								var add_value = (-255 / parseFloat($("#divide_by").val()));
+								var inverted = tf.abs(tf.add(item, add_value));
+								x = x.concat(inverted);
+								classes.push(this_category_counter);
+							}
 						}
 					}
 
@@ -399,14 +403,18 @@ async function get_xs_and_ys () {
 							classes.push(label_nr);
 
 							if($("#auto_augment").is(":checked")) {
-								for (var j = 1; j < 4; j++) {
-									var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
-									x.push(await augmented_img.arraySync());
-									classes.push(label_nr);
+								if($("#augment_rotate_images").is(":checked")) {
+									for (var j = 1; j < 4; j++) {
+										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
+										x.push(await augmented_img.arraySync());
+										classes.push(label_nr);
+									}
 								}
 
-								x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
-								classes.push(label_nr);
+								if($("#augment_invert_images").is(":checked")) {
+									x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+									classes.push(label_nr);
+								}
 							}
 						}
 					}

@@ -70,7 +70,6 @@ $GLOBALS['minify'] = 0;
 		<?php minify_css("prism/prism.min.css"); ?>
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
-
 		<!-- jquery -->
 		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>
@@ -106,6 +105,7 @@ $GLOBALS['minify'] = 0;
 
 		<!-- Easter Egg -->
 		<?php minify_js("fireworks.js"); ?>
+
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
 		<?php minify_js("variables.js"); ?>
@@ -341,8 +341,6 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-group-title">Layers</div>
 					</div>
 
-
-
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
 						<div class="ribbon-toolbar" style="width: 165px">
 							<table>
@@ -382,7 +380,7 @@ $GLOBALS['minify'] = 0;
 									</tr>
 									<tr>
 										<td>Auto-Augment?</td>
-										<td><input type="checkbox" id="auto_augment" /></td>
+										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment" /></td>
 									</tr>
 								</table>
 							</div>
@@ -406,7 +404,7 @@ $GLOBALS['minify'] = 0;
 					</div>
 				</div>
 
-				<div id="tf_ribbon" class="ribbon_tab_content" title="Settings">
+				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="Settings">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
@@ -463,8 +461,6 @@ $GLOBALS['minify'] = 0;
 							<div class="ribbon-group-title">Webcam options</div>
 						</div>
 					</div>
-
-
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
@@ -710,7 +706,26 @@ $GLOBALS['minify'] = 0;
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
 					</div>
+				</div>
 
+				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Set options regarding automatic data augmentation here.">
+						<div class="ribbon-toolbar">
+							<table>
+                                                                <tr>
+								       <td>Auto rotate iamges?</td>
+								       <td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
+								</tr>
+                                                                <tr>
+								       <td>Invert images?</td>
+								       <td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Augmentation</div>
+					</div>
 				</div>
 
 				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">

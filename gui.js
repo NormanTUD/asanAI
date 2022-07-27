@@ -4621,3 +4621,13 @@ async function init_webcams () {
 
 	l("Done checking webcams");
 }
+
+function show_hide_augment_tab () {
+	if($("#auto_augment").is(":checked")) {
+		l("Showing Augmentation tab");
+		$('a[href*="tf_ribbon_augmentation"]').show();
+	} else {
+		l("Hiding Augmentation tab");
+		$('a[href*="tf_ribbon_augmentation"]').hide();
+	}
+}

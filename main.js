@@ -352,5 +352,7 @@ $(document).ready(async function() {
 	copy_options();
 	copy_values();
 
+	show_hide_augment_tab();
+
 	l("Site is ready");
 });
