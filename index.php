@@ -715,7 +715,7 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-toolbar">
 							<table>
                                                                 <tr>
-								       <td>Auto rotate iamges?</td>
+								       <td>Auto rotate images?</td>
 								       <td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
 								</tr>
                                                                 <tr>
