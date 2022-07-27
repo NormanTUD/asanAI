@@ -328,6 +328,11 @@ async function get_xs_and_ys () {
 								x = x.concat(inverted);
 								classes.push(this_category_counter);
 							}
+
+							if($("#augment_flip_left_right").is(":checked")) {
+								x = x.concat(tf.image.flipLeftRight(item));
+								classes.push(label_nr);
+							}
 						}
 					}
 
@@ -413,6 +418,11 @@ async function get_xs_and_ys () {
 
 								if($("#augment_invert_images").is(":checked")) {
 									x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+									classes.push(label_nr);
+								}
+
+								if($("#augment_flip_left_right").is(":checked")) {
+									x.push(await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0]);
 									classes.push(label_nr);
 								}
 							}

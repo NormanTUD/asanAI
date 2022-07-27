@@ -722,6 +722,10 @@ $GLOBALS['minify'] = 0;
 								       <td>Invert images?</td>
 								       <td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
 								</tr>
+                                                                <tr>
+								       <td>Flip left/right?</td>
+								       <td><input type="checkbox" value=1 checked id="augment_flip_left_right" /></td>
+								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Augmentation</div>
