@@ -719,6 +719,10 @@ $GLOBALS['minify'] = 0;
 								       <td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
 								</tr>
                                                                 <tr>
+								       <td>Number of rotations?</td>
+								       <td><input type="number" value=4 id="number_of_rotations" /></td>
+								</tr>
+                                                                <tr>
 								       <td>Invert images?</td>
 								       <td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
 								</tr>

@@ -1,5 +1,9 @@
 "use strict";
 
+function degrees_to_radians(degrees) {
+	return degrees * (Math.PI / 180);
+}
+
 function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
@@ -315,8 +319,8 @@ async function get_xs_and_ys () {
 
 						if($("#auto_augment").is(":checked")) {
 							if($("#augment_rotate_images").is(":checked")) {
-								for (var j = 1; j < 4; j++) {
-									var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
+									for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
+									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
 									x = x.concat(augmented_img);
 									classes.push(this_category_counter);
 								}
@@ -409,8 +413,8 @@ async function get_xs_and_ys () {
 
 							if($("#auto_augment").is(":checked")) {
 								if($("#augment_rotate_images").is(":checked")) {
-									for (var j = 1; j < 4; j++) {
-										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), (2 * Math.PI) / i);
+									for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
+										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
 										x.push(await augmented_img.arraySync());
 										classes.push(label_nr);
 									}
