@@ -393,13 +393,10 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
 							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
-							<button onclick="force_reinit()">Reinitialize network's weight</button><br>
-							<div class="small_vskip"></div>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
-							<div class="small_vskip"></div>
 							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input class="show_data" type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
-							<div class="small_vskip"></div>
-							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" />
+							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
+							<button onclick="force_reinit()">Reinitialize network's weight</button><br>
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>

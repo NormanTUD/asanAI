@@ -1142,17 +1142,32 @@ async function force_reinit () {
 		return;
 	}
 
-	l("Started re-initializing");
-	var old_force_dont_keep_weights = force_dont_keep_weights;
+	Swal.fire({
+		title: 'Are you sure?',
+		text: 'This loses your training progress, but you can undo it.',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Yes, re-init!'
+	}).then(async (result) => {
+		if (result.isConfirmed) {
+			l("Started re-initializing");
+			var old_force_dont_keep_weights = force_dont_keep_weights;
 
-	force_dont_keep_weights = true;
+			force_dont_keep_weights = true;
 
-	await compile_model(0, 1);
+			await compile_model(0, 1);
 
-	force_dont_keep_weights = old_force_dont_keep_weights;
+			force_dont_keep_weights = old_force_dont_keep_weights;
 
-	await updated_page();
-	l("Done re-initializing");
+			await updated_page();
+			l("Done re-initializing");
+		} else {
+			l("Re-init cancelled");
+		}
+	})
+
 }
 
 function input_shape_is_image () {
