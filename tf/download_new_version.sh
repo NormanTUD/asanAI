@@ -17,3 +17,5 @@ for i in "${FILES[@]}"; do
 	FILENAME=$(echo $i | sed -e 's#.*/##' | sed -e 's/$/.js/' | sed -e 's/\.js\.js/\.js/')
 	wget $i -O $FILENAME
 done
+
+mv tf.js.map.js tf.js.map
