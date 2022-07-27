@@ -279,6 +279,11 @@ function restart_webcams () {
 $(document).ready(async function() {
 	swalmsg("Loading page");
 
+
+	window.onbeforeunload = function() {
+		return "You're leaving the site.";
+	};
+
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
 		register();

@@ -419,20 +419,24 @@ async function run_neural_network () {
 		xs_and_ys = await get_xs_and_ys();
 		l("Got data!");
 
-		if(Object.keys(xs_and_ys).includes("x")) {
-			if(xs_and_ys["x"].shape.toString() == "0") {
+		if(xs_and_ys) {
+			if(Object.keys(xs_and_ys).includes("x")) {
+				if(xs_and_ys["x"].shape.toString() == "0") {
+					error_string += "No X-data! ";
+				}
+			} else {
 				error_string += "No X-data! ";
 			}
-		} else {
-			error_string += "No X-data! ";
-		}
 
-		if(Object.keys(xs_and_ys).includes("y")) {
-			if(xs_and_ys["y"].shape.toString() == "0") {
+			if(Object.keys(xs_and_ys).includes("y")) {
+				if(xs_and_ys["y"].shape.toString() == "0") {
+					error_string += "No Y-data! ";
+				}
+			} else {
 				error_string += "No Y-data! ";
 			}
 		} else {
-			error_string += "No Y-data! ";
+			error_string = "No xy_data. Maybe an error while augmenting data?"
 		}
 
 

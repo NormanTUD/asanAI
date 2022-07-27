@@ -317,8 +317,13 @@ async function get_xs_and_ys () {
 							for (var j = 1; j < 4; j++) {
 								var augmented_img = tf.image.rotateWithOffset(item, (2 * Math.PI) / i);
 								x = x.concat(augmented_img);
-								classes.push(label_nr);
+								classes.push(this_category_counter);
 							}
+
+							var add_value = (-255 / parseFloat($("#divide_by").val()));
+							var inverted = tf.abs(tf.add(item, add_value));
+							x = x.concat(inverted);
+							classes.push(this_category_counter);
 						}
 					}
 
@@ -399,6 +404,9 @@ async function get_xs_and_ys () {
 									x.push(await augmented_img.arraySync());
 									classes.push(label_nr);
 								}
+
+								x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+								classes.push(label_nr);
 							}
 						}
 					}
@@ -441,7 +449,6 @@ async function get_xs_and_ys () {
 			$("#reset_data").hide();
 		}
 	}
-
 
 	return xy_data;
 }
