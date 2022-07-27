@@ -1138,8 +1138,11 @@ async function get_tfjs_model () {
 
 async function force_reinit () {
 	if(!model) {
+		l("Tried re-initializing, but no model was found");
 		return;
 	}
+
+	l("Started re-initializing");
 	var old_force_dont_keep_weights = force_dont_keep_weights;
 
 	force_dont_keep_weights = true;
@@ -1148,7 +1151,8 @@ async function force_reinit () {
 
 	force_dont_keep_weights = old_force_dont_keep_weights;
 
-	updated_page();
+	await updated_page();
+	l("Done re-initializing");
 }
 
 function input_shape_is_image () {

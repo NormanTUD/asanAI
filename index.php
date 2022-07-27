@@ -393,7 +393,8 @@ $GLOBALS['minify'] = 0;
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button>
+							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
+							<button onclick="force_reinit()">Reinitialize network's weight</button><br>
 							<div class="small_vskip"></div>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 							<div class="small_vskip"></div>
@@ -513,9 +514,6 @@ $GLOBALS['minify'] = 0;
 									<td>
 										<input type="checkbox" value="1" checked id="reinit_weights_on_data_source_change" />
 									</td>
-								</tr>
-								<tr>
-									<td colspan=2><button onclick="force_reinit()">Reinitialize network's weight</button></td>
 								</tr>
                                                                 <tr>
 								       <td>Shuffle before each epoch?</td>
