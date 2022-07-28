@@ -3,10 +3,10 @@
 	if(is_admin()) {
 ?>
 		<html>
-		Adminstrator links
+			Adminstrator links
 			<ul>
-			<li><a href="user.php">User</a></li>
-			<li><a href="model.php">Model</a></li>
+				<li><a href="user.php">User</a></li>
+				<li><a href="model.php">Model</a></li>
 			</ul>
 
 		</html>
