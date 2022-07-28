@@ -4491,6 +4491,7 @@ async function get_training_data_as_json () {
 function l(msg) {
 	if(last_l != msg) {
 		var load_time = Date().toLocaleString();
+		load_time = load_time.replace(/ GMT.*/, "");
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
 		$("#status_bar_log").html(msg);
