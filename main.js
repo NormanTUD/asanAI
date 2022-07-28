@@ -371,9 +371,16 @@ $(document).ready(async function() {
 		$("#auto_augment").prop("checked", true).trigger("change");
 	}
 
-
 	if(urlParams.get("valsplit")) {
 		$("#validationSplit").val(urlParams.get("valsplit")).trigger("change");
+	}
+
+	if(urlParams.get("no_jump_to_training_tab")) {
+		$("#jump_to_training_tab").prop("checked", false).trigger("change");
+	}
+
+	if(urlParams.get("no_jump_to_predict_tab")) {
+		$("#jump_to_predict_tab").prop("checked", false).trigger("change");
 	}
 
 	if(urlParams.get("autostart_training")) {
