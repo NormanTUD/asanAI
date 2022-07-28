@@ -371,5 +371,14 @@ $(document).ready(async function() {
 		$("#auto_augment").prop("checked", true).trigger("change");
 	}
 
+
+	if(urlParams.get("valsplit")) {
+		$("#validationSplit").val(urlParams.get("valsplit")).trigger("change");
+	}
+
+	if(urlParams.get("autostart_training")) {
+		train_neural_network();
+	}
+
 	l("Site is ready");
 });
