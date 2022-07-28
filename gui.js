@@ -1165,6 +1165,8 @@ function hide_no_conv_stuff() {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
 	} else {
+		$('a[href*="tf_ribbon_augmentation"]').hide();
+		$("#auto_augment").prop("checked", false);
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
 	}
