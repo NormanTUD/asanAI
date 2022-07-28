@@ -210,6 +210,27 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 	var drew_input = draw_image_if_possible(layer, 'input', input_data);
 
+	/*
+	var test_tensor = tf.tensor(input_data);
+	if(drew_input != "show_input_only_on_first_layer") {
+		if(!drew_input) {
+			colorlog("red", "not drawn (layer " + layer + "):");
+			log(test_tensor.shape);
+			log(input_data);
+		} else {
+			colorlog("green", "drawn (layer " + layer + "):");
+			log(test_tensor.shape);
+			log(input_data);
+		}
+	} else {
+		if(layer == 0) {
+			colorlog("red", "Not drawn BUT SHOULD HAVE BEEN DRAWN (currently layer " + layer + ")");
+		} else {
+			colorlog("green", "Not drawn, but this is okay since it is an input layer that should only be drawn on layer 0 (currently layer " + layer + ")");
+		}
+	}
+	*/
+
 	var drew_kernel = draw_image_if_possible(layer, 'kernel', kernel_data);
 
 	var drew_output = draw_image_if_possible(layer, 'output', output_data);
@@ -221,7 +242,7 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 
 function draw_image_if_possible (layer, canvas_type, colors) {
 	if(canvas_type != "kernel" && canvas_type == "input" && layer != 0) {
-		return;
+		return "show_input_only_on_first_layer";
 	}
 
 	var canvas = null;
@@ -241,7 +262,6 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 			$($(canvas)[0]).parent().parent().show()
 			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
 				ret = draw_grid(canvas, pixel_size, colors, 1);
-				log("247: " + ret);
 			} else {
 				log('Too many images (simple) in layer ' + layer);
 			}
@@ -656,33 +676,42 @@ function add_layer_debuggers () {
 		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
+			//colorlog("blue", "Called apply function");
 			if(!disable_layer_debuggers) {
 				if($("#show_layer_data").is(":checked")) {
 					show_tab_label('layer_visualizations_tab_label');
 
-					var output_data = applied.arraySync()[0];
-					$($(".layer_data")[${i}]).html('');
-					var input_data = inputs[0].arraySync()[0];
+					var number_of_items_in_this_batch = inputs[0].shape[0];
 
-					var kernel_data = [];
-					if(Object.keys(model.layers[${i}]).includes('kernel')) {
-						if(model.layers[${i}].kernel.val.shape.length == 4) {
-							kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
+					for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
+						var output_data = applied.arraySync()[batchnr];
+						$($(".layer_data")[${i}]).html('');
+						var input_data = inputs[0].arraySync()[batchnr];
+
+						var kernel_data = [];
+						if(Object.keys(model.layers[${i}]).includes('kernel')) {
+							if(model.layers[${i}].kernel.val.shape.length == 4) {
+								kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
+							}
+						}
+
+						var html = $($(".layer_data")[${i}]).html();
+						if($('#header_layer_visualization_${i}').length == 0) {
+							html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
+						}
+			
+						if(layers_can_be_visualized()) {
+							draw_images_if_possible(${i}, input_data, output_data, kernel_data);
+							$($(".layer_data")[${i}]).append(html);
+						} else {
+							//log("Layers cannot be visualized...");
 						}
 					}
-
-					var html = $($(".layer_data")[${i}]).html();
-					if($('#header_layer_visualization_${i}').length == 0) {
-						html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
-					}
-		
-					if(layers_can_be_visualized()) {
-						draw_images_if_possible(${i}, input_data, output_data, kernel_data);
-						$($(".layer_data")[${i}]).append(html);
-					} else {
-						log("Layers cannot be visualized...");
-					}
+				} else {
+					//colorlog("red", "show_layer_data is disabled");
 				}
+			} else {
+				//colorlog("red", "disable_layer_debuggers is true");
 			}
 
 			return applied;
@@ -704,9 +733,12 @@ function layers_can_be_visualized () {
 		var shape = calculate_default_target_shape(i);
 
 		if(shape_looks_like_image_data(shape) != "unknown") {
+			//colorlog("green", "Layers CAN be visualized")
 			return true;
 		}
 	}
+
+	//colorlog("red", "Layers CANNOT be visualized")
 	return false;
 }
 
@@ -858,7 +890,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		return;
 	}
 
-	log("Layer: " + layer);
+	//log("Layer: " + layer);
 	var types_in_order = "";
 	if(get_numberoflayers() - 1 == layer) {
 		if(labels && labels.length) {

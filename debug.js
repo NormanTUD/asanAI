@@ -1,5 +1,9 @@
 "use strict";
 
+function colorlog (color, msg) {
+	console.log("%c" + msg, "background: " + color + "; color: white");
+}
+
 function logt(msg) {
 	console.log(msg);
 	console.trace();

@@ -472,6 +472,8 @@ async function get_xs_and_ys () {
 		}
 	}
 
+	log("X-Shape: " + xy_data.x.shape);
+
 	return xy_data;
 }
 
