@@ -369,6 +369,7 @@ $(document).ready(async function() {
 
 	if(urlParams.get("auto_augment")) {
 		$("#auto_augment").prop("checked", true).trigger("change");
+		$('a[href*="tf_ribbon_augmentation"]').show();
 	}
 
 	if(urlParams.get("valsplit")) {
