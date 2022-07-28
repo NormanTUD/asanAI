@@ -821,7 +821,7 @@ $GLOBALS['minify'] = 0;
 									<table>
 										<tr>
 											<td>Pixel size:</td>
-											<td><input type="number" min="1" max="100" value="2" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
+											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
 										</tr>
 										<tr>
 											<td>Kernel Pixel size:</td>
