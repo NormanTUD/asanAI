@@ -209,7 +209,6 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 
 function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 	var drew_input = draw_image_if_possible(layer, 'input', input_data);
-	log("drew_input: " + drew_input);
 
 	var drew_kernel = draw_image_if_possible(layer, 'kernel', kernel_data);
 
@@ -221,11 +220,9 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 }
 
 function draw_image_if_possible (layer, canvas_type, colors) {
-	/*
 	if(canvas_type != "kernel" && canvas_type == "input" && layer != 0) {
 		return;
 	}
-	*/
 
 	var canvas = null;
 
@@ -244,6 +241,7 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 			$($(canvas)[0]).parent().parent().show()
 			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
 				ret = draw_grid(canvas, pixel_size, colors, 1);
+				log("247: " + ret);
 			} else {
 				log('Too many images (simple) in layer ' + layer);
 			}
