@@ -354,5 +354,18 @@ $(document).ready(async function() {
 
 	show_hide_augment_tab();
 
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.get("epochs")) {
+		$("#epochs").val(urlParams.get("epochs")).trigger("change");
+	}
+
+	if(urlParams.get("imgcat")) {
+		$("#max_number_of_files_per_category").val(urlParams.get("imgcat")).trigger("change");
+	}
+
+	if(urlParams.get("show_layer_data")) {
+		$("#show_layer_data").prop("checked", true).trigger("change");
+	}
+
 	l("Site is ready");
 });
