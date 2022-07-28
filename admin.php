@@ -11,5 +11,7 @@
 
 		</html>
 <?php
+	} else {
+		print "You don't have access to this";
 	}
 ?>
