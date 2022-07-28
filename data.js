@@ -319,7 +319,7 @@ async function get_xs_and_ys () {
 
 						if($("#auto_augment").is(":checked")) {
 							if($("#augment_rotate_images").is(":checked")) {
-									for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
+								for (var degree = 0; j < 360; j += (360 / $("#number_of_rotations").val())) {
 									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
 									x = x.concat(augmented_img);
 									classes.push(this_category_counter);
