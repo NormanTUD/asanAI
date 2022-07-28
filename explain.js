@@ -678,7 +678,16 @@ function add_layer_debuggers () {
 
 			//colorlog("blue", "Called apply function");
 			if(!disable_layer_debuggers) {
-				if($("#show_layer_data").is(":checked")) {
+				var show_apply_data = 0;
+				if(model.model.isTraining) {
+					show_apply_data = 1;
+				} else {
+					if($("#show_while_predicting").is(":checked")) {
+						show_apply_data = 1;
+					}
+				}
+
+				if($("#show_layer_data").is(":checked") && show_apply_data) {
 					show_tab_label('layer_visualizations_tab_label');
 
 					var number_of_items_in_this_batch = inputs[0].shape[0];
