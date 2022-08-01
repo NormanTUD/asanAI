@@ -8,7 +8,8 @@
 			if(is_null($user)) {
 				print "User doesn't exist.";
 			} else {
-				print get_single_value_from_query("select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).")");
+				$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).")";
+				print get_single_value_from_query($query);
 			}
 		} else {
 			print "You don't have the permission.";
