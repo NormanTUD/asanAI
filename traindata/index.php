@@ -47,7 +47,7 @@ if(preg_match("/^\w+$/", $dataset_category)) {
 		$json = json_encode($dir, JSON_PRETTY_PRINT);
 		print $json;
 	} else {
-		die("Invalid dataset");
+		print('{ "error": "Invalid Dataset" }');
 	}
 } else {
 	die("Invalid dataset_category");
