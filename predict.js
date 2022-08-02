@@ -154,9 +154,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	try {
 		var predict_data = null;
 
-		if(category == "image" || (typeof(item) == "object" && $(item)[0].tagName == "IMG")) {
+		if(input_shape_is_image()) {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
-		} else if(["classification", "own"].includes(category)) {
+		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
 				data = numpy_str_to_tf_tensor(item, 0).arraySync();
@@ -194,8 +194,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				}
 			}
 			predict_data = tf.tensor(data);
-		} else {
-			log("Invalid category for prediction: " + category);
 		}
 
 		if(!tensor_shape_matches_model(predict_data)) {
