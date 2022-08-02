@@ -259,6 +259,8 @@ async function get_xs_and_ys () {
 
 	var loss = $("#loss").val();
 
+	var classes = [];
+
 	if(traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["has_custom_data"]) {
 		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
@@ -290,7 +292,6 @@ async function get_xs_and_ys () {
 				var x = tf.tensor([]);
 				var y;
 				var category_counter = 0;
-				var classes = [];
 
 				if(category == "image") {
 					let imageData = await get_image_data(0);
@@ -383,9 +384,6 @@ async function get_xs_and_ys () {
 					alert("Unknown dataset category: " + category);
 				}
 
-				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-					y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-				}
 
 				xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 			}
@@ -405,7 +403,6 @@ async function get_xs_and_ys () {
 				var keys = [];
 				var x = [];
 				var y = [];
-				var classes = [];
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
@@ -471,15 +468,6 @@ async function get_xs_and_ys () {
 				x = tf.tensor(x);
 				y = tf.tensor(y).expandDims();
 
-				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-					try {
-						y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-					} catch (e) {
-						header(e);
-					}
-				}
-
-
 				l("Done generating data from images");
 
 				xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
@@ -491,18 +479,20 @@ async function get_xs_and_ys () {
 			} else if (data_type_val == "csv") {
 				xy_data = get_x_y_from_csv();
 
-				if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
-					try {
-						y = tf.oneHot(tf.tensor1d(classes, "int32"), category_counter);
-					} catch (e) {
-						header(e);
-					}
-				}
 			} else {
 				alert("Unknown data type: " + data_type_val);
 			}
 
 			$("#reset_data").hide();
+		}
+	}
+
+
+	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+		try {
+			y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
+		} catch (e) {
+			header(e);
 		}
 	}
 
@@ -736,6 +726,9 @@ function get_x_y_from_csv () {
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
+	x = shuffle(x);
+	y = shuffle(y);
+
 	x = tf.tensor(x);
 	y = tf.tensor(y);
 
@@ -743,8 +736,7 @@ function get_x_y_from_csv () {
 		"x": x,
 		"y": y,
 		"keys": y_headers,
-		"number_of_categories":
-		y_headers.length,
+		"number_of_categories": y_headers.length,
 		"y_between_0_and_1": y_between_0_and_1
 	};
 }
