@@ -3564,7 +3564,6 @@ function show_head_data(head) {
 		var y_selected = "";
 		var none_selected = "";
 
-		log(previous_values);
 		if(previous_values.length) {
 			if (previous_values[i] == "X") {
 				x_selected = "selected";
