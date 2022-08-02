@@ -406,10 +406,10 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend">
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
 								<label for="svg_renderer">CPU</label>
 
-								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend" checked>
+								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
 							<script>
