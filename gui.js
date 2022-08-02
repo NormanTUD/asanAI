@@ -3551,17 +3551,38 @@ function set_shown_advanced(shown) {
 }
 
 function show_head_data(head) {
+	var previous_values = [];
+	$(".header_select").each((x, y) => { previous_values.push($(y).val()); });
+
 	$("#csv_header_overview").html("");
+
 	var html = "<h2>Header-to-Training-data</h2><table>";
 
+
 	for (var i = 0; i < head.length; i++) {
-		var x_selected = "selected";
+		var x_selected = "";
 		var y_selected = "";
-		if (i == head.length - 1) {
-			x_selected = "";
-			y_selected = "selected";
+		var none_selected = "";
+
+		log(previous_values);
+		if(previous_values.length) {
+			if (previous_values[i] == "X") {
+				x_selected = "selected";
+			} else if (previous_values[i] == "none") {
+				none_selected = "selected";
+			} else if (previous_values[i] == "Y") {
+				y_selected = "selected";
+			}
+		} else {
+			x_selected = "selected";
+			none_selected = "";
+
+			if (i == head.length - 1) {
+				x_selected = "";
+				y_selected = "selected";
+			}
 		}
-		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none'>None</option></select>, divide by: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />";
+		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>,<br>divide by: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />";
 		html += "<tr><td>" + head[i] + "</td><td>" + select + "</td></tr>";
 	}
 
