@@ -1077,9 +1077,15 @@ var metrics = [
 	"precision",
 	"categoricalCrossentropy",
 	"sparseCategoricalCrossentropy",
-	"mse",
-	"mae",
-	"mape",
+	"meanSquaredError",
+	"meanAbsoluteError",
+	"meanAbsolutePercentageError",
 	"cosine",
 	"binaryCrossentropy"
 ];
+
+var metric_shortnames = {
+	"mse": "meanSquaredError",
+	"mape": "meanAbsolutePercentageError",
+	"mae": "meanAbsoluteError"
+}

@@ -8,16 +8,8 @@ function set_loss_and_metric (loss, metric) {
 		}
 	}
 
-	assert(losses.includes(loss), loss + " is not a valid loss. It must be in " + losses.join(", "));
-	assert(metrics.includes(metric), metric + " is not a valid metric. It must be in " + metrics.join(", "));
-
-	if($("#loss").val() != loss) {
-		$("#loss").val(loss).trigger("change");
-	}
-
-	if($("#metric").val() != metric) {
-		$("#metric").val(metric).trigger("change");
-	}
+	set_loss(loss);
+	set_metric(metric);
 }
 
 function reset_labels () {
@@ -1454,13 +1446,31 @@ function set_optimizer(val) {
 }
 
 function set_metric(val) {
+	log("set_metric: " + val);
+	console.trace();
+
+	if(Object.keys(metric_shortnames).includes(val)) {
+		log(val + " included in metric_shortnames. Long form is: " + metric_shortnames[val]);
+		val = metric_shortnames[val];
+	} else {
+		log(val + " not included in metric_shortnames = " + Object.keys(metric_shortnames).join(", "));
+	}
+
+	assert(metrics.includes(val), metric + " is not a valid metric. It must be in " + metrics.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#metric").val(val).trigger("change");
+
+	if($("#metric").val() != val) {
+		$("#metric").val(val).trigger("change");
+	}
 }
 
 function set_loss(val) {
+	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#loss").val(val).trigger("change");
+
+	if($("#metric").val() != val) {
+		$("#loss").val(val).trigger("change");
+	}
 }
 
 function get_epochs() {
@@ -1736,8 +1746,8 @@ function get_element_xpath(element) {
 	const segs = elm => !elm || elm.nodeType !== 1
 		? ['']
 		: elm.id && document.getElementById(elm.id) === elm
-			? [`id("${elm.id}")`]
-			: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
+		? [`id("${elm.id}")`]
+		: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
 	return segs(element).join('/');
 }
 
@@ -1984,6 +1994,7 @@ async function set_config(index) {
 
 			set_epochs(config["epochs"]);
 			set_loss(config["loss"]);
+			log("SET_CONFIG: METRIC");
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
 

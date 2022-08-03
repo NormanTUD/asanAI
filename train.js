@@ -135,10 +135,22 @@ async function train_neural_network () {
 	save_current_status();
 }
 
+function getKeyByValue(object, value) {
+	return Object.keys(object).find(key => object[key] === value);
+}
+
 function get_model_data (optimizer_name_only) {
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
+
+	if(Object.values(metric_shortnames).includes(metric_type)) {
+		log(metric_type + " included in metric_shortnames. Long form is: " + getKeyByValue(metric_shortnames, metric_type));
+		metric_type = getKeyByValue(metric_shortnames, metric_type);
+	} else {
+		log(metric_type + " not included in metric_shortnames = " + Object.values(metric_shortnames).join(", "));
+	}
+
 	var epochs = parseInt($("#epochs").val());
 	var batchSize = parseInt($("#batchSize").val());
 	var validationSplit = parseInt($("#validationSplit").val());

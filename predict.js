@@ -240,7 +240,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
-					var this_str = label + ": " + probability + "\n";
+					var this_str = "";
+					if(label) {
+						this_str += label + ": ";
+					}
+					this_str += probability + "\n";
 					if(i == max_i && show_green) {
 						str = str + "<b class='max_prediction'>" + this_str + "</b>";
 					} else {
