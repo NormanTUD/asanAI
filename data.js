@@ -638,17 +638,13 @@ function parse_csv_file (csv_file) {
 }
 
 function get_or_insert_label (item) {
-	//log("get_or_insert_label(" + item + ")");
         for (var i = 0; i < labels.length; i++) {
                 if(labels[i] == item) {
-			//log("A: " + i);
                         return i;
                 }
         }
 
-	//log("push " + item + " to labels");
         labels.push(item);
-	//log(labels)
 
         return labels.length - 1;
 }
@@ -673,7 +669,10 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			var header_multiply = parseFloat($($(".header_divide_by")[col_nr + skip_nr]).val());
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
 			if(!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) {
-				var ln = parseFloat(csv_element) / header_multiply;
+				var ln = parseFloat(csv_element);
+				if(header_multiply) {
+					ln = ln / header_multiply;
+				}
 				line.push(ln);
 				if(y_between_0_and_1) {
 					if(ln < 0 || ln > 1) {
@@ -684,10 +683,13 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 				if(!col_contains_string.includes(col_nr)) {
 					col_contains_string.push(col_nr);
 				}
+
 				if(!in_goto) {
 					return get_data_struct_by_header(header, parsed, skip_nr, true);
 				}
-				line.push(get_or_insert_label(csv_element));
+
+				var element_id = get_or_insert_label(csv_element);
+				line.push(element_id);
 			}
 		}
 

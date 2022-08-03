@@ -3912,6 +3912,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 				var option_name = classList[j];
 				option_name = option_name.replace(starts_with_string, "");
 				var value = get_item_value(layer_nr, classList[j]);
+
 				if (looks_like_number(value)) {
 					value = parseFloat(value);
 				}
@@ -3927,7 +3928,11 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 }
 
 function looks_like_number(item) {
-	if (/^[+-]?\d+(?:\d+)?/.test(item)) {
+	if(typeof(item) == "number") {
+		return true;
+	}
+
+	if (/^(?:(?:[+-]?\d+(?:\d+))|(?:(\d+)?\.\d+))$/.test(item)) {
 		return true;
 	}
 	return false;
