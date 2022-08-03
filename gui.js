@@ -3686,9 +3686,9 @@ async function show_csv_file(disabled_show_head_data) {
 		}
 
 		if(labels.length) {
-			shape_preview += "Auto-generated labels:<br>";
+			shape_preview += "Generated encodings:<br>";
 			for (var k = 0; k < labels.length; k++) {
-				shape_preview += labels[k] + "<br>";
+				shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
 			}
 		}
 
@@ -3702,6 +3702,19 @@ async function show_csv_file(disabled_show_head_data) {
 		csv_allow_training = false;
 	}
 	tf.engine().endScope();
+}
+
+function get_generated_encoding(nr, max) {
+	var array = [];
+	for (var i = 0; i < max; i++) {
+		if(i == nr) {
+			array.push(1);
+		} else {
+			array.push(0);
+		}
+	}
+
+	return "[" + array.join(", ") + "]";
 }
 
 function ensure_shape_array(shape) {
