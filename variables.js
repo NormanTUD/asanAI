@@ -1052,3 +1052,5 @@ var predict_examples_hash = "";
 var inited_webcams = false;
 
 var last_batch_time = 0;
+
+var col_contains_string = [];

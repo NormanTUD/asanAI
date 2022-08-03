@@ -660,18 +660,13 @@ function get_or_insert_label (item) {
         return labels.length - 1;
 }
 
-/* 
-
-var array = ["hallo", "welt"];
-
-var array_and_index = get_or_insert_label(array, "welt");
-
-array = array_and_index["array"];
-var index = array_and_index["index"];
-
-*/
-
-function get_data_struct_by_header(header, parsed, skip_nr) {
+function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
+	log("get_data_struct_by_header(");
+	log(header)
+	log(parsed)
+	log(skip_nr)
+	log(in_goto)
+	log(")");
 	reset_labels();
 	var y_between_0_and_1 = true;
 	var indices = {};
@@ -681,13 +676,18 @@ function get_data_struct_by_header(header, parsed, skip_nr) {
 	}
 
 	var data = [];
+	if(!in_goto) {
+		col_contains_string = [];
+	}
 
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
-		for (var item_nr = 0; item_nr < header.length; item_nr++) {
-			var header_multiply = parseFloat($($(".header_divide_by")[item_nr + skip_nr]).val());
-			var csv_element = parsed.data[line_nr][indices[header[item_nr]]];
-			if(looks_like_number(csv_element)) {
+		log("col_contains_string: ");
+		log(col_contains_string);
+		for (var col_nr = 0; col_nr < header.length; col_nr++) {
+			var header_multiply = parseFloat($($(".header_divide_by")[col_nr + skip_nr]).val());
+			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
+			if(!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) {
 				var ln = parseFloat(csv_element) / header_multiply;
 				line.push(ln);
 				if(y_between_0_and_1) {
@@ -696,9 +696,17 @@ function get_data_struct_by_header(header, parsed, skip_nr) {
 					}
 				}
 			} else {
+				if(!col_contains_string.includes(col_nr)) {
+					log("push " + col_nr + " to");
+					log(col_contains_string);
+					col_contains_string.push(col_nr);
+					log("result: ");
+					log(col_contains_string);
+				}
+				if(!in_goto) {
+					return get_data_struct_by_header(header, parsed, skip_nr, true);
+				}
 				line.push(get_or_insert_label(csv_element));
-				//log("HERE");
-				//log(labels);
 			}
 		}
 
@@ -753,8 +761,8 @@ async function get_x_y_from_csv () {
 
 	var parsed = parse_csv_file(csv);
 
-	var x_data = get_data_struct_by_header(x_headers, parsed, 0);
-	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length);
+	var x_data = get_data_struct_by_header(x_headers, parsed, 0, false);
+	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 
 	if($("#shuffle_data").is(":checked")) {
 		tf.util.shuffleCombo(x, y);
@@ -769,8 +777,9 @@ async function get_x_y_from_csv () {
 				y_data["data"] = await tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();
 				auto_adjust_number_of_neurons(labels.length);
 				is_one_hot_encoded = true;
+				l("Enough labels for oneHot-Encoding &#x2705;");
 			} else {
-				log("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2");
+				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2 &#10060;");
 			}
 		} else {
 			log("y_headers.length != 1 but " + y_headers.length);
