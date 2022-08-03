@@ -276,9 +276,26 @@ function restart_webcams () {
 	}
 }
 
+function init_losses_and_metrics () {
+	for (var i = 0; i < losses.length; i++) {
+		$('#loss').append($('<option>', {
+			value: losses[i],
+			text: losses[i]
+		}));
+	}
+
+	for (var i = 0; i < metrics.length; i++) {
+		$('#metric').append($('<option>', {
+			value: losses[i],
+			text: losses[i]
+		}));
+	}
+}
+
 $(document).ready(async function() {
 	swalmsg("Loading page");
 
+	init_losses_and_metrics();
 
 	window.onbeforeunload = function() {
 		return "You're leaving the site.";

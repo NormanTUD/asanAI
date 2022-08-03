@@ -1054,3 +1054,32 @@ var inited_webcams = false;
 var last_batch_time = 0;
 
 var col_contains_string = [];
+
+var losses = [
+	"meanSquaredError",
+	"binaryCrossentropy",
+	"categoricalCrossentropy",
+	"categoricalHinge",
+	"hinge",
+	"meanAbsoluteError",
+	"meanAbsolutePercentageError",
+	"meanSquaredLogarithmicError",
+	"poisson",
+	"sparseCategoricalCrossentropy",
+	"squaredHinge",
+	"kullbackLeiblerDivergence",
+	"logcosh"
+];
+
+var metrics = [
+	"binaryAccuracy",
+	"categoricalAccuracy",
+	"precision",
+	"categoricalCrossentropy",
+	"sparseCategoricalCrossentropy",
+	"mse",
+	"mae",
+	"mape",
+	"cosine",
+	"binaryCrossentropy"
+];

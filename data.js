@@ -472,13 +472,6 @@ async function get_xs_and_ys () {
 
 			log("got xy_data");
 			log(xy_data);
-
-			if(xy_data.is_one_hot_encoded) {
-				log("Setting loss and metric");
-				set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
-			} else {
-				log("NOT setting loss and metric");
-			}
 		} else {
 			alert("Unknown data type: " + data_origin);
 		}
@@ -786,6 +779,14 @@ async function get_x_y_from_csv () {
 
 	x = tf.tensor(x);
 	y = tf.tensor(y);
+
+
+	if(is_one_hot_encoded) {
+		log("Setting loss and metric");
+		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
+	} else {
+		log("NOT setting loss and metric");
+	}
 
 	return {
 		"x": x,

@@ -274,19 +274,6 @@ $GLOBALS['minify'] = 0;
 									<td>Loss<sup onclick="losses_popup()">?</sup>:</td>
 									<td style="width: 140px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
-											<option value="meanSquaredError">MeanSquaredError</option>
-											<option value="binaryCrossentropy">BinaryCrossentropy</option>
-											<option value="categoricalCrossentropy">CategoricalCrossentropy</option>
-											<option value="categoricalHinge">CategoricalHinge</option>
-											<option value="hinge">Hinge</option>
-											<option value="meanAbsoluteError">MeanAbsoluteError</option>
-											<option value="meanAbsolutePercentageError">MeanAbsolutePercentageError</option>
-											<option value="meanSquaredLogarithmicError">MeanSquaredLogarithmicError</option>
-											<option value="poisson">Poisson</option>
-											<option value="sparseCategoricalCrossentropy">SparseCategoricalCrossentropy</option>
-											<option value="squaredHinge">SquaredHinge</option>
-											<option value="kullbackLeiblerDivergence">kullbackLeiblerDivergence</option>
-											<option value="logcosh">logcosh</option>
 										</select>
 									</td>
 								</tr>
@@ -294,15 +281,6 @@ $GLOBALS['minify'] = 0;
 									<td>Metric:</td>
 									<td style="width: 140px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
-											<option value="binaryAccuracy">binaryAccuracy</option>
-											<option value="categoricalAccuracy">categoricalAccuracy</option>
-											<option value="precision">precision</option>
-											<option value="categoricalCrossentropy">categoricalCrossentropy</option>
-											<option value="sparseCategoricalCrossentropy">sparseCategoricalCrossentropy</option>
-											<option value="mse">MeanSquaredError</option>
-											<option value="mae">MeanAbsoluteError</option>
-											<option value="mape">MeanAbsolutePercentageError</option>
-											<option value="cosine">Cosine</option>
 										</select>
 									</td>
 								</tr>

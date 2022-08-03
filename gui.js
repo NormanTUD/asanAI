@@ -3,7 +3,13 @@
 function set_loss_and_metric (loss, metric) {
 	if(!metric) {
 		metric = loss;
+		if(metric == "binaryCrossentropy") {
+			metric = "categoricalCrossentropy";
+		}
 	}
+
+	assert(losses.includes(loss), loss + " is not a valid loss. It must be in " + losses.join(", "));
+	assert(metrics.includes(metric), metric + " is not a valid metric. It must be in " + metrics.join(", "));
 
 	if($("#loss").val() != loss) {
 		$("#loss").val(loss).trigger("change");
@@ -3349,6 +3355,7 @@ async function change_data_origin() {
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_origin").val() == "csv") {
+			show_csv_file(1);
 			if(contains_convolution() && mode != "expert") {
 				await Swal.fire({
 					title: 'Are you sure?',
@@ -3681,7 +3688,7 @@ async function show_csv_file(disabled_show_head_data) {
 		if(labels.length) {
 			shape_preview += "Auto-generated labels:<br>";
 			for (var k = 0; k < labels.length; k++) {
-				shape_preview += k + ": " + labels[k] + "<br>";
+				shape_preview += labels[k] + "<br>";
 			}
 		}
 
