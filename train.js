@@ -477,6 +477,12 @@ async function run_neural_network () {
 		}
 
 		try {
+			await compile_model();
+		} catch (e) {
+			write_error_and_reset(e);
+		}
+
+		try {
 			add_layer_debuggers();
 
 			var fit_data = get_fit_data();
@@ -505,12 +511,6 @@ async function run_neural_network () {
 			tf.disposeVariables();
 
 			model = await create_model(null, await get_model_structure(), 1);
-		} catch (e) {
-			write_error_and_reset(e);
-		}
-
-		try {
-			await compile_model();
 		} catch (e) {
 			write_error_and_reset(e);
 		}

@@ -485,6 +485,9 @@ function tensor_shape_matches_model (tensor) {
 }
 
 async function predict_handdrawn () {
+	if(!input_shape_is_image()) {
+		return;
+	}
 	tf.tidy(() => {
 		var predictions = model.predict(tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [width, height]).expandDims()).arraySync();
 
