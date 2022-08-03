@@ -3698,6 +3698,7 @@ async function show_csv_file(disabled_show_head_data) {
 			for (var k = 0; k < labels.length; k++) {
 				shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
 			}
+			l("Generated encodings");
 		}
 
 		$("#x_y_shape_preview").html(shape_preview);
