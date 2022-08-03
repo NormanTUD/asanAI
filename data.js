@@ -818,7 +818,7 @@ async function get_x_y_from_csv () {
 
 async function get_x_y_as_array () {
 	while (started_training) {
-		log("Awaiting finishing of training");
+		l("Awaiting finishing of training");
 		await delay(1000)
 	}
 	force_download = 1;
@@ -896,7 +896,7 @@ async function get_data_from_webcam (force_restart) {
 }
 
 async function take_image_from_webcam (elem) {
-	l("Took photo from webcam");
+	l("Taking photo from webcam...");
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
@@ -928,4 +928,5 @@ async function take_image_from_webcam (elem) {
 	}
 
 	enable_train();
+	l("Took photo from webcam");
 }
