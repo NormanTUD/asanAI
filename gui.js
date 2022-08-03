@@ -1188,7 +1188,7 @@ function hide_no_conv_stuff() {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
 	} else {
-		$('a[href*="tf_ribbon_augmentation"]').hide();
+		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
 		$("#auto_augment").prop("checked", false);
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
@@ -4714,9 +4714,9 @@ async function init_webcams () {
 function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
 		l("Showing Augmentation tab");
-		$('a[href*="tf_ribbon_augmentation"]').show();
+		$('a[href*="tf_ribbon_augmentation"]').show().parent().show();
 	} else {
 		l("Hiding Augmentation tab");
-		$('a[href*="tf_ribbon_augmentation"]').hide();
+		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
 	}
 }
