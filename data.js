@@ -467,7 +467,7 @@ async function get_xs_and_ys () {
 
 			xy_data = {"x": x, "y": y};
 		} else if (data_origin == "csv") {
-			xy_data = get_x_y_from_csv();
+			xy_data = await get_x_y_from_csv();
 
 		} else {
 			alert("Unknown data type: " + data_origin);
@@ -635,17 +635,17 @@ function parse_csv_file (csv_file) {
 }
 
 function get_or_insert_label (item) {
-	log("get_or_insert_label(" + item + ")");
+	//log("get_or_insert_label(" + item + ")");
         for (var i = 0; i < labels.length; i++) {
                 if(labels[i] == item) {
-			log("A: " + i);
+			//log("A: " + i);
                         return i;
                 }
         }
 
-	log("push " + item + " to labels");
+	//log("push " + item + " to labels");
         labels.push(item);
-	log(labels)
+	//log(labels)
 
         return labels.length - 1;
 }
@@ -687,8 +687,8 @@ function get_data_struct_by_header(header, parsed, skip_nr) {
 				}
 			} else {
 				line.push(get_or_insert_label(csv_element));
-				log("HERE");
-				log(labels);
+				//log("HERE");
+				//log(labels);
 			}
 		}
 
@@ -726,7 +726,7 @@ function get_csv_seperator () {
 	return seperator;
 }
 
-function get_x_y_from_csv () {
+async function get_x_y_from_csv () {
 	reset_data();
 
 	var seperator = get_csv_seperator();
@@ -745,34 +745,41 @@ function get_x_y_from_csv () {
 	var x_data = get_data_struct_by_header(x_headers, parsed, 0);
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length);
 
-	log(y_data);
+	if($("#shuffle_data").is(":checked")) {
+		tf.util.shuffleCombo(x, y);
+	}
 
-	log(y_data);
+	//log(y_data);
+	//log(y_data);
 
 	if($("#auto_one_hot_y").is(":checked")) {
+		log("auto one hot y:")
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data = tf.oneHot(tf.tensor1d(y_data.data.flat(), "int32"), labels.length);
+				log("AUTO ENCODING y:");
+				log(y_data);
+				log("Flattened:");
+				log(y_data["data"].flat());
+				y_data["data"] = await tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();
+				log(y_data);;
 			} else {
 				log("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2");
 			}
 		} else {
 			log("y_headers.length != 1 but " + y_headers.length);
 		}
+	} else {
+		log("not auto one hot y");
 	}
 
 	var x = x_data["data"];
+	log("HERE");
+	log(y_data);
 	var y = y_data["data"];
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
 	log(y)
-	if($("#shuffle_data").is(":checked")) {
-		log("shuffle");
-		tf.util.shuffleCombo(x, y);
-	} else {
-		log("Dont shuffle");
-	}
 
 	x = tf.tensor(x);
 	y = tf.tensor(y);

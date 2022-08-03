@@ -3578,7 +3578,7 @@ function show_head_data(head) {
 	$("#csv_header_overview").html(html);
 }
 
-function show_csv_file(disabled_show_head_data) {
+async function show_csv_file(disabled_show_head_data) {
 	tf.engine().startScope();
 	var csv = $("#csv_file").val();
 
@@ -3595,7 +3595,7 @@ function show_csv_file(disabled_show_head_data) {
 			show_head_data(head);
 		}
 
-		var parsed_data = get_x_y_from_csv();
+		var parsed_data = await get_x_y_from_csv();
 
 		var y_between_0_and_1 = parsed_data["y_between_0_and_1"]
 
