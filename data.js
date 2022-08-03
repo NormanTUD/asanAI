@@ -251,7 +251,6 @@ async function get_xs_and_ys () {
 	var loss = $("#loss").val();
 
 	var classes = [];
-	log("A");
 
 	if(traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["has_custom_data"]) {
 		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
