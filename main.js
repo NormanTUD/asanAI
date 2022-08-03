@@ -277,6 +277,7 @@ function restart_webcams () {
 }
 
 function init_losses_and_metrics () {
+	l("Initializing losses");
 	for (var i = 0; i < losses.length; i++) {
 		$('#loss').append($('<option>', {
 			value: losses[i],
@@ -284,6 +285,7 @@ function init_losses_and_metrics () {
 		}));
 	}
 
+	l("Initializing metrics");
 	for (var i = 0; i < metrics.length; i++) {
 		$('#metric').append($('<option>', {
 			value: losses[i],
