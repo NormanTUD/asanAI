@@ -651,6 +651,7 @@ function get_or_insert_label (item) {
 function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	reset_labels();
 	var y_between_0_and_1 = true;
+	var is_incomplete = false;
 	var indices = {};
 
 	for (var i = 0; i < header.length; i++) {
@@ -667,12 +668,13 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
 			var header_multiply = parseFloat($($(".header_divide_by")[col_nr + skip_nr]).val());
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
-			if(!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) {
+			var to_push = undefined;
+			if((!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) || csv_element === undefined) {
 				var ln = parseFloat(csv_element);
 				if(header_multiply) {
 					ln = ln / header_multiply;
 				}
-				line.push(ln);
+				to_push = ln;
 				if(y_between_0_and_1) {
 					if(ln < 0 || ln > 1) {
 						y_between_0_and_1 = false;
@@ -688,14 +690,22 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 				}
 
 				var element_id = get_or_insert_label(csv_element);
-				line.push(element_id);
+				to_push = element_id;
 			}
+
+			if(Number.isNaN(to_push) || to_push === undefined || (typeof(to_push) == "string" && to_push == "")) {
+				log("to_push");
+				log(to_push);
+				return { "is_incomplete": true };
+			}
+			line.push(to_push);
+
 		}
 
 		data.push(line);
 	}
 
-	return { "data": data, "y_between_0_and_1": y_between_0_and_1 };
+	return { "data": data, "y_between_0_and_1": y_between_0_and_1, "is_incomplete": is_incomplete };
 }
 
 function get_headers (headers) {
@@ -744,7 +754,15 @@ async function get_x_y_from_csv () {
 	var parsed = parse_csv_file(csv);
 
 	var x_data = get_data_struct_by_header(x_headers, parsed, 0, false);
+	if(x_data.is_incomplete) {
+		l("X-Data is yet incomplete");
+		return "incomplete";
+	}
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
+	if(y_data.is_incomplete) {
+		l("Y-Data is yet incomplete");
+		return "incomplete";
+	}
 
 	if($("#shuffle_data").is(":checked")) {
 		tf.util.shuffleCombo(x_data["data"], y_data["data"]);

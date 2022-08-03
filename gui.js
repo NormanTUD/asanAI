@@ -3645,6 +3645,10 @@ async function show_csv_file(disabled_show_head_data) {
 
 		var parsed_data = await get_x_y_from_csv();
 
+		if(typeof parsed_data == "string" && parsed_data == "incomplete") {
+			return;
+		}
+
 		var y_between_0_and_1 = parsed_data["y_between_0_and_1"]
 
 		if (!y_between_0_and_1) {
