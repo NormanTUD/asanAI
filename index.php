@@ -1119,7 +1119,7 @@ $GLOBALS['minify'] = 0;
 											<br>
 											<br>
 
-											<textarea id="csv_file" style="width: 98%; height: 300px" onkeyup="show_csv_file()"></textarea>
+											<textarea id="csv_file" style="width: 98%; height: 300px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 										</td>
 										<td class="hide_when_no_csv" style="display: none">
 											<div id="csv_header_overview"></div>
