@@ -478,6 +478,9 @@ async function run_neural_network () {
 	if(started_training) {
 		var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
+		$("#plotly_epoch_history").parent().hide();
+		$("#plotly_epoch_history").html("");
+
 		if($("#jump_to_training_tab").is(":checked")) {
 			show_tab_label("training_performance_tab_label");
 			if($("#data_origin").val() == "default") {
