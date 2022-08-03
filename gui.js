@@ -982,10 +982,8 @@ async function update_python_code(dont_reget_labels) {
 	var dataset_category = document.getElementById("dataset_category").value;
 	var data_origin = document.getElementById("data_origin").value;
 
-	if(data_origin == "own") {
-		if($("#data_type").val() == "image") {
-			dataset_category = "image";
-		}
+	if(data_origin == "image") {
+		dataset_category = "image";
 	}
 
 	var python_code = "";
@@ -3092,11 +3090,7 @@ var handle_y_file = async function (evt) {
 }
 
 function enable_start_training_custom_tensors() {
-	if (!$("#data_origin").val() == "own") {
-		return;
-	}
-
-	if (!$("#data_type").val() == "tensordata") {
+	if (!$("#data_origin").val() == "tensordata") {
 		return;
 	}
 
@@ -3302,7 +3296,6 @@ async function change_data_origin() {
 	var show_own_csv_data = 0;
 
 	if (new_origin == "default") {
-		$("#data_type_row").hide();
 		if (dataset_category == "image") {
 			show_images_per_category = 1;
 		}
@@ -3313,8 +3306,6 @@ async function change_data_origin() {
 
 		changed_data_source = false;
 
-		$("#custom_training_data_settings").hide();
-
 		set_default_input_shape();
 
 		$("#visualization_tab_label").click();
@@ -3322,17 +3313,15 @@ async function change_data_origin() {
 
 		update_python_code();
 	} else {
-		$("#custom_training_data_settings").show();
 		disable_train();
 
-		$("#data_type_row").show();
-		if ($("#data_type").val() == "image") {
+		if ($("#data_origin").val() == "image") {
 			show_own_image_data = 1;
 			show_images_per_category = 1;
 			set_input_shape("[" + width + ", " + height + ", 3]");
-		} else if ($("#data_type").val() == "tensordata") {
+		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
-		} else if ($("#data_type").val() == "csv") {
+		} else if ($("#data_origin").val() == "csv") {
 			if(contains_convolution() && mode != "expert") {
 				await Swal.fire({
 					title: 'Are you sure?',
@@ -3349,14 +3338,14 @@ async function change_data_origin() {
 						show_own_csv_data = 1;
 					} else {
 						show_own_tensor_data = 1;
-						$("#data_type").val("tensordata").trigger("change");
+						$("#data_origin").val("tensordata").trigger("change");
 					}
 				});
 			} else {
 				show_own_csv_data = 1;
 			}
 		} else {
-			alert("Unknown data_type: " + $("#data_type").val());
+			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
 
 		$(".hide_when_custom_data").hide();
@@ -3455,7 +3444,7 @@ function get_category_nr(elem) {
 }
 
 function last_shape_layer_warning() {
-	if ($("#data_origin").val() == "own" && $("#data_type").val() == "image") {
+	if ($("#data_origin").val() == "image") {
 		if (model.layers[model.layers.length - 1].outputShape.length != 2) {
 			var n = $(".own_image_label").length;
 			$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is not 2. Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
@@ -3656,6 +3645,13 @@ function show_csv_file(disabled_show_head_data) {
 
 		if (csv_allow_training) {
 			hide_error();
+		}
+
+		if(labels.length) {
+			shape_preview += "Auto-generated labels:<br>";
+			for (var k = 0; k < labels.length; k++) {
+				shape_preview += k + ": " + labels[k] + "<br>";
+			}
 		}
 
 		$("#x_y_shape_preview").html(shape_preview);
@@ -3910,30 +3906,30 @@ function _allow_training() {
 		return false;
 	}
 
-	if ($("#data_origin").val() == "default") {
+	var data_origin = $("#data_origin").val();
+
+	if (data_origin == "default") {
 		return true;
 	}
 
-	if ($("#data_origin").val() == "own") {
-		var data_type = $("#data_type").val();
-		if (data_type == "image") {
-			var number_of_training_images = $(".own_images").children().length;
-			if (number_of_training_images) {
+	var data_origin = $("#data_origin").val();
+	if (data_origin == "image") {
+		var number_of_training_images = $(".own_images").children().length;
+		if (number_of_training_images) {
+			return true;
+		} else {
+			return false;
+		}
+	} else if (data_origin == "csv") {
+		return csv_allow_training;
+	} else if (data_origin == "tensordata") {
+		if (special_reason_disable_training) {
+			return false;
+		} else {
+			if (x_file && y_file) {
 				return true;
 			} else {
 				return false;
-			}
-		} else if (data_type == "csv") {
-			return csv_allow_training;
-		} else if (data_type == "tensordata") {
-			if (special_reason_disable_training) {
-				return false;
-			} else {
-				if (x_file && y_file) {
-					return true;
-				} else {
-					return false;
-				}
 			}
 		}
 	}
@@ -4520,12 +4516,9 @@ function l(msg) {
 
 async function set_custom_webcam_training_data() {
 	await init_webcams();
-	if($("#data_origin").val() != "own") {
-		$("#data_origin").val("own").trigger("change");
-	}
 
-	if($("#data_type").val() != "image") {
-		$("#data_type").val("image").trigger("change");
+	if($("#data_origin").val() != "image") {
+		$("#data_origin").val("image").trigger("change");
 	}
 
 	if(!cam_data) {

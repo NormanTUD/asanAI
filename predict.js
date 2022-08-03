@@ -69,7 +69,7 @@ let predict_demo = async function (item, nr) {
 		}
 
 		if(model) {
-			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
+			var show_green = $("#data_origin").val() != "csv";
 			var predictions_tensor = await model.predict([tensor_img]);
 			var predictions = predictions_tensor.dataSync();
 			dispose(predictions_tensor);
@@ -126,7 +126,7 @@ let predict_demo = async function (item, nr) {
 function _get_category () {
 	var category = $("#dataset_category").val();
 	if($("#data_origin").val() != "default") {
-		if($("#data_type").val() == "image") {
+		if($("#data_origin").val() == "image") {
 			category = "image";
 		} else {
 			category = "own";
@@ -221,7 +221,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(["classification"].includes(category) && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
-			var show_green = ($("#data_origin").val() == "default" || ($("#data_origin").val() == "own" && $("#data_type").val() != "csv"));
+			var show_green = $("#data_origin").val() != "csv";
 			if(predictions.length) {
 				var max_i = 0;
 				var max_probability = -9999999;

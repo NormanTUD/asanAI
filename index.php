@@ -311,22 +311,12 @@ $GLOBALS['minify'] = 0;
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
 											<option value="default">Default</option>
-											<option value="own">Own</option>
+											<option value="tensordata">&#x2318; Tensor-Data</option>
+											<option class="input_shape_is_image" value="image">&#128444; Image</option>
+											<option value="csv">&#128290; CSV</option>
 										</select>
 									</td>
 								</tr>
-								<div id="custom_training_data_settings">
-									<tr id="data_type_row" style="display: none">
-										<td>Data Type:</td>
-										<td>
-											<select id="data_type" style="width: 140px" onchange="change_data_origin(1)">
-												<option value="tensordata">&#x2318; Tensor-Data</option>
-												<option class="input_shape_is_image" value="image">&#128444; Image</option>
-												<option value="csv">&#128290; CSV</option>
-											</select>
-										</td>
-									</tr>
-								</div>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Loss/Metric/Data</div>
@@ -904,11 +894,6 @@ $GLOBALS['minify'] = 0;
 															<tr>
 																<td>Data-Source:</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
 															</tr>
-															<!--
-															<tr>
-																<td>Data-Type:</td><td><select class="copy_options" data-from_and_to="data_type" id="data_type_wizard"></select></td>
-															</tr>
-															-->
 														</table>
 
 														<div id="wizard_lr">
@@ -1135,6 +1120,14 @@ $GLOBALS['minify'] = 0;
 												</tr>
 													<td>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
+												</tr>
+												</tr>
+													<td>Shuffle data?</td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="huffle_data" /></td>
+												</tr>
+												</tr>
+													<td>Auto One-Hot-encode Y?</td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" /></td>
 												</tr>
 												<tr>
 													<td>Separator:</td>

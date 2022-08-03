@@ -516,7 +516,7 @@ function explain_error_msg (err) {
 		} else if(err.includes("oneHot: depth must be")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
 		} else if(err.includes("numeric tensor, but got string tensor")) {
-			if($("#data_type").val() == "csv" && $("#data_origin").val() == "own") {
+			if($("#data_origin").val() == "csv") {
 				explanation = "Please check your CSV-file input to remove unneeded extra characters. Neither input nor output tensors should contain any strings, but only integers and floats.";
 			} else {
 				explanation = "Are you sure your input data is numeric?";
@@ -524,7 +524,7 @@ function explain_error_msg (err) {
 		} else if(err.includes("input expected a batch of elements where each example has shape")) {
 			explanation = "Does the input-shape match the data?";
 		} else if (err.includes("Error when checking input") && err.includes("but got array with shape")) {
-			if($("#data_type").val() == "csv" && $("#data_origin").val() == "own") {
+			if($("#data_origin").val() == "csv") {
 				explanation = "Have you chosen an 'own'-data-source with CSV-files in a network with convolutional layers?";
 			}
 		}
