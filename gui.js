@@ -787,6 +787,15 @@ function insert_activation_options(layer_nr) {
 	updated_page();
 }
 
+function set_last_layer_activation_function (activation_function) {
+	assert(Object.keys(activations).includes(activation_function), "activation function " + activation_function + " is invalid. Must be one of these: " + Object.keys(activations).join(", "));
+
+	var last_layer_nr = $(".layer_type").length - 1;
+	var activation_item = $($(".layer_options_internal")[last_layer_nr]).find(".activation");
+	if(activation_item.val() != activation_function) {
+		activation_item.val(activation_function).trigger("change");
+	}
+}
 
 function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");

@@ -661,12 +661,6 @@ function get_or_insert_label (item) {
 }
 
 function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
-	log("get_data_struct_by_header(");
-	log(header)
-	log(parsed)
-	log(skip_nr)
-	log(in_goto)
-	log(")");
 	reset_labels();
 	var y_between_0_and_1 = true;
 	var indices = {};
@@ -682,8 +676,6 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
-		log("col_contains_string: ");
-		log(col_contains_string);
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
 			var header_multiply = parseFloat($($(".header_divide_by")[col_nr + skip_nr]).val());
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
@@ -697,11 +689,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 				}
 			} else {
 				if(!col_contains_string.includes(col_nr)) {
-					log("push " + col_nr + " to");
-					log(col_contains_string);
 					col_contains_string.push(col_nr);
-					log("result: ");
-					log(col_contains_string);
 				}
 				if(!in_goto) {
 					return get_data_struct_by_header(header, parsed, skip_nr, true);
@@ -776,6 +764,7 @@ async function get_x_y_from_csv () {
 			if(labels.length > 1) {
 				y_data["data"] = await tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();
 				auto_adjust_number_of_neurons(labels.length);
+				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
 				l("Enough labels for oneHot-Encoding &#x2705;");
 			} else {
