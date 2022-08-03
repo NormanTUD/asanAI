@@ -1136,37 +1136,45 @@ async function get_tfjs_model () {
 	return str;
 }
 
-async function force_reinit () {
+async function _force_reinit() {
+	l("Started re-initializing");
+	var old_force_dont_keep_weights = force_dont_keep_weights;
+
+	force_dont_keep_weights = true;
+
+	await compile_model(0, 1);
+
+	force_dont_keep_weights = old_force_dont_keep_weights;
+
+	await updated_page();
+	l("Done re-initializing");
+}
+
+async function force_reinit (no_msg) {
 	if(!model) {
 		l("Tried re-initializing, but no model was found");
 		return;
 	}
 
-	Swal.fire({
-		title: 'Are you sure?',
-		text: 'This loses your training progress, but you can undo it.',
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#3085d6',
-		cancelButtonColor: '#d33',
-		confirmButtonText: 'Yes, re-init!'
-	}).then(async (result) => {
-		if (result.isConfirmed) {
-			l("Started re-initializing");
-			var old_force_dont_keep_weights = force_dont_keep_weights;
-
-			force_dont_keep_weights = true;
-
-			await compile_model(0, 1);
-
-			force_dont_keep_weights = old_force_dont_keep_weights;
-
-			await updated_page();
-			l("Done re-initializing");
-		} else {
-			l("Re-init cancelled");
-		}
-	})
+	if(!no_msg) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'This loses your training progress, but you can undo it.',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, re-init!'
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				_force_reinit();
+			} else {
+				l("Re-init cancelled");
+			}
+		});
+	} else {
+		_force_reinit();
+	}
 
 }
 

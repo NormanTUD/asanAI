@@ -3280,7 +3280,7 @@ function reset_view() {
 async function change_data_origin() {
 	l("Change data origin");
 	if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
-		force_reinit();
+		force_reinit(1);
 	}
 
 	x_file = null;
