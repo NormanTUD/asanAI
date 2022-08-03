@@ -388,5 +388,9 @@ $(document).ready(async function() {
 		train_neural_network();
 	}
 
+	if(urlParams.get("data_source")) {
+		$("#data_origin").val(urlParams.get("data_source")).trigger("change");
+	}
+
 	l("Site is ready");
 });

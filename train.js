@@ -485,19 +485,37 @@ async function run_neural_network () {
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 
+			show_info_after_run(h);
+
+			dispose(h);
+		} catch (e) {
+			write_error_and_reset(e);
+		}
+
+		var trained_weights = undefined;
+		try {
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */
 
 			log("Training done, getting weights");
-			var trained_weights = await get_weights_as_string();
+			trained_weights = await get_weights_as_string();
 
 			reset_data();
 
 			tf.disposeVariables();
 
 			model = await create_model(null, await get_model_structure(), 1);
-			await compile_model();
+		} catch (e) {
+			write_error_and_reset(e);
+		}
 
+		try {
+			await compile_model();
+		} catch (e) {
+			write_error_and_reset(e);
+		}
+
+		try {
 			await set_weights_from_string(trained_weights, 1, 1);
 
 			dispose(xs_and_ys["x"]);
@@ -511,31 +529,11 @@ async function run_neural_network () {
 			$("#predictcontainer").show();
 			$("#predict_error").hide().html("");
 
-			show_info_after_run(h);
-
-			dispose(h);
-
 			enable_everything();
 
 			$("#training_progress_bar").hide();
 		} catch (e) {
-			write_error(e);
-
-			started_training = false;
-
-			$('body').css('cursor', 'default');
-			$("#layers_container").sortable("enable");
-			$("#ribbon,select,input,checkbox").prop("disabled", false);
-			write_descriptions();
-			Prism.highlightAll();
-
-			var link = document.querySelector("link[rel~='icon']");
-			if (!link) {
-				link = document.createElement('link');
-				link.rel = 'icon';
-				document.getElementsByTagName('head')[0].appendChild(link);
-			}
-			link.href = 'favicon.ico';
+			write_error_and_reset(e);
 		}
 	}
 
@@ -547,4 +545,27 @@ async function run_neural_network () {
 
 	save_current_status();
 	l("Done training");
+}
+
+function write_error_and_reset(e) {
+	write_error(e);
+	reset_on_error();
+}
+
+function reset_on_error () {
+	started_training = false;
+
+	$('body').css('cursor', 'default');
+	$("#layers_container").sortable("enable");
+	$("#ribbon,select,input,checkbox").prop("disabled", false);
+	write_descriptions();
+	Prism.highlightAll();
+
+	var link = document.querySelector("link[rel~='icon']");
+	if (!link) {
+		link = document.createElement('link');
+		link.rel = 'icon';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	}
+	link.href = 'favicon.ico';
 }

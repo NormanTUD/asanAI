@@ -251,6 +251,7 @@ async function get_xs_and_ys () {
 	var loss = $("#loss").val();
 
 	var classes = [];
+	log("A");
 
 	if(traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["has_custom_data"]) {
 		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
@@ -469,6 +470,15 @@ async function get_xs_and_ys () {
 		} else if (data_origin == "csv") {
 			xy_data = await get_x_y_from_csv();
 
+			log("got xy_data");
+			log(xy_data);
+
+			if(xy_data.is_one_hot_encoded) {
+				log("Setting loss and metric");
+				set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
+			} else {
+				log("NOT setting loss and metric");
+			}
 		} else {
 			alert("Unknown data type: " + data_origin);
 		}

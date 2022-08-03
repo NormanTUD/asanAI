@@ -1,5 +1,19 @@
 "use strict";
 
+function set_loss_and_metric (loss, metric) {
+	if(!metric) {
+		metric = loss;
+	}
+
+	if($("#loss").val() != loss) {
+		$("#loss").val(loss).trigger("change");
+	}
+
+	if($("#metric").val() != metric) {
+		$("#metric").val(metric).trigger("change");
+	}
+}
+
 function reset_labels () {
 	labels = [];
 }

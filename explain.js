@@ -515,6 +515,8 @@ function explain_error_msg (err) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
 		} else if(err.includes("oneHot: depth must be")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
+		} else if(err.includes("Cannot find a connection between any variable and the result of the loss function")) {
+			explanation = "TODO no idea yet...";
 		} else if(err.includes("numeric tensor, but got string tensor")) {
 			if($("#data_origin").val() == "csv") {
 				explanation = "Please check your CSV-file input to remove unneeded extra characters. Neither input nor output tensors should contain any strings, but only integers and floats.";
