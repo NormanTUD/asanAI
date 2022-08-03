@@ -746,7 +746,7 @@ async function get_x_y_from_csv () {
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 
 	if($("#shuffle_data").is(":checked")) {
-		tf.util.shuffleCombo(x, y);
+		tf.util.shuffleCombo(x_data["data"], y_data["data"]);
 	}
 
 	//log(y_data);
