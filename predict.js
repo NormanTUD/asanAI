@@ -247,7 +247,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						str = str + this_str;
 					}
 					str += "<br>";
-					log((i + 1) + " % " + (labels.length) + " = " + ((i + 1) % labels.length));
 					if(!((i + 1) % labels.length)) {
 						str += "<hr>";
 					}
