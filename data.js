@@ -694,8 +694,6 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			}
 
 			if(Number.isNaN(to_push) || to_push === undefined || (typeof(to_push) == "string" && to_push == "")) {
-				log("to_push");
-				log(to_push);
 				return { "is_incomplete": true };
 			}
 			line.push(to_push);
@@ -780,7 +778,7 @@ async function get_x_y_from_csv () {
 				is_one_hot_encoded = true;
 				l("Enough labels for oneHot-Encoding &#x2705;");
 			} else {
-				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2 &#10060;");
+				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2) &#10060;");
 			}
 		} else {
 			log("y_headers.length != 1 but " + y_headers.length);
