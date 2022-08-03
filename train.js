@@ -497,6 +497,10 @@ async function run_neural_network () {
 			var fit_data = get_fit_data();
 
 			l("Started model.fit");
+
+			log(xs_and_ys.x.shape);
+			log(xs_and_ys.y.shape);
+
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 

@@ -482,7 +482,7 @@ async function get_xs_and_ys () {
 
 	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 		try {
-			y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
+			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
 		} catch (e) {
 			header(e);
 		}
