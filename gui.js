@@ -3619,7 +3619,17 @@ function show_head_data(head) {
 		if(!$("#auto_one_hot_y").is(":checked")) {
 			select += ",<br>divide by: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />";
 		}
-		html += "<tr><td>" + head[i] + "</td><td>" + select + "</td></tr>";
+
+		html += "<tr><td>";
+		html += head[i];
+		html += "</td><td>";
+		html += select;
+		html += "<br>";
+		html += "</td>";
+		if(i != head.length - 1) {
+			html += "<tr><td colspan=2><hr></td></th>";
+		}
+		html += "</tr>";
 	}
 
 	html += "</table>";
