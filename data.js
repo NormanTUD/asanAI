@@ -287,7 +287,7 @@ async function get_xs_and_ys () {
 				if(category == "image") {
 					let imageData = await get_image_data(0);
 
-					labels = [];
+					reset_labels();
 
 					var this_data = [];
 
@@ -662,7 +662,7 @@ var index = array_and_index["index"];
 */
 
 function get_data_struct_by_header(header, parsed, skip_nr) {
-	labels = [];
+	reset_labels();
 	var y_between_0_and_1 = true;
 	var indices = {};
 
@@ -731,6 +731,7 @@ async function get_x_y_from_csv () {
 
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();
+	var is_one_hot_encoded = false;
 
 	var headers = $(".header_select");
 
@@ -753,33 +754,27 @@ async function get_x_y_from_csv () {
 	//log(y_data);
 
 	if($("#auto_one_hot_y").is(":checked")) {
-		log("auto one hot y:")
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				log("AUTO ENCODING y:");
-				log(y_data);
-				log("Flattened:");
-				log(y_data["data"].flat());
 				y_data["data"] = await tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();
-				log(y_data);;
+				auto_adjust_number_of_neurons(labels.length);
+				is_one_hot_encoded = true;
 			} else {
 				log("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2");
 			}
 		} else {
 			log("y_headers.length != 1 but " + y_headers.length);
 		}
-	} else {
-		log("not auto one hot y");
 	}
 
 	var x = x_data["data"];
-	log("HERE");
-	log(y_data);
+	//log("HERE");
+	//log(y_data);
 	var y = y_data["data"];
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
-	log(y)
+	//log(y)
 
 	x = tf.tensor(x);
 	y = tf.tensor(y);
@@ -789,7 +784,8 @@ async function get_x_y_from_csv () {
 		"y": y,
 		"keys": y_headers,
 		"number_of_categories": y_headers.length,
-		"y_between_0_and_1": y_between_0_and_1
+		"y_between_0_and_1": y_between_0_and_1,
+		"is_one_hot_encoded": is_one_hot_encoded
 	};
 }
 

@@ -1,5 +1,9 @@
 "use strict";
 
+function reset_labels () {
+	labels = [];
+}
+
 function enable_train () {
 	$(".train_neural_network_button").prop("disabled", false);
 }
@@ -3300,7 +3304,7 @@ async function change_data_origin() {
 			show_images_per_category = 1;
 		}
 
-		labels = [];
+		reset_labels();
 
 		$(".hide_when_custom_data").show();
 
@@ -3406,6 +3410,8 @@ function auto_adjust_number_of_neurons(n) {
 			no_update_math = true;
 			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val(n).trigger("change");
 			no_update_math = original_no_update_math;
+		} else {
+			log("last layer not dense");
 		}
 	}
 }
@@ -3496,7 +3502,7 @@ function add_new_category() {
 }
 
 function rename_labels() {
-	labels = [];
+	reset_labels();
 	$(".own_image_label").each(function (i, x) {
 		labels.push($(x).val());
 	});
@@ -3609,8 +3615,10 @@ async function show_csv_file(disabled_show_head_data) {
 		var new_input_shape = parsed_data.x.shape.slice(1);
 		set_input_shape("[" + new_input_shape.toString() + "]");
 		var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
-		if (auto_adjust && parsed_data.number_of_categories) {
-			auto_adjust_number_of_neurons(parsed_data.number_of_categories);
+		if(auto_adjust) {
+			if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
+				auto_adjust_number_of_neurons(parsed_data.number_of_categories);
+			}
 		}
 
 		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";

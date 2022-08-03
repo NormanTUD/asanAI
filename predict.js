@@ -7,11 +7,10 @@ async function switch_to_next_camera_predict () {
 }
 
 async function get_label_data () {
-	if($("#data_origin").val() == "own") {
-	} else {
+	if(!$("#data_origin").val() == "own") {
 		let imageData = await get_image_data(1);
 
-		labels = [];
+		reset_labels();
 
 		var category_counter = 0;
 		var keys = [];
