@@ -3693,12 +3693,16 @@ async function show_csv_file(disabled_show_head_data) {
 			hide_error();
 		}
 
-		if(labels.length) {
-			shape_preview += "Generated encodings:<br>";
-			for (var k = 0; k < labels.length; k++) {
-				shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
+		if($("#auto_one_hot_y").is(":checked")) {
+			if(labels.length) {
+				shape_preview += "Generated encodings:<br>";
+				for (var k = 0; k < labels.length; k++) {
+					shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
+				}
+				l("Generated encodings");
+			} else {
+				l("Auto-encoding enabled, but no labels given");
 			}
-			l("Generated encodings");
 		}
 
 		$("#x_y_shape_preview").html(shape_preview);
