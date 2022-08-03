@@ -13,7 +13,6 @@ function set_loss_and_metric (loss, metric) {
 }
 
 function reset_labels () {
-	console.trace();
 	labels = [];
 }
 
