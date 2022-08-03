@@ -13,6 +13,7 @@ function set_loss_and_metric (loss, metric) {
 }
 
 function reset_labels () {
+	console.trace();
 	labels = [];
 }
 
@@ -3342,6 +3343,7 @@ async function change_data_origin() {
 		}
 
 		reset_labels();
+		await get_label_data();
 
 		$(".hide_when_custom_data").show();
 
@@ -3616,7 +3618,6 @@ function show_head_data(head) {
 		}
 		var select = "<select name='" + head[i] + "' onchange='show_csv_file(1)' class='header_select'><option " + x_selected + " value='X'>X</option><option " + y_selected + " value='Y'>Y</option><option value='none' " + none_selected + ">None</option></select>";
 		if(!$("#auto_one_hot_y").is(":checked")) {
-			log(i + ": " + previous_values[i]);
 			select += ",<br>divide by: <input style='width: 30px;' value='1' type='number' onchange='show_csv_file(1)' class='header_divide_by' />";
 		}
 		html += "<tr><td>" + head[i] + "</td><td>" + select + "</td></tr>";
