@@ -1099,8 +1099,8 @@ $GLOBALS['minify'] = 0;
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
 												</tr>
 												</tr>
-													<td>Shuffle data?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" /></td>
+													<td>Shuffle data before doing validation split (recommended)?</td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked /></td>
 												</tr>
 												</tr>
 													<td>Auto One-Hot-encode Y?</td>
