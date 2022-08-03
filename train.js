@@ -145,10 +145,7 @@ function get_model_data (optimizer_name_only) {
 	var metric_type = $("#metric").val();
 
 	if(Object.values(metric_shortnames).includes(metric_type)) {
-		log(metric_type + " included in metric_shortnames. Long form is: " + getKeyByValue(metric_shortnames, metric_type));
 		metric_type = getKeyByValue(metric_shortnames, metric_type);
-	} else {
-		log(metric_type + " not included in metric_shortnames = " + Object.values(metric_shortnames).join(", "));
 	}
 
 	var epochs = parseInt($("#epochs").val());

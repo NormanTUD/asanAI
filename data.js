@@ -782,10 +782,7 @@ async function get_x_y_from_csv () {
 
 
 	if(is_one_hot_encoded) {
-		log("Setting loss and metric");
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
-	} else {
-		log("NOT setting loss and metric");
 	}
 
 	return {

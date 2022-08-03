@@ -1446,14 +1446,10 @@ function set_optimizer(val) {
 }
 
 function set_metric(val) {
-	log("set_metric: " + val);
-	console.trace();
+	l("Setting metric to " + val);
 
 	if(Object.keys(metric_shortnames).includes(val)) {
-		log(val + " included in metric_shortnames. Long form is: " + metric_shortnames[val]);
 		val = metric_shortnames[val];
-	} else {
-		log(val + " not included in metric_shortnames = " + Object.keys(metric_shortnames).join(", "));
 	}
 
 	assert(metrics.includes(val), metric + " is not a valid metric. It must be in " + metrics.join(", "));
@@ -1465,6 +1461,7 @@ function set_metric(val) {
 }
 
 function set_loss(val) {
+	l("Setting loss to " + val);
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 
