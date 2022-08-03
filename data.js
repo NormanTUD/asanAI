@@ -768,8 +768,10 @@ function get_x_y_from_csv () {
 
 	log(y)
 	if($("#shuffle_data").is(":checked")) {
-		x = shuffle(x);
-		y = shuffle(y);
+		log("shuffle");
+		tf.util.shuffleCombo(x, y);
+	} else {
+		log("Dont shuffle");
 	}
 
 	x = tf.tensor(x);

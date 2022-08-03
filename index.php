@@ -1123,7 +1123,7 @@ $GLOBALS['minify'] = 0;
 												</tr>
 												</tr>
 													<td>Shuffle data?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="huffle_data" /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" /></td>
 												</tr>
 												</tr>
 													<td>Auto One-Hot-encode Y?</td>
