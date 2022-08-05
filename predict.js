@@ -418,10 +418,6 @@ async function predict_webcam () {
 					probability = (probability * 100) + "%";
 				}
 
-				if(get_last_layer_activation_function() == "softmax") {
-					probability = (probability * 100) + "%";
-				}
-
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {
 					str = "<b class='max_prediction'>" + str + "</b>";
