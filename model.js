@@ -935,7 +935,13 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	var tensors = [];
 
 	if(typeof(json) == "string") {
-		json = JSON.parse(json);
+		try {
+			json = JSON.parse(json);
+		} catch (e) {
+			l("An error occured setting the weights. Check the developer's console for more details.");
+			log(e);
+			return;
+		}
 	}
 
 	for (var i = 0; i < json.length; i++) {
