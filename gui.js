@@ -1850,6 +1850,7 @@ function sortable_layers_container(layers_container) {
 }
 
 function disable_all_non_selected_layer_types() {
+	l("Disabling all non-selected layer types");
 	var all_options = $(".layer_type").children().children();
 
 	for (var i = 0; i < all_options.length; i++) {
@@ -2186,11 +2187,13 @@ async function set_config(index) {
 
 	await updated_page(null, null, null, 1);
 
+	l("Creating model");
 	model = await create_model(model);
 	l("Compiling model");
 	await compile_model();
 
 	if (config["weights"]) {
+		l("Settings weights from config-weights");
 		var weights_string = JSON.stringify(config["weights"]);
 		await set_weights_from_string(weights_string, 1, 1)
 	} else {
