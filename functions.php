@@ -110,7 +110,8 @@
 	}
 
 	function model_is_public($model_id) {
-		$query = !!"select count(*) from model where is_public = 1 and reviewed = 1 and id = ".esc($model_id);
+		$user_is_admin = is_admin() ? 1 : 0;
+		$query = !!"select count(*) from model where ((is_public = 1 and reviewed = 1) or $user_is_admin) and id = ".esc($model_id);
 	}
 
 	function can_edit_model($model_id) {

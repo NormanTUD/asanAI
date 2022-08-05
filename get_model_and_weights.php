@@ -1,5 +1,5 @@
 <?php
-    include('functions.php');
+	include('functions.php');
 
 	if(array_key_exists("id", $_GET)) {
 		$model_id = $_GET["id"];
@@ -8,7 +8,8 @@
 			if(is_null($user)) {
 				print "User doesn't exist.";
 			} else {
-				$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).")";
+				$user_is_admin = is_admin() ? 1 : 0;
+				$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).") or $user_is_admin";
 				print get_single_value_from_query($query);
 			}
 		} else {
