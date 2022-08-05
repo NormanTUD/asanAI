@@ -1391,6 +1391,8 @@ function set_momentum(val) {
 }
 
 function set_validationSplit(val) {
+	assert(typeof(val) == "number", val + " is not an number but " + typeof(number));
+	l("Set validationSplit to " + val);
 	$("#validationSplit").val(val);
 }
 
@@ -1444,6 +1446,7 @@ function write_to_summary(val) {
 
 function set_optimizer(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
+	l("Setting optimizer to " + val);
 	$("#optimizer").val(val).trigger("change");
 }
 
@@ -1482,11 +1485,13 @@ function get_batchSize() {
 
 function set_batchSize(val) {
 	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
+	l("Set batchsize to " + val);
 	$("#batchSize").val(val);
 }
 
 function set_epochs(val) {
 	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
+	l("Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
 }
 
@@ -1502,6 +1507,7 @@ function get_numberoflayers() {
 
 function init_epochs(val) {
 	assert(typeof (val) == "number", "init_epochs(" + val + ") is not an integer but " + typeof (val));
+	l("Initializing epochs to " + val);
 	set_epochs(val);
 }
 
@@ -1967,10 +1973,12 @@ async function set_config(index) {
 	if (config) {
 		if (!index) {
 			if (config["width"]) {
+				l("Setting width");
 				$("#width").val(config["width"]).trigger("change");
 			}
 
 			if (config["height"]) {
+				l("Setting height");
 				$("#height").val(config["height"]).trigger("change");
 			}
 
@@ -1980,22 +1988,26 @@ async function set_config(index) {
 			}
 
 			if (config["max_number_of_files_per_category"]) {
+				l("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
 				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 			}
 
 			if (config["divide_by"]) {
+				l("Setting divide_by to " + config["divide_by"]);
 				$("#divide_by").val(config["divide_by"]);
 			} else {
+				l("Setting divide_by to 1");
 				$("#divide_by").val(1);
 			}
 
 			set_epochs(config["epochs"]);
 			set_loss(config["loss"]);
-			log("SET_CONFIG: METRIC");
+
 			set_metric(config["metric"]);
 			set_optimizer(config["optimizer"]);
 
 			if (config["optimizer"] == "rmsprop") {
+				l("Setting optimizer to rmsprop");
 				set_rho(config["rho"]);
 				set_decay(config["decay"]);
 				set_epsilon(config["epsilon"]);
@@ -2017,6 +2029,7 @@ async function set_config(index) {
 
 		var keras_layers;
 		if (!config["model_structure"]) {
+			l("Looking for model structure...");
 			var paths = [
 				["keras", "config", "layers"],
 				["keras", "modelTopology", "config", "layers"],
@@ -2047,6 +2060,7 @@ async function set_config(index) {
 			}
 
 			number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+			l("Found model structure");
 		} else {
 			number_of_layers = config["model_structure"].length;
 		}
@@ -2068,6 +2082,7 @@ async function set_config(index) {
 			var layer_settings = $(".layer_setting");
 			for (var i = 0; i < keras_layers.length; i++) {
 				var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
+				l("Setting layer " + i + " to " + python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
@@ -2090,6 +2105,8 @@ async function set_config(index) {
 					"stddev",
 					"rate"
 				];
+
+				l("Setting options for layer " + i);
 
 				datapoints.forEach(function (item_name) {
 					if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
@@ -2133,6 +2150,7 @@ async function set_config(index) {
 			}
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
+				l("Setting options for layer " + i);
 				var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
 				layer_type.val(config["model_structure"][i]["type"]);
 				layer_type.trigger("change");
@@ -2169,6 +2187,7 @@ async function set_config(index) {
 	await updated_page(null, null, null, 1);
 
 	model = await create_model(model);
+	l("Compiling model");
 	await compile_model();
 
 	if (config["weights"]) {
@@ -2179,8 +2198,6 @@ async function set_config(index) {
 	}
 
 	disable_all_non_selected_layer_types();
-
-	write_descriptions();
 
 	if (!index) {
 		await save_current_status();
