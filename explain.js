@@ -210,33 +210,10 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 	var drew_input = draw_image_if_possible(layer, 'input', input_data);
 
-	/*
-	var test_tensor = tf.tensor(input_data);
-	if(drew_input != "show_input_only_on_first_layer") {
-		if(!drew_input) {
-			colorlog("red", "not drawn (layer " + layer + "):");
-			log(test_tensor.shape);
-			log(input_data);
-		} else {
-			colorlog("green", "drawn (layer " + layer + "):");
-			log(test_tensor.shape);
-			log(input_data);
-		}
-	} else {
-		if(layer == 0) {
-			colorlog("red", "Not drawn BUT SHOULD HAVE BEEN DRAWN (currently layer " + layer + ")");
-		} else {
-			colorlog("green", "Not drawn, but this is okay since it is an input layer that should only be drawn on layer 0 (currently layer " + layer + ")");
-		}
-	}
-	*/
-
 	var drew_kernel = draw_image_if_possible(layer, 'kernel', kernel_data);
 
 	var drew_output = draw_image_if_possible(layer, 'output', output_data);
 	
-	write_descriptions();
-
 	return drew_input || drew_kernel || drew_output;
 }
 
@@ -675,60 +652,52 @@ function add_layer_debuggers () {
 		}
 
 		model.layers[i].original_apply_real = model.layers[i].apply
+
 		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
-			//colorlog("blue", "Called apply function");
 			if(!disable_layer_debuggers) {
-				var show_apply_data = 0;
-				if(model.model.isTraining) {
-					show_apply_data = 1;
-				} else {
-					if($("#show_while_predicting").is(":checked")) {
-						show_apply_data = 1;
-					}
-				}
-
-				if($("#show_layer_data").is(":checked") && show_apply_data) {
-					show_tab_label('layer_visualizations_tab_label');
-
-					var number_of_items_in_this_batch = inputs[0].shape[0];
-
-					for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
-						var output_data = applied.arraySync()[batchnr];
-						$($(".layer_data")[${i}]).html('');
-						var input_data = inputs[0].arraySync()[batchnr];
-
-						var kernel_data = [];
-						if(Object.keys(model.layers[${i}]).includes('kernel')) {
-							if(model.layers[${i}].kernel.val.shape.length == 4) {
-								kernel_data = model.layers[${i}].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
-							}
-						}
-
-						if(layers_can_be_visualized()) {
-							draw_internal_states(${i}, input_data, output_data, kernel_data, batchnr, html);
-						}
-					}
+				if($("#show_layer_data").is(":checked")) {
+					draw_internal_states(${i}, inputs, applied);
 				}
 			}
 
 			return applied;
 		}`;
+
 		eval(code);
 	}
 }
 
-function draw_internal_states (i, input_data, output_data, kernel_data, batchnr, html) {
-	var html = $($(".layer_data")[i]).html();
-	if($('#header_layer_visualization_' + i).length == 0) {
-		html = html + "<h2 id='header_layer_visualization_" + i + "'>Layer " + i + ": " + $($('.layer_type')[i]).val() + ' ' + get_layer_identification(i) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[i].getOutputAt(0).shape) + ":</h2>";
+function draw_internal_states (layer, inputs, applied) {
+	var number_of_items_in_this_batch = inputs[0].shape[0];
+
+	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
+		var output_data = applied.arraySync()[batchnr];
+		$($(".layer_data")[layer]).html('');
+		var input_data = inputs[0].arraySync()[batchnr];
+
+		var kernel_data = [];
+		if(Object.keys(model.layers[layer]).includes('kernel')) {
+			if(model.layers[layer].kernel.val.shape.length == 4) {
+				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
+			}
+		}
+
+		if(layers_can_be_visualized()) {
+			show_tab_label('layer_visualizations_tab_label');
+			var html = $($(".layer_data")[layer]).html();
+			if($('#header_layer_visualization_' + layer).length == 0) {
+				html = html + "<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>";
+			}
+
+			draw_image_if_possible(layer, 'input', input_data);
+			draw_image_if_possible(layer, 'kernel', kernel_data);
+			draw_image_if_possible(layer, 'output', output_data);
+
+			$($(".layer_data")[layer]).append(html);
+		}
 	}
-
-	log("hallo");
-	draw_images_if_possible(i, input_data, output_data, kernel_data);
-
-	$($(".layer_data")[i]).append(html);
 }
 
 function zoom_kernel_images (kernel_image_zoom) {
