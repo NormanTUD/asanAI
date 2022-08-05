@@ -1975,6 +1975,7 @@ async function set_config(index) {
 			}
 
 			if (config["labels"]) {
+				l("Setting labels from config");
 				labels = config["labels"];
 			}
 
