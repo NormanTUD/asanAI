@@ -706,29 +706,29 @@ function add_layer_debuggers () {
 							}
 						}
 
-						var html = $($(".layer_data")[${i}]).html();
-						if($('#header_layer_visualization_${i}').length == 0) {
-							html = html + "<h2 id='header_layer_visualization_${i}'>Layer ${i}: " + $($('.layer_type')[${i}]).val() + ' ' + get_layer_identification(${i}) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[${i}].getOutputAt(0).shape) + ":</h2>";
-						}
-			
 						if(layers_can_be_visualized()) {
-							draw_images_if_possible(${i}, input_data, output_data, kernel_data);
-							$($(".layer_data")[${i}]).append(html);
-						} else {
-							//log("Layers cannot be visualized...");
+							draw_internal_states(${i}, input_data, output_data, kernel_data, batchnr, html);
 						}
 					}
-				} else {
-					//colorlog("red", "show_layer_data is disabled");
 				}
-			} else {
-				//colorlog("red", "disable_layer_debuggers is true");
 			}
 
 			return applied;
 		}`;
 		eval(code);
 	}
+}
+
+function draw_internal_states (i, input_data, output_data, kernel_data, batchnr, html) {
+	var html = $($(".layer_data")[i]).html();
+	if($('#header_layer_visualization_' + i).length == 0) {
+		html = html + "<h2 id='header_layer_visualization_" + i + "'>Layer " + i + ": " + $($('.layer_type')[i]).val() + ' ' + get_layer_identification(i) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[i].getOutputAt(0).shape) + ":</h2>";
+	}
+
+	log("hallo");
+	draw_images_if_possible(i, input_data, output_data, kernel_data);
+
+	$($(".layer_data")[i]).append(html);
 }
 
 function zoom_kernel_images (kernel_image_zoom) {
