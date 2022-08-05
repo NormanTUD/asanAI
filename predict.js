@@ -305,26 +305,28 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
 					success: async function (x) { 
 						if(x) {
-							var this_examples_hash = await md5(JSON.stringify(x["example"]));
-							if(this_examples_hash != predict_examples_hash) {
-								example_predictions.html("");
-								predict_examples_hash = this_examples_hash;
-							}
-							var examples = x["example"];
-							if(examples) {
-								var str = "";
-								for (var i = 0; i < examples.length; i++) {
-									var img_url = full_dir + "/" + examples[i];
-									var img_elem = $("img[src$='" + img_url + "']");
-									if(img_elem.length) {
-										predict_demo(img_elem[0], i);
-									} else {
-										str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
-									}
+							if(Object.keys(x).includes("example")) {
+								var this_examples_hash = await md5(JSON.stringify(x["example"]));
+								if(this_examples_hash != predict_examples_hash) {
+									example_predictions.html("");
+									predict_examples_hash = this_examples_hash;
 								}
+								var examples = x["example"];
+								if(examples) {
+									var str = "";
+									for (var i = 0; i < examples.length; i++) {
+										var img_url = full_dir + "/" + examples[i];
+										var img_elem = $("img[src$='" + img_url + "']");
+										if(img_elem.length) {
+											predict_demo(img_elem[0], i);
+										} else {
+											str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
+										}
+									}
 
-								if(str) {
-									example_predictions.html(str);
+									if(str) {
+										example_predictions.html(str);
+									}
 								}
 							}
 						}
