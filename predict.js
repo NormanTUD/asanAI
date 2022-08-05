@@ -247,6 +247,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					if(label) {
 						this_str += label + ": ";
 					}
+
+					if(get_last_layer_activation_function() == "softmax") {
+						probability = (probability * 100) + "%";
+					}
+
 					this_str += probability + "\n";
 					if(i == max_i && show_green) {
 						str = str + "<b class='max_prediction'>" + this_str + "</b>";
@@ -409,6 +414,14 @@ async function predict_webcam () {
 			for (let i = 0; i < predictions.length; i++) {
 				var label = labels[i % labels.length];
 				var probability = predictions[i];
+				if(get_last_layer_activation_function() == "softmax") {
+					probability = (probability * 100) + "%";
+				}
+
+				if(get_last_layer_activation_function() == "softmax") {
+					probability = (probability * 100) + "%";
+				}
+
 				var str = label + ": " + probability + "\n";
 				if(i == max_i) {
 					str = "<b class='max_prediction'>" + str + "</b>";
