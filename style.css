@@ -416,7 +416,7 @@ button:disabled:hover {
 #webcam_data {
 	position: fixed;
 	left: 10px;
-	bottom: 10px;
+	bottom: 30px;
 }
 
 .fireworks-container {
