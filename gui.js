@@ -1865,7 +1865,7 @@ function show_layers(number) {
 	var layers_container = $("#layers_container");
 
 	var layers_container_str = "";
-	var layer_visualizations_tab_str = "";
+	var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
 	var remove = "<button class='add_remove_layer_button remove_layer' onclick='remove_layer(this)'>-</button>&thinsp;";
 	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
@@ -1888,9 +1888,6 @@ function show_layers(number) {
 
 		layer_visualizations_tab_str +=
 			"<div class='layer_data'></div>" +
-			"<div class='input_image_grid_div' style='display: none'>Input: <div class='input_image_grid'></div><hr></div>" +
-			"<div class='kernel_image_grid_div' style='display: none'>Filter-Kernel: <div class='filter_image_grid'></div><hr></div>" +
-			"<div class='output_image_grid_div' style='display: none'>Output: <div class='image_grid'></div></div>"
 		"<br>";
 		;
 	}
@@ -2749,7 +2746,7 @@ function register() {
 				if(data["status"] == "ok") {
 					color_msg_green("register_error_msg");
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-					setCookie("session_id", data["session_id"]);
+					setCookie("session_id", data["session_id"], 7);
 					$("#register").hide();
 					$("#delete_button").hide();
 					$("#logout").show();
@@ -2785,7 +2782,7 @@ async function login() {
 				user_id = data["user_id"];
 				color_msg_green("login_error_msg");
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-				setCookie("session_id", data["session_id"])
+				setCookie("session_id", data["session_id"], 7);
 				$("#register").hide();
 				$("#logout").show();
 				$("#register_dialog").delay(400).fadeOut(400, () => {

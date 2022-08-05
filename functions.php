@@ -92,7 +92,7 @@
 	function session_id_exists() {
 		if(array_key_exists("session_id", $_COOKIE)) {
 			$query = "select count(*) from tfd_db.session_ids where session_id = ".esc($_COOKIE["session_id"]);
-			return !!get_single_value_from_query($query);
+			return get_single_value_from_query($query);
 		}
 		return false;
 	}
