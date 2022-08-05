@@ -68,7 +68,9 @@ let predict_demo = async function (item, nr) {
 		}
 
 		if(model) {
-			var show_green = $("#data_origin").val() != "csv";
+			var last_layer_activation = get_last_layer_activation_function();
+			var show_green = last_layer_activation == "softmax" ? 1 : 0;
+
 			var predictions_tensor = await model.predict([tensor_img]);
 			var predictions = predictions_tensor.dataSync();
 			dispose(predictions_tensor);
@@ -220,7 +222,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(["classification"].includes(category) && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
-			var show_green = $("#data_origin").val() != "csv";
+			var last_layer_activation = get_last_layer_activation_function();
+			var show_green = last_layer_activation == "softmax" ? 1 : 0;
 			if(predictions.length) {
 				var max_i = 0;
 				var max_probability = -9999999;

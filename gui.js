@@ -4734,3 +4734,12 @@ function show_hide_augment_tab () {
 		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
 	}
 }
+
+function get_last_layer_activation_function () {
+	var layers_container_children = $("#layers_container").children();
+	var number_of_layers = layers_container_children.length;
+
+	var last_layer = $(layers_container_children[number_of_layers - 1]);
+
+	return last_layer.find(".activation").val();
+}
