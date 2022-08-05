@@ -3525,7 +3525,7 @@ function add_new_category() {
 		$(
 			'<div class="own_image_upload_container"><hr>' +
 			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
-			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam_n_times(this, 10)">&#128248; Take 10 images from webcam (3/sec)</button>' +
+			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam_n_times(this, 10)">&#128248; Take 10 images from webcam</button>' +
 			'<button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>'
 		).appendTo("#own_images_container");
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label ' + label_nr + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);

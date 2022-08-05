@@ -900,7 +900,6 @@ async function get_data_from_webcam (force_restart) {
 async function take_image_from_webcam_n_times (elem, n) {
 	for (var i = 0; i < n; i++) {
 		await take_image_from_webcam(elem);
-		await delay(300);
 	}
 	l("Done taking " + n + " images");
 }
