@@ -1017,7 +1017,9 @@ async function update_python_code(dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
-	python_code += "# sudo pip3 install tensorflow tensorflowjs ";
+	python_code += "# python3 -m venv asanaienv\n";
+	python_code += "# source asanaienv/bin/activate\n";
+	python_code += "# pip3 install tensorflow tensorflowjs ";
 	if (dataset_category == "image") {
 		python_code += " scikit-image";
 	}
