@@ -484,3 +484,23 @@ button:disabled:hover {
 .graphs_here {
 	margin-bottom: 30px;
 }
+
+.fenced {
+        height: auto;
+        width: min-content;
+        min-width: 1em;
+        padding-left: 0.5em;
+        display: block;
+
+        border-left: 3px solid;
+        border-right: 3px solid;
+
+        border-top-left-radius: 1em 5em;
+        border-bottom-left-radius: 1em 5em;
+
+        border-top-right-radius: 1em 5em;
+        border-bottom-right-radius: 1em 5em;
+
+        padding-left: 20px;
+        padding-right: 20px;
+}
