@@ -487,10 +487,10 @@ button:disabled:hover {
 
 .fenced {
         height: auto;
-        width: min-content;
+        width: auto;
         min-width: 1em;
         padding-left: 0.5em;
-        display: block;
+        display: inline flow-root;
 
         border-left: 3px solid;
         border-right: 3px solid;

@@ -15,12 +15,14 @@ function normalize_to_rgb_min_max (x, min, max) {
 	return val;
 }
 
-function get_canvas_in_class (layer, classname) {
+function get_canvas_in_class (layer, classname, dont_append) {
 	var new_canvas = $('<canvas/>', {class: "layer_image"}).prop({
 		width: 0,
 		height: 0
 	});
-	$($('.' + classname)[layer]).append(new_canvas);
+	if(!dont_append) {
+		$($('.' + classname)[layer]).append(new_canvas);
+	}
 	return new_canvas[0];
 }
 
@@ -217,11 +219,7 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 	return drew_input || drew_kernel || drew_output;
 }
 
-function draw_image_if_possible (layer, canvas_type, colors) {
-	if(canvas_type != "kernel" && canvas_type == "input" && layer != 0) {
-		return "show_input_only_on_first_layer";
-	}
-
+function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
 	var canvas = null;
 
 	try {
@@ -231,14 +229,20 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 
 		if(data_type == "simple") {
 			if(canvas_type == "input") {
-				canvas = get_canvas_in_class(layer, "input_image_grid");
+				canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 			} else {
-				canvas = get_canvas_in_class(layer, "image_grid");
+				canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 			}
 
-			$($(canvas)[0]).parent().parent().show()
+			if(!get_canvas_object) {
+				$($(canvas)[0]).parent().parent().show()
+			}
+
 			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
 				ret = draw_grid(canvas, pixel_size, colors, 1);
+				if(get_canvas_object) {
+					return canvas;
+				}
 			} else {
 				log('Too many images (simple) in layer ' + layer);
 			}
@@ -247,40 +251,57 @@ function draw_image_if_possible (layer, canvas_type, colors) {
 		} else if((data_type == "kernel" || canvas_type == "kernel")) {
 			var shape = get_dim(colors);
 
-			var first_kernel = null;
+			var canvasses = [];
 
-			if($($(".filter_image_grid")[layer]).children().length <= parseInt($($(".layer_setting")[0]).find(".filters").val())) {
-				for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
-					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-						canvas = get_canvas_in_class(layer, "filter_image_grid");
+			for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
+				for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
+					canvas = get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
 
+					if(!get_canvas_object) {
 						$($(canvas)[0]).parent().parent().show()
+					}
 
-						ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
-						if(first_kernel === null) {
-							first_kernel = colors[filter_id][channel_id];
-						}
+					ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
+
+					if(get_canvas_object) {
+						canvasses.push(canvas);
 					}
 				}
 			}
 
+			if(get_canvas_object) {
+				return canvasses;
+			}
 			return ret;
 		} else if(data_type == "filter") {
 			var shape = get_dim(colors);
 
+			var canvasses = [];
+
 			for (var k = 0; k < shape[2]; k++) {
 				if(canvas_type == "input") {
-					canvas = get_canvas_in_class(layer, "input_image_grid");
+					canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 				} else {
-					canvas = get_canvas_in_class(layer, "image_grid");
+					canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 				}
-				$($(canvas)[0]).parent().parent().show()
+				if(!get_canvas_object) {
+					$($(canvas)[0]).parent().parent().show()
+				}
 
 				if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
+
 					ret = draw_grid_grayscale(canvas, 5, colors, k);
+
+					if(get_canvas_object) {
+						canvasses.push(canvas);
+					}
 				} else {
 					console.log('Too many images (filter) in layer ' + layer);
 				}
+			}
+
+			if(get_canvas_object) {
+				return canvasses;
 			}
 
 			return ret;
@@ -671,31 +692,81 @@ function add_layer_debuggers () {
 
 function draw_internal_states (layer, inputs, applied) {
 	var number_of_items_in_this_batch = inputs[0].shape[0];
+	//log("layer: " + layer);
+	//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
+		//log("batchnr: " + batchnr);
 		var output_data = applied.arraySync()[batchnr];
-		$($(".layer_data")[layer]).html('');
+		//$($(".layer_data")[layer]).html('');
 		var input_data = inputs[0].arraySync()[batchnr];
 
-		var kernel_data = [];
-		if(Object.keys(model.layers[layer]).includes('kernel')) {
-			if(model.layers[layer].kernel.val.shape.length == 4) {
-				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 0, 1]).arraySync(); // TODO
-			}
-		}
-
 		if(layers_can_be_visualized()) {
+			var layer_div = $($(".layer_data")[layer]);
+			layer_div.show();
 			show_tab_label('layer_visualizations_tab_label');
 			var html = $($(".layer_data")[layer]).html();
 			if($('#header_layer_visualization_' + layer).length == 0) {
 				html = html + "<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>";
 			}
 
-			draw_image_if_possible(layer, 'input', input_data);
-			draw_image_if_possible(layer, 'kernel', kernel_data);
-			draw_image_if_possible(layer, 'output', output_data);
+			var kernel_data = [];
+			if(Object.keys(model.layers[layer]).includes('kernel')) {
+				if(model.layers[layer].kernel.val.shape.length == 4) {
+					kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
+				} else {
+					//log("model.layers[" + layer + "].kernel.val.shape.length == " + model.layers[layer].kernel.val.shape.length);
+				}
+			} else {
+				//log("kernel not included in model.layers[" + layer + "]");
+			}
 
-			$($(".layer_data")[layer]).append(html);
+			var canvas_input = draw_image_if_possible(layer, 'input', input_data, 1);
+			var canvas_kernel = draw_image_if_possible(layer, 'kernel', kernel_data, 1);
+			var canvas_output = draw_image_if_possible(layer, 'output', output_data, 1);
+
+			if(canvas_output.length && canvas_input.length) {
+				for (var j = 0; j < canvas_input.length; j++) {
+					var img_input = '<img alt="Layer ' + layer + ', input: ' + j + '" src="' + canvas_input[j].toDataURL() + '" />';
+					for (var i = 0; i < canvas_output.length; i++) {
+						var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
+						if(Object.keys(canvas_kernel).includes(i + '')) {
+							var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
+							layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+						} else {
+							//log(canvas_kernel);
+							//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
+							layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+						}
+					}
+				}
+			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+				var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_input.toDataURL() + '" />';
+				for (var i = 0; i < canvas_output.length; i++) {
+					var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
+					if(Object.keys(canvas_kernel).includes(i + '')) {
+						var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
+						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+					} else {
+						//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
+						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+					}
+				}
+			} else {
+				if(canvas_input.nodeName == "CANVAS") {
+					var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_output.toDataURL() + '" />';
+					if(canvas_output.nodeName == "CANVAS") {
+						var img_output = '<img alt="Layer ' + layer + ', input" src="' + canvas_output.toDataURL() + '" />';
+						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+					} else {
+						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span></span><br>");
+					}
+				} else {
+					//log(canvas_output);
+				}
+			}
+		} else {
+			//log("layers_can_be_visualized is " + layers_can_be_visualized());
 		}
 	}
 }
