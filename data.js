@@ -897,6 +897,14 @@ async function get_data_from_webcam (force_restart) {
 	}
 }
 
+async function take_image_from_webcam_n_times (elem, n) {
+	for (var i = 0; i < n; i++) {
+		await take_image_from_webcam(elem);
+		await delay(300);
+	}
+	l("Done taking " + n + " images");
+}
+
 async function take_image_from_webcam (elem) {
 	l("Taking photo from webcam...");
 	var category = $(elem).parent();
@@ -914,7 +922,11 @@ async function take_image_from_webcam (elem) {
 		i++;
 	}
 
-	$(category).find(".own_images").append('<span class="own_image_span"><canvas id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>');
+	$(category).find(".own_images").append(
+		'<span class="own_image_span">' +
+			'<canvas id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
+		'</span>'
+	);
 
 	var c = document.getElementById(id + "_canvas");
 	var ctx = c.getContext("2d");
