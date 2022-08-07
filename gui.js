@@ -4622,6 +4622,9 @@ function l(msg) {
 		load_time = load_time.replace(/ GMT.*/, "");
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
+		if(msg.startsWith("ERROR:")) {
+			msg = "<span style='color: red'>" + msg + "</span>";
+		}
 		$("#status_bar_log").html(msg);
 	}
 }

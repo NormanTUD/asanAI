@@ -595,23 +595,23 @@ async function create_model (old_model, fake_model_structure, force) {
 			if(!fake_model_structure) {
 				var msg = e;
 				console.trace();
+				l("ERROR: " + e);
 				if(mode != "expert") {
 					msg = msg + "\n\nUndoing last change"
 				}
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops [3]...',
-					text: msg
-				}).then(() => {
-					if(mode != "expert") {
+				
+				if(mode != "expert") {
+					if(!e.includes("expected") && !e.includes("found")) {
 						undo();
 						future_state_stack = [];
 						show_hide_undo_buttons();
 					}
-				});
+				}
 			}
 			return model;
 		}
+
+		enable_train();
 
 		if(Object.keys(node_data).includes("kernelInitializer")) {
 			node_data["kernelInitializer"] = "tf.initializers." + node_data["kernelInitializer"]["name"] + "(" + JSON.stringify(node_data["kernelInitializer"]["config"]) + ")";
