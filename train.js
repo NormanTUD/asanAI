@@ -568,7 +568,7 @@ function write_error_and_reset(e) {
 function reset_on_error () {
 	started_training = false;
 
-	$('body').css('cursor', 'default');
+	document.body.style.cursor = "default";
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox").prop("disabled", false);
 	write_descriptions();
