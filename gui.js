@@ -1863,7 +1863,7 @@ function disable_all_non_selected_layer_types() {
 			this_all_options.prop("selected", true)
 		}
 	}
-
+	l("Disabled all non-selected layer types");
 }
 
 function show_layers(number) {
@@ -2185,10 +2185,10 @@ async function set_config(index) {
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
-	await updated_page(null, null, null, 1);
 
 	l("Creating model");
 	model = await create_model(model);
+
 	l("Compiling model");
 	await compile_model();
 
@@ -2203,20 +2203,25 @@ async function set_config(index) {
 	disable_all_non_selected_layer_types();
 
 	if (!index) {
+		l("Saving current status");
 		await save_current_status();
 	}
 
+	l("Getting label data");
 	await get_label_data();
 
 	is_setting_config = false;
 
+	l("Call `updated page`-routine");
 	await updated_page(null, null, null, 1);
 
 	Swal.close();
 
 	write_descriptions();
 
+	l("Updating predictions");
 	await show_prediction(1, 1);
+	l("Loaded configuration");
 }
 
 async function show_or_hide_load_weights() {
