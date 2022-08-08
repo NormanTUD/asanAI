@@ -10,7 +10,7 @@ function assert(boolean_value, exception_message) {
 		console.trace();
 		write_error(exception_message);
 
-		$('body').css('cursor', 'default');
+		document.body.style.cursor = "default";
 		$("#layers_container").sortable("enable");
 		$("#ribbon,select,input,checkbox").prop("disabled", false);
 		write_descriptions();
@@ -26,6 +26,6 @@ function assert(boolean_value, exception_message) {
 
 		throw new assertationFailed(exception_message);
 	} else {
-		$("body").css("cursor", "default");
+		document.body.style.cursor = "default";
 	}
 }
