@@ -1429,7 +1429,7 @@ function write_model_summary() {
 
 	model.summary(200);
 
-	write_to_summary(logMessages.join("\n"));
+	document.getElementById('summary').innerHTML = summary_to_table(logMessages);
 
 	console.log = logBackup;
 }
@@ -1439,10 +1439,6 @@ function reset_summary() {
 	$("#summary").html("");
 }
 
-function write_to_summary(val) {
-	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	$("#summary").html(summary_to_table(val));
-}
 
 function set_optimizer(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
@@ -4338,9 +4334,7 @@ function check_number_values() {
 	}
 }
 
-function summary_to_table(t) {
-	var lines = t.split("\n");
-
+function summary_to_table(lines) {
 	var new_array = [];
 
 	var colspan_nr = 0;
