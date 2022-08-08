@@ -3177,8 +3177,6 @@ function enable_start_training_custom_tensors() {
 	}
 
 	current_status_hash = "";
-
-	write_descriptions();
 }
 
 function get_sum_of_items_childrens_width(item) {

@@ -43,6 +43,8 @@
 				return supported;
 			}
 
+			var has_webgl = hasWebGL();
+
 			var original_title = document.title;
 
 			var traindata_struct =
@@ -97,10 +99,8 @@ $GLOBALS['minify'] = 0;
 
 			tf.env().set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
 
-			if(!hasWebGL()) {
-				tf.setBackend('cpu');
-				force_cpu_backend = 1;
-			}
+			tf.setBackend('cpu');
+			force_cpu_backend = 1;
 		</script>
 
 		<!-- Easter Egg -->
@@ -1628,7 +1628,7 @@ $GLOBALS['minify'] = 0;
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
-				if(!hasWebGL()) {
+				if(!has_webgl) {
 					return;
 				}
 
