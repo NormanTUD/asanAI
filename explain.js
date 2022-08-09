@@ -606,7 +606,7 @@ function identify_layers (numberoflayers) {
 			if(has_zero_output_shape) {
 				disable_train();
 				var basemsg = "There are zeroes in the output shapes. ";
-				var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red. Training and saving is disabled.";
+				var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue.<br>If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions.<br>The affected layers output shapes are marked red.<br>Training and saving is disabled.";
 				if(!swal.isVisible()) {
 					Swal.fire({
 						icon: 'error',
