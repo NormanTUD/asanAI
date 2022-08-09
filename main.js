@@ -299,9 +299,11 @@ $(document).ready(async function() {
 
 	init_losses_and_metrics();
 
-	window.onbeforeunload = function() {
-		return "You're leaving the site.";
-	};
+	if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+		window.onbeforeunload = function() {
+			return "You're leaving the site.";
+		};
+	}
 
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
