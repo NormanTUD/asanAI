@@ -1171,7 +1171,7 @@ $GLOBALS['minify'] = 0;
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
 								<div class='webcam_data'>
-									Number of images in a series: <input type='number' min=1 value='10' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
+									Number of images in a series: <input type='number' min=1 value='20' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
 									Delay in seconds between images in a series: <input type='number' value='1' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
 								</div>
 								<div id="own_image_data_categories"></div>
