@@ -3520,6 +3520,14 @@ function last_shape_layer_warning() {
 	}
 }
 
+function alter_text_webcam_series () {
+	var number = parseInt($("#number_of_series_images").val())
+	var delaybetween = parseInt($("#delay_between_images_in_series").val())
+
+	$(".webcam_series_button").html("&#128248; Take " + number + " images from webcam (" + delaybetween + "s apart)");
+
+}
+
 function add_new_category() {
 	var n = $(".own_image_label").length;
 
@@ -3544,7 +3552,7 @@ function add_new_category() {
 		$(
 			'<div class="own_image_upload_container"><hr>' +
 			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
-			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam_n_times(this, 10)">&#128248; Take 10 images from webcam</button>' +
+			'<button style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>' +
 			'<button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>'
 		).appendTo("#own_images_container");
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label ' + label_nr + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
@@ -3562,6 +3570,8 @@ function add_new_category() {
 	last_shape_layer_warning();
 
 	rename_labels();
+
+	alter_text_webcam_series();
 }
 
 function rename_labels() {

@@ -897,9 +897,13 @@ async function get_data_from_webcam (force_restart) {
 	}
 }
 
-async function take_image_from_webcam_n_times (elem, n) {
-	for (var i = 0; i < n; i++) {
+async function take_image_from_webcam_n_times (elem) {
+	var number = parseInt($("#number_of_series_images").val())
+	var delaybetween = parseInt($("#delay_between_images_in_series").val())
+
+	for (var i = 0; i < number; i++) {
 		await take_image_from_webcam(elem);
+		await delay(delaybetween*1000);
 	}
 	l("Done taking " + n + " images");
 }
