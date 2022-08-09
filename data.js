@@ -901,15 +901,20 @@ async function take_image_from_webcam_n_times (elem) {
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseInt($("#delay_between_images_in_series").val())
 
+	await delay(delaybetween);
+
 	for (var i = 0; i < number; i++) {
-		await take_image_from_webcam(elem);
+		l("Taking image " + (i + 1) + " of " + number);
+		await take_image_from_webcam(elem, 1);
 		await delay(delaybetween*1000);
 	}
 	l("Done taking " + n + " images");
 }
 
-async function take_image_from_webcam (elem) {
-	l("Taking photo from webcam...");
+async function take_image_from_webcam (elem, nol) {
+	if(!nol) {
+		l("Taking photo from webcam...");
+	}
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
 	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
@@ -945,5 +950,7 @@ async function take_image_from_webcam (elem) {
 	}
 
 	enable_train();
-	l("Took photo from webcam");
+	if(!nol) {
+		l("Took photo from webcam");
+	}
 }
