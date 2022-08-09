@@ -603,7 +603,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				if(mode != "expert") {
 					msg = msg + "\n\nUndoing last change"
 				
-					if(!e.includes("expected") && !e.includes("found")) {
+					if(!e.toString().includes("expected") && !e.toString().includes("found")) {
 						undo();
 						future_state_stack = [];
 						show_hide_undo_buttons();
