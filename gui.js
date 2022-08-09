@@ -4297,17 +4297,17 @@ function show_tab_label(label, click) {
 	$(this_label_item).show().parent().show();
 	if (click) {
 		$(this_label_item).click();
-	}
 
-	var this_label_xpath = get_element_xpath($($(this_label_item)[0]).parent().parent()[0]);
+		var this_label_xpath = get_element_xpath($($(this_label_item)[0]).parent().parent()[0]);
 
-	var navigation_elements_in_parent = $(this_label_item).parent().parent().parent().parent().find(".navi_list");
-	for (var i = 0; i < navigation_elements_in_parent.length; i++) {
-		if(!is_hidden_or_has_hidden_parent($(navigation_elements_in_parent[i]))) {
-			if(this_label_xpath != get_element_xpath(navigation_elements_in_parent[i])) {
-				var div_name = $(this_label_item).parent().parent().parent().attr("id");
-				$('a[href="#' + div_name + '"]').click();
-				this_label_item.click();
+		var navigation_elements_in_parent = $(this_label_item).parent().parent().parent().parent().find(".navi_list");
+		for (var i = 0; i < navigation_elements_in_parent.length; i++) {
+			if(!is_hidden_or_has_hidden_parent($(navigation_elements_in_parent[i]))) {
+				if(this_label_xpath != get_element_xpath(navigation_elements_in_parent[i])) {
+					var div_name = $(this_label_item).parent().parent().parent().attr("id");
+					$('a[href="#' + div_name + '"]').click();
+					this_label_item.click();
+				}
 			}
 		}
 	}
