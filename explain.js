@@ -1429,7 +1429,7 @@ function model_to_latex () {
 				var alpha = parseFloat(get_item_value(i, "alpha"));
 				if(typeof(alpha) == "number") {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
-					this_activation_string = this_activation_string.replaceAll("\\alpha", "{\\alpha = " + alpha + "} \\cdot ");
+					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 				}
 
 				var theta = parseFloat(get_item_value(i, "theta"));

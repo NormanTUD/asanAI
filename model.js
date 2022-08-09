@@ -224,7 +224,7 @@ function get_data_for_layer (type, i, first_layer) {
 				if(value == "") {
 					//console.warn("Something may be wrong here! value is ''");
 				} else {
-					data[get_js_name(option_name)] = isNumeric(value) ? parseInt(value) : value;
+					data[get_js_name(option_name)] = isNumeric(value) ? parseFloat(value) : value;
 				}
 			}
 		}
@@ -263,9 +263,9 @@ async function get_model_structure() {
 
 				first_layer = false;
 			} catch (e) {
-				//console.warn("Failed to add layer type ", type, ": ", e);
-				//header("DATA:");
-				//console.log(data);
+				console.warn("Failed to add layer type ", type, ": ", e);
+				header("DATA:");
+				log(data);
 				$($(".warning_container")[i]).show()
 				$($(".warning_layer")[i]).html(e)
 			}
@@ -932,7 +932,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	}
 
 	if(!m) {
-		log("No model");
+		console.error("No model");
 		return;
 	}
 
@@ -945,7 +945,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 			json = JSON.parse(json);
 		} catch (e) {
 			l("An error occured setting the weights. Check the developer's console for more details.");
-			log(e);
+			console.error(e);
 			return;
 		}
 	}
@@ -968,7 +968,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 				text: e
 			});
 		}
-		//log(e);
+		console.error(e);
 		return false;
 	}
 

@@ -869,7 +869,7 @@ var activation_options = {
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU). It follows: f(x) = alpha * (exp(x) - 1.) for x < 0, f(x) = x for x >= 0. Input shape: Arbitrary. Use the configuration inputShape when using this layer as the first layer in a model. Output shape: Same shape as the input.",
 		"options": [
-			"alpha"
+			//"alpha" // Deaktiviert, weil "Error: Non-default alpha value (1.01) is not supported by the ELU layer yet." in TF 3.19.0
 		]
 	},
 	"LeakyReLU": {

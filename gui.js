@@ -4637,6 +4637,7 @@ function l(msg) {
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
 		if(msg.startsWith("ERROR:")) {
+			console.error(msg);
 			msg = "<span style='color: red'>" + msg + "</span>";
 		}
 		$("#status_bar_log").html(msg);
