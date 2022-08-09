@@ -1089,3 +1089,7 @@ var metric_shortnames = {
 	"mape": "meanAbsolutePercentageError",
 	"mae": "meanAbsoluteError"
 }
+
+var current_status_hash = "";
+
+var last_zero_output_shape_status = "";

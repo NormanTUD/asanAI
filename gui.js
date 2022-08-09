@@ -1299,7 +1299,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	prev_layer_data = [];
 
-	identify_layers(numberoflayers);
+	await identify_layers(numberoflayers);
 
 	layer_structure_cache = null;
 
@@ -2301,7 +2301,7 @@ async function chose_dataset(no_set_config) {
 	$("#predict_error").html("");
 	$("#prediction").html("");
 
-	identify_layers(get_numberoflayers());
+	await identify_layers(get_numberoflayers());
 }
 
 function init_weight_file_list() {
@@ -4001,7 +4001,7 @@ async function set_default_input_shape() {
 
 			await compile_model();
 
-			identify_layers(get_numberoflayers());
+			await identify_layers(get_numberoflayers());
 
 			write_descriptions();
 		} catch (e) {
