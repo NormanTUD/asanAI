@@ -305,7 +305,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
 		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
-		(keyname == "name" && typeof(value) == "string") ||
+		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
 		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
 		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
@@ -590,6 +590,8 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		try {
+			log(type);
+			log(data);
 			new_model.add(tf.layers[type](data));
 			set_layer_background(i, "");
 		} catch (e) {

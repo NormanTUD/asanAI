@@ -4638,6 +4638,7 @@ function l(msg) {
 		last_l = msg;
 		if(msg.startsWith("ERROR:")) {
 			console.error(msg);
+			console.trace();
 			msg = "<span style='color: red'>" + msg + "</span>";
 		}
 		$("#status_bar_log").html(msg);
