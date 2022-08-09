@@ -930,6 +930,7 @@ async function get_image_from_url (url) {
 }
 
 async function draw_maximally_activated_layer (layer, type) {
+	show_tab_label("maximally_activated_label", 1);
 	var neurons = 1;
 
 	if(type == "conv2d") {
@@ -964,23 +965,8 @@ async function draw_maximally_activated_layer (layer, type) {
 		}
 
 		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
-		l(swal_msg);
-		document.title = swal_msg;
 
-		await Swal.fire({
-			title: 'Generating Image...',
-			html: swal_msg,
-			timer: 2000,
-			showCancelButton: true,
-			showConfirmButton: false
-		}).then((e)=>{
-			if(e.isDismissed && e.dismiss == "cancel") {
-				l("Stopped generating new images, this may take a while");
-				stop_generating_images = 1;
-			}
-		});
-
-		log("Set title to " + swal_msg);
+		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
 
 		var start = Date.now();
 		await draw_maximally_activated_neuron(layer, i);
