@@ -1579,7 +1579,6 @@ $GLOBALS['minify'] = 0;
 					return;
 				}
 				if(force) {
-					logt("Forcing redo");
 					graph_hashes["fcnn"] = "";
 				}
 
