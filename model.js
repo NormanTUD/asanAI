@@ -696,6 +696,10 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 	}
 
+	if(!fake_model_structure) {
+		l("Model compiled successfully");
+	}
+
 	return new_model;
 }
 
