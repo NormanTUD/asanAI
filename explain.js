@@ -1135,10 +1135,16 @@ function get_layer_data() {
 
 		try {
 			if("weights" in model.layers[i]) {
-				this_layer_weights["kernel"] = Array.from(model.layers[i].weights[0].val.arraySync());
+				if(0 in model.layers[i].weights) {
+					this_layer_weights["kernel"] = Array.from(model.layers[i].weights[0].val.arraySync());
+				} else {
+					this_layer_weights["bias"] = [];
+				}
 
-				if(Object.keys(model.layers[i].weights).includes("1")) {
+				if(1 in model.layers[i].weights) {
 					this_layer_weights["bias"] = Array.from(model.layers[i].weights[1].val.dataSync());
+				} else {
+					this_layer_weights["kernel"] = [];
 				}
 			} else {
 				this_layer_weights["bias"] = [];
@@ -1146,6 +1152,9 @@ function get_layer_data() {
 			}
 		} catch (e) {
 			console.error(e);
+
+			this_layer_weights["bias"] = [];
+			this_layer_weights["kernel"] = [];
 		}
 
 		layer_data.push(this_layer_weights);	
