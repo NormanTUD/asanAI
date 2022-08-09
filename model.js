@@ -591,16 +591,19 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		try {
 			new_model.add(tf.layers[type](data));
+			set_layer_background(i, "");
 		} catch (e) {
 			if(!fake_model_structure) {
 				var msg = e;
 				console.trace();
 				l("ERROR: " + e);
+				if(e.toString().includes("is incompatible with layer")) {
+					set_layer_background(i, "red");
+				}
+
 				if(mode != "expert") {
 					msg = msg + "\n\nUndoing last change"
-				}
 				
-				if(mode != "expert") {
 					if(!e.includes("expected") && !e.includes("found")) {
 						undo();
 						future_state_stack = [];

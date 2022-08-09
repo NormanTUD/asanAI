@@ -4813,3 +4813,17 @@ function drag_over(event) {
 	event.preventDefault();
 	return false;
 }
+
+function get_layer_nr_by_name (layer_name) {
+	for (var i = 0; i < model.layers.length; i++) {
+		if(model.layers[i].getConfig().name == layer_name) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+function set_layer_background(nr, color) {
+	$($(".layer_setting")[nr]).css("background-color", color)
+}
