@@ -1068,7 +1068,7 @@ $GLOBALS['minify'] = 0;
 					<div class="right_side" id="graphs_here">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 							<div style="display: flex">
-								<ul>
+								<ul class="navi_list">
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
 									<li><a href="#summary_tab" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
@@ -1187,7 +1187,7 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="code_tab">
-								<ul>
+								<ul class="navi_list">
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
 									<li><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
@@ -1217,7 +1217,7 @@ $GLOBALS['minify'] = 0;
 							</div>
 
 							<div id="visualization_tab">
-								<ul>
+								<ul class="navi_list">
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
