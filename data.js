@@ -901,14 +901,32 @@ async function take_image_from_webcam_n_times (elem) {
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseInt($("#delay_between_images_in_series").val())
 
-	await delay(delaybetween);
-
-	for (var i = 0; i < number; i++) {
-		l("Taking image " + (i + 1) + " of " + number);
-		await take_image_from_webcam(elem, 1);
-		await delay(delaybetween*1000);
-	}
-	l("Done taking " + n + " images");
+	let timerInterval;
+	Swal.fire({
+		title: 'Soon a photo series will start!',
+		html: 'First photo will be taken in  <b></b> seconds.',
+		timer: 5000,
+		timerProgressBar: true,
+		didOpen: () => {
+			Swal.showLoading()
+			const b = Swal.getHtmlContainer().querySelector('b')
+			timerInterval = setInterval(() => {
+				var tl = Swal.getTimerLeft() / 1000;
+				tl = tl.toFixed(1);
+				b.textContent = tl;
+			}, 100)
+		},
+		willClose: () => {
+			clearInterval(timerInterval)
+		}
+	}).then(async (result) => {
+		for (var i = 0; i < number; i++) {
+			l("Taking image " + (i + 1) + " of " + number);
+			await take_image_from_webcam(elem, 1);
+			await delay(delaybetween*1000);
+		}
+		l("Done taking " + number + " images");
+	});
 }
 
 async function take_image_from_webcam (elem, nol) {
