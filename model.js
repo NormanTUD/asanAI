@@ -514,54 +514,32 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		var node_data = JSON.parse(JSON.stringify(data));
 
-		if(has_keys.includes("kernelInitializer")) {
-			var original_name = data["kernelInitializer"]["name"];
-			var options_stringified = JSON.stringify(data["kernelInitializer"]["config"]);
-			if(original_name) {
-				data["kernelInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-			}
-		}
-
-		if(has_keys.includes("biasInitializer")) {
-			var original_name = data["biasInitializer"]["name"];
-			var options_stringified = JSON.stringify(data["biasInitializer"]["config"]);
-			if(original_name) {
-				data["biasInitializer"] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-			}
-		}
-
-		if(has_keys.includes("biasRegularizer")) {
-			var original_name = data["biasRegularizer"]["name"];
-			var options_stringified = JSON.stringify(data["biasRegularizer"]["config"]);
-			if(original_name && original_name != "none") {
-				data["biasRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-			} else {
-				data["biasRegularizer"] = null;
-				node_data["biasRegularizer"] = null;
-			}
-		}
-
-		if(has_keys.includes("kernelRegularizer")) {
-			var original_name = data["kernelRegularizer"]["name"];
-			var options_stringified = JSON.stringify(data["kernelRegularizer"]["config"]);
-			if(original_name && original_name != "none") {
-				data["kernelRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-			} else {
-				data["kernelRegularizer"] = null;
-				node_data["kernelRegularizer"] = null;
-			}
-		}
-
-		if(has_keys.includes("activityRegularizer")) {
-			var original_name = data["activityRegularizer"]["name"];
-			var options_stringified = JSON.stringify(data["activityRegularizer"]["config"]);
-			if(original_name && original_name != "none") {
-				data["activityRegularizer"] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-			} else {
-				data["activityRegularizer"] = null;
-				node_data["activityRegularizer"] = null;
-			}
-		}
+		["kernel", "bias", "activity", "gamma", "epsilon", "beta"].forEach((init_or_regularizer_type) => {
+			["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
+				if(regularizer_or_init == "Initializer") {
+					if(has_keys.includes(init_or_regularizer_type + regularizer_or_init)) {
+						var original_name = data[init_or_regularizer_type + regularizer_or_init]["name"];
+						var options_stringified = JSON.stringify(data[init_or_regularizer_type + regularizer_or_init]["config"]);
+						if(original_name) {
+							data[init_or_regularizer_type + regularizer_or_init] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+						}
+					}
+				} else if(regularizer_or_init == "Regularizer") {
+					if(has_keys.includes(init_or_regularizer_type + regularizer_or_init)) {
+						var original_name = data[init_or_regularizer_type + regularizer_or_init]["name"];
+						var options_stringified = JSON.stringify(data[init_or_regularizer_type + regularizer_or_init]["config"]);
+						if(original_name && original_name != "none") {
+							data[init_or_regularizer_type + regularizer_or_init] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+						} else {
+							data[init_or_regularizer_type + regularizer_or_init] = null;
+							node_data[init_or_regularizer_type + regularizer_or_init] = null;
+						}
+					}
+				} else {
+					log("Invalid regularizer_or_init: " + regularizer_or_init);
+				}
+			});
+		});
 
 		if(type == "rnn") {
 			// never worked...
@@ -590,14 +568,14 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		try {
-			log(type);
-			log(data);
 			new_model.add(tf.layers[type](data));
 			set_layer_background(i, "");
 		} catch (e) {
 			if(!fake_model_structure) {
 				var msg = e;
 				l("ERROR: " + e);
+				log(type);
+				log(data);
 				if(e.toString().includes("is incompatible with layer")) {
 					set_layer_background(i, "red");
 				}

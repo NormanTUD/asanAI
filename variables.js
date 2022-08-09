@@ -675,8 +675,8 @@ var dtypes = {
 	'float32': 'float32',
 	'int32': 'int32',
 	'bool': 'bool',
-	'complex64': 'complex64',
-	'string': 'string'
+	'complex64': 'complex64' //,
+	//'string': 'string'
 };
 
 var layer_names = Object.keys(layer_options);
