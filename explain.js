@@ -1101,7 +1101,8 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 
 function array_to_latex (array, desc, newline_instead_of_ampersand) {
-	var str = "\\underbrace{\\begin{pmatrix}\n";
+	var str = "";
+	str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1127,19 +1128,21 @@ function a_times_b (a, b) {
 }
 
 function get_layer_data() {
-	var layers = model.layers;
 	var layer_data = [];
 
-	for (var i = 0; i < layers.length; i++) {
-		var this_layer = layers[i];
-
+	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_weights = {};
 
 		try {
-			this_layer_weights["kernel"] = Array.from(this_layer.weights[0].val.arraySync());
+			if("weights" in model.layers[i]) {
+				this_layer_weights["kernel"] = Array.from(model.layers[i].weights[0].val.arraySync());
 
-			if(Object.keys(this_layer.weights).includes("1")) {
-				this_layer_weights["bias"] = Array.from(this_layer.weights[1].val.dataSync());
+				if(Object.keys(model.layers[i].weights).includes("1")) {
+					this_layer_weights["bias"] = Array.from(model.layers[i].weights[1].val.dataSync());
+				}
+			} else {
+				this_layer_weights["bias"] = [];
+				this_layer_weights["kernel"] = [];
 			}
 		} catch (e) {
 			console.error(e);
