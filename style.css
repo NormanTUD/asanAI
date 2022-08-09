@@ -431,7 +431,7 @@ button:disabled:hover {
 
 #status_bar {
 	user-select: none;
-	height: 20px;
+	height: 1.5em;
 	width: 100%;
 	position: fixed;
 	bottom: 0px;
