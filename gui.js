@@ -3958,7 +3958,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 				}
 
 				if (value !== "") {
-					option_hash[option_name] = value;
+					option_hash[option_name] = isNumeric(value) ? parseFloat(value) : value;
 				}
 			}
 		}

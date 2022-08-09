@@ -1378,7 +1378,9 @@ function model_to_latex () {
 
 
 			try {
-				str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+				if("bias" in layer_data[i]) {
+					str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+				}
 			} catch (e) {
 				console.error(e);
 			}

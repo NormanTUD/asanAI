@@ -222,7 +222,7 @@ function get_data_for_layer (type, i, first_layer) {
 				data[get_js_name(option_name)] = value == "on" ? true : false;
 			} else {
 				if(value == "") {
-					//console.warn("Something may be wrong here! value is ''");
+					console.warn("Something may be wrong here! value is ''");
 				} else {
 					data[get_js_name(option_name)] = isNumeric(value) ? parseFloat(value) : value;
 				}
