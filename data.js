@@ -231,13 +231,13 @@ async function get_xs_and_ys () {
 
 	if($("#jump_to_training_tab").is(":checked")) {
 		if(data_origin == "default") {
-			$("#training_data_tab_label").click();
+			show_tab_label("training_data_tab_label", 1);
 		} else if(data_origin == "csv") {
-			$("#own_csv_data_label").click();
+			show_tab_label("own_csv_data_label", 1)
 		} else if (data_origin == "image") {
-			$("#own_image_data_label").click();
+			show_tab_label("own_image_data_label", 1);
 		} else if (data_origin == "tensordata") {
-			$("#own_tensor_data_label").click();
+			show_tab_label("own_tensor_data_label", 1);
 		} else {
 			log("Invalid option " + data_origin);
 		}
