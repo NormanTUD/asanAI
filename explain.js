@@ -1141,7 +1141,9 @@ function get_layer_data() {
 			if(Object.keys(this_layer.weights).includes("1")) {
 				this_layer_weights["bias"] = Array.from(this_layer.weights[1].val.dataSync());
 			}
-		} catch (e) {}
+		} catch (e) {
+			console.error(e);
+		}
 
 		layer_data.push(this_layer_weights);	
 	}
@@ -1159,10 +1161,20 @@ function array_size (ar) {
 }
 
 function get_layer_output_shape_as_string (i) {
-	var str = model.layers[i].outputShape.toString()
-	str = str.replace(/^,|,$/g,'');;
-	str = "[" + str + "]";
-	return str;
+	assert(typeof(i) == "number", i + " is not a number");
+	assert(i < model.layers.length, i + " is larger than " + model.layers.length);
+	if(Object.keys(model).includes("layers")) {
+		try {
+			var str = model.layers[i].outputShape.toString()
+			str = str.replace(/^,|,$/g,'');;
+			str = "[" + str + "]";
+			return str;
+		} catch (e) {
+			console.error(e);
+		}
+	} else {
+		log("Layers not in model");
+	}
 }
 
 function _get_h (i) {
@@ -1175,14 +1187,14 @@ function model_to_latex () {
 	var input_shape = model.layers[0].input.shape;
 
 	if(input_shape.length != 2) {
-		log("Invalid input shape. Only works with input_shape that has 2 values");
+		l("Math mode works only in input shape [n] (or [null, n] with batch)");
 		return;
 	}
 
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
 
 	if(output_shape.length != 2) {
-		log("Invalid output shape. Only works with output_shape that has 2 values");
+		l("Math mode works only in output shape [n] (or [null, n] with batch)");
 		return;
 	}
 
@@ -1288,7 +1300,7 @@ function model_to_latex () {
 		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
 	}
 
-	for (var i = 0; i < layer_data.length; i++) {
+	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
 		if(i == 0) {
 			str += "<h2>Layers:</h2>";
@@ -1355,7 +1367,9 @@ function model_to_latex () {
 
 			try {
 				str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
-			} catch (e) {}
+			} catch (e) {
+				console.error(e);
+			}
 
 			if(activation_name != "linear") {
 				str += "\\right)";
@@ -1363,7 +1377,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "flatten") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
-			str += _get_h(i) + " = " + _get_h(i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			str += _get_h(i) + " = " + _get_h(i == 0 ? 0 : i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
 		} else if (this_layer_type == "reshape") {
 			var original_input_shape = JSON.stringify(model.layers[i].getInputAt(0).shape.filter(Number));
 			var original_output_shape = JSON.stringify(model.layers[i].getOutputAt(0).shape.filter(Number));
