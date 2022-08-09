@@ -3294,16 +3294,8 @@ async function update_input_shape() {
 	highlight_code();
 }
 
-function toggle_tfjsvis_overlay() {
-	if ($(".vg-tooltip").hasClass("vg-tooltip-hidden")) {
-		$(".vg-tooltip").removeClass("vg-tooltip-hidden");
-	} else {
-		$(".vg-tooltip").addClass("vg-tooltip-hidden");
-	}
-}
-
 function toggle_show_input_layer() {
-	show_input_layer = !show_input_layer;
+	show_input_layer = $("#show_input_layer").is(":checked");
 
 	restart_fcnn(1);
 	restart_lenet(1);

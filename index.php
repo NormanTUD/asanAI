@@ -716,7 +716,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 								<tr data-intro="Show the input layers">
 									<td>Input&nbsp;Layer?</td>
-									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" checked /></td>
+									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
 								</tr>
 
 							</table>

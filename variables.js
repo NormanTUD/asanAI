@@ -691,7 +691,7 @@ var call_depth = 0;
 
 var model_config_hash = "";
 
-var show_input_layer = true;
+var show_input_layer = false;
 
 var disable_save_current_status = false;
 
