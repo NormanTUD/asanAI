@@ -605,12 +605,17 @@ function identify_layers (numberoflayers) {
 
 			if(has_zero_output_shape) {
 				disable_train();
-				var msg = "There are zeroes in the output shapes. This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red. Training and saving is disabled.";
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops [6]...',
-					html: msg
-				});
+				var basemsg = "There are zeroes in the output shapes. ";
+				var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue. If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions. The affected layers output shapes are marked red. Training and saving is disabled.";
+				if(!swal.isVisible()) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops [6]...',
+						html: msg
+					});
+				} else {
+					l(basemsg);
+				}
 			} else {
 				enable_train();
 			}
