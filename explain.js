@@ -1133,9 +1133,16 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 
 	var original_name = model.layers[layer].weights[index].name
 
-	var single_name = original_name.replace(/.*\//, "");
-	single_name = single_name.replace(/_.*\d+/, "");
-	return single_name;
+	var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
+	if(matches === null) {
+		console.error("matches is null. Could not determine name from " + original_name);
+	} else if(1 in matches) {
+		return matches[1];
+	} else {
+		console.error("Could not determine name from " + original_name + ", matches: ");
+		log(matches)
+	}
+	return null;
 }
 
 function get_layer_data() {
@@ -1159,6 +1166,7 @@ function get_layer_data() {
 						this_layer_weights[wname] = Array.from(model.layers[i].weights[k].val.arraySync());
 					} else {
 						console.error("Invalid wname: " + wname);
+						log(model.layers[i].weights[k]);
 					}
 				}
 			}
