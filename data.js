@@ -905,7 +905,7 @@ async function take_image_from_webcam_n_times (elem) {
 	Swal.fire({
 		title: 'Soon a photo series will start!',
 		html: 'First photo will be taken in  <b></b> seconds.',
-		timer: 5000,
+		timer: 2000,
 		timerProgressBar: true,
 		didOpen: () => {
 			Swal.showLoading()
