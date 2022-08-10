@@ -1529,10 +1529,10 @@ function model_to_latex () {
 			var beta_string = "";
 			var gamma_string = "";
 			if("beta" in layer_data[i]) {
-				beta_string = "\\left( = " + array_to_latex_matrix(layer_data[i].beta) + "\\right)";
+				beta_string = "\\left( = " + array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parseInt($("#decimal_points_math_mode").val()))) + "\\right)";
 			}
 			if("gamma" in layer_data[i]) {
-				gamma_string = "\\left( = " + array_to_latex_matrix(layer_data[i].gamma) + "\\right)";
+				gamma_string = "\\left( = " + array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parseInt($("#decimal_points_math_mode").val()))) + "\\right)";
 			}
 
 			var y_equation = "\\underbrace{y_i = \\gamma " + gamma_string + "\\overline{x_i} + \\beta" + beta_string + "}_{\\text{Scaling\\&shifting}}";
