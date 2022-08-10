@@ -201,7 +201,8 @@ function get_data_for_layer (type, i, first_layer) {
 			if(initializer_name) {
 				var initializer_config = get_layer_initializer_config(i, weight_type);
 				var initializer_config_string = JSON.stringify(initializer_config);
-				data[weight_type + "Initializer"] = {"name": initializer_name, "config": initializer_config};
+				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
+				log(data[get_key_name_camel_case(weight_type) + "Initializer"]);
 			}
 
 		} else if (valid_initializer_types.includes(get_weight_type_name_from_option_name(option_name)) && option_name.includes("egularizer")) {
@@ -210,7 +211,7 @@ function get_data_for_layer (type, i, first_layer) {
 			if(regularizer_name) {
 				var regularizer_config = get_layer_regularizer_config(i, weight_type);
 				var regularizer_config_string = JSON.stringify(regularizer_config);
-				data[weight_type + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
+				data[get_key_name_camel_case(weight_type) + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
 
 		} else {
@@ -324,6 +325,8 @@ function is_valid_parameter (keyname, value, layer) {
 	) {
 		return true;
 	}
+
+	log("keyname: ", keyname, "value: ", value, "layer:", layer);
 
 	return false;
 }
@@ -544,9 +547,12 @@ async function create_model (old_model, fake_model_structure, force) {
 						var options_stringified = JSON.stringify(data[keyname]["config"]);
 						if(original_name) {
 							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-							//header("=====");
-							//log(keyname + ":");
-							//log(data[keyname]);
+							/*
+							header("=====");
+							log(`tf.initializers.${original_name}(${options_stringified})`);
+							log(keyname + ":");
+							log(data[keyname]);
+							*/
 						} else {
 							data[keyname] = null;
 						}
@@ -587,7 +593,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			var layer_setting = $($(".layer_setting")[i]);
 			var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 			if(!is_valid_parameter(this_key, data[this_key], i)) {
-				header("INVALID PARAMETER: " + this_key + ": " + data[this_key] + " (" + typeof(data[this_key]) + ")");
+				log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 				current_setting.css("background-color", "red");
 			} else {
 				current_setting.css("background-color", "");
