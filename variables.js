@@ -1101,7 +1101,7 @@ var opt = {
 	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_stddev": "'Stddev', 'XXX_NAME_XXX_initializer_stddev', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_mean": "'Mean', 'XXX_NAME_XXX_initializer_mean', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_minval": "'Minval', 'XXX_NAME_XXX_initializer_minval', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_minval": "'Minval', 'XXX_NAME_XXX_initializer_minval', 'number', { 'value': 0 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_maxval": "'Maxval', 'XXX_NAME_XXX_initializer_maxval', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_gain": "'Gain', 'XXX_NAME_XXX_initializer_gain', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_distribution": "'Distribution', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'",

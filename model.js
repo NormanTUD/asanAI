@@ -595,6 +595,9 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		try {
+			if(i == 0) {
+				log(data);
+			}
 			new_model.add(tf.layers[type](data));
 			set_layer_background(i, "");
 		} catch (e) {
@@ -628,9 +631,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
 				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
 			}
-		}
 
-		for (var vk = 0; vk < valid_initializer_types; vk++) {
 			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
 				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
 			}
