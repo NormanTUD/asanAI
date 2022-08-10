@@ -1095,3 +1095,45 @@ var current_status_hash = "";
 var last_zero_output_shape_status = "";
 
 var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean"];
+
+var opt = {
+	"initializer_value": "'Value', 'XXX_NAME_XXX_initializer_value', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_stddev": "'Stddev', 'XXX_NAME_XXX_initializer_stddev', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_mean": "'Mean', 'XXX_NAME_XXX_initializer_mean', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_minval": "'Minval', 'XXX_NAME_XXX_initializer_minval', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_maxval": "'Maxval', 'XXX_NAME_XXX_initializer_maxval', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_gain": "'Gain', 'XXX_NAME_XXX_initializer_gain', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_distribution": "'Distribution', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer": "'&XXX_NAME_XXX; Initializer', 'XXX_NAME_XXX_initializer', 'select', initializers, nr",
+	"initializer_scale": "'Scale', 'XXX_NAME_XXX_initializer_scale', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_mode": "'Mode', 'XXX_NAME_XXX_initializer_mode', 'select', mode_modes, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_distribution": "'Distribution', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'"
+}
+
+var keys_opt = Object.keys(opt);
+for (var i = 0; i < valid_initializer_types.length; i++) {
+	for (var j = 0; j < keys_opt.length; j++) {
+		var params = opt[keys_opt[j]];
+		params = params.replace(/XXX_NAME_XXX/g, valid_initializer_types[i]);
+
+		var func_name = "add_" + valid_initializer_types[i] + "_" + keys_opt[j] + "_option";
+		var func_header = "var " + func_name + " = function (type, nr) {\n";
+
+		var func = func_header;
+		func += "\treturn get_tr_str_for_layer_table(" + params + ");\n";
+		func += "}\n";
+
+		//console.log(func);
+
+		//if(func_name == "add_kernel_initializer_value_option") {
+		//	console.log(func);
+		//}
+
+		try {
+			$.globalEval(func);
+		} catch (e) {
+			console.error(e);
+		}
+	}
+}
