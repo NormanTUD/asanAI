@@ -240,6 +240,14 @@ button {
 	background-color: rgba(16, 255, 147, 0.4);
 }
 
+.activity_initializer_tr {
+	background-color: rgba(10, 190, 6, 0.4);
+}
+
+.gamma_initializer_tr {
+	background-color: rgba(10, 255, 16, 0.4);
+}
+
 .bias_initializer_tr {
 	background-color: rgba(147, 255, 16, 0.4);
 }

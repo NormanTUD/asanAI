@@ -1093,3 +1093,5 @@ var metric_shortnames = {
 var current_status_hash = "";
 
 var last_zero_output_shape_status = "";
+
+var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean"];

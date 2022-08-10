@@ -132,6 +132,9 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		}
 	}
 }
+function get_weight_type_name_from_option_name (on) {
+	return on.replace(/_.*?/, "");
+}
 
 function get_data_for_layer (type, i, first_layer) {
 	assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
@@ -179,40 +182,23 @@ function get_data_for_layer (type, i, first_layer) {
 			// Do nothing if activation = None
 			data["activation"] = null;
 
-		} else if(option_name == "kernel_initializer") {
-			var initializer_name = get_item_value(i, "kernel_initializer");
+		} else if (valid_initializer_types.includes(get_weight_type_name_from_option_name(option_name)) && option_name.includes("nitializer")) {
+			var weight_type = get_weight_type_name_from_option_name(option_name);
+
+			var initializer_name = get_item_value(i, weight_type + "_initializer");
 			if(initializer_name) {
-				var initializer_config = get_layer_initializer_config(i, "kernel");
+				var initializer_config = get_layer_initializer_config(i, weight_type);
 				var initializer_config_string = JSON.stringify(initializer_config);
-				data["kernelInitializer"] = {"name": initializer_name, "config": initializer_config};
+				data[weight_type + "Initializer"] = {"name": initializer_name, "config": initializer_config};
 			}
-		} else if(option_name == "bias_initializer") {
-			var initializer_name = get_item_value(i, "bias_initializer");
-			if(initializer_name) {
-				var initializer_config = get_layer_initializer_config(i, "bias");
-				var initializer_config_string = JSON.stringify(initializer_config);
-				data["biasInitializer"] = {"name": initializer_name, "config": initializer_config};
-			}
-		} else if(option_name == "bias_regularizer") {
-			var regularizer_name = get_item_value(i, "bias_regularizer");
+
+		} else if (valid_initializer_types.includes(get_weight_type_name_from_option_name(option_name)) && option_name.includes("egularizer")) {
+			var weight_type = get_weight_type_name_from_option_name(option_name);
+			var regularizer_name = get_item_value(i, weight_type + "_regularizer");
 			if(regularizer_name) {
-				var regularizer_config = get_layer_regularizer_config(i, "bias");
+				var regularizer_config = get_layer_regularizer_config(i, weight_type);
 				var regularizer_config_string = JSON.stringify(regularizer_config);
 				data["biasRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
-			}
-		} else if(option_name == "activity_regularizer") {
-			var regularizer_name = get_item_value(i, "activity_regularizer");
-			if(regularizer_name) {
-				var regularizer_config = get_layer_regularizer_config(i, "activity");
-				var regularizer_config_string = JSON.stringify(regularizer_config);
-				data["activityRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
-			}
-		} else if(option_name == "kernel_regularizer") {
-			var regularizer_name = get_item_value(i, "kernel_regularizer");
-			if(regularizer_name) {
-				var regularizer_config = get_layer_regularizer_config(i, "kernel");
-				var regularizer_config_string = JSON.stringify(regularizer_config);
-				data["kernelRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
 		} else {
 			var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
@@ -303,7 +289,7 @@ function is_valid_parameter (keyname, value, layer) {
 
 	if(
 		(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
-		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros"].includes(value)) ||
+		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
@@ -327,6 +313,27 @@ function is_valid_parameter (keyname, value, layer) {
 	}
 
 	return false;
+}
+
+function get_key_name_camel_case(keyname) {
+	var letters = keyname.split("");
+	var results = [];
+
+	var next_is_camel_case = false;
+	for (var i = 0; i < letters.length; i++) {
+		if(letters[i] == "_") {
+			next_is_camel_case = true;
+		} else {
+			if(next_is_camel_case) {
+				results.push(letters[i].toUpperCase());
+				next_is_camel_case = false;
+			} else {
+				results.push(letters[i]);
+			}
+		}
+	}
+
+	return results.join("");
 }
 
 function remove_empty(obj) {
@@ -514,25 +521,32 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		var node_data = JSON.parse(JSON.stringify(data));
 
-		["kernel", "bias", "activity", "gamma", "epsilon", "beta"].forEach((init_or_regularizer_type) => {
+		valid_initializer_types.forEach((init_or_regularizer_type) => {
 			["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
+				var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
 				if(regularizer_or_init == "Initializer") {
-					if(has_keys.includes(init_or_regularizer_type + regularizer_or_init)) {
-						var original_name = data[init_or_regularizer_type + regularizer_or_init]["name"];
-						var options_stringified = JSON.stringify(data[init_or_regularizer_type + regularizer_or_init]["config"]);
+					//log("checking for: " + keyname);
+					if(has_keys.includes(keyname)) {
+						var original_name = data[keyname]["name"];
+						var options_stringified = JSON.stringify(data[keyname]["config"]);
 						if(original_name) {
-							data[init_or_regularizer_type + regularizer_or_init] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+							//header("=====");
+							//log(keyname + ":");
+							//log(data[keyname]);
+						} else {
+							data[keyname] = null;
 						}
 					}
 				} else if(regularizer_or_init == "Regularizer") {
-					if(has_keys.includes(init_or_regularizer_type + regularizer_or_init)) {
-						var original_name = data[init_or_regularizer_type + regularizer_or_init]["name"];
-						var options_stringified = JSON.stringify(data[init_or_regularizer_type + regularizer_or_init]["config"]);
+					if(has_keys.includes(keyname)) {
+						var original_name = data[keyname]["name"];
+						var options_stringified = JSON.stringify(data[keyname]["config"]);
 						if(original_name && original_name != "none") {
-							data[init_or_regularizer_type + regularizer_or_init] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+							data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
 						} else {
-							data[init_or_regularizer_type + regularizer_or_init] = null;
-							node_data[init_or_regularizer_type + regularizer_or_init] = null;
+							data[keyname] = null;
+							node_data[keyname] = null;
 						}
 					}
 				} else {
@@ -597,24 +611,16 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		enable_train();
 
-		if(Object.keys(node_data).includes("kernelInitializer")) {
-			node_data["kernelInitializer"] = "tf.initializers." + node_data["kernelInitializer"]["name"] + "(" + JSON.stringify(node_data["kernelInitializer"]["config"]) + ")";
+		for (var vk = 0; vk < valid_initializer_types; vk++) {
+			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
+				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
+			}
 		}
 
-		if(Object.keys(node_data).includes("biasInitializer")) {
-			node_data["biasInitializer"] = "tf.initializers." + node_data["biasInitializer"]["name"] + "(" + JSON.stringify(node_data["biasInitializer"]["config"]) + ")";
-		}
-
-		if(Object.keys(node_data).includes("biasRegularizer")) {
-			node_data["biasRegularizer"] = "tf.regularizers." + node_data["biasRegularizer"]["name"] + "(" + JSON.stringify(node_data["biasRegularizer"]["config"]) + ")";
-		}
-
-		if(Object.keys(node_data).includes("kernelRegularizer")) {
-			node_data["kernelRegularizer"] = "tf.regularizers." + node_data["kernelRegularizer"]["name"] + "(" + JSON.stringify(node_data["kernelRegularizer"]["config"]) + ")";
-		}
-
-		if(Object.keys(node_data).includes("activityRegularizer")) {
-			node_data["activityRegularizer"] = "tf.regularizers." + node_data["activityRegularizer"]["name"] + "(" + JSON.stringify(node_data["activityRegularizer"]["config"]) + ")";
+		for (var vk = 0; vk < valid_initializer_types; vk++) {
+			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
+				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
+			}
 		}
 
 		var encoded_data_string = "";
@@ -630,7 +636,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		var node_data_keys = Object.keys(node_data);
 
 		for (var k = 0; k < node_data_keys.length; k++) {
-			if(["kernelInitializer", "biasInitializer", "inputShape", "kernelRegularizer", "activityRegularizer", "biasRegularizer"].includes(node_data_keys[k]) || ["number", "boolean"].includes(typeof(node_data[node_data_keys[k]]))) {
+			if(["betaRegularizer", "betaInitializer", "gammaRegularizer", "gammaInitializer", "movingMeanInitializer", "movingMeanRegularizer", "kernelInitializer", "biasInitializer", "inputShape", "kernelRegularizer", "activityRegularizer", "biasRegularizer"].includes(node_data_keys[k]) || ["number", "boolean"].includes(typeof(node_data[node_data_keys[k]]))) {
 				encoded_data_array.push('"' + node_data_keys[k] + '": ' + node_data[node_data_keys[k]]);
 			} else {
 				if(["kernelSize", "strides", "dilationRate", "poolSize"].includes(node_data_keys[k])) {

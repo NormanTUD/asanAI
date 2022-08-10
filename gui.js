@@ -246,19 +246,18 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	str += "<td>";
 	if (type == "select") {
 		var onchange_text = "updated_page(null, null, this);";
-		if (classname == "kernel_initializer") {
-			onchange_text = "insert_initializer_options(find_layer_number_by_element($(this)), \"kernel\");updated_page(null, null, this)";
-		} else if (classname == "bias_initializer") {
-			onchange_text = "insert_initializer_options(find_layer_number_by_element($(this)), \"bias\");updated_page(null, null, this)";
 
-		} else if (classname == "kernel_regularizer") {
-			onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"kernel\");updated_page(null, null, this)";
-		} else if (classname == "bias_regularizer") {
-			onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"bias\");updated_page(null, null, this)";
-		} else if (classname == "activity_regularizer") {
-			onchange_text = "insert_regularizer_options(find_layer_number_by_element($(this)), \"activity\");updated_page(null, null, this)";
+		var types_init_or_reg = ["initializer", "regularizer"];
 
-		} else if (classname == "activation") {
+		for (var tk = 0; tk < valid_initializer_types.length; tk++) {
+			for (var tir = 0; tir < types_init_or_reg.length; tir++) {
+				if (classname == valid_initializer_types[tk] + "_" + types_init_or_reg[tir]) {
+					onchange_text = `insert_${types_init_or_reg[tir]}_options(find_layer_number_by_element($(this)), "${valid_initializer_types[tk]}");updated_page(null, null, this)`;
+				}
+			}
+		}
+
+		if (classname == "activation") {
 			//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 		}
 
@@ -597,6 +596,10 @@ function add_kernel_initializer_stddev_option(type, nr) {
 	return get_tr_str_for_layer_table("Stddev", "kernel_initializer_stddev", "number", { "value": 1 }, nr, "kernel_initializer_tr");
 }
 
+function add_gamma_initializer_mean_option(type, nr) {
+	return get_tr_str_for_layer_table("Mean", "gamma_initializer_mean", "number", { "value": 1 }, nr, "gamma_initializer_tr");
+}
+
 function add_kernel_initializer_mean_option(type, nr) {
 	return get_tr_str_for_layer_table("Mean", "kernel_initializer_mean", "number", { "value": 1 }, nr, "kernel_initializer_tr");
 }
@@ -605,8 +608,16 @@ function add_kernel_initializer_minval_option(type, nr) {
 	return get_tr_str_for_layer_table("Minval", "kernel_initializer_minval", "number", { "value": 1 }, nr, "kernel_initializer_tr");
 }
 
+function add_gamma_initializer_minval_option(type, nr) {
+	return get_tr_str_for_layer_table("Minval", "gamma_initializer_minval", "number", { "value": 1 }, nr, "gamma_initializer_tr");
+}
+
 function add_kernel_initializer_maxval_option(type, nr) {
 	return get_tr_str_for_layer_table("Maxval", "kernel_initializer_maxval", "number", { "value": 1 }, nr, "kernel_initializer_tr");
+}
+
+function add_gamma_initializer_maxval_option(type, nr) {
+	return get_tr_str_for_layer_table("Maxval", "gamma_initializer_maxval", "number", { "value": 1 }, nr, "gamma_initializer_tr");
 }
 
 function add_kernel_initializer_gain_option(type, nr) {
@@ -625,6 +636,10 @@ function add_kernel_initializer_distribution_option(type, nr) {
 	return get_tr_str_for_layer_table("Distribution", "kernel_initializer_distribution", "select", distribution_modes, nr, "kernel_initializer_tr");
 }
 
+function add_gamma_initializer_distribution_option(type, nr) {
+	return get_tr_str_for_layer_table("Distribution", "gamma_initializer_distribution", "select", distribution_modes, nr, "gamma_initializer_tr");
+}
+
 /* kernel initializer gui functions end */
 
 /* bias initializer gui functions */
@@ -633,8 +648,28 @@ function add_bias_initializer_value_option(type, nr) {
 	return get_tr_str_for_layer_table("Value", "bias_initializer_value", "number", { "value": 1 }, nr, "bias_initializer_tr");
 }
 
+function add_activity_initializer_value_option(type, nr) {
+	return get_tr_str_for_layer_table("Seed", "activity_initializer_seed", "number", { "value": "1" }, nr, "activity_initializer_tr");
+}
+
+function add_beta_initializer_value_option(type, nr) {
+	return get_tr_str_for_layer_table("Seed", "beta_initializer_seed", "number", { "value": "1" }, nr, "beta_initializer_tr");
+}
+
+function add_gamma_initializer_value_option(type, nr) {
+	return get_tr_str_for_layer_table("Seed", "gammainitializer_seed", "number", { "value": "1" }, nr, "gamma_initializer_tr");
+}
+
 function add_bias_initializer_seed_option(type, nr) {
 	return get_tr_str_for_layer_table("Seed", "bias_initializer_seed", "number", { "value": "1" }, nr, "bias_initializer_tr");
+}
+
+function add_gamma_initializer_seed_option(type, nr) {
+	return get_tr_str_for_layer_table("Seed", "gamma_initializer_seed", "number", { "value": "1" }, nr, "gamma_initializer_tr");
+}
+
+function add_gamma_initializer_stddev_option(type, nr) {
+	return get_tr_str_for_layer_table("Stddev", "gamma_initializer_stddev", "number", { "value": 1 }, nr, "gamma_initializer_tr");
 }
 
 function add_bias_initializer_stddev_option(type, nr) {
@@ -657,8 +692,16 @@ function add_bias_initializer_gain_option(type, nr) {
 	return get_tr_str_for_layer_table("Gain", "bias_initializer_gain", "number", { "value": 1 }, nr, "bias_initializer_tr");
 }
 
+function add_gamma_initializer_scale_option(type, nr) {
+	return get_tr_str_for_layer_table("Scale", "gamma_initializer_scale", "number", { "value": 1 }, nr, "gamma_initializer_tr");
+}
+
 function add_bias_initializer_scale_option(type, nr) {
 	return get_tr_str_for_layer_table("Scale", "bias_initializer_scale", "number", { "value": 1 }, nr, "bias_initializer_tr");
+}
+
+function add_gamma_initializer_mode_option(type, nr) {
+	return get_tr_str_for_layer_table("Mode", "gamma_initializer_mode", "select", mode_modes, nr, "gamma_initializer_tr");
 }
 
 function add_bias_initializer_mode_option(type, nr) {
@@ -734,7 +777,7 @@ function insert_activation_option_trs(layer_nr, option_type) {
 }
 
 function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
-	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
 
@@ -748,7 +791,7 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 }
 
 function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
-	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
 
@@ -796,7 +839,7 @@ function set_last_layer_activation_function (activation_function) {
 }
 
 function insert_regularizer_options(layer_nr, regularizer_type) {
-	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
 
@@ -819,7 +862,7 @@ function insert_regularizer_options(layer_nr, regularizer_type) {
 }
 
 function insert_initializer_options(layer_nr, initializer_type) {
-	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
 
@@ -1607,9 +1650,16 @@ function set_option_for_layer_by_layer_nr(nr) {
 	var layer = $(".layer_options_internal")[nr];
 	layer.innerHTML = get_option_for_layer_by_type(nr);
 
-	["bias_initializer", "kernel_initializer", "kernel_regularizer", "bias_regularizer", "activity_regularizer"].forEach((i, e) => {
-		$(layer).find("." + i).trigger("change");
-	});
+	var valid_subtypes = ["initializer", "regularizer"];
+	for (var i = 0; i < valid_initializer_types.length; i++) {
+		var kn = valid_initializer_types[i];
+
+		for (var vs = 0; vs < valid_subtypes.length; vs++) {
+			var t = valid_subtypes[vs];
+			var name = kn + "_" + t;
+			$(layer).find("." + name).trigger("change");
+		}
+	}
 
 	write_descriptions();
 }
@@ -3902,7 +3952,7 @@ function find_layer_number_by_element(element) {
 }
 
 function get_layer_regularizer_config(layer_nr, regularizer_type) {
-	assert(["kernel", "bias", "activity"].includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
 
 	var starts_with_string = regularizer_type + "_regularizer_";
@@ -3934,7 +3984,7 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 }
 
 function get_layer_initializer_config(layer_nr, initializer_type) {
-	assert(["kernel", "bias"].includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
 
 	var starts_with_string = initializer_type + "_initializer_";
