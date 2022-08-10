@@ -4821,3 +4821,14 @@ function get_layer_nr_by_name (layer_name) {
 function set_layer_background(nr, color) {
 	$($(".layer_setting")[nr]).css("background-color", color)
 }
+
+function set_model_layer_warning(i, warning) {
+	assert(typeof(i) == "number", i + " is not a number");
+	assert(typeof(warning) == "string", warning + " is not a string");
+
+	if(warning) {
+		$($(".warning_layer")[i]).html(warning).show().parent().show();
+	} else {
+		$($(".warning_layer")[i]).html("").hide().parent().hide();
+	}
+}

@@ -573,9 +573,11 @@ async function create_model (old_model, fake_model_structure, force) {
 		} catch (e) {
 			if(!fake_model_structure) {
 				var msg = e;
+				set_model_layer_warning(i, e.toString());
 				l("ERROR: " + e);
 				log(type);
 				log(data);
+
 				if(e.toString().includes("is incompatible with layer")) {
 					set_layer_background(i, "red");
 				}
