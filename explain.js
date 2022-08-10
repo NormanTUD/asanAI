@@ -1127,34 +1127,43 @@ function a_times_b (a, b) {
 	return a + " \\times " + b;
 }
 
+function get_weight_name_by_layer_and_weight_index (layer, index) {
+	assert(typeof(layer) == "number", layer + " is not a number");
+	assert(typeof(index) == "number", index + " is not a number");
+
+	var original_name = model.layers[layer].weights[index].name
+
+	var single_name = original_name.replace(/.*\//, "");
+	single_name = single_name.replace(/_.*\d+/, "");
+	return single_name;
+}
+
 function get_layer_data() {
 	var layer_data = [];
+
+	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance"];
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_weights = {};
 
+
+		for (var n = 0; n < possible_weight_names.length; n++) {
+			this_layer_weights[possible_weight_names[n]] = [];
+		}
+
 		try {
 			if("weights" in model.layers[i]) {
-				if(0 in model.layers[i].weights) {
-					this_layer_weights["kernel"] = Array.from(model.layers[i].weights[0].val.arraySync());
-				} else {
-					this_layer_weights["kernel"] = [];
+				for (var k = 0; k < model.layers[i].weights.length; k++) {
+					var wname = get_weight_name_by_layer_and_weight_index(i, k);
+					if(possible_weight_names.includes(wname)) {
+						this_layer_weights[wname] = Array.from(model.layers[i].weights[k].val.arraySync());
+					} else {
+						console.error("Invalid wname: " + wname);
+					}
 				}
-
-				if(1 in model.layers[i].weights) {
-					this_layer_weights["bias"] = Array.from(model.layers[i].weights[1].val.dataSync());
-				} else {
-					this_layer_weights["bias"] = [];
-				}
-			} else {
-				this_layer_weights["bias"] = [];
-				this_layer_weights["kernel"] = [];
 			}
 		} catch (e) {
 			console.error(e);
-
-			this_layer_weights["bias"] = [];
-			this_layer_weights["kernel"] = [];
 		}
 
 		layer_data.push(this_layer_weights);	
@@ -1191,6 +1200,25 @@ function get_layer_output_shape_as_string (i) {
 
 function _get_h (i) {
 	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+}
+
+function array_to_latex_matrix (array) { // TODO color
+	var str = "\\begin{pmatrix}\n";
+	for (var i = 0; i < array.length; i++) {
+		if(typeof(array[i]) == "object") {
+			for (var k = 0; k < array[i].length; k++) {
+				if(k == array[i].length - 1) {
+					str += array[i][k] + "\\\\\n";
+				} else {
+					str += array[i][k] + " & ";
+				}
+			}
+		} else {
+			str += array[i] + "\\\\\n";
+		}
+	}
+	str += "\\end{pmatrix}\n"
+	return str;
 }
 
 function model_to_latex () {
@@ -1484,19 +1512,26 @@ function model_to_latex () {
 				outname += _get_h(i) + " = ";
 			}
 
-			var mini_batch_mean = "\\text{Mini-Batch mean: } \\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i";
+			var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
 
-			var mini_batch_variance = "\\text{Mini-Batch variance: }\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2";
+			var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
 
-			var new_x = "\\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+			var x_equation = "\\overline{x_i} = \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
 
-			//var new_y = "\\underbrace{y_i}_\\text{Scale and shift} = \\gamma\\hat{x}_i + \\beta";
+			var beta_string = "";
+			var gamma_string = "";
+			if("beta" in layer_data[i]) {
+				beta_string = "\\left( = " + array_to_latex_matrix(layer_data[i].beta) + "\\right)";
+			}
+			if("gamma" in layer_data[i]) {
+				gamma_string = "\\left( = " + array_to_latex_matrix(layer_data[i].gamma) + "\\right)";
+			}
 
-			str += "$$\n$$";
+			var y_equation = "\\underbrace{y_i = \\gamma " + gamma_string + "\\overline{x_i} + \\beta" + beta_string + "}_{\\text{Scaling\\&shifting}}";
 
-			str += mini_batch_mean + "$$\n$$";
-			str += mini_batch_variance + "$$\n$$";
-			str += outname + new_x; // + "$$\n$$" + new_y;
+			str += mini_batch_mean + ",\\qquad ";
+			str += mini_batch_variance + ",\\qquad ";
+			str += x_equation + ",\\qquad " + outname + y_equation;
 		} else if (this_layer_type == "dropout") {
 			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
@@ -1539,7 +1574,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout"];
+		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization"];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false
