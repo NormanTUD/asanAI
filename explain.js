@@ -1529,13 +1529,13 @@ function model_to_latex () {
 			var beta_string = "";
 			var gamma_string = "";
 			if("beta" in layer_data[i]) {
-				beta_string = "\\left( = " + array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parseInt($("#decimal_points_math_mode").val()))) + "\\right)";
+				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parseInt($("#decimal_points_math_mode").val())));
 			}
 			if("gamma" in layer_data[i]) {
-				gamma_string = "\\left( = " + array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parseInt($("#decimal_points_math_mode").val()))) + "\\right)";
+				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parseInt($("#decimal_points_math_mode").val())));
 			}
 
-			var y_equation = "\\underbrace{y_i = \\gamma " + gamma_string + "\\overline{x_i} + \\beta" + beta_string + "}_{\\text{Scaling\\&shifting}}";
+			var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
 
 			var between_equations = ",\\\\[10pt]\\\\\n";
 
