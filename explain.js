@@ -1138,13 +1138,13 @@ function get_layer_data() {
 				if(0 in model.layers[i].weights) {
 					this_layer_weights["kernel"] = Array.from(model.layers[i].weights[0].val.arraySync());
 				} else {
-					this_layer_weights["bias"] = [];
+					this_layer_weights["kernel"] = [];
 				}
 
 				if(1 in model.layers[i].weights) {
 					this_layer_weights["bias"] = Array.from(model.layers[i].weights[1].val.dataSync());
 				} else {
-					this_layer_weights["kernel"] = [];
+					this_layer_weights["bias"] = [];
 				}
 			} else {
 				this_layer_weights["bias"] = [];
@@ -1317,12 +1317,15 @@ function model_to_latex () {
 		if(i == 0) {
 			str += "<h2>Layers:</h2>";
 		}
+
 		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
 		if(this_layer_type == "dense") {
 			var activation_name = model.layers[i].activation.constructor.className;
 
-			if(Object.keys(activation_function_equations).includes(activation_name)) {
+			if(activation_name == "linear") {
+				//
+			} else if(Object.keys(activation_function_equations).includes(activation_name)) {
 				if(!shown_activation_equations.includes(activation_name)) {
 					var this_activation_string = activation_function_equations[activation_name]["equation"];
 
@@ -1345,7 +1348,7 @@ function model_to_latex () {
 					shown_activation_equations.push(activation_name);
 				}
 			} else {
-				//log("Activation name '" + activation_name + "' not found");
+				console.error("Activation name '" + activation_name + "' not found");
 			}
 
 			var activation_start = "";
@@ -1378,7 +1381,7 @@ function model_to_latex () {
 
 
 			try {
-				if("bias" in layer_data[i]) {
+				if("bias" in layer_data[i] && layer_data[i].bias.length) {
 					str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
 				}
 			} catch (e) {
