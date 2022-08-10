@@ -595,9 +595,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		try {
-			if(i == 0) {
-				log(data);
-			}
 			new_model.add(tf.layers[type](data));
 			set_layer_background(i, "");
 		} catch (e) {
