@@ -503,3 +503,7 @@ button:disabled:hover {
         padding-left: 20px;
         padding-right: 20px;
 }
+
+.full_width_hr {
+	width: 100%;
+}

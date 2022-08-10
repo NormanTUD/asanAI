@@ -1515,9 +1515,9 @@ function model_to_latex () {
 			var outname = "";
 
 			if(i == layer_data.length - 1) {
-				outname = array_to_latex(y_layer, "Output") + " = ";
+				outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
 			} else {
-				outname += _get_h(i) + " = ";
+				outname += _get_h(i) + " \\longrightarrow ";
 			}
 
 			var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
@@ -1537,9 +1537,14 @@ function model_to_latex () {
 
 			var y_equation = "\\underbrace{y_i = \\gamma " + gamma_string + "\\overline{x_i} + \\beta" + beta_string + "}_{\\text{Scaling\\&shifting}}";
 
-			str += mini_batch_mean + ",\\qquad ";
-			str += mini_batch_variance + ",\\qquad ";
-			str += x_equation + ",\\qquad " + outname + y_equation;
+			var between_equations = ",\\\\[10pt]\\\\\n";
+
+			str += "\\begin{array}{c}\n";
+			str += "\\displaystyle " + mini_batch_mean + between_equations;
+			str += "\\displaystyle " +mini_batch_variance + between_equations;
+			str += "\\displaystyle " + x_equation + between_equations;
+			str += "\\displaystyle " + outname + y_equation;
+			str += "\\end{array}\n";
 		} else if (this_layer_type == "dropout") {
 			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
@@ -1547,6 +1552,9 @@ function model_to_latex () {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 		str += "$$";
+		if(i != model.layers.length - 1) {
+			str += "<hr class='full_width_hr'>";
+		}
 	}
 
 	prev_layer_data = layer_data;
