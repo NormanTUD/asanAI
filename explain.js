@@ -1537,12 +1537,13 @@ function model_to_latex () {
 
 			var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
 
-			var between_equations = ",\\\\[10pt]\\\\\n";
+			var between_equations = ",\\qquad ";
+			var skip_between_equations = ",\\\\[10pt]\\\\\n";
 
 			str += "\\begin{array}{c}\n";
 			str += "\\displaystyle " + mini_batch_mean + between_equations;
 			str += "\\displaystyle " +mini_batch_variance + between_equations;
-			str += "\\displaystyle " + x_equation + between_equations;
+			str += "\\displaystyle " + x_equation + skip_between_equations;
 			str += "\\displaystyle " + outname + y_equation;
 			str += "\\end{array}\n";
 		} else if (this_layer_type == "dropout") {
