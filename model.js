@@ -194,7 +194,7 @@ function get_data_for_layer (type, i, first_layer) {
 			// Do nothing if activation = None
 			data["activation"] = null;
 
-		} else if (valid_initializer_types.includes(get_weight_type_name_from_option_name(option_name)) && option_name.includes("nitializer")) {
+		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
 
 			var initializer_name = get_item_value(i, weight_type + "_initializer");
@@ -202,10 +202,9 @@ function get_data_for_layer (type, i, first_layer) {
 				var initializer_config = get_layer_initializer_config(i, weight_type);
 				var initializer_config_string = JSON.stringify(initializer_config);
 				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
-				log(data[get_key_name_camel_case(weight_type) + "Initializer"]);
 			}
 
-		} else if (valid_initializer_types.includes(get_weight_type_name_from_option_name(option_name)) && option_name.includes("egularizer")) {
+		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
 			var regularizer_name = get_item_value(i, weight_type + "_regularizer");
 			if(regularizer_name) {
@@ -593,7 +592,9 @@ async function create_model (old_model, fake_model_structure, force) {
 			var layer_setting = $($(".layer_setting")[i]);
 			var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 			if(!is_valid_parameter(this_key, data[this_key], i)) {
+				header("=================");
 				log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+				header("<<<<<<<<<<<<<<<<<");
 				current_setting.css("background-color", "red");
 			} else {
 				current_setting.css("background-color", "");
