@@ -1137,3 +1137,75 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		}
 	}
 }
+
+
+var general_options = {
+	'theta': '"&theta;", "theta", "number", { "step": 1, "value": -1 }, nr',
+	'axis': '"Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": get_default_option(type, "axis") }, nr',
+	'max_value': '"Max-Value", "max_value", "number", { "step": 1, "value": get_default_option(type, "max_value") }, nr',
+	'size': '"Size", "size", "text", { "text": "2,2", "placeholder": "2 comma-seperated numbers" }, nr',
+	'target_shape': '"Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr',
+	'dilation_rate': '"Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr',
+	'padding': '"Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr',
+	'filters': '"Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": get_default_option(type, "filters") }, nr',
+	'activation_axis': '"Axis", "activation_axis", "number", { "value": -1 }, nr, "activation_tr"',
+	'activation_max_value': '"Max-Value", "activation_max_value", "number", { "value": 1 }, nr, "activation_tr"',
+	'activation_alpha': '"&alpha;", "activation_alpha", "number", { "value": 1 }, nr, "activation_tr"',
+	'activation_theta': '"&theta;", "activation_theta", "number", { "value": 0.01 }, nr, "activation_tr"',
+	'bias_regularizer': '"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr',
+	'activity_regularizer': '"Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr',
+	'moving_mean': '"Moving mean Initializer", "moving_mean_initializer", "select", initializers, nr',
+	'alpha': '"&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr',
+	'dropout_rate': '"Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr',
+	'center': '"Center?", "center", "checkbox", { "status": "checked" }, nr',
+	'trainable': '"Trainable", "trainable", "checkbox", { "status": "checked" }, nr',
+	'scale': '"Scale?", "scale", "checkbox", { "status": "checked" }, nr',
+	'unroll': '"Unroll?", "unroll", "checkbox", { "status": "checked" }, nr',
+	'unit_forget_bias': '"Unit forget bias", "unit_forget_bias", "checkbox", { "status": "checked" }, nr',
+	'implementation': '"Implementation", "implementation", "select", implementation_modes, nr',
+	'dropout': '"Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr',
+	'epsilon': '"&epsilon; multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": get_default_option(type, "epsilon") }, nr',
+	'rate': '"Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr',
+	'recurrent_dropout': '"Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "recurrent_dropout") }, nr',
+	'max_features': '"Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "max_features") }, nr',
+	'momentum': '"Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": get_default_option(type, "momentum") }, nr',
+	'units': '"Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": get_default_option(type, "units") }, nr',
+	'use_bias': '"Use Bias", "use_bias", "checkbox", { "status": "checked" }, nr',
+	'dtype': '"DType", "dtype", "select", dtypes, nr, null, 1',
+	'interpolation': '"Interpolation", "interpolation", "select", interpolation, nr',
+	'stddev': '"Standard-Deviation", "stddev", "number", { "min": 0, "value": get_default_option(type, "stddev") }, nr',
+	'recurrent_initializer': '"Recurrent Initializer", "recurrent_initializer", "select", initializers, nr',
+	'kernel_regularizer': '"Kernel Regularizer", "kernel_regularizer", "select", initializers, nr',
+	'recurrent_constraint': '"Recurrent Constraint", "recurrent_constraint", "select", constraints, nr',
+	'bias_constraint': '"Bias Constraint", "bias_constraint", "select", constraints, nr',
+	'stateful': '"Stateful?", "stateful", "checkbox", { "status": "" }, nr',
+	'return_state': '"Return state?", "return_state", "checkbox", { "status": "" }, nr',
+	'depth_multiplier': '"Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "depth_multiplier") }, nr',
+	'depthwise_initializer': '"Depthwise Initializer", "depthwise_initializer", "select", initializers, nr',
+	'gamma_constraint': '"&gamma; Constraint", "gamma_constraint", "select", constraints, nr',
+	'beta_constraint': '"&beta; Constraint", "beta_constraint", "select", constraints, nr',
+	'activity_regularizer_l1': '"l1", "activity_regularizer_l1", "number", { "value": 0.01 }, nr, "activity_regularizer_tr"',
+	'activity_regularizer_l2': '"l2", "activity_regularizer_l2", "number", { "value": 0.01 }, nr, "activity_regularizer_tr"',
+	'kernel_regularizer': '"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr',
+	'kernel_constraint': '"Kernel Constraint", "kernel_constraint", "select", constraints, nr',
+	'go_backwards': '"Go Backwards?", "go_backwards", "checkbox", { "status": "" }, nr',
+	'moving_variance_initializer': '"Moving variance Initializer", "moving_variance_initializer", "select", initializers, nr',
+	'beta_initializer': '"&beta; Initializer", "beta_initializer", "select", initializers, nr',
+	'pointwise_initializer': '"Pointwise Initializer", "pointwise_initializer", "select", initializers, nr',
+	'pointwise_constraint': '"Pointwise Constraint", "pointwise_constraint", "select", constraints, nr',
+	'depthwise_constraint': '"Depthwise Constraint", "depthwise_constraint", "select", constraints, nr',
+	'recurrent_activation': '"Recurrent Activation function", "recurrent_activation", "select", activations, nr',
+	'return_sequences': '"Return sequences?", "return_sequences", "checkbox", { "status": "checked" }, nr',
+	'bias_regularizer_l1': '"l1", "bias_regularizer_l1", "number", { "value": 0.01 }, nr, "bias_regularizer_tr"',
+	'bias_regularizer_l2': '"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr"',
+	'kernel_regularizer_l1': '"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"',
+	'kernel_regularizer_l2': '"l2", "kernel_regularizer_l2", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"'
+
+};
+
+var general_options_keys = Object.keys(general_options);
+
+for (var i = 0; i < general_options_keys.length; i++) {
+	var func = "var add_" + general_options_keys[i] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[i]]+ "); }";
+	$.globalEval(func);
+}
