@@ -1200,12 +1200,15 @@ var general_options = {
 	'bias_regularizer_l2': '"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr"',
 	'kernel_regularizer_l1': '"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"',
 	'kernel_regularizer_l2': '"l2", "kernel_regularizer_l2", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"'
-
 };
 
 var general_options_keys = Object.keys(general_options);
 
 for (var i = 0; i < general_options_keys.length; i++) {
 	var func = "var add_" + general_options_keys[i] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[i]]+ "); }";
-	$.globalEval(func);
+	try {
+		$.globalEval(func);
+	} catch (e) {
+		console.error(e);
+	}
 }

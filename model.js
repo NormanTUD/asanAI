@@ -133,7 +133,19 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	}
 }
 function get_weight_type_name_from_option_name (on) {
-	return on.replace(/_.*?/, "");
+	if(on.match(/_/)) {
+		for (var i = 0; i < valid_initializer_types.length; i++) {
+			var v = valid_initializer_types[i];
+			var re = new RegExp("^" + v + "(?:_.*)?$");
+			if(on.match(re)) {
+				return v;
+			}
+		}
+	} else {
+		return on;
+	}
+
+	log("WRONG MATCH TYPE: " + on);
 }
 
 function get_data_for_layer (type, i, first_layer) {
@@ -198,8 +210,9 @@ function get_data_for_layer (type, i, first_layer) {
 			if(regularizer_name) {
 				var regularizer_config = get_layer_regularizer_config(i, weight_type);
 				var regularizer_config_string = JSON.stringify(regularizer_config);
-				data["biasRegularizer"] = {"name": regularizer_name, "config": regularizer_config};
+				data[weight_type + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
 			}
+
 		} else {
 			var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
 			var value = $(elem).val();
