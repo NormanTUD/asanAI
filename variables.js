@@ -1173,9 +1173,9 @@ var general_options = {
 	'return_sequences': '"Return sequences?", "return_sequences", "checkbox", { "status": "checked" }, nr',
 
 	// initializer
-	'moving_mean': '"Moving mean Initializer", "moving_mean_initializer", "select", initializers, nr',
+	'moving_mean_initializer': '"Moving mean Initializer", "moving_mean_initializer", "select", initializers, nr',
 	'recurrent_initializer': '"Recurrent Initializer", "recurrent_initializer", "select", initializers, nr',
-	'moving_variance_initializer': '"Moving variance Initializer", "moving_variance_initializer", "select", initializers, nr',
+	'moving_variance_initializer': '"Moving variance Initializer", "moving_variance_initializer", "select", initializers, nr, "moving_variance_initializer_td"',
 	'beta_initializer': '"&beta; Initializer", "beta_initializer", "select", initializers, nr',
 	'pointwise_initializer': '"Pointwise Initializer", "pointwise_initializer", "select", initializers, nr',
 	'depthwise_initializer': '"Depthwise Initializer", "depthwise_initializer", "select", initializers, nr',

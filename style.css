@@ -248,6 +248,25 @@ button {
 	background-color: rgba(10, 255, 16, 0.4);
 }
 
+
+.recurrent_initializer_tr{
+	background-color: rgba(0, 3, 231, 0.4);
+}
+
+.moving_mean_initializer_tr {
+	background-color: rgba(122, 35, 255, 0.4);
+}
+
+.moving_variance_initializer_td {
+	background-color: rgba(122, 35, 16, 0.4);
+}
+
+.beta_initializer_tr {
+	background-color: rgba(47, 55, 16, 0.4);
+}
+
+
+
 .bias_initializer_tr {
 	background-color: rgba(147, 255, 16, 0.4);
 }
