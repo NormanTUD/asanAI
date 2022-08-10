@@ -145,7 +145,7 @@ function get_weight_type_name_from_option_name (on) {
 		return on;
 	}
 
-	log("WRONG MATCH TYPE: " + on);
+	return on;
 }
 
 function get_data_for_layer (type, i, first_layer) {
