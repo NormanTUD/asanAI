@@ -9,8 +9,8 @@ function logt(msg) {
 	console.trace();
 }
 
-function log (msg) {
-	console.log(msg);
+function log (...args) {
+	args.forEach(arg => console.log(arg))
 	//console.trace();
 }
 
