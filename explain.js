@@ -1524,15 +1524,17 @@ function model_to_latex () {
 
 			var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
 
-			var x_equation = "\\overline{x_i} = \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+			var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
 
 			var beta_string = "";
 			var gamma_string = "";
 			if("beta" in layer_data[i]) {
 				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parseInt($("#decimal_points_math_mode").val())));
+				beta_string = "\\displaystyle " + beta_string;
 			}
 			if("gamma" in layer_data[i]) {
 				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parseInt($("#decimal_points_math_mode").val())));
+				gamma_string = "\\displaystyle " + gamma_string;
 			}
 
 			var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
