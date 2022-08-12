@@ -413,5 +413,13 @@ $(document).ready(async function() {
 		$("#data_origin").val(urlParams.get("data_source")).trigger("change");
 	}
 
+
+	cookie_theme = getCookie("theme");
+	if(cookie_theme) {
+		l("Has cookie for " + cookie_theme);
+		$("#theme_choser").val(cookie_theme).trigger("change")
+		l("Set theme");
+	}
+
 	l("Site is ready");
 });

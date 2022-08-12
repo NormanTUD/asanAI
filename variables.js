@@ -1219,3 +1219,5 @@ for (var i = 0; i < general_options_keys.length; i++) {
 		console.error(e);
 	}
 }
+
+var cookie_theme = "lightmode";

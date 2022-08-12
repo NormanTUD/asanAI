@@ -15,7 +15,6 @@
 		<title>asanAI</title>
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json" />
-
 		<script>
 			function hasWebGL() {
 				var supported;
@@ -2024,11 +2023,6 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("draw.js"); ?>
 		<script>
 			atrament.adaptiveStroke = true;
-
-			var cookie_theme = getCookie("theme");
-			if(cookie_theme) {
-				$("#theme_choser").val(cookie_theme).trigger("change")
-			}
 
 			load_time = Date().toLocaleString();
 
