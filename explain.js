@@ -1331,11 +1331,11 @@ function model_to_latex () {
 		},
 		"eta": {
 			"name": "Learning rate", 
-			"origin": "learningRate_rmsprop"
+			"origin": "learningRate_OPTIMIZERNAME"
 		},
 		"epsilon": {
 			"name": "Epsilon",
-			"origin": "epsilon_adam"
+			"origin": "epsilon_OPTIMIZERNAME"
 		}
 	};
 
@@ -1718,12 +1718,16 @@ function model_to_latex () {
 				if(!m) {
 					str += "<h3>Variables and definitions:</h3>\n";
 				}
-				var valofparam = $("#" + this_optimizer.variables[thisvarname]["origin"]).val();
+
+				var origin = this_optimizer.variables[thisvarname]["origin"];
+
 
 				str += "$$ \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
 				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
 					str += " = " + this_optimizer.variables[thisvarname]["value"];
-				} else if(valofparam !== undefined) {
+				} else if(origin !== undefined) {
+					origin = origin.replace("OPTIMIZERNAME", optimizer);
+					var valofparam = $("#" + origin).val();
 					str += " = " + valofparam;
 				}
 				str += " $$";
