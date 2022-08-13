@@ -1103,7 +1103,7 @@ $GLOBALS['minify'] = 0;
 												</tr>
 												</tr>
 													<td>Auto One-Hot-encode Y?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" checked /></td>
 												</tr>
 												</tr>
 													<td>Auto loss/metric?</td>
