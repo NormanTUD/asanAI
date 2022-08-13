@@ -1043,7 +1043,7 @@ function change_optimizer() {
 
 	$("#" + type + "_metadata").show();
 
-	updated_page(1);
+	updated_page();
 }
 
 function set_momentum(val) {

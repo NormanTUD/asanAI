@@ -421,5 +421,11 @@ $(document).ready(async function() {
 		l("Set theme");
 	}
 
+	l("Installing change-handlers on optimizer_metadata_input");
+	$('.optimizer_metadata_input'). change(function(event) {
+		updated_page();
+	});
+	l("Done installing change handlers on optimizer_metadata_input");
+
 	l("Site is ready");
 });

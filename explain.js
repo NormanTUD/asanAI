@@ -1318,6 +1318,145 @@ function model_to_latex () {
 		"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
 	};
 
+	var default_vars = {
+		"g": {
+			"name": "Gradient estimate"
+		},
+		"nabla_operator": {
+			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
+			"value": "\\begin{align} \\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix} \\end{align}"
+		},
+		"theta": {
+			"name": "Weights"
+		},
+		"eta": {
+			"name": "Learning rate", 
+			"origin": "learningRate_rmsprop"
+		},
+		"epsilon": {
+			"name": "Epsilon",
+			"origin": "epsilon_adam"
+		}
+	};
+
+	var optimizer_equations = {
+		"sgd": {
+			"equations": [
+				"g = \\nabla_{\\theta}J(\\theta; x, y)",
+				"\\Delta\\theta = -\\eta \\cdot g",
+				"\\theta = \\theta + \\Delta\\cdot g"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\eta": {
+					"name": "Learning rate", 
+					"origin": "learningRate_sgd"
+				},
+				"\\theta": default_vars["theta"],
+				"\\nabla": default_vars["nabla_operator"],
+				"J": {
+					"name": "Loss function"
+				},
+				"g": {
+					"name": "Gradient"
+				},
+				"x": {
+					"name": "Input values"
+				},
+				"y": {
+					"name": "Output values"
+				}
+			}
+		},
+		"momentum": {
+			"equations": [
+				"\\Delta\\theta_t = -\\gamma v_{t-1} - \\eta g_t"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\eta": default_vars["eta"],
+				"\\theta": default_vars["theta"]
+			}
+		},
+		"nag": {
+			"equations": [
+				"\\Delta\\theta_t = -\\gamma v_{t-1} - \\eta \\nabla_\\theta J(\\theta - \\gamma v_{t-1})"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\theta": default_vars["theta"], 
+				"\\nabla": default_vars["nabla_operator"],
+				"\\eta": default_vars["eta"],
+			}
+		},
+		/*
+		"adagrad": {
+			"equations": [
+				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\eta": default_vars["eta"],
+				"g": default_vars["g"],
+				"\\theta": default_vars["theta"]
+			}
+		},
+		*/
+		/*
+		"adadelta": {
+			"equations": [
+				"\\Delta\\theta_t = - \\frac{\\mathrm{rmsprop}\\left[\\Delta\\theta\\right]_{t-1}}{\\mathrm{rmsprop}\\left[g_t\\right]}g_t"
+			],
+			"dependencies": ["rmsprop"],
+			"variables": {
+				"\\theta": default_vars["theta"],
+			}
+		},
+		*/
+		/*
+		"adamax": {
+			"equations": [
+				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\theta": default_vars["theta"],
+				"\\alpha": {
+					"name": "Initial accumulator value"
+				}
+			}
+		},
+		*/
+		/*
+		"rmsprop": {
+			"equations": [
+				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{E\\left[g²\\right]+\\epsilon}}"
+			],
+			"dependencies": [],
+			"variables": {
+				"g": default_vars["g"],
+				"\\eta": default_vars["eta"],
+				"\\epsilon": default_vars["epsilon"]
+			}
+		},
+		*/
+		/*
+		"adam": {
+			"equations": [
+				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{\\hat{v}}+\\epsilon}\\hat{m}"
+			],
+			"dependencies": [],
+			"variables": {
+				"\\theta": {
+					"name": "Weights"
+				},
+				"\\eta": default_vars["eta"],
+				"\\epsilon": default_vars["epsilon"]
+			}
+		}
+		*/
+	};
+
 	var layer_data = get_layer_data();
 
 	var y_layer = [];
@@ -1342,11 +1481,13 @@ function model_to_latex () {
 	var activation_string = "";
 	var str = "";
 
+
 	var shown_activation_equations = [];
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
 		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
 	}
+
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
@@ -1558,6 +1699,52 @@ function model_to_latex () {
 		if(i != model.layers.length - 1) {
 			str += "<hr class='full_width_hr'>";
 		}
+	}
+
+	var optimizer = $("#optimizer").val();
+	if(Object.keys(optimizer_equations).includes(optimizer)) {
+		var this_optimizer = optimizer_equations[optimizer];
+
+		var dependencies = this_optimizer["dependencies"];
+
+		str += "<h2>Optimizer:</h2>\n";
+
+		if(this_optimizer.variables) {
+			var varnames = Object.keys(this_optimizer.variables);
+			log("a", this_optimizer.variables);
+			for (var m = 0; m < varnames.length; m++) {
+				log("b", this_optimizer.variables[varnames[m]]);
+				var thisvarname = varnames[m];
+				if(!m) {
+					str += "<h3>Variables and definitions:</h3>\n";
+				}
+				var valofparam = $("#" + this_optimizer.variables[thisvarname]["origin"]).val();
+
+				str += "$$ \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
+				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
+					str += " = " + this_optimizer.variables[thisvarname]["value"];
+				} else if(valofparam !== undefined) {
+					str += " = " + valofparam;
+				}
+				str += " $$";
+
+				if(Object.keys(this_optimizer.variables).includes("example")) {
+					str += "$$ \\displaystyle " + this_optimizer.variables.example + " $$";
+				}
+			}
+
+			str += "<h3>Equations for optimizers:</h3>\n";
+		}
+
+		for (var m = 0; m < dependencies.length; m++) {
+			if(dependencies[m] != optimizer) {
+				str += "$$ \\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" $$\n$$ ") + " $$";
+			}
+		}
+
+		str += "$$ \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" $$\n$$ ") + " $$";
+	} else {
+		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
 	}
 
 	prev_layer_data = layer_data;
