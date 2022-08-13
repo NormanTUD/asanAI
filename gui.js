@@ -677,6 +677,7 @@ async function update_python_code(dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
+	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
 	python_code += "# python3 -m venv asanaienv\n";
 	python_code += "# source asanaienv/bin/activate\n";
 	python_code += "# pip3 install tensorflow tensorflowjs ";
