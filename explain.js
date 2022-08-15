@@ -739,14 +739,14 @@ function draw_internal_states (layer, inputs, applied) {
 				for (var j = 0; j < canvas_input.length; j++) {
 					var img_input = '<img alt="Layer ' + layer + ', input: ' + j + '" src="' + canvas_input[j].toDataURL() + '" />';
 					for (var i = 0; i < canvas_output.length; i++) {
-						var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
+						var img_output = '<img alt="Layer ' + layer + ', output: ' + j + '" src="' + canvas_output[i].toDataURL() + '" />';
 						if(Object.keys(canvas_kernel).includes(i + '')) {
 							var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
-							layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+							layer_div.append("<span>Layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
 						} else {
 							//log(canvas_kernel);
 							//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-							layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+							layer_div.append("<span>layer " + layer + ", neuron " + j + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
 						}
 					}
 				}
@@ -756,10 +756,10 @@ function draw_internal_states (layer, inputs, applied) {
 					var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
 					if(Object.keys(canvas_kernel).includes(i + '')) {
 						var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
-						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+						layer_div.append("<span>layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
 					} else {
 						//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+						layer_div.append("<span>layer" + layer + ", neuron: " + i +  "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
 					}
 				}
 			} else {
@@ -767,9 +767,9 @@ function draw_internal_states (layer, inputs, applied) {
 					var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_output.toDataURL() + '" />';
 					if(canvas_output.nodeName == "CANVAS") {
 						var img_output = '<img alt="Layer ' + layer + ', input" src="' + canvas_output.toDataURL() + '" />';
-						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+						layer_div.append("<span>layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
 					} else {
-						layer_div.append("<span>layer_" + layer + "<span class='fenced'>" + img_input + "</span></span><br>");
+						layer_div.append("<span>layer" + layer + ", neuron " + i + "<span class='fenced'>" + img_input + "</span></span><br>");
 					}
 				} else {
 					//log(canvas_output);
