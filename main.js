@@ -288,8 +288,8 @@ function init_losses_and_metrics () {
 	l("Initializing metrics");
 	for (var i = 0; i < metrics.length; i++) {
 		$('#metric').append($('<option>', {
-			value: losses[i],
-			text: losses[i]
+			value: metrics[i],
+			text: metrics[i]
 		}));
 	}
 }
