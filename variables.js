@@ -1038,7 +1038,8 @@ var plotly_color = {
 		family: 'Courier New, monospace',
 		size: 18,
 		color: '#7f7f7f'
-	}
+	},
+	xaxis: {dtick: 1}
 };
 
 var stop_generating_images = false;
