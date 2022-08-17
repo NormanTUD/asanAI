@@ -1080,8 +1080,8 @@ var metrics = [
 	"meanSquaredError",
 	"meanAbsoluteError",
 	"meanAbsolutePercentageError",
-	"cosine",
-	"binaryCrossentropy"
+	"cosine" //,
+	//"binaryCrossentropy"
 ];
 
 var metric_shortnames = {
