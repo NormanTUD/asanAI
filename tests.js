@@ -208,7 +208,7 @@ async function run_tests () {
 	var new_number_of_layers = $(".layer_setting").length;
 	await delay(1000);
 
-	test_equal("Checking if the number of layers is +1 after adding one", new_number_of_layers - old_number_of_layers), 1);
+	test_equal("Checking if the number of layers is +1 after adding one", new_number_of_layers - old_number_of_layers, 1);
 
 	delay(2000);
 
