@@ -1730,7 +1730,7 @@ async function set_config(index) {
 			number_of_layers = config["model_structure"].length;
 		}
 
-		log("number_of_layers: " + number_of_layers);
+		//log("number_of_layers: " + number_of_layers);
 		init_numberoflayers(number_of_layers);
 
 		if (config["input_shape"]) {
