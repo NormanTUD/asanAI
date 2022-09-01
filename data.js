@@ -469,8 +469,8 @@ async function get_xs_and_ys () {
 		} else if (data_origin == "csv") {
 			xy_data = await get_x_y_from_csv();
 
-			log("got xy_data");
-			log(xy_data);
+			//log("got xy_data");
+			//log(xy_data);
 		} else {
 			alert("Unknown data type: " + data_origin);
 		}
