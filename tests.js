@@ -212,7 +212,7 @@ async function run_tests () {
 	$("#model_dataset").val("and").trigger("change");
 	await delay(2000);
 
-	await set_epochs(1);
+	await set_epochs(3);
 
 	await train_neural_network();	
 
@@ -234,8 +234,10 @@ async function run_tests () {
 	await delay(2000);
 	$("#dataset").val("signs").trigger("change");
 	await delay(2000);
+	$("#model_dataset").val("signs").trigger("change");
+	await delay(2000);
 
-	await set_epochs(1);
+	await set_epochs(3);
 
 	await train_neural_network();	
 
