@@ -205,13 +205,30 @@ async function run_tests () {
 
 	var old_number_of_layers = $(".layer_setting").length;
 	$($(".add_layer")[0]).click();
+	$($(".add_layer")[1]).click();
 	var new_number_of_layers = $(".layer_setting").length;
 	await delay(1000);
 
-	test_equal("Checking if the number of layers is +1 after adding one", new_number_of_layers - old_number_of_layers, 1);
+	test_equal("Checking if the number of layers is +2 after adding 2 layers", new_number_of_layers - old_number_of_layers, 2);
 
 	delay(2000);
 
+	/* Train on CSV */
+
+	set_epochs(50);
+
+	$("#data_origin").val("csv").trigger("change")
+	delay(500);
+
+	$("#csv_file").val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").trigger("keyup");
+	delay(2000);
+	await train_neural_network();	
+
+	var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
+	test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) < 2, true)
+
+	res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
+	test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 2, true)
 
 	/* Test Training images */
 
