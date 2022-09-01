@@ -1406,7 +1406,13 @@ function model_to_latex () {
 			],
 			"dependencies": ["rmsprop"],
 			"variables": {
+				"\\eta": default_vars["eta"],
+				"g": default_vars["g"],
+				"g_t": {
+					"name": "Gradient at time t along } \\theta^j \\text{ "
+				},
 				"\\theta": default_vars["theta"],
+				"\\epsilon": default_vars["epsilon"]
 			}
 		},
 		"adamax": {
