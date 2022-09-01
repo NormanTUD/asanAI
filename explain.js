@@ -1434,7 +1434,10 @@ function model_to_latex () {
 		},
 		"adam": {
 			"equations": [
-				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{\\hat{v}}+\\epsilon}\\hat{m}"
+				"v_t = \\beta_1 \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) \\cdot g_t",
+				"s_t = \\beta_1 \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) \\cdot g^2_t",
+				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{\\hat{v}+\\epsilon}}\\hat{g_t}",
+				"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
 			],
 			"dependencies": [],
 			"variables": {
@@ -1442,7 +1445,19 @@ function model_to_latex () {
 					"name": "Weights"
 				},
 				"\\eta": default_vars["eta"],
-				"\\epsilon": default_vars["epsilon"]
+				"\\epsilon": default_vars["epsilon"],
+				"g_t": {
+					"name": "Gradient at time t along } \\theta^j \\text{ "
+				},
+				"v_t": {
+					"name": "Exponential average of gradients along }\\theta_j \\text{ "
+				},
+				"s_t": {
+					"name": "Exponential average of squares of gradients along }\\theta_j \\text{ "
+				},
+				"\\beta_1, \\beta_2": {
+					"name": "Hyperparameter"
+				}
 			}
 		}
 	};
