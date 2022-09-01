@@ -227,22 +227,36 @@ async function run_tests () {
 	await train_neural_network();	
 	log("D");
 
-	var predict_demo = $(".predict_demo_result");
+	var pd = $(".predict_demo_result");
+	log(pd);
+	log("pd length: ", pd.length);
 	var results = [];
-	for (var i = 0; i < predict_demo.length; i++) {
-		var this_demo = $(predict_demo[i]);
-		var h = this_demo.html();
-		var s = h.split("\n");
-		var r = [];
-		for (var j = 0; j < s.length; j++) {
-			var line = s[j];
-			var v = parseFloat(line.match(/(.*): (\d+(?:\.\d+))/)[2]);
-			r.push(v);
-		}
+	for (var i = 0; i < pd.length; i++) {
+		try {
+			var this_demo = $(pd[i]);
+			var h = this_demo.html();
+			var s = h.split("\n");
+			var r = [];
+			//log("s: ", s);
 
-		log("r:");
-		log(r);
-		results.push(r);
+			for (var j = 0; j < s.length; j++) {
+				var line = s[j];
+				log("line: ", line);
+				if(line && line != "" && line !== null) {
+					var m = line.match(/.*: ([+-]{0,1}\d+(?:\.\d+)?).*?/);
+					if(m) {
+						var v = parseFloat(m[1]);
+						//log("v: ", v);
+						r.push(v);
+					}
+				}
+			}
+
+			log("r: ", r);
+			results.push(r);
+		} catch (e) {
+			console.warn(e);
+		}
 	}
 
 	log("E");
