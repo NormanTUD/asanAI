@@ -1434,9 +1434,9 @@ function model_to_latex () {
 		},
 		"adam": {
 			"equations": [
-				"v_t = \\beta_1 \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) \\cdot g_t",
-				"s_t = \\beta_1 \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) \\cdot g^2_t",
-				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{\\hat{v}+\\epsilon}}\\hat{g_t}",
+				"v_t = \\beta_1 * \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) * g_t",
+				"s_t = \\beta_2 * \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) * g^2_t",
+				"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} * g_t",
 				"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
 			],
 			"dependencies": [],
