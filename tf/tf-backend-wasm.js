@@ -3558,8 +3558,8 @@
     function oneHot(args) {
         var inputs = args.inputs, backend = args.backend, attrs = args.attrs;
         var indices = inputs.indices;
-        var depth = attrs.depth, onValue = attrs.onValue, offValue = attrs.offValue;
-        var out = backend.makeOutput(__spread(indices.shape, [depth]), 'int32');
+        var dtype = attrs.dtype, depth = attrs.depth, onValue = attrs.onValue, offValue = attrs.offValue;
+        var out = backend.makeOutput(__spread(indices.shape, [depth]), dtype);
         var outId = backend.dataIdMap.get(out.dataId).id;
         var indicesData = backend.dataIdMap.get(indices.dataId);
         var indicesId = indicesData.id;
@@ -5227,6 +5227,8 @@
             'number',
             'array',
             'number',
+            'array',
+            'number',
             'number',
             'number',
             'number',
@@ -5241,7 +5243,8 @@
         var _b = __read(outputShape != null ? outputShape : [imageHeight, imageWidth], 2), outHeight = _b[0], outWidth = _b[1];
         var outShape = [batch, outHeight, outWidth,
             numChannels];
-        var strides = new Uint8Array(new Int32Array(tfjsCore.util.computeStrides(image.shape)).buffer);
+        var inputStrides = new Uint8Array(new Int32Array(tfjsCore.util.computeStrides(image.shape)).buffer);
+        var outputStrides = new Uint8Array(new Int32Array(tfjsCore.util.computeStrides(outShape)).buffer);
         var out = backend.makeOutput(outShape, image.dtype);
         var outId = backend.dataIdMap.get(out.dataId).id;
         var imageData = backend.dataIdMap.get(image.dataId);
@@ -5267,7 +5270,7 @@
                 fillModeId = 1;
                 break;
         }
-        wasmTransform(imageId, transformsId, (transforms.shape[0] > 1), batch, outHeight, outWidth, numChannels, imageWidth, imageHeight, strides, image.shape.length - 1, interpolationModeId, fillModeId, fillValue, outId);
+        wasmTransform(imageId, transformsId, (transforms.shape[0] > 1), batch, outHeight, outWidth, numChannels, imageWidth, imageHeight, inputStrides, image.shape.length - 1, outputStrides, outShape.length - 1, interpolationModeId, fillModeId, fillValue, outId);
         return out;
     }
     var transformConfig = {
@@ -7493,7 +7496,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    var version = '3.19.0';
+    var version = '3.20.0';
 
     var _this = undefined;
     var WASM_PRIORITY = 2;
