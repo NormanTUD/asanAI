@@ -3,6 +3,14 @@
 var num_tests = 0;
 var num_tests_failed = 0;
 
+function sumTwoSmallestNumbers(numbers){
+	function sortNumber(a , b){
+		return a - b
+	}
+	numbers.sort(sortNumber)
+	return numbers[0] + numbers[1]
+}
+
 function layer_types_that_dont_have_default_options () {
 	var no_options = [];
 
@@ -132,6 +140,7 @@ function run_tests () {
 
 	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
 
+
 	var cookie_theme = getCookie("theme");
 	var darkmode = 0;
 	if(cookie_theme == "darkmode") {
@@ -201,6 +210,48 @@ function run_tests () {
 	});
 
 	tf.engine().endScope();
+
+
+	/* Test Training */
+
+	$("#dataset_category").val("image").trigger("change");
+	$("#dataset").val("signs").trigger("change");
+	set_epochs(1);
+	await train_neural_network();	
+
+	var predict_demo = $(".predict_demo_result");
+	var results = [];
+	for (var i = 0; i < predict_demo.length; i++) {
+		var this_demo = $(predict_demo[i]);
+		var h = this_demo.html();
+		var s = h.split("\n");
+		var r = [];
+		for (var j = 0; j < s.length; j++) {
+			var line = s[j];
+			var v = parseFloat(line.match(/(.*): (\d+(?:\.\d+))/)[2]);
+			r.push(v);
+		}
+
+		results.push(r);
+	}
+
+	for (var i = 0; i < results.length; i++) {
+		var this_result = results[i];
+
+		var sum = times.reduce((a, b) => a + b, 0);
+		test_equal("Sum of all results for one specific image is near 1", Math.diff(sum, 1) < 0.05, true);
+
+		var avg = (sum / times.length) || 0;
+
+		var clear_winner = false;
+		var highest = Math.max(this_result);
+
+		if(highest > sumTwoSmallestNumbers(this_result)) {
+			test_equal("There is a clear winner", true, true);
+		} else {
+			test_equal("There is NOT a clear winner", false, true);
+		}
+	}
 
 	test_summary();
 }
