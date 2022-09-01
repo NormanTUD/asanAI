@@ -216,17 +216,17 @@ async function run_tests () {
 
 	await train_neural_network();	
 
-	var result_and = await model.predict(tf.tensor([0, 0]));
-	test_equal("0 and 0", result_and.toString().startsWith("0.0"), true)
+	var result_and = await model.predict(tf.tensor([[0, 0]])).arraySync()[0][0];
+	test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
 
-	result_and = await model.predict(tf.tensor([0, 1]));
-	test_equal("0 and 1", result_and.toString().startsWith("0.0"), true)
+	result_and = await model.predict(tf.tensor([[0, 1]])).arraySync()[0][0];
+	test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true)
 
-	result_and = await model.predict(tf.tensor([0, 0]));
-	test_equal("0 and 0", result_and.toString().startsWith("0.0"), true)
+	result_and = await model.predict(tf.tensor([[0, 0]])).arraySync()[0][0];
+	test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
 
-	result_and = await model.predict(tf.tensor([1, 1]));
-	test_equal("1 and 1", result_and.toString().startsWith("0.9"), true)
+	result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
+	test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
 
 	/* Test Training images */
 
