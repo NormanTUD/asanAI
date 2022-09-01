@@ -517,7 +517,7 @@ async function run_neural_network () {
 			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
 			 * then restore the model with the saved weights. Not pretty, but it works...  */
 
-			log("Training done, getting weights");
+			//log("Training done, getting weights");
 			trained_weights = await get_weights_as_string();
 
 			reset_data();
