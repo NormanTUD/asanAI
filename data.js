@@ -794,9 +794,8 @@ async function get_x_y_from_csv () {
 
 	//log(y)
 
-	x = tf.tensor(x);
-	y = tf.tensor(y);
-
+	x = tf.keep(tf.tensor(x));
+	y = tf.keep(tf.tensor(y));
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");

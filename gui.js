@@ -3099,17 +3099,14 @@ async function change_data_origin() {
 		show_tab_label("own_tensor_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
-		$("#metric").val(config["metric"]);
 	} else if (show_own_csv_data) {
 		show_tab_label("own_csv_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
-		$("#metric").val(config["metric"]);
 	} else {
 		show_tab_label("training_data_tab_label");
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
-		$("#metric").val(config["metric"]);
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
