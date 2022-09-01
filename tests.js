@@ -3,14 +3,6 @@
 var num_tests = 0;
 var num_tests_failed = 0;
 
-function sumTwoSmallestNumbers(numbers){
-	function sortNumber(a , b){
-		return a - b
-	}
-	numbers.sort(sortNumber)
-	return numbers[0] + numbers[1]
-}
-
 function layer_types_that_dont_have_default_options () {
 	var no_options = [];
 
@@ -214,71 +206,54 @@ async function run_tests () {
 
 	/* Test Training */
 
-	log("A");
 	$("#dataset_category").val("image").trigger("change");
 	await delay(2000);
 	$("#dataset").val("signs").trigger("change");
 	await delay(2000);
 
-	log("B");
 	await set_epochs(1);
 
-	log("C");
 	await train_neural_network();	
-	log("D");
 
 	var pd = $(".predict_demo_result");
-	log(pd);
-	log("pd length: ", pd.length);
 	var results = [];
 	for (var i = 0; i < pd.length; i++) {
-		try {
-			var this_demo = $(pd[i]);
-			var h = this_demo.html();
-			var s = h.split("\n");
-			var r = [];
-			//log("s: ", s);
+		var this_demo = $(pd[i]);
+		var h = this_demo.html();
+		var s = h.split("\n");
+		var r = [];
 
-			for (var j = 0; j < s.length; j++) {
-				var line = s[j];
-				log("line: ", line);
-				if(line && line != "" && line !== null) {
-					var m = line.match(/.*: ([+-]{0,1}\d+(?:\.\d+)?).*?/);
-					if(m) {
-						var v = parseFloat(m[1]);
-						//log("v: ", v);
-						r.push(v);
-					}
+		for (var j = 0; j < s.length; j++) {
+			var line = s[j];
+			if(line && line != "" && line !== null) {
+				var m = line.match(/.*: ([+-]{0,1}\d+(?:\.\d+)?).*?/);
+				if(m) {
+					var v = parseFloat(m[1]);
+					r.push(v);
 				}
 			}
-
-			log("r: ", r);
-			results.push(r);
-		} catch (e) {
-			console.warn(e);
 		}
+
+		results.push(r);
 	}
 
-	log("E");
-	log(results);
 	for (var i = 0; i < results.length; i++) {
 		var this_result = results[i];
 
-		var sum = times.reduce((a, b) => a + b, 0);
-		test_equal("Sum of all results for one specific image is near 1", Math.diff(sum, 1) < 0.05, true);
+		var sum = this_result.reduce((a, b) => a + b, 0);
+		test_equal("Sum of all results for one specific image is near 1", Math.abs(sum - 1) < 0.05, true);
 
-		var avg = (sum / times.length) || 0;
+		var avg = (sum / this_result.length) || 0;
 
-		var clear_winner = false;
-		var highest = Math.max(this_result);
+		var this_result_ordered = this_result.sort(function (a, b) { return a - b; });
+		var highest = this_result_ordered.pop();
 
-		if(highest > sumTwoSmallestNumbers(this_result)) {
+		if(highest > this_result_ordered.reduce((a, b) => a + b, 0)) {
 			test_equal("There is a clear winner", true, true);
 		} else {
 			test_equal("There is NOT a clear winner", false, true);
 		}
 	}
-	log("F");
 
 	test_summary();
 }
