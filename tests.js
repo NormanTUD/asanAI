@@ -3,33 +3,6 @@
 var num_tests = 0;
 var num_tests_failed = 0;
 
-function layer_types_that_dont_have_default_options () {
-	var no_options = [];
-
-	var all_options = [];
-
-	var keys = Object.keys(layer_options);
-
-	for (var i = 0; i < keys.length; i++) {
-		var layer_name = keys[i];
-		for (var j = 0; j < layer_options[layer_name]["options"].length; j++) {
-			var this_option = layer_options[layer_name]["options"][j];
-			if(!all_options.includes(this_option)) {
-				all_options.push(this_option);
-			}
-		}
-	}
-
-	for (var i = 0; i < all_options.length; i++) {
-		var key = all_options[i];
-		if(!key in layer_options_defaults) {
-			no_options.push(key);
-		}
-	}
-
-	return no_options;
-}
-
 function test_not_equal (name, is, should_be) {
 	num_tests++;
 	if(!is_equal(is, should_be)) {
@@ -227,6 +200,18 @@ async function run_tests () {
 
 	result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
 	test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
+	
+	/* Add Layer */
+
+	var old_number_of_layers = $(".layer_setting").length;
+	$($(".add_layer")[0]).click();
+	var new_number_of_layers = $(".layer_setting").length;
+	await delay(1000);
+
+	test_equal("Checking if the number of layers is +1 after adding one", new_number_of_layers - old_number_of_layers), 1);
+
+	delay(2000);
+
 
 	/* Test Training images */
 
