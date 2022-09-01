@@ -961,10 +961,14 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	}
 
 	try {
-		m.setWeights(tensors);
+		try {
+			m.setWeights(tensors);
 
-		for (var i = 0; i < json.length; i++) {
-			dispose(tensors[i]);
+			for (var i = 0; i < json.length; i++) {
+				dispose(tensors[i]);
+			}
+		} catch (e) {
+			//log(e);
 		}
 	} catch (e) {
 		if(!no_error) {

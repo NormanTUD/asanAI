@@ -176,7 +176,9 @@ function set_item_value(layer, classname, value) {
 			found_setting.val(value).trigger("change");
 		}
 	} else {
-		log("Unknown classname '" + classname + "' in layer " + layer);
+		if(classname != "trainable") {
+			log("Unknown classname '" + classname + "' in layer " + layer);
+		}
 	}
 }
 
