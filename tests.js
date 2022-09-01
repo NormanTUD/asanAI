@@ -218,10 +218,10 @@ async function run_tests () {
 	set_epochs(50);
 
 	$("#data_origin").val("csv").trigger("change")
-	delay(500);
+	delay(1000);
 
 	$("#csv_file").val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").trigger("keyup");
-	delay(2000);
+	delay(5000);
 	await train_neural_network();	
 
 	var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
