@@ -84,7 +84,7 @@ function test_summary () {
 	}
 }
 
-function run_tests () {
+async function run_tests () {
 	num_tests = num_tests_failed = 0;
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -159,7 +159,7 @@ function run_tests () {
 
 	test_equal("array_to_fixed([1.555,2.555,3.555], 2)", JSON.stringify(array_to_fixed([1.555,2.555,3.555], 2)), "[1.55,2.56,3.56]");
 
-	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"Feature ex&shy;traction\":[0]},{\"Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion\":[1]},{\"Feature ex&shy;traction\":[2]},{\"Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion\":[3]},{\"Flatten\":[4]},{\"Pre&shy;vent Over&shy;fit&shy;ting\":[5]},{\"Classi&shy;fication\":[6,7]}]");
+	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"Feature ex&shy;traction\":[0,1,2,3]},{\"Flatten\":[4]},{\"Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention\":[5]},{\"Classi&shy;fication\":[6,7]}]");
 
 	test_equal('decille([1,2,3,4,5,6,7,8,9,10, 11], 1)', decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
 
@@ -214,10 +214,18 @@ function run_tests () {
 
 	/* Test Training */
 
+	log("A");
 	$("#dataset_category").val("image").trigger("change");
+	await delay(2000);
 	$("#dataset").val("signs").trigger("change");
-	set_epochs(1);
+	await delay(2000);
+
+	log("B");
+	await set_epochs(1);
+
+	log("C");
 	await train_neural_network();	
+	log("D");
 
 	var predict_demo = $(".predict_demo_result");
 	var results = [];
@@ -232,9 +240,13 @@ function run_tests () {
 			r.push(v);
 		}
 
+		log("r:");
+		log(r);
 		results.push(r);
 	}
 
+	log("E");
+	log(results);
 	for (var i = 0; i < results.length; i++) {
 		var this_result = results[i];
 
@@ -252,6 +264,7 @@ function run_tests () {
 			test_equal("There is NOT a clear winner", false, true);
 		}
 	}
+	log("F");
 
 	test_summary();
 }
