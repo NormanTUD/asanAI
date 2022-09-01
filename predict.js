@@ -52,6 +52,8 @@ let predict_demo = async function (item, nr) {
 
 
 		let tensor_img = tf.tidy(() => {
+			$(item).prop("width", width);
+			$(item).prop("height", height);
 			return tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims()
 		});
 
