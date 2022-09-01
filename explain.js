@@ -1389,7 +1389,6 @@ function model_to_latex () {
 				"\\eta": default_vars["eta"],
 			}
 		},
-		/*
 		"adagrad": {
 			"equations": [
 				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
@@ -1401,8 +1400,6 @@ function model_to_latex () {
 				"\\theta": default_vars["theta"]
 			}
 		},
-		*/
-		/*
 		"adadelta": {
 			"equations": [
 				"\\Delta\\theta_t = - \\frac{\\mathrm{rmsprop}\\left[\\Delta\\theta\\right]_{t-1}}{\\mathrm{rmsprop}\\left[g_t\\right]}g_t"
@@ -1412,8 +1409,6 @@ function model_to_latex () {
 				"\\theta": default_vars["theta"],
 			}
 		},
-		*/
-		/*
 		"adamax": {
 			"equations": [
 				"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}"
@@ -1426,8 +1421,6 @@ function model_to_latex () {
 				}
 			}
 		},
-		*/
-		/*
 		"rmsprop": {
 			"equations": [
 				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{E\\left[g²\\right]+\\epsilon}}"
@@ -1439,8 +1432,6 @@ function model_to_latex () {
 				"\\epsilon": default_vars["epsilon"]
 			}
 		},
-		*/
-		/*
 		"adam": {
 			"equations": [
 				"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{\\hat{v}}+\\epsilon}\\hat{m}"
@@ -1454,7 +1445,6 @@ function model_to_latex () {
 				"\\epsilon": default_vars["epsilon"]
 			}
 		}
-		*/
 	};
 
 	var layer_data = get_layer_data();
@@ -1711,9 +1701,9 @@ function model_to_latex () {
 
 		if(this_optimizer.variables) {
 			var varnames = Object.keys(this_optimizer.variables);
-			log("a", this_optimizer.variables);
+			//log("a", this_optimizer.variables);
 			for (var m = 0; m < varnames.length; m++) {
-				log("b", this_optimizer.variables[varnames[m]]);
+				//log("b", this_optimizer.variables[varnames[m]]);
 				var thisvarname = varnames[m];
 				if(!m) {
 					str += "<h3>Variables and definitions:</h3>\n";

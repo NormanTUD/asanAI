@@ -203,8 +203,32 @@ async function run_tests () {
 
 	tf.engine().endScope();
 
+	/* Test Training Logic */
 
-	/* Test Training */
+	$("#dataset_category").val("classification").trigger("change");
+	await delay(2000);
+	$("#dataset").val("and_xor").trigger("change");
+	await delay(2000);
+	$("#model_dataset").val("and").trigger("change");
+	await delay(2000);
+
+	await set_epochs(1);
+
+	await train_neural_network();	
+
+	var result_and = await model.predict(tf.tensor([0, 0]));
+	test_equal("0 and 0", result_and.toString().startsWith("0.0"), true)
+
+	result_and = await model.predict(tf.tensor([0, 1]));
+	test_equal("0 and 1", result_and.toString().startsWith("0.0"), true)
+
+	result_and = await model.predict(tf.tensor([0, 0]));
+	test_equal("0 and 0", result_and.toString().startsWith("0.0"), true)
+
+	result_and = await model.predict(tf.tensor([1, 1]));
+	test_equal("1 and 1", result_and.toString().startsWith("0.9"), true)
+
+	/* Test Training images */
 
 	$("#dataset_category").val("image").trigger("change");
 	await delay(2000);
