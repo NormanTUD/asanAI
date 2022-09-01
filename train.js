@@ -212,7 +212,7 @@ function get_fit_data () {
 		if($("#jump_to_training_tab").is(":checked")) {
 			show_tab_label("tfvis_tab_label", 1);
 		} else {
-			show_tab_label("tfvis_tab_label");
+			show_tab_label("tfvis_tab_label", 0);
 		}
 
 	};
@@ -481,11 +481,12 @@ async function run_neural_network () {
 		$("#plotly_epoch_history").parent().hide();
 		$("#plotly_epoch_history").html("");
 
+		//if($("#data_origin").val() == "default") {
+		//	show_tab_label("training_data_tab_label", 1);
+		//}
+
 		if($("#jump_to_training_tab").is(":checked")) {
 			show_tab_label("tfvis_tab_label");
-			if($("#data_origin").val() == "default") {
-				show_tab_label("training_data_tab_label", 1);
-			}
 		}
 
 		try {

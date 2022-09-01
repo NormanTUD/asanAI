@@ -3082,10 +3082,10 @@ async function change_data_origin() {
 		$("#max_number_of_files_per_category").val(0);
 	}
 
-	hide_tab_label("own_tensor_data_label");
 	hide_tab_label("training_data_tab_label");
-	hide_tab_label("own_image_data_label");
 	hide_tab_label("own_csv_data_label");
+	hide_tab_label("own_image_data_label");
+	hide_tab_label("own_tensor_data_label");
 
 	if (show_own_image_data) {
 		show_tab_label("own_image_data_label", 1);
@@ -3099,14 +3099,17 @@ async function change_data_origin() {
 		show_tab_label("own_tensor_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
+		$("#metric").val(config["metric"]);
 	} else if (show_own_csv_data) {
 		show_tab_label("own_csv_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
+		$("#metric").val(config["metric"]);
 	} else {
 		show_tab_label("training_data_tab_label");
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
+		$("#metric").val(config["metric"]);
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
