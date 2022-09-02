@@ -2,6 +2,7 @@
 
 var num_tests = 0;
 var num_tests_failed = 0;
+var mem_history = [];
 
 function test_not_equal (name, is, should_be) {
 	num_tests++;
@@ -49,7 +50,23 @@ function test_summary () {
 	}
 }
 
+function log_test (name) {
+	log("Test-name: " + name)
+
+	var current_mem = get_mem();
+	if(mem_history.length) {
+		var last_num_tensors = mem_history[mem_history.length - 1]["numTensors"];
+		var this_num_tensors = current_mem["numTensors"];
+		if(this_num_tensors > last_num_tensors) {
+			console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors);
+		}
+	}
+
+	mem_history.push(current_mem);
+}
+
 async function run_tests () {
+	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
 	test_equal("test ok", 1, 1);
 	test_not_equal("test not equal", 1, 2);
@@ -61,6 +78,7 @@ async function run_tests () {
 
 	tf.engine().startScope();
 
+	log_test("Tensor functions");
 	var test_tensor = tf.tensor([1,2,3]);
 
 	test_equal("tensor_print_to_string(tf.tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]")
@@ -71,7 +89,9 @@ async function run_tests () {
 	test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array('[1,2,3]'), [1,2,3]);
 	test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array('[1,2,3,5]'), [1,2,3,5]);
 
+	dispose(test_tensor);
 
+	log_test("GUI functions");
 	var example_div = $("<div id='example_test_div' />").appendTo($("body"));
 
 	test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($('#example_test_div')), false);
@@ -106,6 +126,7 @@ async function run_tests () {
 	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
 
 
+	log_test("Math mode");
 	var cookie_theme = getCookie("theme");
 	var darkmode = 0;
 	if(cookie_theme == "darkmode") {
@@ -157,6 +178,7 @@ async function run_tests () {
 		}
 	}
 
+	log_test("Layer checks");
 	test_equal('heuristic_layer_possibility_check(0, "flatten")', heuristic_layer_possibility_check(0, "flatten"), false);
 	test_equal('heuristic_layer_possibility_check(0, "dense")', heuristic_layer_possibility_check(0, "dense"), true);
 
@@ -176,7 +198,7 @@ async function run_tests () {
 
 	tf.engine().endScope();
 
-	/* Test Training Logic */
+	log_test("Test Training Logic");
 
 	$("#dataset_category").val("classification").trigger("change");
 	await delay(2000);
@@ -201,7 +223,7 @@ async function run_tests () {
 	result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
 	test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
 	
-	/* Add Layer */
+	log_test("Add layer");
 
 	var old_number_of_layers = $(".layer_setting").length;
 	$($(".add_layer")[0]).click();
@@ -213,7 +235,7 @@ async function run_tests () {
 
 	delay(2000);
 
-	/* Train on CSV */
+	log_test("Train on CSV")
 
 	set_epochs(50);
 
@@ -230,7 +252,7 @@ async function run_tests () {
 	res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
 	test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
 
-	/* Test Training images */
+	log_test("Test Training images");
 
 	$("#dataset_category").val("image").trigger("change");
 	await delay(2000);
@@ -284,4 +306,8 @@ async function run_tests () {
 	}
 
 	test_summary();
+
+	log_test("Tests ended");
+
+	return num_tests_failed;
 }

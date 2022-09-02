@@ -169,12 +169,12 @@ function toggle_memory_debug () {
 	$("#tensor_number_debugger").html("").hide();
 }
 
-function log_num_tensors () {
-	log(tf.memory()["numTensors"]);
+function log_mem () {
+	log("=====================");
+	log("Number of tensors: " + tf.memory()["numTensors"]);
+	log("MB in RAM:" + (tf.memory().numBytes / (1024*1024)) + "MB");
 }
 
-function log_num_tensors_header () {
-	console.clear();
-	log("=====================");
-	log_num_tensors();
+function get_mem () {
+	return tf.memory();
 }
