@@ -71,6 +71,7 @@ function log_test (name) {
 }
 
 async function run_tests () {
+	mem_history = [];
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
 	test_equal("test ok", 1, 1);
