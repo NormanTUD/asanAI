@@ -43,7 +43,7 @@ var loadFile = (function(event) {
 });
 
 let predict_demo = async function (item, nr) {
-	tf.engine().startScope();
+	//tf.engine().startScope();
 
 	try {
 		if(labels.length == 0) {
@@ -53,7 +53,10 @@ let predict_demo = async function (item, nr) {
 		$(item).prop("width", width);
 		$(item).prop("height", height);
 
-		let tensor_img = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
+		let tensor_img = tf.tidy(() => {
+
+			return tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims()
+		});
 
 		if($("#divide_by").val() != 1) {
 			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
