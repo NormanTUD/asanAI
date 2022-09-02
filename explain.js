@@ -396,6 +396,10 @@ function group_layers (layers) {
                 {
 			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
 			"name": "Relia&shy;bility for real data"
+		},
+		{
+			"re": "(DebugLayer)+",
+			"name": "Debugger"
 		}
         ];
 
@@ -1753,6 +1757,8 @@ function model_to_latex () {
 		} else if (this_layer_type == "dropout") {
 			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+		} else if (this_layer_type == "DebugLayer") {
+			str += "The debug layer does nothing to the data, but just prints it out to the developers console."
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
@@ -1796,7 +1802,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization"];
+		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization", "DebugLayer"];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false

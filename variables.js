@@ -455,7 +455,7 @@ var layer_options = {
 			"stddev", "dtype"
 		],
 		"category": "Noise"
-	}
+	},
 
 	/*
 	,"zeroPadding2d": {
@@ -466,6 +466,13 @@ var layer_options = {
 		"category": "Padding"
 	}
 	*/
+	"DebugLayer": {
+		"description": "Log internal state of the data to the developers console. Does nothing to the data itself.",
+		"options": [
+		],
+		"category": "Debug",
+		"custom": 1
+	}
 };
 
 var model_data_structure = {

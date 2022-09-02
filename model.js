@@ -604,7 +604,11 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		try {
-			new_model.add(tf.layers[type](data));
+			if(layer_options[type]["custom"]) {
+				eval("new_model.add(new " + type + "(data))");
+			} else {
+				new_model.add(tf.layers[type](data));
+			}
 			set_layer_background(i, "");
 		} catch (e) {
 			if(!fake_model_structure) {

@@ -81,6 +81,7 @@ $GLOBALS['minify'] = 0;
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
+		<?php minify_js("custom.js"); ?>
 		<script>
 			var force_cpu_backend = 0;
 
