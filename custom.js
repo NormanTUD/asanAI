@@ -20,7 +20,7 @@ class DebugLayer extends tf.layers.Layer {
 	 * This is where the weights (if any) are created.
 	 */
 	build(inputShape) {
-		this.x = this.addWeight('x', [], 'float32', tf.initializers.ones());
+		//this.x = this.addWeight('x', [], 'float32', tf.initializers.ones());
 	}
 
 	/**
@@ -45,7 +45,7 @@ class DebugLayer extends tf.layers.Layer {
 	 */
 	getConfig() {
 		const config = super.getConfig();
-		Object.assign(config, {alpha: this.alpha});
+		//Object.assign(config, {alpha: this.alpha});
 		return config;
 	}
 
