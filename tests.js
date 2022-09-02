@@ -1,5 +1,6 @@
 "use strict";
 
+var expect_memory_leak = "";
 var num_tests = 0;
 var num_tests_failed = 0;
 var mem_history = [];
@@ -51,18 +52,22 @@ function test_summary () {
 }
 
 function log_test (name) {
-	log("Test-name: " + name)
-
 	var current_mem = get_mem();
 	if(mem_history.length) {
 		var last_num_tensors = mem_history[mem_history.length - 1]["numTensors"];
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
-			console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors);
+			if(!expect_memory_leak) {
+				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors);
+			} else {
+				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ", but this is to be expected, since " + expect_memory_leak);
+			}
 		}
 	}
 
 	mem_history.push(current_mem);
+
+	log("Test-name: " + name)
 }
 
 async function run_tests () {
@@ -235,7 +240,9 @@ async function run_tests () {
 
 	delay(2000);
 
+	expect_memory_leak = "a new layer was added";
 	log_test("Train on CSV")
+	expect_memory_leak = "";
 
 	set_epochs(50);
 
