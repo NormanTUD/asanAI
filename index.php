@@ -1630,14 +1630,6 @@ $GLOBALS['minify'] = 0;
 
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
-				if(!has_webgl) {
-					return;
-				}
-
-				if(force_cpu_backend) {
-					return;
-				}
-
 				seed = 1;
 				var architecture = [];
 				var architecture2 = [];
