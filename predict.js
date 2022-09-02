@@ -513,7 +513,15 @@ async function predict_handdrawn () {
 		return;
 	}
 	tf.tidy(() => {
-		var predictions = model.predict(tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [width, height]).expandDims()).arraySync();
+		var img = tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [width, height]).expandDims();
+
+		var divide_by = parseFloat($("#divide_by").val());
+
+		if(divide_by != 1) {
+			img = tf.divNoNan(img, divide_by);
+		}
+
+		var predictions = model.predict(img).arraySync();
 
 		var handdrawn_predictions = $("#handdrawn_predictions");
 		handdrawn_predictions.html("");
