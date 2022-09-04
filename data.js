@@ -460,7 +460,7 @@ async function get_xs_and_ys () {
 				}
 
 				x = tf.tensor(x);
-				y = tf.tensor(y).expandDims();
+				y = tf.tensor(y).expandDims(); // Bleibt leer, wird in categoricalCrossentropy gefüllt
 
 				l("Done generating data from images");
 
