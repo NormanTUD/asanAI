@@ -376,7 +376,7 @@ async function predict_webcam () {
 		return;
 	}
 
-	if(is_hidden_or_has_hidden_parent($("#webcam_prediction"))) {
+	if(is_hidden_or_has_hidden_parent($("#webcam"))) {
 		return;
 	}
 
