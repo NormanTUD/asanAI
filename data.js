@@ -455,6 +455,8 @@ async function get_xs_and_ys () {
 					}
 				}
 
+				tf.util.shuffleCombo(x, classes);
+
 				x = tf.tensor(x);
 				y = tf.tensor(y).expandDims();
 
