@@ -376,6 +376,10 @@ async function predict_webcam () {
 		return;
 	}
 
+	if(is_hidden_or_has_hidden_parent($("#webcam_prediction))) {
+		return;
+	}
+
 	tf.engine().startScope();
 
 	var predict_data = await cam.capture();
