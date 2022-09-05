@@ -1758,7 +1758,7 @@ function model_to_latex () {
 			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
-			str += "The debug layer does nothing to the data, but just prints it out to the developers console."
+			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
