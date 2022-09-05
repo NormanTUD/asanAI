@@ -2021,6 +2021,8 @@ $GLOBALS['minify'] = 0;
 			load_time = Date().toLocaleString();
 
 			set_mode();
+
+			console.log("%c Hallo Hackerkumpan! Ich mags, dass du wissen willst, was du hier alles tun kannst. Leider habe ich aber grade gar keine Zeit für Dokumentationen. Probiere dich ruhig aus, aber wenn du etwas findest, das uns schaden könnte, mache eine responsible disclosure und du bekommst unseren offenen Dank und unsere offene Anerkennung. Also bau bitte keinen scheiß, wenn du es vermeiden kannst.", 'background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet); color: black;');
 		</script>
 	</body>
 </html>
