@@ -456,5 +456,7 @@ $(document).ready(async function() {
 	});
 	l("Done installing change handlers on optimizer_metadata_input");
 
+	alter_text_webcam_series();
+
 	l("Site is ready");
 });
