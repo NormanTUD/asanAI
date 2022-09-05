@@ -3184,7 +3184,7 @@ function last_shape_layer_warning() {
 
 function alter_text_webcam_series () {
 	var number = parseInt($("#number_of_series_images").val())
-	var delaybetween = parseInt($("#delay_between_images_in_series").val())
+	var delaybetween = parseFloat($("#delay_between_images_in_series").val())
 
 	$(".webcam_series_button").html("&#128248; Take " + number + " images from webcam (" + delaybetween + "s apart)");
 
