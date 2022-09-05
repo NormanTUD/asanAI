@@ -3042,6 +3042,7 @@ async function change_data_origin() {
 			show_own_image_data = 1;
 			show_images_per_category = 1;
 			set_input_shape("[" + width + ", " + height + ", 3]");
+			$("#max_number_of_files_per_category").val(0).trigger("change");
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_origin").val() == "csv") {
