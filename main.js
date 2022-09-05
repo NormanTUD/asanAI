@@ -457,6 +457,7 @@ $(document).ready(async function() {
 	l("Done installing change handlers on optimizer_metadata_input");
 
 	alter_text_webcam_series();
+	$("#webgl_backend").prop("checked", true).trigger("change");
 
 	l("Site is ready");
 });
