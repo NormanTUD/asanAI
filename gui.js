@@ -4315,6 +4315,13 @@ function l(msg) {
 	}
 }
 
+async function set_custom_image_training () {
+	if($("#data_origin").val() != "image") {
+		$("#data_origin").val("image").trigger("change");
+	}
+}
+
+
 async function set_custom_webcam_training_data() {
 	await init_webcams();
 
