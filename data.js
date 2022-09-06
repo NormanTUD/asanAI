@@ -301,7 +301,9 @@ async function get_xs_and_ys () {
 						category_counter++;
 					}
 
-					//this_data = shuffle(this_data);
+					if($("#shuffle_data").is(":checked")) {
+						this_data = shuffle(this_data);
+					}
 
 					for (var i = 0; i < this_data.length; i++) {
 						var item = this_data[i]["item"];
