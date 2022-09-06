@@ -1235,23 +1235,35 @@ function _get_h (i) {
 	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
 }
 
-function array_to_latex_matrix (array) { // TODO color
-	var str = "\\begin{pmatrix}\n";
-	for (var i = 0; i < array.length; i++) {
-		if(typeof(array[i]) == "object") {
-			for (var k = 0; k < array[i].length; k++) {
-				if(k == array[i].length - 1) {
-					str += array[i][k] + "\\\\\n";
-				} else {
-					str += array[i][k] + " & ";
-				}
-			}
-		} else {
-			str += array[i] + "\\\\\n";
-		}
-	}
-	str += "\\end{pmatrix}\n"
-	return str;
+function array_to_latex_matrix (array, level=0) { // TODO color
+        var base_tab = "";
+        for (var i = 0; i < level; i++) {
+                base_tab += "\t";
+        }
+        var str = base_tab + "\\begin{pmatrix}\n";
+        if(typeof(array) == "object") {
+                for (var i = 0; i < array.length; i++) {
+                        if(typeof(array[i]) == "object") {
+                                for (var k = 0; k < array[i].length; k++) {
+                                        if(typeof(array[i][k]) == "object") {
+                                                str += array_to_latex_matrix(array[i][k], level + 1);
+                                        } else {
+                                                if(k == array[i].length - 1) {
+                                                        str += base_tab + "\t" + array[i][k] + "\\\\\n";
+                                                } else {
+                                                        str += base_tab + "\t" + array[i][k] + " & ";
+                                                }
+                                        }
+                                }
+                        } else {
+                                str += base_tab + "\t" + array[i] + "\\\\\n";
+                        }
+                }
+        } else {
+                str += base_tab + "\t" + array + "\n";
+        }
+        str += base_tab + "\\end{pmatrix}\n"
+        return str;
 }
 
 function model_to_latex () {
