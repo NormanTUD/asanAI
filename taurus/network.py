@@ -55,3 +55,7 @@ model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
 model.summary()
 
 model.fit(get_x_np(d), get_y_np(d), epochs=m["epochs"])
+
+import json
+weights_list = model.get_weights()
+print json.dumps(weights_list.tolist())
