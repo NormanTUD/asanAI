@@ -21,6 +21,7 @@ def json_file_to_np (filename):
 
 j = json_file_to_np("data.json")
 d = j["data"]
+m = j["model_data"]
 
 def get_x_np(d):
     return np.squeeze(np.array([json.loads(d)["x"]]), 0)
