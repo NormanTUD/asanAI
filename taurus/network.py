@@ -29,6 +29,17 @@ def get_x_np(d):
 def get_y_np(d):
     return np.squeeze(np.array([json.loads(d)["y"]]), 0)
 
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
 #dier(get_x_np(d).shape)
 #dier(json_file_to_np("data.json"))
 
