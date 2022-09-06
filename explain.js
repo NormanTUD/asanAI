@@ -748,11 +748,11 @@ function draw_internal_states (layer, inputs, applied) {
 
 			if(canvas_output.length && canvas_input.length) {
 				for (var j = 0; j < canvas_input.length; j++) {
-					var img_input = '<img alt="Layer ' + layer + ', input: ' + j + '" src="' + canvas_input[j].toDataURL() + '" />';
+					var img_input = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', input: ' + j + '" src="' + canvas_input[j].toDataURL() + '" />';
 					for (var i = 0; i < canvas_output.length; i++) {
-						var img_output = '<img alt="Layer ' + layer + ', output: ' + j + '" src="' + canvas_output[i].toDataURL() + '" />';
+						var img_output = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', output: ' + j + '" src="' + canvas_output[i].toDataURL() + '" />';
 						if(Object.keys(canvas_kernel).includes(i + '')) {
-							var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
+							var img_kernel = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
 							input.append(img_input).show();
 							kernel.append(img_kernel).show();
 							output.append(img_output).show();
@@ -764,11 +764,11 @@ function draw_internal_states (layer, inputs, applied) {
 					}
 				}
 			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-				var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_input.toDataURL() + '" />';
+				var img_input = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', output" src="' + canvas_input.toDataURL() + '" />';
 				for (var i = 0; i < canvas_output.length; i++) {
-					var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
+					var img_output = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
 					if(Object.keys(canvas_kernel).includes(i + '')) {
-						var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
+						var img_kernel = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
 						kernel.append(img_kernel).show();
 						output.append(img_output).show();
 					} else {
@@ -779,9 +779,9 @@ function draw_internal_states (layer, inputs, applied) {
 				}
 			} else {
 				if(canvas_input.nodeName == "CANVAS") {
-					var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_output.toDataURL() + '" />';
+					var img_input = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', output" src="' + canvas_output.toDataURL() + '" />';
 					if(canvas_output.nodeName == "CANVAS") {
-						var img_output = '<img alt="Layer ' + layer + ', input" src="' + canvas_output.toDataURL() + '" />';
+						var img_output = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', input" src="' + canvas_output.toDataURL() + '" />';
 						input.append(img_input).show();
 						output.append(img_output).show();
 					} else {

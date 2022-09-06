@@ -535,3 +535,7 @@ button:disabled:hover {
 .full_width_hr {
 	width: 100%;
 }
+
+.layer_data_flow_item {
+	margin: 3px;
+}
