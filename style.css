@@ -539,3 +539,8 @@ button:disabled:hover {
 .layer_data_flow_item {
 	margin: 3px;
 }
+
+.best_result {
+	background-color: green;
+	color: white;
+}

@@ -99,7 +99,7 @@ let predict_demo = async function (item, nr) {
 					var probability = predictions[i];
 					var str = label + ": " + probability + "<br>\n";
 					if(i == max_i && show_green) {
-						str = "<b style='color: green'>" + str + "</b>";
+						str = "<b class='best_result'>" + str + "</b>";
 					}
 					fullstr += str;
 				}
@@ -544,13 +544,13 @@ async function predict_handdrawn () {
 			var label = labels[i % labels.length];
 			if(label) {
 				if(predictions[0][i] == max) {
-					html += "<b style='color: green'>" + label + ": " + predictions[0][i] + "</b>\n";
+					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b>\n";
 				} else {
 					html += label + ": " + predictions[0][i] + "\n";
 				}
 			} else {
 				if(predictions[0][i] == max) {
-					html += "<b style='color: green'>" + predictions[0][i] + "</b>\n";
+					html += "<b class='best_result'>" + predictions[0][i] + "</b>\n";
 				} else {
 					html += predictions[0][i] + "<br>\n";
 				}
