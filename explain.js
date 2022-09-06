@@ -721,10 +721,12 @@ function draw_internal_states (layer, inputs, applied) {
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+			layer_div.append("<div style='display: none' id='layer_" + layer + "_equations'><h4>Raw Data:</h4></div>");
 
 			var input = $("#layer_" + layer + "_input");
 			var kernel = $("#layer_" + layer + "_kernel");
 			var output = $("#layer_" + layer + "_output");
+			var equations = $("#layer_" + layer + "_equations");
 
 			show_tab_label('layer_visualizations_tab_label');
 			if($('#header_layer_visualization_' + layer).length == 0) {
@@ -788,13 +790,20 @@ function draw_internal_states (layer, inputs, applied) {
 						input.append(img_input).show();
 					}
 				} else {
-					//log(canvas_output);
+					//log(input_data);
+					if(layer == 0) {
+						equations.append("$$ " + array_to_latex_matrix(input_data) + "$$").show();
+					}
+
+					equations.append("$$ " + array_to_latex_matrix(output_data) + "$$").show();
 				}
 			}
 		} else {
 			//log("layers_can_be_visualized is " + layers_can_be_visualized());
 		}
 	}
+
+	MathJax.typeset();
 }
 
 function zoom_kernel_images (kernel_image_zoom) {
