@@ -713,12 +713,14 @@ function draw_internal_states (layer, inputs, applied) {
 		//log("batchnr: " + batchnr);
 		var output_data = applied.arraySync()[batchnr];
 		var layer_div = $($(".layer_data")[layer]);
+		if(batchnr == 0) {
+			layer_div.append("<h1>Layer data flow</h1>");
+		}
 		layer_div.html('<h3>Layer ' + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 		var input_data = inputs[0].arraySync()[batchnr];
 
 		if(layers_can_be_visualized()) {
 			layer_div.show();
-			layer_div.append("<h1>Layer data flow</h1>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
