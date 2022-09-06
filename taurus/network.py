@@ -56,6 +56,8 @@ model.summary()
 
 model.fit(get_x_np(d), get_y_np(d), epochs=m["epochs"])
 
-import json
-weights_list = model.get_weights()
-print json.dumps(weights_list.tolist())
+weights_list = np.array(model.get_weights()).tolist()
+
+f = open("weights.json", "a")
+f.write(json.dumps(weights_list, cls=NpEncoder))
+f.close()
