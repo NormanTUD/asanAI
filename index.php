@@ -800,11 +800,6 @@ $GLOBALS['minify'] = 0;
 											<td>Max. nr. of images (0 = no limit):</td>
 											<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
 										</tr>
-
-										<tr>
-											<td>Show while predicting:</td>
-											<td><input type="checkbox" value=1 checked id="show_while_predicting" ></td>
-										</tr>
 									</table>
 								</div>
 							</div>

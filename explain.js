@@ -732,7 +732,7 @@ function draw_internal_states (layer, inputs, applied) {
 			$("#layer_visualizations_tab").show();
 
 			if($('#header_layer_visualization_' + layer).length == 0) {
-				html = html + "<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>";
+				layer_div.append("<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>");
 			}
 
 			var kernel_data = [];
