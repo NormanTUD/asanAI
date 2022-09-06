@@ -141,6 +141,7 @@ async function get_image_data(skip_real_image_download) {
 
 	$("#data_loading_progress_bar").show();
 	$("#data_progressbar").css("display", "inline-block");
+
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
@@ -178,6 +179,7 @@ async function get_image_data(skip_real_image_download) {
 
 		times.push(end_time - start_time);
 	}
+
 	$("#data_progressbar").css("display", "none");
 	$("#data_loading_progress_bar").hide();
 
@@ -284,6 +286,7 @@ async function get_xs_and_ys () {
 			var category_counter = 0;
 
 			if(category == "image") {
+				$("#photos").html("");
 				let imageData = await get_image_data(0);
 
 				reset_labels();
@@ -303,8 +306,6 @@ async function get_xs_and_ys () {
 				if($("#shuffle_data").is(":checked")) {
 				//	this_data = shuffle(this_data);
 				}
-
-				log("!!!A");
 
 				for (var i = 0; i < this_data.length; i++) {
 					var item = this_data[i]["item"];
