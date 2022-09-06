@@ -54,4 +54,4 @@ model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
 
 model.summary()
 
-model.fit(get_x_np(d), get_y_np(d))
+model.fit(get_x_np(d), get_y_np(d), epochs=m["epochs"])
