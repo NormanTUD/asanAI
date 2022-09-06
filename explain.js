@@ -712,14 +712,21 @@ function draw_internal_states (layer, inputs, applied) {
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		//log("batchnr: " + batchnr);
 		var output_data = applied.arraySync()[batchnr];
-		$($(".layer_data")[layer]).html('');
+		var layer_div = $($(".layer_data")[layer]);
+		layer_div.html('<h3>Layer ' + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 		var input_data = inputs[0].arraySync()[batchnr];
 
 		if(layers_can_be_visualized()) {
-			var layer_div = $($(".layer_data")[layer]);
 			layer_div.show();
+			layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+			layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
+			layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+
+			var input = $("#layer_" + layer + "_input");
+			var kernel = $("#layer_" + layer + "_kernel");
+			var output = $("#layer_" + layer + "_output");
+
 			show_tab_label('layer_visualizations_tab_label');
-			var html = $($(".layer_data")[layer]).html("");
 			if($('#header_layer_visualization_' + layer).length == 0) {
 				html = html + "<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>";
 			}
@@ -746,11 +753,13 @@ function draw_internal_states (layer, inputs, applied) {
 						var img_output = '<img alt="Layer ' + layer + ', output: ' + j + '" src="' + canvas_output[i].toDataURL() + '" />';
 						if(Object.keys(canvas_kernel).includes(i + '')) {
 							var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
-							layer_div.append("<span>Layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+							input.append(img_input).show();
+							kernel.append(img_kernel).show();
+							output.append(img_output).show();
 						} else {
 							//log(canvas_kernel);
 							//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-							layer_div.append("<span>layer " + layer + ", neuron " + j + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+							output.append(img_output).show();
 						}
 					}
 				}
@@ -760,10 +769,12 @@ function draw_internal_states (layer, inputs, applied) {
 					var img_output = '<img alt="Layer ' + layer + ', output: ' + i + '" src="' + canvas_output[i].toDataURL() + '" />';
 					if(Object.keys(canvas_kernel).includes(i + '')) {
 						var img_kernel = '<img alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
-						layer_div.append("<span>layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + " * " + img_kernel + "</span> = " + img_output + "</span><br>");
+						kernel.append(img_kernel).show();
+						output.append(img_output).show();
 					} else {
 						//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-						layer_div.append("<span>layer" + layer + ", neuron: " + i +  "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+						input.append(img_input).show();
+						output.append(img_output).show();
 					}
 				}
 			} else {
@@ -771,9 +782,10 @@ function draw_internal_states (layer, inputs, applied) {
 					var img_input = '<img alt="Layer ' + layer + ', output" src="' + canvas_output.toDataURL() + '" />';
 					if(canvas_output.nodeName == "CANVAS") {
 						var img_output = '<img alt="Layer ' + layer + ', input" src="' + canvas_output.toDataURL() + '" />';
-						layer_div.append("<span>layer " + layer + ", neuron " + i + "<span class='fenced'>" + img_input + "</span> = " + img_output + "</span><br>");
+						input.append(img_input).show();
+						output.append(img_output).show();
 					} else {
-						layer_div.append("<span>layer" + layer + ", neuron " + i + "<span class='fenced'>" + img_input + "</span></span><br>");
+						input.append(img_input).show();
 					}
 				} else {
 					//log(canvas_output);
