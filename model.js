@@ -1005,6 +1005,35 @@ async function set_weights_from_string (string, no_warning, no_error, m) {
 	return set_weights_from_json_object(json, no_warning, no_error, m);
 }
 
+async function get_weights_as_json (m) {
+	if(!m) {
+		m = model;
+	}
+
+	if(!m) {
+		return false;
+	}
+
+	if(m) {
+		var weights = await m.getWeights();
+
+		var weights_array = [];
+
+		for (var i = 0; i < weights.length; i++) {
+			if(!weights[i].isDisposed) {
+				try {
+					weights_array[i] = weights[i].arraySync();
+				} catch (e) {}
+			}
+		}
+
+		return weights_array;
+	} else {
+		return false;
+	}
+}
+
+
 async function get_weights_as_string (m) {
 	if(!m) {
 		m = model;
