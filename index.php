@@ -1076,6 +1076,7 @@ $GLOBALS['minify'] = 0;
 									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
 									<li><a id="own_image_data_label" href="#own_image_data">Own images</a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensors</a></li>
+									<li><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
 									<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV</a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
@@ -1217,6 +1218,9 @@ $GLOBALS['minify'] = 0;
 								</div>
 							</div>
 
+							<div id="layer_visualizations_tab">
+							</div>
+
 							<div id="visualization_tab">
 								<ul class="navi_list">
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
@@ -1225,7 +1229,6 @@ $GLOBALS['minify'] = 0;
 									<li><a href="#math_tab" onclick="write_model_to_latex_to_page(0, 1);" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
-									<li style="display: none"><a href="#layer_visualizations_tab" id="layer_visualizations_tab_label" style="display: none">Layer Visualizations</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 									<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 								</ul>
@@ -1241,9 +1244,6 @@ $GLOBALS['minify'] = 0;
 									<button onclick='reset_view()'>Reset view</button>
 									<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 									<button onclick="restart_lenet(1)">Restart LeNet</button>
-								</div>
-
-								<div id="layer_visualizations_tab">
 								</div>
 
 								<div id="fcnn_tab">

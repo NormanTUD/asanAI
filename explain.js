@@ -712,7 +712,7 @@ function draw_internal_states (layer, inputs, applied) {
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		//log("batchnr: " + batchnr);
 		var output_data = applied.arraySync()[batchnr];
-		//$($(".layer_data")[layer]).html('');
+		$($(".layer_data")[layer]).html('');
 		var input_data = inputs[0].arraySync()[batchnr];
 
 		if(layers_can_be_visualized()) {
