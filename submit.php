@@ -95,7 +95,10 @@
 
 			$model_hash = hash("md5", $model_json_content.$model_weights_bin_content);
 			
-			system(ssh_taurus("mkdir -p asanai/$model_hash/"));
+			$maindir = "/home/scads/asanai/$model_hash/";
+			system(ssh_taurus("mkdir -p $maindir"));
+			system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.json scads@taurus.hrsk.tu-dresden.de://$maindir");
+			system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.weights.bin scads@taurus.hrsk.tu-dresden.de://$maindir");
 		} else {
 			die("model_weights_bin not in files");
 		}
