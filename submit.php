@@ -79,42 +79,33 @@
                 }
 
                 closedir($directory);
-        }
+	}
 
+	function is_json($string,$return_data = false) {
+		$data = json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE) ? ($return_data ? $data : TRUE) : FALSE;
+	}
+
+	# mkdir ../tmp
+	# chmod -R 0777 ../tmp
+
+	$basepath = realpath(dirname(__FILE__));
 
 	if(array_key_exists("data", $_POST)) {
-		$json = json_decode($_POST["data"], true);
-
-		$model = $json["model"];
-		$fit_data = $json["fit_data"];
-		$model_data = $json["model_data"];
-		$weights = $json["weights"];
-		$data = $json["data"];
-		dier($json);
-	}
-
-	if(array_key_exists("model_json", $_FILES)) {
-		if(array_key_exists("model_weights_bin", $_FILES)) {
-			$model_json_content = file_get_contents($_FILES["model_json"]["tmp_name"]);
-			$model_weights_bin_content = file_get_contents($_FILES["model_weights_bin"]["tmp_name"]);
-			
-			#dier($_FILES);
-
-			$tmp = tempdir();
-			recurseCopy("./test/", "/$tmp/");
-			file_put_contents("/$tmp/model.json", $model_json_content);
-			file_put_contents("/$tmp/model.weights.bin", $model_weights_bin_content);
-
-			$model_hash = hash("md5", $model_json_content.$model_weights_bin_content);
-			
-			$maindir = "/home/scads/asanai/$model_hash/";
-			system(ssh_taurus("mkdir -p $maindir"));
-			system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.json scads@taurus.hrsk.tu-dresden.de://$maindir");
-			system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.weights.bin scads@taurus.hrsk.tu-dresden.de://$maindir");
+		$json = $_POST["data"];
+		if(is_json($json)) {
+			$md5 = hash("md5", $json);
+			$tmp = "$basepath/../tmp/$md5";
+			system("mkdir $tmp");
+			recurseCopy("$basepath/taurus/", "$tmp");
+			die($tmp);
+			die("OK");
 		} else {
-			die("model_weights_bin not in files");
+			die("KEIN JSON");
 		}
-	} else {
-		die("model_json not in files");
+
 	}
+
+	#system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.json scads@taurus.hrsk.tu-dresden.de://$maindir");
+	#system("scp -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 /$tmp/model.weights.bin scads@taurus.hrsk.tu-dresden.de://$maindir");
 ?>
