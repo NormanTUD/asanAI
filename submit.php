@@ -17,11 +17,15 @@
         }
 
         function tempdir() {
-                $tempfile=tempnam(sys_get_temp_dir(), '');
+                $tempfile = tempnam(sys_get_temp_dir(), '/');
                 // tempnam creates file on disk
-                if (file_exists($tempfile)) { unlink($tempfile); }
+		if (file_exists($tempfile)) {
+			unlink($tempfile);
+		}
                 mkdir($tempfile);
-                if (is_dir($tempfile)) { return $tempfile; }
+		if (is_dir($tempfile)) {
+			return $tempfile;
+		}
         }
 
         function recurseCopy(
@@ -77,7 +81,15 @@
 		if(array_key_exists("model_json", $_FILES)) {
 			$model_json_content = file_get_contents($_FILES["model_json"]["tmp_name"]);
 			$model_weights_bin_content = file_get_contents($_FILES["model_weights_bin"]["tmp_name"]);
-			dier($_FILES);
+			
+			#dier($_FILES);
+
+			$tmp = tempdir();
+			recurseCopy("test", $tmp);
+			file_put_contents("/$tmp/model.json", $model_json_content);
+			file_put_contents("/$tmp/model.weights.bin", $model_weights_bin_content);
+
+			die($tmp);
 		} else {
 			die("model_weights_bin not in files");
 		}
