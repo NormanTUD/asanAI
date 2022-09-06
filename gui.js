@@ -4527,3 +4527,9 @@ function download(filename, text) {
 async function download_current_data_as_json () {
 	download("data.json", JSON.stringify(await get_x_y_as_array())) 
 }
+
+async function save_model_and_data_and_copy_to_taurus () {
+	model.setUserDefinedMetadata({"data": await get_x_y_as_array()});
+	var saveResult = await model.save('http://localhost/tf/submit.php'); 
+	return saveResult;
+}

@@ -81,8 +81,9 @@
                 closedir($directory);
         }
 
+			dier($_FILES);
 	if(array_key_exists("model_json", $_FILES)) {
-		if(array_key_exists("model_json", $_FILES)) {
+		if(array_key_exists("model_weights_bin", $_FILES)) {
 			$model_json_content = file_get_contents($_FILES["model_json"]["tmp_name"]);
 			$model_weights_bin_content = file_get_contents($_FILES["model_weights_bin"]["tmp_name"]);
 			
