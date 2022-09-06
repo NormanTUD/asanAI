@@ -755,7 +755,9 @@ function draw_internal_states (layer, inputs, applied) {
 						var img_output = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', output: ' + j + '" src="' + canvas_output[i].toDataURL() + '" />';
 						if(Object.keys(canvas_kernel).includes(i + '')) {
 							var img_kernel = '<img class="layer_data_flow_item" alt="Layer ' + layer + ', kernel: ' + i + '" src="' + canvas_kernel[i].toDataURL() + '" />';
-							input.append(img_input).show();
+							if(layer == 0) {
+								input.append(img_input).show();
+							}
 							kernel.append(img_kernel).show();
 							output.append(img_output).show();
 						} else {
