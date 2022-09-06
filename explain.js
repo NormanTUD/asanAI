@@ -1509,57 +1509,6 @@ function model_to_latex () {
 
 	var activation_string = "";
 	var str = "";
-
-	var optimizer = $("#optimizer").val();
-	if(Object.keys(optimizer_equations).includes(optimizer)) {
-		var this_optimizer = optimizer_equations[optimizer];
-
-		var dependencies = this_optimizer["dependencies"];
-
-		str += "<h2>Optimizer:</h2>\n";
-
-		if(this_optimizer.variables) {
-			var varnames = Object.keys(this_optimizer.variables);
-			//log("a", this_optimizer.variables);
-			for (var m = 0; m < varnames.length; m++) {
-				//log("b", this_optimizer.variables[varnames[m]]);
-				var thisvarname = varnames[m];
-				if(!m) {
-					str += "<h3>Variables and definitions:</h3>\n";
-				}
-
-				var origin = this_optimizer.variables[thisvarname]["origin"];
-
-
-				str += "$$ \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
-				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
-					str += " = " + this_optimizer.variables[thisvarname]["value"];
-				} else if(origin !== undefined) {
-					origin = origin.replace("OPTIMIZERNAME", optimizer);
-					var valofparam = $("#" + origin).val();
-					str += " = " + valofparam;
-				}
-				str += " $$";
-
-				if(Object.keys(this_optimizer.variables).includes("example")) {
-					str += "$$ \\displaystyle " + this_optimizer.variables.example + " $$";
-				}
-			}
-
-			str += "<h3>Equations for optimizers:</h3>\n";
-		}
-
-		for (var m = 0; m < dependencies.length; m++) {
-			if(dependencies[m] != optimizer) {
-				str += "$$ \\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" $$\n$$ ") + " $$";
-			}
-		}
-
-		str += "$$ \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" $$\n$$ ") + " $$";
-	} else {
-		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
-	}
-
 	var layer_data = get_layer_data();
 
 	var y_layer = [];
@@ -1583,11 +1532,6 @@ function model_to_latex () {
 
 
 	var shown_activation_equations = [];
-
-	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
-	}
-
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
@@ -1802,6 +1746,62 @@ function model_to_latex () {
 			str += "<hr class='full_width_hr'>";
 		}
 	}
+
+	if(Object.keys(loss_equations).includes($("#loss").val())) {
+		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
+	}
+
+	var optimizer = $("#optimizer").val();
+	if(Object.keys(optimizer_equations).includes(optimizer)) {
+		var this_optimizer = optimizer_equations[optimizer];
+
+		var dependencies = this_optimizer["dependencies"];
+
+		str += "<h2>Optimizer:</h2>\n";
+
+		if(this_optimizer.variables) {
+			var varnames = Object.keys(this_optimizer.variables);
+			//log("a", this_optimizer.variables);
+			for (var m = 0; m < varnames.length; m++) {
+				//log("b", this_optimizer.variables[varnames[m]]);
+				var thisvarname = varnames[m];
+				if(!m) {
+					str += "<h3>Variables and definitions:</h3>\n";
+				}
+
+				var origin = this_optimizer.variables[thisvarname]["origin"];
+
+
+				str += "$$ \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
+				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
+					str += " = " + this_optimizer.variables[thisvarname]["value"];
+				} else if(origin !== undefined) {
+					origin = origin.replace("OPTIMIZERNAME", optimizer);
+					var valofparam = $("#" + origin).val();
+					str += " = " + valofparam;
+				}
+				str += " $$";
+
+				if(Object.keys(this_optimizer.variables).includes("example")) {
+					str += "$$ \\displaystyle " + this_optimizer.variables.example + " $$";
+				}
+			}
+
+			str += "<h3>Equations for optimizers:</h3>\n";
+		}
+
+		for (var m = 0; m < dependencies.length; m++) {
+			if(dependencies[m] != optimizer) {
+				str += "$$ \\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" $$\n$$ ") + " $$";
+			}
+		}
+
+		str += "$$ \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" $$\n$$ ") + " $$";
+	} else {
+		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+	}
+
+
 
 
 	prev_layer_data = layer_data;
