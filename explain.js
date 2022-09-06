@@ -1242,7 +1242,7 @@ function array_to_latex_matrix (array, level=0) { // TODO color
         for (var i = 0; i < level; i++) {
                 base_tab += "\t";
         }
-        var str = base_tab + "\\begin{pmatrix}\n";
+        var str = base_tab + "\\displaystyle{\\displaylines{\\begin{pmatrix}\n";
         if(typeof(array) == "object") {
                 for (var i = 0; i < array.length; i++) {
                         if(typeof(array[i]) == "object") {
@@ -1264,7 +1264,7 @@ function array_to_latex_matrix (array, level=0) { // TODO color
         } else {
                 str += base_tab + "\t" + array + "\n";
         }
-        str += base_tab + "\\end{pmatrix}\n"
+        str += base_tab + "\\end{pmatrix}}}\n"
         return str;
 }
 
