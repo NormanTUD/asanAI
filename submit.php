@@ -81,7 +81,18 @@
                 closedir($directory);
         }
 
-			dier($_FILES);
+
+	if(array_key_exists("data", $_POST)) {
+		$json = json_decode($_POST["data"], true);
+
+		$model = $json["model"];
+		$fit_data = $json["fit_data"];
+		$model_data = $json["model_data"];
+		$weights = $json["weights"];
+		$data = $json["data"];
+		dier($json);
+	}
+
 	if(array_key_exists("model_json", $_FILES)) {
 		if(array_key_exists("model_weights_bin", $_FILES)) {
 			$model_json_content = file_get_contents($_FILES["model_json"]["tmp_name"]);

@@ -4529,15 +4529,25 @@ async function download_current_data_as_json () {
 }
 
 async function save_model_and_data_and_copy_to_taurus (m) {
-	var model = {
+	var data = {
 		"model": JSON.parse(m.toJSON()),
 		"fit_data": get_fit_data(),
 		"model_data": await get_model_data(),
 		"weights": await get_weights_as_json(),
-		"data": JSON.parse(await get_x_y_as_array())
+		"data": await get_x_y_as_array()
 	};
 
-	log(model);
+	log(data);
+
+	$.ajax({
+		'type': 'POST',
+		'url': 'submit.php',
+		'data': { "data": JSON.stringify(data) },
+		'success': function(response) {
+			log(response);
+		}
+	});
+
 	/*
 	model.setUserDefinedMetadata({"data": await get_x_y_as_array()});
 	var saveResult = await model.save('http://localhost/tf/submit.php'); 
