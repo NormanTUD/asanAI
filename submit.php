@@ -98,8 +98,8 @@
 			$tmp = "$basepath/../tmp/$md5";
 			system("mkdir $tmp");
 			recurseCopy("$basepath/taurus/", "$tmp");
-			die($tmp);
-			die("OK");
+			file_put_contents("$tmp/data.json", $json);
+			print $md5;
 		} else {
 			die("KEIN JSON");
 		}
