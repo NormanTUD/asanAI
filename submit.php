@@ -2,6 +2,10 @@
 	include_once("functions.php");
 	// sed -i 's/PrivateTmp/#PrivateTmp/' /etc/systemd/system/multi-user.target.wants/apache2.service
 
+	function ssh_taurus ($command) {
+		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
+	}
+
         function regex_in_file ($file, $regex, $replace) {
                 $str = file_get_contents($file);
                 $str = preg_replace($regex, $replace, $str);
@@ -85,11 +89,13 @@
 			#dier($_FILES);
 
 			$tmp = tempdir();
-			recurseCopy("test", $tmp);
+			recurseCopy("./test/", "/$tmp/");
 			file_put_contents("/$tmp/model.json", $model_json_content);
 			file_put_contents("/$tmp/model.weights.bin", $model_weights_bin_content);
 
-			die($tmp);
+			$model_hash = hash("md5", $model_json_content.$model_weights_bin_content);
+			
+			system(ssh_taurus("mkdir -p asanai/$model_hash/"));
 		} else {
 			die("model_weights_bin not in files");
 		}
