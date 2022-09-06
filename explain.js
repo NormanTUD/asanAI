@@ -718,6 +718,7 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(layers_can_be_visualized()) {
 			layer_div.show();
+			layer_div.append("<h1>Layer data flow</h1>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
 			layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
@@ -728,7 +729,8 @@ function draw_internal_states (layer, inputs, applied) {
 			var output = $("#layer_" + layer + "_output");
 			var equations = $("#layer_" + layer + "_equations");
 
-			show_tab_label('layer_visualizations_tab_label');
+			$("#layer_visualizations_tab").show();
+
 			if($('#header_layer_visualization_' + layer).length == 0) {
 				html = html + "<h2 id='header_layer_visualization_" + layer + "'>Layer " + layer + ": " + $($('.layer_type')[layer]).val() + ' ' + get_layer_identification(layer) + " [null," + get_dim(input_data) + "] -> " + JSON.stringify(model.layers[layer].getOutputAt(0).shape) + ":</h2>";
 			}
