@@ -23,13 +23,12 @@ j = json_file_to_np("data.json")
 d = j["data"]
 
 def get_x_np(d):
-    return np.array([json.loads(d)["x"]])
+    return np.squeeze(np.array([json.loads(d)["x"]]), 0)
 
 def get_y_np(d):
-    return np.array([json.loads(d)["y"]])
+    return np.squeeze(np.array([json.loads(d)["y"]]), 0)
 
-dier(get_x_np(d))
-
+#dier(get_x_np(d).shape)
 #dier(json_file_to_np("data.json"))
 
 #if not os.path.exists('keras_model'):
@@ -50,4 +49,8 @@ model = tf.keras.models.model_from_json(
     custom_objects=None
 )
 
+model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+
 model.summary()
+
+model.fit(get_x_np(d), get_y_np(d))
