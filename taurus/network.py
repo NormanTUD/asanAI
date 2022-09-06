@@ -19,6 +19,17 @@ def json_file_to_np (filename):
     f.close()
     return data
 
+j = json_file_to_np("data.json")
+d = j["data"]
+
+def get_x_np(d):
+    return np.array([json.loads(d)["x"]])
+
+def get_y_np(d):
+    return np.array([json.loads(d)["y"]])
+
+dier(get_x_np(d))
+
 #dier(json_file_to_np("data.json"))
 
 #if not os.path.exists('keras_model'):
@@ -35,7 +46,7 @@ import tensorflow as tf
 #)
 
 model = tf.keras.models.model_from_json(
-    json.dumps(json_file_to_np("data.json")["model"]),
+    json.dumps(j["model"]),
     custom_objects=None
 )
 
