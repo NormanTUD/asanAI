@@ -1,6 +1,6 @@
 #!/bin/bash
 
-asaneienv="$HOME/asanaienv"
+asanaienv="$HOME/asanaienv"
 
 cd
 if [ -d $asanaienv ]; then
