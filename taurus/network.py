@@ -68,6 +68,20 @@ def get_optimizer_obj (x):
 
         obj = tf.keras.optimizers.Adam(**obj)
 
+        return obj
+    elif opt_name == "SGD":
+        obj["learning_rate"] = m["learningRate"]
+
+        obj = tf.keras.optimizers.SGD(**obj)
+
+        return obj
+    elif opt_name == "SGD":
+        obj["learning_rate"] = m["learningRate"]
+        obj["rho"] = m["rho"]
+        obj["momentum"] = m["momentum"]
+        obj["epsilon"] = m["epsilon"]
+
+        obj = tf.keras.optimizers.RMSprop(**obj)
 
         return obj
 
