@@ -4542,9 +4542,11 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 	$.ajax({
 		'type': 'POST',
 		'url': 'submit.php',
-		'data': { "data": JSON.stringify(data) },
+		'data': {
+			"data": JSON.stringify(data)
+		},
 		'success': function(response) {
-			log(response);
+			log(JSON.parse(response));
 		}
 	});
 
