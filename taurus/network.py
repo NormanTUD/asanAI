@@ -150,6 +150,10 @@ model.fit(
         validation_split=m["validationSplit"]
 )
 weights_list = np.array(model.get_weights()).tolist()
-f = open("weights.json", "a")
+
+wf = "weights.json"
+os.remove(wf)
+
+f = open(wf, "a")
 f.write(json.dumps(weights_list, cls=NpEncoder))
 f.close()
