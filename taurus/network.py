@@ -30,9 +30,6 @@ xy = json.loads(d)
 x = tf.convert_to_tensor(xy["x"])
 y = tf.convert_to_tensor(xy["y"])
 
-dier(m["validationSplit"])
-dier(x.shape)
-
 #dier(m)
 
 def get_loss_or_metric (name):
@@ -170,7 +167,7 @@ model.fit(
         epochs=m["epochs"],
         batch_size=m["batchSize"],
         shuffle=True,
-        validation_split=m["validationSplit"]
+        validation_split=(m["validationSplit"] / 100)
 )
 weights_list = np.array(model.get_weights()).tolist()
 
