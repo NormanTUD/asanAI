@@ -4539,6 +4539,16 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 	log(data);
 
+	var swal_msg = "Your job was sent to our supercomputer. Please wait.";
+	l(swal_msg);
+	Swal.fire({
+		title: swal_msg + '...',
+		allowEscapeKey: false,
+		allowOutsideClick: false,
+		showConfirmButton: false
+	});
+
+
 	$.ajax({
 		'type': 'POST',
 		'url': 'submit.php',
@@ -4567,9 +4577,11 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 			var trained_weights = job_status.weights;
 
+			l("Setting new weights");
 			set_weights_from_json_object(JSON.parse(trained_weights))
 
-			alert("done");
+			Swal.close();
+			l("The job was done on Taurus.");
 		}
 	});
 
