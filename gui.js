@@ -4601,10 +4601,17 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 			$(".taurus_wait_popup").html("");
 
 			var trained_weights = job_status.weights;
-			Swal.close();
 
 			l("Setting new weights");
-			set_weights_from_json_object(JSON.parse(trained_weights));
+			set_weights_from_json_object(JSON.parse(trained_weights), null, 1);
+			model_is_trained = true;
+
+			Swal.fire({
+				icon: 'success',
+				title: 'Model was trained',
+				html: "The model was successfully trained on taurus. You can now work with it in asanAI or export it."
+			});
+
 
 			l("The job was done on Taurus.");
 		}

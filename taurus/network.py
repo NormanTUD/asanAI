@@ -27,8 +27,8 @@ j = json_file_to_np("data.json")
 d = j["data"]
 m = j["model_data"]
 xy = json.loads(d)
-x = xy["x"]
-y = xy["y"]
+x = np.array(xy["x"])
+y = np.array(xy["y"])
 
 #dier(m)
 
