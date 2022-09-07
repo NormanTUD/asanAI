@@ -50,17 +50,24 @@
 			$weights = ob_get_clean();
 
 			$data["weights"] = $weights;
+
+			ob_start();
+			system(ssh_taurus("rm -rf ~/asanai/$hash/"));
+			ob_clean();
+		} else {
+			$estimated_starting_time_command = ssh_taurus("squeue --user=\$USER --format='%A %S' | grep $slurm_id | sed -e 's/.* //'");
+			ob_start();
+			system($estimated_starting_time_command);
+			$estimated_starting_time_squeue = ob_get_clean();
+
+			if($estimated_starting_time_squeue) {
+				$estimated_start_unix_time = strtotime($estimated_starting_time_squeue);
+				$estimated_start_unix_time = intval($estimated_start_unix_time);
+
+				$data["estimated_start_unix_time"] = $estimated_start_unix_time;
+				$data["seconds_until_estimated_start"] = intval(abs($estimated_start_unix_time - time()));
+			}
 		}
-
-		$estimated_start_unix_time_command = ssh_taurus('date -d \\"\\$(squeue --user=$USER --format=\'%A %S\' | grep '.$slurm_id.' | sed -e \'s/.* //\')\\" +%s');
-
-		ob_start();
-		system($estimated_start_unix_time_command);
-		$estimated_start_unix_time = ob_get_clean();
-		$estimated_start_unix_time = intval($estimated_start_unix_time) / 1000;
-
-		$data["estimated_start_unix_time"] = $estimated_start_unix_time;
-		$data["seconds_until_estimated_start"] = intval(abs($estimated_start_unix_time - time()));
 	}
 
 	print json_encode($data, true);

@@ -4562,9 +4562,9 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 			var job_status = await get_json(status_url);
 			while (!job_status["done"]) {
+				await delay(5000);
 				job_status = await get_json(status_url);
 				log("job_status: ", job_status);
-				await delay(1000);
 				if(job_status.errors.length) {
 					log(job_status.errors);
 				}
@@ -4582,11 +4582,11 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 			$(".taurus_wait_popup").html("");
 
 			var trained_weights = job_status.weights;
+			Swal.close();
 
 			l("Setting new weights");
 			set_weights_from_json_object(JSON.parse(trained_weights))
 
-			Swal.close();
 			l("The job was done on Taurus.");
 		}
 	});
