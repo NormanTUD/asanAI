@@ -155,7 +155,8 @@ optimizer_obj = get_optimizer_obj(m)
 model.compile(
         optimizer=optimizer_obj,
         loss=json_loss, 
-        metrics=[json_metric, "acc"]
+        metrics=[json_metric, "acc"],
+        run_eagerly=True
 )
 
 model.summary()
