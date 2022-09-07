@@ -17,9 +17,9 @@ exec &> >(tee -a stdout.txt)
 #source asanaienv/bin/activate
 #cd -
 
-ml modenv/hiera
-ml GCC/10.3.0
-ml OpenMPI/4.1.1
-ml TensorFlow/2.6.0-CUDA-11.3.1
+ml modenv/hiera 2>&1>/dev/null
+ml GCC/10.3.0 2>&1>/dev/null
+ml OpenMPI/4.1.1 2>&1>/dev/null
+ml TensorFlow/2.6.0-CUDA-11.3.1 2>&1>/dev/null
 
-python3 network.py
+python3 network.py 2>&1
