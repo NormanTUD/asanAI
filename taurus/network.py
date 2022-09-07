@@ -44,14 +44,16 @@ def get_loss_or_metric (name):
 def get_optimizer_name (name):
     if name == "adam":
         return "Adam"
-    if name == "adagrad":
+    elif name == "adagrad":
         return "Adagrad"
-    if name == "adamax":
+    elif name == "adamax":
         return "Adamax"
-    if name == "sgd":
+    elif name == "sgd":
         return "SGD"
-    if name == "rmsprop":
+    elif name == "rmsprop":
         return "RMSProp"
+    elif name == "adadelta":
+        return "Adadelta"
 
     return name
 
@@ -75,7 +77,7 @@ def get_optimizer_obj (x):
         obj = tf.keras.optimizers.SGD(**obj)
 
         return obj
-    elif opt_name == "SGD":
+    elif opt_name == "RMSProp":
         obj["learning_rate"] = m["learningRate"]
         obj["rho"] = m["rho"]
         obj["momentum"] = m["momentum"]
@@ -84,7 +86,32 @@ def get_optimizer_obj (x):
         obj = tf.keras.optimizers.RMSprop(**obj)
 
         return obj
+    elif opt_name == "Adamax":
+        obj["learning_rate"] = m["learningRate"]
+        obj["beta_1"] = m["beta1"]
+        obj["beta_2"] = m["beta2"]
+        obj["epsilon"] = m["epsilon"]
 
+        obj = tf.keras.optimizers.Adamax(**obj)
+
+        return obj
+    elif opt_name == "Adadelta":
+        obj["learning_rate"] = m["learningRate"]
+        obj["beta_1"] = m["beta1"]
+        obj["beta_2"] = m["beta2"]
+        obj["initial_accumulator_value"] = m["initialAccumulatorValue"]
+
+        obj = tf.keras.optimizers.Adagrad(**obj);
+
+        return obj
+    elif opt_name == "Adagrad":
+        obj["learning_rate"] = m["learningRate"]
+        obj["initial_accumulator_value"] = m["initialAccumulatorValue"]
+        obj["epsilon"] = m["epsilon"]
+
+        obj = tf.keras.optimizers.Adagrad(**obj);
+
+        return obj
 
     dier("Unsupported optimizer. Sorry");
 

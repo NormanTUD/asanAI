@@ -476,12 +476,12 @@ var layer_options = {
 };
 
 var model_data_structure = {
-	"sgd": ["learningRate"],
-	"rmsprop": ["learningRate", "rho", "decay", "epsilon", "momentum"],
+	"sgd": ["learningRate", "momentum"],
+	"rmsprop": ["learningRate", "rho", "epsilon", "momentum"],
 	"adam": ["learningRate", "beta1", "beta2", "epsilon"],
-	"adagrad": ["learningRate"],
+	"adagrad": ["learningRate", "initialAccumulatorValue", "epsilon"],
 	"adadelta": ["learningRate", "rho", "epsilon"],
-	"adamax": ["learningRate", "beta1", "beta2", "epsilon", "decay"]
+	"adamax": ["learningRate", "beta1", "beta2", "epsilon"]
 };
 
 var activations = {
