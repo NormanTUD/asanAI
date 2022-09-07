@@ -29,7 +29,7 @@ xy = json.loads(d)
 x = xy["x"]
 y = xy["y"]
 
-loss = m["loss"]
+dier(m)
 
 def get_loss_or_metric (name):
     if name == "meanSquaredError":
@@ -65,7 +65,8 @@ model.fit(
         x, 
         y, 
         epochs=m["epochs"],
-        batch_size=m["batchSize"]
+        batch_size=m["batchSize"],
+        validation_split=m["validationSplit"]
 )
 weights_list = np.array(model.get_weights()).tolist()
 f = open("weights.json", "a")
