@@ -140,6 +140,7 @@ model.compile(
         loss=json_loss, 
         metrics=[json_metric, "acc"]
 )
+
 model.summary()
 model.fit(
         x, 
