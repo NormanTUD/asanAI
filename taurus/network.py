@@ -27,18 +27,32 @@ j = json_file_to_np("data.json")
 d = j["data"]
 m = j["model_data"]
 xy = json.loads(d)
-x = xy["x"]
-y = xy["y"]
+x = np.array(xy["x"])
+y = np.array(xy["y"])
 
 #dier(m)
 
 def get_loss_or_metric (name):
     if name == "meanSquaredError":
         return "mse"
-    if name == "mape":
-        return "meanAbsolutePercentageError",
-    if name == "meanAbsolutError":
+    if name == "mape" or name == "meanAbsolutePercentageError":
+        return "mean_absolute_percentage_error",
+    if name == "meanAbsoluteError":
         return "mae"
+    if name == "sparseCategoricalCrossentropy":
+        return "sparse_categorical_crossentropy"
+    if name == "categoricalCrossentropy":
+        return "categorical_crossentropy"
+    if name == "binaryCrossentropy":
+        return "binary_crossentropy"
+    if name == "categoricalHinge":
+        return "categorical_hinge"
+    if name == "squaredHinge":
+        return "squared_hinge"
+    if name == "meanSquaredLogarithmicError":
+        return "mean_squared_logarithmic_error"
+    if name == "kullbackLeiblerDivergence":
+        return "kullback_leibler_divergence"
 
     return name
 
@@ -133,6 +147,8 @@ model = tf.keras.models.model_from_json(
     json.dumps(j["model"]),
     custom_objects=None
 )
+
+#dier(model.get_config()["layers"][0]["config"]["batch_input_shape"])
 
 optimizer_obj = get_optimizer_obj(m)
 
