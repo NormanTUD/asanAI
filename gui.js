@@ -4564,14 +4564,16 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 		},
 		'success': async function(response) {
 			var r = JSON.parse(response);
+			var last_shown_line = 0;
 			log(r);
-			var status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"];
+			var status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"] + "&last_shown_line=" + last_shown_line;
 
 			var waittime = 5000;
 
 			var job_status = await get_json(status_url);
 			while (!job_status["done"]) {
 				await delay(waittime);
+				status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"] + "&last_shown_line=" + last_shown_line;
 				job_status = await get_json(status_url);
 				log("job_status: ", job_status);
 				if(job_status.errors.length) {
@@ -4583,7 +4585,8 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 				}
 
 				if(job_status.logfile) {
-					$(".taurus_log").html(job_status.logfile).show();
+					last_shown_line =  job_status.logfile.split(/\r\n|\r|\n/).length;
+					$(".taurus_log").append(job_status.logfile).show();
 					scroll_down_div("taurus_log");
 					waittime = 1000;
 				}

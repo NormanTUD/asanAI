@@ -34,6 +34,15 @@
 		$data["errors"][] = "Slurm-ID not defined";
 	}
 
+	$last_shown_line = 0;
+	if(array_key_exists("last_shown_line", $_GET)) {
+		if(preg_match('/^\d+$/i', $_GET["last_shown_line"])) {
+			$last_shown_line = $_GET["last_shown_line"];
+		} else {
+			$data["errors"][] = "last_shown_line id is not a number";
+		}
+	}
+
 
 	if(!count($data["errors"])) {
 		ob_start();
@@ -43,7 +52,11 @@
 		$sbatch_out = ob_get_clean();
 
 		if(preg_match("/stdout.txt/", $sbatch_out)) {
-			$start_command = ssh_taurus("cat ~/asanai/$hash/stdout.txt");
+			$stdout_command = "cat ~/asanai/$hash/stdout.txt";
+			if($last_shown_line) {
+				$stdout_command .= " | sed -e '1,".$last_shown_line."d'";
+			}
+			$start_command = ssh_taurus($stdout_command);
 			ob_start();
 			system($start_command);
 			$lf = ob_get_clean();
