@@ -2,6 +2,23 @@
 	include_once("functions.php");
 	// sed -i 's/PrivateTmp/#PrivateTmp/' /etc/systemd/system/multi-user.target.wants/apache2.service
 
+	function scp_to_taurus_and_start ($dir, $hash) {
+		$this_dir = "/home/scads/asanai/";
+
+		ob_start();
+		$command = ssh_taurus("mkdir -p $this_dir/");
+		system($command);
+
+		$scp_command = "scp -o StrictHostKeyChecking=no -r '$dir' scads@taurus.hrsk.tu-dresden.de:/$this_dir/";
+		system($scp_command);
+
+		$start_command = ssh_taurus("sbatch $this_dir/$hash/network.sh");
+		system($start_command);
+
+		$xxx = ob_clean();
+		dier($xxx);
+	}
+
 	function ssh_taurus ($command) {
 		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
 	}
@@ -100,6 +117,8 @@
 			recurseCopy("$basepath/taurus/", "$tmp");
 			file_put_contents("$tmp/data.json", $json);
 			print $md5;
+
+			scp_to_taurus_and_start($tmp, $md5);
 		} else {
 			die("KEIN JSON");
 		}

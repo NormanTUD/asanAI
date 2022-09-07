@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#SBATCH --partition=ml
+#SBATCH --mem=10000MB
+#SBATCH --time=002:00:00
+#SBATCH --gres=gpus:1 
+
 exec &> >(tee -a stdout.txt)
 
 asanaienv="$HOME/asanaienv"
