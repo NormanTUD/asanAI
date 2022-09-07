@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path
 
 import keras
 import tensorflow as tf
@@ -152,7 +153,8 @@ model.fit(
 weights_list = np.array(model.get_weights()).tolist()
 
 wf = "weights.json"
-os.remove(wf)
+if os.path.isfile(wf):
+    os.remove(wf)
 
 f = open(wf, "a")
 f.write(json.dumps(weights_list, cls=NpEncoder))
