@@ -4528,6 +4528,13 @@ async function download_current_data_as_json () {
 	download("data.json", JSON.stringify(await get_x_y_as_array())) 
 }
 
+function scroll_down_div (classname) {
+	var items = $('.' + classname);
+	for (var i = 0; i < items.length; i++) {
+		items.scrollTop(items[i].scrollHeight - $(items[i]).height());
+	}
+}
+
 async function save_model_and_data_and_copy_to_taurus (m) {
 	var data = {
 		"model": JSON.parse(m.toJSON()),
@@ -4539,7 +4546,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 	log(data);
 
-	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div class='taurus_wait_popup'></div><textarea style='display: none; left: 0px; width: 99%; height: 100px; position: fixed' class='taurus_log'></textarea>";
+	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div class='taurus_wait_popup'></div><textarea style='display: none; left: 0px; width: 500px; height: 500px; position: inherit' class='taurus_log'></textarea>";
 	l(swal_msg);
 	Swal.fire({
 		title: swal_msg + '...',
@@ -4575,6 +4582,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 				if(job_status.logfile) {
 					$(".taurus_log").html(job_status.logfile).show();
+					scroll_down_div("taurus_log");
 				}
 			}
 
