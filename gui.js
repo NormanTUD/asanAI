@@ -4562,7 +4562,18 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 		'data': {
 			"data": JSON.stringify(data)
 		},
+		error: function (...msgs) {
+			log(msgs);
+			Swal.close()
+
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops [6]...',
+				html: "Maybe you sent too much data. The sent file can only be ~200MB"
+			});
+		},
 		'success': async function(response) {
+			log(response);
 			var r = JSON.parse(response);
 			var last_shown_line = 0;
 			log(r);

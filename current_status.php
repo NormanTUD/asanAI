@@ -11,8 +11,6 @@
 		if(preg_match('/^[a-f0-9]{32}$/i', $_GET["hash"])) {
 			$hash = $_GET["hash"];
 		} else {
-			dier($_GET);
-			die("a");
 			$data["errors"][] = "hash not an md5 hash";
 		}
 	} else {
