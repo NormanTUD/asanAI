@@ -2019,9 +2019,8 @@ $GLOBALS['minify'] = 0;
 		</script>
 		<script src="./wizard_script.js"></script>
 		<?php minify_js("draw.js"); ?>
-		<?php minify_js("rawdeflate.js"); ?>
-		<?php minify_js("rawinflate.js"); ?>
 		<?php minify_js("base64.js"); ?>
+		<?php minify_js("pako.min.js"); ?>
 		<script>
 			atrament.adaptiveStroke = true;
 

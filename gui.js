@@ -4560,7 +4560,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 		'type': 'POST',
 		'url': 'submit.php',
 		'data': {
-			"data": Base64.toBase64(RawDeflate.deflate(JSON.stringify(data)))
+			"data": JSON.stringify(data)
 		},
 		error: function (...msgs) {
 			log(msgs);
