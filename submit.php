@@ -15,7 +15,16 @@
 		$start_command = ssh_taurus("cd $this_dir/$hash; sbatch network.sh");
 		system($start_command);
 
-		ob_clean();
+		$sbatch_out = ob_get_clean();
+		$slurm_id = preg_replace("/Submitted batch job /", "", $sbatch_out);
+		$slurm_id = intval(trim(preg_replace('/\s\s+/', "", $slurm_id)));
+
+		$data = array(
+			"hash" => $hash,
+			"slurmid" => $slurm_id
+		);
+
+		print json_encode($data);
 	}
 
 	function ssh_taurus ($command) {
@@ -115,8 +124,6 @@
 			system("mkdir $tmp");
 			recurseCopy("$basepath/taurus/", "$tmp");
 			file_put_contents("$tmp/data.json", $json);
-			print $md5;
-
 			scp_to_taurus_and_start($tmp, $md5);
 		} else {
 			die("KEIN JSON");
