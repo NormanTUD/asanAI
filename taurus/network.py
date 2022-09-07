@@ -27,8 +27,11 @@ j = json_file_to_np("data.json")
 d = j["data"]
 m = j["model_data"]
 xy = json.loads(d)
-x = np.array(xy["x"])
-y = np.array(xy["y"])
+x = tf.convert_to_tensor(xy["x"])
+y = tf.convert_to_tensor(xy["y"])
+
+dier(m["validationSplit"])
+dier(x.shape)
 
 #dier(m)
 
@@ -166,6 +169,7 @@ model.fit(
         verbose=2,
         epochs=m["epochs"],
         batch_size=m["batchSize"],
+        shuffle=True,
         validation_split=m["validationSplit"]
 )
 weights_list = np.array(model.get_weights()).tolist()
