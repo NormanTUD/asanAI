@@ -15,8 +15,7 @@
 		$start_command = ssh_taurus("sbatch $this_dir/$hash/network.sh");
 		system($start_command);
 
-		$xxx = ob_clean();
-		dier($xxx);
+		ob_clean();
 	}
 
 	function ssh_taurus ($command) {
