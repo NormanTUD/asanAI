@@ -71,7 +71,7 @@ model = tf.keras.models.model_from_json(
     custom_objects=None
 )
 
-model.compile(optimizer="Adam", loss=json_loss, metrics=[json_metric, "acc"])
+model.compile(optimizer=get_optimizer_name(m["optimizer_name"]), loss=json_loss, metrics=[json_metric, "acc"])
 model.summary()
 model.fit(
         x, 
