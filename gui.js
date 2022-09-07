@@ -4545,10 +4545,22 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 		'data': {
 			"data": JSON.stringify(data)
 		},
-		'success': function(response) {
-			log(JSON.parse(response));
+		'success': async function(response) {
+			var r = JSON.parse(response);
+			log(r);
+			var status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"];
+
+			var job_status = await get_json(status_url);
+			while (!job_status["done"]) {
+				job_status = await get_json(status_url);
+				log("job_status: ", job_status);
+				await delay(5000);
+			}
+
+			alert("done");
 		}
 	});
+
 
 	/*
 	model.setUserDefinedMetadata({"data": await get_x_y_as_array()});
