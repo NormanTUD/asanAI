@@ -29,6 +29,8 @@ xy = json.loads(d)
 x = xy["x"]
 y = xy["y"]
 
+#dier(m)
+
 def get_loss_or_metric (name):
     if name == "meanSquaredError":
         return "mse"
@@ -53,6 +55,25 @@ def get_optimizer_name (name):
 
     return name
 
+def get_optimizer_obj (x):
+    opt_name = get_optimizer_name(x["optimizer_name"])
+
+    obj = {}
+
+    if opt_name == "Adam":
+        obj["learning_rate"] = m["learningRate"]
+        obj["beta_1"] = m["beta1"]
+        obj["beta_2"] = m["beta2"]
+        obj["epsilon"] = m["epsilon"]
+
+        obj = tf.keras.optimizers.Adam(**obj)
+
+
+        return obj
+
+
+    dier("Unsupported optimizer. Sorry");
+
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -71,7 +92,13 @@ model = tf.keras.models.model_from_json(
     custom_objects=None
 )
 
-model.compile(optimizer=get_optimizer_name(m["optimizer_name"]), loss=json_loss, metrics=[json_metric, "acc"])
+optimizer_obj = get_optimizer_obj(m)
+
+model.compile(
+        optimizer=optimizer_obj,
+        loss=json_loss, 
+        metrics=[json_metric, "acc"]
+)
 model.summary()
 model.fit(
         x, 
