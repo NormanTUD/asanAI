@@ -12,7 +12,7 @@
 		$scp_command = "scp -o StrictHostKeyChecking=no -r '$dir' scads@taurus.hrsk.tu-dresden.de:/$this_dir/";
 		system($scp_command);
 
-		$start_command = ssh_taurus("sbatch $this_dir/$hash/network.sh");
+		$start_command = ssh_taurus("cd $this_dir/$hash; sbatch network.sh");
 		system($start_command);
 
 		ob_clean();

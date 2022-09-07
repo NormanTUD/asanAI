@@ -13,7 +13,7 @@ if [ -d $asanaienv ]; then
 	echo "$asanaienv exists"
 else
 	python3 -m venv asanaienv
-	pip3 install tensorflow tensorflowjs scikit-image
+	pip3 install tensorflow tensorflowjs scikit-image keras
 fi
 source asanaienv/bin/activate
 cd -
