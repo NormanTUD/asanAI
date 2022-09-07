@@ -155,6 +155,7 @@ function get_model_data (optimizer_name_only) {
 
 	var model_data = {
 		loss: loss,
+		optimizer_name: optimizer_type,
 		optimizer: optimizer_type,
 		metrics: metric_type,
 		metric: metric_type,
