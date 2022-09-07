@@ -19,6 +19,10 @@
 		$data["errors"][] = "hash not defined";
 	}
 
+	if(!is_dir("../tmp/$hash")) {
+		$data["errors"][] = "This project was never sent to me.";
+	}
+
 	$slurm_id = "";
 	if(array_key_exists("slurm_id", $_GET)) {
 		if(preg_match('/^\d+$/i', $_GET["slurm_id"])) {
@@ -61,6 +65,7 @@
 
 			ob_start();
 			system(ssh_taurus("rm -rf ~/asanai/$hash/"));
+			system("rm -rf ../tmp/$hash");
 			ob_clean();
 		}
 

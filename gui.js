@@ -4539,7 +4539,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 	log(data);
 
-	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div class='taurus_wait_popup'></div><textarea style='display: none; left: 0px; width: 99%; height: 99%; position: fixed' class='taurus_log'></textarea>";
+	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div class='taurus_wait_popup'></div><textarea style='display: none; left: 0px; width: 99%; height: 100px; position: fixed' class='taurus_log'></textarea>";
 	l(swal_msg);
 	Swal.fire({
 		title: swal_msg + '...',
