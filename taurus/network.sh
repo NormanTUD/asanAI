@@ -1,7 +1,6 @@
 #!/bin/bash
 
-exec 1>>stdout.txt
-exec 2>>stderr.txt
+exec &> >(tee -a stdout.txt)
 
 asanaienv="$HOME/asanaienv"
 
