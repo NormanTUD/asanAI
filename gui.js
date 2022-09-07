@@ -4539,7 +4539,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 
 	log(data);
 
-	var swal_msg = "Your job was sent to our supercomputer. Please wait.";
+	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div id='taurus_wait_popup'></div>";
 	l(swal_msg);
 	Swal.fire({
 		title: swal_msg + '...',
@@ -4568,12 +4568,18 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 				if(job_status.errors.length) {
 					log(job_status.errors);
 				}
+
+				if(job_status.seconds_until_estimated_start) {
+					$("#taurus_wait_popup").html(human_readable_time(job_status.seconds_until_estimated_start));
+				}
 			}
 
 			log(job_status);
 			if(job_status.errors.length) {
 				log(job_status.errors);
 			}
+
+			$("#taurus_wait_popup").html("");
 
 			var trained_weights = job_status.weights;
 
