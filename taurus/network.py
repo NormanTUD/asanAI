@@ -29,8 +29,6 @@ xy = json.loads(d)
 x = xy["x"]
 y = xy["y"]
 
-dier(m)
-
 def get_loss_or_metric (name):
     if name == "meanSquaredError":
         return "mse"
@@ -38,6 +36,20 @@ def get_loss_or_metric (name):
         return "meanAbsolutePercentageError",
     if name == "meanAbsolutError":
         return "mae"
+
+    return name
+
+def get_optimizer_name (name):
+    if name == "adam":
+        return "Adam"
+    if name == "adagrad":
+        return "Adagrad"
+    if name == "adamax":
+        return "Adamax"
+    if name == "sgd":
+        return "SGD"
+    if name == "rmsprop":
+        return "RMSProp"
 
     return name
 
