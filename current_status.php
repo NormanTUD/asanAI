@@ -60,7 +60,7 @@
 		$estimated_start_unix_time = intval($estimated_start_unix_time) / 1000;
 
 		$data["estimated_start_unix_time"] = $estimated_start_unix_time;
-		$data["seconds_until_estimated_start"] = $estimated_start_unix_time - time();
+		$data["seconds_until_estimated_start"] = intval(abs($estimated_start_unix_time - time()));
 	}
 
 	print json_encode($data, true);
