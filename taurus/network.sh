@@ -1,7 +1,7 @@
 #!/bin/bash
 
-exec 1>>logfile.txt
-exec 2>&1
+exec 1>>stdout.txt
+exec 2>>stderr.txt
 
 asanaienv="$HOME/asanaienv"
 
