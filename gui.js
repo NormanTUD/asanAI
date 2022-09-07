@@ -4567,9 +4567,11 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 			log(r);
 			var status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"];
 
+			var waittime = 5000;
+
 			var job_status = await get_json(status_url);
 			while (!job_status["done"]) {
-				await delay(5000);
+				await delay(waittime);
 				job_status = await get_json(status_url);
 				log("job_status: ", job_status);
 				if(job_status.errors.length) {
@@ -4583,6 +4585,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 				if(job_status.logfile) {
 					$(".taurus_log").html(job_status.logfile).show();
 					scroll_down_div("taurus_log");
+					waittime = 1000;
 				}
 			}
 

@@ -364,7 +364,7 @@ $GLOBALS['minify'] = 0;
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
 							<span class="symbol_button">&#127937;</span> Auto-jump to predict tab? <input class="show_data" type="checkbox" value="1" id="jump_to_predict_tab" checked /><br>
 							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
-							<button onclick="force_reinit()">Reinitialize network's weight</button><br>
+							<button onclick="force_reinit()">Reinitialize weights</button><br>
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>
