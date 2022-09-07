@@ -4554,8 +4554,20 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 			while (!job_status["done"]) {
 				job_status = await get_json(status_url);
 				log("job_status: ", job_status);
-				await delay(5000);
+				await delay(1000);
+				if(job_status.errors.length) {
+					log(job_status.errors);
+				}
 			}
+
+			log(job_status);
+			if(job_status.errors.length) {
+				log(job_status.errors);
+			}
+
+			var trained_weights = job_status.weights;
+
+			set_weights_from_json_object(JSON.parse(trained_weights))
 
 			alert("done");
 		}

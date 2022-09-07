@@ -448,4 +448,8 @@
 		$query = "select count(*) from training_data where model_id = ".esc($id);
 		return !!get_single_value_from_query($query);
 	}
+
+	function ssh_taurus ($command) {
+		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=60 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
+	}
 ?>
