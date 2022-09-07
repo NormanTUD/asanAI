@@ -146,6 +146,7 @@ model.summary()
 model.fit(
         x, 
         y, 
+        verbose=2,
         epochs=m["epochs"],
         batch_size=m["batchSize"],
         validation_split=m["validationSplit"]
