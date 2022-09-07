@@ -19,7 +19,7 @@
 	}
 
 	function ssh_taurus ($command) {
-		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
+		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=60 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
 	}
 
         function regex_in_file ($file, $regex, $replace) {

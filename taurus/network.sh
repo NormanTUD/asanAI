@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#SBATCH --partition=ml
+#SBATCH --partition=alpha
 #SBATCH --mem=10000MB
-#SBATCH --time=002:00:00
-#SBATCH --gres=gpus:1 
+#SBATCH --time=02:00:00
 
 exec &> >(tee -a stdout.txt)
 
