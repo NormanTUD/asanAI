@@ -113,6 +113,9 @@
 
 	if(array_key_exists("data", $_POST)) {
 		$json = $_POST["data"];
+		$json = base64_decode($json);
+		$json = gzdeflate($json);
+		dier($json);
 		if(is_json($json)) {
 			$md5 = hash("md5", $json);
 			$tmp = "$basepath/../tmp/$md5";
