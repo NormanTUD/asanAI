@@ -85,4 +85,8 @@ else
 	cd -
 fi
 
-python3 network.py $PARAMS 2>&1
+if [[ "$predict" == 1 ]]; then
+	python3 predict.py $PARAMS 2>&1
+else
+	python3 network.py $PARAMS 2>&1
+fi

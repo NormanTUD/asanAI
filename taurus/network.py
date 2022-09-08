@@ -21,11 +21,6 @@ def dier (msg):
     pprint(msg)
     sys.exit(1)
 
-def json_to_np (o, path):
-    dict = json.loads(o)
-    numpy_2d_arrays = np.array(dict[path])
-    return numpy_2d_arrays
-
 def json_file_to_np (filename):
     f = open(filename)
     data = json.load(f)
