@@ -1,5 +1,4 @@
 <?php
-die("Not yet...");
 	include_once("functions.php");
 	// sed -i 's/PrivateTmp/#PrivateTmp/' /etc/systemd/system/multi-user.target.wants/apache2.service
 
@@ -117,11 +116,26 @@ die("Not yet...");
 		if(is_json($json)) {
 			$md5 = hash("md5", $json);
 			$tmp = "$basepath/../tmp/$md5";
-			system("mkdir $tmp");
+			if(!is_dir($tmp)) {
+				ob_start();
+				system("mkdir $tmp");
+				ob_clean();
+			}
 			recurseCopy("$basepath/taurus/", "$tmp");
 			file_put_contents("$tmp/model_data.json", $json);
-			if(array_key_exists("zip", $_POST)) {
-				system("cd $tmp; zip -r model.zip .");
+			if(array_key_exists("zip", $_GET)) {
+				ob_start();
+				system("cd $tmp; zip -r model.zip . --exclude .gitignore --exclude example_data.json");
+				ob_clean();
+
+				$file_url = "$tmp/model.zip";
+
+				header('Content-Type: application/zip');
+				header("Content-Transfer-Encoding: Binary");
+				header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");
+				readfile($file_url);
+
+				exit(0);
 			}
 			#scp_to_taurus_and_start($tmp, $md5);
 		} else {
