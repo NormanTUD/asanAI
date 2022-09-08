@@ -4553,6 +4553,11 @@ async function download_model_for_training (m) {
 			"data": JSON.stringify(data)
 		},
 		'success': async function(response) {
+			var blob=new Blob([response]);
+			var link=document.createElement('a');
+			link.href=window.URL.createObjectURL(blob);
+			link.download="model.zip";
+			link.click();
 		}
 	});
 }
