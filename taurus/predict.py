@@ -6,6 +6,16 @@ import keras
 import tensorflow as tf
 import numpy as np
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Runs asanAI models with imported data locally or on Taurus.')
+parser.add_argument('--taurus', action='store_true', help="Use this when you run this program on Taurus")
+parser.add_argument('--train', action='store_true', help="Run training (deletes weights.json if exists)")
+parser.add_argument('--predict', action='store_true', help="Is ignored here")
+
+args = parser.parse_args()
+
+
 model = keras.models.load_model("saved_model")
 
 model.summary()

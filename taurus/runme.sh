@@ -43,20 +43,18 @@ for i in $@; do
         case $i in
                 --taurus)
                         taurus=1
-                        shift
                         ;;
                 --train)
                         train=1
-                        shift
                         ;;
                 --predict)
                         predict=1
-                        shift
                         ;;
                 -h|--help)
                         help 0
                         ;;
                 --debug)
+			shift
                         set -x
                         ;;
                 *)
@@ -85,8 +83,10 @@ else
 	cd -
 fi
 
+if [[ "$train" == 1 ]]; then
+	python3 network.py $PARAMS 2>&1
+fi
+
 if [[ "$predict" == 1 ]]; then
 	python3 predict.py $PARAMS 2>&1
-else
-	python3 network.py $PARAMS 2>&1
 fi
