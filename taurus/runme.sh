@@ -11,7 +11,7 @@ function echoerr() {
 }
 
 function red_text {
-        echoerr -e "\e[31m$1\e[0m"
+	echoerr -e "\e[31m$1\e[0m"
 }
 
 set -e
@@ -19,19 +19,19 @@ set -o pipefail
 set -u
 
 function calltracer () {
-        echo 'Last file/last line:'
-        caller
+	echo 'Last file/last line:'
+	caller
 }
 trap 'calltracer' ERR
 
 function help () {
-        echo "Possible options:"
-        echo "  --taurus						This loads modules via ml instead of virtualenv. Use it only when you are on Taurus."
+	echo "Possible options:"
+	echo "  --taurus						This loads modules via ml instead of virtualenv. Use it only when you are on Taurus."
 	echo "  --train							If you want to train (current weights.json gets deleted it if exists)"
 	echo "  --predict						If you want to use this call to predict (weights.json file must exist)"
-        echo "  --help							this help"
-        echo "  --debug							Enables debug mode (set -x)"
-        exit $1
+	echo "  --help							this help"
+	echo "  --debug							Enables debug mode (set -x)"
+	exit $1
 }
 export taurus=0
 export train=
@@ -40,28 +40,28 @@ export predict=
 PARAMS="$@"
 
 for i in $@; do
-        case $i in
-                --taurus)
-                        taurus=1
-                        ;;
-                --train)
-                        train=1
-                        ;;
-                --predict)
-                        predict=1
-                        ;;
-                -h|--help)
-                        help 0
-                        ;;
-                --debug)
+	case $i in
+		--taurus)
+			taurus=1
+			;;
+		--train)
+			train=1
+			;;
+		--predict)
+			predict=1
+			;;
+		-h|--help)
+			help 0
+			;;
+		--debug)
 			shift
-                        set -x
-                        ;;
-                *)
-                        red_text "Unknown parameter $i" >&2
-                        help 1
-                        ;;
-        esac
+			set -x
+			;;
+		*)
+			red_text "Unknown parameter $i" >&2
+			help 1
+			;;
+	esac
 done
 
 
