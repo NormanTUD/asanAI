@@ -18,7 +18,7 @@ def json_file_to_np (filename):
     f.close()
     return data
 
-j = json_file_to_np("_data.json")
+j = json_file_to_np("model_data.json")
 
 model = tf.keras.models.model_from_json(
     json.dumps(j["model"]),

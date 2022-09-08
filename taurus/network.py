@@ -27,7 +27,7 @@ def json_file_to_np (filename):
     f.close()
     return data
 
-j = json_file_to_np("data.json")
+j = json_file_to_np("model_data.json")
 d = j["data"]
 m = j["model_data"]
 xy = json.loads(d)

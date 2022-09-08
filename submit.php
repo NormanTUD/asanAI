@@ -119,8 +119,8 @@ die("Not yet...");
 			$tmp = "$basepath/../tmp/$md5";
 			system("mkdir $tmp");
 			recurseCopy("$basepath/taurus/", "$tmp");
-			file_put_contents("$tmp/data.json", $json);
-			scp_to_taurus_and_start($tmp, $md5);
+			file_put_contents("$tmp/model_data.json", $json);
+			#scp_to_taurus_and_start($tmp, $md5);
 		} else {
 			die("KEIN JSON");
 		}
