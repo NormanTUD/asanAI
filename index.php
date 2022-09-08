@@ -365,9 +365,6 @@ $GLOBALS['minify'] = 0;
 									<td>
 										<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
 									</td>
-									<td>
-										<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
-									</td>
 									<!--<td>
 										<button onclick="save_model_and_data_and_copy_to_taurus(model)">Train on Supercomputer</button>
 									</td>-->
@@ -1217,6 +1214,7 @@ $GLOBALS['minify'] = 0;
 
 								<div id="python_tab">
 									<br>
+									<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
 									<button onclick="save_model()">Download model data</button>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
