@@ -4553,11 +4553,11 @@ async function download_model_for_training (m) {
 			"data": JSON.stringify(data)
 		},
 		'success': async function(response) {
-			var blob=new Blob([response]);
-			var link=document.createElement('a');
-			link.href=window.URL.createObjectURL(blob);
-			link.download="model.zip";
-			link.click();
+			var a = document.createElement("a"); //Create <a>
+			a.href = "data:application/zip;base64," + response; //Image Base64 Goes here
+			log(a.href);
+			a.download = "model.zip"; //File name Here
+			a.click(); //Downloaded file
 		}
 	});
 }

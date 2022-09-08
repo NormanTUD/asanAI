@@ -133,7 +133,7 @@
 				header('Content-Type: application/zip');
 				header("Content-Transfer-Encoding: Binary");
 				header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");
-				readfile($file_url);
+				print base64_encode(file_get_contents($file_url));
 
 				exit(0);
 			}
