@@ -120,6 +120,9 @@ die("Not yet...");
 			system("mkdir $tmp");
 			recurseCopy("$basepath/taurus/", "$tmp");
 			file_put_contents("$tmp/model_data.json", $json);
+			if(array_key_exists("zip", $_POST)) {
+				system("cd $tmp; zip -r model.zip .");
+			}
 			#scp_to_taurus_and_start($tmp, $md5);
 		} else {
 			die("KEIN JSON");
