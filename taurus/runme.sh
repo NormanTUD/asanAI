@@ -75,11 +75,12 @@ else
 	cd
 	if [ -d $asanaienv ]; then
 		echo "$asanaienv exists"
+		source asanaienv/bin/activate
 	else
 		python3 -m venv asanaienv
+		source asanaienv/bin/activate
 		pip install --ignore-installed tensorflow tensorflowjs scikit-image keras
 	fi
-	source asanaienv/bin/activate
 	cd -
 fi
 
