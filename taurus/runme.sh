@@ -74,20 +74,24 @@ else
 	asanaienv="$HOME/asanaienv"
 	cd
 	if [ -d $asanaienv ]; then
-		echo "$asanaienv exists"
 		source asanaienv/bin/activate
 	else
 		python3 -m venv asanaienv
 		source asanaienv/bin/activate
 		pip install --ignore-installed tensorflow tensorflowjs scikit-image keras
 	fi
-	cd -
+	cd - >/dev/null
 fi
 
-if [[ "$train" == 1 ]]; then
-	python3 network.py $PARAMS 2>&1
-fi
+if [[ -e model_data.json ]]; then
+	if [[ "$train" == 1 ]]; then
+		python3 network.py $PARAMS 2>&1
+	fi
 
-if [[ "$predict" == 1 ]]; then
-	python3 predict.py $PARAMS 2>&1
+	if [[ "$predict" == 1 ]]; then
+		python3 predict.py $PARAMS 2>&1
+	fi
+else
+	red_text "Sorry, you need the model_data.json file to be present in the same directory. It doesn't seem to be there."
+	red_text "Maybe you want to copy the .example_data.json to model_data.json to test how this script works?"
 fi
