@@ -182,3 +182,13 @@ if os.path.isfile(wf):
 f = open(wf, "a")
 f.write(json.dumps(weights_list, cls=NpEncoder))
 f.close()
+
+model.save(
+        'saved_model',
+        overwrite=True,
+        include_optimizer=True,
+        save_format=None,
+        signatures=None,
+        options=None,
+        save_traces=True,
+)
