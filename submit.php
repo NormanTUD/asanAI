@@ -13,7 +13,7 @@ die("Not yet...");
 		$scp_command = "scp -o StrictHostKeyChecking=no -r '$dir' scads@taurus.hrsk.tu-dresden.de:/$this_dir/";
 		system($scp_command);
 
-		$start_command = ssh_taurus("cd $this_dir/$hash; sbatch run.sh");
+		$start_command = ssh_taurus("cd $this_dir/$hash; sbatch runme.sh");
 		system($start_command);
 
 		$sbatch_out = ob_get_clean();
