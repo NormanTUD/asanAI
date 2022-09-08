@@ -1,4 +1,5 @@
 <?php
+die("Not yet...");
 	include_once("functions.php");
 	// sed -i 's/PrivateTmp/#PrivateTmp/' /etc/systemd/system/multi-user.target.wants/apache2.service
 

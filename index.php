@@ -365,9 +365,9 @@ $GLOBALS['minify'] = 0;
 									<td>
 										<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
 									</td>
-									<td>
+									<!--<td>
 										<button onclick="save_model_and_data_and_copy_to_taurus(model)">Train on Supercomputer</button>
-									</td>
+									</td>-->
 								</tr>
 							</table>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to training tab? <input class="show_data" type="checkbox" value="1" id="jump_to_training_tab" checked /><br>
