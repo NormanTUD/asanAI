@@ -4724,10 +4724,12 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["canvas"] = document.getElementById(idname);
 	atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
 	// instantiate Atrament
-	atrament_data[idname]["atrament"] = new Atrament(atrament_data[idname]["canvas"] , {
-		width: atrament_data[idname]["canvas"].offsetWidth,
-		height: atrament_data[idname]["canvas"].offsetHeight
-	});
+	atrament_data[idname]["atrament"] = new Atrament(
+		atrament_data[idname]["canvas"] , {
+			width: atrament_data[idname]["canvas"].offsetWidth,
+			height: atrament_data[idname]["canvas"].offsetHeight
+		}
+	);
 
 	var ctx = atrament_data[idname]["canvas"] .getContext("2d");
 	ctx.fillStyle = "white";

@@ -154,7 +154,7 @@ $GLOBALS['minify'] = 0;
 		<?php minify_css("chardinjs.css"); ?>
 
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("atrament.min.js"); ?>
+		<?php minify_js("atrament.js"); ?>
 		
 		<script>
 			<?php
