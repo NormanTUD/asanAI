@@ -887,7 +887,7 @@ function stop_webcam() {
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	if(has_missing_values) {
-		l("Not creating model because some values are missing");
+		l("Not creating model because some values are missing (updated page)");
 		return;
 	}
 

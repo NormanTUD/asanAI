@@ -26,8 +26,8 @@ async function get_model_config_hash () {
 
 async function _create_model () {
 	if(has_missing_values) {
-		l("Not creating model because some values are missing");
-		return;
+		l("Not creating model because some values are missing (_create_model)");
+		return model;
 	}
 	try {
 		model = await create_model(model);
@@ -358,8 +358,8 @@ function remove_empty(obj) {
 
 async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
-		l("Not creating model because some values are missing");
-		return;
+		l("Not creating model because some values are missing (create model)");
+		return old_model;
 	}
 
 	var new_layers_container_md5 = await get_layers_container_md5();
