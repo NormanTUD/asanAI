@@ -478,12 +478,14 @@ $GLOBALS['minify'] = 0;
 								       <td>Keep weights when possible?</td>
 								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
 								</tr>
+<!--
 								<tr>
 									<td>Reinit weights on data source change</td>
 									<td>
 										<input type="checkbox" value="1" checked id="reinit_weights_on_data_source_change" />
 									</td>
 								</tr>
+-->
                                                                 <tr>
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
@@ -558,7 +560,7 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
 										</tr>
 									</table>
 								</div>
@@ -567,10 +569,10 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
 
 											<td>Initial accumulator value:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
 										</tr>
 									</table>
 								</div>
@@ -579,18 +581,18 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.001" id="learningRate_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
 											<td>&beta;<sub>1</sub>:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam" /></td>
 										</tr>
 
 										<tr>
 											<td>&beta;<sub>2</sub>:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam" /></td>
 
 											<td>&epsilon;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
 										</tr>
 									</table>
 								</div>
@@ -599,16 +601,16 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
 
 											<td>&rho;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta" /></td>
 										</tr>
 
 										<tr>
 
 											<td>&epsilon;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
 										</tr>
 									</table>
 								</div>
@@ -617,13 +619,13 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.00000000000001" max="1" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
 
 											<td>&beta;<sub>1</sub>:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
 											<td>&epsilon;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
 
 
@@ -631,10 +633,10 @@ $GLOBALS['minify'] = 0;
 										<tr>
 
 											<td>&beta;<sub>2</sub>:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.999" id="beta2_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax" /></td>
 
 											<td>Decay:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0" id="decay_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax" /></td>
 																				</tr>
 											<td></td>
 											<td></td>
@@ -656,7 +658,7 @@ $GLOBALS['minify'] = 0;
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
 
 											<td>&epsilon;:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
 										</tr>
 									</table>
 								</div>
@@ -665,7 +667,7 @@ $GLOBALS['minify'] = 0;
 									<table style="width: 80%">
 										<tr>
 											<td>Learning rate:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.000001" max="1" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
 
 											<td>Momentum:</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
