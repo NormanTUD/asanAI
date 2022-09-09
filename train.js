@@ -396,11 +396,6 @@ async function run_neural_network () {
 		}
 	}
 
-	show_tab_label("tfvis_tab_label");
-
-	if($("#jump_to_interesting_tab").is(":checked")) {
-		show_tab_label("tfvis_tab_label", 1);
-	}
 
 	try {
 		model = await create_model(model);
@@ -427,6 +422,7 @@ async function run_neural_network () {
 		disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
+		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked"));
 		l("Got data!");
 
 		if(xs_and_ys) {
