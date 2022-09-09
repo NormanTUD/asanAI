@@ -517,7 +517,7 @@ async function predict_handdrawn () {
 		return;
 	}
 	tf.tidy(() => {
-		var img = tf.image.resizeBilinear(tf.browser.fromPixels(document.getElementById("sketcher")), [width, height]).expandDims();
+		var img = tf.image.resizeBilinear(tf.browser.fromPixels(atrament_data.sketcher.canvas), [width, height]).expandDims();
 
 		var divide_by = parseFloat($("#divide_by").val());
 
