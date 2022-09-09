@@ -40,12 +40,13 @@ async function _create_model () {
 	} catch (e) {
 		except("ERROR1", e);
 		if(mode == "beginner") {
-			undo();
 			Swal.fire({
 				icon: 'error',
 				title: 'Oops [4]...',
-				text: e + "\n\nUndoing last change"
+				text: e
 			});
+		} else {
+			l("ERROR: " + e);
 		}
 	}
 
@@ -622,6 +623,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 
 				if(mode != "expert") {
+					/*
 					msg = msg + "\n\nUndoing last change"
 				
 					if(!e.toString().includes("expected") && !e.toString().includes("found")) {
@@ -629,6 +631,7 @@ async function create_model (old_model, fake_model_structure, force) {
 						future_state_stack = [];
 						show_hide_undo_buttons();
 					}
+					*/
 				}
 			}
 			return model;
