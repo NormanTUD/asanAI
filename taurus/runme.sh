@@ -34,8 +34,8 @@ function help () {
 	exit $1
 }
 export taurus=0
-export train=
-export predict=
+export train=0
+export predict=0
 
 PARAMS="$@"
 
@@ -90,6 +90,12 @@ if [[ -e model_data.json ]]; then
 
 	if [[ "$predict" == 1 ]]; then
 		python3 predict.py $PARAMS 2>&1
+	fi
+
+	if [[ "$train" == 0 ]]; then
+		if [[ "$predict" == 0 ]]; then
+			red_text "Please use either --train or --predict";
+		fi
 	fi
 else
 	red_text "Sorry, you need the model_data.json file to be present in the same directory. It doesn't seem to be there."
