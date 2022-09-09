@@ -2272,6 +2272,23 @@ function set_all_bias_initializers() {
 	updated_page();
 }
 
+function set_all_activation_functions_except_last_layer() {
+	var chosen_value = $("#set_all_activation_functions_except_last_layer").val();
+	l("Setting all activation functions (except for last layer) to " + chosen_value);
+	var keys = Object.keys(activations);
+	if (keys.includes(chosen_value)) {
+		var activations_setting = $(".activation");
+		for (var i = 0; i < activations_setting.length - 1; i++) {
+			$(activations_setting[i]).val(chosen_value).trigger("change");
+		}
+	}
+
+	$("#set_all_activation_functions_except_last_layer").val("none");
+
+	updated_page();
+}
+
+
 function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
 	l("Setting all activation functions to " + chosen_value);

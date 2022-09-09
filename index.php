@@ -456,6 +456,14 @@ $GLOBALS['minify'] = 0;
 										</select>
 									</td>
 								</tr>
+								<tr>
+									<td>Activation functions (except last layer)</td>
+									<td>
+										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 150px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title">Set options for all</div>

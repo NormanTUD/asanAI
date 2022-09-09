@@ -112,6 +112,7 @@ function init_set_all_options () {
 	var set_all_bias_initializers = $('#set_all_bias_initializers')
 	var set_all_kernel_initializers = $('#set_all_kernel_initializers');
 	var set_all_activation_functions = $('#set_all_activation_functions');
+	var set_all_activation_functions_except_last_layer = $('#set_all_activation_functions_except_last_layer');
 
 	for (var i = 0; i < initializer_keys.length; i++) {
 		set_all_bias_initializers.append($('<option>', {
@@ -127,6 +128,11 @@ function init_set_all_options () {
 
 	for (var i = 0; i < activation_functions.length; i++) {
 		set_all_activation_functions.append($('<option>', {
+			value: activation_functions[i],
+			text: activation_functions[i]
+		}));
+
+		set_all_activation_functions_except_last_layer.append($('<option>', {
 			value: activation_functions[i],
 			text: activation_functions[i]
 		}));
