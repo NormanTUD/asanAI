@@ -210,7 +210,7 @@ function get_fit_data () {
 		this_training_start_time = Date.now()
 		$(".training_performance_tabs").show();
 
-		if($("#jump_to_training_tab").is(":checked")) {
+		if($("#jump_to_interesting_tab").is(":checked")) {
 			show_tab_label("tfvis_tab_label", 1);
 		} else {
 			show_tab_label("tfvis_tab_label", 0);
@@ -398,7 +398,7 @@ async function run_neural_network () {
 
 	show_tab_label("tfvis_tab_label");
 
-	if($("#jump_to_training_tab").is(":checked")) {
+	if($("#jump_to_interesting_tab").is(":checked")) {
 		show_tab_label("tfvis_tab_label", 1);
 	}
 
@@ -486,7 +486,7 @@ async function run_neural_network () {
 		//	show_tab_label("training_data_tab_label", 1);
 		//}
 
-		if($("#jump_to_training_tab").is(":checked")) {
+		if($("#jump_to_interesting_tab").is(":checked")) {
 			show_tab_label("tfvis_tab_label");
 		}
 

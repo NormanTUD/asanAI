@@ -138,14 +138,12 @@ function init_set_all_options () {
 		} else if (event.ctrlKey && event.key === 'y') {
 			redo();
 		} else if (event.ctrlKey && event.key === ';') {
-			$("#jump_to_training_tab").click();
-			$("#jump_to_predict_tab").click();
+			$("#jump_to_interesting_tab").click();
 			train_neural_network();
 		} else if (event.ctrlKey && event.key === ',') {
 			train_neural_network();
 		} else if (event.ctrlKey && event.key === 'L') {
-			$("#jump_to_predict_tab").click();
-			$("#jump_to_training_tab").click();
+			$("#jump_to_interesting_tab").click();
 		} else if (event.ctrlKey && event.altKey && event.key === 'h') {
 			$("[href='#home_ribbon']").click();
 		} else if (event.altKey && event.key === 't') {
@@ -426,12 +424,8 @@ $(document).ready(async function() {
 		$("#validationSplit").val(urlParams.get("valsplit")).trigger("change");
 	}
 
-	if(urlParams.get("no_jump_to_training_tab")) {
-		$("#jump_to_training_tab").prop("checked", false).trigger("change");
-	}
-
-	if(urlParams.get("no_jump_to_predict_tab")) {
-		$("#jump_to_predict_tab").prop("checked", false).trigger("change");
+	if(urlParams.get("no_jump_to_interesting_tab")) {
+		$("#jump_to_interesting_tab").prop("checked", false).trigger("change");
 	}
 
 	if(urlParams.get("autostart_training")) {

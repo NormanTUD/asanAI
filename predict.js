@@ -362,7 +362,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		}
 
 		if(!dont_go_to_tab) {
-			if($("#jump_to_predict_tab").is(":checked")) {
+			if($("#jump_to_interesting_tab").is(":checked")) {
 				$('a[href="#predict_tab"]').click();
 			}
 		}
