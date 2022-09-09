@@ -4696,7 +4696,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
-	log(code);
 
 	$(indiv).append(drawingboard);
 
