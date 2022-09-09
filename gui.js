@@ -4561,8 +4561,6 @@ async function download_model_for_training (m) {
 		"data": await get_x_y_as_array()
 	};
 
-	log(data);
-
 	$.ajax({
 		'type': 'POST',
 		'url': 'submit.php?zip=1',
@@ -4572,7 +4570,6 @@ async function download_model_for_training (m) {
 		'success': async function(response) {
 			var a = document.createElement("a"); //Create <a>
 			a.href = "data:application/zip;base64," + response; //Image Base64 Goes here
-			log(a.href);
 			a.download = "model.zip"; //File name Here
 			a.click(); //Downloaded file
 		}
