@@ -1175,6 +1175,7 @@ $GLOBALS['minify'] = 0;
 								<br>
 								<div id="last_layer_shape_warning"></div>
 								<button onclick="add_new_category();">Add new category</button>
+								<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>
 								<div class='webcam_data only_when_webcam_on'>
 									Number of images in a series: <input type='number' min=1 value='100' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
 									Delay in seconds between images in a series: <input type='number' value='0.9' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
@@ -1353,27 +1354,7 @@ $GLOBALS['minify'] = 0;
 										</div>
 
 										<div class="handdrawn hide_when_no_image">
-											<form>
-												<label>Thickness</label><br />
-												<input
-													class="show_data"
-													type="range"
-													min="1"
-													oninput="atrament.weight = parseFloat(event.target.value);"
-													value="2"
-													step="0.1"
-													autocomplete="off"
-												/><br />
-												<label>Mode</label>
-												<select onchange="atrament.mode = event.target.value;" autocomplete="off">
-													<option value="draw" default>Draw</option>
-													<option value="fill" default>Fill</option>
-													<option value="erase" default>Erase</option>
-												</select><br />
-												<input type="text" name="value" class="jscolor" value="#000000" onchange="atrament.color='#'+this.jscolor;log(this)"  />
-												<button id="clear" onclick="event.preventDefault();atrament.clear();predict_handdrawn();">Clear</button>
-											</form>
-											<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" id="sketcher"></canvas>
+											<div id='predict_handdrawn_canvas'></div>
 
 											<div id="handdrawn_predictions"></div>
 
@@ -2015,8 +1996,6 @@ $GLOBALS['minify'] = 0;
 		<script src="./wizard_script.js"></script>
 		<?php minify_js("draw.js"); ?>
 		<script>
-			atrament.adaptiveStroke = true;
-
 			load_time = Date().toLocaleString();
 
 			set_mode();

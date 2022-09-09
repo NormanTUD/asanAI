@@ -4676,3 +4676,28 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 	return saveResult;
 	*/
 }
+
+function get_drawing_board_on_page (indiv, idname, customfunc) {
+	if(!customfunc) {
+		customfunc = "";
+	}
+	var code = `<form>
+		<label>Thickness</label><br />
+		<input class="show_data"type="range" min="1"oninput="atrament.weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
+		<label>Mode</label>
+		<select onchange="atrament.mode = event.target.value;" autocomplete="off">
+			<option value="draw" default>Draw</option>
+			<option value="fill" default>Fill</option>
+			<option value="erase" default>Erase</option>
+		</select><br />
+		<input type="text" name="value" class="jscolor" value="#000000" onchange="atrament.color='#'+this.jscolor;"  />
+		<button id="clear" onclick="event.preventDefault();atrament.clear();${customfunc}">Clear</button>
+	</form>
+	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+
+	var drawingboard = $(code);
+	log(code)
+	log(indiv);
+
+	$(indiv).append(drawingboard);
+}
