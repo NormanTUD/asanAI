@@ -1994,7 +1994,6 @@ $GLOBALS['minify'] = 0;
 			set_mode();
 		</script>
 		<script src="./wizard_script.js"></script>
-		<?php minify_js("draw.js"); ?>
 		<script>
 			load_time = Date().toLocaleString();
 
