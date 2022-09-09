@@ -4690,14 +4690,56 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			<option value="fill" default>Fill</option>
 			<option value="erase" default>Erase</option>
 		</select><br />
-		<input type="text" name="value" class="jscolor" value="#000000" onchange="atrament.color='#'+this.jscolor;"  />
+		<input type="text" name="value" id='${idname}_colorpicker' class="jscolor" value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;"  />
 		<button id="clear" onclick="event.preventDefault();atrament.clear();${customfunc}">Clear</button>
 	</form>
 	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
-	log(code)
-	log(indiv);
+	log(code);
 
 	$(indiv).append(drawingboard);
+
+	atrament_data[idname] = {};
+
+	// Drawings code
+	// first, we need to set up the canvas
+	atrament_data[idname]["canvas"] = document.getElementById(idname);
+	atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
+	// instantiate Atrament
+	atrament_data[idname]["atrament"] = new Atrament(atrament_data[idname]["canvas"] , {
+		width: atrament_data[idname]["canvas"] .offsetWidth,
+		height: atrament_data[idname]["canvas"] .offsetHeight
+	});
+
+	var ctx = atrament_data[idname]["canvas"] .getContext("2d");
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, atrament_data[idname]["canvas"].width, atrament_data[idname]["canvas"].height);
+
+	// a little helper tool for logging events
+	const eventsLog = [];
+	const logElement = document.getElementById('events');
+
+	atrament_data[idname]["atrament"].addEventListener('clean', () => {
+		log('event: clean');
+		predict_handdrawn();
+	});
+
+	atrament_data[idname]["atrament"].addEventListener('fillstart', ({ x, y }) => {
+		atrament_data[idname]["canvas"] .style.cursor = 'wait';
+		predict_handdrawn();
+	});
+
+	atrament_data[idname]["atrament"].addEventListener('fillend', () => {
+		atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
+		log('event: fillend');
+		if(customfunc) {
+			eval(customfunc);
+		}
+	});
+
+	atrament_data[idname]["atrament"].addEventListener('strokeend', () => { predict_handdrawn(); } );
+	atrament_data[idname]["atrament"].adaptiveStroke = true;
+
+	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
 }

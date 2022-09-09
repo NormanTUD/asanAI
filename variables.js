@@ -1231,3 +1231,5 @@ for (var i = 0; i < general_options_keys.length; i++) {
 var cookie_theme = "lightmode";
 
 var enable_drawing_custom_data = 0;
+
+var atrament_data = {};
