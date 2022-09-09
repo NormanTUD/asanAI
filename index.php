@@ -1962,7 +1962,7 @@ $GLOBALS['minify'] = 0;
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var html = '<span class="own_image_span"><img height="90" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
-						imgDiv.prepend(html);
+						imgDiv.append(html);
 						disable_start_training_button_custom_images();
 					}
 					reader.readAsDataURL(f);
