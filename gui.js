@@ -1404,8 +1404,11 @@ async function remove_layer(item) {
 
 	}
 
-	l("Removed layer");
 	write_descriptions();
+	rename_labels();
+	predict_handdrawn();
+
+	l("Removed layer");
 }
 
 function get_element_xpath(element) {
@@ -1457,9 +1460,12 @@ async function add_layer(item) {
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
 
-	l("Added layer");
-
 	await save_current_status();
+
+	rename_labels();
+	predict_handdrawn();
+
+	l("Added layer");
 }
 
 function sortable_layers_container(layers_container) {
@@ -4695,7 +4701,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	}
 	var code = `<form>
 		<label>Thickness</label><br />
-		<input class="show_data"type="range" min="1"oninput="atrament_data['${idname}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
+		<input class="show_data"type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
 		<label>Mode</label>
 		<select onchange="atrament_data['${idname}']['atrament'].mode = event.target.value;" autocomplete="off">
 			<option value="draw" default>Draw</option>
@@ -4719,8 +4725,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
 	// instantiate Atrament
 	atrament_data[idname]["atrament"] = new Atrament(atrament_data[idname]["canvas"] , {
-		width: atrament_data[idname]["canvas"] .offsetWidth,
-		height: atrament_data[idname]["canvas"] .offsetHeight
+		width: atrament_data[idname]["canvas"].offsetWidth,
+		height: atrament_data[idname]["canvas"].offsetHeight
 	});
 
 	var ctx = atrament_data[idname]["canvas"] .getContext("2d");
@@ -4749,7 +4755,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		}
 	});
 
-	atrament_data[idname]["atrament"].addEventListener('strokeend', () => { predict_handdrawn(); } );
+	atrament_data[idname]["atrament"].addEventListener('strokeend', () => {
+		predict_handdrawn();
+	});
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});

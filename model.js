@@ -1228,6 +1228,8 @@ async function force_reinit (no_msg) {
 		_force_reinit();
 	}
 
+	rename_labels();
+	predict_handdrawn();
 }
 
 function input_shape_is_image () {
