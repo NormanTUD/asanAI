@@ -3210,7 +3210,6 @@ function alter_text_webcam_series () {
 
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
-	log(img);
 	var html = '<span class="own_image_span"><img height="90" src="' + img+ '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 	imgDiv.append(html);
 }
@@ -3247,7 +3246,7 @@ function add_new_category() {
 		).appendTo("#own_images_container");
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="label ' + label_nr + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
-		get_drawing_board_on_page($("#" + uuid), uuid + "_sketcher", "");
+		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "");
 	}
 
 	imgDiv = $(".own_images")[n];
@@ -4696,15 +4695,15 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	}
 	var code = `<form>
 		<label>Thickness</label><br />
-		<input class="show_data"type="range" min="1"oninput="atrament.weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
+		<input class="show_data"type="range" min="1"oninput="atrament_data['${idname}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
 		<label>Mode</label>
-		<select onchange="atrament.mode = event.target.value;" autocomplete="off">
+		<select onchange="atrament_data['${idname}']['atrament'].mode = event.target.value;" autocomplete="off">
 			<option value="draw" default>Draw</option>
 			<option value="fill" default>Fill</option>
 			<option value="erase" default>Erase</option>
 		</select><br />
 		<input type="text" name="value" id='${idname}_colorpicker' class="jscolor" value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;"  />
-		<button id="clear" onclick="event.preventDefault();atrament.clear();${customfunc}">Clear</button>
+		<button id="clear" onclick="event.preventDefault();atrament_data['${idname}']['atrament'].clear();${customfunc}">Clear</button>
 	</form>
 	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
