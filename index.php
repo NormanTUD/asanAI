@@ -360,16 +360,7 @@ $GLOBALS['minify'] = 0;
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>
-										<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
-									</td>
-									<!--<td>
-										<button onclick="save_model_and_data_and_copy_to_taurus(model)">Train on Supercomputer</button>
-									</td>-->
-								</tr>
-							</table>
+							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to interesting tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
 							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
 							<button onclick="force_reinit()">Reinitialize weights</button><br>
