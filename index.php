@@ -584,7 +584,7 @@ $GLOBALS['minify'] = 0;
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
 											<td>&beta;<sub>1</sub>:</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0.0000000000001" max="1" step="0.000001" value="0.9" id="beta1_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam" /></td>
 										</tr>
 
 										<tr>
