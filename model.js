@@ -68,6 +68,10 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		recreate_model = true;
 	}
 
+	if(!keep_weights && force_dont_keep_weights) {
+		recreate_model = true;
+	}
+
 	var old_weights_string = false;
 
 	if(!model) {
