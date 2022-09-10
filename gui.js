@@ -4740,25 +4740,32 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	const logElement = document.getElementById('events');
 
 	atrament_data[idname]["atrament"].addEventListener('clean', () => {
-		log('event: clean');
-		predict_handdrawn();
+		if(customfunc) {
+			eval(customfunc);
+		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('fillstart', ({ x, y }) => {
-		atrament_data[idname]["canvas"] .style.cursor = 'wait';
-		predict_handdrawn();
+		atrament_data[idname]["canvas"].style.cursor = 'wait';
+		if(customfunc) {
+			eval(customfunc);
+		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('fillend', () => {
-		atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
-		log('event: fillend');
+		atrament_data[idname]["canvas"].style.cursor = 'crosshair';
+		if(customfunc) {
+			eval(customfunc);
+		}
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('strokeend', () => {
-		predict_handdrawn();
+		if(customfunc) {
+			eval(customfunc);
+		}
 	});
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
