@@ -1851,8 +1851,6 @@ function can_be_shown_in_latex () {
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	if(!can_be_shown_in_latex()) {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
-			show_tab_label("math_tab_label", 1);
-		} else {
 			hide_tab_label("math_tab_label");
 		}
 		return;

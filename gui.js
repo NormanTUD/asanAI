@@ -4764,3 +4764,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
 }
+
+function onclick_math_mode (t, e) {
+	log(e);
+	write_model_to_latex_to_page(0, 1);
+	console.trace();
+}
