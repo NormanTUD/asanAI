@@ -59,8 +59,6 @@ function log_test (name) {
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
 				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors);
-			} else {
-				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ", but this is to be expected, since " + expect_memory_leak);
 			}
 		}
 	}
