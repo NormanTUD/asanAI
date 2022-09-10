@@ -768,7 +768,7 @@ $GLOBALS['minify'] = 0;
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
 								<tr class="hide_when_no_image">
 									<td>Show layer data flow:</td>
-									<td><input type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
+									<td><input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 								</tr>
 								<!--
 								<tr class="hide_when_no_conv_visualizations">
