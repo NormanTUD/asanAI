@@ -289,6 +289,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 	if(model) {
 		$(".show_when_predicting").show();
+		$(".show_when_has_examples").hide();
 
 		hide_unused_layer_visualization_headers();
 
@@ -328,6 +329,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 									}
 
 									if(str) {
+										$(".show_when_has_examples").show();
 										example_predictions.html(str);
 									}
 								}

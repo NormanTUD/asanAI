@@ -1365,8 +1365,7 @@ $GLOBALS['minify'] = 0;
 										<div class="hide_when_custom_data">
 											<button onclick="show_prediction(1);">Re-predict examples</button>
 											<div class="medium_vskip"></div>
-											<h2 class="show_when_predicting" style="display: none">Examples</h2>
-
+											<h2 class="show_when_has_examples" style="display: none">Examples</h2>
 											<div id="example_predictions">
 											</div>
 										</div>
