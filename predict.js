@@ -118,6 +118,7 @@ let predict_demo = async function (item, nr) {
 		$("#predict_error").show();
 		$("#predict_error").html(e);
 		$("#example_predictions").html("");
+		$(".show_when_has_examples").hide();
 	}
 
 	//tf.engine().endScope();
@@ -348,6 +349,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						for (var i = 0; i < example_predict_data.length; i++) {
 							var tensor = tf.tensor(example_predict_data[i]);
 							if(tensor_shape_matches_model(tensor)) {
+								$(".show_when_has_examples").show();
 								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
 								count++;
 							}
@@ -356,9 +358,9 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				}
 
 				if(count) {
-					$("#show_when_predicting,#example_predictions").show();
+					$(".show_when_predicting,.example_predictions").show();
 				} else {
-					$("#show_when_predicting,#example_predictions").hide();
+					$(".show_when_predicting,.example_predictions").hide();
 				}
 			}
 		}

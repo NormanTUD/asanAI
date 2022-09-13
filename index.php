@@ -1349,20 +1349,18 @@ $GLOBALS['minify'] = 0;
 
 											<div id="prediction" style="display: none"></div>
 											<div id="predict_error" style="overflow: scroll; display: none"></div>
-
-											<hr>
 										</div>
 
 										<div class="handdrawn hide_when_no_image">
+											<hr>
 											<div id='predict_handdrawn_canvas'></div>
 
 											<div id="handdrawn_predictions"></div>
-
-											<hr>
 										</div>
 
 
-										<div class="hide_when_custom_data">
+										<div class="hide_when_custom_data show_when_has_examples">
+											<hr>
 											<button onclick="show_prediction(1);">Re-predict examples</button>
 											<div class="medium_vskip"></div>
 											<h2 class="show_when_has_examples" style="display: none">Examples</h2>
