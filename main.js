@@ -207,7 +207,6 @@ async function init_page_contents (chosen_dataset) {
 		$("#train_data_set_group").show();
 	}
 
-	await set_config();
 	is_setting_config = false;
 
 	global_disable_auto_enable_valid_layer_types = false;
@@ -215,6 +214,8 @@ async function init_page_contents (chosen_dataset) {
 
 	if(chosen_dataset) {
 		$("#dataset").val(chosen_dataset).trigger("change");
+	} else {
+		await set_config();
 	}
 
 	rename_tmp_onchange();
