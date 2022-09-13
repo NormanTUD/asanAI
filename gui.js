@@ -3892,11 +3892,13 @@ function allow_edit_inputShape() {
 function show_ribbon() {
 	$("#ribbon").show();
 	$("#ribbon_shower").hide();
+	$("#status_bar").show();
 }
 
 function hide_ribbon() {
 	$("#ribbon").hide();
 	$("#ribbon_shower").show();
+	$("#status_bar").hide();
 }
 
 function human_readable_time(seconds) {
