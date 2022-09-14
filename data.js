@@ -307,6 +307,7 @@ async function get_xs_and_ys () {
 				//	this_data = shuffle(this_data);
 				}
 
+				//log(this_data);
 				for (var i = 0; i < this_data.length; i++) {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
@@ -363,6 +364,7 @@ async function get_xs_and_ys () {
 						dispose(item);
 					}
 				}
+
 				imageData = null;
 			} else if(category == "classification") {
 				var x_string, y_string;
@@ -378,7 +380,6 @@ async function get_xs_and_ys () {
 			} else {
 				alert("Unknown dataset category: " + category);
 			}
-
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(data_origin == "image") {

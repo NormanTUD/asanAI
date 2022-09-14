@@ -1967,3 +1967,66 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 	return color_diff;
 }
+
+function get_loss_landscape_data (Y, Y_hat, min_x, max_x, min_y, max_y, steps) {
+        var x_diff = Math.abs(min_x - max_x);
+        var y_diff = Math.abs(min_y - max_y);
+        var x_step_size = x_diff / steps;
+        var y_step_size = y_diff / steps;
+
+        var x_pos = Math.min(max_x, min_x);
+        var y_pos = Math.min(max_y, min_y);
+
+        var landscape = [];
+
+        while (x_pos <= max_x) {
+                y_pos = Math.min(max_y, min_y);
+                while (y_pos <= max_x) {
+                        //log("x: " + x_pos + ", y: " + y_pos);
+                        y_pos += y_step_size;
+			var this_loss = median(eval("tf.metrics." + $("#loss").val() + "(Y, Y_hat).arraySync()"));
+                        landscape.push([x_pos, y_pos, this_loss]);
+                }
+                x_pos += x_step_size;
+        }
+
+        return landscape;
+}
+
+async function create_loss_landscape () {
+	var old_force_download = force_download;
+	force_download = 1;
+	var xs_ys = await get_xs_and_ys()
+	force_download = old_force_download;
+
+	/*
+	xs_ys.x = tf.tensor([xs_ys.x], null, 'float32');
+	xs_ys.y = tf.tensor([xs_ys.y], null, 'float32');
+	*/
+
+	var Y = model.predict(xs_ys.x);
+	//log(Y);
+	var Y_hat = xs_ys.y.asType("float32");
+	//log(Y_hat);
+
+	//log(xs_ys);
+
+	var landscape = get_loss_landscape_data(Y, Y_hat, -10, 10, -10, 10, 20);
+	log(landscape);
+
+	var data = [{
+		z: landscape,
+		type: 'surface'
+	}];
+
+	var layout = {
+		title: 'Loss Landscape',
+		autosize: true,
+		width: 500,
+		height: 500
+	};
+
+	Plotly.newPlot('graphs_here', data, layout);
+}
+// grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
+// tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
