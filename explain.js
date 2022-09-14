@@ -584,6 +584,7 @@ function get_layer_identification (i) {
 }
 
 async function identify_layers (numberoflayers) {
+	//console.trace();
 	for (var i = 0; i < numberoflayers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);

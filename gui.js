@@ -1647,12 +1647,12 @@ async function set_config(index) {
 		if (!index) {
 			if (config["width"]) {
 				l("Setting width");
-				$("#width").val(config["width"]).trigger("change");
+				$("#width").val(config["width"]); //.trigger("change");
 			}
 
 			if (config["height"]) {
 				l("Setting height");
-				$("#height").val(config["height"]).trigger("change");
+				$("#height").val(config["height"]); //.trigger("change");
 			}
 
 			if (config["labels"]) {
@@ -4777,5 +4777,5 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 function onclick_math_mode (t, e) {
 	log(e);
 	write_model_to_latex_to_page(0, 1);
-	console.trace();
+	//console.trace();
 }

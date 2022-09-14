@@ -462,14 +462,14 @@ async function get_xs_and_ys () {
 			x = tf.tensor(x);
 			y = tf.tensor(classes).expandDims();
 
-			log("A", x.shape);
+			//log("A", x.shape);
 
 			if($("#shuffle_data").is(":checked")) {
 				tf.util.shuffleCombo(x, y);
 			}
 
 			l("Done generating data from images");
-			log("B", x.shape);
+			//log("B", x.shape);
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (data_origin == "tensordata") {
@@ -492,9 +492,9 @@ async function get_xs_and_ys () {
 
 	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 		try {
-			log("C", xy_data.x.shape);
+			//log("C", xy_data.x.shape);
 			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
-			log("D", xy_data.x.shape);
+			//log("D", xy_data.x.shape);
 		} catch (e) {
 			header(e);
 		}
