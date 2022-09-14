@@ -4344,7 +4344,7 @@ function l(msg) {
 		load_time = load_time.replace(/ GMT.*/, "");
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
-		if(msg.toString().startsWith("ERROR:")) {
+		if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 			console.error(msg);
 			console.trace();
 			msg = "<span style='color: red'>" + msg + "</span>";

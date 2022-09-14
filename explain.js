@@ -613,8 +613,9 @@ async function identify_layers (numberoflayers) {
 				var zero_output_shape_current_status_hash = await get_current_layer_container_status_hash();
 
 				if(zero_output_shape_current_status_hash != last_zero_output_shape_status) {
-					var basemsg = "There are zeroes in the output shapes. ";
+					var basemsg = "ERROR: There are zeroes in the output shapes. ";
 					var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue.<br>If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions.<br>The affected layers output shapes are marked <span style='color: red'>red</span>.<br>Training and saving is disabled.";
+					l(msg);
 					if(!swal.isVisible()) {
 						Swal.fire({
 							icon: 'error',
