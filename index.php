@@ -82,6 +82,7 @@ $GLOBALS['minify'] = 0;
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
 		<?php minify_js("custom.js"); ?>
+		<?php minify_js("jsmanipulate.js"); ?>
 		<script>
 			var force_cpu_backend = 0;
 
@@ -688,20 +689,28 @@ $GLOBALS['minify'] = 0;
 						<div class="ribbon-toolbar">
 							<table>
                                                                 <tr>
-								       <td>Auto rotate images?</td>
-								       <td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
+									<td>Auto rotate images?</td>
+									<td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
+									<td>Sine-Ripple?</td>
+									<td><input type="checkbox" value=1 checked id="augment_sine_ripple" /></td>
 								</tr>
                                                                 <tr>
-								       <td>Number of rotations?</td>
-								       <td><input type="number" value=4 id="number_of_rotations" /></td>
+									<td>Number of rotations?</td>
+									<td><input type="number" value=4 id="number_of_rotations" /></td>
+									<td></td>
+									<td></td>
 								</tr>
                                                                 <tr>
-								       <td>Invert images?</td>
-								       <td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
+									<td>Invert images?</td>
+									<td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
+									<td></td>
+									<td></td>
 								</tr>
                                                                 <tr>
-								       <td>Flip left/right?</td>
-								       <td><input type="checkbox" value=1 checked id="augment_flip_left_right" /></td>
+									<td>Flip left/right?</td>
+									<td><input type="checkbox" value=1 checked id="augment_flip_left_right" /></td>
+									<td></td>
+									<td></td>
 								</tr>
 							</table>
 						</div>
