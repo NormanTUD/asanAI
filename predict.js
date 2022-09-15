@@ -303,6 +303,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		var dataset_category = $("#dataset_category").val();
 
 		if($("#data_origin").val() == "default") {
+			var count = 0;
+
 			if(dataset_category == "image") {
 				var dataset = $("#dataset").val();
 				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
@@ -320,6 +322,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								if(examples) {
 									var str = "";
 									for (var i = 0; i < examples.length; i++) {
+										count++;
 										var img_url = full_dir + "/" + examples[i];
 										var img_elem = $("img[src$='" + img_url + "']");
 										if(img_elem.length) {
@@ -330,7 +333,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 									}
 
 									if(str) {
-										$(".show_when_has_examples").show();
 										example_predictions.html(str);
 									}
 								}
@@ -342,27 +344,34 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				example_predictions.html("");
 				var example_url = "traindata/" + dataset_category + "/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
-				var count = 0;
 
 				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
 					tf.tidy(() => {
 						for (var i = 0; i < example_predict_data.length; i++) {
 							var tensor = tf.tensor(example_predict_data[i]);
 							if(tensor_shape_matches_model(tensor)) {
-								$(".show_when_has_examples").show();
 								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
 								count++;
 							}
 						}
 					});
 				}
-
-				if(count) {
-					$(".show_when_predicting,.example_predictions").show();
-				} else {
-					$(".show_when_predicting,.example_predictions").hide();
-				}
 			}
+
+			if(count) {
+				$(".show_when_has_examples").show();
+				$(".show_when_predicting").show();
+				$(".example_predictions").show();
+			} else {
+				$(".show_when_has_examples").hide();
+				$(".example_predictions").hide();
+				$(".show_when_predicting").hide();
+			}
+		} else {
+			l("Not predicting examples because you chose a custom dataset.");
+			$(".show_when_has_examples").hide();
+			$(".example_predictions").hide();
+			$(".show_when_predicting").hide();
 		}
 
 		if(!dont_go_to_tab) {
@@ -371,7 +380,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			}
 		}
 	} else {
-		log("No model given for show_prediction");
+		l("ERROR: No model given for show_prediction");
 	}
 }
 
