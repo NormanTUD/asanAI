@@ -3121,6 +3121,7 @@ async function change_data_origin() {
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
+		rename_labels();
 	} else if (show_own_tensor_data) {
 		show_tab_label("own_tensor_data_label", 1);
 		var config = await _get_configuration();
@@ -3227,6 +3228,7 @@ function add_new_category() {
 	var current_labels = [];
 
 	var label_nr = n;
+	var uuid = uuidv4();
 
 	$(".own_image_label").each(function (i, x) {
 		current_labels.push($(x).val());
@@ -3241,7 +3243,6 @@ function add_new_category() {
 		if(cam_data) {
 			webcam_button_style = "";
 		}
-		var uuid = uuidv4();
 		$(
 			'<div class="own_image_upload_container"><hr>' +
 			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
@@ -3265,9 +3266,9 @@ function add_new_category() {
 
 	last_shape_layer_warning();
 
-	rename_labels();
-
 	alter_text_webcam_series();
+
+	rename_labels();
 
 	return uuid;
 }
