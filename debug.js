@@ -4,8 +4,8 @@ function colorlog (color, msg) {
 	console.log("%c" + msg, "background: " + color + "; color: white");
 }
 
-function logt(msg) {
-	console.log(msg);
+function logt(...msg) {
+	log(msg);
 	console.trace();
 }
 
