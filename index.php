@@ -179,6 +179,7 @@ $GLOBALS['minify'] = 0;
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	</head>
 	<body data-chardin-sequenced="true">
 		<div class="fireworks-container"></div>
