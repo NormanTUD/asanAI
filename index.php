@@ -690,9 +690,9 @@ $GLOBALS['minify'] = 0;
 							<table>
                                                                 <tr>
 									<td>Auto rotate images?</td>
-									<td><input type="checkbox" value=1 checked id="augment_rotate_images" /></td>
+									<td><input type="checkbox" value=1 id="augment_rotate_images" /></td>
 									<td>Sine-Ripple?</td>
-									<td><input type="checkbox" value=1 checked id="augment_sine_ripple" /></td>
+									<td><input type="checkbox" value=1 id="augment_sine_ripple" /></td>
 								</tr>
                                                                 <tr>
 									<td>Number of rotations?</td>
@@ -702,13 +702,13 @@ $GLOBALS['minify'] = 0;
 								</tr>
                                                                 <tr>
 									<td>Invert images?</td>
-									<td><input type="checkbox" value=1 checked id="augment_invert_images" /></td>
+									<td><input type="checkbox" value=1 id="augment_invert_images" /></td>
 									<td></td>
 									<td></td>
 								</tr>
                                                                 <tr>
 									<td>Flip left/right?</td>
-									<td><input type="checkbox" value=1 checked id="augment_flip_left_right" /></td>
+									<td><input type="checkbox" value=1 id="augment_flip_left_right" /></td>
 									<td></td>
 									<td></td>
 								</tr>
