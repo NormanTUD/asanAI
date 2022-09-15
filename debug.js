@@ -76,7 +76,6 @@ function add_function_debugger () {
 			    "fix_viz_width", 
 			    "allow_training", 
 			    "allow_training", 
-			    "get_current_chosen_object_default_weights_string", 
 			    "get_chosen_dataset", 
 			    "get_weights_as_string", 
 			    "show_load_weights", 
