@@ -1647,12 +1647,12 @@ async function set_config(index) {
 		if (!index) {
 			if (config["width"]) {
 				l("Setting width");
-				$("#width").val(config["width"]); //.trigger("change");
+				$("#width").val(config["width"]).trigger("change");
 			}
 
 			if (config["height"]) {
 				l("Setting height");
-				$("#height").val(config["height"]); //.trigger("change");
+				$("#height").val(config["height"]).trigger("change");
 			}
 
 			if (config["labels"]) {
