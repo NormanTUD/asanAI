@@ -308,38 +308,37 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			if(dataset_category == "image") {
 				var dataset = $("#dataset").val();
 				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
-				$.ajax({
-					url: 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1',
-					success: async function (x) { 
-						if(x) {
-							if(Object.keys(x).includes("example")) {
-								var this_examples_hash = await md5(JSON.stringify(x["example"]));
-								if(this_examples_hash != predict_examples_hash) {
-									example_predictions.html("");
-									predict_examples_hash = this_examples_hash;
-								}
-								var examples = x["example"];
-								if(examples) {
-									var str = "";
-									for (var i = 0; i < examples.length; i++) {
-										count++;
-										var img_url = full_dir + "/" + examples[i];
-										var img_elem = $("img[src$='" + img_url + "']");
-										if(img_elem.length) {
-											predict_demo(img_elem[0], i);
-										} else {
-											str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
-										}
-									}
+				var dataset_url = 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1';
 
-									if(str) {
-										example_predictions.html(str);
-									}
+				var x = await get_cached_json(dataset_url);
+
+				if(x) {
+					if(Object.keys(x).includes("example")) {
+						var this_examples_hash = await md5(JSON.stringify(x["example"]));
+						if(this_examples_hash != predict_examples_hash) {
+							example_predictions.html("");
+							predict_examples_hash = this_examples_hash;
+						}
+						var examples = x["example"];
+						if(examples) {
+							var str = "";
+							for (var i = 0; i < examples.length; i++) {
+								count++;
+								var img_url = full_dir + "/" + examples[i];
+								var img_elem = $("img[src$='" + img_url + "']");
+								if(img_elem.length) {
+									predict_demo(img_elem[0], i);
+								} else {
+									str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
 								}
+							}
+
+							if(str) {
+								example_predictions.html(str);
 							}
 						}
 					}
-				});
+				}
 			} else if (dataset_category == "classification") {
 				example_predictions.html("");
 				var example_url = "traindata/" + dataset_category + "/" + $("#model_dataset").val() + "/examples.json"
