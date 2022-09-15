@@ -211,6 +211,16 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	/*
+	"prelu": {
+		"description": "Parameterized version of a leaky rectified linear unit. It follows $$ f(x) = \\begin{cases}\n\\alpha * x & x < 0 \\\\ x & x >= 0\\end{cases}. wherein $$\\alpha$$ is a trainable weight.",
+		"options": [
+			"alpha", "dtype"
+		],
+		"category": "Activation"
+	},
+	*/
+
 	"reLU": {
 		"description": "Rectified Linear Unit activation function. $$\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)$$",
 		"options": [
