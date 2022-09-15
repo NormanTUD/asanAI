@@ -7,7 +7,7 @@ async function switch_to_next_camera_predict () {
 }
 
 async function get_label_data () {
-	if($("#data_origin").val() == "image" || input_shape_is_image()) {
+	if(($("#data_origin").val() == "image" || input_shape_is_image()) && $("#data_origin").val() == "default") {
 		let imageData = await get_image_data(1);
 
 		reset_labels();
