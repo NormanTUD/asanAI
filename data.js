@@ -353,6 +353,21 @@ async function get_xs_and_ys () {
 							x = x.concat(tf.image.flipLeftRight(item));
 							classes.push(label_nr);
 						}
+
+						if($("#augment_sine_ripple").is(":checked")) {
+							var uuid = uuidv4();
+							$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+							await tf.browser.toPixels(tf.tensor(item.arraySync()[0]), $("#" + uuid)[0]);
+							var canvas = $("#" + uuid)[0];
+							var context = canvas.getContext("2d");
+							var data = context.getImageData(0,0,canvas.width, canvas.height) 
+							JSManipulate.sineripple.filter(data); 
+							context.putImageData(data,0,0);
+							var rippled = await tf.browser.fromPixels(canvas);
+							x = x.concat(rippled.expandDims());
+							$(canvas).remove();
+							classes.push(label_nr);
+						}
 					}
 				}
 
@@ -453,6 +468,25 @@ async function get_xs_and_ys () {
 								l("Flip left/right");
 								x.push(await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0]);
 								classes.push(label_nr);
+							}
+
+							if($("#augment_sine_ripple").is(":checked")) {
+								l("Rippling is not yet supported for custom data!");
+								/*
+								var uuid = uuidv4();
+								$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+								await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
+								var canvas = $("#" + uuid)[0];
+								var context = canvas.getContext("2d");
+								var data = context.getImageData(0,0,canvas.width, canvas.height) 
+								JSManipulate.sineripple.filter(data); 
+								context.putImageData(data,0,0);
+								var rippled = await tf.browser.fromPixels(canvas);
+								$(canvas).remove();
+								log(rippled);
+								x.push(rippled[0]);
+								classes.push(label_nr);
+								*/
 							}
 						}
 					}
