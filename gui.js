@@ -845,7 +845,6 @@ function hide_no_conv_stuff() {
 	} else {
 		$(".hide_when_no_conv_visualizations").hide();
 		$(".hide_when_conv_visualizations").show();
-		$("#show_layer_data").prop("checked", false);
 		$("#data_plotter").hide();
 	}
 
