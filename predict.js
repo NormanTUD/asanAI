@@ -543,7 +543,7 @@ async function predict_handdrawn () {
 		var handdrawn_predictions = $("#handdrawn_predictions");
 		handdrawn_predictions.html("");
 
-		var html = "<pre>";
+		var html = "";
 
 		var max = 0;
 
@@ -557,19 +557,19 @@ async function predict_handdrawn () {
 			var label = labels[i % labels.length];
 			if(label) {
 				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b>\n";
+					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
 				} else {
-					html += label + ": " + predictions[0][i] + "\n";
+					html += label + ": " + predictions[0][i] + "<br>\n";
 				}
 			} else {
 				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + predictions[0][i] + "</b>\n";
+					html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
 				} else {
 					html += predictions[0][i] + "<br>\n";
 				}
 			}
 		}
-		html += "</pre>";
+		html += "";
 
 		handdrawn_predictions.html(html);
 	});
