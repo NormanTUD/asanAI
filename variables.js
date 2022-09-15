@@ -242,6 +242,13 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	"activation": {
+		"description": "Applies an activation function to an output.",
+		"options": [
+			"activation", "dtype"
+		],
+		"category": "Activation"
+	},
 
 
 	"batchNormalization": {
