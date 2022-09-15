@@ -257,7 +257,7 @@ $GLOBALS['minify'] = 0;
 										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
-								<tr class="expert_mode_only">
+								<tr>
 									<td>Shapes: </td>
 									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 102px;" readonly id="outputShape" /></td>
 								</tr>
