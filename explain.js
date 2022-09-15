@@ -873,6 +873,8 @@ function tensor_normalize_to_rgb_min_max (x) {
 function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 	var worked = 0;
         var full_data = {};
+
+
 	full_data["image"] = tf.tidy(() => {
                 var imageH = model.inputs[0].shape[1];
                 var imageW = model.inputs[0].shape[2];
@@ -911,7 +913,6 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 			if(stop_generating_images) {
 				continue;
 			}
-                        console.warn("Iteration " + i + " of " + iterations);
 
                         const scaledGrads = tf.tidy(() => {
                                 const grads = gradFunction(image);
@@ -971,6 +972,8 @@ async function get_image_from_url (url) {
 
 async function draw_maximally_activated_layer (layer, type) {
 	show_tab_label("maximally_activated_label", 1);
+
+
 	var neurons = 1;
 
 	if(type == "conv2d") {
@@ -1008,8 +1011,29 @@ async function draw_maximally_activated_layer (layer, type) {
 
 		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
 
+
+		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		l(swal_msg);
+		document.title = swal_msg;
+
+		await Swal.fire({
+			title: 'Generating Image...',
+			html: swal_msg,
+			timer: 2000,
+			showCancelButton: true,
+			showConfirmButton: false
+		}).then((e)=>{
+			if(e.isDismissed && e.dismiss == "cancel") {
+				l("Stopped generating new images, this may take a while");
+				stop_generating_images = 1;
+			}
+		});
+
+
 		var start = Date.now();
+
 		await draw_maximally_activated_neuron(layer, i);
+
 		var end = Date.now();
 
 		var time = ((end - start) / 1000) + 1;
