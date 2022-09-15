@@ -767,16 +767,10 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-								<tr class="hide_when_no_image">
+								<tr>
 									<td>Show layer data flow:</td>
 									<td><input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 								</tr>
-								<!--
-								<tr class="hide_when_no_conv_visualizations">
-									<td>Show kernel images:</td>
-									<td><input type="checkbox" value="1" onclick="add_layer_debuggers();" id="show_kernel_images" /></td>
-								</tr>
-								-->
 								<tr>
 									<td>Enable TF-Debug:</td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>

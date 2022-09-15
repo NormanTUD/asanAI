@@ -820,6 +820,7 @@ function reset_zoom_kernel_images () {
 }
 
 function layers_can_be_visualized () {
+	return true;
 	for (var i = 0; i < get_numberoflayers(); i++) {
 		var shape = calculate_default_target_shape(i);
 
