@@ -256,7 +256,7 @@ $GLOBALS['minify'] = 0;
 										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>Shapes: </td>
 									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 102px;" readonly id="outputShape" /></td>
 								</tr>
@@ -271,14 +271,14 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
 						<div class="ribbon-toolbar" style="width: 220px">
 							<table>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>Loss<sup onclick="losses_popup()">?</sup>:</td>
 									<td style="width: 140px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>Metric:</td>
 									<td style="width: 140px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
@@ -304,7 +304,7 @@ $GLOBALS['minify'] = 0;
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Loss/Metric/Data</div>
+						<div class="ribbon-group-title"><span class="expert_mode_only">Loss/Metric/</span>Data</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
