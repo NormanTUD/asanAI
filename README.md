@@ -68,6 +68,14 @@ in creating this program:
 
 - [Magic Wand](https://codepen.io/averyhw/pen/xyxKjO/)
 
+- [JSManipulate](http://joelb.me/jsmanipulate/)
+
+- [hash-wasm](https://github.com/Daninet/hash-wasm)
+
+- [plotly.js](https://plotly.com/javascript/)
+
+- [jscolor](https://jscolor.com/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
