@@ -546,9 +546,9 @@ button:disabled:hover {
 }
 
 .start_training {
-	background-color: #85ee54;
+	background-color: #9ACD32;
 }
 
 .stop_training {
-	background-color: #ee566d;
+	background-color: #FF4500;
 }
