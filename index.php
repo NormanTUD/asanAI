@@ -243,7 +243,7 @@ $GLOBALS['minify'] = 0;
 										Architecture:
 									</td>
 									<td colspan="2">
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 104px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 108px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
@@ -253,7 +253,7 @@ $GLOBALS['minify'] = 0;
 										Dataset:
 									</td>
 									<td colspan=2>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 164px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 162px">
 										</select>
 										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
