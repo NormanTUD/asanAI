@@ -32,8 +32,16 @@ This is a very early alpha.
 
 ## Apache2 + PHP + MongoDB + MySQL
 
-A MySQL instance is only needed for the login functionality. MongoDB will be used for saving
-models. Apache and PHP serve the JS-files. All calculations are done within the browser.
+A MySQL instance is only needed for the login functionality. Apache and PHP serve the JS-files. 
+All calculations are done within the browser.
+
+Run this for exporting python files, e.g. for taurus:
+
+```console
+mkdir -p /var/www/tmp
+sudo chown -R www-user:$USER /var/www/tmp
+sudo chmod -R 775 /var/www/tmp
+```
 
 # Standing on the shoulders of giants
 
