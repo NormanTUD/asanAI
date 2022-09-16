@@ -30,7 +30,7 @@ This is a very early alpha.
 
 # Installation
 
-## Apache2 + PHP + MongoDB + MySQL
+## Apache2 + PHP + MySQL
 
 A MySQL instance is only needed for the login functionality. Apache and PHP serve the JS-files. 
 All calculations are done within the browser.
