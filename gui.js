@@ -3559,7 +3559,7 @@ function write_error(e) {
 			msg = msg + "\n<br><br>\n" + explanation;
 		}
 
-		$(".train_neural_network_button").html("Start training");
+		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 		write_descriptions();
 		console.warn(e);
 		console.trace();

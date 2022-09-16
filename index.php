@@ -334,7 +334,7 @@ $GLOBALS['minify'] = 0;
 
 					<div id="image_resize_dimensions" class="hide_when_no_image">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:170px">
+							<div class="ribbon-toolbar" style="width:130px">
 								<table>
 									<tr>
 										<td>Width:</td>
@@ -349,7 +349,7 @@ $GLOBALS['minify'] = 0;
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
 									<tr>
-										<td>Auto-Augment?</td>
+										<td>Augment?</td>
 										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment" /></td>
 									</tr>
 								</table>
@@ -362,8 +362,8 @@ $GLOBALS['minify'] = 0;
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px;" onclick="train_neural_network()">Start training</button><br>
-							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to interesting tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
+							<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px" onclick="train_neural_network()">Start training</button><br>
+							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to current tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
 							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
 							<button onclick="force_reinit()">Reinitialize weights</button><br>
 						</div>
