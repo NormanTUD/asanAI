@@ -227,14 +227,14 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group-sep"></div>
 
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:350px">
-							<table width=360>
+						<div class="ribbon-toolbar" style="width:300px">
+							<table width=300>
 								<tr>
 									<td>
 										Problem type:
 									</td>
 									<td colspan="2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');setCookie('dataset_category',$(this).val());" style="width: 244px">
+										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');setCookie('dataset_category',$(this).val());" style="width: 204px">
 										</select>
 									</td>
 								</tr>
@@ -243,7 +243,7 @@ $GLOBALS['minify'] = 0;
 										Architecture:
 									</td>
 									<td colspan="2">
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 144px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 104px">
 										</select>
 										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset Network</button>
 									</td>
@@ -253,14 +253,14 @@ $GLOBALS['minify'] = 0;
 										Dataset:
 									</td>
 									<td colspan=2>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 204px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 164px">
 										</select>
 										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 								<tr>
-									<td>Shapes: </td>
-									<td><input type="text" value="" style="width: 105px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 102px;" readonly id="outputShape" /></td>
+									<td>Shapes:</td>
+									<td><input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 82px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
@@ -271,18 +271,18 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 220px">
+						<div class="ribbon-toolbar" style="width: 190px">
 							<table>
 								<tr class="expert_mode_only">
 									<td>Loss<sup onclick="losses_popup()">?</sup>:</td>
-									<td style="width: 140px">
+									<td style="width: 110px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
 									<td>Metric:</td>
-									<td style="width: 140px">
+									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
 										</select>
 									</td>
@@ -290,7 +290,7 @@ $GLOBALS['minify'] = 0;
 								<tr>
 									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
 									<td>
-										<select id="data_origin" onchange="change_data_origin(1)" style="width: 140px">
+										<select id="data_origin" onchange="change_data_origin(1)" style="width: 110px">
 											<option value="default">Default</option>
 											<option value="tensordata">&#x2318; Tensor-Data</option>
 											<option class="input_shape_is_image" value="image">&#128444; Image</option>
@@ -319,11 +319,11 @@ $GLOBALS['minify'] = 0;
 					</div>
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width: 165px">
+						<div class="ribbon-toolbar" style="width: 155px">
 							<table>
-								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 80px;" /></td></tr>
-								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 80px;" /></td></tr>
-								<tr><td>Val.-Split&nbsp;%:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 80px;" id="validationSplit" /></td></tr>
+								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 60px;" /></td></tr>
+								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 60px;" /></td></tr>
+								<tr><td>Val.-Split&nbsp;%:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 60px;" id="validationSplit" /></td></tr>
 							</table>
 							<div class="ribbon-group-title">Hyperparameters, Data</div>
 						</div>
