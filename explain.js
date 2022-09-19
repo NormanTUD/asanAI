@@ -616,12 +616,15 @@ async function identify_layers (numberoflayers) {
 					var basemsg = "ERROR: There are zeroes in the output shapes. ";
 					var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue.<br>If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions.<br>The affected layers output shapes are marked <span style='color: red'>red</span>.<br>Training and saving is disabled.";
 					l(msg);
-					if(!swal.isVisible()) {
-						Swal.fire({
-							icon: 'error',
-							title: 'Oops [6]...',
-							html: msg
-						});
+					if(!shown_has_zero_data) {
+						if(!swal.isVisible()) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops [6]...',
+								html: msg
+							});
+						}
+						shown_has_zero_data = true;
 					}
 					last_zero_output_shape_status = zero_output_shape_current_status_hash;
 				}
@@ -646,6 +649,10 @@ async function identify_layers (numberoflayers) {
 		}
 
 		write_layer_identification(i, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+	}
+
+	if(!has_zero_output_shape) {
+		shown_has_zero_data = false;
 	}
 }
 
