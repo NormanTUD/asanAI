@@ -4390,6 +4390,8 @@ async function set_custom_webcam_training_data() {
 
 function toggle_layers() {
 	$(".left_side").toggle();
+
+	write_descriptions(1);
 }
 
 async function get_available_cams () {
