@@ -3842,7 +3842,6 @@ async function start_demo_mode() {
 		var aria_hidden = $("#" + potential_items_to_move_keys[i]).attr("aria-hidden");
 		var display_mode = $("#" + potential_items_to_move_keys[i]).css("display");
 		log(potential_items_to_move_keys[i] + ", aria-hidden: " + aria_hidden + ", css-display: " + display_mode);
-		//if(aria_hidden != "true" || display_mode != "none") {
 		if (display_mode != "none") {
 			items_to_move.push(potential_items_to_move[potential_items_to_move_keys[i]]);
 		}
