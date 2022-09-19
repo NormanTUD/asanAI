@@ -622,8 +622,6 @@ async function identify_layers (numberoflayers) {
 							title: 'Oops [6]...',
 							html: msg
 						});
-					} else {
-						l(basemsg);
 					}
 					last_zero_output_shape_status = zero_output_shape_current_status_hash;
 				}
