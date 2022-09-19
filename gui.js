@@ -2614,14 +2614,18 @@ function get_id_from_train_data_struct(index) {
 }
 
 function display_delete_button() {
-	$("#delete_model").addClass("disabled_symbol").html("&#10060");
-
 	var user_id = get_id_from_train_data_struct("user_id").toString();
 
+	var dm = $("#delete_model");
+
 	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
-		$("#delete_model").html("&#10060").removeClass("disabled_symbol");
+		if(dm.hasClass("disabled_symbol")) {
+			dm.html("&#10060;").removeClass("disabled_symbol");
+		}
 	} else {
-		$("#delete_model").html("&#10006;").addClass("disabled_symbol");
+		if(!dm.hasClass("disabled_symbol")) {
+			dm.html("&#10006;").addClass("disabled_symbol");
+		}
 	}
 }
 
