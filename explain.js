@@ -585,6 +585,7 @@ function get_layer_identification (i) {
 
 async function identify_layers (numberoflayers) {
 	//console.trace();
+	has_zero_output_shape = false;
 	for (var i = 0; i < numberoflayers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);
@@ -595,7 +596,6 @@ async function identify_layers (numberoflayers) {
 
 		var output_shape_string = "";
 		try {
-			has_zero_output_shape = false;
 			if(i in model.layers) {
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
 				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {

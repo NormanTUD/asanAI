@@ -44,6 +44,10 @@ var loadFile = (function(event) {
 
 let predict_demo = async function (item, nr) {
 	//tf.engine().startScope();
+	
+	if(has_zero_output_shape) {
+		return;
+	}
 
 	try {
 		if(labels.length == 0) {

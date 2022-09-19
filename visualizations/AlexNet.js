@@ -104,15 +104,23 @@ function AlexNet() {
 	}
 
 	async function animate() {
-		requestAnimationFrame(animate);
-		var cookie_theme = getCookie("theme");
-		if(cookie_theme == "darkmode") {
-			scene.background = new THREE.Color(0x363636);
-		} else {
-			scene.background = new THREE.Color(0xffffff);
+		while(has_zero_output_shape) {
+			await delay(200);
 		}
-		renderer.render(scene, camera);
-		await delay(200);
+
+		try {
+			requestAnimationFrame(animate);
+			var cookie_theme = getCookie("theme");
+			if(cookie_theme == "darkmode") {
+				scene.background = new THREE.Color(0x363636);
+			} else {
+				scene.background = new THREE.Color(0xffffff);
+			}
+			renderer.render(scene, camera);
+			await delay(200);
+		} catch (e) {
+			// log(e);
+		}
 	};
 
 	restartRenderer();
