@@ -377,7 +377,7 @@ function get_fit_data () {
 }
 
 function show_info_pre_run () {
-	write_model_summary();
+	write_model_summary_wait();
 }
 
 function show_info_after_run (h) {

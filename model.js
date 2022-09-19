@@ -112,7 +112,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 	$("#outputShape").val(JSON.stringify(model.outputShape));
 
-	write_model_summary();
+	write_model_summary_wait();
 
 	if(keep_weights) {
 		if(old_weights_string) {
