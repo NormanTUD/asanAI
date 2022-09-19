@@ -1644,8 +1644,8 @@ $GLOBALS['minify'] = 0;
 								}
 								this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
 								this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
-								this_layer_arch["rel_x"] = random(-0.1, 0.1);
-								this_layer_arch["rel_y"] = random(-0.1, 0.1);
+								this_layer_arch["rel_x"] = random(0, 0.1);
+								this_layer_arch["rel_y"] = random(0, 0.1);
 
 								if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
 									push = 1;
