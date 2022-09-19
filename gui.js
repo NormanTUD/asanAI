@@ -1079,7 +1079,16 @@ function byteToMB(varbyte) {
 	return varbyte + " (" + mb + "MB)";
 }
 
+function write_model_summary_wait () {
+	document.getElementById('summary').innerHTML = "<center><img width=32 height=32 src='loading_favicon.gif' /></center>";
+	write_model_summary();
+}
+
 function write_model_summary() {
+	if(is_hidden_or_has_hidden_parent($("#summary_tab"))) {
+		return;
+	}
+
 	$("#summarycontainer").show();
 	assert(typeof(model) == "object", "model is not an object");
 	var logBackup = console.log;

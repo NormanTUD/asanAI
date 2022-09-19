@@ -402,6 +402,7 @@ $(document).ready(async function() {
 	setInterval(fix_viz_width, 700);
 	setInterval(check_number_values, 200);
 	setInterval(display_delete_button, 200);
+	setInterval(write_model_summary, 200);
 	setInterval(write_descriptions, 500);
 
 	allow_edit_inputShape();
