@@ -227,8 +227,8 @@ $GLOBALS['minify'] = 0;
 					<div class="ribbon-group-sep"></div>
 
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:300px">
-							<table width=300>
+						<div class="ribbon-toolbar" style="width:310px">
+							<table width=310>
 								<tr>
 									<td>
 										Problem type:
