@@ -109,6 +109,7 @@ function AlexNet() {
 		}
 
 		try {
+			await delay(200);
 			requestAnimationFrame(animate);
 			var cookie_theme = getCookie("theme");
 			if(cookie_theme == "darkmode") {
@@ -117,7 +118,6 @@ function AlexNet() {
 				scene.background = new THREE.Color(0xffffff);
 			}
 			renderer.render(scene, camera);
-			await delay(200);
 		} catch (e) {
 			// log(e);
 		}
@@ -271,9 +271,9 @@ function AlexNet() {
 			}
 		});
 
-		scene.add(layers);
-		scene.add(convs);
-		scene.add(pyramids);
+		scene.add(layers); // Causes weird problem
+		scene.add(convs); // Causes weird problem
+		scene.add(pyramids); // Causes weird problem
 		scene.add(sprites);
 	}
 
