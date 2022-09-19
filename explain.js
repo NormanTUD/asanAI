@@ -452,7 +452,14 @@ function group_layers (layers) {
         return result;
 }
 
-function write_descriptions () {
+async function write_descriptions () {
+	var new_hash = await get_model_config_hash();
+	if(last_drawn_descriptions == new_hash) {
+		return;
+	}
+
+	last_drawn_descriptions = new_hash;
+
 	if(!disable_show_python_and_create_model) {
 		var groups = group_layers(get_layer_type_array());
 

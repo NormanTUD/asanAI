@@ -1254,3 +1254,5 @@ var enable_drawing_custom_data = 0;
 var atrament_data = {};
 
 var shown_has_zero_data = false;
+
+var last_drawn_descriptions = "";

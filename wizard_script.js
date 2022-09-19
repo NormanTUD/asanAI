@@ -128,7 +128,7 @@ DOMstrings.stepsBar.addEventListener('click', e => {
   //open active panel
   setActivePanel(activeStep);
 
-  write_descriptions();
+  (async () => await write_descriptions());
 });
 
 //PREV/NEXT BTNS CLICK
@@ -159,8 +159,7 @@ DOMstrings.stepsForm.addEventListener('click', e => {
 
   setActiveStep(activePanelNum);
   setActivePanel(activePanelNum);
-
-  write_descriptions();
+  (async () => await write_descriptions());
 });
 
 //SETTING PROPER FORM HEIGHT ONLOAD
@@ -181,4 +180,4 @@ const setAnimationType = newType => {
 
 setAnimationType("scaleIn");
 
-write_descriptions();
+(async () => await write_descriptions());

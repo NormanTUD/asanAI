@@ -4,7 +4,7 @@ function gui_in_training () {
 	started_training = true;
 	disable_everything();
 	favicon_spinner();
-	write_descriptions();
+	(async () => await write_descriptions());
 }
 
 function gui_not_in_training () {
@@ -129,7 +129,7 @@ async function train_neural_network () {
 		await show_prediction();
 	}
 
-	write_descriptions();
+	(async () => await write_descriptions());
 	write_model_to_latex_to_page();
 
 	save_current_status();
@@ -466,7 +466,7 @@ async function run_neural_network () {
 		header("ERROR END");
 		console.trace();
 		favicon_default();
-		write_descriptions();
+		(async () => await write_descriptions());
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 		started_training = false;
 		return;
@@ -569,7 +569,7 @@ function reset_on_error () {
 	document.body.style.cursor = "default";
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox").prop("disabled", false);
-	write_descriptions();
+	(async () => await write_descriptions());
 	Prism.highlightAll();
 
 	var link = document.querySelector("link[rel~='icon']");

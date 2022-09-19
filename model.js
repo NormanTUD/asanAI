@@ -1,7 +1,7 @@
 "use strict";
 
 function except (errname, e) {
-	write_descriptions();
+	(async () => await write_descriptions());
 	enable_everything();
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
@@ -721,7 +721,7 @@ function get_fake_data_for_layertype (layer_nr, layer_type) {
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 	assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
 
-	write_descriptions();
+	(async () => await write_descriptions());
 
 	var data = {};
 
