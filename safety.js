@@ -13,7 +13,7 @@ function assert(boolean_value, exception_message) {
 		document.body.style.cursor = "default";
 		$("#layers_container").sortable("enable");
 		$("#ribbon,select,input,checkbox").prop("disabled", false);
-		(async () => await write_descriptions());
+		write_descriptions();
 		highlight_code();
 
 		var link = document.querySelector("link[rel~='icon']");

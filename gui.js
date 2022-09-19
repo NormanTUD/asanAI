@@ -992,7 +992,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	try {
-		(async () => await write_descriptions());
+		write_descriptions();
 	} catch (e) {
 		console.warn(e);
 	}
@@ -1289,14 +1289,14 @@ function set_option_for_layer_by_layer_nr(nr) {
 		}
 	}
 
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function toggle_options(item) {
 	assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
 
 	$(item).parent().parent().parent().next().toggle();
-	(async () => await write_descriptions(1));
+	write_descriptions(1);
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
@@ -1412,7 +1412,7 @@ async function remove_layer(item) {
 
 	}
 
-	(async () => await write_descriptions());
+	write_descriptions();
 	rename_labels();
 	predict_handdrawn();
 
@@ -1463,7 +1463,7 @@ async function add_layer(item) {
 
 	await updated_page();
 
-	(async () => await write_descriptions());
+	write_descriptions();
 
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
@@ -1735,7 +1735,7 @@ async function set_config(index) {
 					title: 'Oops [1]...',
 					text: 'Error loading the model'
 				});
-				(async () => await write_descriptions());
+				write_descriptions();
 				log(config);
 				return;
 			}
@@ -1897,7 +1897,7 @@ async function set_config(index) {
 
 	Swal.close();
 
-	(async () => await write_descriptions());
+	write_descriptions();
 
 	l("Updating predictions");
 	await show_prediction(1, 1);
@@ -2101,7 +2101,7 @@ async function init_dataset_category() {
 function clean_gui() {
 	reset_summary();
 	write_error("");
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function set_input_shape(val) {
@@ -2109,7 +2109,7 @@ function set_input_shape(val) {
 
 	$("#inputShape").val(val);
 
-	(async () => await write_descriptions());
+	write_descriptions();
 
 	return get_input_shape();
 }
@@ -2173,7 +2173,7 @@ function disable_everything() {
 	$("#layers_container").sortable("disable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
-	(async () => await write_descriptions());
+	write_descriptions();
 	highlight_code();
 }
 
@@ -2181,7 +2181,7 @@ function enable_everything() {
 	document.body.style.cursor = "default";
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
-	(async () => await write_descriptions());
+	write_descriptions();
 	highlight_code();
 }
 
@@ -2372,7 +2372,7 @@ async function undo() {
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
 
-	(async () => await write_descriptions());
+	write_descriptions();
 
 	l("Undone last change");
 }
@@ -2398,7 +2398,7 @@ async function redo() {
 
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
-	(async () => await write_descriptions());
+	write_descriptions();
 
 	l("Redone last undone change");
 }
@@ -2491,7 +2491,7 @@ function register() {
 		color_msg_red("register_error_msg");
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 async function login() {
@@ -2765,7 +2765,7 @@ function openPopup(name) {
 	} else {
 		el.style.display = 'none';
 	}
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function closePopup(name) {
@@ -2773,7 +2773,7 @@ function closePopup(name) {
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = 'none';
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 async function upload_model(evt) {
@@ -3573,7 +3573,7 @@ function write_error(e) {
 		}
 
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
-		(async () => await write_descriptions());
+		write_descriptions();
 		console.warn(e);
 		console.trace();
 
@@ -3587,13 +3587,13 @@ function write_error(e) {
 	}
 
 	enable_everything();
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function hide_error() {
 	$("#error").html("").hide().parent().hide();
 	enable_everything();
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function find_layer_number_by_element(element) {
@@ -3714,7 +3714,7 @@ async function set_default_input_shape() {
 
 			await identify_layers(get_numberoflayers());
 
-			(async () => await write_descriptions());
+			write_descriptions();
 		} catch (e) {
 			log(e);
 		}
@@ -3771,7 +3771,7 @@ function toggle_layer_view() {
 	if (is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 		$("#layers_container_left").show();
 		$(".descriptions_of_layers").show();
-		(async () => await write_descriptions());
+		write_descriptions();
 		$("#toggle_layer_view_button").html("&#x1F5D6;");
 	} else {
 		$("#layers_container_left").hide();
@@ -3794,7 +3794,7 @@ async function theme_choser () {
 
 	setCookie("theme", theme);
 
-	(async () => await write_descriptions());
+	write_descriptions();
 	write_model_to_latex_to_page();
 	restart_fcnn();
 	restart_alexnet();
@@ -3883,7 +3883,7 @@ function end_demo_mode() {
 	$("#mainsite").show();
 	$("#demomode").hide();
 
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 async function change_model_dataset() {
@@ -4184,7 +4184,7 @@ function plotly_show_loss_graph() {
 		Plotly.newPlot('explanation', plot_data);
 	});
 
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function add_row_to_plotly_loss() {
@@ -4198,7 +4198,7 @@ function add_row_to_plotly_loss() {
 		$(".delete_row").prop("disabled", true);
 	}
 
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function remove_plotly_table_element(item) {
@@ -4237,7 +4237,7 @@ function create_plotly_table() {
 
 	$("#table_div").html(str);
 
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function add_loss_functions_to_plotly_visualizer(data) {

@@ -253,7 +253,7 @@ async function get_traindata_and_init_categories () {
 	}
 
 	await init_page_contents();
-	(async () => await write_descriptions());
+	write_descriptions();
 }
 
 function init_categories () {
