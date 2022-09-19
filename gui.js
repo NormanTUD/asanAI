@@ -1296,7 +1296,7 @@ function toggle_options(item) {
 	assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
 
 	$(item).parent().parent().parent().next().toggle();
-	(async () => await write_descriptions());
+	(async () => await write_descriptions(1));
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
@@ -1873,7 +1873,7 @@ async function set_config(index) {
 	await compile_model();
 
 	if (config["weights"]) {
-		l("Settings weights from config-weights");
+		l("Setting weights from config-weights");
 		var weights_string = JSON.stringify(config["weights"]);
 		await set_weights_from_string(weights_string, 1, 1)
 	} else {
