@@ -1459,7 +1459,7 @@ $GLOBALS['minify'] = 0;
 				}
 
 				if(old_mode != mode) {
-					setCookie("mode", mode)
+					setCookie("mode", mode);
 				}
 
 				return mode;
@@ -1469,7 +1469,7 @@ $GLOBALS['minify'] = 0;
 			function set_mode () {
 				mode = get_mode();
 				if(old_mode != mode) {
-					setCookie("mode", mode)
+					setCookie("mode", mode);
 				}
 				if(mode == "beginner") {
 					throw_compile_exception = false;

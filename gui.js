@@ -3792,7 +3792,7 @@ async function theme_choser () {
 	document.getElementById('css_mode').href = theme + '.css';
 	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
 
-	setCookie("theme", theme)
+	setCookie("theme", theme);
 
 	(async () => await write_descriptions());
 	write_model_to_latex_to_page();
@@ -4245,7 +4245,7 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function setCookie(name,value,days) {
+function setCookie(name,value,days=365) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
