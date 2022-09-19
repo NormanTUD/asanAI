@@ -529,6 +529,10 @@ function tensor_shape_matches_model (tensor) {
 }
 
 async function predict_handdrawn () {
+	if(has_zero_output_shape) {
+		return;
+	}
+
 	if(!input_shape_is_image()) {
 		return;
 	}
