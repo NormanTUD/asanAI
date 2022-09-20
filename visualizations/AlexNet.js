@@ -109,7 +109,9 @@ function AlexNet() {
 		}
 
 		try {
-			await delay(200);
+			while (is_hidden_or_has_hidden_parent($("#alexnet_tab"))) {
+				await delay(200);
+			}
 			requestAnimationFrame(animate);
 			var cookie_theme = getCookie("theme");
 			if(cookie_theme == "darkmode") {
