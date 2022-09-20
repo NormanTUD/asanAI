@@ -4047,13 +4047,13 @@ function check_number_values() {
 
 			if (max) {
 				if (val > max) {
-					item.val(max);
+					item.val(max).trigger("change");
 				}
 			}
 
 			if (min) {
 				if (val < min) {
-					item.val(min);
+					item.val(min).trigger("change");
 				}
 			}
 
