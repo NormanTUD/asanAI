@@ -4065,7 +4065,9 @@ function check_number_values() {
 		disable_train();
 	} else {
 		has_missing_values = false;
-		enable_train();
+		if(!shown_has_zero_data) {
+			enable_train();
+		}
 	}
 }
 

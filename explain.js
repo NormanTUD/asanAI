@@ -618,7 +618,6 @@ async function identify_layers (numberoflayers) {
 			}
 
 			if(has_zero_output_shape) {
-				disable_train();
 				var zero_output_shape_current_status_hash = await get_current_layer_container_status_hash();
 
 				if(zero_output_shape_current_status_hash != last_zero_output_shape_status) {
@@ -636,9 +635,12 @@ async function identify_layers (numberoflayers) {
 						shown_has_zero_data = true;
 					}
 					last_zero_output_shape_status = zero_output_shape_current_status_hash;
+					disable_train();
 				}
 			} else {
-				enable_train();
+				if(!has_zero_output_shape && !shown_has_zero_data) {
+					enable_train();
+				}
 			}
 		} catch (e) {
 			console.warn(e);
