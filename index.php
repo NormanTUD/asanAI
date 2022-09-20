@@ -82,7 +82,7 @@ $GLOBALS['minify'] = 0;
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
 		<?php minify_js("custom.js"); ?>
-		<?php minify_js("jsmanipulate.js"); ?>
+		<?php minify_js("jsmanipulate.js", 1, 1); ?>
 		<script>
 			var force_cpu_backend = 0;
 
@@ -105,7 +105,7 @@ $GLOBALS['minify'] = 0;
 		</script>
 
 		<!-- Easter Egg -->
-		<?php minify_js("fireworks.js"); ?>
+		<?php minify_js("fireworks.js", 1, 1); ?>
 
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
@@ -150,12 +150,12 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("visualizations/FCNN.js"); ?>
 		
 		<!-- ChardinJS -->
-		<?php minify_js("chardinjs.js"); ?>
+		<?php minify_js("chardinjs.js", 1, 1); ?>
 		
 		<?php minify_css("chardinjs.css"); ?>
 
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("atrament.js"); ?>
+		<?php minify_js("atrament.js", 1, 1); ?>
 		
 		<script>
 			<?php
