@@ -49,6 +49,10 @@ let predict_demo = async function (item, nr) {
 		return;
 	}
 
+	while (is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+		await delay(200);
+	}
+
 	try {
 		if(labels.length == 0) {
 			await get_label_data();
