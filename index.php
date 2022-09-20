@@ -1581,6 +1581,9 @@
 					var layer_type = $($(".layer_type")[i]).val();
 					if(parseInt(number_of_units) > 0) {
 						real_architecture.push(number_of_units);
+						if(number_of_units > 100) {
+							number_of_units = 100;
+						}
 						architecture.push(number_of_units);
 						betweenNodesInLayer.push(10);
 						layer_types.push(layer_type);
