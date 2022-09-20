@@ -1945,7 +1945,7 @@ async function init_dataset() {
 }
 
 function init_download_link() {
-	let html = "Download the training data <a href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.";
+	let html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.";
 	$("#download_data").html(html).show();
 }
 
