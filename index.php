@@ -60,7 +60,7 @@
 		if(array_key_exists("no_minify", $_GET)) {
 			$GLOBALS['minify'] = 0;
 		}
-$GLOBALS['minify'] = 0;
+		$GLOBALS['minify'] = 0;
 ?>
 		<?php minify_css("wand.css"); ?>
 		<?php minify_css("jquery-ui.css"); ?>
