@@ -150,7 +150,7 @@ $GLOBALS['minify'] = 0;
 		<?php minify_js("visualizations/FCNN.js"); ?>
 		
 		<!-- ChardinJS -->
-		<?php minify_js("chardinjs.js", 1, 1); ?>
+		<?php minify_js("chardinjs.js"); ?>
 		
 		<?php minify_css("chardinjs.css"); ?>
 
@@ -1980,8 +1980,8 @@ $GLOBALS['minify'] = 0;
 
 		</script>
 
-		<?php minify_js("prism/prism.js", 1, 1); ?>
-		<?php minify_js("prism/prism-python.min.js", 1, 1); ?>
+		<?php minify_js("prism/prism.js"); ?>
+		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
 		
 		<script type="text/x-mathjax-config">
