@@ -173,7 +173,7 @@ $GLOBALS['minify'] = 0;
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
-		<?php minify_js("plotly-latest.min.js"); ?>
+		<?php minify_js("plotly-latest.min.js", 1, 1); ?>
 
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 

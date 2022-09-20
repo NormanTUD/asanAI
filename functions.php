@@ -333,16 +333,24 @@
 		}
 	}
 
-	function minify_js ($file, $async=0) {
+	function minify_js ($file, $async=0, $defer=0) {
 		if(0 && ($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css" && $file != 'visualizations/d3.v5.min.js' && $file != "visualizations/three.min.js") {
-			if($async) {
+			if($async && $defer) {
+				print "<script async defer src='minify.php?file=$file'></script>";
+			} else if($async && !$defer) {
 				print "<script async src='minify.php?file=$file'></script>";
+			} else if(!$async && $defer) {
+				print "<script defer src='minify.php?file=$file'></script>";
 			} else {
 				print "<script src='minify.php?file=$file'></script>";
 			}
 		} else {
-			if($async) {
+			if($async && $defer) {
+				print "<script async defer src='$file'></script>";
+			} else if($async && !$defer) {
 				print "<script async src='$file'></script>";
+			} else if(!$async && $defer) {
+				print "<script defer defer src='$file'></script>";
 			} else {
 				print "<script src='$file'></script>";
 			}
