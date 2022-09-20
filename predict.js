@@ -42,6 +42,16 @@ var loadFile = (function(event) {
 	$("#output").show();
 });
 
+function _predict_error (e) {
+	console.warn(e);
+	l(e);
+	$("#prediction").hide();
+	$("#predict_error").html(e).show();
+	$("#example_predictions").html("");
+	$(".show_when_has_examples").hide();
+
+}
+
 let predict_demo = async function (item, nr) {
 	//tf.engine().startScope();
 	
@@ -53,18 +63,34 @@ let predict_demo = async function (item, nr) {
 		await delay(200);
 	}
 
+	var tensor_img;
+
 	try {
 		if(labels.length == 0) {
 			await get_label_data();
 		}
+	} catch (e) {
+		_predict_error(e);
+	}
 
+	try {
 		$(item).prop("width", width);
 		$(item).prop("height", height);
+	} catch (e) {
+		_predict_error(e);
+	}
 
-		let tensor_img = tf.tidy(() => {
+	try {
 
+		tensor_img = tf.tidy(() => {
 			return tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims()
 		});
+
+	} catch (e) {
+		_predict_error(e);
+	}
+
+	try {
 
 		if($("#divide_by").val() != 1) {
 			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
@@ -72,10 +98,22 @@ let predict_demo = async function (item, nr) {
 			tensor_img = tf.tensor(await new_tensor_img.arraySync());
 			dispose(new_tensor_img);
 		}
+	} catch (e) {
+		_predict_error(e);
+	}
 
+	try {
 		if(!tensor_shape_matches_model(tensor_img)) {
 			dispose(tensor_img);
 			return;
+		}
+	} catch (e) {
+		_predict_error(e);
+	}
+
+	try {
+		while (!tf.backend()) {
+			await delay(100);
 		}
 
 		if(model) {
@@ -120,13 +158,7 @@ let predict_demo = async function (item, nr) {
 
 		dispose(tensor_img);
 	} catch (e) {
-		console.warn(e);
-		l(e);
-		$("#prediction").hide();
-		$("#predict_error").show();
-		$("#predict_error").html(e);
-		$("#example_predictions").html("");
-		$(".show_when_has_examples").hide();
+		_predict_error(e);
 	}
 
 	//tf.engine().endScope();
@@ -282,9 +314,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 		$("#predict_error").html("").hide();
 	} catch (e) {
-		console.warn(e);
-		$("#prediction").hide();
-		$("#predict_error").html(e).show();
+		_predict_error(e);
 	}
 	tf.engine().endScope();
 
