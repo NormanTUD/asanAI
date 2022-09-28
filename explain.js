@@ -1790,9 +1790,11 @@ function model_to_latex () {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 		str += "$$";
+		/*
 		if(i != model.layers.length - 1) {
 			str += "<hr class='full_width_hr'>";
 		}
+		*/
 	}
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
