@@ -76,7 +76,9 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	var old_weights_string = false;
 
 	if(!model) {
-		model = await create_model(model, await get_model_structure());
+		if(!fake_model_structure) {
+			model = await create_model(model, await get_model_structure());
+		}
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
 			old_weights_string = await get_weights_as_string(model);
@@ -813,12 +815,16 @@ async function compile_fake_model (layer_nr, layer_type) {
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
+
 	try {
+		var start_tensors = tf.memory()["numTensors"];
 		var fake_model = await create_model(null, fake_model_structure);
 		fake_model.compile(get_model_data());
+		log((tf.memory()["numTensors"] - start_tensors) + " new tensors");
 	} catch (e) {
 		return false;
 	}
+
 	return true;
 }
 
