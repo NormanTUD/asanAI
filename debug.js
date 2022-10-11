@@ -59,6 +59,72 @@ function getParamNames(func) {
 	return result;
 }
 
+
+function add_memory_debugger () {
+	var ORIGINAL_FUNCTION_PREFIX = "___original___";
+	var current_functions = Object.keys(window);
+
+	for (var i in window) {
+	    if(
+		    i != "assert" &&							// Disable assert output
+		    ![
+			    "delay", 
+			    "Swal", 
+			    "add_function_debugger", 
+			    "getParamNames", 
+			    "memory_debugger", 
+			    "_allow_training", 
+			    "fix_viz_width", 
+			    "allow_training", 
+			    "allow_training", 
+			    "get_chosen_dataset", 
+			    "get_weights_as_string", 
+			    "show_load_weights", 
+			    "_show_load_weights", 
+			    "get_current_chosen_object_default_weights_string", 
+			    "get_chosen_dataset", 
+			    "get_weights_shape", 
+			    "dispose", 
+			    "get_weights_shape", 
+			    "get_weights_as_string", 
+		    ].includes(i) &&		// exclude these functions
+		    typeof(window[i]) == "function" &&					// use only functions
+		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
+		    !current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions
+		    window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
+		    i != "$"								// Do not debug jquery
+	    ) {
+		    var param_names = getParamNames(window[i]);
+
+		    var args_string = param_names.join(", "); 
+
+		    try {
+			    var execute_this = `
+			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
+			    window["${i}"] = function (${args_string}) {
+					var start_tensors = tf.memory()["numTensors"];
+
+					var result = window["${ORIGINAL_FUNCTION_PREFIX}${i}"](${args_string});
+
+					var end_tensors = tf.memory()["numTensors"];
+					if((end_tensors - start_tensors) != 0) {
+						log((end_tensors - start_tensors) + " new tensors in ${i}");
+					}
+					return result;
+			    }
+			    `;
+
+			    eval(execute_this);
+		    } catch (e) {
+			    console.warn(e);
+			    log(i);
+			    log(param_names);
+			    window[i] = original_function;
+		    }
+	    }
+	}
+}
+
 function add_function_debugger () {
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
 	var current_functions = Object.keys(window);
