@@ -230,18 +230,14 @@
 						<div class="ribbon-toolbar" style="width:310px">
 							<table width=310>
 								<tr>
-									<td>
-										Problem type:
-									</td>
+									<td>Problem type</td>
 									<td colspan="2">
 										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');setCookie('dataset_category',$(this).val());" style="width: 204px">
 										</select>
 									</td>
 								</tr>
 								<tr>
-									<td>
-										Architecture:
-									</td>
+									<td>Architecture</td>
 									<td colspan="2">
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 108px">
 										</select>
@@ -250,7 +246,7 @@
 								</tr>
 								<tr>
 									<td>
-										Dataset:
+										Dataset
 									</td>
 									<td colspan=2>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 162px">
@@ -259,8 +255,11 @@
 									</td>
 								</tr>
 								<tr>
-									<td>Shapes:</td>
-									<td><input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />&nbsp;&rarr;&nbsp;<input type="text" value="" style="width: 82px;" readonly id="outputShape" /></td>
+									<td>Shapes</td>
+									<td>
+										<input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />
+										&nbsp;&rarr;&nbsp;
+										<input type="text" value="" style="width: 82px;" readonly id="outputShape" /></td>
 								</tr>
 							</table>
 
@@ -274,21 +273,21 @@
 						<div class="ribbon-toolbar" style="width: 190px">
 							<table>
 								<tr class="expert_mode_only">
-									<td>Loss<sup onclick="losses_popup()">?</sup>:</td>
+									<td>Loss<sup onclick="losses_popup()">?</sup></td>
 									<td style="width: 110px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
-									<td>Metric:</td>
+									<td>Metric</td>
 									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
 								<tr>
-									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source:</td>
+									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source</td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 110px">
 											<option value="default">Default</option>
@@ -321,9 +320,9 @@
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
 						<div class="ribbon-toolbar" style="width: 155px">
 							<table>
-								<tr><td>Epochs:</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 60px;" /></td></tr>
-								<tr><td>Batch-Size:</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 60px;" /></td></tr>
-								<tr><td>Val.-Split&nbsp;%:</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 60px;" id="validationSplit" /></td></tr>
+								<tr><td>Epochs</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 60px;" /></td></tr>
+								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 60px;" /></td></tr>
+								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 60px;" id="validationSplit" /></td></tr>
 							</table>
 							<div class="ribbon-group-title">Hyperparameters, Data</div>
 						</div>
@@ -337,15 +336,15 @@
 							<div class="ribbon-toolbar" style="width:130px">
 								<table>
 									<tr>
-										<td>Width:</td>
+										<td>Width</td>
 										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 50px;" /></td>
 									</tr>
 									<tr>
-										<td>Height:</td>
+										<td>Height</td>
 										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 50px;" /></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
-										<td>Img/cat:</td>
+										<td>Img/cat</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
 									<tr>
@@ -542,7 +541,7 @@
 						<div class="ribbon-toolbar">
 							<table style="width: 80%">
 								<tr>
-									<td>Optimizer:</td>
+									<td>Optimizer</td>
 									<td>
 										<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
 											<option value="adam">adam</option>
@@ -561,7 +560,7 @@
 								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
 										</tr>
 									</table>
@@ -570,10 +569,10 @@
 								<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
 
-											<td>Initial accumulator value:</td>
+											<td>Initial accumulator value</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
 										</tr>
 									</table>
@@ -582,18 +581,18 @@
 								<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
 
-											<td>&beta;<sub>1</sub>:</td>
+											<td>&beta;<sub>1</sub></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam" /></td>
 										</tr>
 
 										<tr>
-											<td>&beta;<sub>2</sub>:</td>
+											<td>&beta;<sub>2</sub></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam" /></td>
 
-											<td>&epsilon;:</td>
+											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
 										</tr>
 									</table>
@@ -602,16 +601,16 @@
 								<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
 
-											<td>&rho;:</td>
+											<td>&rho;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta" /></td>
 										</tr>
 
 										<tr>
 
-											<td>&epsilon;:</td>
+											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
 										</tr>
 									</table>
@@ -620,13 +619,13 @@
 								<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
 
-											<td>&beta;<sub>1</sub>:</td>
+											<td>&beta;<sub>1</sub></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax" /></td>
 
-											<td>&epsilon;:</td>
+											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
 
 
@@ -634,10 +633,10 @@
 										</tr>
 										<tr>
 
-											<td>&beta;<sub>2</sub>:</td>
+											<td>&beta;<sub>2</sub></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax" /></td>
 
-											<td>Decay:</td>
+											<td>Decay</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax" /></td>
 																				</tr>
 											<td></td>
@@ -649,17 +648,17 @@
 								<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
 
-											<td>Decay:</td>
+											<td>Decay</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
 										</tr>
 										<tr>
-											<td>Momentum:</td>
+											<td>Momentum</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
 
-											<td>&epsilon;:</td>
+											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
 										</tr>
 									</table>
@@ -668,10 +667,10 @@
 								<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
 									<table style="width: 80%">
 										<tr>
-											<td>Learning rate:</td>
+											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
 
-											<td>Momentum:</td>
+											<td>Momentum</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
 										</tr>
 									</table>
@@ -752,15 +751,15 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
-											<td>Iterations:</td>
+											<td>Iterations</td>
 											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;" /></td>
 										</tr>
 										<tr>
-											<td>Randomizer limits:</td>
+											<td>Randomizer limits</td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
 										<tr>
-											<td>Image-Size (w&amp;h, 0 = auto):</td>
+											<td>Image-Size (w&amp;h, 0 = auto)</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;" /></td>
 										</tr>
 									</table>
@@ -777,15 +776,15 @@
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
 								<tr>
-									<td>Show layer data flow:</td>
+									<td>Show layer data flow</td>
 									<td><input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
 								</tr>
 								<tr>
-									<td>Enable TF-Debug:</td>
+									<td>Enable TF-Debug</td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
 								</tr>
 								<tr>
-									<td>Memory Debugger:</td>
+									<td>Memory Debugger</td>
 									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" class="show_data" id="memory_debugger" /></td>
 								</tr>
 							</table>
@@ -801,16 +800,16 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 									<table>
 										<tr>
-											<td>Pixel size:</td>
+											<td>Pixel size</td>
 											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
 										</tr>
 										<tr>
-											<td>Kernel Pixel size:</td>
+											<td>Kernel Pixel size</td>
 											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
 										</tr>
 
 										<tr>
-											<td>Max. nr. of images (0 = no limit):</td>
+											<td>Max. nr. of images (0 = no limit)</td>
 											<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
 										</tr>
 									</table>
@@ -869,16 +868,16 @@
 													<div class="multisteps-form__content">
 														<table>
 															<tr>
-																<td>Problem type:</td><td><select class="copy_options" data-from_and_to="dataset_category" id="dataset_category_wizard"></select></td>
+																<td>Problem type</td><td><select class="copy_options" data-from_and_to="dataset_category" id="dataset_category_wizard"></select></td>
 															</tr>
 															<tr>
-																<td>Architecture:</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
+																<td>Architecture</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
 															</tr>
 															<tr>
-																<td>Dataset:</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
+																<td>Dataset</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
 															</tr>
 															<tr>
-																<td>Data-Source:</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
+																<td>Data-Source</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
 															</tr>
 														</table>
 
@@ -896,13 +895,13 @@
 													<div class="multisteps-form__content">
 														<table>
 															<tr>
-																<td>Epochs:</td><td><input type="number" class="copy_values" data-from_and_to="epochs" id="epochs_wizard"></input></td>
+																<td>Epochs</td><td><input type="number" class="copy_values" data-from_and_to="epochs" id="epochs_wizard"></input></td>
 															</tr>
 															<tr>
-																<td>Batch-Size:</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
+																<td>Batch-Size</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
 															</tr>
 															<tr>
-																<td>Validation-Split (in %):</td><td><input type="number" class="copy_values" data-from_and_to="validationSplit" id="validationSplit_wizard"></input></td>
+																<td>Validation-Split (in %)</td><td><input type="number" class="copy_values" data-from_and_to="validationSplit" id="validationSplit_wizard"></input></td>
 															</tr>
 														</table>
 
@@ -962,11 +961,11 @@
 						<div> 
 							<table>
 								<tr>
-									<td>Upload Model (<tt>.json</tt>):</td>
+									<td>Upload Model (<tt>.json</tt>)</td>
 									<td><input accept="application/json" type="file" id="upload_model" value="Upload Model"></td>
 								</tr>
 								<tr>
-									<td>Upload Model weights from TFD trained model (<tt>.json</tt>):</td>
+									<td>Upload Model weights from TFD trained model (<tt>.json</tt>)</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
 								</tr>
 								<tr class="expert_mode_only">
@@ -978,7 +977,7 @@
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
-									<td>Upload Model weights from Keras (<tt>.bin</tt>):</td>
+									<td>Upload Model weights from Keras (<tt>.bin</tt>)</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_weights" value="Upload Weights"></td>
 								</tr>
 							</table>
@@ -1120,7 +1119,7 @@
 													<td><input type="checkbox" value="1" id="auto_loss_metric" checked /></td>
 												</tr>
 												<tr>
-													<td>Separator:</td>
+													<td>Separator</td>
 													<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
 												</tr>
 											</table>
@@ -1278,7 +1277,7 @@
 								<div id="math_tab">
 									<table data-intro="Options for the math mode.">
 										<tr>
-											<td>Number of decimal points (0 = no limit):</td>
+											<td>Number of decimal points (0 = no limit)</td>
 											<td><input class="show_data" type="number" style="width: 50px" value="0" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
 										</tr>
 									</table>
