@@ -1290,24 +1290,26 @@
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
 								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
-								<div style="display: none">
-									<h1>Epochs:</h1>
-									<div id="plotly_epoch_history"></div>
-								</div>
+								<div id="training_content">
+									<div style="display: none">
+										<h1>Epochs:</h1>
+										<div id="plotly_epoch_history"></div>
+									</div>
 
-								<div style="display: none">
-									<h1>Batches:</h1>
-									<div id="plotly_batch_history"></div>
-								</div>
+									<div style="display: none">
+										<h1>Batches:</h1>
+										<div id="plotly_batch_history"></div>
+									</div>
 
-								<div style="display: none">
-									<h1>Time per batch (in seconds):</h1>
-									<div id="plotly_time_per_batch"></div>
-								</div>
+									<div style="display: none">
+										<h1>Time per batch (in seconds):</h1>
+										<div id="plotly_time_per_batch"></div>
+									</div>
 
-								<div style="display: none">
-									<h1>Memory usage while training (per batch):</h1>
-									<div id="plotly_memory_history"></div>
+									<div style="display: none">
+										<h1>Memory usage while training (per batch):</h1>
+										<div id="plotly_memory_history"></div>
+									</div>
 								</div>
 							</div>
 
