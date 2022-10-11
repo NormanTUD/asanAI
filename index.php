@@ -1289,6 +1289,7 @@
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
+								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
 								<div style="display: none">
 									<h1>Epochs:</h1>
 									<div id="plotly_epoch_history"></div>
