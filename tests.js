@@ -11,7 +11,7 @@ function test_not_equal (name, is, should_be) {
 		//console.log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		console.log("%c" + name + " ERROR. Is: " + JSON.stringify(is) + ", should be: " + JSON.stringify(should_be), "background: red; color: white");
+		console.log("%c" + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be), "background: red; color: white");
 		num_tests_failed++;
 		return false;
 	}
@@ -310,6 +310,22 @@ async function run_tests () {
 			test_equal("There is NOT a clear winner", false, true);
 		}
 	}
+
+
+	// testing shuffling
+	$("#dataset_category").val("image").trigger("change");
+	$("#dataset").val("mnist").trigger("change");
+	$("#epochs").val(1).trigger("change");
+	$("#max_number_of_files_per_category").val(1).trigger("change");
+	$("#shuffle_before_each_epoch").prop("checked", true).trigger("change")
+
+	var original_force_download = force_download;
+	force_download = true;
+	test_not_equal("get_image_data(0) is not empty", JSON.stringify(await get_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true)
+	force_download = false;
+
+	var xy_data = await get_xs_and_ys();
+
 
 	test_summary();
 
