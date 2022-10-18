@@ -505,10 +505,10 @@ var model_data_structure = {
 
 var activations = {
 	//"None": "none",
+	"relu": "ReLu",
 	"linear": "Linear",
 	"sigmoid": "Sigmoid",
 	"elu": "ELU",
-	"relu": "ReLu",
 	"relu6": "ReLu6",
 	"selu": "SeLu",
 	"softplus": "SoftPlus",
