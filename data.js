@@ -304,7 +304,7 @@ async function get_xs_and_ys () {
 				}
 
 				if($("#shuffle_data").is(":checked")) {
-				//	this_data = shuffle(this_data);
+					this_data = shuffle(this_data);
 				}
 
 				log("this_data:", this_data);

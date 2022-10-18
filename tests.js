@@ -322,9 +322,12 @@ async function run_tests () {
 	var original_force_download = force_download;
 	force_download = true;
 	test_not_equal("get_image_data(0) is not empty", JSON.stringify(await get_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true)
-	force_download = false;
 
 	var xy_data = await get_xs_and_ys();
+	force_download = false;
+
+	var y_test = await xy_data.y.arraySync();
+	test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
 
 
 	test_summary();
