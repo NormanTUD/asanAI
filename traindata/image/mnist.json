@@ -8,10 +8,10 @@
 	"validationSplit": 20,
 	"max_number_of_files_per_category": 20,
 
-	"width": 45,
-	"height": 45,
+	"width": 35,
+	"height": 35,
 
-	"learningRate": 0.00001,
+	"learningRate": 0.01,
 	"rho": 0.8999999761581421,
 	"decay": 0,
 	"epsilon": 0.0000001,

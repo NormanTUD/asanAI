@@ -367,7 +367,8 @@ function get_fit_data () {
 		epochs: epochs,
 		shuffle: $("#shuffle_before_each_epoch").is(":checked"),
 		verbose: 0,
-		callbacks: callbacks
+		callbacks: callbacks,
+		yieldEvery: 'batch'
 	};
 
 	traindebug("fit_data:");

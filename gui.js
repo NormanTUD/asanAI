@@ -176,7 +176,9 @@ function set_item_value(layer, classname, value) {
 			found_setting.val(value).trigger("change");
 		}
 	} else {
-		if(classname != "trainable") {
+		if(classname == "rate") {
+			set_item_value(layer, "dropout_rate", value)
+		} else if(classname != "trainable") {
 			log("Unknown classname '" + classname + "' in layer " + layer);
 		}
 	}
