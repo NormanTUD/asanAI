@@ -307,7 +307,7 @@ async function get_xs_and_ys () {
 					this_data = shuffle(this_data);
 				}
 
-				log("this_data:", this_data);
+				//log("this_data:", this_data);
 				for (var i = 0; i < this_data.length; i++) {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
@@ -371,7 +371,7 @@ async function get_xs_and_ys () {
 					}
 				}
 
-				log("classes:", classes);
+				//log("classes:", classes);
 				y = tf.tensor(classes);
 
 				for (let [key, value] of Object.entries(imageData)) {
