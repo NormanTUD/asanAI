@@ -784,7 +784,7 @@ function get_default_option (layer_type, option_name) {
 	if(match) {
 		if(typeof(layer_options_defaults[option_name]) == "string" && layer_options_defaults[option_name] == "[]") {
 			var number_of_match_items = parseInt(match[1]);
-			var number = 2;
+			var number = 1;
 			var results = [];
 			for (var i = 0; i < number_of_match_items; i++) {
 				results.push(number);
