@@ -297,14 +297,14 @@ async function run_tests () {
 		var this_result = results[i];
 
 		var sum = this_result.reduce((a, b) => a + b, 0);
-		test_equal("Sum of all results for one specific image is near 1", Math.abs(sum - 1) < 0.05, true);
+		test_equal("Sum of all results for one specific image is near 1", Math.abs(sum - 1) < 0.1, true);
 
 		var avg = (sum / this_result.length) || 0;
 
 		var this_result_ordered = this_result.sort(function (a, b) { return a - b; });
 		var highest = this_result_ordered.pop();
 
-		if(highest > this_result_ordered.reduce((a, b) => a + b, 0)) {
+		if(highest > (0.8 * this_result_ordered.reduce((a, b) => a + b, 0))) {
 			test_equal("There is a clear winner", true, true);
 		} else {
 			test_equal("There is NOT a clear winner", false, true);
