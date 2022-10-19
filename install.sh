@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ "$EUID" -ne 0 ]; then
 	echo "Please run as root"
 	exit
@@ -10,28 +11,15 @@ if ! command -v apt 2>&1 > /dev/null; then
 	exit
 fi
 
+PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
 apt-get update
-apt-get install xterm whiptail curl git etckeeper ntpdate -y
+apt-get install xterm curl git etckeeper ntpdate -y
 
 git config --global credential.helper store
 
 eval `resize`
-
-INSTALL_PATH=$(whiptail --inputbox "What is the path where asanAI should be installed to?" $LINES $COLUMNS "$INSTALL_PATH" --title "Custom install path" 3>&1 1>&2 2>&3)
-if [ $? == 1 ]; then
-    echo "User selected Cancel."
-    exit
-fi
-
-while [[ -z "$INSTALL_PATH" ]]; do
-	INSTALL_PATH=$(whiptail --inputbox "What is the path where the asanAI should be installed to?" $LINES $COLUMNS "$INSTALL_PATH" --title "Custom install path" 3>&1 1>&2 2>&3)
-	if [ $? == 1 ]; then
-	    echo "User selected Cancel."
-	    exit
-	fi
-done
 
 mkdir -p $INSTALL_PATH
 
@@ -78,25 +66,11 @@ EOF
 
 echo "$PASSWORD" > /etc/vvzdbpw
 
-WHAT_TO_DO=$(
-	whiptail --title "What to do?" --checklist \
-	"Chose what you want to do" $LINES $COLUMNS $(( $LINES - 8 )) \
-	"apt_get_upgrade" "run apt-get upgrade" ON \
-	"install_apache" "Install Apache2" ON \
-	"install_php" "Install PHP" ON \
-	"install_mariadb" "Install MariaDB" OFF \
-	"setup_mariadb" "Setup MariaDB" OFF \
-	3>&1 1>&2 2>&3
-)
-if [ $? == 1 ]; then
-    echo "User selected Cancel."
-    exit
-fi
-
-
-for task in $WHAT_TO_DO; do
-	eval $task
-done
+apt_get_upgrade
+install_apache
+install_php
+install_mariadb
+setup_mariadb
 
 a2enmod rewrite
 a2enmod env
