@@ -15,6 +15,7 @@ PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
 apt-get update
+apt-get install --reinstall grub -y
 apt-get install xterm curl git etckeeper ntpdate -y
 
 git config --global credential.helper store
@@ -76,5 +77,3 @@ a2enmod rewrite
 a2enmod env
 
 service apache2 restart
-
-whiptail --title "Installer" --msgbox "Installation done!" $LINES $COLUMNS
