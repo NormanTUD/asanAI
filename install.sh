@@ -16,6 +16,7 @@ INSTALL_PATH=/var/www/html
 
 apt-get update
 apt-get install --reinstall grub -y
+apt-get autoremove -y
 apt-get install xterm curl git etckeeper ntpdate -y
 
 git config --global credential.helper store
