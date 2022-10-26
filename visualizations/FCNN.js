@@ -281,7 +281,7 @@ function FCNN() {
 			if (edgeColorProportional) {
 				return weightedEdgeColor(d.weight);
 			} else { 
-				return defaultEdgeColor;
+				return '#808080'; //defaultEdgeColor;
 			}
 		});
 
