@@ -413,8 +413,14 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						for (var i = 0; i < example_predict_data.length; i++) {
 							var tensor = tf.tensor(example_predict_data[i]);
 							if(tensor_shape_matches_model(tensor)) {
-								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict([tensor]).arraySync()) + "<br>");
-								count++;
+								try {
+									var res = model.predict([tensor]).arraySync();
+									example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res) + "<br>");
+									count++;
+									$("#predict_error").html("");
+								} catch (e) {
+									_predict_error(e);
+								}
 							}
 						}
 					});
