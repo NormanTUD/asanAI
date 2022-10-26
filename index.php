@@ -425,7 +425,7 @@
 							Theme: <select id="theme_choser" class="show_data" onchange="theme_choser()">
 								<option value="lightmode">Light Mode</option>
 								<option value="darkmode">Dark Mode</option>
-								<option value="natural">Natural</option>
+								<option value="naturalmode">Natural</option>
 							</select>
 						</div>
 						<div class="ribbon-group-title">TF-Backend/GUI-Mode/Style</div>
