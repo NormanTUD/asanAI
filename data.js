@@ -307,11 +307,17 @@ async function get_xs_and_ys () {
 					this_data = shuffle(this_data);
 				}
 
+				x = tf.ones([width, height, 3]).expandDims();
+
 				//log("this_data:", this_data);
 				for (var i = 0; i < this_data.length; i++) {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
-					x = x.concat(item);
+					/*
+					log("x.shape", x.shape);
+					log("item.shape", item.shape);
+					*/
+					x = x.concat(item, 0);
 					classes.push(this_category_counter);
 
 					if($("#auto_augment").is(":checked")) {
@@ -370,6 +376,10 @@ async function get_xs_and_ys () {
 						}
 					}
 				}
+
+				var x_arr = await x.arraySync();
+				x_arr.shift();
+				x = tf.tensor(x_arr);
 
 				//log("classes:", classes);
 				y = tf.tensor(classes);

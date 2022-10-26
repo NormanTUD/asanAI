@@ -120,12 +120,6 @@ let predict_demo = async function (item, nr) {
 			var last_layer_activation = get_last_layer_activation_function();
 			var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
-			/*
-			log("=================================");
-			log(tensor_img);
-			tensor_img.print();
-			log("=================================");
-			*/
 
 			var model_input_shape = JSON.parse(JSON.stringify((model.input.shape)));
 			model_input_shape.shift();
@@ -138,7 +132,21 @@ let predict_demo = async function (item, nr) {
 				return;
 			}
 
-			var predictions_tensor = await model.predict([tensor_img]);
+			var predictions_tensor = undefined;
+			try {
+				predictions_tensor = await model.predict(tensor_img);
+			} catch (e) {
+
+				log("================================= Tensor_Img");
+				log(tensor_img);
+				tensor_img.print();
+				log("=================================");
+
+
+				_predict_error(e);
+
+				return;
+			}
 			var predictions = predictions_tensor.dataSync();
 			dispose(predictions_tensor);
 
@@ -405,7 +413,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						for (var i = 0; i < example_predict_data.length; i++) {
 							var tensor = tf.tensor(example_predict_data[i]);
 							if(tensor_shape_matches_model(tensor)) {
-								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict(tensor).arraySync()) + "<br>");
+								example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(model.predict([tensor]).arraySync()) + "<br>");
 								count++;
 							}
 						}
