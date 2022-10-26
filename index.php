@@ -275,26 +275,34 @@
 					<div class="ribbon-group-sep expert_mode_only"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group expert_mode_only" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
-						<div class="ribbon-toolbar" style="width: 190px">
+						<div class="ribbon-toolbar" style="width: 250px">
 							<table>
-								<tr class="expert_mode_only">
+								<tr>
 									<td>Loss<sup onclick="losses_popup()">?</sup></td>
-									<td style="width: 110px">
+									<td style="width: 200px">
 										<select id="loss" onchange="updated_page()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
-								<tr class="expert_mode_only">
+								<tr>
 									<td>Metric</td>
 									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
 										</select>
 									</td>
 								</tr>
-								<tr class="expert_mode_only">
+								<tr>
 									<td colspan=2>
 										Auto-Input-Shape?
 										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
+									</td>
+								</tr>
+								<tr>
+									<td>Shapes</td>
+									<td>
+										<input type="text" value="" style="width: 73px;" onchange="update_input_shape()" readonly id="inputShape" />
+										&nbsp;&rarr;&nbsp;
+										<input type="text" value="" style="width: 73px;" readonly id="outputShape" />
 									</td>
 								</tr>
 							</table>
@@ -872,14 +880,6 @@
 															</tr>
 															<tr>
 																<td>Data-Source</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
-															</tr>
-															<tr>
-																<td>Shapes</td>
-																<td>
-																	<input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />
-																	&nbsp;&rarr;&nbsp;
-																	<input type="text" value="" style="width: 82px;" readonly id="outputShape" />
-																</td>
 															</tr>
 														</table>
 
