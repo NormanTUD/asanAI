@@ -254,12 +254,16 @@
 										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
-								<tr class="expert_mode_only">
-									<td>Shapes</td>
+
+								<tr>
+									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source</td>
 									<td>
-										<input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />
-										&nbsp;&rarr;&nbsp;
-										<input type="text" value="" style="width: 82px;" readonly id="outputShape" />
+										<select id="data_origin" onchange="change_data_origin(1)" style="width: 110px">
+											<option value="default">Default</option>
+											<option value="tensordata">&#x2318; Tensor-Data</option>
+											<option class="input_shape_is_image" value="image">&#128444; Image</option>
+											<option value="csv">&#128290; CSV</option>
+										</select>
 									</td>
 								</tr>
 							</table>
@@ -268,9 +272,9 @@
 						<div class="ribbon-group-title">Dataset and Network</div>
 					</div>
 
-					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep expert_mode_only"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
+					<div class="ribbon-group expert_mode_only" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
 						<div class="ribbon-toolbar" style="width: 190px">
 							<table>
 								<tr class="expert_mode_only">
@@ -284,17 +288,6 @@
 									<td>Metric</td>
 									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 100%">
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source</td>
-									<td>
-										<select id="data_origin" onchange="change_data_origin(1)" style="width: 110px">
-											<option value="default">Default</option>
-											<option value="tensordata">&#x2318; Tensor-Data</option>
-											<option class="input_shape_is_image" value="image">&#128444; Image</option>
-											<option value="csv">&#128290; CSV</option>
 										</select>
 									</td>
 								</tr>
@@ -879,6 +872,14 @@
 															</tr>
 															<tr>
 																<td>Data-Source</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
+															</tr>
+															<tr>
+																<td>Shapes</td>
+																<td>
+																	<input type="text" value="" style="width: 85px;" onchange="update_input_shape()" readonly id="inputShape" />
+																	&nbsp;&rarr;&nbsp;
+																	<input type="text" value="" style="width: 82px;" readonly id="outputShape" />
+																</td>
 															</tr>
 														</table>
 
