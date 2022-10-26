@@ -120,6 +120,22 @@ let predict_demo = async function (item, nr) {
 			var last_layer_activation = get_last_layer_activation_function();
 			var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
+			log("=================================");
+			log(tensor_img);
+			tensor_img.print();
+			log("=================================");
+
+			var model_input_shape = JSON.parse(JSON.stringify((model.input.shape)));
+			model_input_shape.shift();
+
+			var tensor_img_shape = JSON.parse(JSON.stringify(tensor_img.shape));
+			tensor_img_shape.shift();
+
+			if(JSON.stringify(model_input_shape) != JSON.stringify(tensor_img_shape)) {
+				log("Model input shape: ", model_input_shape, "Tensor-Img-shape:", tensor_img_shape);
+				return;
+			}
+
 			var predictions_tensor = await model.predict([tensor_img]);
 			var predictions = predictions_tensor.dataSync();
 			dispose(predictions_tensor);
