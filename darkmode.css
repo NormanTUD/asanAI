@@ -230,3 +230,8 @@ a.ui-button:focus {
 #status_bar {
 	background-color: #262626;
 }
+
+#log {
+	background-color: gray;
+	color: white;
+}
