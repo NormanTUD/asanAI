@@ -188,7 +188,7 @@ async function run_tests () {
 
 	var fit_data = get_fit_data();
 
-	test_equal("keys get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\", \"yieldEvery\"]");
+	test_equal("keys get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\",\"yieldEvery\"]");
 
 	["batchSize", "epochs", "validationSplit"].forEach(function (item) {
 		test_equal("typeof(get_fit_data()['" + item + "']) == number", typeof(fit_data[item]), "number");
