@@ -258,7 +258,7 @@
 								<tr>
 									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source</td>
 									<td>
-										<select id="data_origin" onchange="change_data_origin(1)" style="width: 110px">
+										<select id="data_origin" onchange="change_data_origin(1)" style="width: 204px;">
 											<option value="default">Default</option>
 											<option value="tensordata">&#x2318; Tensor-Data</option>
 											<option class="input_shape_is_image" value="image">&#128444; Image</option>
