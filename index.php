@@ -347,7 +347,7 @@
 										<td>Img/cat</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 50px" /></td>
 									</tr>
-									<tr>
+									<tr class="expert_mode_only">
 										<td>Augment?</td>
 										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment" /></td>
 									</tr>
@@ -364,7 +364,7 @@
 							<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px" onclick="train_neural_network()">Start training</button><br>
 							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to current tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
 							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
-							<button onclick="force_reinit()">Reinitialize weights</button><br>
+							<button class="expert_mode_only" onclick="force_reinit()">Reinitialize weights</button><br>
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>
