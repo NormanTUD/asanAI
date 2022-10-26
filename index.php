@@ -307,7 +307,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title"><span class="expert_mode_only">Loss/Metric/</span>Data</div>
+						<div class="ribbon-group-title">Loss, Metric, Data and Shapes</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
