@@ -142,11 +142,11 @@ let predict_demo = async function (item, nr) {
 				tensor_img.print();
 				log("=================================");
 
-
 				_predict_error(e);
 
 				return;
 			}
+
 			var predictions = predictions_tensor.dataSync();
 			dispose(predictions_tensor);
 
