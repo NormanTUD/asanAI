@@ -395,7 +395,7 @@
 					</div>
 				</div>
 
-				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General Settings">
+				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
@@ -664,7 +664,7 @@
 					</div>
 				</div>
 
-				<div id="tf_ribbon_layer_settings" class="ribbon_tab_content" title="Layer Settings">
+				<div id="tf_ribbon_layer_settings" class="ribbon_tab_content" title="Layer">
 					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
 						<div class="ribbon-toolbar">
 							<table>
