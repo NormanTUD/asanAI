@@ -809,7 +809,6 @@ async function compile_fake_model (layer_nr, layer_type) {
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
-
 	try {
 		var start_tensors = tf.memory()["numTensors"];
 
