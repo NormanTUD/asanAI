@@ -395,7 +395,7 @@
 					</div>
 				</div>
 
-				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="Settings">
+				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General Settings">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
