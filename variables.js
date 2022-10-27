@@ -1224,16 +1224,16 @@ var general_options = {
 	'recurrent_activation': '"Recurrent Activation function", "recurrent_activation", "select", activations, nr',
 
 	// regularizer
-	'bias_regularizer': '"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr',
-	'activity_regularizer': '"Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr',
-	'kernel_regularizer': '"Kernel Regularizer", "kernel_regularizer", "select", initializers, nr',
-	'activity_regularizer_l1': '"l1", "activity_regularizer_l1", "number", { "value": 0.01 }, nr, "activity_regularizer_tr"',
-	'activity_regularizer_l2': '"l2", "activity_regularizer_l2", "number", { "value": 0.01 }, nr, "activity_regularizer_tr"',
-	'kernel_regularizer': '"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr',
-	'bias_regularizer_l1': '"l1", "bias_regularizer_l1", "number", { "value": 0.01 }, nr, "bias_regularizer_tr"',
-	'bias_regularizer_l2': '"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr"',
-	'kernel_regularizer_l1': '"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"',
-	'kernel_regularizer_l2': '"l2", "kernel_regularizer_l2", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr"'
+	'bias_regularizer': '"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr, null, 0, 1',
+	'activity_regularizer': '"Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr, null, 0, 1',
+	'kernel_regularizer': '"Kernel Regularizer", "kernel_regularizer", "select", initializers, nr, null, 0, 1',
+	'activity_regularizer_l1': '"l1", "activity_regularizer_l1", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1',
+	'activity_regularizer_l2': '"l2", "activity_regularizer_l2", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1',
+	'kernel_regularizer': '"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr, null, 0, 1',
+	'bias_regularizer_l1': '"l1", "bias_regularizer_l1", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1',
+	'bias_regularizer_l2': '"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1',
+	'kernel_regularizer_l1': '"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr", null, 0, 1',
+	'kernel_regularizer_l2': '"l2", "kernel_regularizer_l2", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr", null, 0, 1'
 };
 
 var general_options_keys = Object.keys(general_options);
