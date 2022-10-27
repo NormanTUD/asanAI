@@ -176,7 +176,7 @@ html {
 	}
 }
 
-@media only screen and (min-width: 1100px) {
+@media only screen and (min-width: 1101px) {
 	#toggle_layers_button {
 		display: none;
 	}
