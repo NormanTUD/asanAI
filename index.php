@@ -704,8 +704,24 @@
 						</div>
 						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
 					</div>
+					<!--
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
+
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td>Strides</td>
+									<td>
+										<input id="all_strides_val" class="no_red_on_error" type="number" step=1 min=0 onchange="set_all_strides()" />
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Strides</div>
+					</div>
+					-->
 				</div>
 
 				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">

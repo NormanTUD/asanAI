@@ -4051,7 +4051,9 @@ function check_number_values() {
 		var val = item.val();
 
 		if (!isNumeric(val)) {
-			item.css("background-color", "red");
+			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
+				item.css("background-color", "red");
+			}
 			missing_values++;
 		} else {
 			val = parseFloat(val);
@@ -4811,13 +4813,21 @@ function onclick_math_mode (t, e) {
 	//console.trace();
 }
 
-async function set_all_strides (n) {
+async function set_all_strides () {
+	var n = $("#all_strides_val").val();
+	_set_all_strides(n);
+	if(looks_like_number(n)) {
+		$("#all_strides_val").val("");
+	}
+}
+
+async function _set_all_strides (n) {
 	assert(typeof(n) == "number" || looks_like_number(n), n + " is not an integer and does not look like one");
 	n = parseInt(n);
 
-	$(".strides_x").val(n);
-	$(".strides_y").val(n);
 	$(".strides_z").val(n);
+	$(".strides_y").val(n);
+	$(".strides_x").val(n);
 
-	await updated_page();
+	$($(".strides_x")[0]).trigger("change");
 }
