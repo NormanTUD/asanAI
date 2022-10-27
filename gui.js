@@ -4810,3 +4810,14 @@ function onclick_math_mode (t, e) {
 	write_model_to_latex_to_page(0, 1);
 	//console.trace();
 }
+
+async function set_all_strides (n) {
+	assert(typeof(n) == "number" || looks_like_number(n), n + " is not an integer and does not look like one");
+	n = parseInt(n);
+
+	$(".strides_x").val(n);
+	$(".strides_y").val(n);
+	$(".strides_z").val(n);
+
+	await updated_page();
+}

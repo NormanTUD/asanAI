@@ -702,7 +702,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Set options for all</div>
+						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
