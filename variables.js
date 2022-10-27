@@ -172,7 +172,7 @@ var layer_options = {
 	"dense": {
 		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: $$\\mathrm{output} = \\mathrm{activation}\\left(\\mathrm{input} \\cdot \\mathrm{kernel} + \\text{bias}\\right)$$ activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "kernel_regularizer", "bias_regularizer", "visualize"
+			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "kernel_regularizer", "bias_regularizer", "visualize", "dtype"
 		],
 		"category": "Basic"
 	},
@@ -184,14 +184,14 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate"
+			"dropout_rate", "dtype"
 		],
 		"category": "Basic"
 	},
 	"reshape": {
 		"description": "Reshapes an input to a certain shape.",
 		"options": [
-			'target_shape'
+			'target_shape', "dtype"
 		],
 		"category": "Basic"
 	},
@@ -199,7 +199,7 @@ var layer_options = {
 	"elu": {
 		"description": "Exponetial Linear Unit (ELU).<br>It follows: $$\\text{elu}\\left(x\\right) = \\left\\{\\begin{array}{ll} \\alpha \\cdot \\left(e^x - 1\\right) & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0\\end{array}\\right.$$",
 		"options": [
-			"alpha"
+			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -207,7 +207,7 @@ var layer_options = {
 	"leakyReLU": {
 		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: $$ \\text{leakyReLU}(x) = \\left\\{\\begin{array}{ll} \\alpha \\cdot x & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0 \\end{array}\\right.$$",
 		"options": [
-			"alpha"
+			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -215,7 +215,7 @@ var layer_options = {
 	"prelu": {
 		"description": "Parameterized version of a leaky rectified linear unit. It follows $$ f(x) = \\begin{cases}\n\\alpha * x & x < 0 \\\\ x & x >= 0\\end{cases}. wherein $$\\alpha$$ is a trainable weight.",
 		"options": [
-			"alpha"
+			"alpha", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -224,14 +224,14 @@ var layer_options = {
 	"reLU": {
 		"description": "Rectified Linear Unit activation function. $$\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)$$",
 		"options": [
-			"max_value"
+			"max_value", "dtype"
 		],
 		"category": "Activation"
 	},
 	"softmax": {
 		"description": "Softmax activation layer. $$\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}$$",
 		"options": [
-			"axis"
+			"axis", "dtype"
 		],
 		"category": "Activation"
 	},
@@ -246,7 +246,7 @@ var layer_options = {
 	"activation": {
 		"description": "Applies an activation function to an output.",
 		"options": [
-			"activation"
+			"activation", "dtype"
 		],
 		"category": "Activation"
 	},
