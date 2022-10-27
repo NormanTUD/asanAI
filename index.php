@@ -2012,13 +2012,10 @@
 				"showMathMenu": true
 			});
 
-			set_mode();
-		</script>
-		<?php minify_js("wizard_script.js", 1, 1); ?>
-		<script>
 			load_time = Date().toLocaleString();
 
 			set_mode();
 		</script>
+		<?php minify_js("wizard_script.js", 1, 1); ?>
 	</body>
 </html>
