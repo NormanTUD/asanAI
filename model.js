@@ -626,18 +626,6 @@ async function create_model (old_model, fake_model_structure, force) {
 				if(e.toString().includes("is incompatible with layer")) {
 					set_layer_background(i, "red");
 				}
-
-				if(mode != "expert") {
-					/*
-					msg = msg + "\n\nUndoing last change"
-				
-					if(!e.toString().includes("expected") && !e.toString().includes("found")) {
-						undo();
-						future_state_stack = [];
-						show_hide_undo_buttons();
-					}
-					*/
-				}
 			}
 			return model;
 		}
@@ -824,11 +812,16 @@ async function compile_fake_model (layer_nr, layer_type) {
 
 	try {
 		var start_tensors = tf.memory()["numTensors"];
-		tf.engine().startScope();
+
 		var fake_model = await create_model(null, fake_model_structure);
-		fake_model.compile(get_model_data());
-		tf.engine().endScope();
-		log((tf.memory()["numTensors"] - start_tensors) + " new tensors");
+
+		tf.tidy(() => {
+			tf.engine().startScope();
+			fake_model.compile(get_model_data());
+			tf.engine().endScope();
+		});
+
+		log("after compile: " + (tf.memory()["numTensors"] - start_tensors) + " new tensors");
 	} catch (e) {
 		return false;
 	}
