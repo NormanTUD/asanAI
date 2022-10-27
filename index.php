@@ -819,10 +819,6 @@
 						<div class="ribbon-toolbar" style="width:190px">
 							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
 								<tr>
-									<td>Show layer data flow</td>
-									<td><input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /></td>
-								</tr>
-								<tr>
 									<td>Enable TF-Debug</td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
 								</tr>
@@ -1362,7 +1358,10 @@
 
 							<div id="predict_tab">
 								Live update example predictions while training?
-								<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" />
+								<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" /><br>
+
+								Show layer data flow?
+								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
 
 								<div class="container" id="predictcontainer">
 									<div>
