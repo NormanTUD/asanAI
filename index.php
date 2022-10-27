@@ -455,48 +455,6 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Kernel initializer</td>
-									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Bias initializer</td>
-									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions</td>
-									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions (except last layer)</td>
-									<td>
-										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Set options for all</div>
-					</div>
-
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="Set options regarding the weights here.">
 						<div class="ribbon-toolbar">
 							<table>
@@ -704,6 +662,50 @@
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
 					</div>
+				</div>
+
+				<div id="tf_ribbon_layer_settings" class="ribbon_tab_content" title="Layer Settings">
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td>Kernel initializer</td>
+									<td>
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Bias initializer</td>
+									<td>
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Activation functions</td>
+									<td>
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Activation functions (except last layer)</td>
+									<td>
+										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 150px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Set options for all</div>
+					</div>
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 				</div>
 
 				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
