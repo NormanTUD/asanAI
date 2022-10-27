@@ -117,11 +117,15 @@
 
 	function can_edit_model($model_id) {
 		_assert($model_id != "", "Parameter is empty.");
+
 		if(is_admin()) {
 			return true;
 		}
+
 		if(array_key_exists("session_id", $_COOKIE)) {
-			if(get_user_id_from_session_id($_COOKIE["session_id"]) == get_user_id_from_model_id($model_id)) {
+			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+			$model_user = get_user_id_from_model_id($model_id);
+			if($user == $model_user) {
 				return true;
 			}
 		}
@@ -449,7 +453,9 @@
 	}
 
 	function get_user_id_from_model_id($model_id) {
-		return get_single_value_from_query("select user_id from model where id = ".esc($model_id));
+		$q = "select user_id from model where id = ".esc($model_id);
+		$res = get_single_value_from_query($q);
+		return $res;
 	}
 
 	function has_custom_data ($id) {
