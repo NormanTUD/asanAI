@@ -234,8 +234,15 @@ function get_python_name(name) {
 	return name;
 }
 
-function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden) {
+function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
 	var str = "<tr";
+	if(expert_mode_only) {
+		if(tr_class) {
+			tr_class = tr_class + " expert_mode_only";
+		} else {
+			tr_class = "expert_mode_only";
+		}
+	}
 	if (tr_class) {
 		str += " class='" + tr_class + "'";
 	}
@@ -1011,6 +1018,12 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	await wait_for_latex_model;
 	await wait_for_show_hide_load_weights;
+
+	if(mode == "beginner") {
+		$(".expert_mode_only").hide();
+	} else {
+		$(".expert_mode_only").show();
+	}
 
 	return 1;
 }

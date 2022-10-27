@@ -1190,7 +1190,7 @@ var general_options = {
 	'momentum': '"Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": get_default_option(type, "momentum") }, nr',
 	'units': '"Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": get_default_option(type, "units") }, nr',
 	'use_bias': '"Use Bias", "use_bias", "checkbox", { "status": "checked" }, nr',
-	'dtype': '"DType", "dtype", "select", dtypes, nr, null, 1',
+	'dtype': '"DType", "dtype", "select", dtypes, nr, null, 1, 1',
 	'interpolation': '"Interpolation", "interpolation", "select", interpolation, nr',
 	'stddev': '"Standard-Deviation", "stddev", "number", { "min": 0, "value": get_default_option(type, "stddev") }, nr',
 	'stateful': '"Stateful?", "stateful", "checkbox", { "status": "" }, nr',
