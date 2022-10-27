@@ -52,7 +52,7 @@ function _predict_error (e) {
 
 }
 
-let predict_demo = async function (item, nr) {
+let predict_demo = async function (item, nr, tried_again = 0) {
 	//tf.engine().startScope();
 	
 	if(has_zero_output_shape) {
@@ -144,7 +144,11 @@ let predict_demo = async function (item, nr) {
 
 				_predict_error(e);
 
-				return;
+				if(tried_again) {
+					return;
+				}
+
+				return predict_demo(item, nr, 1);
 			}
 
 			var predictions = predictions_tensor.dataSync();
