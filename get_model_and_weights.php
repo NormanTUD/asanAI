@@ -1,17 +1,20 @@
 <?php
 	include('functions.php');
 
-	if(array_key_exists("id", $_GET)) {
-		$model_id = $_GET["id"];
-		if(model_is_public($model_id) || can_edit_model(get_user_from_model_id($model_id), $model_id)) {
-			$user = get_user_id_from_session_id($_COOKIE["session_id"]);
-			$user_is_admin = is_admin() ? 1 : 0;
-			$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).") or $user_is_admin";
-			print get_single_value_from_query($query);
-		} else {
-			print "You don't have the permission.";
-		}
-	} else {
+	if(!array_key_exists("id", $_GET)) {
 		print "No id given.";
+		exit(1);
 	}
+
+	$model_id = $_GET["id"];
+
+	if(model_is_public($model_id) || can_edit_model(get_user_from_model_id($model_id), $model_id)) {
+		print "You don't have the permission.";
+		exit(2);
+	}
+
+	$user = get_user_id_from_session_id($_COOKIE["session_id"]);
+	$user_is_admin = is_admin() ? 1 : 0;
+	$query = "select model_weights from model where id = ".esc($model_id)." and ((is_public = true and reviewed = true) or user_id = ".esc($user).") or $user_is_admin";
+	print get_single_value_from_query($query);
 ?>
