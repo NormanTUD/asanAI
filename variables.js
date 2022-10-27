@@ -1256,3 +1256,5 @@ var atrament_data = {};
 var shown_has_zero_data = false;
 
 var last_drawn_descriptions = "";
+
+var last_training_time = "";

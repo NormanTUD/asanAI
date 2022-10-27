@@ -59,6 +59,7 @@ async function train_neural_network () {
 		l("Stopped training");
 	} else {
 		l("Started training")
+		last_training_time = Date.now();
 		gui_in_training();
 
 		training_logs_batch = {
@@ -560,7 +561,9 @@ async function run_neural_network () {
 	tf.engine().endScope();
 
 	save_current_status();
-	l("Done training");
+	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
+	l("Done training, took " + training_time + " seconds");
+	last_training_time = "";
 }
 
 function write_error_and_reset(e) {
