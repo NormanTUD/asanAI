@@ -80,8 +80,8 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();
 
-	var min = -1;
-	var max = 1;
+	var min = 0;
+	var max = 0;
 
 	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
 		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
