@@ -189,6 +189,15 @@
 		<?php minify_js("plotly-latest.min.js", 1, 1); ?>
 
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['$','$']]
+				},
+				jax: ["input/TeX","output/CommonHTML"],
+				"showMathMenu": true
+			});
+		</script>
 
 		<link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
@@ -2003,16 +2012,6 @@
 		<?php minify_js("prism/prism.js"); ?>
 		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
-		
-		<script type="text/x-mathjax-config">
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['$','$']]
-				},
-				jax: ["input/TeX","output/CommonHTML"],
-				"showMathMenu": true
-			});
-		</script>
 
 		<script>
 
