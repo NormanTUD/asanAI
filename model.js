@@ -927,9 +927,12 @@ async function get_valid_layer_types (layer_nr) {
 			if(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category)) {
 				valid_layer_types.push(layer_type);
 			} else {
-				var pb_string = "Checking layer type "  + (i + 1) + " of " + layer_names.length;
+				await write_descriptions();
+				var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
+				var pb_string = percent + "% (" + layer_type + ")";
 				l(pb_string);
 				pb.html(pb_string);
+				await write_descriptions();
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					if(await compile_fake_model(layer_nr, layer_type)) {
@@ -938,8 +941,11 @@ async function get_valid_layer_types (layer_nr) {
 				}
 				checked_layers = true;
 			}
+			await write_descriptions();
 		}
+		await write_descriptions();
 	}
+	await write_descriptions();
 
 	if(checked_layers) {
 		l("Checked possible layer types");
