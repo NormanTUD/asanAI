@@ -144,8 +144,8 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	var ctx = $(canvas)[0].getContext('2d');
 	ctx.beginPath();    
 
-	var min = -1;
-	var max = 1;
+	var min = 0;
+	var max = 0;
 
 	if(denormalize) {
 		for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
