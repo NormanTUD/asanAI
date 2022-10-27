@@ -812,11 +812,9 @@ function draw_internal_states (layer, inputs, applied) {
 					}
 				} else {
 					//log(input_data);
-					if(layer == 0) {
-						equations.append("$$ " + array_to_latex_matrix(input_data) + "$$").show();
-					}
+					var latex_str = "$$ " + array_to_latex_matrix(output_data) + "$$";
 
-					equations.append("$$ " + array_to_latex_matrix(output_data) + "$$").show();
+					equations.append(latex_str).show();
 				}
 			}
 		} else {
@@ -1288,7 +1286,7 @@ function array_to_latex_matrix (array, level=0) { // TODO color
         for (var i = 0; i < level; i++) {
                 base_tab += "\t";
         }
-        var str = base_tab + "\\displaystyle{\\displaylines{\\begin{pmatrix}\n";
+        var str = base_tab + "\\left(\\begin{matrix}\n";
         if(typeof(array) == "object") {
                 for (var i = 0; i < array.length; i++) {
                         if(typeof(array[i]) == "object") {
@@ -1310,7 +1308,7 @@ function array_to_latex_matrix (array, level=0) { // TODO color
         } else {
                 str += base_tab + "\t" + array + "\n";
         }
-        str += base_tab + "\\end{pmatrix}}}\n"
+        str += base_tab + "\\end{matrix}\\right)\n"
         return str;
 }
 
