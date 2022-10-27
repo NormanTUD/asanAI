@@ -3706,7 +3706,7 @@ function looks_like_number(item) {
 		return true;
 	}
 
-	if (/^(?:(?:[+-]?\d+(?:\d+))|(?:(\d+)?\.\d+))$/.test(item)) {
+	if (/^[+-]?(?:(?:\d+(?:\.\d+)?))$/.test(item)) {
 		return true;
 	}
 	return false;
