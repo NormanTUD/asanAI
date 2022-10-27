@@ -812,7 +812,7 @@ function draw_internal_states (layer, inputs, applied) {
 					}
 				} else {
 					//log(input_data);
-					var latex_str = "$$ " + array_to_latex_matrix(output_data) + "$$";
+					var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
 
 					equations.append(latex_str).show();
 				}
@@ -1281,12 +1281,12 @@ function _get_h (i) {
 	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
 }
 
-function array_to_latex_matrix (array, level=0) { // TODO color
+function array_to_latex_matrix (array, level=0, no_brackets) { // TODO color
         var base_tab = "";
         for (var i = 0; i < level; i++) {
                 base_tab += "\t";
         }
-        var str = base_tab + "\\left(\\begin{matrix}\n";
+        var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
         if(typeof(array) == "object") {
                 for (var i = 0; i < array.length; i++) {
                         if(typeof(array[i]) == "object") {
@@ -1308,7 +1308,7 @@ function array_to_latex_matrix (array, level=0) { // TODO color
         } else {
                 str += base_tab + "\t" + array + "\n";
         }
-        str += base_tab + "\\end{matrix}\\right)\n"
+        str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n"
         return str;
 }
 
