@@ -271,6 +271,7 @@ async function get_model_structure() {
 				log(data);
 				$($(".warning_container")[i]).show()
 				$($(".warning_layer")[i]).html(e)
+
 			}
 
 			traindebug("tf.layers." + type + "(", data, ")");
@@ -281,6 +282,8 @@ async function get_model_structure() {
 			console.trace();
 		}
 	}
+
+	write_descriptions();
 
 	layer_structure_cache = JSON.stringify(structure);
 	return structure;
