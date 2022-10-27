@@ -737,88 +737,84 @@ function draw_internal_states (layer, inputs, applied) {
 		layer_div.html('<h3>Layer ' + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 		var input_data = inputs[0].arraySync()[batchnr];
 
-		if(layers_can_be_visualized()) {
-			layer_div.show();
-			layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-			layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
-			layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-			layer_div.append("<div style='display: none' id='layer_" + layer + "_equations'><h4>Raw Data:</h4></div>");
+		layer_div.show();
+		layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+		layer_div.append("<div style='display: none' id='layer_" + layer + "_kernel'><h4>Kernel:</h4></div>");
+		layer_div.append("<div style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+		layer_div.append("<div style='display: none' id='layer_" + layer + "_equations'><h4>Raw Data:</h4></div>");
 
-			var input = $("#layer_" + layer + "_input");
-			var kernel = $("#layer_" + layer + "_kernel");
-			var output = $("#layer_" + layer + "_output");
-			var equations = $("#layer_" + layer + "_equations");
+		var input = $("#layer_" + layer + "_input");
+		var kernel = $("#layer_" + layer + "_kernel");
+		var output = $("#layer_" + layer + "_output");
+		var equations = $("#layer_" + layer + "_equations");
 
-			$("#layer_visualizations_tab").show();
+		$("#layer_visualizations_tab").show();
 
 
-			var kernel_data = [];
-			if(Object.keys(model.layers[layer]).includes('kernel')) {
-				if(model.layers[layer].kernel.val.shape.length == 4) {
-					kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
-				} else {
-					//log("model.layers[" + layer + "].kernel.val.shape.length == " + model.layers[layer].kernel.val.shape.length);
-				}
+		var kernel_data = [];
+		if(Object.keys(model.layers[layer]).includes('kernel')) {
+			if(model.layers[layer].kernel.val.shape.length == 4) {
+				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
 			} else {
-				//log("kernel not included in model.layers[" + layer + "]");
+				//log("model.layers[" + layer + "].kernel.val.shape.length == " + model.layers[layer].kernel.val.shape.length);
 			}
+		} else {
+			//log("kernel not included in model.layers[" + layer + "]");
+		}
 
-			var canvas_input = draw_image_if_possible(layer, 'input', input_data, 1);
-			var canvas_kernel = draw_image_if_possible(layer, 'kernel', kernel_data, 1);
-			var canvas_output = draw_image_if_possible(layer, 'output', output_data, 1);
+		var canvas_input = draw_image_if_possible(layer, 'input', input_data, 1);
+		var canvas_kernel = draw_image_if_possible(layer, 'kernel', kernel_data, 1);
+		var canvas_output = draw_image_if_possible(layer, 'output', output_data, 1);
 
-			if(canvas_output.length && canvas_input.length) {
-				for (var j = 0; j < canvas_input.length; j++) {
-					var img_input = canvas_input[j];
-					for (var i = 0; i < canvas_output.length; i++) {
-						var img_output = canvas_output[i];
-						if(Object.keys(canvas_kernel).includes(i + '')) {
-							var img_kernel = canvas_kernel[i];
-							if(layer == 0) {
-								input.append(img_input).show();
-							}
-							kernel.append(img_kernel).show();
-							output.append(img_output).show();
-						} else {
-							//log(canvas_kernel);
-							//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-							output.append(img_output).show();
-						}
-					}
-				}
-			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-				var img_input = canvas_input;
+		if(canvas_output.length && canvas_input.length) {
+			for (var j = 0; j < canvas_input.length; j++) {
+				var img_input = canvas_input[j];
 				for (var i = 0; i < canvas_output.length; i++) {
 					var img_output = canvas_output[i];
 					if(Object.keys(canvas_kernel).includes(i + '')) {
 						var img_kernel = canvas_kernel[i];
+						if(layer == 0) {
+							input.append(img_input).show();
+						}
 						kernel.append(img_kernel).show();
 						output.append(img_output).show();
 					} else {
+						//log(canvas_kernel);
 						//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-						input.append(img_input).show();
 						output.append(img_output).show();
 					}
 				}
-			} else {
-				if(canvas_input.nodeName == "CANVAS") {
-					var img_input = canvas_output;
-					if(canvas_output.nodeName == "CANVAS") {
-						var img_output = canvas_output;
-						input.append(img_input).show();
-						output.append(img_output).show();
-					} else {
-						input.append(img_input).show();
-					}
+			}
+		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+			var img_input = canvas_input;
+			for (var i = 0; i < canvas_output.length; i++) {
+				var img_output = canvas_output[i];
+				if(Object.keys(canvas_kernel).includes(i + '')) {
+					var img_kernel = canvas_kernel[i];
+					kernel.append(img_kernel).show();
+					output.append(img_output).show();
 				} else {
-					//log(input_data);
-					var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
-
-					equations.append(latex_str).show();
+					//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
+					input.append(img_input).show();
+					output.append(img_output).show();
 				}
 			}
 		} else {
-			//log("layers_can_be_visualized is " + layers_can_be_visualized());
+			if(canvas_input.nodeName == "CANVAS") {
+				var img_input = canvas_output;
+				if(canvas_output.nodeName == "CANVAS") {
+					var img_output = canvas_output;
+					input.append(img_input).show();
+					output.append(img_output).show();
+				} else {
+					input.append(img_input).show();
+				}
+			} else {
+				//log(input_data);
+				var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
+
+				equations.append(latex_str).show();
+			}
 		}
 	}
 
@@ -832,24 +828,6 @@ function zoom_kernel_images (kernel_image_zoom) {
 function reset_zoom_kernel_images () {
 	$(".kernel_layer_image").width("auto");
 }
-
-function layers_can_be_visualized () {
-	return true;
-	/*
-	for (var i = 0; i < get_numberoflayers(); i++) {
-		var shape = calculate_default_target_shape(i);
-
-		if(shape_looks_like_image_data(shape) != "unknown") {
-			//colorlog("green", "Layers CAN be visualized")
-			return true;
-		}
-	}
-
-	//colorlog("red", "Layers CANNOT be visualized")
-	return false;
-	*/
-}
-
 
 /*
  * From https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet
