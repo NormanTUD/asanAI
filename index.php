@@ -305,17 +305,17 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan=2>
-										Auto-Input-Shape?
-										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
-									</td>
-								</tr>
-								<tr>
 									<td>Shapes</td>
 									<td>
 										<input type="text" value="" style="width: 73px;" onchange="update_input_shape()" readonly id="inputShape" />
 										&nbsp;&rarr;&nbsp;
 										<input type="text" value="" style="width: 73px;" readonly id="outputShape" />
+									</td>
+								</tr>
+								<tr>
+									<td colspan=2>
+										Auto-Input-Shape?
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
 									</td>
 								</tr>
 							</table>
