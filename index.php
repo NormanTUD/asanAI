@@ -2009,8 +2009,12 @@
 				tex2jax: {
 					inlineMath: [['$','$']]
 				},
+				jax: ["input/TeX","output/CommonHTML"],
 				"showMathMenu": true
 			});
+		</script>
+
+		<script>
 
 			load_time = Date().toLocaleString();
 
