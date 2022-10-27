@@ -94,6 +94,7 @@
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
+		<?php minify_js("tf/tf-backend-wasm.js"); ?>
 		<?php minify_js("custom.js"); ?>
 		<?php minify_js("jsmanipulate.js", 1, 1); ?>
 		<script>
