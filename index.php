@@ -347,7 +347,7 @@
 								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;" /></td></tr>
 								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 40px;" id="validationSplit" /></td></tr>
 							</table>
-							<div class="ribbon-group-title">Hyperparams, Data</div>
+							<div class="ribbon-group-title">Hyperparams</div>
 						</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
