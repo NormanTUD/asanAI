@@ -332,6 +332,7 @@ function init_losses_and_metrics () {
 
 $(document).ready(async function() {
 	swalmsg("Loading page");
+	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
 	init_losses_and_metrics();
 
@@ -351,8 +352,6 @@ $(document).ready(async function() {
 		$("#logout").show();
 		$(".show_when_logged_in").show();
 	}
-
-	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
 
 	init_tabs();
