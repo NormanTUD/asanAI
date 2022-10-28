@@ -562,7 +562,7 @@ async function run_neural_network () {
 
 	save_current_status();
 	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
-	l("Done training, took " + training_time + " seconds");
+	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
 	last_training_time = "";
 }
 
