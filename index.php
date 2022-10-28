@@ -356,19 +356,19 @@
 
 					<div id="image_resize_dimensions" class="hide_when_no_image">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:97px">
+							<div class="ribbon-toolbar" style="width:107px">
 								<table>
 									<tr>
 										<td>Width</td>
-										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 30px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;" /></td>
 									</tr>
 									<tr>
 										<td>Height</td>
-										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 30px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 40px;" /></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" style="display: none">
 										<td>Img/cat</td>
-										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 30px" /></td>
+										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px" /></td>
 									</tr>
 									<tr class="expert_mode_only">
 										<td>Augment?</td>
