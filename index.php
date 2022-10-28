@@ -247,8 +247,6 @@
 						</div>
 					</div>
 
-					<div class="ribbon-group-sep"></div>
-
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:250px">
 							<table width=250>
