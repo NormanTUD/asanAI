@@ -250,8 +250,8 @@
 					<div class="ribbon-group-sep"></div>
 
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:282px">
-							<table width=310>
+						<div class="ribbon-toolbar" style="width:250px">
+							<table width=250>
 								<tr>
 									<td>Problem type</td>
 									<td colspan="2">
