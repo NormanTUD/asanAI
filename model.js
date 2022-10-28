@@ -954,7 +954,7 @@ async function get_valid_layer_types (layer_nr) {
 
 function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	if(!m) {
-		console.warning("Model not giving. Using model singleton.");
+		console.warn("Model not giving. Using model singleton.");
 		m = model;
 	}
 
