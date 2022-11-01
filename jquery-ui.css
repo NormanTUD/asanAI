@@ -845,7 +845,7 @@ button.ui-button::-moz-focus-inner {
 	border-bottom-width: 0;
 	padding: 0;
 	white-space: nowrap;
-	border-radius: 5px 5px 0px 0px;
+	//border-radius: 5px 5px 0px 0px;
 }
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	padding: 0em 1em;
