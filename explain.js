@@ -395,7 +395,7 @@ function group_layers (layers) {
 		},
                 {
 			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
-			"name": "Relia&shy;bility for real data"
+			"name": "Simulate real data"
 		},
 		{
 			"re": "(DebugLayer)+",
