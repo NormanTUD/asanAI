@@ -789,10 +789,13 @@
 										</fieldset>
 									</td>
 								</tr>
-
+								<tr>
+									<td>Enable TF-Debug</td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
+								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Visualizations</div>
+						<div class="ribbon-group-title">Visualizations &amp; Debug</div>
 					</div>
 
 					<div class="hide_when_no_conv_visualizations">
@@ -811,7 +814,7 @@
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
 										<tr>
-											<td>Image-Size (w&amp;h, 0 = auto)</td>
+											<td>Width&amp;height (0 = auto):</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;" /></td>
 										</tr>
 									</table>
@@ -822,19 +825,7 @@
 					</div>
 
 
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:190px">
-							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-								<tr>
-									<td>Enable TF-Debug</td>
-									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Debug</div>
-					</div>
+
 
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
