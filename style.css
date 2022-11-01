@@ -547,3 +547,14 @@ button:disabled:hover {
 	background-color: #ff9696;
 	color: black;
 }
+
+hr {
+	padding: 0;
+	border: none;
+	border-top: 1px double #333;
+}
+
+.ribbon-group {
+	margin: 0px;
+	padding: 0px;
+}
