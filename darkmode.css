@@ -234,3 +234,10 @@ a.ui-button:focus {
 	background-color: gray;
 	color: white;
 }
+
+hr {
+	padding: 0;
+	border: none;
+	border-top: 1px solid #585858;
+	border-bottom: 1px solid #585858;
+}

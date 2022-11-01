@@ -548,12 +548,6 @@ button:disabled:hover {
 	color: black;
 }
 
-hr {
-	padding: 0;
-	border: none;
-	border-top: 1px solid #cccccc;
-	border-bottom: 1px solid #ffffff;
-}
 
 .ribbon-group {
 	margin: 0px;

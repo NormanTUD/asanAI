@@ -216,3 +216,10 @@ a.ui-button:focus {
 #status_bar {
 	background-color: #e5e5e5;
 }
+
+hr {
+	padding: 0;
+	border: none;
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #ffffff;
+}
