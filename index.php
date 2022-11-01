@@ -260,9 +260,9 @@
 								<tr>
 									<td>Architecture</td>
 									<td colspan="2">
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 107px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
-										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
+										<button id="reset_model" style="width: 47px;" onclick="init_page_contents($('#dataset').val())">Reset</button>
 									</td>
 								</tr>
 								<tr>
@@ -270,9 +270,9 @@
 										Dataset
 									</td>
 									<td colspan=2>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 107px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
-										<button id="load_weights_button" style="width: 44px;" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										<button id="load_weights_button" style="width: 47px;" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 

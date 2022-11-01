@@ -888,7 +888,6 @@ body .ui-tooltip {
 .ui-widget button {
 	/*font-family: Lucida Grande,Lucida Sans,Arial,sans-serif;*/
 	font-size: 1em;
-	border-radius: 5px;
 }
 .ui-widget.ui-widget-content {
 }
