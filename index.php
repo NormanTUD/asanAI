@@ -789,10 +789,6 @@
 										</fieldset>
 									</td>
 								</tr>
-								<tr data-intro="Show the input layers">
-									<td>Input&nbsp;Layer?</td>
-									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
-								</tr>
 
 							</table>
 						</div>
@@ -1284,7 +1280,6 @@
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
-									<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 								</ul>
 
 								<div id="alexnet_tab">
@@ -1332,8 +1327,7 @@
 									<div class="typeset_me" id="math_tab_code"></div>
 								</div>
 
-								<div id="help_tab">
-								</div>
+								Input&nbsp;Layer? <input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" />
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
