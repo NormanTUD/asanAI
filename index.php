@@ -533,9 +533,51 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td>Kernel initializer</td>
+									<td>
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Bias initializer</td>
+									<td>
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Activation functions</td>
+									<td>
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>&rdca; except last layer</td>
+									<td>
+										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar">
-							<table style="width: 80%">
+							<table>
 								<tr>
 									<td>Optimizer</td>
 									<td>
@@ -550,11 +592,12 @@
 									</td>
 								</tr>
 							</table>
-							<hr>
+
+							<br><br>
 
 							<div id="optimizer_table">
-								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
+									<table 
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
@@ -562,8 +605,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adagrad_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
@@ -574,8 +617,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adam_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
@@ -594,8 +637,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adadelta_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
@@ -612,8 +655,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adamax_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
@@ -641,8 +684,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
@@ -660,8 +703,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="momentum_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
@@ -675,66 +718,6 @@
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
 					</div>
-				</div>
-
-				<div id="tf_ribbon_layer_settings" class="ribbon_tab_content" title="Layer">
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Kernel initializer</td>
-									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Bias initializer</td>
-									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions</td>
-									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions (except last layer)</td>
-									<td>
-										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
-					</div>
-					<!--
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Strides</td>
-									<td>
-										<input id="all_strides_val" class="no_red_on_error" type="number" step=1 min=0 onchange="set_all_strides()" />
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Strides</div>
-					</div>
-					-->
 				</div>
 
 				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
