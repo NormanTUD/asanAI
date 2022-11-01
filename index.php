@@ -1931,7 +1931,6 @@
 
 			favicon_default();
 
-			change_number_of_images();
 			enable_disable_kernel_images();
 
 			$(document).keyup(function(e) {
