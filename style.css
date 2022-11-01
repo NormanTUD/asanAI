@@ -558,3 +558,8 @@ hr {
 	margin: 0px;
 	padding: 0px;
 }
+
+#memory_debugger_div {
+	right: 5px;
+	position: absolute;
+}

@@ -234,7 +234,6 @@
 <?php
 					}
 ?>
-					<span id="tensor_number_debugger" style="display: none"></span>
 				</ul>
 
 
@@ -819,10 +818,6 @@
 								<tr>
 									<td>Enable TF-Debug</td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
-								</tr>
-								<tr>
-									<td>Memory Debugger</td>
-									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" class="show_data" id="memory_debugger" /></td>
 								</tr>
 							</table>
 						</div>
@@ -1445,6 +1440,8 @@
 					<div></div>
 				</span>
 			</span>
+
+			<span id="memory_debugger_div"></span>
 		</div>
 
 		<?php minify_js("main.js"); ?>
@@ -2019,12 +2016,11 @@
 				disable_start_training_button_custom_images();
 			}
 
-			toggle_memory_debug();
-
 			if(window.location.href.indexOf("run_tests") > -1) {
 				run_tests();
 			}
 
+			install_memory_debugger();
 		</script>
 
 		<?php minify_js("prism/prism.js"); ?>
