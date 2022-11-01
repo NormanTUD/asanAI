@@ -551,7 +551,8 @@ button:disabled:hover {
 hr {
 	padding: 0;
 	border: none;
-	border-top: 1px double #333;
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #ffffff;
 }
 
 .ribbon-group {
