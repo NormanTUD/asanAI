@@ -61,8 +61,6 @@ var allowed_layer_cache = [];
 var last_allowed_layers_update = null;
 var started_training = false;
 
-var max_images_per_layer = 0;
-
 var x_file = null;
 var y_file = null;
 var y_shape = null;

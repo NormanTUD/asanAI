@@ -816,11 +816,6 @@
 											<td>Kernel Pixel size</td>
 											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
 										</tr>
-
-										<tr>
-											<td>Max. nr. of images (0 = no limit)</td>
-											<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
-										</tr>
 									</table>
 								</div>
 							</div>
