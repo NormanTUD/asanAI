@@ -270,9 +270,9 @@
 										Dataset
 									</td>
 									<td colspan=2>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 112px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 107px">
 										</select>
-										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										<button id="load_weights_button" style="width: 44px;" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 
