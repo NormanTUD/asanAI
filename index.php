@@ -1326,7 +1326,9 @@
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
-								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+								<br>
+								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
+								<br>
 								<div id="training_content">
 									<div style="display: none">
 										<h1>Epochs:</h1>
