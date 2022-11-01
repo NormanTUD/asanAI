@@ -238,13 +238,9 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 				$($(canvas)[0]).parent().parent().show()
 			}
 
-			if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
-				ret = draw_grid(canvas, pixel_size, colors, 1);
-				if(get_canvas_object) {
-					return canvas;
-				}
-			} else {
-				log('Too many images (simple) in layer ' + layer);
+			ret = draw_grid(canvas, pixel_size, colors, 1);
+			if(get_canvas_object) {
+				return canvas;
 			}
 
 			return ret;
@@ -288,15 +284,10 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					$($(canvas)[0]).parent().parent().show()
 				}
 
-				if(max_images_per_layer == 0 || get_number_of_images_per_layer(layer) <= max_images_per_layer) {
+				ret = draw_grid_grayscale(canvas, 5, colors, k);
 
-					ret = draw_grid_grayscale(canvas, 5, colors, k);
-
-					if(get_canvas_object) {
-						canvasses.push(canvas);
-					}
-				} else {
-					console.log('Too many images (filter) in layer ' + layer);
+				if(get_canvas_object) {
+					canvasses.push(canvas);
 				}
 			}
 
@@ -395,7 +386,7 @@ function group_layers (layers) {
 		},
                 {
 			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
-			"name": "Relia&shy;bility for real data"
+			"name": "Simulate real data"
 		},
 		{
 			"re": "(DebugLayer)+",

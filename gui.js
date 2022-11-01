@@ -603,10 +603,6 @@ function copy_id_to_clipboard(idname) {
 	copy_to_clipboard(serialized);
 }
 
-function change_number_of_images() {
-	max_images_per_layer = parseInt($("#max_images_per_layer").val());
-}
-
 function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
 		$("#show_kernel_images").prop("disabled", false);

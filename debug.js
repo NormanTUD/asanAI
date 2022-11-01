@@ -215,23 +215,18 @@ function memory_debugger () {
 	var gpu_mb = gpu_bytes / 1024 / 1024;
 	gpu_mb = gpu_mb.toFixed(2);
 
-	var debug_string = "| Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
+	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
 
-	$("#tensor_number_debugger").html(debug_string).show();
+	$("#memory_debugger_div").html(debug_string);
 }
 
-function toggle_memory_debug () {
-	var enable = $("#memory_debugger").is(":checked");
+function install_memory_debugger () {
+	l("Installing Memory debugger");
+	$(function(){
+		memory_debugger();
+		memory_debug_interval = setInterval(memory_debugger, 100);
+	});
 
-	if(enable) {
-		$(function(){
-			memory_debugger();
-			memory_debug_interval = setInterval(memory_debugger, 100);
-		});
-	} else {
-		clearInterval(memory_debug_interval);
-	}
-	$("#tensor_number_debugger").html("").hide();
 }
 
 function log_mem () {

@@ -234,7 +234,6 @@
 <?php
 					}
 ?>
-					<span id="tensor_number_debugger" style="display: none"></span>
 				</ul>
 
 
@@ -260,9 +259,9 @@
 								<tr>
 									<td>Architecture</td>
 									<td colspan="2">
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 107px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
-										<button id="reset_model" onclick="init_page_contents($('#dataset').val())">Reset</button>
+										<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())">Reset</button>
 									</td>
 								</tr>
 								<tr>
@@ -270,9 +269,9 @@
 										Dataset
 									</td>
 									<td colspan=2>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 112px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
-										<button id="load_weights_button" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										<button id="load_weights_button" style="width: 46px;" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 
@@ -341,11 +340,11 @@
 					</div>
 
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
-						<div class="ribbon-toolbar" style="width: 115px">
+						<div class="ribbon-toolbar" style="width: 125px">
 							<table>
 								<tr><td>Epochs</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;" /></td></tr>
 								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;" /></td></tr>
-								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 40px;" id="validationSplit" /></td></tr>
+								<tr><td>Val.-Split %</td><td><input type="number" min="0" max="100" step="5" value="20" style="width: 40px;" id="validationSplit" /></td></tr>
 							</table>
 							<div class="ribbon-group-title">Hyperparams</div>
 						</div>
@@ -384,10 +383,34 @@
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px" onclick="train_neural_network()">Start training</button><br>
-							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to current tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
-							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
-							<button class="expert_mode_only" onclick="force_reinit()">Reinitialize weights</button><br>
+							<table>
+								<tr>
+									<td colspan=2>
+										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()">Start training</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<span class="symbol_button">&#x1F4C9;</span> Auto-jump tab?
+									</td>
+									<td>
+										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Divide <i>X</i>-Tensor by:
+									</td>
+									<td>
+										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" />
+									</td>
+								</tr>
+								<tr>
+									<td colspan=2>
+										<button class="expert_mode_only" style="width:100%" onclick="force_reinit()">Reinitialize weights</button>
+									</td>
+								</tr>
+							</table>
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>
@@ -460,21 +483,31 @@
 								       <td>Keep weights when possible?</td>
 								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
 								</tr>
-<!--
-								<tr>
-									<td>Reinit weights on data source change</td>
-									<td>
-										<input type="checkbox" value="1" checked id="reinit_weights_on_data_source_change" />
-									</td>
-								</tr>
--->
                                                                 <tr>
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
 								</tr>
+								<tr>
+									<td>Enable TF-Debug</td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
+								</tr>
+								<tr class="hide_when_no_alexnet">
+									<td>AlexNet-Renderer</td>
+									<td>
+										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
+											<!--<legend>AlexNet-renderer:</legend> -->
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
+											<label for="webgl_renderer">WebGL</label>
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
+											<label for="svg_renderer">SVG</label>
+										</fieldset>
+									</td>
+								</tr>
+
 							</table>
+
 						</div>
-						<div class="ribbon-group-title">Weights/Shuffle</div>
+						<div class="ribbon-group-title">Weights/Shuffle/Renderer/Debug</div>
 					</div>
 
 					<!--
@@ -518,9 +551,51 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td>Kernel initializer</td>
+									<td>
+										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Bias initializer</td>
+									<td>
+										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Activation functions</td>
+									<td>
+										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>&rdca; except last layer</td>
+									<td>
+										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 120px">
+											<option value="none">&mdash;</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Set for all layers</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar">
-							<table style="width: 80%">
+							<table>
 								<tr>
 									<td>Optimizer</td>
 									<td>
@@ -535,11 +610,12 @@
 									</td>
 								</tr>
 							</table>
-							<hr>
+
+							<br><br>
 
 							<div id="optimizer_table">
-								<div class="container optimizer_metadata" style="display: none;" id="sgd_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
+									<table 
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
@@ -547,8 +623,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adagrad_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adagrad_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
@@ -559,8 +635,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adam_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adam_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
@@ -579,8 +655,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adadelta_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adadelta_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
@@ -597,8 +673,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="adamax_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="adamax_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
@@ -626,8 +702,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="rmsprop_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
@@ -645,8 +721,8 @@
 									</table>
 								</div>
 
-								<div class="container optimizer_metadata" style="display: none;" id="momentum_metadata">
-									<table style="width: 80%">
+								<div class="optimizer_metadata" style="display: none;" id="momentum_metadata">
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
@@ -660,66 +736,6 @@
 						</div>
 						<div class="ribbon-group-title">Optimizer</div>
 					</div>
-				</div>
-
-				<div id="tf_ribbon_layer_settings" class="ribbon_tab_content" title="Layer">
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Kernel initializer</td>
-									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Bias initializer</td>
-									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions</td>
-									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Activation functions (except last layer)</td>
-									<td>
-										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 150px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
-					</div>
-					<!--
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Strides</td>
-									<td>
-										<input id="all_strides_val" class="no_red_on_error" type="number" step=1 min=0 onchange="set_all_strides()" />
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Strides</div>
-					</div>
-					-->
 				</div>
 
 				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
@@ -759,31 +775,6 @@
 				</div>
 
 				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-					<div class="ribbon-group" style="width: auto;">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr class="hide_when_no_alexnet">
-									<td>AlexNet-Renderer</td>
-									<td>
-										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
-											<!--<legend>AlexNet-renderer:</legend> -->
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
-											<label for="webgl_renderer">WebGL</label>
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
-											<label for="svg_renderer">SVG</label>
-										</fieldset>
-									</td>
-								</tr>
-								<tr data-intro="Show the input layers">
-									<td>Input&nbsp;Layer?</td>
-									<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
-								</tr>
-
-							</table>
-						</div>
-						<div class="ribbon-group-title">Visualizations</div>
-					</div>
-
 					<div class="hide_when_no_conv_visualizations">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
@@ -800,7 +791,7 @@
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
 										</tr>
 										<tr>
-											<td>Image-Size (w&amp;h, 0 = auto)</td>
+											<td>Width&amp;height (0 = auto):</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;" /></td>
 										</tr>
 									</table>
@@ -808,25 +799,6 @@
 							</div>
 							<div class="ribbon-group-title">Max. activated neurons</div>
 						</div>
-					</div>
-
-
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:190px">
-							<table data-intro="Show the input and output (and kernel) images when possible. See 'Visualizations' -> 'Layer Visualizations' after training or predicting.">
-								<tr>
-									<td>Enable TF-Debug</td>
-									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
-								</tr>
-								<tr>
-									<td>Memory Debugger</td>
-									<td><input type="checkbox" value="1" onclick="toggle_memory_debug();" class="show_data" id="memory_debugger" /></td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Debug</div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
@@ -843,11 +815,6 @@
 										<tr>
 											<td>Kernel Pixel size</td>
 											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
-										</tr>
-
-										<tr>
-											<td>Max. nr. of images (0 = no limit)</td>
-											<td><input type="number" min="0" value="0" onchange="change_number_of_images()" onkeyup="change_number_of_images()" id="max_images_per_layer" style="width: 80px"/></td>
 										</tr>
 									</table>
 								</div>
@@ -1273,7 +1240,6 @@
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
-									<li style="display: none"><a href="#help_tab" id="help_tab_label" style="display: none">Help</a></li>
 								</ul>
 
 								<div id="alexnet_tab">
@@ -1321,12 +1287,13 @@
 									<div class="typeset_me" id="math_tab_code"></div>
 								</div>
 
-								<div id="help_tab">
-								</div>
+								Input&nbsp;Layer? <input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" />
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
-								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
+								<br>
+								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
+								<br>
 								<div id="training_content">
 									<div style="display: none">
 										<h1>Epochs:</h1>
@@ -1443,6 +1410,8 @@
 					<div></div>
 				</span>
 			</span>
+
+			<span id="memory_debugger_div"></span>
 		</div>
 
 		<?php minify_js("main.js"); ?>
@@ -1962,7 +1931,6 @@
 
 			favicon_default();
 
-			change_number_of_images();
 			enable_disable_kernel_images();
 
 			$(document).keyup(function(e) {
@@ -2017,12 +1985,11 @@
 				disable_start_training_button_custom_images();
 			}
 
-			toggle_memory_debug();
-
 			if(window.location.href.indexOf("run_tests") > -1) {
 				run_tests();
 			}
 
+			install_memory_debugger();
 		</script>
 
 		<?php minify_js("prism/prism.js"); ?>

@@ -11,7 +11,11 @@ function calculate_default_target_shape (nr) {
 	if(nr == 0) {
 		input_shape = get_input_shape();
 	} else {
-		input_shape = model.layers[nr - 1].getOutputAt(0).shape;
+		if(Object.keys(model.layers).includes(nr - 1)) {
+			input_shape = model.layers[nr - 1].getOutputAt(0).shape;
+		} else {
+			console.warn((nr - 1) + " is not in model.layers");
+		}
 	}
 
 	var output = [];
@@ -56,8 +60,6 @@ var layer_structure_cache = null;
 var allowed_layer_cache = [];
 var last_allowed_layers_update = null;
 var started_training = false;
-
-var max_images_per_layer = 0;
 
 var x_file = null;
 var y_file = null;

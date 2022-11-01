@@ -184,7 +184,6 @@ a.ui-button:focus {
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
 	cursor: text;
 	color: white;
-	font-style: italic;
 }
 
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
@@ -234,4 +233,11 @@ a.ui-button:focus {
 #log {
 	background-color: gray;
 	color: white;
+}
+
+hr {
+	padding: 0;
+	border: none;
+	border-top: 1px solid #585858;
+	border-bottom: 1px solid #585858;
 }

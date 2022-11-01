@@ -95,7 +95,6 @@ html {
 	color: gray;
 	background-color: white;
 	padding: 8px 5px;
-	border-radius: 8px;
 	font-weight: bold;
 }
 
@@ -173,6 +172,8 @@ input {
 
 .add_remove_layer_button {
 	width: 30px;
+	margin-left: 1px;
+	margin-right: -5px;
 }
 
 .add_layer {
@@ -212,7 +213,6 @@ input {
 	top: 0;
 	left: 0;
 	border: 1px solid #ddd;
-	border-radius: 5px;
 	overflow: hidden;
 	padding: 10px;
 }
@@ -223,15 +223,12 @@ input {
 
 .input_field {
 	width: 100%;
-	border-radius: 5px;
 }
 
 button {
-	border-radius: 5px;
 }
 
 .layer_type {
-	border-radius: 5px;
 }
 
 .vg-tooltip-hidden {
@@ -345,7 +342,7 @@ body {
 
 .remove_layer {
 	position: absolute;
-	left: 47px;
+	left: 46px;
 }
 
 .layer_identifier {
@@ -421,7 +418,6 @@ button:disabled:hover {
 	border: solid #a3a8ac 1px;
 	width: 40px;
 	text-align: center;
-	border-radius: 4px;
 }
 
 #webcam_prediction {
@@ -472,7 +468,6 @@ button:disabled:hover {
 	display: none;
 	height: 3px;
 	background-color: #909090;
-	border-radius: 3px;
 	padding: 3px;
 	width: 100px;
 }
@@ -481,7 +476,6 @@ button:disabled:hover {
 	background-color: orange;
 	width: 0%;
 	height: 3px;
-	border-radius: 10px;
 }
 
 #training_progressbar {
@@ -489,7 +483,6 @@ button:disabled:hover {
 	display: inline-block;
 	height: 3px;
 	background-color: #909090;
-	border-radius: 3px;
 	padding: 3px;
 	width: 100px;
 }
@@ -498,7 +491,6 @@ button:disabled:hover {
 	background-color: orange;
 	width: 0%;
 	height: 3px;
-	border-radius: 10px;
 }
 
 #status_bar_log {
@@ -554,4 +546,15 @@ button:disabled:hover {
 .stop_training {
 	background-color: #ff9696;
 	color: black;
+}
+
+
+.ribbon-group {
+	margin: 0px;
+	padding: 0px;
+}
+
+#memory_debugger_div {
+	right: 5px;
+	position: absolute;
 }
