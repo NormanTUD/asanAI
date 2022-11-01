@@ -487,9 +487,27 @@
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
 								</tr>
+
+								<tr class="hide_when_no_alexnet">
+									<td>AlexNet-Renderer</td>
+									<td>
+										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
+											<!--<legend>AlexNet-renderer:</legend> -->
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
+											<label for="webgl_renderer">WebGL</label>
+											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
+											<label for="svg_renderer">SVG</label>
+										</fieldset>
+									</td>
+								</tr>
+								<tr>
+									<td>Enable TF-Debug</td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
+								</tr>
 							</table>
+
 						</div>
-						<div class="ribbon-group-title">Weights/Shuffle</div>
+						<div class="ribbon-group-title">Weights/Shuffle/Renderer/Debug</div>
 					</div>
 
 					<!--
@@ -757,30 +775,6 @@
 				</div>
 
 				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-					<div class="ribbon-group" style="width: auto;">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr class="hide_when_no_alexnet">
-									<td>AlexNet-Renderer</td>
-									<td>
-										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
-											<!--<legend>AlexNet-renderer:</legend> -->
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
-											<label for="webgl_renderer">WebGL</label>
-											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
-											<label for="svg_renderer">SVG</label>
-										</fieldset>
-									</td>
-								</tr>
-								<tr>
-									<td>Enable TF-Debug</td>
-									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Visualizations &amp; Debug</div>
-					</div>
-
 					<div class="hide_when_no_conv_visualizations">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
@@ -806,9 +800,6 @@
 							<div class="ribbon-group-title">Max. activated neurons</div>
 						</div>
 					</div>
-
-
-
 
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
