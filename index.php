@@ -487,7 +487,10 @@
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
 								</tr>
-
+								<tr>
+									<td>Enable TF-Debug</td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
+								</tr>
 								<tr class="hide_when_no_alexnet">
 									<td>AlexNet-Renderer</td>
 									<td>
@@ -500,10 +503,7 @@
 										</fieldset>
 									</td>
 								</tr>
-								<tr>
-									<td>Enable TF-Debug</td>
-									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
-								</tr>
+
 							</table>
 
 						</div>
