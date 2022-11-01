@@ -570,7 +570,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Kernel/bias initializer, activation functions</div>
+						<div class="ribbon-group-title">Set for all layers</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
