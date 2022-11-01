@@ -383,10 +383,34 @@
 
 					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
 						<div class="ribbon-toolbar">
-							<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px" onclick="train_neural_network()">Start training</button><br>
-							<span class="symbol_button">&#x1F4C9;</span> Auto-jump to current tab? <input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked /><br>
-							Divide <i>X</i>-Tensor by: <input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" /><br>
-							<button class="expert_mode_only" onclick="force_reinit()">Reinitialize weights</button><br>
+							<table>
+								<tr>
+									<td colspan=2>
+										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()">Start training</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<span class="symbol_button">&#x1F4C9;</span> Auto-jump tab?
+									</td>
+									<td>
+										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Divide <i>X</i>-Tensor by:
+									</td>
+									<td>
+										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" />
+									</td>
+								</tr>
+								<tr>
+									<td colspan=2>
+										<button class="expert_mode_only" style="width:100%" onclick="force_reinit()">Reinitialize weights</button>
+									</td>
+								</tr>
+							</table>
 						</div>
 						<div class="ribbon-group-title">Training</div>
 					</div>
@@ -459,14 +483,6 @@
 								       <td>Keep weights when possible?</td>
 								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
 								</tr>
-<!--
-								<tr>
-									<td>Reinit weights on data source change</td>
-									<td>
-										<input type="checkbox" value="1" checked id="reinit_weights_on_data_source_change" />
-									</td>
-								</tr>
--->
                                                                 <tr>
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
