@@ -198,26 +198,8 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 	change_output_and_example_image_size();
 }
 
-function _get_category () {
-	var category = $("#dataset_category").val();
-	if($("#data_origin").val() != "default") {
-		if($("#data_origin").val() == "image") {
-			category = "image";
-		} else {
-			category = "own";
-		}
-	}
-	return category;
-}
-
 async function predict (item, force_category, dont_write_to_predict_tab) {
 	enable_everything();
-
-	var category = "";
-	if(force_category) {
-		category = force_category;
-	}
-	category = _get_category();
 
 	$("#prediction").html("").show();
 	$("#predict_error").html("").hide();
@@ -293,7 +275,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		//log(predictions);
 
-		if(["classification"].includes(category) && labels.length == 0) {
+		if(!input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
 			var last_layer_activation = get_last_layer_activation_function();
@@ -368,15 +350,13 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 		var example_predictions = $("#example_predictions");
 
-		var dataset_category = $("#dataset_category").val();
-
 		if($("#data_origin").val() == "default") {
 			var count = 0;
 
-			if(dataset_category == "image") {
+			if(input_shape_is_image()) {
 				var dataset = $("#dataset").val();
-				var full_dir = "traindata/" + dataset_category + "/" + dataset + "/example/";
-				var dataset_url = 'traindata/index.php?dataset_category=' + dataset_category + '&dataset=' + dataset + '&examples=1';
+				var full_dir = "traindata/" + dataset + "/example/";
+				var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
 
 				var x = await get_cached_json(dataset_url);
 
@@ -407,9 +387,9 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						}
 					}
 				}
-			} else if (dataset_category == "classification") {
+			} else {
 				example_predictions.html("");
-				var example_url = "traindata/" + dataset_category + "/" + $("#model_dataset").val() + "/examples.json"
+				var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
 
 				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
@@ -480,12 +460,10 @@ async function predict_webcam () {
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);
 	var predictions = predictions_tensor.dataSync();
 
-	var category = _get_category();
-
 	var webcam_prediction = $("#webcam_prediction");
 	webcam_prediction.html("").show();
 
-	if(["classification"].includes(category) && labels.length == 0) {
+	if(!input_shape_is_image() && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
 		$("#webcam_prediction").append(str);
 	} else {
