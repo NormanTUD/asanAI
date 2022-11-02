@@ -370,7 +370,7 @@ function group_layers (layers) {
 		},
                 {
 			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))", 
-			"name": "Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention"
+			"name": "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
 		},
                 { 
 			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)", 
