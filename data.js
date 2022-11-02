@@ -254,8 +254,8 @@ async function get_xs_and_ys () {
 
 	var classes = [];
 
-	if(traindata_struct["datasets"][$("#dataset option:selected").text()]["has_custom_data"]) {
-		var model_id = traindata_struct["datasets"][$( "#dataset option:selected" ).text()]["id"];
+	if(traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
+		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
 		var x = xy_data.x;
