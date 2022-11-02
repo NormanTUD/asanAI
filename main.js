@@ -179,8 +179,6 @@ async function init_page_contents (chosen_dataset) {
 	$("#width").val(width);
 	$("#height").val(height);
 
-	$("#train_data_set_group").hide();
-
 	await init_dataset_category();
 	global_disable_auto_enable_valid_layer_types = true;
 
@@ -202,10 +200,6 @@ async function init_page_contents (chosen_dataset) {
 	});
 
 	$("#tablist").show();
-
-	if(["image"].includes($("#dataset_category").val())) {
-		$("#train_data_set_group").show();
-	}
 
 	is_setting_config = false;
 

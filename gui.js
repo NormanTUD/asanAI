@@ -2098,7 +2098,6 @@ async function init_dataset_category() {
 
 	var dataset = "";
 
-	$("#train_data_set_group").show();
 	$("#dataset").html(dataset);
 	$("#upload_x").hide().parent().hide();
 	$("#upload_y").hide().parent().hide();
