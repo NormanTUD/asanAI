@@ -243,14 +243,6 @@ function dataset_already_there (dataset_name) {
 async function get_traindata_and_init_categories () {
 	traindata_struct = await get_json("traindata.php");
 	init_categories();
-	if(getCookie("dataset_category")) {
-		l("Setting dataset_category to " + getCookie("dataset_category") + " from cookie");
-		$("#dataset_category").val(getCookie("dataset_category"));
-	} else if(get_get("dataset_category")) {
-		$("#dataset_category").val(get_get("dataset_category"));
-	} else {
-		$("#dataset_category").val("image");
-	}
 
 	await init_page_contents();
 	write_descriptions();
@@ -357,15 +349,6 @@ $(document).ready(async function() {
 	init_tabs();
 	init_set_all_options();
 	init_categories();
-
-	if(getCookie("dataset_category")) {
-		l("Setting dataset_category to " + getCookie("dataset_category") + " from cookie");
-		$("#dataset_category").val(getCookie("dataset_category"));
-	} else if(get_get("dataset_category")) {
-		$("#dataset_category").val(get_get("dataset_category"));
-	} else {
-		$("#dataset_category").val("image");
-	}
 
 	await init_page_contents();
 

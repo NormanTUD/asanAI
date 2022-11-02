@@ -174,13 +174,13 @@
 		return run_query($query);
 	}
 
-	function save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category_full, $name) {
+	function save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $name) {
 		if($is_public == "true") {
 			$is_public = 1;
 		} else {
 			$is_public = 0;
 		}
-		$query = "insert into model (model_structure, model_weights, model_data, user_id, is_public, category, category_full, name) values (".esc($model_structure).", ".esc($model_weights).", ".esc($model_data).", ".esc($user).", ".esc($is_public).", ".esc($category_full).", ".esc($name).")";
+		$query = "insert into model (model_structure, model_weights, model_data, user_id, is_public, name) values (".esc($model_structure).", ".esc($model_weights).", ".esc($model_data).", ".esc($user).", ".esc($is_public).", ".esc($name).")";
 		run_query($query);
 		return mysqli_insert_id($GLOBALS["mysqli"]);
 	}

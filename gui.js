@@ -554,7 +554,6 @@ async function _get_configuration(index) {
 		}
 	}
 
-	//log($("#dataset_category").val());
 	if (typeof(data) == "undefined") {
 		try {
 			while ($("#dataset").val() === null) {
@@ -672,12 +671,7 @@ async function update_python_code(dont_reget_labels) {
 	var optimizer_type = document.getElementById("optimizer").value;
 	var metric_type = document.getElementById("metric").value;
 	var batchSize = document.getElementById("batchSize").value;
-	var dataset_category = document.getElementById("dataset_category").value;
 	var data_origin = document.getElementById("data_origin").value;
-
-	if(data_origin == "image") {
-		dataset_category = "image";
-	}
 
 	var python_code = "";
 
@@ -689,7 +683,7 @@ async function update_python_code(dont_reget_labels) {
 	python_code += "# python3 -m venv asanaienv\n";
 	python_code += "# source asanaienv/bin/activate\n";
 	python_code += "# pip3 install tensorflow tensorflowjs ";
-	if (dataset_category == "image") {
+	if (input_shape_is_image()) {
 		python_code += " scikit-image";
 	}
 	python_code += "\n";
@@ -697,7 +691,7 @@ async function update_python_code(dont_reget_labels) {
 	python_code += "if not os.path.exists('keras_model'):\n";
 	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
-	if (dataset_category == "image") {
+	if (input_shape_is_image()) {
 		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
 	} else {
 		python_code += "# python3 nn.py\n";
@@ -718,7 +712,7 @@ async function update_python_code(dont_reget_labels) {
 		await get_label_data();
 	}
 
-	if (dataset_category == "image") {
+	if (input_shape_is_image()) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
 		python_code += "labels = ['" + labels.join("', '") + "']\n";
 		python_code += "height = " + height + "\n";
@@ -771,7 +765,7 @@ async function update_python_code(dont_reget_labels) {
 		var data = {};
 
 		if (i == 0) {
-			if (["image"].includes(dataset_category)) {
+			if (input_shape_is_image()) {
 				data["input_shape"] = x_shape;
 			} else {
 				data["input_shape"] = "get_shape('x.txt')";
@@ -1960,7 +1954,7 @@ async function init_dataset() {
 }
 
 function init_download_link() {
-	let html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "&dataset_category=" + $("#dataset_category").val() + "'>here</a>.";
+	let html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "'>here</a>.";
 	$("#download_data").html(html).show();
 }
 
@@ -2007,7 +2001,7 @@ function init_weight_file_list() {
 	$('#model_dataset').find('option').remove();
 
 	$("#model_dataset_div").show();
-	var weights_files = traindata_struct[$("#dataset_category").find(":selected").text()]["datasets"][$("#dataset").find(":selected").text()]["weights_file"];
+	var weights_files = traindata_struct["datasets"][$("#dataset").find(":selected").text()]["weights_file"];
 	var weight_file_names = Object.keys(weights_files);
 
 	for (var i = 0; i < weight_file_names.length; i++) {
@@ -2049,6 +2043,7 @@ async function init_dataset_category() {
 
 	if(input_shape_is_image()) {
 		for (var i = 0; i < show_items["image"].length; i++) {
+			var item_name = show_items["image"][i];
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().show();
@@ -2058,6 +2053,7 @@ async function init_dataset_category() {
 		}
 
 		for (var i = 0; i < show_items["else"].length; i++) {
+			var item_name = show_items["else"][i];
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().hide();
@@ -2067,6 +2063,7 @@ async function init_dataset_category() {
 		}
 	} else {
 		for (var i = 0; i < show_items["else"].length; i++) {
+			var item_name = show_items["else"][i];
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().show();
@@ -2076,6 +2073,7 @@ async function init_dataset_category() {
 		}
 
 		for (var i = 0; i < show_items["image"].length; i++) {
+			var item_name = show_items["image"][i];
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().hide();
@@ -2711,7 +2709,7 @@ function network_name_is_empty(name) {
 // 	}
 // }
 
-function save_to_db(model_structure, model_weights, model_data, requests_public, category_full) {
+function save_to_db(model_structure, model_weights, model_data, requests_public) {
 	document.getElementById("save_model_msg").style.display = 'visible';
 	$.ajax({
 		url: "save_to_db.php",
@@ -2720,8 +2718,6 @@ function save_to_db(model_structure, model_weights, model_data, requests_public,
 			model_weights: model_weights,
 			model_data: model_data,
 			requests_public: requests_public,
-			category: category,
-			category_full: category_full,
 			network_name: $("#network_name").val()
 		},
 		method: "POST",
@@ -2757,7 +2753,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public,
 
 async function save_to_db_wrapper () {
 	if(!model_name_exists()) {
-		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category option:selected").text());
+		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
 		$("#save_to_db").prop("disabled", true);
 	} else {
 		color_msg_red("save_model_msg");

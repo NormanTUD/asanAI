@@ -31,7 +31,7 @@
 			$category_full = $data["category_full"];
 			$network_name = $data["network_name"];
 
-			$new_id = save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category_full, $network_name);
+			$new_id = save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $network_name);
 			if($new_id) {
 				$status = [ "status" => "ok", "msg" => "Saving data was successful.", "id" => $new_id ];
 			} else {
