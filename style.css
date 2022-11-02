@@ -115,12 +115,14 @@ html {
 .left_side {
 	min-width: 500px;
 	float: left;
+	margin-left: -40px;
 }
 
 @media only screen and (min-width: 600px) {
 	.left_side {
 		min-width: 500px;
 		float: none;
+		margin-left: -40px;
 	}
 }
 
@@ -416,7 +418,7 @@ button:disabled:hover {
 	writing-mode: vertical-rl;
 	background-color: white;
 	border: solid #a3a8ac 1px;
-	width: 40px;
+	width: 55px;
 	text-align: center;
 }
 

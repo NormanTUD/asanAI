@@ -3800,6 +3800,7 @@ function toggle_layer_view() {
 		$("#toggle_layer_view_button").html("&#x1F5D7;");
 	}
 
+	write_descriptions();
 }
 
 function fix_viz_width () {
