@@ -2010,8 +2010,6 @@ function init_weight_file_list() {
 
 	var this_struct = traindata_struct[chosen_dataset]["weights_file"];
 
-	log(this_struct);
-
 	var weight_files = Object.keys(this_struct);
 
 	for (var i = 0; i < weight_files.length; i++) {
