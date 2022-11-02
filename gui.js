@@ -4827,3 +4827,20 @@ async function _set_all_strides (n) {
 
 	$($(".strides_x")[0]).trigger("change");
 }
+
+function hide_empty_tabs (name) {
+	var c = $("#" + name).children();
+
+	for (var i = 0; i < c.length; i++) {
+		if($(c[i]).css("display") != "none") {
+			$("[href='#" + name + "']").parent().show()
+			return;
+		}
+	}
+
+	if($("[href='#" + name + "']").parent().hasClass("ui-state-active")) {
+		$("[href='#home_ribbon']").click();
+	}
+
+	$("[href='#" + name + "']").parent().hide()
+}

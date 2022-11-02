@@ -959,7 +959,6 @@ async function get_image_from_url (url) {
 async function draw_maximally_activated_layer (layer, type) {
 	show_tab_label("maximally_activated_label", 1);
 
-
 	var neurons = 1;
 
 	if(type == "conv2d") {
