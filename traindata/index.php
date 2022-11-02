@@ -28,7 +28,6 @@ function list_dir ($folder, $max_number_of_files_per_category, $examples) {
 	return $struct;
 }
 
-$dataset_category = $_GET['dataset_category'];
 $dataset = $_GET['dataset'];
 $examples = array_key_exists("examples", $_GET);
 
@@ -40,16 +39,12 @@ if(array_key_exists("max_number_of_files_per_category", $_GET)) {
 	}
 }
 
-if(preg_match("/^\w+$/", $dataset_category)) {
-	if(preg_match("/^\w+$/", $dataset)) {
-		$folder = $dataset_category."/".$dataset;
-		$dir = list_dir($folder, $max_number_of_files_per_category, $examples);
-		$json = json_encode($dir, JSON_PRETTY_PRINT);
-		print $json;
-	} else {
-		print('{ "error": "Invalid Dataset" }');
-	}
+if(preg_match("/^\w+$/", $dataset)) {
+	$folder = $dataset;
+	$dir = list_dir($folder, $max_number_of_files_per_category, $examples);
+	$json = json_encode($dir, JSON_PRETTY_PRINT);
+	print $json;
 } else {
-	die("Invalid dataset_category");
+	print('{ "error": "Invalid Dataset" }');
 }
 ?>
