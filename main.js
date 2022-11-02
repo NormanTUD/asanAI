@@ -256,7 +256,7 @@ function init_categories () {
 	var dataset_names = Object.keys(traindata_struct);
 	for (var j = 0; j < dataset_names.length; j++) {
 		var dataset_name = dataset_names[j];
-		log("THIS_DATASETNAME" + dataset_name);
+		log("dataset_name: " + dataset_name);
 		if(!dataset_already_there(dataset_name)) {
 			var dataset_value = traindata_struct[dataset_names[j]]["name"];
 			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
@@ -267,8 +267,6 @@ function init_categories () {
 	}
 
 	number_of_initialized_layers = 0;
-
-exit;
 }
 
 async function hasBothFrontAndBack () {
