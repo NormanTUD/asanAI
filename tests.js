@@ -202,7 +202,6 @@ async function run_tests () {
 
 	tf.engine().endScope();
 
-	/*
 	log_test("Test Training Logic");
 
 	await delay(2000);
@@ -257,7 +256,6 @@ async function run_tests () {
 
 	res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
 	test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
-	*/
 
 	log_test("Test Training images");
 
