@@ -1765,7 +1765,6 @@ async function set_config(index) {
 				var is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
 				is = remove_empty(is);
 				is = Object.values(is);
-				log(is);
 				set_input_shape("[" + is.join(", ") + "]");
 			} catch (e) {
 				log(e);
