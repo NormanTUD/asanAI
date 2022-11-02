@@ -202,6 +202,7 @@ async function run_tests () {
 
 	tf.engine().endScope();
 
+	/*
 	log_test("Test Training Logic");
 
 	await delay(2000);
@@ -256,6 +257,7 @@ async function run_tests () {
 
 	res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
 	test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
+	*/
 
 	log_test("Test Training images");
 
@@ -270,9 +272,11 @@ async function run_tests () {
 	await train_neural_network();	
 
 	$("[href='#predict_tab']").click()
+	await delay(5000);
 
-	var pd = $(".predict_demo_result");
 	var results = [];
+	var pd = $(".predict_demo_result");
+
 	for (var i = 0; i < pd.length; i++) {
 		var this_demo = $(pd[i]);
 		var h = this_demo.html();
@@ -297,7 +301,6 @@ async function run_tests () {
 		var this_result = results[i];
 
 		var sum = this_result.reduce((a, b) => a + b, 0);
-		log("result in test: ", this_result);
 		test_equal("Sum of all results for one specific image is near 1 (is " + sum + ")", Math.abs(sum - 1) < 0.1, true);
 
 		var avg = (sum / this_result.length) || 0;
