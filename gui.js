@@ -611,6 +611,7 @@ function enable_disable_kernel_images() {
 		$("#show_kernel_images").prop("disabled", true);
 		$("#data_plotter").hide();
 	}
+	hide_empty_tabs("visualization_ribbon");
 }
 
 function change_kernel_pixel_size() {
@@ -853,6 +854,7 @@ function hide_no_conv_stuff() {
 		$("#data_plotter").hide();
 	}
 
+
 	if(input_shape_is_image()) {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
@@ -868,6 +870,8 @@ function hide_no_conv_stuff() {
 	} else {
 		$(".hide_when_no_alexnet").hide();
 	}
+
+	hide_empty_tabs("visualization_ribbon");
 }
 
 async function get_shape_from_array(array) {
