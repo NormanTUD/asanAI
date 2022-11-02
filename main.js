@@ -243,7 +243,6 @@ async function get_traindata_and_init_categories () {
 }
 
 function init_categories () {
-	log("init_categories TODO");
 	l("Initializing categories");
 	$("#dataset").html("");
 
