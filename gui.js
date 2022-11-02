@@ -1761,7 +1761,16 @@ async function set_config(index) {
 		if (config["input_shape"]) {
 			set_input_shape(config["input_shape"]);
 		} else {
-			determine_input_shape();
+			try {
+				var is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+				is = remove_empty(is);
+				is = Object.values(is);
+				log(is);
+				set_input_shape("[" + is.join(", ") + "]");
+			} catch (e) {
+				log(e);
+				determine_input_shape();
+			}
 		}
 
 		if (!config["model_structure"]) {
