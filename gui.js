@@ -1874,7 +1874,6 @@ async function set_config(index) {
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
-
 	l("Creating model");
 	model = await create_model(model);
 
@@ -2009,7 +2008,6 @@ function init_weight_file_list() {
 
 	for (var i = 0; i < weight_files.length; i++) {
 		var new_option = $('<option>', { value: weight_files[i], text: weight_files[i] });
-		log("new option: ", new_option);
 		$("#model_dataset").append(new_option);
 	}
 }
