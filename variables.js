@@ -7,16 +7,7 @@ function uuidv4() {
 }
 
 function calculate_default_target_shape (nr) {
-	var input_shape = null;
-	if(nr == 0) {
-		input_shape = get_input_shape();
-	} else {
-		if(Object.keys(model.layers).includes(nr - 1)) {
-			input_shape = model.layers[nr - 1].getOutputAt(0).shape;
-		} else {
-			console.warn((nr - 1) + " is not in model.layers");
-		}
-	}
+	var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 	var output = [];
 
