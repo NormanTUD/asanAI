@@ -561,14 +561,14 @@ async function _get_configuration(index) {
 			}
 
 			var data_url, keras_url;
-			var filename =  traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["filename"];
+			var filename = traindata_struct[$("#dataset option:selected").text()]["filename"];
 
 			if(filename.startsWith("get_")) {
-				data_url = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["data"];
+				data_url = traindata_struct[$("#dataset option:selected").text()]["data"];
 				keras_url = filename;
 			} else {
-				data_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + ".json";
-				keras_url = "traindata/" + $("#dataset_category").val() + "/" + $("#dataset").val() + "_keras.json";
+				data_url = "traindata/" + $("#dataset").val() + ".json";
+				keras_url = "traindata/" + $("#dataset").val() + "_keras.json";
 			}
 
 			data = await get_cached_json(data_url);
@@ -1916,9 +1916,8 @@ async function set_config(index) {
 async function show_or_hide_load_weights() {
 	$("#load_weights_button").attr("disabled", "true");
 
-	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+	var this_struct = traindata_struct[dataset];
 	var keys = Object.keys(this_struct);
 
 	if (keys.includes("weights_file") && await _show_load_weights()) {
@@ -2000,12 +1999,16 @@ async function chose_dataset(no_set_config) {
 function init_weight_file_list() {
 	$('#model_dataset').find('option').remove();
 
-	$("#model_dataset_div").show();
-	var weights_files = traindata_struct["datasets"][$("#dataset").find(":selected").text()]["weights_file"];
-	var weight_file_names = Object.keys(weights_files);
+	var chosen_dataset = $("#dataset").find(":selected").text();
 
-	for (var i = 0; i < weight_file_names.length; i++) {
-		var new_option = $('<option>', { value: weight_file_names[i], text: weight_file_names[i] });
+	var this_struct = traindata_struct[chosen_dataset];
+
+	log(this_struct);
+
+	var weight_files = Object.keys(weights_files);
+
+	for (var i = 0; i < weight_files.length; i++) {
+		var new_option = $('<option>', { value: weight_files[i], text: weight_files[i] });
 		$("#model_dataset").append(new_option);
 	}
 }
@@ -2581,7 +2584,7 @@ function close_losses() {
 }
 
 function model_name_already_exists() {
-	var model_names = Object.keys(traindata_struct["Image Classification"]["datasets"]);
+	var model_names = Object.keys(traindata_struct);
 	var network_name = document.getElementById("network_name").value;
 	for(var i = 0; i < model_names.length; i++) {
 		if(model_names[i] == network_name) {
@@ -2621,13 +2624,11 @@ function delete_model() {
 
 function get_id_from_train_data_struct(index) {
 	var dataset_index = document.getElementById("dataset").selectedIndex;
-	var classification_index = document.getElementById("dataset_category").selectedIndex;
 
-	if((dataset_index >= 0) && (classification_index >= 0)) {
+	if(dataset_index >= 0) {
 		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
-		var classification = document.getElementById("dataset_category").children[classification_index].innerText;
-		if((dataset != undefined) && (classification != undefined)) {
-			var id = traindata_struct[classification]["datasets"][dataset][index];
+		if(dataset != undefined) {
+			var id = traindata_struct[dataset][index];
 			return id;
 		}
 	}
@@ -2923,7 +2924,7 @@ function get_chosen_dataset() {
 
 async function load_weights(dont_show_msg) {
 	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct["datasets"][dataset];
+	var this_struct = traindata_struct[dataset];
 
 	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
 
@@ -3903,7 +3904,6 @@ function end_demo_mode() {
 }
 
 async function change_model_dataset() {
-	$("#model_dataset_div").show();
 	await load_weights(1);
 	display_delete_button();
 }

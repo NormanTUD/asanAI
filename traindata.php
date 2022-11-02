@@ -37,13 +37,9 @@
 
 		foreach ($traindata_contents as $content) {
 			if(!preg_match("/^\.{1,2}$/", $content)) {
-				$this_path = "$start_dir/$content";
+				$this_path = "$start_dir/";
 				if(is_dir($this_path)) {
 					$content_name = $content;
-					if(is_file("$this_path/desc.txt")) {
-						$content_name = trim(file_get_contents("$this_path/desc.txt"));
-					}
-					$data[$content_name]["category_name"] = $content;
 					$category_contents = scandir($this_path);
 					$category_contents = array_reverse($category_contents);
 					foreach ($category_contents as $this_category_contents) {
@@ -62,7 +58,7 @@
 
 							$name = $json_data["name"];
 
-							$data[$content_name]["datasets"][$name] = [
+							$data[$content_name][$name] = [
 								"name" => $file_basename,
 								"user_id" => "has no user",
 								"filename" => "$this_path/$this_category_contents"
@@ -83,7 +79,7 @@
 								}
 
 								if($weights_file) {
-									$data[$content_name]["datasets"][$name]["weights_file"][$this_trainable_data] = $weights_file;
+									$data[$content_name][$name]["weights_file"][$this_trainable_data] = $weights_file;
 								}
 							}
 						}
@@ -113,8 +109,7 @@
 				$network_name = $row[3];
 				$user = $row[4];
 
-				$data[$category_full]["category_name"] = $category;
-				$data[$category_full]["datasets"][$network_name] = array(
+				$data[$network_name] = array(
 					"name" => $network_name,
 					"user_id" => $user,
 					"data" => "get_model_data.php?id=".$id,

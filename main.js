@@ -249,38 +249,26 @@ async function get_traindata_and_init_categories () {
 }
 
 function init_categories () {
+	log("init_categories TODO");
 	l("Initializing categories");
-	var chosen_category = $("#dataset_category").val();
-	var categories = Object.keys(traindata_struct);
-
 	$("#dataset").html("");
 
-	for (var i = 0; i < categories.length; i++) {
-		var existing_keys = $.map($("#dataset_category option"), e => $(e).val())
-		var folder_name = traindata_struct[categories[i]]["category_name"];
-		var category = categories[i];
-		if(!existing_keys.includes(folder_name)) {
-			$("#dataset_category").prepend(`<option value="${folder_name}">${category}</option>`);
-		}
+	var dataset_names = Object.keys(traindata_struct);
+	for (var j = 0; j < dataset_names.length; j++) {
+		var dataset_name = dataset_names[j];
+		log("THIS_DATASETNAME" + dataset_name);
+		if(!dataset_already_there(dataset_name)) {
+			var dataset_value = traindata_struct[dataset_names[j]]["name"];
+			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
 
-		if(folder_name == chosen_category) {
-			var datasets = traindata_struct[categories[i]]["datasets"];
-
-			var dataset_names = Object.keys(datasets);
-			for (var j = 0; j < dataset_names.length; j++) {
-				var dataset_name = dataset_names[j];
-				if(!dataset_already_there(dataset_name)) {
-					var dataset_value = datasets[dataset_names[j]]["name"];
-					var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
-					if(!existing_keys_in_dataset.includes(folder_name)) {
-						$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
-					}
-				}
-			}
+			log(`<option value="${dataset_value}">${dataset_name}</option>`);
+			$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
 		}
 	}
 
 	number_of_initialized_layers = 0;
+
+exit;
 }
 
 async function hasBothFrontAndBack () {
