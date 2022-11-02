@@ -2035,39 +2035,47 @@ async function init_dataset_category() {
 	show_hide_undo_buttons();
 
 	clicked_on_tab = 0;
-	var category = $("#dataset_category").val();
-
-	assert(typeof (category) == "string", "init_dataset_category -> category from $(#dataset_category).val() is not a string, but " + typeof (category));
 
 	reset_data();
 
 	var show_items = {
-		"imageresizecontainer": ["image"],
-		"black_and_white": ["image"],
-		"resizedimensions": ["image"],
-		"resizedimensions.parent": ["image"],
-
-		"max_values": [],
-		"max_values.parent": [],
-
-		"tensor_type_div": ["classification"],
-		"input_shape_div": ["classification"],
-		"input_shape_div.parent": ["classification"]
+		"image": ["imageresizecontainer", "black_and_white", "resizedimensions", "resizedimensions.parent"],
+		"else": ["max_values", "max_values.parent"]
 	};
+
+
 
 	var item_names = Object.keys(show_items);
 
-	for (var i = 0; i < item_names.length; i++) {
-		var pages_to_show_on = show_items[item_names[i]];
-		var item_name = item_names[i];
-		if (pages_to_show_on.includes(category)) {
+	if(input_shape_is_image()) {
+		for (var i = 0; i < show_items["image"].length; i++) {
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().show();
 			} else {
 				$("#" + item_name).show();
 			}
-		} else {
+		}
+
+		for (var i = 0; i < show_items["else"].length; i++) {
+			if (item_name.endsWith(".parent")) {
+				item_name = item_name.replace(/\.parent/, '');
+				$("#" + item_name).parent().hide();
+			} else {
+				$("#" + item_name).hide();
+			}
+		}
+	} else {
+		for (var i = 0; i < show_items["else"].length; i++) {
+			if (item_name.endsWith(".parent")) {
+				item_name = item_name.replace(/\.parent/, '');
+				$("#" + item_name).parent().show();
+			} else {
+				$("#" + item_name).show();
+			}
+		}
+
+		for (var i = 0; i < show_items["image"].length; i++) {
 			if (item_name.endsWith(".parent")) {
 				item_name = item_name.replace(/\.parent/, '');
 				$("#" + item_name).parent().hide();
@@ -2703,7 +2711,7 @@ function network_name_is_empty(name) {
 // 	}
 // }
 
-function save_to_db(model_structure, model_weights, model_data, requests_public, category, category_full) {
+function save_to_db(model_structure, model_weights, model_data, requests_public, category_full) {
 	document.getElementById("save_model_msg").style.display = 'visible';
 	$.ajax({
 		url: "save_to_db.php",
@@ -2749,7 +2757,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public,
 
 async function save_to_db_wrapper () {
 	if(!model_name_exists()) {
-		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category").val(), $("#dataset_category option:selected").text());
+		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked, $("#dataset_category option:selected").text());
 		$("#save_to_db").prop("disabled", true);
 	} else {
 		color_msg_red("save_model_msg");
@@ -2918,9 +2926,8 @@ function get_chosen_dataset() {
 }
 
 async function load_weights(dont_show_msg) {
-	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+	var this_struct = traindata_struct["datasets"][dataset];
 
 	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
 
@@ -3059,8 +3066,6 @@ async function change_data_origin() {
 
 	var new_origin = $("#data_origin").val();
 
-	var dataset_category = _get_category();
-
 	var show_images_per_category = 0;
 
 	var show_own_image_data = 0;
@@ -3068,7 +3073,7 @@ async function change_data_origin() {
 	var show_own_csv_data = 0;
 
 	if (new_origin == "default") {
-		if (dataset_category == "image") {
+		if (input_shape_is_image()) {
 			show_images_per_category = 1;
 		}
 

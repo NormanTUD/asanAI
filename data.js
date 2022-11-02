@@ -62,7 +62,7 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-	return await $.get("traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/" + filename);
+	return await $.get("traindata/" + get_chosen_dataset() + "/" + filename);
 }
 
 function shuffle (array) {
@@ -112,7 +112,7 @@ async function get_image_data(skip_real_image_download) {
 	var urls = [];
 	var keys = {};
 
-	var base_url = "traindata/" + $("#dataset_category").val() + "/" + get_chosen_dataset() + "/";
+	var base_url = "traindata/" + get_chosen_dataset() + "/";
 
 	for (const [key, items] of Object.entries(json)) {
 		if(items.length) {
@@ -254,8 +254,8 @@ async function get_xs_and_ys () {
 
 	var classes = [];
 
-	if(traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$("#dataset option:selected").text()]["has_custom_data"]) {
-		var model_id = traindata_struct[$("#dataset_category option:selected").text()]["datasets"][$( "#dataset option:selected" ).text()]["id"];
+	if(traindata_struct["datasets"][$("#dataset option:selected").text()]["has_custom_data"]) {
+		var model_id = traindata_struct["datasets"][$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
 		var x = xy_data.x;
@@ -278,14 +278,12 @@ async function get_xs_and_ys () {
 		}
 	} else {
 		if(data_origin == "default") {
-			var category = $("#dataset_category").val();
-
 			var keys = [];
 			var x = tf.tensor([]);
 			var y;
 			var category_counter = 0;
 
-			if(category == "image") {
+			if(input_shape_is_image()) {
 				$("#photos").html("");
 				let imageData = await get_image_data(0);
 
@@ -392,7 +390,7 @@ async function get_xs_and_ys () {
 				}
 
 				imageData = null;
-			} else if(category == "classification") {
+			} else {
 				var x_string, y_string;
 				x_string = await _get_training_data_from_filename("x.txt");
 				y_string = await _get_training_data_from_filename("y.txt");
@@ -403,8 +401,6 @@ async function get_xs_and_ys () {
 				var y_print_string = tensor_print_to_string(y);
 
 				$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-			} else {
-				alert("Unknown dataset category: " + category);
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
@@ -583,13 +579,13 @@ function url_to_tf (url) {
 }
 
 function determine_input_shape () {
-	if($("#dataset_category").val() == "image") {
+	if(input_shape_is_image()) {
 		set_input_shape("[" + width + ", " + height + ", 3]");
 	}
 }
 
 async function _get_training_data() {
-	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&dataset_category=" + $("#dataset_category").val() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
 	return await get_cached_json(url);
 }
 

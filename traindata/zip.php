@@ -34,38 +34,32 @@
                 }
         }
 
-        function zip_project ($dataset_category, $dataset) {
-                if(preg_match('/^[a-z]+$/', $dataset_category) && is_dir($dataset_category)) {
-			if(preg_match('/^[a-z]+$/', $dataset) && is_dir("$dataset_category/$dataset")) {
-				$tmp_folder = "/tmp/";
+        function zip_project ($dataset) {
+		if(preg_match('/^[a-z]+$/', $dataset) && is_dir($dataset)) {
+			$tmp_folder = "/tmp/";
+			$tmp_file = mt_rand(1, 1000000000);
+			$tmp_path = $tmp_folder.$tmp_file.'.zip';
+
+			while (is_dir($tmp_folder.$tmp_file.'.zip')) {
 				$tmp_file = mt_rand(1, 1000000000);
-				$tmp_path = $tmp_folder.$tmp_file.'.zip';
-
-				while (is_dir($tmp_folder.$tmp_file.'.zip')) {
-					$tmp_file = mt_rand(1, 1000000000);
-				}
-
-
-				$folder = "$dataset_category/$dataset";
-
-				$command = "zip -r $tmp_path $folder";
-				my_shell_exec($command);
-				return $tmp_path;
-			} else {
-				die("Could not find the specified project!");
 			}
-		} else {
 
-			die("Could not find the specified category!");
+
+			$folder = "$dataset";
+
+			$command = "zip -r $tmp_path $folder";
+			my_shell_exec($command);
+			return $tmp_path;
+		} else {
+			die("Could not find the specified project!");
 		}
 
                 return null;
         }
 
-	$dataset_category = get_get('dataset_category');
 	$dataset = get_get('dataset');
 
-	$file = zip_project($dataset_category, $dataset);
+	$file = zip_project($dataset);
 	if($file) {
 		header("Content-Type: application/zip");
 		header("Content-Disposition: attachment; filename=$dataset.zip");

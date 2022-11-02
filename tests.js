@@ -204,7 +204,6 @@ async function run_tests () {
 
 	log_test("Test Training Logic");
 
-	$("#dataset_category").val("classification").trigger("change");
 	await delay(2000);
 	$("#dataset").val("and_xor").trigger("change");
 	await delay(2000);
@@ -260,7 +259,6 @@ async function run_tests () {
 
 	log_test("Test Training images");
 
-	$("#dataset_category").val("image").trigger("change");
 	await delay(2000);
 	$("#dataset").val("signs").trigger("change");
 	await delay(2000);
@@ -313,7 +311,6 @@ async function run_tests () {
 
 
 	// testing shuffling
-	$("#dataset_category").val("image").trigger("change");
 	$("#dataset").val("mnist").trigger("change");
 	$("#epochs").val(1).trigger("change");
 	$("#max_number_of_files_per_category").val(1).trigger("change");

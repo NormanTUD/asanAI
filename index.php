@@ -250,13 +250,6 @@
 						<div class="ribbon-toolbar" style="width:250px">
 							<table width=250>
 								<tr>
-									<td>Problem type</td>
-									<td colspan="2">
-										<select data-position="right" data-intro="Choose a category here (images, classification, your own data)" id="dataset_category" onchange="init_dataset_category();show_or_hide_load_weights();model_is_trained=false;set_config();$('#prediction').html('');setCookie('dataset_category',$(this).val());" style="width: 155px">
-										</select>
-									</td>
-								</tr>
-								<tr>
 									<td>Architecture</td>
 									<td colspan="2">
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
@@ -871,9 +864,6 @@
 													<h3 class="multisteps-form__title">Network Type</h3>
 													<div class="multisteps-form__content">
 														<table>
-															<tr>
-																<td>Problem type</td><td><select class="copy_options" data-from_and_to="dataset_category" id="dataset_category_wizard"></select></td>
-															</tr>
 															<tr>
 																<td>Architecture</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
 															</tr>

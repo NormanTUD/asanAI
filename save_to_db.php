@@ -3,7 +3,7 @@
 
 	$status = [ "status" => "error", "msg" => "Something went wrong while saving the model" ];
 	if(array_key_exists("session_id", $_COOKIE)) {
-		$keys = ["model_structure", "model_weights", "model_data", "requests_public", "category", "category_full", "network_name"];
+		$keys = ["model_structure", "model_weights", "model_data", "requests_public", "category_full", "network_name"];
 
 		$data = array();
 		foreach ($keys as $key) {
@@ -28,11 +28,10 @@
 			$model_weights = $data["model_weights"];
 			$model_data = $data["model_data"];
 			$is_public = $data["requests_public"];
-			$category = $data["category"];
 			$category_full = $data["category_full"];
 			$network_name = $data["network_name"];
 
-			$new_id = save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category, $category_full, $network_name);
+			$new_id = save_to_db($model_structure, $model_weights, $model_data, $user, $is_public, $category_full, $network_name);
 			if($new_id) {
 				$status = [ "status" => "ok", "msg" => "Saving data was successful.", "id" => $new_id ];
 			} else {

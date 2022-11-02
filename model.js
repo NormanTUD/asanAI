@@ -1132,9 +1132,8 @@ function save_model () {
 }
 
 function get_current_chosen_object_default_weights_string () {
-	var category_text = $("#dataset_category option:selected").text();
 	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct[category_text]["datasets"][dataset];
+	var this_struct = traindata_struct["datasets"][dataset];
 
 	var response = "";
 
@@ -1178,7 +1177,7 @@ async function _show_load_weights () {
 		return false;
 	}
 
-	var this_weights_file = traindata_struct[$("#dataset_category option:selected").text()].datasets[$("#dataset option:selected").text()].weights_file;
+	var this_weights_file = traindata_struct.datasets[$("#dataset option:selected").text()].weights_file;
 
 	if(!(Object.keys(this_weights_file).length >= 1)) {
 		return false;
