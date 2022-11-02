@@ -269,6 +269,8 @@ async function run_tests () {
 
 	await train_neural_network();	
 
+	$("[href='#predict_tab']").click()
+
 	var pd = $(".predict_demo_result");
 	var results = [];
 	for (var i = 0; i < pd.length; i++) {
@@ -295,7 +297,8 @@ async function run_tests () {
 		var this_result = results[i];
 
 		var sum = this_result.reduce((a, b) => a + b, 0);
-		test_equal("Sum of all results for one specific image is near 1, is " + sum, Math.abs(sum - 1) < 0.1, true);
+		log("result in test: ", this_result);
+		test_equal("Sum of all results for one specific image is near 1 (is " + sum + ")", Math.abs(sum - 1) < 0.1, true);
 
 		var avg = (sum / this_result.length) || 0;
 
