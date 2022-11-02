@@ -256,12 +256,10 @@ function init_categories () {
 	var dataset_names = Object.keys(traindata_struct);
 	for (var j = 0; j < dataset_names.length; j++) {
 		var dataset_name = dataset_names[j];
-		log("dataset_name: " + dataset_name);
 		if(!dataset_already_there(dataset_name)) {
 			var dataset_value = traindata_struct[dataset_names[j]]["name"];
 			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
 
-			log(`<option value="${dataset_value}">${dataset_name}</option>`);
 			$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
 		}
 	}

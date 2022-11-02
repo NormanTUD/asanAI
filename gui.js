@@ -2001,14 +2001,15 @@ function init_weight_file_list() {
 
 	var chosen_dataset = $("#dataset").find(":selected").text();
 
-	var this_struct = traindata_struct[chosen_dataset];
+	var this_struct = traindata_struct[chosen_dataset]["weights_file"];
 
 	log(this_struct);
 
-	var weight_files = Object.keys(weights_files);
+	var weight_files = Object.keys(this_struct);
 
 	for (var i = 0; i < weight_files.length; i++) {
 		var new_option = $('<option>', { value: weight_files[i], text: weight_files[i] });
+		log("new option: ", new_option);
 		$("#model_dataset").append(new_option);
 	}
 }
