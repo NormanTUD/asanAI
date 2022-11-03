@@ -263,6 +263,7 @@ async function get_xs_and_ys () {
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
 
+		log("A");
 		xy_data.y.print();
 
 		labels = xy_data.keys;
@@ -279,6 +280,9 @@ async function get_xs_and_ys () {
 
 			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 		}
+
+		log("B");
+		xy_data.y.print();
 	} else {
 		if(data_origin == "default") {
 			var keys = [];
