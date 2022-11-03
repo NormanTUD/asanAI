@@ -263,9 +263,6 @@ async function get_xs_and_ys () {
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
 
-		log("A");
-		xy_data.y.print();
-
 		labels = xy_data.keys;
 
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
@@ -280,9 +277,6 @@ async function get_xs_and_ys () {
 
 			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 		}
-
-		log("B");
-		xy_data.y.print();
 	} else {
 		if(data_origin == "default") {
 			var keys = [];
@@ -537,9 +531,7 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
-	log("D");
-	xy_data.y.print();
-	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
+	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
 		try {
 			//log("C", xy_data.x.shape);
 			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
@@ -553,9 +545,6 @@ async function get_xs_and_ys () {
 
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
-	//
-	log("E");
-	xy_data.y.print();
 
 	return xy_data;
 }
