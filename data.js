@@ -531,7 +531,7 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
-	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
+	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && !traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
 		try {
 			//log("C", xy_data.x.shape);
 			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
