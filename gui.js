@@ -1766,7 +1766,6 @@ async function set_config(index) {
 					if(Object.keys(config.keras).includes("modelTopology")) {
 						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
 					} else {
-						log(config.keras);
 						is = config.keras.config.layers[0].config.batch_input_shape;
 					}
 				}
