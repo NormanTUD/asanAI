@@ -537,7 +537,8 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
-
+	log("D");
+	xy_data.y.print();
 	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 		try {
 			//log("C", xy_data.x.shape);
@@ -553,7 +554,7 @@ async function get_xs_and_ys () {
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
 	//
-	log("C");
+	log("E");
 	xy_data.y.print();
 
 	return xy_data;
