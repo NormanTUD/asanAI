@@ -258,7 +258,6 @@ async function get_xs_and_ys () {
 		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
-		var x = xy_data.x;
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
 
@@ -613,6 +612,7 @@ function decille (arr, percentage) {
 }
 
 function reset_data () {
+	logt("Reset data");
 	if(!xy_data === null) {
 		if(Object.keys(xy_data).includes("x")) {
 			dispose(xy_data["x"]);
