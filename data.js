@@ -613,7 +613,6 @@ function decille (arr, percentage) {
 }
 
 function reset_data () {
-	logt("Reset data");
 	if(!xy_data === null) {
 		if(Object.keys(xy_data).includes("x")) {
 			dispose(xy_data["x"]);
