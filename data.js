@@ -552,6 +552,9 @@ async function get_xs_and_ys () {
 
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
+	//
+	log("C");
+	xy_data.y.print();
 
 	return xy_data;
 }
