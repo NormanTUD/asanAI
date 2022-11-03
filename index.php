@@ -382,9 +382,9 @@
 										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()">Start training</button>
 									</td>
 								</tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>
-										<span class="symbol_button">&#x1F4C9;</span> Auto-jump tab?
+										<span class="symbol_button">&#x1F4C9;</span> Autotab?
 									</td>
 									<td>
 										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked />
@@ -392,7 +392,7 @@
 								</tr>
 								<tr>
 									<td>
-										Divide <i>X</i>-Tensor by:
+										Divide <i>X</i> by:
 									</td>
 									<td>
 										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" />
