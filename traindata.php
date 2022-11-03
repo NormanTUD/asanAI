@@ -105,7 +105,7 @@
 				"id" => $id,
 				"filename" => "get_model_from_db.php?id=".$id,
 				"weights_file" => array(
-					$network_name => "get_model_and_weights.php?id=".$id
+					$network_name => "get_weights.php?id=".$id
 				),
 				"has_custom_data" => has_custom_data($id)
 			);
