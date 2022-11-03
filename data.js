@@ -258,12 +258,16 @@ async function get_xs_and_ys () {
 		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
+		log("1", xy_data);
+
 		var x = xy_data.x;
 		xy_data.x = tf.tensor(xy_data.x);
 		xy_data.y = tf.tensor(xy_data.y);
+		log("2", xy_data);
 
 		labels = xy_data.keys;
 
+		log("3", xy_data);
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 			$("#photos").show();
 			for (var i = 0; i < xy_data.x.shape[0]; i++) {
@@ -276,6 +280,7 @@ async function get_xs_and_ys () {
 
 			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 		}
+		log("4", xy_data);
 	} else {
 		if(data_origin == "default") {
 			var keys = [];
@@ -530,6 +535,8 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
+	log("5", xy_data);
+
 
 	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss)) {
 		try {
@@ -545,6 +552,8 @@ async function get_xs_and_ys () {
 
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
+
+	log("6", xy_data);
 	
 	return xy_data;
 }
