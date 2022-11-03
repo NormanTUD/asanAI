@@ -1201,15 +1201,17 @@ function init_numberoflayers(val) {
 function get_option_for_layer_by_type(nr) {
 	assert(typeof (nr) == "number", "get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof (nr));
 
-	var type = $($(".layer_type")[nr]).val();
+	var layer_type = $($(".layer_type")[nr]);
+
+	var type = layer_type.val();
 
 	if (!type) {
-		$($(".layer_type")[nr]).children().children().each(function () {
+		layer_type.children().children().each(function () {
 			if ($(this).val() == 'dense') {
 				$(this).prop("selected", true);
 			}
 		});
-		type = $($(".layer_type")[nr]).val();
+		type = layer_type.val();
 		console.log("Cannot determine type of layer " + nr);
 		return;
 	}
