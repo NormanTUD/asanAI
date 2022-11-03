@@ -1761,15 +1761,23 @@ async function set_config(index) {
 		if (config["input_shape"]) {
 			set_input_shape(config["input_shape"]);
 		} else {
-			try {
-				var is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-				is = remove_empty(is);
-				is = Object.values(is);
-				set_input_shape("[" + is.join(", ") + "]");
-			} catch (e) {
-				log(e);
-				determine_input_shape();
-			}
+				var is = null;
+				if(Object.keys(config).includes("keras")) {
+					if(Object.keys(config.keras).includes("modelTopology")) {
+						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+					} else {
+						log(config.keras);
+						is = config.keras.config.layers[0].config.batch_input_shape;
+					}
+				}
+
+				if(is) {
+					is = remove_empty(is);
+					is = Object.values(is);
+					set_input_shape("[" + is.join(", ") + "]");
+				} else {
+					l("ERROR: keras not found in config");
+				}
 		}
 
 		if (!config["model_structure"]) {
