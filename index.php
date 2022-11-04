@@ -1469,9 +1469,7 @@
 
 			function set_mode () {
 				mode = get_mode();
-				if(old_mode != mode) {
-					setCookie("mode", mode);
-				}
+				setCookie("mode", mode);
 				if(mode == "beginner") {
 					throw_compile_exception = false;
 					$(".layer_type").children().children().each(function (t, l) {
