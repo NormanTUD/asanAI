@@ -560,3 +560,7 @@ button:disabled:hover {
 	right: 5px;
 	position: absolute;
 }
+
+#register {
+	user-select: none;
+}
