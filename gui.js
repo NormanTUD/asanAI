@@ -1201,15 +1201,17 @@ function init_numberoflayers(val) {
 function get_option_for_layer_by_type(nr) {
 	assert(typeof (nr) == "number", "get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof (nr));
 
-	var type = $($(".layer_type")[nr]).val();
+	var layer_type = $($(".layer_type")[nr]);
+
+	var type = layer_type.val();
 
 	if (!type) {
-		$($(".layer_type")[nr]).children().children().each(function () {
+		layer_type.children().children().each(function () {
 			if ($(this).val() == 'dense') {
 				$(this).prop("selected", true);
 			}
 		});
-		type = $($(".layer_type")[nr]).val();
+		type = layer_type.val();
 		console.log("Cannot determine type of layer " + nr);
 		return;
 	}
@@ -1761,15 +1763,22 @@ async function set_config(index) {
 		if (config["input_shape"]) {
 			set_input_shape(config["input_shape"]);
 		} else {
-			try {
-				var is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-				is = remove_empty(is);
-				is = Object.values(is);
-				set_input_shape("[" + is.join(", ") + "]");
-			} catch (e) {
-				log(e);
-				determine_input_shape();
-			}
+				var is = null;
+				if(Object.keys(config).includes("keras")) {
+					if(Object.keys(config.keras).includes("modelTopology")) {
+						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+					} else {
+						is = config.keras.config.layers[0].config.batch_input_shape;
+					}
+				}
+
+				if(is) {
+					is = remove_empty(is);
+					is = Object.values(is);
+					set_input_shape("[" + is.join(", ") + "]");
+				} else {
+					l("ERROR: keras not found in config");
+				}
 		}
 
 		if (!config["model_structure"]) {
