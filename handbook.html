@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<title>asanAI Handbook</title>
+	</head>
+	<body>
+		<div id="toc"></div>
+
+		<div id="contents">
+			<h1>asanAI</h1>
+
+			<h2>General outline</h2>
+			asanAI offers a simple way of creating sequential neural networks and train them
+			on your own data, from within the browser. It allows you to visualize a lot of
+			different intermediate steps. You can, when done training, also export the trained
+			model to Python and NodeJS.
+
+			<h2>Basic idea of neural networks</h2>
+			Neural networks are roughly based on the way the brain works.
+
+			<h3>Data</h3>
+			TODO
+
+			<h2>A very simple neural network</h2>
+			TODO
+
+			<h2>Layer Types</h2>
+			TODO
+
+			<h3>Basic Layer Types</h3>
+			TODO
+
+			<h3>Convolutional Layers</h3>
+			TODO
+
+			<h3>Dropout and noise layers</h3>
+			TODO
+
+			<h2>Layer Options</h2>
+
+			<h3>Units</h3>
+			TODO
+
+			<h3>Dtype</h3>
+			TODO
+
+			<h3>Standard-Deviation</h3>
+			TODO
+
+			<h3>Strides</h3>
+			TODO
+
+			<h2>Tips for creating neural networks</h2>
+			Start small at first and add until it works.
+
+			<h2>Visualizations</h2>
+
+			<h2>Contact</h2>
+			Please contact norman.koch@tu-dresden.de if you have any questions.
+		</div>
+
+		<script>
+			function toc () {
+				var toc = "";
+				var level = 0;
+
+				document.getElementById("contents").innerHTML =
+					document.getElementById("contents").innerHTML.replace(
+						/<h([\d])>([^<]+)<\/h([\d])>/gi,
+						function (str, openLevel, titleText, closeLevel) {
+							if (openLevel != closeLevel) {
+								return str;
+							}
+
+							if (openLevel > level) {
+								toc += (new Array(openLevel - level + 1)).join("<ul>");
+							} else if (openLevel < level) {
+								toc += (new Array(level - openLevel + 1)).join("</ul>");
+							}
+
+							level = parseInt(openLevel);
+
+							var anchor = titleText.replace(/ /g, "_");
+							toc += "<li><a href=\"#" + anchor + "\">" + titleText
+								+ "</a></li>";
+
+							return "<h" + openLevel + "><a name=\"" + anchor + "\">"
+								+ titleText + "</a></h" + closeLevel + ">";
+						}
+					);
+
+				if (level) {
+					toc += (new Array(level + 1)).join("</ul>");
+				}
+
+				document.getElementById("toc").innerHTML += toc;
+			};
+
+			toc();
+		</script>
+	</body>
+</html>
