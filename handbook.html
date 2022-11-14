@@ -43,7 +43,7 @@
 			Available options: <a href="#Trainable">Trainable</a>, <a href="#Use_Bias">Use Bias</a>, <a href="#Units">Units</a>, 
 			<a href="#Activation_Function">Activation Functions</a>, <a href="#Kernel_Initializer">Kernel Initializer</a>, 
 			<a href="#Bias_Initializer">Bias Initializer</a>, <a href="#Kernel_Regularizer">Kernel Regularizer</a>, 
-			<a href="#Bias_Regularizer">Bias Regularizer</a>, <a href="#Visualize_Layer">Visualize_layer</a>, 
+			<a href="#Bias_Regularizer">Bias Regularizer</a>, <a href="#Visualize_Layer">Visualize Layer</a>, 
 			<a href="#DType">DType</a>
 
 			<br>
@@ -56,13 +56,35 @@
 					y_{0}
 					\end{pmatrix}}_{\mathrm{Output}}
 					 = \underbrace{\begin{pmatrix}
-					x_{0}
+						x_{0}
 					\end{pmatrix}}_{\mathrm{Input}}
 					 \times \underbrace{\begin{pmatrix}
-					\color{black}{-1.4404407739639282}
+						-1.4404407739639282
 					\end{pmatrix}}_{\mathrm{Kernel^{1 \times 1}}}
 					 + \underbrace{\begin{pmatrix}
-					\color{black}{0}
+					0
+				\end{pmatrix}}_{\mathrm{Bias}}
+			$$
+
+			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and 
+			the Bias may change.
+
+			This, for example, is a Dense Layer with the input shape <tt>[2]</tt>:
+
+			$$
+				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						0.785955011844635\\
+						-0.015428715385496616
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+					 + \underbrace{\begin{pmatrix}
+						0.123153419419419
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
 
@@ -159,6 +181,7 @@
 			Start small at first and add until it works.
 
 			<h2>Visualizations</h2>
+			<h3>Visualize Layer</h3>
 
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
