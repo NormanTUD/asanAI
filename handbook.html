@@ -216,11 +216,62 @@
 
 			WHEN TO USE TODO
 
-			<h3></h3>
-			<h3></h3>
-			<h3></h3>
-			<h3></h3>
-			<h3></h3>
+			<h3>relu6</h3>
+
+			TODO
+
+			$$
+			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
+			$$
+
+
+			WHEN TO USE TODO
+
+
+			<h3>SeLu</h3>
+
+			TODO
+
+			$$
+			\mathrm{selu}\left(x\right) = \mathrm{scale} \cdot \mathrm{elu}\left(x, \alpha\right) = \mathrm{scale} \cdot \left\{
+				\begin{array}{ll}
+					x & x \geq 0 \\
+					\alpha\left(e^x - 1\right)& \, x \lt 0 \\
+					\end{array}
+				\right.
+			$$
+
+
+			WHEN TO USE TODO
+			<h3>SoftPlus</h3>
+
+			TODO
+
+			$$
+				\mathrm{softplus}\left(x\right) = \ln\left(1 + e^x\right)
+			$$
+
+			WHEN TO USE TODO
+
+
+			<h3>SoftSign</h3>
+
+			TODO
+
+			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
+
+			WHEN TO USE TODO
+
+			<h3>SoftMax</h3>
+
+			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value
+			is in percentage in relation to the whole.
+
+			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
+
+			SoftMax can be used if you want a percentage of how certain the network is in it's prediction.
+
+
 			<h3></h3>
 			<h3></h3>
 			<h3></h3>
