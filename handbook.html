@@ -124,6 +124,28 @@
 			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
 			<br>
 
+			$$
+				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
+					\begin{pmatrix}
+						1 & 2 & 3 & 4 \\
+						5 & 6 & 7 & 8 \\
+						9 & 10 & 11 & 12 \\
+						13 & 14 & 15 & 16 \\
+						17 & 18 & 19 & 20 \\
+						21 & 22 & 23 & 24 \\
+					\end{pmatrix}
+				\right)
+				\xrightarrow{\text{Set values randomly to 0 with a 50\% chance}}
+				\begin{pmatrix}
+					0 & 0 & 3 & 0 \\
+					5 & 6 & 7 & 8 \\
+					9 & 10 & 0 & 0 \\
+					0 & 0 & 15 & 0 \\
+					0 & 18 & 19 & 20 \\
+					21 & 0 & 0 & 0 \\
+				\end{pmatrix}
+			$$
+
 			This is used for avoiding <a href="#Overfitting">overfitting</a>.
 
 			<h4>Reshape</h4>
