@@ -328,11 +328,18 @@
 			<h3>meanSquaredError</h3>
 			TODO
 
+
+			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
+
 			<h3>binaryCrossentropy</h3>
 			TODO
 
+			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
+
 			<h3>categoricalCrossentropy</h3>
 			TODO
+
+			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
 
 			<h3>categoricalHinge</h3>
 			TODO
@@ -343,14 +350,22 @@
 			<h3>meanAbsoluteError</h3>
 			TODO
 
+			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
+
 			<h3>meanAbsolutePercentageError</h3>
 			TODO
+
+			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
 
 			<h3>meanSquaredLogarithmicError</h3>
 			TODO
 
+			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
+
 			<h3>poisson</h3>
 			TODO
+
+			$$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$
 
 			<h3>sparseCategoricalCrossentropy</h3>
 			TODO
@@ -358,10 +373,15 @@
 			<h3>squaredHinge</h3>
 			TODO
 
+			$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$
+
 			<h3>kullbackLeiblerDivergence</h3>
 			TODO
 
 			<h3>logcosh</h3>
+			TODO
+
+			$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$
 
 			<h2>Metric</h2>
 			TODO
