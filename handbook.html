@@ -17,6 +17,26 @@
 			body {
 				font-family: sans-serif;
 			}
+
+
+			.container{
+				margin: 20px auto;
+				width:100px;
+				height:100px;
+				display:grid;
+				grid-template-columns: 50px 50px;
+				grid-row: auto auto;
+				.box{
+					color:#fff;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					font-size:40px;
+					font-family:sans-serif;
+				}
+
+			}
+
 		</style>
 	</head>
 	<body>
@@ -32,10 +52,59 @@
 			model to Python and NodeJS.
 
 			<h2>Basic idea of neural networks</h2>
-			TODO
 
 			<h3>Data</h3>
-			TODO
+			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every
+			number, every vector and matrix is a tensor.
+
+			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
+
+			$$
+			  \textrm{Second dimension}
+			  \stackrel{\mbox{First dimension}}{%
+			    \begin{pmatrix}
+			    a_{11} & a_{12} & \cdots & a_{1M} \\
+			    a_{21} & a_{22} & \cdots & a_{2M} \\
+			    \vdots & \vdots & \ddots & \vdots \\
+			    a_{N1} & a_{N2} & \cdots & a_{NM}
+			    \end{pmatrix}%
+			  },
+			$$
+
+			tensors have an arbitrary number of dimensions.
+
+			An image, for example, consists of 3 channels, one for red, green and blue each.
+			If the image is 2x2 pixels, the image as a tensor would look like this:
+
+
+			$$
+				\begin{pmatrix}
+					\text{Red}: \begin{pmatrix}
+						221 & 122 \\
+						121 & 11
+					\end{pmatrix},
+					\text{Green}: \begin{pmatrix}
+						0 & 12 \\
+						1 & 2
+					\end{pmatrix},
+					\text{Blue}: \begin{pmatrix}
+						225 & 255 \\
+						240 & 211
+					\end{pmatrix}
+				\end{pmatrix}
+			$$
+
+			This is a full description of this picture (albeit small):
+
+			<div class="container">
+				<div class="box" style="background-color: #dd00f0"></div>
+				<div class="box" style="background-color: #7a0cff"></div>
+				<div class="box" style="background-color: #7901f0"></div>
+				<div class="box" style="background-color: #0b02d3"></div>
+			</div>
+
+			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are
+			nonetheless tensors.
 
 			<h3>Dimensionality Reduction</h3>
 			TODO
