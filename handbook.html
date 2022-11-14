@@ -165,6 +165,50 @@
 
 			<h2>Layer Options</h2>
 
+			<h3>Trainable</h3>
+			If enabled, the network's weights and biases are changed while training. If not, they stay the same.
+
+			<h3>Use Bias</h3>
+			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical
+			representation:
+
+			$$ 
+				\underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \mathrm{\underbrace{LeakyReLU}_{\mathrm{Activation}}}\left(\underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						-1.124836802482605\\
+						0.01841479167342186
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+					 + \underbrace{\begin{pmatrix}
+						0.123153419419419
+					\end{pmatrix}}_{\mathrm{Bias}}
+				\right)
+			$$
+
+			A Layer without Use Bias enabled would look like this:
+
+			$$
+				\underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \mathrm{\underbrace{LeakyReLU}_{\mathrm{Activation}}}\left(\underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						0.24012170732021332\\
+						1.188180685043335
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+				\right)
+			$$
+
+			The bias allows the function to be shifted in any axis.
+
 			<h3>Units</h3>
 			TODO
 
@@ -175,6 +219,18 @@
 			TODO
 
 			<h3>Strides</h3>
+			TODO
+
+			<h3>Kernel Initializer</h3>
+			TODO
+
+			<h3>Bias Initializer</h3>
+			TODO
+
+			<h3>Kernel Regularizer</h3>
+			TODO
+
+			<h3>Bias Regularizer</h3>
 			TODO
 
 			<h2>Tips for creating neural networks</h2>
