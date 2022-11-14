@@ -122,6 +122,17 @@
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are
 			nonetheless tensors.
 
+			<h3>Layers</h3>
+			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger
+			function.
+
+			You can imagine them as such:
+
+			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
+
+			This is called a sequential model, since the data flows through it sequentially. There are other types of models,
+			but they cannot be designed with asanAI.
+
 			<h3>Dimensionality Reduction</h3>
 			TODO
 
