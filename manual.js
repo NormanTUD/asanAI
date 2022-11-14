@@ -47,6 +47,6 @@ async function get_network_type_result_by_array (layer_type, array, config) {
 	return res;
 }
 
-// await get_network_type_result_by_array("dense", [1, 2, 3], {units:10})
+// await get_network_type_result_by_array("dense", [1, 2, 3], {units: 1, kernelInitializer: "ones" })
 
 toc();
