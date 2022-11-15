@@ -168,7 +168,12 @@
 			This can be done by several ways. For example, <a href="#Convolutional_Layers">convolutions</a> or <a href="#Pooling_layers">pooling layers</a> "extract" information from images and reduce the number of values and therefore reduce the dimensionality of the inputted images.
 
 			<h3>Training</h3>
-			TODO
+			The <a href="#Loss">loss function</a> creates a single value from the training data \(X\) and \(Y\) such that the lower the number is, the better the results are. 
+			This creates a so-called "loss-landscape", that is a function that represents, for each data point, how well the network currently recognizes it.
+
+			For each point, this is just a single float. The overall loss is the average loss of all points. 
+
+			For each point, while training, a loss is determined. How exactly this is done is dependent on the optimizer chosen (see <a href="#Optimizers">Optimizers</a> for more details).
 
 			<h4>Batch-Size</h4>
 			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
@@ -715,7 +720,11 @@
 
 			WHEN TO USE 
 
+			<h2>Optimizers</h2>
+			TODO
+
 			<h2>Visualizations</h2>
+			TODO
 
 			<h3>Visualize Layer</h3>
 			TODO
