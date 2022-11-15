@@ -13,6 +13,7 @@
 					inlineMath: [['$','$']]
 				},
 				jax: ["input/TeX","output/CommonHTML"],
+				processEscapes: true,
 				"showMathMenu": true
 			});
 		</script>
@@ -130,7 +131,7 @@
 			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be designed with asanAI.
 
 			<h3>What do functions have to do with neural networks?</h3>
-			A mathematical function assigns values from one set to values from another. For example, the function $$ \text{nth\_prime}(n) $$ assigns natural numbers (1, 2, 3, ...) to a subset of natural numbers, prime numbers, (2, 3, 5, ...).
+			A mathematical function assigns values from one set to values from another. For example, the function \( \text{nth\_prime}(n) \) assigns natural numbers \( (1, 2, 3, \dots) \) to a subset of natural numbers, prime numbers, \( (2, 3, 5, \dots) \).
 
 			Since parameters for functions can also be matrices, or even tensors, you can define a computer program as a function that gets some input and produces a specific output, depending solely on the inputs.
 
@@ -150,7 +151,9 @@
 			We will cover these layers <a href="#Layer_Types">here</a>.
 
 			<h3>Dimensionality Reduction</h3>
-			TODO
+			A common goal of neural networks is dimensionality reduction.
+
+			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values
 
 			<h3>Training</h3>
 			TODO
