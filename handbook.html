@@ -203,7 +203,11 @@
 			When the network, while training, has seen all training data once, this is called an epoch. You usually need many epochs after each other to train a neural network.
 
 			<h4>Shuffling</h4>
-			TODO
+			Because usually not the whole data fits into memory and has to be sharded into smaller chunks (<a href="#Batch-Size">Batches</a>), it is usually recommended to shuffle the data. Imagine you didn't do this in the example network that should learn to classify cats and dogs, and in the first batch the network there are only cats and in the second one only dogs.
+
+			Then, the network would learn "cat" in the first batch and be punished for what it has learnt previously in the next batch, where there are only dogs. 
+
+			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch.
 
 			<h3>Predicting</h3>
 			TODO
