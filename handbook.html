@@ -150,12 +150,16 @@
 
 			We will cover these layers <a href="#Layer_Types">here</a>.
 
+			In neural networks, instead of writing the interna of functions by yourself, you give the network a lot of data and what should come out. Mathematically, you tell the network that the function \( f \) should transform the input set \( X \) to the output set \( Y \). It will try to find values for the parameters of the interna of the functions, whose general outline you need to give by specifying the layer types and their options, so that the difference between the values you specify as ground truth and the values the network gives out is minimized as much as possible.
+
 			<h3>Dimensionality Reduction</h3>
 			A common goal of neural networks is dimensionality reduction.
 
 			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
 
 			This is a dimensionality reduction, from a tensor of the shape \( [64, 64, 3] \) to a tensor of the shape \( [2] \).
+
+			This can be done by several ways. For example, <a href="#Convolutional_Layers">convolutions</a> or <a href="#Pooling_layers">pooling layers</a> "extract" information from images and reduce the number of values and therefore reduce the dimensionality of the inputted images.
 
 			<h3>Training</h3>
 			TODO
