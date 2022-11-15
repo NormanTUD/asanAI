@@ -175,6 +175,8 @@
 
 			For each point, while training, a loss is determined. How exactly this is done is dependent on the optimizer chosen (see <a href="#Optimizers">Optimizers</a> for more details).
 
+			After each <a href="#Batch-Size">Batch</a>, the weights and biases are adjusted to to better fit the training data and to minimize the loss. The network structure is not altered while training.
+
 			<h4>Batch-Size</h4>
 			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
 
