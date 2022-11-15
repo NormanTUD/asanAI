@@ -76,11 +76,25 @@
 
 			If you just want to use a single image, press "Take image from webcam" instead.
 
+			While doing these images, please move the object around, so that the neural network can see it from different angles and sides.
+
 			Each of these buttons is assigned to a category, which you can name. By default, there are 2 categories, but you can add as many as you like. If you want to remove a category, press "Delete this category". If you want to add a category, press "Add new category".
 
 			<img src="camera_data.png" />
 
 			When you have as many categories and images as you wish, go to the ribbon and click <img src="start_training_button.png">.
+
+			You will then see graphs like these:
+
+			<img src="train_graph_ok.png" />
+
+			For now only the topmost graph is important. The two lines are the <a href="#Loss">Loss</a> and <a href="#Validation_Loss">Validation-Loss</a>.
+
+			Both show how well the network is performing. A simple (but technically inaccurate) way of thinking of them is the number of errors the network makes while predicting. The Validation Loss is based on the <a href="#Validation_Split">Validation Split</a>. This takes a certain percentage out of the training loop and tests the network after each <a href="#Epochs">Epoch</a> on data the network has not yet seen.
+
+			Both graphs should look similiar. Check <a href="#Interpretating_the_training_graph">how to interpret these graphs here</a>.
+
+			When the training is done (or you prematurely cancelled it, which can be done by clicking <img src="stop_training_button.png"> in the ribbon.
 			
 
 			<h3>Train on images from files</h3>
@@ -540,6 +554,10 @@
 
 			<h2>Regularizer Functions</h2>
 			TODO
+
+			<h2>Validation Split</h2>
+
+			<h2>Validation Loss</h2>
 
 			<h2>Loss</h2>
 			TODO
