@@ -75,15 +75,15 @@
 			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
 
 			$$
-			  \textrm{Second dimension}
-			  \stackrel{\mbox{First dimension}}{%
-			    \begin{pmatrix}
-			    a_{11} & a_{12} & \cdots & a_{1M} \\
-			    a_{21} & a_{22} & \cdots & a_{2M} \\
-			    \vdots & \vdots & \ddots & \vdots \\
-			    a_{N1} & a_{N2} & \cdots & a_{NM}
-			    \end{pmatrix}%
-			  }.
+			\textrm{Second dimension}
+			\stackrel{\mbox{First dimension}}{%
+				\begin{pmatrix}
+					a_{11} & a_{12} & \cdots & a_{1M} \\
+					a_{21} & a_{22} & \cdots & a_{2M} \\
+					\vdots & \vdots & \ddots & \vdots \\
+					a_{N1} & a_{N2} & \cdots & a_{NM}
+				\end{pmatrix}%
+			}.
 			$$
 
 			Tensors have an arbitrary number of dimensions.
@@ -196,6 +196,8 @@
 					y_5 
 				\end{pmatrix}
 			$$
+
+			and so on, until all values have been seen by the network once. This is then called an <a href="#Epochs">epoch</a>.
 
 			<h4>Epochs</h4>
 			When the network, while training, has seen all training data once, this is called an epoch. You usually need many epochs after each other to train a neural network.
