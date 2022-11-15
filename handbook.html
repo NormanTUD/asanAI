@@ -42,6 +42,9 @@
 
 			}
 
+			#contents {
+				white-space: pre-line;
+			}
 		</style>
 	</head>
 	<body>
@@ -61,16 +64,12 @@
 			TODO
 
 			<h2>General outline</h2>
-			asanAI offers a simple way of creating sequential neural networks and train them
-			on your own data, from within the browser. It allows you to visualize a lot of
-			different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained
-			model to Python and NodeJS.
+			asanAI offers a simple way of creating sequential neural networks and train them on your own data, from within the browser. It allows you to visualize a lot of 			different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained model to Python and NodeJS.
 
 			<h2>Basic idea of neural networks</h2>
 
 			<h3>Data</h3>
-			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every
-			number, every vector and matrix is a tensor.
+			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every number, every vector and matrix is a tensor.
 
 			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
 
@@ -83,14 +82,12 @@
 			    \vdots & \vdots & \ddots & \vdots \\
 			    a_{N1} & a_{N2} & \cdots & a_{NM}
 			    \end{pmatrix}%
-			  },
+			  }.
 			$$
 
-			tensors have an arbitrary number of dimensions.
+			Tensors have an arbitrary number of dimensions.
 
-			An image, for example, consists of 3 channels, one for red, green and blue,
-			each one being a matrix (or submatrix of the image tensor).
-			If the image is 2x2 pixels, the image as a tensor would look like this:
+			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 2x2 pixels, the image as a tensor would look like this:
 
 
 			$$
@@ -119,23 +116,34 @@
 				<div class="box" style="background-color: #0b02d3"></div>
 			</div>
 
-			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are
-			nonetheless tensors.
+			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
 
-			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape [2, 2]. The image above would have
-			the shape [2, 2, 3], because its 2x2 pixels and has three channels. An image with 
-			64x64 pixel and 3 channels would be [64, 64, 3].
+			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape [2, 2]. The image above would have the shape [2, 2, 3], because its 2x2 pixels and has three channels. An image with 64x64 pixel and 3 channels would be [64, 64, 3].
 
 			<h3>Layers</h3>
-			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger
-			function.
+			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger function.
 
 			You can imagine them as such:
 
 			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
 
-			This is called a sequential model, since the data flows through it sequentially. There are other types of models,
-			but they cannot be designed with asanAI.
+			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be designed with asanAI.
+
+			<h3>What do functions have to do with neural networks?</h3>
+			A mathematical function assigns values from one set to values from another. For example, the function $$ \text{nth\_prime}(n) $$ assigns natural numbers (1, 2, 3, ...) to a subset of natural numbers, prime numbers, (2, 3, 5, ...).
+
+			Since parameters for functions can also be matrices, or even tensors, you can define a computer program as a function that gets some input and produces a specific output, depending solely on the inputs.
+
+			Imagine a set of images of cats and dogs. These are, as already discussed, tensors. If you want to classify these images, you are actually searching a function such that 
+
+			$$ 
+				f\left(\text{Input Image Tensor}\right) = \begin{pmatrix}
+					\text{Probability cat in percent}\\
+					\text{Probability dog in percent}
+				\end{pmatrix}
+			$$
+
+			Writing this function manually is practically impossible. Every picture of every cat or dog is different. Even if it's the same cat, it is different if the picture is taken half a second later. So you cannot 
 
 			<h3>Dimensionality Reduction</h3>
 			TODO
@@ -179,8 +187,7 @@
 
 			<br>
 
-			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer
-			is as follows:
+			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer is as follows:
 
 			$$
 				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
@@ -197,8 +204,7 @@
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
 
-			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and 
-			the Bias may change.
+			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and the Bias may change.
 
 			This, for example, is a Dense Layer with the input shape <tt>[2]</tt>:
 
@@ -233,15 +239,12 @@
 				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
 			$$
 
-			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer
-			of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
+			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
 
 			<h4>Dropout</h4>
 			Available options: <a href="#Dropout_Rate">Dropout-Rate</a>
-			<br>
 
 			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
-			<br>
 
 			$$
 				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
@@ -271,10 +274,8 @@
 
 			<h4>Reshape</h4>
 			Available Options: <a href="#Target_Size">Target Size</a>.
-			<br>
 
-			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their
-			arragement.
+			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
 
 			TODO
 
@@ -359,8 +360,7 @@
 			If enabled, the network's weights and biases are changed while training. If not, they stay the same.
 
 			<h3>Use Bias</h3>
-			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical
-			representation:
+			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical representation:
 
 			$$ 
 				\underbrace{\begin{pmatrix}
@@ -500,9 +500,7 @@
 
 			<h3>meanSquaredError</h3>
 
-			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a
-			meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it
-			as a category id for example.
+			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
 
 			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
 
@@ -591,18 +589,15 @@
 
 			<h2>Activation Functions</h2>
 
-			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between
-			0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
+			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between 0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
 
 			<h3>Linear</h3>
 
-			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted,
-			without any changes.
+			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
 
 			<h3>Sigmoid</h3>
 
-			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values 
-			are near 0.
+			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
 
 			$$ 
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
@@ -673,13 +668,11 @@
 
 			<h3>SoftMax</h3>
 
-			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value
-			is in percentage in relation to the whole.
+			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction.
-
 
 			<h3>tanh</h3>
 
