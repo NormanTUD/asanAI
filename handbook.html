@@ -153,7 +153,9 @@
 			<h3>Dimensionality Reduction</h3>
 			A common goal of neural networks is dimensionality reduction.
 
-			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values
+			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
+
+			This is a dimensionality reduction, from a tensor of the shape \( [64, 64, 3] \) to a tensor of the shape \( [2] \).
 
 			<h3>Training</h3>
 			TODO
