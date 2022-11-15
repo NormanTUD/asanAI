@@ -165,10 +165,42 @@
 			TODO
 
 			<h4>Batch-Size</h4>
-			TODO
+			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
+
+			$$ 
+				f\left(
+					\begin{pmatrix}
+						x_0 \\
+						x_1 \\
+						x_2 
+					\end{pmatrix}
+				\right) = \begin{pmatrix}
+					y_0 \\
+					y_1 \\
+					y_2 
+				\end{pmatrix}
+			$$
+
+			The next batch may then be:
+
+			$$ 
+				f\left(
+					\begin{pmatrix}
+						x_3 \\
+						x_4 \\
+						x_4 
+					\end{pmatrix}
+				\right) = \begin{pmatrix}
+					y_3 \\
+					y_4 \\
+					y_5 
+				\end{pmatrix}
+			$$
 
 			<h4>Epochs</h4>
 			TODO
+
+			<h4>Shuffling</h4>
 
 			<h3>Predicting</h3>
 			TODO
