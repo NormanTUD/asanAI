@@ -207,6 +207,14 @@ async function get_image_data(skip_real_image_download) {
 	return data;
 }
 
+function add_tensor_as_image_to_photos (tensor) {
+	// TODO
+	var uuid = uuidv4();
+	var id = "augmented_photo_" + uuid;
+	$("#photos").append("<canvas id='" + id + "'></canvas>");
+	tf.browser.toPixels(tensor, $("#" + id)[0]);
+}
+
 
 function truncate_text (fullStr, strLen, separator) {
     if (fullStr.length <= strLen) return fullStr;
