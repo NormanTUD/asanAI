@@ -1101,6 +1101,18 @@
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
 			$$
 
+			$$
+				\text{sigmoid}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					0.2689414322376251 & 0.5 & 0.7310585975646973 \\
+					0.00004539786823443137 & 0.5 & 0.9999545812606812 \\
+					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
+				\end{pmatrix}
+			$$
+
 			WHEN TO USE TODO
 
 			<h3>ELU</h3>
@@ -1123,6 +1135,18 @@
 
 			$$
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
+			$$
+
+			$$
+				\text{relu6}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					0 & 0 & 1 \\
+					0 & 0 & 6 \\
+					0 & 0 & 6
+				\end{pmatrix}
 			$$
 
 			WHEN TO USE TODO
