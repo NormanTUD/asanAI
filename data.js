@@ -207,12 +207,37 @@ async function get_image_data(skip_real_image_download) {
 	return data;
 }
 
-function add_tensor_as_image_to_photos (tensor) {
+async function add_tensor_as_image_to_photos (tensor) {
 	// TODO
+	assert(typeof(tensor) == "object", "Tensor must be an object");	
+	assert(Object.keys(tensor).includes("shape"), "Tensor must be an object that contains a shape subkey");
 	var uuid = uuidv4();
 	var id = "augmented_photo_" + uuid;
+	log("image-element-id: ", id);
 	$("#photos").append("<canvas id='" + id + "'></canvas>");
-	tf.browser.toPixels(tensor, $("#" + id)[0]);
+	log("toPixels(tensor, $('#" + id + "')");
+
+	var min_value = 0;
+	var max_value = 0;
+
+	var min_in_tensor = tf.min(tensor).arraySync();
+	var max_in_tensor = tf.max(tensor).arraySync();
+
+	if(min_in_tensor < min_value) {
+		min_value = min_in_tensor;
+	}
+
+	if(max_in_tensor > max_value) {
+		max_value = max_in_tensor;
+	}
+
+	tensor = tensor.add(min_value);
+
+	if(max_value != 0) {
+		tensor = tensor.div(max_value);
+	}
+
+	await tf.browser.toPixels(tensor, $("#" + id)[0]);
 }
 
 
