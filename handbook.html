@@ -5,6 +5,7 @@
 	-->
 	<head>
 		<title>asanAI Handbook</title>
+		<script src='plotly-latest.min.js'></script>
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 		<script type="text/x-mathjax-config">
@@ -439,8 +440,7 @@
 
 			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
 
-			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, 
-			the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
+			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
 
 			<h4>conv2dTranspose</h4>
 			TODO
@@ -788,9 +788,29 @@
 				\right) = 2.99573227355399099344
 			$$
 
-			Quite a high loss.
+			Which is quite a high loss.
 
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
+
+			This is due to the structure of the \( \log \) function, which starts steeply and gets more and more flat the higher the number gets:
+
+			<div id="log_from_0_to_100"></div>
+
+			<script>
+				var log_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = 0; i < 100; i++) {
+					log_trace.x.push(i);
+					log_trace.y.push(Math.log(i));
+				}
+
+				var data = [log_trace];
+				Plotly.newPlot('log_from_0_to_100', data);
+			</script>
 
 			<h3>categoricalHinge</h3>
 			TODO
