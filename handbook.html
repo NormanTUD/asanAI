@@ -455,7 +455,27 @@
 			TODO
 
 			<h4>upsampling2d</h4>
-			TODO
+
+			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
+
+			For example, \(
+			\underbrace{\text{upsampling2d}}_{w = 2,\ h = 4}\left(
+				\begin{pmatrix}
+					1 & 2 \\
+					3 & 4
+				\end{pmatrix}
+			\right) = \begin{pmatrix}
+				1 & 1 & 2 & 2 \\
+				1 & 1 & 2 & 2 \\
+				1 & 1 & 2 & 2 \\
+				1 & 1 & 2 & 2 \\
+				3 & 3 & 4 & 4 \\
+				3 & 3 & 4 & 4 \\
+				3 & 3 & 4 & 4 \\
+				3 & 3 & 4 & 4
+			\end{pmatrix} \)
+
+			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
 
 			<h3>Pooling layers</h3>
 			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
