@@ -221,17 +221,21 @@ async function add_tensor_as_image_to_photos (tensor) {
 	var max_value = 0;
 
 	var min_in_tensor = tf.min(tensor).arraySync();
-	var max_in_tensor = tf.max(tensor).arraySync();
 
 	if(min_in_tensor < min_value) {
 		min_value = min_in_tensor;
 	}
 
+
+	if(min_value < 0) {
+		tensor = tensor.sub(min_value);
+	}
+
+	var max_in_tensor = tf.max(tensor).arraySync();
+
 	if(max_in_tensor > max_value) {
 		max_value = max_in_tensor;
 	}
-
-	tensor = tensor.add(min_value);
 
 	if(max_value != 0) {
 		tensor = tensor.div(max_value);
