@@ -627,7 +627,18 @@
 			TODO
 
 			<h4>constant</h4>
-			TODO
+			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a>with Kernel Initializer  set to constant and it's value to 42 without bias would look like this:
+
+			$$
+				h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
+					x_{0}\\
+					x_{1}
+				\end{pmatrix}}_{\mathrm{Input}}
+				\times \underbrace{\begin{pmatrix}
+					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42\\
+					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
+				\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+			$$
 
 			<h4>glorotNormal</h4>
 			TODO
