@@ -968,6 +968,8 @@
 
 			Which is quite a high loss.
 
+			Usually, it is recommeded to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a>in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad values (but which will look like a good result to the optimizer, even tough they aren't).
+
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
 
 			This is due to the structure of the \( \log \) function, which starts steeply and gets more and more flat the higher the number gets:
