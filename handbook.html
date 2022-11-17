@@ -176,7 +176,7 @@
 
 			Tensors have an arbitrary number of dimensions.
 
-			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 2x2 pixels, the image as a tensor would look like this:
+			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 3x3 pixels, the image as a tensor would look like this:
 
 			$$
 				\text{Image} = \begin{pmatrix}
@@ -268,7 +268,7 @@
 
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
 
-			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape \( [2, 2] \). The image above would have the shape \( [2, 2, 3] \), because its 2x2 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
+			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape \( [3, 3] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
 
 			<h3>One-Hot-Encoding</h3>
 			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
