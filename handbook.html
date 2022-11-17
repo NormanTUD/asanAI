@@ -181,27 +181,89 @@
 			$$
 				\text{Image} = \begin{pmatrix}
 					\text{Red:} \begin{pmatrix}
-						221 & 122 \\
-						121 & 11
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
 					\end{pmatrix},
 					\text{Green:} \begin{pmatrix}
-						0 & 12 \\
-						1 & 2
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
 					\end{pmatrix},
 					\text{Blue:} \begin{pmatrix}
-						225 & 255 \\
-						240 & 211
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
 					\end{pmatrix}
 				\end{pmatrix}
 			$$
 
-			This is a full description of this picture:
+			The three channels together give us this total image:
 
-			<div class="container">
-				<div class="box" style="background-color: #dd00f0"></div>
-				<div class="box" style="background-color: #7a0cff"></div>
-				<div class="box" style="background-color: #7901f0"></div>
-				<div class="box" style="background-color: #0b02d3"></div>
+			<div class="center_vertically" style="height: 230px">
+				<div style="position: absolute; left: 130px; width: 300px">
+					<span id="training_data_matrix" style="display: inline-flex; width: 150px">
+						<span class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<div class="cell" style='background-color: #0000ff'>255</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #000080'>128</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #000040'>64</div>
+								</span>
+							</span>
+						</span>
+						<span style="position: relative; top: 30px; left: -150;" class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<div class="cell" style='background-color: #00ff00'>255</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #008000'>128</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #004000'>64</div>
+								</span>
+							</span>
+						</span>
+						<span style="position: relative; top: 60px; left: -300px;" class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<span class="cell" style='background-color: #ff0000'>255</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell" style='background-color: #800000'>128</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell" style='background-color: #400000'>64</span>
+								</span>
+							</span>
+						</span>
+					</span>
+				</div>
+				<div style="position: absolute; left: 260px;">=</div>
+				<div style="position: absolute; left: 280px;">
+					<div class="grid">
+						<div class="cell" style='background-color: #ffffff'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: #808080'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: #404040'></div>
+					</div>
+				</div>
 			</div>
 
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
@@ -1288,72 +1350,6 @@
 
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
-		</div>
-
-		<div class="center_vertically" style="height: 230px">
-			<div style="position: absolute; left: 130px; width: 300px">
-				<span id="training_data_matrix" style="display: inline-flex; width: 150px">
-					<span class="flip3dtensor">
-						<span class="container">
-							<span class="grid">
-								<div class="cell" style='background-color: #0000ff'>255</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell" style='background-color: #000080'>128</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell" style='background-color: #000040'>64</div>
-							</span>
-						</span>
-					</span>
-					<span style="position: relative; top: 30px; left: -150;" class="flip3dtensor">
-						<span class="container">
-							<span class="grid">
-								<div class="cell" style='background-color: #00ff00'>255</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell" style='background-color: #008000'>128</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell">0</div>
-								<div class="cell" style='background-color: #004000'>64</div>
-							</span>
-						</span>
-					</span>
-					<span style="position: relative; top: 60px; left: -300px;" class="flip3dtensor">
-						<span class="container">
-							<span class="grid">
-								<span class="cell" style='background-color: #ff0000'>255</span>
-								<span class="cell">0</span>
-								<span class="cell">0</span>
-								<span class="cell">0</span>
-								<span class="cell" style='background-color: #800000'>128</span>
-								<span class="cell">0</span>
-								<span class="cell">0</span>
-								<span class="cell">0</span>
-								<span class="cell" style='background-color: #400000'>64</span>
-							</span>
-						</span>
-					</span>
-				</span>
-			</div>
-			<div style="position: absolute; left: 260px;">=</div>
-			<div style="position: absolute; left: 280px;">
-				<div class="grid">
-					<div class="cell" style='background-color: #ffffff'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: #808080'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: black'></div>
-					<div class="cell" style='background-color: #404040'></div>
-				</div>
-			</div>
 		</div>
 
 		<script src="manual.js"></script>
