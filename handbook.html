@@ -763,6 +763,27 @@
 
 			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
 
+			Example-Calculation:
+
+			$$
+				MSE \left(\underbrace{\begin{pmatrix}
+					0.1 \\
+					-0.2 \\
+					1
+				\end{pmatrix}}_{\text{Ground-Truth}},
+				\underbrace{\begin{pmatrix}
+					0 \\
+					0.2 \\
+					-1
+				\end{pmatrix}}_{\text{Predicted Value}}
+				\right) = 
+				\frac{
+					\left( 0.1 - 0 \right)^2 +
+					\left( -0.2 - 0.2 \right)^2 +
+					\left( 1 - -1 \right)^2
+				}{3} = 4.17
+			$$
+
 			<h3>binaryCrossentropy</h3>
 
 			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
