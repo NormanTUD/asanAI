@@ -526,7 +526,11 @@
 
 			<h4>gaussianDropout</h4>
 			<img width=80 height=80 src="manual/before_gaussian_dropout.png"> \( \rightarrow \) <img src="manual/gaussian_dropout.png">
-			Adds a 
+			Drops out with a gaussian distribution of a specified dropout rate (in the example, 0.2).
+
+			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
+
+			This layer is only active during training.
 
 			<h4>gaussianNoise</h4>
 			<img width=80 height=80 src="manual/before_gaussian.png"> \( \rightarrow \) <img src="manual/gaussian.png">
