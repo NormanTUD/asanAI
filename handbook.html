@@ -1326,6 +1326,8 @@
 			<h3>Network Structures</h3>
 			TODO
 
+			<h2>Auto-Input-Size</h2>
+
 			<h2>Export</h2>
 
 			<h3>Export to Python</h3>
@@ -1349,6 +1351,8 @@
 			You can always check the number of used memory by tensors by looking at the bottom right corner.
 
 			There, you can see something like this: <img src="tensor_debugger.png">. It shows you the current usage of your GPU memory and RAM and how many tensors are actually allocated.
+
+			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
 
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
