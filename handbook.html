@@ -52,6 +52,42 @@
 				display: flex;
 				align-items: center;
 			}
+
+						.grid3x2 {
+				display: grid;
+				grid-template-columns: repeat(2, 40px);
+				grid-template-rows: repeat(3, 40px);
+				grid-gap: 1px;
+			}
+
+			.grid2x2 {
+				display: grid;
+				grid-template-columns: repeat(2, 40px);
+				grid-template-rows: repeat(2, 40px);
+				grid-gap: 1px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(3, 40px);
+				grid-template-rows: repeat(3, 40px);
+				grid-gap: 1px;
+			}
+
+			.cell {
+				justify-content: center;
+				align-items: center;
+				display: flex;
+				font-family: Arial;
+				font-size: 0.5em;
+				font-weight: bold;
+				background: white;
+			}
+
+			.flip3dtensor {
+				max-width: 100px;
+				transform: skew(-180deg, 21deg);
+			}
 		</style>
 	</head>
 	<body>
@@ -1252,6 +1288,54 @@
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 		</div>
+
+		<span id="training_data_matrix" style="display: inline-flex; width: 150px">
+			<span class="flip3dtensor">
+				<span class="container">
+					<span class="grid">
+						<span class="cell" style='background-color: red'>\((0, 0)\)</span>
+						<span class="cell">\((0, 1)\)</span>
+						<span class="cell">\((0, 2)\)</span>
+						<span class="cell">\((1, 0)"</span>
+						<span class="cell" style='background-color: green'>\((1, 1)\)</span>
+						<span class="cell">\((1, 2)\)</span>
+						<span class="cell">\((2, 0)\)</span>
+						<span class="cell">\((2, 1)\)</span>
+						<span class="cell" style='background-color: blue'>\((2, 2)\)</span>
+					</span>
+				</span>
+			</span>
+			<span style="position: relative; top: 30px; left: -120;" class="flip3dtensor">
+				<span class="container">
+					<span class="grid">
+						<div class="cell" style='background-color: red'>\((0, 0)\)</div>
+						<div class="cell">\((0, 1)\)</div>
+						<div class="cell">\((0, 2)\)</div>
+						<div class="cell">\((1, 0)\)</div>
+						<div class="cell" style='background-color: green'>\((1, 1)\)</div>
+						<div class="cell">\((1, 2)\)</div>
+						<div class="cell">\((2, 0)\)</div>
+						<div class="cell">\((2, 1)\)</div>
+						<div class="cell" style='background-color: blue'>\((2, 2)</div>
+					</span>
+				</span>
+			</span>
+			<span style="position: relative; top: 60px; left: -240px;" class="flip3dtensor">
+				<span class="container">
+					<span class="grid">
+						<div class="cell" style='background-color: red'>\((0, 0)\)</div>
+						<div class="cell">\((0, 1)\)</div>
+						<div class="cell">\((0, 2)\)</div>
+						<div class="cell">\((1, 0)\)</div>
+						<div class="cell" style='background-color: green'>\((1, 1)\)</div>
+						<div class="cell">\((1, 2)\)</div>
+						<div class="cell">\((2, 0)\)</div>
+						<div class="cell">\((2, 1)\)</div>
+						<div class="cell" style='background-color: blue'>\((2, 2)\)</div>
+					</span>
+				</span>
+			</span>
+		</span>
 
 		<script src="manual.js"></script>
 	</body>
