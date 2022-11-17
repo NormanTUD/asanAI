@@ -1251,3 +1251,11 @@ var shown_has_zero_data = false;
 var last_drawn_descriptions = "";
 
 var last_training_time = "";
+
+var original_sgd = tf.train.sgd;
+var original_rmsprop = tf.train.rmsprop;
+var original_adamax = tf.train.adamax;
+var original_adam = tf.train.adam;
+var original_adadelta = tf.train.adadelta;
+var original_adagrad = tf.train.adagrad;
+var original_momentum = tf.train.momentum;
