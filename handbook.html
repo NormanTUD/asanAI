@@ -629,14 +629,91 @@
 			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
 
 			<h3>binaryCrossentropy</h3>
-			TODO
 
 			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
 
 			<h3>categoricalCrossentropy</h3>
-			TODO
-
 			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
+
+			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of \( [5] \).
+			
+			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is \(
+				\begin{pmatrix}
+					0.03 \\
+					0.9 \\
+					0.05 \\
+					0.01 \\
+					0.01
+				\end{pmatrix}
+			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
+
+			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
+
+			We don't want to punish the network for that then, of course. 
+
+			But imagine, category 3 was the correct one. Then, it was very bad, although it is the second best category.
+
+			For this, categoricalCrossentropy is useful. Let us calculate the categorical crossentropy value for each of those options.
+
+			In the first one, the ground-truth output is \(
+				\begin{pmatrix}
+					0 \\	
+					1 \\	
+					0 \\	
+					0 \\	
+					0 \\	
+				\end{pmatrix}
+			\). The categorical crossentropy would be:
+
+			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
+
+			$$ 
+				-\left(
+					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+					\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
+					\underbrace{(0 * \log(0.05))}_\text{Third entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+				\right) =
+			$$
+
+			$$
+				-\left(
+					0 + -0.10536051565782630123 + 0 + 0 + 0
+				\right) = 0.10536051565782630123
+			$$
+
+			This is not a perfect loss, but it indicates the results is quite OK.
+
+			Let's try the other case, where the ground truth is \(
+				\begin{pmatrix}
+					0 \\	
+					0 \\
+					1 \\	
+					0 \\	
+					0 \\	
+				\end{pmatrix}
+			\). The categorical crossentropy would be:
+
+			$$ 
+				-\left(
+					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+					\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
+					\underbrace{(1 * \log(0.05))}_\text{Third entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+				\right) =
+			$$
+
+			$$
+				-\left(
+					0 + 0 + -2.99573227355399099344 + 0 + 0
+				\right) = 2.99573227355399099344
+			$$
+
+			Quite a high loss.
+
+			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
 
 			<h3>categoricalHinge</h3>
 			TODO
