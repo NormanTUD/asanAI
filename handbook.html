@@ -819,9 +819,24 @@
 			TODO
 
 			<h3>meanAbsoluteError</h3>
-			TODO
-
 			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
+
+			The meanAbsoluteError calculcates the absolute difference for each set of values from the ground truth and the predicted value, and
+			averages over them.
+
+			If the ground truth is \( \begin{pmatrix}
+				0 \\
+				10 \\
+				-100
+			\end{pmatrix} \) and the predicted value is \( \begin{pmatrix}
+				3 \\
+				9 \\
+				10
+			\end{pmatrix} \).
+
+			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
+
+			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
 
 			<h3>meanAbsolutePercentageError</h3>
 			TODO
@@ -873,9 +888,6 @@
 			TODO
 
 			<h3>meanSquaredError</h3>
-			TODO
-
-			<h3>meanAbsoluteError</h3>
 			TODO
 
 			<h3>meanAbsolutePercentageError</h3>
