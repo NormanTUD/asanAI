@@ -537,7 +537,8 @@ async function get_xs_and_ys () {
 
 							if($("#augment_flip_left_right").is(":checked")) {
 								l("Flip left/right");
-								x.push(await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0]);
+								var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
+								x.push(flipped);
 								classes.push(label_nr);
 							}
 
@@ -555,6 +556,7 @@ async function get_xs_and_ys () {
 								var rippled = await tf.browser.fromPixels(canvas);
 								$(canvas).remove();
 								log(rippled);
+								add_tensor_as_image_to_photos(rippled);
 								x.push(rippled[0]);
 								classes.push(label_nr);
 								*/
