@@ -523,7 +523,29 @@
 			TODO
 
 			<h4>ones</h4>
-			TODO
+			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+
+			$$
+			\left(\underbrace{\begin{pmatrix}
+				x_{0}\\
+				x_{1}
+			\end{pmatrix}}_{\mathrm{Input}}
+			\times \underbrace{\begin{pmatrix}
+				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
+			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+				+ \underbrace{\begin{pmatrix}
+					0.7754069566726685 \\
+					0.49466845393180847 \\
+					0.7826976180076599 \\
+					0.25087693333625793 \\
+					0.794059157371521 \\
+					0.5701638460159302 \\
+					0.04553954675793648 \\
+					0.20112565159797668
+				\end{pmatrix}}_{\mathrm{Bias}}
+			\right)
+			$$
 
 			<h4>randomNormal</h4>
 			TODO
@@ -538,7 +560,29 @@
 			TODO
 
 			<h4>zeros</h4>
-			TODO
+			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+
+			$$
+			\left(\underbrace{\begin{pmatrix}
+				x_{0}\\
+				x_{1}
+			\end{pmatrix}}_{\mathrm{Input}}
+			\times \underbrace{\begin{pmatrix}
+				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+				+ \underbrace{\begin{pmatrix}
+					0.7754069566726685 \\
+					0.49466845393180847 \\
+					0.7826976180076599 \\
+					0.25087693333625793 \\
+					0.794059157371521 \\
+					0.5701638460159302 \\
+					0.04553954675793648 \\
+					0.20112565159797668
+				\end{pmatrix}}_{\mathrm{Bias}}
+			\right)
+			$$
 
 			<h3>Kernel Initializer</h3>
 			TODO
