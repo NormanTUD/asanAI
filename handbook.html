@@ -457,25 +457,22 @@
 			TODO
 
 			<h4>upsampling2d</h4>
+			<img width=20 height=20 src="manual/before_upscaling.png"> \( \rightarrow \) <img src="manual/upscaled.png">
 
 			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
 
 			For example, \(
-			\underbrace{\text{upsampling2d}}_{w = 2,\ h = 4}\left(
+			\underbrace{\text{upsampling2d}}_{h = 2,\ w = 4}\left(
 				\begin{pmatrix}
 					1 & 2 \\
 					3 & 4
 				\end{pmatrix}
 			\right) = \begin{pmatrix}
-				1 & 1 & 2 & 2 \\
-				1 & 1 & 2 & 2 \\
-				1 & 1 & 2 & 2 \\
-				1 & 1 & 2 & 2 \\
-				3 & 3 & 4 & 4 \\
-				3 & 3 & 4 & 4 \\
-				3 & 3 & 4 & 4 \\
-				3 & 3 & 4 & 4
-			\end{pmatrix} \)
+					1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
+					1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
+					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4 \\
+					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4
+			\end{pmatrix} \).
 
 			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
 
