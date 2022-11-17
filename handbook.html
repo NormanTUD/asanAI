@@ -407,17 +407,43 @@
 			TODO
 
 			<h3>Pooling layers</h3>
-			<h4>averagePooling1d</h4>
-			TODO
+			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
+			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the image (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
-			<h4>averagePooling2d</h4>
-			TODO
+			Example:
 
-			<h4>maxPooling1d</h4>
-			TODO
+			$$
+				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
+					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
+					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
+					\color{orange}{32} & \color{orange}{128} & \color{green}{3} & \color{green}{30}
+				\end{pmatrix}\right) = \begin{pmatrix}
+					\color{red}{\frac{10 + 8 + 4 + 2}{4}} & \color{blue}{\frac{1 + 4 + 14 + 5}{4}} \\
+					\color{orange}{\frac{12+20+32+128}{4}} & \color{green}{\frac{-5+19+3+30}{4}} \\
+				\end{pmatrix} = \begin{pmatrix}
+					\color{red}{6} & \color{blue}{6} \\
+					\color{orange}{48} & \color{green}{11.75} \\
+				\end{pmatrix}
+			$$
 
-			<h4>maxPooling2d</h4>
-			TODO
+
+			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
+			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the image (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
+
+			Example:
+
+			$$
+				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
+					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
+					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
+					\color{orange}{32} & \color{orange}{128} & \color{green}{3} & \color{green}{30}
+				\end{pmatrix}\right) = \begin{pmatrix}
+					\color{red}{10} & \color{blue}{14} \\
+					\color{orange}{128} & \color{green}{30} \\
+				\end{pmatrix}
+			$$
 
 			<h3>Dropout and noise layers</h3>
 			<h4>alphaDropout</h4>
