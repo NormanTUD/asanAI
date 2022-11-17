@@ -188,6 +188,10 @@ function get_model_data (optimizer_name_only) {
 		"sgd": "sgd(model_data['learningRate'])"
 	};
 
+	// TODO:
+	// original_function = tf.train.adam
+	// tf.train.adam = function (e, t, n, r) { log("ADAM etnr:", e, t, n, r); var res = original_function(e, t, n, r); log("res", res); return res; }
+
 	if(!optimizer_name_only) {
 		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
 	}
