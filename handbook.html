@@ -82,6 +82,7 @@
 				font-size: 0.5em;
 				font-weight: bold;
 				background: white;
+				outline: 1px solid black;
 			}
 
 			.flip3dtensor {
@@ -1289,53 +1290,71 @@
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 		</div>
 
-		<span id="training_data_matrix" style="display: inline-flex; width: 150px">
-			<span class="flip3dtensor">
-				<span class="container">
-					<span class="grid">
-						<span class="cell" style='background-color: red'>\((0, 0)\)</span>
-						<span class="cell">\((0, 1)\)</span>
-						<span class="cell">\((0, 2)\)</span>
-						<span class="cell">\((1, 0)"</span>
-						<span class="cell" style='background-color: green'>\((1, 1)\)</span>
-						<span class="cell">\((1, 2)\)</span>
-						<span class="cell">\((2, 0)\)</span>
-						<span class="cell">\((2, 1)\)</span>
-						<span class="cell" style='background-color: blue'>\((2, 2)\)</span>
+		<div class="center_vertically" style="height: 230px">
+			<div style="position: absolute; left: 130px; width: 300px">
+				<span id="training_data_matrix" style="display: inline-flex; width: 150px">
+					<span class="flip3dtensor">
+						<span class="container">
+							<span class="grid">
+								<div class="cell" style='background-color: #0000ff'>255</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell" style='background-color: #000080'>128</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell" style='background-color: #000040'>64</div>
+							</span>
+						</span>
+					</span>
+					<span style="position: relative; top: 30px; left: -150;" class="flip3dtensor">
+						<span class="container">
+							<span class="grid">
+								<div class="cell" style='background-color: #00ff00'>255</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell" style='background-color: #008000'>128</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell">0</div>
+								<div class="cell" style='background-color: #004000'>64</div>
+							</span>
+						</span>
+					</span>
+					<span style="position: relative; top: 60px; left: -300px;" class="flip3dtensor">
+						<span class="container">
+							<span class="grid">
+								<span class="cell" style='background-color: #ff0000'>255</span>
+								<span class="cell">0</span>
+								<span class="cell">0</span>
+								<span class="cell">0</span>
+								<span class="cell" style='background-color: #800000'>128</span>
+								<span class="cell">0</span>
+								<span class="cell">0</span>
+								<span class="cell">0</span>
+								<span class="cell" style='background-color: #400000'>64</span>
+							</span>
+						</span>
 					</span>
 				</span>
-			</span>
-			<span style="position: relative; top: 30px; left: -120;" class="flip3dtensor">
-				<span class="container">
-					<span class="grid">
-						<div class="cell" style='background-color: red'>\((0, 0)\)</div>
-						<div class="cell">\((0, 1)\)</div>
-						<div class="cell">\((0, 2)\)</div>
-						<div class="cell">\((1, 0)\)</div>
-						<div class="cell" style='background-color: green'>\((1, 1)\)</div>
-						<div class="cell">\((1, 2)\)</div>
-						<div class="cell">\((2, 0)\)</div>
-						<div class="cell">\((2, 1)\)</div>
-						<div class="cell" style='background-color: blue'>\((2, 2)</div>
-					</span>
-				</span>
-			</span>
-			<span style="position: relative; top: 60px; left: -240px;" class="flip3dtensor">
-				<span class="container">
-					<span class="grid">
-						<div class="cell" style='background-color: red'>\((0, 0)\)</div>
-						<div class="cell">\((0, 1)\)</div>
-						<div class="cell">\((0, 2)\)</div>
-						<div class="cell">\((1, 0)\)</div>
-						<div class="cell" style='background-color: green'>\((1, 1)\)</div>
-						<div class="cell">\((1, 2)\)</div>
-						<div class="cell">\((2, 0)\)</div>
-						<div class="cell">\((2, 1)\)</div>
-						<div class="cell" style='background-color: blue'>\((2, 2)\)</div>
-					</span>
-				</span>
-			</span>
-		</span>
+			</div>
+			<div style="position: absolute; left: 260px;">=</div>
+			<div style="position: absolute; left: 280px;">
+				<div class="grid">
+					<div class="cell" style='background-color: #ffffff'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: #808080'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: black'></div>
+					<div class="cell" style='background-color: #404040'></div>
+				</div>
+			</div>
+		</div>
 
 		<script src="manual.js"></script>
 	</body>
