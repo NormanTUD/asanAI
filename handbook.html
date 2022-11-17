@@ -387,7 +387,60 @@
 			<h3>Convolutional Layers</h3>
 
 			<h4>convNd (conv1d, conv2d)</h4>
-			TODO
+			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+
+			Example:
+
+			Kernel: \( K = \begin{pmatrix}
+				1 & -1 \\
+				0 & 2
+			\end{pmatrix}\).
+
+			Data: \( D = \begin{pmatrix}
+				\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
+				\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
+				\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
+				\color{orange}{32} & \color{orange}{128} & \color{green}{3} & \color{green}{30}
+			\end{pmatrix}
+			\).
+
+			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is \( S_1 = \begin{pmatrix}
+				10 & 8 \\
+				4 & 2
+				\end{pmatrix} \). \( S_1 \cdot K = \begin{pmatrix}
+					10 & 8 \\
+					4 & 2
+				\end{pmatrix} \cdot \begin{pmatrix}
+				1 & -1 \\
+				0 & 2
+				\end{pmatrix} = \begin{pmatrix}
+					10 & 6 \\
+					4 & 0
+				\end{pmatrix}
+			\).
+
+			The second submatrix is then \( S_2 = \begin{pmatrix}
+				\color{blue}{1} & \color{blue}{4} \\
+				\color{blue}{14} & \color{blue}{5}
+				\end{pmatrix} \), which, multiplied by \(K\), is \( \begin{pmatrix}
+				1 & 7 \\
+				14 & -4
+			\end{pmatrix}
+			\).
+
+			When slided over the whole image, the result is \(
+				\begin{pmatrix}
+					10 & 6 & 1 & 7 \\
+					4 & 0 & 14 & -4 \\
+					12 & 28 & -5 & 43 \\
+					32 & 224 & 3 & 57
+				\end{pmatrix}
+			\). The kernel is being trained to recognize whatever it needs to recognize. 
+
+			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
+
+			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, 
+			the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
 
 			<h4>conv2dTranspose</h4>
 			TODO
@@ -406,7 +459,7 @@
 
 			<h3>Pooling layers</h3>
 			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
-			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the image (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
 			Example:
 
@@ -427,7 +480,7 @@
 
 
 			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
-			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the image (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
+			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
 
 			Example:
 
