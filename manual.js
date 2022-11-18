@@ -85,7 +85,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 			} else if(layer_name.endsWith("filters")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_name.endsWith("use_bias")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='checkbox' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_name.endsWith("activation")) {
 				var selecter = "<select>";
 				var activation_keys = Object.keys(activation_options);
