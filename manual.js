@@ -82,7 +82,17 @@ function get_element (item) {
 	if($(item).is(":checkbox")) {
 		return $(item).is(":checked")
 	} else if ($(item).is("input")) {
-		return $(item).val();
+		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize")) {
+			var str = $(item).val();
+			var values = str.split(/\s*,\s*/)
+			values.map(function (x) {
+				return parseInt(x, 10);
+			});
+
+			return values;
+		} else {
+			return $(item).val();
+		}
 	} else if ($(item).is("select")) {
 		return $(item).val();
 	}
@@ -131,7 +141,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 			} else if(layer_option.endsWith("use_bias")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("activation")) {
-				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
 				for (var k = 0; k < activation_keys.length; k++) {
 					var checked = "";
@@ -144,7 +154,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("padding")) {
-				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
 				for (var k = 0; k < padding_keys.length; k++) {
 					var checked = "";
@@ -159,7 +169,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("initializer")) {
-				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
 				for (var k = 0; k < initializer_keys.length; k++) {
 					var checked = "";
@@ -199,7 +209,8 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 		var element = "";
 
-		for (k = 0; i < classes.length; i++) {
+		log("classes:", classes);
+		for (k = 0; k < classes.length; k++) {
 			if(classes[k] != "gui_option") {
 				element = classes[k];
 			}
