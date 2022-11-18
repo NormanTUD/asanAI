@@ -73,7 +73,13 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				var selecter = "<select>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (var k = 0; k < regularizer_keys.length; k++) {
-					selecter += "<option value='" + regularizer_keys[k] + "'>" + regularizer_keys[k] + "</option>";
+					var checked = "";
+
+					if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
+						checked = "selected";
+					}
+
+					selecter += "<option " + checked + " value='" + regularizer_keys[k] + "'>" + regularizer_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
