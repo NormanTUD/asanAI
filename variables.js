@@ -1232,12 +1232,17 @@ var general_options = {
 var general_options_keys = Object.keys(general_options);
 
 for (var i = 0; i < general_options_keys.length; i++) {
-	var func = "var add_" + general_options_keys[i] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[i]]+ "); }";
+	var func = "var add_" + general_options_keys[i] + "_option = function (type, nr) { return get_tr_str_for_layer_table(" + general_options[general_options_keys[i]] + "); }";
 	try {
 		$.globalEval(func);
 	} catch (e) {
 		console.error(e);
 	}
+}
+
+var padding_options = {
+	"valid": "valid",
+	"same": "same"
 }
 
 var cookie_theme = "lightmode";
