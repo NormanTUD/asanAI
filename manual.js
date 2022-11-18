@@ -77,6 +77,16 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				selecter += "</select>";
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_name.endsWith("kernel_size")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+			} else if(layer_name.endsWith("dilation_rate")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+			} else if(layer_name.endsWith("strides")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+			} else if(layer_name.endsWith("filters")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='number' min=0 step=1 /></td></tr>")
+			} else if(layer_name.endsWith("use_bias")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='checkbox' /></td></tr>")
 			} else if(layer_name.endsWith("activation")) {
 				var selecter = "<select>";
 				var activation_keys = Object.keys(activation_options);
