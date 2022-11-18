@@ -44,17 +44,26 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	var tensor = tf.tensor(array);
 	config["inputShape"] = tensor.shape;
 	var layer = null;
-	if(Object.keys(config).includes("biasRegularizer")) {
-		if(config["biasRegularizer"].hasL1 && config["biasRegularizer"].hasL2) {
-			config["biasRegularizer"] = tf.regularizers.l1l2({"l1": config["biasRegularizer"]["l1"],  "l2": config["biasRegularizer"]["l2"]});
-		} else if(config["biasRegularizer"].hasL1 && !config["biasRegularizer"].hasL2) {
-			config["biasRegularizer"] = tf.regularizers.l1({"l1": config["biasRegularizer"]["l1"]});
-		} else if(!config["biasRegularizer"].hasL1 && config["biasRegularizer"].hasL2) {
-			config["biasRegularizer"] = tf.regularizers.l2({"l2": config["biasRegularizer"]["l2"]});
-		} else {
-			delete config["biasRegularizer"];
+	var reg = ["bias", "kernel"];
+	for (var i = 0; i < reg.length; i++) {
+		var type = reg[i];
+		if(Object.keys(config).includes(type + "Regularizer")) {
+			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
+				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"]};
+				log("A", cfg);
+				config[type + "Regularizer"] = tf.regularizers.l1l2(cfg);
+			} else if(config[type + "Regularizer"].hasL1 && !config[type + "Regularizer"].hasL2) {
+				var cfg = {"l1": config[type + "Regularizer"]["l1"]};
+				log("B", cfg);
+				config[type + "Regularizer"] = tf.regularizers.l1(cfg);
+			} else if(!config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
+				var cfg = {"l2": config[type + "Regularizer"]["l2"]};
+				log("C", cfg);
+				config[type + "Regularizer"] = tf.regularizers.l2(cfg);
+			} else {
+				delete config[type + "Regularizer"];
+			}
 		}
-
 	}
 
 	log("config:", config);
