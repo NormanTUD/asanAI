@@ -49,17 +49,20 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var type = reg[i];
 		if(Object.keys(config).includes(type + "Regularizer")) {
 			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"]};
+				var cfg = {"className": tf.regularizers.l1l2, config: { "l1": config[type + "Regularizer"]["l1"], "l2": config[type + "Regularizer"]["l2"] }};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l1l2(cfg);
+
 			} else if(config[type + "Regularizer"].hasL1 && !config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"]};
+				var cfg = {"className": tf.regularizers.l1, config: { "l1": config[type + "Regularizer"]["l1"] }};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l1(cfg);
+
 			} else if(!config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l2": config[type + "Regularizer"]["l2"]};
+				var cfg = {"className": tf.regularizers.l2l2, config: { "l1": 0.01, "l2": config[type + "Regularizer"]["l2"] }};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l2(cfg);
+	
 			} else {
 				delete config[type + "Regularizer"];
 			}
@@ -101,11 +104,11 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
 						var cfg_itm = config[python_names_to_js_names[layer_option]];
 						log(config, layer_option, cfg_itm);
-						if(cfg_itm.hasL1 && cfg_itm.hasL2 && initializer_keys[k] == "l1l2") {
+						if(cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l1l2") {
 							checked = "selected";
-						} else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && initializer_keys[k] == "l1") {
+						} else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && regularizer_keys[k] == "l1") {
 							checked = "selected";
-						} else if(!cfg_itm.hasL1 && cfg_itm.hasL2 && initializer_keys[k] == "l2") {
+						} else if(!cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l2") {
 							checked = "selected";
 						}
 					}
