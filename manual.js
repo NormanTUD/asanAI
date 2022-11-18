@@ -40,7 +40,9 @@ function toc () {
 	document.getElementById("toc").innerHTML += toc;
 };
 
-async function get_network_type_result_by_array (layer_type, array, config, expand_dims=1) {
+async function get_network_type_result_by_array (layer_type, array, config, expand_dims=1, uuid) {
+	assert(typeof(layer_type) == "string", "Layer type must be string, is " + typeof(layer_type));
+
 	var tensor = tf.tensor(array);
 	config["inputShape"] = tensor.shape;
 	var layer = null;
@@ -63,20 +65,30 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		}
 	}
 
-	eval("layer = tf.layers." + layer_type + "(config)");
+	try {
+		eval("layer = tf.layers." + layer_type + "(config)");
+		$("#" + uuid + "_error").html("");
+	} catch (e) {
+		$("#" + uuid + "_error").html(e);
+	}
 
 	if(expand_dims) {
 		tensor = tensor.expandDims();
 	}
 
 	log("image tensor before applying:", tensor.arraySync());
-	var res = await layer.apply(tensor).arraySync();
-	log("applied:", res);
+	var res;
+	try {
+		res = await layer.apply(tensor).arraySync();
+		log("applied:", res);
+		$("#" + uuid + "_error").html("");
+	} catch (e) {
+		log(e);
+		$("#" + uuid + "_error").html(e);
+	}
 
 	return [res, layer];
 }
-
-// await get_network_type_result_by_array("dense", [1, 2, 3], {units: 1, kernelInitializer: "ones" })
 
 function get_element (item) {
 	if($(item).is(":checkbox")) {
@@ -98,7 +110,7 @@ function get_element (item) {
 	}
 }
 
-function add_table (layer_type, config, onchange) {
+function add_table (layer_type, config, onchange, uuid) {
 	var this_layer_options = layer_options[layer_type]["options"];
 
 	var general_options_keys = Object.keys(general_options);
@@ -106,7 +118,7 @@ function add_table (layer_type, config, onchange) {
 		var nr = 0;
 		var layer_option = this_layer_options[i];
 		
-		var on_change = "eval_base64(\"" + onchange + "\", \"" + error_id + "\")";
+		var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
 			if(layer_option.endsWith("regularizer")) {
@@ -191,17 +203,18 @@ function add_table (layer_type, config, onchange) {
 			}
 		}
 	}
+
+	eval_base64(onchange, uuid);
 }
 
-function eval_base64 (b, error_id) {
+function eval_base64 (b, uuid) {
 	try {
 		var code = atob(b);
-		log(code);
 		eval(code);
-		$("#" + error_id).html("");
+		$("#" + uuid + "_error").html("");
 	} catch (e) {
 		log(e);
-		$("#" + error_id).html(e);
+		$("#" + uuid + "_error").html(e);
 	}
 
 }
@@ -212,9 +225,8 @@ function add_html_for_layer_types (layer_type) {
 	var base_img_id = uuid + "_" + "base_img";
 	var internal_canvasses_id = uuid + "_internal_canvasses";
 	var out_canvasses_id = uuid + "_out_canvasses";
-	var error_id = uuid + "_error";
 
-	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${error_id}");`);
+	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${uuid}");`);
 
 	$("#" + div_to_add_to).html("");
 
@@ -222,13 +234,11 @@ function add_html_for_layer_types (layer_type) {
 		<img id="${base_img_id}" src="manual/before_averagePooling.png"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> \\( \\Bigg] \\rightarrow \\Bigg[ \\) <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
 		<script>
 			$(document).ready(function(){
-				add_table("${layer_type}", default_config_${layer_type}, "${onchange_code}");
-
-				eval_base64("${onchange_code}", "${error_id}");
+				add_table("${layer_type}", default_config_${layer_type}, "${onchange_code}", "${uuid}");
 			});
 		</script>
 	</div>
-	<div id="${error_id}"></div>
+	<div id="${uuid}_error"></div>
 	<table id="layer_gui"></table>`;
 
 	log(html);
@@ -237,7 +247,7 @@ function add_html_for_layer_types (layer_type) {
 }
 
 // simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
-async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, error_id) {
+async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
 	tf.engine().startScope();
 
 	var img_element = $("#" + img_element_id);
@@ -271,13 +281,17 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 	}
 
 	log(config);
-	var [result, layer];
+	var result, layer;
 	try {
-		[result, layer] = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1);
-		$("#" + error_id).html("");
+		var res = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1, uuid);
+
+		result = res[0];
+		layer = res[1];
+		$("#" + uuid + "_error").html("");
 	} catch (e) {
 		log(e);
-		$("#" + error_id).html(e);
+		$("#" + uuid + "_error").html(e);
+		return;
 	}
 	log("layer:", layer);
 
