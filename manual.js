@@ -147,6 +147,10 @@ function add_table (layer_type, config, onchange, uuid) {
 				selecter += "</select>";
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_option == "strides") {
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.strides.join(',') + "' /></td></tr>")
+			} else if(layer_option == "pool_size") {
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.poolSize.join(',') + "' /></td></tr>")
 			} else if(layer_option == "size") {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.size.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
@@ -354,3 +358,4 @@ toc();
 
 add_html_for_layer_types("conv2d");
 add_html_for_layer_types("upSampling2d");
+add_html_for_layer_types("maxPooling2d");

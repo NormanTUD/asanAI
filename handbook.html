@@ -110,7 +110,13 @@
 	<body>
 		<script>
 			var default_config_upSampling2d = {
-				size: [2, 2]
+				size: [2, 2],
+				interpolation: "nearest"
+			};
+
+			var default_config_maxPooling2d = {
+				poolSize: [2, 2],
+				strides: [2, 2]
 			};
 
 			var default_config_conv2d = {
@@ -130,6 +136,8 @@
 				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
 			};
 		</script>
+
+		<div id="maxPooling2d_example"></div>
 
 		<img src="logo_small.png" />
 		<div id="toc"></div>
