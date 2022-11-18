@@ -65,7 +65,6 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	for (var i = 0; i < this_layer_options.length; i++) {
 		var nr = 0;
 		var layer_name = this_layer_options[i];
-		log(this_layer_options[i], layer_name);
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_name)) {
 			if(layer_name.endsWith("regularizer")) {
@@ -78,11 +77,11 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_name.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_name.endsWith("dilation_rate")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
 			} else if(layer_name.endsWith("strides")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
 			} else if(layer_name.endsWith("filters")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='number' min=0 step=1 /></td></tr>")
 			} else if(layer_name.endsWith("use_bias")) {

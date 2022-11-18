@@ -112,7 +112,7 @@
 			<img id="tftestimg" src="manual/before_averagePooling.png"> \( \cdot \Bigg[ \) <span id="tftestcanvasinternal"></span> \( \Bigg] \rightarrow \Bigg[ \) <span id="tftestcanvasout"></span> \( \Bigg] \)
 			<script>
 				$(document).ready(function(){
-					simulate_layer_on_image($("#tftestimg"), $("#tftestcanvasinternal"), $("#tftestcanvasout"), "conv2d", {filters: 3, kernelSize: [4, 4], kernelInitializer: "glorotUniform", activation: "relu", strides: [1, 1] })
+					simulate_layer_on_image($("#tftestimg"), $("#tftestcanvasinternal"), $("#tftestcanvasout"), "conv2d", {filters: 3, kernelSize: [4, 4], kernelInitializer: "glorotUniform", activation: "relu", strides: [1, 1], kernelSize: [3, 3], dilationRate: [1, 1] })
 				});
 			</script>
 		</div>
