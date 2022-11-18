@@ -297,7 +297,13 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 	if(result) {
 		var tensor = tf.tensor(result);
 
-		tensor = tensor.transpose([3, 1, 2, 0]);
+		try {
+			tensor = tensor.transpose([3, 1, 2, 0]);
+			$("#" + uuid + "_error").html("");
+		} catch (e) {
+			$("#" + uuid + "_error").html(e);
+			return;
+		}
 
 		$(internal_canvas_div).html("");
 		$(out_canvas_div).html("");
