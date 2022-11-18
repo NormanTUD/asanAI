@@ -335,4 +335,5 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 toc();
 
 
-add_html_for_layer_types("conv2d");
+//add_html_for_layer_types("conv2d");
+add_html_for_layer_types("upSampling2d");
