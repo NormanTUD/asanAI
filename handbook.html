@@ -109,9 +109,19 @@
 	</head>
 	<body>
 		<script>
+			var default_config_alphaDropout = {
+				rate: 0.1
+			};
+
 			var default_config_upSampling2d = {
 				size: [2, 2],
 				interpolation: "nearest"
+			};
+
+			var default_config_averagePooling2d = {
+				poolSize: [2, 2],
+				strides: [2, 2],
+				padding: "valid"
 			};
 
 			var default_config_maxPooling2d = {
@@ -138,7 +148,7 @@
 			};
 		</script>
 
-		<div id="maxPooling2d_example"></div>
+		<div id="alphaDropout_example"></div>
 
 		<img src="logo_small.png" />
 		<div id="toc"></div>
@@ -631,7 +641,7 @@
 
 			<h3>Pooling layers</h3>
 			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
-			<img width=80 height=80 src="manual/before_averagePooling.png"> \( \rightarrow \) <img src="manual/averagePooling.png">
+			<div id="averagePooling2d_example"></div>
 			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
 			Example:
@@ -653,7 +663,8 @@
 
 
 			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
-			<img width=80 height=80 src="manual/before_averagePooling.png"> \( \rightarrow \) <img src="manual/maxPooling.png">
+			<div id="maxPooling2d_example"></div>
+
 			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
 
 			Example:
@@ -672,7 +683,6 @@
 
 			<h3>Dropout and noise layers</h3>
 			<h4>alphaDropout</h4>
-			<img width=80 height=80 src="manual/before_alpha_dropout.png"> \( \rightarrow \) <img src="manual/alpha_dropout.png">
 			(In this example, 0.2).
 
 			TODO
