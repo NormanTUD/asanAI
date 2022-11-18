@@ -66,12 +66,9 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	}
 
 	try {
-		log("Try to define layer type " + layer_type);
 		eval("layer = tf.layers." + layer_type + "(config)");
-		log("after definition: ", layer);
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
-		log(" !!! Failed to define layer", config, e);
 		$("#" + uuid + "_error").html(e);
 	}
 
@@ -83,10 +80,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
-			log("Trying to apply");
 			res = await layer.apply(tensor).arraySync();
-			log("Done applying");
-			log("applied:", res);
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
 			log(" !!! Failed applying:", e);
@@ -287,7 +281,6 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 		config[element] = get_element(this_option);
 	}
 
-	log(config);
 	var result, layer;
 	try {
 		var res = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1, uuid);
@@ -300,13 +293,9 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 		$("#" + uuid + "_error").html(e);
 		return;
 	}
-	log("layer:", layer);
 
 	if(result) {
 		var tensor = tf.tensor(result);
-		log("tensor-shape:", tensor.shape);
-		log("tensor:");
-		tensor.print();
 
 		tensor = tensor.transpose([3, 1, 2, 0]);
 
@@ -316,9 +305,6 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 		var layer_kernel_tensor = layer.kernel.val;
 		layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
 		var layer_kernel = layer_kernel_tensor.arraySync();
-
-		log("kernel-shape:", layer_kernel_tensor.shape);
-		log("kernel:", layer_kernel);
 
 		for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
 			for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
