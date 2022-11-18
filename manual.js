@@ -44,6 +44,20 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	var tensor = tf.tensor(array);
 	config["inputShape"] = tensor.shape;
 	var layer = null;
+	if(Object.keys(config).includes("biasRegularizer")) {
+		if(config["biasRegularizer"].hasL1 && config["biasRegularizer"].hasL2) {
+			config["biasRegularizer"] = tf.regularizers.l1l2({"l1": config["biasRegularizer"]["l1"],  "l2": config["biasRegularizer"]["l2"]});
+		} else if(config["biasRegularizer"].hasL1 && !config["biasRegularizer"].hasL2) {
+			config["biasRegularizer"] = tf.regularizers.l1({"l1": config["biasRegularizer"]["l1"]});
+		} else if(!config["biasRegularizer"].hasL1 && config["biasRegularizer"].hasL2) {
+			config["biasRegularizer"] = tf.regularizers.l2({"l2": config["biasRegularizer"]["l2"]});
+		} else {
+			delete config["biasRegularizer"];
+		}
+
+	}
+
+	log("config:", config);
 	eval("layer = tf.layers." + layer_type + "(config)");
 
 	if(expand_dims) {
@@ -75,8 +89,11 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				for (var k = 0; k < regularizer_keys.length; k++) {
 					var checked = "";
 
-					if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
-						checked = "selected";
+					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
+						log(config, layer_option, config[python_names_to_js_names[layer_option]].hasL1);
+						if(config[python_names_to_js_names[layer_option]].hasL1 && initializer_keys[k] == "l1") {
+							checked = "selected";
+						}
 					}
 
 					selecter += "<option " + checked + " value='" + regularizer_keys[k] + "'>" + regularizer_keys[k] + "</option>";
@@ -93,7 +110,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 			} else if(layer_option.endsWith("filters")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select>";
 				var activation_keys = Object.keys(activations);
