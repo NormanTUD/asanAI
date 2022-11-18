@@ -60,6 +60,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 
 // await get_network_type_result_by_array("dense", [1, 2, 3], {units: 1, kernelInitializer: "ones" })
 
+// simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
 async function simulate_layer_on_image(img_element, canvas, layer_type, config) {
 	if(typeof(img_element) == "object") {
 		img_element = img_element[0];
