@@ -63,7 +63,6 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		}
 	}
 
-	log("config:", config);
 	eval("layer = tf.layers." + layer_type + "(config)");
 
 	if(expand_dims) {
@@ -97,7 +96,6 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
 						var cfg_itm = config[python_names_to_js_names[layer_option]];
-						log(config, layer_option, cfg_itm);
 						if(cfg_itm.hasL1 && cfg_itm.hasL2 && regularizer_keys[k] == "l1l2") {
 							checked = "selected";
 						} else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && regularizer_keys[k] == "l1") {
