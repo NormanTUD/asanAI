@@ -98,7 +98,7 @@ function get_element (item) {
 	if($(item).is(":checkbox")) {
 		return $(item).is(":checked")
 	} else if ($(item).is("input")) {
-		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize") || $(item).hasClass("strides")) {
+		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize") || $(item).hasClass("strides") || $(item).hasClass("size")) {
 			var str = $(item).val();
 			var values = str.split(/\s*,\s*/)
 			values = values.map(function (x) {
@@ -147,6 +147,8 @@ function add_table (layer_type, config, onchange, uuid) {
 				selecter += "</select>";
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_option.endsWith("size")) {
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.size.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
@@ -157,6 +159,19 @@ function add_table (layer_type, config, onchange, uuid) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+			} else if(layer_option.endsWith("interpolation")) {
+				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				var interpolation_keys = Object.keys(interpolation);
+				for (var k = 0; k < interpolation_keys.length; k++) {
+					var checked = "";
+					if(config[layer_option] == interpolation_keys[k]) {
+						checked = "selected";
+					}
+					selecter += "<option " + checked + " value='" + interpolation_keys[k] + "'>" + interpolation_keys[k] + "</option>";
+				}
+				selecter += "</select>";
+
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
@@ -308,15 +323,17 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 		$(internal_canvas_div).html("");
 		$(out_canvas_div).html("");
 
-		var layer_kernel_tensor = layer.kernel.val;
-		layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
-		var layer_kernel = layer_kernel_tensor.arraySync();
+		if(Object.keys(layer).includes("kernel")) {
+			var layer_kernel_tensor = layer.kernel.val;
+			layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
+			var layer_kernel = layer_kernel_tensor.arraySync();
 
-		for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
-			for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
-				var id = uuidv4()
-				$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
-				draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+			for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
+				for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
+					var id = uuidv4()
+					$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
+					draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+				}
 			}
 		}
 
