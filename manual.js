@@ -71,25 +71,26 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	log("layer:", layer);
 
 	var tensor = tf.tensor(result);
+	log("tensor-shape:", tensor.shape);
+	log("tensor:");
+	tensor.print();
 
 	$(internal_canvas_div).html("");
 	$(out_canvas_div).html("");
 
 	var layer_kernel_tensor = layer.kernel.val;
-
-	const indices = tf.tensor1d([3, 0, 1, 2], 'int32');
-
-	layer_kernel_tensor = layer_kernel_tensor.transpose([3, 0, 1, 2]);
-
+	layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
 	var layer_kernel = layer_kernel_tensor.arraySync();
 
 	log("kernel-shape:", layer_kernel_tensor.shape);
 	log("kernel:", layer_kernel);
 
-	for (var i = 0; i < layer.kernel.val.shape[0]; i++) {
-		var id = uuidv4()
-		$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
-		draw_grid($("#" + id)[0], 10, layer_kernel[i], 1, 1, "", "");
+	for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
+		for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
+			var id = uuidv4()
+			$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
+			draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+		}
 	}
 
 	for (var i = 0; i < tensor.shape[0]; i++) {
