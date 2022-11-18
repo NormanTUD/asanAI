@@ -83,7 +83,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
