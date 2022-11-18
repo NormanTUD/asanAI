@@ -191,6 +191,35 @@ function add_table (layer_type, config) {
 	}
 }
 
+function add_html_for_layer_types (layer_type) {
+	var div_to_add_to = layer_type + "_example";
+	var uuid = uuidv4();
+	var base_img_id = uuid + "_" + "base_img";
+	var internal_canvasses_id = uuid + "_internal_canvasses";
+	var out_canvasses_id = uuid + "_out_canvasses";
+
+	$("#" + div_to_add_to).html("");
+
+	var html = `<div class="center_vertically">
+		<img id="${base_img_id}" src="manual/before_averagePooling.png"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> \\( \\Bigg] \\rightarrow \\Bigg[ \\) <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
+		<script>
+			$(document).ready(function(){
+				add_table("${layer_type}", default_config_${layer_type});
+
+				simulate_layer_on_image(
+					"${base_img_id}", 
+					"${internal_canvasses_id}", 
+					"${out_canvasses_id}", 
+					"${layer_type}"
+				);
+			});
+		</script>
+	</div>
+	<table id="layer_gui"></table>`;
+	
+	$("#" + div_to_add_to).html(html);
+}
+
 // simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
 async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type) {
 	tf.engine().startScope();
@@ -266,3 +295,6 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 }
 
 toc();
+
+
+add_html_for_layer_types("conv2d");

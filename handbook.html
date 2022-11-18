@@ -108,39 +108,26 @@
 		</style>
 	</head>
 	<body>
-		<div class="center_vertically">
-			<img id="tftestimg" src="manual/before_averagePooling.png"> \( \cdot \Bigg[ \) <span id="tftestcanvasinternal"></span> \( \Bigg] \rightarrow \Bigg[ \) <span id="tftestcanvasout"></span> \( \Bigg] \)
-			<script>
-				$(document).ready(function(){
-					var default_config = {
-						filters: 3, 
-						kernelSize: [4, 4], 
-						activation: "sigmoid", 
-						strides: [1, 1], 
-						kernelSize: [3, 3], 
-						dilationRate: [1, 1], 
-						useBias: true, 
-						padding: "valid", 
+		<script>
+			var default_config_conv2d = {
+				filters: 3, 
+				kernelSize: [4, 4], 
+				activation: "sigmoid", 
+				strides: [1, 1], 
+				kernelSize: [3, 3], 
+				dilationRate: [1, 1], 
+				useBias: true, 
+				padding: "valid", 
 
-						biasInitializer: "ones", 
-						kernelInitializer: "glorotUniform", 
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
 
-						kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
-						biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
-					};
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+		</script>
 
-					add_table("conv2d", default_config);
-
-					simulate_layer_on_image(
-						"tftestimg", 
-						"tftestcanvasinternal", 
-						"tftestcanvasout", 
-						"conv2d"
-					);
-				});
-			</script>
-		</div>
-		<table id="layer_gui"></table>
+		<div id="conv2d_example"></div>
 
 		<img src="logo_small.png" />
 		<div id="toc"></div>
