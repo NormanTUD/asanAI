@@ -82,24 +82,23 @@ function get_element (item) {
 	if($(item).is(":checkbox")) {
 		return $(item).is(":checked")
 	} else if ($(item).is("input")) {
-		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize")) {
+		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize") || $(item).hasClass("strides")) {
 			var str = $(item).val();
 			var values = str.split(/\s*,\s*/)
-			values.map(function (x) {
-				return parseInt(x, 10);
+			values = values.map(function (x) {
+				return parseInt(x);
 			});
 
 			return values;
 		} else {
-			return $(item).val();
+			return parseInt($(item).val());
 		}
 	} else if ($(item).is("select")) {
 		return $(item).val();
 	}
 }
 
-// simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
-async function simulate_layer_on_image(img_element, internal_canvas_div, out_canvas_div, layer_type, config) {
+function add_table (layer_type, config) {
 	var this_layer_options = layer_options[layer_type]["options"];
 
 	var general_options_keys = Object.keys(general_options);
@@ -190,6 +189,11 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 			}
 		}
 	}
+}
+
+// simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
+async function simulate_layer_on_image(img_element, internal_canvas_div, out_canvas_div, layer_type, config) {
+	add_table(layer_type, config);
 
 	tf.engine().startScope();
 	if(typeof(img_element) == "object") {
@@ -199,7 +203,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	var img = tf.browser.fromPixels(img_element); 
 	img = img.div(255);
 
-	config = {};
+	var config = {};
 
 	var options = $("#layer_gui").find(".gui_option");
 
@@ -209,8 +213,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 		var element = "";
 
-		log("classes:", classes);
-		for (k = 0; k < classes.length; k++) {
+		for (var k = 0; k < classes.length; k++) {
 			if(classes[k] != "gui_option") {
 				element = classes[k];
 			}
@@ -218,6 +221,8 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 		config[element] = get_element(this_option);
 	}
+
+	log(config);
 
 	var [result, layer] = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1);
 	log("layer:", layer);
