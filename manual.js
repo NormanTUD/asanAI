@@ -92,7 +92,10 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				var selecter = "<select>";
 				var activation_keys = Object.keys(activation_options);
 				for (var k = 0; k < activation_keys.length; k++) {
-					selecter += "<option value='" + activation_keys[k] + "'>" + activation_keys[k] + "</option>";
+					if(config[layer_option] == activation_keys[k]) {
+						checked = "selected";
+					}
+					selecter += "<option " + checked + " value='" + activation_keys[k] + "'>" + activation_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
@@ -112,7 +115,6 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				selecter += "</select>";
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
-
 			} else if(layer_option.endsWith("initializer")) {
 				var selecter = "<select>";
 				var initializer_keys = Object.keys(initializer_options);
