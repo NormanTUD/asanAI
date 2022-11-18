@@ -192,10 +192,13 @@ function add_table (layer_type, config) {
 }
 
 // simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
-async function simulate_layer_on_image(img_element, internal_canvas_div, out_canvas_div, layer_type, config) {
-	add_table(layer_type, config);
-
+async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type) {
 	tf.engine().startScope();
+
+	var img_element = $("#" + img_element_id);
+	var internal_canvas_div = $("#" + internal_canvas_div_id);
+	var out_canvas_div = $("#" + out_canvas_div_id);
+
 	if(typeof(img_element) == "object") {
 		img_element = img_element[0];
 	}
