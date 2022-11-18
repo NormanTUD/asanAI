@@ -49,17 +49,20 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var type = reg[i];
 		if(Object.keys(config).includes(type + "Regularizer")) {
 			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"]};
+				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"], "a": 1};
 				log("A", cfg);
-				config[type + "Regularizer"] = tf.regularizers.l1l2(cfg);
+				config[type + "Regularizer"] = cfg;
+				//config[type + "Regularizer"] = tf.regularizers.l1l2(cfg);
 			} else if(config[type + "Regularizer"].hasL1 && !config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"]};
+				var cfg = {"l1": config[type + "Regularizer"]["l1"], "b": 2};
 				log("B", cfg);
-				config[type + "Regularizer"] = tf.regularizers.l1(cfg);
+				config[type + "Regularizer"] = cfg;
+				//config[type + "Regularizer"] = tf.regularizers.l1(cfg);
 			} else if(!config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l2": config[type + "Regularizer"]["l2"]};
+				var cfg = {"l2": config[type + "Regularizer"]["l2"], "c": 3};
 				log("C", cfg);
-				config[type + "Regularizer"] = tf.regularizers.l2(cfg);
+				config[type + "Regularizer"] = cfg;
+				//config[type + "Regularizer"] = tf.regularizers.l2(cfg);
 			} else {
 				delete config[type + "Regularizer"];
 			}
@@ -99,8 +102,13 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 					var checked = "";
 
 					if(Object.keys(config).includes(python_names_to_js_names[layer_option])) {
-						log(config, layer_option, config[python_names_to_js_names[layer_option]].hasL1);
-						if(config[python_names_to_js_names[layer_option]].hasL1 && initializer_keys[k] == "l1") {
+						var cfg_itm = config[python_names_to_js_names[layer_option]];
+						log(config, layer_option, cfg_itm);
+						if(cfg_itm.hasL1 && cfg_itm.hasL2 && initializer_keys[k] == "l1l2") {
+							checked = "selected";
+						} else if(cfg_itm.hasL1 && !cfg_itm.hasL2 && initializer_keys[k] == "l1") {
+							checked = "selected";
+						} else if(!cfg_itm.hasL1 && cfg_itm.hasL2 && initializer_keys[k] == "l2") {
 							checked = "selected";
 						}
 					}
@@ -111,7 +119,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("strides")) {
