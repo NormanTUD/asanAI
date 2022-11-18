@@ -49,18 +49,15 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var type = reg[i];
 		if(Object.keys(config).includes(type + "Regularizer")) {
 			if(config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"], "a": 1};
-				log("A", cfg);
+				var cfg = {"l1": config[type + "Regularizer"]["l1"],  "l2": config[type + "Regularizer"]["l2"]};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l1l2(cfg);
 			} else if(config[type + "Regularizer"].hasL1 && !config[type + "Regularizer"].hasL2) {
-				var cfg = {"l1": config[type + "Regularizer"]["l1"], "b": 2};
-				log("B", cfg);
+				var cfg = {"l1": config[type + "Regularizer"]["l1"]};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l1(cfg);
 			} else if(!config[type + "Regularizer"].hasL1 && config[type + "Regularizer"].hasL2) {
-				var cfg = {"l2": config[type + "Regularizer"]["l2"], "c": 3};
-				log("C", cfg);
+				var cfg = {"l2": config[type + "Regularizer"]["l2"]};
 				config[type + "Regularizer"] = cfg;
 				//config[type + "Regularizer"] = tf.regularizers.l2(cfg);
 			} else {
