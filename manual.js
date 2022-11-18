@@ -132,7 +132,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
 			if(layer_option.endsWith("regularizer")) {
-				var selecter = "<select onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (var k = 0; k < regularizer_keys.length; k++) {
 					var checked = "";
@@ -152,19 +152,19 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("strides")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("filters")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("activation")) {
-				var selecter = "<select onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
 				for (var k = 0; k < activation_keys.length; k++) {
 					var checked = "";
@@ -175,9 +175,9 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("padding")) {
-				var selecter = "<select onchange='" + on_change + " class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
 				for (var k = 0; k < padding_keys.length; k++) {
 					var checked = "";
@@ -190,7 +190,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("initializer")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
@@ -207,9 +207,9 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>")
 			}
 		}
 	}
@@ -249,14 +249,11 @@ function add_html_for_layer_types (layer_type) {
 		</script>
 	</div>
 	<div id="${uuid}_error"></div>
-	<table id="layer_gui"></table>`;
-
-	log(html);
+	<table id="${uuid}_layer_gui"></table>`;
 	
 	$("#" + div_to_add_to).html(html);
 }
 
-// simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
 async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
 	tf.engine().startScope();
 
@@ -273,7 +270,7 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 
 	var config = {};
 
-	var options = $("#layer_gui").find(".gui_option");
+	var options = $("#" + uuid + "_layer_gui").find(".gui_option");
 
 	for (var i = 0; i < options.length; i++) {
 		var this_option = options[i];
