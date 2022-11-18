@@ -22,6 +22,7 @@
 		<script src='jquery.js'></script>
 		<script src='jquery-ui.js'></script>
 		<script src="tf/tf.js"></script>
+		<script src='variables.js'></script>
 		<script src='safety.js'></script>
 		<script src='explain.js'></script>
 
@@ -95,9 +96,26 @@
 				max-width: 100px;
 				transform: skew(-180deg, 21deg);
 			}
+			
+			.kernel_images {
+				margin: 10px;
+			}
+
+			.out_images {
+				margin: 10px;
+			}
 		</style>
 	</head>
 	<body>
+		<div class="center_vertically">
+			<img id="tftestimg" src="manual/before_averagePooling.png"> \( \cdot \) <span id="tftestcanvasinternal"></span> \( \rightarrow \Bigg[ \) <span id="tftestcanvasout"></span> \( \Bigg] \)
+			<script>
+				$(document).ready(function(){
+					simulate_layer_on_image($("#tftestimg"), $("#tftestcanvasinternal"), $("#tftestcanvasout"), "conv2d", {filters: 10, kernelSize: [2, 2], kernelInitializer: "glorotUniform", activation: "relu", strides: [1, 1] })
+				});
+			</script>
+		</div>
+
 		<img src="logo_small.png" />
 		<div id="toc"></div>
 
@@ -496,10 +514,16 @@
 			<h3>Convolutional Layers</h3>
 
 			<h4>convNd (conv1d, conv2d)</h4>
+			<!--
 			<div class="center_vertically">
-				<img id="tftestimg" src="manual/before_averagePooling.png"> \( \cdot \) <img src="manual/kernel1.png"> \( \rightarrow \Bigg[ \) <img src="manual/conv_output_1.png"> \( \Bigg] \)
-				<canvas id="tftestcanvas"></canvas>
+				<img id="tftestimg" src="manual/before_averagePooling.png"> \( \cdot \) <img src="manual/kernel1.png"> \( \rightarrow \Bigg[ \) <div id="tftestcanvasout"></div> \( \Bigg] \)
+				<script>
+					$(document).ready(function(){
+						simulate_layer_on_image($("#tftestimg"), $("#tftestcanvasout"), "conv2d", {filters: 10, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
+					});
+				</script>
 			</div>
+			-->
 			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
 			Example:
