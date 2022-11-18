@@ -90,8 +90,9 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select>";
-				var activation_keys = Object.keys(activation_options);
+				var activation_keys = Object.keys(activations);
 				for (var k = 0; k < activation_keys.length; k++) {
+					var checked = "";
 					if(config[layer_option] == activation_keys[k]) {
 						checked = "selected";
 					}
