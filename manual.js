@@ -1,3 +1,5 @@
+"use strict";
+
 function log (...args) {
 	console.log(args);
 }
@@ -117,18 +119,19 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				for (var k = 0; k < initializer_keys.length; k++) {
 					var checked = "";
 
-					log("AAA", config[layer_option], initializer_keys[k]);
-					if(config[layer_option] == initializer_keys[k]) {
+					//log(config[python_names_to_js_names[layer_option]], initializer_keys[k]);
+
+					if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
 						checked = "selected";
 					}
 
-					selecter += "<option " + checked + "value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
+					selecter += "<option " + checked + " value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>b</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>b</td></tr>")
 			}
 		}
 	}
