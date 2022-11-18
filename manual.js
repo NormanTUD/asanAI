@@ -73,7 +73,8 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	var tensor = tf.tensor(result);
 	log("tensor-shape:", tensor.shape);
 	log("tensor:");
-	tensor.print();
+
+	tensor = tensor.transpose([3, 1, 2, 0]);
 
 	$(internal_canvas_div).html("");
 	$(out_canvas_div).html("");
@@ -96,7 +97,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	for (var i = 0; i < tensor.shape[0]; i++) {
 		var id = uuidv4()
 		$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
-		draw_grid($("#" + id)[0], 1, result[i], 1, 1, "", "");
+		draw_grid($("#" + id)[0], 1, tensor.arraySync()[i], 1, 1, "", "");
 		//tf.browser.toPixels(tensor, canvas);
 	}
 
