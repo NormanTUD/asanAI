@@ -64,10 +64,10 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 	var general_options_keys = Object.keys(general_options);
 	for (var i = 0; i < this_layer_options.length; i++) {
 		var nr = 0;
-		var layer_name = this_layer_options[i];
+		var layer_option = this_layer_options[i];
 
-		if(!["trainable", "dtype", "visualize"].includes(layer_name)) {
-			if(layer_name.endsWith("regularizer")) {
+		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
+			if(layer_option.endsWith("regularizer")) {
 				var selecter = "<select>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (var k = 0; k < regularizer_keys.length; k++) {
@@ -75,18 +75,18 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
-			} else if(layer_name.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.kernelSize.join(',') + "' /></td></tr>")
-			} else if(layer_name.endsWith("dilation_rate")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
-			} else if(layer_name.endsWith("strides")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
-			} else if(layer_name.endsWith("filters")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
-			} else if(layer_name.endsWith("use_bias")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
-			} else if(layer_name.endsWith("activation")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_option.endsWith("kernel_size")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+			} else if(layer_option.endsWith("dilation_rate")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
+			} else if(layer_option.endsWith("strides")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
+			} else if(layer_option.endsWith("filters")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
+			} else if(layer_option.endsWith("use_bias")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select>";
 				var activation_keys = Object.keys(activation_options);
 				for (var k = 0; k < activation_keys.length; k++) {
@@ -94,28 +94,41 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
-			} else if(layer_name.endsWith("padding")) {
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_option.endsWith("padding")) {
 				var selecter = "<select>";
 				var padding_keys = Object.keys(padding_options);
 				for (var k = 0; k < padding_keys.length; k++) {
-					selecter += "<option value='" + padding_keys[k] + "'>" + padding_keys[k] + "</option>";
+					var checked = "";
+
+					if(config.padding == padding_keys[k]) {
+						checked = "selected";
+					}
+
+					selecter += "<option " + checked + " value='" + padding_keys[k] + "'>" + padding_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 
-			} else if(layer_name.endsWith("initializer")) {
+			} else if(layer_option.endsWith("initializer")) {
 				var selecter = "<select>";
 				var initializer_keys = Object.keys(initializer_options);
 				for (var k = 0; k < initializer_keys.length; k++) {
-					selecter += "<option value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
+					var checked = "";
+
+					log("AAA", config[layer_option], initializer_keys[k]);
+					if(config[layer_option] == initializer_keys[k]) {
+						checked = "selected";
+					}
+
+					selecter += "<option " + checked + "value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>" + selecter + "</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_name + "</td><td>b</td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>b</td></tr>")
 			}
 		}
 	}
