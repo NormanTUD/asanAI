@@ -78,6 +78,16 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 
 // await get_network_type_result_by_array("dense", [1, 2, 3], {units: 1, kernelInitializer: "ones" })
 
+function get_element (item) {
+	if($(item).is(":checkbox")) {
+		return $(item).is(":checked")
+	} else if ($(item).is("input")) {
+		return $(item).val();
+	} else if ($(item).is("select")) {
+		return $(item).val();
+	}
+}
+
 // simulate_layer_on_image($("#tftestimg"), $("#tftestcanvas"), "conv2d", {filters: 1, kernelSize: [2, 2], kernelInitializer: "randomUniform", activation: "relu", strides: [1, 1] })
 async function simulate_layer_on_image(img_element, internal_canvas_div, out_canvas_div, layer_type, config) {
 	var this_layer_options = layer_options[layer_type]["options"];
@@ -111,9 +121,9 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("strides")) {
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("filters")) {
@@ -178,6 +188,25 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 	var img = tf.browser.fromPixels(img_element); 
 	img = img.div(255);
+
+	config = {};
+
+	var options = $("#layer_gui").find(".gui_option");
+
+	for (var i = 0; i < options.length; i++) {
+		var this_option = options[i];
+		var classes = this_option.className.split(/\s+/)
+
+		var element = "";
+
+		for (k = 0; i < classes.length; i++) {
+			if(classes[k] != "gui_option") {
+				element = classes[k];
+			}
+		}
+
+		config[element] = get_element(this_option);
+	}
 
 	var [result, layer] = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1);
 	log("layer:", layer);
