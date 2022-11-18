@@ -89,7 +89,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
 			if(layer_option.endsWith("regularizer")) {
-				var selecter = "<select>";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var regularizer_keys = Object.keys(regularizer_options);
 				for (var k = 0; k < regularizer_keys.length; k++) {
 					var checked = "";
@@ -111,17 +111,17 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("kernel_size")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("dilation_rate")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("strides")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
 			} else if(layer_option.endsWith("filters")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
-				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("activation")) {
-				var selecter = "<select>";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
 				var activation_keys = Object.keys(activations);
 				for (var k = 0; k < activation_keys.length; k++) {
 					var checked = "";
@@ -134,7 +134,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("padding")) {
-				var selecter = "<select>";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
 				var padding_keys = Object.keys(padding_options);
 				for (var k = 0; k < padding_keys.length; k++) {
 					var checked = "";
@@ -149,7 +149,7 @@ async function simulate_layer_on_image(img_element, internal_canvas_div, out_can
 
 				$("#layer_gui").html($("#layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
 			} else if(layer_option.endsWith("initializer")) {
-				var selecter = "<select>";
+				var selecter = "<select class='gui_option " + python_names_to_js_names[layer_option] + ">";
 				var initializer_keys = Object.keys(initializer_options);
 				for (var k = 0; k < initializer_keys.length; k++) {
 					var checked = "";
