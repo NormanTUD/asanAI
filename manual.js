@@ -46,7 +46,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	var tensor = tf.tensor(array);
 	config["inputShape"] = tensor.shape;
 	var layer = null;
-	var reg = ["bias", "kernel"];
+	var reg = ["bias", "kernel", "depthwise", "pointwise"];
 
 	for (var i = 0; i < reg.length; i++) {
 		var type = reg[i];
@@ -64,10 +64,15 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 				delete config[type + "Regularizer"];
 			}
 		}
+
+		if(Object.keys(config).includes(type + "Constraint")) {
+			if(config[type + "Constraint"] == "") {
+				delete config[type + "Constraint"];
+			}
+		}
 	}
 
-	var kwargs = {
-	};
+	var kwargs = {};
 
 	if($("#" + uuid + "_is_training").length && $("#" + uuid + "_is_training").is(":checked")) {
 		kwargs = {
@@ -76,11 +81,13 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	}
 
 	try {
-		//log(config, kwargs);
+		log(config, kwargs);
 		eval("layer = tf.layers." + layer_type + "(config)");
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
 		$("#" + uuid + "_error").html(e);
+		console.warn(e);
+		output_shape = input_shape;
 	}
 
 	var input_shape, output_shape;
@@ -93,11 +100,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
-			/*
-			if(layer_type == "separableConv2d") {
-				log(layer_type, config, tensor, kwargs);
-			}
-			*/
+			log(layer_type, config, tensor, kwargs);
 			input_shape = tensor.shape;
 			var tensor_res = await layer.apply(tensor, kwargs);
 			res = tensor_res.arraySync();
@@ -107,6 +110,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 			log(" !!! Failed applying:", e);
 			$("#" + uuid + "_error").html(e);
 			res = [e, e];
+			output_shape = input_shape;
 		}
 	} else {
 		console.error("layer is empty");
@@ -190,6 +194,8 @@ function add_table (layer_type, config, onchange, uuid) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
 			} else if(layer_option.endsWith("filters")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=1 step=1 value='" + config.filters + "' /></td></tr>")
+			} else if(layer_option.endsWith("depth_multiplier")) {
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step='0.05' max=1 value='" + config.depthMultiplier + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("interpolation")) {
@@ -214,6 +220,21 @@ function add_table (layer_type, config, onchange, uuid) {
 						checked = "selected";
 					}
 					selecter += "<option " + checked + " value='" + activation_keys[k] + "'>" + activation_keys[k] + "</option>";
+				}
+				selecter += "</select>";
+
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+			} else if(layer_option.endsWith("constraint")) {
+				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
+				var constraints_keys = Object.keys(constraints);
+				for (var k = 0; k < constraints_keys.length; k++) {
+					var checked = "";
+
+					if(config.constraints == constraints_keys[k]) {
+						checked = "selected";
+					}
+
+					selecter += "<option " + checked + " value='" + constraints_keys[k] + "'>" + constraints_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
@@ -251,6 +272,7 @@ function add_table (layer_type, config, onchange, uuid) {
 
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
 			} else {
+				log(layer_option + " does not yet exist");
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>")
 			}
 		}
@@ -341,14 +363,18 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	try {
 		var res = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1, uuid);
 
-		result = res[0];
-		layer = res[1];
-		input_shape = res[2].join(",");
-		output_shape = res[3].join(",");
-		$("#" + uuid + "_error").html("");
-		$("#" + uuid + "_shapes").html(`\\( \\text{Input/Output-Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
+		if(res.length >= 4) {
+			result = res[0];
+			layer = res[1];
+			input_shape = res[2].join(",");
+			output_shape = res[3].join(",");
+			$("#" + uuid + "_error").html("");
+			$("#" + uuid + "_shapes").html(`\\( \\text{Input/Output-Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
 
-		await MathJax.typesetPromise()
+			await MathJax.typesetPromise()
+		} else {
+			log("RES has not enough (4) values: ", res);
+		}
 	} catch (e) {
 		log(e);
 		$("#" + uuid + "_error").html(e);
@@ -421,5 +447,5 @@ add_html_for_layer_types("dropout");
 add_html_for_layer_types("gaussianDropout");
 add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
-add_html_for_layer_types("depthwiseConv2d");
 add_html_for_layer_types("separableConv2d");
+add_html_for_layer_types("depthwiseConv2d");
