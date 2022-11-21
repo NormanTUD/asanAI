@@ -91,6 +91,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
+			log(layer_type, config, tensor, kwargs);
 			res = await layer.apply(tensor, kwargs).arraySync();
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
@@ -117,7 +118,7 @@ function get_element (item) {
 			});
 
 			return values;
-		} else if ($(item).hasClass("rate")) {
+		} else if ($(item).hasClass("rate") || $(item).hasClass("stddev")) {
 			return parseFloat($(item).val());
 		} else {
 			return parseInt($(item).val());
