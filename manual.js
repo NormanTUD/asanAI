@@ -405,3 +405,4 @@ add_html_for_layer_types("dropout");
 add_html_for_layer_types("gaussianDropout");
 add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
+add_html_for_layer_types("depthwiseConv2d");
