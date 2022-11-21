@@ -258,15 +258,17 @@ function add_table (layer_type, config, onchange, uuid) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
 				for (var k = 0; k < initializer_keys.length; k++) {
-					var checked = "";
+					if(!["identity"].includes(initializer_keys[k])) {
+						var checked = "";
 
-					//log(config[python_names_to_js_names[layer_option]], initializer_keys[k]);
+						//log(config[python_names_to_js_names[layer_option]], initializer_keys[k]);
 
-					if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
-						checked = "selected";
+						if(config[python_names_to_js_names[layer_option]] == initializer_keys[k]) {
+							checked = "selected";
+						}
+
+						selecter += "<option " + checked + " value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
 					}
-
-					selecter += "<option " + checked + " value='" + initializer_keys[k] + "'>" + initializer_keys[k] + "</option>";
 				}
 				selecter += "</select>";
 
