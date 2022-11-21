@@ -83,6 +83,8 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		$("#" + uuid + "_error").html(e);
 	}
 
+	var input_shape, output_shape;
+
 	if(layer) {
 		if(expand_dims) {
 			tensor = tensor.expandDims();
@@ -92,7 +94,10 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 
 		try {
 			log(layer_type, config, tensor, kwargs);
-			res = await layer.apply(tensor, kwargs).arraySync();
+			input_shape = tensor.shape;
+			var tensor_res = await layer.apply(tensor, kwargs);
+			res = tensor_res.arraySync();
+			output_shape = tensor_res.shape;
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
 			log(" !!! Failed applying:", e);
@@ -103,7 +108,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		console.error("layer is empty");
 	}
 
-	return [res, layer];
+	return [res, layer, input_shape, output_shape];
 }
 
 function get_element (item) {
@@ -273,6 +278,7 @@ function add_html_for_layer_types (layer_type) {
 	var internal_canvasses_id = uuid + "_internal_canvasses";
 	var out_canvasses_id = uuid + "_out_canvasses";
 	var kernel_canvasses_id = uuid + "_kernel_canvasses";
+	var shapes_id = uuid + "_shapes";
 
 	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${uuid}");`);
 
@@ -280,19 +286,21 @@ function add_html_for_layer_types (layer_type) {
 
 	var html = `<div class="center_vertically">
 		\\( \\Bigg[ \\) <img id="${base_img_id}" src="manual/before_averagePooling.png"> <span id="${kernel_canvasses_id}" style="display: none"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> </span>\\( \\Bigg] \\rightarrow \\Bigg[ \\)   <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
+		<br>
 		<script>
 			$(document).ready(function(){
 				add_table("${layer_type}", default_config_${layer_type}, "${onchange_code}", "${uuid}");
 			});
 		</script>
 	</div>
+	<span id="${shapes_id}"></span>
 	<div id="${uuid}_error"></div>
 	<table id="${uuid}_layer_gui"></table>`;
 	
 	$("#" + div_to_add_to).html(html);
 }
 
-async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
+async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
 	tf.engine().startScope();
 
 	var img_element = $("#" + img_element_id);
@@ -325,13 +333,18 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 		config[element] = get_element(this_option);
 	}
 
-	var result, layer;
+	var result, layer, input_shape, output_shape;
 	try {
 		var res = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1, uuid);
 
 		result = res[0];
 		layer = res[1];
+		input_shape = res[2].join(",");
+		output_shape = res[3].join(",");
 		$("#" + uuid + "_error").html("");
+		$("#" + uuid + "_shapes").html(`\\( \\text{Input/Output-Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
+
+		await MathJax.typesetPromise()
 	} catch (e) {
 		log(e);
 		$("#" + uuid + "_error").html(e);
