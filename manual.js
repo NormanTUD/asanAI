@@ -187,7 +187,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option.endsWith("strides")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
 			} else if(layer_option == "dropout_rate") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + "rate" + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + "rate" + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
 			} else if(layer_option == "stddev") {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.stddev + "' /></td></tr>")
 			} else if(layer_option == "rate") {
