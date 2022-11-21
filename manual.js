@@ -175,7 +175,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			} else if(layer_option == "rate") {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
 			} else if(layer_option.endsWith("filters")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step=1 value='" + config.filters + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=1 step=1 value='" + config.filters + "' /></td></tr>")
 			} else if(layer_option.endsWith("use_bias")) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
 			} else if(layer_option.endsWith("interpolation")) {
@@ -267,13 +267,14 @@ function add_html_for_layer_types (layer_type) {
 	var base_img_id = uuid + "_" + "base_img";
 	var internal_canvasses_id = uuid + "_internal_canvasses";
 	var out_canvasses_id = uuid + "_out_canvasses";
+	var kernel_canvasses_id = uuid + "_kernel_canvasses";
 
 	var onchange_code = btoa(`simulate_layer_on_image("${base_img_id}", "${internal_canvasses_id}", "${out_canvasses_id}", "${layer_type}", "${uuid}");`);
 
 	$("#" + div_to_add_to).html("");
 
 	var html = `<div class="center_vertically">
-		<img id="${base_img_id}" src="manual/before_averagePooling.png"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> \\( \\Bigg] \\rightarrow \\Bigg[ \\) <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
+		\\( \\Bigg[ \\) <img id="${base_img_id}" src="manual/before_averagePooling.png"> <span id="${kernel_canvasses_id}" style="display: none"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> </span>\\( \\Bigg] \\rightarrow \\Bigg[ \\)   <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
 		<script>
 			$(document).ready(function(){
 				add_table("${layer_type}", default_config_${layer_type}, "${onchange_code}", "${uuid}");
@@ -356,6 +357,9 @@ async function simulate_layer_on_image(img_element_id, internal_canvas_div_id, o
 					var id = uuidv4()
 					$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
 					draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+
+					var kernel_canvasses_id = uuid + "_kernel_canvasses";
+					$("#" + kernel_canvasses_id).show();
 				}
 			}
 		}
