@@ -1145,9 +1145,35 @@
 			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
 
 			<h3>meanAbsolutePercentageError</h3>
-			TODO
-
 			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
+
+			The mean absolute percentage error is used to measure forecasting errors.
+
+			Example:
+
+			$$ y =        [1,   0, 0.5, 2] \qquad \text{(Ground Truth)} $$
+
+			$$ \hat{y} =  [0.5, 1, 0.4, 2] \qquad \text{(Predicted)}$$
+
+			$$ n = 4 $$
+
+			$$ 
+				\text{MAPE}\left(y, \hat{y}\right) = 
+				\frac{1}{4} \cdot
+				\left(
+					\left(\frac{0.5-1}{0.5}\right) +
+					\left(\frac{1-0}{1}\right) +
+					\left(\frac{0.4-0.5}{0.5}\right) +
+					\left(\frac{2-2}{2}\right)
+				\right) =
+			$$
+
+			$$
+				\frac{1}{4} \cdot
+				\left(
+					\left(\frac{-0.5}{0.5}\right) + 
+				)
+			$$
 
 			<h3>meanSquaredLogarithmicError</h3>
 			TODO
