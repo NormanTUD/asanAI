@@ -109,6 +109,10 @@
 	</head>
 	<body>
 		<script>
+			var default_config_dropout = {
+				rate: 0.1
+			};
+
 			var default_config_alphaDropout = {
 				rate: 0.1
 			};
@@ -504,6 +508,8 @@
 			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
 
 			<h4>Dropout</h4>
+			<div id="dropout_example"></div>
+
 			Available options: <a href="#Dropout_Rate">Dropout-Rate</a>
 
 			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
