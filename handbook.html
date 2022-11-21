@@ -109,10 +109,25 @@
 	</head>
 	<body>
 		<script>
+			var default_config_conv2dTranspose = {
+				filters: 3,
+				kernelSize: [3, 3],
+				strides: [1, 1],
+				padding: "same",
+				dilationRate: [1, 1],
+				activation: "relu",
+				useBias: true,
+
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
+
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+
 			var default_config_gaussianNoise = {
 				stddev: 0.1
 			};
-
 
 			var default_config_gaussianDropout = {
 				rate: 0.1
@@ -618,6 +633,7 @@
 			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
 
 			<h4>conv2dTranspose</h4>
+			<div id="conv2dTranspose_example"></div>
 			TODO
 
 			<h4>depthwiseConv2d</h4>
