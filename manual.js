@@ -93,7 +93,9 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
-			log(layer_type, config, tensor, kwargs);
+			if(layer_type == "separableConv2d") {
+				log(layer_type, config, tensor, kwargs);
+			}
 			input_shape = tensor.shape;
 			var tensor_res = await layer.apply(tensor, kwargs);
 			res = tensor_res.arraySync();
@@ -365,19 +367,28 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		$(internal_canvas_div).html("");
 		$(out_canvas_div).html("");
 
-		if(Object.keys(layer).includes("kernel")) {
-			var layer_kernel_tensor = layer.kernel.val;
-			layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
-			var layer_kernel = layer_kernel_tensor.arraySync();
+		if(layer_type == "separableConv2d") {
+			log(layer);
+		}
+		if(layer) {
+			if(Object.keys(layer).includes("kernel")) {
+				if(!(layer.kernel === null)) {
+					if(Object.keys(layer.kernel).includes("val")) {
+						var layer_kernel_tensor = layer.kernel.val;
+						layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
+						var layer_kernel = layer_kernel_tensor.arraySync();
 
-			for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
-				for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
-					var id = uuidv4()
-					$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
-					draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+						for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
+							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
+								var id = uuidv4()
+								$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
+								draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
 
-					var kernel_canvasses_id = uuid + "_kernel_canvasses";
-					$("#" + kernel_canvasses_id).show();
+								var kernel_canvasses_id = uuid + "_kernel_canvasses";
+								$("#" + kernel_canvasses_id).show();
+							}
+						}
+					}
 				}
 			}
 		}
@@ -406,3 +417,4 @@ add_html_for_layer_types("gaussianDropout");
 add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
 add_html_for_layer_types("depthwiseConv2d");
+add_html_for_layer_types("separableConv2d");
