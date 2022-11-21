@@ -76,7 +76,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	}
 
 	try {
-		log(config, kwargs);
+		//log(config, kwargs);
 		eval("layer = tf.layers." + layer_type + "(config)");
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
