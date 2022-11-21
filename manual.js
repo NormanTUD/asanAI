@@ -47,6 +47,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	config["inputShape"] = tensor.shape;
 	var layer = null;
 	var reg = ["bias", "kernel"];
+
 	for (var i = 0; i < reg.length; i++) {
 		var type = reg[i];
 		if(Object.keys(config).includes(type + "Regularizer")) {
@@ -65,7 +66,17 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		}
 	}
 
+	var kwargs = {
+	};
+
+	if($("#" + uuid + "_is_training").length && $("#" + uuid + "_is_training").is(":checked")) {
+		kwargs = {
+			training: true
+		};
+	}
+
 	try {
+		log(config, kwargs);
 		eval("layer = tf.layers." + layer_type + "(config)");
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
@@ -80,7 +91,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
-			res = await layer.apply(tensor).arraySync();
+			res = await layer.apply(tensor, kwargs).arraySync();
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
 			log(" !!! Failed applying:", e);
@@ -229,6 +240,10 @@ function add_table (layer_type, config, onchange, uuid) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>")
 			}
 		}
+	}
+
+	if(layer_type.includes("ropout")) {
+		$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>Is Training?</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>")
 	}
 
 	eval_base64(onchange, uuid);

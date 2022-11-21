@@ -700,6 +700,9 @@ function add_layer_debuggers () {
 		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
+			log("inputs:", inputs);
+			log("kwargs:", kwargs);
+
 			if(!disable_layer_debuggers) {
 				if($("#show_layer_data").is(":checked")) {
 					draw_internal_states(${i}, inputs, applied);
