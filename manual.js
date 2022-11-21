@@ -93,9 +93,11 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
+			/*
 			if(layer_type == "separableConv2d") {
 				log(layer_type, config, tensor, kwargs);
 			}
+			*/
 			input_shape = tensor.shape;
 			var tensor_res = await layer.apply(tensor, kwargs);
 			res = tensor_res.arraySync();
@@ -367,9 +369,12 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		$(internal_canvas_div).html("");
 		$(out_canvas_div).html("");
 
+		/*
 		if(layer_type == "separableConv2d") {
 			log(layer);
 		}
+		*/
+
 		if(layer) {
 			if(Object.keys(layer).includes("kernel")) {
 				if(!(layer.kernel === null)) {
