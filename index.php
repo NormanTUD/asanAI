@@ -250,7 +250,7 @@
 						<div class="ribbon-toolbar" style="width:250px">
 							<table width=250>
 								<tr>
-									<td>Architecture</td>
+									<td>Examples</td>
 									<td colspan="2">
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
@@ -865,7 +865,7 @@
 													<div class="multisteps-form__content">
 														<table>
 															<tr>
-																<td>Architecture</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
+																<td>Examples</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
 															</tr>
 															<tr>
 																<td>Dataset</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
