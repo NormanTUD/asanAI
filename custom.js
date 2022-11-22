@@ -1,11 +1,6 @@
 /**
  * Define a custom layer.
  *
- * This layer performs the following simple operation:
- *   output = input * (x ^ alpha);
- * - x is a trainable scalar weight.
- * - alpha is a configurable constant.
- *
  * This custom layer is written in a way that can be saved and loaded.
  */
 class DebugLayer extends tf.layers.Layer {
