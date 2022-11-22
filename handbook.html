@@ -1510,7 +1510,7 @@
 
 			<h3>Interpretating the training graph</h3>
 			<h4>Good loss</h4>
-			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not continue training.
+			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
 
 			<img src="manual/loss_ok.png" />
 
@@ -1518,7 +1518,12 @@
 
 
 			<h4>Stopped learning</h4>
+			This graph shows that the learning process has basically stopped. It fluctuates around a certain point (see graph 2), but does not really learn anything new.
+
 			<img src="manual/stopped_learning.png" />
+
+			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters.
+
 			<img src="manual/stopped_training.gif" />
 
 			<h4>Overfitting Loss</h4>
