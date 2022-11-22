@@ -421,7 +421,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				$(".show_when_predicting").hide();
 			}
 		} else {
-			l("Not predicting examples because you chose a custom dataset.");
 			$(".show_when_has_examples").hide();
 			$(".example_predictions").hide();
 			$(".show_when_predicting").hide();

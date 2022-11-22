@@ -904,7 +904,10 @@ async function get_x_y_from_csv () {
 				l("Not enough labels for oneHot-Encoding (got " + labels.length + ", need at least >= 2) &#10060;");
 			}
 		} else {
-			log("y_headers.length != 1 but " + y_headers.length);
+			if($("#auto_one_hot_y").is(":checked")) {
+				l("Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled");
+				$("#auto_one_hot_y").prop("checked", false)
+			}
 		}
 	}
 
