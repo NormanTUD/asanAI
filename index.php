@@ -269,13 +269,13 @@
 								</tr>
 
 								<tr>
-									<td style="white-space: nowrap;"><i>X</i>&amp;<i>Y</i>-Source</td>
+									<td style="white-space: nowrap;">Own data?</td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 155px;">
-											<option value="default">Default</option>
-											<option value="tensordata">&#x2318; Tensor-Data</option>
-											<option class="input_shape_is_image" value="image">&#128444; Image</option>
-											<option value="csv">&#128290; CSV</option>
+											<option value="default">No, default</option>
+											<option value="tensordata">&#x2318; Yes, own Tensor-Data</option>
+											<option class="input_shape_is_image" value="image">&#128444; Yes, own Images</option>
+											<option value="csv">&#128290; Yes, own CSV</option>
 										</select>
 									</td>
 								</tr>
