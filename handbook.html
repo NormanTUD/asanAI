@@ -503,6 +503,12 @@
 
 			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, so the likelyhood of one batch containing only one type of image is drastically reduced.
 
+			<h4>How the computer calculates derivatives of very complex function</h4>
+			TODO
+
+			$$ f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} $$
+			
+
 			<h3>Predicting</h3>
 			TODO
 
@@ -1522,14 +1528,16 @@
 
 			<img src="manual/stopped_learning.png" />
 
-			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters.
+			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters. You may also try to change the step size of the <a href="#Optimizer">optimizer</a>.
 
 			<img src="manual/stopped_training.gif" />
 
 			<h4>Overfitting Loss</h4>
+			TODO
 			<img src="manual/overfitting.png" />
 
 			<h4>No more improvements</h4>
+
 			<img src="manual/no_improvement_2.png" />
 			<img src="manual/no_real_improvement.png" />
 
