@@ -1105,7 +1105,7 @@
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked /></td>
 												</tr>
 												</tr>
-													<td>Auto One-Hot-encode Y?</td>
+													<td>Auto One-Hot-encode Y (disables "divide by")?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" checked /></td>
 												</tr>
 												</tr>
