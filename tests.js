@@ -149,7 +149,7 @@ async function run_tests () {
 
 	test_equal("array_to_fixed([1.555,2.555,3.555], 2)", JSON.stringify(array_to_fixed([1.555,2.555,3.555], 2)), "[1.55,2.56,3.56]");
 
-	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"Feature ex&shy;traction\":[0,1,2,3]},{\"Flatten\":[4]},{\"Feature ex&shy;traction&amp;Over&shy;fitting pre&shy;vention\":[5]},{\"Classi&shy;fication\":[6,7]}]");
+	test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), JSON.parse("[{\"Feature ex&shy;traction\":[0,1,2,3]},{\"Flatten\":[4]},{\"Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention\":[5]},{\"Classi&shy;fication\":[6,7]}]"));
 
 	test_equal('decille([1,2,3,4,5,6,7,8,9,10, 11], 1)', decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
 

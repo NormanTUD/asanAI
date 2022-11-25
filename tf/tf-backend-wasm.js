@@ -2830,6 +2830,24 @@
 
     /**
      * @license
+     * Copyright 2022 The TensorFlow Authors. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the License);
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an AS IS BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+    var isNaNConfig = createUnaryKernelConfig(tfjsCore.IsNan, 'bool');
+
+    /**
+     * @license
      * Copyright 2019 Google LLC. All Rights Reserved.
      * Licensed under the Apache License, Version 2.0 (the "License");
      * you may not use this file except in compliance with the License.
@@ -3901,6 +3919,24 @@
      * =============================================================================
      */
     var realDivConfig = createBinaryKernelConfig(tfjsCore.RealDiv);
+
+    /**
+     * @license
+     * Copyright 2022 The TensorFlow Authors. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+    var reciprocalConfig = createUnaryKernelConfig(tfjsCore.Reciprocal);
 
     /**
      * @license
@@ -5427,6 +5463,7 @@
         greaterConfig,
         greaterEqualConfig,
         identityConfig,
+        isNaNConfig,
         leakyReluConfig,
         lessConfig,
         lessEqualConfig,
@@ -5457,6 +5494,7 @@
         prodConfig,
         rangeConfig,
         realDivConfig,
+        reciprocalConfig,
         reluConfig,
         relu6Config,
         reshapeConfig,
@@ -6252,6 +6290,7 @@
                 Module["_GatherNd"] = function () { return (Module["_GatherNd"] = Module["asm"]["GatherNd"]).apply(null, arguments); };
                 Module["_Greater"] = function () { return (Module["_Greater"] = Module["asm"]["Greater"]).apply(null, arguments); };
                 Module["_GreaterEqual"] = function () { return (Module["_GreaterEqual"] = Module["asm"]["GreaterEqual"]).apply(null, arguments); };
+                Module["_IsNan"] = function () { return (Module["_IsNan"] = Module["asm"]["IsNan"]).apply(null, arguments); };
                 Module["_LeakyRelu"] = function () { return (Module["_LeakyRelu"] = Module["asm"]["LeakyRelu"]).apply(null, arguments); };
                 Module["_Less"] = function () { return (Module["_Less"] = Module["asm"]["Less"]).apply(null, arguments); };
                 Module["_LessEqual"] = function () { return (Module["_LessEqual"] = Module["asm"]["LessEqual"]).apply(null, arguments); };
@@ -6279,6 +6318,7 @@
                 Module["_Prelu"] = function () { return (Module["_Prelu"] = Module["asm"]["Prelu"]).apply(null, arguments); };
                 Module["_Prod"] = function () { return (Module["_Prod"] = Module["asm"]["Prod"]).apply(null, arguments); };
                 Module["_RealDiv"] = function () { return (Module["_RealDiv"] = Module["asm"]["RealDiv"]).apply(null, arguments); };
+                Module["_Reciprocal"] = function () { return (Module["_Reciprocal"] = Module["asm"]["Reciprocal"]).apply(null, arguments); };
                 Module["_Relu"] = function () { return (Module["_Relu"] = Module["asm"]["Relu"]).apply(null, arguments); };
                 Module["_Relu6"] = function () { return (Module["_Relu6"] = Module["asm"]["Relu6"]).apply(null, arguments); };
                 Module["_ResizeBilinear"] = function () { return (Module["_ResizeBilinear"] = Module["asm"]["ResizeBilinear"]).apply(null, arguments); };
@@ -6763,6 +6803,7 @@
                 Module["_GatherNd"] = function () { return (Module["_GatherNd"] = Module["asm"]["GatherNd"]).apply(null, arguments); };
                 Module["_Greater"] = function () { return (Module["_Greater"] = Module["asm"]["Greater"]).apply(null, arguments); };
                 Module["_GreaterEqual"] = function () { return (Module["_GreaterEqual"] = Module["asm"]["GreaterEqual"]).apply(null, arguments); };
+                Module["_IsNan"] = function () { return (Module["_IsNan"] = Module["asm"]["IsNan"]).apply(null, arguments); };
                 Module["_LeakyRelu"] = function () { return (Module["_LeakyRelu"] = Module["asm"]["LeakyRelu"]).apply(null, arguments); };
                 Module["_Less"] = function () { return (Module["_Less"] = Module["asm"]["Less"]).apply(null, arguments); };
                 Module["_LessEqual"] = function () { return (Module["_LessEqual"] = Module["asm"]["LessEqual"]).apply(null, arguments); };
@@ -6790,6 +6831,7 @@
                 Module["_Prelu"] = function () { return (Module["_Prelu"] = Module["asm"]["Prelu"]).apply(null, arguments); };
                 Module["_Prod"] = function () { return (Module["_Prod"] = Module["asm"]["Prod"]).apply(null, arguments); };
                 Module["_RealDiv"] = function () { return (Module["_RealDiv"] = Module["asm"]["RealDiv"]).apply(null, arguments); };
+                Module["_Reciprocal"] = function () { return (Module["_Reciprocal"] = Module["asm"]["Reciprocal"]).apply(null, arguments); };
                 Module["_Relu"] = function () { return (Module["_Relu"] = Module["asm"]["Relu"]).apply(null, arguments); };
                 Module["_Relu6"] = function () { return (Module["_Relu6"] = Module["asm"]["Relu6"]).apply(null, arguments); };
                 Module["_ResizeBilinear"] = function () { return (Module["_ResizeBilinear"] = Module["asm"]["ResizeBilinear"]).apply(null, arguments); };
@@ -7315,7 +7357,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    var version = '4.0.0';
+    var version = '4.1.0';
 
     var WASM_PRIORITY = 2;
     tfjsCore.registerBackend('wasm', function () { return __awaiter(void 0, void 0, void 0, function () {
