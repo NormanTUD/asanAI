@@ -218,7 +218,7 @@ function memory_debugger () {
 	}
 
 	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB";
-	if(gpu_mb.toString().match(/^\d+(?:,\d+)?$/)) {
+	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + gpu_mb + "MB"
 	}
 
