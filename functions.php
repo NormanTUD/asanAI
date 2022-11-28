@@ -235,7 +235,11 @@
 			$start_time = microtime(true);
 			$result = $GLOBALS['mysqli']->query($query);
 			if($result === false) {
-				dier("Query failed:\n$query\nError:\n".$GLOBALS["mysqli"]->error);
+				if(file_exists("/etc/asanai_die_on_sql_error")) {
+					dier("Query failed:\n$query\nError:\n".$GLOBALS["mysqli"]->error);
+				} else {
+					$GLOBALS["use_db"] = 0;
+				}
 			}
 			$end_time = microtime(true);
 			$bt = debug_backtrace();
