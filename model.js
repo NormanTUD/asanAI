@@ -813,11 +813,14 @@ async function compile_fake_model (layer_nr, layer_type) {
 		var start_tensors = tf.memory()["numTensors"];
 
 		var fake_model = await create_model(null, fake_model_structure);
+		var model_data = get_model_data();
 
 		tf.tidy(() => {
 			tf.engine().startScope();
-			fake_model.compile(get_model_data());
+			fake_model.compile(model_data);
 			tf.engine().endScope();
+
+			dispose(model_data);
 		});
 
 		log("after compile: " + (tf.memory()["numTensors"] - start_tensors) + " new tensors");

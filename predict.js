@@ -74,8 +74,8 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 	}
 
 	try {
-		$(item).prop("width", width);
-		$(item).prop("height", height);
+		$(item).prop("width", $(item)[0].naturalWidth);
+		$(item).prop("height", $(item)[0].naturalHeight);
 	} catch (e) {
 		_predict_error(e);
 	}

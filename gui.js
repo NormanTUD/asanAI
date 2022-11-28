@@ -636,8 +636,8 @@ function change_output_and_example_image_size() {
 
 	$("#output").width($("#width").val())
 	$("#output").height($("#height").val())
-	$(".example_images").width($("#width").val())
-	$(".example_images").height($("#height").val())
+	//$(".example_images").width($("#width").val())
+	//$(".example_images").height($("#height").val())
 }
 
 async function change_width_or_height(name, inputshape_index) {

@@ -213,9 +213,14 @@ function memory_debugger () {
 	var ram_mb = bytes / 1024 / 1024;
 	ram_mb = ram_mb.toFixed(2);
 	var gpu_mb = gpu_bytes / 1024 / 1024;
-	gpu_mb = gpu_mb.toFixed(2);
+	if(gpu_mb) {
+		gpu_mb = gpu_mb.toFixed(2);
+	}
 
-	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB, GPU: " + gpu_mb + "MB";
+	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB";
+	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
+		debug_string = debug_string + ", GPU: " + gpu_mb + "MB"
+	}
 
 	$("#memory_debugger_div").html(debug_string);
 }
