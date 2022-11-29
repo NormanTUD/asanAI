@@ -424,6 +424,7 @@ $(document).ready(async function() {
 	alter_text_webcam_series();
 	$("#webgl_backend").prop("checked", true).trigger("change");
 
+	l("Git-Hash: " + git_hash);
 
 	l("Site is ready");
 });
