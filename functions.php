@@ -470,4 +470,9 @@
 	function ssh_taurus ($command) {
 		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=60 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
 	}
+
+	function get_git_hash () {
+		$rev = chop(file_get_contents(".git/refs/heads/master"));
+		return $rev;
+	}
 ?>

@@ -44,6 +44,8 @@
 
 			var has_webgl = hasWebGL();
 
+			var git_hash = "<?php print get_git_hash(); ?>";
+
 			var original_title = document.title;
 
 			var traindata_struct =
