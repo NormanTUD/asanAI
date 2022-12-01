@@ -561,8 +561,8 @@ async function start_test_training(fn, epochs, start, end, step) {
 	log(t_y);
 
 	var current_model = tf.sequential();
-	current_model.add(tf.layers.dense({units: 64, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
-	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 128, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 128, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 32, activation: "relu"}));
