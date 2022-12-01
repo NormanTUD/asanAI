@@ -521,9 +521,14 @@ async function train_example (current_model, max_epoch, x_data, y_data, loss_nam
 	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
 }
 
-async function start_test_training(fn, start, end, step) {
+async function start_test_training(fn, epochs, start, end, step) {
 	assert(start != end, "start and end must be different");
 	assert(step != 0, "step cannot be 0");
+	assert(epochs != 0, "epochs cannot be 0");
+	assert(typeof(start) == "number", "start must be an number");
+	assert(typeof(epochs) == "number", "epochs must be an number");
+	assert(typeof(end) == "number", "end must be an number");
+	assert(typeof(step) == "number", "step must be an number");
 	assert(typeof(fn) == "function", "fn must be function");
 
 	tf.engine().startScope();
@@ -545,7 +550,7 @@ async function start_test_training(fn, start, end, step) {
 	current_model.add(tf.layers.dense({units: 2, activation: "linear"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
 
-	await train_example(current_model, 250, t_x, t_y, "meanSquaredError", 10, "adam");
+	await train_example(current_model, epochs, t_x, t_y, "meanSquaredError", 10, "adam");
 	tf.engine().endScope();
 }
 
