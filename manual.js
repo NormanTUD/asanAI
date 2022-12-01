@@ -531,9 +531,11 @@ async function start_test_training() {
 	    t_y.push(Math.log(i) / 10);
 	}
 
-	var current_model = tf.sequential()
-	current_model.add(tf.layers.dense({units: 8, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
-	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
+	var current_model = tf.sequential();
+	current_model.add(tf.layers.dense({units: 16, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 8, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 2, activation: "linear"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
 
 	await train_example(current_model, 100, t_x, t_y, "meanSquaredError", 10, "adam");
