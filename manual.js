@@ -438,16 +438,12 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	return result;
 }
 
-async function train_example (max_epoch, x_data, y_data, loss_name, batchSize, optimizer_name) {
-	tf.engine().startScope();
+async function train_example (current_model, max_epoch, x_data, y_data, loss_name, batchSize, optimizer_name) {
 	var id = uuidv4();
 
-	var current_model = tf.sequential()
-	current_model.add(tf.layers.dense({units: 4, inputShape: [1], activation: "relu"}))
-	current_model.add(tf.layers.dense({units: 4, activation: "relu"}))
-	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
-	current_model.add(tf.layers.dense({units: 2, activation: "linear"}))
-	current_model.add(tf.layers.dense({units: 1, activation: "linear"}))
+	var x = tf.tensor(x_data);
+	var y = tf.tensor(y_data);
+
 
 	var loss_trace = {
 		x: [],
@@ -521,23 +517,28 @@ async function train_example (max_epoch, x_data, y_data, loss_name, batchSize, o
 		}
 	}
 
-	var x = tf.tensor(x_data)
-	var y = tf.tensor(y_data)
 	current_model.compile({ optimizer: optimizer_name, loss: loss_name, batchSize: batchSize });
 	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
-	tf.engine().endScope();
 }
 
 async function start_test_training() {
+	tf.engine().startScope();
 	var t_x = [];
 	var t_y = [];
 
-	for (var i = 1; i < 10; i++) {
-	    t_x.push([i]);
-	    t_y.push(Math.log(i));
+	for (var i = 1; i < 100; i++) {
+	    t_x.push([i / 10]);
+	    t_y.push(Math.log(i) / 10);
 	}
 
-	await train_example(200, t_x, t_y, "meanSquaredError", 10, "adam");
+
+	var current_model = tf.sequential()
+	current_model.add(tf.layers.dense({units: 8, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
+	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
+
+	await train_example(current_model, 100, t_x, t_y, "meanSquaredError", 10, "adam");
+	tf.engine().endScope();
 }
 
 toc();
