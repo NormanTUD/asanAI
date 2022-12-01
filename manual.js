@@ -438,7 +438,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	return result;
 }
 
-async function train_example (current_model, max_epoch, x_data, y_data, loss_name, batchSize, optimizer_name) {
+async function train_example (current_model, max_epoch, x_data, y_data, loss_name, batchSize, optimizer_name, shuffle) {
 	var id = uuidv4();
 
 	var x = tf.tensor(x_data);
@@ -518,6 +518,11 @@ async function train_example (current_model, max_epoch, x_data, y_data, loss_nam
 	}
 
 	current_model.compile({ optimizer: optimizer_name, loss: loss_name, batchSize: batchSize });
+
+	if(shuffle) {
+		tf.util.shuffleCombo(x, y);
+	}
+
 	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
 }
 
@@ -532,7 +537,8 @@ function contains_null (arr) {
 	return false;
 }
 
-async function start_test_training(fn, epochs, start, end, step) {
+async function start_test_training(fn, epochs, start, end, step, shuffle) {
+	assert(typeof(shuffle) == "boolean", "start must be an number");
 	assert(typeof(start) == "number", "start must be an number");
 	assert(typeof(epochs) == "number", "epochs must be an number");
 	assert(typeof(end) == "number", "end must be an number");
@@ -570,7 +576,7 @@ async function start_test_training(fn, epochs, start, end, step) {
 	current_model.add(tf.layers.dense({units: 2, activation: "linear"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
 
-	await train_example(current_model, epochs, t_x, t_y, "meanSquaredError", 10, "adam");
+	await train_example(current_model, epochs, t_x, t_y, "meanSquaredError", 10, "adam", shuffle);
 	tf.engine().endScope();
 }
 
