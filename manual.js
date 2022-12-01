@@ -438,8 +438,115 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	return result;
 }
 
+async function train_example (max_epoch, x_data, y_data, loss_name, batchSize, optimizer_name) {
+	tf.engine().startScope();
+	var id = uuidv4();
+
+	var current_model = tf.sequential()
+	current_model.add(tf.layers.dense({units: 4, inputShape: [1], activation: "relu"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 2, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 1, activation: "linear"}))
+
+	var loss_trace = {
+		x: [],
+		y: [],
+		name: 'loss',
+		yaxis: 'y2',
+		xaxis: 'x2',
+		type: 'scatter'
+	};
+
+	var callbacks = {
+		"onEpochEnd": async function (epoch, logs) {
+			//log(epoch, logs);
+			var current_epoch = epoch + 1;
+			if(current_epoch == 1) {
+				$("#training_data").html("");
+				$("<div id='" + id + "_training_data_graph'></div>").appendTo($("#training_data"));
+			}
+
+			loss_trace.x.push(current_epoch);
+			loss_trace.y.push(logs.loss);
+
+			var real_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "real data"
+			};
+
+			var predicted_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "predicted data"
+			};
+
+			for (var i = 0; i < y_data.length; i++) {
+				real_trace.x.push(x_data[i][0]);
+				predicted_trace.x.push(x_data[i][0]);
+
+				real_trace.y.push(y_data[i]);
+				var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
+				predicted_trace.y.push(predicted);
+			}
+
+			var layout = {
+				title: "Epoch " + current_epoch + " of " + max_epoch,
+				yaxis: {title: 'predicted vs. real data'},
+				yaxis2: {
+					title: 'loss',
+					overlaying: 'y',
+					side: 'right'
+				},
+				yaxis: {
+					title: 'y',
+					side: 'left'
+				},
+				xaxis2: {
+					title: 'Epoch',
+					overlaying: 'x',
+					side: 'top'
+				},
+				xaxis: {
+					title: 'x',
+					side: 'bottom'
+				}
+			};
+
+			var data = [real_trace, predicted_trace, loss_trace];
+			Plotly.newPlot(id + '_training_data_graph', data, layout);
+		}
+	}
+
+	var x = tf.tensor(x_data)
+	var y = tf.tensor(y_data)
+	current_model.compile({ optimizer: optimizer_name, loss: loss_name, batchSize: batchSize });
+	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
+	tf.engine().endScope();
+}
+
+async function start_test_training() {
+	var t_x = [];
+	var t_y = [];
+
+	for (var i = 1; i < 10; i++) {
+	    t_x.push([i]);
+	    t_y.push(Math.log(i));
+	}
+
+	await train_example(200, t_x, t_y, "meanSquaredError", 10, "adam");
+}
+
 toc();
 
+/*
 add_html_for_layer_types("conv2d");
 add_html_for_layer_types("upSampling2d");
 add_html_for_layer_types("maxPooling2d");
@@ -451,3 +558,4 @@ add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
 add_html_for_layer_types("separableConv2d");
 add_html_for_layer_types("depthwiseConv2d");
+*/
