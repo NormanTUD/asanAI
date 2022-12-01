@@ -444,7 +444,7 @@ async function train_example (max_epoch, x_data, y_data, loss_name, batchSize, o
 
 	var current_model = tf.sequential()
 	current_model.add(tf.layers.dense({units: 4, inputShape: [1], activation: "relu"}))
-	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}))
 	current_model.add(tf.layers.dense({units: 4, activation: "linear"}))
 	current_model.add(tf.layers.dense({units: 2, activation: "linear"}))
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}))
