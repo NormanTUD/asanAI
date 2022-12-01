@@ -553,7 +553,9 @@ async function start_test_training(fn, epochs, start, end, step) {
 	    t_y.push(fn(i));
 	}
 
-	assert(!contains_null(t_y), "y contains NaN values");
+	if(contains_null(t_y)) {
+		log("y contains NaN values: ", t_y);
+	}
 
 	log(t_x);
 	log(t_y);
