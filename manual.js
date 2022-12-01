@@ -527,8 +527,8 @@ async function start_test_training() {
 	var t_y = [];
 
 	for (var i = 1; i < 100; i++) {
-	    t_x.push([i / 10]);
-	    t_y.push(Math.log(i) / 10);
+	    t_x.push([i]);
+	    t_y.push(Math.log(i));
 	}
 
 	var current_model = tf.sequential();
