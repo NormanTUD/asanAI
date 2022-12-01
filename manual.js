@@ -531,7 +531,6 @@ async function start_test_training() {
 	    t_y.push(Math.log(i) / 10);
 	}
 
-
 	var current_model = tf.sequential()
 	current_model.add(tf.layers.dense({units: 8, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
