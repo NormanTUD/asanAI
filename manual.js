@@ -541,7 +541,7 @@ async function start_test_training() {
 	current_model.add(tf.layers.dense({units: 2, activation: "linear"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
 
-	await train_example(current_model, 200, t_x, t_y, "meanSquaredError", 10, "adam");
+	await train_example(current_model, 250, t_x, t_y, "meanSquaredError", 10, "adam");
 	tf.engine().endScope();
 }
 
