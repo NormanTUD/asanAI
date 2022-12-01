@@ -521,6 +521,17 @@ async function train_example (current_model, max_epoch, x_data, y_data, loss_nam
 	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
 }
 
+function contains_null (arr) {
+	for (i=0; i < arr.length; i++){
+		// check if array value is false or NaN
+		if (arr[i] === false || (arr[i] != undefined && typeof(arr[i]) == "number" && arr[i].toString() === 'NaN')) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 async function start_test_training(fn, epochs, start, end, step) {
 	assert(typeof(start) == "number", "start must be an number");
 	assert(typeof(epochs) == "number", "epochs must be an number");
@@ -541,6 +552,11 @@ async function start_test_training(fn, epochs, start, end, step) {
 	    t_x.push([i]);
 	    t_y.push(fn(i));
 	}
+
+	assert(!contains_null(t_y), "y contains NaN values");
+
+	log(t_x);
+	log(t_y);
 
 	var current_model = tf.sequential();
 	current_model.add(tf.layers.dense({units: 64, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
