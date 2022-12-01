@@ -535,6 +535,8 @@ async function start_test_training() {
 	current_model.add(tf.layers.dense({units: 16, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 8, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 4, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 4, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 2, activation: "linear"}));
 	current_model.add(tf.layers.dense({units: 1, activation: "linear"}));
 
