@@ -522,14 +522,16 @@ async function train_example (current_model, max_epoch, x_data, y_data, loss_nam
 }
 
 async function start_test_training(fn, epochs, start, end, step) {
-	assert(start != end, "start and end must be different");
-	assert(step != 0, "step cannot be 0");
-	assert(epochs != 0, "epochs cannot be 0");
 	assert(typeof(start) == "number", "start must be an number");
 	assert(typeof(epochs) == "number", "epochs must be an number");
 	assert(typeof(end) == "number", "end must be an number");
 	assert(typeof(step) == "number", "step must be an number");
 	assert(typeof(fn) == "function", "fn must be function");
+
+	assert(start != end, "start and end must be different");
+	assert(step != 0, "step cannot be 0");
+	assert(epochs != 0, "epochs cannot be 0");
+
 
 	tf.engine().startScope();
 	var t_x = [];
