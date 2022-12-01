@@ -521,14 +521,18 @@ async function train_example (current_model, max_epoch, x_data, y_data, loss_nam
 	await current_model.fit(x, y, {epochs: max_epoch, callbacks: callbacks, yieldEvery: 'batch'})
 }
 
-async function start_test_training() {
+async function start_test_training(fn, start, end, step) {
+	assert(start != end, "start and end must be different");
+	assert(step != 0, "step cannot be 0");
+	assert(typeof(fn) == "function", "fn must be function");
+
 	tf.engine().startScope();
 	var t_x = [];
 	var t_y = [];
 
-	for (var i = 1; i < 100; i++) {
-	    t_x.push([i / 10]);
-	    t_y.push(Math.sin(i / 10));
+	for (var i = start; i <= end ; i += step) {
+	    t_x.push([i]);
+	    t_y.push(fn(i));
 	}
 
 	var current_model = tf.sequential();
