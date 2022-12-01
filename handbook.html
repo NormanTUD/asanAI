@@ -509,8 +509,19 @@
 
 			$$ f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} $$
 
-			This follows from constructing a TODO
-			
+			The way a computer can approximate derivates of any arbitrary function, no matter how complex, is to set h to some very small value.
+
+			Let's say, 
+
+			$$ f(x) = 2x^2 $$
+
+			Of course, the derivative is 4x then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point $x = 10$?
+
+			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = \frac{f(x + 0.0001) - f(x)}{0.0001} $$
+
+			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = \frac{2(10+0.0001)**2}{0.0001} =  $$
+
+			TODO
 
 			<h3>Predicting</h3>
 			TODO
