@@ -1523,6 +1523,11 @@
 				} catch (e) {
 					log(e);
 				}
+
+				if(units > 32) {
+					units = 32;
+				}
+
 				return units;
 			}
 
