@@ -1287,6 +1287,7 @@
 								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
 								<div id="training_content">
+									<div id="simplest_training_data_visualization" style="display: none"></div>
 									<div style="display: none">
 										<h1>Epochs:</h1>
 										<div id="plotly_epoch_history"></div>

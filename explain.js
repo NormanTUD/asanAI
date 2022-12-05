@@ -2041,7 +2041,7 @@ async function create_loss_landscape () {
 	Plotly.newPlot('graphs_here', data, layout);
 }
 
-async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
+async function get_live_tracking_on_batch_end (current_model, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
 	var id = uuidv4();
 
 	/*
@@ -2055,119 +2055,123 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_d
 	};
 	*/
 
-	var callbacks = {};
+	var onBatchEnd = null;
 
 	eval(`
-	callbacks = {
-		"onEpochEnd": async function (epoch, logs) {
-			if(typeof(old_onEpochEnd) == 'function') {
-				old_onEpochEnd(epoch, logs);
+	onBatchEnd = async function (epoch, logs) {
+		if(typeof(old_onEpochEnd) == 'function') {
+			old_onEpochEnd(epoch, logs);
+		}
+
+		try {
+			var current_epoch = epoch + 1;
+			if(current_epoch == 1) {
+				$("#${append_to_id}").html("");
+				$("<div id='${id}_training_data_graph'></div>").appendTo($("#${append_to_id}"));
 			}
-			try {
-				var current_epoch = epoch + 1;
-				if(current_epoch == 1) {
-					$("#${append_to_id}").html("");
-					$("<div id='${id}_training_data_graph'></div>").appendTo($("#${append_to_id}"));
-				}
 
-				/*
-				loss_trace.x.push(current_epoch);
-				loss_trace.y.push(logs.loss);
-				*/
+			/*
+			loss_trace.x.push(current_epoch);
+			loss_trace.y.push(logs.loss);
+			*/
 
-				var real_trace = {
-					x: [],
-					y: [],
-					type: 'scatter',
-					name: "real data"
-				};
+			var real_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "real data"
+			};
 
-				var predicted_trace = {
-					x: [],
-					y: [],
-					type: 'scatter',
-					name: "predicted data"
-				};
+			var predicted_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "predicted data"
+			};
 
-				var x_data = ${x_data_json};
-				var y_data = ${y_data_json};
+			log("A");
 
-				log("x_data before sort:", x_data);
-				log("y_data before sort:", y_data);
+			var x_data = ${x_data_json};
+			var y_data = ${y_data_json};
 
-				//1) combine the arrays:
-				var list = [];
-				for (var j = 0; j < x_data.length; j++)
-					list.push({'x_data': parseFloat(x_data[j][0]), 'y_data': parseFloat(y_data[j][0])});
+			log("x_data before sort:", x_data);
+			log("y_data before sort:", y_data);
 
-				//2) sort:
-				list.sort(function(a, b) {
-					return ((a.x_data < b.x_data) ? -1 : ((a.x_data == b.x_data) ? 0 : 1));
-					//Sort could be modified to, for example, sort on the age
-					// if the name is the same.
-				});
+			//1) combine the arrays:
+			var list = [];
+			for (var j = 0; j < x_data.length; j++)
+				list.push({'x_data': parseFloat(x_data[j][0]), 'y_data': parseFloat(y_data[j][0])});
 
-				//3) separate them back out:
-				for (var k = 0; k < list.length; k++) {
-					x_data[k][0] = list[k].x_data;
-					y_data[k][0] = list[k].y_data;
-				}
+			//2) sort:
+			list.sort(function(a, b) {
+				return ((a.x_data < b.x_data) ? -1 : ((a.x_data == b.x_data) ? 0 : 1));
+				//Sort could be modified to, for example, sort on the age
+				// if the name is the same.
+			});
 
-
-
-				log("x_data:", x_data);
-				log("y_data:", y_data);
-
-				for (var i = 0; i < y_data.length; i++) {
-					real_trace.x.push(x_data[i][0]);
-					predicted_trace.x.push(x_data[i][0]);
-
-					real_trace.y.push(y_data[i][0]);
-					var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
-					predicted_trace.y.push(predicted);
-				}
-
-				log("real_trace", real_trace);
-
-				var layout = {
-					title: "Epoch " + current_epoch + " of " + max_epoch,
-					yaxis: {title: 'predicted vs. real data'},
-					yaxis: {
-						title: 'y',
-						side: 'left'
-					},
-					xaxis: {
-						title: 'x',
-						side: 'bottom'
-					}
-				};
-
-				var data = [real_trace, predicted_trace];
-				/*
-				if(show_loss) {
-					data.push(loss_trace);
-					layout["xaxis2"] = {
-						title: 'Epoch',
-						overlaying: 'x',
-						side: 'top'
-					};
-
-					layout["yaxis2"] = {
-						title: 'loss',
-						overlaying: 'y',
-						side: 'right'
-					};
-				}
-				*/
-				Plotly.newPlot('${id}_training_data_graph', data, layout);
-			} catch (e) {
-				console.error(e);
+			//3) separate them back out:
+			for (var k = 0; k < list.length; k++) {
+				x_data[k][0] = list[k].x_data;
+				y_data[k][0] = list[k].y_data;
 			}
+
+			log("B");
+
+
+			log("x_data:", x_data);
+			log("y_data:", y_data);
+
+			for (var i = 0; i < y_data.length; i++) {
+				real_trace.x.push(x_data[i][0]);
+				predicted_trace.x.push(x_data[i][0]);
+
+				real_trace.y.push(y_data[i][0]);
+				var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
+				predicted_trace.y.push(predicted);
+			}
+
+			log("real_trace", real_trace);
+
+			var layout = {
+				title: "Epoch " + current_epoch + " of " + max_epoch,
+				yaxis: {title: 'predicted vs. real data'},
+				yaxis: {
+					title: 'y',
+					side: 'left'
+				},
+				xaxis: {
+					title: 'x',
+					side: 'bottom'
+				}
+			};
+
+			log("C");
+
+			var data = [real_trace, predicted_trace];
+			/*
+			if(show_loss) {
+				data.push(loss_trace);
+				layout["xaxis2"] = {
+					title: 'Epoch',
+					overlaying: 'x',
+					side: 'top'
+				};
+
+				layout["yaxis2"] = {
+					title: 'loss',
+					overlaying: 'y',
+					side: 'right'
+				};
+			}
+			*/
+			Plotly.newPlot('${id}_training_data_graph', data, layout);
+		} catch (e) {
+			console.error(e);
 		}
 	}
 	`);
 
-	return callbacks;
+	return onBatchEnd;
 }
 
 

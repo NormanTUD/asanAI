@@ -490,7 +490,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 	var callbacks = {};
 	try {
-		callbacks = await get_tracing_callbacks(current_model, epochs, JSON.stringify(t_x), JSON.stringify(t_y), true, "training_data");
+		callbacks = { "onBatchEnd": await get_live_tracking_on_batch_end(current_model, epochs, JSON.stringify(t_x), JSON.stringify(t_y), true, "training_data") };
 	} catch (e) {
 		console.error(e);
 	}
