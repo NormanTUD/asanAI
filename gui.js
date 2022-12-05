@@ -314,7 +314,8 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			str += " value=" + data["value"] + " ";
 		}
 
-		str += " _onchange='updated_page()' onkeyup='updated_page(null, null, this)' />";
+		str += " _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" />";
+			var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
 		str += "<input type='checkbox' class='input_data " + classname + "' _onchange='updated_page(null, null, this);' ";
 		if ("status" in data && data["status"] == "checked") {
