@@ -2089,13 +2089,8 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				name: "predicted data"
 			};
 
-			log("A");
-
 			var x_data = ${x_data_json};
 			var y_data = ${y_data_json};
-
-			log("x_data before sort:", x_data);
-			log("y_data before sort:", y_data);
 
 			//1) combine the arrays:
 			var list = [];
@@ -2115,12 +2110,6 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				y_data[k][0] = list[k].y_data;
 			}
 
-			log("B");
-
-
-			log("x_data:", x_data);
-			log("y_data:", y_data);
-
 			for (var i = 0; i < y_data.length; i++) {
 				real_trace.x.push(x_data[i][0]);
 				predicted_trace.x.push(x_data[i][0]);
@@ -2130,10 +2119,8 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				predicted_trace.y.push(predicted);
 			}
 
-			log("real_trace", real_trace);
-
 			var layout = {
-				title: "Epoch " + current_epoch + " of " + max_epoch,
+				title: "",
 				yaxis: {title: 'predicted vs. real data'},
 				yaxis: {
 					title: 'y',
@@ -2144,8 +2131,6 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					side: 'bottom'
 				}
 			};
-
-			log("C");
 
 			var data = [real_trace, predicted_trace];
 			/*
