@@ -2060,6 +2060,9 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_d
 	eval(`
 	callbacks = {
 		"onEpochEnd": async function (epoch, logs) {
+			if(typeof(old_onEpochEnd) == 'function') {
+				old_onEpochEnd(epoch, logs);
+			}
 			try {
 				var current_epoch = epoch + 1;
 				if(current_epoch == 1) {
@@ -2119,10 +2122,12 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_d
 					real_trace.x.push(x_data[i][0]);
 					predicted_trace.x.push(x_data[i][0]);
 
-					real_trace.y.push(y_data[i]);
+					real_trace.y.push(y_data[i][0]);
 					var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
 					predicted_trace.y.push(predicted);
 				}
+
+				log("real_trace", real_trace);
 
 				var layout = {
 					title: "Epoch " + current_epoch + " of " + max_epoch,

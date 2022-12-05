@@ -499,6 +499,10 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 	current_model.compile({ optimizer: optimizer_name, loss: "meanSquaredError", batchSize: batchSize });
 
+	if(shuffle) {
+		tf.util.shuffleCombo(t_x, t_y);
+	}
+
 	var x = tf.tensor(t_x);
 	var y = tf.tensor(t_y);
 
@@ -508,9 +512,6 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	log("y:");
 	y.print();
 
-	if(shuffle) {
-		tf.util.shuffleCombo(x, y);
-	}
 
 	log("Started training...");
 	await current_model.fit(x, y, {epochs: epochs, callbacks: callbacks, yieldEvery: 'batch'})

@@ -1264,3 +1264,5 @@ var original_adam = tf.train.adam;
 var original_adadelta = tf.train.adadelta;
 var original_adagrad = tf.train.adagrad;
 var original_momentum = tf.train.momentum;
+
+var old_onEpochEnd = undefined;
