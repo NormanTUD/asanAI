@@ -1525,6 +1525,7 @@
 				}
 
 				if(units > 32) {
+					log("Units is " + units + ", which is bigger than 32. 32 is the maximum, it will get set to this for layer " + i);
 					units = 32;
 				}
 
