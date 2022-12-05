@@ -2079,14 +2079,14 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				x: [],
 				y: [],
 				type: 'scatter',
-				name: "real data"
+				name: "Real function"
 			};
 
 			var predicted_trace = {
 				x: [],
 				y: [],
 				type: 'scatter',
-				name: "predicted data"
+				name: "Predicted data"
 			};
 
 			var x_data = ${x_data_json};
@@ -2120,7 +2120,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 			}
 
 			var layout = {
-				title: "",
+				title: "Real function vs. predicted function",
 				yaxis: {title: 'predicted vs. real data'},
 				yaxis: {
 					title: 'y',
