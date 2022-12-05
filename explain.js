@@ -2115,9 +2115,9 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				predicted_trace.x.push(x_data[i][0]);
 
 				real_trace.y.push(y_data[i][0]);
-				tf.engine.startScope();
+				tf.engine().startScope();
 				var predicted = await ${global_model_name}.predict(tf.tensor(x_data[i])).arraySync()[0][0];
-				tf.engine.endScope();
+				tf.engine().endScope();
 				predicted_trace.y.push(predicted);
 			}
 
