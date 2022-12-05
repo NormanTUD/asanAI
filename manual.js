@@ -1,5 +1,7 @@
 "use strict";
 
+var current_model = null;
+
 function log (...args) {
 	console.log(args);
 }
@@ -478,7 +480,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	log(t_x);
 	log(t_y);
 
-	var current_model = tf.sequential();
+	current_model = tf.sequential();
 	current_model.add(tf.layers.dense({units: 128, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 128, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
@@ -490,7 +492,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 	var callbacks = {};
 	try {
-		callbacks = { "onBatchEnd": await get_live_tracking_on_batch_end(current_model, epochs, JSON.stringify(t_x), JSON.stringify(t_y), true, "training_data") };
+		callbacks = { "onBatchEnd": await get_live_tracking_on_batch_end("current_model", epochs, JSON.stringify(t_x), JSON.stringify(t_y), true, "training_data") };
 	} catch (e) {
 		console.error(e);
 	}

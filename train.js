@@ -513,7 +513,7 @@ async function run_neural_network () {
 				if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 					old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
-					var new_on_batch_end_callback = await get_live_tracking_on_batch_end(model, parseInt($("#epochs").val()), JSON.stringify(xs_and_ys["x"].arraySync()), JSON.stringify(xs_and_ys["y"].arraySync()), false, "simplest_training_data_visualization");
+					var new_on_batch_end_callback = await get_live_tracking_on_batch_end("model", parseInt($("#epochs").val()), JSON.stringify(xs_and_ys["x"].arraySync()), JSON.stringify(xs_and_ys["y"].arraySync()), false, "simplest_training_data_visualization");
 					log(new_on_batch_end_callback);
 					if(new_on_batch_end_callback) {
 						fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;

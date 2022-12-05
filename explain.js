@@ -2041,7 +2041,7 @@ async function create_loss_landscape () {
 	Plotly.newPlot('graphs_here', data, layout);
 }
 
-async function get_live_tracking_on_batch_end (current_model, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
+async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
 	var id = uuidv4();
 
 	/*
@@ -2126,7 +2126,7 @@ async function get_live_tracking_on_batch_end (current_model, max_epoch, x_data_
 				predicted_trace.x.push(x_data[i][0]);
 
 				real_trace.y.push(y_data[i][0]);
-				var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
+				var predicted = await ${global_model_name}.predict(tf.tensor(x_data[i])).arraySync()[0][0];
 				predicted_trace.y.push(predicted);
 			}
 
