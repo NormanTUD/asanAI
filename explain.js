@@ -2104,6 +2104,8 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_d
 
 
 
+			log("x_data:", x_data);
+			log("y_data:", y_data);
 
 			for (var i = 0; i < y_data.length; i++) {
 				real_trace.x.push(x_data[i][0]);
