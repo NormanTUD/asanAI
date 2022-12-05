@@ -468,7 +468,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 	for (var i = start; i <= end ; i += step) {
 	    t_x.push([i]);
-	    t_y.push(fn(i));
+	    t_y.push([fn(i)]);
 	}
 
 	if(contains_null(t_y)) {
@@ -490,7 +490,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 	var callbacks = [];
 	try {
-		callbacks = await get_tracing_callbacks(current_model, epochs, t_x, t_y, 10, "adam", true);
+		callbacks = await get_tracing_callbacks(current_model, epochs, JSON.stringify(t_x), JSON.stringify(t_y), 10, "adam", true);
 	} catch (e) {
 		console.error(e);
 	}
@@ -502,11 +502,19 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	var x = tf.tensor(t_x);
 	var y = tf.tensor(t_y);
 
+	log("x:");
+	x.print();
+
+	log("y:");
+	y.print();
+
 	if(shuffle) {
 		tf.util.shuffleCombo(x, y);
 	}
 
+	log("Started training...");
 	await current_model.fit(x, y, {epochs: epochs, callbacks: callbacks, yieldEvery: 'batch'})
+	log("Ended training...");
 }
 
 toc();

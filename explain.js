@@ -2041,7 +2041,10 @@ async function create_loss_landscape () {
 	Plotly.newPlot('graphs_here', data, layout);
 }
 
-async function get_tracing_callbacks (current_model, max_epoch, x_data, y_data, batchSize, optimizer_name, show_loss) {
+async function get_tracing_callbacks (current_model, max_epoch, x_data_json, y_data_json, batchSize, optimizer_name, show_loss) {
+	var x_data = JSON.parse(x_data_json);
+	var y_data = JSON.parse(y_data_json);
+
 	var id = uuidv4();
 
 	var loss_trace = {
@@ -2084,7 +2087,7 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data, y_data, 
 			//1) combine the arrays:
 			var list = [];
 			for (var j = 0; j < x_data.length; j++)
-				list.push({'x_data': parseFloat(x_data[j]), 'y_data': parseFloat(y_data[j])});
+				list.push({'x_data': parseFloat(x_data[j][0]), 'y_data': parseFloat(y_data[j][0])});
 
 			//2) sort:
 			list.sort(function(a, b) {
@@ -2095,8 +2098,8 @@ async function get_tracing_callbacks (current_model, max_epoch, x_data, y_data, 
 
 			//3) separate them back out:
 			for (var k = 0; k < list.length; k++) {
-				x_data[k] = list[k].x_data;
-				y_data[k] = list[k].y_data;
+				x_data[k][0] = list[k].x_data;
+				y_data[k][0] = list[k].y_data;
 			}
 
 
