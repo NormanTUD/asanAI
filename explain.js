@@ -2040,5 +2040,114 @@ async function create_loss_landscape () {
 
 	Plotly.newPlot('graphs_here', data, layout);
 }
+
+async function get_tracing_callbacks (current_model, max_epoch, x_data, y_data, batchSize, optimizer_name, show_loss) {
+	var id = uuidv4();
+
+	var loss_trace = {
+		x: [],
+		y: [],
+		name: 'loss',
+		yaxis: 'y2',
+		xaxis: 'x2',
+		type: 'scatter'
+	};
+
+	var callbacks = {
+		"onEpochEnd": async function (epoch, logs) {
+			//log(epoch, logs);
+			var current_epoch = epoch + 1;
+			if(current_epoch == 1) {
+				$("#training_data").html("");
+				$("<div id='" + id + "_training_data_graph'></div>").appendTo($("#training_data"));
+			}
+
+			loss_trace.x.push(current_epoch);
+			loss_trace.y.push(logs.loss);
+
+			var real_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "real data"
+			};
+
+			var predicted_trace = {
+				x: [],
+				y: [],
+				type: 'scatter',
+				name: "predicted data"
+			};
+
+
+
+			//1) combine the arrays:
+			var list = [];
+			for (var j = 0; j < x_data.length; j++)
+				list.push({'x_data': parseFloat(x_data[j]), 'y_data': parseFloat(y_data[j])});
+
+			//2) sort:
+			list.sort(function(a, b) {
+				return ((a.x_data < b.x_data) ? -1 : ((a.x_data == b.x_data) ? 0 : 1));
+				//Sort could be modified to, for example, sort on the age
+				// if the name is the same.
+			});
+
+			//3) separate them back out:
+			for (var k = 0; k < list.length; k++) {
+				x_data[k] = list[k].x_data;
+				y_data[k] = list[k].y_data;
+			}
+
+
+
+
+			for (var i = 0; i < y_data.length; i++) {
+				real_trace.x.push(x_data[i][0]);
+				predicted_trace.x.push(x_data[i][0]);
+
+				real_trace.y.push(y_data[i]);
+				var predicted = await current_model.predict(tf.tensor(x_data[i])).arraySync()[0][0];
+				predicted_trace.y.push(predicted);
+			}
+
+			var layout = {
+				title: "Epoch " + current_epoch + " of " + max_epoch,
+				yaxis: {title: 'predicted vs. real data'},
+				yaxis: {
+					title: 'y',
+					side: 'left'
+				},
+				xaxis: {
+					title: 'x',
+					side: 'bottom'
+				}
+			};
+
+			var data = [real_trace, predicted_trace];
+			if(show_loss) {
+				data.push(loss_trace);
+				layout["xaxis2"] = {
+					title: 'Epoch',
+					overlaying: 'x',
+					side: 'top'
+				};
+
+				layout["yaxis2"] = {
+					title: 'loss',
+					overlaying: 'y',
+					side: 'right'
+				};
+			}
+			Plotly.newPlot(id + '_training_data_graph', data, layout);
+		}
+	}
+
+
+	return callbacks;
+}
+
+
+
 // grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
 // tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
