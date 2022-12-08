@@ -511,10 +511,10 @@ async function run_neural_network () {
 					old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
 					var new_on_batch_end_callback = await get_live_tracking_on_batch_end("model", parseInt($("#epochs").val()), JSON.stringify(xs_and_ys["x"].arraySync()), JSON.stringify(xs_and_ys["y"].arraySync()), false, "simplest_training_data_visualization");
-					log(new_on_batch_end_callback);
+					//log(new_on_batch_end_callback);
 					if(new_on_batch_end_callback) {
 						fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
-						log("tried installing new callbacks in fit_data:", fit_data);
+						//log("tried installing new callbacks in fit_data:", fit_data);
 						$("#simplest_training_data_visualization").show()
 					} else {
 						log("Could not install new callback");
