@@ -518,13 +518,21 @@
 
 			$$ f(x) = 2x^2 $$
 
-			Of course, the derivative is 4x then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point $x = 10$?
+			Of course, the derivative is \(4x\) then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point \(x = 10\)?
 
-			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = \frac{f(x + 0.0001) - f(x)}{0.0001} $$
+			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = $$
 
-			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = \frac{2(10+0.0001)**2}{0.0001} =  $$
+			$$ \frac{f(x + 0.0001) - f(x)}{0.0001} = $$
 
-			TODO
+			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = $$
+
+			$$ \frac{2(10+0.0001)^2 - 2*(10^2)}{0.0001} =  $$
+
+			$$ \frac{2(10+0.0001)^2 - 200}{0.0001} = $$
+
+			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
+
+			The real answer is 40, the approximated answer is 40.0002; they are, for most cases.
 
 			<h3>Predicting</h3>
 			TODO
