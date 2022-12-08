@@ -430,7 +430,7 @@ async function run_neural_network () {
 		disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked"));
+		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		l("Got data!");
 
 		if(xs_and_ys) {
@@ -492,9 +492,6 @@ async function run_neural_network () {
 		//	show_tab_label("training_data_tab_label", 1);
 		//}
 
-		if($("#jump_to_interesting_tab").is(":checked")) {
-			show_tab_label("tfvis_tab_label");
-		}
 
 		try {
 			await compile_model();
@@ -530,7 +527,9 @@ async function run_neural_network () {
 				$("#simplest_training_data_visualization").html("").hide();
 			}
 
-
+			if($("#jump_to_interesting_tab").is(":checked")) {
+				show_tab_label("tfvis_tab_label", 1);
+			}
 
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
