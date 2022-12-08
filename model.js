@@ -675,7 +675,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 
 	if(typeof(fake_model_structure) == "undefined") {
-		$("#node").html(node_js);
+		//$("#node").html(node_js);
 		$("#html").text(html);
 	}
 
