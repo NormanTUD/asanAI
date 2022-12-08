@@ -2079,14 +2079,14 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				x: [],
 				y: [],
 				type: 'scatter',
-				name: "Real function"
+				name: "Ground Truth"
 			};
 
 			var predicted_trace = {
 				x: [],
 				y: [],
 				type: 'scatter',
-				name: "Predicted data"
+				name: "Prediction"
 			};
 
 			var x_data = ${x_data_json};
