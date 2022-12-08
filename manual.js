@@ -522,7 +522,6 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 toc();
 
-/*
 add_html_for_layer_types("conv2d");
 add_html_for_layer_types("upSampling2d");
 add_html_for_layer_types("maxPooling2d");
@@ -534,4 +533,3 @@ add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
 add_html_for_layer_types("separableConv2d");
 add_html_for_layer_types("depthwiseConv2d");
-*/
