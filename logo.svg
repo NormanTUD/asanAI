@@ -272,7 +272,7 @@
          clip-path="url(#clipPath18)"
          id="g14"><path
            id="path20"
-           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           style="fill:#ffffff;fill-opacity:0;fill-rule:evenodd;stroke:none"
            d="M 0,2.4414e-4 H 2592 V 2592.0002 H 0 Z" /></g></g><path
        id="path22"
        style="fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
