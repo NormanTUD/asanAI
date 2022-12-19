@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html>
+	<!--
+		TODO:
+		https://codepen.io/ismaelexperiments/pen/gxxjZQ
+	-->
+	<head>
+		<title>asanAI Handbook</title>
+		<script src='plotly-latest.min.js'></script>
+		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['$','$']]
+				},
+				jax: ["input/TeX","output/CommonHTML"],
+				processEscapes: true,
+				"showMathMenu": true
+			});
+		</script>
+		<script src='jquery.js'></script>
+		<script src='jquery-ui.js'></script>
+		<script src="tf/tf.js"></script>
+		<script src='variables.js'></script>
+		<script src='safety.js'></script>
+		<script src='explain.js'></script>
+		<script src='model.js'></script>
+		<script src='gui.js'></script>
+
+		<style>
+			body {
+				font-family: sans-serif;
+				background-color: #e5e5e5;
+			}
+
+			.container{
+				margin: 20px auto;
+				width:100px;
+				height:100px;
+				display:grid;
+				grid-template-columns: 50px 50px;
+				grid-row: auto auto;
+				.box{
+					color:#fff;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					font-size:40px;
+					font-family:sans-serif;
+				}
+
+			}
+
+			#contents {
+				white-space: pre-line;
+			}
+
+			.center_vertically {
+				display: flex;
+				align-items: center;
+			}
+
+			.grid3x2 {
+				display: grid;
+				grid-template-columns: repeat(2, 40px);
+				grid-template-rows: repeat(3, 40px);
+				grid-gap: 1px;
+			}
+
+			.grid2x2 {
+				display: grid;
+				grid-template-columns: repeat(2, 40px);
+				grid-template-rows: repeat(2, 40px);
+				grid-gap: 1px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(3, 40px);
+				grid-template-rows: repeat(3, 40px);
+				grid-gap: 1px;
+			}
+
+			.cell {
+				justify-content: center;
+				align-items: center;
+				display: flex;
+				font-family: Arial;
+				font-size: 0.5em;
+				font-weight: bold;
+				background: white;
+				outline: 1px solid black;
+			}
+
+			.flip3dtensor {
+				max-width: 100px;
+				transform: skew(-180deg, 21deg);
+			}
+			
+			.kernel_images {
+				margin: 10px;
+			}
+
+			.out_images {
+				margin: 10px;
+			}
+			
+			img {
+				max-width: 90%;
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+			var default_config_separableConv2d = {
+				filters: 3, 
+				kernelSize: [3, 3],
+				depthMultiplier: 1,
+				depthwiseInitializer: "glorotNormal",
+				depthwiseConstraint: undefined,
+				depthwiseRegularizer: undefined,
+				strides: [1, 1],
+				padding: "same",
+				dilationRate: [1, 1],
+				activation: "relu",
+				useBias: true,
+
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
+
+				kernelConstraint: undefined,
+				biasConstraint: undefined,
+
+				activityRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ),
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+
+			var default_config_depthwiseConv2d = {
+				kernelSize: [3, 3],
+				depthMultiplier: 1,
+				depthwiseInitializer: "glorotNormal",
+				depthwiseConstraint: undefined,
+				depthwiseRegularizer: undefined,
+				strides: [1, 1],
+				padding: "same",
+				dilationRate: [1, 1],
+				activation: "relu",
+				useBias: true,
+
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
+
+				kernelConstraint: undefined,
+				biasConstraint: undefined,
+
+				activityRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ),
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+
+			var default_config_conv2dTranspose = {
+				filters: 3,
+				kernelSize: [3, 3],
+				strides: [1, 1],
+				padding: "same",
+				dilationRate: [1, 1],
+				activation: "relu",
+				useBias: true,
+
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
+
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+
+			var default_config_gaussianNoise = {
+				stddev: 0.1
+			};
+
+			var default_config_gaussianDropout = {
+				rate: 0.1
+			};
+
+			var default_config_dropout = {
+				rate: 0.1
+			};
+
+			var default_config_alphaDropout = {
+				rate: 0.1
+			};
+
+			var default_config_upSampling2d = {
+				size: [2, 2],
+				interpolation: "nearest"
+			};
+
+			var default_config_averagePooling2d = {
+				poolSize: [2, 2],
+				strides: [2, 2],
+				padding: "valid"
+			};
+
+			var default_config_maxPooling2d = {
+				poolSize: [2, 2],
+				strides: [2, 2],
+				padding: "valid"
+			};
+
+			var default_config_conv2d = {
+				filters: 3, 
+				kernelSize: [4, 4], 
+				activation: "sigmoid", 
+				strides: [1, 1], 
+				kernelSize: [3, 3], 
+				dilationRate: [1, 1], 
+				useBias: true, 
+				padding: "valid", 
+
+				biasInitializer: "ones", 
+				kernelInitializer: "glorotUniform", 
+
+				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
+				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
+			};
+		</script>
+
+
+		<div id="training_data"></div>
+
+		<img src="logo_small.png" />
+
+		<div id="toc"></div>
+
+		<div id="contents">
+			<h2>General outline</h2>
+			asanAI offers a simple way of creating sequential neural networks and train them on your own data, from within the browser. It allows you to visualize a lot of different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained model to Python and NodeJS.
+
+			<h2>Quickstart</h2>
+			<h3>GUI Basics</h3>
+			<img src="ribbon.png" />
+			The bar at the top is called ribbon. It contains general options, applicable to all layers, the data itself or the ability to start the training.
+
+			<img src="layers.png" />
+			The left side is the layers panel. It shows the layers of the current neural network in the state they are in currently. Also, it shows the description of what groups of layers do on the right side. 
+
+			<h3>Train on images from webcam</h3>
+			The quickest and easiest way to create a neural network is to simply use images from the webcam.
+
+			Click on the camera icon &#128248; in the top-left of the ribbon.
+
+			<img src="camera_icon.png" />
+
+			You then get a screen where you can set how many images you want to take via webcam (default: 100) and how much time should between them in seconds (default: 0.9 seconds). If you want to take multiple pictures, set these settings accordingly and click "Take 100 images from webcam (0.9 seconds apart)" on the first category.
+
+			If you just want to use a single image, press "Take image from webcam" instead.
+
+			While doing these images, please move the object around, so that the neural network can see it from different angles and sides.
+
+			Each of these buttons is assigned to a category, which you can name. By default, there are 2 categories, but you can add as many as you like. If you want to remove a category, press "Delete this category". If you want to add a category, press "Add new category".
+
+			<img src="camera_data.png" />
+
+			When you have as many categories and images as you wish, go to the ribbon and click <img src="start_training_button.png">.
+
+			Remember that the image will, by default, be converted to 10x10 pixels, so make sure that the objects you hold in front of the camera are well-visible and clearly distinguishable.
+
+			You will then see graphs like these:
+
+			<img src="train_graph_ok.png" />
+
+			For now only the topmost graph is important. The two lines are the <a href="#Loss">Loss</a> and <a href="#Validation_Loss">Validation-Loss</a>.
+
+			Both show how well the network is performing. A simple (but technically inaccurate) way of thinking of them is the number of errors the network makes while predicting. The lower, the better.
+
+			The Validation Loss is based on the <a href="#Validation_Split">Validation Split</a>. This takes a certain percentage out of the training loop and tests the network after each <a href="#Epochs">Epoch</a> on data the network has not yet seen.
+
+			Both graphs should look similiar. Check <a href="#Interpretating_the_training_graph">how to interpret these graphs here</a>.
+
+			When the training is done (or you prematurely cancelled it, which can be done by clicking <img src="stop_training_button.png"> in the ribbon), you get automatically redirected to the Predict tab, where your webcam is already enabled and the prediction of what the network thinks is shown life.
+			
+			<img src="predict_webcam.png">
+
+			The category which has the highest probability is automatically highlighted in green.
+
+			Congratulations! &#127881; You have now trained a neural network. You can now <a href="#Export_to_Python">export it to python</a> and do any kinds of logic with it.
+
+			<h3>Train on images from files</h3>
+			TODO
+
+			<h3>Train on CSV</h3>
+			TODO
+
+			<h2>Basic idea of neural networks</h2>
+			<h3>Data</h3>
+			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every number, every vector and matrix is a tensor.
+
+			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
+
+			$$
+			\textrm{Second dimension}
+			\stackrel{\mbox{First dimension}}{%
+				\begin{pmatrix}
+					a_{11} & a_{12} & \cdots & a_{1M} \\
+					a_{21} & a_{22} & \cdots & a_{2M} \\
+					\vdots & \vdots & \ddots & \vdots \\
+					a_{N1} & a_{N2} & \cdots & a_{NM}
+				\end{pmatrix}%
+			}.
+			$$
+
+			Tensors have an arbitrary number of dimensions.
+
+			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 3x3 pixels, the image as a tensor would look like this:
+
+			$$
+				\text{Image} = \begin{pmatrix}
+					\text{Red:} \begin{pmatrix}
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
+					\end{pmatrix},
+					\text{Green:} \begin{pmatrix}
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
+					\end{pmatrix},
+					\text{Blue:} \begin{pmatrix}
+						255 & 0 & 0 \\
+						0 & 128 & 0 \\
+						0 & 0 & 64
+					\end{pmatrix}
+				\end{pmatrix}
+			$$
+
+			The three channels together give us this total image:
+
+			<div class="center_vertically" style="height: 300px; position: relative">
+				<div style="position: absolute; left: 130px; width: 300px">
+					<span id="training_data_matrix" style="display: inline-flex; width: 150px">
+						<span class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<div class="cell" style='background-color: #0000ff'>255</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #000080'>128</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #000040'>64</div>
+								</span>
+							</span>
+						</span>
+						<span style="position: relative; top: 30px; left: -150px;" class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<div class="cell" style='background-color: #00ff00'>255</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #008000'>128</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell">0</div>
+									<div class="cell" style='background-color: #004000'>64</div>
+								</span>
+							</span>
+						</span>
+						<span style="position: relative; top: 60px; left: -300px;" class="flip3dtensor">
+							<span class="container">
+								<span class="grid">
+									<span class="cell" style='background-color: #ff0000'>255</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell" style='background-color: #800000'>128</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell">0</span>
+									<span class="cell" style='background-color: #400000'>64</span>
+								</span>
+							</span>
+						</span>
+					</span>
+				</div>
+				<div style="position: absolute; left: 260px;">=</div>
+				<div style="position: absolute; left: 280px;">
+					<div class="grid">
+						<div class="cell" style='background-color: #ffffff'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: #808080'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: black'></div>
+						<div class="cell" style='background-color: #404040'></div>
+					</div>
+				</div>
+			</div>
+
+			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
+
+			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape \( [3, 3] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
+
+			<h3>One-Hot-Encoding</h3>
+			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
+			could be \( [\text{Percentage Cat}, \text{Percentage Dog}] \), which, in total, sums up to 1 (100%).
+
+			For more categories, you'd add another entry to that column vector, like \( [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] \), all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
+
+			<h3>Layers</h3>
+			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger function.
+
+			You can imagine them as such:
+
+			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
+
+			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be designed with asanAI.
+
+			<h3>What do functions have to do with neural networks?</h3>
+			A mathematical function assigns values from one set to values from another. For example, the function \( \text{nth\_prime}(n) \) assigns natural numbers \( (1, 2, 3, \dots) \) to a subset of natural numbers, prime numbers, \( (2, 3, 5, \dots) \).
+
+			Since parameters for functions can also be matrices, or even tensors, you can define a computer program as a function that gets some input and produces a specific output, depending solely on the inputs.
+
+			Imagine a set of images of cats and dogs. These are, as already discussed, tensors. If you want to classify these images, you are actually searching a function such that 
+
+			$$ 
+				f\left(\text{Input Image Tensor}\right) = \begin{pmatrix}
+					\text{Probability cat in percent}\\
+					\text{Probability dog in percent}
+				\end{pmatrix}
+			$$
+
+			Writing this function manually is practically impossible. Every picture of every cat or dog is different. Even if it's the same cat, it is different if the picture is taken half a second later. So you cannot simply say "if this pixel has this color and this pixel has this color, and ..., then it is a cat". 
+
+			This is where Neural Networks jump in. Via the layers, we can approximate a function that does that, by connecting different very generalized functions (called layer types) that do specific kinds of tasks.
+
+			We will cover these layers <a href="#Layer_Types">here</a>.
+
+			In neural networks, instead of writing the interna of functions by yourself, you give the network a lot of data and what should come out. Mathematically, you tell the network that the function \( f \) should transform the input set \( X \) to the output set \( Y \). It will try to find values for the parameters of the interna of the functions, whose general outline you need to give by specifying the layer types and their options, so that the difference between the values you specify as ground truth and the values the network gives out is minimized as much as possible.
+
+			<h3>Dimensionality Reduction</h3>
+			A common goal of neural networks is dimensionality reduction.
+
+			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
+
+			This is a dimensionality reduction, from a tensor of the shape \( [64, 64, 3] \) to a tensor of the shape \( [2] \).
+
+			This can be done by several ways. For example, <a href="#Convolutional_Layers">convolutions</a> or <a href="#Pooling_layers">pooling layers</a> "extract" information from images and reduce the number of values and therefore reduce the dimensionality of the inputted images.
+
+			<h3>Training</h3>
+			The <a href="#Loss">loss function</a> creates a single value from the training data \(X\) and \(Y\) such that the lower the number is, the better the results are. 
+			This creates a so-called "loss-landscape", that is a function that represents, for each data point, how well the network currently recognizes it.
+
+			For each point, this is just a single float. The overall loss is the average loss of all points. 
+
+			For each point, while training, a loss is determined. How exactly this is done is dependent on the optimizer chosen (see <a href="#Optimizers">Optimizers</a> for more details).
+
+			After each <a href="#Batch-Size">Batch</a>, the (trainable) weights and biases are adjusted to to better fit the training data and to minimize the loss. The network structure is not altered while training.
+
+			<h4>Batch-Size</h4>
+			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
+
+			$$ 
+				f\left(
+					\begin{pmatrix}
+						x_0 \\
+						x_1 \\
+						x_2 
+					\end{pmatrix}
+				\right) = \begin{pmatrix}
+					y_0 \\
+					y_1 \\
+					y_2 
+				\end{pmatrix}
+			$$
+
+			The next batch may then be:
+
+			$$ 
+				f\left(
+					\begin{pmatrix}
+						x_3 \\
+						x_4 \\
+						x_4 
+					\end{pmatrix}
+				\right) = \begin{pmatrix}
+					y_3 \\
+					y_4 \\
+					y_5 
+				\end{pmatrix}
+			$$
+
+			and so on, until all values have been seen by the network once. This is then called an <a href="#Epochs">epoch</a>.
+
+			<h4>Epochs</h4>
+			When the network, while training, has seen all training data once, this is called an epoch. You usually need many epochs after each other to train a neural network.
+
+			<h4>Shuffling</h4>
+			Because usually not the whole data fits into memory and has to be sharded into smaller chunks (<a href="#Batch-Size">Batches</a>), it is usually recommended to shuffle the data. Imagine you didn't do this in the example network that should learn to classify cats and dogs, and in the first batch the network there are only cats and in the second one only dogs.
+
+			Then, the network would learn "cat" in the first batch and be punished for what it has learnt previously in the next batch, where there are only dogs. 
+
+			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, so the likelyhood of one batch containing only one type of image is drastically reduced.
+
+			<h4>How the computer calculates derivatives of very complex function</h4>
+			
+			One possible definition of derivates is this equation:
+
+			$$ f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} $$
+
+			The way a computer can approximate derivates of any arbitrary function, no matter how complex, is to set h to some very small value.
+
+			Let's say, 
+
+			$$ f(x) = 2x^2 $$
+
+			Of course, the derivative is \(4x\) then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point \(x = 10\)?
+
+			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = $$
+
+			$$ \frac{f(x + 0.0001) - f(x)}{0.0001} = $$
+
+			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = $$
+
+			$$ \frac{2(10+0.0001)^2 - 2\cdot 10^2}{0.0001} =  $$
+
+			$$ \frac{2(10+0.0001)^2 - 200}{0.0001} = $$
+
+			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
+
+			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by chosing a smaller \(h\).
+
+			<h3>Predicting</h3>
+			TODO
+
+			<h3>Shapes</h3>
+			<h4>Input Shape</h4>
+			TODO
+
+			<h4>Output Shape</h4>
+			TODO
+
+			<h3>Overfitting</h3>
+			TODO
+
+			<h2>A very simple neural network</h2>
+			TODO
+
+			<h2>Layer Types</h2>
+			<h3>Basic Layer Types</h3>
+			<h4>Dense</h4>
+
+			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer is as follows:
+
+			$$
+				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \underbrace{\begin{pmatrix}
+						x_{0}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						-1.4404407739639282
+					\end{pmatrix}}_{\mathrm{Kernel^{1 \times 1}}}
+					 + \underbrace{\begin{pmatrix}
+					0
+				\end{pmatrix}}_{\mathrm{Bias}}
+			$$
+
+			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and the Bias may change.
+
+			This, for example, is a Dense Layer with the input shape \( [2] \):
+
+			$$
+				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						0.785955011844635\\
+						-0.015428715385496616
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+					 + \underbrace{\begin{pmatrix}
+						0.123153419419419
+				\end{pmatrix}}_{\mathrm{Bias}}
+			$$
+
+			<h4>Flatten</h4>
+			Flatten has no options. It creates a simple vector of any matrix.
+
+			Example:
+
+			$$
+				\textrm{Flatten}\left( \begin{pmatrix}
+					0 & 1 & 2 \\
+					3 & 4 & 5 \\
+					6 & 7 & 8
+				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
+			$$
+
+			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
+
+			<h4>Dropout</h4>
+			<div id="dropout_example"></div>
+
+
+			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
+
+			$$
+				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
+					\begin{pmatrix}
+						1 & 2 & 3 & 4 \\
+						5 & 6 & 7 & 8 \\
+						9 & 10 & 11 & 12 \\
+						13 & 14 & 15 & 16 \\
+						17 & 18 & 19 & 20 \\
+						21 & 22 & 23 & 24 \\
+					\end{pmatrix}
+				\right)
+				\xrightarrow{\text{Set values randomly to 0 with a 50\% chance}}
+				\begin{pmatrix}
+					0 & 0 & 3 & 0 \\
+					5 & 6 & 7 & 8 \\
+					9 & 10 & 0 & 0 \\
+					0 & 0 & 15 & 0 \\
+					0 & 18 & 19 & 20 \\
+					21 & 0 & 0 & 0 \\
+				\end{pmatrix}
+			$$
+			
+			This is only active while training.
+
+			This is used for avoiding <a href="#Overfitting">overfitting</a>.
+
+			<h4>Reshape</h4>
+
+			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
+
+			TODO
+
+			<h3>Activation Layer Types</h3>
+			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a seperate layer.
+			<h3>Convolutional Layers</h3>
+			<h4>convNd (conv1d, conv2d)</h4>
+			<div id="conv2d_example"></div>
+			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+
+			Example:
+
+			Kernel: \( K = \begin{pmatrix}
+				1 & -1 \\
+				0 & 2
+			\end{pmatrix}\).
+
+			Data: \( D = \begin{pmatrix}
+				10 & 8 & 1 & 4 \\
+				4 & 2 & 14 & 5 \\
+				12 & 20 & 5 & 19 \\
+				32 & 128 & 3 & 30
+			\end{pmatrix}
+			\).
+
+			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is \( S_1 = \begin{pmatrix}
+				10 & 8 \\
+				4 & 2
+				\end{pmatrix} \). \( S_1 \cdot K = \begin{pmatrix}
+					10 & 8 \\
+					4 & 2
+				\end{pmatrix} \cdot \begin{pmatrix}
+				1 & -1 \\
+				0 & 2
+				\end{pmatrix} = \begin{pmatrix}
+					10 & 6 \\
+					4 & 0
+				\end{pmatrix}
+			\).
+
+			The second submatrix is then \( S_2 = \begin{pmatrix}
+				1 & 4 \\
+				14 & 5
+				\end{pmatrix} \), which, multiplied by \(K\), is \( \begin{pmatrix}
+				1 & 7 \\
+				14 & -4
+			\end{pmatrix}
+			\).
+
+			When slided over the whole image, the result is \(
+				\begin{pmatrix}
+					10 & 6 & 1 & 7 \\
+					4 & 0 & 14 & -4 \\
+					12 & 28 & -5 & 43 \\
+					32 & 224 & 3 & 57
+				\end{pmatrix}
+			\). The kernel is being trained to recognize whatever it needs to recognize. 
+
+			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
+
+			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
+
+			A bias is (if enabled) then added to each output value of this graph.
+
+			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
+
+			<h4>conv2dTranspose</h4>
+			<div id="conv2dTranspose_example"></div>
+			TODO
+
+			<h4>depthwiseConv2d</h4>
+			<div id="depthwiseConv2d_example"></div>
+			TODO
+
+			<h4>separableConv2d</h4>
+			<div id="separableConv2d_example"></div>
+			TODO
+
+			<h4>upsampling2d</h4>
+			<div id="upSampling2d_example"></div>
+
+			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
+
+			For example, \(
+			\underbrace{\text{upsampling2d}}_{h = 2,\ w = 4}\left(
+				\begin{pmatrix}
+					1 & 2 \\
+					3 & 4
+				\end{pmatrix}
+			\right) = \begin{pmatrix}
+					1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
+					1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
+					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4 \\
+					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4
+			\end{pmatrix} \).
+
+			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
+
+			<h3>Pooling layers</h3>
+			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
+			<div id="averagePooling2d_example"></div>
+			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+
+			Example:
+
+			$$
+				\underbrace{\text{averagePooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
+					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
+					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
+					\color{orange}{32} & \color{orange}{128} & \color{green}{3} & \color{green}{30}
+				\end{pmatrix}\right) = \begin{pmatrix}
+					\color{red}{\frac{10 + 8 + 4 + 2}{4}} & \color{blue}{\frac{1 + 4 + 14 + 5}{4}} \\
+					\color{orange}{\frac{12+20+32+128}{4}} & \color{green}{\frac{-5+19+3+30}{4}} \\
+				\end{pmatrix} = \begin{pmatrix}
+					\color{red}{6} & \color{blue}{6} \\
+					\color{orange}{48} & \color{green}{11.75} \\
+				\end{pmatrix}
+			$$
+
+
+			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
+			<div id="maxPooling2d_example"></div>
+
+			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
+
+			Example:
+
+			$$
+				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
+					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
+					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
+					\color{orange}{32} & \color{orange}{128} & \color{green}{3} & \color{green}{30}
+				\end{pmatrix}\right) = \begin{pmatrix}
+					\color{red}{10} & \color{blue}{14} \\
+					\color{orange}{128} & \color{green}{30} \\
+				\end{pmatrix}
+			$$
+
+			<h3>Dropout and noise layers</h3>
+			<h4>alphaDropout</h4>
+			<div id="alphaDropout_example"></div>
+
+			TODO
+
+			This layer is only active during training.
+
+			<h4>gaussianDropout</h4>
+			<div id="gaussianDropout_example"></div>
+			Drops out with a gaussian distribution of a specified dropout rate (in the example, 0.2).
+
+			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
+
+			This layer is only active during training.
+
+			<h4>gaussianNoise</h4>
+			<div id="gaussianNoise_example"></div>
+
+			Adds gaussian noise to images. You can specify the standard deviation (in the case shown above = 1) of how noisy the image should be.
+
+			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
+
+			This layer is only active during training.
+
+			<h3>Debug Layers</h3>
+			<h4>Debug Layer</h4>
+			This layer does not do anything to the data. It just prints them out to <tt>console.log</tt>.
+
+			<h2>Layer Options</h2>
+
+			<h3>Trainable</h3>
+			If enabled, the network's weights and biases (if enabled, see <a href="#Use_Bias">Use Bias</a>) are changed while training. If not, they stay the same.
+
+			<h3>Use Bias</h3>
+			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical representation:
+
+			$$ 
+				\underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \mathrm{\underbrace{LeakyReLU}_{\mathrm{Activation}}}\left(\underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						-1.124836802482605\\
+						0.01841479167342186
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+					 + \underbrace{\begin{pmatrix}
+						0.123153419419419
+					\end{pmatrix}}_{\mathrm{Bias}}
+				\right)
+			$$
+
+			A Layer without Use Bias enabled would look like this:
+
+			$$
+				\underbrace{\begin{pmatrix}
+					y_{0}
+					\end{pmatrix}}_{\mathrm{Output}}
+					 = \mathrm{\underbrace{LeakyReLU}_{\mathrm{Activation}}}\left(\underbrace{\begin{pmatrix}
+						x_{0}\\
+						x_{1}
+					\end{pmatrix}}_{\mathrm{Input}}
+					 \times \underbrace{\begin{pmatrix}
+						0.24012170732021332\\
+						1.188180685043335
+					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
+				\right)
+			$$
+
+			The bias allows the function's output to be shifted in any axis.
+
+			<h3>Units</h3>
+			TODO
+
+			<h3>Standard-Deviation</h3>
+			TODO
+
+			<h3>Strides</h3>
+			TODO
+
+			<h3>Regularizer</h3>
+
+			Regularization helps prevent <a href="#Overfitting">overfitting</a>. 
+
+			<h4>l1</h4>
+			TODO
+
+			<h4>l2</h4>
+			TODO
+
+			<h4>l1l2</h4>
+			TODO
+
+			<h3>Initializers</h3>
+			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
+
+			<h4>glorotUniform</h4>
+			TODO
+
+			<h4>constant</h4>
+			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
+
+			$$
+				h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
+					x_{0}\\
+					x_{1}
+				\end{pmatrix}}_{\mathrm{Input}}
+				\times \underbrace{\begin{pmatrix}
+					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42\\
+					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
+				\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+			$$
+
+			<h4>glorotNormal</h4>
+			TODO
+
+			<h4>heNormal</h4>
+			TODO
+
+			<h4>heUniform</h4>
+			TODO
+
+			<h4>leCunNormal</h4>
+			TODO
+
+			<h4>leCunUniform</h4>
+			TODO
+
+			<h4>ones</h4>
+			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+
+			$$
+			\left(\underbrace{\begin{pmatrix}
+				x_{0}\\
+				x_{1}
+			\end{pmatrix}}_{\mathrm{Input}}
+			\times \underbrace{\begin{pmatrix}
+				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
+			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+				+ \underbrace{\begin{pmatrix}
+					0.7754069566726685 \\
+					0.49466845393180847 \\
+					0.7826976180076599 \\
+					0.25087693333625793 \\
+					0.794059157371521 \\
+					0.5701638460159302 \\
+					0.04553954675793648 \\
+					0.20112565159797668
+				\end{pmatrix}}_{\mathrm{Bias}}
+			\right)
+			$$
+
+			<h4>randomNormal</h4>
+			TODO
+
+			<h4>randomUniform</h4>
+			TODO
+
+			<h4>truncatedNormal</h4>
+			TODO
+
+			<h4>varianceScaling</h4>
+			TODO
+
+			<h4>zeros</h4>
+			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+
+			$$
+			\left(\underbrace{\begin{pmatrix}
+				x_{0}\\
+				x_{1}
+			\end{pmatrix}}_{\mathrm{Input}}
+			\times \underbrace{\begin{pmatrix}
+				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+				+ \underbrace{\begin{pmatrix}
+					0.7754069566726685 \\
+					0.49466845393180847 \\
+					0.7826976180076599 \\
+					0.25087693333625793 \\
+					0.794059157371521 \\
+					0.5701638460159302 \\
+					0.04553954675793648 \\
+					0.20112565159797668
+				\end{pmatrix}}_{\mathrm{Bias}}
+			\right)
+			$$
+
+			<h3>Kernel Initializer</h3>
+			The Kernel Initializer sets the initial values of the kernel to one of the <a href="#Initializers">initializers</a>.
+
+			<h3>Bias Initializer</h3>
+			The Bias Initializer sets the initial values of the bias to one of the <a href="#Initializers">initializers</a>.
+
+			<h3>Kernel Regularizer</h3>
+			TODO
+
+			<h3>Bias Regularizer</h3>
+			TODO
+
+			<h3>Dropout Shape</h3>
+			TODO
+
+			<h3>Target Shape</h3>
+			TODO
+
+			<h2>Initializer Functions</h2>
+			TODO
+
+			<h2>Regularizer Functions</h2>
+			TODO
+
+			<h2>Validation Split</h2>
+
+			<h2>Validation Loss</h2>
+
+			<h2>Loss</h2>
+			TODO
+
+			General variables used here:
+
+			$$ \text{Ground truth output value} := y_i $$
+			$$ \text{Ground truth input value} := \hat{x}_i $$
+			$$ \text{Output value of the network} := \hat{y}_i $$
+			$$ \text{Number of elements in total} := n $$
+
+			<h3>meanSquaredError</h3>
+
+			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
+
+			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
+
+			Example-Calculation:
+
+			$$
+				MSE \left(\underbrace{\begin{pmatrix}
+					0.1 \\
+					-0.2 \\
+					1
+				\end{pmatrix}}_{\text{Ground-Truth}},
+				\underbrace{\begin{pmatrix}
+					0 \\
+					0.2 \\
+					-1
+				\end{pmatrix}}_{\text{Predicted Value}}
+				\right) = 
+				\frac{
+					\left( 0.1 - 0 \right)^2 +
+					\left( -0.2 - 0.2 \right)^2 +
+					\left( 1 - -1 \right)^2
+				}{3} = 4.17
+			$$
+
+			<h3>binaryCrossentropy</h3>
+
+			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
+
+			<h3>categoricalCrossentropy</h3>
+			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
+
+			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of \( [5] \).
+			
+			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is \(
+				\begin{pmatrix}
+					0.03 \\
+					0.9 \\
+					0.05 \\
+					0.01 \\
+					0.01
+				\end{pmatrix}
+			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
+
+			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
+
+			We don't want to punish the network for that then, of course. 
+
+			But imagine, category 3 was the correct one. Then, it was very bad, although it is the second best category.
+
+			For this, categoricalCrossentropy is useful. Let us calculate the categorical crossentropy value for each of those options.
+
+			In the first one, the ground-truth output is \(
+				\begin{pmatrix}
+					0 \\	
+					1 \\	
+					0 \\	
+					0 \\	
+					0 \\	
+				\end{pmatrix}
+			\). The categorical crossentropy would be:
+
+			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
+
+			$$ 
+				-\left(
+					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+					\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
+					\underbrace{(0 * \log(0.05))}_\text{Third entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+				\right) =
+			$$
+
+			$$
+				-\left(
+					0 + -0.10536051565782630123 + 0 + 0 + 0
+				\right) = 0.10536051565782630123
+			$$
+
+			This is not a perfect loss, but it indicates the results is quite OK.
+
+			Let's try the other case, where the ground truth is \(
+				\begin{pmatrix}
+					0 \\	
+					0 \\
+					1 \\	
+					0 \\	
+					0 \\	
+				\end{pmatrix}
+			\). The categorical crossentropy would be:
+
+			$$ 
+				-\left(
+					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+					\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
+					\underbrace{(1 * \log(0.05))}_\text{Third entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+				\right) =
+			$$
+
+			$$
+				-\left(
+					0 + 0 + -2.99573227355399099344 + 0 + 0
+				\right) = 2.99573227355399099344
+			$$
+
+			Which is quite a high loss.
+
+			Usually, it is recommeded to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
+
+			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
+
+			This is due to the structure of the \( \log \) function, which starts steeply and gets more and more flat the higher the number gets:
+
+			<div id="log_from_0_to_100"></div>
+
+			<script>
+				var log_trace = {
+					x: [],
+					y: [],
+					type: 'scatter'
+				};
+
+				for (var i = 0; i < 100; i++) {
+					log_trace.x.push(i);
+					log_trace.y.push(Math.log(i));
+				}
+
+				var data = [log_trace];
+				Plotly.newPlot('log_from_0_to_100', data);
+			</script>
+
+			<h3>categoricalHinge</h3>
+			TODO
+
+			<h3>hinge</h3>
+			TODO
+
+			<h3>meanAbsoluteError</h3>
+			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
+
+			The meanAbsoluteError calculcates the absolute difference for each set of values from the ground truth and the predicted value, and
+			averages over them.
+
+			If the ground truth is \( \begin{pmatrix}
+				0 \\
+				10 \\
+				-100
+			\end{pmatrix} \) and the predicted value is \( \begin{pmatrix}
+				3 \\
+				9 \\
+				10
+			\end{pmatrix} \).
+
+			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
+
+			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
+
+			<h3>meanAbsolutePercentageError</h3>
+			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
+
+			The mean absolute percentage error is used to measure forecasting errors.
+
+			Example:
+
+			$$ y =        [1,   0, 0.5, 2] \qquad \text{(Ground Truth)} $$
+
+			$$ \hat{y} =  [0.5, 1, 0.4, 2] \qquad \text{(Predicted)}$$
+
+			$$ n = 4 $$
+
+			$$ 
+				\text{MAPE}\left(y, \hat{y}\right) = 
+				\frac{1}{4} \cdot
+				\left(
+					\left(\frac{0.5-1}{0.5}\right) +
+					\left(\frac{1-0}{1}\right) +
+					\left(\frac{0.4-0.5}{0.5}\right) +
+					\left(\frac{2-2}{2}\right)
+				\right) =
+			$$
+
+			$$
+				\frac{1}{4} \cdot
+				\left(
+					\left(\frac{-0.5}{0.5}\right) + 
+					\left(\frac{1}{1}\right) + 
+					\left(\frac{-0.1}{0.5}\right) + 
+					\left(\frac{0}{2}\right)
+				\right) =
+			$$
+
+			$$
+				\frac{1}{4} \cdot
+				\left(
+					-1 +
+					1 +
+					-0.2 +
+					0
+				\right) =
+			$$
+
+			$$
+				\frac{1}{4} \cdot
+				\left(
+					-0.2
+				\right) = -0.05 
+			$$
+
+			<h3>meanSquaredLogarithmicError</h3>
+			TODO
+
+			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
+
+			<h3>poisson</h3>
+			TODO
+
+			$$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$
+
+			<h3>sparseCategoricalCrossentropy</h3>
+			TODO
+
+			<h3>squaredHinge</h3>
+			TODO
+
+			$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$
+
+			<h3>kullbackLeiblerDivergence</h3>
+			TODO
+
+			$$ 
+				D(P || Q) = \sum_{x \in X} P(x) \cdot \log\left(\frac{P(x)}{Q(x)}\right)
+			$$
+
+			<h3>logcosh</h3>
+			TODO
+
+			$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$
+
+			<h2>Metric</h2>
+			TODO
+
+			<h3>binaryAccuracy</h3>
+			TODO
+
+			<h3>categoricalAccuracy</h3>
+			TODO
+
+			<h3>precision</h3>
+			TODO
+
+			<h3>categoricalCrossentropy</h3>
+			TODO
+
+			<h3>sparseCategoricalCrossentropy</h3>
+			TODO
+
+			<h3>meanSquaredError</h3>
+			TODO
+
+			<h3>meanAbsolutePercentageError</h3>
+			TODO
+
+			<h3>cosine</h3>
+			TODO
+
+			<h2>Activation Functions</h2>
+			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between 0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
+
+			<h3>Linear</h3>
+			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
+
+			$$
+				\text{linear}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}
+			$$
+
+			<h3>Sigmoid</h3>
+			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
+
+			$$ 
+				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
+			$$
+
+			$$
+				\text{sigmoid}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					0.2689414322376251 & 0.5 & 0.7310585975646973 \\
+					0.00004539786823443137 & 0.5 & 0.9999545812606812 \\
+					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
+				\end{pmatrix}
+			$$
+
+			WHEN TO USE TODO
+
+			<h3>ELU</h3>
+			TODO
+
+			$$
+				\mathrm{elu}\left(x\right) = \left\{
+					\begin{array}{ll}
+						x & x \geq 0 \\
+						\alpha\left(e^x - 1\right)& \, x \lt 0 \\
+					\end{array}
+				\right.
+			$$
+
+			WHEN TO USE TODO
+
+			<h3>relu6</h3>
+
+			TODO
+
+			$$
+			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
+			$$
+
+			$$
+				\text{relu6}\left(\begin{pmatrix}
+					-1 & 0 & 1 \\
+					-10 & 0 & 10 \\
+					-100 & 0 & 100 
+				\end{pmatrix}\right) = \begin{pmatrix}
+					0 & 0 & 1 \\
+					0 & 0 & 6 \\
+					0 & 0 & 6
+				\end{pmatrix}
+			$$
+
+			WHEN TO USE TODO
+
+			<h3>SeLu</h3>
+
+			TODO
+
+			$$
+			\mathrm{selu}\left(x\right) = \mathrm{scale} \cdot \mathrm{elu}\left(x, \alpha\right) = \mathrm{scale} \cdot \left\{
+				\begin{array}{ll}
+					x & x \geq 0 \\
+					\alpha\left(e^x - 1\right)& \, x \lt 0 \\
+					\end{array}
+				\right.
+			$$
+
+			WHEN TO USE TODO
+			<h3>SoftPlus</h3>
+
+			TODO
+
+			$$
+				\mathrm{softplus}\left(x\right) = \ln\left(1 + e^x\right)
+			$$
+
+			WHEN TO USE TODO
+
+			<h3>SoftSign</h3>
+
+			TODO
+
+			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
+
+			WHEN TO USE TODO
+
+			<h3>SoftMax</h3>
+			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
+
+			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
+
+			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
+
+			<h3>tanh</h3>
+
+			TODO
+
+			$$ \mathrm{tanh}\left(x\right) = \frac{e^x-e^{-x}}{e^x+e^{-x}}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
+
+			WHEN TO USE TODO
+
+			<h3>LeakyReLu</h3>
+			TODO
+
+			$$ \mathrm{LeakyReLU}\left(x\right) = \mathrm{max}\left(\alpha \cdot x, x\right) $$
+
+			WHEN TO USE 
+
+			<h2>Optimizers</h2>
+
+			<h3>adam</h3>
+			TODO
+
+			<h3>adadelta</h3>
+			TODO
+
+			<h3>adagrad</h3>
+			TODO
+
+			<h3>adamax</h3>
+			TODO
+
+			<h3>rmsprop</h3>
+			TODO
+
+			<h3>sgd</h3>
+			TODO
+
+			<h2>Augmentation</h2>
+			Augmentation means: creating new training data from current training data to make training better without collecting more data manually.
+
+			Augmentation is currently only available for images.
+
+			If you have a network that looks like images (i.e., input shape is like \( [\text{int}, \text{int}, 3] \), and you have chosen <a href="#Expert-mode">Expert Mode</a>, you can easily add augment your data by ticking the augment checkbox in the Home menu.
+
+			<img src="manual/augment.png">
+
+			Then, a new tab, "Augmentation", appears. There, you can chose types of automatic augmentation.
+			
+			<img src="manual/augment2.png">
+			
+			For example images, we have chosen this as a default image to show you the effects of each augmentation types:
+
+			<img src="manual/normal.png">
+
+			These are the four types of augmentation:
+
+			<h3>Auto rotate images?</h3>
+
+			<img src="manual/rotate1.png"><img src="manual/rotate2.png"><img src="manual/rotate3.png"><img src="manual/rotate4.png"><img src="manual/rotate5.png">
+
+			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
+
+			This is useful if you want to detect objects from all kinds of angles.
+
+
+			<h3>Invert images?</h3>
+
+			<img src="manual/invert.png">
+
+			This can be used to force the network train to learn a shape instead of, for example, just colors.
+
+			If chosen, and <a href="Auto_rotate_images">Auto rotate images</a> is also chosen, each rotated image will also be inverted.
+
+			<img src="manual/rotate_invert.png">
+
+			<h3>Flip left/right</h3>
+			<img src="manual/flipped.png">
+
+			Mirrors the image, so that the left side becomes the right one and vice versa.
+
+			<h3>Sine-Ripple?</h3>
+			<img src="manual/sine.png">
+
+			Ripples the image, as if it was a reflection on a pool of water which is rippled. This can be used to simulate hand-drawn or inexact images.
+
+			<h2>Visualizations</h2>
+			TODO
+
+			<h3>Visualize Layer</h3>
+			TODO
+
+			<h3>Math Mode</h3>
+			TODO
+
+			<h4>Math Mode while training</h4>
+			When in math mode while the network is training, you can follow how the weights are changing after each batch.
+
+			$$
+			h_{\text{Shape: }[4]}' = h_{\text{Shape: }[8]} \times \underbrace{\begin{pmatrix}
+				\color{OrangeRed}{-0.3091616630554199} & \color{OrangeRed}{-1.0221514701843262} & \color{SeaGreen}{0.45086362957954407} & \color{OrangeRed}{-0.7998510003089905}\\
+				\color{SeaGreen}{0.9452675580978394} & \color{SeaGreen}{0.5125802755355835} & \color{OrangeRed}{0.2691028118133545} & \color{SeaGreen}{0.5353769063949585}\\
+				\color{SeaGreen}{0.6954256892204285} & \color{SeaGreen}{-0.10241153091192245} & \color{OrangeRed}{-0.7921894788742065} & \color{SeaGreen}{-0.06718342006206512}\\
+				\color{SeaGreen}{0.8208072185516357} & \color{SeaGreen}{0.18873469531536102} & \color{OrangeRed}{-0.9478559494018555} & \color{SeaGreen}{-0.39617955684661865}\\
+				\color{SeaGreen}{0.6045407056808472} & \color{SeaGreen}{1.0430694818496704} & \color{OrangeRed}{0.035687852650880814} & \color{SeaGreen}{0.7145455479621887}\\
+				\color{SeaGreen}{0.8260137438774109} & \color{SeaGreen}{1.054178237915039} & \color{OrangeRed}{-0.0034644887782633305} & \color{SeaGreen}{0.4802440404891968}\\
+				\color{OrangeRed}{-0.26180365681648254} & \color{OrangeRed}{-1.1178499460220337} & \color{SeaGreen}{0.7635270953178406} & \color{OrangeRed}{-0.7277255058288574}\\
+				\color{OrangeRed}{-0.897043764591217} & \color{OrangeRed}{0.08662456274032593} & \color{SeaGreen}{0.7211657762527466} & \color{OrangeRed}{-0.25352758169174194}
+				\end{pmatrix}}_{\mathrm{Kernel^{8 \times 4}}}
+				+ \underbrace{\begin{pmatrix}
+				\color{OrangeRed}{-0.4480378329753876} \\
+				\color{OrangeRed}{-0.38209599256515503} \\
+				\color{SeaGreen}{0.7187266945838928} \\
+				\color{OrangeRed}{-0.549872875213623}
+			\end{pmatrix}}_{\mathrm{Bias}}
+			$$
+
+			Red values have become smaller since the last batch, and green values became larger. Black (or white, depending on if you chose <a href="#Dark-Mode">Dark-Mode</a> or not) values stayed the same.
+
+			When values fluctuate at every batch, the training has found a local minimum.
+
+			<h2>User Modes</h2>
+
+			<img src="manual/mode_choser.png">
+
+			The mode determines what kind of options you see. It can be set in the general tab.
+
+			<h3>Beginner-mode</h3>
+			In Beginner mode, some options are not available. This mode hides everything that is not absolutely needed to be set up manually for a simple neural network.
+
+			It also <a href="#Auto-Input-Shape">automatically generates the input shape</a>, depending on the data you give it.
+
+			Also, it disables layer options that would break the neural network or it's shapes.
+
+			<h3>Expert-mode</h3>
+			The Expert-mode allows the user to set all settings possible. You can even set network stuff that breaks the network, if you want.
+
+			Also, <a href="#Auto-Input-Shape">auto-input-shape</a> can be disabled, and, as such, you can set any arbitrary input shape for your network.
+
+			<h2>Themes</h2>
+
+			Themes alter the color schemes of asanAI, but the layout stays the same. 
+
+			You can chose themes in the "General"-tab.
+
+			<img src="manual/theme_choser.png">
+
+			<h3>Light-Mode</h3>
+			<img style="width: 90%" src="manual/lightmode.png">
+
+			<h3>Dark-Mode</h3>
+			<img style="width: 90%" src="manual/darkmode.png">
+
+			<h3>Natural-Mode</h3>
+			<img style="width: 90%" src="manual/naturalmode.png">
+
+			<h2>Backend</h2>
+			<h3>CPU</h3>
+			TODO
+
+			<h3>GPU</h3>
+			The GPU is faster when you have large GPU memory and a large enough batch size. 
+
+			If the batch size is too small, it may even be slower than CPU.
+
+			<h2>Create your own neural network</h2>
+
+			<h3>From CSV</h3>
+			TODO
+
+			<h3>From Images</h3>
+			TODO
+
+			<h3>From arbitrary tensors</h3>
+			TODO
+
+			<h3>Interpretating the training graph</h3>
+			<h4>Good loss</h4>
+			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
+
+			<img src="manual/loss_ok.png" />
+
+			<img src="manual/good_loss.png" />
+
+
+			<h4>Stopped learning</h4>
+			This graph shows that the learning process has basically stopped. It fluctuates around a certain point (see graph 2), but does not really learn anything new.
+
+			<img src="manual/stopped_learning.png" />
+
+			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters. You may also try to change the step size of the <a href="#Optimizer">optimizer</a>.
+
+			<img src="manual/stopped_training.gif" />
+
+			<h4>Overfitting Loss</h4>
+			TODO
+			<img src="manual/overfitting.png" />
+
+			<h4>No more improvements</h4>
+
+			<img src="manual/no_improvement_2.png" />
+
+			This graph looks almost like there is any change, but look at the left. All change is in a miniscule area, so basically the line is flat, but it looks like it's not at this scale.
+
+			<img src="manual/no_real_improvement.png" />
+
+			<h3>Network Structures</h3>
+			TODO
+
+			<h2>Auto-Input-Shape</h2>
+
+			<h2>Export</h2>
+
+			<h3>Export to Python</h3>
+			<img src="manual/export_to_python.png" />
+			TODO
+
+			<h3>Export to HTML</h3>
+			<img src="manual/export_to_html.png" />
+
+			Exporting to HTML allows you to integrate the trained model in a website.
+
+			First, download the model data (the button at the top of the code), then, at the bottom of the code tab, copy the code itself and insert it into an HTML file. Put it in the same folder as the model files (which has to be served via a webserver), and then you can start building your webapp around this example page.
+
+
+			<h2>Tips for creating neural networks</h2>
+			Start small at first and add until it works.
+
+			<h2>What to do when asanAI crashes your tab?</h2>
+			Please send an error report to your browser provider. This may happen when you allocate larger quantities of memory than is available.
+
+			You can always check the number of used memory by tensors by looking at the bottom right corner.
+
+			There, you can see something like this: <img src="tensor_debugger.png">. It shows you the current usage of your GPU memory and RAM and how many tensors are actually allocated.
+
+			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
+
+			<h2>Contact</h2>
+			Please contact norman.koch@tu-dresden.de if you have any questions.
+		</div>
+
+		<script src="manual.js"></script>
+	</body>
+</html>
