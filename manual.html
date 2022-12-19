@@ -313,6 +313,16 @@ x_1, x_2, x_3, y_1, y_2, y_3
 ...
 </pre>
 
+			<b>Auto-adjust last layer's number of neurons?</b> This sets the number of output neurons depending on the number of values set to "Y".
+
+			<b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 0.
+
+			<b>Shuffle data before doing validation split (recommended)?</b> TensorFlow usually takes the last n% of the input data as Validation Split (if enabled). This way, if the data is ordered, you may miss some categories of data in the training data, because it got shifted to the Validation dataset automatically. This can be counteracted by shuffling the data randomly before the validation split is taken out of the dataset.o
+
+			<b>Auto One-Hot-encode Y (disables "divide by")?</b> Automatically One-Hot-Encodes if the Y-data has only one column and is a string. Then, it autogenerates labels too.
+
+			<b>Auto loss/metric?</b> Set loss and metric automatically depending on how the data is structured (for classification problems it takes <a href="#categoricalCrossentropy">Categorical Crossentropy</a> and <a href="#meanSquaredError">Mean Squared Error</a> for anything else.
+
 			TODO
 
 			<h2>Basic idea of neural networks</h2>
