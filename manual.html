@@ -587,11 +587,17 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			TODO
 
 			<h3>Shapes</h3>
+
+			Tensors have shapes. The shape describe how many data points are in the tensor, and in what way they are arranged.
+
+			For example, an Image may have 3 channels (one for each, red, green and blue), and each of those channels may be 10px wide and 20px height. So the total tensor shape may be \([10, 20, 3]\). If you have multiple of these images, lets say five, you may expand the tensor's first implicit index to 5, like this: \([5, 10, 20, 3]\). Then, you'd have 5 images, each 10x20px, with 3 channels each. This, in total, makes \(5 \cdot 10 \cdot 20 \cdot 3 = 3000\) data points.
+
 			<h4>Input Shape</h4>
-			TODO
+			The input shape of a network is the shape of tensors that the network can process. If the incoming tensor has another shape, it may fail, because the network doesn't know what to do with it.
 
 			<h4>Output Shape</h4>
-			TODO
+			The output shape of a network is the shape of the tensor that comes out of the network. Usually, in asanAI, the output shape consists of Dense Layers that have a One-Hot-Encoding (though this may be different for special kinds of networks not covered in this documentation).
+
 
 			<h3>Overfitting</h3>
 			TODO
