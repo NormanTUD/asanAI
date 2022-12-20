@@ -700,7 +700,21 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
 
-			TODO
+			$$
+				\begin{pmatrix}
+					1 & 2 & 3 \\
+					4 & 5 & 6
+				\end{pmatrix}
+				\xrightarrow{\text{Reshape to [3, 2]}}
+				\begin{pmatrix}
+					1 & 2 \\
+					3 & 4 \\
+					5 & 6
+				\end{pmatrix}
+				
+			$$
+
+			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 
 			<h3>Activation Layer Types</h3>
 			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a seperate layer.
