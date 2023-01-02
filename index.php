@@ -1994,17 +1994,12 @@
 
 			install_memory_debugger();
 		</script>
-
 		<?php minify_js("prism/prism.js"); ?>
 		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
-
 		<script>
-
 			load_time = Date().toLocaleString();
-
 			set_mode();
 		</script>
-		<?php minify_js("wizard_script.js", 1, 1); ?>
 	</body>
 </html>
