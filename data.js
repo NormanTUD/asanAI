@@ -288,6 +288,7 @@ async function get_xs_and_ys () {
 	var data_origin = $("#data_origin").val();
 
 	if($("#jump_to_interesting_tab").is(":checked")) {
+		/*
 		if(data_origin == "default") {
 			show_tab_label("training_data_tab_label", 1);
 		} else if(data_origin == "csv") {
@@ -299,6 +300,9 @@ async function get_xs_and_ys () {
 		} else {
 			log("Invalid option " + data_origin);
 		}
+		*/
+
+		show_tab_label("tfvis_tab_label", 1);
 	}
 
 	var max_number_values = 0;

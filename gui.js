@@ -3170,6 +3170,7 @@ async function change_data_origin() {
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
+		log("hallo 1");
 		show_tab_label("own_csv_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
@@ -4035,6 +4036,8 @@ function hide_tab_label(label) {
 }
 
 function show_tab_label(label, click) {
+	console.log("show_tab_label(" + label + ", " + click + ")");
+
 	var this_label_item = $("#" + label);
 	assert(this_label_item.length == 1, "Invalid or double label " + label);
 	$(this_label_item).show().parent().show();

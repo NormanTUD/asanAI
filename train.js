@@ -488,11 +488,6 @@ async function run_neural_network () {
 		$("#plotly_epoch_history").parent().hide();
 		$("#plotly_epoch_history").html("");
 
-		//if($("#data_origin").val() == "default") {
-		//	show_tab_label("training_data_tab_label", 1);
-		//}
-
-
 		try {
 			await compile_model();
 		} catch (e) {
