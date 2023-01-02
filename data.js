@@ -191,7 +191,7 @@ async function get_image_data(skip_real_image_download) {
 	if(!skip_real_image_download) {
 		await Swal.fire({
 			title: 'Generating tensors from images...',
-			html: "<br><br><br><br><br>This may take some time, but your computer is working!",
+			html: "This may take some time, but your computer is working!",
 			timer: 2000,
 			showConfirmButton: false
 		});
@@ -472,7 +472,7 @@ async function get_xs_and_ys () {
 		} else if(data_origin == "image") {
 			Swal.fire({
 				title: 'Generating tensors from images...',
-				html: "<br><br><br><br><br>This may take some time, but your computer is working!",
+				html: "This may take some time, but your computer is working!",
 				timer: 2000,
 				showConfirmButton: false
 			});

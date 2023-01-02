@@ -77,7 +77,6 @@
 		}
 
 ?>
-		<?php minify_css("wand.css"); ?>
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
 		<?php minify_css("ribbon.css"); ?>
@@ -96,7 +95,6 @@
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
-		<?php /* minify_js("tf/tf-backend-wasm.js"); */ ?>
 		<?php minify_js("custom.js"); ?>
 		<?php minify_js("jsmanipulate.js", 1, 1); ?>
 
