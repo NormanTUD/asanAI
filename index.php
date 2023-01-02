@@ -99,21 +99,6 @@
 		<?php /* minify_js("tf/tf-backend-wasm.js"); */ ?>
 		<?php minify_js("custom.js"); ?>
 		<?php minify_js("jsmanipulate.js", 1, 1); ?>
-		<script>
-			var force_cpu_backend = 0;
-
-			function get_backend() {
-				var backend = $("#backend_chooser > input[type=radio]:checked").val();
-
-				return backend;
-			}
-
-
-			tf.env().set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
-
-			tf.setBackend('cpu');
-			force_cpu_backend = 1;
-		</script>
 
 		<!-- Easter Egg -->
 		<?php minify_js("fireworks.js", 1, 1); ?>
@@ -127,25 +112,6 @@
 		<?php minify_js("data.js"); ?>
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
-			<script>
-				/*
-				(function(){
-				    var oldLog = console.log;
-				    console.log = function (message) {
-					    l(message);
-					oldLog.apply(console, arguments);
-				    };
-				})();
-
-				(function(){
-				    var oldWarn = console.warn;
-				    console.warn = function (message) {
-					    l("WARNING: " + message);
-					oldWarn.apply(console, arguments);
-				    };
-				})();
-				 */
-			</script>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
 		
@@ -170,6 +136,20 @@
 		<?php minify_js("main.js"); ?>
 		
 		<script>
+			var force_cpu_backend = 0;
+
+			function get_backend() {
+				var backend = $("#backend_chooser > input[type=radio]:checked").val();
+
+				return backend;
+			}
+
+
+			tf.env().set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
+
+			tf.setBackend('cpu');
+			force_cpu_backend = 1;
+
 			<?php
 				print "user_id = ";
 				if(array_key_exists("session_id", $_COOKIE)) {
