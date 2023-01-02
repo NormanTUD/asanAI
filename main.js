@@ -426,5 +426,7 @@ $(document).ready(async function() {
 
 	l("Git-Hash: " + git_hash);
 
+	l("TFJS-Version: " + tf.version["tfjs-core"]);
+
 	l("Site is ready");
 });
