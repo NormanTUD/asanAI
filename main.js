@@ -298,9 +298,26 @@ function init_losses_and_metrics () {
 }
 
 
+async function set_backend() {
+	l("Setting backend");
+	var backend = get_backend();
+
+	if(!has_webgl) {
+		backend = "cpu";
+		$("#cpu_backend").prop("checked", true);
+		l("Has no WebGL. Using CPU backend.");
+	}
+
+	await tf.setBackend(backend);
+}
 
 $(document).ready(async function() {
 	swalmsg("Loading page");
+
+	l("Trying to set Backend");
+	await set_backend();
+	l("Backend set");
+
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
 	init_losses_and_metrics();

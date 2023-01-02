@@ -108,11 +108,6 @@
 				return backend;
 			}
 
-			function set_backend() {
-				l("Setting backend");
-				var backend = get_backend();
-				tf.setBackend(backend);
-			}
 
 			tf.env().set("WEBGL_DELETE_TEXTURE_THRESHOLD", 0);
 
@@ -172,6 +167,7 @@
 
 		<?php minify_css("classic.min.css"); ?>
 		<?php minify_js("atrament.js", 1, 1); ?>
+		<?php minify_js("main.js"); ?>
 		
 		<script>
 			<?php
@@ -1406,8 +1402,6 @@
 
 			<span id="memory_debugger_div"></span>
 		</div>
-
-		<?php minify_js("main.js"); ?>
 		<script>
 			function get_color_coded_neurons (number_of_layers) {
 				var colors = [
@@ -1488,8 +1482,6 @@
 					$(".expert_mode_only").show();
 				}
 			}
-
-			set_backend();
 			
 			var clicked_on_tab = 0;
 
