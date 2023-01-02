@@ -792,6 +792,22 @@
 						</div>
 					</div>
 
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group">
+						<div class="ribbon-group">
+							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+								<table>
+									<tr data-intro="Show the input layer in the visualizations?">
+										<td>Show Input-Layer?</td>
+										<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="ribbon-group-title">FCNN/LeNet/AlexNet</div>
+					</div>
+
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
@@ -1274,8 +1290,6 @@
 									</table>
 									<div class="typeset_me" id="math_tab_code"></div>
 								</div>
-
-								Input&nbsp;Layer? <input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" />
 							</div>
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
