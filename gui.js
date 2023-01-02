@@ -3170,7 +3170,6 @@ async function change_data_origin() {
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
-		log("hallo 1");
 		show_tab_label("own_csv_data_label", 1);
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
