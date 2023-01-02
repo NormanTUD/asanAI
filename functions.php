@@ -363,6 +363,7 @@
 				print "<script src='$file'></script>";
 			}
 		}
+		print "\n";
 	}
 
 	function minify_css ($file, $id=null) {
