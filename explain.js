@@ -802,9 +802,13 @@ function draw_internal_states (layer, inputs, applied) {
 				}
 			} else {
 				//log(input_data);
-				var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
+				// TODO HERE
+				//var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
+				//equations.append(latex_str).show();
 
-				equations.append(latex_str).show();
+				var h = array_to_html(output_data);
+
+				equations.append(h).show()
 			}
 		}
 	}
@@ -2201,6 +2205,22 @@ function least_square_equation (x_array, y_array) {
 	var equation = `y = ${m}x + ${b}`;
 
 	return equation;
+}
+
+function array_to_html(array) {
+	var m = '';
+	for (var i = 0; i < array.length; i++) {
+		if(typeof(array[i]) == "object") {
+			for (var j = 0; j < array[i].length; j++) {
+				m += array[i][j] + " ";
+			}
+		} else {
+			m += array[i];
+		}
+		m += "<br>";
+	}
+
+	return m;
 }
 
 // grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
