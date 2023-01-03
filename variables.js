@@ -1,10 +1,13 @@
 "use strict";
 
 function get_scatter_type () {
+	return "scatter";
+	/*
 	if(has_webgl) {
 		return "scattergl";
 	}
 	return "scatter";
+	*/
 }
 
 function uuidv4() {
