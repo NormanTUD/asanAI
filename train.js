@@ -247,12 +247,14 @@ function get_fit_data () {
 
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
+		/*
 		if(training_logs_batch["loss"]["x"] && training_logs_batch["loss"]["x"].length) {
 			$("#approximation_equation").parent().show();
 			$("#approximation_equation").html(least_square_equation(training_logs_batch["loss"]["x"], training_logs_batch["loss"]["y"]));
 		} else {
 			$("#approximation_equation").parent().hide();
 		}
+		*/
 	}
 
 	callbacks["onBatchEnd"] = function (batch, logs) {
@@ -294,6 +296,7 @@ function get_fit_data () {
 			}
 		}
 		*/
+
 
 		$("#plotly_batch_history").parent().show();
 		$("#plotly_time_per_batch").parent().show();
