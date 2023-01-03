@@ -385,9 +385,6 @@ function get_fit_data () {
 		});
 	}
 
-	//callbacks["onBatchEnd"] = async function () {
-	//}
-
 	var fit_data = {
 		validationSplit: validationSplit,
 		batchSize: batchSize,
