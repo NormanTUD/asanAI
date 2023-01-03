@@ -288,13 +288,18 @@ function get_fit_data () {
 		}
 
 		$("#plotly_batch_history").parent().show();
-		Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
-
-		$("#plotly_memory_history").parent().show();
-		Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
-
 		$("#plotly_time_per_batch").parent().show();
-		Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+		//$("#plotly_memory_history").parent().show();
+
+		if(batchNr == 1) {
+			Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
+			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+			//Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
+		} else {
+			Plotly.redraw('plotly_batch_history', this_plot_data, plotly_color);
+			Plotly.redraw('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+			//Plotly.redraw('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
+		}
 
 		if($("#auto_update_predictions").is(":checked")) {
 			if($('#predict_own_data').val()) {
@@ -345,7 +350,11 @@ function get_fit_data () {
 		}
 
 		$("#plotly_epoch_history").parent().show();
-		Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
+		if(epochNr == 1) {
+			Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
+		} else {
+			Plotly.redraw('plotly_epoch_history', this_plot_data, plotly_color);
+		}
 	}
 
 	callbacks["onTrainEnd"] = async function () {
