@@ -194,6 +194,15 @@ function get_model_data (optimizer_name_only) {
 
 	if(!optimizer_name_only) {
 		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+		/*
+		var old_applyGradients = model_data["optimizer"].applyGradients;
+		model_data["optimizer"].applyGradients = function (...args) {
+			log("Optimizer args:");
+			log(args);
+			
+			return old_applyGradients(...args);
+		}
+		*/
 	}
 
 	return model_data;
