@@ -249,7 +249,7 @@ function get_fit_data () {
 		$("#training_progressbar>div").css("width", percentage + "%")
 	}
 
-	callbacks["onBatchEnd"] = async function (batch, logs) {
+	callbacks["onBatchEnd"] = function (batch, logs) {
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -314,7 +314,7 @@ function get_fit_data () {
 		setTimeout('', 1); // thread yield
 	};
 
-	callbacks["onEpochEnd"] = async function (batch, logs) {
+	callbacks["onEpochEnd"] = function (batch, logs) {
 		delete logs["epoch"];
 		delete logs["size"];
 

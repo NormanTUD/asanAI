@@ -1058,7 +1058,14 @@ var plotly_color = {
 		size: 18,
 		color: '#7f7f7f'
 	},
-	xaxis: {dtick: 1}
+	xaxis: {
+		dtick: 0,
+		showgrid: false
+	},
+	yaxis: {
+		showgrid: false
+	}
+
 };
 
 var stop_generating_images = false;
