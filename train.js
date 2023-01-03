@@ -296,9 +296,9 @@ function get_fit_data () {
 			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
 			//Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
 		} else {
-			Plotly.redraw('plotly_batch_history', this_plot_data, plotly_color);
-			Plotly.redraw('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
-			//Plotly.redraw('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
+			Plotly.update('plotly_batch_history', this_plot_data, plotly_color);
+			Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+			//Plotly.update('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
 		}
 
 		if($("#auto_update_predictions").is(":checked")) {
@@ -353,7 +353,7 @@ function get_fit_data () {
 		if(epochNr == 1) {
 			Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
 		} else {
-			Plotly.redraw('plotly_epoch_history', this_plot_data, plotly_color);
+			Plotly.update('plotly_epoch_history', this_plot_data, plotly_color);
 		}
 	}
 
