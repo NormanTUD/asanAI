@@ -149,6 +149,11 @@ async function get_image_data(skip_real_image_download) {
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
 					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+					if(i == 0 && $("#jump_to_interesting_tab").is(":checked")) {
+						show_tab_label("training_data_tab_label", 1);
+					} else {
+						show_tab_label("training_data_tab_label", 0);
+					}
 					document.title = "Loading data " + percentage_text;
 					$("#data_progressbar>div").css("width", percentage + "%")
 					percentage_div.html(percentage_text);
