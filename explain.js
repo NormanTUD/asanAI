@@ -741,7 +741,6 @@ function draw_internal_states (layer, inputs, applied) {
 
 		$("#layer_visualizations_tab").show();
 
-
 		var kernel_data = [];
 		if(Object.keys(model.layers[layer]).includes('kernel')) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
