@@ -813,7 +813,7 @@ function draw_internal_states (layer, inputs, applied) {
 		}
 	}
 
-	MathJax.typeset();
+	//MathJax.typeset();
 }
 
 function zoom_kernel_images (kernel_image_zoom) {
