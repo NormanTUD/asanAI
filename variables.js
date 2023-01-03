@@ -1,5 +1,12 @@
 "use strict";
 
+function get_scatter_type () {
+	if(has_webgl) {
+		return "scattergl";
+	}
+	return "scatter";
+}
+
 function uuidv4() {
 	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -999,7 +1006,7 @@ var training_logs_batch = {
 	"loss": {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'Loss'
 	}
@@ -1009,7 +1016,7 @@ var training_logs_epoch = {
 	"loss": {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'Loss'
 	}
@@ -1019,7 +1026,7 @@ var time_per_batch = {
 	"time": {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'Time per batch (in seconds)'
 	}
@@ -1029,21 +1036,21 @@ var training_memory_history = {
 	numBytes: {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'RAM (MB)'
 	},
 	numBytesInGPU: {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'GPU (MB)'
 	},
 	numTensors: {
 		"x": [],
 		"y": [],
-		"type": "scatter",
+		"type": get_scatter_type(),
 		"mode": 'lines+markers',
 		"name": 'Number of Tensors'
 	}
