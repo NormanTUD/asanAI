@@ -2161,7 +2161,39 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 	return onBatchEnd;
 }
 
+function least_square (x_array, y_array) {
+	assert(x_array.length == y_array.length, "x and y arrays must have the same number of components");
+	assert(x_array.length != 0, "x or y cannot be empty");
 
+	var X = 0;
+	var Y = 0;
+
+	var n = x_array.length;
+
+	for (var i = 0; i < n; i++) {
+		X += x_array[i];
+		Y += y_array[i];
+	}
+
+	X = X / n;
+	Y = Y / n;
+
+	var m_top = 0;
+	var m_bottom = 0;
+
+	for (var i = 0; i < n; i++) {
+		m_top += ((x_array[i] - X) * (y_array[i] - Y));
+		m_bottom += ((x_array[i] - X) ** 2);
+	}
+
+	var m = m_top / m_bottom;
+
+	var b = Y - (m * X);
+
+	var equation = `y = ${m}x + ${b}`;
+
+	return equation;
+}
 
 // grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
 // tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
