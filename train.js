@@ -274,6 +274,7 @@ function get_fit_data () {
 
 		var memory_status = tf.memory();
 
+		/*
 		var objects_in_training_memory_history = Object.keys(training_memory_history);
 
 		for (var i = 0; i < objects_in_training_memory_history.length; i++) {
@@ -286,6 +287,7 @@ function get_fit_data () {
 				training_memory_history[name]["y"].push(memory_status[name]);
 			}
 		}
+		*/
 
 		$("#plotly_batch_history").parent().show();
 		$("#plotly_time_per_batch").parent().show();
