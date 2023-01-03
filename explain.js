@@ -801,11 +801,6 @@ function draw_internal_states (layer, inputs, applied) {
 					input.append(img_input).show();
 				}
 			} else {
-				//log(input_data);
-				// TODO HERE
-				//var latex_str = "$$ " + array_to_latex_matrix(output_data, 0, 1) + "$$";
-				//equations.append(latex_str).show();
-
 				var h = array_to_html(output_data);
 
 				equations.append(h).show()
