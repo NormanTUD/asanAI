@@ -2068,11 +2068,6 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				$("<div id='${id}_training_data_graph'></div>").appendTo($("#${append_to_id}"));
 			}
 
-			/*
-			loss_trace.x.push(current_epoch);
-			loss_trace.y.push(logs.loss);
-			*/
-
 			var real_trace = {
 				x: [],
 				y: [],
@@ -2124,31 +2119,18 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				yaxis: {title: 'predicted vs. real data'},
 				yaxis: {
 					title: 'y',
-					side: 'left'
+					side: 'left',
+					showgrid: false
 				},
 				xaxis: {
 					title: 'x',
-					side: 'bottom'
+					side: 'bottom',
+					showgrid: false
 				}
 			};
 
 			var data = [real_trace, predicted_trace];
-			/*
-			if(show_loss) {
-				data.push(loss_trace);
-				layout["xaxis2"] = {
-					title: 'Epoch',
-					overlaying: 'x',
-					side: 'top'
-				};
 
-				layout["yaxis2"] = {
-					title: 'loss',
-					overlaying: 'y',
-					side: 'right'
-				};
-			}
-			*/
 			Plotly.newPlot('${id}_training_data_graph', data, layout);
 		} catch (e) {
 			console.error(e);
