@@ -200,7 +200,11 @@ function get_model_data (optimizer_name_only) {
 			log("Optimizer args:");
 			log(args);
 			
-			return old_applyGradients(...args);
+			var res = old_applyGradients(...args);
+			log("Optimizer res:");
+			log(res);
+
+			return res;
 		}
 		*/
 	}
