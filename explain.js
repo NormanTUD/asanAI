@@ -2190,6 +2190,14 @@ function least_square (x_array, y_array) {
 
 	var b = Y - (m * X);
 
+	return [m, b];
+}
+
+function least_square_equation (x_array, y_array) {
+	var r = least_square(x_array, y_array);
+	var m = r[0];
+	var b = r[1];
+
 	var equation = `y = ${m}x + ${b}`;
 
 	return equation;

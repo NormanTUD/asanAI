@@ -1390,6 +1390,11 @@
 				<span id="training_progressbar">
 					<div></div>
 				</span>
+				<!--
+				<span style="display: none">
+					| Approximation: <span id="approximation_equation"></span>
+				</span>
+				-->
 			</span>
 
 			<span id="memory_debugger_div"></span>
