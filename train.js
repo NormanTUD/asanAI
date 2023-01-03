@@ -541,6 +541,8 @@ async function run_neural_network () {
 
 			if($("#jump_to_interesting_tab").is(":checked")) {
 				show_tab_label("tfvis_tab_label", 1);
+			} else {
+				show_tab_label("tfvis_tab_label", 0);
 			}
 
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
