@@ -1283,8 +1283,8 @@ function model_to_latex () {
 
 	var input_shape = model.layers[0].input.shape;
 
-	if(input_shape.length != 2) {
-		l("Math mode works only in input shape [n] (or [null, n] with batch)");
+	if(![4, 2].includes(input_shape.length)) {
+		l("Math mode works only in input shape [n] (or [null, n] with batch or [w, h, n] or [null, w, h, n] with batch)");
 		return;
 	}
 
@@ -1750,6 +1750,8 @@ function model_to_latex () {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}"
+		} else if (this_layer_type == "conv2d") {
+			str += "G_\\mathrm{out}(x, y) = \\omega_\\mathrm{out} * F(x, y) = \\left(\\sum_{\\delta x = -k_i}^{k_i} \\sum_{\\delta y = -k_j}^{k_j} \\omega_\\mathrm{out}(\\delta x, \\delta y) \\cdot F(x + \\delta x, y + \\delta y) \\right) + \\omega_{\\mathrm{out}_\\mathrm{bias}}"
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
@@ -1838,10 +1840,36 @@ function can_be_shown_in_latex () {
 	}
 
 	if(model.layers[0].input.shape.length != 2) {
-		if($("#math_tab_label").is(":visible")) {
-			l("Hiding math tab because the input tensor is too large.");
+		if(model.layers[0].input.shape.length == 4) {
+			var allow_anyways = 1;
+			var layer_types = get_layer_type_array();
+
+			for (var i = 0; i < layer_types.length; i++) {
+				var this_layer_name = layer_types[i];
+				var this_layer_category = layer_options[this_layer_name].category;
+
+				if(!(
+					["Noise", "Normalization", "Activation", "Debug", "Pooling", "Convolutional"].includes(this_layer_category) ||
+					["dense", "flatten", "dropout"].includes(this_layer_name)
+				)) {
+					allow_anyways = 0;	
+				}
+			}
+
+			if(allow_anyways) {
+				return true;
+			} else {
+				if($("#math_tab_label").is(":visible")) {
+					l("Hiding math tab because the input tensor is too large.");
+				}
+				return false;
+			}
+		} else {
+			if($("#math_tab_label").is(":visible")) {
+				l("Hiding math tab because the input tensor is too large.");
+			}
+			return false;
 		}
-		return false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
@@ -1851,7 +1879,7 @@ function can_be_shown_in_latex () {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization", "DebugLayer", "gaussianNoise"];
+		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization", "DebugLayer", "gaussianNoise", "conv2d"];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			return false
