@@ -333,7 +333,7 @@ function get_fit_data () {
 			predict_handdrawn();
 		}
 
-		setTimeout('', 1); // thread yield
+		setTimeout('', 0); // thread yield
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
