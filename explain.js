@@ -1751,7 +1751,8 @@ function model_to_latex () {
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}"
 		} else if (this_layer_type == "conv2d") {
-			str += "G_\\mathrm{out}(x, y) = \\omega_\\mathrm{out} * F(x, y) = \\left(\\sum_{\\delta x = -k_i}^{k_i} \\sum_{\\delta y = -k_j}^{k_j} \\omega_\\mathrm{out}(\\delta x, \\delta y) \\cdot F(x + \\delta x, y + \\delta y) \\right) + \\omega_{\\mathrm{out}_\\mathrm{bias}}"
+			var outname = _get_h(i) + " \\longrightarrow ";
+			str += outname + "\\theta_\\mathrm{out} * F(X_0, X_1) = \\left(\\sum_{\\delta X_0 = -k_i}^{k_i} \\sum_{\\delta X_1 = -k_j}^{k_j} \\theta_\\mathrm{out}(\\delta X_0, \\delta X_1) \\cdot F(X_0 + \\delta X_0, X_1 + \\delta X_1) \\right) + \\theta_{\\mathrm{out}_\\mathrm{bias}}"
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
