@@ -1,7 +1,7 @@
 "use strict";
 
 function get_plotly_type () {
-	return 'lines+markers';
+	return 'lines';
 }
 
 function get_scatter_type () {
@@ -1074,9 +1074,11 @@ var plotly_color = {
 	},
 	xaxis: {
 		dtick: 0,
+		showline: false,
 		showgrid: false
 	},
 	yaxis: {
+		showline: false,
 		showgrid: false
 	}
 
