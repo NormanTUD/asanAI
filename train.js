@@ -67,7 +67,7 @@ async function train_neural_network () {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'Loss'
 			}
 		};
@@ -77,7 +77,7 @@ async function train_neural_network () {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'Loss'
 			}
 		};
@@ -89,7 +89,7 @@ async function train_neural_network () {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'Time per batch (in seconds)'
 			}
 		}
@@ -99,21 +99,21 @@ async function train_neural_network () {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'RAM (MB)'
 			},
 			numBytesInGPU: {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'GPU (MB)'
 			},
 			numTensors: {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
-				"mode": 'lines+markers',
+				"mode": get_plotly_type(),
 				"name": 'Number of Tensors'
 			}
 		}
@@ -359,7 +359,7 @@ function get_fit_data () {
 					"x": [],
 					"y": [],
 					"type": get_scatter_type(),
-					"mode": 'lines+markers',
+					"mode": get_plotly_type(),
 					"name": 'Loss'
 				};
 			}
@@ -367,7 +367,7 @@ function get_fit_data () {
 			loss = logs[other_key_name];
 			training_logs_epoch[other_key_name]["x"].push(epochNr);
 			training_logs_epoch[other_key_name]["y"].push(loss);
-			training_logs_epoch[other_key_name]["mode"] = "lines+markers";
+			training_logs_epoch[other_key_name]["mode"] = get_plotly_type();
 			training_logs_epoch[other_key_name]["name"] = other_key_name;
 
 			this_plot_data.push(training_logs_epoch[other_key_name]);

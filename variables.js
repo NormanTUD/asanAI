@@ -1,5 +1,9 @@
 "use strict";
 
+function get_plotly_type () {
+	return 'lines+markers';
+}
+
 function get_scatter_type () {
 	return "scatter";
 	/*
@@ -1010,7 +1014,7 @@ var training_logs_batch = {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'Loss'
 	}
 };
@@ -1020,7 +1024,7 @@ var training_logs_epoch = {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'Loss'
 	}
 };
@@ -1030,7 +1034,7 @@ var time_per_batch = {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'Time per batch (in seconds)'
 	}
 };
@@ -1040,21 +1044,21 @@ var training_memory_history = {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'RAM (MB)'
 	},
 	numBytesInGPU: {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'GPU (MB)'
 	},
 	numTensors: {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
-		"mode": 'lines+markers',
+		"mode": get_plotly_type(),
 		"name": 'Number of Tensors'
 	}
 };
