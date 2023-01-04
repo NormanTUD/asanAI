@@ -1611,19 +1611,6 @@ function reset_photo_gallery() {
 	document.getElementById("photos").innerHTML = "";
 }
 
-function add_photo_to_gallery(url) {
-	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
-
-	var photoscontainer = $("#photoscontainer");
-
-	if (photoscontainer.css("display") == "none") {
-		photoscontainer.show();
-	}
-
-	var html = "<img class='download_img' src='" + url + "' height='90' />";
-	$("#photos").show().html(html + $("#photos").html());
-}
-
 function set_xyz_values(j, name, values) {
 	assert(typeof (j) == "number", "j must be number, is: " + typeof (number));
 	assert(typeof (name) == "string", "name must be string, is: " + typeof (number));

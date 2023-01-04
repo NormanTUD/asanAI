@@ -619,6 +619,19 @@ async function get_xs_and_ys () {
 	return xy_data;
 }
 
+function add_photo_to_gallery(url) {
+	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
+
+	var photoscontainer = $("#photoscontainer");
+
+	if (photoscontainer.css("display") == "none") {
+		photoscontainer.show();
+	}
+
+	var html = "<img class='download_img' src='" + url + "' height='90' />";
+	$("#photos").show().prepend(html);
+}
+
 function url_to_tf (url) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
