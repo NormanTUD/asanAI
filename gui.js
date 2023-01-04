@@ -869,13 +869,17 @@ function hide_no_conv_stuff() {
 	hide_empty_tabs("visualization_ribbon");
 }
 
-async function get_shape_from_array(array) {
-	tf.engine().startScope();
-	var x = tf.tensor(array);
-	var shape = x.shape;
-	tf.engine().endScope();
-
-	return shape;
+async function get_shape_from_array(a) {
+	var dim = [];
+	for (;;) {
+		dim.push(a.length);
+		if (Array.isArray(a[0])) {
+			a = a[0];
+		} else {
+			break;
+		}
+	}
+	return dim;
 }
 
 function stop_webcam() {
