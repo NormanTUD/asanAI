@@ -388,7 +388,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var old_weights_string = false;
 	if(model && Object.keys(model).includes("layers")) {
-		old_weights_string = await get_weights_as_string(model);
+		old_weights_string = last_weights_as_string;
 	}
 
 	current_status_hash = new_current_status_hash;
@@ -1074,7 +1074,8 @@ async function get_weights_as_string (m) {
 			}
 		}
 
-		return JSON.stringify(weights_array);
+		last_weights_as_string = JSON.stringify(weights_array);
+		return last_weights_as_string;
 	} else {
 		return false;
 	}

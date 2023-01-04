@@ -1289,3 +1289,5 @@ var original_adagrad = tf.train.adagrad;
 var original_momentum = tf.train.momentum;
 
 var old_onEpochEnd = undefined;
+
+var last_weights_as_string = "";
