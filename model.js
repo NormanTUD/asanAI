@@ -56,7 +56,7 @@ async function _create_model () {
 }
 
 async function compile_model (keep_weights, force_dont_keep_weights) {
-	assert(get_numberoflayers() >= 1, "Need at least 1 layer.");
+	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
 	keep_weights = keep_weights && $("#keep_weights").is(":checked");
 	if(force_dont_keep_weights) {
@@ -265,7 +265,7 @@ async function get_model_structure() {
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < get_number_of_layers(); i++) {
 		var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
 		var type = $(layer_type).val();
 		if(typeof(type) !== "undefined" && type) {

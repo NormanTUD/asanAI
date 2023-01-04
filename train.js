@@ -293,9 +293,9 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
+		/*
 		var memory_status = tf.memory();
 
-		/*
 		var objects_in_training_memory_history = Object.keys(training_memory_history);
 
 		for (var i = 0; i < objects_in_training_memory_history.length; i++) {

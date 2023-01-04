@@ -311,7 +311,7 @@ async function Sleep(milliseconds) {
 function get_layer_type_array () {
 	var r = [];
 
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < get_number_of_layers(); i++) {
 		r.push($($(".layer_type")[i]).val());
 	}
 
@@ -659,7 +659,7 @@ async function identify_layers (numberoflayers) {
 }
 
 function hide_unused_layer_visualization_headers () {
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < get_number_of_layers(); i++) {
 		hide_layer_visualization_header_if_unused(i);
 	}
 }
@@ -970,7 +970,7 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	//log("Layer: " + layer);
 	var types_in_order = "";
-	if(get_numberoflayers() - 1 == layer) {
+	if(get_number_of_layers() - 1 == layer) {
 		if(labels && labels.length) {
 			types_in_order = " (" + labels.join(", ") + ")";
 		}

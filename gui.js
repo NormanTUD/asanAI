@@ -432,7 +432,7 @@ function insert_initializer_option_trs(layer_nr, initializer_type, option_type) 
 function insert_activation_options(layer_nr) {
 	// TODO NOT YET USED
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
-	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
 	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove()
 
@@ -470,7 +470,7 @@ function set_last_layer_activation_function (activation_function) {
 function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
-	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
 	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove()
 
@@ -493,7 +493,7 @@ function insert_regularizer_options(layer_nr, regularizer_type) {
 function insert_initializer_options(layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
-	assert(layer_nr >= 0 && layer_nr <= get_numberoflayers(), "Invalid layer number");
+	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
 	$($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr").remove()
 
@@ -760,7 +760,7 @@ async function update_python_code(dont_reget_labels) {
 	var layer_types = $(".layer_type");
 	var layer_settings = $(".layer_setting");
 
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < get_number_of_layers(); i++) {
 		var type = $(layer_types[i]).val();
 
 		var data = {};
@@ -908,7 +908,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		return;
 	}
 
-	var numberoflayers = get_numberoflayers();
+	var numberoflayers = get_number_of_layers();
 	show_or_hide_bias_initializer(numberoflayers);
 
 	if (disable_show_python_and_create_model) {
@@ -1182,7 +1182,7 @@ function set_numberoflayers(val) {
 	return val;
 }
 
-function get_numberoflayers() {
+function get_number_of_layers() {
 	return parseInt(document.getElementById("numberoflayers").value);
 }
 
@@ -1339,7 +1339,7 @@ async function disable_all_invalid_layers_from(start) {
 	assert(typeof (start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof (start));
 
 	favicon_spinner();
-	for (var i = start; i < get_numberoflayers(); i++) {
+	for (var i = start; i < get_number_of_layers(); i++) {
 		await enable_valid_layer_types(i);
 	}
 	favicon_default();
@@ -1413,7 +1413,7 @@ async function remove_layer(item) {
 		await updated_page();
 		disable_all_non_selected_layer_types();
 
-		if (get_numberoflayers() - 1 == 0) {
+		if (get_number_of_layers() == 1) {
 			$(".remove_layer").prop("disabled", true).hide();
 		} else {
 			$(".remove_layer").prop("disabled", false).show();
@@ -2001,7 +2001,7 @@ async function chose_dataset(no_set_config) {
 	$("#predict_error").html("");
 	$("#prediction").html("");
 
-	await identify_layers(get_numberoflayers());
+	await identify_layers(get_number_of_layers());
 }
 
 function init_weight_file_list() {
@@ -2889,7 +2889,7 @@ function enable_start_training_custom_tensors() {
 	enable_train();
 
 	if (x_file && y_file) {
-		var last_layer_warning_container = $($(".warning_container")[get_numberoflayers() - 1]);
+		var last_layer_warning_container = $($(".warning_container")[get_number_of_layers() - 1]);
 		if (eval($("#outputShape").val()).join(",") == get_full_shape_without_batch(y_file).join(",")) {
 			special_reason_disable_training = false;
 			last_layer_warning_container.html("").hide();
@@ -2948,7 +2948,7 @@ async function load_weights(dont_show_msg) {
 }
 
 function show_dtype_only_first_layer() {
-	for (var i = 0; i < get_numberoflayers(); i++) {
+	for (var i = 0; i < get_number_of_layers(); i++) {
 		if (i == 0) {
 			$($(".dtype")[i]).parent().parent().show()
 		} else {
@@ -3564,8 +3564,8 @@ function tensor_print_to_string(tensor) {
 }
 
 function contains_convolution() {
-	var number_of_layers = get_numberoflayers();
-	for (var j = 0; j < get_numberoflayers(); j++) {
+	var number_of_layers = get_number_of_layers();
+	for (var j = 0; j < get_number_of_layers(); j++) {
 		var layer_type = $($(".layer_type")[j]).val();
 
 		if (layer_type.includes("conv")) {
@@ -3734,7 +3734,7 @@ async function set_default_input_shape() {
 
 			await compile_model();
 
-			await identify_layers(get_numberoflayers());
+			await identify_layers(get_number_of_layers());
 
 			write_descriptions();
 		} catch (e) {

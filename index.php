@@ -1573,7 +1573,7 @@
 					betweenNodesInLayer.push(10);
 				}
 
-				for (var i = 0; i < get_numberoflayers(); i++) {
+				for (var i = 0; i < get_number_of_layers(); i++) {
 					var number_of_units = get_units_at_layer(i);
 					var layer_type = $($(".layer_type")[i]).val();
 					if(parseInt(number_of_units) > 0) {
@@ -1619,7 +1619,7 @@
 
 				var disable_alexnet = 0;
 
-				for (var i = 0; i < get_numberoflayers(); i++) {
+				for (var i = 0; i < get_number_of_layers(); i++) {
 					if(disable_alexnet) { continue; }
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
@@ -1753,7 +1753,7 @@
 					j--;
 				}
 
-				for (var i = 0; i < get_numberoflayers(); i++) {
+				for (var i = 0; i < get_number_of_layers(); i++) {
 					var layer_type = $($(".layer_type")[i]).val();
 					if(typeof(layer_type) === 'undefined') {
 						return;
