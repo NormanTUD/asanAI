@@ -107,6 +107,20 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	try {
 		model_config_hash = await get_model_config_hash();
 		var model_data = get_model_data();
+
+		/*
+		model_data.optimizer.original_applyGradients = model_data.optimizer.applyGradients;
+
+		model_data.optimizer.applyGradients = function (vargs) {
+			for (var i = 0; i < vargs.length; i++) {
+				vargs[i].tensor.print();
+			}
+
+			var res = model_data.optimizer.original_applyGradients(vargs);
+			return res;
+		}
+		*/
+
 		model.compile(model_data);
 	} catch (e) {
 		except("ERROR2", e);
