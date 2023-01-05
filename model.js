@@ -57,6 +57,7 @@ async function _create_model () {
 
 async function compile_model (keep_weights, force_dont_keep_weights) {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+	weights_as_string_cache = false;
 
 	keep_weights = keep_weights && $("#keep_weights").is(":checked");
 	if(force_dont_keep_weights) {
@@ -81,7 +82,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		}
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
-			old_weights_string = await get_weights_as_string(model);
+			old_weights_string = await get_weights_as_string();
 		}
 	}
 
@@ -132,7 +133,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 	if(keep_weights) {
 		if(old_weights_string) {
-			var new_weights_string = await get_weights_as_string(model);
+			var new_weights_string = await get_weights_as_string();
 			var old_weights = eval(old_weights_string);
 			var new_weights = eval(new_weights_string);
 
@@ -148,6 +149,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		}
 	}
 }
+
 function get_weight_type_name_from_option_name (on) {
 	if(on.match(/_/)) {
 		for (var i = 0; i < valid_initializer_types.length; i++) {
