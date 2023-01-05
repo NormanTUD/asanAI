@@ -642,21 +642,21 @@ function change_output_and_example_image_size() {
 }
 
 async function change_width_or_height(name, inputshape_index) {
-	var t_start = Date.now();
-	l("Changing " + name + "...");
-
-	if(show_swal_when_changing_size) {
-		Swal.fire({
-			title: "Loading new " + name,
-			allowEscapeKey: false,
-			allowOutsideClick: false,
-			showConfirmButton: false
-		});
-	}
 
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
-		if(value) {
+		if(value && value != eval(name)) {
+			var t_start = Date.now();
+			l("Changing " + name + "...");
+			if(show_swal_when_changing_size) {
+				Swal.fire({
+					title: "Loading new " + name,
+					allowEscapeKey: false,
+					allowOutsideClick: false,
+					showConfirmButton: false
+				});
+			}
+
 			var inputShape = get_input_shape();
 			inputShape[inputshape_index] = value;
 			set_input_shape("[" + inputShape.join(", ") + "]");
@@ -668,20 +668,22 @@ async function change_width_or_height(name, inputshape_index) {
 			change_output_and_example_image_size();
 
 			restart_webcams();
+
+			if(show_swal_when_changing_size) {
+				Swal.close()
+			}
+
+			var t_end = Date.now();
+
+			var used_time = ((t_end - t_start) / 1000).toFixed(5);
+
+			l("Done changing " + name + ", took " + used_time + "seconds.");
 		}
 	} else {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
 
-	if(show_swal_when_changing_size) {
-		Swal.close()
-	}
 
-	var t_end = Date.now();
-
-	var used_time = ((t_end - t_start) / 1000).toFixed(5);
-
-	l("Done changing " + name + ", took " + used_time + "seconds.");
 }
 
 async function update_python_code(dont_reget_labels) {
