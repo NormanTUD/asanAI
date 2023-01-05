@@ -1080,7 +1080,7 @@ async function get_weights_as_string (m) {
 	}
 
 	if(!m) {
-		log("Could not get model...");
+		//log("Could not get model...");
 		return false;
 	}
 
