@@ -523,10 +523,12 @@ async function run_neural_network () {
 			write_error_and_reset(e);
 		}
 
+		var fit_data;
+
 		try {
 			add_layer_debuggers();
 
-			var fit_data = get_fit_data();
+			fit_data = get_fit_data();
 
 			l("Started model.fit");
 
@@ -556,7 +558,14 @@ async function run_neural_network () {
 			} else {
 				show_tab_label("tfvis_tab_label", 0);
 			}
+		} catch (e) {
+			write_error_and_reset(e);
+		}
 
+		try {
+			log("Model-Input-shape:", model.getInputAt(0).shape);
+			log("x-shape:", xs_and_ys["x"].shape);
+			log("y-shape:", xs_and_ys["y"].shape);
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 

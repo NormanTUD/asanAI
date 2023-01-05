@@ -366,7 +366,11 @@ async function get_xs_and_ys () {
 					this_data = shuffle(this_data);
 				}
 
-				x = tf.ones([width, height, 3]).expandDims();
+				var imgs_shape = [width, height, 3];
+
+				log(imgs_shape);
+
+				x = tf.ones(imgs_shape).expandDims();
 
 				//log("this_data:", this_data);
 				for (var i = 0; i < this_data.length; i++) {
@@ -375,7 +379,11 @@ async function get_xs_and_ys () {
 					/*
 					log("x.shape", x.shape);
 					log("item.shape", item.shape);
+					log("x.shape, item.shape");
+					log(x.shape);
+					log(item.shape);
 					*/
+
 					x = x.concat(item, 0);
 					classes.push(this_category_counter);
 
@@ -500,7 +508,7 @@ async function get_xs_and_ys () {
 
 						var tf_img = tf.browser.fromPixels(img_elem);
 						var resized_img = tf_img.
-							resizeNearestNeighbor([height, width]).
+							resizeNearestNeighbor([width, height]).
 							toFloat();
 
 						if($("#divide_by").val() != 1) {
@@ -642,7 +650,7 @@ function url_to_tf (url) {
 			let img = await load_image(url);
 			tf_img = tf.browser.fromPixels(img);
 			var resized_img = tf_img.
-				resizeNearestNeighbor([height, width]).
+				resizeNearestNeighbor([width, height]).
 				toFloat().
 				expandDims();
 			dispose(tf_img);

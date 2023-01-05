@@ -656,7 +656,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
-		if(value && eval(name) != value) {
+		if(value) {
 			var inputShape = get_input_shape();
 			inputShape[inputshape_index] = value;
 			set_input_shape("[" + inputShape.join(", ") + "]");
@@ -3036,8 +3036,8 @@ async function update_input_shape() {
 	await updated_page();
 	if(input_shape_is_image()) {
 		var this_shape = get_input_shape();
-		$("#width").val(this_shape[0]);
-		$("#height").val(this_shape[1]);
+		$("#width").val(this_shape[1]);
+		$("#height").val(this_shape[0]);
 		change_width();
 		change_height();
 	}

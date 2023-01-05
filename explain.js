@@ -943,7 +943,7 @@ async function get_image_from_url (url) {
 		let img = await load_image(url);
 		tf_img = tf.browser.fromPixels(img);
 		var resized_img = tf_img.
-			resizeNearestNeighbor([height, width]).
+			resizeNearestNeighbor([width, height]).
 			toFloat().
 			expandDims();
 		if($("#divide_by").val() != 1) {
