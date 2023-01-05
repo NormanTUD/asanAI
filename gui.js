@@ -656,7 +656,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
-		if(value) {
+		if(value && eval(name) != value) {
 			var inputShape = get_input_shape();
 			inputShape[inputshape_index] = value;
 			set_input_shape("[" + inputShape.join(", ") + "]");
