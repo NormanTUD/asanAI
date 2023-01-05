@@ -368,7 +368,7 @@ async function get_xs_and_ys () {
 
 				var imgs_shape = [width, height, 3];
 
-				log(imgs_shape);
+				//log(imgs_shape);
 
 				x = tf.ones(imgs_shape).expandDims();
 

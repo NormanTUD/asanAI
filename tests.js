@@ -344,7 +344,7 @@ async function run_tests () {
 	}
 
 	while (swal.isVisible()) {
-		log("Is still setting config...");
+		l("Is still setting config...");
 		await delay(10);
 	}
 
@@ -353,23 +353,26 @@ async function run_tests () {
 	for (var k = 0; k < X.length; k++) {
 		var wh = X[k];
 
-		log(wh);
 		var start_time = Date.now();
 
 		$("#width").val(wh).trigger("change");
 
+		var i = 1;
 		while (swal.isVisible()) {
-			log("Is still setting width...");
+			l("Is still setting width to " + wh + "...");
 			await delay(10);
+			i++;
 		}
 
 		await delay(1000)
 
 		$("#height").val(wh).trigger("change");
 
+		i = 1;
 		while (swal.isVisible()) {
-			log("Is still setting height...");
+			l("Is still setting height " + wh + "... (" + i + ")");
 			await delay(10);
+			i++;
 		}
 
 		await delay(1000)
