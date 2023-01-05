@@ -1651,6 +1651,8 @@ function set_xyz_values(j, name, values) {
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
+	show_swal_when_changing_size = true;
+
 	var swal_msg = "Loading model";
 	if (index) {
 		swal_msg = "Undoing/redoing";
@@ -1934,6 +1936,8 @@ async function set_config(index) {
 	await updated_page(null, null, null, 1);
 
 	Swal.close();
+
+	show_swal_when_changing_size = true;
 
 	write_descriptions();
 
