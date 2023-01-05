@@ -1291,3 +1291,5 @@ var original_momentum = tf.train.momentum;
 var old_onEpochEnd = undefined;
 
 var last_weights_as_string = "";
+
+var show_swal_when_changing_size = false;

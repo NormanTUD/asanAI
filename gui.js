@@ -642,6 +642,18 @@ function change_output_and_example_image_size() {
 }
 
 async function change_width_or_height(name, inputshape_index) {
+	var t_start = Date.now();
+	l("Changing " + name + "...");
+
+	if(show_swal_when_changing_size) {
+		Swal.fire({
+			title: "Loading new " + name,
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			showConfirmButton: false
+		});
+	}
+
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
 		if(value) {
@@ -652,7 +664,7 @@ async function change_width_or_height(name, inputshape_index) {
 			layer_structure_cache = null;
 			model = await create_model();
 			is_setting_config = false;
-			updated_page();
+			await updated_page();
 			change_output_and_example_image_size();
 
 			restart_webcams();
@@ -661,6 +673,15 @@ async function change_width_or_height(name, inputshape_index) {
 		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
 	}
 
+	if(show_swal_when_changing_size) {
+		Swal.close()
+	}
+
+	var t_end = Date.now();
+
+	var used_time = ((t_end - t_start) / 1000).toFixed(5);
+
+	l("Done changing " + name + ", took " + used_time + "seconds.");
 }
 
 async function update_python_code(dont_reget_labels) {

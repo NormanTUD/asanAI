@@ -330,10 +330,87 @@ async function run_tests () {
 	var y_test = await xy_data.y.arraySync();
 	test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
 
+	log_test("Testing speed");
 
-	test_summary();
+	show_swal_when_changing_size = true;
+	var X = [20, 50, 100];
+	var Y = [];
+
+	$("#dataset").val("signs").trigger("change");
+
+	while (!swal.isVisible()) {
+		log("Is waiting for SWAL...");
+		await delay(10);
+	}
+
+	while (swal.isVisible()) {
+		log("Is still setting config...");
+		await delay(10);
+	}
+
+	await delay(1000)
+
+	for (var k = 0; k < X.length; k++) {
+		var wh = X[k];
+
+		log(wh);
+		var start_time = Date.now();
+
+		$("#width").val(wh).trigger("change");
+
+		while (swal.isVisible()) {
+			log("Is still setting width...");
+			await delay(10);
+		}
+
+		await delay(1000)
+
+		$("#height").val(wh).trigger("change");
+
+		while (swal.isVisible()) {
+			log("Is still setting height...");
+			await delay(10);
+		}
+
+		await delay(1000)
+
+		var end_time = Date.now();
+
+		var used_time = (end_time - start_time) - 3000;
+		Y.push(used_time);
+	}
+
+	show_swal_when_changing_size = false;
+
+	var landau_linear_approx = least_square(X, Y);
+
+	var a = 200;
+	var b = -4000;
+
+	if(get_backend() == "webgl") {
+		a = 200;
+		b = -4000;
+	} else if(get_backend() == "cpu") {
+		a = 200;
+		b = -4000;
+	} else {
+		log("Unknown backend: " + get_backend());
+	}
+
+	var test_ok = false;
+	if(landau_linear_approx[0] <= a && landau_linear_approx[1] <= b) {
+		test_ok = true;
+	}
+
+	log("Approximated O(" + least_square_equation(X, Y) + ")")
+
+	test_equal("Size changing test", test_ok, true);
+
+
 
 	log_test("Tests ended");
+
+	test_summary();
 
 	return num_tests_failed;
 }
