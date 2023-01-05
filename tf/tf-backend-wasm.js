@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2022 Google LLC. All Rights Reserved.
+ * Copyright 2023 Google LLC. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,9 +15,9 @@
  * =============================================================================
  */
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@tensorflow/tfjs-core'), require('path'), require('fs'), require('worker_threads'), require('perf_hooks'), require('os')) :
-    typeof define === 'function' && define.amd ? define(['exports', '@tensorflow/tfjs-core', 'path', 'fs', 'worker_threads', 'perf_hooks', 'os'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.tf = global.tf || {}, global.tf.wasm = global.tf.wasm || {}), global.tf, global.path, global.fs, global.worker_threads, global.perf_hooks, global.require$$4));
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@tensorflow/tfjs-core'), require('fs'), require('path'), require('worker_threads'), require('perf_hooks'), require('os')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@tensorflow/tfjs-core', 'fs', 'path', 'worker_threads', 'perf_hooks', 'os'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.tf = global.tf || {}, global.tf.wasm = global.tf.wasm || {}), global.tf, global.fs, global.path, global.worker_threads, global.perf_hooks, global.require$$4));
 })(this, (function (exports, tfjsCore, require$$0, require$$1, require$$2, require$$3, require$$4) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -5605,9 +5605,6 @@
         var module = { exports: {} };
         return fn(module, module.exports), module.exports;
     }
-    function commonjsRequire(path) {
-        throw new Error('Could not dynamically require "' + path + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
-    }
 
     var tfjsBackendWasmThreadedSimd = createCommonjsModule(function (module, exports) {
         var WasmBackendModuleThreadedSimd = (function () {
@@ -5652,22 +5649,19 @@
                 function logExceptionOnExit(e) { if (e instanceof ExitStatus)
                     return; var toLog = e; err("exiting due to exception: " + toLog); }
                 if (ENVIRONMENT_IS_NODE) {
+                    var fs = require$$0__default["default"];
+                    var nodePath = require$$1__default["default"];
                     if (ENVIRONMENT_IS_WORKER) {
-                        scriptDirectory = require$$0__default["default"].dirname(scriptDirectory) + "/";
+                        scriptDirectory = nodePath.dirname(scriptDirectory) + "/";
                     }
                     else {
                         scriptDirectory = __dirname + "/";
                     }
-                    var fs, nodePath;
-                    if (typeof commonjsRequire === "function") {
-                        fs = require$$1__default["default"];
-                        nodePath = require$$0__default["default"];
-                    }
-                    read_ = function (filename, binary) { filename = nodePath["normalize"](filename); return fs.readFileSync(filename, binary ? undefined : "utf8"); };
+                    read_ = function (filename, binary) { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); return fs.readFileSync(filename, binary ? undefined : "utf8"); };
                     readBinary = function (filename) { var ret = read_(filename, true); if (!ret.buffer) {
                         ret = new Uint8Array(ret);
                     } return ret; };
-                    readAsync = function (filename, onload, onerror) { filename = nodePath["normalize"](filename); fs.readFile(filename, function (err, data) { if (err)
+                    readAsync = function (filename, onload, onerror) { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); fs.readFile(filename, function (err, data) { if (err)
                         onerror(err);
                     else
                         onload(data.buffer); }); };
@@ -5842,7 +5836,7 @@
                         if (!(wasmMemory.buffer instanceof SharedArrayBuffer)) {
                             err("requested a shared WebAssembly.Memory but the returned buffer is not a SharedArrayBuffer, indicating that while the browser has SharedArrayBuffer it does not have WebAssembly threads support - you may need to set a flag");
                             if (ENVIRONMENT_IS_NODE) {
-                                console.log("(on node you may need: --experimental-wasm-threads --experimental-wasm-bulk-memory and also use a recent version)");
+                                err("(on node you may need: --experimental-wasm-threads --experimental-wasm-bulk-memory and/or recent version)");
                             }
                             throw Error("bad memory");
                         }
@@ -5892,13 +5886,8 @@
                         callback();
                     }
                 } }
-                function abort(what) { if (ENVIRONMENT_IS_PTHREAD) {
-                    postMessage({ "cmd": "onAbort", "arg": what });
-                }
-                else {
-                    if (Module["onAbort"]) {
-                        Module["onAbort"](what);
-                    }
+                function abort(what) { if (Module["onAbort"]) {
+                    Module["onAbort"](what);
                 } what = "Aborted(" + what + ")"; err(what); ABORT = true; EXITSTATUS = 1; what += ". Build with -sASSERTIONS for more info."; var e = new WebAssembly.RuntimeError(what); readyPromiseReject(e); throw e; }
                 var dataURIPrefix = "data:application/octet-stream;base64,";
                 function isDataURI(filename) { return filename.startsWith(dataURIPrefix); }
@@ -5960,9 +5949,10 @@
                 function cleanupThread(pthread_ptr) { var worker = PThread.pthreads[pthread_ptr]; assert(worker); PThread.returnWorkerToPool(worker); }
                 function spawnThread(threadParams) { var worker = PThread.getNewWorker(); if (!worker) {
                     return 6;
-                } PThread.runningWorkers.push(worker); PThread.pthreads[threadParams.pthread_ptr] = worker; worker.pthread_ptr = threadParams.pthread_ptr; var msg = { "cmd": "run", "start_routine": threadParams.startRoutine, "arg": threadParams.arg, "pthread_ptr": threadParams.pthread_ptr }; worker.runPthread = function () { msg.time = performance.now(); worker.postMessage(msg, threadParams.transferList); }; if (worker.loaded) {
+                } PThread.runningWorkers.push(worker); PThread.pthreads[threadParams.pthread_ptr] = worker; worker.pthread_ptr = threadParams.pthread_ptr; var msg = { "cmd": "run", "start_routine": threadParams.startRoutine, "arg": threadParams.arg, "pthread_ptr": threadParams.pthread_ptr }; worker.runPthread = function () { if (ENVIRONMENT_IS_NODE) {
+                    worker.ref();
+                } worker.postMessage(msg, threadParams.transferList); delete worker.runPthread; }; if (worker.loaded) {
                     worker.runPthread();
-                    delete worker.runPthread;
                 } return 0; }
                 function _proc_exit(code) { if (ENVIRONMENT_IS_PTHREAD)
                     return _emscripten_proxy_to_main_thread_js(1, 1, code); EXITSTATUS = code; if (!keepRuntimeAlive()) {
@@ -6017,65 +6007,90 @@
                             finally { if (e_2) throw e_2.error; }
                         }
                         PThread.unusedWorkers = [];
-                    }, returnWorkerToPool: function (worker) { var pthread_ptr = worker.pthread_ptr; delete PThread.pthreads[pthread_ptr]; PThread.unusedWorkers.push(worker); PThread.runningWorkers.splice(PThread.runningWorkers.indexOf(worker), 1); worker.pthread_ptr = 0; __emscripten_thread_free_data(pthread_ptr); }, receiveObjectTransfer: function (data) { }, threadInitTLS: function () { PThread.tlsInitFunctions.forEach(function (f) { return f(); }); }, loadWasmModuleToWorker: function (worker, onFinishedLoading) { worker.onmessage = function (e) { var d = e["data"]; var cmd = d["cmd"]; if (worker.pthread_ptr)
-                        PThread.currentProxiedOperationCallerThread = worker.pthread_ptr; if (d["targetThread"] && d["targetThread"] != _pthread_self()) {
-                        var targetWorker = PThread.pthreads[d.targetThread];
-                        if (targetWorker) {
-                            targetWorker.postMessage(d, d["transferList"]);
+                    }, returnWorkerToPool: function (worker) { var pthread_ptr = worker.pthread_ptr; delete PThread.pthreads[pthread_ptr]; PThread.unusedWorkers.push(worker); PThread.runningWorkers.splice(PThread.runningWorkers.indexOf(worker), 1); worker.pthread_ptr = 0; if (ENVIRONMENT_IS_NODE) {
+                        worker.unref();
+                    } __emscripten_thread_free_data(pthread_ptr); }, receiveObjectTransfer: function (data) { }, threadInitTLS: function () { PThread.tlsInitFunctions.forEach(function (f) { return f(); }); }, loadWasmModuleToWorker: function (worker, onFinishedLoading) {
+                        var e_3, _a;
+                        worker.onmessage = function (e) { var d = e["data"]; var cmd = d["cmd"]; if (worker.pthread_ptr)
+                            PThread.currentProxiedOperationCallerThread = worker.pthread_ptr; if (d["targetThread"] && d["targetThread"] != _pthread_self()) {
+                            var targetWorker = PThread.pthreads[d.targetThread];
+                            if (targetWorker) {
+                                targetWorker.postMessage(d, d["transferList"]);
+                            }
+                            else {
+                                err('Internal error! Worker sent a message "' + cmd + '" to target pthread ' + d["targetThread"] + ", but that thread no longer exists!");
+                            }
+                            PThread.currentProxiedOperationCallerThread = undefined;
+                            return;
+                        } if (cmd === "processProxyingQueue") {
+                            executeNotifiedProxyingQueue(d["queue"]);
                         }
-                        else {
-                            err('Internal error! Worker sent a message "' + cmd + '" to target pthread ' + d["targetThread"] + ", but that thread no longer exists!");
+                        else if (cmd === "spawnThread") {
+                            spawnThread(d);
                         }
-                        PThread.currentProxiedOperationCallerThread = undefined;
-                        return;
-                    } if (cmd === "processProxyingQueue") {
-                        executeNotifiedProxyingQueue(d["queue"]);
-                    }
-                    else if (cmd === "spawnThread") {
-                        spawnThread(d);
-                    }
-                    else if (cmd === "cleanupThread") {
-                        cleanupThread(d["thread"]);
-                    }
-                    else if (cmd === "killThread") {
-                        killThread(d["thread"]);
-                    }
-                    else if (cmd === "cancelThread") {
-                        cancelThread(d["thread"]);
-                    }
-                    else if (cmd === "loaded") {
-                        worker.loaded = true;
-                        if (onFinishedLoading)
-                            onFinishedLoading(worker);
-                        if (worker.runPthread) {
-                            worker.runPthread();
-                            delete worker.runPthread;
+                        else if (cmd === "cleanupThread") {
+                            cleanupThread(d["thread"]);
                         }
-                    }
-                    else if (cmd === "print") {
-                        out("Thread " + d["threadId"] + ": " + d["text"]);
-                    }
-                    else if (cmd === "printErr") {
-                        err("Thread " + d["threadId"] + ": " + d["text"]);
-                    }
-                    else if (cmd === "alert") {
-                        alert("Thread " + d["threadId"] + ": " + d["text"]);
-                    }
-                    else if (d.target === "setimmediate") {
-                        worker.postMessage(d);
-                    }
-                    else if (cmd === "onAbort") {
-                        if (Module["onAbort"]) {
-                            Module["onAbort"](d["arg"]);
+                        else if (cmd === "killThread") {
+                            killThread(d["thread"]);
                         }
-                    }
-                    else if (cmd) {
-                        err("worker sent an unknown command " + cmd);
-                    } PThread.currentProxiedOperationCallerThread = undefined; }; worker.onerror = function (e) { var message = "worker sent an error!"; err(message + " " + e.filename + ":" + e.lineno + ": " + e.message); throw e; }; if (ENVIRONMENT_IS_NODE) {
-                        worker.on("message", function (data) { worker.onmessage({ data: data }); });
-                        worker.on("error", function (e) { worker.onerror(e); });
-                        worker.on("detachedExit", function () { });
-                    } worker.postMessage({ "cmd": "load", "urlOrBlob": Module["mainScriptUrlOrBlob"] || _scriptDir, "wasmMemory": wasmMemory, "wasmModule": wasmModule }); }, allocateUnusedWorker: function () { var pthreadMainJs = locateFile("tfjs-backend-wasm-threaded-simd.worker.js"); PThread.unusedWorkers.push(new Worker(pthreadMainJs)); }, getNewWorker: function () { if (PThread.unusedWorkers.length == 0) {
+                        else if (cmd === "cancelThread") {
+                            cancelThread(d["thread"]);
+                        }
+                        else if (cmd === "loaded") {
+                            worker.loaded = true;
+                            if (ENVIRONMENT_IS_NODE) {
+                                worker.unref();
+                            }
+                            if (onFinishedLoading)
+                                onFinishedLoading(worker);
+                            if (worker.runPthread) {
+                                worker.runPthread();
+                            }
+                        }
+                        else if (cmd === "print") {
+                            out("Thread " + d["threadId"] + ": " + d["text"]);
+                        }
+                        else if (cmd === "printErr") {
+                            err("Thread " + d["threadId"] + ": " + d["text"]);
+                        }
+                        else if (cmd === "alert") {
+                            alert("Thread " + d["threadId"] + ": " + d["text"]);
+                        }
+                        else if (d.target === "setimmediate") {
+                            worker.postMessage(d);
+                        }
+                        else if (cmd === "callHandler") {
+                            Module[d["handler"]].apply(Module, __spreadArray([], __read(d["args"]), false));
+                        }
+                        else if (cmd) {
+                            err("worker sent an unknown command " + cmd);
+                        } PThread.currentProxiedOperationCallerThread = undefined; };
+                        worker.onerror = function (e) { var message = "worker sent an error!"; err(message + " " + e.filename + ":" + e.lineno + ": " + e.message); throw e; };
+                        if (ENVIRONMENT_IS_NODE) {
+                            worker.on("message", function (data) { worker.onmessage({ data: data }); });
+                            worker.on("error", function (e) { worker.onerror(e); });
+                            worker.on("detachedExit", function () { });
+                        }
+                        var handlers = [];
+                        var knownHandlers = ["onExit", "onAbort", "print", "printErr"];
+                        try {
+                            for (var knownHandlers_1 = __values(knownHandlers), knownHandlers_1_1 = knownHandlers_1.next(); !knownHandlers_1_1.done; knownHandlers_1_1 = knownHandlers_1.next()) {
+                                var handler = knownHandlers_1_1.value;
+                                if (Module.hasOwnProperty(handler)) {
+                                    handlers.push(handler);
+                                }
+                            }
+                        }
+                        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                        finally {
+                            try {
+                                if (knownHandlers_1_1 && !knownHandlers_1_1.done && (_a = knownHandlers_1.return)) _a.call(knownHandlers_1);
+                            }
+                            finally { if (e_3) throw e_3.error; }
+                        }
+                        worker.postMessage({ "cmd": "load", "handlers": handlers, "urlOrBlob": Module["mainScriptUrlOrBlob"] || _scriptDir, "wasmMemory": wasmMemory, "wasmModule": wasmModule });
+                    }, allocateUnusedWorker: function () { var worker; var pthreadMainJs = locateFile("tfjs-backend-wasm-threaded-simd.worker.js"); worker = new Worker(pthreadMainJs); PThread.unusedWorkers.push(worker); }, getNewWorker: function () { if (PThread.unusedWorkers.length == 0) {
                         PThread.allocateUnusedWorker();
                         PThread.loadWasmModuleToWorker(PThread.unusedWorkers[0]);
                     } return PThread.unusedWorkers.pop(); } };
@@ -6083,8 +6098,7 @@
                 function callRuntimeCallbacks(callbacks) { while (callbacks.length > 0) {
                     callbacks.shift()(Module);
                 } }
-                function withStackSave(f) { var stack = stackSave(); var ret = f(); stackRestore(stack); return ret; }
-                function establishStackSpace() { var pthread_ptr = _pthread_self(); var stackTop = GROWABLE_HEAP_I32()[pthread_ptr + 44 >> 2]; var stackSize = GROWABLE_HEAP_I32()[pthread_ptr + 48 >> 2]; var stackMax = stackTop - stackSize; _emscripten_stack_set_limits(stackTop, stackMax); stackRestore(stackTop); }
+                function establishStackSpace() { var pthread_ptr = _pthread_self(); var stackTop = GROWABLE_HEAP_I32()[pthread_ptr + 52 >> 2]; var stackSize = GROWABLE_HEAP_I32()[pthread_ptr + 56 >> 2]; var stackMax = stackTop - stackSize; _emscripten_stack_set_limits(stackTop, stackMax); stackRestore(stackTop); }
                 Module["establishStackSpace"] = establishStackSpace;
                 function exitOnMainThread(returnCode) { if (ENVIRONMENT_IS_PTHREAD)
                     return _emscripten_proxy_to_main_thread_js(2, 0, returnCode); try {
@@ -6107,7 +6121,6 @@
                 } }
                 Module["invokeEntryPoint"] = invokeEntryPoint;
                 function registerTLSInit(tlsInitFunc) { PThread.tlsInitFunctions.push(tlsInitFunc); }
-                function writeArrayToMemory(array, buffer) { GROWABLE_HEAP_I8().set(array, buffer); }
                 function ___emscripten_init_main_thread_js(tb) { __emscripten_thread_init(tb, !ENVIRONMENT_IS_WORKER, 1, !ENVIRONMENT_IS_WEB); PThread.threadInitTLS(); }
                 function ___emscripten_thread_cleanup(thread) { if (!ENVIRONMENT_IS_PTHREAD)
                     cleanupThread(thread);
@@ -6125,7 +6138,7 @@
                     postMessage(threadParams, transferList);
                     return 0;
                 } return spawnThread(threadParams); }
-                function __emscripten_default_pthread_stack_size() { return 2097152; }
+                function __emscripten_default_pthread_stack_size() { return 65536; }
                 var nowIsMonotonic = true;
                 function __emscripten_get_now_is_monotonic() { return nowIsMonotonic; }
                 function executeNotifiedProxyingQueue(queue) { Atomics.store(GROWABLE_HEAP_I32(), queue >> 2, 1); if (_pthread_self()) {
@@ -6164,14 +6177,12 @@
                 if (ENVIRONMENT_IS_NODE) {
                     _emscripten_get_now = function () { var t = process["hrtime"](); return t[0] * 1e3 + t[1] / 1e6; };
                 }
-                else if (ENVIRONMENT_IS_PTHREAD) {
-                    _emscripten_get_now = function () { return performance.now() - Module["__performance_now_clock_drift"]; };
-                }
                 else
-                    _emscripten_get_now = function () { return performance.now(); };
+                    _emscripten_get_now = function () { return performance.timeOrigin + performance.now(); };
                 function _emscripten_memcpy_big(dest, src, num) { GROWABLE_HEAP_U8().copyWithin(dest, src, src + num); }
                 function _emscripten_num_logical_cores() { if (ENVIRONMENT_IS_NODE)
                     return require$$4__default["default"].cpus().length; return navigator["hardwareConcurrency"]; }
+                function withStackSave(f) { var stack = stackSave(); var ret = f(); stackRestore(stack); return ret; }
                 function _emscripten_proxy_to_main_thread_js(index, sync) { var numCallArgs = arguments.length - 2; var outerArgs = arguments; return withStackSave(function () { var serializedNumCallArgs = numCallArgs; var args = stackAlloc(serializedNumCallArgs * 8); var b = args >> 3; for (var i = 0; i < numCallArgs; i++) {
                     var arg = outerArgs[2 + i];
                     GROWABLE_HEAP_F64()[b + i] = arg;
@@ -6223,6 +6234,7 @@
                     num += len;
                 } GROWABLE_HEAP_U32()[pnum >> 2] = num; return 0; }
                 function getCFunc(ident) { var func = Module["_" + ident]; return func; }
+                function writeArrayToMemory(array, buffer) { GROWABLE_HEAP_I8().set(array, buffer); }
                 function ccall(ident, returnType, argTypes, args, opts) { var toC = { "string": function (str) { var ret = 0; if (str !== null && str !== undefined && str !== 0) {
                         var len = (str.length << 2) + 1;
                         ret = stackAlloc(len);
@@ -6383,7 +6395,7 @@
                 } if (ENVIRONMENT_IS_PTHREAD) {
                     readyPromiseResolve(Module);
                     initRuntime();
-                    postMessage({ "cmd": "loaded" });
+                    startWorker(Module);
                     return;
                 } preRun(); if (runDependencies > 0) {
                     return;
@@ -6434,7 +6446,7 @@
         'default': tfjsBackendWasmThreadedSimd
     }, [tfjsBackendWasmThreadedSimd]);
 
-    var wasmWorkerContents = "\"use strict\";var Module={};var ENVIRONMENT_IS_NODE=typeof process==\"object\"&&typeof process.versions==\"object\"&&typeof process.versions.node==\"string\";if(ENVIRONMENT_IS_NODE){var nodeWorkerThreads=require(\"worker_threads\");var parentPort=nodeWorkerThreads.parentPort;parentPort.on(\"message\",data=>onmessage({data:data}));var fs=require(\"fs\");Object.assign(global,{self:global,require:require,Module:Module,location:{href:__filename},Worker:nodeWorkerThreads.Worker,importScripts:function(f){(0,eval)(fs.readFileSync(f,\"utf8\"))},postMessage:function(msg){parentPort.postMessage(msg)},performance:global.performance||{now:function(){return Date.now()}}})}var initializedJS=false;var pendingNotifiedProxyingQueues=[];function threadPrintErr(){var text=Array.prototype.slice.call(arguments).join(\" \");if(ENVIRONMENT_IS_NODE){fs.writeSync(2,text+\"\n\");return}console.error(text)}function threadAlert(){var text=Array.prototype.slice.call(arguments).join(\" \");postMessage({cmd:\"alert\",text:text,threadId:Module[\"_pthread_self\"]()})}var err=threadPrintErr;self.alert=threadAlert;Module[\"instantiateWasm\"]=(info,receiveInstance)=>{var instance=new WebAssembly.Instance(Module[\"wasmModule\"],info);receiveInstance(instance);Module[\"wasmModule\"]=null;return instance.exports};self.onunhandledrejection=e=>{throw e.reason??e};self.onmessage=e=>{try{if(e.data.cmd===\"load\"){Module[\"wasmModule\"]=e.data.wasmModule;Module[\"wasmMemory\"]=e.data.wasmMemory;Module[\"buffer\"]=Module[\"wasmMemory\"].buffer;Module[\"ENVIRONMENT_IS_PTHREAD\"]=true;if(typeof e.data.urlOrBlob==\"string\"){importScripts(e.data.urlOrBlob)}else{var objectUrl=URL.createObjectURL(e.data.urlOrBlob);importScripts(objectUrl);URL.revokeObjectURL(objectUrl)}WasmBackendModuleThreadedSimd(Module).then(function(instance){Module=instance})}else if(e.data.cmd===\"run\"){Module[\"__performance_now_clock_drift\"]=performance.now()-e.data.time;Module[\"__emscripten_thread_init\"](e.data.pthread_ptr,0,0,1);Module[\"establishStackSpace\"]();Module[\"PThread\"].receiveObjectTransfer(e.data);Module[\"PThread\"].threadInitTLS();if(!initializedJS){pendingNotifiedProxyingQueues.forEach(queue=>{Module[\"executeNotifiedProxyingQueue\"](queue)});pendingNotifiedProxyingQueues=[];initializedJS=true}try{Module[\"invokeEntryPoint\"](e.data.start_routine,e.data.arg)}catch(ex){if(ex!=\"unwind\"){if(ex instanceof Module[\"ExitStatus\"]){if(Module[\"keepRuntimeAlive\"]()){}else{Module[\"__emscripten_thread_exit\"](ex.status)}}else{throw ex}}}}else if(e.data.cmd===\"cancel\"){if(Module[\"_pthread_self\"]()){Module[\"__emscripten_thread_exit\"](-1)}}else if(e.data.target===\"setimmediate\"){}else if(e.data.cmd===\"processProxyingQueue\"){if(initializedJS){Module[\"executeNotifiedProxyingQueue\"](e.data.queue)}else{pendingNotifiedProxyingQueues.push(e.data.queue)}}else if(e.data.cmd){err(\"worker.js received unknown command \"+e.data.cmd);err(e.data)}}catch(ex){if(Module[\"__emscripten_thread_crashed\"]){Module[\"__emscripten_thread_crashed\"]()}throw ex}};";
+    var wasmWorkerContents = "\"use strict\";var Module={};var ENVIRONMENT_IS_NODE=typeof process==\"object\"&&typeof process.versions==\"object\"&&typeof process.versions.node==\"string\";if(ENVIRONMENT_IS_NODE){var nodeWorkerThreads=require(\"worker_threads\");var parentPort=nodeWorkerThreads.parentPort;parentPort.on(\"message\",data=>onmessage({data:data}));var fs=require(\"fs\");Object.assign(global,{self:global,require:require,Module:Module,location:{href:__filename},Worker:nodeWorkerThreads.Worker,importScripts:function(f){(0,eval)(fs.readFileSync(f,\"utf8\")+\"//# sourceURL=\"+f)},postMessage:function(msg){parentPort.postMessage(msg)},performance:global.performance||{now:function(){return Date.now()}}})}var initializedJS=false;var pendingNotifiedProxyingQueues=[];function threadPrintErr(){var text=Array.prototype.slice.call(arguments).join(\" \");if(ENVIRONMENT_IS_NODE){fs.writeSync(2,text+\"\n\");return}console.error(text)}function threadAlert(){var text=Array.prototype.slice.call(arguments).join(\" \");postMessage({cmd:\"alert\",text:text,threadId:Module[\"_pthread_self\"]()})}var err=threadPrintErr;self.alert=threadAlert;Module[\"instantiateWasm\"]=(info,receiveInstance)=>{var instance=new WebAssembly.Instance(Module[\"wasmModule\"],info);receiveInstance(instance);Module[\"wasmModule\"]=null;return instance.exports};self.onunhandledrejection=e=>{throw e.reason??e};self.startWorker=instance=>{Module=instance;postMessage({\"cmd\":\"loaded\"})};self.onmessage=e=>{try{if(e.data.cmd===\"load\"){Module[\"wasmModule\"]=e.data.wasmModule;for(const handler of e.data.handlers){Module[handler]=function(){postMessage({cmd:\"callHandler\",handler:handler,args:[...arguments]})}}Module[\"wasmMemory\"]=e.data.wasmMemory;Module[\"buffer\"]=Module[\"wasmMemory\"].buffer;Module[\"ENVIRONMENT_IS_PTHREAD\"]=true;if(typeof e.data.urlOrBlob==\"string\"){importScripts(e.data.urlOrBlob)}else{var objectUrl=URL.createObjectURL(e.data.urlOrBlob);importScripts(objectUrl);URL.revokeObjectURL(objectUrl)}WasmBackendModuleThreadedSimd(Module)}else if(e.data.cmd===\"run\"){Module[\"__emscripten_thread_init\"](e.data.pthread_ptr,0,0,1);Module[\"establishStackSpace\"]();Module[\"PThread\"].receiveObjectTransfer(e.data);Module[\"PThread\"].threadInitTLS();if(!initializedJS){pendingNotifiedProxyingQueues.forEach(queue=>{Module[\"executeNotifiedProxyingQueue\"](queue)});pendingNotifiedProxyingQueues=[];initializedJS=true}try{Module[\"invokeEntryPoint\"](e.data.start_routine,e.data.arg)}catch(ex){if(ex!=\"unwind\"){if(ex instanceof Module[\"ExitStatus\"]){if(Module[\"keepRuntimeAlive\"]()){}else{Module[\"__emscripten_thread_exit\"](ex.status)}}else{throw ex}}}}else if(e.data.cmd===\"cancel\"){if(Module[\"_pthread_self\"]()){Module[\"__emscripten_thread_exit\"](-1)}}else if(e.data.target===\"setimmediate\"){}else if(e.data.cmd===\"processProxyingQueue\"){if(initializedJS){Module[\"executeNotifiedProxyingQueue\"](e.data.queue)}else{pendingNotifiedProxyingQueues.push(e.data.queue)}}else if(e.data.cmd){err(\"worker.js received unknown command \"+e.data.cmd);err(e.data)}}catch(ex){if(Module[\"__emscripten_thread_crashed\"]){Module[\"__emscripten_thread_crashed\"]()}throw ex}};";
 
     var tfjsBackendWasm = createCommonjsModule(function (module, exports) {
         var WasmBackendModule = (function () {
@@ -6460,22 +6472,19 @@
                 } return scriptDirectory + path; }
                 var read_, readAsync, readBinary;
                 if (ENVIRONMENT_IS_NODE) {
+                    var fs = require$$0__default["default"];
+                    var nodePath = require$$1__default["default"];
                     if (ENVIRONMENT_IS_WORKER) {
-                        scriptDirectory = require$$0__default["default"].dirname(scriptDirectory) + "/";
+                        scriptDirectory = nodePath.dirname(scriptDirectory) + "/";
                     }
                     else {
                         scriptDirectory = __dirname + "/";
                     }
-                    var fs, nodePath;
-                    if (typeof commonjsRequire === "function") {
-                        fs = require$$1__default["default"];
-                        nodePath = require$$0__default["default"];
-                    }
-                    read_ = function (filename, binary) { filename = nodePath["normalize"](filename); return fs.readFileSync(filename, binary ? undefined : "utf8"); };
+                    read_ = function (filename, binary) { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); return fs.readFileSync(filename, binary ? undefined : "utf8"); };
                     readBinary = function (filename) { var ret = read_(filename, true); if (!ret.buffer) {
                         ret = new Uint8Array(ret);
                     } return ret; };
-                    readAsync = function (filename, onload, onerror) { filename = nodePath["normalize"](filename); fs.readFile(filename, function (err, data) { if (err)
+                    readAsync = function (filename, onload, onerror) { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); fs.readFile(filename, function (err, data) { if (err)
                         onerror(err);
                     else
                         onload(data.buffer); }); };
@@ -6640,10 +6649,8 @@
                         callback();
                     }
                 } }
-                function abort(what) { {
-                    if (Module["onAbort"]) {
-                        Module["onAbort"](what);
-                    }
+                function abort(what) { if (Module["onAbort"]) {
+                    Module["onAbort"](what);
                 } what = "Aborted(" + what + ")"; err(what); ABORT = true; what += ". Build with -sASSERTIONS for more info."; var e = new WebAssembly.RuntimeError(what); readyPromiseReject(e); throw e; }
                 var dataURIPrefix = "data:application/octet-stream;base64,";
                 function isDataURI(filename) { return filename.startsWith(dataURIPrefix); }
@@ -6696,7 +6703,6 @@
                 function callRuntimeCallbacks(callbacks) { while (callbacks.length > 0) {
                     callbacks.shift()(Module);
                 } }
-                function writeArrayToMemory(array, buffer) { HEAP8.set(array, buffer); }
                 function _abort() { abort(""); }
                 function getHeapMax() { return 2147483648; }
                 function _emscripten_get_heap_max() { return getHeapMax(); }
@@ -6738,6 +6744,7 @@
                     num += len;
                 } HEAPU32[pnum >> 2] = num; return 0; }
                 function getCFunc(ident) { var func = Module["_" + ident]; return func; }
+                function writeArrayToMemory(array, buffer) { HEAP8.set(array, buffer); }
                 function ccall(ident, returnType, argTypes, args, opts) { var toC = { "string": function (str) { var ret = 0; if (str !== null && str !== undefined && str !== 0) {
                         var len = (str.length << 2) + 1;
                         ret = stackAlloc(len);
@@ -7357,7 +7364,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    var version = '4.1.0';
+    var version = '4.2.0';
 
     var WASM_PRIORITY = 2;
     tfjsCore.registerBackend('wasm', function () { return __awaiter(void 0, void 0, void 0, function () {
