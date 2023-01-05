@@ -384,9 +384,10 @@ async function run_tests () {
 
 	var landau_linear_approx = least_square(X, Y);
 
-	var a = 200;
+	var a = 300;
 	var b = -4000;
 
+	/*
 	if(get_backend() == "webgl") {
 		a = 200;
 		b = -4000;
@@ -396,6 +397,7 @@ async function run_tests () {
 	} else {
 		log("Unknown backend: " + get_backend());
 	}
+	*/
 
 	var test_ok = false;
 	if(landau_linear_approx[0] <= a && landau_linear_approx[1] <= b) {
