@@ -377,6 +377,8 @@ function remove_empty(obj) {
 }
 
 async function create_model (old_model, fake_model_structure, force) {
+	weights_as_string_cache = false;
+
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
 		return old_model;
@@ -1067,11 +1069,16 @@ async function get_weights_as_json (m) {
 
 
 async function get_weights_as_string (m) {
+	if(weights_as_string_cache !== false && !m) {
+		return weights_as_string_cache;
+	}
+
 	if(!m) {
 		m = model;
 	}
 
 	if(!m) {
+		log("Could not get model...");
 		return false;
 	}
 
@@ -1089,6 +1096,7 @@ async function get_weights_as_string (m) {
 		}
 
 		last_weights_as_string = JSON.stringify(weights_array);
+		weights_as_string_cache = last_weights_as_string;
 		return last_weights_as_string;
 	} else {
 		return false;

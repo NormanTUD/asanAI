@@ -563,9 +563,12 @@ async function run_neural_network () {
 		}
 
 		try {
+			/*
 			log("Model-Input-shape:", model.getInputAt(0).shape);
 			log("x-shape:", xs_and_ys["x"].shape);
 			log("y-shape:", xs_and_ys["y"].shape);
+			*/
+			weights_as_string_cache = false;
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 
