@@ -1651,7 +1651,7 @@ function set_xyz_values(j, name, values) {
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
-	show_swal_when_changing_size = true;
+	show_swal_when_changing_size = false;
 
 	var swal_msg = "Loading model";
 	if (index) {
