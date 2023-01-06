@@ -842,12 +842,12 @@ function deprocessImage(x) {
 /* This function normalizes a given tensor so that it's minimum value is 0 and it's maximum value is 1. This is done by subtracting the minimum value from the tensor, and then dividing by the difference between the maximum and minimum values. */
 
 function tensor_normalize_to_rgb_min_max (x) {
-	var max = x.max().dataSync()[0];
-	var min = x.min().dataSync()[0];
+	var max = x.max();
+	var min = x.min();
 
 	var x_minus_min = x.sub(min);
 
-	x = x_minus_min.div(max - min);
+	x = x_minus_min.div(max.sub(min));
 
 	return x;
 }
@@ -909,7 +909,7 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
 
-			//image = tensor_normalize_to_rgb_min_max(image);
+			image = tensor_normalize_to_rgb_min_max(image);
 
 			image = image.add(scaledGrads);
 			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
