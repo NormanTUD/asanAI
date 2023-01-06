@@ -142,7 +142,8 @@ async function get_image_data(skip_real_image_download) {
 	$("#data_loading_progress_bar").show();
 	$("#data_progressbar").css("display", "inline-block");
 
-
+	var data_progressbar_div = $("#data_progressbar>div");
+	var shown_stop_downloading = 0;
 
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
@@ -153,7 +154,7 @@ async function get_image_data(skip_real_image_download) {
 				if(!skip_real_image_download) {
 					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
 					document.title = "Loading data " + percentage_text;
-					$("#data_progressbar>div").css("width", percentage + "%")
+					data_progressbar_div.css("width", percentage + "%")
 					percentage_div.html(percentage_text);
 					if(eta) {
 						percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
@@ -177,7 +178,10 @@ async function get_image_data(skip_real_image_download) {
 					data[keys[url]].push(tf_data);
 				}
 			} else {
-				log("Stop downloading");
+				if(!shown_stop_downloading) {
+					log("Stop downloading");
+					shown_stop_downloading = 1;
+				}
 			}
 		}
 		var end_time = Date.now();
