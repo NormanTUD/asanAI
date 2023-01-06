@@ -288,7 +288,7 @@ function get_fit_data () {
 		$("#plotly_batch_history").parent().show();
 		$("#plotly_time_per_batch").parent().show();
 
-		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > 5000) { // Only plot every 5 seconds
+		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parseInt($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {
 				Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_layout);
 				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);

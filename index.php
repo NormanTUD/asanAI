@@ -780,10 +780,14 @@
 										<td>Show Input-Layer?</td>
 										<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
 									</tr>
+									<tr data-intro="How many seconds before re-plotting the batch-graph?">
+										<td>Batch-Plot-Minimum-Time (s)</td>
+										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 86px" /></td>
+									</tr>
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title">FCNN/LeNet/AlexNet</div>
+						<div class="ribbon-group-title">FCNN/LeNet/AlexNet/Batch-Plot</div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
