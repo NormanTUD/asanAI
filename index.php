@@ -787,7 +787,7 @@
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title">FCNN/LeNet/AlexNet/Batch-Plot</div>
+						<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
