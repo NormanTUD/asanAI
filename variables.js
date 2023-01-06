@@ -1295,3 +1295,5 @@ var last_weights_as_string = "";
 var show_swal_when_changing_size = false;
 
 var weights_as_string_cache = false;
+
+var last_batch_plot_time = false;

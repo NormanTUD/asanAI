@@ -288,12 +288,15 @@ function get_fit_data () {
 		$("#plotly_batch_history").parent().show();
 		$("#plotly_time_per_batch").parent().show();
 
-		if(batchNr == 1) {
-			Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_layout);
-			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
-		} else {
-			Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
-			Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > 5000) { // Only plot every 5 seconds
+			if(batchNr == 1) {
+				Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_layout);
+				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+			} else {
+				Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
+				Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+			}
+			last_batch_plot_time = Date.now();
 		}
 
 		if($("#auto_update_predictions").is(":checked")) {
@@ -348,6 +351,11 @@ function get_fit_data () {
 		} else {
 			Plotly.update('plotly_epoch_history', this_plot_data, plotly_layout);
 		}
+
+		var this_plot_data = [training_logs_batch["loss"]];
+		Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
+		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+		last_batch_plot_time = false;
 	}
 
 	callbacks["onTrainEnd"] = async function () {
