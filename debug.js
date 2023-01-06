@@ -218,7 +218,8 @@ function memory_debugger () {
 		debug_string = debug_string + ", GPU: " + gpu_mb + "MB"
 	}
 
-	$("#memory_debugger_div").html(debug_string);
+	document.querySelector('#memory_debugger_div').innerHTML = debug_string;
+	//$("#memory_debugger_div").html(debug_string);
 }
 
 function install_memory_debugger () {

@@ -66,7 +66,9 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 	var recreate_model = false;
 
-	if(model_config_hash != await get_model_config_hash() || current_status_hash != get_current_status_hash()) {
+	var new_model_config_hash = await get_model_config_hash();
+
+	if(model_config_hash != new_model_config_hash || current_status_hash != get_current_status_hash()) {
 		recreate_model = true;
 	}
 
@@ -89,7 +91,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	var model_was_trained_previously = model_is_trained;
 
 	if(model_is_trained) {
-		if(model_config_hash == await get_model_config_hash()) {
+		if(model_config_hash == new_model_config_hash) {
 			recreate_model = false;
 		} else {
 			recreate_model = true;
@@ -106,7 +108,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	}
 
 	try {
-		model_config_hash = await get_model_config_hash();
+		model_config_hash = get_model_config_hash;
 		var model_data = get_model_data();
 
 		/*
