@@ -776,6 +776,10 @@
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
+									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
+										<td>Max. neurons FCNN?</td>
+										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px" /></td>
+									</tr>
 									<tr data-intro="Show the input layer in the visualizations?">
 										<td>Show Input-Layer?</td>
 										<td><input class="show_data" type='checkbox' value="1" onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
@@ -1518,9 +1522,11 @@
 					log(e);
 				}
 
-				if(units > 32) {
-					log("Units is " + units + ", which is bigger than 32. 32 is the maximum, it will get set to this for layer " + i);
-					units = 32;
+				var max_neurons_fcnn = parseInt($("#max_neurons_fcnn").val());
+
+				if(units > max_neurons_fcnn) {
+					l("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
+					units = max_neurons_fcnn;
 				}
 
 				return units;
