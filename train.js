@@ -260,14 +260,6 @@ function get_fit_data () {
 
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
-		/*
-		if(training_logs_batch["loss"]["x"] && training_logs_batch["loss"]["x"].length) {
-			$("#approximation_equation").parent().show();
-			$("#approximation_equation").html(least_square_equation(training_logs_batch["loss"]["x"], training_logs_batch["loss"]["y"]));
-		} else {
-			$("#approximation_equation").parent().hide();
-		}
-		*/
 	}
 
 	callbacks["onBatchEnd"] = function (batch, logs) {
@@ -293,36 +285,15 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
-		/*
-		var memory_status = tf.memory();
-
-		var objects_in_training_memory_history = Object.keys(training_memory_history);
-
-		for (var i = 0; i < objects_in_training_memory_history.length; i++) {
-			var name = objects_in_training_memory_history[i];
-
-			training_memory_history[name]["x"].push(batchNr);
-			if(["numBytes", "numBytesInGPU"].includes(name)) {
-				training_memory_history[name]["y"].push(memory_status[name] / 1048576);
-			} else {
-				training_memory_history[name]["y"].push(memory_status[name]);
-			}
-		}
-		*/
-
-
 		$("#plotly_batch_history").parent().show();
 		$("#plotly_time_per_batch").parent().show();
-		//$("#plotly_memory_history").parent().show();
 
 		if(batchNr == 1) {
 			Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
 			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
-			//Plotly.newPlot('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
 		} else {
 			Plotly.update('plotly_batch_history', this_plot_data, plotly_color);
 			Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
-			//Plotly.update('plotly_memory_history', [training_memory_history["numBytesInGPU"], training_memory_history["numBytes"], training_memory_history["numTensors"]], plotly_color);
 		}
 
 		if($("#auto_update_predictions").is(":checked")) {
@@ -332,7 +303,6 @@ function get_fit_data () {
 			show_prediction(0, 1);
 			predict_handdrawn();
 		}
-		//setTimeout('', 0); // thread yield
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
