@@ -4764,6 +4764,16 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 	*/
 }
 
+function clear_attrament (idname) {
+	atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
+	atrament_data[idname]['atrament'].context.fillRect(
+		0, 
+		0, 
+		atrament_data[idname]['atrament'].canvas.width, 
+		atrament_data[idname]['atrament'].canvas.height
+	);
+}
+
 function get_drawing_board_on_page (indiv, idname, customfunc) {
 	if(!customfunc) {
 		customfunc = "";
@@ -4778,7 +4788,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			<option value="erase" default>Erase</option>
 		</select><br />
 		<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;"  />
-		<button id="clear" onclick="event.preventDefault();atrament_data['${idname}']['atrament'].clear();${customfunc}">Clear</button>
+		<button id="clear" onclick="event.preventDefault();clear_attrament('${idname}');${customfunc}">Clear</button>
 	</form>
 	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
