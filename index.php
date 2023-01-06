@@ -1220,7 +1220,7 @@
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label">Math</a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
-									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated filter/neuron</a></li>
+									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 								</ul>
 
