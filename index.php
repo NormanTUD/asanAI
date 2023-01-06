@@ -782,7 +782,7 @@
 									</tr>
 									<tr data-intro="How many seconds before re-plotting the batch-graph?">
 										<td>Batch-Plot-Minimum-Time (s)</td>
-										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 86px" /></td>
+										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px" /></td>
 									</tr>
 								</table>
 							</div>
