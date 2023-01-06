@@ -108,7 +108,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	}
 
 	try {
-		model_config_hash = get_model_config_hash;
+		model_config_hash = new_model_config_hash;
 		var model_data = get_model_data();
 
 		/*
