@@ -377,7 +377,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								if(img_elem.length) {
 									predict_demo(img_elem[0], i);
 								} else {
-									str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
+									str += "<hr><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div>";
 								}
 							}
 
