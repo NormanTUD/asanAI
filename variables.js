@@ -1063,7 +1063,7 @@ var training_memory_history = {
 	}
 };
 
-var plotly_color = {
+var plotly_layout = {
 	paper_bgcolor: "rgba(0, 0, 0, 0)",
 	plot_bgcolor: "rgba(0, 0, 0, 0)",
 	gridcolor: "#7c7c7c",

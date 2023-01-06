@@ -289,11 +289,11 @@ function get_fit_data () {
 		$("#plotly_time_per_batch").parent().show();
 
 		if(batchNr == 1) {
-			Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_color);
-			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+			Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_layout);
+			Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
 		} else {
-			Plotly.update('plotly_batch_history', this_plot_data, plotly_color);
-			Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_color);
+			Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
+			Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
 		}
 
 		if($("#auto_update_predictions").is(":checked")) {
@@ -344,9 +344,9 @@ function get_fit_data () {
 
 		$("#plotly_epoch_history").parent().show();
 		if(epochNr == 1) {
-			Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_color);
+			Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_layout);
 		} else {
-			Plotly.update('plotly_epoch_history', this_plot_data, plotly_color);
+			Plotly.update('plotly_epoch_history', this_plot_data, plotly_layout);
 		}
 	}
 
