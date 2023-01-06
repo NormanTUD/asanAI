@@ -909,7 +909,7 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
                         // Perform one step of gradient ascent: Update the image along the
                         // direction of the gradient.
 
-			image = tensor_normalize_to_rgb_min_max(image);
+			//image = tensor_normalize_to_rgb_min_max(image);
 
 			image = image.add(scaledGrads);
 			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
@@ -980,21 +980,19 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	for (var i = 0; i < neurons; i++) {
+	for (var i = neurons; i > 0; i--) {
 		if(stop_generating_images) {
 			continue;
 		}
 		var eta = "";
 		if(times.length) {
-			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
+			eta = " (" + human_readable_time(parseInt((i) * median(times))) + " left)";
 		}
 
-		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
+		var swal_msg = "Image " + ((neurons - i) + 1) + " of " + neurons + eta;
 
 		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
 
-
-		var swal_msg = "Image " + (i + 1) + " of " + neurons + eta;
 		l(swal_msg);
 		document.title = swal_msg;
 
