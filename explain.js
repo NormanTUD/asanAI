@@ -758,11 +758,7 @@ function draw_internal_states (layer, inputs, applied) {
 		if(Object.keys(model.layers[layer]).includes('kernel')) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
 				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
-			} else {
-				//log("model.layers[" + layer + "].kernel.val.shape.length == " + model.layers[layer].kernel.val.shape.length);
 			}
-		} else {
-			//log("kernel not included in model.layers[" + layer + "]");
 		}
 
 		var canvas_input = draw_image_if_possible(layer, 'input', input_data, 1);
