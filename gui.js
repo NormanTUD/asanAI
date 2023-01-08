@@ -623,11 +623,11 @@ function change_pixel_size() {
 }
 
 function change_height() {
-	change_width_or_height("height", 1);
+	change_width_or_height("height", 0);
 }
 
 function change_width() {
-	change_width_or_height("width", 0);
+	change_width_or_height("width", 1);
 }
 
 function change_output_and_example_image_size() {
@@ -689,7 +689,7 @@ async function change_width_or_height(name, inputshape_index) {
 async function update_python_code(dont_reget_labels) {
 	var redo_graph = 0;
 
-	var input_shape = [width, height, number_channels];
+	var input_shape = [height, width, number_channels];
 
 	var loss = document.getElementById("loss").value;
 	var optimizer_type = document.getElementById("optimizer").value;
@@ -749,7 +749,7 @@ async function update_python_code(dont_reget_labels) {
 		python_code += "def load(filename):\n";
 		python_code += "    np_image = Image.open(filename)\n";
 		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
-		python_code += "    np_image = transform.resize(np_image, (width, height, 3))\n";
+		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
 
@@ -764,7 +764,7 @@ async function update_python_code(dont_reget_labels) {
 
 
 
-		x_shape = "[width, height, 3]";
+		x_shape = "[height, width, 3]";
 	} else {
 		python_code += "import re\n";
 		python_code += "from pprint import pprint\n";
@@ -3125,7 +3125,7 @@ async function change_data_origin() {
 		if ($("#data_origin").val() == "image") {
 			show_own_image_data = 1;
 			show_images_per_category = 1;
-			set_input_shape("[" + width + ", " + height + ", 3]");
+			set_input_shape("[" + height + ", " + width + ", 3]");
 			$("#max_number_of_files_per_category").val(0).trigger("change");
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;

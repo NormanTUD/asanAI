@@ -81,11 +81,9 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 	}
 
 	try {
-
 		tensor_img = tf.tidy(() => {
-			return tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims()
+			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
 		});
-
 	} catch (e) {
 		_predict_error(e);
 	}
@@ -212,7 +210,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predict_data = null;
 
 		if(input_shape_is_image()) {
-			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([width, height]).toFloat().expandDims();
+			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
@@ -451,7 +449,7 @@ async function predict_webcam () {
 	tf.engine().startScope();
 
 	var predict_data = await cam.capture();
-	predict_data = predict_data.resizeNearestNeighbor([width, height]).toFloat().expandDims()
+	predict_data = predict_data.resizeNearestNeighbor([height, height]).toFloat().expandDims()
 
 	var divide_by = parseFloat($("#divide_by").val());
 
@@ -587,7 +585,7 @@ async function predict_handdrawn () {
 		return;
 	}
 	tf.tidy(() => {
-		var img = tf.image.resizeBilinear(tf.browser.fromPixels(atrament_data.sketcher.canvas), [width, height]).expandDims();
+		var img = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 
 		var divide_by = parseFloat($("#divide_by").val());
 

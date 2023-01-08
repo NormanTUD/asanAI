@@ -370,7 +370,7 @@ async function get_xs_and_ys () {
 					this_data = shuffle(this_data);
 				}
 
-				var imgs_shape = [width, height, 3];
+				var imgs_shape = [height, width, 3];
 
 				//log(imgs_shape);
 
@@ -512,7 +512,7 @@ async function get_xs_and_ys () {
 
 						var tf_img = tf.browser.fromPixels(img_elem);
 						var resized_img = tf_img.
-							resizeNearestNeighbor([width, height]).
+							resizeNearestNeighbor([height, width]).
 							toFloat();
 
 						if($("#divide_by").val() != 1) {
@@ -654,7 +654,7 @@ function url_to_tf (url) {
 			let img = await load_image(url);
 			tf_img = tf.browser.fromPixels(img);
 			var resized_img = tf_img.
-				resizeNearestNeighbor([width, height]).
+				resizeNearestNeighbor([height, width]).
 				toFloat().
 				expandDims();
 			dispose(tf_img);
@@ -1089,7 +1089,7 @@ async function take_image_from_webcam (elem, nol) {
 	}
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
-	cam_image = cam_image.resizeNearestNeighbor([width, height]).toFloat().expandDims()
+	cam_image = cam_image.resizeNearestNeighbor([height, width]).toFloat().expandDims()
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
