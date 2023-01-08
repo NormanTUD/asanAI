@@ -767,12 +767,8 @@ function draw_internal_states (layer, inputs, applied) {
 							input.append(img_input).show();
 						}
 						kernel.append(img_kernel).show();
-						output.append(img_output).show();
-					} else {
-						//log(canvas_kernel);
-						//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
-						output.append(img_output).show();
 					}
+					output.append(img_output).show();
 				}
 			}
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
@@ -782,27 +778,22 @@ function draw_internal_states (layer, inputs, applied) {
 				if(Object.keys(canvas_kernel).includes(i + '')) {
 					var img_kernel = canvas_kernel[i];
 					kernel.append(img_kernel).show();
-					output.append(img_output).show();
 				} else {
-					//log(`Layer ${layer} DOES NOT contain kernel ${i} for neuron ${i}`);
 					input.append(img_input).show();
-					output.append(img_output).show();
 				}
+				output.append(img_output).show();
 			}
 		} else {
 			if(canvas_input.nodeName == "CANVAS") {
 				var img_input = canvas_output;
+				input.append(img_input).show();
 				if(canvas_output.nodeName == "CANVAS") {
 					var img_output = canvas_output;
-					input.append(img_input).show();
 					output.append(img_output).show();
-				} else {
-					input.append(img_input).show();
 				}
 			} else {
 				if($("#show_raw_data").is(":checked")) {
 					var h = array_to_html(output_data);
-
 					equations.append(h).show()
 				} else {
 					equations.html("Enable 'show raw data?' in the visualization tab to show").show();
