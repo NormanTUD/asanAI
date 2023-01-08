@@ -758,33 +758,29 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(canvas_output.length && canvas_input.length) {
 			for (var j = 0; j < canvas_input.length; j++) {
-				var img_input = canvas_input[j];
 				for (var i = 0; i < canvas_output.length; i++) {
 					var img_output = canvas_output[i];
 					if(Object.keys(canvas_kernel).includes(i + '')) {
 						var img_kernel = canvas_kernel[i];
-						input.append(img_input).show();
+						input.append(canvas_input[j]).show();
 						kernel.append(img_kernel).show();
 					}
 					output.append(img_output).show();
 				}
 			}
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-			var img_input = canvas_input;
 			for (var i = 0; i < canvas_output.length; i++) {
 				var img_output = canvas_output[i];
+				input.append(canvas_input).show();
 				if(Object.keys(canvas_kernel).includes(i + '')) {
 					var img_kernel = canvas_kernel[i];
 					kernel.append(img_kernel).show();
-				} else {
-					input.append(img_input).show();
 				}
 				output.append(img_output).show();
 			}
 		} else {
 			if(canvas_input.nodeName == "CANVAS") {
-				var img_input = canvas_output;
-				input.append(img_input).show();
+				input.append(canvas_input).show();
 				if(canvas_output.nodeName == "CANVAS") {
 					var img_output = canvas_output;
 					output.append(img_output).show();
