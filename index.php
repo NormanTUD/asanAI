@@ -794,22 +794,6 @@
 						<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
 					</div>
 
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group">
-						<div class="ribbon-group">
-							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
-								<table>
-									<tr data-intro="Show raw data in layer data flow?">
-										<td>Show raw data?</td>
-										<td><input class="show_data" type='checkbox' id="show_raw_data" /></td>
-									</tr>
-								</table>
-							</div>
-						</div>
-						<div class="ribbon-group-title">Layer data flow</div>
-					</div>
-
 					<div id="data_plotter" style="display: none">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
@@ -817,6 +801,10 @@
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 									<table>
+										<tr data-intro="Show raw data in layer data flow?">
+											<td>Show raw data?</td>
+											<td><input class="show_data" type='checkbox' id="show_raw_data" /></td>
+										</tr>
 										<tr>
 											<td>Pixel size</td>
 											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
@@ -828,7 +816,7 @@
 									</table>
 								</div>
 							</div>
-							<div class="ribbon-group-title">Data plotter</div>
+							<div class="ribbon-group-title">Layer data flow</div>
 						</div>
 					</div>
 				</div>
