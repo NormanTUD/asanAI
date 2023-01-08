@@ -762,7 +762,9 @@ function draw_internal_states (layer, inputs, applied) {
 					var img_output = canvas_output[i];
 					if(Object.keys(canvas_kernel).includes(i + '')) {
 						var img_kernel = canvas_kernel[i];
-						input.append(canvas_input[j]).show();
+						if(layer == 0) {
+							input.append(canvas_input[j]).show();
+						}
 						kernel.append(img_kernel).show();
 					}
 					output.append(img_output).show();
@@ -771,7 +773,9 @@ function draw_internal_states (layer, inputs, applied) {
 		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
 			for (var i = 0; i < canvas_output.length; i++) {
 				var img_output = canvas_output[i];
-				input.append(canvas_input).show();
+				if(layer == 0) {
+					input.append(canvas_input).show();
+				}
 				if(Object.keys(canvas_kernel).includes(i + '')) {
 					var img_kernel = canvas_kernel[i];
 					kernel.append(img_kernel).show();
@@ -780,7 +784,9 @@ function draw_internal_states (layer, inputs, applied) {
 			}
 		} else {
 			if(canvas_input.nodeName == "CANVAS") {
-				input.append(canvas_input).show();
+				if(layer == 0) {
+					input.append(canvas_input).show();
+				}
 				if(canvas_output.nodeName == "CANVAS") {
 					var img_output = canvas_output;
 					output.append(img_output).show();
