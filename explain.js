@@ -720,13 +720,26 @@ function draw_internal_states (layer, inputs, applied) {
 
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		//log("batchnr: " + batchnr);
-		var output_data = applied.arraySync()[batchnr];
+		var output_data = null;
+
+		if(applied.shape.length == 4) {
+			output_data = applied.transpose([0, 2, 1, 3]).arraySync()[batchnr];
+		} else {
+			output_data = applied.arraySync()[batchnr];
+		}
+
 		var layer_div = $($(".layer_data")[layer]);
 		if(batchnr == 0) {
 			layer_div.append("<h1>Layer data flow</h1>");
 		}
 		layer_div.html('<h3>Layer ' + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
-		var input_data = inputs[0].arraySync()[batchnr];
+		var input_data = null;
+
+		if(applied.shape.length == 4) {
+			input_data = inputs[0].transpose([0, 2, 1, 3]).arraySync()[batchnr];
+		} else {
+			input_data = inputs[0].arraySync()[batchnr];
+		}
 
 		layer_div.show();
 		layer_div.append("<div style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
