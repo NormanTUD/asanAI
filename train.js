@@ -36,9 +36,11 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	if(!Object.keys(model).includes("layers")) {
+	if(model === null || !Object.keys(model).includes("layers")) {
 		gui_not_in_training();
 		write_error("Something went wrong with compiling the model. Please reload the site.");
+
+		return;
 	}
 
 	if(started_training) {
