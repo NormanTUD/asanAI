@@ -584,6 +584,12 @@ async function predict_handdrawn () {
 	if(!input_shape_is_image()) {
 		return;
 	}
+
+	if(!model) {
+		log("ERROR: model is undefined");
+		return;
+	}
+
 	tf.tidy(() => {
 		var img = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 
