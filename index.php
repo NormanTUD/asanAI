@@ -334,7 +334,7 @@
 										<td>Width</td>
 										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;" /></td>
 									</tr>
-									<tr id="max_number_of_files_per_category_tr" style="display: none">
+									<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
 										<td>Img/cat</td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px" /></td>
 									</tr>
