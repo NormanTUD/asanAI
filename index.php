@@ -1318,9 +1318,6 @@
 							</div>
 
 							<div id="predict_tab">
-								Live update example predictions while training?
-								<input class="show_data" type='checkbox' value="1" id="auto_update_predictions" /><br>
-
 								Show layer data flow?
 								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
 

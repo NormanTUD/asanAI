@@ -301,7 +301,7 @@ function get_fit_data () {
 			last_batch_plot_time = Date.now();
 		}
 
-		if($("#auto_update_predictions").is(":checked")) {
+		if(!is_hidden_or_has_hidden_parent("#predict_tab")) {
 			if($('#predict_own_data').val()) {
 				predict($('#predict_own_data').val());
 			}
