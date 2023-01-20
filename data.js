@@ -396,43 +396,45 @@ async function get_xs_and_ys () {
 						if($("#augment_rotate_images").is(":checked")) {
 							log("augment_rotate_images CHECKED")
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-								l("Rotating image: " + j + "°");
-								var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
-								add_tensor_as_image_to_photos(augmented_img);
-								x = x.concat(augmented_img);
-								classes.push(this_category_counter);
-
-								if($("#augment_invert_images").is(":checked")) {
-									l("Inverted image that has been turned " + degree + "°");
-									var add_value = (-255 / parseFloat($("#divide_by").val()));
-									var inverted = tf.abs(tf.add(augmented_img, add_value));
-									add_tensor_as_image_to_photos(inverted);
-									x = x.concat(inverted);
+								if(degree = 0) {
+									l("Rotating image: " + j + "°");
+									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
+									add_tensor_as_image_to_photos(augmented_img);
+									x = x.concat(augmented_img);
 									classes.push(this_category_counter);
-								}
 
-								if($("#augment_flip_left_right").is(":checked")) {
-									l("Flip left/right image that has been turned " + degree + "°");
-									var flipped = tf.image.flipLeftRight(augmented_img);
-									add_tensor_as_image_to_photos(flipped);
-									x = x.concat(flipped);
-									classes.push(label_nr);
-								}
+									if($("#augment_invert_images").is(":checked")) {
+										l("Inverted image that has been turned " + degree + "°");
+										var add_value = (-255 / parseFloat($("#divide_by").val()));
+										var inverted = tf.abs(tf.add(augmented_img, add_value));
+										add_tensor_as_image_to_photos(inverted);
+										x = x.concat(inverted);
+										classes.push(this_category_counter);
+									}
 
-								if($("#augment_sine_ripple").is(":checked")) {
-									var uuid = uuidv4();
-									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-									await tf.browser.toPixels(tf.tensor(augmented_img.arraySync()[0]), $("#" + uuid)[0]);
-									var canvas = $("#" + uuid)[0];
-									var context = canvas.getContext("2d");
-									var data = context.getImageData(0,0,canvas.width, canvas.height) 
-									JSManipulate.sineripple.filter(data); 
-									context.putImageData(data,0,0);
-									var rippled = await tf.browser.fromPixels(canvas);
-									x = x.concat(rippled.expandDims());
-									add_tensor_as_image_to_photos(rippled);
-									$(canvas).remove();
-									classes.push(label_nr);
+									if($("#augment_flip_left_right").is(":checked")) {
+										l("Flip left/right image that has been turned " + degree + "°");
+										var flipped = tf.image.flipLeftRight(augmented_img);
+										add_tensor_as_image_to_photos(flipped);
+										x = x.concat(flipped);
+										classes.push(label_nr);
+									}
+
+									if($("#augment_sine_ripple").is(":checked")) {
+										var uuid = uuidv4();
+										$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+										await tf.browser.toPixels(tf.tensor(augmented_img.arraySync()[0]), $("#" + uuid)[0]);
+										var canvas = $("#" + uuid)[0];
+										var context = canvas.getContext("2d");
+										var data = context.getImageData(0,0,canvas.width, canvas.height) 
+										JSManipulate.sineripple.filter(data); 
+										context.putImageData(data,0,0);
+										var rippled = await tf.browser.fromPixels(canvas);
+										x = x.concat(rippled.expandDims());
+										add_tensor_as_image_to_photos(rippled);
+										$(canvas).remove();
+										classes.push(label_nr);
+									}
 								}
 							}
 						}
