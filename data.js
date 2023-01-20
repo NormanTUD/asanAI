@@ -286,6 +286,21 @@ function truncate_text (fullStr, strLen, separator) {
            fullStr.substr(fullStr.length - backChars);
 };
 
+async function sine_ripple (img) {
+	var uuid = uuidv4();
+	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+	await tf.browser.toPixels(tf.tensor(img.arraySync()[0]), $("#" + uuid)[0]);
+	var canvas = $("#" + uuid)[0];
+	var context = canvas.getContext("2d");
+	var data = context.getImageData(0,0,canvas.width, canvas.height) 
+	JSManipulate.sineripple.filter(data); 
+	context.putImageData(data,0,0);
+	var rippled = await tf.browser.fromPixels(canvas);
+	$(canvas).remove();
+
+	return rippled;
+}
+
 async function get_xs_and_ys () {
 	headerdatadebug("get_xs_and_ys()");
 
@@ -421,18 +436,9 @@ async function get_xs_and_ys () {
 									}
 
 									if($("#augment_sine_ripple").is(":checked")) {
-										var uuid = uuidv4();
-										$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-										await tf.browser.toPixels(tf.tensor(augmented_img.arraySync()[0]), $("#" + uuid)[0]);
-										var canvas = $("#" + uuid)[0];
-										var context = canvas.getContext("2d");
-										var data = context.getImageData(0,0,canvas.width, canvas.height) 
-										JSManipulate.sineripple.filter(data); 
-										context.putImageData(data,0,0);
-										var rippled = await tf.browser.fromPixels(canvas);
+										var rippled = await sine_ripple(augmented_img);
 										x = x.concat(rippled.expandDims());
 										add_tensor_as_image_to_photos(rippled);
-										$(canvas).remove();
 										classes.push(label_nr);
 									}
 								}
@@ -457,18 +463,9 @@ async function get_xs_and_ys () {
 						}
 
 						if($("#augment_sine_ripple").is(":checked")) {
-							var uuid = uuidv4();
-							$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-							await tf.browser.toPixels(tf.tensor(item.arraySync()[0]), $("#" + uuid)[0]);
-							var canvas = $("#" + uuid)[0];
-							var context = canvas.getContext("2d");
-							var data = context.getImageData(0,0,canvas.width, canvas.height) 
-							JSManipulate.sineripple.filter(data); 
-							context.putImageData(data,0,0);
-							var rippled = await tf.browser.fromPixels(canvas);
+							var rippled = await sine_ripple(item);
 							x = x.concat(rippled.expandDims());
 							add_tensor_as_image_to_photos(rippled);
-							$(canvas).remove();
 							classes.push(label_nr);
 						}
 					}
