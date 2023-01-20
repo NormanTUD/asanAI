@@ -234,9 +234,9 @@ async function add_tensor_as_image_to_photos (tensor) {
 
 	var uuid = uuidv4();
 	var id = "augmented_photo_" + uuid;
-	log("image-element-id: ", id);
+	//log("image-element-id: ", id);
 	$("#photos").append("<canvas id='" + id + "'></canvas>");
-	log("toPixels(tensor, $('#" + id + "')");
+	//log("toPixels(tensor, $('#" + id + "')");
 
 	var min_value = 0;
 	var max_value = 0;
@@ -416,6 +416,22 @@ async function get_xs_and_ys () {
 									var flipped = tf.image.flipLeftRight(augmented_img);
 									add_tensor_as_image_to_photos(flipped);
 									x = x.concat(flipped);
+									classes.push(label_nr);
+								}
+
+								if($("#augment_sine_ripple").is(":checked")) {
+									var uuid = uuidv4();
+									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+									await tf.browser.toPixels(tf.tensor(augmented_img.arraySync()[0]), $("#" + uuid)[0]);
+									var canvas = $("#" + uuid)[0];
+									var context = canvas.getContext("2d");
+									var data = context.getImageData(0,0,canvas.width, canvas.height) 
+									JSManipulate.sineripple.filter(data); 
+									context.putImageData(data,0,0);
+									var rippled = await tf.browser.fromPixels(canvas);
+									x = x.concat(rippled.expandDims());
+									add_tensor_as_image_to_photos(rippled);
+									$(canvas).remove();
 									classes.push(label_nr);
 								}
 							}
