@@ -1107,15 +1107,15 @@
 													<td>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
 												</tr>
-												</tr>
+												<tr>
 													<td>Shuffle data before doing validation split (recommended)?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked /></td>
 												</tr>
-												</tr>
+												<tr>
 													<td>Auto One-Hot-encode Y (disables "divide by")?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" checked /></td>
 												</tr>
-												</tr>
+												<tr>
 													<td>Auto loss/metric?</td>
 													<td><input type="checkbox" value="1" id="auto_loss_metric" checked /></td>
 												</tr>
