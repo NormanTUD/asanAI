@@ -1102,8 +1102,8 @@
 												<tr>
 													<td>Auto-adjust last layer's number of neurons?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
-												<tr>
 												</tr>
+												<tr>
 													<td>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</td>
 													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
 												</tr>
