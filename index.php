@@ -587,7 +587,7 @@
 
 							<div id="optimizer_table">
 								<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
-									<table 
+									<table>
 										<tr>
 											<td>Learning rate</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
