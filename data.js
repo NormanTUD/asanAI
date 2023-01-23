@@ -649,7 +649,7 @@ async function get_xs_and_ys () {
 
 	var number_of_training_data = xy_data["y"].shape[0];
 	log("number_of_training_data", number_of_training_data);
-	var number_of_training_data_left_after_split = Math.floor((validation_split/100) * number_of_training_data);
+	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
 
 	log("Number of training data left after split:", number_of_training_data_left_after_split);
 

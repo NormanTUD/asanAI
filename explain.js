@@ -1930,7 +1930,10 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 		for (var key_nr = 0; key_nr < keys.length; key_nr++) {
 			var this_key = keys[key_nr];
 
-			assert(this_old_layer[this_key].length == this_new_layer[this_key].length, "Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
+			if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
+				console.warn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
+				console.trace();
+			}
 
 			color_diff[layer_nr][this_key] = [];
 
