@@ -643,6 +643,25 @@ async function get_xs_and_ys () {
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
 
+	data_debug(xy_data["x"], xy_data["y"])
+
+	var validation_split = parseInt($("#validationSplit").val());
+
+	var number_of_training_data = xy_data["y"].shape[0];
+	log("number_of_training_data", number_of_training_data);
+	var number_of_training_data_left_after_split = Math.floor((validation_split/100) * number_of_training_data);
+
+	log("Number of training data left after split:", number_of_training_data_left_after_split);
+
+	if(number_of_training_data_left_after_split < 1) {
+		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);
+		if(new_validation_split > 20) {
+			new_validation_split = 20;
+		}
+		l(`The old validation Split of ${validation_split}% was too high. No data would be left to train upon if set this way. It was set to the highest possible number that still keeps at least one set of training data, being ${new_validation_split}%.`);
+		$("#validationSplit").val(new_validation_split);
+	}
+
 	return xy_data;
 }
 
