@@ -251,3 +251,24 @@ function add_optimizer_debugger () {
 	tf.train.momentum = function (e, t, n) { log("momentum. learningRate, momentum, useNesterov", e, t, n); var res = original_momentum(e, t, n); log("Result:", res); return res; }
 
 }
+
+function data_debug (...data) {
+	log(">>>>>>>>>>>>>>>>>>");
+	for (var i = 0; i < data.length; i++) {
+		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
+			log("Tensor", data[i]);
+			try {
+				data[i].print();
+			} catch (e) {
+				log("Error while printing: ", e);
+			}
+		} else {
+			log(typeof(data[i]), data[i]);
+		}
+	}
+
+	console.trace();
+	log("<<<<<<<<<<<<<<<<<<");
+}
+
+
