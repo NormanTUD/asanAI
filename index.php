@@ -1376,7 +1376,7 @@
 									</div>
 								</div>
 
-								<div id="layer_visualizations_tab">
+								<div id="layer_visualizations_tab" style="display: none">
 								</div>
 							</div>
 						</div>
