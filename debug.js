@@ -11,7 +11,9 @@ function logt(...msg) {
 
 function log (...args) {
 	args.forEach(arg => console.log(arg))
-	//console.trace();
+	if(enable_log_trace) {
+		console.trace();
+	}
 }
 
 function header_error (msg) {

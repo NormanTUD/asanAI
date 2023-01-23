@@ -3612,7 +3612,7 @@ function disable_start_training_button_custom_images() {
 	}
 }
 
-function write_error(e) {
+function write_error(e, fn, hide_swal) {
 	if (e) {
 		var msg = e;
 
@@ -3627,13 +3627,21 @@ function write_error(e) {
 		console.warn(e);
 		console.trace();
 
-		Swal.fire({
-			icon: 'error',
-			title: 'Oops [5]...',
-			html: msg
-		});
+		if(!hide_swal) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops [5]...',
+				html: msg
+			});
+		} else {
+			l(msg);
+		}
 	} else {
 		$("#error").html(e).show().parent().hide();
+	}
+
+	if(typeof(fn) == "function") {
+		fn();
 	}
 
 	enable_everything();

@@ -634,7 +634,17 @@ async function get_xs_and_ys () {
 			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
 			//log("D", xy_data.x.shape);
 		} catch (e) {
-			header(e);
+			/*
+			log(e);
+			log(typeof(e));
+			log(Object.keys(e));
+			log(e.__proto__);
+			*/
+			write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () {
+				$("#loss").val("meanSquaredError").trigger("change");
+				$("#metric").val("meanSquaredError").trigger("change")
+				log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
+			} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
 		}
 	}
 
@@ -643,15 +653,12 @@ async function get_xs_and_ys () {
 	// TODO:
 	//assert(xy_data.x.shape[0] == xy_data.x.shape[0], "FEHLER");
 
-	data_debug(xy_data["x"], xy_data["y"])
+	//data_debug(xy_data["x"], xy_data["y"])
 
 	var validation_split = parseInt($("#validationSplit").val());
 
 	var number_of_training_data = xy_data["y"].shape[0];
-	log("number_of_training_data", number_of_training_data);
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
-
-	log("Number of training data left after split:", number_of_training_data_left_after_split);
 
 	if(number_of_training_data_left_after_split < 1) {
 		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);

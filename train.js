@@ -611,8 +611,8 @@ async function run_neural_network () {
 	last_training_time = "";
 }
 
-function write_error_and_reset(e) {
-	write_error(e);
+function write_error_and_reset(e, fn, hide_swal) {
+	write_error(e, fn, hide_swal);
 	reset_on_error();
 }
 
