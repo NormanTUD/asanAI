@@ -44,6 +44,11 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
+		if($("#show_grad_cam").is(":checked")) {
+			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
+		}
+		
 		Swal.fire({
 			title: 'Stopped training',
 			html: "This may take some time...",
@@ -61,6 +66,7 @@ async function train_neural_network () {
 		l("Stopped training");
 	} else {
 		l("Started training")
+		$("#show_grad_cam").prop("disabled", false);
 		last_training_time = Date.now();
 		gui_in_training();
 

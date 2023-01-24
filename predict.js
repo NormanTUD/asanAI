@@ -461,7 +461,7 @@ function get_index_of_highest_category (predictions_tensor) {
 }
 
 async function draw_heatmap (predictions_tensor, predict_data) {
-	if(input_shape_is_image() && $("#show_grad_cam").is(":checked")) {
+	if(input_shape_is_image() && $("#show_grad_cam").is(":checked") && !started_training) {
 		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
 
