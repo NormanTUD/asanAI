@@ -465,7 +465,14 @@ async function draw_heatmap (predictions_tensor, predict_data) {
 		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
 
+		var original_disable_layer_debuggers = disable_layer_debuggers;
+		disable_layer_debuggers = 1;
 		var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
+		disable_layer_debuggers = original_disable_layer_debuggers;
+
+		/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
+		_create_model();
+
 		if(heatmap) {
 			/*
 			log(heatmap);

@@ -2282,7 +2282,6 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 		let y = newInput;
 		while (layerIndex < model.layers.length) {
 			y = model.layers[layerIndex++].apply(y);
-			_create_model();
 		}
 		const subModel2 = tf.model({inputs: newInput, outputs: y});
 
