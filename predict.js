@@ -639,48 +639,52 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	tf.tidy(() => {
-		var img = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+	tf.engine().startScope();
+	var img = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 
-		var divide_by = parseFloat($("#divide_by").val());
+	var divide_by = parseFloat($("#divide_by").val());
 
-		if(divide_by != 1) {
-			img = tf.divNoNan(img, divide_by);
+	if(divide_by != 1) {
+		img = tf.divNoNan(img, divide_by);
+	}
+
+	var predictions_tensor = model.predict(img);
+	var predictions = predictions_tensor.arraySync();
+
+	await draw_heatmap(predictions_tensor, img);
+
+	var handdrawn_predictions = $("#handdrawn_predictions");
+	handdrawn_predictions.html("");
+
+	var html = "";
+
+	var max = 0;
+
+	for (var i = 0; i < predictions[0].length; i++) {
+		if(max < predictions[0][i]) {
+			max = predictions[0][i];
 		}
+	}
 
-		var predictions = model.predict(img).arraySync();
-
-		var handdrawn_predictions = $("#handdrawn_predictions");
-		handdrawn_predictions.html("");
-
-		var html = "";
-
-		var max = 0;
-
-		for (var i = 0; i < predictions[0].length; i++) {
-			if(max < predictions[0][i]) {
-				max = predictions[0][i];
-			}
-		}
-
-		for (var i = 0; i < predictions[0].length; i++) {
-			var label = labels[i % labels.length];
-			if(label) {
-				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
-				} else {
-					html += label + ": " + predictions[0][i] + "<br>\n";
-				}
+	for (var i = 0; i < predictions[0].length; i++) {
+		var label = labels[i % labels.length];
+		if(label) {
+			if(predictions[0][i] == max) {
+				html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
 			} else {
-				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
-				} else {
-					html += predictions[0][i] + "<br>\n";
-				}
+				html += label + ": " + predictions[0][i] + "<br>\n";
+			}
+		} else {
+			if(predictions[0][i] == max) {
+				html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+			} else {
+				html += predictions[0][i] + "<br>\n";
 			}
 		}
-		html += "";
+	}
+	html += "";
 
-		handdrawn_predictions.html(html);
-	});
+	handdrawn_predictions.html(html);
+
+	tf.engine().endScope();
 }
