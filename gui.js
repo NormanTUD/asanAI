@@ -612,8 +612,10 @@ function enable_disable_grad_cam() {
 
 	if($("#show_layer_data").is(":checked")) {
 		l("You can either use grad CAM or the internal layer states, but not both. Disabling internal layer states.");
-		$("#show_layer_data").prop("checked", false);
+		$("#show_layer_data").prop("checked", false).trigger("change");
 	}
+
+	$("#grad_cam_heatmap").show();
 
 	hide_empty_tabs("visualization_ribbon");
 }
@@ -631,8 +633,10 @@ function enable_disable_kernel_images() {
 
 	if($("#show_grad_cam").is(":checked")) {
 		l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
-		$("#show_grad_cam").prop("checked", false);
+		$("#show_grad_cam").prop("checked", false).trigger("change");
 	}
+
+	$("#grad_cam_heatmap").hide();
 
 	hide_empty_tabs("visualization_ribbon");
 }
