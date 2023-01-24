@@ -4948,7 +4948,9 @@ async function create_zip_with_custom_images () {
 
 		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
 
-		await zipWriter.add(label + "/" + canvas.id + ".png", new zip.BlobReader(blob));
+		var filename = canvas.id
+
+		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
 	}
 	return zipWriter.close();
 }
