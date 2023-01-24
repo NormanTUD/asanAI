@@ -2202,5 +2202,41 @@ function array_to_html(array) {
 	return m;
 }
 
+async function generateCAM(img, target_class) {
+	try {
+		// Compute the output of the final convolutional layer
+		log("Predicting");
+		var convOutputs = await model.predict(img);
+		log("convOutputs = ", convOutputs);
+
+		// Compute the weights of the target class
+		log("Getting weights");
+		var weights = model.getWeights()[get_number_of_layers()].arraySync()
+		log("weights = ", weights);
+
+		log("Defining cam");
+		var cam = tf.mul(convOutputs, tf.tensor(weights[target_class]));
+		log("cam = ", cam);
+
+		// Resize the class activation map to the same size as the input image
+		log("Setting cam to max between cam and 0");
+		cam = tf.maximum(cam, 0);
+		log("cam = ", cam);
+
+		log("Resizing cam");
+		cam = await tf.image.resizeBilinear(cam.expandDims(), [img.shape[1], img.shape[2]]);
+		log("Resized cam: ", cam);
+
+		// Create a heatmap of the class activation map
+		log("Creating heatmap");
+		var heatmap = tf.div(cam, tf.max(cam));
+		log("Heatmap:", heatmap);
+
+		return heatmap;
+	} catch (e) {
+		console.warn(e);
+	}
+}
+
 // grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
 // tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
