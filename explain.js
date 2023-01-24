@@ -2238,13 +2238,13 @@ function applyColorMap(x) {
 }
 
 function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
-	if(model.isTraining) {
-		log("Cannot show grad CAM while training");
+	if(started_training) {
+		l("Cannot show grad CAM while training");
 		return;
 	}
 
 	if(!contains_convolution()) {
-		log("Cannot continue using grad CAM when you have no convolutional layers");
+		l("Cannot continue using grad CAM when you have no convolutional layers");
 		return;
 	}
 

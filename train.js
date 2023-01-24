@@ -51,7 +51,7 @@ async function train_neural_network () {
 			showConfirmButton: false
 		});
 
-		if(model.isTraining || model.isTraining) {
+		if(model.isTraining) {
 			model.stopTraining = true;
 			model.stopTraining = true;
 		}
