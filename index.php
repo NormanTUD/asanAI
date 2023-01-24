@@ -1171,8 +1171,7 @@
 							</div>
 
 							<div id="own_image_data">
-								<button onclick="create_and_download_zip()">Prepare .zip file with all custom images for download...</button>
-								<div id="download_zip_file"></div>
+								<button onclick="create_and_download_zip()">Download custom data in a .zip file</button>
 								<br>
 								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
 								<br>

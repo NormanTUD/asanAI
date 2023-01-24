@@ -4964,6 +4964,24 @@ function downloadFile(blob) {
 	$("#download_zip_file").html(new_child);
 }
 
+
+function saveFile (name, type, data) {
+    if (data !== null && navigator.msSaveBlob)
+        return navigator.msSaveBlob(new Blob([data], { type: type }), name);
+    var a = $("<a style='display: none;'/>");
+    var url = window.URL.createObjectURL(new Blob([data], {type: type}));
+    a.attr("href", url);
+    a.attr("download", name);
+    $("body").append(a);
+    a[0].click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+}
+
+function save_custom_images_file (blob) {
+	saveFile("custom_images.zip", "data:application/zip", blob);
+}
+
 async function create_and_download_zip () {
-	await create_zip_with_custom_images().then(downloadFile);
+	await create_zip_with_custom_images().then(save_custom_images_file);
 }
