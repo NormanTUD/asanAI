@@ -615,7 +615,7 @@ async function show_webcam (force_restart) {
 				cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
 			}
 
-			log(cam_config);
+			//log(cam_config);
 			cam = await tf.data.webcam(videoElement, cam_config);
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
