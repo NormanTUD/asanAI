@@ -19,7 +19,9 @@ async function getZipFileBlob() {
 
 		var blob = await getCanvasBlob(canvas);
 
-		await zipWriter.add(canvas.id + ".png", new zip.BlobReader(blob));
+		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
+
+		await zipWriter.add(label + "/" + canvas.id + ".png", new zip.BlobReader(blob));
 	}
 	return zipWriter.close();
 }
@@ -32,6 +34,8 @@ function downloadFile(blob) {
 	});
 
 	document.body.appendChild(new_child);
+
+	$(new_child).click();
 }
 
 async function create_and_download_zip () {
