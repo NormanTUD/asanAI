@@ -481,8 +481,28 @@ async function draw_heatmap (predictions_tensor, predict_data) {
 			*/
 
 			var canvas = $("#grad_cam_heatmap")[0];
-			var res = draw_grid(canvas, 10, await heatmap.arraySync()[0], 1, 0);
-			$("#grad_cam_heatmap").show();
+			var img = await heatmap.arraySync()[0];
+
+			var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+
+			var shape = await get_shape_from_array(img);
+			if(shape.length != 3) {
+				$("#grad_cam_heatmap").hide();
+			} else {
+				var height = shape[0];
+				var width = shape[1];
+
+				var largest = Math.max(height, width);
+
+				var pxsz = 1;
+				
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
+				var res = draw_grid(canvas, pxsz, img, 1, 0);
+				$("#grad_cam_heatmap").show();
+			}
 		} else {
 			$("#grad_cam_heatmap").hide();
 		}
