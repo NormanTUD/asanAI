@@ -146,7 +146,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 						*/
 
 						var canvas = $("#grad_cam_heatmap")[0];
-						var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+						var res = draw_grid(canvas, 10, await heatmap.arraySync()[0], 1, 0);
 						tf.engine().endScope();
 					}
 				} else {
@@ -298,7 +298,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				*/
 
 				var canvas = $("#grad_cam_heatmap")[0];
-				var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+				var res = draw_grid(canvas, 10, await heatmap.arraySync()[0], 1, 0);
 				tf.engine().endScope();
 			}
 		} else {
@@ -479,7 +479,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 function get_index_of_highest_category (predictions_tensor) {
 	var js = predictions_tensor.dataSync();
 
-	log(js);
 	var highest_index = 0;
 	var highest = 0;
 
@@ -526,7 +525,7 @@ async function predict_webcam () {
 		*/
 
 		var canvas = $("#grad_cam_heatmap")[0];
-		var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+		var res = draw_grid(canvas, 10, await heatmap.arraySync()[0], 1, 0);
 		tf.engine().endScope();
 	}
 
