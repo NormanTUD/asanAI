@@ -84,6 +84,8 @@ in creating this program:
 
 - [jscolor](https://jscolor.com/)
 
+- [zip.js](https://gildas-lormeau.github.io/zip.js/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
