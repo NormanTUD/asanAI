@@ -1128,9 +1128,13 @@ async function take_image_from_webcam (elem, nol) {
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
+
+	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
+	var stream_height = cam.stream.getVideoTracks(0)[0].getSettings().height;
+
 	var category = $(elem).parent();
 	var cam_image = await cam_data.capture();
-	cam_image = cam_image.resizeNearestNeighbor([height, width]).toFloat().expandDims()
+	cam_image = cam_image.resizeNearestNeighbor([stream_height, stream_width]).toFloat().expandDims()
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
@@ -1145,7 +1149,7 @@ async function take_image_from_webcam (elem, nol) {
 
 	$(category).find(".own_images").append(
 		'<span class="own_image_span">' +
-			'<canvas id="' + id + '_canvas" width="' + width + '" height="' + height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
+			'<canvas id="' + id + '_canvas" width="' + stream_width + '" height="' + stream_height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
 		'</span>'
 	);
 
