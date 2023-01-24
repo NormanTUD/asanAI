@@ -1,5 +1,37 @@
 "use strict";
 
+async function getZipFileBlob() {
+	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+
+	var canvasses = $(".own_image_span").find("canvas");
+
+	for (var i = 0; i < canvasses.length; i++) {
+		var canvas = canvasses[i];
+
+
+		var blob = new Blob([canvas], {type : 'image/png'});
+
+		await Promise.all([
+			zipWriter.add(canvas.id + ".png", new zip.BlobReader(blob))
+		]);
+	}
+	return zipWriter.close();
+}
+
+function downloadFile(blob) {
+	var new_child = Object.assign(document.createElement("a"), {
+		download: "hello.zip",
+		href: URL.createObjectURL(blob),
+		textContent: "Download zip file",
+	});
+
+	document.body.appendChild(new_child);
+}
+
+async function create_and_download_zip () {
+	await getZipFileBlob().then(downloadFile);
+}
+
 function get_plotly_type () {
 	return 'lines';
 }
