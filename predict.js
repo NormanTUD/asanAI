@@ -133,6 +133,25 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 			var predictions_tensor = undefined;
 			try {
 				predictions_tensor = await model.predict(tensor_img);
+				if($("#show_grad_cam").is(":checked") && input_shape_is_image()) {
+					tf.engine().startScope();
+					var strongest_category = get_index_of_highest_category(predictions_tensor);
+					var heatmap = await gradClassActivationMap(tensor_img, strongest_category);
+					if(heatmap) {
+						tf.engine().startScope();
+						/*
+						log(heatmap);
+						log(heatmap.shape);
+						heatmap.print();
+						*/
+
+						var canvas = $("#grad_cam_heatmap")[0];
+						var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+						tf.engine().endScope();
+					}
+				} else {
+					console.warn("Cannot show gradCAM for non image inputs");
+				}
 			} catch (e) {
 
 				log("================================= Tensor_Img");
@@ -266,6 +285,25 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		//log(predict_data.arraySync());
 		var predictions_tensor = await model.predict([predict_data], [1, 1]);
+		if($("#show_grad_cam").is(":checked") && input_shape_is_image()) {
+			tf.engine().startScope();
+			var strongest_category = get_index_of_highest_category(predictions_tensor);
+			var heatmap = await gradClassActivationMap(tensor_img, strongest_category);
+			if(heatmap) {
+				tf.engine().startScope();
+				/*
+				log(heatmap);
+				log(heatmap.shape);
+				heatmap.print();
+				*/
+
+				var canvas = $("#grad_cam_heatmap")[0];
+				var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+				tf.engine().endScope();
+			}
+		} else {
+			console.warn("Cannot show gradCAM for non image inputs");
+		}
 		predictions = predictions_tensor.dataSync();
 
 		dispose(predict_data);
@@ -397,6 +435,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							if(tensor_shape_matches_model(tensor)) {
 								try {
 									var res = model.predict([tensor]).arraySync();
+
 									example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res) + "<br>");
 									count++;
 									$("#predict_error").html("");
@@ -437,6 +476,23 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 }
 
+function get_index_of_highest_category (predictions_tensor) {
+	var js = predictions_tensor.dataSync();
+
+	log(js);
+	var highest_index = 0;
+	var highest = 0;
+
+	for (var i = 0; i < js.length; i++) {
+		if(js[i] > highest) {
+			highest = js[i];
+			highest_index = i;
+		}
+	}
+
+	return highest_index;
+}
+
 async function predict_webcam () {
 	if(!cam) {
 		return;
@@ -458,6 +514,22 @@ async function predict_webcam () {
 	}
 
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);
+
+	var strongest_category = get_index_of_highest_category(predictions_tensor);
+	var heatmap = await gradClassActivationMap(predict_data, strongest_category);
+	if(heatmap) {
+		tf.engine().startScope();
+		/*
+		log(heatmap);
+		log(heatmap.shape);
+		heatmap.print();
+		*/
+
+		var canvas = $("#grad_cam_heatmap")[0];
+		var res = draw_grid(canvas, 5, await heatmap.arraySync()[0], 1, 0);
+		tf.engine().endScope();
+	}
+
 	var predictions = predictions_tensor.dataSync();
 
 	var webcam_prediction = $("#webcam_prediction");

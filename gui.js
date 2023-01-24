@@ -603,6 +603,21 @@ function copy_id_to_clipboard(idname) {
 	copy_to_clipboard(serialized);
 }
 
+function enable_disable_grad_cam() {
+	console.warn("TODO");
+	if ($("#show_layer_data").is(":checked")) {
+		$("#show_kernel_images").prop("disabled", false);
+		$("#data_plotter").show();
+		$("#layer_visualizations_tab").show();
+	} else {
+		$("#show_kernel_images").prop("disabled", true);
+		$("#data_plotter").hide();
+		$("#layer_visualizations_tab").hide();
+	}
+
+	hide_empty_tabs("visualization_ribbon");
+}
+
 function enable_disable_kernel_images() {
 	if ($("#show_layer_data").is(":checked")) {
 		$("#show_kernel_images").prop("disabled", false);

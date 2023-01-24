@@ -1320,6 +1320,10 @@
 							<div id="predict_tab">
 								Show layer data flow?
 								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
+								Show gradCAM?
+								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
+
+								<canvas id="grad_cam_heatmap"></canvas>
 
 								<div class="container" id="predictcontainer">
 									<div>
@@ -1932,6 +1936,7 @@
 			favicon_default();
 
 			enable_disable_kernel_images();
+			enable_disable_grad_cam();
 
 			$(document).keyup(function(e) {
 				if (e.key === "Escape") { // escape key maps to keycode `27`

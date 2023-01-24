@@ -2202,39 +2202,126 @@ function array_to_html(array) {
 	return m;
 }
 
-async function generateCAM(img, target_class) {
+function applyColorMap(x) {
+  tf.util.assert(
+      x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
+  tf.util.assert(
+      x.shape[0] === 1,
+      `Expected exactly one example, but got ${x.shape[0]} examples`);
+  tf.util.assert(
+      x.shape[3] === 1,
+      `Expected exactly one channel, but got ${x.shape[3]} channels`);
+
+  return tf.tidy(() => {
+    // Get normalized x.
+    const EPSILON = 1e-5;
+    const xRange = x.max().sub(x.min());
+    const xNorm = x.sub(x.min()).div(xRange.add(EPSILON));
+    const xNormData = xNorm.dataSync();
+
+    const h = x.shape[1];
+    const w = x.shape[2];
+    const buffer = tf.buffer([1, h, w, 3]);
+
+    const colorMapSize = RGB_COLORMAP.length / 3;
+    for (let i = 0; i < h; ++i) {
+      for (let j = 0; j < w; ++j) {
+        const pixelValue = xNormData[i * w + j];
+        const row = Math.floor(pixelValue * colorMapSize);
+        buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
+        buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
+        buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
+      }
+    }
+    return buffer.toTensor();
+  });
+}
+
+function gradClassActivationMap(x, classIndex, overlayFactor = 2.0) {
 	try {
-		// Compute the output of the final convolutional layer
-		log("Predicting");
-		var convOutputs = await model.predict(img);
-		log("convOutputs = ", convOutputs);
+		// Try to locate the last conv layer of the model.
+		let layerIndex = model.layers.length - 1;
+		while (layerIndex >= 0) {
+			if (model.layers[layerIndex].getClassName().startsWith('Conv')) {
+				break;
+			}
+			layerIndex--;
+		}
+		tf.util.assert(
+			layerIndex >= 0, `Failed to find a convolutional layer in model`);
 
-		// Compute the weights of the target class
-		log("Getting weights");
-		var weights = model.getWeights()[get_number_of_layers()].arraySync()
-		log("weights = ", weights);
+		const lastConvLayer = model.layers[layerIndex];
+		/*
+			console.log(
+				`Located last convolutional layer of the model at ` +
+				`index ${layerIndex}: layer type = ${lastConvLayer.getClassName()}; ` +
+				`layer name = ${lastConvLayer.name}`
+			);
+		*/
 
-		log("Defining cam");
-		var cam = tf.mul(convOutputs, tf.tensor(weights[target_class]));
-		log("cam = ", cam);
+		// Get "sub-model 1", which goes from the original input to the output
+		// of the last convolutional layer.
+		const lastConvLayerOutput = lastConvLayer.output;
+		const subModel1 =
+			tf.model({inputs: model.inputs, outputs: lastConvLayerOutput});
 
-		// Resize the class activation map to the same size as the input image
-		log("Setting cam to max between cam and 0");
-		cam = tf.maximum(cam, 0);
-		log("cam = ", cam);
+		// Get "sub-model 2", which goes from the output of the last convolutional
+		// layer to the original output.
+		const newInput = tf.input({shape: lastConvLayerOutput.shape.slice(1)});
+		layerIndex++;
+		let y = newInput;
+		while (layerIndex < model.layers.length) {
+			y = model.layers[layerIndex++].apply(y);
+		}
+		const subModel2 = tf.model({inputs: newInput, outputs: y});
 
-		log("Resizing cam");
-		cam = await tf.image.resizeBilinear(cam.expandDims(), [img.shape[1], img.shape[2]]);
-		log("Resized cam: ", cam);
+		return tf.tidy(() => {
+			// This function runs sub-model 2 and extracts the slice of the probability
+			// output that corresponds to the desired class.
+			const convOutput2ClassOutput = (input) =>
+				subModel2.apply(input, {training: true}).gather([classIndex], 1);
+			// This is the gradient function of the output corresponding to the desired
+			// class with respect to its input (i.e., the output of the last
+			// convolutional layer of the original model).
+			const gradFunction = tf.grad(convOutput2ClassOutput);
 
-		// Create a heatmap of the class activation map
-		log("Creating heatmap");
-		var heatmap = tf.div(cam, tf.max(cam));
-		log("Heatmap:", heatmap);
+			// Calculate the values of the last conv layer's output.
+			const lastConvLayerOutputValues = subModel1.apply(x);
+			// Calculate the values of gradients of the class output w.r.t. the output
+			// of the last convolutional layer.
+			const gradValues = gradFunction(lastConvLayerOutputValues);
 
-		return heatmap;
+			// Pool the gradient values within each filter of the last convolutional
+			// layer, resulting in a tensor of shape [numFilters].
+			const pooledGradValues = tf.mean(gradValues, [0, 1, 2]);
+			// Scale the convlutional layer's output by the pooled gradients, using
+			// broadcasting.
+			const scaledConvOutputValues =
+				lastConvLayerOutputValues.mul(pooledGradValues);
+
+			// Create heat map by averaging and collapsing over all filters.
+			let heatMap = scaledConvOutputValues.mean(-1);
+
+			// Discard negative values from the heat map and normalize it to the [0, 1]
+			// interval.
+			heatMap = heatMap.relu();
+			heatMap = heatMap.div(heatMap.max()).expandDims(-1);
+
+			// Up-sample the heat map to the size of the input image.
+			heatMap = tf.image.resizeBilinear(heatMap, [x.shape[1], x.shape[2]]);
+
+			// Apply an RGB colormap on the heatMap. This step is necessary because
+			// the heatMap is a 1-channel (grayscale) image. It needs to be converted
+			// into a color (RGB) one through this function call.
+			heatMap = applyColorMap(heatMap);
+
+			// To form the final output, overlay the color heat map on the input image.
+			heatMap = heatMap.mul(overlayFactor).add(x.div(255));
+			return heatMap.div(heatMap.max()).mul(255);
+		});
 	} catch (e) {
 		console.warn(e);
+		return null;
 	}
 }
 
