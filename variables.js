@@ -1,5 +1,14 @@
 "use strict";
 
+function getCanvasBlob(canvas) {
+	return new Promise(function(resolve, reject) {
+		canvas.toBlob(function(blob) {
+			resolve(blob)
+		})
+	})
+}
+
+
 async function getZipFileBlob() {
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
@@ -8,12 +17,10 @@ async function getZipFileBlob() {
 	for (var i = 0; i < canvasses.length; i++) {
 		var canvas = canvasses[i];
 
+		var blob = await getCanvasBlob(canvas);
+		var blob_text = await blob.text();
 
-		var blob = new Blob([canvas], {type : 'image/png'});
-
-		await Promise.all([
-			zipWriter.add(canvas.id + ".png", new zip.BlobReader(blob))
-		]);
+		await zipWriter.add(canvas.id + ".png", new zip.BlobReader(blob));
 	}
 	return zipWriter.close();
 }
