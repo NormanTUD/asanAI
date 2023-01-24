@@ -564,3 +564,7 @@ button:disabled:hover {
 #register {
 	user-select: none;
 }
+
+.download_link {
+	color: red;
+}

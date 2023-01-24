@@ -4926,3 +4926,44 @@ function hide_empty_tabs (name) {
 
 	$("[href='#" + name + "']").parent().hide()
 }
+
+function getCanvasBlob(canvas) {
+	return new Promise(function(resolve, reject) {
+		canvas.toBlob(function(blob) {
+			resolve(blob)
+		})
+	})
+}
+
+
+async function create_zip_with_custom_images () {
+	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+
+	var canvasses = $(".own_image_span").find("canvas");
+
+	for (var i = 0; i < canvasses.length; i++) {
+		var canvas = canvasses[i];
+
+		var blob = await getCanvasBlob(canvas);
+
+		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
+
+		await zipWriter.add(label + "/" + canvas.id + ".png", new zip.BlobReader(blob));
+	}
+	return zipWriter.close();
+}
+
+function downloadFile(blob) {
+	var new_child = Object.assign(document.createElement("a"), {
+		className: "download_link",
+		download: "custom_images.zip",
+		href: URL.createObjectURL(blob),
+		textContent: "Download zip file",
+	});
+
+	$("#download_zip_file").html(new_child);
+}
+
+async function create_and_download_zip () {
+	await create_zip_with_custom_images().then(downloadFile);
+}

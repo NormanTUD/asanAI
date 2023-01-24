@@ -1,47 +1,4 @@
 "use strict";
-
-function getCanvasBlob(canvas) {
-	return new Promise(function(resolve, reject) {
-		canvas.toBlob(function(blob) {
-			resolve(blob)
-		})
-	})
-}
-
-
-async function getZipFileBlob() {
-	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
-
-	var canvasses = $(".own_image_span").find("canvas");
-
-	for (var i = 0; i < canvasses.length; i++) {
-		var canvas = canvasses[i];
-
-		var blob = await getCanvasBlob(canvas);
-
-		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
-
-		await zipWriter.add(label + "/" + canvas.id + ".png", new zip.BlobReader(blob));
-	}
-	return zipWriter.close();
-}
-
-function downloadFile(blob) {
-	var new_child = Object.assign(document.createElement("a"), {
-		download: "hello.zip",
-		href: URL.createObjectURL(blob),
-		textContent: "Download zip file",
-	});
-
-	document.body.appendChild(new_child);
-
-	$(new_child).click();
-}
-
-async function create_and_download_zip () {
-	await getZipFileBlob().then(downloadFile);
-}
-
 function get_plotly_type () {
 	return 'lines';
 }
