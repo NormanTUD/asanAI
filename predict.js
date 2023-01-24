@@ -462,10 +462,11 @@ function get_index_of_highest_category (predictions_tensor) {
 
 async function draw_heatmap (predictions_tensor, predict_data) {
 	if(input_shape_is_image() && $("#show_grad_cam").is(":checked")) {
+		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
-		var heatmap = await gradClassActivationMap(predict_data, strongest_category);
+
+		var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
 		if(heatmap) {
-			tf.engine().startScope();
 			/*
 			log(heatmap);
 			log(heatmap.shape);
@@ -477,8 +478,8 @@ async function draw_heatmap (predictions_tensor, predict_data) {
 			$("#grad_cam_heatmap").show();
 		} else {
 			$("#grad_cam_heatmap").hide();
-			tf.engine().endScope();
 		}
+		tf.engine().endScope();
 	}
 }
 

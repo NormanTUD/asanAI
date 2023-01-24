@@ -2237,7 +2237,17 @@ function applyColorMap(x) {
   });
 }
 
-function gradClassActivationMap(x, classIndex, overlayFactor = 2.0) {
+function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
+	if(model.isTraining) {
+		log("Cannot show grad CAM while training");
+		return;
+	}
+
+	if(!contains_convolution()) {
+		log("Cannot continue using grad CAM when you have no convolutional layers");
+		return;
+	}
+
 	try {
 		// Try to locate the last conv layer of the model.
 		let layerIndex = model.layers.length - 1;
@@ -2251,12 +2261,12 @@ function gradClassActivationMap(x, classIndex, overlayFactor = 2.0) {
 			layerIndex >= 0, `Failed to find a convolutional layer in model`);
 
 		const lastConvLayer = model.layers[layerIndex];
+
 		/*
-			console.log(
-				`Located last convolutional layer of the model at ` +
-				`index ${layerIndex}: layer type = ${lastConvLayer.getClassName()}; ` +
-				`layer name = ${lastConvLayer.name}`
-			);
+		console.log(
+			`Located last convolutional layer of the model at ` +
+			`index ${layerIndex}: layer type = ${lastConvLayer.getClassName()}; ` +
+			`layer name = ${lastConvLayer.name}`);
 		*/
 
 		// Get "sub-model 1", which goes from the original input to the output
@@ -2272,12 +2282,14 @@ function gradClassActivationMap(x, classIndex, overlayFactor = 2.0) {
 		let y = newInput;
 		while (layerIndex < model.layers.length) {
 			y = model.layers[layerIndex++].apply(y);
+			_create_model();
 		}
 		const subModel2 = tf.model({inputs: newInput, outputs: y});
 
-		return tf.tidy(() => {
+		var retval = tf.tidy(() => {
 			// This function runs sub-model 2 and extracts the slice of the probability
 			// output that corresponds to the desired class.
+
 			const convOutput2ClassOutput = (input) =>
 				subModel2.apply(input, {training: true}).gather([classIndex], 1);
 			// This is the gradient function of the output corresponding to the desired
@@ -2319,6 +2331,8 @@ function gradClassActivationMap(x, classIndex, overlayFactor = 2.0) {
 			heatMap = heatMap.mul(overlayFactor).add(x.div(255));
 			return heatMap.div(heatMap.max()).mul(255);
 		});
+
+		return retval;
 	} catch (e) {
 		console.warn(e);
 		return null;

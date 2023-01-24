@@ -604,15 +604,10 @@ function copy_id_to_clipboard(idname) {
 }
 
 function enable_disable_grad_cam() {
-	console.warn("TODO");
 	if ($("#show_layer_data").is(":checked")) {
-		$("#show_kernel_images").prop("disabled", false);
-		$("#data_plotter").show();
-		$("#layer_visualizations_tab").show();
+		$("#grad_cam_heatmap").show();
 	} else {
-		$("#show_kernel_images").prop("disabled", true);
-		$("#data_plotter").hide();
-		$("#layer_visualizations_tab").hide();
+		$("#grad_cam_heatmap").hide();
 	}
 
 	hide_empty_tabs("visualization_ribbon");
