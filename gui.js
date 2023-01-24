@@ -4551,7 +4551,7 @@ async function init_webcams () {
 	available_webcams = available_webcam_data[0];
 	available_webcams_ids = available_webcam_data[1];
 
-	log("Number of available cams: " + available_webcams.length);
+	l("Number of available cams: " + available_webcams.length);
 
 	if(available_webcams.length) {
 		l("Webcam(s) were found. Enabling webcam related features.");
