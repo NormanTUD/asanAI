@@ -18,7 +18,6 @@ async function getZipFileBlob() {
 		var canvas = canvasses[i];
 
 		var blob = await getCanvasBlob(canvas);
-		var blob_text = await blob.text();
 
 		await zipWriter.add(canvas.id + ".png", new zip.BlobReader(blob));
 	}
