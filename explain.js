@@ -2248,6 +2248,11 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 		return;
 	}
 
+	if(is_hidden_or_has_hidden_parent("#grad_cam_heatmap")) {
+		l("Not wasting resources on grad CAM when the predict tab is not visible anyways.");
+		return;
+	}
+
 	try {
 		// Try to locate the last conv layer of the model.
 		let layerIndex = model.layers.length - 1;
