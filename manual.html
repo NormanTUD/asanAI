@@ -1495,13 +1495,13 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
 
-			Where $J(\theta)$ is the loss function, $\beta_1$ and $\beta_2$ are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
+			Where $J(\theta)$ is the loss function, \[\beta_1\] and \[\beta_2\] are hyperparameters, \[m\] and \[v\] are the moving averages of the gradient and the squared gradient, respectively.
 
 			To calculate the new weight $\theta_{t+1}$, Adam uses the following update rule:
 
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
 
-			Where $\alpha$ is the learning rate and $\epsilon$ is a small constant to avoid division by zero.
+			Where \[\alpha\] is the learning rate and \[\epsilon\] is a small constant to avoid division by zero.
 
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
 
@@ -1542,7 +1542,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
 
-			Where $\theta$ is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, $\beta$ is a hyperparameter, $\textbf{s}_t$ is the moving average of the squared gradient, and $\epsilon$ is a small constant to avoid division by zero.
+			Where \[\theta\] is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, $\beta$ is a hyperparameter, $\textbf{s}_t$ is the moving average of the squared gradient, and $\epsilon$ is a small constant to avoid division by zero.
 
 			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
 
