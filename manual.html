@@ -8,7 +8,6 @@
 		<title>asanAI Handbook</title>
 		<script src='plotly-latest.min.js'></script>
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
 		<script type="text/x-mathjax-config">
 			MathJax.Hub.Config({
 				tex2jax: {
@@ -27,13 +26,11 @@
 		<script src='explain.js'></script>
 		<script src='model.js'></script>
 		<script src='gui.js'></script>
-
 		<style>
 			body {
 				font-family: sans-serif;
 				background-color: #e5e5e5;
 			}
-
 			.container{
 				margin: 20px auto;
 				width:100px;
@@ -49,39 +46,32 @@
 					font-size:40px;
 					font-family:sans-serif;
 				}
-
 			}
-
 			#contents {
-				white-space: pre-line;
+				/*white-space: pre-line;*/
 			}
-
 			.center_vertically {
 				display: flex;
 				align-items: center;
 			}
-
 			.grid3x2 {
 				display: grid;
 				grid-template-columns: repeat(2, 40px);
 				grid-template-rows: repeat(3, 40px);
 				grid-gap: 1px;
 			}
-
 			.grid2x2 {
 				display: grid;
 				grid-template-columns: repeat(2, 40px);
 				grid-template-rows: repeat(2, 40px);
 				grid-gap: 1px;
 			}
-
 			.grid {
 				display: grid;
 				grid-template-columns: repeat(3, 40px);
 				grid-template-rows: repeat(3, 40px);
 				grid-gap: 1px;
 			}
-
 			.cell {
 				justify-content: center;
 				align-items: center;
@@ -92,20 +82,16 @@
 				background: white;
 				outline: 1px solid black;
 			}
-
 			.flip3dtensor {
 				max-width: 100px;
 				transform: skew(-180deg, 21deg);
 			}
-			
 			.kernel_images {
 				margin: 10px;
 			}
-
 			.out_images {
 				margin: 10px;
 			}
-			
 			img {
 				max-width: 90%;
 			}
@@ -125,18 +111,14 @@
 				dilationRate: [1, 1],
 				activation: "relu",
 				useBias: true,
-
 				biasInitializer: "ones", 
 				kernelInitializer: "glorotUniform", 
-
 				kernelConstraint: undefined,
 				biasConstraint: undefined,
-
 				activityRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ),
 				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
 				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
 			};
-
 			var default_config_depthwiseConv2d = {
 				kernelSize: [3, 3],
 				depthMultiplier: 1,
@@ -148,18 +130,14 @@
 				dilationRate: [1, 1],
 				activation: "relu",
 				useBias: true,
-
 				biasInitializer: "ones", 
 				kernelInitializer: "glorotUniform", 
-
 				kernelConstraint: undefined,
 				biasConstraint: undefined,
-
 				activityRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ),
 				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
 				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
 			};
-
 			var default_config_conv2dTranspose = {
 				filters: 3,
 				kernelSize: [3, 3],
@@ -168,47 +146,37 @@
 				dilationRate: [1, 1],
 				activation: "relu",
 				useBias: true,
-
 				biasInitializer: "ones", 
 				kernelInitializer: "glorotUniform", 
-
 				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
 				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
 			};
-
 			var default_config_gaussianNoise = {
 				stddev: 0.1
 			};
-
 			var default_config_gaussianDropout = {
 				rate: 0.1
 			};
-
 			var default_config_dropout = {
 				rate: 0.1
 			};
-
 			var default_config_alphaDropout = {
 				rate: 0.1
 			};
-
 			var default_config_upSampling2d = {
 				size: [2, 2],
 				interpolation: "nearest"
 			};
-
 			var default_config_averagePooling2d = {
 				poolSize: [2, 2],
 				strides: [2, 2],
 				padding: "valid"
 			};
-
 			var default_config_maxPooling2d = {
 				poolSize: [2, 2],
 				strides: [2, 2],
 				padding: "valid"
 			};
-
 			var default_config_conv2d = {
 				filters: 3, 
 				kernelSize: [4, 4], 
@@ -218,134 +186,125 @@
 				dilationRate: [1, 1], 
 				useBias: true, 
 				padding: "valid", 
-
 				biasInitializer: "ones", 
 				kernelInitializer: "glorotUniform", 
-
 				kernelRegularizer: tf.regularizers.l1l2( { "l1": 0.01, "l2": 0.01 } ), 
 				biasRegularizer: tf.regularizers.l2( { "l2": 0.01 } )
 			};
 		</script>
-
-
 		<div id="training_data"></div>
-
 		<img src="logo_small.png" />
-
 		<div id="toc"></div>
-
 		<div id="contents">
 			<h2>General outline</h2>
 			asanAI offers a simple way of creating sequential neural networks and train them on your own data, from within the browser. It allows you to visualize a lot of different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained model to Python and NodeJS.
-
 			<h2>Quickstart</h2>
 			<h3>GUI Basics</h3>
 			<img src="ribbon.png" />
 			The bar at the top is called ribbon. It contains general options, applicable to all layers, the data itself or the ability to start the training.
-
+<br>
 			<img src="layers.png" />
 			The left side is the layers panel. It shows the layers of the current neural network in the state they are in currently. Also, it shows the description of what groups of layers do on the right side. 
-
+<br>
 			<h3>Train on images from webcam</h3>
 			The quickest and easiest way to create a neural network is to simply use images from the webcam.
-
+<br>
 			Click on the camera icon &#128248; in the top-left of the ribbon.
-
+<br>
 			<img src="camera_icon.png" />
-
+<br>
 			You then get a screen where you can set how many images you want to take via webcam (default: 100) and how much time should between them in seconds (default: 0.9 seconds). If you want to take multiple pictures, set these settings accordingly and click "Take 100 images from webcam (0.9 seconds apart)" on the first category.
-
+<br>
 			If you just want to use a single image, press "Take image from webcam" instead.
-
+<br>
 			While doing these images, please move the object around, so that the neural network can see it from different angles and sides.
-
+<br>
 			Each of these buttons is assigned to a category, which you can name. By default, there are 2 categories, but you can add as many as you like. If you want to remove a category, press "Delete this category". If you want to add a category, press "Add new category".
-
+<br>
 			<img src="camera_data.png" />
-
+<br>
 			When you have as many categories and images as you wish, go to the ribbon and click <img src="start_training_button.png">.
-
+<br>
 			Remember that the image will, by default, be converted to 10x10 pixels, so make sure that the objects you hold in front of the camera are well-visible and clearly distinguishable.
-
+<br>
 			You will then see graphs like these:
-
+<br>
 			<img src="train_graph_ok.png" />
-
+<br>
 			For now only the topmost graph is important. The two lines are the <a href="#Loss">Loss</a> and <a href="#Validation_Loss">Validation-Loss</a>.
-
+<br>
 			Both show how well the network is performing. A simple (but technically inaccurate) way of thinking of them is the number of errors the network makes while predicting. The lower, the better.
-
+<br>
 			The Validation Loss is based on the <a href="#Validation_Split">Validation Split</a>. This takes a certain percentage out of the training loop and tests the network after each <a href="#Epochs">Epoch</a> on data the network has not yet seen.
-
+<br>
 			Both graphs should look similiar. Check <a href="#Interpretating_the_training_graph">how to interpret these graphs here</a>.
-
+<br>
 			When the training is done (or you prematurely cancelled it, which can be done by clicking <img src="stop_training_button.png"> in the ribbon), you get automatically redirected to the Predict tab, where your webcam is already enabled and the prediction of what the network thinks is shown life.
-			
+<br>
 			<img src="predict_webcam.png">
-
+<br>
 			The category which has the highest probability is automatically highlighted in green.
-
+<br>
 			Congratulations! &#127881; You have now trained a neural network. You can now <a href="#Export_to_Python">export it to python</a> and do any kinds of logic with it.
-
+<br>
 			<h3>Train on images from files</h3>
 			Training on images is very similiar to training from webcam images, but instead of the camera icon, click the photo icon (or chose "Own data?" &rarr; "Yes, own images/webcam").
-
+<br>
 			Right of the category name, you see an Upload button. Drag files onto there or open the file picker. 
-
+<br>
 			The rest is the same as with training on webcam images, when done adding images, you may chose to <a href="#Augmentation">augment</a> them, or straight go to <img src="start_training_button.png" /> to start training.
-
+<br>
 			<h3>Train on CSV</h3>
-
+<br>
 			As Neural Networks as just function approximators (see <a href="#Basic_idea_of_neural_networks">Basic idea of neural networks</a>), you can also approximate custom functions based on numbers. The easiest way to import custom data from functions of the form \( f(x_1, x_2, x_3, \dots, x_n) = [y_1, y_2, y_3, \dots, y_n] \) is to use the CSV importer.
-
+<br>
 			For this, choose "Own data?" &rarr; "Yes, own CSV".
-
+<br>
 			A new tab will appear.
-
+<br>
 			<img src="manual/own_csv_1.png" />
-
+<br>
 			In the large text field, you can enter data in the CSV format:
-
+<br>
 <pre>
 x_1, x_2, x_3, y_1, y_2, y_3
 1, 0, -1, 5, 1, 1
 3, 3, 1, 0, 1, 3
 ...
 </pre>
-
+<br>
 			<img src="manual/own_csv_2.png" />
-
+<br>
 			The the header-to-training-data-section you can specify which columns (defined by their title in the very first line) should belong to the Input and which ones should belong to the output.
-			
-
+<br>
 			<img src="manual/own_csv_3.png" />
-
+<br>
 			After specifying this, on the right, a preview of how the tensors will look like like.
-
+<br>
 			The input and output shapes are changed automatically according to the data type and the constructed network.
-
+<br>
 			There are also some options at the top:
-
+<br>
 			<b>Auto-adjust last layer's number of neurons?</b> This sets the number of output neurons depending on the number of values set to "Y".
-
+<br>
 			<b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 0.
-
+<br>
 			<b>Shuffle data before doing validation split (recommended)?</b> TensorFlow usually takes the last n% of the input data as Validation Split (if enabled). This way, if the data is ordered, you may miss some categories of data in the training data, because it got shifted to the Validation dataset automatically. This can be counteracted by shuffling the data randomly before the validation split is taken out of the dataset. The correlation between an input and an output stays the same after shuffling.
-
+<br>
 			<b>Auto One-Hot-encode Y (disables "divide by")?</b> Automatically One-Hot-Encodes if the Y-data has only one column and is a string. Then, it autogenerates labels too.
-
+<br>
 			<b>Auto loss/metric?</b> Set loss and metric automatically depending on how the data is structured (for classification problems it takes <a href="#categoricalCrossentropy">Categorical Crossentropy</a> and <a href="#meanSquaredError">Mean Squared Error</a> for anything else.
-
+<br>
 			<b>Separator</b> Which symbol should be used as CSV seperator (usually ",").
-
+<br>
 			<b>divide by</b> Which number every value in the tensor should be divided by (by default, 1, and not enabled if auto-one-hot-encoding is enabled.
-
+<br>
 			<h2>Basic idea of neural networks</h2>
 			<h3>Data</h3>
 			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every number, every vector and matrix is a tensor.
-
+<br>
 			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
-
+<br>
 			$$
 			\textrm{Second dimension}
 			\stackrel{\mbox{First dimension}}{%
@@ -357,11 +316,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}%
 			}.
 			$$
-
+<br>
 			Tensors have an arbitrary number of dimensions.
-
+<br>
 			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 3x3 pixels, the image as a tensor would look like this:
-
+<br>
 			$$
 				\text{Image} = \begin{pmatrix}
 					\text{Red:} \begin{pmatrix}
@@ -381,9 +340,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\end{pmatrix}
 				\end{pmatrix}
 			$$
-
+<br>
 			The three channels together give us this total image:
-
+<br>
 			<div class="center_vertically" style="height: 300px; position: relative">
 				<div style="position: absolute; left: 130px; width: 300px">
 					<span id="training_data_matrix" style="display: inline-flex; width: 150px">
@@ -449,70 +408,70 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					</div>
 				</div>
 			</div>
-
+<br>
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
-
+<br>
 			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape \( [3, 3] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
-
+<br>
 			<h3>One-Hot-Encoding</h3>
 			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
 			could be \( [\text{Percentage Cat}, \text{Percentage Dog}] \), which, in total, sums up to 1 (100%).
-
+<br>
 			For more categories, you'd add another entry to that column vector, like \( [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] \), all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
-
+<br>
 			<h3>Layers</h3>
 			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger function.
-
+<br>
 			You can imagine them as such:
-
+<br>
 			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
-
+<br>
 			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be designed with asanAI.
-
+<br>
 			<h3>What do functions have to do with neural networks?</h3>
 			A mathematical function assigns values from one set to values from another. For example, the function \( \text{nth\_prime}(n) \) assigns natural numbers \( (1, 2, 3, \dots) \) to a subset of natural numbers, prime numbers, \( (2, 3, 5, \dots) \).
-
+<br>
 			Since parameters for functions can also be matrices, or even tensors, you can define a computer program as a function that gets some input and produces a specific output, depending solely on the inputs.
-
+<br>
 			Imagine a set of images of cats and dogs. These are, as already discussed, tensors. If you want to classify these images, you are actually searching a function such that 
-
+<br>
 			$$ 
 				f\left(\text{Input Image Tensor}\right) = \begin{pmatrix}
 					\text{Probability cat in percent}\\
 					\text{Probability dog in percent}
 				\end{pmatrix}
 			$$
-
+<br>
 			Writing this function manually is practically impossible. Every picture of every cat or dog is different. Even if it's the same cat, it is different if the picture is taken half a second later. So you cannot simply say "if this pixel has this color and this pixel has this color, and ..., then it is a cat". 
-
+<br>
 			This is where Neural Networks jump in. Via the layers, we can approximate a function that does that, by connecting different very generalized functions (called layer types) that do specific kinds of tasks.
-
+<br>
 			We will cover these layers <a href="#Layer_Types">here</a>.
-
+<br>
 			In neural networks, instead of writing the interna of functions by yourself, you give the network a lot of data and what should come out. Mathematically, you tell the network that the function \( f \) should transform the input set \( X \) to the output set \( Y \). It will try to find values for the parameters of the interna of the functions, whose general outline you need to give by specifying the layer types and their options, so that the difference between the values you specify as ground truth and the values the network gives out is minimized as much as possible.
-
+<br>
 			<h3>Dimensionality Reduction</h3>
 			A common goal of neural networks is dimensionality reduction.
-
+<br>
 			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
-
+<br>
 			This is a dimensionality reduction, from a tensor of the shape \( [64, 64, 3] \) to a tensor of the shape \( [2] \).
-
+<br>
 			This can be done by several ways. For example, <a href="#Convolutional_Layers">convolutions</a> or <a href="#Pooling_layers">pooling layers</a> "extract" information from images and reduce the number of values and therefore reduce the dimensionality of the inputted images.
-
+<br>
 			<h3>Training</h3>
 			The <a href="#Loss">loss function</a> creates a single value from the training data \(X\) and \(Y\) such that the lower the number is, the better the results are. 
 			This creates a so-called "loss-landscape", that is a function that represents, for each data point, how well the network currently recognizes it.
-
+<br>
 			For each point, this is just a single float. The overall loss is the average loss of all points. 
-
+<br>
 			For each point, while training, a loss is determined. How exactly this is done is dependent on the optimizer chosen (see <a href="#Optimizers">Optimizers</a> for more details).
-
+<br>
 			After each <a href="#Batch-Size">Batch</a>, the (trainable) weights and biases are adjusted to to better fit the training data and to minimize the loss. The network structure is not altered while training.
-
+<br>
 			<h4>Batch-Size</h4>
 			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
-
+<br>
 			$$ 
 				f\left(
 					\begin{pmatrix}
@@ -526,9 +485,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					y_2 
 				\end{pmatrix}
 			$$
-
+<br>
 			The next batch may then be:
-
+<br>
 			$$ 
 				f\left(
 					\begin{pmatrix}
@@ -542,95 +501,95 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					y_5 
 				\end{pmatrix}
 			$$
-
+<br>
 			and so on, until all values have been seen by the network once. This is then called an <a href="#Epochs">epoch</a>.
-
+<br>
 			<h4>Epochs</h4>
 			When the network, while training, has seen all training data once, this is called an epoch. You usually need many epochs after each other to train a neural network.
-
+<br>
 			<h4>Shuffling</h4>
 			Because usually not the whole data fits into memory and has to be sharded into smaller chunks (<a href="#Batch-Size">Batches</a>), it is usually recommended to shuffle the data. Imagine you didn't do this in the example network that should learn to classify cats and dogs, and in the first batch the network there are only cats and in the second one only dogs.
-
+<br>
 			Then, the network would learn "cat" in the first batch and be punished for what it has learnt previously in the next batch, where there are only dogs. 
-
+<br>
 			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, so the likelyhood of one batch containing only one type of image is drastically reduced.
-
+<br>
 			<h4>How the computer calculates derivatives of very complex function</h4>
-			
+<br>
 			One possible definition of derivates is this equation:
-
+<br>
 			$$ f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} $$
-
+<br>
 			The way a computer can approximate derivates of any arbitrary function, no matter how complex, is to set h to some very small value.
-
+<br>
 			Let's say, 
-
+<br>
 			$$ f(x) = 2x^2 $$
-
+<br>
 			Of course, the derivative is \(4x\) then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point \(x = 10\)?
-
+<br>
 			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = $$
-
+<br>
 			$$ \frac{f(x + 0.0001) - f(x)}{0.0001} = $$
-
+<br>
 			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = $$
-
+<br>
 			$$ \frac{2(10+0.0001)^2 - 2\cdot 10^2}{0.0001} =  $$
-
+<br>
 			$$ \frac{2(10+0.0001)^2 - 200}{0.0001} = $$
-
+<br>
 			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
-
+<br>
 			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by chosing a smaller \(h\).
-
+<br>
 			<h3>Predicting</h3>
 			TODO
-
+<br>
 			<h3>Shapes</h3>
-
+<br>
 			Tensors have shapes. The shape describe how many data points are in the tensor, and in what way they are arranged.
-
+<br>
 			For example, an Image may have 3 channels (one for each, red, green and blue), and each of those channels may be 10px wide and 20px height. So the total tensor shape may be \([10, 20, 3]\). If you have multiple of these images, lets say five, you may expand the tensor's first implicit index to 5, like this: \([5, 10, 20, 3]\). Then, you'd have 5 images, each 10x20px, with 3 channels each. This, in total, makes \(5 \cdot 10 \cdot 20 \cdot 3 = 3000\) data points.
-
+<br>
 			<h4>Input Shape</h4>
 			The input shape of a network is the shape of tensors that the network can process. If the incoming tensor has another shape, it may fail, because the network doesn't know what to do with it.
-
+<br>
 			<h4>Output Shape</h4>
 			The output shape of a network is the shape of the tensor that comes out of the network. Usually, in asanAI, the output shape consists of Dense Layers that have a One-Hot-Encoding (though this may be different for special kinds of networks not covered in this documentation).
-
+<br>
 			For example, if you have 5 categories as a one-hot-encoded softmax'ed vector like this: \([0, 0.8, 0.1, 0.05, 0.05]\), the output shape is \([5]\)....
-
-
+<br>
+<br>
 			<h3>Overfitting</h3>
 			Overfitting is a common problem in machine learning, it occurs when a model is trained too well on the training data, and as a result, it performs poorly on new, unseen data. It means that the model has learned the noise in the training data, rather than the underlying pattern.
-
+<br>
 			In simple terms, overfitting occurs when a model is too complex and it captures the noise in the training data. This happens when the model has too many parameters compared to the amount of training data available.
-
+<br>
 			Here are some possible ways to avoid overfitting:
-
+<br>
 				Use more data: The more data you have, the less likely the model is to overfit.
-
+<br>
 				Use regularization techniques: Regularization techniques such as L1, L2 or dropout can help to reduce overfitting by adding a penalty term to the loss function.
-
+<br>
 				Use cross-validation: Cross-validation is a technique used to evaluate the performance of a model by dividing the data into multiple subsets.
-
+<br>
 				Early stopping: Monitor the performance of the model on a validation set during training and stop training when the performance on the validation set starts to decrease.
-
+<br>
 				Use simpler models: A simpler model is less likely to overfit than a complex one, thus it is recommended to use simpler models when dealing with small data sets.
-
+<br>
 				Bagging and Boosting: Bagging and Boosting are ensemble methods that can help to reduce overfitting by combining multiple models.
-
+<br>
 				Transfer learning: Use pre-trained models to initialize the weights of the network, this can help the network to converge faster and achieve better performance.
-
+<br>
 			<h2>A very simple neural network</h2>
 			TODO
-
+<br>
 			<h2>Layer Types</h2>
 			<h3>Basic Layer Types</h3>
 			<h4>Dense</h4>
-
+<br>
 			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer is as follows:
-
+<br>
 			$$
 				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
 					y_{0}
@@ -645,11 +604,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					0
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
-
+<br>
 			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and the Bias may change.
-
+<br>
 			This, for example, is a Dense Layer with the input shape \( [2] \):
-
+<br>
 			$$
 				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
 					y_{0}
@@ -666,12 +625,12 @@ x_1, x_2, x_3, y_1, y_2, y_3
 						0.123153419419419
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
-
+<br>
 			<h4>Flatten</h4>
 			Flatten has no options. It creates a simple vector of any matrix.
-
+<br>
 			Example:
-
+<br>
 			$$
 				\textrm{Flatten}\left( \begin{pmatrix}
 					0 & 1 & 2 \\
@@ -679,15 +638,15 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					6 & 7 & 8
 				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
 			$$
-
+<br>
 			This is used for <a href="#Dimensionality_Reduction">Dimensionality Reduction</a>, in asanAI especially for the transfer of image tensors to vectors for Dense Layers (see <a href="#Network_Structures">Network Structures</a>).
-
+<br>
 			<h4>Dropout</h4>
 			<div id="dropout_example"></div>
-
-
+<br>
+<br>
 			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
-
+<br>
 			$$
 				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
 					\begin{pmatrix}
@@ -709,15 +668,15 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					21 & 0 & 0 & 0 \\
 				\end{pmatrix}
 			$$
-			
+<br>
 			This is only active while training.
-
+<br>
 			This is used for avoiding <a href="#Overfitting">overfitting</a>.
-
+<br>
 			<h4>Reshape</h4>
-
+<br>
 			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
-
+<br>
 			$$
 				\begin{pmatrix}
 					1 & 2 & 3 \\
@@ -729,25 +688,25 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					3 & 4 \\
 					5 & 6
 				\end{pmatrix}
-				
+<br>
 			$$
-
+<br>
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
-
+<br>
 			<h3>Activation Layer Types</h3>
 			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a seperate layer.
 			<h3>Convolutional Layers</h3>
 			<h4>convNd (conv1d, conv2d)</h4>
 			<div id="conv2d_example"></div>
 			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
-
+<br>
 			Example:
-
+<br>
 			Kernel: \( K = \begin{pmatrix}
 				1 & -1 \\
 				0 & 2
 			\end{pmatrix}\).
-
+<br>
 			Data: \( D = \begin{pmatrix}
 				10 & 8 & 1 & 4 \\
 				4 & 2 & 14 & 5 \\
@@ -755,7 +714,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				32 & 128 & 3 & 30
 			\end{pmatrix}
 			\).
-
+<br>
 			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is \( S_1 = \begin{pmatrix}
 				10 & 8 \\
 				4 & 2
@@ -770,7 +729,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					4 & 0
 				\end{pmatrix}
 			\).
-
+<br>
 			The second submatrix is then \( S_2 = \begin{pmatrix}
 				1 & 4 \\
 				14 & 5
@@ -779,7 +738,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				14 & -4
 			\end{pmatrix}
 			\).
-
+<br>
 			When slided over the whole image, the result is \(
 				\begin{pmatrix}
 					10 & 6 & 1 & 7 \\
@@ -788,52 +747,52 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					32 & 224 & 3 & 57
 				\end{pmatrix}
 			\). The kernel is being trained to recognize whatever it needs to recognize. 
-
+<br>
 			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
-
+<br>
 			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
-
+<br>
 			A bias is (if enabled) then added to each output value of this graph.
-
+<br>
 			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
-
+<br>
 			<h4>conv2dTranspose</h4>
 			<div id="conv2dTranspose_example"></div>
 			A 2D transposed convolutional layer, also known as a deconvolutional layer, is a type of layer used in deep neural networks for upsampling the feature maps. It is the inverse operation of a 2D convolutional layer, and it is used to increase the spatial resolution of the feature maps.
-
+<br>
 			A 2D transposed convolutional layer applies a set of filters to the input feature maps, with the goal of increasing their spatial resolution. The filters are applied in a way that is similar to a 2D convolutional layer, but the operation is done in reverse. The input feature maps are upsampled by the transposed convolutional layer by inserting zeros between the elements of the input feature maps, and then applying the filters.
-
+<br>
 			The use of 2D transposed convolutional layers allows to increase the spatial resolution of the feature maps, which is useful for tasks such as image segmentation or image generation. They are used in the decoder part of architectures such as U-Net or encoder-decoder architectures, where the goal is to increase the spatial resolution of the feature maps in order to make the predictions more detailed.
-
+<br>
 			It is a good choice when the goal is to increase the spatial resolution of the feature maps, for example, in image segmentation or image generation tasks. It is also a good choice when working with encoder-decoder architectures, where the goal is to make predictions more detailed.
-
+<br>
 			<h4>depthwiseConv2d</h4>
 			<div id="depthwiseConv2d_example"></div>
 			A depthwise convolutional layer is a type of 2D convolutional layer used in deep neural networks. It applies a single filter to each input channel independently, rather than applying a set of filters to the entire input feature map.
-
+<br>
 			The depthwise convolutional layer applies a single filter to each input channel independently, which means that the number of filters used is equal to the number of input channels. The filters are applied to the input feature map in a way that is similar to a 2D convolutional layer, but each filter is applied only to a single input channel.
-
+<br>
 			The use of depthwise convolutional layers allows for a reduction in the number of parameters and computation in the network, while maintaining or even improving the performance. They also allow for a better representation of the spatial correlations within each channel.
-
+<br>
 			It is a good choice when there is a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when working with images and there's a need to preserve the spatial correlations within each channel. They are commonly used in conjunction with pointwise convolutional layers to form a separable convolutional layer, which is a more efficient way of applying convolutional filters to the input feature maps.
-
+<br>
 			<h4>separableConv2d</h4>
 			<div id="separableConv2d_example"></div>
 			Separable convolutional layers are a type of 2D convolutional layers used in deep neural networks. They are designed to reduce the number of parameters and computation in the network, while maintaining or even improving the performance.
-
+<br>
 			A separable convolutional layer consists of two parts: a depthwise convolutional layer and a pointwise convolutional layer. The depthwise convolutional layer applies a single filter to each input channel independently, while the pointwise convolutional layer applies a 1x1 convolution to combine the output of the depthwise convolutional layer.
-
+<br>
 			The use of the depthwise convolutional layer and the pointwise convolutional layer in a separable convolutional layer makes it possible to reduce the number of parameters and computation in the network, while maintaining or even improving the performance. The depthwise convolutional layer reduces the number of parameters by applying a single filter to each input channel independently, while the pointwise convolutional layer combines the output of the depthwise convolutional layer with a 1x1 convolution.
-
+<br>
 			Separable convolutional layers are often used in the early layers of neural network architectures, especially in the mobile versions of the architectures, where the number of parameters and computation is limited. They can also be used as a replacement for standard 2D convolutional layers in cases where the number of parameters and computation is a concern.
-
+<br>
 			It is a good choice when there's a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when the model is going to run on mobile devices or other resource-constrained environments.
-
+<br>
 			<h4>upsampling2d</h4>
 			<div id="upSampling2d_example"></div>
-
+<br>
 			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
-
+<br>
 			For example, \(
 			\underbrace{\text{upsampling2d}}_{h = 2,\ w = 4}\left(
 				\begin{pmatrix}
@@ -846,16 +805,16 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4 \\
 					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4
 			\end{pmatrix} \).
-
+<br>
 			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
-
+<br>
 			<h3>Pooling layers</h3>
 			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
 			<div id="averagePooling2d_example"></div>
 			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
-
+<br>
 			Example:
-
+<br>
 			$$
 				\underbrace{\text{averagePooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
@@ -870,15 +829,15 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\color{orange}{48} & \color{green}{11.75} \\
 				\end{pmatrix}
 			$$
-
-
+<br>
+<br>
 			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
 			<div id="maxPooling2d_example"></div>
-
+<br>
 			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
-
+<br>
 			Example:
-
+<br>
 			$$
 				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
@@ -890,50 +849,50 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\color{orange}{128} & \color{green}{30} \\
 				\end{pmatrix}
 			$$
-
+<br>
 			<h3>Dropout and noise layers</h3>
 			<h4>alphaDropout</h4>
 			<div id="alphaDropout_example"></div>
-
+<br>
 			AlphaDropout is a variation of dropout, a regularization technique for reducing overfitting in neural networks.
-
+<br>
 			In standard dropout, a random subset of neurons are "dropped out" during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of \(\alpha\) (\(\alpha\) is a hyperparameter).
-
+<br>
 			This way, AlphaDropout allows the model to still learn the mean of the activations while also preventing overfitting and forcing the model to be less sensitive to the specific weights of the neurons. In other words, AlphaDropout regularizes the network by adding noise to the activations, which promotes the network to learn more robust feature representations.
-
+<br>
 			AlphaDropout can be useful for certain types of datasets, such as time-series data, where the activations have temporal dependencies.
-
+<br>
 			This layer is only active during training.
-
+<br>
 			<h4>gaussianDropout</h4>
 			<div id="gaussianDropout_example"></div>
 			Drops out with a gaussian distribution of a specified dropout rate (in the example, 0.2).
-
+<br>
 			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
-
+<br>
 			This layer is only active during training.
-
+<br>
 			<h4>gaussianNoise</h4>
 			<div id="gaussianNoise_example"></div>
-
+<br>
 			Adds gaussian noise to images. You can specify the standard deviation (in the case shown above = 1) of how noisy the image should be.
-
+<br>
 			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
-
+<br>
 			This layer is only active during training.
-
+<br>
 			<h3>Debug Layers</h3>
 			<h4>Debug Layer</h4>
 			This layer does not do anything to the data. It just prints them out to <tt>console.log</tt>.
-
+<br>
 			<h2>Layer Options</h2>
-
+<br>
 			<h3>Trainable</h3>
 			If enabled, the network's weights and biases (if enabled, see <a href="#Use_Bias">Use Bias</a>) are changed while training. If not, they stay the same.
-
+<br>
 			<h3>Use Bias</h3>
 			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical representation:
-
+<br>
 			$$ 
 				\underbrace{\begin{pmatrix}
 					y_{0}
@@ -951,9 +910,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\end{pmatrix}}_{\mathrm{Bias}}
 				\right)
 			$$
-
+<br>
 			A Layer without Use Bias enabled would look like this:
-
+<br>
 			$$
 				\underbrace{\begin{pmatrix}
 					y_{0}
@@ -968,54 +927,54 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
 				\right)
 			$$
-
+<br>
 			The bias allows the function's output to be shifted in any axis.
-
+<br>
 			<h3>Units</h3>
 			TODO
-
+<br>
 			<h3>Standard-Deviation</h3>
 			TODO
-
+<br>
 			<h3>Strides</h3>
 			TODO
-
+<br>
 			<h3>Regularizer</h3>
-
+<br>
 			Regularization is a technique used to prevent <a href="#Overfitting">overfitting</a> in machine learning models by adding a penalty term to the loss function. The goal is to prevent the model from fitting the noise in the data, and to encourage the model to have small weights.
-
+<br>
 			The choice of regularization method depends on the specific problem and the dataset. L1 regularization can be preferred in case of sparse data, where only a few features are informative. L2 regularization can be preferred when the problem is not sparse and when you want to keep all the features. L1-L2 regularization can be used when you have both sparse and non-sparse data.
-
+<br>
 			In the context of machine learning, "sparse" generally refers to a dataset or input where a large proportion of the values are zero or near zero. For example, a sparse matrix is a matrix in which most of the elements are zero. A sparse dataset is a dataset where most of the features have little or no variation and thus, little or no informative value.
-
+<br>
 			In the context of regularization, L1 regularization is often preferred when working with sparse data because it tends to push the weights of less important features towards zero, effectively setting them to zero. This results in feature selection, where only the most important features are used for the final model, making it simpler and more interpretable.
-
+<br>
 In contrast, L2 regularization tends to shrink the weights of all features towards zero, but it doesn't push the weights to exactly zero. This means that it doesn't perform feature selection, and all features are used in the final model.
-
+<br>
 In general, L1 regularization is more suitable for sparse data, where only a few features are informative, and L2 regularization is more suitable when the problem is not sparse.
-
+<br>
 			<h4>l1</h4>
 			Also known as Lasso regularization, it adds a penalty term to the loss function proportional to the absolute value of the weights. The L1 regularization term is defined as \(\lambda\sum_{i=1}^{n}|w_i|\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L1 regularization tends to push the weights towards zero and thus it can also be used to perform feature selection.
-
+<br>
 			<h4>l2</h4>
 			L2 Regularization: Also known as Ridge regularization, it adds a penalty term to the loss function proportional to the square of the weights. The L2 regularization term is defined as \(\lambda\sum_{i=1}^{n}w_i^2\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L2 regularization tends to shrink the weights towards zero, but unlike L1 regularization, it doesn't push the weights to exactly zero.
-
+<br>
 			<h4>l1l2</h4>
 			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as \(\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)\), where \(\lambda\) is the regularization strength, \(w_i\) are the weights of the model, and \(\alpha\) is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
-
+<br>
 			<h3>Initializers</h3>
 			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
-
+<br>
 			An initializer is a function used to initialize the weights of a neural network. It is called when the model is first created and its purpose is to set the initial values of the weights. The choice of initializer can have a significant impact on the performance and convergence of the model.
-
+<br>
 			In general, He et al. and LeCun normal/uniform initializers tend to work well for deep networks, while Glorot/Xavier normal/uniform initializers tend to work well for shallow networks. It also depends on the activation function used in the layer.
-
+<br>
 			<h4>glorotUniform</h4>
 			This initializer samples the weights from a uniform distribution within the range \([-x, x]\), where x is calculated as \(\sqrt{\frac{6}{\text{fan\_in} + \text{fan\_out}}}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
-
+<br>
 			<h4>constant</h4>
 			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
-
+<br>
 			$$
 			h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
 			x_{0}\\
@@ -1026,25 +985,25 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
 			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
 			$$
-
+<br>
 			<h4>glorotNormal</h4>
 			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
-
+<br>
 			<h4>heNormal</h4>
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
-
+<br>
 			<h4>heUniform</h4>
 			Draws from a uniform distribution within \([-\sqrt{6 / \text{fan\_in}}, \sqrt{6 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
-
+<br>
 			<h4>leCunNormal</h4>
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
-
+<br>
 			<h4>leCunUniform</h4>
 			Draws from a uniform distribution within \([-\sqrt{3 / \text{fan\_in}}, \sqrt{3 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
-
+<br>
 			<h4>ones</h4>
 			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
-
+<br>
 			$$
 			\left(\underbrace{\begin{pmatrix}
 			x_{0}\\
@@ -1066,22 +1025,22 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
-
+<br>
 			<h4>randomNormal</h4>
 			Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
-
+<br>
 			<h4>randomUniform</h4>
 			Draws from a uniform distribution within \[[-0.05, 0.05]\].
-
+<br>
 			<h4>truncatedNormal</h4>
 			Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
-
+<br>
 			<h4>varianceScaling</h4>
 			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
-
+<br>
 			<h4>zeros</h4>
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
-
+<br>
 			$$
 			\left(\underbrace{\begin{pmatrix}
 			x_{0}\\
@@ -1103,54 +1062,54 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
-
+<br>
 			<h3>Kernel Initializer</h3>
 			The Kernel Initializer sets the initial values of the kernel to one of the <a href="#Initializers">initializers</a>.
-
+<br>
 			<h3>Bias Initializer</h3>
 			The Bias Initializer sets the initial values of the bias to one of the <a href="#Initializers">initializers</a>.
-
+<br>
 			<h3>Kernel Regularizer</h3>
 			TODO
-
+<br>
 			<h3>Bias Regularizer</h3>
 			TODO
-
+<br>
 			<h3>Dropout Shape</h3>
 			TODO
-
+<br>
 			<h3>Target Shape</h3>
 			TODO
-
+<br>
 			<h2>Validation Split</h2>
 			Validation split is a technique used to evaluate the performance of a machine learning model by dividing the data into two subsets: a training set and a validation set. The training set is used to train the model, while the validation set is used to evaluate the performance of the model on unseen data.
-
+<br>
 			The validation split is typically done by randomly splitting the data into two subsets, with a certain percentage of the data set aside for validation. For example, if you have a data set of 100 samples, you may choose to use 80 samples for training and 20 samples for validation.
-
+<br>
 			The main purpose of using a validation split is to estimate the generalization error of the model. The generalization error is the error that the model makes on new, unseen data. By evaluating the model on the validation set, we can estimate the generalization error of the model, and use it to guide the model selection and the hyperparameter tuning.
-
+<br>
 			It's a good choice when there's a need to evaluate the performance of a model on unseen data, it's also a good choice when the goal is to estimate the generalization error of the model, and it's also a good choice when the model selection and the hyperparameter tuning need to be guided.
-
+<br>
 			<h2>Validation Loss</h2>
-
+<br>
 			<h2>Loss</h2>
 			TODO
-
+<br>
 			General variables used here:
-
+<br>
 			$$ \text{Ground truth output value} := y_i $$
 			$$ \text{Ground truth input value} := \hat{x}_i $$
 			$$ \text{Output value of the network} := \hat{y}_i $$
 			$$ \text{Number of elements in total} := n $$
-
+<br>
 			<h3>meanSquaredError</h3>
-
+<br>
 			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
-
+<br>
 			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
-
+<br>
 			Example-Calculation:
-
+<br>
 			$$
 			MSE \left(\underbrace{\begin{pmatrix}
 			0.1 \\
@@ -1169,16 +1128,16 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\left( 1 - -1 \right)^2
 			}{3} = 4.17
 			$$
-
+<br>
 			<h3>binaryCrossentropy</h3>
-
+<br>
 			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
-
+<br>
 			<h3>categoricalCrossentropy</h3>
 			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
-
+<br>
 			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of \( [5] \).
-
+<br>
 			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is \(
 			\begin{pmatrix}
 			0.03 \\
@@ -1188,15 +1147,15 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			0.01
 			\end{pmatrix}
 			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
-
+<br>
 			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
-
+<br>
 			We don't want to punish the network for that then, of course. 
-
+<br>
 			But imagine, category 3 was the correct one. Then, it was very bad, although it is the second best category.
-
+<br>
 			For this, categoricalCrossentropy is useful. Let us calculate the categorical crossentropy value for each of those options.
-
+<br>
 			In the first one, the ground-truth output is \(
 			\begin{pmatrix}
 			0 \\	
@@ -1206,9 +1165,9 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			0 \\	
 			\end{pmatrix}
 			\). The categorical crossentropy would be:
-
+<br>
 			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
-
+<br>
 			$$ 
 			-\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
@@ -1218,15 +1177,15 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
 			$$
-
+<br>
 			$$
 			-\left(
 			0 + -0.10536051565782630123 + 0 + 0 + 0
 			\right) = 0.10536051565782630123
 			$$
-
+<br>
 			This is not a perfect loss, but it indicates the results is quite OK.
-
+<br>
 			Let's try the other case, where the ground truth is \(
 			\begin{pmatrix}
 			0 \\	
@@ -1236,7 +1195,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			0 \\	
 			\end{pmatrix}
 			\). The categorical crossentropy would be:
-
+<br>
 			$$ 
 			-\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
@@ -1246,75 +1205,71 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
 			$$
-
+<br>
 			$$
 			-\left(
 			0 + 0 + -2.99573227355399099344 + 0 + 0
 			\right) = 2.99573227355399099344
 			$$
-
+<br>
 			Which is quite a high loss.
-
+<br>
 			Usually, it is recommeded to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
-
+<br>
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
-
+<br>
 			This is due to the structure of the \( \log \) function, which starts steeply and gets more and more flat the higher the number gets:
-
+<br>
 			<div id="log_from_0_to_100"></div>
-
 			<script>
 				var log_trace = {
 					x: [],
 					y: [],
 					type: 'scatter'
 				};
-
 				for (var i = 0; i < 100; i++) {
 					log_trace.x.push(i);
 					log_trace.y.push(Math.log(i));
 				}
-
 				var data = [log_trace];
 				Plotly.newPlot('log_from_0_to_100', data);
 			</script>
-
 			<h3>categoricalHinge</h3>
 			Categorical hinge loss is a loss function used in multi-class classification tasks, specifically for training models using the hinge loss. It is a variation of the hinge loss that is used for multi-class classification problems where the goal is to separate the classes with a linear boundary.
-
+<br>
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. In the case of the categorical hinge loss, the predicted class score is the score of the predicted class, and the true class score is the score of the correct class.
-
+<br>
 			The categorical hinge loss is calculated as:
-
+<br>
 			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
-
+<br>
 			where \(\text{y\_true}\) is the true class label and \(\text{y\_pred}\) is the predicted class score.
-
+<br>
 			The function will return 0 if \(\text{y\_true}* \text{y\_pred} >=1\), else it will return \(1- \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other classes.
-
+<br>
 			It is used in cases when multi-class classification is required and training with Hinge Loss is preferred.
-
+<br>
 			<h3>hinge</h3>
 			Hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is commonly used in support vector machines (SVMs) and other maximum-margin classifiers.
-
+<br>
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The margin is a hyperparameter that controls how far the predicted class score must be from the true class score in order for the loss to be non-zero.
-
+<br>
 			The hinge loss is calculated as:
-
+<br>
 			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
-
+<br>
 			where y_true is the true class label (-1 or 1) and y_pred is the predicted class score.
-
+<br>
 			The function will return 0 if \(\text{y\_true} * \text{y\_pred} >=1\), else it will return \(1 - \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other class.
-
+<br>
 			In binary classification, it is used to train a linear classifier that separates the two classes by a margin. It's a commonly used loss function for training linear models in a large margin setting, as it encourages the model to separate the classes as much as possible, which leads to a more robust classifier.
-
+<br>
 			<h3>meanAbsoluteError</h3>
 			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
-
+<br>
 			The meanAbsoluteError calculcates the absolute difference for each set of values from the ground truth and the predicted value, and
 			averages over them.
-
+<br>
 			If the ground truth is \( \begin{pmatrix}
 			0 \\
 			10 \\
@@ -1324,24 +1279,24 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			9 \\
 			10
 			\end{pmatrix} \).
-
+<br>
 			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
-
+<br>
 			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
-
+<br>
 			<h3>meanAbsolutePercentageError</h3>
 			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
-
+<br>
 			The mean absolute percentage error is used to measure forecasting errors.
-
+<br>
 			Example:
-
+<br>
 			$$ y =        [1,   0, 0.5, 2] \qquad \text{(Ground Truth)} $$
-
+<br>
 			$$ \hat{y} =  [0.5, 1, 0.4, 2] \qquad \text{(Predicted)}$$
-
+<br>
 			$$ n = 4 $$
-
+<br>
 			$$ 
 				\text{MAPE}\left(y, \hat{y}\right) = 
 				\frac{1}{4} \cdot
@@ -1352,7 +1307,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\left(\frac{2-2}{2}\right)
 				\right) =
 			$$
-
+<br>
 			$$
 				\frac{1}{4} \cdot
 				\left(
@@ -1362,7 +1317,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\left(\frac{0}{2}\right)
 				\right) =
 			$$
-
+<br>
 			$$
 				\frac{1}{4} \cdot
 				\left(
@@ -1372,67 +1327,67 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				0
 				\right) =
 			$$
-
+<br>
 			$$
 				\frac{1}{4} \cdot
 				\left(
 				-0.2
 				\right) = -0.05 
 			$$
-
+<br>
 			<h3>meanSquaredLogarithmicError</h3>
 			Mean squared logarithmic error (MSLE) is a loss function used in regression problems. It is a variation of the mean squared error (MSE) loss function, which is commonly used for regression problems.
-
+<br>
 			The MSLE loss is calculated as:
-
+<br>
 			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(y_i\) is the true value of the i-th sample</li>
 				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
 			</ul>
-
+<br>
 			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
-
+<br>
 			This loss function is used when the target variable is skewed and has some large values, it is often used in regression problems that involve exponential growth, such as predicting stock prices, population growth, or the spread of a disease. It can also be used when there are outliers in the data, as it is less sensitive to large errors than mean squared error.
-
+<br>
 			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
-
+<br>
 			<h3>poisson</h3>
 			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
-
+<br>
 			The Poisson loss is calculated as:
-
+<br>
 			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(y_i\) is the true value of the i-th sample</li>
 				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
 			</ul>
-
+<br>
 			This loss function is used when the target variable follows a Poisson distribution, a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time or space, if these events occur with a known average rate and independently of the time since the last event. Poisson loss is a good choice when the target variable is a count, such as the number of visitors to a website, the number of clicks on an ad, or the number of phone calls received.
-
+<br>
 			It's a good choice when the target variable is a count, the model is expected to predict the mean of the Poisson distribution, and the target variable is positive. It's also a good choice when the model is expected to predict a rate, such as time between events.
-
+<br>
 			Keep in mind that Poisson loss assumes that the target variable follows a Poisson distribution and can be sensitive to outliers.
-
+<br>
 			<!-- $$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$ -->
-
+<br>
 			<h3>sparseCategoricalCrossentropy</h3>
 			Sparse categorical cross-entropy is a loss function used in multi-class classification tasks. It is used when the target labels are integers rather than one-hot encoded vectors.
-
+<br>
 			The sparse categorical cross-entropy loss is calculated as:
-
+<br>
 			\[L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>N is the number of samples in the batch</li>
 				<li>C is the number of classes</li>
@@ -1440,158 +1395,158 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				<li>\(f_c\) is the predicted logit for the c-th class</li>
 				<li>\(y_i\) is the true class label for the i-th sample</li>
 			</ul>
-
+<br>
 			This formula calculates the average cross-entropy loss over the batch of samples. The cross-entropy loss for each sample is calculated by taking the log of the predicted probability for the true class, and dividing by the sum of the predicted probabilities for all classes. The resulting loss value is negative, so it is multiplied by -1 to obtain the final loss.
-
+<br>
 			The sparse categorical cross-entropy loss function expects the target labels to be integers, and uses these integers to index into the predicted logits to obtain the predicted class scores.
-
+<br>
 			It is used when the classification task has multiple classes, and the target labels are integers rather than one-hot encoded vectors. It's a common loss function when training models for multi-class classification problems.
-
+<br>
 			<h3>squaredHinge</h3>
 			Squared hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is a variation of the hinge loss that is used to penalize the model more heavily when the predicted class score is further from the true class score.
-
+<br>
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The squared hinge loss is calculated as the square of this difference:
-
+<br>
 			\[L = max(0, 1 - y_i * y_j)^2\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>\(y_i\) is the true class label (-1 or 1)</li>
 				<li>\(y_j\) is the predicted class score</li>
 			</ul>
-
+<br>
 			This function will return 0 if \(y_i * y_j >=1\), else it will return \((1- y_i * y_j)^2\). It forces the model to have a margin of at least 1 between the correct class and the other class.
-
+<br>
 			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
-
+<br>
 			<!--$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$-->
-
+<br>
 			<h3>kullbackLeiblerDivergence</h3>
 			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
-
+<br>
 			The Kullback-Leibler divergence between two probability distributions \(p\) and \(q\) is defined as:
-
+<br>
 			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(p(i)\) and \(q(i)\) are the probability of i-th sample under the two distributions</li>
 			</ul>
-
+<br>
 			This formula calculates the divergence between the two distributions by summing over all possible outcomes, the probability of that outcome under the first distribution multiplied by the logarithm of the ratio of the probability of that outcome under the first distribution to the probability of that outcome under the second distribution.
-
+<br>
 			This loss function measures the dissimilarity between two probability distributions, it is often used as a loss function in generative models, to measure how well the model can generate samples that match the true distribution of the data. It is a measure of how much information is lost when approximating a true distribution with a model distribution.
-
+<br>
 			<!--$$ 
 				D(P || Q) = \sum_{x \in X} P(x) \cdot \log\left(\frac{P(x)}{Q(x)}\right)
 				$$-->
-
+<br>
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
-
+<br>
 			\[L = \log(\cosh(y_i - y_j))\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>\(y_i\) is the true value</li>
 				<li>\(y_j\) is the predicted value</li>
 			</ul>
-
+<br>
 			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
-
+<br>
 			This loss function is often used for regression problems, it is less sensitive to outliers than the mean squared error (MSE) and it is less computationally expensive than the Huber loss. It is a good alternative to the mean squared error loss when the data is heteroscedastic, meaning that the variance of the errors is not constant.
-
+<br>
 			<!--$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$-->
-
+<br>
 			<h2>Metric</h2>
 			A metric and a loss are both used to evaluate the performance of a neural network, but they serve different purposes.
-
+<br>
 			A loss function is used during the training phase of a neural network to measure the difference between the predicted output of the network and the true output. The loss function is used to guide the optimization process and update the weights of the network in order to minimize the difference between the predicted and true outputs.
-
+<br>
 			A metric, on the other hand, is used to evaluate the performance of a trained neural network on a test or validation set. It is a measure of how well the network is able to solve the problem at hand, given a set of input-output pairs. Metrics are used to evaluate the performance of the model, and to compare the performance of different models.
-
+<br>
 			In summary, a loss function is used during the training phase to update the weights of the network, while a metric is used to evaluate the performance of a trained model.
-
+<br>
 			While loss functions are used to optimize the network by backpropagating errors, metrics are used to evaluate the performance of the network on unseen data. Different metrics can be used to evaluate different aspects of the performance, such as accuracy, precision, recall, F1-score, AUC-ROC, etc, depending on the problem and the dataset.
-
+<br>
 			<h3>binaryAccuracy</h3>
 			Binary accuracy is a metric used in binary classification tasks to evaluate the performance of a model. It measures the proportion of true positive and true negative predictions made by the model.
-
+<br>
 			Binary accuracy is defined as:
-
+<br>
 			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{Total}\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
 				<li>True Negatives (TN) are the number of correct negative predictions made by the model</li>
 				<li>Total is the number of samples</li>
 			</ul>
-
+<br>
 			This metric is a measure of the model's ability to correctly classify positive and negative instances. A high accuracy score indicates that the model is good at correctly identifying positive and negative instances, but it does not take into account the imbalance of the classes.
-
+<br>
 			Binary accuracy is a commonly used metric for binary classification problems, where the goal is to predict whether an instance belongs to one class or another. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
-
+<br>
 			<h3>categoricalAccuracy</h3>
 			Categorical accuracy is a metric used in multi-class classification tasks to evaluate the performance of a model. It measures the proportion of correct predictions made by the model among all predictions.
-
+<br>
 			Categorical accuracy is defined as:
-
+<br>
 			\[\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} \]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>Number of Correct Predictions is the number of predictions made by the model that match the true labels</li>
 				<li>Total is the number of samples</li>
 			</ul>
-
+<br>
 			This metric is a measure of the model's ability to correctly classify instances among all the classes. A high accuracy score indicates that the model is good at correctly identifying instances among all the classes, but it does not take into account the imbalance of the classes.
-
+<br>
 			Categorical accuracy is a commonly used metric for multi-class classification problems, where the goal is to predict the class of an instance among multiple classes. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
-
+<br>
 			<h3>precision</h3>
 			Precision is a metric used in classification tasks to evaluate the performance of a model. It measures the proportion of true positive predictions among all positive predictions made by the model.
-
+<br>
 			Precision is defined as:
-
+<br>
 			\[\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}} \]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
 				<li>False Positives (FP) are the number of incorrect positive predictions made by the model</li>
 			</ul>
-
+<br>
 			This metric is a measure of the model's ability to correctly identify positive instances, while avoiding false positives. A high precision score indicates that the model is good at correctly identifying positive instances, but it does not take into account the number of false negatives.
-
+<br>
 			Precision is a metric commonly used in classification problems, it is a good metric to evaluate the performance of models when the data is imbalanced. It is also useful to evaluate the performance of models when the false positive rate is critical, for example, in medical diagnosis.
-
+<br>
 			<h3>cosine</h3>
 			In neural networks, the cosine similarity metric can be used as a measure of similarity between the embeddings learned by the network. It can be used to evaluate the performance of the network on tasks such as word embedding, image embedding, or sentence embedding.
-
+<br>
 			The cosine similarity metric is calculated by taking the dot product of the embeddings and dividing by the product of the magnitudes of the embeddings. This results in a value between -1 and 1, where 1 represents an exact match and -1 represents a complete mismatch.
-
+<br>
 			The cosine similarity metric can be used in a variety of natural language processing and computer vision tasks, such as:
-
+<br>
 				Word embeddings: to measure the similarity between two words, or to find the most similar words to a given word
 				Image embeddings: to measure the similarity between two images, or to find the most similar images to a given image
 				Sentence embeddings: to measure the similarity between two sentences, or to find the most similar sentences to a given sentence
-
+<br>
 			It is a good choice when working with embeddings and there's a need to measure the similarity between them, it's also a good choice when working with natural language processing or computer vision tasks that require to find similar instances.
-
+<br>
 			<h2>Activation Functions</h2>
 			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between 0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
-
+<br>
 			<h3>Linear</h3>
 			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
-
+<br>
 			$$
 				\text{linear}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
@@ -1603,14 +1558,14 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					-100 & 0 & 100 
 				\end{pmatrix}
 			$$
-
+<br>
 			<h3>Sigmoid</h3>
 			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
-
+<br>
 			$$ 
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
 			$$
-
+<br>
 			$$
 				\text{sigmoid}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
@@ -1622,11 +1577,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
 				\end{pmatrix}
 			$$
-
+<br>
 			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
-
+<br>
 			<h3>ELU</h3>
-
+<br>
 			$$
 				\mathrm{elu}\left(x\right) = \left\{
 					\begin{array}{ll}
@@ -1635,17 +1590,17 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					\end{array}
 				\right.
 			$$
-
+<br>
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
-
+<br>
 			<h3>relu6</h3>
-
+<br>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
-
+<br>
 			$$
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
 			$$
-
+<br>
 			$$
 				\text{relu6}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
@@ -1657,34 +1612,34 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					0 & 0 & 6
 				\end{pmatrix}
 			$$
-
+<br>
 			The choice of 6 is somewhat arbitrary, and it could be any other positive number. The value of 6 is used for the same reason that other values like 3 or 4 are used, it is a hyperparameter that can be adjusted to optimize the performance of the network.
-
+<br>
 			In summary, ReLU6 can be useful in situations where the model is prone to producing large activation values, which can cause problems such as overfitting. Capping the maximum value at 6 helps to regularize the model and improve its performance.
-
+<br>
 			<h3>SeLu</h3>
-
+<br>
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
-
+<br>
 			\[f(x) = \lambda \begin{cases}
 				x & \text{if } x > 0 \\
 				\alpha * (e^x - 1) & \text{else}
 			\end{cases}
 			\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>\(\lambda\) is a scaling factor and is equal to 1.0507</li>
 				<li>\(\alpha\) is a negative scaling factor and is equal to 1.67326</li>
 			</ul>
-
+<br>
 			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
-
+<br>
 			SELU activation function can be used as a replacement of traditional activation functions like ReLU, LeakyReLU, TanH, etc. It is particularly useful in deep neural networks where the input data is standardized, and the network architecture is feedforward.
-
+<br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
-
+<br>
 			<!--$$
 			\mathrm{selu}\left(x\right) = \mathrm{scale} \cdot \mathrm{elu}\left(x, \alpha\right) = \mathrm{scale} \cdot \left\{
 				\begin{array}{ll}
@@ -1693,231 +1648,231 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					\end{array}
 				\right.
 			$$-->
-
+<br>
 			<h3>SoftPlus</h3>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
-
+<br>
 			\[f(x) = \log(1 + e^x)\]
-
+<br>
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
-
+<br>
 			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
-
+<br>
 			It's a good choice when there's a need for a smooth approximation of the ReLU activation function, it's also a good choice when the ReLU function causes problems like the "dying ReLU" issue. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation.
-
+<br>
 			<h3>SoftSign</h3>
-
+<br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
-
+<br>
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
-
+<br>
 			WHEN TO USE TODO
-
+<br>
 			<h3>SoftMax</h3>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
-
+<br>
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
-
+<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
-
+<br>
 			<h3>tanh</h3>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
-
+<br>
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
-
+<br>
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
-
+<br>
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
-
+<br>
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
-
+<br>
 			<h3>LeakyReLu</h3>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
-
+<br>
 			\[f(x) = \begin{cases}
 				x & \text{if } x > 0 \\
 				\alpha * x & \text{else}
 			\end{cases}
 			\]
-
+<br>
 			Where \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
-
+<br>
 			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \(\alpha\) parameter.
-
+<br>
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
-
+<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
-
+<br>
 			<h2>Optimizers</h2>
-
+<br>
 			<h3>adam</h3>
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
-
+<br>
 			Adam algorithm keeps track of the moving average of the gradient and the moving average of the squared gradient. The moving averages are calculated as follows:
-
+<br>
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
-
+<br>
 			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
-
+<br>
 			To calculate the new weight \(\theta_{t+1}\), Adam uses the following update rule:
-
+<br>
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-
+<br>
 			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
-
+<br>
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
-
+<br>
 			In summary, Adam algorithm is an optimization algorithm that combines the benefits of both SGD and the RMSProp algorithm by keeping track of the moving average of the gradient and the moving average of the squared gradient, and adapts the learning rate accordingly.
-
+<br>
 			<h3>adadelta</h3>
 			Adadelta is an optimization algorithm used to train neural networks. It is an extension of the Adagrad algorithm, which is designed to address some of its limitations.
-
+<br>
 			Adadelta uses the gradient of the loss function with respect to the parameters to update the parameters. The update at each time step t is determined by considering the historical gradient information. The main idea behind Adadelta is to adapt the learning rate for each parameter separately, based on the historical gradient information. The update rule for the parameters is defined as:
-
+<br>
 			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}\]
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>\(\theta_t\) is the parameter at time step \(t\)</li>
 				<li>\(\Delta \theta_t\) is the change in the parameter at time step \(t\)</li>
 				<li>\(E[g^2]_t\) is the historical gradient information at time step \(t\)</li>
 				<li>\(\epsilon\) is a small value used to prevent division by zero</li>
 			</ul>
-
+<br>
 			Adadelta is particularly useful when the data set is noisy, or when the gradients are sparse. It is also useful in cases where the learning rate is difficult to tune.
-
+<br>
 			It's a good choice when the data set is noisy or when the gradients are sparse. It's also a good choice when the learning rate is difficult to tune, it can be used with any neural network architecture
-
+<br>
 			<h3>adagrad</h3>
 			Adagrad is an optimization algorithm used for training machine learning models, particularly neural networks. It adapts the learning rate for each parameter in the model, rather than using a fixed learning rate for all parameters. The learning rate for each parameter is determined by the historical gradient information for that parameter.
-
+<br>
 			The update rule for each parameter in Adagrad is as follows:
-
+<br>
 			$$ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t $$
-
+<br>
 			Where:
-
+<br>
 			<ul>
 				<li>\(\theta_t\) is the value of the parameter at time step \(t\)</li>
 				<li>\(\eta\) is the global learning rate</li>
 				<li>\(g_t\) is the gradient of the parameter at time step \(t\)</li>
 				<li>\(\sum\limits_{i=1}^{t}g_{i}^2\) is the historical sum of squared gradients for that parameter up to time step \(t\)</li>
 			</ul>
-
+<br>
 			The denominator \(\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\) is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
 			<h3>adamax</h3>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
-
+<br>
 			Adamax uses the following formulas to calculate the moving averages:
-
+<br>
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
-
+<br>
 			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
-
+<br>
 			The update rule for Adamax is:
-
+<br>
 			$$\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-
+<br>
 			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
-
+<br>
 			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
-
+<br>
 			In summary, Adamax is an optimization algorithm that is an extension of Adam algorithm, it keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses the infinity norm instead of the square of the gradient. This allows Adamax to be robust against the presence of large gradients and converge faster.
-
+<br>
 			<h3>rmsprop</h3>
 			RMSprop (Root Mean Square Propagation) is an optimization algorithm that is similar to the stochastic gradient descent (SGD) algorithm but adapts the learning rate for each parameter individually.
-
+<br>
 			The basic idea of RMSprop is to keep track of the moving average of the squared gradient for each parameter, and adjust the learning rate accordingly. The update rule for RMSprop is defined as:
-
+<br>
 			$$\textbf{s}t = \beta \textbf{s}{t-1} + (1 - \beta) (\nabla_{\theta} J(\theta))^2$$
-
+<br>
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
-
+<br>
 			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, \(\beta\) is a hyperparameter, \(\textbf{s}_t\) is the moving average of the squared gradient, and \(\epsilon\) is a small constant to avoid division by zero.
-
+<br>
 			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
-
+<br>
 			RMSprop reduces the oscillations and high variance in the parameter updates that can occur with SGD by adapting the learning rate individually for each parameter. This allows the algorithm to converge faster and more efficiently than SGD.
-
+<br>
 			In summary, RMSprop is an optimization algorithm that adapts the learning rate for each parameter individually. It keeps track of the moving average of the squared gradient for each parameter, and adjusts the learning rate accordingly. This allows RMSprop to reduce the oscillations and high variance in the parameter updates that can occur with SGD and converge faster and more efficiently.
-
+<br>
 			<h3>sgd</h3>
 			Stochastic Gradient Descent (SGD) is a widely used optimization algorithm for training neural networks. It is a simple and efficient method for optimizing a wide range of differentiable functions, including those used in neural networks.
-
+<br>
 			The basic idea behind SGD is to iteratively update the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. The update rule for SGD is defined as:
-
+<br>
 			$$\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)$$
-
+<br>
 			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, and \(\nabla_{\theta} J(\theta)\) is the gradient of the loss function with respect to the parameters.
-
+<br>
 			SGD uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset. This subset is chosen randomly, which is why it is called "stochastic".
-
+<br>
 			SGD is computationally efficient, easy to implement, and can be used to optimize a wide range of differentiable functions. However, due to the randomness in the choice of the batches, the algorithm can oscillate and have a high variance in the parameter updates. This can slow down the convergence and make it harder to find the global minimum of the loss function.
-
+<br>
 			In summary, Stochastic Gradient Descent (SGD) is a simple optimization algorithm that iteratively updates the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. It is computationally efficient, easy to implement, but it can be sensitive to the choice of hyper-parameters such as learning rate and batch size.
-
+<br>
 			<h2>Augmentation</h2>
 			Augmentation means: creating new training data from current training data to make training better without collecting more data manually.
-
+<br>
 			Augmentation is currently only available for images.
-
+<br>
 			If you have a network that looks like images (i.e., input shape is like \( [\text{int}, \text{int}, 3] \), and you have chosen <a href="#Expert-mode">Expert Mode</a>, you can easily add augment your data by ticking the augment checkbox in the Home menu.
-
+<br>
 			<img src="manual/augment.png">
-
+<br>
 			Then, a new tab, "Augmentation", appears. There, you can chose types of automatic augmentation.
-			
+<br>
 			<img src="manual/augment2.png">
-			
+<br>
 			For example images, we have chosen this as a default image to show you the effects of each augmentation types:
-
+<br>
 			<img src="manual/normal.png">
-
+<br>
 			These are the four types of augmentation:
-
+<br>
 			<h3>Auto rotate images?</h3>
-
+<br>
 			<img src="manual/rotate1.png"><img src="manual/rotate2.png"><img src="manual/rotate3.png"><img src="manual/rotate4.png"><img src="manual/rotate5.png">
-
+<br>
 			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
-
+<br>
 			This is useful if you want to detect objects from all kinds of angles.
-
+<br>
 			<h3>Invert images?</h3>
-
+<br>
 			<img src="manual/invert.png">
-
+<br>
 			This can be used to force the network train to learn a shape instead of, for example, just colors.
-
+<br>
 			If chosen, and <a href="Auto_rotate_images">Auto rotate images</a> is also chosen, each rotated image will also be inverted.
-
+<br>
 			<img src="manual/rotate_invert.png">
-
+<br>
 			<h3>Flip left/right</h3>
 			<img src="manual/flipped.png">
-
+<br>
 			Mirrors the image, so that the left side becomes the right one and vice versa.
-
+<br>
 			<h3>Sine-Ripple?</h3>
 			<img src="manual/sine.png">
-
+<br>
 			Ripples the image, as if it was a reflection on a pool of water which is rippled. This can be used to simulate hand-drawn or inexact images.
-
+<br>
 			<h2>Visualizations</h2>
 			TODO
-
+<br>
 			<h3>Visualize Layer</h3>
 			TODO
-
+<br>
 			<h3>Math Mode</h3>
 			TODO
-
+<br>
 			<h4>Math Mode while training</h4>
 			When in math mode while the network is training, you can follow how the weights are changing after each batch.
-
+<br>
 			$$
 			h_{\text{Shape: }[4]}' = h_{\text{Shape: }[8]} \times \underbrace{\begin{pmatrix}
 				\color{OrangeRed}{-0.3091616630554199} & \color{OrangeRed}{-1.0221514701843262} & \color{SeaGreen}{0.45086362957954407} & \color{OrangeRed}{-0.7998510003089905}\\
@@ -1936,115 +1891,111 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\color{OrangeRed}{-0.549872875213623}
 			\end{pmatrix}}_{\mathrm{Bias}}
 			$$
-
+<br>
 			Red values have become smaller since the last batch, and green values became larger. Black (or white, depending on if you chose <a href="#Dark-Mode">Dark-Mode</a> or not) values stayed the same.
-
+<br>
 			When values fluctuate at every batch, the training has found a local minimum.
-
+<br>
 			<h2>User Modes</h2>
-
+<br>
 			<img src="manual/mode_choser.png">
-
+<br>
 			The mode determines what kind of options you see. It can be set in the general tab.
-
+<br>
 			<h3>Beginner-mode</h3>
 			In Beginner mode, some options are not available. This mode hides everything that is not absolutely needed to be set up manually for a simple neural network.
-
+<br>
 			It also <a href="#Auto-Input-Shape">automatically generates the input shape</a>, depending on the data you give it.
-
+<br>
 			Also, it disables layer options that would break the neural network or it's shapes.
-
+<br>
 			<h3>Expert-mode</h3>
 			The Expert-mode allows the user to set all settings possible. You can even set network stuff that breaks the network, if you want.
-
+<br>
 			Also, <a href="#Auto-Input-Shape">auto-input-shape</a> can be disabled, and, as such, you can set any arbitrary input shape for your network.
-
+<br>
 			<h2>Themes</h2>
-
+<br>
 			Themes alter the color schemes of asanAI, but the layout stays the same. 
-
+<br>
 			You can chose themes in the "General"-tab.
-
+<br>
 			<img src="manual/theme_choser.png">
-
+<br>
 			<h3>Light-Mode</h3>
 			<img style="width: 90%" src="manual/lightmode.png">
-
+<br>
 			<h3>Dark-Mode</h3>
 			<img style="width: 90%" src="manual/darkmode.png">
-
+<br>
 			<h3>Natural-Mode</h3>
 			<img style="width: 90%" src="manual/naturalmode.png">
-
+<br>
 			<h2>Backend</h2>
 			<h3>CPU</h3>
 			TODO
-
+<br>
 			<h3>GPU</h3>
 			The GPU is faster when you have large GPU memory and a large enough batch size. 
-
+<br>
 			If the batch size is too small, it may even be slower than CPU.
-
+<br>
 			<h2>Create your own neural network</h2>
-
+<br>
 			<h3>From CSV</h3>
 			TODO
-
+<br>
 			<h3>From Images</h3>
 			TODO
-
+<br>
 			<h3>From arbitrary tensors</h3>
 			TODO
-
+<br>
 			<h3>Interpretating the training graph</h3>
 			<h4>Good loss</h4>
 			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
-
+<br>
 			<img src="manual/loss_ok.png" />
-
+<br>
 			<img src="manual/good_loss.png" />
-
-
+<br>
+<br>
 			<h4>Stopped learning</h4>
 			This graph shows that the learning process has basically stopped. It fluctuates around a certain point (see graph 2), but does not really learn anything new.
-
+<br>
 			<img src="manual/stopped_learning.png" />
-
+<br>
 			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters. You may also try to change the step size of the <a href="#Optimizer">optimizer</a>.
-
+<br>
 			<img src="manual/stopped_training.gif" />
-
+<br>
 			<h4>Overfitting Loss</h4>
 			TODO
 			<img src="manual/overfitting.png" />
-
+<br>
 			<h4>No more improvements</h4>
-
+<br>
 			<img src="manual/no_improvement_2.png" />
-
+<br>
 			This graph looks almost like there is any change, but look at the left. All change is in a miniscule area, so basically the line is flat, but it looks like it's not at this scale.
-
+<br>
 			<img src="manual/no_real_improvement.png" />
-
 			<h3>Network Structures</h3>
 			TODO
-
 			<h2>Auto-Input-Shape</h2>
-
+			TODO
+<br>
 			<h2>Export</h2>
-
+<br>
 			<h3>Export to Python</h3>
 			<img src="manual/export_to_python.png" />
 			TODO
-
+<br>
 			<h3>Export to HTML</h3>
 			<img src="manual/export_to_html.png" />
-
 			Exporting to HTML allows you to integrate the trained model in a website.
-
+<br>
 			First, download the model data (the button at the top of the code), then, at the bottom of the code tab, copy the code itself and insert it into an HTML file. Put it in the same folder as the model files (which has to be served via a webserver), and then you can start building your webapp around this example page.
-
-
 			<h2>Tips for creating neural networks</h2>
 			<ul>
 				<li>Start with a simple architecture: Begin with a simple neural network architecture and gradually increase the complexity as needed.</li>
@@ -2060,17 +2011,15 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			</ul>
 			<h2>What to do when asanAI crashes your tab?</h2>
 			Please send an error report to your browser provider. This may happen when you allocate larger quantities of memory than is available.
-
+<br>
 			You can always check the number of used memory by tensors by looking at the bottom right corner.
-
+<br>
 			There, you can see something like this: <img src="tensor_debugger.png">. It shows you the current usage of your GPU memory and RAM and how many tensors are actually allocated.
-
+<br>
 			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
-
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 		</div>
-
 		<script src="manual.js"></script>
 	</body>
 </html>
