@@ -1391,7 +1391,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 
-			WHEN TO USE TODO
+			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
 
 			<h3>ELU</h3>
 			TODO
@@ -1405,11 +1405,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\right.
 			$$
 
-			WHEN TO USE TODO
+			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
 
 			<h3>relu6</h3>
 
-			TODO
+			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
 
 			$$
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
@@ -1427,7 +1427,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 
-			WHEN TO USE TODO
+			The choice of 6 is somewhat arbitrary, and it could be any other positive number. The value of 6 is used for the same reason that other values like 3 or 4 are used, it is a hyperparameter that can be adjusted to optimize the performance of the network.
+
+			In summary, ReLU6 can be useful in situations where the model is prone to producing large activation values, which can cause problems such as overfitting. Capping the maximum value at 6 helps to regularize the model and improve its performance.
 
 			<h3>SeLu</h3>
 
@@ -1455,7 +1457,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			<h3>SoftSign</h3>
 
-			TODO
+			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
 
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
 
@@ -1486,7 +1488,24 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h2>Optimizers</h2>
 
 			<h3>adam</h3>
-			TODO
+			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
+
+			Adam algorithm keeps track of the moving average of the gradient and the moving average of the squared gradient. The moving averages are calculated as follows:
+
+			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
+			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
+
+			Where $J(\theta)$ is the loss function, $\beta_1$ and $\beta_2$ are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
+
+			To calculate the new weight $\theta_{t+1}$, Adam uses the following update rule:
+
+			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
+
+			Where $\alpha$ is the learning rate and $\epsilon$ is a small constant to avoid division by zero.
+
+			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
+
+			In summary, Adam algorithm is an optimization algorithm that combines the benefits of both SGD and the RMSProp algorithm by keeping track of the moving average of the gradient and the moving average of the squared gradient, and adapts the learning rate accordingly.
 
 			<h3>adadelta</h3>
 			TODO
@@ -1495,13 +1514,56 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			TODO
 
 			<h3>adamax</h3>
-			TODO
+			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
+
+			Adamax uses the following formulas to calculate the moving averages:
+
+			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
+			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
+
+			Where $J(\theta)$ is the loss function, $\beta_1$ and $\beta_2$ are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
+
+			The update rule for Adamax is:
+
+			$$\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
+
+			Where \[\alpha\] is the learning rate and \[\epsilon\] is a small constant to avoid division by zero.
+
+			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
+
+			In summary, Adamax is an optimization algorithm that is an extension of Adam algorithm, it keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses the infinity norm instead of the square of the gradient. This allows Adamax to be robust against the presence of large gradients and converge faster.
 
 			<h3>rmsprop</h3>
-			TODO
+			RMSprop (Root Mean Square Propagation) is an optimization algorithm that is similar to the stochastic gradient descent (SGD) algorithm but adapts the learning rate for each parameter individually.
+
+			The basic idea of RMSprop is to keep track of the moving average of the squared gradient for each parameter, and adjust the learning rate accordingly. The update rule for RMSprop is defined as:
+
+			$$\textbf{s}t = \beta \textbf{s}{t-1} + (1 - \beta) (\nabla_{\theta} J(\theta))^2$$
+
+			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
+
+			Where $\theta$ is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, $\beta$ is a hyperparameter, $\textbf{s}_t$ is the moving average of the squared gradient, and $\epsilon$ is a small constant to avoid division by zero.
+
+			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
+
+			RMSprop reduces the oscillations and high variance in the parameter updates that can occur with SGD by adapting the learning rate individually for each parameter. This allows the algorithm to converge faster and more efficiently than SGD.
+
+			In summary, RMSprop is an optimization algorithm that adapts the learning rate for each parameter individually. It keeps track of the moving average of the squared gradient for each parameter, and adjusts the learning rate accordingly. This allows RMSprop to reduce the oscillations and high variance in the parameter updates that can occur with SGD and converge faster and more efficiently.
 
 			<h3>sgd</h3>
-			TODO
+			Stochastic Gradient Descent (SGD) is a widely used optimization algorithm for training neural networks. It is a simple and efficient method for optimizing a wide range of differentiable functions, including those used in neural networks.
+
+			The basic idea behind SGD is to iteratively update the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. The update rule for SGD is defined as:
+
+			$$\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)$$
+
+			Where \[\theta\] is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, and \[\nabla_{\theta} J(\theta)\] is the gradient of the loss function with respect to the parameters.
+
+			SGD uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset. This subset is chosen randomly, which is why it is called "stochastic".
+
+			SGD is computationally efficient, easy to implement, and can be used to optimize a wide range of differentiable functions. However, due to the randomness in the choice of the batches, the algorithm can oscillate and have a high variance in the parameter updates. This can slow down the convergence and make it harder to find the global minimum of the loss function.
+
+			In summary, Stochastic Gradient Descent (SGD) is a simple optimization algorithm that iteratively updates the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. It is computationally efficient, easy to implement, but it can be sensitive to the choice of hyper-parameters such as learning rate and batch size.
 
 			<h2>Augmentation</h2>
 			Augmentation means: creating new training data from current training data to make training better without collecting more data manually.
