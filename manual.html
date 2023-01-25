@@ -1347,19 +1347,63 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$
 
 			<h3>sparseCategoricalCrossentropy</h3>
-			TODO
+			Sparse categorical cross-entropy is a loss function used in multi-class classification tasks. It is used when the target labels are integers rather than one-hot encoded vectors.
+
+			The sparse categorical cross-entropy loss is calculated as:
+
+			$L = -\frac{1}{N}\sum_{i=1}^{N} log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})$
+
+			Where:
+
+			N is the number of samples in the batch
+			C is the number of classes
+			$f_{y_i}$ is the predicted logit for the true class of the i-th sample
+			$f_c$ is the predicted logit for the c-th class
+			$y_i$ is the true class label for the i-th sample
+
+			This formula calculates the average cross-entropy loss over the batch of samples. The cross-entropy loss for each sample is calculated by taking the log of the predicted probability for the true class, and dividing by the sum of the predicted probabilities for all classes. The resulting loss value is negative, so it is multiplied by -1 to obtain the final loss.
+
+			The sparse categorical cross-entropy loss function expects the target labels to be integers, and uses these integers to index into the predicted logits to obtain the predicted class scores.
+
+			It is used when the classification task has multiple classes, and the target labels are integers rather than one-hot encoded vectors. It's a common loss function when training models for multi-class classification problems.
 
 			<h3>squaredHinge</h3>
-			TODO
+			Squared hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is a variation of the hinge loss that is used to penalize the model more heavily when the predicted class score is further from the true class score.
 
-			$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$
+			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The squared hinge loss is calculated as the square of this difference:
+
+			$L = max(0, 1 - y_i * y_j)^2$
+
+			Where:
+
+			$y_i$ is the true class label (-1 or 1)
+			$y_j$ is the predicted class score
+
+			This function will return 0 if $y_i * y_j >=1$, else it will return $(1- y_i * y_j)^2$. It forces the model to have a margin of at least 1 between the correct class and the other class.
+
+			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
+
+			<!--$$ \text{Squared Hinge:} \sum_{i=0}^n \left(\mathrm{max}\left(0, 1 - y_i \cdot \hat{y}_i\right)^ 2\right) $$-->
 
 			<h3>kullbackLeiblerDivergence</h3>
-			TODO
+			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
 
-			$$ 
+			The Kullback-Leibler divergence between two probability distributions p and q is defined as:
+
+			$D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})$
+
+			Where:
+
+			n is the number of samples
+			p(i) and q(i) are the probability of i-th sample under the two distributions
+
+			This formula calculates the divergence between the two distributions by summing over all possible outcomes, the probability of that outcome under the first distribution multiplied by the logarithm of the ratio of the probability of that outcome under the first distribution to the probability of that outcome under the second distribution.
+
+			This loss function measures the dissimilarity between two probability distributions, it is often used as a loss function in generative models, to measure how well the model can generate samples that match the true distribution of the data. It is a measure of how much information is lost when approximating a true distribution with a model distribution.
+
+			<!--$$ 
 				D(P || Q) = \sum_{x \in X} P(x) \cdot \log\left(\frac{P(x)}{Q(x)}\right)
-			$$
+				$$-->
 
 			<h3>logcosh</h3>
 			TODO
