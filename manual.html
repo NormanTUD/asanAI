@@ -739,7 +739,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>Convolutional Layers</h3>
 			<h4>convNd (conv1d, conv2d)</h4>
 			<div id="conv2d_example"></div>
-			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
 			Example:
 
@@ -852,7 +852,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>Pooling layers</h3>
 			<h4>averagePooling (averagePooling1d, averagePooling2d)</h4>
 			<div id="averagePooling2d_example"></div>
-			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 
 			Example:
 
@@ -875,7 +875,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h4>maxPooling (maxPooling1d, maxPooling2d)</h4>
 			<div id="maxPooling2d_example"></div>
 
-			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>, and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
+			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
 
 			Example:
 
@@ -1034,10 +1034,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>heUniform</h4>
-			Draws from a uniform distribution within [-sqrt(6 / fan_in), sqrt(6 / fan_in)] where fan_in is the number of input units in the weight tensor.
+			Draws from a uniform distribution within \([-\sqrt{6 / \text{fan\_in}}, \sqrt{6 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>leCunNormal</h4>
-			Draws from a normal distribution with mean 0 and a standard deviation of sqrt(1 / fan_in) where fan_in is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of \(sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>leCunUniform</h4>
 			Draws from a uniform distribution within \([-\sqrt{3 / \text{fan\_in}}, \sqrt{3 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
@@ -1068,16 +1068,16 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$
 
 			<h4>randomNormal</h4>
-			randomNormal: Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
+			Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
 
 			<h4>randomUniform</h4>
-			randomUniform: Draws from a uniform distribution within [-0.05, 0.05].
+			Draws from a uniform distribution within \[[-0.05, 0.05]\].
 
 			<h4>truncatedNormal</h4>
-			truncatedNormal: Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
+			Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
 
 			<h4>varianceScaling</h4>
-			varianceScaling: Draws from a distribution with a mean of 0 and a standard deviation of sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor.
+			Draws from a distribution with a mean of 0 and a standard deviation of sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor.
 
 			<h4>zeros</h4>
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
