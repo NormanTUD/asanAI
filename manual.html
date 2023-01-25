@@ -1511,8 +1511,20 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			TODO
 
 			<h3>adagrad</h3>
-			TODO
+			Adagrad is an optimization algorithm used for training machine learning models, particularly neural networks. It adapts the learning rate for each parameter in the model, rather than using a fixed learning rate for all parameters. The learning rate for each parameter is determined by the historical gradient information for that parameter.
 
+			The update rule for each parameter in Adagrad is as follows:
+
+			$$ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t $$
+
+			Where:
+
+			$\theta_t$ is the value of the parameter at time step $t$
+			$\eta$ is the global learning rate
+			$g_t$ is the gradient of the parameter at time step $t$
+			$\sum\limits_{i=1}^{t}g_{i}^2$ is the historical sum of squared gradients for that parameter up to time step $t$
+
+			The denominator $\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}$ is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
 			<h3>adamax</h3>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
 
