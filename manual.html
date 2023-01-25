@@ -1028,19 +1028,19 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$
 
 			<h4>glorotNormal</h4>
-			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as sqrt(2 / (fan_in + fan_out)), where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
+			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
 
 			<h4>heNormal</h4>
-			Draws from a normal distribution with mean 0 and a standard deviation of sqrt(2 / fan_in) where fan_in is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>heUniform</h4>
-			heUniform: Draws from a uniform distribution within [-sqrt(6 / fan_in), sqrt(6 / fan_in)] where fan_in is the number of input units in the weight tensor.
+			Draws from a uniform distribution within [-sqrt(6 / fan_in), sqrt(6 / fan_in)] where fan_in is the number of input units in the weight tensor.
 
 			<h4>leCunNormal</h4>
-			leCunNormal: Draws from a normal distribution with mean 0 and a standard deviation of sqrt(1 / fan_in) where fan_in is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of sqrt(1 / fan_in) where fan_in is the number of input units in the weight tensor.
 
 			<h4>leCunUniform</h4>
-			leCunUniform: Draws from a uniform distribution within [-sqrt(3 / fan_in), sqrt(3 / fan_in)] where fan_in is the number of input units in the weight tensor.
+			Draws from a uniform distribution within \([-\sqrt{3 / \text{fan\_in}}, \sqrt{3 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>ones</h4>
 			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
@@ -1736,13 +1736,13 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
 
-			Where \[J(\theta)\] is the loss function, \[\beta_1\] and \[\beta_2\] are hyperparameters, \[m\] and \[v\] are the moving averages of the gradient and the squared gradient, respectively.
+			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(m\) and \(v\) are the moving averages of the gradient and the squared gradient, respectively.
 
-			To calculate the new weight \[\theta_{t+1}\], Adam uses the following update rule:
+			To calculate the new weight \(\theta_{t+1}\), Adam uses the following update rule:
 
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
 
-			Where \[\alpha\] is the learning rate and \[\epsilon\] is a small constant to avoid division by zero.
+			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
 
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
 
@@ -1789,13 +1789,13 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
 
-			Where \[J(\theta)\] is the loss function, \[\beta_1\] and \[\beta_2\] are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
+			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
 
 			The update rule for Adamax is:
 
 			$$\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
 
-			Where \[\alpha\] is the learning rate and \[\epsilon\] is a small constant to avoid division by zero.
+			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
 
 			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
 
@@ -1810,7 +1810,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
 
-			Where \[\theta\] is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, \[\beta\] is a hyperparameter, \[\textbf{s}_t\] is the moving average of the squared gradient, and \[\epsilon\] is a small constant to avoid division by zero.
+			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, \(\beta\) is a hyperparameter, \(\textbf{s}_t\) is the moving average of the squared gradient, and \(\epsilon\) is a small constant to avoid division by zero.
 
 			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
 
@@ -1825,7 +1825,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			$$\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)$$
 
-			Where \[\theta\] is the set of parameters, \[J(\theta)\] is the loss function, \[\alpha\] is the learning rate, and \[\nabla_{\theta} J(\theta)\] is the gradient of the loss function with respect to the parameters.
+			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, and \(\nabla_{\theta} J(\theta)\) is the gradient of the loss function with respect to the parameters.
 
 			SGD uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset. This subset is chosen randomly, which is why it is called "stochastic".
 
@@ -1859,7 +1859,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
 
 			This is useful if you want to detect objects from all kinds of angles.
-
 
 			<h3>Invert images?</h3>
 
