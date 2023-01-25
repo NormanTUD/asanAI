@@ -1337,14 +1337,44 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$
 
 			<h3>meanSquaredLogarithmicError</h3>
-			TODO
+			Mean squared logarithmic error (MSLE) is a loss function used in regression problems. It is a variation of the mean squared error (MSE) loss function, which is commonly used for regression problems.
+
+			The MSLE loss is calculated as:
+
+			$MSLE = \frac{1}{n} \sum_{i=1}^{n} (log(1+y_i) - log(1+\hat{y_i}))^2$
+
+			Where:
+
+			n is the number of samples
+			$y_i$ is the true value of the i-th sample
+			$\hat{y_i}$ is the predicted value of the i-th sample
+
+			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
+
+			This loss function is used when the target variable is skewed and has some large values, it is often used in regression problems that involve exponential growth, such as predicting stock prices, population growth, or the spread of a disease. It can also be used when there are outliers in the data, as it is less sensitive to large errors than mean squared error.
 
 			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
 
 			<h3>poisson</h3>
-			TODO
+			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
 
-			$$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$
+			The Poisson loss is calculated as:
+
+			$L = \frac{1}{n} \sum_{i=1}^{n} (y_i log(\hat{y_i})-\hat{y_i})$
+
+			Where:
+
+			n is the number of samples
+			$y_i$ is the true value of the i-th sample
+			$\hat{y_i}$ is the predicted value of the i-th sample
+
+			This loss function is used when the target variable follows a Poisson distribution, a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time or space, if these events occur with a known average rate and independently of the time since the last event. Poisson loss is a good choice when the target variable is a count, such as the number of visitors to a website, the number of clicks on an ad, or the number of phone calls received.
+
+			It's a good choice when the target variable is a count, the model is expected to predict the mean of the Poisson distribution, and the target variable is positive. It's also a good choice when the model is expected to predict a rate, such as time between events.
+
+			Keep in mind that Poisson loss assumes that the target variable follows a Poisson distribution and can be sensitive to outliers.
+
+			<!-- $$ \text{Poisson:} \frac{1}{n} \sum_{i=0}^n \left(\hat{x}_i - y_i\cdot \log\left(\hat{y}_i\right)\right) $$ -->
 
 			<h3>sparseCategoricalCrossentropy</h3>
 			Sparse categorical cross-entropy is a loss function used in multi-class classification tasks. It is used when the target labels are integers rather than one-hot encoded vectors.
@@ -1422,13 +1452,48 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<!--$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$-->
 
 			<h2>Metric</h2>
-			TODO
+			A metric and a loss are both used to evaluate the performance of a neural network, but they serve different purposes.
+
+			A loss function is used during the training phase of a neural network to measure the difference between the predicted output of the network and the true output. The loss function is used to guide the optimization process and update the weights of the network in order to minimize the difference between the predicted and true outputs.
+
+			A metric, on the other hand, is used to evaluate the performance of a trained neural network on a test or validation set. It is a measure of how well the network is able to solve the problem at hand, given a set of input-output pairs. Metrics are used to evaluate the performance of the model, and to compare the performance of different models.
+
+			In summary, a loss function is used during the training phase to update the weights of the network, while a metric is used to evaluate the performance of a trained model.
+
+			While loss functions are used to optimize the network by backpropagating errors, metrics are used to evaluate the performance of the network on unseen data. Different metrics can be used to evaluate different aspects of the performance, such as accuracy, precision, recall, F1-score, AUC-ROC, etc, depending on the problem and the dataset.
 
 			<h3>binaryAccuracy</h3>
-			TODO
+			Binary accuracy is a metric used in binary classification tasks to evaluate the performance of a model. It measures the proportion of true positive and true negative predictions made by the model.
+
+			Binary accuracy is defined as:
+
+			$Accuracy = \frac{True Positives + True Negatives}{Total}$
+
+			Where:
+
+			    True Positives (TP) are the number of correct positive predictions made by the model
+			    True Negatives (TN) are the number of correct negative predictions made by the model
+			    Total is the number of samples
+
+			This metric is a measure of the model's ability to correctly classify positive and negative instances. A high accuracy score indicates that the model is good at correctly identifying positive and negative instances, but it does not take into account the imbalance of the classes.
+
+			Binary accuracy is a commonly used metric for binary classification problems, where the goal is to predict whether an instance belongs to one class or another. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
 
 			<h3>categoricalAccuracy</h3>
-			TODO
+			Categorical accuracy is a metric used in multi-class classification tasks to evaluate the performance of a model. It measures the proportion of correct predictions made by the model among all predictions.
+
+			Categorical accuracy is defined as:
+
+			$Accuracy = \frac{Number of Correct Predictions}{Total}$
+
+			Where:
+
+			    Number of Correct Predictions is the number of predictions made by the model that match the true labels
+			    Total is the number of samples
+
+			This metric is a measure of the model's ability to correctly classify instances among all the classes. A high accuracy score indicates that the model is good at correctly identifying instances among all the classes, but it does not take into account the imbalance of the classes.
+
+			Categorical accuracy is a commonly used metric for multi-class classification problems, where the goal is to predict the class of an instance among multiple classes. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
 
 			<h3>precision</h3>
 			Precision is a metric used in classification tasks to evaluate the performance of a model. It measures the proportion of true positive predictions among all positive predictions made by the model.
