@@ -897,7 +897,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			AlphaDropout is a variation of dropout, a regularization technique for reducing overfitting in neural networks.
 
-			In standard dropout, a random subset of neurons are “dropped out” during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of \[\alpha\] (alpha is a hyperparameter).
+			In standard dropout, a random subset of neurons are "dropped out" during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of \(\alpha\) (\(\alpha\) is a hyperparameter).
 
 			This way, AlphaDropout allows the model to still learn the mean of the activations while also preventing overfitting and forcing the model to be less sensitive to the specific weights of the neurons. In other words, AlphaDropout regularizes the network by adding noise to the activations, which promotes the network to learn more robust feature representations.
 
@@ -995,13 +995,13 @@ In contrast, L2 regularization tends to shrink the weights of all features towar
 In general, L1 regularization is more suitable for sparse data, where only a few features are informative, and L2 regularization is more suitable when the problem is not sparse.
 
 			<h4>l1</h4>
-			Also known as Lasso regularization, it adds a penalty term to the loss function proportional to the absolute value of the weights. The L1 regularization term is defined as \[\lambda\sum_{i=1}^{n}|w_i|\[, where \[\lambda\] is the regularization strength and \[w_i\] are the weights of the model. The L1 regularization tends to push the weights towards zero and thus it can also be used to perform feature selection.
+			Also known as Lasso regularization, it adds a penalty term to the loss function proportional to the absolute value of the weights. The L1 regularization term is defined as \(\lambda\sum_{i=1}^{n}|w_i|\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L1 regularization tends to push the weights towards zero and thus it can also be used to perform feature selection.
 
 			<h4>l2</h4>
-			L2 Regularization: Also known as Ridge regularization, it adds a penalty term to the loss function proportional to the square of the weights. The L2 regularization term is defined as \[\lambda\sum_{i=1}^{n}w_i^2\[, where \[\lambda\] is the regularization strength and \[w_i\] are the weights of the model. The L2 regularization tends to shrink the weights towards zero, but unlike L1 regularization, it doesn't push the weights to exactly zero.
+			L2 Regularization: Also known as Ridge regularization, it adds a penalty term to the loss function proportional to the square of the weights. The L2 regularization term is defined as \(\lambda\sum_{i=1}^{n}w_i^2\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L2 regularization tends to shrink the weights towards zero, but unlike L1 regularization, it doesn't push the weights to exactly zero.
 
 			<h4>l1l2</h4>
-			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as \[\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)\[, where \[\lambda\] is the regularization strength, \[w_i\] are the weights of the model, and \[\alpha\] is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
+			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as \(\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)\), where \(\lambda\) is the regularization strength, \(w_i\) are the weights of the model, and \(\alpha\) is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
 
 			<h3>Initializers</h3>
 			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
