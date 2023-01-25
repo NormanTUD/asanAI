@@ -1017,14 +1017,14 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
 
 			$$
-				h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
-					x_{0}\\
-					x_{1}
-				\end{pmatrix}}_{\mathrm{Input}}
-				\times \underbrace{\begin{pmatrix}
-					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42\\
-					42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
-				\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
+			h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
+			x_{0}\\
+			x_{1}
+			\end{pmatrix}}_{\mathrm{Input}}
+			\times \underbrace{\begin{pmatrix}
+			42 & 42 & 42 & 42 & 42 & 42 & 42 & 42\\
+			42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
+			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
 			$$
 
 			<h4>glorotNormal</h4>
@@ -1047,23 +1047,23 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			$$
 			\left(\underbrace{\begin{pmatrix}
-				x_{0}\\
-				x_{1}
+			x_{0}\\
+			x_{1}
 			\end{pmatrix}}_{\mathrm{Input}}
 			\times \underbrace{\begin{pmatrix}
-				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
-				1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
+			1 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+			1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
 			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
-				+ \underbrace{\begin{pmatrix}
-					0.7754069566726685 \\
-					0.49466845393180847 \\
-					0.7826976180076599 \\
-					0.25087693333625793 \\
-					0.794059157371521 \\
-					0.5701638460159302 \\
-					0.04553954675793648 \\
-					0.20112565159797668
-				\end{pmatrix}}_{\mathrm{Bias}}
+			+ \underbrace{\begin{pmatrix}
+			0.7754069566726685 \\
+			0.49466845393180847 \\
+			0.7826976180076599 \\
+			0.25087693333625793 \\
+			0.794059157371521 \\
+			0.5701638460159302 \\
+			0.04553954675793648 \\
+			0.20112565159797668
+			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
 
@@ -1084,23 +1084,23 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			$$
 			\left(\underbrace{\begin{pmatrix}
-				x_{0}\\
-				x_{1}
+			x_{0}\\
+			x_{1}
 			\end{pmatrix}}_{\mathrm{Input}}
 			\times \underbrace{\begin{pmatrix}
-				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-				0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+			0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+			0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
 			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
-				+ \underbrace{\begin{pmatrix}
-					0.7754069566726685 \\
-					0.49466845393180847 \\
-					0.7826976180076599 \\
-					0.25087693333625793 \\
-					0.794059157371521 \\
-					0.5701638460159302 \\
-					0.04553954675793648 \\
-					0.20112565159797668
-				\end{pmatrix}}_{\mathrm{Bias}}
+			+ \underbrace{\begin{pmatrix}
+			0.7754069566726685 \\
+			0.49466845393180847 \\
+			0.7826976180076599 \\
+			0.25087693333625793 \\
+			0.794059157371521 \\
+			0.5701638460159302 \\
+			0.04553954675793648 \\
+			0.20112565159797668
+			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
 
@@ -1152,22 +1152,22 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Example-Calculation:
 
 			$$
-				MSE \left(\underbrace{\begin{pmatrix}
-					0.1 \\
-					-0.2 \\
-					1
-				\end{pmatrix}}_{\text{Ground-Truth}},
-				\underbrace{\begin{pmatrix}
-					0 \\
-					0.2 \\
-					-1
-				\end{pmatrix}}_{\text{Predicted Value}}
-				\right) = 
-				\frac{
-					\left( 0.1 - 0 \right)^2 +
-					\left( -0.2 - 0.2 \right)^2 +
-					\left( 1 - -1 \right)^2
-				}{3} = 4.17
+			MSE \left(\underbrace{\begin{pmatrix}
+			0.1 \\
+			-0.2 \\
+			1
+			\end{pmatrix}}_{\text{Ground-Truth}},
+			\underbrace{\begin{pmatrix}
+			0 \\
+			0.2 \\
+			-1
+			\end{pmatrix}}_{\text{Predicted Value}}
+			\right) = 
+			\frac{
+			\left( 0.1 - 0 \right)^2 +
+			\left( -0.2 - 0.2 \right)^2 +
+			\left( 1 - -1 \right)^2
+			}{3} = 4.17
 			$$
 
 			<h3>binaryCrossentropy</h3>
@@ -1178,15 +1178,15 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
 
 			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of \( [5] \).
-			
+
 			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is \(
-				\begin{pmatrix}
-					0.03 \\
-					0.9 \\
-					0.05 \\
-					0.01 \\
-					0.01
-				\end{pmatrix}
+			\begin{pmatrix}
+			0.03 \\
+			0.9 \\
+			0.05 \\
+			0.01 \\
+			0.01
+			\end{pmatrix}
 			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
 
 			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
@@ -1198,59 +1198,59 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			For this, categoricalCrossentropy is useful. Let us calculate the categorical crossentropy value for each of those options.
 
 			In the first one, the ground-truth output is \(
-				\begin{pmatrix}
-					0 \\	
-					1 \\	
-					0 \\	
-					0 \\	
-					0 \\	
-				\end{pmatrix}
+			\begin{pmatrix}
+			0 \\	
+			1 \\	
+			0 \\	
+			0 \\	
+			0 \\	
+			\end{pmatrix}
 			\). The categorical crossentropy would be:
 
 			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
 
 			$$ 
-				-\left(
-					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
-					\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
-					\underbrace{(0 * \log(0.05))}_\text{Third entry} + 
-					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
-					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
-				\right) =
+			-\left(
+			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+			\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
+			\underbrace{(0 * \log(0.05))}_\text{Third entry} + 
+			\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+			\right) =
 			$$
 
 			$$
-				-\left(
-					0 + -0.10536051565782630123 + 0 + 0 + 0
-				\right) = 0.10536051565782630123
+			-\left(
+			0 + -0.10536051565782630123 + 0 + 0 + 0
+			\right) = 0.10536051565782630123
 			$$
 
 			This is not a perfect loss, but it indicates the results is quite OK.
 
 			Let's try the other case, where the ground truth is \(
-				\begin{pmatrix}
-					0 \\	
-					0 \\
-					1 \\	
-					0 \\	
-					0 \\	
-				\end{pmatrix}
+			\begin{pmatrix}
+			0 \\	
+			0 \\
+			1 \\	
+			0 \\	
+			0 \\	
+			\end{pmatrix}
 			\). The categorical crossentropy would be:
 
 			$$ 
-				-\left(
-					\underbrace{(0 * \log(0.03))}_\text{First entry} + 
-					\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
-					\underbrace{(1 * \log(0.05))}_\text{Third entry} + 
-					\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
-					\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
-				\right) =
+			-\left(
+			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
+			\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
+			\underbrace{(1 * \log(0.05))}_\text{Third entry} + 
+			\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
+			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
+			\right) =
 			$$
 
 			$$
-				-\left(
-					0 + 0 + -2.99573227355399099344 + 0 + 0
-				\right) = 2.99573227355399099344
+			-\left(
+			0 + 0 + -2.99573227355399099344 + 0 + 0
+			\right) = 2.99573227355399099344
 			$$
 
 			Which is quite a high loss.
@@ -1316,13 +1316,13 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			averages over them.
 
 			If the ground truth is \( \begin{pmatrix}
-				0 \\
-				10 \\
-				-100
+			0 \\
+			10 \\
+			-100
 			\end{pmatrix} \) and the predicted value is \( \begin{pmatrix}
-				3 \\
-				9 \\
-				10
+			3 \\
+			9 \\
+			10
 			\end{pmatrix} \).
 
 			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
@@ -1346,37 +1346,37 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\text{MAPE}\left(y, \hat{y}\right) = 
 				\frac{1}{4} \cdot
 				\left(
-					\left(\frac{0.5-1}{0.5}\right) +
-					\left(\frac{1-0}{1}\right) +
-					\left(\frac{0.4-0.5}{0.5}\right) +
-					\left(\frac{2-2}{2}\right)
+				\left(\frac{0.5-1}{0.5}\right) +
+				\left(\frac{1-0}{1}\right) +
+				\left(\frac{0.4-0.5}{0.5}\right) +
+				\left(\frac{2-2}{2}\right)
 				\right) =
 			$$
 
 			$$
 				\frac{1}{4} \cdot
 				\left(
-					\left(\frac{-0.5}{0.5}\right) + 
-					\left(\frac{1}{1}\right) + 
-					\left(\frac{-0.1}{0.5}\right) + 
-					\left(\frac{0}{2}\right)
+				\left(\frac{-0.5}{0.5}\right) + 
+				\left(\frac{1}{1}\right) + 
+				\left(\frac{-0.1}{0.5}\right) + 
+				\left(\frac{0}{2}\right)
 				\right) =
 			$$
 
 			$$
 				\frac{1}{4} \cdot
 				\left(
-					-1 +
-					1 +
-					-0.2 +
-					0
+				-1 +
+				1 +
+				-0.2 +
+				0
 				\right) =
 			$$
 
 			$$
 				\frac{1}{4} \cdot
 				\left(
-					-0.2
+				-0.2
 				\right) = -0.05 
 			$$
 
@@ -1385,13 +1385,13 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The MSLE loss is calculated as:
 
-			\[MSLE = \frac{1}{n} \sum_{i=1}^{n} (log(1+y_i) - log(1+\hat{y_i}))^2$
+			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (log(1+y_i) - log(1+\hat{y_i}))^2\]
 
 			Where:
 
 			n is the number of samples
-			\[y_i\] is the true value of the i-th sample
-			\[\hat{y_i}\] is the predicted value of the i-th sample
+			\(y_i\) is the true value of the i-th sample
+			\(\hat{y_i}\) is the predicted value of the i-th sample
 
 			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
 
@@ -1409,8 +1409,8 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Where:
 
 			n is the number of samples
-			\[y_i\] is the true value of the i-th sample
-			\[\hat{y_i}\] is the predicted value of the i-th sample
+			\(y_i\) is the true value of the i-th sample
+			\(\hat{y_i}\) is the predicted value of the i-th sample
 
 			This loss function is used when the target variable follows a Poisson distribution, a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time or space, if these events occur with a known average rate and independently of the time since the last event. Poisson loss is a good choice when the target variable is a count, such as the number of visitors to a website, the number of clicks on an ad, or the number of phone calls received.
 
@@ -1431,9 +1431,9 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			N is the number of samples in the batch
 			C is the number of classes
-			\[f_{y_i}\] is the predicted logit for the true class of the i-th sample
-			\[f_c\] is the predicted logit for the c-th class
-			\[y_i\] is the true class label for the i-th sample
+			\(f_{y_i}\) is the predicted logit for the true class of the i-th sample
+			\(f_c\) is the predicted logit for the c-th class
+			\(y_i\) is the true class label for the i-th sample
 
 			This formula calculates the average cross-entropy loss over the batch of samples. The cross-entropy loss for each sample is calculated by taking the log of the predicted probability for the true class, and dividing by the sum of the predicted probabilities for all classes. The resulting loss value is negative, so it is multiplied by -1 to obtain the final loss.
 
@@ -1446,14 +1446,14 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The squared hinge loss is calculated as the square of this difference:
 
-			\[L = max(0, 1 - y_i * y_j)^2$
+			\[L = max(0, 1 - y_i * y_j)^2\]
 
 			Where:
 
-			\[y_i\] is the true class label (-1 or 1)
-			\[y_j\] is the predicted class score
+			\(y_i\) is the true class label (-1 or 1)
+			\(y_j\) is the predicted class score
 
-			This function will return 0 if \[y_i * y_j >=1\[, else it will return \[(1- y_i * y_j)^2\[. It forces the model to have a margin of at least 1 between the correct class and the other class.
+			This function will return 0 if \(y_i * y_j >=1\), else it will return \((1- y_i * y_j)^2\). It forces the model to have a margin of at least 1 between the correct class and the other class.
 
 			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
 
@@ -1464,7 +1464,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The Kullback-Leibler divergence between two probability distributions p and q is defined as:
 
-			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})$
+			\(D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})$
 
 			Where:
 
@@ -1710,11 +1710,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>LeakyReLu</h3>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 
-			\[f(x) = x if x > 0 else \alpha * x$
+			\[f(x) = x if x > 0 else \alpha * x\]
 
 			Where:
 
-			    \[\alpha\] is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
+			    \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
 
 			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \[\alpha\] parameter.
 
@@ -1753,10 +1753,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Where:
 
-			    \[\theta_t\] is the parameter at time step t
-			    \[\Delta \theta_t\] is the change in the parameter at time step t
-			    \[E[g^2]_t\] is the historical gradient information at time step t
-			    \[\epsilon\] is a small value used to prevent division by zero
+			    \(\theta_t\) is the parameter at time step \(t\)
+			    \(\Delta \theta_t\) is the change in the parameter at time step \(t\)
+			    \(E[g^2]_t\) is the historical gradient information at time step \(t\)
+			    \(\epsilon\) is a small value used to prevent division by zero
 
 			Adadelta is particularly useful when the data set is noisy, or when the gradients are sparse. It is also useful in cases where the learning rate is difficult to tune.
 
@@ -1771,12 +1771,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Where:
 
-			\[\theta_t\] is the value of the parameter at time step \[t$
-			\[\eta\] is the global learning rate
-			\[g_t\] is the gradient of the parameter at time step \[t$
-			\[\sum\limits_{i=1}^{t}g_{i}^2\] is the historical sum of squared gradients for that parameter up to time step \[t$
+			\(\theta_t\) is the value of the parameter at time step \(t\)
+			\(\eta\) is the global learning rate
+			\(g_t\) is the gradient of the parameter at time step \(t\)
+			\[\sum\limits_{i=1}^{t}g_{i}^2\] is the historical sum of squared gradients for that parameter up to time step \(t\)
 
-			The denominator \[\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\] is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
+			The denominator \(\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\) is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
 			<h3>adamax</h3>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
 
