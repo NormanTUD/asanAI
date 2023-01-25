@@ -522,7 +522,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Of course, the derivative is \(4x\) then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point \(x = 10\)?
 <br>
-			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h} = $$
+			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h}$$
 <br>
 			$$ \frac{f(x + 0.0001) - f(x)}{0.0001} = $$
 <br>
@@ -1072,8 +1072,17 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			It's a good choice when there's a need to evaluate the performance of a model on unseen data, it's also a good choice when the goal is to estimate the generalization error of the model, and it's also a good choice when the model selection and the hyperparameter tuning need to be guided.
 			<h2>Validation Loss</h2>
+			Validation loss is similar to the training loss, but it is calculated using a separate set of data called the validation set. The validation set is used to evaluate the model's performance during the training process, and it is used to prevent overfitting.
+
+			Overfitting occurs when a model is trained too well on the training data, and it performs poorly on new, unseen data. By using a validation set, we can monitor the validation loss during training and identify when the model starts to overfit. We can then stop training the model or use techniques such as early stopping to prevent overfitting.
+
+			In summary, validation loss is used to measure the performance of a model on a separate dataset during the training process, and it is used to prevent overfitting by monitoring the performance of the model on unseen data.
 			<h2>Loss</h2>
-			TODO
+			In machine learning, a loss function (or objective function, or optimization score function) is a function that maps an event or values of one or more variables onto a real number intuitively representing some "cost" associated with the event. An optimization problem seeks to minimize a loss function. Loss functions are used in various forms of supervised learning, such as regression and classification, and unsupervised learning such as Generative models.
+<br>
+			For example, in a supervised learning task where the goal is to classify images into different classes, the loss function could be the cross-entropy loss which measures the dissimilarity between the predicted probability distribution and the true distribution.
+<br>
+			In general, the goal of training a machine learning model is to find the set of model parameters that minimize the loss function.
 <br>
 			General variables used here:
 			$$ \text{Ground truth output value} := y_i $$
@@ -1308,9 +1317,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
 <br>
 			This loss function is used when the target variable is skewed and has some large values, it is often used in regression problems that involve exponential growth, such as predicting stock prices, population growth, or the spread of a disease. It can also be used when there are outliers in the data, as it is less sensitive to large errors than mean squared error.
-<br>
 			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
-<br>
 			<h3>poisson</h3>
 			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
 <br>
@@ -1867,6 +1874,9 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Also, check the summary tab before creating models. The number of parameters describes how complex the model is. The more parameters, the more ressources it will need. Try to change input sizes or amount of data. There's no hard limit that can be given, since this is highly dependent on your hardware.
 			<h2>Contact</h2>
 			Please contact norman.koch@tu-dresden.de if you have any questions.
+
+			<h1>Credits</h1>
+			Some parts of this documentation were created by OpenAIs ChatGPT.
 		</div>
 		<script src="manual.js"></script>
 	</body>
