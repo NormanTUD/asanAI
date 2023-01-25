@@ -1511,7 +1511,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Binary accuracy is defined as:
 
-			\[Accuracy = \frac{True Positives + True Negatives}{Total}\]
+			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{Total}\]
 
 			Where:
 
@@ -1528,7 +1528,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Categorical accuracy is defined as:
 
-			\[Accuracy = \frac{Number of Correct Predictions}{Total} \]
+			\[\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} \]
 
 			Where:
 
@@ -1710,13 +1710,17 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>LeakyReLu</h3>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 
-			\[f(x) = x if x > 0 else \alpha * x\]
+			\[f(x) = \begin{cases}
+				x & \text{if } x > 0 \\
+				\alpha * x & \text{else}
+			\end{cases}
+			\]
 
 			Where:
 
 			    \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
 
-			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \[\alpha\] parameter.
+			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \(\alpha\) parameter.
 
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
 
