@@ -1369,9 +1369,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
 <br>
 			The Kullback-Leibler divergence between two probability distributions \(p\) and \(q\) is defined as:
-<br>
 			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})\]
-<br>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
@@ -1414,7 +1412,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Binary accuracy is a metric used in binary classification tasks to evaluate the performance of a model. It measures the proportion of true positive and true negative predictions made by the model.
 <br>
 			Binary accuracy is defined as:
-			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{Total}\]
+			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{\text{Total}}\]
 			Where:
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
@@ -1539,7 +1537,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\alpha * (e^x - 1) & \text{else}
 			\end{cases}
 			\]
-<br>
 			Where:
 			<ul>
 				<li>\(\lambda\) is a scaling factor and is equal to 1.0507</li>
@@ -1830,6 +1827,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<img src="manual/no_improvement_2.png" />
 <br>
 			This graph looks almost like there is any change, but look at the left. All change is in a miniscule area, so basically the line is flat, but it looks like it's not at this scale.
+<br>
 			<img src="manual/no_real_improvement.png" />
 			<h3>Network Structures</h3>
 			TODO
@@ -1838,9 +1836,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h2>Export</h2>
 			<h3>Export to Python</h3>
 			<img src="manual/export_to_python.png" />
+<br>
 			TODO
 			<h3>Export to HTML</h3>
 			<img src="manual/export_to_html.png" />
+<br>
 			Exporting to HTML allows you to integrate the trained model in a website.
 <br>
 			First, download the model data (the button at the top of the code), then, at the bottom of the code tab, copy the code itself and insert it into an HTML file. Put it in the same folder as the model files (which has to be served via a webserver), and then you can start building your webapp around this example page.
