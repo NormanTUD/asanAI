@@ -574,7 +574,6 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				Bagging and Boosting: Bagging and Boosting are ensemble methods that can help to reduce overfitting by combining multiple models.
 <br>
 				Transfer learning: Use pre-trained models to initialize the weights of the network, this can help the network to converge faster and achieve better performance.
-<br>
 			<h2>A very simple neural network</h2>
 			TODO
 <br>
@@ -925,14 +924,30 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			The bias allows the function's output to be shifted in any axis.
 <br>
 			<h3>Units</h3>
-			TODO
+			In a dense layer, the "units" option refers to the number of neurons or nodes in that layer. A dense layer is a type of layer in a neural network that is fully connected, meaning that each neuron in the layer is connected to every neuron in the previous and next layers.
 <br>
+			The units option determines the number of neurons in the dense layer, and therefore also determines the number of outputs the layer will produce. For example, if you specify units=32, the dense layer will have 32 neurons, and it will produce 32 output values.
+<br>
+			A higher number of units in a dense layer can increase the capacity of the model to learn complex patterns in the data, but it also increases the risk of overfitting. On the other hand, a lower number of units can reduce the risk of overfitting but decrease the model's ability to learn complex patterns.
+<br>
+			When choosing the number of units for a dense layer, it's important to consider the complexity of the problem, the size of the dataset, and the capacity of the model. In general, you should start with a small number of units and increase it gradually until you find a good balance between the model's performance and the risk of overfitting.
+<br>
+			It's also worth noting that the number of units in the output layer should match the number of classes or output variables in the problem.
 			<h3>Standard-Deviation</h3>
 			TODO
 <br>
 			<h3>Strides</h3>
-			TODO
+			The "strides" option in a neural network layer refers to the step size that the layer takes when moving across the input tensor. In other words, it defines the number of pixels or units that the layer's filter moves when scanning the input tensor.
 <br>
+			This option is typically used in convolutional layers, which are layers that are used to extract features from images or other grid-like input data. The strides option in a convolutional layer determines how the convolution filter is moved across the input tensor, and it affects the size of the output tensor.
+<br>
+			A stride value of 1 means that the filter is moved one pixel at a time, while a stride value of 2 means that the filter is moved two pixels at a time. A larger stride value results in a smaller output tensor and fewer computations, but it also reduces the amount of information the layer can learn from the input.
+<br>
+			A stride of 1 is the default stride value for most convolutional layers, and it is often used when the goal is to maintain the spatial resolution of the input tensor. A stride of 2 or more is often used to reduce the size of the input tensor and reduce the number of computations.
+<br>
+			It's worth noting that for pooling layers, strides are also used to define the step size of the pooling operation. Pooling layers are used to down-sample the input tensor, and the strides option determines how much the pooling filter moves when scanning the input tensor.
+<br>
+			In general, choosing the right stride value depends on the problem, the size of the dataset, and the capacity of the model. It's a good practice to experiment with different stride values to find the best one for a specific task.
 			<h3>Regularizer</h3>
 <br>
 			Regularization is a technique used to prevent <a href="#Overfitting">overfitting</a> in machine learning models by adding a penalty term to the loss function. The goal is to prevent the model from fitting the noise in the data, and to encourage the model to have small weights.
@@ -1056,11 +1071,35 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>Bias Initializer</h3>
 			The Bias Initializer sets the initial values of the bias to one of the <a href="#Initializers">initializers</a>.
 			<h3>Kernel Regularizer</h3>
-			TODO
+			Kernel regularization is a technique used in machine learning to prevent overfitting in models that use kernel methods, such as support vector machines (SVMs) and kernel regression. A kernel is a function that computes the dot product of two inputs in a higher dimensional space, allowing for non-linear decision boundaries.
+
+			A kernel regularizer is a term added to the loss function of a kernel-based model that penalizes certain characteristics of the model's kernel. The most common kernel regularizer is the L2 regularization term, which adds the sum of the squares of the model's kernel weights to the loss function.
+<br>
+			There are a few different types of kernel regularizers, each with different strengths and weaknesses. The most common types of kernel regularizers are L1 and L2 regularization.
+<br>
+			L1 regularization (also known as Lasso regularization) adds the absolute value of the kernel weights to the loss function, which encourages the model to use only a subset of the features. This can be useful for feature selection, but it can also make the model less stable.
+<br>
+			L2 regularization (also known as Ridge regularization) adds the square of the kernel weights to the loss function, which encourages the model to use all of the features but keep them small. This can be useful for preventing overfitting, but it can also make the model less sensitive to the input features.
+<br>
+			There is no hard and fast rule for when to use one type of kernel regularizer over another. It largely depends on the problem and dataset. L1 regularization is often used when you have a high-dimensional dataset with many irrelevant features, and you want to select a subset of the most informative features. L2 regularization is often used when you have a small dataset and you want to prevent overfitting.
+			<br>
+			In practice, a combination of L1 and L2 regularization (Elastic net regularization) can be used to balance out the strengths and weaknesses of L1 and L2 regularization.
 			<h3>Bias Regularizer</h3>
-			TODO
-			<h3>Dropout Shape</h3>
-			TODO
+			Bias regularization is a technique used in machine learning to prevent overfitting in models that have a bias term, such as linear regression and neural networks. The bias term is a constant value added to the output of the model, and it is used to adjust the model's predictions.
+<br>
+			A bias regularizer is a term added to the loss function of a model that penalizes certain characteristics of the model's bias term. The most common bias regularizer is the L2 regularization term, which adds the sum of the squares of the model's bias term to the loss function.
+<br>
+			Like kernel regularizers, there are a few different types of bias regularizers, each with different strengths and weaknesses. The most common types of bias regularizers are L1 and L2 regularization.
+<br>
+			L1 regularization adds the absolute value of the bias term to the loss function, which encourages the model to have a small bias term. This can be useful for preventing overfitting, but it can also make the model less stable.
+<br>
+			L2 regularization adds the square of the bias term to the loss function, which encourages the model to have a small bias term. This can be useful for preventing overfitting, but it can also make the model less sensitive to the input features.
+<br>
+			There is no hard and fast rule for when to use one type of bias regularizer over another. It largely depends on the problem and dataset. L1 regularization is often used when you have a high-dimensional dataset with many irrelevant features, and you want to select a subset of the most informative features. L2 regularization is often used when you have a small dataset and you want to prevent overfitting.
+<br>
+			In practice, a combination of L1 and L2 regularization (Elastic net regularization) can be used to balance out the strengths and weaknesses of L1 and L2 regularization.
+<br>
+			It's worth noting that L1 regularization can result in sparse solutions, that is solutions where some of the weights are exactly zero, which can be useful in some cases, such as feature selection.
 			<h3>Target Shape</h3>
 			TODO
 			<h2>Validation Split</h2>
@@ -1576,37 +1615,48 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
-			WHEN TO USE TODO
+			The softsign activation function is typically used in neural networks as an alternative to the more commonly used sigmoid or ReLU activation functions. It has a smooth transition between positive and negative values, which can lead to more stable gradients during training. This can make it a good choice for tasks where the output of the network is a continuous value, such as regression problems. However, it is not commonly used as it is not as popular as other activation functions like ReLU, and it could be difficult to achieve good performance with it.
 			<h3>SoftMax</h3>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
-<br>
+			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
-<br>
+			<br>
 			<h3>tanh</h3>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
-<br>
+			<br>
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
-<br>
+			<br>
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
 			<h3>LeakyReLu</h3>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 			\[f(x) = \begin{cases}
-				x & \text{if } x > 0 \\
-				\alpha * x & \text{else}
+			x & \text{if } x > 0 \\
+			\alpha * x & \text{else}
 			\end{cases}
 			\]
 			Where \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
-<br>
+			<br>
 			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \(\alpha\) parameter.
-<br>
+			<br>
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
-<br>
+			<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
 			<h2>Optimizers</h2>
-			TODO
+			Optimizers are algorithms used in machine learning to adjust the parameters of a model in order to minimize a loss function. The loss function measures how well the model is able to make predictions on a given dataset. By minimizing the loss function, the optimizer helps to improve the accuracy of the model.
+<br>
+			There are different types of optimizers available, each with their own strengths and weaknesses. Some of the most commonly used optimizers include:
+			<ul>
+				<li>Stochastic Gradient Descent (SGD): This is a simple and widely used optimizer that adjusts the parameters of the model by taking the gradient of the loss function with respect to the parameters.</li>
+				<li>Adam: This is an extension of the SGD optimizer that uses a more sophisticated method for adjusting the learning rate, which can lead to faster convergence and better performance.</li>
+				<li>Adagrad: This optimizer adapts the learning rate for each parameter individually, which can help to avoid getting stuck in local minima.</li>
+				<li>RMSprop: This optimizer is similar to Adagrad, but it uses a moving average of the gradient squared to adjust the learning rate.</li>
+			</ul>
+			Choosing the right optimizer depends on the specific task and the characteristics of the data and model. For example, Adam is a good optimizer for handling large datasets, while Adagrad is good for sparse data and RMSprop is good for dealing with noisy data.
+			In general, optimizers help the machine learning model to converge to a better solution by fine-tuning the parameters of the model, which in turn leads to better performance.
+
 			<h3>adam</h3>
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
 <br>
