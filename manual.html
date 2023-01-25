@@ -1077,7 +1077,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
 
 			<h4>varianceScaling</h4>
-			Draws from a distribution with a mean of 0 and a standard deviation of sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor.
+			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
 
 			<h4>zeros</h4>
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
