@@ -968,8 +968,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>Initializers</h3>
 			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
 
+			An initializer is a function used to initialize the weights of a neural network. It is called when the model is first created and its purpose is to set the initial values of the weights. The choice of initializer can have a significant impact on the performance and convergence of the model.
+
+			In general, He et al. and LeCun normal/uniform initializers tend to work well for deep networks, while Glorot/Xavier normal/uniform initializers tend to work well for shallow networks. It also depends on the activation function used in the layer.
+
 			<h4>glorotUniform</h4>
-			TODO
+			GlorotUniform: This initializer samples the weights from a uniform distribution within the range [-x, x], where x is calculated as sqrt(6 / (fan_in + fan_out)), where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. It is a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
 
 			<h4>constant</h4>
 			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
@@ -986,19 +990,19 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$
 
 			<h4>glorotNormal</h4>
-			TODO
+			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as sqrt(2 / (fan_in + fan_out)), where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
 
 			<h4>heNormal</h4>
-			TODO
+			Draws from a normal distribution with mean 0 and a standard deviation of sqrt(2 / fan_in) where fan_in is the number of input units in the weight tensor.
 
 			<h4>heUniform</h4>
-			TODO
+			heUniform: Draws from a uniform distribution within [-sqrt(6 / fan_in), sqrt(6 / fan_in)] where fan_in is the number of input units in the weight tensor.
 
 			<h4>leCunNormal</h4>
-			TODO
+			leCunNormal: Draws from a normal distribution with mean 0 and a standard deviation of sqrt(1 / fan_in) where fan_in is the number of input units in the weight tensor.
 
 			<h4>leCunUniform</h4>
-			TODO
+			leCunUniform: Draws from a uniform distribution within [-sqrt(3 / fan_in), sqrt(3 / fan_in)] where fan_in is the number of input units in the weight tensor.
 
 			<h4>ones</h4>
 			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
@@ -1026,16 +1030,16 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$
 
 			<h4>randomNormal</h4>
-			TODO
+			randomNormal: Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
 
 			<h4>randomUniform</h4>
-			TODO
+			randomUniform: Draws from a uniform distribution within [-0.05, 0.05].
 
 			<h4>truncatedNormal</h4>
-			TODO
+			truncatedNormal: Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
 
 			<h4>varianceScaling</h4>
-			TODO
+			varianceScaling: Draws from a distribution with a mean of 0 and a standard deviation of sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor.
 
 			<h4>zeros</h4>
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
