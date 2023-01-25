@@ -781,15 +781,35 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			<h4>conv2dTranspose</h4>
 			<div id="conv2dTranspose_example"></div>
-			TODO
+			A 2D transposed convolutional layer, also known as a deconvolutional layer, is a type of layer used in deep neural networks for upsampling the feature maps. It is the inverse operation of a 2D convolutional layer, and it is used to increase the spatial resolution of the feature maps.
+
+			A 2D transposed convolutional layer applies a set of filters to the input feature maps, with the goal of increasing their spatial resolution. The filters are applied in a way that is similar to a 2D convolutional layer, but the operation is done in reverse. The input feature maps are upsampled by the transposed convolutional layer by inserting zeros between the elements of the input feature maps, and then applying the filters.
+
+			The use of 2D transposed convolutional layers allows to increase the spatial resolution of the feature maps, which is useful for tasks such as image segmentation or image generation. They are used in the decoder part of architectures such as U-Net or encoder-decoder architectures, where the goal is to increase the spatial resolution of the feature maps in order to make the predictions more detailed.
+
+			It is a good choice when the goal is to increase the spatial resolution of the feature maps, for example, in image segmentation or image generation tasks. It is also a good choice when working with encoder-decoder architectures, where the goal is to make predictions more detailed.
 
 			<h4>depthwiseConv2d</h4>
 			<div id="depthwiseConv2d_example"></div>
-			TODO
+			A depthwise convolutional layer is a type of 2D convolutional layer used in deep neural networks. It applies a single filter to each input channel independently, rather than applying a set of filters to the entire input feature map.
+
+			The depthwise convolutional layer applies a single filter to each input channel independently, which means that the number of filters used is equal to the number of input channels. The filters are applied to the input feature map in a way that is similar to a 2D convolutional layer, but each filter is applied only to a single input channel.
+
+			The use of depthwise convolutional layers allows for a reduction in the number of parameters and computation in the network, while maintaining or even improving the performance. They also allow for a better representation of the spatial correlations within each channel.
+
+			It is a good choice when there is a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when working with images and there's a need to preserve the spatial correlations within each channel. They are commonly used in conjunction with pointwise convolutional layers to form a separable convolutional layer, which is a more efficient way of applying convolutional filters to the input feature maps.
 
 			<h4>separableConv2d</h4>
 			<div id="separableConv2d_example"></div>
-			TODO
+			Separable convolutional layers are a type of 2D convolutional layers used in deep neural networks. They are designed to reduce the number of parameters and computation in the network, while maintaining or even improving the performance.
+
+			A separable convolutional layer consists of two parts: a depthwise convolutional layer and a pointwise convolutional layer. The depthwise convolutional layer applies a single filter to each input channel independently, while the pointwise convolutional layer applies a 1x1 convolution to combine the output of the depthwise convolutional layer.
+
+			The use of the depthwise convolutional layer and the pointwise convolutional layer in a separable convolutional layer makes it possible to reduce the number of parameters and computation in the network, while maintaining or even improving the performance. The depthwise convolutional layer reduces the number of parameters by applying a single filter to each input channel independently, while the pointwise convolutional layer combines the output of the depthwise convolutional layer with a 1x1 convolution.
+
+			Separable convolutional layers are often used in the early layers of neural network architectures, especially in the mobile versions of the architectures, where the number of parameters and computation is limited. They can also be used as a replacement for standard 2D convolutional layers in cases where the number of parameters and computation is a concern.
+
+			It is a good choice when there's a need to reduce the number of parameters and computation in the network while maintaining or improving the performance. It's also a good choice when the model is going to run on mobile devices or other resource-constrained environments.
 
 			<h4>upsampling2d</h4>
 			<div id="upSampling2d_example"></div>
@@ -1512,7 +1532,17 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Precision is a metric commonly used in classification problems, it is a good metric to evaluate the performance of models when the data is imbalanced. It is also useful to evaluate the performance of models when the false positive rate is critical, for example, in medical diagnosis.
 
 			<h3>cosine</h3>
-			TODO
+			In neural networks, the cosine similarity metric can be used as a measure of similarity between the embeddings learned by the network. It can be used to evaluate the performance of the network on tasks such as word embedding, image embedding, or sentence embedding.
+
+			The cosine similarity metric is calculated by taking the dot product of the embeddings and dividing by the product of the magnitudes of the embeddings. This results in a value between -1 and 1, where 1 represents an exact match and -1 represents a complete mismatch.
+
+			The cosine similarity metric can be used in a variety of natural language processing and computer vision tasks, such as:
+
+				Word embeddings: to measure the similarity between two words, or to find the most similar words to a given word
+				Image embeddings: to measure the similarity between two images, or to find the most similar images to a given image
+				Sentence embeddings: to measure the similarity between two sentences, or to find the most similar sentences to a given sentence
+
+			It is a good choice when working with embeddings and there's a need to measure the similarity between them, it's also a good choice when working with natural language processing or computer vision tasks that require to find similar instances.
 
 			<h2>Activation Functions</h2>
 			Activation functions are often used to &raquo;squeeze&laquo; the values between a certain range, mostly between 0 and 1, so that the neural-network-function is nonlinear and as such can approximate nonlinear functions.
@@ -1593,27 +1623,40 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			<h3>SeLu</h3>
 
-			TODO
+			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
 
-			$$
+			$f(x) = \lambda * (x if x > 0 else \alpha * (e^x - 1))$
+
+			Where:
+
+			$\lambda$ is a scaling factor and is equal to 1.0507
+			$\alpha$ is a negative scaling factor and is equal to 1.67326
+
+			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
+
+			SELU activation function can be used as a replacement of traditional activation functions like ReLU, LeakyReLU, TanH, etc. It is particularly useful in deep neural networks where the input data is standardized, and the network architecture is feedforward.
+
+			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
+
+			<!--$$
 			\mathrm{selu}\left(x\right) = \mathrm{scale} \cdot \mathrm{elu}\left(x, \alpha\right) = \mathrm{scale} \cdot \left\{
 				\begin{array}{ll}
 					x & x \geq 0 \\
 					\alpha\left(e^x - 1\right)& \, x \lt 0 \\
 					\end{array}
 				\right.
-			$$
+			$$-->
 
-			WHEN TO USE TODO
 			<h3>SoftPlus</h3>
+			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
 
-			TODO
+			$f(x) = log(1 + e^x)$
 
-			$$
-				\mathrm{softplus}\left(x\right) = \ln\left(1 + e^x\right)
-			$$
+			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
 
-			WHEN TO USE TODO
+			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
+
+			It's a good choice when there's a need for a smooth approximation of the ReLU activation function, it's also a good choice when the ReLU function causes problems like the "dying ReLU" issue. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation.
 
 			<h3>SoftSign</h3>
 
