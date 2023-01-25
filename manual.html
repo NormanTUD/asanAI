@@ -1497,7 +1497,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 
 			Where $J(\theta)$ is the loss function, \[\beta_1\] and \[\beta_2\] are hyperparameters, \[m\] and \[v\] are the moving averages of the gradient and the squared gradient, respectively.
 
-			To calculate the new weight $\theta_{t+1}$, Adam uses the following update rule:
+			To calculate the new weight \[\theta_{t+1}\], Adam uses the following update rule:
 
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
 
@@ -1521,7 +1521,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
 
-			Where $J(\theta)$ is the loss function, $\beta_1$ and $\beta_2$ are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
+			Where \[J(\theta)\] is the loss function, \[\beta_1\] and \[\beta_2\] are hyperparameters, m and v are the moving averages of the gradient and the squared gradient, respectively.
 
 			The update rule for Adamax is:
 
