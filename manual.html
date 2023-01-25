@@ -1019,19 +1019,14 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
-<br>
 			<h4>randomNormal</h4>
 			Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
-<br>
 			<h4>randomUniform</h4>
-			Draws from a uniform distribution within \[[-0.05, 0.05]\].
-<br>
+			Draws from a uniform distribution within \([-0.05, 0.05]\).
 			<h4>truncatedNormal</h4>
 			Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
-<br>
 			<h4>varianceScaling</h4>
 			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
-<br>
 			<h4>zeros</h4>
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
@@ -1056,25 +1051,18 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
 			$$
-<br>
 			<h3>Kernel Initializer</h3>
 			The Kernel Initializer sets the initial values of the kernel to one of the <a href="#Initializers">initializers</a>.
-<br>
 			<h3>Bias Initializer</h3>
 			The Bias Initializer sets the initial values of the bias to one of the <a href="#Initializers">initializers</a>.
-<br>
 			<h3>Kernel Regularizer</h3>
 			TODO
-<br>
 			<h3>Bias Regularizer</h3>
 			TODO
-<br>
 			<h3>Dropout Shape</h3>
 			TODO
-<br>
 			<h3>Target Shape</h3>
 			TODO
-<br>
 			<h2>Validation Split</h2>
 			Validation split is a technique used to evaluate the performance of a machine learning model by dividing the data into two subsets: a training set and a validation set. The training set is used to train the model, while the validation set is used to evaluate the performance of the model on unseen data.
 <br>
@@ -1083,27 +1071,20 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			The main purpose of using a validation split is to estimate the generalization error of the model. The generalization error is the error that the model makes on new, unseen data. By evaluating the model on the validation set, we can estimate the generalization error of the model, and use it to guide the model selection and the hyperparameter tuning.
 <br>
 			It's a good choice when there's a need to evaluate the performance of a model on unseen data, it's also a good choice when the goal is to estimate the generalization error of the model, and it's also a good choice when the model selection and the hyperparameter tuning need to be guided.
-<br>
 			<h2>Validation Loss</h2>
-<br>
 			<h2>Loss</h2>
 			TODO
 <br>
 			General variables used here:
-<br>
 			$$ \text{Ground truth output value} := y_i $$
 			$$ \text{Ground truth input value} := \hat{x}_i $$
 			$$ \text{Output value of the network} := \hat{y}_i $$
 			$$ \text{Number of elements in total} := n $$
-<br>
 			<h3>meanSquaredError</h3>
 <br>
 			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
-<br>
 			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
-<br>
 			Example-Calculation:
-<br>
 			$$
 			MSE \left(\underbrace{\begin{pmatrix}
 			0.1 \\
@@ -1122,11 +1103,8 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\left( 1 - -1 \right)^2
 			}{3} = 4.17
 			$$
-<br>
 			<h3>binaryCrossentropy</h3>
-<br>
 			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
-<br>
 			<h3>categoricalCrossentropy</h3>
 			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
 <br>
@@ -1141,7 +1119,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			0.01
 			\end{pmatrix}
 			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
-<br>
 			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
 <br>
 			We don't want to punish the network for that then, of course. 
@@ -1159,9 +1136,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			0 \\	
 			\end{pmatrix}
 			\). The categorical crossentropy would be:
-<br>
 			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
-<br>
 			$$ 
 			-\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
@@ -1171,13 +1146,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
 			$$
-<br>
 			$$
 			-\left(
 			0 + -0.10536051565782630123 + 0 + 0 + 0
 			\right) = 0.10536051565782630123
 			$$
-<br>
 			This is not a perfect loss, but it indicates the results is quite OK.
 <br>
 			Let's try the other case, where the ground truth is \(
@@ -1199,13 +1172,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
 			$$
-<br>
 			$$
 			-\left(
 			0 + 0 + -2.99573227355399099344 + 0 + 0
 			\right) = 2.99573227355399099344
 			$$
-<br>
 			Which is quite a high loss.
 <br>
 			Usually, it is recommeded to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
@@ -1234,9 +1205,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. In the case of the categorical hinge loss, the predicted class score is the score of the predicted class, and the true class score is the score of the correct class.
 <br>
 			The categorical hinge loss is calculated as:
-<br>
 			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
-<br>
 			where \(\text{y\_true}\) is the true class label and \(\text{y\_pred}\) is the predicted class score.
 <br>
 			The function will return 0 if \(\text{y\_true}* \text{y\_pred} >=1\), else it will return \(1- \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other classes.
@@ -1249,9 +1218,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The margin is a hyperparameter that controls how far the predicted class score must be from the true class score in order for the loss to be non-zero.
 <br>
 			The hinge loss is calculated as:
-<br>
 			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
-<br>
 			where y_true is the true class label (-1 or 1) and y_pred is the predicted class score.
 <br>
 			The function will return 0 if \(\text{y\_true} * \text{y\_pred} >=1\), else it will return \(1 - \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other class.
@@ -1277,7 +1244,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
 <br>
 			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
-<br>
 			<h3>meanAbsolutePercentageError</h3>
 			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
 <br>
@@ -1328,14 +1294,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				-0.2
 				\right) = -0.05 
 			$$
-<br>
 			<h3>meanSquaredLogarithmicError</h3>
 			Mean squared logarithmic error (MSLE) is a loss function used in regression problems. It is a variation of the mean squared error (MSE) loss function, which is commonly used for regression problems.
 <br>
 			The MSLE loss is calculated as:
-<br>
 			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2\]
-<br>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
@@ -1352,9 +1315,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
 <br>
 			The Poisson loss is calculated as:
-<br>
 			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})\]
-<br>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
@@ -1373,9 +1334,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Sparse categorical cross-entropy is a loss function used in multi-class classification tasks. It is used when the target labels are integers rather than one-hot encoded vectors.
 <br>
 			The sparse categorical cross-entropy loss is calculated as:
-<br>
 			\[L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
-<br>
 			Where:
 			<ul>
 				<li>N is the number of samples in the batch</li>
@@ -1394,9 +1353,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Squared hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is a variation of the hinge loss that is used to penalize the model more heavily when the predicted class score is further from the true class score.
 <br>
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The squared hinge loss is calculated as the square of this difference:
-<br>
-			\[L = max(0, 1 - y_i * y_j)^2\]
-<br>
+			\[L = \text{max}(0, 1 - y_i * y_j)^2\]
 			Where:
 			<ul>
 				<li>\(y_i\) is the true class label (-1 or 1)</li>
@@ -1430,9 +1387,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
-<br>
 			\[L = \log(\cosh(y_i - y_j))\]
-<br>
 			Where:
 			<ul>
 				<li>\(y_i\) is the true value</li>
@@ -1459,9 +1414,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Binary accuracy is a metric used in binary classification tasks to evaluate the performance of a model. It measures the proportion of true positive and true negative predictions made by the model.
 <br>
 			Binary accuracy is defined as:
-<br>
 			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{Total}\]
-<br>
 			Where:
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
@@ -1471,14 +1424,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			This metric is a measure of the model's ability to correctly classify positive and negative instances. A high accuracy score indicates that the model is good at correctly identifying positive and negative instances, but it does not take into account the imbalance of the classes.
 <br>
 			Binary accuracy is a commonly used metric for binary classification problems, where the goal is to predict whether an instance belongs to one class or another. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
-<br>
 			<h3>categoricalAccuracy</h3>
 			Categorical accuracy is a metric used in multi-class classification tasks to evaluate the performance of a model. It measures the proportion of correct predictions made by the model among all predictions.
 <br>
 			Categorical accuracy is defined as:
-<br>
 			\[\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} \]
-<br>
 			Where:
 			<ul>
 				<li>Number of Correct Predictions is the number of predictions made by the model that match the true labels</li>
@@ -1534,14 +1484,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					-100 & 0 & 100 
 				\end{pmatrix}
 			$$
-<br>
 			<h3>Sigmoid</h3>
 			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
-<br>
 			$$ 
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
 			$$
-<br>
 			$$
 				\text{sigmoid}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
@@ -1553,11 +1500,9 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
 				\end{pmatrix}
 			$$
-<br>
 			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
 <br>
 			<h3>ELU</h3>
-<br>
 			$$
 				\mathrm{elu}\left(x\right) = \left\{
 					\begin{array}{ll}
@@ -1566,17 +1511,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					\end{array}
 				\right.
 			$$
-<br>
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
-<br>
 			<h3>relu6</h3>
-<br>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
-<br>
 			$$
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
 			$$
-<br>
 			$$
 				\text{relu6}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
@@ -1588,15 +1528,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 					0 & 0 & 6
 				\end{pmatrix}
 			$$
-<br>
 			The choice of 6 is somewhat arbitrary, and it could be any other positive number. The value of 6 is used for the same reason that other values like 3 or 4 are used, it is a hyperparameter that can be adjusted to optimize the performance of the network.
 <br>
 			In summary, ReLU6 can be useful in situations where the model is prone to producing large activation values, which can cause problems such as overfitting. Capping the maximum value at 6 helps to regularize the model and improve its performance.
 <br>
 			<h3>SeLu</h3>
-<br>
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
-<br>
 			\[f(x) = \lambda \begin{cases}
 				x & \text{if } x > 0 \\
 				\alpha * (e^x - 1) & \text{else}
@@ -1625,50 +1562,38 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			<h3>SoftPlus</h3>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
-<br>
 			\[f(x) = \log(1 + e^x)\]
-<br>
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
 <br>
 			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
 <br>
 			It's a good choice when there's a need for a smooth approximation of the ReLU activation function, it's also a good choice when the ReLU function causes problems like the "dying ReLU" issue. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation.
-<br>
 			<h3>SoftSign</h3>
 <br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
-<br>
 			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
-<br>
 			WHEN TO USE TODO
-<br>
 			<h3>SoftMax</h3>
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
-<br>
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 <br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
 <br>
 			<h3>tanh</h3>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
-<br>
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
-<br>
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
 <br>
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
 <br>
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
-<br>
 			<h3>LeakyReLu</h3>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
-<br>
 			\[f(x) = \begin{cases}
 				x & \text{if } x > 0 \\
 				\alpha * x & \text{else}
 			\end{cases}
 			\]
-<br>
 			Where \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
 <br>
 			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \(\alpha\) parameter.
@@ -1676,36 +1601,28 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
 <br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
-<br>
 			<h2>Optimizers</h2>
-<br>
+			TODO
 			<h3>adam</h3>
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
 <br>
 			Adam algorithm keeps track of the moving average of the gradient and the moving average of the squared gradient. The moving averages are calculated as follows:
-<br>
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
-<br>
 			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
 <br>
 			To calculate the new weight \(\theta_{t+1}\), Adam uses the following update rule:
-<br>
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-<br>
 			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
 <br>
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
 <br>
 			In summary, Adam algorithm is an optimization algorithm that combines the benefits of both SGD and the RMSProp algorithm by keeping track of the moving average of the gradient and the moving average of the squared gradient, and adapts the learning rate accordingly.
-<br>
 			<h3>adadelta</h3>
 			Adadelta is an optimization algorithm used to train neural networks. It is an extension of the Adagrad algorithm, which is designed to address some of its limitations.
 <br>
 			Adadelta uses the gradient of the loss function with respect to the parameters to update the parameters. The update at each time step t is determined by considering the historical gradient information. The main idea behind Adadelta is to adapt the learning rate for each parameter separately, based on the historical gradient information. The update rule for the parameters is defined as:
-<br>
 			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}\]
-<br>
 			Where:
 			<ul>
 				<li>\(\theta_t\) is the parameter at time step \(t\)</li>
@@ -1721,9 +1638,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Adagrad is an optimization algorithm used for training machine learning models, particularly neural networks. It adapts the learning rate for each parameter in the model, rather than using a fixed learning rate for all parameters. The learning rate for each parameter is determined by the historical gradient information for that parameter.
 <br>
 			The update rule for each parameter in Adagrad is as follows:
-<br>
 			$$ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t $$
-<br>
 			Where:
 			<ul>
 				<li>\(\theta_t\) is the value of the parameter at time step \(t\)</li>
@@ -1736,16 +1651,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
 <br>
 			Adamax uses the following formulas to calculate the moving averages:
-<br>
 			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
 			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
-<br>
 			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
 <br>
 			The update rule for Adamax is:
-<br>
 			$$\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-<br>
 			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
 <br>
 			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
@@ -1756,11 +1667,8 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			RMSprop (Root Mean Square Propagation) is an optimization algorithm that is similar to the stochastic gradient descent (SGD) algorithm but adapts the learning rate for each parameter individually.
 <br>
 			The basic idea of RMSprop is to keep track of the moving average of the squared gradient for each parameter, and adjust the learning rate accordingly. The update rule for RMSprop is defined as:
-<br>
 			$$\textbf{s}t = \beta \textbf{s}{t-1} + (1 - \beta) (\nabla_{\theta} J(\theta))^2$$
-<br>
 			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
-<br>
 			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, \(\beta\) is a hyperparameter, \(\textbf{s}_t\) is the moving average of the squared gradient, and \(\epsilon\) is a small constant to avoid division by zero.
 <br>
 			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
@@ -1768,14 +1676,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			RMSprop reduces the oscillations and high variance in the parameter updates that can occur with SGD by adapting the learning rate individually for each parameter. This allows the algorithm to converge faster and more efficiently than SGD.
 <br>
 			In summary, RMSprop is an optimization algorithm that adapts the learning rate for each parameter individually. It keeps track of the moving average of the squared gradient for each parameter, and adjusts the learning rate accordingly. This allows RMSprop to reduce the oscillations and high variance in the parameter updates that can occur with SGD and converge faster and more efficiently.
-<br>
 			<h3>sgd</h3>
 			Stochastic Gradient Descent (SGD) is a widely used optimization algorithm for training neural networks. It is a simple and efficient method for optimizing a wide range of differentiable functions, including those used in neural networks.
 <br>
 			The basic idea behind SGD is to iteratively update the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. The update rule for SGD is defined as:
-<br>
 			$$\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)$$
-<br>
 			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, and \(\nabla_{\theta} J(\theta)\) is the gradient of the loss function with respect to the parameters.
 <br>
 			SGD uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset. This subset is chosen randomly, which is why it is called "stochastic".
@@ -1810,9 +1715,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
 <br>
 			This is useful if you want to detect objects from all kinds of angles.
-<br>
 			<h3>Invert images?</h3>
-<br>
 			<img src="manual/invert.png">
 <br>
 			This can be used to force the network train to learn a shape instead of, for example, just colors.
@@ -1825,24 +1728,18 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<img src="manual/flipped.png">
 <br>
 			Mirrors the image, so that the left side becomes the right one and vice versa.
-<br>
 			<h3>Sine-Ripple?</h3>
 			<img src="manual/sine.png">
-<br>
 			Ripples the image, as if it was a reflection on a pool of water which is rippled. This can be used to simulate hand-drawn or inexact images.
 <br>
 			<h2>Visualizations</h2>
 			TODO
-<br>
 			<h3>Visualize Layer</h3>
 			TODO
-<br>
 			<h3>Math Mode</h3>
 			TODO
-<br>
 			<h4>Math Mode while training</h4>
 			When in math mode while the network is training, you can follow how the weights are changing after each batch.
-<br>
 			$$
 			h_{\text{Shape: }[4]}' = h_{\text{Shape: }[8]} \times \underbrace{\begin{pmatrix}
 				\color{OrangeRed}{-0.3091616630554199} & \color{OrangeRed}{-1.0221514701843262} & \color{SeaGreen}{0.45086362957954407} & \color{OrangeRed}{-0.7998510003089905}\\
@@ -1861,29 +1758,23 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				\color{OrangeRed}{-0.549872875213623}
 			\end{pmatrix}}_{\mathrm{Bias}}
 			$$
-<br>
 			Red values have become smaller since the last batch, and green values became larger. Black (or white, depending on if you chose <a href="#Dark-Mode">Dark-Mode</a> or not) values stayed the same.
 <br>
 			When values fluctuate at every batch, the training has found a local minimum.
-<br>
 			<h2>User Modes</h2>
-<br>
 			<img src="manual/mode_choser.png">
 <br>
 			The mode determines what kind of options you see. It can be set in the general tab.
-<br>
 			<h3>Beginner-mode</h3>
 			In Beginner mode, some options are not available. This mode hides everything that is not absolutely needed to be set up manually for a simple neural network.
 <br>
 			It also <a href="#Auto-Input-Shape">automatically generates the input shape</a>, depending on the data you give it.
 <br>
 			Also, it disables layer options that would break the neural network or it's shapes.
-<br>
 			<h3>Expert-mode</h3>
 			The Expert-mode allows the user to set all settings possible. You can even set network stuff that breaks the network, if you want.
 <br>
 			Also, <a href="#Auto-Input-Shape">auto-input-shape</a> can be disabled, and, as such, you can set any arbitrary input shape for your network.
-<br>
 			<h2>Themes</h2>
 <br>
 			Themes alter the color schemes of asanAI, but the layout stays the same. 
@@ -1900,27 +1791,21 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			<h3>Natural-Mode</h3>
 			<img style="width: 90%" src="manual/naturalmode.png">
-<br>
 			<h2>Backend</h2>
 			<h3>CPU</h3>
 			TODO
-<br>
 			<h3>GPU</h3>
 			The GPU is faster when you have large GPU memory and a large enough batch size. 
 <br>
 			If the batch size is too small, it may even be slower than CPU.
-<br>
 			<h2>Create your own neural network</h2>
 <br>
 			<h3>From CSV</h3>
 			TODO
-<br>
 			<h3>From Images</h3>
 			TODO
-<br>
 			<h3>From arbitrary tensors</h3>
 			TODO
-<br>
 			<h3>Interpretating the training graph</h3>
 			<h4>Good loss</h4>
 			Good losses look like the next two ones. In each of these, both losses go down and a very similiar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
@@ -1928,8 +1813,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<img src="manual/loss_ok.png" />
 <br>
 			<img src="manual/good_loss.png" />
-<br>
-<br>
 			<h4>Stopped learning</h4>
 			This graph shows that the learning process has basically stopped. It fluctuates around a certain point (see graph 2), but does not really learn anything new.
 <br>
@@ -1942,25 +1825,20 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h4>Overfitting Loss</h4>
 			TODO
 			<img src="manual/overfitting.png" />
-<br>
 			<h4>No more improvements</h4>
 <br>
 			<img src="manual/no_improvement_2.png" />
 <br>
 			This graph looks almost like there is any change, but look at the left. All change is in a miniscule area, so basically the line is flat, but it looks like it's not at this scale.
-<br>
 			<img src="manual/no_real_improvement.png" />
 			<h3>Network Structures</h3>
 			TODO
 			<h2>Auto-Input-Shape</h2>
 			TODO
-<br>
 			<h2>Export</h2>
-<br>
 			<h3>Export to Python</h3>
 			<img src="manual/export_to_python.png" />
 			TODO
-<br>
 			<h3>Export to HTML</h3>
 			<img src="manual/export_to_html.png" />
 			Exporting to HTML allows you to integrate the trained model in a website.
