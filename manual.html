@@ -1404,7 +1404,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The Poisson loss is calculated as:
 
-			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i log(\hat{y_i})-\hat{y_i})$
+			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i log(\hat{y_i})-\hat{y_i})\]
 
 			Where:
 
@@ -1425,7 +1425,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The sparse categorical cross-entropy loss is calculated as:
 
-			\[L = -\frac{1}{N}\sum_{i=1}^{N} log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})$
+			\[L = -\frac{1}{N}\sum_{i=1}^{N} log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
 
 			Where:
 
@@ -1462,14 +1462,14 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>kullbackLeiblerDivergence</h3>
 			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
 
-			The Kullback-Leibler divergence between two probability distributions p and q is defined as:
+			The Kullback-Leibler divergence between two probability distributions \(p\) and \(q\) is defined as:
 
-			\(D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})$
+			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})\]
 
 			Where:
 
 			n is the number of samples
-			p(i) and q(i) are the probability of i-th sample under the two distributions
+			\(p(i)\) and \(q(i)\) are the probability of i-th sample under the two distributions
 
 			This formula calculates the divergence between the two distributions by summing over all possible outcomes, the probability of that outcome under the first distribution multiplied by the logarithm of the ratio of the probability of that outcome under the first distribution to the probability of that outcome under the second distribution.
 
@@ -1482,12 +1482,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
 
-			\[L = log(cosh(y_i - y_j))$
+			\[L = log(cosh(y_i - y_j))\]
 
 			Where:
 
-			\[y_i\] is the true value
-			\[y_j\] is the predicted value
+			\(y_i\) is the true value
+			\(y_j\) is the predicted value
 
 			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
 
@@ -1511,7 +1511,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Binary accuracy is defined as:
 
-			\[Accuracy = \frac{True Positives + True Negatives}{Total}$
+			\[Accuracy = \frac{True Positives + True Negatives}{Total}\]
 
 			Where:
 
@@ -1528,7 +1528,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Categorical accuracy is defined as:
 
-			\[Accuracy = \frac{Number of Correct Predictions}{Total}$
+			\[Accuracy = \frac{Number of Correct Predictions}{Total} \]
 
 			Where:
 
@@ -1544,7 +1544,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Precision is defined as:
 
-			\[Precision = \frac{True Positives}{True Positives + False Positives}$
+			\[\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}} \]
 
 			Where:
 
@@ -1648,12 +1648,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
 
-			\[f(x) = \lambda * (x if x > 0 else \alpha * (e^x - 1))$
+			\[f(x) = \lambda * (x if x > 0 else \alpha * (e^x - 1))\]
 
 			Where:
 
-			\[\lambda\] is a scaling factor and is equal to 1.0507
-			\[\alpha\] is a negative scaling factor and is equal to 1.67326
+			\(\lambda\) is a scaling factor and is equal to 1.0507
+			\(\alpha\) is a negative scaling factor and is equal to 1.67326
 
 			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
 
@@ -1673,7 +1673,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>SoftPlus</h3>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
 
-			\[f(x) = log(1 + e^x)$
+			\[f(x) = log(1 + e^x)\]
 
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
 
@@ -1699,7 +1699,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>tanh</h3>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 
-			\[f(x) = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$
+			\[f(x) = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
 
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
 
@@ -1749,7 +1749,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			Adadelta uses the gradient of the loss function with respect to the parameters to update the parameters. The update at each time step t is determined by considering the historical gradient information. The main idea behind Adadelta is to adapt the learning rate for each parameter separately, based on the historical gradient information. The update rule for the parameters is defined as:
 
-			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}$
+			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}\]
 
 			Where:
 
