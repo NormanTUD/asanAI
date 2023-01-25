@@ -1385,7 +1385,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The MSLE loss is calculated as:
 
-			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (log(1+y_i) - log(1+\hat{y_i}))^2\]
+			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2\]
 
 			Where:
 
@@ -1404,7 +1404,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The Poisson loss is calculated as:
 
-			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i log(\hat{y_i})-\hat{y_i})\]
+			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})\]
 
 			Where:
 
@@ -1425,7 +1425,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The sparse categorical cross-entropy loss is calculated as:
 
-			\[L = -\frac{1}{N}\sum_{i=1}^{N} log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
+			\[L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
 
 			Where:
 
@@ -1464,7 +1464,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 
 			The Kullback-Leibler divergence between two probability distributions \(p\) and \(q\) is defined as:
 
-			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) log(\frac{p(i)}{q(i)})\]
+			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})\]
 
 			Where:
 
@@ -1482,7 +1482,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
 
-			\[L = log(cosh(y_i - y_j))\]
+			\[L = \log(\cosh(y_i - y_j))\]
 
 			Where:
 
@@ -1673,7 +1673,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>SoftPlus</h3>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
 
-			\[f(x) = log(1 + e^x)\]
+			\[f(x) = \log(1 + e^x)\]
 
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
 
