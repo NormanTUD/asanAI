@@ -1674,12 +1674,15 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
 
 			<h3>tanh</h3>
+			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 
-			TODO
+			$f(x) = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$
 
-			$$ \mathrm{tanh}\left(x\right) = \frac{e^x-e^{-x}}{e^x+e^{-x}}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
+			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
 
-			WHEN TO USE TODO
+			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
+
+			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
 
 			<h3>LeakyReLu</h3>
 			TODO
