@@ -1685,11 +1685,19 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			It's a good choice when working with non-standardized input data and the network architecture is feedforward. It's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between -1 and 1.
 
 			<h3>LeakyReLu</h3>
-			TODO
+			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 
-			$$ \mathrm{LeakyReLU}\left(x\right) = \mathrm{max}\left(\alpha \cdot x, x\right) $$
+			$f(x) = x if x > 0 else \alpha * x$
 
-			WHEN TO USE 
+			Where:
+
+			    $\alpha$ is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
+
+			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the $\alpha$ parameter.
+
+			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
+
+			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value
 
 			<h2>Optimizers</h2>
 
