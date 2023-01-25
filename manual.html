@@ -1084,13 +1084,8 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>Target Shape</h3>
 			TODO
 
-			<h2>Initializer Functions</h2>
-			TODO
-
-			<h2>Regularizer Functions</h2>
-			TODO
-
 			<h2>Validation Split</h2>
+			TODO
 
 			<h2>Validation Loss</h2>
 
@@ -1241,7 +1236,19 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			</script>
 
 			<h3>categoricalHinge</h3>
-			TODO
+			Categorical hinge loss is a loss function used in multi-class classification tasks, specifically for training models using the hinge loss. It is a variation of the hinge loss that is used for multi-class classification problems where the goal is to separate the classes with a linear boundary.
+
+			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. In the case of the categorical hinge loss, the predicted class score is the score of the predicted class, and the true class score is the score of the correct class.
+
+			The categorical hinge loss is calculated as:
+
+			loss = max(0, 1 - y_true * y_pred)
+
+			where y_true is the true class label and y_pred is the predicted class score.
+
+			The function will return 0 if y_true* y_pred >=1, else it will return 1- y_true* y_pred. It forces the model to have a margin of at least 1 between the correct class and the other classes.
+
+			It is used in cases when multi-class classification is required and training with Hinge Loss is preferred.
 
 			<h3>hinge</h3>
 			TODO
