@@ -1406,9 +1406,20 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				$$-->
 
 			<h3>logcosh</h3>
-			TODO
+			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
 
-			$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$
+			$L = log(cosh(y_i - y_j))$
+
+			Where:
+
+			$y_i$ is the true value
+			$y_j$ is the predicted value
+
+			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
+
+			This loss function is often used for regression problems, it is less sensitive to outliers than the mean squared error (MSE) and it is less computationally expensive than the Huber loss. It is a good alternative to the mean squared error loss when the data is heteroscedastic, meaning that the variance of the errors is not constant.
+
+			<!--$$ \text{logcosh:} \sum_{i=0}^n \log(\cosh\left(\hat{y}_i - y_i\right)) $$-->
 
 			<h2>Metric</h2>
 			TODO
@@ -1420,19 +1431,20 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			TODO
 
 			<h3>precision</h3>
-			TODO
+			Precision is a metric used in classification tasks to evaluate the performance of a model. It measures the proportion of true positive predictions among all positive predictions made by the model.
 
-			<h3>categoricalCrossentropy</h3>
-			TODO
+			Precision is defined as:
 
-			<h3>sparseCategoricalCrossentropy</h3>
-			TODO
+			$Precision = \frac{True Positives}{True Positives + False Positives}$
 
-			<h3>meanSquaredError</h3>
-			TODO
+			Where:
 
-			<h3>meanAbsolutePercentageError</h3>
-			TODO
+			True Positives (TP) are the number of correct positive predictions made by the model
+			False Positives (FP) are the number of incorrect positive predictions made by the model
+
+			This metric is a measure of the model's ability to correctly identify positive instances, while avoiding false positives. A high precision score indicates that the model is good at correctly identifying positive instances, but it does not take into account the number of false negatives.
+
+			Precision is a metric commonly used in classification problems, it is a good metric to evaluate the performance of models when the data is imbalanced. It is also useful to evaluate the performance of models when the false positive rate is critical, for example, in medical diagnosis.
 
 			<h3>cosine</h3>
 			TODO
