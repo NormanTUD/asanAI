@@ -284,8 +284,6 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			The input and output shapes are changed automatically according to the data type and the constructed network.
 <br>
 			There are also some options at the top:
-<br>
-			
 			<ul>
 				<li><b>Auto-adjust last layer's number of neurons?</b> This sets the number of output neurons depending on the number of values set to "Y".</li>
 				<li><b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 0.</li>
@@ -295,7 +293,6 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				<li><b>Separator</b> Which symbol should be used as CSV seperator (usually ",").</li>
 				<li><b>divide by</b> Which number every value in the tensor should be divided by (by default, 1, and not enabled if auto-one-hot-encoding is enabled.</li>
 			</ul>
-<br>
 			<h2>Basic idea of neural networks</h2>
 			<h3>Data</h3>
 			For neural networks, everything is a tensor. Even if you don't know, you have certainly used tensors. Every number, every vector and matrix is a tensor.
@@ -1340,13 +1337,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(y_i\) is the true value of the i-th sample</li>
 				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
 			</ul>
-<br>
 			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
 <br>
 			This loss function is used when the target variable is skewed and has some large values, it is often used in regression problems that involve exponential growth, such as predicting stock prices, population growth, or the spread of a disease. It can also be used when there are outliers in the data, as it is less sensitive to large errors than mean squared error.
@@ -1361,13 +1356,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(y_i\) is the true value of the i-th sample</li>
 				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
 			</ul>
-<br>
 			This loss function is used when the target variable follows a Poisson distribution, a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time or space, if these events occur with a known average rate and independently of the time since the last event. Poisson loss is a good choice when the target variable is a count, such as the number of visitors to a website, the number of clicks on an ad, or the number of phone calls received.
 <br>
 			It's a good choice when the target variable is a count, the model is expected to predict the mean of the Poisson distribution, and the target variable is positive. It's also a good choice when the model is expected to predict a rate, such as time between events.
@@ -1384,7 +1377,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>N is the number of samples in the batch</li>
 				<li>C is the number of classes</li>
@@ -1392,7 +1384,6 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 				<li>\(f_c\) is the predicted logit for the c-th class</li>
 				<li>\(y_i\) is the true class label for the i-th sample</li>
 			</ul>
-<br>
 			This formula calculates the average cross-entropy loss over the batch of samples. The cross-entropy loss for each sample is calculated by taking the log of the predicted probability for the true class, and dividing by the sum of the predicted probabilities for all classes. The resulting loss value is negative, so it is multiplied by -1 to obtain the final loss.
 <br>
 			The sparse categorical cross-entropy loss function expects the target labels to be integers, and uses these integers to index into the predicted logits to obtain the predicted class scores.
@@ -1407,12 +1398,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[L = max(0, 1 - y_i * y_j)^2\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>\(y_i\) is the true class label (-1 or 1)</li>
 				<li>\(y_j\) is the predicted class score</li>
 			</ul>
-<br>
 			This function will return 0 if \(y_i * y_j >=1\), else it will return \((1- y_i * y_j)^2\). It forces the model to have a margin of at least 1 between the correct class and the other class.
 <br>
 			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
@@ -1427,12 +1416,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>n is the number of samples</li>
 				<li>\(p(i)\) and \(q(i)\) are the probability of i-th sample under the two distributions</li>
 			</ul>
-<br>
 			This formula calculates the divergence between the two distributions by summing over all possible outcomes, the probability of that outcome under the first distribution multiplied by the logarithm of the ratio of the probability of that outcome under the first distribution to the probability of that outcome under the second distribution.
 <br>
 			This loss function measures the dissimilarity between two probability distributions, it is often used as a loss function in generative models, to measure how well the model can generate samples that match the true distribution of the data. It is a measure of how much information is lost when approximating a true distribution with a model distribution.
@@ -1447,12 +1434,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[L = \log(\cosh(y_i - y_j))\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>\(y_i\) is the true value</li>
 				<li>\(y_j\) is the predicted value</li>
 			</ul>
-<br>
 			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
 <br>
 			This loss function is often used for regression problems, it is less sensitive to outliers than the mean squared error (MSE) and it is less computationally expensive than the Huber loss. It is a good alternative to the mean squared error loss when the data is heteroscedastic, meaning that the variance of the errors is not constant.
@@ -1478,13 +1463,11 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{Total}\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
 				<li>True Negatives (TN) are the number of correct negative predictions made by the model</li>
 				<li>Total is the number of samples</li>
 			</ul>
-<br>
 			This metric is a measure of the model's ability to correctly classify positive and negative instances. A high accuracy score indicates that the model is good at correctly identifying positive and negative instances, but it does not take into account the imbalance of the classes.
 <br>
 			Binary accuracy is a commonly used metric for binary classification problems, where the goal is to predict whether an instance belongs to one class or another. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
@@ -1497,12 +1480,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} \]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>Number of Correct Predictions is the number of predictions made by the model that match the true labels</li>
 				<li>Total is the number of samples</li>
 			</ul>
-<br>
 			This metric is a measure of the model's ability to correctly classify instances among all the classes. A high accuracy score indicates that the model is good at correctly identifying instances among all the classes, but it does not take into account the imbalance of the classes.
 <br>
 			Categorical accuracy is a commonly used metric for multi-class classification problems, where the goal is to predict the class of an instance among multiple classes. It is simple and easy to understand, but it may not be the best metric to use when the data is imbalanced, as the accuracy can be misleading in those cases.
@@ -1515,12 +1496,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}} \]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
 				<li>False Positives (FP) are the number of incorrect positive predictions made by the model</li>
 			</ul>
-<br>
 			This metric is a measure of the model's ability to correctly identify positive instances, while avoiding false positives. A high precision score indicates that the model is good at correctly identifying positive instances, but it does not take into account the number of false negatives.
 <br>
 			Precision is a metric commonly used in classification problems, it is a good metric to evaluate the performance of models when the data is imbalanced. It is also useful to evaluate the performance of models when the false positive rate is critical, for example, in medical diagnosis.
@@ -1625,12 +1604,10 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>\(\lambda\) is a scaling factor and is equal to 1.0507</li>
 				<li>\(\alpha\) is a negative scaling factor and is equal to 1.67326</li>
 			</ul>
-<br>
 			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
 <br>
 			SELU activation function can be used as a replacement of traditional activation functions like ReLU, LeakyReLU, TanH, etc. It is particularly useful in deep neural networks where the input data is standardized, and the network architecture is feedforward.
@@ -1730,14 +1707,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}\]
 <br>
 			Where:
-<br>
 			<ul>
 				<li>\(\theta_t\) is the parameter at time step \(t\)</li>
 				<li>\(\Delta \theta_t\) is the change in the parameter at time step \(t\)</li>
 				<li>\(E[g^2]_t\) is the historical gradient information at time step \(t\)</li>
 				<li>\(\epsilon\) is a small value used to prevent division by zero</li>
 			</ul>
-<br>
 			Adadelta is particularly useful when the data set is noisy, or when the gradients are sparse. It is also useful in cases where the learning rate is difficult to tune.
 <br>
 			It's a good choice when the data set is noisy or when the gradients are sparse. It's also a good choice when the learning rate is difficult to tune, it can be used with any neural network architecture
@@ -1750,14 +1725,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			$$ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t $$
 <br>
 			Where:
-<br>
 			<ul>
 				<li>\(\theta_t\) is the value of the parameter at time step \(t\)</li>
 				<li>\(\eta\) is the global learning rate</li>
 				<li>\(g_t\) is the gradient of the parameter at time step \(t\)</li>
 				<li>\(\sum\limits_{i=1}^{t}g_{i}^2\) is the historical sum of squared gradients for that parameter up to time step \(t\)</li>
 			</ul>
-<br>
 			The denominator \(\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\) is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
 			<h3>adamax</h3>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
