@@ -1011,7 +1011,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			In general, He et al. and LeCun normal/uniform initializers tend to work well for deep networks, while Glorot/Xavier normal/uniform initializers tend to work well for shallow networks. It also depends on the activation function used in the layer.
 
 			<h4>glorotUniform</h4>
-			GlorotUniform: This initializer samples the weights from a uniform distribution within the range [-x, x], where x is calculated as sqrt(6 / (fan_in + fan_out)), where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. It is a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
+			This initializer samples the weights from a uniform distribution within the range \([-x, x]\), where x is calculated as \(\sqrt{\frac{6}{\text{fan\_in} + \text{fan\_out}}}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
 
 			<h4>constant</h4>
 			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
@@ -1037,7 +1037,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Draws from a uniform distribution within \([-\sqrt{6 / \text{fan\_in}}, \sqrt{6 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>leCunNormal</h4>
-			Draws from a normal distribution with mean 0 and a standard deviation of \(sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 
 			<h4>leCunUniform</h4>
 			Draws from a uniform distribution within \([-\sqrt{3 / \text{fan\_in}}, \sqrt{3 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
