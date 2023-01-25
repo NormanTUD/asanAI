@@ -1251,7 +1251,19 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			It is used in cases when multi-class classification is required and training with Hinge Loss is preferred.
 
 			<h3>hinge</h3>
-			TODO
+			Hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is commonly used in support vector machines (SVMs) and other maximum-margin classifiers.
+
+			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The margin is a hyperparameter that controls how far the predicted class score must be from the true class score in order for the loss to be non-zero.
+
+			The hinge loss is calculated as:
+
+			loss = max(0, 1 - y_true * y_pred)
+
+			where y_true is the true class label (-1 or 1) and y_pred is the predicted class score.
+
+			The function will return 0 if y_true* y_pred >=1, else it will return 1- y_true* y_pred. It forces the model to have a margin of at least 1 between the correct class and the other class.
+
+			In binary classification, it is used to train a linear classifier that separates the two classes by a margin. It's a commonly used loss function for training linear models in a large margin setting, as it encourages the model to separate the classes as much as possible, which leads to a more robust classifier.
 
 			<h3>meanAbsoluteError</h3>
 			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
