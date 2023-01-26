@@ -1883,11 +1883,13 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>Natural-Mode</h3>
 			<img style="width: 90%" src="manual/naturalmode.png">
 			<h2>Backend</h2>
+			TensorFlow.js inside asanAI provides two backends for performing computations: CPU and WebGL. By default, it tries to use WebGL, but automatically falls back to CPU if WebGL is not available.
 			<h3>CPU</h3>
-			TODO
+			The CPU backend uses the JavaScript implementation of TensorFlow operations to perform computations on the CPU. It is compatible with all web browsers and can be used to run models on machines without a GPU. However, it may be slower than using a GPU backend.
 			<h3>GPU</h3>
-			The GPU is faster when you have large GPU memory and a large enough batch size. 
+			The WebGL backend uses the WebGL API to perform computations on the GPU. It is compatible with most modern web browsers, but requires the user's device to have a compatible GPU. The WebGL backend can provide a significant performance boost over the CPU backend, especially for large models and datasets. The WebGL backend is not available on all platforms, like iOS.
 <br>
+			In general, using the WebGL backend can speed up the computation and make it possible to run large models on the browser, whereas using the CPU backend makes the models run on any browser but with a lower performance.
 			If the batch size is too small, it may even be slower than CPU.
 			<h2>Create your own neural network</h2>
 <br>
