@@ -1937,7 +1937,21 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			<img src="manual/no_real_improvement.png" />
 			<h3>Network Structures</h3>
-			TODO
+			In image classification problems, a common approach is to use a combination of convolutional layers (conv2d) and dense layers, along with other layers such as flatten and dropout.
+<br>
+			Convolutional layers are typically used to extract features from images by applying a set of filters to the input image. These filters can learn to detect edges, textures, and other patterns in the image that are relevant to the classification task. The output of a convolutional layer is called a feature map, which can be used as input to the next layer.
+<br>
+			Dense layers, also known as fully connected layers, are used to make the final decision about the image classification. They take the feature maps from the convolutional layers as input and use them to perform the classification task.
+<br>
+			Flatten layers are used to reshape the tensor to 1D array before passing it to dense layers.
+<br>
+			Noise layers are used to add noise to the input images, this is known as data augmentation, which can help to improve the model's ability to generalize to new images.
+<br>
+			Dropout layers are used to randomly drop some of the neurons during the training process, this is to prevent overfitting.
+<br>
+			In the case of approximating multidimensional functions from a CSV file, a neural network can be trained to learn the underlying patterns in the data. A common approach is to use dense layers as the primary building blocks of the network, along with other types of layers such as dropout layers to prevent overfitting. The input to the network is the values in the CSV file, and the output is the estimated function value.
+<br>
+			It's important to note that the structure of the neural network, the number of layers, and the number of neurons in each layer will depend on the complexity of the underlying function and the size of the dataset.
 			<h2>Auto-Input-Shape</h2>
 			TODO
 			<h2>Export</h2>
