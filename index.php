@@ -214,6 +214,7 @@
 <?php
 					}
 ?>
+					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
 				</ul>
 
 
