@@ -1101,7 +1101,12 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			It's worth noting that L1 regularization can result in sparse solutions, that is solutions where some of the weights are exactly zero, which can be useful in some cases, such as feature selection.
 			<h3>Target Shape</h3>
-			TODO
+			In the reshape layer, the target shape option is used to specify the desired shape of the output tensor. This can be useful when you want to change the dimensions of the input tensor to match the requirements of the next layer.
+<br>
+			The target shape can be specified by providing a tuple of integers which defines the desired shape of the output tensor. The number of integers in the tuple must match the number of dimensions of the input tensor. For example, if the input tensor is of shape (batch_size, height, width, channels), and you want to reshape it to \([batch_size, height*width, channels]\), you can use the reshape layer with target shape option as \([batch_size, height*width, channels]\).
+<br>
+			For reshaping, the multiplication of all the shape's part must remain the same. E.g. if you have \([10, 20, 3]\), you cannot reshape it to \([10, 2]\), because \(10*20*3 != 10*2\).
+
 			<h2>Validation Split</h2>
 			Validation split is a technique used to evaluate the performance of a machine learning model by dividing the data into two subsets: a training set and a validation set. The training set is used to train the model, while the validation set is used to evaluate the performance of the model on unseen data.
 <br>
