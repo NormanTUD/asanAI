@@ -930,9 +930,6 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			When choosing the number of units for a dense layer, it's important to consider the complexity of the problem, the size of the dataset, and the capacity of the model. In general, you should start with a small number of units and increase it gradually until you find a good balance between the model's performance and the risk of overfitting.
 <br>
 			It's also worth noting that the number of units in the output layer should match the number of classes or output variables in the problem.
-			<h3>Standard-Deviation</h3>
-			TODO
-<br>
 			<h3>Strides</h3>
 			The "strides" option in a neural network layer refers to the step size that the layer takes when moving across the input tensor. In other words, it defines the number of pixels or units that the layer's filter moves when scanning the input tensor.
 <br>
@@ -1950,7 +1947,20 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			It's important to note that the structure of the neural network, the number of layers, and the number of neurons in each layer will depend on the complexity of the underlying function and the size of the dataset.
 			<h2>Auto-Input-Shape</h2>
-			TODO
+
+
+
+
+
+
+
+
+
+			Auto-Input-Shape is a feature that is to automatically infer the shape of the input data.
+<br>
+			In neural networks, the shape of the input data is typically specified as a tuple of integers, where each integer corresponds to the size of a dimension of the input data. For example, in an image classification problem, the input data might be a 4-dimensional tensor with shape \([\text{batch\_size}, \text{height}, \text{width}, \text{channels}]\), where batch_size is the number of images in a batch, height and width are the dimensions of the images, and channels is the number of color channels in the images.
+<br>
+			When using Auto-Input-Shape, asanAI will, depending on how you input your data (e.g. as a CSV or as image data from local files or webcam data, or tensor data), set the input shape accordingly automatically.
 			<h2>Export</h2>
 			<h3>Export to Python</h3>
 			<img src="manual/export_to_python.png" />
