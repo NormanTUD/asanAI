@@ -371,7 +371,7 @@
 										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked />
 									</td>
 								</tr>
-								<tr>
+								<tr class="expert_mode_only">
 									<td>
 										Divide <i>X</i> by:
 									</td>
