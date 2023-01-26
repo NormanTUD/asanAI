@@ -537,8 +537,17 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by chosing a smaller \(h\).
 <br>
 			<h3>Predicting</h3>
-			TODO
+			Predicting with a simple sequential neural network works by passing input data through the layers of the network in order, starting from the input layer and ending at the output layer.
 <br>
+			The input data is first passed through the first layer, the output of the first layer is then passed to the first hidden layer, where it is transformed using a set of weights and biases that are learned during the training process.
+<br>
+			This output is then passed through the next hidden layer, where it is again transformed using a set of weights and biases, and so on, until it reaches the output layer.
+<br>
+			The output layer produces the final predictions of the network, which can be compared to the expected output during training to adjust the weights and biases.
+<br>
+			During the prediction phase, the input data is passed through the trained network, and the output of the output layer is the prediction of the model. The prediction can be in the form of a probability distribution over the possible classes, or a single class.
+<br>
+			It's important to note that when the model is trained, it's trained with a specific set of weights and biases and these are the ones that are used during the prediction phase. Also, it's important to note that the prediction phase should be done on unseen data, as the model's aim is to generalize to new examples, not memorize the training data.
 			<h3>Shapes</h3>
 <br>
 			Tensors have shapes. The shape describe how many data points are in the tensor, and in what way they are arranged.
@@ -1921,8 +1930,9 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<img src="manual/stopped_training.gif" />
 <br>
 			<h4>Overfitting Loss</h4>
-			TODO
 			<img src="manual/overfitting.png" />
+			<br>
+			TODO
 			<h4>No more improvements</h4>
 <br>
 			<img src="manual/no_improvement_2.png" />
