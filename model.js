@@ -900,14 +900,10 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	var layer_input_shape = calculate_default_target_shape(layer_nr);
 
 	if(layer_type == "flatten") {
-		if(layer_nr == 0) {
-			return false;
+		if(layer_input_shape.length > 1) {
+			return true;
 		} else {
-			if(layer_input_shape.length > 1) {
-				return true;
-			} else {
-				return false;
-			}
+			return false;
 		}
 	}
 
