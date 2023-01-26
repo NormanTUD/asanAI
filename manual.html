@@ -1828,7 +1828,18 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			To interpret the resulting Class Activation Map, you can think of it as a heatmap where the regions with the highest values are the most important for the specific prediction made by the CNN. In general, if you see the regions of input image that are being highlighted in the CAM are the regions that are important for the CNN to make the predicted class label.
 
 			<h3>Math Mode</h3>
-			TODO
+
+			The mode allows the user to view the network's internal computations, including the equations that define the various layers and the values of the weights and biases for each layer.
+<br>
+			It can be useful for:
+<br>
+			<ul>
+				<li>Debugging: By viewing the internal equations and the values of the weights and biases, the user can identify any errors or issues with the network. This can be useful for debugging and troubleshooting problems with the network's performance.</li>
+				<li>Analysis: The user can analyze the internal computations of the network to understand how it is processing the input data and to identify any patterns or trends in the computations.</li>
+				<li>Understanding: The mode can be used to help the user understand how the network is working and to gain insight into the internal workings of the network. This can be especially useful for users who are new to machine learning or who are not familiar with the details of neural network computations.</li>
+				<li>Optimization: The user can use the mode to identify and optimize specific layers or parts of the network that may be causing performance issues.</li>
+			</ul>
+
 			<h4>Math Mode while training</h4>
 			When in math mode while the network is training, you can follow how the weights are changing after each batch.
 			$$
