@@ -1324,8 +1324,11 @@
 								Show layer data flow?
 								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
 
-								Show gradCAM?
-								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
+								
+								<span class="hide_when_no_conv_visualizations">
+									Show gradCAM?
+									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
+								</span>
 
 								<canvas id="grad_cam_heatmap" style="position: fixed; left: 50px; bottom: 50px; display: none"></canvas>
 
