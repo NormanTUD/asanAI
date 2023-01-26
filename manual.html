@@ -1966,7 +1966,23 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			<h3>Export to Python</h3>
 			<img src="manual/export_to_python.png" />
 <br>
-			TODO
+			This allows you to use the model you trained in your browser in Python code. Simply copy the code (with the button "Copy to clipboard"), paste it into a file and then click "Download model data" and put the files in the same directory.
+<br>
+			Depending on the type of your neural network (ie. for loading images) it will automatically adapt the modules you need to install. 
+			<br>
+			At the top of the code, in a comment, there is the code you need to execute before running your script.
+
+			<pre>
+python3 -m venv asanaienv
+source asanaienv/bin/activate
+pip3 install tensorflow tensorflowjs  scikit-image
+			</pre>
+
+			For images, for example, you can then run your neural network after enabling the virtual environment (contained in the <tt>asanaienv</tt> folder) like this:
+<br>
+			<tt>python3 script.py image1.jpg image2.jpg</tt>. It will predict the categores for each image
+<br>
+			You can do whatever you like with this code, this includes including it in your program (that does not have to be released), or re-license it under any license you wish. It is under WTFPL therefore.
 			<h3>Export to HTML</h3>
 			<img src="manual/export_to_html.png" />
 <br>
