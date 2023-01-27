@@ -1208,3 +1208,12 @@ function array_likelyhood_of_being_random (array) {
 
 	return 1 - chi;
 }
+
+function image_element_looks_random (imgelem) {
+	var t = tf.reshape(tf.browser.fromPixels(imgelem), [-1]);
+	return array_likelyhood_of_being_random(t.arraySync())
+}
+
+function maximally_activated_neurons_randomness () {
+	$("#maximally_activated_content").find("canvas"); 
+}
