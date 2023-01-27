@@ -1272,7 +1272,9 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var neurons_that_learnt_something = 0;
 
 		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
-			if(activated_neurons[current_model_config_hash][layer][i] < 0.05) {
+			// 0: etwas gelernt, 1: nix gelernt
+			// threshold: 0.01
+			if(activated_neurons[current_model_config_hash][layer][i] > 0.02) {
 				neurons_that_learnt_something++;
 			}
 		}
@@ -1300,12 +1302,15 @@ async function adjust_number_of_neurons (layer) {
 
 	var adjust_neurons = await get_new_number_of_neurons_according_to_visualization_randomness(layer);
 
+	var adjusted_neurons_total = 0;
+
 	while (adjust_neurons != 0) {
 		await train_neural_network();
 		adjust_neurons = await get_new_number_of_neurons_according_to_visualization_randomness(layer);
 
 		var old_value = parseInt($($(".layer_options_internal")[layer]).find(".filters,.units").val());
 		var new_value = old_value + adjust_neurons;
+		adjusted_neurons_total += Math.abs(adjust_neurons);
 		log("new-value", new_value);
 		$($(".layer_options_internal")[layer]).find(".filters,.units").val(new_value).trigger("change");
 		await delay(1000);
@@ -1313,7 +1318,7 @@ async function adjust_number_of_neurons (layer) {
 
 
 	$("#epochs").val(original_epochs);
-	return;
+	return adjusted_neurons_total;
 }
 
 /*
