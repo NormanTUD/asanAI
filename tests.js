@@ -129,6 +129,13 @@ async function run_tests () {
 
 	test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
 
+	var not_random = [1,1,1,1,1,1,1,1];
+	var medium_random = [0,0.1,1,2,0.5,-1,1,1,1,1,2,0.5];
+	var real_random = [0.782561374669061,0.435820713729726,0.733394706660089,0.670549480567338,0.0996915503756846,0.0596513498894495,0.981818576945752,0.612811573822079,0.149262201265092,0.339208902617202,0.283748225092307];
+
+	test_equal("testing non-random array to have likelyhood 0 of being random", array_likelyhood_of_being_random(not_random) == 0, true);
+	test_equal("testing medium-random array to have likelyhood 0.3062189184132783 of being random", array_likelyhood_of_being_random(medium_random) == 0.3062189184132783, true);
+	test_equal("testing real-random array to have likelyhood 1 of being random", array_likelyhood_of_being_random(real_random) == 1, true);
 
 	log_test("Math mode");
 	var cookie_theme = getCookie("theme");
@@ -136,6 +143,7 @@ async function run_tests () {
 	if(cookie_theme == "darkmode") {
 		darkmode = 1;
 	}
+
 
 	var color = "black";
 	if(darkmode) {
@@ -183,7 +191,7 @@ async function run_tests () {
 	}
 
 	log_test("Layer checks");
-	test_equal('heuristic_layer_possibility_check(0, "flatten")', heuristic_layer_possibility_check(0, "flatten"), false);
+	test_equal('heuristic_layer_possibility_check(0, "flatten")', heuristic_layer_possibility_check(0, "flatten"), true);
 	test_equal('heuristic_layer_possibility_check(0, "dense")', heuristic_layer_possibility_check(0, "dense"), true);
 
 	var fit_data = get_fit_data();

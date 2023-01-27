@@ -1171,3 +1171,53 @@ async function take_image_from_webcam (elem, nol) {
 		l("Took photo from webcam");
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function chiSquaredTest(arr) {
+  // Create a histogram of the data
+  const histogram = {};
+  for (let i = 0; i < arr.length; i++) {
+    if (!histogram[arr[i]]) {
+      histogram[arr[i]] = 1;
+    } else {
+      histogram[arr[i]]++;
+    }
+  }
+  // Check if the expected frequency is zero
+  if (Object.keys(histogram).length === 1) {
+    return 1;
+  }
+  // Calculate the expected frequency of each value
+  const expectedFrequency = arr.length / Object.keys(histogram).length;
+
+  // Calculate the chi-squared value
+  let chiSquared = 0;
+  for (const key in histogram) {
+    const observedFrequency = histogram[key];
+    chiSquared += Math.pow(observedFrequency - expectedFrequency, 2) / expectedFrequency;
+  }
+
+  // Look up the chi-squared distribution table to find the probability
+  const degreesOfFreedom = Object.keys(histogram).length - 1;
+  const probability = jStat.chisquare.cdf(chiSquared, degreesOfFreedom);
+
+  return probability;
+}
+
+function array_likelyhood_of_being_random (array) {
+	var chi = chiSquaredTest(array);
+
+	return 1 - chi;
+}
