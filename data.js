@@ -1172,19 +1172,6 @@ async function take_image_from_webcam (elem, nol) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function chiSquaredTest(arr) {
   // Create a histogram of the data
   const histogram = {};
