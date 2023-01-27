@@ -1272,7 +1272,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var neurons_that_learnt_something = 0;
 
 		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
-			if(activated_neurons[current_model_config_hash][layer][i] < 0.3) {
+			if(activated_neurons[current_model_config_hash][layer][i] < 0.05) {
 				neurons_that_learnt_something++;
 			}
 		}
@@ -1289,3 +1289,51 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		return null;
 	}
 }
+
+
+async function adjust_number_of_neurons (layer) {
+	var original_epochs = parseInt($("#epochs").val());
+
+	$("#epochs").val(10);
+
+	await train_neural_network();
+
+	var adjust_neurons = await get_new_number_of_neurons_according_to_visualization_randomness(layer);
+
+	while (adjust_neurons != 0) {
+		await train_neural_network();
+		adjust_neurons = await get_new_number_of_neurons_according_to_visualization_randomness(layer);
+
+		var old_value = parseInt($($(".layer_options_internal")[layer]).find(".filters,.units").val());
+		var new_value = old_value + adjust_neurons;
+		log("new-value", new_value);
+		$($(".layer_options_internal")[layer]).find(".filters,.units").val(new_value).trigger("change");
+		await delay(1000);
+	}
+
+
+	$("#epochs").val(original_epochs);
+	return;
+}
+
+/*
+async function start_simple () {
+	while (get_number_of_layers() > 1) {
+		$($(".remove_layer")[0]).click();
+	}
+
+	$($(".add_layer")[0]).click();
+	await delay(200);
+
+	$($(".add_layer")[0]).click();
+	await delay(500);
+
+	$($(".layer_type")[0]).val("conv2d").trigger("change")
+	await delay(500);
+
+	$($(".layer_type")[1]).val("flatten").trigger("change")
+	await delay(500);
+
+	
+}
+*/
