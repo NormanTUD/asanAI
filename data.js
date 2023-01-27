@@ -1215,5 +1215,76 @@ function image_element_looks_random (imgelem) {
 }
 
 function maximally_activated_neurons_randomness () {
-	$("#maximally_activated_content").find("canvas"); 
+	var canvasses = $("#maximally_activated_content").find("canvas"); 
+
+	var struct = {};
+
+	for (var i = 0; i < canvasses.length; i++) {
+		var model_hash = $(canvasses[i]).data("model_hash");
+		var data_layer = $(canvasses[i]).data("layer");
+		var data_neuron = $(canvasses[i]).data("neuron");
+
+		if(typeof(struct[model_hash]) == "undefined") {
+			struct[model_hash] = {};
+		}
+
+		if(typeof(struct[model_hash][data_layer]) == "undefined") {
+			struct[model_hash][data_layer] = [];
+		}
+
+		var res = image_element_looks_random(canvasses[i]);
+
+		//log(`hash: ${model_hash}, layer: ${data_layer}, neuron: ${data_neuron}: ${res}`);
+
+		struct[model_hash][data_layer][data_neuron - 1] = res;
+
+		//log("Done struct", struct);
+	}
+
+	return struct;
+}
+
+/*
+ * Returns 0 if the number of neurons can stay the same
+ * Returns -n if n neurons are random
+ * Returns 1 if the number of neurons should be increased
+ */
+async function get_new_number_of_neurons_according_to_visualization_randomness (layer) {
+	if(!model_is_trained) {
+		log("This algorithm is useless when the network is not trained");
+		return 0;
+	}
+
+	if(layer == (get_number_of_layers() - 1)) {
+		log("Cannot remove last layer");
+		return 0;
+	}
+
+	var layer_can_be_visualized = $($(".layer_setting")[layer]).find(".visualize_button");
+
+	if(layer_can_be_visualized) {
+		var current_model_config_hash = await get_model_config_hash()
+		await draw_maximally_activated_layer(layer, get_layer_type_array()[layer]);
+
+		var activated_neurons = maximally_activated_neurons_randomness();
+
+		var number_of_neurons = activated_neurons[current_model_config_hash][layer].length;
+		var neurons_that_learnt_something = 0;
+
+		for (var i = 0; i < activated_neurons[current_model_config_hash][layer].length; i++) {
+			if(activated_neurons[current_model_config_hash][layer][i] < 0.3) {
+				neurons_that_learnt_something++;
+			}
+		}
+
+		var n = neurons_that_learnt_something - number_of_neurons;
+
+		if (n <= 0) {
+			return n;
+		} else {
+			return 1;
+		}
+	} else {
+		return null;
+	}
 }
