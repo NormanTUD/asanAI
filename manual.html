@@ -981,11 +981,32 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 <br>
 			In general, He et al. and LeCun normal/uniform initializers tend to work well for deep networks, while Glorot/Xavier normal/uniform initializers tend to work well for shallow networks. It also depends on the activation function used in the layer.
 <br>
+Choosing the appropriate initialization method for a neural network depends on various characteristics of the data, including the scale of the input and output features, the number of input and output neurons, and the activation function used in the network. Here are some general guidelines for selecting an initialization method based on the characteristics of the data:
+
+    If the input and output features have similar scales, a good option is to use He uniform or Glorot uniform initialization methods, as they are designed for datasets with similar scale of inputs and outputs.
+    If the input and output features have very different scales, a good option is to use LeCun uniform initialization method, which is designed for datasets with different scale of inputs and outputs.
+    If the activation function used in the network is ReLU, He uniform initialization method is a good option as it's designed for this activation function.
+    If the activation function used in the network is sigmoid or tanh, Glorot uniform initialization method is a good option as it's designed for this activation function.
+    If the number of input neurons is much larger than the number of output neurons, it can be a good idea to use LeCun uniform initialization method.
+    If the number of output neurons is much larger than the number of input neurons, it can be a good idea to use He uniform initialization method.
+
+It's important to note that these are general guidelines, and the best initialization method for a particular dataset and neural network architecture may vary depending on the specific problem and optimizer you're trying to solve. It's also important to keep in mind that other factors such as data preprocessing techniques and network architectures can also have a big impact on the performance of a neural network.
 			<h4>glorotUniform</h4>
-			This initializer samples the weights from a uniform distribution within the range \([-x, x]\), where x is calculated as \(\sqrt{\frac{6}{\text{fan\_in} + \text{fan\_out}}}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
+			Glorot uniform initializer, also known as Xavier uniform initializer, is an initialization method that uses a uniform distribution with a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m))] to initialize the weights of neural network layers, where n is the number of input neurons and m is the number of output neurons. It is named after the researcher who proposed it, Xavier Glorot, and is commonly used in deep learning models such as multi-layer perceptrons (MLPs) and feedforward neural networks (FFNs). It can help improve the performance of these types of neural networks by ensuring that the activations of neurons are well-conditioned and that gradients during backpropagation are neither too big nor too small.
+
+			This initialization method is designed to be used with neural networks that have sigmoid or tanh activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m)] which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid or tanh activation function.
 <br>
 			<h4>constant</h4>
-			Sets all of the kernel or bias values to a given constant. For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
+
+			Constant initializer is an initialization method that initializes the weights of neural network layers with a constant value, which can be specified by the user. This can be useful when the user wants to initialize the weights with a specific value or when the user wants to compare the performance of a model with different initial weights.
+
+This initialization method is not as commonly used as other initialization methods and it is not recommended for most deep learning models. This is because initializing all weights to the same constant value can lead to poor performance, as the gradients during backpropagation will be the same for all neurons. This can cause the model to converge to suboptimal solutions.
+
+It can be useful in some edge cases, for example when you have a very large dataset, and you have a lot of computational power, you can initialize the weights to a constant value, and then train the network for a few epochs, this can help you to reduce the time to train the model.
+
+This initialization method can be useful when the user wants to initialize the weights with a specific value or when the user wants to compare the performance of a model with different initial weights. It's important to note that this initialization method is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
+
+			For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
 <br>
 			$$
 			h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
@@ -1005,13 +1026,21 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 <br>
 			<h4>heUniform</h4>
-			Draws from a uniform distribution within \([-\sqrt{6 / \text{fan\_in}}, \sqrt{6 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
+He uniform initializer is an initialization method that uses a uniform distribution with a range of [-sqrt(6 / n), sqrt(6 / n)] to initialize the weights of neural network layers. It is named after the researcher who proposed it, Xu He, and is commonly used in deep learning models such as multi-layer perceptrons (MLPs) and feedforward neural networks (FFNs). It can help improve the performance of these types of neural networks by ensuring that the activations of neurons are well-conditioned and that gradients during backpropagation are neither too big nor too small.
+
+The value "6" in the calculation of the "limit" for the He uniform initializer is based on the expected variance of the activations of a neuron in a randomly initialized network with ReLU activation function, which is one of the most commonly used activation functions in deep learning.
+
+This initialization method is designed to be used with neural networks that have rectified linear unit (ReLU) activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / n), sqrt(6 / n)], where n is the number of input neurons, which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with ReLU activation function.
 <br>
 			<h4>leCunNormal</h4>
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
 <br>
 			<h4>leCunUniform</h4>
-			Draws from a uniform distribution within \([-\sqrt{3 / \text{fan\_in}}, \sqrt{3 / \text{fan\_in}}]\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
+			The LeCun uniform initializer is designed to be used with neural networks that have sigmoid activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(3 / n), sqrt(3 / n)], where n is the number of input neurons, which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid activation function.
+
+			The value "3" is chosen because it corresponds to the expected variance of the activations of a neuron in a randomly initialized network with sigmoid activation function, which is one of the most commonly used activation functions in deep learning. This value ensure that the activations of the neuron are well-conditioned and that the gradients during backpropagation are neither too big nor too small.
+
+Additionally, this initialization method is best suited for datasets that have a non-zero mean and a small variance. If the input data has a large variance or zero mean, it can be normalized using techniques like standardization or normalization to make it suitable for LeCun uniform initializer.
 <br>
 			<h4>ones</h4>
 			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
