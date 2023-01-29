@@ -1075,6 +1075,22 @@ Additionally, this initialization method is best suited for datasets that have a
 			<h4>varianceScaling</h4>
 			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
 			<h4>zeros</h4>
+
+
+The zero initializer is an initialization method that initializes the weights of neural network layers with zero. This initialization method is not commonly used as it can lead to poor performance of the neural network.
+
+When all the weights are initialized to zero, during the forward propagation all neurons in a layer will produce the same output, this will make the gradients during backpropagation the same for all neurons, this will cause the model to converge to suboptimal solutions.
+
+The zero initialization can be used in some specific cases, for example, when you want to compare the performance of a model with different initialization methods, or you want to train a model with a specific constraint, for example, some regularization techniques such as weight decay, can be implemented by initializing the weights to zero.
+
+In general, it is recommended to avoid using the zero initializer and instead use other initialization methods such as He uniform, Glorot uniform, or LeCun uniform, which have been designed to better handle the non-linearity of deep neural networks.
+
+It's important to keep in mind that the zero initialization is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
+
+
+
+
+
 			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
 			$$
