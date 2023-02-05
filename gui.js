@@ -3281,13 +3281,40 @@ function get_category_nr(elem) {
 	return nr;
 }
 
+function delete_custom_drawing_layer () {
+	var all_current_custom_images = $(".own_image_span")
+	for (var i = 0; i < all_current_custom_images.length; i++) {
+		var this_canvas_id = $(all_current_custom_images[i]).find("canvas")[i].id;
+		if($("#" + this_canvas_id + "_layer").length) {
+			l("Deleting layer for custom image " + this_canvas_id);
+			$("#" + this_canvas_id + "_layer").remove();
+			$("#" + this_canvas_id + "_layer_colorpicker").remove()
+			$("#" + this_canvas_id + "_layer_slider").remove()
+			delete(atrament_data[this_canvas_id]);
+		}
+	}
+}
+
 function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
-		if (model.layers[model.layers.length - 1].outputShape.length != 2) {
-			var n = $(".own_image_label").length;
-			$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is not 2. Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
-		} else {
+		if (model.outputShape.length == 2) {
+			delete_custom_drawing_layer();
 			$("#last_layer_shape_warning").html("");
+		} else {
+			if (model.outputShape.length != 4) {
+				var n = $(".own_image_label").length;
+				$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is neither 2 (for classification) nor 4 (for segmentation). Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
+			} else {
+				$("#last_layer_shape_warning").html("");
+				var all_current_custom_images = $(".own_image_span");
+				for (var i = 0; i < all_current_custom_images.length; i++) {
+					var this_canvas_id = $(all_current_custom_images[i]).find("canvas")[0].id;
+					if($("#" + this_canvas_id + "_layer").length == 0) {
+						l("Drawing layer for custom image " + this_canvas_id);
+						addLayer(this_canvas_id, 0.5);
+					}
+				}
+			}
 		}
 	} else {
 		$("#last_layer_shape_warning").html("");
@@ -3388,6 +3415,7 @@ function addLayer(canvas_id, transparency) {
 
 	// Create a transparency slider
 	const slider = document.createElement("input");
+	slider.id = layer.id + "_slider";
 	slider.type = "range";
 	slider.min = 0;
 	slider.max = 1;
@@ -3405,7 +3433,6 @@ function addLayer(canvas_id, transparency) {
 	});
 
 	// Add the transparency slider to the document
-	$("#" + canvas_id).parent().append("Transparency:&nbsp;");
 	$("#" + canvas_id).parent().append(slider);
 }
 
