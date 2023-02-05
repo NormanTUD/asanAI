@@ -3405,6 +3405,7 @@ function addLayer(canvas_id, transparency) {
 	});
 
 	// Add the transparency slider to the document
+	$("#" + canvas_id).parent().append("Transparency:&nbsp;");
 	$("#" + canvas_id).parent().append(slider);
 }
 
