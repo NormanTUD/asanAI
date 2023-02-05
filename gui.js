@@ -3360,6 +3360,55 @@ function add_new_category() {
 	return uuid;
 }
 
+function addLayer(canvas_id, transparency) {
+	// Get the canvas element
+	const canvas = document.getElementById(canvas_id);
+
+	// Create a new canvas element for the layer
+	const layer = document.createElement("canvas");
+	layer.id = `${canvas_id}_layer`;
+	layer.width = canvas.width;
+	layer.height = canvas.height;
+	layer.style.position = "absolute";
+	layer.style.left = canvas.offsetLeft + "px";
+	layer.style.top = canvas.offsetTop + "px";
+	layer.style.backgroundColor = "white";
+	layer.style.opacity = transparency;
+
+	// Add the new canvas element to the document
+	$("#" + canvas_id).parent().append(layer);
+
+	// Create a new Atrament instance for the layer
+	atrament_data[layer.id] = {};
+	atrament_data[layer.id]["atrament"] = new Atrament(layer);
+
+	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
+	$("#" + canvas_id).parent().append(color_picker_code);
+	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
+
+	// Create a transparency slider
+	const slider = document.createElement("input");
+	slider.type = "range";
+	slider.min = 0;
+	slider.max = 1;
+	slider.step = 0.01;
+	slider.value = transparency;
+	slider.style.position = "absolute";
+	slider.style.left = canvas.offsetLeft + canvas.width + "px";
+	slider.style.top = canvas.offsetTop + "px";
+	slider.style.width = "100px";
+
+
+	// Update the opacity of the layer when the slider value changes
+	slider.addEventListener("input", function() {
+		layer.style.opacity = this.value;
+	});
+
+	// Add the transparency slider to the document
+	$("#" + canvas_id).parent().append(slider);
+}
+
+
 function rename_labels() {
 	reset_labels();
 	$(".own_image_label").each(function (i, x) {
