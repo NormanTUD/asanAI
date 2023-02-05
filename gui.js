@@ -3308,10 +3308,14 @@ function last_shape_layer_warning() {
 				$("#last_layer_shape_warning").html("");
 				var all_current_custom_images = $(".own_image_span");
 				for (var i = 0; i < all_current_custom_images.length; i++) {
-					var this_canvas_id = $(all_current_custom_images[i]).find("canvas")[0].id;
-					if($("#" + this_canvas_id + "_layer").length == 0) {
-						l("Drawing layer for custom image " + this_canvas_id);
-						addLayer(this_canvas_id, 0.5);
+					var canvasses = $(all_current_custom_images[i]).find("img,canvas");
+
+					for (var j = 0; j < all_current_custom_images.length; j++) {
+						var this_canvas_id = canvasses[j].id
+						if($("#" + this_canvas_id + "_layer").length == 0) {
+							l("Drawing layer for custom image " + this_canvas_id);
+							addLayer(this_canvas_id, 0.5);
+						}
 					}
 				}
 			}

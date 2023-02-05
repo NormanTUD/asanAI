@@ -1969,7 +1969,9 @@
 
 				var nr = null;
 
-				$(".own_image_files").each(function (x, y) { if (get_element_xpath(y) == get_element_xpath(currentTarget)) { nr = x } } )
+				$(".own_image_files").each(function (x, y) {
+					if (get_element_xpath(y) == get_element_xpath(currentTarget)) { nr = x };
+				});
 
 				return nr;
 			}
@@ -1988,7 +1990,7 @@
 					}
 					var reader = new FileReader();
 					reader.onload = function (e) {
-						var html = '<span class="own_image_span"><img height="90" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+						var html = '<span class="own_image_span"><img height="90" id="' + uuidv4() + '_image" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 						imgDiv.append(html);
 						disable_start_training_button_custom_images();
 					}
