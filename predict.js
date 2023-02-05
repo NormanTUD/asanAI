@@ -676,42 +676,61 @@ async function predict_handdrawn () {
 	}
 
 	var predictions_tensor = model.predict(img);
-	var predictions = predictions_tensor.arraySync();
 
 	await draw_heatmap(predictions_tensor, img);
 
 	var handdrawn_predictions = $("#handdrawn_predictions");
 	handdrawn_predictions.html("");
 
-	var html = "";
+	if(model.outputShape.length == 2) {
+		var predictions = predictions_tensor.arraySync();
+		var html = "";
 
-	var max = 0;
+		var max = 0;
 
-	for (var i = 0; i < predictions[0].length; i++) {
-		if(max < predictions[0][i]) {
-			max = predictions[0][i];
-		}
-	}
-
-	for (var i = 0; i < predictions[0].length; i++) {
-		var label = labels[i % labels.length];
-		if(label) {
-			if(predictions[0][i] == max) {
-				html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
-			} else {
-				html += label + ": " + predictions[0][i] + "<br>\n";
-			}
-		} else {
-			if(predictions[0][i] == max) {
-				html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
-			} else {
-				html += predictions[0][i] + "<br>\n";
+		for (var i = 0; i < predictions[0].length; i++) {
+			if(max < predictions[0][i]) {
+				max = predictions[0][i];
 			}
 		}
-	}
-	html += "";
 
-	handdrawn_predictions.html(html);
+		for (var i = 0; i < predictions[0].length; i++) {
+			var label = labels[i % labels.length];
+			if(label) {
+				if(predictions[0][i] == max) {
+					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
+				} else {
+					html += label + ": " + predictions[0][i] + "<br>\n";
+				}
+			} else {
+				if(predictions[0][i] == max) {
+					html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+				} else {
+					html += predictions[0][i] + "<br>\n";
+				}
+			}
+		}
+		html += "";
+
+		handdrawn_predictions.html(html);
+	} else if(model.outputShape.length == 4) {
+		var pxsz = 10;
+
+		var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+		var predictions = predictions_tensor_transposed.arraySync();
+		for (var i = 0; i < predictions.length; i++) {
+			var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+				width: pxsz * predictions_tensor.shape[2],
+				height: pxsz * predictions_tensor.shape[1],
+			});
+
+			$("#handdrawn_predictions").append(canvas);
+
+			var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+		}
+	} else {
+		log("Different output shapes not yet supported");
+	}
 
 	tf.engine().endScope();
 }
