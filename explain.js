@@ -347,13 +347,13 @@ function group_layers (layers) {
 	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
 
         var descs = [
+		{ 
+			"re": "((?:upSampling2d;?)+)", 
+			"name": "Scaling up"
+		},
 		{
 			"re": "((?:lstm;)+)",
 			"name": "LSTM"
-		},
-		{ 
-			"re": "((?:upSampling2d;)+)", 
-			"name": "Scaling up"
 		},
                 { 
 			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)", 
