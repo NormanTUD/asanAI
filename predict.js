@@ -600,7 +600,8 @@ async function predict_webcam () {
 
 					$("#webcam_prediction").append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 0);
+					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+					var res = draw_grid(canvas, 5, predictions[i], 1, 1);
 				}
 			} else {
 				var max_i = 0;
