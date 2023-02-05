@@ -312,7 +312,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 					$("#prediction").append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 0);
+					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
 					log(res);
 				}
 			} else {

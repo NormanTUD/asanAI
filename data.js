@@ -632,9 +632,10 @@ async function get_xs_and_ys () {
 								var this_img = await resized_img.arraySync();
 								x.push(this_img);
 								classes.push(label_nr);
-								var this_map = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
-										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]).
-										arraySync();
+								var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
+									resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
+
+								var this_map = this_map_tensor.arraySync();
 								log(this_map);
 								maps.push(this_map)
 							}
