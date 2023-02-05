@@ -3282,15 +3282,20 @@ function get_category_nr(elem) {
 }
 
 function delete_custom_drawing_layer () {
-	var all_current_custom_images = $(".own_image_span")
+	var all_current_custom_images = $(".own_image_span");
 	for (var i = 0; i < all_current_custom_images.length; i++) {
-		var this_canvas_id = $(all_current_custom_images[i]).find("canvas")[i].id;
-		if($("#" + this_canvas_id + "_layer").length) {
-			l("Deleting layer for custom image " + this_canvas_id);
-			$("#" + this_canvas_id + "_layer").remove();
-			$("#" + this_canvas_id + "_layer_colorpicker").remove()
-			$("#" + this_canvas_id + "_layer_slider").remove()
-			delete(atrament_data[this_canvas_id]);
+		var imgs = $(all_current_custom_images[i]).find("img,canvas");
+		for (var j = 0; j < all_current_custom_images.length; j++) {
+			var this_canvas_id = imgs[j].id;
+			if(this_canvas_id.endsWith("_layer")) {
+				if($("#" + this_canvas_id + "_layer").length) {
+					l("Deleting layer for custom image " + this_canvas_id);
+					$("#" + this_canvas_id + "_layer").remove();
+					$("#" + this_canvas_id + "_layer_colorpicker").remove()
+					$("#" + this_canvas_id + "_layer_slider").remove()
+					delete(atrament_data[this_canvas_id]);
+				}
+			}
 		}
 	}
 }
@@ -3310,7 +3315,7 @@ function last_shape_layer_warning() {
 				for (var i = 0; i < all_current_custom_images.length; i++) {
 					var canvasses = $(all_current_custom_images[i]).find("img,canvas");
 
-					for (var j = 0; j < all_current_custom_images.length; j++) {
+					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id
 						if(!this_canvas_id.endsWith("_layer")) {
 							if($("#" + this_canvas_id + "_layer").length == 0) {
