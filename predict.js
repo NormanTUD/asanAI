@@ -134,7 +134,6 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 			try {
 				predictions_tensor = await model.predict(tensor_img);
 
-
 				await draw_heatmap(predictions_tensor, tensor_img);
 			} catch (e) {
 
@@ -152,42 +151,61 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 				return predict_demo(item, nr, 1);
 			}
 
-			var predictions = predictions_tensor.dataSync();
-			dispose(predictions_tensor);
+			var desc = $($(".predict_demo_result")[nr]);
+			desc.html("");
 
-			if(predictions.length) {
-				var max_i = 0;
-				var max_probability = -9999999;
+			if(model.outputShape.length == 4) {
+				var pxsz = 10;
 
-				for (let i = 0; i < predictions.length; i++) {
-					var probability = predictions[i];
-					if(probability > max_probability) {
-						max_probability = probability;
-						max_i = i;
+				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				var predictions = predictions_tensor_transposed.arraySync();
+				for (var i = 0; i < predictions.length; i++) {
+					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+						width: pxsz * predictions_tensor.shape[2],
+						height: pxsz * predictions_tensor.shape[1],
+					});
+
+					desc.append(canvas);
+
+					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+				}
+			} else {
+				var predictions = predictions_tensor.dataSync();
+				if(predictions.length) {
+					var max_i = 0;
+					var max_probability = -9999999;
+
+					for (let i = 0; i < predictions.length; i++) {
+						var probability = predictions[i];
+						if(probability > max_probability) {
+							max_probability = probability;
+							max_i = i;
+						}
 					}
+
+					var fullstr = "";
+
+					for (let i = 0; i < predictions.length; i++) {
+						var label = labels[i % labels.length];
+						var probability = predictions[i];
+						var str = label + ": " + probability + "<br>\n";
+						if(i == max_i && show_green) {
+							str = "<b class='best_result'>" + str + "</b>";
+						}
+						fullstr += str;
+					}
+					desc.html(fullstr);
 				}
 
-				var desc = $($(".predict_demo_result")[nr]);
-
-				var fullstr = "";
-
-				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i % labels.length];
-					var probability = predictions[i];
-					var str = label + ": " + probability + "<br>\n";
-					if(i == max_i && show_green) {
-						str = "<b class='best_result'>" + str + "</b>";
-					}
-					fullstr += str;
-				}
-				desc.html(fullstr);
+				$("#predict_error").hide();
+				$("#predict_error").html("");
 			}
-
-			$("#predict_error").hide();
-			$("#predict_error").html("");
+		} else {
+			log("No model");
 		}
 
 		dispose(tensor_img);
+		dispose(predictions_tensor);
 	} catch (e) {
 		_predict_error(e);
 	}
