@@ -292,65 +292,89 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		predictions = predictions_tensor.dataSync();
 
-		dispose(predict_data);
-		dispose(predictions_tensor);
 
 		//log(predictions);
 
 		if(!input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
-			var last_layer_activation = get_last_layer_activation_function();
-			var show_green = last_layer_activation == "softmax" ? 1 : 0;
-			if(predictions.length) {
-				var max_i = 0;
-				var max_probability = -9999999;
+			if(model.outputShape.length == 4) {
+				var pxsz = 10;
 
-				for (let i = 0; i < predictions.length; i++) {
-					var probability = predictions[i];
-					if(probability > max_probability) {
-						max_probability = probability;
-						max_i = i;
-					}
+				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				predictions_tensor_transposed.print()
+				predictions = predictions_tensor_transposed.arraySync();
+				for (var i = 0; i < predictions.length; i++) {
+					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+						width: pxsz * predictions_tensor.shape[2],
+						height: pxsz * predictions_tensor.shape[1],
+					});
+
+					$("#prediction").append(canvas);
+
+					var res = draw_grid(canvas, 10, predictions[i], 1, 0);
+					log(res);
 				}
+			} else {
+				var last_layer_activation = get_last_layer_activation_function();
+				var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
-				if(labels.length == 0) {
-					await get_label_data();
-				}
+				if(predictions.length) {
+					var max_i = 0;
+					var max_probability = -9999999;
 
-				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i % labels.length];
-					var probability = predictions[i];
-					var this_str = "";
-					if(label) {
-						this_str += label + ": ";
+					for (let i = 0; i < predictions.length; i++) {
+						var probability = predictions[i];
+						if(probability > max_probability) {
+							max_probability = probability;
+							max_i = i;
+						}
 					}
 
-					if(get_last_layer_activation_function() == "softmax") {
-						probability = (probability * 100) + "%";
+					if(labels.length == 0) {
+						await get_label_data();
 					}
 
-					this_str += probability + "\n";
-					if(i == max_i && show_green) {
-						str = str + "<b class='max_prediction'>" + this_str + "</b>";
-					} else {
-						str = str + this_str;
-					}
-					str += "<br>";
-					if(!((i + 1) % labels.length)) {
-						str += "<hr>";
+					for (let i = 0; i < predictions.length; i++) {
+						var label = labels[i % labels.length];
+						var probability = predictions[i];
+						var this_str = "";
+						if(label) {
+							this_str += label + ": ";
+						}
+
+						if(get_last_layer_activation_function() == "softmax") {
+							probability = (probability * 100) + "%";
+						}
+
+						this_str += probability + "\n";
+						if(i == max_i && show_green) {
+							str = str + "<b class='max_prediction'>" + this_str + "</b>";
+						} else {
+							str = str + this_str;
+						}
+						str += "<br>";
+						if(!((i + 1) % labels.length)) {
+							str += "<hr>";
+						}
 					}
 				}
 			}
 		}
+
 		if(!dont_write_to_predict_tab) {
 			$("#prediction").append(str);
 		}
+
 		$("#predict_error").html("").hide();
+
+		dispose(predict_data);
+		dispose(predictions_tensor);
 	} catch (e) {
 		_predict_error(e);
 	}
 	tf.engine().endScope();
+
 
 	return str;
 }
@@ -576,7 +600,7 @@ async function predict_webcam () {
 
 					$("#webcam_prediction").append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+					var res = draw_grid(canvas, 10, predictions[i], 1, 0);
 				}
 			} else {
 				var max_i = 0;
