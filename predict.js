@@ -605,7 +605,7 @@ async function predict_webcam () {
 		if(predictions.length) {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
-				var predictions_tensor_transposed = predictions_tensor//.transpose([3, 2, 1, 0]);
+				var predictions_tensor_transposed = predictions_tensor.transpose([0, 1, 2, 3]);
 				log("=== predictions/transposed shape ===")
 				log(predictions_tensor.shape);
 				log(predictions_tensor_transposed.shape);
@@ -620,9 +620,8 @@ async function predict_webcam () {
 					pxsz += 1;
 				}
 
-				//log(predictions);
-
-				for (var i = 0; i < predictions.length; i++) {
+				if(predictions_tensor_transposed.shape[3] == 3) {
+					log("PATH A");
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 						width: pxsz * predictions_tensor.shape[2],
 						height: pxsz * predictions_tensor.shape[1],
@@ -631,7 +630,20 @@ async function predict_webcam () {
 					$("#webcam_prediction").append(canvas);
 
 					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+					var res = draw_grid(canvas, pxsz, predictions[0], 1, 0);
+				} else {
+					log("PATH B");
+					for (var i = 0; i < predictions.length; i++) {
+						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+							width: pxsz * predictions_tensor.shape[2],
+							height: pxsz * predictions_tensor.shape[1],
+						});
+
+						$("#webcam_prediction").append(canvas);
+
+						//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+						var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+					}
 				}
 			} else {
 				var max_i = 0;
