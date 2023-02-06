@@ -629,16 +629,20 @@ async function predict_webcam () {
 					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 					draw_grid(canvas, pxsz, predictions[0], 1, 0);
 				} else {
-					for (var i = 0; i < predictions.length; i++) {
+					var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
+
+					for (var i = 0; i < predictions_tensor.shape[3]; i++) {
 						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-							width: pxsz * predictions_tensor.shape[2],
 							height: pxsz * predictions_tensor.shape[1],
+							width: pxsz * predictions_tensor.shape[2]
 						});
 
 						$("#webcam_prediction").append(canvas);
 
+						var d = transposed[i];
+
 						//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-						draw_grid(canvas, pxsz, predictions[i], 1, 1);
+						draw_grid(canvas, pxsz, d, 1, 1);
 					}
 				}
 			} else {
