@@ -3426,26 +3426,29 @@ function addLayer(canvas_id, transparency) {
 	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
 
 	// Create a transparency slider
-	const slider = document.createElement("input");
-	slider.id = layer.id + "_slider";
-	slider.type = "range";
-	slider.min = 0;
-	slider.max = 1;
-	slider.step = 0.01;
-	slider.value = transparency;
-	slider.style.position = "absolute";
-	slider.style.left = canvas.offsetLeft + canvas.width + "px";
-	slider.style.top = canvas.offsetTop + "px";
-	slider.style.width = "100px";
+	const transparency_slider = document.createElement("input");
+	transparency_slider.id = layer.id + "_slider";
+	transparency_slider.type = "range";
+	transparency_slider.min = 0;
+	transparency_slider.max = 1;
+	transparency_slider.step = 0.01;
+	transparency_slider.value = transparency;
+	transparency_slider.style.position = "absolute";
+	transparency_slider.style.left = canvas.offsetLeft + canvas.width + "px";
+	transparency_slider.style.top = canvas.offsetTop + "px";
+	transparency_slider.style.width = "100px";
+
 
 
 	// Update the opacity of the layer when the slider value changes
-	slider.addEventListener("input", function() {
+	transparency_slider.addEventListener("input", function() {
 		layer.style.opacity = this.value;
 	});
 
 	// Add the transparency slider to the document
-	$("#" + canvas_id).parent().append(slider);
+	$("#" + canvas_id).parent().append(transparency_slider);
+
+	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off">`));
 }
 
 
