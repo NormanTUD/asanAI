@@ -155,9 +155,22 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 			desc.html("");
 
 			if(model.outputShape.length == 4) {
-				var pxsz = 10;
+				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				
+				
+
 
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				predictions_tensor_transposed.print()
+
+				var pxsz = 1;
+
+				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
 				var predictions = predictions_tensor_transposed.arraySync();
 				for (var i = 0; i < predictions.length; i++) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
@@ -299,10 +312,17 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
 			if(model.outputShape.length == 4) {
-				var pxsz = 10;
+				var pxsz = 1;
 
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 				predictions_tensor_transposed.print()
+
+				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
 				predictions = predictions_tensor_transposed.arraySync();
 				for (var i = 0; i < predictions.length; i++) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
@@ -588,10 +608,17 @@ async function predict_webcam () {
 		if(predictions.length) {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
-				var pxsz = 10;
-
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 				var predictions = predictions_tensor_transposed.arraySync();
+
+				var pxsz = 1;
+
+				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
 				for (var i = 0; i < predictions.length; i++) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 						width: pxsz * predictions_tensor.shape[2],
@@ -775,10 +802,18 @@ async function predict_handdrawn () {
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
-		var pxsz = 10;
-
 		var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 		var predictions = predictions_tensor_transposed.arraySync();
+
+		var pxsz = 1;
+
+		var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+		while ((pxsz * largest) < max_height_width) {
+			pxsz += 1;
+		}
+
+
 		for (var i = 0; i < predictions.length; i++) {
 			var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 				width: pxsz * predictions_tensor.shape[2],
