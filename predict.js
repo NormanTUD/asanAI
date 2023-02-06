@@ -181,7 +181,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					desc.append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 				}
 			} else {
 				var predictions = predictions_tensor.dataSync();
@@ -334,7 +334,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 					$("#prediction").append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 					log(res);
 				}
 			} else {
@@ -631,7 +631,7 @@ async function predict_webcam () {
 					$("#webcam_prediction").append(canvas);
 
 					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-					var res = draw_grid(canvas, 5, predictions[i], 1, 1);
+					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 				}
 			} else {
 				var max_i = 0;
@@ -826,7 +826,7 @@ async function predict_handdrawn () {
 
 			$("#handdrawn_predictions").append(canvas);
 
-			var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 		}
 	} else {
 		log("Different output shapes not yet supported");
