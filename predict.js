@@ -167,6 +167,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
 
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 				while ((pxsz * largest) < max_height_width) {
 					pxsz += 1;
 				}
@@ -319,6 +320,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
 
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 				while ((pxsz * largest) < max_height_width) {
 					pxsz += 1;
 				}
@@ -615,6 +617,7 @@ async function predict_webcam () {
 
 				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
 
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 				while ((pxsz * largest) < max_height_width) {
 					pxsz += 1;
 				}
@@ -809,6 +812,7 @@ async function predict_handdrawn () {
 
 		var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
 
+		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 		while ((pxsz * largest) < max_height_width) {
 			pxsz += 1;
 		}
