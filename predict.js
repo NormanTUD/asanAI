@@ -605,8 +605,10 @@ async function predict_webcam () {
 		if(predictions.length) {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
-				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				//log(predictions_tensor.shape);
+				var predictions_tensor_transposed = predictions_tensor//.transpose([3, 2, 1, 0]);
+				log("=== predictions/transposed shape ===")
+				log(predictions_tensor.shape);
+				log(predictions_tensor_transposed.shape);
 				var predictions = predictions_tensor_transposed.arraySync();
 
 				var pxsz = 1;
@@ -617,6 +619,8 @@ async function predict_webcam () {
 				while ((pxsz * largest) < max_height_width) {
 					pxsz += 1;
 				}
+
+				//log(predictions);
 
 				for (var i = 0; i < predictions.length; i++) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
