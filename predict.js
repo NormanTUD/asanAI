@@ -621,7 +621,6 @@ async function predict_webcam () {
 				}
 
 				if(predictions_tensor_transposed.shape[3] == 3) {
-					log("PATH A");
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 						width: pxsz * predictions_tensor.shape[2],
 						height: pxsz * predictions_tensor.shape[1],
@@ -632,7 +631,6 @@ async function predict_webcam () {
 					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 					var res = draw_grid(canvas, pxsz, predictions[0], 1, 0);
 				} else {
-					log("PATH B");
 					for (var i = 0; i < predictions.length; i++) {
 						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 							width: pxsz * predictions_tensor.shape[2],
