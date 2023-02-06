@@ -156,12 +156,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 			if(model.outputShape.length == 4) {
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				
-				
-
-
-				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				predictions_tensor_transposed.print()
+				//predictions_tensor_transposed.print()
 
 				var pxsz = 1;
 
@@ -316,7 +311,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				var pxsz = 1;
 
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				predictions_tensor_transposed.print()
+				//predictions_tensor_transposed.print()
 
 				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
 
@@ -586,7 +581,7 @@ async function predict_webcam () {
 	tf.engine().startScope();
 
 	var predict_data = await cam.capture();
-	predict_data = predict_data.resizeNearestNeighbor([height, height]).toFloat().expandDims()
+	predict_data = predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims()
 
 	var divide_by = parseFloat($("#divide_by").val());
 
@@ -611,6 +606,7 @@ async function predict_webcam () {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				log(predictions_tensor.shape);
 				var predictions = predictions_tensor_transposed.arraySync();
 
 				var pxsz = 1;
