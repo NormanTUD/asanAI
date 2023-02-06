@@ -606,7 +606,7 @@ async function predict_webcam () {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				log(predictions_tensor.shape);
+				//log(predictions_tensor.shape);
 				var predictions = predictions_tensor_transposed.arraySync();
 
 				var pxsz = 1;
