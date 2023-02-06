@@ -605,22 +605,20 @@ async function predict_webcam () {
 		if(predictions.length) {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
-				var predictions_tensor_transposed = predictions_tensor.transpose([0, 1, 2, 3]);
-				log("=== predictions/transposed shape ===")
-				log(predictions_tensor.shape);
-				log(predictions_tensor_transposed.shape);
-				var predictions = predictions_tensor_transposed.arraySync();
+				//log("=== predictions/transposed shape ===")
+				//log(predictions_tensor.shape);
+				var predictions = predictions_tensor.arraySync();
 
 				var pxsz = 1;
 
-				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+				var largest = Math.max(predictions_tensor[1], predictions_tensor[2]);
 
 				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 				while ((pxsz * largest) < max_height_width) {
 					pxsz += 1;
 				}
 
-				if(predictions_tensor_transposed.shape[3] == 3) {
+				if(predictions_tensor.shape[3] == 3) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 						width: pxsz * predictions_tensor.shape[2],
 						height: pxsz * predictions_tensor.shape[1],
@@ -629,7 +627,7 @@ async function predict_webcam () {
 					$("#webcam_prediction").append(canvas);
 
 					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-					var res = draw_grid(canvas, pxsz, predictions[0], 1, 0);
+					draw_grid(canvas, pxsz, predictions[0], 1, 0);
 				} else {
 					for (var i = 0; i < predictions.length; i++) {
 						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
@@ -640,7 +638,7 @@ async function predict_webcam () {
 						$("#webcam_prediction").append(canvas);
 
 						//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-						var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+						draw_grid(canvas, pxsz, predictions[i], 1, 1);
 					}
 				}
 			} else {
