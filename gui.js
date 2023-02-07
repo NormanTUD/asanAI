@@ -3326,6 +3326,8 @@ function last_shape_layer_warning() {
 				}
 
 				is_classification = false;
+
+				change_last_responsible_layer_for_image_output();
 			}
 		}
 	} else {
@@ -5085,4 +5087,34 @@ function save_custom_images_file (blob) {
 
 async function create_and_download_zip () {
 	await create_zip_with_custom_images().then(save_custom_images_file);
+}
+
+async function change_last_responsible_layer_for_image_output () {
+	if(is_classification) {
+		return;
+	}
+
+	var current_layer_status_hash = await get_current_layer_container_status_hash();
+
+	if(last_image_output_shape_hash == current_layer_status_hash) {
+		return;
+	}
+
+	last_image_output_shape_hash = current_layer_status_hash;
+
+	var layer_types = get_layer_type_array();
+
+	var last_layer_nr = null;
+
+	for (var i = layer_types.length; i >= 0; i--) {
+		if(last_layer_nr === null && ["dense", "conv2d"].includes(layer_types[i])) {
+			last_layer_nr = i;
+		}
+	}
+
+	if(last_layer_nr) {
+		$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
+	} else {
+		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
+	}
 }

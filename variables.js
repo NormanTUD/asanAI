@@ -1333,3 +1333,5 @@ const RGB_COLORMAP = [
 var default_webcam_size = 200;
 
 var is_classification = true;
+
+var last_image_output_shape_hash = "";
