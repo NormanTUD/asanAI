@@ -419,7 +419,7 @@
 ?>>
 								<label for="beginner">&#129466; Beginner</label>
 
-								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert"<?php
+								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert" <?php
 									$checked = 0;
 									if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
 										$checked = 1;
