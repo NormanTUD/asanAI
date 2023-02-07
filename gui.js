@@ -3425,6 +3425,8 @@ function addLayer(canvas_id, transparency) {
 	$("#" + canvas_id).parent().append(color_picker_code);
 	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
 
+	clear_attrament(layer.id);
+
 	// Create a transparency slider
 	const transparency_slider = document.createElement("input");
 	transparency_slider.id = layer.id + "_slider";
