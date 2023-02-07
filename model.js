@@ -150,6 +150,8 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 			}
 		}
 	}
+
+	last_shape_layer_warning();
 }
 
 function get_weight_type_name_from_option_name (on) {

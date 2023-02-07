@@ -1169,6 +1169,8 @@ async function take_image_from_webcam_n_times (elem) {
 		}
 		l("Done taking " + number + " images");
 	});
+
+	last_shape_layer_warning();
 }
 
 async function take_image_from_webcam (elem, nol) {
@@ -1217,6 +1219,8 @@ async function take_image_from_webcam (elem, nol) {
 	if(!nol) {
 		l("Took photo from webcam");
 	}
+
+	last_shape_layer_warning();
 }
 
 function chiSquaredTest(arr) {
