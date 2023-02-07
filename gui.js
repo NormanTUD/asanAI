@@ -5122,8 +5122,13 @@ async function change_last_responsible_layer_for_image_output () {
 
 	if(last_layer_nr) {
 		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
-			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
 			l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
+			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
+		}
+
+		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
+			l("Setting the activation function of layer " + last_layer_nr + " to linear");
+			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
 		}
 	} else {
 		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
