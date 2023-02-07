@@ -1197,9 +1197,9 @@ async function take_image_from_webcam (elem, nol) {
 	}
 
 	$(category).find(".own_images").append(
-		'<span class="own_image_span">' +
+		'<div class="own_image_span">' +
 			'<canvas id="' + id + '_canvas" width="' + stream_width + '" height="' + stream_height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
-		'</span>'
+		'</div><br>'
 	);
 
 	var c = document.getElementById(id + "_canvas");
