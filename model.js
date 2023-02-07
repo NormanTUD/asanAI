@@ -105,6 +105,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		model_is_trained = false;
 		reset_summary();
 		await _create_model();
+		last_shape_layer_warning();
 	}
 
 	try {

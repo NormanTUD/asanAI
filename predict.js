@@ -155,9 +155,18 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 			desc.html("");
 
 			if(model.outputShape.length == 4) {
-				var pxsz = 10;
-
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				//predictions_tensor_transposed.print()
+
+				var pxsz = 1;
+
+				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
 				var predictions = predictions_tensor_transposed.arraySync();
 				for (var i = 0; i < predictions.length; i++) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
@@ -167,7 +176,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					desc.append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 				}
 			} else {
 				var predictions = predictions_tensor.dataSync();
@@ -292,65 +301,97 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		predictions = predictions_tensor.dataSync();
 
-		dispose(predict_data);
-		dispose(predictions_tensor);
 
 		//log(predictions);
 
 		if(!input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 		} else {
-			var last_layer_activation = get_last_layer_activation_function();
-			var show_green = last_layer_activation == "softmax" ? 1 : 0;
-			if(predictions.length) {
-				var max_i = 0;
-				var max_probability = -9999999;
+			if(model.outputShape.length == 4) {
+				var pxsz = 1;
 
-				for (let i = 0; i < predictions.length; i++) {
-					var probability = predictions[i];
-					if(probability > max_probability) {
-						max_probability = probability;
-						max_i = i;
-					}
+				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+				//predictions_tensor_transposed.print()
+
+				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
 				}
 
-				if(labels.length == 0) {
-					await get_label_data();
+				predictions = predictions_tensor_transposed.arraySync();
+				for (var i = 0; i < predictions.length; i++) {
+					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+						width: pxsz * predictions_tensor.shape[2],
+						height: pxsz * predictions_tensor.shape[1],
+					});
+
+					$("#prediction").append(canvas);
+
+					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+					log(res);
 				}
+			} else {
+				var last_layer_activation = get_last_layer_activation_function();
+				var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
-				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i % labels.length];
-					var probability = predictions[i];
-					var this_str = "";
-					if(label) {
-						this_str += label + ": ";
+				if(predictions.length) {
+					var max_i = 0;
+					var max_probability = -9999999;
+
+					for (let i = 0; i < predictions.length; i++) {
+						var probability = predictions[i];
+						if(probability > max_probability) {
+							max_probability = probability;
+							max_i = i;
+						}
 					}
 
-					if(get_last_layer_activation_function() == "softmax") {
-						probability = (probability * 100) + "%";
+					if(labels.length == 0) {
+						await get_label_data();
 					}
 
-					this_str += probability + "\n";
-					if(i == max_i && show_green) {
-						str = str + "<b class='max_prediction'>" + this_str + "</b>";
-					} else {
-						str = str + this_str;
-					}
-					str += "<br>";
-					if(!((i + 1) % labels.length)) {
-						str += "<hr>";
+					for (let i = 0; i < predictions.length; i++) {
+						var label = labels[i % labels.length];
+						var probability = predictions[i];
+						var this_str = "";
+						if(label) {
+							this_str += label + ": ";
+						}
+
+						if(get_last_layer_activation_function() == "softmax") {
+							probability = (probability * 100) + "%";
+						}
+
+						this_str += probability + "\n";
+						if(i == max_i && show_green) {
+							str = str + "<b class='max_prediction'>" + this_str + "</b>";
+						} else {
+							str = str + this_str;
+						}
+						str += "<br>";
+						if(!((i + 1) % labels.length)) {
+							str += "<hr>";
+						}
 					}
 				}
 			}
 		}
+
 		if(!dont_write_to_predict_tab) {
 			$("#prediction").append(str);
 		}
+
 		$("#predict_error").html("").hide();
+
+		dispose(predict_data);
+		dispose(predictions_tensor);
 	} catch (e) {
 		_predict_error(e);
 	}
 	tf.engine().endScope();
+
 
 	return str;
 }
@@ -540,7 +581,7 @@ async function predict_webcam () {
 	tf.engine().startScope();
 
 	var predict_data = await cam.capture();
-	predict_data = predict_data.resizeNearestNeighbor([height, height]).toFloat().expandDims()
+	predict_data = predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims()
 
 	var divide_by = parseFloat($("#divide_by").val());
 
@@ -564,11 +605,20 @@ async function predict_webcam () {
 		if(predictions.length) {
 			$("#webcam_prediction").html("");
 			if(model.outputShape.length == 4) {
-				var pxsz = 10;
+				//log("=== predictions/transposed shape ===")
+				//log(predictions_tensor.shape);
+				var predictions = predictions_tensor.arraySync();
 
-				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				var predictions = predictions_tensor_transposed.arraySync();
-				for (var i = 0; i < predictions.length; i++) {
+				var pxsz = 1;
+
+				var largest = Math.max(predictions_tensor[1], predictions_tensor[2]);
+
+				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+				while ((pxsz * largest) < max_height_width) {
+					pxsz += 1;
+				}
+
+				if(predictions_tensor.shape[3] == 3) {
 					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 						width: pxsz * predictions_tensor.shape[2],
 						height: pxsz * predictions_tensor.shape[1],
@@ -576,7 +626,24 @@ async function predict_webcam () {
 
 					$("#webcam_prediction").append(canvas);
 
-					var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+					draw_grid(canvas, pxsz, predictions[0], 1, 0);
+				} else {
+					var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
+
+					for (var i = 0; i < predictions_tensor.shape[3]; i++) {
+						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+							height: pxsz * predictions_tensor.shape[1],
+							width: pxsz * predictions_tensor.shape[2]
+						});
+
+						$("#webcam_prediction").append(canvas);
+
+						var d = transposed[i];
+
+						//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+						draw_grid(canvas, pxsz, d, 1, 1);
+					}
 				}
 			} else {
 				var max_i = 0;
@@ -750,10 +817,19 @@ async function predict_handdrawn () {
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
-		var pxsz = 10;
-
 		var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 		var predictions = predictions_tensor_transposed.arraySync();
+
+		var pxsz = 1;
+
+		var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+		while ((pxsz * largest) < max_height_width) {
+			pxsz += 1;
+		}
+
+
 		for (var i = 0; i < predictions.length; i++) {
 			var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 				width: pxsz * predictions_tensor.shape[2],
@@ -762,7 +838,7 @@ async function predict_handdrawn () {
 
 			$("#handdrawn_predictions").append(canvas);
 
-			var res = draw_grid(canvas, 10, predictions[i], 1, 1);
+			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 		}
 	} else {
 		log("Different output shapes not yet supported");

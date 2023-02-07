@@ -132,8 +132,8 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 
 	var drew_something = false;
 
-	var width = colors[0].length;
 	var height = colors.length;
+	var width = colors[0].length;
 
 	$(canvas).attr("width", width * pixel_size);
 	$(canvas).attr("height", height * pixel_size);
@@ -347,13 +347,13 @@ function group_layers (layers) {
 	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
 
         var descs = [
+		{ 
+			"re": "((?:upSampling2d;?)+)", 
+			"name": "Scaling up"
+		},
 		{
 			"re": "((?:lstm;)+)",
 			"name": "LSTM"
-		},
-		{ 
-			"re": "((?:upSampling2d;)+)", 
-			"name": "Scaling up"
 		},
                 { 
 			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)", 
