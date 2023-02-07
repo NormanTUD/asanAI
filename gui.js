@@ -3327,6 +3327,7 @@ function last_shape_layer_warning() {
 
 				is_classification = false;
 
+				l("Setting loss and metric to meanSquaredError");
 				$("#loss").val("meanSquaredError").trigger("change");
 				$("#metric").val("meanSquaredError").trigger("change");
 
