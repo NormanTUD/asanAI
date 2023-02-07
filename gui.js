@@ -3448,8 +3448,10 @@ function addLayer(canvas_id, transparency) {
 	});
 
 	// Add the transparency slider to the document
+	$("#" + canvas_id).parent().append("<br>Transparency:");
 	$("#" + canvas_id).parent().append(transparency_slider);
 
+	$("#" + canvas_id).parent().append("<br>Pen size:");
 	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off">`));
 }
 
