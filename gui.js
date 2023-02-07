@@ -3327,9 +3327,13 @@ function last_shape_layer_warning() {
 
 				is_classification = false;
 
-				l("Setting loss and metric to meanSquaredError");
-				$("#loss").val("meanSquaredError").trigger("change");
-				$("#metric").val("meanSquaredError").trigger("change");
+				if($("#loss").val() != "meanSquaredError") {
+					l("Setting loss to meanSquaredError");
+					$("#loss").val("meanSquaredError").trigger("change");
+				}
+				if($("#metric").val() != "meanSquaredError") {
+					$("#metric").val("meanSquaredError").trigger("change");
+				}
 
 				change_last_responsible_layer_for_image_output();
 			}
@@ -5117,8 +5121,10 @@ async function change_last_responsible_layer_for_image_output () {
 	}
 
 	if(last_layer_nr) {
-		$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
-		l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
+		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
+			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
+			l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
+		}
 	} else {
 		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
 	}
