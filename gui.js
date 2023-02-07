@@ -3327,6 +3327,9 @@ function last_shape_layer_warning() {
 
 				is_classification = false;
 
+				$("#loss").val("meanSquaredError").trigger("change");
+				$("#metric").val("meanSquaredError").trigger("change");
+
 				change_last_responsible_layer_for_image_output();
 			}
 		}
