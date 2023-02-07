@@ -636,7 +636,6 @@ async function get_xs_and_ys () {
 									resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 
 								var this_map = this_map_tensor.arraySync();
-								log(this_map);
 								maps.push(this_map)
 							}
 						}
@@ -645,7 +644,6 @@ async function get_xs_and_ys () {
 
 				x = tf.tensor(x);
 				y = tf.tensor(maps);
-				y.print();
 			}
 
 			//log("A", x.shape);
