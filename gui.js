@@ -3421,10 +3421,6 @@ function addLayer(canvas_id, transparency) {
 	atrament_data[layer.id] = {};
 	atrament_data[layer.id]["atrament"] = new Atrament(layer);
 
-	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
-	$("#" + canvas_id).parent().append(color_picker_code);
-	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
-
 	clear_attrament(layer.id);
 
 	// Create a transparency slider
@@ -3448,6 +3444,13 @@ function addLayer(canvas_id, transparency) {
 	});
 
 	// Add the transparency slider to the document
+	
+	$("#" + canvas_id).parent().append("<br>");
+	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
+	$("#" + canvas_id).parent().append(color_picker_code);
+	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
+
+
 	$("#" + canvas_id).parent().append("<br>Transparency:");
 	$("#" + canvas_id).parent().append(transparency_slider);
 
