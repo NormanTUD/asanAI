@@ -3446,8 +3446,6 @@ function addLayer(canvas_id, transparency) {
 	transparency_slider.style.top = canvas.offsetTop + "px";
 	transparency_slider.style.width = "100px";
 
-
-
 	// Update the opacity of the layer when the slider value changes
 	transparency_slider.addEventListener("input", function() {
 		layer.style.opacity = this.value;

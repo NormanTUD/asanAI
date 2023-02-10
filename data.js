@@ -635,7 +635,7 @@ async function get_xs_and_ys () {
 								var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
 									resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 
-								var this_map = this_map_tensor.arraySync();
+								var this_map = tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
 								maps.push(this_map)
 							}
 						}
