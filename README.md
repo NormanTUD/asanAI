@@ -86,6 +86,8 @@ in creating this program:
 
 - [zip.js](https://gildas-lormeau.github.io/zip.js/)
 
+- [chatGPT](https://chat.openai.com/chat)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
