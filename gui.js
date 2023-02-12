@@ -3286,13 +3286,17 @@ function delete_custom_drawing_layer () {
 	for (var i = 0; i < all_current_custom_images.length; i++) {
 		var imgs = $(all_current_custom_images[i]).find("img,canvas");
 		for (var j = 0; j < all_current_custom_images.length; j++) {
-			var this_canvas_id = imgs[j].id;
-			if($("#" + this_canvas_id + "_layer").length) {
-				l("Deleting layer for custom image " + this_canvas_id);
-				$("#" + this_canvas_id + "_layer").remove();
-				$("#" + this_canvas_id + "_layer_colorpicker").remove()
-				$("#" + this_canvas_id + "_layer_slider").remove()
-				delete(atrament_data[this_canvas_id]);
+			try {
+				var this_canvas_id = imgs[j].id;
+				if($("#" + this_canvas_id + "_layer").length) {
+					l("Deleting layer for custom image " + this_canvas_id);
+					$("#" + this_canvas_id + "_layer").remove();
+					$("#" + this_canvas_id + "_layer_colorpicker").remove()
+					$("#" + this_canvas_id + "_layer_slider").remove()
+					delete(atrament_data[this_canvas_id]);
+				}
+			} catch (e) {
+				console.log(e);
 			}
 		}
 	}
