@@ -390,35 +390,33 @@ async function get_default_data () {
 				if($("#augment_rotate_images").is(":checked")) {
 					log("augment_rotate_images CHECKED")
 					for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-						if(degree = 0) {
-							l("Rotating image: " + j + "°");
-							var x_classes_img = await rotate_with_offset (item, degree, x, classes, this_category_counter, 0, 1);
-							x = x_classes_img[0];
-							classes = x_classes_img[1];
-							augmented_img = x_classes_img[2];
+						l("Rotating image: " + degree + "°");
+						var x_classes_img = await rotate_with_offset(item, degree, x, classes, this_category_counter, 0, 1);
+						x = x_classes_img[0];
+						classes = x_classes_img[1];
+						var augmented_img = x_classes_img[2];
 
-							if($("#augment_invert_images").is(":checked")) {
-								l("Inverted image that has been turned " + degree + "°");
-								var add_value = (-255 / parseFloat($("#divide_by").val()));
-								var inverted = tf.abs(tf.add(augmented_img, add_value));
-								add_tensor_as_image_to_photos(inverted);
-								x = x.concat(inverted);
-								classes.push(this_category_counter);
-							}
+						if($("#augment_invert_images").is(":checked")) {
+							l("Inverted image that has been turned " + degree + "°");
+							var add_value = (-255 / parseFloat($("#divide_by").val()));
+							var inverted = tf.abs(tf.add(augmented_img, add_value));
+							add_tensor_as_image_to_photos(inverted);
+							x = x.concat(inverted);
+							classes.push(this_category_counter);
+						}
 
-							if($("#augment_flip_left_right").is(":checked")) {
-								l("Flip left/right image that has been turned " + degree + "°");
-								var flipped = await flip_image_left_right(augmented_img, 0, 0);
-								add_tensor_as_image_to_photos(flipped);
-								x = x.concat(flipped);
-								classes.push(this_category_counter);
-							}
+						if($("#augment_flip_left_right").is(":checked")) {
+							l("Flip left/right image that has been turned " + degree + "°");
+							var flipped = await flip_image_left_right(augmented_img, 0, 0);
+							add_tensor_as_image_to_photos(flipped);
+							x = x.concat(flipped);
+							classes.push(this_category_counter);
+						}
 
-							if($("#augment_sine_ripple").is(":checked")) {
-								var x_classes = await ripple(item);
-								x = x_classes[0];
-								classes = x_classes[1];
-							}
+						if($("#augment_sine_ripple").is(":checked")) {
+							var x_classes = await ripple(item);
+							x = x_classes[0];
+							classes = x_classes[1];
 						}
 					}
 				}
@@ -504,6 +502,7 @@ async function flip_image_left_right (img, expandDims=0, arraySync=0) {
 }
 
 async function rotate_with_offset (item, degree, x, classes, labelNr, expandDims = 0, addToPhoto=0) {
+	log("rotate_with_offset");
 	if (expandDims) {
 		item = item.expandDims();
 	}
@@ -522,7 +521,7 @@ async function rotate_with_offset (item, degree, x, classes, labelNr, expandDims
 
 	classes.push(labelNr);
 
-	return [x, classes, img];
+	return [x, classes, augmented_img];
 }
 
 async function get_image_classification_data (category_counter) {
@@ -557,7 +556,7 @@ async function get_image_classification_data (category_counter) {
 					l("Auto augmenting images");
 					if($("#augment_rotate_images").is(":checked")) {
 						for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-							var x_classes_img = await rotate_with_offset (item, degree, x, classes, this_category_counter, 1, 0);
+							var x_classes_img = await rotate_with_offset(item, degree, x, classes, this_category_counter, 1, 0);
 							x = x_classes_img[0];
 							classes = x_classes_img[1];
 							augmented_img = x_classes_img[2];
