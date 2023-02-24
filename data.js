@@ -326,7 +326,7 @@ async function get_custom_data () {
 	}
 }
 
-async function ripple (item, x, classes) {
+async function ripple (item, x, classes, this_category_counter) {
 	var rippled = await sine_ripple(item);
 	x = x.concat(rippled.expandDims());
 	add_tensor_as_image_to_photos(rippled);
@@ -398,11 +398,9 @@ async function get_default_data () {
 
 						if($("#augment_invert_images").is(":checked")) {
 							l("Inverted image that has been turned " + degree + "°");
-							var add_value = (-255 / parseFloat($("#divide_by").val()));
-							var inverted = tf.abs(tf.add(augmented_img, add_value));
-							add_tensor_as_image_to_photos(inverted);
-							x = x.concat(inverted);
-							classes.push(this_category_counter);
+							var x_classes = await invert_image(augmented_img, x, classes, this_category_counter, 0, 1);
+							x = x_classes[0];
+							classes = x_classes[1];
 						}
 
 						if($("#augment_flip_left_right").is(":checked")) {
@@ -414,7 +412,7 @@ async function get_default_data () {
 						}
 
 						if($("#augment_sine_ripple").is(":checked")) {
-							var x_classes = await ripple(item);
+							var x_classes = await ripple(item, x, classes, this_category_counter);
 							x = x_classes[0];
 							classes = x_classes[1];
 						}
@@ -423,11 +421,10 @@ async function get_default_data () {
 
 				if($("#augment_invert_images").is(":checked")) {
 					l("Inverted image");
-					var add_value = (-255 / parseFloat($("#divide_by").val()));
-					var inverted = tf.abs(tf.add(item, add_value));
-					add_tensor_as_image_to_photos(inverted);
-					x = x.concat(inverted);
-					classes.push(this_category_counter);
+
+					var x_classes = await invert_image(item, x, classes, this_category_counter, 0, 1)
+					x = x_classes[0];
+					classes = x_classes[1];
 				}
 
 				if($("#augment_flip_left_right").is(":checked")) {
@@ -439,7 +436,7 @@ async function get_default_data () {
 				}
 
 				if($("#augment_sine_ripple").is(":checked")) {
-					var x_classes = await ripple(item);
+					var x_classes = await ripple(item, x, classes, this_category_counter);
 					x = x_classes[0];
 					classes = x_classes[1];
 				}
@@ -524,11 +521,34 @@ async function rotate_with_offset (item, degree, x, classes, labelNr, expandDims
 	return [x, classes, augmented_img];
 }
 
+async function invert_image (img, x, classes, this_category_counter, expandDims = 0, addToPhoto = 0) {
+	if(expandDims) {
+		img = img.expandDims();
+	}
+
+	var add_value = (-255 / parseFloat($("#divide_by").val()));
+	var inverted = await tf.abs(tf.add(img, add_value));
+
+	if(Array.isArray(x)) {
+		x.push(inverted.arraySync());
+	} else {
+		x = x.concat(inverted);
+	}
+
+	if(addToPhoto) {
+		add_tensor_as_image_to_photos(inverted);
+	}
+
+	classes.push(this_category_counter);
+
+	return [x, classes];
+}
+
 async function get_image_classification_data (category_counter) {
 	var x = [];
 	var classes = [];
 	var keys = [];
-	
+
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 		if(img_elems.length) {
@@ -556,15 +576,17 @@ async function get_image_classification_data (category_counter) {
 					l("Auto augmenting images");
 					if($("#augment_rotate_images").is(":checked")) {
 						for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-							var x_classes_img = await rotate_with_offset(item, degree, x, classes, this_category_counter, 1, 0);
+							var x_classes_img = await rotate_with_offset(item, degree, x, classes, label_nr, 1, 0);
 							x = x_classes_img[0];
 							classes = x_classes_img[1];
-							augmented_img = x_classes_img[2];
+							var augmented_img = x_classes_img[2];
 
 							if($("#augment_invert_images").is(":checked")) {
 								l("Inverted image that has been turned " + degree + "°");
-								x.push(await tf.abs(tf.add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
-								classes.push(label_nr);
+
+								var x_classes = await invert_image(augmented_img, x, classes, label_nr, 1, 1);
+								x = x_classes[0];
+								classes = x_classes[1];
 							}
 
 							if($("#augment_flip_left_right").is(":checked")) {
@@ -574,7 +596,7 @@ async function get_image_classification_data (category_counter) {
 							}
 
 							if($("#augment_sine_ripple").is(":checked")) {
-								var x_classes = await ripple(augmented_img);
+								var x_classes = await ripple(augmented_img, x, classes, label_nr);
 								x = x_classes[0];
 								classes = x_classes[1];
 							}
@@ -583,8 +605,9 @@ async function get_image_classification_data (category_counter) {
 
 					if($("#augment_invert_images").is(":checked")) {
 						l("Inverted image");
-						x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
-						classes.push(label_nr);
+						var x_classes = await invert_image(item, x, classes, label_nr, 1, 1);
+						x = x_classes[0];
+						classes = x_classes[1];
 					}
 
 					if($("#augment_flip_left_right").is(":checked")) {
