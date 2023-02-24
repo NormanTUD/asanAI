@@ -1282,7 +1282,7 @@
 									<table data-intro="Options for the math mode.">
 										<tr>
 											<td>Number of decimal points (0 = no limit)</td>
-											<td><input class="show_data" type="number" style="width: 50px" value="0" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
+											<td><input class="show_data" type="number" style="width: 50px" value="3" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
 										</tr>
 									</table>
 									<div class="typeset_me" id="math_tab_code"></div>
