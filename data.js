@@ -326,7 +326,18 @@ async function get_custom_data () {
 	}
 }
 
-async function ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
+function ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto 0 0) {
+	if($("#augment_sine_ripple").is(":checked")) {
+		var x_classes = await _ripple(item, x, classes, label_nr, expandDims, addToPhoto);
+		x = x_classes[0];
+		classes = x_classes[1];
+	}
+
+	return [x, classes];
+}
+
+
+async function _ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
 	if(expandDims) {
 		item = item.expandDims();
 	}
@@ -413,48 +424,38 @@ async function get_default_data () {
 						var augmented_img = x_classes_img[2];
 
 						if($("#augment_invert_images").is(":checked")) {
-							l("Inverted image that has been turned " + degree + "°");
 							var x_classes = await invert_image(augmented_img, x, classes, label_nr, 0, 1);
 							x = x_classes[0];
 							classes = x_classes[1];
 						}
 
-						if($("#augment_flip_left_right").is(":checked")) {
-							l("Flip left/right image that has been turned " + degree + "°");
-							var flipped = await flip_image_left_right(augmented_img, 0, 1);
+						var flipped = await flip_image_left_right(augmented_img, 0, 1);
+						if(flipped) {
 							x = x.concat(flipped);
 							classes.push(label_nr);
 						}
 
-						if($("#augment_sine_ripple").is(":checked")) {
-							var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
-							x = x_classes[0];
-							classes = x_classes[1];
-						}
+						var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
+						x = x_classes[0];
+						classes = x_classes[1];
 					}
 				}
 
 				if($("#augment_invert_images").is(":checked")) {
-					l("Inverted image");
-
 					var x_classes = await invert_image(item, x, classes, label_nr, 0, 1)
 					x = x_classes[0];
 					classes = x_classes[1];
 				}
 
-				if($("#augment_flip_left_right").is(":checked")) {
-					l("Flip left/right");
-					var flipped = await flip_image_left_right(item, 0, 0);
-					add_tensor_as_image_to_photos(flipped);
+				var flipped = await flip_image_left_right(item, 0, 0);
+				if(flipped) {
 					x = x.concat(flipped);
 					classes.push(label_nr);
 				}
 
-				if($("#augment_sine_ripple").is(":checked")) {
-					var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
-					x = x_classes[0];
-					classes = x_classes[1];
-				}
+				var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
+				x = x_classes[0];
+				classes = x_classes[1];
 			}
 		}
 
@@ -498,6 +499,15 @@ async function get_default_data () {
 }
 
 async function flip_image_left_right (img, expandDims=0, arraySync=0) {
+	if($("#augment_flip_left_right").is(":checked")) {
+		var flipped = _flip_image_left_right (img, expandDims, arraySync);
+		return flipped;
+	}
+
+	return null;
+}
+
+async function _flip_image_left_right (img, expandDims=0, arraySync=0) {
 	if(expandDims) {
 		img = img.expandDims();
 	}
@@ -536,7 +546,19 @@ async function rotate_with_offset (item, degree, x, classes, labelNr, expandDims
 	return [x, classes, augmented_img];
 }
 
-async function invert_image (img, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
+async function invert_image (img, x, classes, label_nr, expandDims = 0; addToPhoto = 0) {
+	if($("#augment_invert_images").is(":checked")) {
+		var x_classes = _invert_image(img, x, classes, label_nr, expandDims, addToPhoto);
+		x = x_classes[0];
+		classes = x_classes[1];
+
+	}
+
+	return [x, classes];
+
+}
+
+async function _invert_image (img, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
 	if(expandDims) {
 		img = img.expandDims();
 	}
@@ -588,7 +610,6 @@ async function get_image_classification_data (category_counter) {
 				classes.push(label_nr);
 
 				if($("#auto_augment").is(":checked")) {
-					l("Auto augmenting images");
 					if($("#augment_rotate_images").is(":checked")) {
 						for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 							var x_classes_img = await rotate_with_offset(item, degree, x, classes, label_nr, 1, 0);
@@ -597,47 +618,36 @@ async function get_image_classification_data (category_counter) {
 							var augmented_img = x_classes_img[2];
 
 							if($("#augment_invert_images").is(":checked")) {
-								l("Inverted image that has been turned " + degree + "°");
-
 								var x_classes = await invert_image(augmented_img, x, classes, label_nr, 1, 1);
 								x = x_classes[0];
 								classes = x_classes[1];
 							}
 
-							if($("#augment_flip_left_right").is(":checked")) {
-								l("Flip left/right image that has been turned " + degree + "°");
-								x.push(await flip_image_left_right(img, 0, 1));
-								classes.push(label_nr);
-							}
+							flipped = await flip_image_left_right(img, 0, 1);
+							x.push(flipped);
+							classes.push(label_nr);
 
-							if($("#augment_sine_ripple").is(":checked")) {
-								var x_classes = await ripple(augmented_img, x, classes, label_nr, 0, 1);
-								x = x_classes[0];
-								classes = x_classes[1];
-							}
+							var x_classes = await ripple(augmented_img, x, classes, label_nr, 0, 1);
+							x = x_classes[0];
+							classes = x_classes[1];
 						}
 					}
 
 					if($("#augment_invert_images").is(":checked")) {
-						l("Inverted image");
 						var x_classes = await invert_image(item, x, classes, label_nr, 1, 1);
 						x = x_classes[0];
 						classes = x_classes[1];
 					}
 
-					if($("#augment_flip_left_right").is(":checked")) {
-						l("Flip left/right");
-						var flipped = await flip_image_left_right(resized_img, 1, 1);
+					var flipped = await flip_image_left_right(resized_img, 1, 1);
+					if(flipped) {
 						x.push(flipped);
 						classes.push(label_nr);
 					}
 
-					if($("#augment_sine_ripple").is(":checked")) {
-						l("Rippling is not yet supported for custom data!");
-						var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
-						x = x_classes[0];
-						classes = x_classes[1];
-					}
+					var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
+					x = x_classes[0];
+					classes = x_classes[1];
 				}
 			}
 		}
@@ -657,7 +667,7 @@ async function get_image_map_data (category_counter) {
 	var y = [];
 
 	if($("#auto_augment").is(":checked")) {
-		l("Auto-Augmentation is currently not implemented for image segmentation");;;;
+		l("Auto-Augmentation is currently not implemented for image segmentation");
 	}
 
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
