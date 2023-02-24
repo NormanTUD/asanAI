@@ -5,6 +5,7 @@ function degrees_to_radians(degrees) {
 }
 
 function numpy_str_to_tf_tensor (numpy_str, max_values) {
+	log(max_values)
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 
@@ -301,6 +302,365 @@ async function sine_ripple (img) {
 	return rippled;
 }
 
+async function get_custom_data () {
+	var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
+	xy_data = await get_json("get_training_data.php?id=" + model_id);
+
+	var x = JSON.parse(JSON.stringify(xy_data.x));
+
+	xy_data.x = tf.tensor(xy_data.x);
+	xy_data.y = tf.tensor(xy_data.y);
+
+	labels = xy_data.keys;
+
+	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
+		$("#photos").show();
+		for (var i = 0; i < xy_data.x.shape[0]; i++) {
+			$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
+			draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
+		}
+	} else {
+		var x_print_string = tensor_print_to_string(xy_data.x);
+		var y_print_string = tensor_print_to_string(xy_data.y);
+
+		$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+	}
+}
+
+async function get_default_data () {
+	var classes = [];
+	var keys = [];
+	var x = tf.tensor([]);
+	var y;
+	var category_counter = 0;
+
+	if(input_shape_is_image()) {
+		$("#photos").html("");
+		let imageData = await get_image_data(0);
+
+		reset_labels();
+
+		var this_data = [];
+
+		for (let [key, value] of Object.entries(imageData)) {
+			keys.push(key);
+			for (var i = 0; i < imageData[key].length; i++) {
+				var item = imageData[key][i];
+				this_data.push({key: key, item: item, category_counter: category_counter});
+			}
+			labels[category_counter] = key;
+			category_counter++;
+		}
+
+		if($("#shuffle_data").is(":checked")) {
+			this_data = shuffle(this_data);
+		}
+
+		var imgs_shape = [height, width, 3];
+
+		//log(imgs_shape);
+
+		x = tf.ones(imgs_shape).expandDims();
+
+		//log("this_data:", this_data);
+		for (var i = 0; i < this_data.length; i++) {
+			var item = this_data[i]["item"];
+			var this_category_counter = this_data[i]["category_counter"];
+			/*
+			log("x.shape", x.shape);
+			log("item.shape", item.shape);
+			log("x.shape, item.shape");
+			log(x.shape);
+			log(item.shape);
+			*/
+
+			x = x.concat(item, 0);
+			classes.push(this_category_counter);
+
+			if($("#auto_augment").is(":checked")) {
+				l("Auto augmenting images");
+				if($("#augment_rotate_images").is(":checked")) {
+					log("augment_rotate_images CHECKED")
+					for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
+						if(degree = 0) {
+							l("Rotating image: " + j + "°");
+							var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
+							add_tensor_as_image_to_photos(augmented_img);
+							x = x.concat(augmented_img);
+							classes.push(this_category_counter);
+
+							if($("#augment_invert_images").is(":checked")) {
+								l("Inverted image that has been turned " + degree + "°");
+								var add_value = (-255 / parseFloat($("#divide_by").val()));
+								var inverted = tf.abs(tf.add(augmented_img, add_value));
+								add_tensor_as_image_to_photos(inverted);
+								x = x.concat(inverted);
+								classes.push(this_category_counter);
+							}
+
+							if($("#augment_flip_left_right").is(":checked")) {
+								l("Flip left/right image that has been turned " + degree + "°");
+								var flipped = tf.image.flipLeftRight(augmented_img);
+								add_tensor_as_image_to_photos(flipped);
+								x = x.concat(flipped);
+								classes.push(label_nr);
+							}
+
+							if($("#augment_sine_ripple").is(":checked")) {
+								var rippled = await sine_ripple(augmented_img);
+								x = x.concat(rippled.expandDims());
+								add_tensor_as_image_to_photos(rippled);
+								classes.push(label_nr);
+							}
+						}
+					}
+				}
+
+				if($("#augment_invert_images").is(":checked")) {
+					l("Inverted image");
+					var add_value = (-255 / parseFloat($("#divide_by").val()));
+					var inverted = tf.abs(tf.add(item, add_value));
+					add_tensor_as_image_to_photos(inverted);
+					x = x.concat(inverted);
+					classes.push(this_category_counter);
+				}
+
+				if($("#augment_flip_left_right").is(":checked")) {
+					l("Flip left/right");
+					var flipped = tf.image.flipLeftRight(item);
+					add_tensor_as_image_to_photos(flipped);
+					x = x.concat(flipped);
+					classes.push(label_nr);
+				}
+
+				if($("#augment_sine_ripple").is(":checked")) {
+					var rippled = await sine_ripple(item);
+					x = x.concat(rippled.expandDims());
+					add_tensor_as_image_to_photos(rippled);
+					classes.push(label_nr);
+				}
+			}
+		}
+
+		var x_arr = await x.arraySync();
+		x_arr.shift();
+		x = tf.tensor(x_arr);
+
+		//log("classes:", classes);
+		y = tf.tensor(classes);
+
+		for (let [key, value] of Object.entries(imageData)) {
+			for (var i = 0; i < imageData[key].length; i++) {
+				var item = imageData[key][i];
+				dispose(item);
+			}
+		}
+
+		imageData = null;
+	} else {
+		var x_string, y_string;
+		x_string = await _get_training_data_from_filename("x.txt");
+		y_string = await _get_training_data_from_filename("y.txt");
+
+		var max_number_values = 0;
+		if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
+			max_number_values = parseInt($("#max_number_values").val());
+		}
+
+		x = numpy_str_to_tf_tensor(x_string, max_number_values);
+		y = numpy_str_to_tf_tensor(y_string, max_number_values);
+
+		var x_print_string = tensor_print_to_string(x);
+		var y_print_string = tensor_print_to_string(y);
+
+		$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+	}
+
+	xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+
+	return classes;
+}
+
+async function get_image_classification_data (category_counter) {
+	var x = [];
+	var classes = [];
+	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+		var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
+		if(img_elems.length) {
+			var label_val = $($(".own_image_label")[label_nr]).val();
+			keys.push(label_val);
+			labels[label_nr] = label_val;
+
+			for (var j = 0; j < img_elems.length; j++) {
+				var img_elem = img_elems[j];
+
+				var tf_img = tf.browser.fromPixels(img_elem);
+				var resized_img = tf_img.
+					resizeNearestNeighbor([height, width]).
+					toFloat();
+
+				if($("#divide_by").val() != 1) {
+					resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+				}
+
+				var this_img = await resized_img.arraySync();
+				x.push(this_img);
+				classes.push(label_nr);
+
+				if($("#auto_augment").is(":checked")) {
+					l("Auto augmenting images");
+					if($("#augment_rotate_images").is(":checked")) {
+						for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
+							var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
+							x.push(await augmented_img.arraySync());
+							classes.push(label_nr);
+
+							if($("#augment_invert_images").is(":checked")) {
+								l("Inverted image that has been turned " + degree + "°");
+								x.push(await tf.abs(tf.add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
+								classes.push(label_nr);
+							}
+
+							if($("#augment_flip_left_right").is(":checked")) {
+								l("Flip left/right image that has been turned " + degree + "°");
+								x.push(await tf.image.flipLeftRight(augmented_img).arraySync()[0]);
+								classes.push(label_nr);
+							}
+						}
+					}
+
+					if($("#augment_invert_images").is(":checked")) {
+						l("Inverted image");
+						x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+						classes.push(label_nr);
+					}
+
+					if($("#augment_flip_left_right").is(":checked")) {
+						l("Flip left/right");
+						var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
+						x.push(flipped);
+						classes.push(label_nr);
+					}
+
+					if($("#augment_sine_ripple").is(":checked")) {
+						l("Rippling is not yet supported for custom data!");
+						/*
+						var uuid = uuidv4();
+						$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
+						await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
+						var canvas = $("#" + uuid)[0];
+						var context = canvas.getContext("2d");
+						var data = context.getImageData(0,0,canvas.width, canvas.height) 
+						JSManipulate.sineripple.filter(data); 
+						context.putImageData(data,0,0);
+						var rippled = await tf.browser.fromPixels(canvas);
+						$(canvas).remove();
+						log(rippled);
+						add_tensor_as_image_to_photos(rippled);
+						x.push(rippled[0]);
+						classes.push(label_nr);
+						*/
+					}
+				}
+			}
+		}
+	}
+
+
+	var x = tf.tensor(x);
+	var y = tf.tensor(classes).expandDims();
+
+	return [x, y, classes];
+}
+
+async function get_image_map_data () {
+	var maps = [];
+	if($("#auto_augment").is(":checked")) {
+		l("Auto-Augmentation is currently not implemented for image segmentation");;;;
+	}
+
+	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
+		var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
+		if(img_elems.length) {
+			var label_val = $($(".own_image_label")[label_nr]).val();
+			keys.push(label_val);
+			labels[label_nr] = label_val;
+
+			for (var j = 0; j < img_elems.length; j++) {
+				var img_elem = img_elems[j];
+
+				var id = img_elem.id;
+
+				if(!id.endsWith("_layer")) {
+					var tf_img = tf.browser.fromPixels(img_elem);
+					var resized_img = tf_img.
+						resizeNearestNeighbor([height, width]).
+						toFloat();
+
+					if($("#divide_by").val() != 1) {
+						resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+					}
+
+					var this_img = await resized_img.arraySync();
+					x.push(this_img);
+					var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
+						resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
+
+					var this_map = tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
+					maps.push(this_map)
+				}
+			}
+		}
+	}
+
+	x = tf.tensor(x);
+	y = tf.tensor(maps);
+
+	return [x, y];
+}
+
+async function get_default_image_data () {
+	Swal.fire({
+		title: 'Generating tensors from images...',
+		html: "This may take some time, but your computer is working!",
+		timer: 2000,
+		showConfirmButton: false
+	});
+
+	l("Generating data from images");
+
+	var category_counter = $(".own_image_label").length;
+	var keys = [];
+	var x = [];
+	var y = [];
+	var classes = [];
+
+	if(is_classification) {
+		var x_y_classes = await get_image_classification_data(category_counter);
+		x = x_y_classes[0];
+		y = x_y_classes[1];
+		classes = x_y_classes[2];
+	} else {
+		var x_y = await get_image_map_data();
+		x = x_y[0];
+		y = x_y[1];
+	}
+
+	//log("A", x.shape);
+
+	if($("#shuffle_data").is(":checked")) {
+		tf.util.shuffleCombo(x, y);
+	}
+
+	l("Done generating data from images");
+	//log("B", x.shape);
+
+	xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+	
+	return classes;
+}
+
+
 async function get_xs_and_ys () {
 	headerdatadebug("get_xs_and_ys()");
 
@@ -333,329 +693,14 @@ async function get_xs_and_ys () {
 
 	var classes = [];
 
+
 	if(traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
-		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
-		xy_data = await get_json("get_training_data.php?id=" + model_id);
-
-		var x = JSON.parse(JSON.stringify(xy_data.x));
-
-		xy_data.x = tf.tensor(xy_data.x);
-		xy_data.y = tf.tensor(xy_data.y);
-
-		labels = xy_data.keys;
-
-		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
-			$("#photos").show();
-			for (var i = 0; i < xy_data.x.shape[0]; i++) {
-				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
-				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
-			}
-		} else {
-			var x_print_string = tensor_print_to_string(xy_data.x);
-			var y_print_string = tensor_print_to_string(xy_data.y);
-
-			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-		}
+		await get_custom_data();
 	} else {
 		if(data_origin == "default") {
-			var keys = [];
-			var x = tf.tensor([]);
-			var y;
-			var category_counter = 0;
-
-			if(input_shape_is_image()) {
-				$("#photos").html("");
-				let imageData = await get_image_data(0);
-
-				reset_labels();
-
-				var this_data = [];
-
-				for (let [key, value] of Object.entries(imageData)) {
-					keys.push(key);
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
-						this_data.push({key: key, item: item, category_counter: category_counter});
-					}
-					labels[category_counter] = key;
-					category_counter++;
-				}
-
-				if($("#shuffle_data").is(":checked")) {
-					this_data = shuffle(this_data);
-				}
-
-				var imgs_shape = [height, width, 3];
-
-				//log(imgs_shape);
-
-				x = tf.ones(imgs_shape).expandDims();
-
-				//log("this_data:", this_data);
-				for (var i = 0; i < this_data.length; i++) {
-					var item = this_data[i]["item"];
-					var this_category_counter = this_data[i]["category_counter"];
-					/*
-					log("x.shape", x.shape);
-					log("item.shape", item.shape);
-					log("x.shape, item.shape");
-					log(x.shape);
-					log(item.shape);
-					*/
-
-					x = x.concat(item, 0);
-					classes.push(this_category_counter);
-
-					if($("#auto_augment").is(":checked")) {
-						l("Auto augmenting images");
-						if($("#augment_rotate_images").is(":checked")) {
-							log("augment_rotate_images CHECKED")
-							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-								if(degree = 0) {
-									l("Rotating image: " + j + "°");
-									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
-									add_tensor_as_image_to_photos(augmented_img);
-									x = x.concat(augmented_img);
-									classes.push(this_category_counter);
-
-									if($("#augment_invert_images").is(":checked")) {
-										l("Inverted image that has been turned " + degree + "°");
-										var add_value = (-255 / parseFloat($("#divide_by").val()));
-										var inverted = tf.abs(tf.add(augmented_img, add_value));
-										add_tensor_as_image_to_photos(inverted);
-										x = x.concat(inverted);
-										classes.push(this_category_counter);
-									}
-
-									if($("#augment_flip_left_right").is(":checked")) {
-										l("Flip left/right image that has been turned " + degree + "°");
-										var flipped = tf.image.flipLeftRight(augmented_img);
-										add_tensor_as_image_to_photos(flipped);
-										x = x.concat(flipped);
-										classes.push(label_nr);
-									}
-
-									if($("#augment_sine_ripple").is(":checked")) {
-										var rippled = await sine_ripple(augmented_img);
-										x = x.concat(rippled.expandDims());
-										add_tensor_as_image_to_photos(rippled);
-										classes.push(label_nr);
-									}
-								}
-							}
-						}
-
-						if($("#augment_invert_images").is(":checked")) {
-							l("Inverted image");
-							var add_value = (-255 / parseFloat($("#divide_by").val()));
-							var inverted = tf.abs(tf.add(item, add_value));
-							add_tensor_as_image_to_photos(inverted);
-							x = x.concat(inverted);
-							classes.push(this_category_counter);
-						}
-
-						if($("#augment_flip_left_right").is(":checked")) {
-							l("Flip left/right");
-							var flipped = tf.image.flipLeftRight(item);
-							add_tensor_as_image_to_photos(flipped);
-							x = x.concat(flipped);
-							classes.push(label_nr);
-						}
-
-						if($("#augment_sine_ripple").is(":checked")) {
-							var rippled = await sine_ripple(item);
-							x = x.concat(rippled.expandDims());
-							add_tensor_as_image_to_photos(rippled);
-							classes.push(label_nr);
-						}
-					}
-				}
-
-				var x_arr = await x.arraySync();
-				x_arr.shift();
-				x = tf.tensor(x_arr);
-
-				//log("classes:", classes);
-				y = tf.tensor(classes);
-
-				for (let [key, value] of Object.entries(imageData)) {
-					for (var i = 0; i < imageData[key].length; i++) {
-						var item = imageData[key][i];
-						dispose(item);
-					}
-				}
-
-				imageData = null;
-			} else {
-				var x_string, y_string;
-				x_string = await _get_training_data_from_filename("x.txt");
-				y_string = await _get_training_data_from_filename("y.txt");
-				x = numpy_str_to_tf_tensor(x_string, max_number_values);
-				y = numpy_str_to_tf_tensor(y_string, max_number_values);
-
-				var x_print_string = tensor_print_to_string(x);
-				var y_print_string = tensor_print_to_string(y);
-
-				$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
-			}
-
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			classes = await get_default_data();
 		} else if(data_origin == "image") {
-			Swal.fire({
-				title: 'Generating tensors from images...',
-				html: "This may take some time, but your computer is working!",
-				timer: 2000,
-				showConfirmButton: false
-			});
-
-			l("Generating data from images");
-
-			var category_counter = $(".own_image_label").length;
-			var keys = [];
-			var x = [];
-			var y = [];
-
-			if(is_classification) {
-				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
-					if(img_elems.length) {
-						var label_val = $($(".own_image_label")[label_nr]).val();
-						keys.push(label_val);
-						labels[label_nr] = label_val;
-
-						for (var j = 0; j < img_elems.length; j++) {
-							var img_elem = img_elems[j];
-
-							var tf_img = tf.browser.fromPixels(img_elem);
-							var resized_img = tf_img.
-								resizeNearestNeighbor([height, width]).
-								toFloat();
-
-							if($("#divide_by").val() != 1) {
-								resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
-							}
-
-							var this_img = await resized_img.arraySync();
-							x.push(this_img);
-							classes.push(label_nr);
-
-							if($("#auto_augment").is(":checked")) {
-								l("Auto augmenting images");
-								if($("#augment_rotate_images").is(":checked")) {
-									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
-										x.push(await augmented_img.arraySync());
-										classes.push(label_nr);
-
-										if($("#augment_invert_images").is(":checked")) {
-											l("Inverted image that has been turned " + degree + "°");
-											x.push(await tf.abs(tf.add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
-											classes.push(label_nr);
-										}
-
-										if($("#augment_flip_left_right").is(":checked")) {
-											l("Flip left/right image that has been turned " + degree + "°");
-											x.push(await tf.image.flipLeftRight(augmented_img).arraySync()[0]);
-											classes.push(label_nr);
-										}
-									}
-								}
-
-								if($("#augment_invert_images").is(":checked")) {
-									l("Inverted image");
-									x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
-									classes.push(label_nr);
-								}
-
-								if($("#augment_flip_left_right").is(":checked")) {
-									l("Flip left/right");
-									var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
-									x.push(flipped);
-									classes.push(label_nr);
-								}
-
-								if($("#augment_sine_ripple").is(":checked")) {
-									l("Rippling is not yet supported for custom data!");
-									/*
-									var uuid = uuidv4();
-									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-									await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
-									var canvas = $("#" + uuid)[0];
-									var context = canvas.getContext("2d");
-									var data = context.getImageData(0,0,canvas.width, canvas.height) 
-									JSManipulate.sineripple.filter(data); 
-									context.putImageData(data,0,0);
-									var rippled = await tf.browser.fromPixels(canvas);
-									$(canvas).remove();
-									log(rippled);
-									add_tensor_as_image_to_photos(rippled);
-									x.push(rippled[0]);
-									classes.push(label_nr);
-									*/
-								}
-							}
-						}
-					}
-				}
-
-
-				x = tf.tensor(x);
-				y = tf.tensor(classes).expandDims();
-			} else {
-				var maps = [];
-				if($("#auto_augment").is(":checked")) {
-					l("Auto-Augmentation is currently not implemented for image segmentation");;;;
-				}
-
-				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
-					var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
-					if(img_elems.length) {
-						var label_val = $($(".own_image_label")[label_nr]).val();
-						keys.push(label_val);
-						labels[label_nr] = label_val;
-
-						for (var j = 0; j < img_elems.length; j++) {
-							var img_elem = img_elems[j];
-
-							var id = img_elem.id;
-
-							if(!id.endsWith("_layer")) {
-								var tf_img = tf.browser.fromPixels(img_elem);
-								var resized_img = tf_img.
-									resizeNearestNeighbor([height, width]).
-									toFloat();
-
-								if($("#divide_by").val() != 1) {
-									resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
-								}
-
-								var this_img = await resized_img.arraySync();
-								x.push(this_img);
-								classes.push(label_nr);
-								var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
-									resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
-
-								var this_map = tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
-								maps.push(this_map)
-							}
-						}
-					}
-				}
-
-				x = tf.tensor(x);
-				y = tf.tensor(maps);
-			}
-
-			//log("A", x.shape);
-
-			if($("#shuffle_data").is(":checked")) {
-				tf.util.shuffleCombo(x, y);
-			}
-
-			l("Done generating data from images");
-			//log("B", x.shape);
-
-			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+			classes = await get_default_image_data();
 		} else if (data_origin == "tensordata") {
 			x = numpy_str_to_tf_tensor(x_file, max_number_values);
 			y = numpy_str_to_tf_tensor(y_file, max_number_values);
@@ -673,7 +718,7 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
-	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && !traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] && is_classification) {
+	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && !traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] && is_classification && classes.length != 0) {
 		try {
 			//log("C", xy_data.x.shape);
 			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
