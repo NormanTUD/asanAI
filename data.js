@@ -705,7 +705,9 @@ async function get_xs_and_ys () {
 	var number_of_training_data = xy_data["y"].shape[0];
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
 
-	if(number_of_training_data_left_after_split < 1) {
+	if(number_of_training_data == 0) {
+		l("Somehow, there were 0 training data available. Consider this a bug in asanAI if you have chosen default settings.");
+	} else if(number_of_training_data_left_after_split < 1) {
 		var new_validation_split = 100 - Math.floor((1/number_of_training_data) * 100);
 		if(new_validation_split > 20) {
 			new_validation_split = 20;
