@@ -326,10 +326,26 @@ async function get_custom_data () {
 	}
 }
 
-async function ripple (item, x, classes, label_nr) {
+async function ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
+	if(expandDims) {
+		item = item.expandDims();
+	}
+
 	var rippled = await sine_ripple(item);
-	x = x.concat(rippled.expandDims());
-	add_tensor_as_image_to_photos(rippled);
+
+	if(Array.isArray(x)) {
+		x.push(item.arraySync());
+	} else {
+		rippled = rippled.expandDims();
+		log("X-shape:", x.shape);
+		log("rippled-shape:", rippled.shape);
+		x = x.concat(rippled);
+	}
+
+	if(addToPhoto) {
+		add_tensor_as_image_to_photos(rippled);
+	}
+
 	classes.push(label_nr);
 
 	return [x, classes];
@@ -412,7 +428,7 @@ async function get_default_data () {
 						}
 
 						if($("#augment_sine_ripple").is(":checked")) {
-							var x_classes = await ripple(item, x, classes, label_nr);
+							var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
 							x = x_classes[0];
 							classes = x_classes[1];
 						}
@@ -436,7 +452,7 @@ async function get_default_data () {
 				}
 
 				if($("#augment_sine_ripple").is(":checked")) {
-					var x_classes = await ripple(item, x, classes, label_nr);
+					var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
 					x = x_classes[0];
 					classes = x_classes[1];
 				}
@@ -596,7 +612,7 @@ async function get_image_classification_data (category_counter) {
 							}
 
 							if($("#augment_sine_ripple").is(":checked")) {
-								var x_classes = await ripple(augmented_img, x, classes, label_nr);
+								var x_classes = await ripple(augmented_img, x, classes, label_nr, 0, 1);
 								x = x_classes[0];
 								classes = x_classes[1];
 							}
