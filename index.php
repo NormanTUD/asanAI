@@ -1081,15 +1081,15 @@
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 							<div style="display: flex">
 								<ul class="navi_list">
-									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Visualizations</a></li>
-									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
-									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
 									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
+									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Model Visualization</a></li>
+									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
 									<li><a id="own_image_data_label" href="#own_image_data">Own images</a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensors</a></li>
 									<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV</a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
+									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
 								</ul>
 								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
