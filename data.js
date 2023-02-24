@@ -572,8 +572,12 @@ async function get_image_classification_data (category_counter) {
 	return [x, y, classes];
 }
 
-async function get_image_map_data () {
+async function get_image_map_data (category_counter) {
 	var maps = [];
+	var keys = [];
+	var x = [];
+	var y = [];
+
 	if($("#auto_augment").is(":checked")) {
 		l("Auto-Augmentation is currently not implemented for image segmentation");;;;
 	}
@@ -615,7 +619,7 @@ async function get_image_map_data () {
 	x = tf.tensor(x);
 	y = tf.tensor(maps);
 
-	return [x, y];
+	return [x, y, keys];
 }
 
 async function get_default_image_data () {
@@ -640,9 +644,10 @@ async function get_default_image_data () {
 		y = x_y_classes[1];
 		classes = x_y_classes[2];
 	} else {
-		var x_y = await get_image_map_data();
-		x = x_y[0];
-		y = x_y[1];
+		var x_y_keys = await get_image_map_data(category_counter);
+		x = x_y_keys[0];
+		y = x_y_keys[1];
+		keys = x_y_keys[2];
 	}
 
 	//log("A", x.shape);
