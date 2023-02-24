@@ -419,12 +419,12 @@ async function get_default_data () {
 					for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 						l("Rotating image: " + degree + "°");
 						var x_classes_img = await rotate_with_offset(item, degree, x, classes, label_nr, 0, 1);
-						x = x_classes_img[0];
+						x = tf.tensor(x_classes_img[0]);
 						classes = x_classes_img[1];
 						var augmented_img = x_classes_img[2];
 
 						var x_classes = await invert_image(augmented_img, x, classes, label_nr, 0, 1);
-						x = x_classes[0];
+						x = tf.tensor(x_classes[0]);
 						classes = x_classes[1];
 
 						var flipped = await flip_image_left_right(augmented_img, 0, 1);
@@ -434,7 +434,7 @@ async function get_default_data () {
 						}
 
 						var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
-						x = x_classes[0];
+						x = tf.tensor(x_classes[0]);
 						classes = x_classes[1];
 					}
 				}
@@ -618,8 +618,10 @@ async function get_image_classification_data (category_counter) {
 							classes = x_classes[1];
 
 							flipped = await flip_image_left_right(img, 0, 1);
-							x.push(flipped);
-							classes.push(label_nr);
+							if(flipped) {
+								x.push(flipped);
+								classes.push(label_nr);
+							}
 
 							var x_classes = await ripple(augmented_img, x, classes, label_nr, 0, 1);
 							x = x_classes[0];
