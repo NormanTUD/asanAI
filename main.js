@@ -445,5 +445,7 @@ $(document).ready(async function() {
 
 	l("TFJS-Version: " + tf.version["tfjs-core"]);
 
+	toggle_show_input_layer();
+
 	l("Site is ready");
 });
