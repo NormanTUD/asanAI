@@ -421,8 +421,7 @@ async function get_default_data () {
 
 						if($("#augment_flip_left_right").is(":checked")) {
 							l("Flip left/right image that has been turned " + degree + "°");
-							var flipped = await flip_image_left_right(augmented_img, 0, 0);
-							add_tensor_as_image_to_photos(flipped);
+							var flipped = await flip_image_left_right(augmented_img, 0, 1);
 							x = x.concat(flipped);
 							classes.push(label_nr);
 						}
@@ -635,22 +634,9 @@ async function get_image_classification_data (category_counter) {
 
 					if($("#augment_sine_ripple").is(":checked")) {
 						l("Rippling is not yet supported for custom data!");
-						/*
-						var uuid = uuidv4();
-						$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-						await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
-						var canvas = $("#" + uuid)[0];
-						var context = canvas.getContext("2d");
-						var data = context.getImageData(0,0,canvas.width, canvas.height) 
-						JSManipulate.sineripple.filter(data); 
-						context.putImageData(data,0,0);
-						var rippled = await tf.browser.fromPixels(canvas);
-						$(canvas).remove();
-						log(rippled);
-						add_tensor_as_image_to_photos(rippled);
-						x.push(rippled[0]);
-						classes.push(label_nr);
-						*/
+						var x_classes = await ripple(item, x, classes, label_nr, 0, 0);
+						x = x_classes[0];
+						classes = x_classes[1];
 					}
 				}
 			}
