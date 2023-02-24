@@ -451,10 +451,10 @@ async function run_neural_network () {
 		if(xs_and_ys) {
 			if(Object.keys(xs_and_ys).includes("x")) {
 				if(xs_and_ys["x"].shape.toString() == "0") {
-					error_string += "No X-data (0)! ";
+					error_string += "No X-data! ";
 				}
 			} else {
-				error_string += "No X-data (1)! ";
+				error_string += "No X-data! ";
 			}
 
 			if(Object.keys(xs_and_ys).includes("y")) {
