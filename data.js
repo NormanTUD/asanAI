@@ -399,17 +399,18 @@ async function get_default_data () {
 
 							if($("#augment_flip_left_right").is(":checked")) {
 								l("Flip left/right image that has been turned " + degree + "°");
-								var flipped = tf.image.flipLeftRight(augmented_img);
+								//var flipped = await tf.image.flipLeftRight(augmented_img);
+								var flipped = await flip_image_left_right(augmented_img, 0, 0);
 								add_tensor_as_image_to_photos(flipped);
 								x = x.concat(flipped);
-								classes.push(label_nr);
+								classes.push(this_category_counter);
 							}
 
 							if($("#augment_sine_ripple").is(":checked")) {
 								var rippled = await sine_ripple(augmented_img);
 								x = x.concat(rippled.expandDims());
 								add_tensor_as_image_to_photos(rippled);
-								classes.push(label_nr);
+								classes.push(this_category_counter);
 							}
 						}
 					}
@@ -426,17 +427,18 @@ async function get_default_data () {
 
 				if($("#augment_flip_left_right").is(":checked")) {
 					l("Flip left/right");
-					var flipped = tf.image.flipLeftRight(item);
+					//var flipped = await tf.image.flipLeftRight(item);
+					var flipped = await flip_image_left_right(item, 0, 0);
 					add_tensor_as_image_to_photos(flipped);
 					x = x.concat(flipped);
-					classes.push(label_nr);
+					classes.push(this_category_counter);
 				}
 
 				if($("#augment_sine_ripple").is(":checked")) {
 					var rippled = await sine_ripple(item);
 					x = x.concat(rippled.expandDims());
 					add_tensor_as_image_to_photos(rippled);
-					classes.push(label_nr);
+					classes.push(this_category_counter);
 				}
 			}
 		}
@@ -478,6 +480,22 @@ async function get_default_data () {
 	xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 
 	return classes;
+}
+
+async function flip_image_left_right (img, expandDims=0, arraySync=0) {
+	if(expandDims) {
+		img = img.expandDims();
+	}
+
+	var flipped = null;
+
+	if(arraySync) {
+		flipped = await tf.image.flipLeftRight(img).arraySync()[0];
+	} else {
+		flipped = await tf.image.flipLeftRight(img);
+	}
+
+	return flipped;
 }
 
 async function get_image_classification_data (category_counter) {
@@ -524,7 +542,8 @@ async function get_image_classification_data (category_counter) {
 
 							if($("#augment_flip_left_right").is(":checked")) {
 								l("Flip left/right image that has been turned " + degree + "°");
-								x.push(await tf.image.flipLeftRight(augmented_img).arraySync()[0]);
+								//x.push(await tf.image.flipLeftRight(augmented_img).arraySync()[0]);
+								x.push(await flip_image_left_right(img, 0, 1));
 								classes.push(label_nr);
 							}
 						}
@@ -538,7 +557,8 @@ async function get_image_classification_data (category_counter) {
 
 					if($("#augment_flip_left_right").is(":checked")) {
 						l("Flip left/right");
-						var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
+						var flipped = await flip_image_left_right(resized_img, 1, 1);
+						//var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
 						x.push(flipped);
 						classes.push(label_nr);
 					}
@@ -699,7 +719,6 @@ async function get_xs_and_ys () {
 	var loss = $("#loss").val();
 
 	var classes = [];
-
 
 	if(traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
 		await get_custom_data();
