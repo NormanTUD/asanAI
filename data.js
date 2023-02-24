@@ -326,7 +326,7 @@ async function get_custom_data () {
 	}
 }
 
-function ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto 0 0) {
+async function ripple (item, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
 	if($("#augment_sine_ripple").is(":checked")) {
 		var x_classes = await _ripple(item, x, classes, label_nr, expandDims, addToPhoto);
 		x = x_classes[0];
@@ -423,11 +423,9 @@ async function get_default_data () {
 						classes = x_classes_img[1];
 						var augmented_img = x_classes_img[2];
 
-						if($("#augment_invert_images").is(":checked")) {
-							var x_classes = await invert_image(augmented_img, x, classes, label_nr, 0, 1);
-							x = x_classes[0];
-							classes = x_classes[1];
-						}
+						var x_classes = await invert_image(augmented_img, x, classes, label_nr, 0, 1);
+						x = x_classes[0];
+						classes = x_classes[1];
 
 						var flipped = await flip_image_left_right(augmented_img, 0, 1);
 						if(flipped) {
@@ -441,11 +439,9 @@ async function get_default_data () {
 					}
 				}
 
-				if($("#augment_invert_images").is(":checked")) {
-					var x_classes = await invert_image(item, x, classes, label_nr, 0, 1)
-					x = x_classes[0];
-					classes = x_classes[1];
-				}
+				var x_classes = await invert_image(item, x, classes, label_nr, 0, 1)
+				x = x_classes[0];
+				classes = x_classes[1];
 
 				var flipped = await flip_image_left_right(item, 0, 0);
 				if(flipped) {
@@ -546,7 +542,7 @@ async function rotate_with_offset (item, degree, x, classes, labelNr, expandDims
 	return [x, classes, augmented_img];
 }
 
-async function invert_image (img, x, classes, label_nr, expandDims = 0; addToPhoto = 0) {
+async function invert_image (img, x, classes, label_nr, expandDims = 0, addToPhoto = 0) {
 	if($("#augment_invert_images").is(":checked")) {
 		var x_classes = _invert_image(img, x, classes, label_nr, expandDims, addToPhoto);
 		x = x_classes[0];
@@ -617,11 +613,9 @@ async function get_image_classification_data (category_counter) {
 							classes = x_classes_img[1];
 							var augmented_img = x_classes_img[2];
 
-							if($("#augment_invert_images").is(":checked")) {
-								var x_classes = await invert_image(augmented_img, x, classes, label_nr, 1, 1);
-								x = x_classes[0];
-								classes = x_classes[1];
-							}
+							var x_classes = await invert_image(augmented_img, x, classes, label_nr, 1, 1);
+							x = x_classes[0];
+							classes = x_classes[1];
 
 							flipped = await flip_image_left_right(img, 0, 1);
 							x.push(flipped);
@@ -633,11 +627,9 @@ async function get_image_classification_data (category_counter) {
 						}
 					}
 
-					if($("#augment_invert_images").is(":checked")) {
-						var x_classes = await invert_image(item, x, classes, label_nr, 1, 1);
-						x = x_classes[0];
-						classes = x_classes[1];
-					}
+					var x_classes = await invert_image(item, x, classes, label_nr, 1, 1);
+					x = x_classes[0];
+					classes = x_classes[1];
 
 					var flipped = await flip_image_left_right(resized_img, 1, 1);
 					if(flipped) {
