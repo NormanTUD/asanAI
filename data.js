@@ -483,6 +483,8 @@ async function get_default_data () {
 async function get_image_classification_data (category_counter) {
 	var x = [];
 	var classes = [];
+	var keys = [];
+	
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var img_elems = $($(".own_images")[label_nr]).children().find("img,canvas");
 		if(img_elems.length) {
@@ -639,10 +641,11 @@ async function get_default_image_data () {
 	var classes = [];
 
 	if(is_classification) {
-		var x_y_classes = await get_image_classification_data(category_counter);
-		x = x_y_classes[0];
-		y = x_y_classes[1];
-		classes = x_y_classes[2];
+		var x_y_classes_keys = await get_image_classification_data(category_counter);
+		x = x_y_classes_keys[0];
+		y = x_y_classes_keys[1];
+		classes = x_y_classes_keys[2];
+		keys = x_y_classes_keys[3];
 	} else {
 		var x_y_keys = await get_image_map_data(category_counter);
 		x = x_y_keys[0];
