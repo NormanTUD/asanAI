@@ -112,10 +112,15 @@ async function force_download_image_preview_data () {
 async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
+	if(started_training || force_download) {
+		$("#photos").html("");
+	}
+
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
 		$("#stop_downloading").show();
 	}
+
 
 	var json = await _get_training_data();
 
@@ -139,6 +144,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 
 	urls = shuffle(urls);
 
+
 	var percentage_div = $("#percentage");
 
 	if(!skip_real_image_download) {
@@ -155,6 +161,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 
 	var data_progressbar_div = $("#data_progressbar>div");
 	var shown_stop_downloading = 0;
+
 
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
