@@ -2055,6 +2055,7 @@ async function chose_dataset(no_set_config) {
 	$("#prediction").html("");
 
 	await identify_layers(get_number_of_layers());
+	init_download_link();
 }
 
 function init_weight_file_list() {
