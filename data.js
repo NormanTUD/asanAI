@@ -98,7 +98,17 @@ function load_image(url) {
 	});
 }
 
-async function get_image_data(skip_real_image_download) {
+async function force_download_image_preview_data () {
+	var old_img_cat = $("#max_number_of_files_per_category").val();
+	$("#max_number_of_files_per_category").val(1);
+	var old_force_download = force_download;
+	force_download = 1;
+	await get_image_data(0, 1);
+	force_download = old_force_download;
+	$("#max_number_of_files_per_category").val(old_img_cat);
+}
+
+async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	headerdatadebug("get_image_data()");
@@ -148,7 +158,6 @@ async function get_image_data(skip_real_image_download) {
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
-
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
@@ -195,7 +204,7 @@ async function get_image_data(skip_real_image_download) {
 	stop_downloading_data = false;
 	$("#stop_downloading").hide();
 
-	if(!skip_real_image_download) {
+	if(!skip_real_image_download && !dont_show_swal) {
 		await Swal.fire({
 			title: 'Generating tensors from images...',
 			html: "This may take some time, but your computer is working!",
