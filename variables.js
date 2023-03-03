@@ -1184,7 +1184,7 @@ var general_options = {
 	'theta': '"&theta;", "theta", "number", { "step": 1, "value": -1 }, nr',
 	'axis': '"Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": get_default_option(type, "axis") }, nr',
 	'max_value': '"Max-Value", "max_value", "number", { "step": 1, "value": get_default_option(type, "max_value") }, nr',
-	'size': '"Size", "size", "text", { "text": "2,2", "placeholder": "2 comma-seperated numbers" }, nr',
+	'size': '"Size", "size", "text", { "text": "3,3", "placeholder": "2 comma-seperated numbers" }, nr',
 	'target_shape': '"Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr',
 	'dilation_rate': '"Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr',
 	'padding': '"Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr',
