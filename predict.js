@@ -455,6 +455,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
 				var example_predict_data = await get_cached_json(example_url)
 
+				var html_contents = "";
+
 				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
 					tf.tidy(() => {
 						for (var i = 0; i < example_predict_data.length; i++) {
@@ -463,7 +465,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								try {
 									var res = model.predict([tensor]).arraySync();
 
-									example_predictions.append(JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res) + "<br>");
+									html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res) + "<br>";
 									count++;
 									$("#predict_error").html("");
 								} catch (e) {
@@ -472,6 +474,10 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							}
 						}
 					});
+				}
+
+				if(html_contents) {
+					example_predictions.html(html_contents);
 				}
 			}
 
