@@ -447,5 +447,7 @@ $(document).ready(async function() {
 
 	toggle_show_input_layer();
 
+	force_download_image_preview_data();
+
 	l("Site is ready");
 });

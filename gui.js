@@ -2056,6 +2056,8 @@ async function chose_dataset(no_set_config) {
 
 	await identify_layers(get_number_of_layers());
 	init_download_link();
+
+	force_download_image_preview_data();
 }
 
 function init_weight_file_list() {

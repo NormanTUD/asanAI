@@ -99,7 +99,6 @@ function load_image(url) {
 }
 
 async function force_download_image_preview_data () {
-	$("#photos").html("");
 	var old_img_cat = $("#max_number_of_files_per_category").val();
 	$("#max_number_of_files_per_category").val(1);
 	var old_force_download = force_download;
@@ -107,6 +106,7 @@ async function force_download_image_preview_data () {
 	await get_image_data(0, 1);
 	force_download = old_force_download;
 	$("#max_number_of_files_per_category").val(old_img_cat);
+	$("#photos").html("These are some example photos of the chosen category:<br>" + $("#photos").html());
 }
 
 async function get_image_data(skip_real_image_download, dont_show_swal=0) {
