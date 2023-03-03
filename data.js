@@ -99,6 +99,7 @@ function load_image(url) {
 }
 
 async function force_download_image_preview_data () {
+	$("#photos").html("");
 	var old_img_cat = $("#max_number_of_files_per_category").val();
 	$("#max_number_of_files_per_category").val(1);
 	var old_force_download = force_download;
