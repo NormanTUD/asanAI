@@ -539,11 +539,7 @@ async function run_neural_network () {
 				$("#simplest_training_data_visualization").html("").hide();
 			}
 
-			if($("#jump_to_interesting_tab").is(":checked")) {
-				show_tab_label("tfvis_tab_label", 1);
-			} else {
-				show_tab_label("tfvis_tab_label", 0);
-			}
+			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		} catch (e) {
 			write_error_and_reset(e);
 		}
