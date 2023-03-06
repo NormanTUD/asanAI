@@ -972,7 +972,7 @@ async function draw_maximally_activated_layer (layer, type) {
 	var types_in_order = "";
 	if(get_number_of_layers() - 1 == layer) {
 		if(labels && labels.length) {
-			types_in_order = " (" + labels.join(", ") + ")";
+			types_in_order = " (" + labels.reverse().join(", ") + ")";
 		}
 	}
 
@@ -1021,7 +1021,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		times.push(time);
 	}
 
-	$("#maximally_activated_content").prepend("<h2>Layer " + layer + types_in_order + "</h2>")
+	$("#maximally_activated_content").prepend("<h2 class='h2_maximally_activated_layer_contents'>Layer " + layer + types_in_order + "</h2>")
 
 	l("Done generating images");
 
