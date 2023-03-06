@@ -980,7 +980,7 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	for (var i = neurons; i > 0; i--) {
+	for (var i = neurons - 1; i >= 0; i--) {
 		if(stop_generating_images) {
 			continue;
 		}

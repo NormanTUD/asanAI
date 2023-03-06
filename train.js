@@ -309,6 +309,10 @@ function get_fit_data () {
 			show_prediction(0, 1);
 			predict_handdrawn();
 		}
+
+		if(input_shape_is_image()) {
+			predict_handdrawn();
+		}
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
