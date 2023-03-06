@@ -989,7 +989,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			eta = " (" + human_readable_time(parseInt((i) * median(times))) + " left)";
 		}
 
-		var swal_msg = "Image " + ((neurons - i) + 1) + " of " + neurons + eta;
+		var swal_msg = "Image " + ((neurons - i)) + " of " + neurons + eta;
 
 		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
 
