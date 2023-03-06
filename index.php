@@ -1516,7 +1516,7 @@
 				return result;
 			}
 
-			function get_units_at_layer(i) {
+			function get_units_at_layer(i, use_max_layer_size) {
 				var units = undefined;
 				try {
 					var units = get_item_value(i, "units");
@@ -1540,7 +1540,7 @@
 
 				var max_neurons_fcnn = parseInt($("#max_neurons_fcnn").val());
 
-				if(units > max_neurons_fcnn) {
+				if(units > max_neurons_fcnn && use_max_layer_size) {
 					l("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
 					units = max_neurons_fcnn;
 				}
@@ -1600,7 +1600,7 @@
 				}
 
 				for (var i = 0; i < get_number_of_layers(); i++) {
-					var number_of_units = get_units_at_layer(i);
+					var number_of_units = get_units_at_layer(i, 1);
 					var layer_type = $($(".layer_type")[i]).val();
 					if(parseInt(number_of_units) > 0) {
 						real_architecture.push(number_of_units);
@@ -1685,7 +1685,7 @@
 							}
 						} else if (category == "Basic") {
 							try {
-								var units_at_layer = get_units_at_layer(i);
+								var units_at_layer = get_units_at_layer(i, 0);
 								if(units_at_layer) {
 									architecture2.push(units_at_layer);
 								}
@@ -1819,7 +1819,7 @@
 							}
 						} else if (category == "Basic") {
 							try {
-								var units_at_layer = get_units_at_layer(i);
+								var units_at_layer = get_units_at_layer(i, 0);
 								if(units_at_layer) {
 									architecture2.push(units_at_layer);
 									layer_to_lenet_arch[i] = {"arch": "architecture2", "id": architecture.length - 1};
