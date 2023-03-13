@@ -5139,3 +5139,14 @@ async function change_last_responsible_layer_for_image_output () {
 		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
 	}
 }
+
+function cosmo_mode () {
+	toggle_layer_view();
+	hide_ribbon();
+	$("#show_layer_data").prop("checked", true)
+	$("#show_hide_ribbon_button").hide();
+	$(".vis_button").hide();
+	$("#toggle_layer_view_button").hide();
+	$("#show_grad_cam").parent().hide();
+	$("#show_layer_data").parent().hide();
+}

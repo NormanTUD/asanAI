@@ -190,7 +190,7 @@
 		<div class="fireworks-container"></div>
 		<div id="mainsite">
 			<div id="ribbon_shower">
-				<span class="symbol_button" onclick="show_ribbon()">&#9776;</span>
+				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<!--<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>-->
 				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
@@ -1246,21 +1246,21 @@
 								<div id="alexnet_tab">
 									<div id="alexnet"></div>
 									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
-									<button onclick="restart_alexnet(1)">Restart AlexNet</button>
+									<button class="vis_button" onclick="restart_alexnet(1)">Restart AlexNet</button>
 								</div>
 
 								<div id="lenet_tab">
 									<div id="lenet"></div>
-									<button onclick='reset_view()'>Reset view</button>
-									<button id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
-									<button onclick="restart_lenet(1)">Restart LeNet</button>
+									<button class="vis_button" onclick='reset_view()'>Reset view</button>
+									<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
+									<button class="vis_button" onclick="restart_lenet(1)">Restart LeNet</button>
 								</div>
 
 								<div id="fcnn_tab">
 									<div id="fcnn"></div>
-									<button onclick='reset_view()'>Reset view</button>
-									<button id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
-									<button onclick="restart_fcnn(1)">Restart FCNN</button>
+									<button class="vis_button" onclick='reset_view()'>Reset view</button>
+									<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
+									<button class="vis_button" onclick="restart_fcnn(1)">Restart FCNN</button>
 								</div>
 
 								<div id="activation_plot_tab">
@@ -1322,8 +1322,10 @@
 							</div>
 
 							<div id="predict_tab">
-								Show layer data flow?
-								<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
+								<span>
+									Show layer data flow?
+									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
+								</span>
 
 								
 								<span class="hide_when_no_conv_visualizations">
