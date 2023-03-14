@@ -676,13 +676,20 @@ async function predict_webcam () {
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
+
+					var w = Math.floor(probability * 100);
+
 					if(get_last_layer_activation_function() == "softmax") {
 						probability = (probability * 100) + "%";
 					}
 
-					var str = label + ": " + probability + "\n";
+					str = "";
+
 					if(i == max_i) {
-						str = "<b class='max_prediction'>" + str + "</b>";
+						//str = "<b class='max_prediction'>" + str + "</b>";
+						str += label + ": <span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+					} else {
+						str += label + ": <span class='bar'><span style='width: " + w + "px'></span></span><br>";
 					}
 					webcam_prediction.append(str);
 				}
