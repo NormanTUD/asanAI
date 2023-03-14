@@ -194,9 +194,8 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					var fullstr = "";
 
-					if(show_bars_instead_of_numbers()) {
-						fullstr += "<table>";
-					}
+					fullstr += "<table>";
+
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
@@ -210,16 +209,15 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 								str = "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							}
 						} else {
-							str = label + ": " + probability + "<br>";
+							str = "<tr><td>" + label + "</td><td>" + probability + "</td></tr>";
 							if(i == max_i && show_green) {
-								str = label + ": <b class='best_result'>" + probability+ "</b><br>";
+								str = "<tr><td>" + label + "</td><td><b class='best_result'>" + probability+ "</b></td></tr>";
 							}
 						}
 						fullstr += str;
 					}
-					if(show_bars_instead_of_numbers()) {
-						fullstr += "</table>";
-					}
+
+					fullstr += "</table>";
 					desc.html(fullstr);
 				}
 
@@ -369,9 +367,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						await get_label_data();
 					}
 
-					if(show_bars_instead_of_numbers()) {
-						str += "<table>";
-					}
+					str += "<table>";
 
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
@@ -384,11 +380,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						var w = Math.floor(probability * 100);
 
 						if(show_bars_instead_of_numbers()) {
-							probability = (probability * 100) + "%";
-						}
-
-						//this_str += probability + "\n";
-						if(show_bars_instead_of_numbers()) {
 							if(i == max_i && show_green) {
 								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							} else {
@@ -396,15 +387,14 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							}
 						} else {
 							if(i == max_i && show_green) {
-								str = str + "<b class='max_prediction'>" + this_str + "</b>";
+								str += "<tr><td>" + this_str + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 							} else {
-								str = str + this_str;
+								str += "<tr><td>" + this_str + "</td><td>" + probability + "</td></tr>";
 							}
 						}
 					}
-					if(show_bars_instead_of_numbers()) {
-						str += "</table>";
-					}
+
+					str += "</table>";
 				}
 			}
 		}
@@ -697,20 +687,13 @@ async function predict_webcam () {
 					await get_label_data();
 				}
 
+				str = "<table>";
 
-				if(show_bars_instead_of_numbers()) {
-					str = "<table>";
-				}
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
 
 					var w = Math.floor(probability * 100);
-
-					if(show_bars_instead_of_numbers()) {
-						probability = (probability * 100) + "%";
-					}
-
 
 					if(show_bars_instead_of_numbers()) {
 						if(i == max_i) {
@@ -720,17 +703,16 @@ async function predict_webcam () {
 							str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
 					} else {
+						probability = (probability * 100) + "%";
 						if(i == max_i) {
-							str += "<b class='max_prediction'>" + probability + "</b><br>";
+							str += "<tr><td>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 						} else {
-							str += label + ": " + probability + "<br>";
+							str += "<tr><td>" + label + "</td><td>" + probability + "</td></tr>";
 						}
 					}
 				}
 
-				if(show_bars_instead_of_numbers()) {
-					str += "</table>";
-				}
+				str += "</table>";
 
 				webcam_prediction.append(str);
 			}
@@ -855,9 +837,8 @@ async function predict_handdrawn () {
 			}
 		}
 
-		if(show_bars_instead_of_numbers()) {
-			html += "<table>";
-		}
+		html += "<table>";
+
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
 			var val = predictions[0][i];
@@ -884,23 +865,21 @@ async function predict_handdrawn () {
 			} else {
 				if(label) {
 					if(val == max) {
-						html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
+						html += "<tr><td><b class='best_result'>" + label + "</td><td>" + val + "</b></td></tr>\n";
 					} else {
-						html += label + ": " + predictions[0][i] + "<br>\n";
+						html += "<tr><td>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
 					}
 				} else {
 					if(val == max) {
-						html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+						html += "<tr><td><b class='best_result'>" + predictions[0][i] + "</b></td></tr>\n";
 					} else {
-						html += predictions[0][i] + "<br>\n";
+						html += "<tr><td>" + predictions[0][i] + "</td></tr>";
 					}
 				}
 			}
 		}
 
-		if(show_bars_instead_of_numbers()) {
-			html += "</table>";
-		}
+		html += "</table>";
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
