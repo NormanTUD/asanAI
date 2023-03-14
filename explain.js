@@ -264,6 +264,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 						$($(canvas)[0]).parent().parent().show()
 					}
 
+					//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 					ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
 
 					if(get_canvas_object) {
@@ -1068,7 +1069,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				
 			};
 
-			var res = draw_grid(canvas, 1,data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
+			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
 
 			if(res) {
 				$("#maximally_activated_content").prepend(canvas);
