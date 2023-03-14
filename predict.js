@@ -194,7 +194,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					var fullstr = "";
 
-					fullstr += "<table>";
+					fullstr += "<table class='predict_table'>";
 
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
@@ -367,7 +367,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						await get_label_data();
 					}
 
-					str += "<table>";
+					str += "<table class='predict_table'>";
 
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
@@ -687,7 +687,7 @@ async function predict_webcam () {
 					await get_label_data();
 				}
 
-				str = "<table>";
+				str = "<table class='predict_table'>";
 
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
@@ -837,7 +837,7 @@ async function predict_handdrawn () {
 			}
 		}
 
-		html += "<table>";
+		html += "<table class='predict_table'>";
 
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
