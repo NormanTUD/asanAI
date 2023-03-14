@@ -5149,4 +5149,7 @@ function cosmo_mode () {
 	$("#toggle_layer_view_button").hide();
 	$("#show_grad_cam").parent().hide();
 	$("#show_layer_data").parent().hide();
+	$("#navbar1").hide();
+	$(".navi_list").hide();
+	$("#hr_nav").hide();
 }

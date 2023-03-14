@@ -1079,7 +1079,7 @@
 					</div>
 					<div class="right_side" id="graphs_here">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
-							<div style="display: flex">
+							<div id="navbar1" style="display: flex">
 								<ul class="navi_list">
 									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Model Visualization</a></li>
@@ -1093,7 +1093,7 @@
 								</ul>
 								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
-							<hr>
+							<hr id="hr_nav">
 
 							<div id="own_csv_data">
 								<br>
