@@ -194,17 +194,19 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					var fullstr = "";
 
+					fullstr += "<table>";
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
 						var w = Math.floor(probability * 100);
-						var str = label + ": <span class='bar'><span style='width: " + w + "px'></span></span><br>";
+						var str = "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						if(i == max_i && show_green) {
 							//str = "<b class='best_result'>" + str + "</b>";
-							str = label + ": <span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+							str = "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 						}
 						fullstr += str;
 					}
+					fullstr += "</table>";
 					desc.html(fullstr);
 				}
 
@@ -368,14 +370,17 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							probability = (probability * 100) + "%";
 						}
 
+						str += "<table>";
 						//this_str += probability + "\n";
 						if(i == max_i && show_green) {
 							//str = str + "<b class='max_prediction'>" + this_str + "</b>";
-							str += this_str + "<span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+							str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 						} else {
 							//str = str + this_str;
-							str += this_str + "<span class='bar'><span style='width: " + w + "px'></span></span><br>";
+							str += "<tr><td>" + this_str + "<span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
+						str += "</table>";
+
 						if(!((i + 1) % labels.length)) {
 							str += "<hr>";
 						}
@@ -683,14 +688,15 @@ async function predict_webcam () {
 						probability = (probability * 100) + "%";
 					}
 
-					str = "";
+					str = "<table>";
 
 					if(i == max_i) {
 						//str = "<b class='max_prediction'>" + str + "</b>";
-						str += label + ": <span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+						str += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 					} else {
-						str += label + ": <span class='bar'><span style='width: " + w + "px'></span></span><br>";
+						str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 					}
+					str += "</table>";
 					webcam_prediction.append(str);
 				}
 			}
@@ -820,25 +826,26 @@ async function predict_handdrawn () {
 			var val = predictions[0][i];
 			var w = Math.floor(val * 100);
 
+			html += "<table>";
 			if(label) {
 				if(val == max) {
 					//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
-					html += label + ": <span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+					html += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 				} else {
 					//html += label + ": " + predictions[0][i] + "<br>\n";
-					html += label + ": <span class='bar'><span style='width: " + w + "px'></span></span><br>";
+					html += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 				}
 			} else {
-				if(predictions[0][i] == max) {
+				if(val == max) {
 					//html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
-					html += "<span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
+					html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 				} else {
 					//html += predictions[0][i] + "<br>\n";
-					html += "<span class='bar'><span style='width: " + w + "px'></span></span><br>";
+					html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
 				}
 			}
+			html += "</table>";
 		}
-		html += "";
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
