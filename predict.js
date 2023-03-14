@@ -194,19 +194,32 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					var fullstr = "";
 
-					fullstr += "<table>";
+					if(get_last_layer_activation_function() == "softmax") {
+						fullstr += "<table>";
+					}
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
 						var w = Math.floor(probability * 100);
-						var str = "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-						if(i == max_i && show_green) {
-							//str = "<b class='best_result'>" + str + "</b>";
-							str = "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+
+						var str = "";
+						if(get_last_layer_activation_function() == "softmax") {
+							str = "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							if(i == max_i && show_green) {
+								//str = "<b class='best_result'>" + str + "</b>";
+								str = "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+							}
+						} else {
+							str = label + ": " + probability + "<br>";
+							if(i == max_i && show_green) {
+								str = label + ": <b class='best_result'>" + probability+ "</b><br>";
+							}
 						}
 						fullstr += str;
 					}
-					fullstr += "</table>";
+					if(get_last_layer_activation_function() == "softmax") {
+						fullstr += "</table>";
+					}
 					desc.html(fullstr);
 				}
 
@@ -356,7 +369,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						await get_label_data();
 					}
 
-					str += "<table>";
+					if(get_last_layer_activation_function() == "softmax") {
+						str += "<table>";
+					}
+
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
@@ -372,15 +388,23 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						}
 
 						//this_str += probability + "\n";
-						if(i == max_i && show_green) {
-							//str = str + "<b class='max_prediction'>" + this_str + "</b>";
-							str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+						if(get_last_layer_activation_function() == "softmax") {
+							if(i == max_i && show_green) {
+								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+							} else {
+								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							}
 						} else {
-							//str = str + this_str;
-							str += "<tr><td>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							if(i == max_i && show_green) {
+								str = str + "<b class='max_prediction'>" + this_str + "</b>";
+							} else {
+								str = str + this_str;
+							}
 						}
 					}
-					str += "</table>";
+					if(get_last_layer_activation_function() == "softmax") {
+						str += "</table>";
+					}
 				}
 			}
 		}
@@ -674,7 +698,9 @@ async function predict_webcam () {
 				}
 
 
-				str = "<table>";
+				if(get_last_layer_activation_function() == "softmax") {
+					str = "<table>";
+				}
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
@@ -686,15 +712,26 @@ async function predict_webcam () {
 					}
 
 
-					if(i == max_i) {
-						//str = "<b class='max_prediction'>" + str + "</b>";
-						str += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+					if(get_last_layer_activation_function() == "softmax") {
+						if(i == max_i) {
+							//str = "<b class='max_prediction'>" + str + "</b>";
+							str += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+						} else {
+							str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+						}
 					} else {
-						str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+						if(i == max_i) {
+							str += "<b class='max_prediction'>" + probability + "</b><br>";
+						} else {
+							str += label + ": " + probability + "<br>";
+						}
 					}
 				}
 
-				str += "</table>";
+				if(get_last_layer_activation_function() == "softmax") {
+					str += "</table>";
+				}
+
 				webcam_prediction.append(str);
 			}
 		}
@@ -818,31 +855,52 @@ async function predict_handdrawn () {
 			}
 		}
 
-		html += "<table>";
+		if(get_last_layer_activation_function() == "softmax") {
+			html += "<table>";
+		}
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
 			var val = predictions[0][i];
 			var w = Math.floor(val * 100);
 
-			if(label) {
-				if(val == max) {
-					//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
-					html += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+			if(get_last_layer_activation_function() == "softmax") {
+				if(label) {
+					if(val == max) {
+						//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
+						html += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+					} else {
+						//html += label + ": " + predictions[0][i] + "<br>\n";
+						html += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+					}
 				} else {
-					//html += label + ": " + predictions[0][i] + "<br>\n";
-					html += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+					if(val == max) {
+						//html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+						html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+					} else {
+						//html += predictions[0][i] + "<br>\n";
+						html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
+					}
 				}
 			} else {
-				if(val == max) {
-					//html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
-					html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+				if(label) {
+					if(val == max) {
+						html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
+					} else {
+						html += label + ": " + predictions[0][i] + "<br>\n";
+					}
 				} else {
-					//html += predictions[0][i] + "<br>\n";
-					html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
+					if(val == max) {
+						html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+					} else {
+						html += predictions[0][i] + "<br>\n";
+					}
 				}
 			}
 		}
-		html += "</table>";
+
+		if(get_last_layer_activation_function() == "softmax") {
+			html += "</table>";
+		}
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
