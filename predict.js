@@ -362,17 +362,20 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							this_str += label + ": ";
 						}
 
+						var w = Math.floor(probability * 100);
+
 						if(get_last_layer_activation_function() == "softmax") {
 							probability = (probability * 100) + "%";
 						}
 
-						this_str += probability + "\n";
+						//this_str += probability + "\n";
 						if(i == max_i && show_green) {
-							str = str + "<b class='max_prediction'>" + this_str + "</b>";
+							//str = str + "<b class='max_prediction'>" + this_str + "</b>";
+							str += this_str + "<span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
 						} else {
-							str = str + this_str;
+							//str = str + this_str;
+							str += this_str + "<span class='bar'><span style='width: " + w + "px'></span></span><br>";
 						}
-						str += "<br>";
 						if(!((i + 1) % labels.length)) {
 							str += "<hr>";
 						}
