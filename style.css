@@ -590,11 +590,14 @@ button:disabled:hover {
 	color: red;
 }
 
+/*
 .predict_table {
 	border: 1px solid #e5e5e5;
 	border-collapse: collapse;
 }
+
 .predict_table>tbody>tr>td {
 	border: 1px solid #e5e5e5;
 	border-collapse: collapse;
 }
+*/
