@@ -356,6 +356,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						await get_label_data();
 					}
 
+					str += "<table>";
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
@@ -370,7 +371,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							probability = (probability * 100) + "%";
 						}
 
-						str += "<table>";
 						//this_str += probability + "\n";
 						if(i == max_i && show_green) {
 							//str = str + "<b class='max_prediction'>" + this_str + "</b>";
@@ -379,12 +379,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							//str = str + this_str;
 							str += "<tr><td>" + this_str + "<span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
-						str += "</table>";
-
-						if(!((i + 1) % labels.length)) {
-							str += "<hr>";
-						}
 					}
+					str += "</table>";
 				}
 			}
 		}
@@ -822,12 +818,12 @@ async function predict_handdrawn () {
 			}
 		}
 
+		html += "<table>";
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
 			var val = predictions[0][i];
 			var w = Math.floor(val * 100);
 
-			html += "<table>";
 			if(label) {
 				if(val == max) {
 					//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
@@ -845,8 +841,8 @@ async function predict_handdrawn () {
 					html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
 				}
 			}
-			html += "</table>";
 		}
+		html += "</table>";
 
 		handdrawn_predictions.html(html);
 	} else if(model.outputShape.length == 4) {
