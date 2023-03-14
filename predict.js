@@ -678,6 +678,7 @@ async function predict_webcam () {
 				}
 
 
+				str = "<table>";
 				for (let i = 0; i < predictions.length; i++) {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
@@ -688,7 +689,6 @@ async function predict_webcam () {
 						probability = (probability * 100) + "%";
 					}
 
-					str = "<table>";
 
 					if(i == max_i) {
 						//str = "<b class='max_prediction'>" + str + "</b>";
@@ -696,9 +696,10 @@ async function predict_webcam () {
 					} else {
 						str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 					}
-					str += "</table>";
-					webcam_prediction.append(str);
 				}
+
+				str += "</table>";
+				webcam_prediction.append(str);
 			}
 		}
 	}

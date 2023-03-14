@@ -1348,7 +1348,7 @@
 											<div id="webcam" style="display: none">
 											</div>
 
-											<pre id="webcam_prediction" style="display: none; overflow: scroll;"></pre>
+											<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 											<br>
 											
 											<div class="hide_when_image">
