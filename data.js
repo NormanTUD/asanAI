@@ -107,7 +107,7 @@ async function force_download_image_preview_data () {
 		await get_image_data(0, 1);
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
-		$("#photos").html("These are one example photos of each category in the chose dataset:<br>" + $("#photos").html()).show();
+		$("#photos").html("These are one example photos of each category in the chosen dataset:<br>" + $("#photos").html()).show();
 	} else {
 		$("#photos").html("").hide();
 	}
