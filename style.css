@@ -485,18 +485,19 @@ button:disabled:hover {
 	display: inline-block;
 	height: 3px;
 	background-color: #909090;
-	padding: 3px;
+	padding: 5px;
 	width: 100px;
 }
 
 .bar>span{
 	background-color: orange;
 	width: 0%;
-	height: 3px;
+	height: 6px;
+	display: block;
 }
 
 .highest_bar {
-	background-color: green;
+	background-color: green !important;
 }
 
 
