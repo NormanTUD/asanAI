@@ -5152,4 +5152,5 @@ function cosmo_mode () {
 	$("#navbar1").hide();
 	$(".navi_list").hide();
 	$("#hr_nav").hide();
+	move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 }
