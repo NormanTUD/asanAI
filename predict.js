@@ -377,7 +377,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 						} else {
 							//str = str + this_str;
-							str += "<tr><td>" + this_str + "<span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							str += "<tr><td>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
 					}
 					str += "</table>";
