@@ -5144,16 +5144,33 @@ async function change_last_responsible_layer_for_image_output () {
 }
 
 function cosmo_mode () {
-	toggle_layer_view();
-	hide_ribbon();
-	$("#show_layer_data").prop("checked", true)
-	$("#show_hide_ribbon_button").hide();
-	$(".vis_button").hide();
-	$("#toggle_layer_view_button").hide();
-	$("#show_grad_cam").parent().hide();
-	$("#show_layer_data").parent().hide();
-	$("#navbar1").hide();
-	$(".navi_list").hide();
-	$("#hr_nav").hide();
-	move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
+	if(is_cosmo_mode) {
+		toggle_layer_view();
+		show_ribbon();
+		$("#show_layer_data").prop("checked", false)
+		$("#show_hide_ribbon_button").show();
+		$(".vis_button").show();
+		$("#toggle_layer_view_button").show();
+		$("#show_grad_cam").parent().show();
+		$("#show_layer_data").parent().show();
+		$("#navbar1").show();
+		$(".navi_list").show();
+		$("#hr_nav").show();
+		move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
+		is_cosmo_mode = false;
+	} else {
+		toggle_layer_view();
+		hide_ribbon();
+		$("#show_layer_data").prop("checked", true)
+		$("#show_hide_ribbon_button").hide();
+		$(".vis_button").hide();
+		$("#toggle_layer_view_button").hide();
+		$("#show_grad_cam").parent().hide();
+		$("#show_layer_data").parent().hide();
+		$("#navbar1").hide();
+		$(".navi_list").hide();
+		$("#hr_nav").hide();
+		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
+		is_cosmo_mode = true;
+	}
 }
