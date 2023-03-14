@@ -362,7 +362,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						var probability = predictions[i];
 						var this_str = "";
 						if(label) {
-							this_str += label + ": ";
+							this_str = label;
 						}
 
 						var w = Math.floor(probability * 100);
