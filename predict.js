@@ -807,17 +807,24 @@ async function predict_handdrawn () {
 
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
+			var val = predictions[0][i];
+			var w = Math.floor(val * 100);
+
 			if(label) {
-				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + label + ": " + predictions[0][i] + "</b><br>\n";
+				if(val == max) {
+					//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
+					html += label + ": <span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
 				} else {
-					html += label + ": " + predictions[0][i] + "<br>\n";
+					//html += label + ": " + predictions[0][i] + "<br>\n";
+					html += label + ": <span class='bar'><span style='width: " + w + "px'></span></span><br>";
 				}
 			} else {
 				if(predictions[0][i] == max) {
-					html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+					//html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
+					html += "<span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span><br>";
 				} else {
-					html += predictions[0][i] + "<br>\n";
+					//html += predictions[0][i] + "<br>\n";
+					html += "<span class='bar'><span style='width: " + w + "px'></span></span><br>";
 				}
 			}
 		}
