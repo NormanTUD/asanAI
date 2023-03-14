@@ -5170,7 +5170,18 @@ function cosmo_mode () {
 		$("#navbar1").hide();
 		$(".navi_list").hide();
 		$("#hr_nav").hide();
+		$("#toggle_layers_button").hide();
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 	}
+}
+
+function show_bars_instead_of_numbers () {
+	if(get_last_layer_activation_function() == "softmax") {
+		if($("#show_bars_instead_of_numbers").is(":checked")) {
+			return true;
+		}
+	}
+
+	return false;
 }

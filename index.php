@@ -377,7 +377,7 @@
 										Divide <i>X</i> by:
 									</td>
 									<td>
-										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="updated_page()" />
+										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()" />
 									</td>
 								</tr>
 								<tr>
@@ -793,6 +793,22 @@
 									<tr data-intro="How many seconds before re-plotting the batch-graph?">
 										<td>Batch-Plot-Minimum-Time (s)</td>
 										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px" /></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group">
+						<div class="ribbon-group">
+							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
+								<table>
+									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
+										<td>Show bars instead of numbers?</td>
+										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()" /></td>
 									</tr>
 								</table>
 							</div>

@@ -194,7 +194,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 					var fullstr = "";
 
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						fullstr += "<table>";
 					}
 					for (let i = 0; i < predictions.length; i++) {
@@ -203,7 +203,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 						var w = Math.floor(probability * 100);
 
 						var str = "";
-						if(get_last_layer_activation_function() == "softmax") {
+						if(show_bars_instead_of_numbers()) {
 							str = "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 							if(i == max_i && show_green) {
 								//str = "<b class='best_result'>" + str + "</b>";
@@ -217,7 +217,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 						}
 						fullstr += str;
 					}
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						fullstr += "</table>";
 					}
 					desc.html(fullstr);
@@ -369,7 +369,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						await get_label_data();
 					}
 
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						str += "<table>";
 					}
 
@@ -383,12 +383,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 						var w = Math.floor(probability * 100);
 
-						if(get_last_layer_activation_function() == "softmax") {
+						if(show_bars_instead_of_numbers()) {
 							probability = (probability * 100) + "%";
 						}
 
 						//this_str += probability + "\n";
-						if(get_last_layer_activation_function() == "softmax") {
+						if(show_bars_instead_of_numbers()) {
 							if(i == max_i && show_green) {
 								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							} else {
@@ -402,7 +402,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							}
 						}
 					}
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						str += "</table>";
 					}
 				}
@@ -698,7 +698,7 @@ async function predict_webcam () {
 				}
 
 
-				if(get_last_layer_activation_function() == "softmax") {
+				if(show_bars_instead_of_numbers()) {
 					str = "<table>";
 				}
 				for (let i = 0; i < predictions.length; i++) {
@@ -707,12 +707,12 @@ async function predict_webcam () {
 
 					var w = Math.floor(probability * 100);
 
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						probability = (probability * 100) + "%";
 					}
 
 
-					if(get_last_layer_activation_function() == "softmax") {
+					if(show_bars_instead_of_numbers()) {
 						if(i == max_i) {
 							//str = "<b class='max_prediction'>" + str + "</b>";
 							str += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
@@ -728,7 +728,7 @@ async function predict_webcam () {
 					}
 				}
 
-				if(get_last_layer_activation_function() == "softmax") {
+				if(show_bars_instead_of_numbers()) {
 					str += "</table>";
 				}
 
@@ -855,7 +855,7 @@ async function predict_handdrawn () {
 			}
 		}
 
-		if(get_last_layer_activation_function() == "softmax") {
+		if(show_bars_instead_of_numbers()) {
 			html += "<table>";
 		}
 		for (var i = 0; i < predictions[0].length; i++) {
@@ -863,7 +863,7 @@ async function predict_handdrawn () {
 			var val = predictions[0][i];
 			var w = Math.floor(val * 100);
 
-			if(get_last_layer_activation_function() == "softmax") {
+			if(show_bars_instead_of_numbers()) {
 				if(label) {
 					if(val == max) {
 						//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
@@ -898,7 +898,7 @@ async function predict_handdrawn () {
 			}
 		}
 
-		if(get_last_layer_activation_function() == "softmax") {
+		if(show_bars_instead_of_numbers()) {
 			html += "</table>";
 		}
 
@@ -932,4 +932,10 @@ async function predict_handdrawn () {
 	}
 
 	tf.engine().endScope();
+}
+
+function repredict () {
+	show_prediction();
+	predict_webcam();
+	predict_handdrawn();
 }
