@@ -950,18 +950,28 @@ function stop_webcam() {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+	while (number_of_currently_running_updated_pages) {
+		//log("Currently in queue for updated_page");
+		await(delay(10));
+	}
+
+	number_of_currently_running_updated_pages++;
+
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (updated page)");
+		number_of_currently_running_updated_pages--;
 		return;
 	}
 
 	rename_tmp_onchange();
 
 	if($("#width").val() == "" || $("#height").val() == "") {
+		number_of_currently_running_updated_pages--;
 		return;
 	}
 
 	if (is_setting_config) {
+		number_of_currently_running_updated_pages--;
 		return;
 	}
 
@@ -969,6 +979,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	show_or_hide_bias_initializer(numberoflayers);
 
 	if (disable_show_python_and_create_model) {
+		number_of_currently_running_updated_pages--;
 		return;
 	}
 
@@ -1084,6 +1095,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		$(".expert_mode_only").show();
 	}
 
+	number_of_currently_running_updated_pages--;
 	return 1;
 }
 
