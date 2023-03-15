@@ -201,6 +201,13 @@ function tf_debug () {
 	}
 }
 
+function colorize (text, color) {
+	if(color) {
+		return "<span style='color: " + color + "'>" + text + "</span>";
+	}
+	return text;
+}
+
 function memory_debugger () {
 	var memory = tf.memory();
 
@@ -215,13 +222,38 @@ function memory_debugger () {
 		gpu_mb = gpu_mb.toFixed(2);
 	}
 
-	var debug_string = "Tensors: " + num_tensors + ", RAM: " + ram_mb + "MB";
+	var tensor_color = "";
+	var gpu_color = "";
+	var cpu_color = "";
+
+	if(last_num_global_tensors > num_tensors) {
+		tensor_color = "#00ff00";
+	} else if (last_num_global_tensors < num_tensors) {
+		tensor_color = "#ff0000";
+	}
+
+	if(last_tensor_size_cpu > ram_mb) {
+		cpu_color = "#00ff00";
+	} else if (last_tensor_size_cpu < ram_mb) {
+		cpu_color = "#ff0000";
+	}
+
+	if(last_tensor_size_gpu > gpu_mb) {
+		gpu_color = "#00ff00";
+	} else if (last_tensor_size_gpu < gpu_mb) {
+		gpu_color = "#ff0000";
+	}
+
+	var debug_string = "Tensors: " + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
-		debug_string = debug_string + ", GPU: " + gpu_mb + "MB"
+		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
 	}
 
 	document.querySelector('#memory_debugger_div').innerHTML = debug_string;
-	//$("#memory_debugger_div").html(debug_string);
+
+	last_num_global_tensors = num_tensors;
+	last_tensor_size_cpu = ram_mb;
+	last_tensor_size_gpu = gpu_mb;
 }
 
 function install_memory_debugger () {
