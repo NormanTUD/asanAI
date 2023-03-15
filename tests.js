@@ -441,8 +441,6 @@ async function run_tests () {
 		test_equal("Size changing test failed", false, true);
 	}
 
-
-
 	log_test("Tests ended");
 
 	test_summary();
