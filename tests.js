@@ -273,7 +273,7 @@ async function run_tests () {
 	$("#model_dataset").val("signs").trigger("change");
 	await delay(2000);
 
-	await set_epochs(3);
+	await set_epochs(20);
 
 	await train_neural_network();	
 
@@ -330,9 +330,12 @@ async function run_tests () {
 		var this_result_ordered = this_result.sort(function (a, b) { return a - b; });
 		var highest = this_result_ordered.pop();
 
-		if(highest > (0.8 * this_result_ordered.reduce((a, b) => a + b, 0))) {
+		var real_sum = this_result_ordered.reduce((a, b) => a + b, 0);
+
+		if(highest > (0.8 * real_sum)) {
 			test_equal("There is a clear winner", true, true);
 		} else {
+			log("highest:", highest, "real_sum:", real_sum);
 			test_equal("There is NOT a clear winner", false, true);
 		}
 	}
@@ -431,9 +434,12 @@ async function run_tests () {
 		test_ok = true;
 	}
 
-	log("Approximated O(" + least_square_equation(X, Y) + ")")
-
-	test_equal("Size changing test", test_ok, true);
+	if(test_ok) {
+		test_equal("Size changing test", test_ok, true);
+	} else {
+		log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
+		test_equal("Size changing test failed", false, true);
+	}
 
 
 
