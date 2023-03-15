@@ -914,8 +914,10 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 async function get_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 
+	/*
 	log("get_valid_layer_types");
 	console.trace();
+	*/
 
 	log("last_allowed_layers_update:", last_allowed_layers_update);
 
@@ -924,13 +926,13 @@ async function get_valid_layer_types (layer_nr) {
 			if(Object.keys(allowed_layer_cache).includes(layer_nr)) {
 				return allowed_layer_cache[layer_nr];
 			} else {
-				log("Object.keys(allowed_layer_cache) does not include layer_nr");
+				//log("Object.keys(allowed_layer_cache) does not include layer_nr");
 			}
 		} else {
-			log("The Status hash is different");
+			//log("The Status hash is different");
 		}
 	} else {
-		log("last_allowed_layers_update is undefined");
+		//log("last_allowed_layers_update is undefined");
 	}
 
 	allowed_layer_cache[layer_nr] = null;
