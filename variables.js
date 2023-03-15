@@ -1341,3 +1341,7 @@ var is_cosmo_mode = false;
 var last_num_global_tensors = 0;
 var last_tensor_size_cpu = 0;
 var last_tensor_size_gpu = 0;
+
+
+
+var last_status_hash = "";

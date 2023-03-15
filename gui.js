@@ -123,7 +123,15 @@ async function get_current_status_hash() {
 
 	html_code += await get_weights_as_string();
 
-	return await md5(html_code);
+	var new_status_hash = await md5(html_code);
+
+	if(last_status_hash != new_status_hash) {
+		//log(html_code);
+		//log(new_status_hash);
+		last_status_hash = new_status_hash;
+	}
+
+	return new_status_hash;
 }
 
 /* This function returns the value of an item in a given layer, specified by classname. If the item is a checkbox, it returns whether or not the box is checked. Otherwise, it returns the value of the item. */
