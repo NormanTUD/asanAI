@@ -277,30 +277,46 @@ async function run_tests () {
 
 	await train_neural_network();	
 
+	$("#show_bars_instead_of_numbers").prop("checked", false);
+	updated_page();
+
 	$("[href='#predict_tab']").click()
 	await delay(5000);
+
 
 	var results = [];
 	var pd = $(".predict_demo_result");
 
+
 	for (var i = 0; i < pd.length; i++) {
-		var this_demo = $(pd[i]);
-		var h = this_demo.html();
-		var s = h.split("\n");
+		var all_tds = $(pd[i]).find("table>tbody>tr>td");
+
 		var r = [];
 
-		for (var j = 0; j < s.length; j++) {
-			var line = s[j];
-			if(line && line != "" && line !== null) {
-				var m = line.match(/.*: ([+-]{0,1}\d+(?:\.\d+)?).*?/);
-				if(m) {
-					var v = parseFloat(m[1]);
-					r.push(v);
-				}
+		for (var j = 0; j < all_tds.length; j++) {
+			if(j % 2 == 1) {
+				var pure_number = $(all_tds[j]).html().replace(/<b[^>]*>/, "").replace("</b>", "");
+				r.push(parseFloat(pure_number));
 			}
 		}
 
 		results.push(r);
+	}
+
+	var array_contains_nan = false;
+
+	for (var i = 0; i < results[0].length; i++){
+		// check if array value is false or NaN
+		if (isNaN(results[0][i])) {
+			array_contains_nan = true;
+		}
+	}
+
+
+	test_equal("array_contains_nan must be false (if true, this means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)", array_contains_nan, false);
+
+	if(array_contains_nan) {
+		log(results);
 	}
 
 	for (var i = 0; i < results.length; i++) {
