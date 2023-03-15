@@ -951,8 +951,8 @@ function stop_webcam() {
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	while (number_of_currently_running_updated_pages) {
-		//log("Currently in queue for updated_page");
-		await(delay(10));
+		log("Currently in queue for updated_page: " + number_of_currently_running_updated_pages);
+		return;
 	}
 
 	number_of_currently_running_updated_pages++;
@@ -1096,6 +1096,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	number_of_currently_running_updated_pages--;
+
 	return 1;
 }
 
