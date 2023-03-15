@@ -836,6 +836,11 @@ async function compile_fake_model (layer_nr, layer_type) {
 		var fake_model = await create_model(null, fake_model_structure);
 		var model_data = get_model_data();
 
+		/*
+		 *	Number of hours wasted to fix memory leak here: 1
+		 *	Please increment accordingly
+		 */
+
 		tf.tidy(() => {
 			tf.engine().startScope();
 			fake_model.compile(model_data);
