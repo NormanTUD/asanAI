@@ -1195,6 +1195,7 @@ async function take_image_from_webcam_n_times (elem) {
 }
 
 async function take_image_from_webcam (elem, nol) {
+	tf.engine().startScope();
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
@@ -1241,7 +1242,9 @@ async function take_image_from_webcam (elem, nol) {
 		l("Took photo from webcam");
 	}
 
+
 	last_shape_layer_warning();
+	tf.engine().endScope();
 }
 
 function chiSquaredTest(arr) {
