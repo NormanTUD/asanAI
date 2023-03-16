@@ -4951,17 +4951,12 @@ function clear_attrament (idname) {
 function invert_elements_in_dark_mode () {
 	var is_dark_mode = $("#theme_choser").val() == 'darkmode' ? true : false;
 
-	var css_props = [
-		'-webkit-filter',
-		'-moz-filter',
-		'-o-filter',
-		'-ms-filter'
-	];
-
 	var el = $(".invert_in_dark_mode");
 
-	for (var i = 0; i < css_props.length; i++) {
-		$(el).css(css_props[i], is_dark_mode ? 'invert(100%)' : '');
+	el.removeClass("dark_mode_inverted");
+
+	if(is_dark_mode) {
+		el.addClass("dark_mode_inverted");
 	}
 }
 
