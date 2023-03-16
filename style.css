@@ -627,5 +627,5 @@ button:disabled:hover {
 }
 
 .large_button {
-	font-size: 3vw;
+	font-size: calc(12px + 2.5vw);
 }
