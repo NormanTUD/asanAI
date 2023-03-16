@@ -930,7 +930,7 @@ async function get_valid_layer_types (layer_nr) {
 	log("last_allowed_layers_update:", last_allowed_layers_update);
 
 	if(typeof(last_allowed_layers_update) != "undefined") {
-		if(last_allowed_layers_update == await get_current_status_hash()) {
+		if(last_allowed_layers_update == await get_current_status_hash(0)) {
 			if(Object.keys(allowed_layer_cache).includes(layer_nr)) {
 				return allowed_layer_cache[layer_nr];
 			} else {
@@ -945,7 +945,7 @@ async function get_valid_layer_types (layer_nr) {
 
 	allowed_layer_cache[layer_nr] = null;
 
-	last_allowed_layers_update = await get_current_status_hash();
+	last_allowed_layers_update = await get_current_status_hash(0);
 
 	var valid_layer_types = [];
 

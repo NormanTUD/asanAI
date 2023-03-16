@@ -107,7 +107,7 @@ async function get_current_layer_container_status_hash() {
 	return await md5(html);
 }
 
-async function get_current_status_hash() {
+async function get_current_status_hash(use_weights=1) {
 	var html_code = '';
 
 	var allitems = [];
@@ -121,15 +121,13 @@ async function get_current_status_hash() {
 		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked
 	});
 
-	html_code += await get_weights_as_string();
+	if(use_weights) {
+		html_code += await get_weights_as_string();
+	}
 
 	var new_status_hash = await md5(html_code);
 
-	if(last_status_hash != new_status_hash) {
-		//log(html_code);
-		//log(new_status_hash);
-		last_status_hash = new_status_hash;
-	}
+	last_status_hash = new_status_hash;
 
 	return new_status_hash;
 }
