@@ -88,6 +88,8 @@ in creating this program:
 
 - [chatGPT](https://chat.openai.com/chat)
 
+- [sparkle.js](https://www.cssscript.com/demo/sparkle-effect/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings

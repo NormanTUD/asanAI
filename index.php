@@ -86,6 +86,7 @@
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
 		<!-- jquery -->
+		<?php minify_js("sparkle.min.js"); ?>
 		<?php minify_js("zip.js"); ?>
 		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>

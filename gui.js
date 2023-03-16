@@ -5223,6 +5223,11 @@ function cosmo_mode () {
 		is_cosmo_mode = true;
 		cosmo_wave = 1;
 
+		document.querySelector("#start_stop_training").sparkle({
+			count: 3,
+			minAge: 3000,
+			maxAge: 7000
+		});
 	}
 
 	show_cosmo_waves();
