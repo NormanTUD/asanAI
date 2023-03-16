@@ -1396,8 +1396,10 @@
 
 
 										<div class="hide_when_custom_data">
-											<hr>
-											<button onclick="show_prediction(1);">Re-predict examples</button>
+											<span id="repredict_examples_button">
+												<hr>
+												<button onclick="show_prediction(1);">Re-predict examples</button>
+											</span>
 											<div class="medium_vskip"></div>
 											<h2 class="" style="display: none">Examples</h2>
 											<div id="example_predictions">
@@ -1654,6 +1656,8 @@
 				reset_view();
 			}
 
+			var disable_alexnet = 0;
+
 			var alexnet = AlexNet();
                         async function restart_alexnet(dont_click) {
 				seed = 1;
@@ -1661,7 +1665,7 @@
 				var architecture2 = [];
 				var colors = [];
 
-				var disable_alexnet = 0;
+				disable_alexnet = 0;
 
 				for (var i = 0; i < get_number_of_layers(); i++) {
 					if(disable_alexnet) { continue; }

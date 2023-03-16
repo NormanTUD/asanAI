@@ -5166,6 +5166,7 @@ async function change_last_responsible_layer_for_image_output () {
 
 function cosmo_mode () {
 	if(is_cosmo_mode) {
+		// switch to normal mode
 		toggle_layer_view();
 		show_ribbon();
 		$("#show_layer_data").prop("checked", false)
@@ -5179,8 +5180,11 @@ function cosmo_mode () {
 		$("#hr_nav").show();
 		move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
 		$("#upload_file").show();
+		$("#repredict_examples_button").show();
+		$("#download_data").show();
 		is_cosmo_mode = false;
 	} else {
+		// switch to cosmo mode
 		toggle_layer_view();
 		hide_ribbon();
 		$("#show_layer_data").prop("checked", true)
@@ -5194,6 +5198,11 @@ function cosmo_mode () {
 		$("#hr_nav").hide();
 		$("#toggle_layers_button").hide();
 		$("#upload_file").hide();
+		$("#repredict_examples_button").hide();
+		$("#download_data").hide();
+		if(!disable_alexnet) {
+			$("#alexnet_tab_label").click();
+		}
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 	}
