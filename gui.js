@@ -4977,7 +4977,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<a class='atrament_buttons invert_in_dark_mode' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'"><img width=32 src='Eraser_icon.svg'/></a>
 		<br />
 		<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;"  />
-		<button id="clear" onclick="event.preventDefault();clear_attrament('${idname}');${customfunc}">Clear</button>
+		<button id="clear" onclick="event.preventDefault();clear_attrament('${idname}');${customfunc}">&#9003;</button>
 	</form>
 	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
