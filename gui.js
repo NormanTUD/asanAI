@@ -5008,9 +5008,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		if(customfunc) {
 			eval(customfunc);
 		}
-		if(customfunc) {
-			eval(customfunc);
-		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('strokeend', () => {

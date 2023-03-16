@@ -847,18 +847,14 @@ async function predict_handdrawn () {
 			if(show_bars_instead_of_numbers()) {
 				if(label) {
 					if(val == max) {
-						//html += "<b class='best_result'>" + label + ": " + val + "</b><br>\n";
 						html += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 					} else {
-						//html += label + ": " + predictions[0][i] + "<br>\n";
 						html += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 					}
 				} else {
 					if(val == max) {
-						//html += "<b class='best_result'>" + predictions[0][i] + "</b><br>\n";
 						html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 					} else {
-						//html += predictions[0][i] + "<br>\n";
 						html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
 					}
 				}
