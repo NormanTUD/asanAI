@@ -940,7 +940,7 @@ async function get_shape_from_array(a) {
 }
 
 function stop_webcam() {
-	$("#show_webcam_button").html("Show webcam");
+	$("#show_webcam_button").html("<span class='large_button'>&#128247;</span>");
 	if (cam) {
 		cam.stop();
 	}
@@ -5229,6 +5229,7 @@ function cosmo_mode () {
 			minAge: 3000,
 			maxAge: 7000
 		});
+
 	}
 
 	show_cosmo_waves();

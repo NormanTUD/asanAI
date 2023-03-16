@@ -1357,7 +1357,7 @@
 								<div class="container" id="predictcontainer">
 									<div>
 										<div id="own_files">
-											<button class="only_when_webcam show_cosmo_wave_2" id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
+											<button class="only_when_webcam show_cosmo_wave_2" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
 											<div id="webcam" style="display: none">

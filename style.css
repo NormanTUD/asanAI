@@ -625,3 +625,7 @@ button:disabled:hover {
 .sparkle_star {
 	font-size: 10px;
 }
+
+.large_button {
+	font-size: 3vw;
+}
