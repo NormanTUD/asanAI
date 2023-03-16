@@ -827,7 +827,6 @@ async function predict_handdrawn () {
 
 	if(model.outputShape.length == 2) {
 		var predictions = predictions_tensor.arraySync();
-		var html = "";
 
 		var max = 0;
 
@@ -837,7 +836,7 @@ async function predict_handdrawn () {
 			}
 		}
 
-		html += "<table class='predict_table'>";
+		var html = "<table class='predict_table'>";
 
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
