@@ -5224,7 +5224,8 @@ function cosmo_mode () {
 		cosmo_wave = 1;
 
 		document.querySelector("#start_stop_training").sparkle({
-			count: 3,
+			starsource: document.querySelector(".sparkle_star"),
+			count: 1,
 			minAge: 3000,
 			maxAge: 7000
 		});

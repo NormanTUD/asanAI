@@ -2036,5 +2036,8 @@
 		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
 
+		<span style="display: none">
+			<span class='sparkle_star'>&#11088;</span>
+		</span>
 	</body>
 </html>

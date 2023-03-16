@@ -621,3 +621,7 @@ button:disabled:hover {
 	-o-filter: invert(100%);
 	-ms-filter: invert(100%);
 }
+
+.sparkle_star {
+	font-size: 10px;
+}
