@@ -173,7 +173,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
-					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ") loaded...";
+					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ")...";
 					document.title = "Loading data " + percentage_text;
 					data_progressbar_div.css("width", percentage + "%")
 					percentage_div.html(percentage_text);
