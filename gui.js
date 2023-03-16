@@ -5240,10 +5240,10 @@ function show_cosmo_waves () {
 	} else {
 		for (var i = 1; i <= max_cosmo_wave; i++) {
 			if(i <= cosmo_wave) {
-				log("Showing .show_cosmo_wave_" + i);
+				//log("Showing .show_cosmo_wave_" + i);
 				$(".show_cosmo_wave_" + i).show();
 			} else {
-				log("Hiding .show_cosmo_wave_" + i);
+				//log("Hiding .show_cosmo_wave_" + i);
 				$(".show_cosmo_wave_" + i).hide();
 			}
 		}
