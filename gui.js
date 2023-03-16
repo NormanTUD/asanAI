@@ -5198,6 +5198,7 @@ function cosmo_mode () {
 		$("#repredict_examples_button").show();
 		$("#download_data").show();
 		is_cosmo_mode = false;
+		cosmo_wave = null;
 	} else {
 		// switch to cosmo mode
 		toggle_layer_view();
@@ -5220,6 +5221,28 @@ function cosmo_mode () {
 		}
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
+		cosmo_wave = 1;
+
+	}
+
+	show_cosmo_waves();
+}
+
+function show_cosmo_waves () {
+	if(typeof(cosmo_wave) == "undefined") {
+		for (var i = 1; i <= max_cosmo_wave; i++) {
+			$(".show_cosmo_wave_" + i).show();
+		}
+	} else {
+		for (var i = 1; i <= max_cosmo_wave; i++) {
+			if(i <= cosmo_wave) {
+				log("Showing .show_cosmo_wave_" + i);
+				$(".show_cosmo_wave_" + i).show();
+			} else {
+				log("Hiding .show_cosmo_wave_" + i);
+				$(".show_cosmo_wave_" + i).hide();
+			}
+		}
 	}
 }
 
