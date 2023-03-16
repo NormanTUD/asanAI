@@ -5229,6 +5229,10 @@ function cosmo_mode () {
 }
 
 function show_cosmo_waves () {
+	if(!is_cosmo_mode) {
+		return;
+	}
+
 	if(typeof(cosmo_wave) == "undefined") {
 		for (var i = 1; i <= max_cosmo_wave; i++) {
 			$(".show_cosmo_wave_" + i).show();

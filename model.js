@@ -1304,8 +1304,10 @@ function input_shape_is_image () {
 	var shape = get_input_shape();
 	if(shape.length == 3 && shape[2] == 3) {
 		$(".input_shape_is_image").show();
+		show_cosmo_waves();
 		return true;
 	}
 	$(".input_shape_is_image").hide();
+	show_cosmo_waves();
 	return false;
 }
