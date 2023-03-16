@@ -449,5 +449,7 @@ $(document).ready(async function() {
 
 	force_download_image_preview_data();
 
+	invert_elements_in_dark_mode();
+
 	l("Site is ready");
 });
