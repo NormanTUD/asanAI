@@ -1356,8 +1356,6 @@
 								<div class="container" id="predictcontainer">
 									<div>
 										<div id="own_files">
-											<h2>Own files</h2>
-
 											<button class="only_when_webcam" id="show_webcam_button" onclick="show_webcam();">Show webcam</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
@@ -1378,10 +1376,10 @@
 
 											<br>
 
-											<div class="hide_when_no_image">
+											<span class="hide_when_no_image">
 												<div id="upload_file" class="show_data"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
 												<img style="display:none" id="output"/>
-											</div>
+											</span>
 
 											<br>
 

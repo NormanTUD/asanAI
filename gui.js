@@ -5178,6 +5178,7 @@ function cosmo_mode () {
 		$(".navi_list").show();
 		$("#hr_nav").show();
 		move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
+		$("#upload_file").show();
 		is_cosmo_mode = false;
 	} else {
 		toggle_layer_view();
@@ -5192,6 +5193,7 @@ function cosmo_mode () {
 		$(".navi_list").hide();
 		$("#hr_nav").hide();
 		$("#toggle_layers_button").hide();
+		$("#upload_file").hide();
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 	}
