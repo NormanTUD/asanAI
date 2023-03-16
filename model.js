@@ -828,7 +828,10 @@ async function compile_fake_model (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
+	tf.engine().startScope();
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
+
+	var ret = false;
 
 	try {
 		var start_tensors = tf.memory()["numTensors"];
@@ -841,20 +844,20 @@ async function compile_fake_model (layer_nr, layer_type) {
 		 *	Please increment accordingly
 		 */
 
-		tf.tidy(() => {
-			tf.engine().startScope();
-			fake_model.compile(model_data);
-			tf.engine().endScope();
+		fake_model.compile(model_data);
 
-			dispose(model_data);
-		});
+		model_data.dispose();
+		fake_model.dispose();
 
-		log("after compile: " + (tf.memory()["numTensors"] - start_tensors) + " new tensors");
+		ret = true;
 	} catch (e) {
-		return false;
+		ret = false;
 	}
 
-	return true;
+	tf.engine().endScope();
+	log("after compile: " + (tf.memory()["numTensors"] - start_tensors) + " new tensors");
+
+	return ret;
 }
 
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
