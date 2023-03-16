@@ -601,3 +601,7 @@ button:disabled:hover {
 	border-collapse: collapse;
 }
 */
+
+.atrament_buttons {
+	font-size: 3vw;
+}

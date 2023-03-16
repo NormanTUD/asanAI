@@ -4952,13 +4952,11 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	}
 	var code = `<form>
 		<label>Thickness</label><br />
-		<input class="show_data"type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
-		<label>Mode</label>
-		<select onchange="atrament_data['${idname}']['atrament'].mode = event.target.value;" autocomplete="off">
-			<option value="draw" default>Draw</option>
-			<option value="fill" default>Fill</option>
-			<option value="erase" default>Erase</option>
-		</select><br />
+		<input class="show_data" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" /><br />
+		<a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'"><img width=32 src='pen.png'/></a>
+		<a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'"><img width=32 src='Fill-icon.svg'></a>
+		<a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'"><img width=32 src='Eraser_icon.svg'/></a>
+		<br />
 		<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;"  />
 		<button id="clear" onclick="event.preventDefault();clear_attrament('${idname}');${customfunc}">Clear</button>
 	</form>
