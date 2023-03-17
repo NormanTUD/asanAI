@@ -600,6 +600,10 @@ button:disabled:hover {
 }
 */
 
+.atrament_buttons_small {
+	font-size: 1.5vw;
+}
+
 .atrament_buttons {
 	font-size: 3vw;
 }
@@ -626,4 +630,8 @@ button:disabled:hover {
 
 .large_button {
 	font-size: calc(12px + 2.5vw);
+}
+
+.no_mark {
+	user-select: none;
 }
