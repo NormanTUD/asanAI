@@ -1494,13 +1494,13 @@ async function remove_layer(item) {
 		Swal.fire({
 			icon: 'error',
 			title: 'Oops [2]...',
-			text: 'You cannot remove the last layer of your model.',
+			text: 'You cannot remove the last remaining layer of your model.',
 		});
 
 	}
 
 	write_descriptions();
-	rename_labels();
+	//rename_labels();
 	predict_handdrawn();
 
 	l("Removed layer");

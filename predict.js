@@ -854,7 +854,7 @@ async function predict_handdrawn () {
 					if(val == max) {
 						html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 					} else {
-						html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>>";
+						html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 					}
 				}
 			} else {

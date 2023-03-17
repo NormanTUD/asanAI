@@ -1397,12 +1397,16 @@
 
 
 										<div class="hide_when_custom_data">
+											<hr>
+											<hr>
+											<!--
 											<span id="repredict_examples_button">
 												<hr>
 												<button onclick="show_prediction(1);">Re-predict examples</button>
 											</span>
 											<div class="medium_vskip"></div>
 											<h2 class="" style="display: none">Examples</h2>
+											-->
 											<div id="example_predictions">
 											</div>
 										</div>
