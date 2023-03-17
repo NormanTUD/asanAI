@@ -90,6 +90,8 @@ in creating this program:
 
 - [sparkle.js](https://www.cssscript.com/demo/sparkle-effect/)
 
+- [Manicule](https://news.lib.wvu.edu/2017/08/28/the-first-post-it-note-the-manicule/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
