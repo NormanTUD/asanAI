@@ -6,7 +6,8 @@ basename=$(echo $INPUT | sed -e 's/\.[a-zA-Z]*$//')
 
 echo $INPUT
 echo $basename
-exit
+
+set -x
 
 gmic $INPUT +sketchbw 1 reverse "blur[-1]" 3 "blend[-2,-1]" overlay "${basename}_sketchbw.png"
 gmic $INPUT sponge "${basename}_sponge.png"
