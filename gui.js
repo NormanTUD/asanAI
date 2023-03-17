@@ -3483,7 +3483,7 @@ function addLayer(canvas_id, transparency) {
 	// Add the transparency slider to the document
 	
 	$("#" + canvas_id).parent().append("<br>");
-	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' onkeydown="return event.key != 'Enter';" class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
+	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
 	$("#" + canvas_id).parent().append(color_picker_code);
 	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
 
@@ -4968,7 +4968,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	if(!customfunc) {
 		customfunc = "";
 	}
-	var code = `<form class='no_mark'>
+	var code = `<form class='no_mark' onkeydown="return event.key != 'Enter';">
 		<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this);"><img width=32 src='pen.png'/></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); "><img width=32 src='Fill-icon.svg'></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this);"><img width=32 src='Eraser_icon.svg'/></a></span>
