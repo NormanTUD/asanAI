@@ -3986,16 +3986,24 @@ function _allow_training() {
 	}
 }
 
+function show_layer_view() {
+	$("#layers_container_left").show();
+	$(".descriptions_of_layers").show();
+	write_descriptions();
+	$("#toggle_layer_view_button").html("&#x1F5D6;");
+}
+
+function hide_layer_view () {
+	$("#layers_container_left").hide();
+	$(".descriptions_of_layers").hide();
+	$("#toggle_layer_view_button").html("&#x1F5D7;");
+}
+
 function toggle_layer_view() {
 	if (is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
-		$("#layers_container_left").show();
-		$(".descriptions_of_layers").show();
-		write_descriptions();
-		$("#toggle_layer_view_button").html("&#x1F5D6;");
+		show_layer_view();
 	} else {
-		$("#layers_container_left").hide();
-		$(".descriptions_of_layers").hide();
-		$("#toggle_layer_view_button").html("&#x1F5D7;");
+		hide_layer_view();
 	}
 
 	write_descriptions();
@@ -5196,7 +5204,7 @@ function cosmo_mode () {
 	if(is_cosmo_mode) {
 		// switch to normal mode
 		l("Exiting cosmo mode");
-		toggle_layer_view();
+		show_layer_view();
 		show_ribbon();
 		$("#show_layer_data").prop("checked", false)
 		$("#show_hide_ribbon_button").show();
@@ -5213,11 +5221,12 @@ function cosmo_mode () {
 		$("#download_data").show();
 		is_cosmo_mode = false;
 		cosmo_wave = null;
+
 		setCookie("cosmo_mode", 0);
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
-		toggle_layer_view();
+		hide_layer_view();
 		hide_ribbon();
 		$("#show_layer_data").prop("checked", true)
 		$("#show_hide_ribbon_button").hide();
@@ -5237,7 +5246,7 @@ function cosmo_mode () {
 		}
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
-		cosmo_wave = 1;
+		cosmo_wave = null;
 
 		sparkle_one_element($("#start_stop_training"))
 
