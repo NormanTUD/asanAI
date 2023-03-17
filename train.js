@@ -311,6 +311,8 @@ function get_fit_data () {
 				predict_handdrawn();
 			}
 		}
+
+		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
@@ -548,6 +550,8 @@ async function run_neural_network () {
 			log("y-shape:", xs_and_ys["y"].shape);
 			*/
 			weights_as_string_cache = false;
+
+			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");

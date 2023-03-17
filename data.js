@@ -218,7 +218,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 
 	if(!skip_real_image_download && !dont_show_swal) {
 		await Swal.fire({
-			title: 'Generating tensors from images...',
+			title: 'Generating tensors from images [0]...',
 			html: "This may take some time, but your computer is working!",
 			timer: 2000,
 			showConfirmButton: false
@@ -523,7 +523,7 @@ async function get_xs_and_ys () {
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(data_origin == "image") {
 			Swal.fire({
-				title: 'Generating tensors from images...',
+				title: 'Generating tensors from images [1]...',
 				html: "This may take some time, but your computer is working!",
 				timer: 2000,
 				showConfirmButton: false
@@ -675,7 +675,7 @@ async function get_xs_and_ys () {
 
 			l("Done generating data from images");
 			//log("B", x.shape);
-
+			
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (data_origin == "tensordata") {
 			x = numpy_str_to_tf_tensor(x_file, max_number_values);
