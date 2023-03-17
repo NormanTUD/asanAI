@@ -5246,7 +5246,6 @@ function cosmo_mode () {
 		}
 		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
-		cosmo_wave = null;
 
 		sparkle_one_element($("#start_stop_training"))
 
