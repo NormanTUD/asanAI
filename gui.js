@@ -4236,7 +4236,8 @@ function hide_tab_label(label) {
 }
 
 function show_tab_label(label, click) {
-	logt(`Trying label ${label} (click: ${click})`);
+	//logt(`Trying label ${label} (click: ${click})`);
+
 	var this_label_item = $("#" + label);
 	assert(this_label_item.length == 1, "Invalid or double label " + label);
 	$(this_label_item).show().parent().show();
