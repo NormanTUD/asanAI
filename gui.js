@@ -5258,6 +5258,10 @@ function cosmo_mode () {
 		$("#toggle_layers_button").hide();
 
 		setCookie("cosmo_mode", 1);
+
+		if(typeof(cosmo_wave) == "object") {
+			cosmo_wave = 0;
+		}
 	}
 
 	show_cosmo_waves();
