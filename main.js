@@ -455,5 +455,24 @@ $(document).ready(async function() {
 		cosmo_mode();
 	}
 
+	document.addEventListener('keydown', (event) => {
+		const currentTime = new Date().getTime();
+
+		if (event.key === 'Escape') {
+			if (currentTime - lastEscapeTime < 1000) {
+				escapeCount++;
+			} else {
+				escapeCount = 1;
+			}
+			lastEscapeTime = currentTime;
+
+			if (escapeCount === 3) {
+				escapeCount = 0;
+				lastEscapeTime = 0;
+				cosmo_mode();
+			}
+		}
+	});
+
 	l("Site is ready");
 });

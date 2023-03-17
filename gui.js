@@ -5180,6 +5180,7 @@ async function change_last_responsible_layer_for_image_output () {
 function cosmo_mode () {
 	if(is_cosmo_mode) {
 		// switch to normal mode
+		l("Exiting cosmo mode");
 		toggle_layer_view();
 		show_ribbon();
 		$("#show_layer_data").prop("checked", false)
@@ -5200,6 +5201,7 @@ function cosmo_mode () {
 		setCookie("cosmo_mode", 0);
 	} else {
 		// switch to cosmo mode
+		l("Starting cosmo mode");
 		toggle_layer_view();
 		hide_ribbon();
 		$("#show_layer_data").prop("checked", true)
