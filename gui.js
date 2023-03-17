@@ -904,6 +904,9 @@ function hide_no_conv_stuff() {
 		$("#data_plotter").hide();
 	}
 
+	if(is_cosmo_mode) {
+		$(".hide_in_cosmo_mode").hide();
+	}
 
 	if(input_shape_is_image()) {
 		$(".hide_when_no_image").show();
@@ -5190,14 +5193,16 @@ function sparkle_one_element (element) {
 		$(last_sparkle_element).find("sparkle-div").remove()
 	}
 
-	$(element)[0].sparkle({
-		starsource: document.querySelector(".sparkle_star"),
-		count: 1,
-		minAge: 3000,
-		maxAge: 7000
-	});
+	if(element) {
+		$(element)[0].sparkle({
+			starsource: document.querySelector(".sparkle_star"),
+			count: 1,
+			minAge: 3000,
+			maxAge: 7000
+		});
 
-	last_sparkle_element = element;
+		last_sparkle_element = element;
+	}
 }
 
 function cosmo_mode () {
@@ -5222,6 +5227,8 @@ function cosmo_mode () {
 		is_cosmo_mode = false;
 		cosmo_wave = null;
 
+		sparkle_one_element();
+
 		setCookie("cosmo_mode", 0);
 	} else {
 		// switch to cosmo mode
@@ -5237,7 +5244,6 @@ function cosmo_mode () {
 		$("#navbar1").hide();
 		$(".navi_list").hide();
 		$("#hr_nav").hide();
-		$("#toggle_layers_button").hide();
 		$("#upload_file").hide();
 		$("#repredict_examples_button").hide();
 		$("#download_data").hide();
@@ -5248,6 +5254,8 @@ function cosmo_mode () {
 		is_cosmo_mode = true;
 
 		sparkle_one_element($("#start_stop_training"))
+
+		$("#toggle_layers_button").hide();
 
 		setCookie("cosmo_mode", 1);
 	}

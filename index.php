@@ -1347,7 +1347,7 @@
 								</span>
 
 								
-								<span class="hide_when_no_conv_visualizations">
+								<span class="hide_when_no_conv_visualizations hide_in_cosmo_mode">
 									Show gradCAM?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
 								</span>
