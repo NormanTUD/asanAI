@@ -4611,9 +4611,9 @@ async function set_custom_image_training () {
 async function set_custom_webcam_training_data() {
 	await init_webcams();
 
-	if($("#data_origin").val() != "image") {
-		$("#data_origin").val("image").trigger("change");
-	}
+	//if($("#data_origin").val() != "image") {
+	$("#data_origin").val("image").trigger("change");
+	//}
 
 	if(!cam_data) {
 		get_data_from_webcam();
@@ -4622,6 +4622,8 @@ async function set_custom_webcam_training_data() {
 	if(!cam) {
 		show_webcam();
 	}
+
+	$("#data_origin").val("image").trigger("change");
 }
 
 function toggle_layers() {
