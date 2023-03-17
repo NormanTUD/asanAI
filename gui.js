@@ -5177,6 +5177,21 @@ async function change_last_responsible_layer_for_image_output () {
 	}
 }
 
+function sparkle_one_element (element) {
+	if(last_sparkle_element) {
+		$(last_sparkle_element).find("sparkle-div").remove()
+	}
+
+	$(element)[0].sparkle({
+		starsource: document.querySelector(".sparkle_star"),
+		count: 1,
+		minAge: 3000,
+		maxAge: 7000
+	});
+
+	last_sparkle_element = element;
+}
+
 function cosmo_mode () {
 	if(is_cosmo_mode) {
 		// switch to normal mode
@@ -5224,12 +5239,7 @@ function cosmo_mode () {
 		is_cosmo_mode = true;
 		cosmo_wave = 1;
 
-		document.querySelector("#start_stop_training").sparkle({
-			starsource: document.querySelector(".sparkle_star"),
-			count: 1,
-			minAge: 3000,
-			maxAge: 7000
-		});
+		sparkle_one_element($("#start_stop_training"))
 
 		setCookie("cosmo_mode", 1);
 	}
@@ -5250,7 +5260,13 @@ function show_cosmo_waves () {
 		for (var i = 1; i <= max_cosmo_wave; i++) {
 			if(i <= cosmo_wave) {
 				//log("Showing .show_cosmo_wave_" + i);
-				$(".show_cosmo_wave_" + i).show();
+				var all_elements = $(".show_cosmo_wave_" + i);
+				all_elements.show();
+
+				for (var k = 0; k < all_elements.length; k++) {
+					sparkle_one_element(all_elements[k]);
+				}
+				
 			} else {
 				//log("Hiding .show_cosmo_wave_" + i);
 				$(".show_cosmo_wave_" + i).hide();

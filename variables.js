@@ -1351,3 +1351,5 @@ var max_cosmo_wave = 2;
 
 var escapeCount = 0;
 var lastEscapeTime = 0;
+
+var last_sparkle_element = null;
