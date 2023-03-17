@@ -5197,6 +5197,7 @@ function cosmo_mode () {
 		$("#download_data").show();
 		is_cosmo_mode = false;
 		cosmo_wave = null;
+		setCookie("cosmo_mode", 0);
 	} else {
 		// switch to cosmo mode
 		toggle_layer_view();
@@ -5228,6 +5229,7 @@ function cosmo_mode () {
 			maxAge: 7000
 		});
 
+		setCookie("cosmo_mode", 1);
 	}
 
 	show_cosmo_waves();

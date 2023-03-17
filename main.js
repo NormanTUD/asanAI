@@ -451,5 +451,9 @@ $(document).ready(async function() {
 
 	invert_elements_in_dark_mode();
 
+	if(getCookie("cosmo_mode")) {
+		cosmo_mode();
+	}
+
 	l("Site is ready");
 });
