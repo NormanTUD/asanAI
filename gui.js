@@ -3324,7 +3324,7 @@ function delete_custom_drawing_layer () {
 					delete(atrament_data[this_canvas_id]);
 				}
 			} catch (e) {
-				console.log(e);
+				//console.log(e);
 			}
 		}
 	}
