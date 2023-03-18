@@ -4483,7 +4483,7 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function setCookie(name,value,days=365) {
+function setCookie(name, value, days=365) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
@@ -5233,7 +5233,7 @@ function cosmo_mode () {
 
 		sparkle_one_element();
 
-		setCookie("cosmo_mode", 0);
+		setCookie("cosmo_mode", "0");
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
@@ -5261,7 +5261,7 @@ function cosmo_mode () {
 
 		$("#toggle_layers_button").hide();
 
-		setCookie("cosmo_mode", 1);
+		setCookie("cosmo_mode", "1");
 
 		if(typeof(cosmo_wave) == "object") {
 			cosmo_wave = 0;
