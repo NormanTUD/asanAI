@@ -4,12 +4,12 @@
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",
 	"epochs": 200,
-	"batchSize": 5,
+	"batchSize": 20,
 	"validationSplit": 10,
 	"max_number_of_files_per_category": 20,
 
-	"width": 16,
-	"height": 16,
+	"width": 28,
+	"height": 28,
 
 	"learningRate": 0.001,
 	"rho": 0.89,

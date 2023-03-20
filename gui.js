@@ -508,10 +508,16 @@ function insert_initializer_options(layer_nr, initializer_type) {
 	if (initializer.length) {
 		var initializer_name = initializer.val();
 
-		var options = initializer_options[initializer_name]["options"];
+		if(initializer_name) {
+			var options = initializer_options[initializer_name]["options"];
 
-		for (var i = 0; i < options.length; i++) {
-			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
+			for (var i = 0; i < options.length; i++) {
+				insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
+			}
+		} else {
+			log("ERROR: Initializer is empty!");
+			log(initializer);
+			log(initializer_name);
 		}
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
