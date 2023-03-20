@@ -5234,6 +5234,7 @@ function cosmo_mode () {
 
 		sparkle_one_element();
 
+		/*
 		var url = window.location.href;
 
 		if (url.indexOf('?') > -1){
@@ -5243,6 +5244,7 @@ function cosmo_mode () {
 		}
 
 		window.location.href = url;
+		*/
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
