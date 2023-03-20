@@ -5225,7 +5225,7 @@ function cosmo_mode () {
 		$("#navbar1").show();
 		$(".navi_list").show();
 		$("#hr_nav").show();
-		move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
+		//move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
 		$("#upload_file").show();
 		$("#repredict_examples_button").show();
 		$("#download_data").show();
@@ -5234,7 +5234,21 @@ function cosmo_mode () {
 
 		sparkle_one_element();
 
+<<<<<<< HEAD
 		setCookie("cosmo_mode", "0");
+=======
+		/*
+		var url = window.location.href;
+
+		if (url.indexOf('?') > -1){
+			url += '&no_cosmo=1'
+		} else {
+			url += '?no_cosmo=1'
+		}
+
+		window.location.href = url;
+		*/
+>>>>>>> master
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
@@ -5255,7 +5269,7 @@ function cosmo_mode () {
 		if(!disable_alexnet) {
 			$("#alexnet_tab_label").click();
 		}
-		move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
+		//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 
 		sparkle_one_element($("#start_stop_training"))
