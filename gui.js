@@ -1898,6 +1898,7 @@ async function set_config(index) {
 							value = get_initializer_name(value["class_name"]);
 						}
 
+
 						if (!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
 							set_item_value(i, item_name, value);
 						}
@@ -2334,6 +2335,11 @@ function detect_kernel_initializer(original_kernel_initializer_data) {
 	} else {
 		//log("No mode");
 		//log(kernel_initializer_data);
+		if(original_kernel_initializer_data["class_name"] == "Ones") {
+			return "ones";
+		} else if (original_kernel_initializer_data["class_name"] == "Zeros") {
+			return "zeros";
+		}
 
 		return original_kernel_initializer_data["class_name"];
 	}
