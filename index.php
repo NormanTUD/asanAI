@@ -7,6 +7,10 @@
 		'secure' => true,
 		'samesite' => 'None'
 	];
+
+	if(isset($_GET["no_cosmo"])) {
+		setcookie('cosmo_mode', null, -1, '/');
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en" style="font-size: 0.75em;">
