@@ -8,7 +8,7 @@
 		'samesite' => 'None'
 	];
 
-	if(array_key_exists("no_cosmo", $_GET)) {
+	if(isset($_GET["no_cosmo"])) {
 		setcookie('cosmo_mode', null, -1, '/');
 	}
 ?>
