@@ -5234,21 +5234,7 @@ function cosmo_mode () {
 
 		sparkle_one_element();
 
-<<<<<<< HEAD
 		setCookie("cosmo_mode", "0");
-=======
-		/*
-		var url = window.location.href;
-
-		if (url.indexOf('?') > -1){
-			url += '&no_cosmo=1'
-		} else {
-			url += '?no_cosmo=1'
-		}
-
-		window.location.href = url;
-		*/
->>>>>>> master
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
