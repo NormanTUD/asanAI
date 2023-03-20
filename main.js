@@ -451,7 +451,7 @@ $(document).ready(async function() {
 
 	invert_elements_in_dark_mode();
 
-	if(getCookie("cosmo_mode")) {
+	if(getCookie("cosmo_mode") && document.location.href.indexOf('no_cosmo') === -1) {
 		cosmo_mode();
 	}
 

@@ -5213,6 +5213,7 @@ function cosmo_mode () {
 	if(is_cosmo_mode) {
 		// switch to normal mode
 		l("Exiting cosmo mode");
+		setCookie("cosmo_mode", 0);
 		show_layer_view();
 		show_ribbon();
 		$("#show_layer_data").prop("checked", false)
@@ -5233,7 +5234,15 @@ function cosmo_mode () {
 
 		sparkle_one_element();
 
-		setCookie("cosmo_mode", 0);
+		var url = window.location.href;
+
+		if (url.indexOf('?') > -1){
+			url += '&no_cosmo=1'
+		} else {
+			url += '?no_cosmo=1'
+		}
+
+		window.location.href = url;
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
