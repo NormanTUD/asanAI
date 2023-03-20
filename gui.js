@@ -5213,7 +5213,7 @@ function cosmo_mode () {
 	if(is_cosmo_mode) {
 		// switch to normal mode
 		l("Exiting cosmo mode");
-		setCookie("cosmo_mode", 0);
+		setCookie("cosmo_mode", "0");
 		show_layer_view();
 		show_ribbon();
 		$("#show_layer_data").prop("checked", false)
@@ -5233,11 +5233,10 @@ function cosmo_mode () {
 		cosmo_wave = null;
 
 		sparkle_one_element();
-
-		setCookie("cosmo_mode", "0");
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
+		setCookie("cosmo_mode", "1");
 		hide_layer_view();
 		hide_ribbon();
 		$("#show_layer_data").prop("checked", true)
@@ -5262,7 +5261,6 @@ function cosmo_mode () {
 
 		$("#toggle_layers_button").hide();
 
-		setCookie("cosmo_mode", "1");
 
 		if(typeof(cosmo_wave) == "object") {
 			cosmo_wave = 0;
