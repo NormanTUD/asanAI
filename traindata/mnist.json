@@ -6,7 +6,7 @@
 	"epochs": 200,
 	"batchSize": 20,
 	"validationSplit": 10,
-	"max_number_of_files_per_category": 20,
+	"max_number_of_files_per_category": 30,
 
 	"width": 28,
 	"height": 28,
