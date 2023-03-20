@@ -451,7 +451,11 @@ $(document).ready(async function() {
 
 	invert_elements_in_dark_mode();
 
+<<<<<<< HEAD
 	if(getCookie("cosmo_mode") == "1") {
+=======
+	if(getCookie("cosmo_mode") && document.location.href.indexOf('no_cosmo') === -1) {
+>>>>>>> 4c7fa3c09 (fixed cookie problem)
 		cosmo_mode();
 	}
 
