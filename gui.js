@@ -5292,15 +5292,17 @@ function show_cosmo_waves () {
 			$(".show_cosmo_wave_" + i).show();
 		}
 	} else {
-		for (var i = 1; i <= max_cosmo_wave; i++) {
+		for (var i = 0; i <= max_cosmo_wave; i++) {
 			if(i <= cosmo_wave) {
 				//log("Showing .show_cosmo_wave_" + i);
 				var all_elements = $(".show_cosmo_wave_" + i);
 				all_elements.show();
 
-				var all_elements = $(".manicule_wave_" + i);
-				for (var k = 0; k < all_elements.length; k++) {
-					new MoveImageRight(all_elements[k], 'manicule.svg');
+				var k = $(".manicule_wave_" + i);
+				if(k.length) {
+					new MoveImageRight(k[0], 'manicule.svg');
+				} else {
+					new MoveImageRight(null, 'manicule.svg');
 				}
 				
 			} else {
@@ -5323,6 +5325,8 @@ function show_bars_instead_of_numbers () {
 
 class MoveImageRight {
 	constructor(elementSelector, imageUrl) {
+		log("MoveImageRight elementSelector:", elementSelector);
+		console.trace();
 		remove_manicule();
 
 		if(elementSelector) {
@@ -5340,7 +5344,7 @@ class MoveImageRight {
 			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
 
 			var ntop = $(elementSelector).position()["top"];
-			var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();;
+			var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
@@ -5358,6 +5362,8 @@ class MoveImageRight {
 			this.moveImageInCircle(); // call moveImageInCircle() to start the animation
 
 			manicule = this;
+		} else {
+			log("Empty elementSelector");
 		}
 	}
 
