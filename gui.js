@@ -5244,7 +5244,7 @@ function cosmo_mode () {
 		is_cosmo_mode = false;
 		cosmo_wave = null;
 
-		new MoveImageRight('', 'manicule.svg');
+		new MoveImageRight(null, 'manicule.svg');
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
@@ -5269,14 +5269,14 @@ function cosmo_mode () {
 		//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 
-		new MoveImageRight('#start_stop_training', 'manicule.svg');
 
 		$("#toggle_layers_button").hide();
-
 
 		if(typeof(cosmo_wave) == "object") {
 			cosmo_wave = 0;
 		}
+
+		new MoveImageRight($('#start_stop_training')[0], 'manicule.svg');
 	}
 
 	show_cosmo_waves();
@@ -5326,7 +5326,7 @@ class MoveImageRight {
 		manicule = null;
 
 		if(elementSelector) {
-			this.element = document.querySelector(elementSelector);
+			this.element = elementSelector;
 			this.image = new Image();
 			this.image.src = imageUrl;
 
