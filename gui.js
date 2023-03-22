@@ -5325,19 +5325,64 @@ class MoveImageRight {
 		this.element = document.querySelector(elementSelector);
 		this.image = new Image();
 		this.image.src = imageUrl;
+
+		var ntop = $("#start_stop_training").position()["top"]// + $("#start_stop_training").height();
+		var nleft = $("#start_stop_training").position()["left"] + 20// + $("#start_stop_training").width();
+
 		this.image.style.position = 'absolute';
-		this.image.style.display = 'none';
+		this.image.style.display = 'block'; // changed to block so that the image is shown by default
+		this.image.style.width = `70px`;
+		this.image.style.top = ntop + "px";
+		this.image.style.left = nleft + "px";
+		this.image.style.zIndex = 100000;
+
+		this.image.classList.add('invert_in_dark_mode');
+
 		document.body.appendChild(this.image);
+		//this.moveImageInCircle(); // call moveImageInCircle() to start the animation
 	}
 
-	show() {
+	moveImageInCircle() {
+		// calculate the center point of the element
 		const elementRect = this.element.getBoundingClientRect();
-		const imageRect = this.image.getBoundingClientRect();
-		this.image.style.left = `${elementRect.right}px`;
-		this.image.style.top = `${elementRect.top + window.scrollY + 10}px`;
-		this.image.style.width = `70px`;
-		this.image.style.zIndex = `1000000`;
-		this.image.style.display = 'block';
+		const centerX = elementRect.left + elementRect.width / 2;
+		const centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
+
+		// calculate the radius of the circle
+		const radius = 10;
+
+		// set up the animation
+		this.image.style.animation = 'moveInCircle 2s linear infinite';
+		this.image.style.animationName = 'moveInCircle';
+
+		// define the keyframes for the animation
+		const keyframes = `
+			0% {
+				transform: translate(${centerX + radius}px, ${centerY}px);
+			}
+			25% {
+				transform: translate(${centerX}px, ${centerY + radius}px);
+			}
+			50% {
+				transform: translate(${centerX - radius}px, ${centerY}px);
+			}
+			75% {
+				transform: translate(${centerX}px, ${centerY - radius}px);
+			}
+			100% {
+				transform: translate(${centerX + radius}px, ${centerY}px);
+			}
+		`;
+
+		// add the keyframes to a style sheet
+		const styleSheet = document.createElement('style');
+		styleSheet.innerHTML = `
+			@keyframes moveInCircle {
+				${keyframes}
+			}
+		`;
+
+		document.head.appendChild(styleSheet);
 	}
 
 	hide() {
