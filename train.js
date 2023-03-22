@@ -738,6 +738,11 @@ function visualize_train () {
 		return;
 	}
 
+	if($("#data_origin").val() != "default") {
+		l("Disabling visualize_train because this only works for default, not for custom data of any kind");
+		return;
+	}
+
 	if(!is_classification) {
 		l("Disabling visualize_train because this only works when using classification");
 		return;
