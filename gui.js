@@ -5319,3 +5319,29 @@ function show_bars_instead_of_numbers () {
 
 	return false;
 }
+
+class MoveImageRight {
+	constructor(elementSelector, imageUrl) {
+		this.element = document.querySelector(elementSelector);
+		this.image = new Image();
+		this.image.src = imageUrl;
+		this.image.style.position = 'absolute';
+		this.image.style.display = 'none';
+		document.body.appendChild(this.image);
+	}
+
+	show() {
+		const elementRect = this.element.getBoundingClientRect();
+		const imageRect = this.image.getBoundingClientRect();
+		this.image.style.left = `${elementRect.right}px`;
+		this.image.style.top = `${elementRect.top + window.scrollY + 10}px`;
+		this.image.style.width = `70px`;
+		this.image.style.zIndex = `1000000`;
+		this.image.style.display = 'block';
+	}
+
+	hide() {
+		this.image.style.display = 'none';
+	}
+}
+
