@@ -511,6 +511,8 @@ function explain_error_msg (err) {
 		var last_layer_name = model.layers[model.layers.length - 1].name;
 		if(err.includes(last_layer_name) && err.includes("Error when checking target") && err.includes("but got array with shape")) {
 			explanation = "This may mean that the number of neurons in the last layer do not conform with the data structure in the training-data-outputs.";
+		} else if(err.includes("does not match the shape of the rest")) {
+			explanation = "Have you repeatedly pressed 'Start training'? The second one may have started while the first one was not ready, and re-downloaded images. Please reload the page.";
 		} else if(err.includes("Failed to compile fragment shader")) {
 			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
 		} else if(err.includes("target expected a batch of elements where each example")) {
