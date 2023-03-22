@@ -716,6 +716,11 @@ function randomInRange(start,end){
        return Math.floor(Math.random() * (end - start + 1) + start);
 }
 
+
+
+
+
+
 function drawImages(images, categories, probabilities, numCategories) {
 	var targetSize = 16; // Change this to the desired size
 
@@ -750,7 +755,7 @@ function drawImages(images, categories, probabilities, numCategories) {
 		ctx.fillText(label, margin - 10, yPos);
 		ctx.beginPath();
 		ctx.moveTo(margin - 5, yPos);
-		ctx.lineTo(margin, yPos);
+		ctx.lineTo(canvas.width, yPos);
 		ctx.stroke();
 	}
 
@@ -760,6 +765,10 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var xPos = margin + i * xStep + xStep / 2;
 		var label = categoryNames[i];
 		ctx.fillText(label, xPos, canvas.height - margin + 20);
+		ctx.beginPath();
+		ctx.moveTo(xPos, canvas.height - margin + 20);
+		ctx.lineTo(xPos, canvas.width);
+		ctx.stroke();
 	}
 
 	// draw images
@@ -777,7 +786,7 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var width = image.width * scale;
 		var height = image.height * scale;
 		var imageX = xPos - width / 2;
-		imageX += margin;
+		imageX += margin + 20;
 		imageX += randomInRange(-(2 * targetSize), 2*targetSize);
 		var imageY = yPos - height / 2;
 		ctx.drawImage(image, imageX, imageY, width, height);
