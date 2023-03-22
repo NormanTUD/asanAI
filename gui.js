@@ -5244,7 +5244,7 @@ function cosmo_mode () {
 		is_cosmo_mode = false;
 		cosmo_wave = null;
 
-		sparkle_one_element();
+		new MoveImageRight('', 'manicule.svg');
 	} else {
 		// switch to cosmo mode
 		l("Starting cosmo mode");
@@ -5269,7 +5269,7 @@ function cosmo_mode () {
 		//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 
-		sparkle_one_element($("#start_stop_training"))
+		new MoveImageRight('#start_stop_training', 'manicule.svg');
 
 		$("#toggle_layers_button").hide();
 
@@ -5299,7 +5299,7 @@ function show_cosmo_waves () {
 				all_elements.show();
 
 				for (var k = 0; k < all_elements.length; k++) {
-					sparkle_one_element(all_elements[k]);
+					new MoveImageRight(all_elements[k], 'manicule.svg');
 				}
 				
 			} else {
@@ -5325,32 +5325,34 @@ class MoveImageRight {
 		$(".manicule").remove();
 		manicule = null;
 
-		this.element = document.querySelector(elementSelector);
-		this.image = new Image();
-		this.image.src = imageUrl;
+		if(elementSelector) {
+			this.element = document.querySelector(elementSelector);
+			this.image = new Image();
+			this.image.src = imageUrl;
 
-		//var ntop = $("#start_stop_training").position()["top"] + 35; // + $("#start_stop_training").height();
-		//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
+			//var ntop = $("#start_stop_training").position()["top"] + 35; // + $("#start_stop_training").height();
+			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
 
-		var ntop = $(elementSelector).position()["top"];
-		var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();;
+			var ntop = $(elementSelector).position()["top"];
+			var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();;
 
-		this.image.style.position = 'absolute';
-		this.image.style.display = 'block'; // changed to block so that the image is shown by default
-		this.image.style.width = `70px`;
-		this.image.style.top = ntop + "px";
-		this.image.style.left = nleft + "px";
-		this.image.style.zIndex = 100000;
+			this.image.style.position = 'absolute';
+			this.image.style.display = 'block'; // changed to block so that the image is shown by default
+			this.image.style.width = `70px`;
+			this.image.style.top = ntop + "px";
+			this.image.style.left = nleft + "px";
+			this.image.style.zIndex = 100000;
 
 
-		this.image.classList.add('manicule');
-		this.image.classList.add('invert_in_dark_mode');
+			this.image.classList.add('manicule');
+			this.image.classList.add('invert_in_dark_mode');
 
-		document.body.appendChild(this.image);
+			document.body.appendChild(this.image);
 
-		this.moveImageInCircle(); // call moveImageInCircle() to start the animation
+			this.moveImageInCircle(); // call moveImageInCircle() to start the animation
 
-		manicule = this;
+			manicule = this;
+		}
 	}
 
 	moveImageInCircle() {
