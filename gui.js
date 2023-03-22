@@ -1036,7 +1036,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	var redo_graph = update_python_code();
 
-	if (model && redo_graph && !no_graph_restart && !global_no_graph_restart) {
+	if (model && redo_graph && !no_graph_restart) {
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
@@ -3286,7 +3286,10 @@ function auto_adjust_number_of_neurons(n) {
 		if (last_layer_type == "dense") {
 			var original_no_update_math = no_update_math;
 			no_update_math = true;
-			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val(n).trigger("change");
+			click_on_graphs = 0;
+			if(n != $($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val()) {
+				$($(".layer_setting")[$(".layer_setting").length - 1]).find(".units").val(n).trigger("change");
+			}
 			no_update_math = original_no_update_math;
 		} else {
 			log("last layer not dense");
@@ -4254,7 +4257,7 @@ function hide_tab_label(label) {
 }
 
 function show_tab_label(label, click) {
-	logt(`Trying label ${label} (click: ${click})`);
+	logt(`Trying label ${label} (click: ${click}, global_force_noclick_tab_label: ${global_force_noclick_tab_label})`);
 
 	var this_label_item = $("#" + label);
 	assert(this_label_item.length == 1, "Invalid or double label " + label);
@@ -4629,30 +4632,20 @@ async function set_custom_image_training () {
 
 
 async function set_custom_webcam_training_data() {
-	global_force_noclick_tab_label = 1;
-	var old_global_no_graph_restart = global_no_graph_restart;
-	global_no_graph_restart = 1;
 	new MoveImageRight("", "");
 
 	await init_webcams();
 
 
-	//if($("#data_origin").val() != "image") {
-	$("#data_origin").val("image").trigger("change");
-	//}
+	$.when($("#data_origin").val("image").trigger("change")).done(function(){
+		if(!cam_data) {
+			get_data_from_webcam();
+		}
 
-	if(!cam_data) {
-		get_data_from_webcam();
-	}
-
-	if(!cam) {
-		show_webcam();
-	}
-
-	$("#data_origin").val("image").trigger("change");
-
-	global_no_graph_restart = old_global_no_graph_restart;
-	global_force_noclick_tab_label = 0;
+		if(!cam) {
+			show_webcam();
+		}
+	});
 }
 
 function toggle_layers() {

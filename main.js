@@ -474,5 +474,7 @@ $(document).ready(async function() {
 		}
 	});
 
+	click_on_graphs = 0;
+
 	l("Site is ready");
 });
