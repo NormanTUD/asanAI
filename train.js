@@ -364,7 +364,7 @@ function get_fit_data () {
 		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
 		last_batch_plot_time = false;
 
-		//visualize_train();
+		visualize_train();
 	}
 
 	callbacks["onTrainEnd"] = async function () {
@@ -647,82 +647,11 @@ function reset_on_error () {
 	link.href = 'favicon.ico';
 }
 
-async function visualize_train () {
-	if(!is_classification) {
-		l("Disabling visualize_train because this only works when using classification");
-		return;
-	}
-
-	if(!input_shape_is_image()) {
-		l("Disable visualize_train because the input shape is not image-like");
-		return;
-	}
-
-	var max_img_width = 20;
-
-	var max_num_imgs = 50;
-
-	$("#hallo").remove();
-
-	$("<div id='hallo' style='width: 500px; height: 200px'></div>").appendTo($("body"));
-	$("#photos").find("img").each((i,x) => { if(--max_num_imgs > 0) { $($(x).clone()).appendTo($("#hallo")) } });
-	$("#hallo").find("img").css({"max-width": max_img_width + "px", "max-height": max_img_width + "px"});
-
-	var number_of_categories = await get_number_of_categories();
-
-	await delay(100);
-
-	var imgs = $("#hallo").find("img");
-
-
-	for (var i = 0; i < imgs.length; i++) {
-		var xpath = get_element_xpath(imgs[i]);
-
-		var img = tf.browser.fromPixels(imgs[i]);
-		img = img.resizeBilinear([width, height]).expandDims();
-
-		var res = model.predict(img);
-		res = (await res.arraySync())[0]
-
-		var highest_index = res.indexOf(Math.max(...res));
-		var probability = res[highest_index];
-
-		var bottom_pos = parseInt(probability * 100);
-
-		log(bottom_pos);
-
-		//log("SET");
-		//
-		var c = {
-			"position": "absolute",
-			"bottom": bottom_pos + "px",
-			"left": parseInt(highest_index * max_img_width) + "px"
-		}
-
-		//log(c);
-
-		$(imgs[i]).css(c);
-		
-		/*
-		log($(imgs[i]).css("position"));
-		log($(imgs[i]).css("top"))
-		log($(imgs[i]).css("left"))
-		*/
-	}
-	//log("done");
-}
-
 function randomInRange(start,end){
        return Math.floor(Math.random() * (end - start + 1) + start);
 }
 
-
-
-
-
-
 function drawImages(images, categories, probabilities, numCategories) {
-
 	var canvas = document.createElement("canvas");
 	canvas.width = 800;
 	canvas.height = 600;
@@ -796,10 +725,17 @@ function drawImages(images, categories, probabilities, numCategories) {
 }
 
 
-f_test();
+function visualize_train () {
+	if(!is_classification) {
+		l("Disabling visualize_train because this only works when using classification");
+		return;
+	}
 
+	if(!input_shape_is_image()) {
+		l("Disable visualize_train because the input shape is not image-like");
+		return;
+	}
 
-function f_test () {
 	var imgs = [];
 	var categories = [];
 	var probabilities = [];
