@@ -314,7 +314,7 @@ function get_fit_data () {
 			}
 		}
 
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		//show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {

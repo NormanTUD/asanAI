@@ -1358,3 +1358,7 @@ var last_sparkle_element = null;
 var manicule = null;
 
 var manicule_element_xpath = null;
+
+var currently_running_change_data_origin = 0;
+
+var global_no_graph_restart = 0;

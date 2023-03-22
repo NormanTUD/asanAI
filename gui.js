@@ -1036,7 +1036,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	var redo_graph = update_python_code();
 
-	if (model && redo_graph && !no_graph_restart) {
+	if (model && redo_graph && !no_graph_restart && !global_no_graph_restart) {
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
@@ -3148,6 +3148,7 @@ function reset_view() {
 }
 
 async function change_data_origin() {
+	currently_running_change_data_origin = 1;
 	l("Change data origin");
 	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 	//	force_reinit(1);
@@ -3182,7 +3183,9 @@ async function change_data_origin() {
 		set_default_input_shape();
 
 		$("#visualization_tab_label").click();
-		show_tab_label("fcnn_tab_label", 1);
+		if(!is_cosmo_mode) {
+			show_tab_label("fcnn_tab_label", 1);
+		}
 
 		update_python_code();
 	} else {
@@ -3271,6 +3274,7 @@ async function change_data_origin() {
 			stop_webcam();
 		}
 	}
+	currently_running_change_data_origin = 0;
 }
 
 function auto_adjust_number_of_neurons(n) {
@@ -4623,9 +4627,12 @@ async function set_custom_image_training () {
 
 
 async function set_custom_webcam_training_data() {
+	var old_global_no_graph_restart = global_no_graph_restart;
+	global_no_graph_restart = 1;
+	new MoveImageRight("", "");
+
 	await init_webcams();
 
-	new MoveImageRight("", "");
 
 	//if($("#data_origin").val() != "image") {
 	$("#data_origin").val("image").trigger("change");
@@ -4640,6 +4647,8 @@ async function set_custom_webcam_training_data() {
 	}
 
 	$("#data_origin").val("image").trigger("change");
+
+	global_no_graph_restart = old_global_no_graph_restart;
 }
 
 function toggle_layers() {
