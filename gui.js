@@ -5328,8 +5328,8 @@ function show_bars_instead_of_numbers () {
 
 class MoveImageRight {
 	constructor(elementSelector, imageUrl) {
-		log("MoveImageRight elementSelector:", elementSelector);
-		console.trace();
+		//log("MoveImageRight elementSelector:", elementSelector);
+		//console.trace();
 		remove_manicule();
 
 		if(elementSelector) {
@@ -5362,7 +5362,7 @@ class MoveImageRight {
 
 			manicule = this;
 		} else {
-			log("Empty elementSelector");
+			//log("Empty elementSelector");
 		}
 	}
 
