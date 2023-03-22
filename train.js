@@ -712,7 +712,13 @@ async function visualize_train () {
 	//log("done");
 }
 
+function randomInRange(start,end){
+       return Math.floor(Math.random() * (end - start + 1) + start);
+}
+
 function drawImages(images, categories, probabilities, numCategories) {
+	var targetSize = 16; // Change this to the desired size
+
 	var canvas = document.createElement("canvas");
 	canvas.width = 800;
 	canvas.height = 600;
@@ -737,7 +743,6 @@ function drawImages(images, categories, probabilities, numCategories) {
 	ctx.font = "14px Arial";
 	ctx.fillStyle = "#000000";
 	ctx.textAlign = "right";
-	ctx.fillText("Probability", margin - 10, margin);
 
 	for (let i = 0; i <= 10; i += 2) {
 		var yPos = margin + graphHeight - i / 10 * graphHeight;
@@ -767,13 +772,15 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 		// draw image
-		ctx.drawImage(image, xPos - image.width / 2, yPos - image.height / 2);
 
-		// draw probability
-		ctx.font = "14px Arial";
-		ctx.fillStyle = "#000000";
-		ctx.textAlign = "center";
-		ctx.fillText(probability.toFixed(2), xPos, yPos + 20);
+		var scale = targetSize / Math.max(image.width, image.height);
+		var width = image.width * scale;
+		var height = image.height * scale;
+		var imageX = xPos - width / 2;
+		imageX += margin;
+		imageX += randomInRange(-(2 * targetSize), 2*targetSize);
+		var imageY = yPos - height / 2;
+		ctx.drawImage(image, imageX, imageY, width, height);
 	}
 }
 
