@@ -5370,6 +5370,8 @@ class MoveImageRight {
 			this.moveImageInCircle(); // call moveImageInCircle() to start the animation
 
 			manicule = this;
+
+			invert_elements_in_dark_mode();
 		} else {
 			//log("Empty elementSelector");
 		}
