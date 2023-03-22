@@ -811,9 +811,13 @@
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
-									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
+									<tr data-intro="In the predict page, show visual bars instead of numbers">
 										<td>Show bars instead of numbers?</td>
 										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()" /></td>
+									</tr>
+									<tr data-intro="Visualize images by grouping visually">
+										<td>Visualize images in grid?</td>
+										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid" /></td>
 									</tr>
 								</table>
 							</div>
@@ -1314,6 +1318,7 @@
 								<br>
 								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
+								<span id="canvas_grid_visualization"></span>
 								<span id="show_visualization_here_in_cosmo"></span>
 								<br>
 								<div id="training_content">

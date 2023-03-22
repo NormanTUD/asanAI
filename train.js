@@ -651,11 +651,10 @@ function randomInRange(start,end){
        return Math.floor(Math.random() * (end - start + 1) + start);
 }
 
-function drawImages(images, categories, probabilities, numCategories) {
+function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	var canvas = document.createElement("canvas");
 	canvas.width = 800;
-	canvas.height = 600;
-	document.body.appendChild(canvas);
+	canvas.height = 400;
 
 	var ctx = canvas.getContext("2d");
 	ctx.fillStyle = "#ffffff";
@@ -667,7 +666,7 @@ function drawImages(images, categories, probabilities, numCategories) {
 	var graphWidth = canvas.width - margin * 2;
 	var graphHeight = canvas.height - margin * 2;
 
-	var targetSize = graphWidth / (numCategories * 8); // Change this to the desired size
+	var targetSize = graphWidth / (numCategories * 6); // Change this to the desired size
 
 	var xStep = graphWidth / numCategories;
 	var yStep = graphHeight / 1.2;
@@ -683,10 +682,14 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var yPos = margin + graphHeight - i / 10 * graphHeight;
 		var label = (i / 10 * maxProb).toFixed(2);
 		ctx.fillText(label, margin - 10, yPos);
-		ctx.beginPath();
-		ctx.moveTo(margin, yPos);
-		ctx.lineTo(canvas.width, yPos);
-		ctx.stroke();
+		/*
+		if(i != 0) {
+			ctx.beginPath();
+			ctx.moveTo(margin, yPos);
+			ctx.lineTo(canvas.width, yPos);
+			ctx.stroke();
+		}
+		*/
 	}
 
 	// draw x-axis labels
@@ -695,11 +698,13 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var xPos = margin + i * xStep + xStep / 2;
 		var label = categoryNames[i];
 		ctx.fillText(label, xPos, canvas.height - margin + 20);
+		/*
 		ctx.beginPath();
 		xPos = xPos - (4*targetSize);
 		ctx.moveTo(xPos, canvas.height - margin + 20);
 		ctx.lineTo(xPos, 0);
 		ctx.stroke();
+		*/
 	}
 
 	// draw images
@@ -722,10 +727,17 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var imageY = yPos - height / 2;
 		ctx.drawImage(image, imageX, imageY, width, height);
 	}
+
+	$("#canvas_grid_visualization").html("");
+	$(canvas).appendTo($("#canvas_grid_visualization"));
 }
 
 
 function visualize_train () {
+	if(!$("#visualize_images_in_grid").is(":checked")) {
+		return;
+	}
+
 	if(!is_classification) {
 		l("Disabling visualize_train because this only works when using classification");
 		return;
@@ -740,20 +752,27 @@ function visualize_train () {
 	var categories = [];
 	var probabilities = [];
 
+	var max_images = labels.length * 5;
+
+	var j = 0;
+
 	$("#photos").find("img").each((i,x) => {
-		imgs.push(x);
+		if(max_images < j) {
+			imgs.push(x);
 
-		var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
-		var res = model.predict(img_tensor);
+			var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+			var res = model.predict(img_tensor);
 
-		res = res.arraySync()[0];
+			res = res.arraySync()[0];
 
-		var probability = Math.max(...res);
-		var category = res.indexOf(probability);
+			var probability = Math.max(...res);
+			var category = res.indexOf(probability);
 
-		categories.push(category);
-		probabilities.push(probability);
+			categories.push(category);
+			probabilities.push(probability);
+		}
+		j++;
 	});
 
-	drawImages(imgs, categories, probabilities, labels.length);
+	drawImagesInGrid(imgs, categories, probabilities, labels.length);
 }
