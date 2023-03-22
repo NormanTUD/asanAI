@@ -2062,7 +2062,9 @@ async function chose_dataset(no_set_config) {
 
 	$("#maximally_activated_content").html("")
 	hide_tab_label("maximally_activated_label");
-	$("#visualization_tab_label").click();
+	if(!cosmo_mode) {
+		$("#visualization_tab_label").click();
+	}
 	show_tab_label("fcnn_tab_label", 1);
 
 	init_weight_file_list();
@@ -3182,8 +3184,8 @@ async function change_data_origin() {
 
 		set_default_input_shape();
 
-		$("#visualization_tab_label").click();
 		if(!is_cosmo_mode) {
+			$("#visualization_tab_label").click();
 			show_tab_label("fcnn_tab_label", 1);
 		}
 
@@ -4252,12 +4254,12 @@ function hide_tab_label(label) {
 }
 
 function show_tab_label(label, click) {
-	//logt(`Trying label ${label} (click: ${click})`);
+	logt(`Trying label ${label} (click: ${click})`);
 
 	var this_label_item = $("#" + label);
 	assert(this_label_item.length == 1, "Invalid or double label " + label);
 	$(this_label_item).show().parent().show();
-	if (click) {
+	if (click && !global_force_noclick_tab_label) {
 		$(this_label_item).click();
 
 		var this_label_xpath = get_element_xpath($($(this_label_item)[0]).parent().parent()[0]);
@@ -4627,6 +4629,7 @@ async function set_custom_image_training () {
 
 
 async function set_custom_webcam_training_data() {
+	global_force_noclick_tab_label = 1;
 	var old_global_no_graph_restart = global_no_graph_restart;
 	global_no_graph_restart = 1;
 	new MoveImageRight("", "");
@@ -4649,6 +4652,7 @@ async function set_custom_webcam_training_data() {
 	$("#data_origin").val("image").trigger("change");
 
 	global_no_graph_restart = old_global_no_graph_restart;
+	global_force_noclick_tab_label = 0;
 }
 
 function toggle_layers() {

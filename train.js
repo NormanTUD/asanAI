@@ -742,19 +742,26 @@ function visualize_train () {
 	}
 
 	if($("#data_origin").val() != "default") {
-		l("Disabling visualize_train because this only works for default, not for custom data of any kind");
+		l("Disabling visualize_train because this only works for default, not for custom data of any kind.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!is_classification) {
-		l("Disabling visualize_train because this only works when using classification");
+		l("Disabling visualize_train because this only works when using classification.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
 	if(!input_shape_is_image()) {
-		l("Disable visualize_train because the input shape is not image-like");
+		l("Disable visualize_train because the input shape is not image-like.");
+		$("#canvas_grid_visualization").html("");
+		return;
+	}
+
+	if(get_last_layer_activation_function() != "softmax") {
+		l("Disable visualize_train because the last layer is not softmax.");
+		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
