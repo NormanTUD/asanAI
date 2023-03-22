@@ -712,43 +712,73 @@ async function visualize_train () {
 	//log("done");
 }
 
-function displayImages(images, categories, probabilities) {
-	const canvasWidth = 500;
-	const canvasHeight = 300;
-	const imageSize = 16;
-	const numCategories = categories.length;
-	const categoryWidth = canvasWidth / numCategories;
+function drawImages(images, categories, probabilities, numCategories) {
+	var canvas = document.createElement("canvas");
+	canvas.width = 800;
+	canvas.height = 600;
+	document.body.appendChild(canvas);
 
-	// Create a canvas element to draw on
-	const canvas = document.createElement('canvas');
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
+	var ctx = canvas.getContext("2d");
+	ctx.fillStyle = "#ffffff";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// Loop through each image and draw it on the canvas
-	for (let i = 0; i < images.length; i++) {
-		const image = images[i];
-		const categoryIndex = categories[i];
-		const probability = probabilities[i];
+	var categoryNames = labels.slice(0, numCategories);
 
-		// Calculate the x and y positions of the image based on its category and probability
-		const x = categoryIndex * categoryWidth + (categoryWidth - imageSize) / 2;
-		const y = canvasHeight - (probability * canvasHeight) - imageSize;
+	var margin = 40;
+	var graphWidth = canvas.width - margin * 2;
+	var graphHeight = canvas.height - margin * 2;
 
-		// Draw the image on the canvas
-		const ctx = canvas.getContext('2d');
-		ctx.drawImage(image, x, y, imageSize, imageSize);
+	var xStep = graphWidth / numCategories;
+	var yStep = graphHeight / 1.2;
 
-		// Add labels for the category and probability
-		const categoryLabel = labels[i];
-		ctx.fillText(categoryLabel, x + imageSize / 2, canvasHeight - 10);
-		ctx.fillText(probability.toFixed(2), categoryIndex * categoryWidth + 10, canvasHeight - y - imageSize / 2);
+	var maxProb = Math.max(...probabilities);
+
+	// draw y-axis labels
+	ctx.font = "14px Arial";
+	ctx.fillStyle = "#000000";
+	ctx.textAlign = "right";
+	ctx.fillText("Probability", margin - 10, margin);
+
+	for (let i = 0; i <= 10; i += 2) {
+		var yPos = margin + graphHeight - i / 10 * graphHeight;
+		var label = (i / 10 * maxProb).toFixed(2);
+		ctx.fillText(label, margin - 10, yPos);
+		ctx.beginPath();
+		ctx.moveTo(margin - 5, yPos);
+		ctx.lineTo(margin, yPos);
+		ctx.stroke();
 	}
 
-	// Append the canvas to the DOM
-	//const container = document.getElementById('image-container');
-	const container = $("body")[0];
-	container.appendChild(canvas);
+	// draw x-axis labels
+	ctx.textAlign = "center";
+	for (let i = 0; i < numCategories; i++) {
+		var xPos = margin + i * xStep + xStep / 2;
+		var label = categoryNames[i];
+		ctx.fillText(label, xPos, canvas.height - margin + 20);
+	}
+
+	// draw images
+	for (let i = 0; i < images.length; i++) {
+		var image = images[i];
+		var category = categories[i];
+		var probability = probabilities[i];
+
+		var xPos = margin + (category - 1) * xStep + xStep / 2;
+		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
+
+		// draw image
+		ctx.drawImage(image, xPos - image.width / 2, yPos - image.height / 2);
+
+		// draw probability
+		ctx.font = "14px Arial";
+		ctx.fillStyle = "#000000";
+		ctx.textAlign = "center";
+		ctx.fillText(probability.toFixed(2), xPos, yPos + 20);
+	}
 }
+
+
+f_test();
 
 
 function f_test () {
@@ -771,5 +801,5 @@ function f_test () {
 		probabilities.push(probability);
 	});
 
-	displayImages(imgs, categories, probabilities);
+	drawImages(imgs, categories, probabilities, labels.length);
 }
