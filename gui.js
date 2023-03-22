@@ -5330,10 +5330,6 @@ class MoveImageRight {
 		remove_manicule();
 
 		if(elementSelector) {
-			if(manicule_element_xpath !== null && get_element_xpath($(elementSelector)[0]) != manicule_element_xpath) {
-				return;
-			}
-
 			manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
 
 			this.element = elementSelector;
