@@ -1037,9 +1037,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var redo_graph = update_python_code();
 
 	if (model && redo_graph && !no_graph_restart) {
-		restart_fcnn();
-		restart_lenet();
-		restart_alexnet();
+		restart_fcnn(1);
+		restart_lenet(1);
+		restart_alexnet(1);
 	}
 
 	prev_layer_data = [];
@@ -2035,7 +2035,7 @@ async function init_dataset() {
 	$(".training_performance_tabs").hide();
 
 	$("#data_origin").val("default").trigger("change");
-	$("#visualization_tab_label").click();
+	show_tab_label("visualization_tab_label", 1);
 
 	await save_current_status();
 	init_weight_file_list();
@@ -2063,7 +2063,7 @@ async function chose_dataset(no_set_config) {
 	$("#maximally_activated_content").html("")
 	hide_tab_label("maximally_activated_label");
 	if(!cosmo_mode) {
-		$("#visualization_tab_label").click();
+		show_tab_label("visualization_tab_label", 1);
 	}
 	show_tab_label("fcnn_tab_label", 1);
 
@@ -2210,7 +2210,7 @@ async function init_dataset_category() {
 
 	$("#data_origin").val("default").trigger("change");
 
-	$("#visualization_tab_label").click();
+	show_tab_label("visualization_tab_label", 1);
 	show_tab_label("fcnn_tab_label", 1);
 
 	updated_page();
@@ -3185,7 +3185,7 @@ async function change_data_origin() {
 		set_default_input_shape();
 
 		if(!is_cosmo_mode) {
-			$("#visualization_tab_label").click();
+			show_tab_label("visualization_tab_label", 1);
 			show_tab_label("fcnn_tab_label", 1);
 		}
 
