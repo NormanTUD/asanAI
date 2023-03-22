@@ -711,3 +711,65 @@ async function visualize_train () {
 	}
 	//log("done");
 }
+
+function displayImages(images, categories, probabilities) {
+	const canvasWidth = 500;
+	const canvasHeight = 300;
+	const imageSize = 16;
+	const numCategories = categories.length;
+	const categoryWidth = canvasWidth / numCategories;
+
+	// Create a canvas element to draw on
+	const canvas = document.createElement('canvas');
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+
+	// Loop through each image and draw it on the canvas
+	for (let i = 0; i < images.length; i++) {
+		const image = images[i];
+		const categoryIndex = categories[i];
+		const probability = probabilities[i];
+
+		// Calculate the x and y positions of the image based on its category and probability
+		const x = categoryIndex * categoryWidth + (categoryWidth - imageSize) / 2;
+		const y = canvasHeight - (probability * canvasHeight) - imageSize;
+
+		// Draw the image on the canvas
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(image, x, y, imageSize, imageSize);
+
+		// Add labels for the category and probability
+		const categoryLabel = labels[i];
+		ctx.fillText(categoryLabel, x + imageSize / 2, canvasHeight - 10);
+		ctx.fillText(probability.toFixed(2), categoryIndex * categoryWidth + 10, canvasHeight - y - imageSize / 2);
+	}
+
+	// Append the canvas to the DOM
+	//const container = document.getElementById('image-container');
+	const container = $("body")[0];
+	container.appendChild(canvas);
+}
+
+
+function f_test () {
+	var imgs = [];
+	var categories = [];
+	var probabilities = [];
+
+	$("#photos").find("img").each((i,x) => {
+		imgs.push(x);
+
+		var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+		var res = model.predict(img_tensor);
+
+		res = res.arraySync()[0];
+
+		var probability = Math.max(...res);
+		var category = res.indexOf(probability);
+
+		categories.push(category);
+		probabilities.push(probability);
+	});
+
+	displayImages(imgs, categories, probabilities);
+}

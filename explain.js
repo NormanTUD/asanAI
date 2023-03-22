@@ -973,7 +973,8 @@ async function draw_maximally_activated_layer (layer, type) {
 	var types_in_order = "";
 	if(get_number_of_layers() - 1 == layer) {
 		if(labels && labels.length) {
-			types_in_order = " (" + labels.reverse().join(", ") + ")";
+			var labels_copy = labels;
+			types_in_order = " (" + labels_copy.reverse().join(", ") + ")";
 		}
 	}
 
