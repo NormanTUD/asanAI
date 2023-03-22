@@ -722,7 +722,6 @@ function randomInRange(start,end){
 
 
 function drawImages(images, categories, probabilities, numCategories) {
-	var targetSize = 16; // Change this to the desired size
 
 	var canvas = document.createElement("canvas");
 	canvas.width = 800;
@@ -739,6 +738,8 @@ function drawImages(images, categories, probabilities, numCategories) {
 	var graphWidth = canvas.width - margin * 2;
 	var graphHeight = canvas.height - margin * 2;
 
+	var targetSize = graphWidth / (numCategories * 8); // Change this to the desired size
+
 	var xStep = graphWidth / numCategories;
 	var yStep = graphHeight / 1.2;
 
@@ -754,7 +755,7 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var label = (i / 10 * maxProb).toFixed(2);
 		ctx.fillText(label, margin - 10, yPos);
 		ctx.beginPath();
-		ctx.moveTo(margin - 5, yPos);
+		ctx.moveTo(margin, yPos);
 		ctx.lineTo(canvas.width, yPos);
 		ctx.stroke();
 	}
@@ -766,8 +767,9 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var label = categoryNames[i];
 		ctx.fillText(label, xPos, canvas.height - margin + 20);
 		ctx.beginPath();
+		xPos = xPos - (4*targetSize);
 		ctx.moveTo(xPos, canvas.height - margin + 20);
-		ctx.lineTo(xPos, canvas.width);
+		ctx.lineTo(xPos, 0);
 		ctx.stroke();
 	}
 
@@ -786,8 +788,8 @@ function drawImages(images, categories, probabilities, numCategories) {
 		var width = image.width * scale;
 		var height = image.height * scale;
 		var imageX = xPos - width / 2;
-		imageX += margin + 20;
-		imageX += randomInRange(-(2 * targetSize), 2*targetSize);
+		imageX += (margin * 3) + 20;
+		imageX += randomInRange(-(2*targetSize), 2*targetSize);
 		var imageY = yPos - height / 2;
 		ctx.drawImage(image, imageX, imageY, width, height);
 	}
