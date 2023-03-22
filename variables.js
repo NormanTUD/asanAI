@@ -1353,3 +1353,6 @@ var escapeCount = 0;
 var lastEscapeTime = 0;
 
 var last_sparkle_element = null;
+
+
+var manicule = null;

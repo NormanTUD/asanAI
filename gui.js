@@ -5322,12 +5322,18 @@ function show_bars_instead_of_numbers () {
 
 class MoveImageRight {
 	constructor(elementSelector, imageUrl) {
+		$(".manicule").remove();
+		manicule = null;
+
 		this.element = document.querySelector(elementSelector);
 		this.image = new Image();
 		this.image.src = imageUrl;
 
-		var ntop = $("#start_stop_training").position()["top"]// + $("#start_stop_training").height();
-		var nleft = $("#start_stop_training").position()["left"] + 20// + $("#start_stop_training").width();
+		//var ntop = $("#start_stop_training").position()["top"] + 35; // + $("#start_stop_training").height();
+		//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
+
+		var ntop = $(elementSelector).position()["top"];
+		var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();;
 
 		this.image.style.position = 'absolute';
 		this.image.style.display = 'block'; // changed to block so that the image is shown by default
@@ -5336,10 +5342,15 @@ class MoveImageRight {
 		this.image.style.left = nleft + "px";
 		this.image.style.zIndex = 100000;
 
+
+		this.image.classList.add('manicule');
 		this.image.classList.add('invert_in_dark_mode');
 
 		document.body.appendChild(this.image);
-		//this.moveImageInCircle(); // call moveImageInCircle() to start the animation
+
+		this.moveImageInCircle(); // call moveImageInCircle() to start the animation
+
+		manicule = this;
 	}
 
 	moveImageInCircle() {
