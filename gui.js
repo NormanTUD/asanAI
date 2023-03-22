@@ -5323,16 +5323,15 @@ function show_bars_instead_of_numbers () {
 
 class MoveImageRight {
 	constructor(elementSelector, imageUrl) {
-		$(".manicule").remove();
-		manicule = null;
-
-		if(manicule_element_xpath !== null && get_element_xpath($(elementSelector)[0]) != manicule_element_xpath) {
-			return;
-		}
-
-		manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
+		remove_manicule();
 
 		if(elementSelector) {
+			if(manicule_element_xpath !== null && get_element_xpath($(elementSelector)[0]) != manicule_element_xpath) {
+				return;
+			}
+
+			manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
+
 			this.element = elementSelector;
 			this.image = new Image();
 			this.image.src = imageUrl;
@@ -5408,4 +5407,9 @@ class MoveImageRight {
 	hide() {
 		this.image.style.display = 'none';
 	}
+}
+
+function remove_manicule () {
+	$(".manicule").remove();
+	manicule = null;
 }
