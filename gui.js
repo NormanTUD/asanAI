@@ -5273,7 +5273,7 @@ function cosmo_mode () {
 		$("#toggle_layers_button").hide();
 
 		if(typeof(cosmo_wave) == "object") {
-			cosmo_wave = 0;
+			cosmo_wave = 1;
 		}
 
 		new MoveImageRight($('#start_stop_training')[0], 'manicule.svg');
@@ -5298,6 +5298,7 @@ function show_cosmo_waves () {
 				var all_elements = $(".show_cosmo_wave_" + i);
 				all_elements.show();
 
+				var all_elements = $(".manicule_wave_" + i);
 				for (var k = 0; k < all_elements.length; k++) {
 					new MoveImageRight(all_elements[k], 'manicule.svg');
 				}
@@ -5324,6 +5325,12 @@ class MoveImageRight {
 	constructor(elementSelector, imageUrl) {
 		$(".manicule").remove();
 		manicule = null;
+
+		if(manicule_element_xpath !== null && get_element_xpath($(elementSelector)[0]) != manicule_element_xpath) {
+			return;
+		}
+
+		manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
 
 		if(elementSelector) {
 			this.element = elementSelector;
@@ -5402,4 +5409,3 @@ class MoveImageRight {
 		this.image.style.display = 'none';
 	}
 }
-

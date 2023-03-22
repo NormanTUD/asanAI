@@ -1345,9 +1345,9 @@ var last_tensor_size_gpu = 0;
 var last_status_hash = "";
 var number_of_currently_running_updated_pages = 0;
 
-var cosmo_wave = null;
+var cosmo_wave = 1;
 
-var max_cosmo_wave = 2;
+var max_cosmo_wave = 3;
 
 var escapeCount = 0;
 var lastEscapeTime = 0;
@@ -1356,3 +1356,5 @@ var last_sparkle_element = null;
 
 
 var manicule = null;
+
+var manicule_element_xpath = null;

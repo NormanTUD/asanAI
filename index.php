@@ -197,8 +197,8 @@
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<!--<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>-->
-				<span id="custom_webcam_training_data" style="display: none" class="only_when_webcam input_shape_is_image symbol_button show_cosmo_wave_1" onclick="set_custom_webcam_training_data()">&#128248;</span>
-				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network()">&#127947;</span>
+				<span id="custom_webcam_training_data" class="manicule_wave_2" style="display: none" class="only_when_webcam input_shape_is_image symbol_button show_cosmo_wave_2" onclick="set_custom_webcam_training_data()">&#128248;</span>
+				<span id="start_stop_training" class="manicule_wave_1 symbol_button" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">
@@ -209,7 +209,7 @@
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<!--<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>-->
 					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
-					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button show_cosmo_wave_1" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
+					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button show_cosmo_wave_2" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
 					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
@@ -1096,7 +1096,7 @@
 
 
 				<div id="help" style="display: none"></div>
-				<div id="toggle_layers_button" class="show_cosmo_wave_1"><button style="width: 100%" onclick="toggle_layers()"><span class="large_button">&#9881;&#129302;</span></button></div>
+				<div id="toggle_layers_button" class="show_cosmo_wave_3"><button style="width: 100%" onclick="toggle_layers()"><span class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side">
@@ -1366,7 +1366,7 @@
 								<div class="container" id="predictcontainer">
 									<div>
 										<div id="own_files">
-											<button class="only_when_webcam show_cosmo_wave_1" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+											<button class="only_when_webcam show_cosmo_wave_2" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
 											<div id="webcam" style="display: none">
