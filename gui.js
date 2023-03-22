@@ -5228,7 +5228,7 @@ function cosmo_mode () {
 		setCookie("cosmo_mode", "0");
 		show_layer_view();
 		show_ribbon();
-		$("#show_layer_data").prop("checked", false)
+		//$("#show_layer_data").prop("checked", false)
 		$("#show_hide_ribbon_button").show();
 		$(".vis_button").show();
 		$("#toggle_layer_view_button").show();
@@ -5251,7 +5251,7 @@ function cosmo_mode () {
 		setCookie("cosmo_mode", "1");
 		hide_layer_view();
 		hide_ribbon();
-		$("#show_layer_data").prop("checked", true)
+		//$("#show_layer_data").prop("checked", true)
 		$("#show_hide_ribbon_button").hide();
 		$(".vis_button").hide();
 		$("#toggle_layer_view_button").hide();
