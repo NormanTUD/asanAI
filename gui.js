@@ -3425,7 +3425,7 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
+			'<button style="' + webcam_button_style + '" class="webcam_data_button hide_in_cosmo_mode" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
 			'<button style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>' +
 			'<button class="delete_category_button" onclick="delete_category(this)">Delete this category</button></div>' +
 			'<div id="' + uuid + '"></div>' +
@@ -4624,6 +4624,8 @@ async function set_custom_image_training () {
 
 async function set_custom_webcam_training_data() {
 	await init_webcams();
+
+	new MoveImageRight("", "");
 
 	//if($("#data_origin").val() != "image") {
 	$("#data_origin").val("image").trigger("change");

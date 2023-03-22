@@ -1198,17 +1198,19 @@
 							</div>
 
 							<div id="own_image_data">
-								<button onclick="create_and_download_zip()">Download custom data in a .zip file</button>
-								<br>
-								Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
-								<br>
-								<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								<span class="hide_in_cosmo_mode">
+									<button onclick="create_and_download_zip()">Download custom data in a .zip file</button>
+									<br>
+									Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
+									<br>
+									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+								</span>
 								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 								<div id="webcam_data" style="display: none"></div>
 								<br>
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
-								<div class='webcam_data only_when_webcam_on'>
+								<div class='webcam_data only_when_webcam_on hide_in_cosmo_mode'>
 									Number of images in a series: <input type='number' min=1 value='100' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
 									Delay in seconds between images in a series: <input type='number' value='0.9' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
 								</div>
