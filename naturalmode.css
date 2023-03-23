@@ -18,6 +18,9 @@ html {
 	color: #151B54;
 }
 
+.ui-widget-content a {
+	color: #151B54;
+}
 
 #log {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -39,9 +42,6 @@ html {
 	border-radius: 5px;
 }
 
-.ui-widget-content a {
-	color: #151B54;
-}
 
 .ui-state-default a,
 .ui-state-default a:link,
@@ -66,10 +66,11 @@ a:visited.ui-button,
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	background: #f5f3f3;
-	font-weight: bold;
-	color: #ffffff;
+	background: #646464;
+	color: #b5b5b5;
 }
+
+
 
 .ui-widget-header a {
 	color: #222222;
@@ -95,9 +96,8 @@ button:hover {
 }
 
 select {
-	background-color: rgba(255,255,255,0.5);
-	border: none;
-	border-radius: 5px;
+	background-color: #ffffff;
+	color: black;
 }
 
 select:hover {
@@ -197,3 +197,6 @@ hr {
 	border-top: 1px solid #cccccc;
 	border-bottom: 1px solid #ffffff;
 }
+
+
+

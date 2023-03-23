@@ -739,3 +739,20 @@ input {
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
 	color: white;
 }
+
+
+select {
+	border-radius: 5px;
+	border: 1px solid rgba(255,0,0,0);
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	border: 1px solid #585858;
+	font-weight: bold;
+}

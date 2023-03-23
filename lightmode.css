@@ -46,7 +46,6 @@ a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
 	background: #f5f3f3;
-	font-weight: bold;
 	color: #ffffff;
 }
 
@@ -67,8 +66,6 @@ button {
 }
 
 select {
-	border: 1px solid rgba(255,0,0,0);
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	background-color: #ffffff;
 	color: black;
 }
