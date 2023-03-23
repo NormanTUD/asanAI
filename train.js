@@ -684,6 +684,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var yPos = margin + graphHeight - i / 10 * graphHeight;
 		var label = (i / 10 * maxProb).toFixed(2);
 		ctx.fillText(label, margin - 10, yPos);
+		// ------
 		/*
 		if(i != 0) {
 			ctx.beginPath();
@@ -697,16 +698,17 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	// draw x-axis labels
 	ctx.textAlign = "center";
 	for (let i = 0; i < numCategories; i++) {
-		var xPos = margin + i * xStep + xStep / 2;
+		var xPos = (1.5 * margin) + i * xStep + xStep / 2;
 		var label = categoryNames[i];
 		ctx.fillText(label, xPos, canvas.height - margin + 20);
-		/*
-		ctx.beginPath();
-		xPos = xPos - (4*targetSize);
-		ctx.moveTo(xPos, canvas.height - margin + 20);
-		ctx.lineTo(xPos, 0);
-		ctx.stroke();
-		*/
+		// |      |        |
+		if(i != 0) {
+			ctx.beginPath();
+			xPos = xPos - (4*targetSize);
+			ctx.moveTo(xPos, canvas.height - margin + 20);
+			ctx.lineTo(xPos, 0);
+			ctx.stroke();
+		}
 	}
 
 	// draw images
@@ -771,30 +773,33 @@ function visualize_train () {
 
 	var max_images = labels.length * 5;
 
-	var j = 0;
+	if(labels.length && labels.length < 7) {
 
-	$("#photos").find("img").each((i,x) => {
-		if(max_images > j) {
-			imgs.push(x);
+		var j = 0;
 
-			var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
-			var res = model.predict(img_tensor);
+		$("#photos").find("img").each((i,x) => {
+			if(max_images > j) {
+				imgs.push(x);
 
-			res = res.arraySync()[0];
+				var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+				var res = model.predict(img_tensor);
 
-			var probability = Math.max(...res);
-			var category = res.indexOf(probability);
+				res = res.arraySync()[0];
 
-			categories.push(category);
-			probabilities.push(probability);
+				var probability = Math.max(...res);
+				var category = res.indexOf(probability);
+
+				categories.push(category);
+				probabilities.push(probability);
+			}
+			j++;
+		});
+
+		if(imgs.length && categories.length && probabilities.length) {
+			drawImagesInGrid(imgs, categories, probabilities, labels.length);
+		} else {
+			$("#canvas_grid_visualization").html("");
 		}
-		j++;
-	});
-
-	log(imgs);
-	
-	if(imgs.length && categories.length && probabilities.length) {
-		drawImagesInGrid(imgs, categories, probabilities, labels.length);
 	} else {
 		$("#canvas_grid_visualization").html("");
 	}
