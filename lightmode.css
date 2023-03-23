@@ -86,19 +86,6 @@ html .ui-button.ui-state-disabled:active {
 	color: #2779aa;
 }
 
-.ui-state-default:hover {
-	background: #c2c0c0;
-	border: 1px solid #bababa;
-	color: #2779aa;
-}
-
-.ui-tabs-active {
-	background: red;
-	border: 1px solid #bababa;
-	color: #2779aa;
-}
-
-
 .ui-state-hover,
 .ui-widget-content .ui-state-hover,
 .ui-widget-header .ui-state-hover,

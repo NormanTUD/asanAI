@@ -798,3 +798,14 @@ button {
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
 	color: black;
 }
+
+.ui-state-default:hover {
+	background: #c2c0c0;
+	border: 1px solid #bababa;
+	color: #2779aa;
+}
+
+.ui-tabs-active {
+	border: 1px solid #bababa;
+	color: #2779aa;
+}
