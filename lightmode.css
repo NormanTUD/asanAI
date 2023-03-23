@@ -132,6 +132,22 @@ html .ui-button.ui-state-disabled:active {
 	color: black;
 }
 
+.footer>a:visited, .footer>a, .footer>a:link {
+	color: black;
+}
+
+.sources_popup_link {
+	filter: invert(0);
+}
+
+.fcnn_desc_text {
+	color: black;
+}
+
+#explanation {
+	filter: invert(0);
+}
+
 #tablist {
 	background: #8cc0da; 
 }
