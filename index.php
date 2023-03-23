@@ -1368,42 +1368,40 @@
 								<div class="container" id="predictcontainer">
 									<div>
 										<div id="own_files">
-											<div class="full_example_image_prediction">
-												<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
+											<div class="hide_when_no_image">
+												<div class="full_example_image_prediction">
+													<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+													<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 
-												<div id="webcam" style="display: none">
+													<div id="webcam" style="display: none"></div>
+
+													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 												</div>
-
-												<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 											</div>
 											
 											<div class="hide_when_image">
 												<div id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 													<br>
-													<br>
 													<button onclick="predict($('#predict_own_data').val())">Predict</button>
 												</div>
 											</div>
 
-											<br>
-
-											<div class="full_example_image_prediction">
-												<span class="hide_when_no_image">
+											<span class="hide_when_no_image">
+												<div class="full_example_image_prediction">
 													<div id="upload_file" class="show_data"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
 													<img style="display:none" id="output"/>
-												</span>
 
-												<br>
+													<br>
 
+													<div id="predict_error" style="overflow: scroll; display: none"></div>
+												</div>
+											</span>
 												<div id="prediction" style="display: none"></div>
-												<div id="predict_error" style="overflow: scroll; display: none"></div>
-											</div>
 										</div>
 
-										<div class="full_example_image_prediction">
-											<div class="handdrawn hide_when_no_image">
+										<div class="handdrawn hide_when_no_image">
+											<div class="full_example_image_prediction">
 												<div id='predict_handdrawn_canvas'></div>
 
 												<div id="handdrawn_predictions"></div>
