@@ -819,3 +819,11 @@ button {
 	background: rgba(0, 200, 140, 0.4);
 	border: 2px solid rgba(0, 200, 140, 0.4);
 }
+
+.full_example_image_prediction {
+	width: fit-content;
+	display: inline-block;
+	margin: 10px;
+	box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+	padding: 10px;
+}
