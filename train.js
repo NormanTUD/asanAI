@@ -454,18 +454,18 @@ async function run_neural_network () {
 		if(xs_and_ys) {
 			if(Object.keys(xs_and_ys).includes("x")) {
 				if(xs_and_ys["x"].shape.toString() == "0") {
-					error_string += "No X-data! ";
+					error_string += "No X-data [1]! Do you have custom images loaded? ";
 				}
 			} else {
-				error_string += "No X-data! ";
+				error_string += "No X-data [2]! Do you have custom images loaded? ";
 			}
 
 			if(Object.keys(xs_and_ys).includes("y")) {
 				if(xs_and_ys["y"].shape.toString() == "0") {
-					error_string += "No Y-data! ";
+					error_string += "No Y-data [1]! Do you have custom images loaded? ";
 				}
 			} else {
-				error_string += "No Y-data! ";
+				error_string += "No Y-data [2]! Do you have custom images loaded? ";
 			}
 		} else {
 			error_string = "No xy_data. Maybe an error while augmenting data?"
