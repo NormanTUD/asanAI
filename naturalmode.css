@@ -14,7 +14,7 @@ html {
 }
 
 #ribbon {
-	background: rgba(170, 230, 210, 0.9);
+	background: rgba(170, 230, 210, 0.95);
 	color: #151B54;
 }
 
@@ -156,7 +156,7 @@ html .ui-button.ui-state-disabled:active {
 }
 
 #right_side {
-	background-color: #ffffff;
+	background-color: #c5ebe0;
 }
 
 hr {
