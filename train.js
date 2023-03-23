@@ -787,8 +787,6 @@ function visualize_train () {
 
 			categories.push(category);
 			probabilities.push(probability);
-		} else {
-			log(max_images, "<", j);
 		}
 		j++;
 	});
