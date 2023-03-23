@@ -76,11 +76,6 @@ select {
 	color: white;
 }
 
-input {
-	border: 1px solid rgba(255,0,0,0);
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 button:hover {
 	background-color: #7091b9;
 }
@@ -128,10 +123,6 @@ html .ui-button.ui-state-disabled:active {
 	color: white;
 }
 
-.link:link, .link:active, .link:visited, .link:hover, .link:active {
-	color: white;
-}
-
 .vega-embed {
 	filter: invert(0.791);
 }
@@ -157,9 +148,6 @@ html .ui-button.ui-state-disabled:active {
 }
 
 #math_tab {
-	overflow: scroll;
-	width: 99%; 
-	max-height: 100%; 
 	background-color: #363636;
 	color: #fff;
 }
@@ -177,4 +165,3 @@ hr {
 	border-top: 1px solid #585858;
 	border-bottom: 1px solid #585858;
 }
-

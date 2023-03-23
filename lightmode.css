@@ -73,11 +73,6 @@ select {
 	color: black;
 }
 
-input {
-	border: 1px solid rgba(255,0,0,0);
-	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
 button:hover {
 	background-color:#b7c8dc;
 }
@@ -140,18 +135,11 @@ html .ui-button.ui-state-disabled:active {
 	color: black;
 }
 
-.link:link, .link:active, .link:visited, .link:hover, .link:active {
-	color: white;
-}
-
 #tablist {
 	background: #8cc0da; 
 }
 
 #math_tab {
-	overflow: scroll;
-	width: 99%; 
-	max-height: 100%; 
 	background-color: #fff;
 	color: #000;
 }
@@ -165,9 +153,7 @@ html .ui-button.ui-state-disabled:active {
 	color: black;
 }
 
-
 hr {
 	border-top: 1px solid #cccccc;
 	border-bottom: 1px solid #ffffff;
 }
-

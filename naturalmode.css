@@ -104,12 +104,6 @@ select:hover {
 	background-color:rgba(255, 255, 255, 0.9);
 }
 
-input {
-	background-color: rgba(255,255,255,0.5);
-	border: none;
-	border-radius: 5px;
-}
-
 input:hover {
 	background-color:rgb(255,255,255,0.8);
 }
@@ -164,12 +158,13 @@ html .ui-button.ui-state-disabled:active {
 	color: black;
 }
 
-.link:link, .link:active, .link:visited, .link:hover, .link:active {
-	color: white;
-}
-
 #tablist {
 	background-color: #151B54;
+}
+
+#math_tab {
+	background-color: #fff;
+	color: #000;
 }
 
 #predict_own_data {
