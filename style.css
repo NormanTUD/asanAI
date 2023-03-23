@@ -809,3 +809,15 @@ button {
 	border: 1px solid #bababa;
 	color: #2779aa;
 }
+
+#save_model_content {
+	background: rgba(0, 200, 140, 0.4);
+	border: 2px solid rgba(0, 200, 140, 0.4);
+}
+
+#register_content {
+	background: rgba(0, 200, 140, 0.4);
+	border: 2px solid rgba(0, 200, 140, 0.4);
+}
+
+

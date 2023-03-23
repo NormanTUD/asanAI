@@ -23,16 +23,6 @@ html {
 }
 
 
-#save_model_content {
-	background: rgba(0, 200, 140, 0.4);
-	border: 2px solid rgba(0, 200, 140, 0.4);
-}
-
-#register_content {
-	background: rgba(0, 200, 140, 0.4);
-	border: 2px solid rgba(0, 200, 140, 0.4);
-}
-
 button, select, input, #predict_own_data {
 	background-color: #ffffff;
 	color: black;
