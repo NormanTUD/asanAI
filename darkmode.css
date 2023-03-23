@@ -99,6 +99,11 @@ html .ui-button.ui-state-disabled:active {
 	color: #0070a3;
 }
 
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	color: black;
+	background-color: black;
+}
+
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
 .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
