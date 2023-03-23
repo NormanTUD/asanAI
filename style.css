@@ -765,3 +765,23 @@ html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
 	color: #2779aa;
 }
+
+
+
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited,
+a.ui-button,
+a:link.ui-button,
+a:visited.ui-button,
+.ui-button {
+	color: #2779aa;
+	text-decoration: none;
+}
+
+
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+	text-decoration: none;
+}

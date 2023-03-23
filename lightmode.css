@@ -22,21 +22,10 @@ html {
 	color: #362b36;
 }
 
-.ui-state-default a,
-.ui-state-default a:link,
-.ui-state-default a:visited,
-a.ui-button,
-a:link.ui-button,
-a:visited.ui-button,
-.ui-button {
-	color: #2779aa;
-	text-decoration: none;
-}
-
+.ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
 	color: #19439c;
-	text-decoration: none;
 }
 
 .ui-state-active,

@@ -22,21 +22,10 @@ html {
 	color: #ffffff;
 }
 
-.ui-state-default a,
-.ui-state-default a:link,
-.ui-state-default a:visited,
-a.ui-button,
-a:link.ui-button,
-a:visited.ui-button,
-.ui-button {
-	text-decoration: none;
-}
-
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
 	color: white;
-	text-decoration: none;
 }
 
 .ui-state-active,
@@ -96,6 +85,7 @@ html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
 	background: #232323;
 	border: 1px solid #585858;
+	color: whitesmoke;
 }
 
 
