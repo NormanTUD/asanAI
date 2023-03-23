@@ -3240,13 +3240,20 @@ async function change_data_origin() {
 		$("#max_number_of_files_per_category").val(0);
 	}
 
+	/*
 	hide_tab_label("training_data_tab_label");
 	hide_tab_label("own_csv_data_label");
 	hide_tab_label("own_image_data_label");
 	hide_tab_label("own_tensor_data_label");
+	*/
 
 	if (show_own_image_data) {
 		show_tab_label("own_image_data_label", 1);
+
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_tensor_data_label");
+
 		$("#own_images_container").html("");
 		add_new_category();
 		add_new_category();
@@ -3256,14 +3263,29 @@ async function change_data_origin() {
 		rename_labels();
 	} else if (show_own_tensor_data) {
 		show_tab_label("own_tensor_data_label", 1);
+
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_image_data_label");
+
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
 		show_tab_label("own_csv_data_label", 1);
+
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_tensor_data_label");
+
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else {
 		show_tab_label("training_data_tab_label");
+
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_tensor_data_label");
+
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	}
