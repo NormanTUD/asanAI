@@ -349,6 +349,7 @@ input {
 	right: 0;
 	z-index: 2;
 	border-bottom: 1px solid gray;
+	backdrop-filter: blur(3px);
 }
 
 body {
