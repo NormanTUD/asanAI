@@ -793,5 +793,9 @@ function visualize_train () {
 
 	log(imgs);
 	
-	drawImagesInGrid(imgs, categories, probabilities, labels.length);
+	if(imgs.length && categories.length && probabilities.length) {
+		drawImagesInGrid(imgs, categories, probabilities, labels.length);
+	} else {
+		$("#canvas_grid_visualization").html("");
+	}
 }
