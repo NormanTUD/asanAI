@@ -4654,7 +4654,7 @@ async function set_custom_image_training () {
 
 
 async function set_custom_webcam_training_data() {
-	new MoveImageRight("", "");
+	new ManiC("", "");
 
 	await init_webcams();
 
@@ -5274,7 +5274,7 @@ function cosmo_mode () {
 		is_cosmo_mode = false;
 		cosmo_wave = null;
 
-		new MoveImageRight(null, 'manicule.svg');
+		new ManiC(null);
 	} else {
 		$("#beginner").click();
 		// switch to cosmo mode
@@ -5307,7 +5307,7 @@ function cosmo_mode () {
 			cosmo_wave = 1;
 		}
 
-		new MoveImageRight($('#start_stop_training')[0], 'manicule.svg');
+		new ManiC($('#start_stop_training')[0]);
 	}
 
 	show_cosmo_waves();
@@ -5331,9 +5331,9 @@ function show_cosmo_waves () {
 
 				var k = $(".manicule_wave_" + i);
 				if(k.length) {
-					new MoveImageRight(k[0], 'manicule.svg');
+					new ManiC(k[0]);
 				} else {
-					new MoveImageRight(null, 'manicule.svg');
+					new ManiC(null);
 				}
 				
 			} else {
@@ -5354,9 +5354,9 @@ function show_bars_instead_of_numbers () {
 	return false;
 }
 
-class MoveImageRight {
-	constructor(elementSelector, imageUrl) {
-		//log("MoveImageRight elementSelector:", elementSelector);
+class ManiC {
+	constructor(elementSelector, imageUrl = "manicule.svg") {
+		//log("ManiC elementSelector:", elementSelector);
 		//console.trace();
 		remove_manicule();
 
@@ -5371,15 +5371,24 @@ class MoveImageRight {
 			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
 
 			var ntop = $(elementSelector).position()["top"];
-			var nleft = $(elementSelector).position()["left"] + $(elementSelector).width();
+			var bottom_y = ntop + $(elementSelector).height();
+			var left = $(elementSelector).position()["left"];
+			var nleft = left + $(elementSelector).width();
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
 			this.image.style.width = `70px`;
-			this.image.style.top = ntop + "px";
-			this.image.style.left = nleft + "px";
+
 			this.image.style.zIndex = 100000;
 
+			if($(elementSelector).data("mfb")) {
+				this.image.style.top = bottom_y + "px";
+				this.image.style.left = left + "px";
+				this.image.classList.add('rotate_90_deg');
+			} else {
+				this.image.style.top = ntop + "px";
+				this.image.style.left = nleft + "px";
+			}
 
 			this.image.classList.add('manicule');
 			this.image.classList.add('invert_in_dark_mode');
@@ -5403,22 +5412,24 @@ class MoveImageRight {
 		const centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
 
 		// calculate the radius of the circle
-		const radius = 10;
+		const radius = 20;
 
 		// set up the animation
 		this.image.style.animation = 'moveInCircle 2s linear infinite';
 		this.image.style.animationName = 'moveInCircle';
-
 		// define the keyframes for the animation
 		const keyframes = `
 			0% {
 				transform: translate(${centerX + radius}px, ${centerY}px);
+				rotation: ${this.image.style.rotation};
 			}
 			50% {
 				transform: translate(${centerX}px, ${centerY}px);
+				rotation: ${this.image.style.rotation};
 			}
 			100% {
 				transform: translate(${centerX + radius}px, ${centerY}px);
+				rotation: ${this.image.style.rotation};
 			}
 		`;
 
