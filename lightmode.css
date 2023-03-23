@@ -70,6 +70,10 @@ select:hover {
 	background-color:#b7c8dc;
 }
 
+input:hover {
+	background-color:#b7c8dc;
+}
+
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default,

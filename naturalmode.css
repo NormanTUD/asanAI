@@ -76,9 +76,19 @@ select {
 	color: black;
 }
 
+button:hover {
+	background-color:rgba(255, 255, 255, 0.9);
+}
+
 select:hover {
 	background-color:rgba(255, 255, 255, 0.9);
 }
+
+input:hover {
+	background-color:rgba(255, 255, 255, 0.9);
+}
+
+
 
 .ui-state-default,
 .ui-widget-content .ui-state-default,

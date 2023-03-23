@@ -172,10 +172,6 @@ ul {
 	padding: 0px;
 }
 
-input {
-	line-height: 1.5em;
-}
-
 .ribbon-toolbar {
 	margin: auto;
 	text-align: center;
@@ -411,7 +407,7 @@ button:disabled {
 
 button:disabled:hover {
 	color: #555555;
-	background-color: #222222;
+	background-color: red;
 	cursor: not-allowed;
 }
 
@@ -726,6 +722,7 @@ hr {
 }
 
 input {
+	line-height: 1.5em;
 	background-color: rgba(255,255,255,0.5);
 	border: none;
 	border-radius: 5px;
