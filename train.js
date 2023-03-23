@@ -673,7 +673,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	var xStep = graphWidth / numCategories;
 	var yStep = graphHeight / 1.2;
 
-	var maxProb = Math.max(...probabilities);
+	var maxProb = 1;
 
 	// draw y-axis labels
 	ctx.font = "14px Arial";

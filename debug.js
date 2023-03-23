@@ -98,6 +98,8 @@ function add_memory_debugger () {
 
 		    var args_string = param_names.join(", "); 
 
+		    var original_function = window[i];
+
 		    try {
 			    var execute_this = `
 			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
@@ -136,7 +138,20 @@ function add_function_debugger () {
 			    "delay", 
 			    "Swal", 
 			    "add_function_debugger", 
+			    "get_model_config_hash",
+			    "gradClassActivationMap",
+			    "enable_train",
+			    "isNumeric",
+			    "colorize",
+			    "md5",
+			    "is_hidden_or_has_hidden_parent",
+			    "getCookie",
+			    "display_delete_button",
+			    "get_id_from_train_data_struct",
+			    "decille",
+			    "headerdatadebug",
 			    "getParamNames", 
+			    "predict_webcam",
 			    "memory_debugger", 
 			    "_allow_training", 
 			    "fix_viz_width", 
@@ -160,6 +175,8 @@ function add_function_debugger () {
 		    var param_names = getParamNames(window[i]);
 
 		    var args_string = param_names.join(", "); 
+
+		    var original_function = window[i];
 
 		    try {
 			    var execute_this = `
