@@ -709,3 +709,18 @@ a.ui-button:focus {
 	color: #0070a3;
 	text-decoration: none;
 }
+
+
+.show_data {
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.add_remove_layer_button {
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+hr {
+	padding: 0;
+	border: none;
+}
+
