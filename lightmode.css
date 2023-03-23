@@ -63,15 +63,15 @@ select {
 }
 
 button:hover {
-	background-color:#b7c8dc;
+	background-color: #b7c8dc;
 }
 
 select:hover {
-	background-color:#b7c8dc;
+	background-color: #b7c8dc;
 }
 
 input:hover {
-	background-color:#b7c8dc;
+	background-color: #b7c8dc;
 }
 
 .ui-state-default,
