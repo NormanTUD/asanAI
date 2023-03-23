@@ -6,7 +6,7 @@ html {
 	padding:0;
 	width:100%;
 	height:100%;
-	background: #e5e5e5;
+	background: #ffffff;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	font-size: 14px;
@@ -28,6 +28,11 @@ html {
 	z-index: 1;
 	overflow: hidden;
 	border: solid #a3a8ac 1px;
+	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.descriptions_of_layers {
+	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 #register {
@@ -104,20 +109,22 @@ button, select, input, #predict_own_data {
 }
 
 button {
-	border: 1px solid #9a9a9a;
+	border: 1px solid rgba(255,0,0,0);
 	background-color: #ffffff;
 	outline:none;
 	color: black;
 }
 
 select {
-	border: 1px solid #9a9a9a;
+	border: 1px solid rgba(255,0,0,0);
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	background-color: #ffffff;
 	color: black;
 }
 
 input {
-	border: 1px solid #9a9a9a;
+	border: 1px solid rgba(255,0,0,0);
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 button:hover {
@@ -202,7 +209,7 @@ a.ui-button:focus {
 }
 
 #tablist {
-	background: #254c87; 
+	background: #8cc0da; 
 }
 
 #math_tab {
@@ -222,4 +229,12 @@ hr {
 	border: none;
 	border-top: 1px solid #cccccc;
 	border-bottom: 1px solid #ffffff;
+}
+
+.add_remove_layer_button {
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.disabled_symbol {
+	color: #ffffff;
 }

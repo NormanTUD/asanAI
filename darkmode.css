@@ -108,20 +108,22 @@ button, select, input, #predict_own_data {
 }
 
 button {
-	border: 1px solid #585858;
+	border: 1px solid rgba(255,0,0,0);
 	background-color: #444444;
 	outline:none;
 	color: white;
 }
 
 select {
-	border: 1px solid #585858;
+	border: 1px solid rgba(255,0,0,0);
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 	background-color: #444444;
 	color: white;
 }
 
 input {
-	border: 1px solid #585858;
+	border: 1px solid rgba(255,0,0,0);
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 button:hover {
@@ -240,4 +242,12 @@ hr {
 	border: none;
 	border-top: 1px solid #585858;
 	border-bottom: 1px solid #585858;
+}
+
+.disabled_symbol {
+	color: #ffffff;
+}
+
+.show_data {
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }

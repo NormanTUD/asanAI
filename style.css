@@ -3,6 +3,13 @@ html {
 	font-size: 0.8em;
 }
 
+body {
+	background-image: url(header_start.png);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: right 0px top 0px;
+}
+
 .container {
 	width: 80%;
 	margin: auto;
@@ -199,7 +206,6 @@ input {
 }
 
 .disabled_symbol {
-	color: #b4b4b4;
 	cursor: not-allowed;
 	opacity: 0.7;
 }
@@ -223,9 +229,6 @@ input {
 
 .input_field {
 	width: 100%;
-}
-
-button {
 }
 
 .layer_type {
@@ -634,4 +637,8 @@ button:disabled:hover {
 
 .no_mark {
 	user-select: none;
+}
+
+.show_data {
+	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }

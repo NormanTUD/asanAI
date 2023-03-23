@@ -250,3 +250,7 @@ a.ui-button:focus {
 #status_bar {
 	background-color: #f5f5f5;
 }
+
+#right_side {
+	background-color: #ffffff;
+}
