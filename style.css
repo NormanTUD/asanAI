@@ -445,7 +445,6 @@ button:disabled:hover {
 	align-items: center;
 	writing-mode: vertical-rl;
 	background-color: white;
-	border: solid #a3a8ac 1px;
 	width: 55px;
 	text-align: center;
 }

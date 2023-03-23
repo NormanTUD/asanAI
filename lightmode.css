@@ -38,13 +38,18 @@ a.ui-button:active,
 	color: #ffffff;
 }
 
-.ui-widget-header a {
-	color: #222222;
-}
-
 button, select, input, #predict_own_data {
 	background-color: #ffffff;
 	color: black;
+}
+
+.descriptions_of_layers {
+	background: #ffffff;
+	border: solid #a3a8ac 1px;
+}
+
+.ui-widget-header a {
+	color: #222222;
 }
 
 button {

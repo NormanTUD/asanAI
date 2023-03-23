@@ -36,6 +36,10 @@ html {
 	border: 2px solid rgba(0, 200, 140, 0.4);
 }
 
+button, select, input, #predict_own_data {
+	background-color: #ffffff;
+	color: black;
+}
 
 #save_model_msg, #login_error_msg, #register_error_msg {
 	border: 1px solid white;
