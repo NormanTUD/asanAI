@@ -67,12 +67,7 @@ button:hover {
 }
 
 select:hover {
-	border: 1px solid #585858;
 	background-color: #7091b9;
-}
-
-input:hover {
-	border: 1px solid #585858;
 }
 
 .ui-state-default,
