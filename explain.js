@@ -1014,6 +1014,10 @@ async function draw_maximally_activated_layer (layer, type) {
 		});
 
 
+		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+
+
 		var start = Date.now();
 
 		await draw_maximally_activated_neuron(layer, i);
