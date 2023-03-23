@@ -439,6 +439,7 @@ button:disabled:hover {
 }
 
 .descriptions_of_layers {
+	border-radius: 5px;
 	display: flex;
 	position: absolute;
 	justify-content: center;
@@ -784,3 +785,10 @@ a:visited.ui-button,
 .ui-state-active a:visited {
 	text-decoration: none;
 }
+
+button {
+	border: 1px solid rgba(255,0,0,0);
+	outline: none;
+	border-radius: 5px;
+}
+

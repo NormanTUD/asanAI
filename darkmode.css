@@ -53,9 +53,7 @@ button, select, input, #predict_own_data {
 }
 
 button {
-	border: 1px solid rgba(255,0,0,0);
 	background-color: #444444;
-	outline:none;
 	color: white;
 }
 
