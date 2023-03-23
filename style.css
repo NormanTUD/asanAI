@@ -25,6 +25,10 @@ html {
 	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
+.descriptions_of_layers {
+	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
 body {
 	background-image: url(header_start.png);
 	background-repeat: no-repeat;
@@ -230,6 +234,7 @@ input {
 .disabled_symbol {
 	cursor: not-allowed;
 	opacity: 0.7;
+	color: #ffffff;
 }
 
 .popup {
@@ -606,6 +611,7 @@ button:disabled:hover {
 }
 
 #register {
+	color: white;
 	user-select: none;
 }
 
@@ -663,4 +669,43 @@ button:disabled:hover {
 
 .show_data {
 	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.glass_box:before {
+	content: "";
+	position: absolute;
+	background: inherit;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: -20px;
+}
+
+.less_transparent_glass_box:before {
+	content: "";
+	position: absolute;
+	background: inherit;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: -20px;
+}
+
+
+.ui-state-hover a,
+.ui-state-hover a:hover,
+.ui-state-hover a:link,
+.ui-state-hover a:visited,
+.ui-state-focus a,
+.ui-state-focus a:hover,
+.ui-state-focus a:link,
+.ui-state-focus a:visited,
+a.ui-button:hover,
+a.ui-button:focus {
+	color: #0070a3;
+	text-decoration: none;
 }

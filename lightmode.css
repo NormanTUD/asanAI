@@ -13,18 +13,11 @@ html {
 	border: solid #a3a8ac 1px;
 }
 
-.descriptions_of_layers {
-	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-}
-
-#register {
-	color: white;
-}
-
 #ribbon {
 	background: #f5f3f3;
 	color: #362b36;
 }
+
 .ui-widget-content a {
 	color: #362b36;
 }
@@ -59,30 +52,6 @@ a.ui-button:active,
 
 .ui-widget-header a {
 	color: #222222;
-}
-
-.less_transparent_glass_box:before {
-	content: "";
-	position: absolute;
-	background: inherit;
-	z-index: -1;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: -20px;
-}
-
-.glass_box:before {
-	content: "";
-	position: absolute;
-	background: inherit;
-	z-index: -1;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: -20px;
 }
 
 button, select, input, #predict_own_data {
@@ -159,21 +128,6 @@ html .ui-button.ui-state-disabled:active {
 	font-weight: bold;
 	color: yellow;
 }
-.ui-state-hover a,
-.ui-state-hover a:hover,
-.ui-state-hover a:link,
-.ui-state-hover a:visited,
-.ui-state-focus a,
-.ui-state-focus a:hover,
-.ui-state-focus a:link,
-.ui-state-focus a:visited,
-a.ui-button:hover,
-a.ui-button:focus {
-	color: #0070a3;
-	text-decoration: none;
-}
-
-
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	color: darkgray;
 	background-color: #f5f3f3;
@@ -215,8 +169,4 @@ hr {
 
 .add_remove_layer_button {
 	box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-}
-
-.disabled_symbol {
-	color: #ffffff;
 }

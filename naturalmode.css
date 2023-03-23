@@ -13,12 +13,14 @@ html {
 	border: solid rgba(0, 200, 140, 0.1) 1px;
 }
 
-#log {
-	background-color: rgba(255, 255, 255, 0.5);
+#ribbon {
+	background: rgba(170, 230, 210, 0.9);
+	color: #151B54;
 }
 
-#register {
-	color: white;
+
+#log {
+	background-color: rgba(255, 255, 255, 0.5);
 }
 
 #save_model_content {
@@ -31,10 +33,6 @@ html {
 	border: 2px solid rgba(0, 200, 140, 0.4);
 }
 
-#ribbon {
-	background: rgba(170, 230, 210, 0.9);
-	color: #151B54;
-}
 
 #save_model_msg, #login_error_msg, #register_error_msg {
 	border: 1px solid white;
@@ -75,30 +73,6 @@ a.ui-button:active,
 
 .ui-widget-header a {
 	color: #222222;
-}
-
-.less_transparent_glass_box:before {
-	content: "";
-	position: absolute;
-	background: inherit;
-	z-index: -1;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: -20px;
-}
-
-.glass_box:before {
-	content: "";
-	position: absolute;
-	background: inherit;
-	z-index: -1;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: -20px;
 }
 
 button {
@@ -177,20 +151,6 @@ html .ui-button.ui-state-disabled:active {
 	font-weight: bold;
 	color: yellow;
 }
-.ui-state-hover a,
-.ui-state-hover a:hover,
-.ui-state-hover a:link,
-.ui-state-hover a:visited,
-.ui-state-focus a,
-.ui-state-focus a:hover,
-.ui-state-focus a:link,
-.ui-state-focus a:visited,
-a.ui-button:hover,
-a.ui-button:focus {
-	color: #0070a3;
-	text-decoration: none;
-}
-
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	color: #60528b;
