@@ -771,7 +771,7 @@ function visualize_train () {
 	var categories = [];
 	var probabilities = [];
 
-	var max_images = labels.length * 5;
+	var max_images = labels.length * 20;
 
 	if(labels.length && labels.length < 7) {
 
