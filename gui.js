@@ -5392,14 +5392,8 @@ class MoveImageRight {
 			0% {
 				transform: translate(${centerX + radius}px, ${centerY}px);
 			}
-			25% {
-				transform: translate(${centerX}px, ${centerY + radius}px);
-			}
 			50% {
-				transform: translate(${centerX - radius}px, ${centerY}px);
-			}
-			75% {
-				transform: translate(${centerX}px, ${centerY - radius}px);
+				transform: translate(${centerX}px, ${centerY}px);
 			}
 			100% {
 				transform: translate(${centerX + radius}px, ${centerY}px);
