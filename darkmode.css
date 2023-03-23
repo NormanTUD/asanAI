@@ -1,32 +1,15 @@
 html {
-	min-height:100%;
-	outline: none;
 	color: #ffffff;
-	margin:0;
-	padding:0;
-	width:100%;
-	height:100%;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
 	background: #262626;
-	font-size: 14px;
 }
 
 .less_transparent_glass_box {
-	position: relative;
 	background: #363636;
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
 	border: solid #626567 1px;
 }
 
 .glass_box {
-	position: relative;
 	background: #363636;
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
 	border: solid #626567 1px;
 }
 

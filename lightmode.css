@@ -1,34 +1,16 @@
 html {
-	min-height:100%;
-	outline: none;
 	color: #000000;
-	margin:0;
-	padding:0;
-	width:100%;
-	height:100%;
 	background: #ffffff;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	font-size: 14px;
 }
 
 .less_transparent_glass_box {
-	position: relative;
 	background: white;
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
 	border: solid #a3a8ac 1px;
 }
 
 .glass_box {
-	position: relative;
 	background: white;
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
 	border: solid #a3a8ac 1px;
-	box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .descriptions_of_layers {
