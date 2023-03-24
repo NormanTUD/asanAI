@@ -1191,6 +1191,7 @@ async function take_image_from_webcam_n_times (elem) {
 		for (var i = 0; i < number; i++) {
 			l("Taking image " + (i + 1) + " of " + number);
 			await take_image_from_webcam(elem, 1);
+			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
 		}
 		l("Done taking " + number + " images");
@@ -1224,6 +1225,7 @@ async function take_image_from_webcam (elem, nol) {
 		i++;
 	}
 
+	// TODO: Cannot easily changed to span because of image map generation. The image map generator drawing canvas is, when not in a single line, not properly aligned.
 	$(category).find(".own_images").append(
 		'<div class="own_image_span">' +
 			'<canvas id="' + id + '_canvas" width="' + stream_width + '" height="' + stream_height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
@@ -1258,7 +1260,6 @@ async function take_image_from_webcam (elem, nol) {
 	}
 
 	has_taken_webcam_image_for_cosmo++;
-	window.scrollTo(0, document.body.scrollHeight);
 }
 
 function chiSquaredTest(arr) {

@@ -3433,7 +3433,7 @@ function alter_text_webcam_series () {
 
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
-	var html = '<div class="own_image_span"><img height="90" src="' + img+ '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></div><br>';
+	var html = '<span class="own_image_span"><img height="90" src="' + img+ '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>';
 	imgDiv.append(html);
 }
 
