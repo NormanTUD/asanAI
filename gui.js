@@ -5463,7 +5463,7 @@ class ManiC {
 		// define the keyframes for the animation
 		const keyframes = `
 			0% {
-				transform: translate(${centerX}px, ${centerY + radius}px);
+				transform: translate(${centerX}px, ${centerY - radius}px);
 				rotation: ${this.image.style.rotation};
 			}
 			50% {
@@ -5471,7 +5471,7 @@ class ManiC {
 				rotation: ${this.image.style.rotation};
 			}
 			100% {
-				transform: translate(${centerX}px, ${centerY + radius}px);
+				transform: translate(${centerX}px, ${centerY - radius}px);
 				rotation: ${this.image.style.rotation};
 			}
 		`;
@@ -5500,7 +5500,7 @@ class ManiC {
 		// define the keyframes for the animation
 		const keyframes = `
 			0% {
-				transform: translate(${centerX + radius}px, ${centerY}px);
+				transform: translate(${centerX - radius}px, ${centerY}px);
 				rotation: ${this.image.style.rotation};
 			}
 			50% {
@@ -5508,7 +5508,7 @@ class ManiC {
 				rotation: ${this.image.style.rotation};
 			}
 			100% {
-				transform: translate(${centerX + radius}px, ${centerY}px);
+				transform: translate(${centerX - radius}px, ${centerY}px);
 				rotation: ${this.image.style.rotation};
 			}
 		`;
