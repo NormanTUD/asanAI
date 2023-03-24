@@ -192,7 +192,7 @@ function set_item_value(layer, classname, value) {
 
 function get_tr_str_for_description(desc) {
 	assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
-	return "<tr><td>Description:</td><td><i class='typeset_me'>" + desc + "</i></td></tr>";
+	return "<tr><td>Description:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
 }
 
 function isNumeric(str) {
