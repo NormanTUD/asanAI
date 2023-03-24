@@ -836,5 +836,10 @@ button {
 	rotate: 90deg;
 }
 
-.no_box_shadow_when_no_camera_enabled {
+.only_when_webcam {
+	display: none;
+}
+
+.only_when_webcam_on {
+	display: none;
 }

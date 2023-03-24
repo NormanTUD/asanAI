@@ -732,6 +732,7 @@ async function show_webcam (force_restart) {
 		if(cam) {
 			stop_webcam();
 			stopped = 1;
+			$(".only_when_webcam_on").hide();
 		} else {
 			var webcam = $("#webcam");
 			webcam.hide().html("");
@@ -762,6 +763,7 @@ async function show_webcam (force_restart) {
 			cam = await tf.data.webcam(videoElement, cam_config);
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
+			$(".only_when_webcam_on").show();
 		}
 	} else {
 		$("#webcam").hide().html("");

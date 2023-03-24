@@ -1371,7 +1371,7 @@
 											<div class="hide_when_no_image">
 												<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
-												<div class="full_example_image_prediction only_when_webcam">
+												<div class="full_example_image_prediction only_when_webcam_on">
 													<div id="webcam" style="display: none"></div>
 													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 												</div>
