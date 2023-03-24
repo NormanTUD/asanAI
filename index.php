@@ -192,6 +192,7 @@
 		<noscript>
 			<span style="font-size: 50px; color: red">You must enable JavaScript for this site to work. Please add an exception to NoScript if you have it installed.</span>
 		</noscript>
+		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite">
 			<div id="ribbon_shower">
@@ -1206,8 +1207,6 @@
 									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
 								</span>
 								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
-								<div id="webcam_data" style="display: none"></div>
-								<br>
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
