@@ -1212,7 +1212,7 @@
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
 									Number of images in a series: <input type='number' min=1 value='100' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
-									Delay in seconds between images in a series: <input type='number' value='0.9' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
+									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
 								</div>
 								<button onclick="add_new_category();">Add new category</button>
 								<div id="own_image_data_categories"></div>
