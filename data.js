@@ -1197,6 +1197,7 @@ async function take_image_from_webcam_n_times (elem) {
 	});
 
 	last_shape_layer_warning();
+
 }
 
 async function take_image_from_webcam (elem, nol) {
@@ -1257,6 +1258,7 @@ async function take_image_from_webcam (elem, nol) {
 	}
 
 	has_taken_webcam_image_for_cosmo++;
+	window.scrollTo(0, document.body.scrollHeight);
 }
 
 function chiSquaredTest(arr) {
