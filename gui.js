@@ -4703,6 +4703,11 @@ function toggle_layers() {
 	$(".left_side").toggle();
 
 	write_descriptions(1);
+	
+	if(is_cosmo_mode) {
+		cosmo_wave++;
+		show_cosmo_waves();
+	}
 }
 
 async function get_available_cams () {
@@ -5408,7 +5413,7 @@ class ManiC {
 
 			var ntop = $(elementSelector).position()["top"];
 			var bottom_y = $(elementSelector)[0].getBoundingClientRect().y + $(elementSelector)[0].getBoundingClientRect().height
-			var left = $(elementSelector)[0].getBoundingClientRect().x + $(elementSelector)[0].getBoundingClientRect().width
+			var left = $(elementSelector)[0].getBoundingClientRect().x; // + $(elementSelector)[0].getBoundingClientRect().width
 			var nleft = left + $(elementSelector).width();
 
 			this.image.style.position = 'absolute';
