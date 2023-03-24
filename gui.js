@@ -4659,12 +4659,26 @@ async function set_custom_image_training () {
 
 
 async function set_custom_webcam_training_data() {
+	if(!is_hidden_or_has_hidden_parent($("#own_image_data"))) {
+		return;
+	}
+
 	new ManiC("", "");
 
 	await init_webcams();
 
 
-	$.when($("#data_origin").val("image").trigger("change")).done(function(){
+	if($("#data_origin").val() != "image") {
+		$.when($("#data_origin").val("image").trigger("change")).done(function(){
+			if(!cam_data) {
+				get_data_from_webcam();
+			}
+
+			if(!cam) {
+				show_webcam();
+			}
+		});
+	} else {
 		if(!cam_data) {
 			get_data_from_webcam();
 		}
@@ -4672,7 +4686,9 @@ async function set_custom_webcam_training_data() {
 		if(!cam) {
 			show_webcam();
 		}
-	});
+
+		show_tab_label("own_image_data_label", 1);
+	}
 }
 
 function toggle_layers() {

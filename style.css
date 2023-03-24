@@ -863,3 +863,7 @@ button {
 .only_show_when_predicting_image_file {
 	display: none;
 }
+
+#custom_webcam_training_data {
+	user-select: none;
+}
