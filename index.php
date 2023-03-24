@@ -1386,16 +1386,16 @@
 											</div>
 
 											<span class="hide_when_no_image">
-												<div class="full_example_image_prediction">
-													<div id="upload_file" class="show_data"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
+												<div id="upload_file" class="show_data no_box_shadow"><input type="file" accept="image/*" onchange="loadFile(event)"></div>
+												<div class="full_example_image_prediction only_show_when_predicting_image_file">
 													<img style="display:none" id="output"/>
 
 													<br>
 
 													<div id="predict_error" style="overflow: scroll; display: none"></div>
+													<div id="prediction" style="display: none"></div>
 												</div>
 											</span>
-												<div id="prediction" style="display: none"></div>
 										</div>
 
 										<div class="handdrawn hide_when_no_image">

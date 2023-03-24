@@ -37,6 +37,8 @@ var loadFile = (function(event) {
 		$("#output")[0].width = $("#output")[0].naturalWidth;
 
 		predict(output);
+		
+		$(".only_show_when_predicting_image_file").show();
 	};
 
 	$("#output").show();

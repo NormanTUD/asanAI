@@ -1710,6 +1710,8 @@ function set_xyz_values(j, name, values) {
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
+	$(".only_show_when_predicting_image_file").hide();
+
 	show_swal_when_changing_size = false;
 
 	var swal_msg = "Loading model";
@@ -2003,6 +2005,7 @@ async function set_config(index) {
 
 	l("Updating predictions");
 	await show_prediction(1, 1);
+
 	l("Loaded configuration");
 }
 

@@ -843,3 +843,11 @@ button {
 .only_when_webcam_on {
 	display: none;
 }
+
+.no_box_shadow {
+	box-shadow: none !important;
+}
+
+.only_show_when_predicting_image_file {
+	display: none;
+}
