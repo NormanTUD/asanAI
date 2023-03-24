@@ -1250,6 +1250,13 @@ async function take_image_from_webcam (elem, nol) {
 
 	last_shape_layer_warning();
 	tf.engine().endScope();
+
+	if(!has_taken_webcam_image_for_cosmo) {
+		cosmo_wave++;
+		show_cosmo_waves();
+	}
+
+	has_taken_webcam_image_for_cosmo = true;
 }
 
 function chiSquaredTest(arr) {

@@ -1347,7 +1347,7 @@ var number_of_currently_running_updated_pages = 0;
 
 var cosmo_wave = 0;
 
-var max_cosmo_wave = 5;
+var max_cosmo_wave = 6;
 
 var escapeCount = 0;
 var lastEscapeTime = 0;
@@ -1368,3 +1368,5 @@ var global_force_noclick_tab_label = 0;
 var click_on_graphs = 1;
 
 var has_keyframes_for_manicule = false;
+
+var has_taken_webcam_image_for_cosmo = false;

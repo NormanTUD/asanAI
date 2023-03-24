@@ -5357,9 +5357,14 @@ function show_cosmo_waves () {
 				var all_elements = $(".show_cosmo_wave_" + i);
 				all_elements.show();
 
-				var k = $($(".manicule_wave_" + i)[0]);
-				if(k.length && i == cosmo_wave) {
-					new ManiC(k[0]);
+
+				if(i == cosmo_wave) {
+					var k = $($(".manicule_wave_" + i)[0]);
+					if(k.length) {
+						new ManiC(k[0]);
+					} else {
+						new ManiC(null);
+					}
 				} else {
 					new ManiC(null);
 				}
