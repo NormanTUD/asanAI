@@ -778,20 +778,19 @@ function visualize_train () {
 		var j = 0;
 
 		$("#photos").find("img").each((i,x) => {
-			if(max_images > j) {
-				imgs.push(x);
+			imgs.push(x);
 
-				var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
-				var res = model.predict(img_tensor);
+			var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+			var res = model.predict(img_tensor);
 
-				res = res.arraySync()[0];
+			res = res.arraySync()[0];
 
-				var probability = Math.max(...res);
-				var category = res.indexOf(probability);
+			var probability = Math.max(...res);
+			var category = res.indexOf(probability);
 
-				categories.push(category);
-				probabilities.push(probability);
-			}
+			categories.push(category);
+			probabilities.push(probability);
+
 			j++;
 		});
 

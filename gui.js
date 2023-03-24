@@ -3461,8 +3461,8 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
-			'<button style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>' +
+			'<button data-mfb="1" style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
+			'<button data-mfb="1" style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button manicule_wave_2" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>' +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			'<div id="' + uuid + '"></div>' +
 			`<button id='save_button_${uuid}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();">Save this image</button>`
@@ -4669,13 +4669,21 @@ async function set_custom_webcam_training_data() {
 
 
 	if($("#data_origin").val() != "image") {
-		$.when($("#data_origin").val("image").trigger("change")).done(function(){
+		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
 			if(!cam_data) {
 				get_data_from_webcam();
 			}
 
 			if(!cam) {
 				show_webcam();
+			}
+
+			if(is_cosmo_mode) {
+				cosmo_wave++;
+
+				await delay(1500);
+
+				show_cosmo_waves();
 			}
 		});
 	} else {
@@ -5349,8 +5357,8 @@ function show_cosmo_waves () {
 				var all_elements = $(".show_cosmo_wave_" + i);
 				all_elements.show();
 
-				var k = $(".manicule_wave_" + i);
-				if(k.length) {
+				var k = $($(".manicule_wave_" + i)[0]);
+				if(k.length && i == cosmo_wave) {
 					new ManiC(k[0]);
 				} else {
 					new ManiC(null);
@@ -5389,23 +5397,29 @@ class ManiC {
 
 			//var ntop = $("#start_stop_training").position()["top"] + 35; // + $("#start_stop_training").height();
 			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
+			
+
+			log("Manicule Selector:", elementSelector);
 
 			var ntop = $(elementSelector).position()["top"];
-			var bottom_y = ntop + $(elementSelector).height();
-			var left = $(elementSelector).position()["left"];
+			var bottom_y = $(elementSelector)[0].getBoundingClientRect().y + $(elementSelector)[0].getBoundingClientRect().height
+			var left = $(elementSelector)[0].getBoundingClientRect().x + $(elementSelector)[0].getBoundingClientRect().width
 			var nleft = left + $(elementSelector).width();
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
-			this.image.style.width = `70px`;
 
 			this.image.style.zIndex = 100000;
 
 			if($(elementSelector).data("mfb")) {
-				this.image.style.top = bottom_y + "px";
-				this.image.style.left = left + "px";
-				this.image.classList.add('rotate_90_deg');
+				//this.image.style.top = bottom_y + "px";
+				this.image.style.top = "0px";
+				//this.image.style.left = left + "px";
+				this.image.style.height = `70px`;
+				//this.image.classList.add('rotate_90_deg');
+				this.image.src = "rotated_90_" + imageUrl;
 			} else {
+				this.image.style.width = `70px`;
 				this.image.style.top = ntop + "px";
 				this.image.style.left = nleft + "px";
 			}
@@ -5415,7 +5429,11 @@ class ManiC {
 
 			document.body.appendChild(this.image);
 
-			this.moveImageInCircle(); // call moveImageInCircle() to start the animation
+			if($(elementSelector).data("mfb")) {
+				this.moveAroundVertically();
+			} else {
+				this.moveAroundHorizontally();
+			}
 
 			manicule = this;
 
@@ -5425,7 +5443,7 @@ class ManiC {
 		}
 	}
 
-	moveImageInCircle() {
+	moveAroundVertically () {
 		// calculate the center point of the element
 		const elementRect = this.element.getBoundingClientRect();
 		const centerX = elementRect.left + elementRect.width / 2;
@@ -5435,8 +5453,45 @@ class ManiC {
 		const radius = 20;
 
 		// set up the animation
-		this.image.style.animation = 'moveInCircle 2s linear infinite';
-		this.image.style.animationName = 'moveInCircle';
+		this.image.style.animation = 'moveAroundVertically 2s linear infinite';
+		this.image.style.animationName = 'moveAroundVertically';
+		// define the keyframes for the animation
+		const keyframes = `
+			0% {
+				transform: translate(${centerX}px, ${centerY + radius}px);
+				rotation: ${this.image.style.rotation};
+			}
+			50% {
+				transform: translate(${centerX}px, ${centerY}px);
+				rotation: ${this.image.style.rotation};
+			}
+			100% {
+				transform: translate(${centerX}px, ${centerY + radius}px);
+				rotation: ${this.image.style.rotation};
+			}
+		`;
+
+		// add the keyframes to a style sheet
+		const styleSheet = document.getElementById('manicule_animation_css');
+		styleSheet.innerHTML = `
+			@keyframes moveAroundVertically {
+				${keyframes}
+			}
+		`;
+	}
+
+	moveAroundHorizontally () {
+		// calculate the center point of the element
+		const elementRect = this.element.getBoundingClientRect();
+		const centerX = elementRect.left + elementRect.width / 2;
+		const centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
+
+		// calculate the radius of the circle
+		const radius = 20;
+
+		// set up the animation
+		this.image.style.animation = 'moveAroundHorizontally 2s linear infinite';
+		this.image.style.animationName = 'moveAroundHorizontally';
 		// define the keyframes for the animation
 		const keyframes = `
 			0% {
@@ -5454,14 +5509,12 @@ class ManiC {
 		`;
 
 		// add the keyframes to a style sheet
-		const styleSheet = document.createElement('style');
+		const styleSheet = document.getElementById('manicule_animation_css');
 		styleSheet.innerHTML = `
-			@keyframes moveInCircle {
+			@keyframes moveAroundHorizontally {
 				${keyframes}
 			}
 		`;
-
-		document.head.appendChild(styleSheet);
 	}
 
 	hide() {
