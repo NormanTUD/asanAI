@@ -5423,7 +5423,7 @@ class ManiC {
 
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
-				this.image.style.top = "0px";
+				this.image.style.top = $("#custom_webcam_training_data").position()["top"] + $("#custom_webcam_training_data").height() + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `70px`;
 				//this.image.classList.add('rotate_90_deg');
