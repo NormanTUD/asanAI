@@ -5253,7 +5253,6 @@ function sparkle_one_element (element) {
 
 function cosmo_mode () {
 	if(is_cosmo_mode) {
-		// switch to normal mode
 		l("Exiting cosmo mode");
 		setCookie("cosmo_mode", "0", 1);
 		show_layer_view();
@@ -5276,9 +5275,9 @@ function cosmo_mode () {
 
 		new ManiC(null);
 	} else {
+		l("Starting cosmo mode");
 		$("#beginner").click();
 		// switch to cosmo mode
-		l("Starting cosmo mode");
 		setCookie("cosmo_mode", "1", 365);
 		hide_layer_view();
 		hide_ribbon();

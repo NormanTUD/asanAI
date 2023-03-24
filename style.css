@@ -835,3 +835,6 @@ button {
 .rotate_90_deg {
 	rotate: 90deg;
 }
+
+.no_box_shadow_when_no_camera_enabled {
+}

@@ -762,8 +762,6 @@ async function show_webcam (force_restart) {
 			cam = await tf.data.webcam(videoElement, cam_config);
 
 			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
-
-			//webcam.append("<br><button onclick='predict_webcam()'>&#x1F4F8; Predict webcam image</button>");
 		}
 	} else {
 		$("#webcam").hide().html("");

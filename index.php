@@ -1210,7 +1210,7 @@
 								<br>
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
-								<div class='webcam_data only_when_webcam_on hide_in_cosmo_mode'>
+								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
 									Number of images in a series: <input type='number' min=1 value='100' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
 									Delay in seconds between images in a series: <input type='number' value='0.9' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
 								</div>
@@ -1369,12 +1369,10 @@
 									<div>
 										<div id="own_files">
 											<div class="hide_when_no_image">
-												<div class="full_example_image_prediction">
-													<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-													<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
-
+												<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
+												<div class="full_example_image_prediction only_when_webcam">
 													<div id="webcam" style="display: none"></div>
-
 													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 												</div>
 											</div>
