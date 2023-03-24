@@ -134,7 +134,7 @@ async function run_tests () {
 
 		test_equal('quote_python(123)', quote_python(123), "[123]");
 
-		test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><i class='typeset_me'>hallo</i></td></tr>");
+		test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td>Description:</td><td><span class='typeset_me'>hallo</span></td></tr>");
 
 		var not_random = [1,1,1,1,1,1,1,1];
 		var medium_random = [0,0.1,1,2,0.5,-1,1,1,1,1,2,0.5];
