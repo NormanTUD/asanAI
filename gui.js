@@ -5455,7 +5455,7 @@ class ManiC {
 		// calculate the center point of the element
 		const elementRect = this.element.getBoundingClientRect();
 		//const centerX = parseInt(this.image.style.left); //elementRect.left + elementRect.width / 2;
-		const centerX = $(this.element).position()["left"] + $(this.element).width() - ($(this.element).width() / 2);
+		const centerX = parseInt($(this.element).position()["left"] + $(this.element).width() / 2);
 		const centerY = parseInt(this.image.style.top); //elementRect.top + elementRect.height / 2 + window.scrollY;
 
 		// calculate the radius of the circle
