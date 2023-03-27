@@ -5421,7 +5421,7 @@ class ManiC {
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
 				this.image.style.top = $(elementSelector).position()["top"] + $(elementSelector).height() + "px";
-				this.image.style.left = ($(elementSelector).position()["left"] - (hand_height / 3)) + "px";
+				this.image.style.left = ($(elementSelector).position()["left"]) + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
 				//this.image.classList.add('rotate_90_deg');
@@ -5454,8 +5454,8 @@ class ManiC {
 	moveAroundVertically () {
 		// calculate the center point of the element
 		const elementRect = this.element.getBoundingClientRect();
-		const centerX = elementRect.left + elementRect.width / 2;
-		const centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
+		const centerX = parseInt(this.image.style.left); //elementRect.left + elementRect.width / 2;
+		const centerY = parseInt(this.image.style.top); //elementRect.top + elementRect.height / 2 + window.scrollY;
 
 		// calculate the radius of the circle
 		const radius = 20;
@@ -5467,17 +5467,16 @@ class ManiC {
 		const keyframes = `
 			0% {
 				transform: translate(${centerX}px, ${centerY - radius}px);
-				rotation: ${this.image.style.rotation};
 			}
 			50% {
 				transform: translate(${centerX}px, ${centerY}px);
-				rotation: ${this.image.style.rotation};
 			}
 			100% {
 				transform: translate(${centerX}px, ${centerY - radius}px);
-				rotation: ${this.image.style.rotation};
 			}
 		`;
+
+		log(keyframes);
 
 		// add the keyframes to a style sheet
 		const styleSheet = document.getElementById('manicule_animation_css');
@@ -5504,15 +5503,12 @@ class ManiC {
 		const keyframes = `
 			0% {
 				transform: translate(${centerX - radius}px, ${centerY}px);
-				rotation: ${this.image.style.rotation};
 			}
 			50% {
 				transform: translate(${centerX}px, ${centerY}px);
-				rotation: ${this.image.style.rotation};
 			}
 			100% {
 				transform: translate(${centerX - radius}px, ${centerY}px);
-				rotation: ${this.image.style.rotation};
 			}
 		`;
 
