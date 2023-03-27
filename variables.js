@@ -1347,8 +1347,6 @@ var number_of_currently_running_updated_pages = 0;
 
 var cosmo_wave = 0;
 
-var max_cosmo_wave = 10;
-
 var escapeCount = 0;
 var lastEscapeTime = 0;
 

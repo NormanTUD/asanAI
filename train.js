@@ -617,10 +617,6 @@ async function run_neural_network () {
 	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
 	if(is_cosmo_mode) {
 		cosmo_wave++;
-		if(cosmo_wave > max_cosmo_wave) {
-			cosmo_wave = max_cosmo_wave;
-		}
-
 		show_cosmo_waves();
 	}
 	last_training_time = "";

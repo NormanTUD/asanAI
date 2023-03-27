@@ -5352,31 +5352,26 @@ function show_cosmo_waves () {
 	}
 
 	if(typeof(cosmo_wave) == "undefined") {
-		for (var i = 1; i <= max_cosmo_wave; i++) {
+		for (var i = 1; i <= cosmo_wave; i++) {
 			$(".show_cosmo_wave_" + i).show();
 		}
 	} else {
-		for (var i = 0; i <= max_cosmo_wave; i++) {
-			if(i <= cosmo_wave) {
-				//log("Showing .show_cosmo_wave_" + i);
-				var all_elements = $(".show_cosmo_wave_" + i);
-				all_elements.show();
+		$("[class^=show_cosmo_wave_]").hide();
+		for (var i = 0; i <= cosmo_wave; i++) {
+			//log("Showing .show_cosmo_wave_" + i);
+			var all_elements = $(".show_cosmo_wave_" + i);
+			all_elements.show();
 
 
-				if(i == cosmo_wave) {
-					var k = $($(".manicule_wave_" + i)[0]);
-					if(k.length) {
-						new ManiC(k[0]);
-					} else {
-						new ManiC(null);
-					}
+			if(i == cosmo_wave) {
+				var k = $($(".manicule_wave_" + i)[0]);
+				if(k.length) {
+					new ManiC(k[0]);
 				} else {
 					new ManiC(null);
 				}
-				
 			} else {
-				//log("Hiding .show_cosmo_wave_" + i);
-				$(".show_cosmo_wave_" + i).hide();
+				new ManiC(null);
 			}
 		}
 	}
