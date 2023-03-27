@@ -4737,7 +4737,7 @@ async function switch_to_next_camera () {
 function swalmsg (msg) {
 	l(msg);
 	log(msg);
-	Swal.fire({
+	return Swal.fire({
 		title: msg,
 		allowEscapeKey: false,
 		allowOutsideClick: false,
