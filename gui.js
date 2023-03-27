@@ -4214,6 +4214,7 @@ function human_readable_time(seconds) {
 }
 
 function delete_own_image(elem) {
+	$(elem).parent().next().remove()
 	$(elem).parent().remove();
 }
 
