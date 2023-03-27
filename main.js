@@ -346,6 +346,8 @@ $(document).ready(async function() {
 
 	await init_page_contents();
 
+	await force_download_image_preview_data();
+
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
@@ -446,8 +448,6 @@ $(document).ready(async function() {
 	l("TFJS-Version: " + tf.version["tfjs-core"]);
 
 	toggle_show_input_layer();
-
-	force_download_image_preview_data();
 
 	invert_elements_in_dark_mode();
 
