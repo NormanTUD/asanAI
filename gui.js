@@ -5421,15 +5421,18 @@ class ManiC {
 
 			this.image.style.zIndex = 100000;
 
+			var hand_height = 70;
+
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
-				this.image.style.top = $("#custom_webcam_training_data").position()["top"] + $("#custom_webcam_training_data").height() + "px";
+				this.image.style.top = $(elementSelector).position()["top"] + $(elementSelector).height() + "px";
+				this.image.style.left = ($(elementSelector).position()["left"] - (hand_height / 3)) + "px";
 				//this.image.style.left = left + "px";
-				this.image.style.height = `70px`;
+				this.image.style.height = `${hand_height}px`;
 				//this.image.classList.add('rotate_90_deg');
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
-				this.image.style.width = `70px`;
+				this.image.style.width = `${hand_height}px`;
 				this.image.style.top = ntop + "px";
 				this.image.style.left = nleft + "px";
 			}
