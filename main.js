@@ -1,5 +1,10 @@
 "use strict";
 
+function on_resize () {
+	reset_view(); 
+	show_cosmo_waves();
+}
+
 function layer_types_that_dont_have_default_options () {
 	var no_options = [];
 
@@ -379,7 +384,7 @@ $(document).ready(async function() {
 
 	await change_data_origin();
 
-	window.onresize = reset_view;
+	window.onresize = on_resize;
 
 	setInterval(fix_viz_width, 700);
 	setInterval(check_number_values, 200);

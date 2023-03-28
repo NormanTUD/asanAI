@@ -1190,7 +1190,7 @@ async function take_image_from_webcam_n_times (elem) {
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
 			l("Taking image " + (i + 1) + " of " + number);
-			await take_image_from_webcam(elem, 1);
+			await take_image_from_webcam(elem, 1, i == 0);
 			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
 		}
@@ -1201,7 +1201,7 @@ async function take_image_from_webcam_n_times (elem) {
 
 }
 
-async function take_image_from_webcam (elem, nol) {
+async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	tf.engine().startScope();
 	if(!nol) {
 		l("Taking photo from webcam...");
@@ -1254,12 +1254,14 @@ async function take_image_from_webcam (elem, nol) {
 	last_shape_layer_warning();
 	tf.engine().endScope();
 
-	if(!has_taken_webcam_image_for_cosmo < 2) {
+	if(!has_taken_webcam_image_for_cosmo < 2 && increment_counter) {
 		cosmo_wave++;
 		show_cosmo_waves();
 	}
 
-	has_taken_webcam_image_for_cosmo++;
+	if(increment_counter) {
+		has_taken_webcam_image_for_cosmo++;
+	}
 }
 
 function chiSquaredTest(arr) {
