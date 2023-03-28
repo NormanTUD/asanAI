@@ -355,9 +355,7 @@ $(document).ready(async function() {
 
 	await init_page_contents();
 
-	if(!is_cosmo) {
-		await force_download_image_preview_data();
-	}
+	await force_download_image_preview_data();
 
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
 		if(!window.FileReader) return;

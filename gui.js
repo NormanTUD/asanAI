@@ -2049,8 +2049,11 @@ async function init_dataset() {
 }
 
 function init_download_link() {
-	let html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "'>here</a>.";
-	$("#download_data").html(html).show();
+	let html = "";
+	if(!is_cosmo_mode) {
+		html = "Download the training data <a alt='Download Training Data as ZIP' href='traindata/zip.php?dataset=" + $("#dataset").val() + "'>here</a>.";
+	}
+	var d = $("#download_data").html(html).show;
 }
 
 async function get_number_of_categories() {
@@ -5405,7 +5408,7 @@ class ManiC {
 			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
 			
 
-			log("Manicule Selector:", elementSelector);
+			//log("Manicule Selector:", elementSelector);
 
 			var ntop = $(elementSelector).position()["top"];
 			var bottom_y = $(elementSelector)[0].getBoundingClientRect().y + $(elementSelector)[0].getBoundingClientRect().height
@@ -5476,8 +5479,6 @@ class ManiC {
 				transform: translate(${centerX}px, ${centerY - radius}px);
 			}
 		`;
-
-		log(keyframes);
 
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
