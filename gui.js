@@ -5454,19 +5454,18 @@ class ManiC {
 
 	moveAroundVertically () {
 		// calculate the center point of the element
-		const elementRect = this.element.getBoundingClientRect();
-		//const centerX = parseInt(this.image.style.left); //elementRect.left + elementRect.width / 2;
-		const centerX = parseInt($(this.element).position()["left"] + $(this.element).width() / 2);
-		const centerY = parseInt(this.image.style.top); //elementRect.top + elementRect.height / 2 + window.scrollY;
+		var elementRect = this.element.getBoundingClientRect();
+		var centerX = elementRect.left + elementRect.width / 2;
+		var centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
 
 		// calculate the radius of the circle
-		const radius = 20;
+		var radius = 20;
 
 		// set up the animation
 		this.image.style.animation = 'moveAroundVertically 2s linear infinite';
 		this.image.style.animationName = 'moveAroundVertically';
 		// define the keyframes for the animation
-		const keyframes = `
+		var keyframes = `
 			0% {
 				transform: translate(${centerX}px, ${centerY - radius}px);
 			}
@@ -5481,7 +5480,7 @@ class ManiC {
 		log(keyframes);
 
 		// add the keyframes to a style sheet
-		const styleSheet = document.getElementById('manicule_animation_css');
+		var styleSheet = document.getElementById('manicule_animation_css');
 		styleSheet.innerHTML = `
 			@keyframes moveAroundVertically {
 				${keyframes}
@@ -5491,18 +5490,19 @@ class ManiC {
 
 	moveAroundHorizontally () {
 		// calculate the center point of the element
-		const elementRect = this.element.getBoundingClientRect();
-		const centerX = elementRect.left + elementRect.width / 2;
-		const centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
+		var elementRect = this.element.getBoundingClientRect();
+		var centerX = elementRect.left + elementRect.width / 2;
+		var centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
 
 		// calculate the radius of the circle
-		const radius = 20;
+		var radius = 20;
 
 		// set up the animation
 		this.image.style.animation = 'moveAroundHorizontally 2s linear infinite';
 		this.image.style.animationName = 'moveAroundHorizontally';
 		// define the keyframes for the animation
-		const keyframes = `
+
+		var keyframes = `
 			0% {
 				transform: translate(${centerX - radius}px, ${centerY}px);
 			}
@@ -5515,7 +5515,7 @@ class ManiC {
 		`;
 
 		// add the keyframes to a style sheet
-		const styleSheet = document.getElementById('manicule_animation_css');
+		var styleSheet = document.getElementById('manicule_animation_css');
 		styleSheet.innerHTML = `
 			@keyframes moveAroundHorizontally {
 				${keyframes}
