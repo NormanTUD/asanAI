@@ -767,26 +767,31 @@ function visualize_train () {
 	var categories = [];
 	var probabilities = [];
 
+	var max = parseInt($("#max_number_of_images_in_grid").val());
+
 	if(labels.length && labels.length < 7) {
-		$("#photos").find("img").each((i,x) => {
-			imgs.push(x);
+		var image_elements = shuffle($("#photos").find("img"));
+		image_elements.each((i,x) => {
+			if(i < max) {
+				imgs.push(x);
 
-			var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
-			img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
-			var res = model.predict(img_tensor);
+				var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
+				var res = model.predict(img_tensor);
 
-			res = res.arraySync()[0];
-			log("RES for " + x.src + " :", res);
+				res = res.arraySync()[0];
+				//log("RES for " + x.src + " :", res);
 
-			var probability = Math.max(...res);
-			var category = res.indexOf(probability);
+				var probability = Math.max(...res);
+				var category = res.indexOf(probability);
 
-			categories.push(category);
-			probabilities.push(probability);
+				categories.push(category);
+				probabilities.push(probability);
+			}
 		});
 
 		if(imgs.length && categories.length && probabilities.length) {
-			log("drawImagesInGrid:", imgs, categories, probabilities, labels.length);
+			//log("drawImagesInGrid:", imgs, categories, probabilities, labels.length);
 			drawImagesInGrid(imgs, categories, probabilities, labels.length);
 		} else {
 			$("#canvas_grid_visualization").html("");

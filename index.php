@@ -821,10 +821,14 @@
 										<td>Visualize images in grid?</td>
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid" /></td>
 									</tr>
+									<tr data-intro="Visualize images by grouping visually">
+										<td>Number of grid images?</td>
+										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;' /></td>
+									</tr>
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title">FCNN/LeNet/AlexNet, Batch-Plot</div>
+						<div class="ribbon-group-title">Various Plots</div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
