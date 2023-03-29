@@ -687,7 +687,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		}
 	}
 
-	var targetSize = 20; // Change this to the desired size
+	var targetSize = Math.min(40, height, width); // Change this to the desired size
 
 	// draw y-axis labels
 
@@ -722,6 +722,14 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var height = image.height * scale;
 		var imageX = xPos - width / 2;
 		imageX += randomInRange(-(2*targetSize), 2*targetSize);
+
+		if((imageX + targetSize) > canvas.width) {
+			imageX = canvas.width - targetSize;
+		}
+
+		if(imageX < 0) {
+			imageX = 0;
+		}
 		var imageY = yPos - height / 2;
 		//log("DEBUG:", image, imageX, imageY, width, height);
 		ctx.drawImage(image, imageX, imageY, width, height);
@@ -733,7 +741,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		//var containerId = "#canvas_grid_visualization_" + (i + 1);
 		var containerId = "#canvas_grid_visualization";
 		$(canvas).appendTo($(containerId));
-		$('<span style="border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
+		$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 	}
 }
 
@@ -773,7 +781,7 @@ function visualize_train () {
 
 	var max = parseInt($("#max_number_of_images_in_grid").val());
 
-	if(labels.length && labels.length < 7) {
+	if(labels.length) {
 		var image_elements = shuffle($("#photos").find("img"));
 		image_elements.each((i,x) => {
 			if(i < max) {
