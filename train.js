@@ -767,30 +767,26 @@ function visualize_train () {
 	var categories = [];
 	var probabilities = [];
 
-	var max_images = labels.length * 20;
-
 	if(labels.length && labels.length < 7) {
-
-		var j = 0;
-
 		$("#photos").find("img").each((i,x) => {
 			imgs.push(x);
 
 			var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+			img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 			var res = model.predict(img_tensor);
 
 			res = res.arraySync()[0];
+			log("RES for " + x.src + " :", res);
 
 			var probability = Math.max(...res);
 			var category = res.indexOf(probability);
 
 			categories.push(category);
 			probabilities.push(probability);
-
-			j++;
 		});
 
 		if(imgs.length && categories.length && probabilities.length) {
+			log("drawImagesInGrid:", imgs, categories, probabilities, labels.length);
 			drawImagesInGrid(imgs, categories, probabilities, labels.length);
 		} else {
 			$("#canvas_grid_visualization").html("");
