@@ -650,24 +650,28 @@ function randomInRange(start,end){
 }
 
 function drawImagesInGrid(images, categories, probabilities, numCategories) {
-	var canvas = document.createElement("canvas");
-	canvas.width = 800;
-	canvas.height = 400;
-
-	var ctx = canvas.getContext("2d");
-	ctx.fillStyle = "#ffffff";
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+	$("#canvas_grid_visualization").html("");
 	var categoryNames = labels.slice(0, numCategories);
+	var canvases = [];
+
+	// create a canvas for each category
+	for (let i = 0; i < numCategories; i++) {
+		var canvas = document.createElement("canvas");
+		canvas.width = parseInt($("#tfvis_tab").width() / numCategories);
+		canvas.height = 400;
+
+		var ctx = canvas.getContext("2d");
+		ctx.fillStyle = "#ffffff";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		canvases.push(canvas);
+	}
 
 	var margin = 40;
-	var graphWidth = canvas.width - margin * 2;
-	var graphHeight = canvas.height - margin * 2;
+	var graphWidth = canvases[0].width - margin * 2;
+	var graphHeight = canvases[0].height - margin * 2;
 
-	var targetSize = graphWidth / (numCategories * 6); // Change this to the desired size
-
-	var xStep = graphWidth / numCategories;
-	var yStep = graphHeight / 1.2;
+	var targetSize = 20; // Change this to the desired size
 
 	var maxProb = 1;
 
@@ -682,47 +686,45 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		ctx.fillText(label, margin - 10, yPos);
 	}
 
-	// draw x-axis labels
-	ctx.textAlign = "center";
-	for (let i = 0; i < numCategories; i++) {
-		var xPos = (1.5 * margin) + i * xStep + xStep / 2;
-		var label = categoryNames[i];
-		ctx.fillText(label, xPos, canvas.height - margin + 20);
-		// |      |        |
-		if(i != 0) {
-			ctx.beginPath();
-			xPos = xPos - (4*targetSize);
-			ctx.moveTo(xPos, canvas.height - margin + 20);
-			ctx.lineTo(xPos, 0);
-			ctx.stroke();
-		}
-	}
-
-	// draw images
+	// draw x-axis labels and images
 	for (let i = 0; i < images.length; i++) {
 		var image = images[i];
 		var category = categories[i];
 		var probability = probabilities[i];
 
-		var xPos = margin + (category - 1) * xStep + xStep / 2;
+		var xPos = margin * 1.5;
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
-		// draw image
+		var canvasIndex = category;
+		var canvas = canvases[canvasIndex];
+		var ctx = canvas.getContext("2d");
 
+		// draw x-axis label
+		if (i == 0) {
+			ctx.textAlign = "center";
+			var label = categoryNames[canvasIndex];
+			ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
+		}
+
+		// draw image
 		var scale = targetSize / Math.max(image.width, image.height);
 		var width = image.width * scale;
 		var height = image.height * scale;
 		var imageX = xPos - width / 2;
-		imageX += (margin * 3) + 20;
 		imageX += randomInRange(-(2*targetSize), 2*targetSize);
 		var imageY = yPos - height / 2;
+		log("DEBUG:", image, imageX, imageY, width, height);
 		ctx.drawImage(image, imageX, imageY, width, height);
 	}
 
-	$("#canvas_grid_visualization").html("");
-	$(canvas).appendTo($("#canvas_grid_visualization"));
+	// append each canvas to its corresponding element
+	for (let i = 0; i < numCategories; i++) {
+		var canvas = canvases[i];
+		//var containerId = "#canvas_grid_visualization_" + (i + 1);
+		var containerId = "#canvas_grid_visualization";
+		$(canvas).prependTo($(containerId));
+	}
 }
-
 
 function visualize_train () {
 	if(!$("#visualize_images_in_grid").is(":checked")) {
