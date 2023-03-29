@@ -658,7 +658,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	// create a canvas for each category
 	for (let i = 0; i < (numCategories + 1); i++) {
 		var canvas = document.createElement("canvas");
-		canvas.width = parseInt($("#tfvis_tab").width() / (numCategories + 1));
+		canvas.width = parseInt($("#tfvis_tab").width() / (numCategories + 2));
 		canvas.height = 400;
 
 		var ctx = canvas.getContext("2d");
@@ -691,20 +691,16 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 
 	// draw y-axis labels
 
-
-	var drawn_labels = [];
-
-
 	for (let canvasIndex = 1; canvasIndex < (numCategories + 1); canvasIndex++) {
 		var canvas = canvases[canvasIndex];
 		var ctx = canvas.getContext("2d");
 
-		ctx.textAlign = "center";
-		var label = categoryNames[canvasIndex];
-		ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
-		drawn_labels.push(canvasIndex);
+		if(!canvasIndex == 0) {
+			ctx.textAlign = "center";
+			var label = categoryNames[canvasIndex - 1];
+			ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
+		}
 	}
-
 
 
 	// draw x-axis labels and images
@@ -727,12 +723,12 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var imageX = xPos - width / 2;
 		imageX += randomInRange(-(2*targetSize), 2*targetSize);
 		var imageY = yPos - height / 2;
-		log("DEBUG:", image, imageX, imageY, width, height);
+		//log("DEBUG:", image, imageX, imageY, width, height);
 		ctx.drawImage(image, imageX, imageY, width, height);
 	}
 
 	// append each canvas to its corresponding element
-	for (let i = 0; i < numCategories; i++) {
+	for (let i = 0; i < (numCategories + 1); i++) {
 		var canvas = canvases[i];
 		//var containerId = "#canvas_grid_visualization_" + (i + 1);
 		var containerId = "#canvas_grid_visualization";
