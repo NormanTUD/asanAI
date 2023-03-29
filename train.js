@@ -680,15 +680,6 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var yPos = margin + graphHeight - i / 10 * graphHeight;
 		var label = (i / 10 * maxProb).toFixed(2);
 		ctx.fillText(label, margin - 10, yPos);
-		// ------
-		/*
-		if(i != 0) {
-			ctx.beginPath();
-			ctx.moveTo(margin, yPos);
-			ctx.lineTo(canvas.width, yPos);
-			ctx.stroke();
-		}
-		*/
 	}
 
 	// draw x-axis labels
