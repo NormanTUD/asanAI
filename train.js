@@ -718,8 +718,9 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 
 		// draw image
 		var scale = targetSize / Math.max(image.width, image.height);
-		var width = image.width * scale;
-		var height = image.height * scale;
+		var w = image.width * scale;
+		var h = image.height * scale;
+
 		var imageX = xPos - width / 2;
 		imageX += randomInRange(-(2*targetSize), 2*targetSize);
 
@@ -730,9 +731,10 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		if(imageX < 0) {
 			imageX = 0;
 		}
-		var imageY = yPos - height / 2;
-		//log("DEBUG:", image, imageX, imageY, width, height);
-		ctx.drawImage(image, imageX, imageY, width, height);
+
+		var imageY = yPos - h / 2;
+		//log("DEBUG:", image, imageX, imageY, w, h);
+		ctx.drawImage(image, imageX, imageY, w, h);
 	}
 
 	// append each canvas to its corresponding element
@@ -784,7 +786,7 @@ function visualize_train () {
 	if(labels.length) {
 		var image_elements = shuffle($("#photos").find("img"));
 		image_elements.each((i,x) => {
-			if(i < max) {
+			if(i <= max) {
 				imgs.push(x);
 
 				var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
