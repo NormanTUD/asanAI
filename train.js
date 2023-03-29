@@ -661,8 +661,19 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		canvas.height = 400;
 
 		var ctx = canvas.getContext("2d");
+
 		ctx.fillStyle = "#ffffff";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		ctx.font = "14px Arial";
+		ctx.fillStyle = "#000000";
+		ctx.textAlign = "right";
+
+		for (let j = 0; j <= 10; j += 2) {
+			var yPos = margin + graphHeight - j / 10 * graphHeight;
+			var label = (j / 10 * maxProb).toFixed(2);
+			ctx.fillText(label, margin - 10, yPos);
+		}
 
 		canvases.push(canvas);
 	}
@@ -676,15 +687,9 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	var maxProb = 1;
 
 	// draw y-axis labels
-	ctx.font = "14px Arial";
-	ctx.fillStyle = "#000000";
-	ctx.textAlign = "right";
 
-	for (let i = 0; i <= 10; i += 2) {
-		var yPos = margin + graphHeight - i / 10 * graphHeight;
-		var label = (i / 10 * maxProb).toFixed(2);
-		ctx.fillText(label, margin - 10, yPos);
-	}
+
+	var drawn_labels = [];
 
 	// draw x-axis labels and images
 	for (let i = 0; i < images.length; i++) {
@@ -700,10 +705,11 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var ctx = canvas.getContext("2d");
 
 		// draw x-axis label
-		if (i == 0) {
+		if(!drawn_labels.includes(canvasIndex)) {
 			ctx.textAlign = "center";
 			var label = categoryNames[canvasIndex];
 			ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
+			drawn_labels.push(canvasIndex);
 		}
 
 		// draw image
