@@ -205,15 +205,15 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 						var str = "";
 						if(show_bars_instead_of_numbers()) {
-							str = "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 							if(i == max_i && show_green) {
 								//str = "<b class='best_result'>" + str + "</b>";
-								str = "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+								str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							}
 						} else {
-							str = "<tr><td>" + label + "</td><td>" + probability + "</td></tr>";
+							str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 							if(i == max_i && show_green) {
-								str = "<tr><td>" + label + "</td><td><b class='best_result'>" + probability+ "</b></td></tr>";
+								str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result'>" + probability+ "</b></td></tr>";
 							}
 						}
 						fullstr += str;
@@ -700,16 +700,16 @@ async function predict_webcam () {
 					if(show_bars_instead_of_numbers()) {
 						if(i == max_i) {
 							//str = "<b class='max_prediction'>" + str + "</b>";
-							str += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+							str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 						} else {
-							str += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+							str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
 					} else {
 						probability = (probability * 100) + "%";
 						if(i == max_i) {
-							str += "<tr><td>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
+							str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 						} else {
-							str += "<tr><td>" + label + "</td><td>" + probability + "</td></tr>";
+							str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 						}
 					}
 				}
@@ -848,9 +848,9 @@ async function predict_handdrawn () {
 			if(show_bars_instead_of_numbers()) {
 				if(label) {
 					if(val == max) {
-						html += "<tr><td>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+						html += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 					} else {
-						html += "<tr><td>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+						html += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 					}
 				} else {
 					if(val == max) {
@@ -864,7 +864,7 @@ async function predict_handdrawn () {
 					if(val == max) {
 						html += "<tr><td><b class='best_result'>" + label + "</td><td>" + val + "</b></td></tr>\n";
 					} else {
-						html += "<tr><td>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
+						html += "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
 					}
 				} else {
 					if(val == max) {
