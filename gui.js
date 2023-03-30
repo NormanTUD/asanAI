@@ -5401,6 +5401,10 @@ class ManiC {
 		//console.trace();
 		remove_manicule();
 
+		while(is_hidden_or_has_hidden_parent(elementSelector)) {
+			// intentionally do nothing until loaded
+		}
+
 		if(elementSelector) {
 			manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
 
@@ -5428,8 +5432,8 @@ class ManiC {
 
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
-				this.image.style.top = $(elementSelector).position()["top"] + $(elementSelector).height() + "px";
-				this.image.style.left = ($(elementSelector).position()["left"]) + "px";
+				this.image.style.top = ($(elementSelector).position()["top"] + $(elementSelector).height()) + "px";
+				this.image.style.left = ($(elementSelector).position()["left"] +  (($(elementSelector).width() / 2))) + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
 				//this.image.classList.add('rotate_90_deg');
@@ -5460,6 +5464,7 @@ class ManiC {
 	}
 
 	moveAroundVertically () {
+		return;
 		// calculate the center point of the element
 		var elementRect = this.element.getBoundingClientRect();
 		var centerX = elementRect.left + elementRect.width / 2;
@@ -5494,6 +5499,7 @@ class ManiC {
 	}
 
 	moveAroundHorizontally () {
+		return;
 		// calculate the center point of the element
 		var elementRect = this.element.getBoundingClientRect();
 		var centerX = elementRect.left + elementRect.width / 2;
