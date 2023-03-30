@@ -5433,7 +5433,7 @@ class ManiC {
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
 				this.image.style.top = ($(elementSelector).position()["top"] + $(elementSelector).height() + hand_height) + "px";
-				this.image.style.left = ($(elementSelector).position()["left"] +  (($(elementSelector).width() / 2))) + "px";
+				this.image.style.left = ($(elementSelector).position()["left"]) + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
 				//this.image.classList.add('rotate_90_deg');
