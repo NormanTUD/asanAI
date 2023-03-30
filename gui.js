@@ -2100,6 +2100,8 @@ async function chose_dataset(no_set_config) {
 	init_download_link();
 
 	await force_download_image_preview_data();
+
+	$("#prediction_non_image").hide();
 }
 
 function init_weight_file_list() {

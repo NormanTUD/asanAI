@@ -1399,7 +1399,10 @@
 													<div id="predict_error" style="overflow: scroll; display: none"></div>
 													<div id="prediction" style="display: none"></div>
 												</div>
+
 											</span>
+											
+											<div id="prediction_non_image" style="display: none"></div>
 										</div>
 
 										<div class="handdrawn hide_when_no_image">

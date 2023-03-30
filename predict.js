@@ -248,7 +248,9 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 async function predict (item, force_category, dont_write_to_predict_tab) {
 	enable_everything();
 
-	$("#prediction").html("").show();
+	var pred_tab = "prediction";
+
+	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
 	var predictions = [];
 
@@ -320,11 +322,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		predictions = predictions_tensor.dataSync();
 
-
 		//log(predictions);
 
 		if(!input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
+			pred_tab = "prediction_non_image";
+			$("#" + pred_tab).html("");
 		} else {
 			if(model.outputShape.length == 4) {
 				var pxsz = 1;
@@ -346,7 +349,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						height: pxsz * predictions_tensor.shape[1],
 					});
 
-					$("#prediction").append(canvas);
+					$("#" + pred_tab).append(canvas);
 
 					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 					log(res);
@@ -403,9 +406,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			}
 		}
 
-		if(!dont_write_to_predict_tab) {
-			$("#prediction").append(str);
-		}
+		log("attempting to add to ", $("#" + pred_tab));
+		$("#" + pred_tab).append(str).show();
 
 		$("#predict_error").html("").hide();
 
@@ -414,6 +416,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	} catch (e) {
 		_predict_error(e);
 	}
+
 	tf.engine().endScope();
 
 	allow_editable_labels();
