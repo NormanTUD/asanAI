@@ -213,7 +213,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 						} else {
 							str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 							if(i == max_i && show_green) {
-								str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result'>" + probability+ "</b></td></tr>";
+								str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
 							}
 						}
 						fullstr += str;
@@ -868,13 +868,13 @@ async function predict_handdrawn () {
 			} else {
 				if(label) {
 					if(val == max) {
-						html += "<tr><td><b class='best_result'>" + label + "</td><td>" + val + "</b></td></tr>\n";
+						html += "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
 					} else {
 						html += "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
 					}
 				} else {
 					if(val == max) {
-						html += "<tr><td><b class='best_result'>" + predictions[0][i] + "</b></td></tr>\n";
+						html += "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
 					} else {
 						html += "<tr><td>" + predictions[0][i] + "</td></tr>";
 					}
