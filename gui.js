@@ -1104,6 +1104,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	number_of_currently_running_updated_pages--;
 
+	allow_editable_labels();
+
 	return 1;
 }
 
@@ -5532,4 +5534,47 @@ class ManiC {
 function remove_manicule () {
 	$(".manicule").remove();
 	manicule = null;
+}
+
+
+function update_label_by_nr (t, nr) {
+    var name = $(t).val();
+
+    var t_xpath = get_element_xpath(t);
+
+    labels[nr] = name;
+
+    $(".label_element").each((i, x) => {
+        if(get_element_xpath(x) != t_xpath) {
+            var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+
+            var tmp_label = labels[label_index];
+
+            tmp_label = tmp_label.replaceAll(/'/g, "");
+
+            if(label_index == nr) {
+                if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+                    $(x).find("input").val(name);
+                } else {
+                    $(x).html(`<input style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
+                }
+            }
+        } else {
+            log("Don't change xpath " + t_xpath);
+        }
+    })
+}
+
+function allow_editable_labels () {
+    $(".label_element").each((i, x) => {
+        var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+
+        var tmp_label = labels[label_index];
+
+        tmp_label = tmp_label.replaceAll(/'/g, "");
+
+        if(!$(x).children().length) {
+            $(x).html(`<input style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+        }
+    })
 }

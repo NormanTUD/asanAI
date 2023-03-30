@@ -241,6 +241,8 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 	hide_unused_layer_visualization_headers();
 
 	change_output_and_example_image_size();
+
+	allow_editable_labels();
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
@@ -383,9 +385,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 						if(show_bars_instead_of_numbers()) {
 							if(i == max_i && show_green) {
-								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							} else {
-								str += "<tr><td>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 							}
 						} else {
 							if(i == max_i && show_green) {
@@ -414,6 +416,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	}
 	tf.engine().endScope();
 
+	allow_editable_labels();
 
 	return str;
 }
@@ -908,6 +911,8 @@ async function predict_handdrawn () {
 	}
 
 	tf.engine().endScope();
+
+	allow_editable_labels();
 }
 
 function repredict () {

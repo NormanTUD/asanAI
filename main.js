@@ -481,7 +481,9 @@ $(document).ready(async function() {
 
 	click_on_graphs = 0;
 
-	l("Site is ready");
+	allow_editable_labels();
 
 	s.close();
+
+	l("Site is ready");
 });
