@@ -5552,11 +5552,13 @@ function update_label_by_nr (t, nr) {
 				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 					$(x).find("input").val(name);
 				} else {
-					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${name}aa' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
+					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${name}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
 				}
 			}
 		}
-	})
+	});
+
+	$($(".own_image_label")[nr]).val(name)
 }
 
 function allow_editable_labels () {
