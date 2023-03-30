@@ -5432,7 +5432,7 @@ class ManiC {
 
 			if($(elementSelector).data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
-				this.image.style.top = ($(elementSelector).position()["top"] + $(elementSelector).height()) + "px";
+				this.image.style.top = ($(elementSelector).position()["top"] + $(elementSelector).height() + hand_height) + "px";
 				this.image.style.left = ($(elementSelector).position()["left"] +  (($(elementSelector).width() / 2))) + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
@@ -5440,7 +5440,7 @@ class ManiC {
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
 				this.image.style.width = `${hand_height}px`;
-				this.image.style.top = ntop + "px";
+				this.image.style.top = (ntop + (10)) + "px";
 				this.image.style.left = nleft + "px";
 			}
 
