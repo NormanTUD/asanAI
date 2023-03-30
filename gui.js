@@ -5538,43 +5538,48 @@ function remove_manicule () {
 
 
 function update_label_by_nr (t, nr) {
-    var name = $(t).val();
+	var name = $(t).val();
 
-    var t_xpath = get_element_xpath(t);
+	var t_xpath = get_element_xpath(t);
 
-    labels[nr] = name;
+	labels[nr] = name;
 
-    $(".label_element").each((i, x) => {
-        if(get_element_xpath(x) != t_xpath) {
-            var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+	$(".label_element").each((i, x) => {
+		if(1 || get_element_xpath(x) != t_xpath) {
+			var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
-            var tmp_label = labels[label_index];
-
-            tmp_label = tmp_label.replaceAll(/'/g, "");
-
-            if(label_index == nr) {
-                if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-                    $(x).find("input").val(name);
-                } else {
-                    $(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
-                }
-            }
-        } else {
-            log("Don't change xpath " + t_xpath);
-        }
-    })
+			if(label_index == nr) {
+				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+					$(x).find("input").val(name);
+				} else {
+					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${name}aa' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
+				}
+			}
+		}
+	})
 }
 
 function allow_editable_labels () {
-    $(".label_element").each((i, x) => {
-        var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+	$(".label_element").each((i, x) => {
+		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
-        var tmp_label = labels[label_index];
-
-        tmp_label = tmp_label.replaceAll(/'/g, "");
-
-        if(!$(x).children().length) {
-            $(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-        }
-    })
+		if(label_index !== undefined) {
+			var tmp_label = labels[label_index];
+			
+			tmp_label = tmp_label.replaceAll(/'/g, "");
+			if(tmp_label) {
+				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+					$(x).find("input").val(tmp_label);
+				} else {
+					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				}
+			} else {
+				tmp_label = $(x).text();
+				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+			}
+		} else {
+			var tmp_label = $(x).text();
+			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+		}
+	})
 }
