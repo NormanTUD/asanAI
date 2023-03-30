@@ -5556,7 +5556,7 @@ function update_label_by_nr (t, nr) {
                 if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
                     $(x).find("input").val(name);
                 } else {
-                    $(x).html(`<input style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
+                    $(x).html(`<input class='label_input_element' style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
                 }
             }
         } else {
@@ -5574,7 +5574,7 @@ function allow_editable_labels () {
         tmp_label = tmp_label.replaceAll(/'/g, "");
 
         if(!$(x).children().length) {
-            $(x).html(`<input style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+            $(x).html(`<input class='label_input_element' style='width: 110px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
         }
     })
 }
