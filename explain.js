@@ -1037,6 +1037,8 @@ async function draw_maximally_activated_layer (layer, type) {
 	favicon_default();
 
 	document.title = original_title;
+
+	await allow_editable_labels();
 }
 
 async function predict_maximally_activated (item, force_category) {
@@ -1045,6 +1047,8 @@ async function predict_maximally_activated (item, force_category) {
 		$(item).next().remove();
 	}
 	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+
+	predict($('#predict_own_data').val())
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {
