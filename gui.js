@@ -5423,6 +5423,7 @@ class ManiC {
 			this.image.style.zIndex = 100000;
 
 			var hand_height = 70;
+			var hand_width = 35;
 
 			var element_top = $e.offset()["top"];
 
@@ -5430,19 +5431,13 @@ class ManiC {
 				log("$e", $e);
 				var element_position_left = $e.offset()["left"] + ($e.width() / 2) - (hand_height / 2);
 				if(element_position_left < 0) {
-					element_position_left = 0;
+					element_position_left = Math.max(-parseInt(hand_width / 4), element_position_left);
 				}
 
 				log("element_position_left", element_position_left);
 
 				log("$e.height():", $e.height());
 				var element_height = $e.height();
-
-				/*
-				var final_top = element_top + element_height + hand_height;
-				log(`final_top = element_top + element_height + hand_height = ${final_top}`);
-				log(`final_top = ${element_top} + ${element_height} + ${hand_height} = ${final_top}`);
-				*/
 
 				var final_top = element_top + element_height;
 				log(`final_top = element_top + element_height = ${final_top}`);
