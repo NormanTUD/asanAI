@@ -5422,16 +5422,16 @@ class ManiC {
 
 			this.image.style.zIndex = 100000;
 
-			var hand_height = 70;
-			var hand_width = 35;
+			this.hand_height = 70;
+			this.hand_width = 35;
 
 			var element_top = $e.offset()["top"];
 
 			if($e.data("rotated")) {
 				log("$e", $e);
-				var element_position_left = $e.offset()["left"] + ($e.width() / 2) - (hand_height / 2);
+				var element_position_left = $e.offset()["left"] + ($e.width() / 2) - (this.hand_height / 2);
 				if(element_position_left < 0) {
-					element_position_left = Math.max(-parseInt(hand_width / 4), element_position_left);
+					element_position_left = Math.max(-parseInt(this.hand_width / 4), element_position_left);
 				}
 
 				log("element_position_left", element_position_left);
@@ -5445,7 +5445,7 @@ class ManiC {
 
 				this.image.style.top = `${final_top}px`;
 				this.image.style.left = `${element_position_left}px`;
-				this.image.style.height = `${hand_height}px`;
+				this.image.style.height = `${this.hand_height}px`;
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
 				var element_bounding_box_left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
@@ -5454,7 +5454,7 @@ class ManiC {
 				var final_left = element_bounding_box_left + element_width;
 				var final_element_top = element_top + 10;
 
-				this.image.style.width = `${hand_height}px`;
+				this.image.style.width = `${this.hand_height}px`;
 				this.image.style.top =`${final_element_top}px`;
 				this.image.style.left = `${final_left}px`;
 			}
@@ -5464,12 +5464,95 @@ class ManiC {
 
 			document.body.appendChild(this.image);
 
+			if($e.data("rotated")) {
+				this.moveAroundVertically();
+			} else {
+				this.moveAroundHorizontally();
+			}
+
 			manicule = this;
 
 			invert_elements_in_dark_mode();
 		} else {
 			//log("Empty e");
 		}
+	}
+
+	moveAroundVertically () {
+		// calculate the center point of the element
+		var centerX = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
+		var centerY = parseInt(this.image.style.top) + this.hand_height / 2;
+
+		assert(!isNaN(centerX), "centerX is not a number");
+		assert(!isNaN(centerY), "centerY is not a number");
+
+		// calculate the radius of the circle
+		var radius = 20;
+
+		// set up the animation
+		this.image.style.animation = 'moveAroundVertically 2s linear infinite';
+		this.image.style.animationName = 'moveAroundVertically';
+		// define the keyframes for the animation
+		var keyframes = `
+			0% {
+				transform: translate(${centerX}px, ${centerY - radius}px);
+			}
+			50% {
+				transform: translate(${centerX}px, ${centerY}px);
+			}
+			100% {
+				transform: translate(${centerX}px, ${centerY - radius}px);
+			}
+		`;
+
+		// add the keyframes to a style sheet
+		var styleSheet = document.getElementById('manicule_animation_css');
+		styleSheet.innerHTML = `
+			@keyframes moveAroundVertically {
+				${keyframes}
+			}
+		`;
+
+		log(styleSheet);
+	}
+
+	moveAroundHorizontally () {
+		// calculate the center point of the element
+		var centerX = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
+		var centerY = parseInt(this.image.style.top) + this.hand_height / 2;
+
+		assert(!isNaN(centerX), "centerX is not a number");
+		assert(!isNaN(centerY), "centerY is not a number");
+
+		// calculate the radius of the circle
+		var radius = 20;
+
+		// set up the animation
+		this.image.style.animation = 'moveAroundHorizontally 2s linear infinite';
+		this.image.style.animationName = 'moveAroundHorizontally';
+		// define the keyframes for the animation
+
+		var keyframes = `
+			0% {
+				transform: translate(${centerX - radius}px, ${centerY}px);
+			}
+			50% {
+				transform: translate(${centerX}px, ${centerY}px);
+			}
+			100% {
+				transform: translate(${centerX - radius}px, ${centerY}px);
+			}
+		`;
+
+		// add the keyframes to a style sheet
+		var styleSheet = document.getElementById('manicule_animation_css');
+		styleSheet.innerHTML = `
+			@keyframes moveAroundHorizontally {
+				${keyframes}
+			}
+		`;
+
+		log(styleSheet);
 	}
 
 	hide() {
