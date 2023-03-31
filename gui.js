@@ -5396,19 +5396,21 @@ function show_bars_instead_of_numbers () {
 }
 
 class ManiC {
-	constructor(elementSelector, imageUrl = "manicule.svg") {
-		//log("ManiC elementSelector:", elementSelector);
+	constructor(e, imageUrl = "manicule.svg") {
+		//log("ManiC e:", e);
 		//console.trace();
 		remove_manicule();
 
-		while(is_hidden_or_has_hidden_parent(elementSelector)) {
+		while(is_hidden_or_has_hidden_parent(e)) {
 			// intentionally do nothing until loaded
 		}
 
-		if(elementSelector) {
-			manicule_element_xpath = get_element_xpath($(elementSelector)[0]);
+		if(e) {
+			var $e = $(e);
 
-			this.element = elementSelector;
+			manicule_element_xpath = get_element_xpath($e[0]);
+
+			this.element = e;
 			this.image = new Image();
 			this.image.src = imageUrl;
 
@@ -5416,12 +5418,13 @@ class ManiC {
 			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
 			
 
-			//log("Manicule Selector:", elementSelector);
+			//log("Manicule Selector:", e);
 
-			var ntop = $(elementSelector).position()["top"];
-			var bottom_y = $(elementSelector)[0].getBoundingClientRect().y + $(elementSelector)[0].getBoundingClientRect().height
-			var left = $(elementSelector)[0].getBoundingClientRect().x; // + $(elementSelector)[0].getBoundingClientRect().width
-			var nleft = left + $(elementSelector).width();
+
+			var ntop = $e.position()["top"];
+			var bottom_y = $e[0].getBoundingClientRect().y + $e[0].getBoundingClientRect().height
+			var left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
+			var nleft = left + $e.width();
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
@@ -5430,10 +5433,10 @@ class ManiC {
 
 			var hand_height = 70;
 
-			if($(elementSelector).data("mfb")) {
+			if($e.data("mfb")) {
 				//this.image.style.top = bottom_y + "px";
-				this.image.style.top = ($(elementSelector).position()["top"] + $(elementSelector).height() + hand_height) + "px";
-				this.image.style.left = ($(elementSelector).position()["left"]) + "px";
+				this.image.style.top = ($e.position()["top"] + $e.height() + hand_height) + "px";
+				this.image.style.left = ($e.position()["left"]) + "px";
 				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
 				//this.image.classList.add('rotate_90_deg');
@@ -5449,7 +5452,7 @@ class ManiC {
 
 			document.body.appendChild(this.image);
 
-			if($(elementSelector).data("mfb")) {
+			if($e.data("mfb")) {
 				this.moveAroundVertically();
 			} else {
 				this.moveAroundHorizontally();
@@ -5459,7 +5462,7 @@ class ManiC {
 
 			invert_elements_in_dark_mode();
 		} else {
-			//log("Empty elementSelector");
+			//log("Empty e");
 		}
 	}
 
@@ -5543,7 +5546,6 @@ function remove_manicule () {
 	$(".manicule").remove();
 	manicule = null;
 }
-
 
 function update_label_by_nr (t, nr) {
 	var name = $(t).val();
