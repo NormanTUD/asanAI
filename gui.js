@@ -3468,8 +3468,8 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button data-mfb="1" style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
-			`<button data-mfb="1" style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>` +
+			'<button data-rotated="1" style="' + webcam_button_style + '" class="webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
+			`<button data-rotated="1" style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			'<div id="' + uuid + '"></div>' +
 			`<button id='save_button_${uuid}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();">Save this image</button>`
@@ -5426,19 +5426,24 @@ class ManiC {
 
 			var element_top = $e.position()["top"];
 
-			if($e.data("mfb")) {
-				this.image.style.top = (element_top + $e.height() + hand_height) + "px";
-				this.image.style.left = ($e.position()["left"]) + "px";
+			if($e.data("rotated")) {
+				var element_position_left = $e.position()["left"];
+				var element_height = $e.height();
+
+				this.image.style.top = (element_top + element_height + hand_height) + "px";
+				this.image.style.left = `${element_position_left}px`;
 				this.image.style.height = `${hand_height}px`;
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
-				var left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
+				var element_bounding_box_left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
+				var element_width = $e.width();
 
-				var m_left = left + $e.width();
+				var final_left = element_bounding_box_left + element_width;
+				var final_element_top = element_top + 10;
 
 				this.image.style.width = `${hand_height}px`;
-				this.image.style.top = (element_top + (10)) + "px";
-				this.image.style.left = m_left + "px";
+				this.image.style.top =`${final_element_top}px`;
+				this.image.style.left = `${final_left}px`;
 			}
 
 			this.image.classList.add('manicule');
