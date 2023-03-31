@@ -5414,12 +5414,7 @@ class ManiC {
 			this.image = new Image();
 			this.image.src = imageUrl;
 
-			//var ntop = $("#start_stop_training").position()["top"] + 35; // + $("#start_stop_training").height();
-			//var nleft = $("#start_stop_training").position()["left"] + 30; // + $("#start_stop_training").width();
-			
-
 			//log("Manicule Selector:", e);
-
 
 			var ntop = $e.position()["top"];
 			var bottom_y = $e[0].getBoundingClientRect().y + $e[0].getBoundingClientRect().height
@@ -5434,12 +5429,9 @@ class ManiC {
 			var hand_height = 70;
 
 			if($e.data("mfb")) {
-				//this.image.style.top = bottom_y + "px";
 				this.image.style.top = ($e.position()["top"] + $e.height() + hand_height) + "px";
 				this.image.style.left = ($e.position()["left"]) + "px";
-				//this.image.style.left = left + "px";
 				this.image.style.height = `${hand_height}px`;
-				//this.image.classList.add('rotate_90_deg');
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
 				this.image.style.width = `${hand_height}px`;
@@ -5452,89 +5444,12 @@ class ManiC {
 
 			document.body.appendChild(this.image);
 
-			if($e.data("mfb")) {
-				this.moveAroundVertically();
-			} else {
-				this.moveAroundHorizontally();
-			}
-
 			manicule = this;
 
 			invert_elements_in_dark_mode();
 		} else {
 			//log("Empty e");
 		}
-	}
-
-	moveAroundVertically () {
-		return;
-		// calculate the center point of the element
-		var elementRect = this.element.getBoundingClientRect();
-		var centerX = elementRect.left + elementRect.width / 2;
-		var centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
-
-		// calculate the radius of the circle
-		var radius = 20;
-
-		// set up the animation
-		this.image.style.animation = 'moveAroundVertically 2s linear infinite';
-		this.image.style.animationName = 'moveAroundVertically';
-		// define the keyframes for the animation
-		var keyframes = `
-			0% {
-				transform: translate(${centerX}px, ${centerY - radius}px);
-			}
-			50% {
-				transform: translate(${centerX}px, ${centerY}px);
-			}
-			100% {
-				transform: translate(${centerX}px, ${centerY - radius}px);
-			}
-		`;
-
-		// add the keyframes to a style sheet
-		var styleSheet = document.getElementById('manicule_animation_css');
-		styleSheet.innerHTML = `
-			@keyframes moveAroundVertically {
-				${keyframes}
-			}
-		`;
-	}
-
-	moveAroundHorizontally () {
-		return;
-		// calculate the center point of the element
-		var elementRect = this.element.getBoundingClientRect();
-		var centerX = elementRect.left + elementRect.width / 2;
-		var centerY = elementRect.top + elementRect.height / 2 + window.scrollY;
-
-		// calculate the radius of the circle
-		var radius = 20;
-
-		// set up the animation
-		this.image.style.animation = 'moveAroundHorizontally 2s linear infinite';
-		this.image.style.animationName = 'moveAroundHorizontally';
-		// define the keyframes for the animation
-
-		var keyframes = `
-			0% {
-				transform: translate(${centerX - radius}px, ${centerY}px);
-			}
-			50% {
-				transform: translate(${centerX}px, ${centerY}px);
-			}
-			100% {
-				transform: translate(${centerX - radius}px, ${centerY}px);
-			}
-		`;
-
-		// add the keyframes to a style sheet
-		var styleSheet = document.getElementById('manicule_animation_css');
-		styleSheet.innerHTML = `
-			@keyframes moveAroundHorizontally {
-				${keyframes}
-			}
-		`;
 	}
 
 	hide() {
