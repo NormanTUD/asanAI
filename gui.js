@@ -5415,10 +5415,7 @@ class ManiC {
 
 			//log("Manicule Selector:", e);
 
-			var ntop = $e.position()["top"];
-			var bottom_y = $e[0].getBoundingClientRect().y + $e[0].getBoundingClientRect().height
-			var left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
-			var nleft = left + $e.width();
+			//var bottom_y = $e[0].getBoundingClientRect().y + $e[0].getBoundingClientRect().height
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
@@ -5427,15 +5424,21 @@ class ManiC {
 
 			var hand_height = 70;
 
+			var element_top = $e.position()["top"];
+
 			if($e.data("mfb")) {
-				this.image.style.top = ($e.position()["top"] + $e.height() + hand_height) + "px";
+				this.image.style.top = (element_top + $e.height() + hand_height) + "px";
 				this.image.style.left = ($e.position()["left"]) + "px";
 				this.image.style.height = `${hand_height}px`;
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
+				var left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
+
+				var m_left = left + $e.width();
+
 				this.image.style.width = `${hand_height}px`;
-				this.image.style.top = (ntop + (10)) + "px";
-				this.image.style.left = nleft + "px";
+				this.image.style.top = (element_top + (10)) + "px";
+				this.image.style.left = m_left + "px";
 			}
 
 			this.image.classList.add('manicule');
