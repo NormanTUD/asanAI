@@ -5397,8 +5397,7 @@ function show_bars_instead_of_numbers () {
 
 class ManiC {
 	constructor(e, imageUrl = "manicule.svg") {
-		//log("ManiC e:", e);
-		//console.trace();
+		//logt("ManiC e:", e);
 		remove_manicule();
 
 		while(is_hidden_or_has_hidden_parent(e)) {
