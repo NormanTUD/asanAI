@@ -5428,20 +5428,20 @@ class ManiC {
 			var element_top = $e.offset()["top"];
 
 			if($e.data("rotated")) {
-				log("$e", $e);
+				//log("$e", $e);
 				var element_position_left = $e.offset()["left"] + ($e.width() / 2) - (this.hand_height / 2);
 				if(element_position_left < 0) {
 					element_position_left = Math.max(-parseInt(this.hand_width / 4), element_position_left);
 				}
 
-				log("element_position_left", element_position_left);
+				//log("element_position_left", element_position_left);
 
-				log("$e.height():", $e.height());
+				//log("$e.height():", $e.height());
 				var element_height = $e.height();
 
 				var final_top = element_top + element_height;
-				log(`final_top = element_top + element_height = ${final_top}`);
-				log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
+				//log(`final_top = element_top + element_height = ${final_top}`);
+				//log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
 
 				this.image.style.top = `${final_top}px`;
 				this.image.style.left = `${element_position_left}px`;
@@ -5480,11 +5480,11 @@ class ManiC {
 
 	moveAroundVertically () {
 		// calculate the center point of the element
-		var centerX = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
-		var centerY = parseInt(this.image.style.top) + this.hand_height / 2;
+		var element_left = parseInt(this.image.style.left) + (parseInt(this.hand_width) / 10);
+		var element_top = parseInt(this.image.style.top);
 
-		assert(!isNaN(centerX), "centerX is not a number");
-		assert(!isNaN(centerY), "centerY is not a number");
+		assert(!isNaN(element_left), "element_left is not a number");
+		assert(!isNaN(element_top), "element_top is not a number");
 
 		// calculate the radius of the circle
 		var radius = 20;
@@ -5495,13 +5495,16 @@ class ManiC {
 		// define the keyframes for the animation
 		var keyframes = `
 			0% {
-				transform: translate(${centerX}px, ${centerY - radius}px);
+				left: ${element_left}px;
+				top: ${element_top}px;
 			}
 			50% {
-				transform: translate(${centerX}px, ${centerY}px);
+				left: ${element_left}px;
+				top: ${element_top + radius}px;
 			}
 			100% {
-				transform: translate(${centerX}px, ${centerY - radius}px);
+				left: ${element_left}px;
+				top: ${element_top}px;
 			}
 		`;
 
@@ -5518,11 +5521,11 @@ class ManiC {
 
 	moveAroundHorizontally () {
 		// calculate the center point of the element
-		var centerX = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
-		var centerY = parseInt(this.image.style.top) + this.hand_height / 2;
+		var element_left = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
+		var element_top = parseInt(this.image.style.top);
 
-		assert(!isNaN(centerX), "centerX is not a number");
-		assert(!isNaN(centerY), "centerY is not a number");
+		assert(!isNaN(element_left), "element_left is not a number");
+		assert(!isNaN(element_top), "element_top is not a number");
 
 		// calculate the radius of the circle
 		var radius = 20;
@@ -5534,13 +5537,16 @@ class ManiC {
 
 		var keyframes = `
 			0% {
-				transform: translate(${centerX - radius}px, ${centerY}px);
+				left: ${element_left}px;
+				top: ${element_top}px;
 			}
 			50% {
-				transform: translate(${centerX}px, ${centerY}px);
+				left: ${element_left + radius}px;
+				top: ${element_top}px;
 			}
 			100% {
-				transform: translate(${centerX - radius}px, ${centerY}px);
+				left: ${element_left}px;
+				top: ${element_top}px;
 			}
 		`;
 
