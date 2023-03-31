@@ -5427,10 +5427,19 @@ class ManiC {
 			var element_top = $e.position()["top"];
 
 			if($e.data("rotated")) {
-				var element_position_left = $e.position()["left"];
+				log("$e", $e);
+				var element_position_left = $e.offset()["left"] + ($e.width() / 2);
+				if(element_position_left < 0) {
+					element_position_left = 0;
+				}
+
+				log("element_position_left", element_position_left);
+
+				log("$e.height():", $e.height());
 				var element_height = $e.height();
 
 				var final_top = element_top + element_height;
+				log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
 
 				this.image.style.top = `${final_top}px`;
 				this.image.style.left = `${element_position_left}px`;
