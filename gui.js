@@ -5430,7 +5430,9 @@ class ManiC {
 				var element_position_left = $e.position()["left"];
 				var element_height = $e.height();
 
-				this.image.style.top = (element_top + element_height + hand_height) + "px";
+				var final_top = element_top + element_height;
+
+				this.image.style.top = `${final_top}px`;
 				this.image.style.left = `${element_position_left}px`;
 				this.image.style.height = `${hand_height}px`;
 				this.image.src = "rotated_90_" + imageUrl;
