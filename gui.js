@@ -5424,7 +5424,7 @@ class ManiC {
 
 			var hand_height = 70;
 
-			var element_top = $e.position()["top"];
+			var element_top = $e.offset()["top"];
 
 			if($e.data("rotated")) {
 				log("$e", $e);
@@ -5438,7 +5438,14 @@ class ManiC {
 				log("$e.height():", $e.height());
 				var element_height = $e.height();
 
+				/*
 				var final_top = element_top + element_height + hand_height;
+				log(`final_top = element_top + element_height + hand_height = ${final_top}`);
+				log(`final_top = ${element_top} + ${element_height} + ${hand_height} = ${final_top}`);
+				*/
+
+				var final_top = element_top + element_height;
+				log(`final_top = element_top + element_height = ${final_top}`);
 				log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
 
 				this.image.style.top = `${final_top}px`;
