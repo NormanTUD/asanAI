@@ -5597,6 +5597,8 @@ function update_label_by_nr (t, nr) {
 	});
 
 	$($(".own_image_label")[nr]).val(name)
+
+	update_python_code(1);
 }
 
 function allow_editable_labels () {
