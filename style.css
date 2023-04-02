@@ -671,7 +671,7 @@ button:disabled:hover {
 }
 
 .large_button {
-	font-size: calc(12px + 2.5vw);
+	font-size: calc(12px + 2.5vw) !important;
 }
 
 .no_mark {
