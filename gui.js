@@ -3472,7 +3472,7 @@ function add_new_category() {
 			`<button data-rotated="1" style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			'<div id="' + uuid + '"></div>' +
-			`<button id='save_button_${uuid}' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();">&#128190;</button>`
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();">&#128190;</button>`
 		).appendTo("#own_images_container");
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="category ' + label_nr + '" /><input type="file" class="own_image_files hide_in_cosmo_mode" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
