@@ -746,7 +746,7 @@ async function update_python_code(dont_reget_labels) {
 	python_code += "# source asanaienv/bin/activate\n";
 	python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
 	if (input_shape_is_image()) {
-		python_code += " scikit-image opencv-python";
+		python_code += " scikit-image opencv-python ";
 	}
 	python_code += "\n";
 	python_code += "import os\n";
@@ -776,22 +776,23 @@ async function update_python_code(dont_reget_labels) {
 
 	if (input_shape_is_image()) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
+		python_code += "from PIL import Image\n";
+		python_code += "import numpy as np\n";
+		python_code += "from skimage import transform\n";
+		python_code += "import sys\n";
+
 		python_code += "labels = ['" + labels.join("', '") + "']\n";
 		python_code += "height = " + height + "\n";
 		python_code += "width = " + width + "\n";
 		python_code += "divideby = " + $("#divide_by").val() + "\n";
 
-		python_code += "from PIL import Image\n";
-		python_code += "import numpy as np\n";
-		python_code += "from skimage import transform\n";
 		python_code += "def load(filename):\n";
-		python_code += "    np_image = Image.open(filename)\n";
+		python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
 		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
 		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
 		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
 		python_code += "    return np_image\n";
 
-		python_code += "import sys\n";
 		python_code += "for a in range(1, len(sys.argv)):\n";
 		python_code += "    image = load(sys.argv[a])\n";
 		python_code += "    print(sys.argv[a] + ':')\n";
@@ -881,6 +882,41 @@ async function update_python_code(dont_reget_labels) {
 				}
 			}
 		}
+	}
+
+	if(input_shape_is_image()) {
+		python_code += `
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Preprocess the frame
+    image = load(frame)
+
+    # Make predictions
+    predictions = model.predict(image)
+
+    highest_index = np.argmax(predictions[0])
+
+    # Get the class with highest probability
+    prediction = labels[highest_index]
+
+    # Add label to the frame
+    cv2.putText(frame, str(prediction) + " (" + str(predictions[0][highest_index]) + ")", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+    # Display the resulting frame
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+`;
 	}
 
 	document.getElementById("python").innerHTML = python_code;
