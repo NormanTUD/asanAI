@@ -902,6 +902,11 @@ if len(sys.argv) == 1:
         # Capture frame-by-frame
         ret, frame = cap.read()
 
+        if not ret:
+            import sys
+            print("Could not load frame from webcam. Is the webcam currently in use?")
+            sys.exit(1)
+
         # Preprocess the frame
         image = load_frame(frame)
 
@@ -911,10 +916,10 @@ if len(sys.argv) == 1:
         highest_index = np.argmax(predictions[0])
 
         # Get the class with highest probability
-        prediction = labels[highest_index]
 
         # Add label to the frame
         for i in range(0, len(labels)):
+            prediction = labels[i]
             text = str(prediction) + " (" + str(predictions[0][i]) + ")"
             x = 10
             y = (i + 1) * 30
