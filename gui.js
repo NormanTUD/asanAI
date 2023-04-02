@@ -3472,7 +3472,7 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button hide_in_cosmo_mode" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
+			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
 			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			'<div id="' + uuid + '"></div>' +
