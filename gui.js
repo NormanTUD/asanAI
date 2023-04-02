@@ -3434,8 +3434,12 @@ function alter_text_webcam_series () {
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseFloat($("#delay_between_images_in_series").val())
 
-	$(".webcam_series_button").html("&#128248; Take " + number + " images from webcam (" + delaybetween + "s apart)");
+	var s = "&#128248; x " + number;
+	if(!is_cosmo_mode) {
+		s = s + " (" + delaybetween + "s apart)"
+	}
 
+	$(".webcam_series_button").html(s);
 }
 
 function add_image_to_category (img, category) {
@@ -3468,8 +3472,8 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button data-rotated="1" style="' + webcam_button_style + '" class="webcam_data_button hide_in_cosmo_mode" onclick="take_image_from_webcam(this)">&#128248; Take image from webcam</button>' +
-			`<button data-rotated="1" style="' + webcam_button_style + '" class="webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; Take 10 images from webcam (1s apart)</button>` +
+			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button hide_in_cosmo_mode" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
+			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button manicule_wave_${label_nr + 2}" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (1s apart)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			'<div id="' + uuid + '"></div>' +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();">&#128190;</button>`
