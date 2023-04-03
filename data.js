@@ -104,7 +104,7 @@ async function force_download_image_preview_data () {
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
 		force_download = 1;
-		await get_image_data(0, 1);
+		await get_image_data(0, 0, {title: "Loading example images", html: ""});
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
@@ -113,7 +113,10 @@ async function force_download_image_preview_data () {
 	}
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0) {
+async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
+	title: 'Generating tensors from images [0]...',
+	html: "This may take some time, but your computer is working!"
+}) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	if(started_training || force_download) {
@@ -218,8 +221,8 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0) {
 
 	if(!skip_real_image_download && !dont_show_swal) {
 		await Swal.fire({
-			title: 'Generating tensors from images [0]...',
-			html: "This may take some time, but your computer is working!",
+			title: swal_msg_format["title"],
+			html: swal_msg_format["html"],
 			timer: 2000,
 			showConfirmButton: false
 		});
