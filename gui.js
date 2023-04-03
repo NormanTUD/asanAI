@@ -5533,6 +5533,14 @@ class ManiC {
 			manicule = this;
 
 			invert_elements_in_dark_mode();
+
+			var window_width = $(window).width();
+			var window_height = $(window).height();
+
+			var x_position_manicule_centered = $(this.image).offset()["left"] - (window_width / 2);
+			var y_position_manicule_centered = $(this.image).offset()["top"] - (window_height / 2);
+
+			window.scrollTo(x_position_manicule_centered, y_position_manicule_centered)
 		} else {
 			//log("Empty e");
 		}
