@@ -4746,7 +4746,9 @@ async function set_custom_webcam_training_data() {
 				show_webcam();
 			}
 
-			if(is_cosmo_mode) {
+			if(is_cosmo_mode && !$("#data_origin").attr("data-clicked")) {
+				$("#data_origin").attr("data-clicked", 1);
+
 				cosmo_wave++;
 
 				await delay(1500);
