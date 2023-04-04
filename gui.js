@@ -4772,9 +4772,10 @@ function toggle_layers() {
 
 	write_descriptions(1);
 	
-	if(is_cosmo_mode) {
+	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
 		cosmo_wave++;
 		show_cosmo_waves();
+		$(".left_side").attr("data-clicked", 1)
 	}
 }
 
