@@ -557,8 +557,6 @@ async function create_model (old_model, fake_model_structure, force) {
 			}
 		});
 
-		var node_data = JSON.parse(JSON.stringify(data));
-
 		valid_initializer_types.forEach((init_or_regularizer_type) => {
 			["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
 				var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
@@ -587,7 +585,6 @@ async function create_model (old_model, fake_model_structure, force) {
 							data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
 						} else {
 							data[keyname] = null;
-							node_data[keyname] = null;
 						}
 					}
 				} else {
@@ -607,7 +604,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		data = remove_empty(data);
-		node_data = remove_empty(node_data);
 
 		var data_keys = Object.keys(data);
 		for (var k = 0; k < data_keys.length; k++) {
@@ -647,42 +643,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		enable_train();
-
-		for (var vk = 0; vk < valid_initializer_types; vk++) {
-			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
-				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
-			}
-
-			if(Object.keys(node_data).includes(valid_initializer_types[vk] + "Initializer")) {
-				node_data[valid_initializer_types[vk] + "Initializer"] = "tf.initializers." + node_data[valid_initializer_types[vk] + "Initializer"]["name"] + "(" + JSON.stringify(node_data[valid_initializer_types[vk] + "Initializer"]["config"]) + ")";
-			}
-		}
-
-		var encoded_data_string = "";
-		var encoded_data_array = [];
-
-		if(i == 0) {
-			node_data["inputShape"] = "[" + node_data["inputShape"].join(", ") + "]";
-		} else {
-			delete node_data["inputShape"];
-			delete node_data["dtype"];
-		}
-
-		var node_data_keys = Object.keys(node_data);
-
-		for (var k = 0; k < node_data_keys.length; k++) {
-			if(["betaRegularizer", "betaInitializer", "gammaRegularizer", "gammaInitializer", "movingMeanInitializer", "movingMeanRegularizer", "kernelInitializer", "biasInitializer", "inputShape", "kernelRegularizer", "activityRegularizer", "biasRegularizer"].includes(node_data_keys[k]) || ["number", "boolean"].includes(typeof(node_data[node_data_keys[k]]))) {
-				encoded_data_array.push('"' + node_data_keys[k] + '": ' + node_data[node_data_keys[k]]);
-			} else {
-				if(["kernelSize", "strides", "dilationRate", "poolSize"].includes(node_data_keys[k])) {
-					encoded_data_array.push('"' + node_data_keys[k] + '": ' + "[" + node_data[node_data_keys[k]] + "]");
-				} else {
-					encoded_data_array.push('"' + node_data_keys[k] + '": "' + node_data[node_data_keys[k]] + '"');
-				}
-			}
-		}
-
-		encoded_data_string = encoded_data_array.join(",\n") + "\n";
 	}
 
 
