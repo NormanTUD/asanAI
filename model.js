@@ -513,11 +513,6 @@ async function create_model (old_model, fake_model_structure, force) {
 	html += "        </body>\n";
 	html += '</html>' + "\n";
 
-	var node_js = "import * as tf from '@tensorflow/tfjs-node';\n";
-
-	node_js += "// npm install @tensorflow/tfjs-node\n";
-	node_js += "var model = tf.sequential();\n";
-
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];
@@ -688,15 +683,11 @@ async function create_model (old_model, fake_model_structure, force) {
 		}
 
 		encoded_data_string = encoded_data_array.join(",\n") + "\n";
-
-		node_js += "model.add(tf.layers." + type + "({" + encoded_data_string + "}));\n";
 	}
 
-	node_js += "\nmodel.summary();\n";
 
 
 	if(typeof(fake_model_structure) == "undefined") {
-		//$("#node").html(node_js);
 		$("#html").text(html);
 	}
 
