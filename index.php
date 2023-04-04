@@ -1235,13 +1235,7 @@
 								<ul class="navi_list">
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
-									<li style="display: none"><a href="#node_tab" id="node_tab_label">NodeJS</a></li>
 								</ul>
-
-								<div id="node_tab">
-									<pre><code class="language-javascript" id="node" style="width: 99%"></code></pre>
-									<button onclick="copy_id_to_clipboard('node')">Copy to clipboard</button>
-								</div>
 
 								<div id="html_tab">
 									<br>
