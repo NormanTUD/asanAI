@@ -1330,17 +1330,17 @@
 								<div id="training_content">
 									<div id="simplest_training_data_visualization" style="display: none"></div>
 									<div style="display: none">
-										<h1>Epochs:</h1>
+										<h3>Epochs:</h3>
 										<div id="plotly_epoch_history"></div>
 									</div>
 
 									<div style="display: none">
-										<h1>Batches:</h1>
+										<h3>Batches:</h3>
 										<div id="plotly_batch_history"></div>
 									</div>
 
 									<div style="display: none">
-										<h1>Time per batch (in seconds):</h1>
+										<h3>Time per batch (in seconds):</h3>
 										<div id="plotly_time_per_batch"></div>
 									</div>
 
