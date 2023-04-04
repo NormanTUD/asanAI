@@ -1391,7 +1391,7 @@
 
 											<span class="hide_when_no_image">
 												<div id="upload_file" class="show_data no_box_shadow">
-													<input type="button" id="upload_file_styleable" class='large_button' value="&#x1F4C1;" onclick="document.getElementById('upload_file_non_styleable').click();" />
+													<input type="button" id="upload_file_styleable" class='large_button' value="&#128444;&#128452;" onclick="document.getElementById('upload_file_non_styleable').click();" />
 													<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
 												</div>
 												<div class="full_example_image_prediction only_show_when_predicting_image_file">
