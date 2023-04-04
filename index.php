@@ -1254,12 +1254,11 @@
 
 								<div id="python_tab">
 									<br>
-									<button onclick="copy_id_to_clipboard('node')">Copy to clipboard</button>
+									<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
 									<button onclick="save_model()">Download model data</button>
 									<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
-									<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
 								</div>
 							</div>
 
