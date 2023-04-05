@@ -343,12 +343,10 @@ function cosmo_debugger () {
 		$(".manicule_debugger").remove()
 
 		$("[class^='manicule_wave_'],[class^='show_cosmo_wave_']").each((i, x) => {
-			//log($(x).offset());
 			if(!is_hidden_or_has_hidden_parent(x)) {
 				var xpath = get_element_xpath(x);
 				var l = $(x).offset().left + $(x).width();
 				var t = $(x).offset()["top"];
-				//log(">>>", x.classList, "<<<")
 
 
 				var interesting_classes = $.grep(x.classList, (x) => { if(x.match(/^(manicule|show_cosmo)_wave/)) { return x; } })
@@ -360,8 +358,6 @@ function cosmo_debugger () {
 					var m_matches = interesting_classes[i].match(/manicule_wave_(\d+)\s*$/)
 					var c_matches = interesting_classes[i].match(/show_cosmo_wave_(\d+)\s*$/)
 
-					log("interesting:", interesting_classes[i], "c-matches:", c_matches, "m-matches:", m_matches);
-
 					if(m_matches) {
 						manicule_nrs.push(parseInt(m_matches[1]));
 					} else if(c_matches) {
@@ -370,9 +366,6 @@ function cosmo_debugger () {
 				}
 
 				var cosmo_debug_arr = [];
-
-				log("c", cosmo_nrs);
-				log("c", manicule_nrs);
 
 				if(cosmo_nrs.length) {
 					cosmo_debug_arr.push("Waves: [" + cosmo_nrs.join(", ") + "]");

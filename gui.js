@@ -3505,6 +3505,13 @@ function add_image_to_category (img, category) {
 }
 
 function increase_cosmo_wave_when_clicked_element_is_maniculed (element) {
+	if(!manicule) {
+		console.log("Manicule undefined, is this ok?");
+		return;
+	}
+
+	assert(!!element, "!!element is not true");
+
 	var element_xpath = get_element_xpath(element);
 	var manicule_xpath = get_element_xpath(manicule.element);
 
@@ -3557,12 +3564,12 @@ function add_new_category() {
 			webcam_button_style = "";
 		}
 		$(
-			'<div class="own_image_upload_container"><hr>' +
-			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button show_cosmo_wave_10" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
-			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
-			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<div class="manicule_wave_${cosmo_wave + label_nr + 1}" id="${uuid}"></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();award_cosmo_points_once('${uuid}')">&#128190;</button>`
+			`<div class="own_image_upload_container" class="manicule_wave_${cosmo_wave + label_nr + 1}"><hr>` +
+				'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
+				`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+				`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
+				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();award_cosmo_points_once('${uuid}')">&#128190;</button>` +
+			`</div>`
 		).appendTo("#own_images_container");
 
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="category ' + label_nr + '" /><input type="file" class="own_image_files hide_in_cosmo_mode" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
@@ -5586,6 +5593,8 @@ class ManiC {
 		} else {
 			//log("Empty e");
 		}
+
+		cosmo_debugger();
 	}
 
 	moveAroundVertically () {
@@ -5625,8 +5634,6 @@ class ManiC {
 				${keyframes}
 			}
 		`;
-
-		log(styleSheet);
 	}
 
 	moveAroundHorizontally () {
@@ -5667,12 +5674,11 @@ class ManiC {
 				${keyframes}
 			}
 		`;
-
-		log(styleSheet);
 	}
 
 	hide() {
 		this.image.style.display = 'none';
+		cosmo_debugger();
 	}
 }
 
