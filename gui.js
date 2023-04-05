@@ -3516,12 +3516,25 @@ function increase_cosmo_wave_when_clicked_element_is_maniculed (element) {
 	var manicule_xpath = get_element_xpath(manicule.element);
 
 	if(element_xpath == manicule_xpath) {
-		cosmo_wave++;
-		show_cosmo_waves();
+		increase_cosmo_wave();
 	}
 }
 
-function award_cosmo_points_once (id, n = 1) {
+function increase_cosmo_wave_when_wave_in (arr) {
+	var increase = false;
+	for (var i = 0; i < arr.length; i++) {
+		if(arr[i] == cosmo_wave) {
+			increase = true;
+			break;
+		}
+	}
+
+	if(increase) {
+		increase_cosmo_wave();
+	}
+}
+
+function increase_cosmo_wave_once (id, n = 1) {
 	if(!is_cosmo_mode) {
 		return;
 	}
@@ -3529,14 +3542,12 @@ function award_cosmo_points_once (id, n = 1) {
 	if(!Object.keys(cosmo_points_once).includes(id)) {
 		cosmo_points_once[id] = 1;
 
-		cosmo_wave++;
-		show_cosmo_waves();
+		increase_cosmo_wave();
 	} else {
 		cosmo_points_once[id] += 1;
 
 		if(cosmo_points_once[id] <= n) {
-			cosmo_wave++;
-			show_cosmo_waves();
+			increase_cosmo_wave();
 		}
 	}
 }
@@ -3568,7 +3579,7 @@ function add_new_category() {
 				'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
 				`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 				`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();award_cosmo_points_once('${uuid}')">&#128190;</button>` +
+				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();increase_cosmo_wave_once('${uuid}')">&#128190;</button>` +
 			`</div>`
 		).appendTo("#own_images_container");
 
@@ -4789,7 +4800,7 @@ async function set_custom_webcam_training_data() {
 			if(is_cosmo_mode && !$("#data_origin").attr("data-clicked")) {
 				$("#data_origin").attr("data-clicked", 1);
 
-				cosmo_wave++;
+				increase_cosmo_wave();
 
 				await delay(1500);
 
@@ -4815,8 +4826,7 @@ function toggle_layers() {
 	write_descriptions(1);
 	
 	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
-		cosmo_wave++;
-		show_cosmo_waves();
+		increase_cosmo_wave();
 		$(".left_side").attr("data-clicked", 1)
 	}
 }
@@ -5233,7 +5243,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			eval(customfunc);
 		}
 
-		award_cosmo_points_once(idname);
+		increase_cosmo_wave_once(idname);
 	});
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
@@ -5680,6 +5690,12 @@ class ManiC {
 		this.image.style.display = 'none';
 		cosmo_debugger();
 	}
+}
+
+function increase_cosmo_wave () {
+	//logt("increase_cosmo_wave");
+	cosmo_wave++;
+	show_cosmo_waves();
 }
 
 function remove_manicule () {

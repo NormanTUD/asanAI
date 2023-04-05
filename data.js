@@ -1258,7 +1258,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	tf.engine().endScope();
 
 	if(!has_taken_webcam_image_for_cosmo < 2 && increment_counter) {
-		cosmo_wave++;
+		increase_cosmo_wave();
 		show_cosmo_waves();
 	}
 

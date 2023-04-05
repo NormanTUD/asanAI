@@ -36,7 +36,9 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	remove_manicule(); 
+	if(is_cosmo_mode) {
+		remove_manicule(); 
+	}
 
 	if(model === null || !Object.keys(model).includes("layers")) {
 		gui_not_in_training();
@@ -138,6 +140,10 @@ async function train_neural_network () {
 		enable_everything();
 
 		await show_prediction();
+
+		if(is_cosmo_mode) {
+			increase_cosmo_wave_when_wave_in([0]);
+		}
 	}
 
 	write_descriptions();
