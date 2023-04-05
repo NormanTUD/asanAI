@@ -325,5 +325,9 @@ function data_debug (...data) {
 
 
 function cosmo_debugger () {
-	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave) : $("body").append($(`<div id='cosmo_debugger' style='position: absolute; left: 300px; top: 10px;'>${cosmo_wave}</div>`));
+	if(is_cosmo_mode) {
+		$("#cosmo_debugger").length ? $("#cosmo_debugger").html("Cosmo-Wave: " + cosmo_wave) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 300px; top: 10px;'>Cosmo-Wave: ${cosmo_wave}</div>`));
+	} else {
+		$("#cosmo_debugger").remove();
+	}
 }
