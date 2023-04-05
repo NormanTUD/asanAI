@@ -869,3 +869,7 @@ button {
 #custom_webcam_training_data {
 	user-select: none;
 }
+
+#own_files {
+	display: flex;
+}
