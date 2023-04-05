@@ -322,7 +322,19 @@ function data_debug (...data) {
 	log("<<<<<<<<<<<<<<<<<<");
 }
 
+function highlightElement(xpath) {
+	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	if (element) {
+		element.style.backgroundColor = 'yellow';
+	}
+}
 
+function unhighlightElement(xpath) {
+	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	if (element) {
+		element.style.backgroundColor = '';
+	}
+}
 
 function cosmo_debugger () {
 	if(is_cosmo_mode) {
@@ -333,6 +345,7 @@ function cosmo_debugger () {
 		$("[class^='manicule_wave_'],[class^='show_cosmo_wave_']").each((i, x) => {
 			//log($(x).offset());
 			if(!is_hidden_or_has_hidden_parent(x)) {
+				var xpath = get_element_xpath(x);
 				var l = $(x).offset().left + $(x).width();
 				var t = $(x).offset()["top"];
 				//log(">>>", x.classList, "<<<")
@@ -371,8 +384,7 @@ function cosmo_debugger () {
 
 				var cosmo_debug_str = cosmo_debug_arr.join(", ");
 
-
-				$("body").append(`<div style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+				$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 			}
 		})
 	} else {
