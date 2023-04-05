@@ -904,3 +904,7 @@ button {
 	left: 0px;
 	opacity: 0.5;
 }
+
+.own_image_upload_container {
+	width: 250px;
+}
