@@ -201,7 +201,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 					for (let i = 0; i < predictions.length; i++) {
 						var label = labels[i % labels.length];
 						var probability = predictions[i];
-						var w = Math.floor(probability * 100);
+						var w = Math.floor(probability * 50);
 
 						var str = "";
 						if(show_bars_instead_of_numbers()) {
@@ -384,7 +384,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							this_str = label;
 						}
 
-						var w = Math.floor(probability * 100);
+						var w = Math.floor(probability * 50);
 
 						if(show_bars_instead_of_numbers()) {
 							if(i == max_i && show_green) {
@@ -701,7 +701,7 @@ async function predict_webcam () {
 					var label = labels[i % labels.length];
 					var probability = predictions[i];
 
-					var w = Math.floor(probability * 100);
+					var w = Math.floor(probability * 50);
 
 					if(show_bars_instead_of_numbers()) {
 						if(i == max_i) {
@@ -711,7 +711,7 @@ async function predict_webcam () {
 							str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 						}
 					} else {
-						probability = (probability * 100) + "%";
+						probability = (probability * 50) + "%";
 						if(i == max_i) {
 							str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 						} else {
@@ -849,7 +849,7 @@ async function predict_handdrawn () {
 		for (var i = 0; i < predictions[0].length; i++) {
 			var label = labels[i % labels.length];
 			var val = predictions[0][i];
-			var w = Math.floor(val * 100);
+			var w = Math.floor(val * 50);
 
 			if(show_bars_instead_of_numbers()) {
 				if(label) {

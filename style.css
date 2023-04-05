@@ -525,7 +525,7 @@ button:disabled:hover {
 	height: 3px;
 	background-color: #909090;
 	padding: 5px;
-	width: 100px;
+	width: 50px;
 }
 
 .bar>span{
