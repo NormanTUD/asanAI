@@ -342,7 +342,7 @@ function cosmo_debugger () {
 
 		$(".manicule_debugger").remove()
 
-		$("[class^='manicule_wave_'],[class^='show_cosmo_wave_']").each((i, x) => {
+		var dbgf = (i, x) => {
 			if(!is_hidden_or_has_hidden_parent(x)) {
 				var xpath = get_element_xpath(x);
 				var l = $(x).offset().left + $(x).width();
@@ -379,7 +379,10 @@ function cosmo_debugger () {
 
 				$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 			}
-		})
+		}
+
+		$("[class^='manicule_wave_']").each(dbgf)
+		$("[class^='show_cosmo_wave_']").each(dbgf)
 	} else {
 		$("#cosmo_debugger").remove();
 	}

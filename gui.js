@@ -3575,7 +3575,7 @@ function add_new_category() {
 			webcam_button_style = "";
 		}
 		$(
-			`<div class="own_image_upload_container" class="manicule_wave_${cosmo_wave + label_nr + 1}"><hr>` +
+			`<div class="own_image_upload_container manicule_wave_${cosmo_wave + label_nr + 1}"><hr>` +
 				'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
 				`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 				`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
@@ -3605,6 +3605,20 @@ function add_new_category() {
 	rename_labels();
 
 	return uuid;
+}
+
+function has_special_cosmo_classes (x) {
+	var s = false;
+	var c = x.classList;
+
+	for (var i = 0; i < c.length; i++) {
+		if(c[i].match(/(show_cosmo|manicule)_wave_/)) {
+			s = true;
+			break;
+		}
+	}
+
+	return s;
 }
 
 function addLayer(canvas_id, transparency) {

@@ -1256,10 +1256,19 @@ async function force_reinit (no_msg) {
 
 function input_shape_is_image () {
 	var shape = get_input_shape();
+	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
-		$(".input_shape_is_image").show();
+		is.show();
+		if(is_cosmo_mode) {
+			for (var i = 0; i < is.length; i++) {
+				if(has_special_cosmo_classes(is[i])) {
+					$(is[i]).hide();
+					show_cosmo_waves();
+				}
+			}
+		}
 		return true;
 	}
-	$(".input_shape_is_image").hide();
+	is.hide();
 	return false;
 }
