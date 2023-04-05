@@ -1318,29 +1318,31 @@
 								<br>
 								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
-								<span id="canvas_grid_visualization"></span>
-								<span id="show_visualization_here_in_cosmo"></span>
-								<br>
-								<div id="training_content">
-									<div id="simplest_training_data_visualization" style="display: none"></div>
-									<div style="display: none">
-										<h3>Epochs:</h3>
-										<div id="plotly_epoch_history"></div>
-									</div>
+								<div class="overlay_each_other">
+									<span id="canvas_grid_visualization"></span>
+									<span id="show_visualization_here_in_cosmo"></span>
+									<br>
+									<div id="training_content">
+										<div id="simplest_training_data_visualization" style="display: none"></div>
+										<div style="display: none">
+											<h3>Epochs:</h3>
+											<div id="plotly_epoch_history"></div>
+										</div>
 
-									<div style="display: none">
-										<h3>Batches:</h3>
-										<div id="plotly_batch_history"></div>
-									</div>
+										<div style="display: none">
+											<h3>Batches:</h3>
+											<div id="plotly_batch_history"></div>
+										</div>
 
-									<div style="display: none">
-										<h3>Time per batch (in seconds):</h3>
-										<div id="plotly_time_per_batch"></div>
-									</div>
+										<div style="display: none">
+											<h3>Time per batch (in seconds):</h3>
+											<div id="plotly_time_per_batch"></div>
+										</div>
 
-									<div style="display: none">
-										<h1>Memory usage while training (per batch):</h1>
-										<div id="plotly_memory_history"></div>
+										<div style="display: none">
+											<h1>Memory usage while training (per batch):</h1>
+											<div id="plotly_memory_history"></div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1391,7 +1393,7 @@
 											</span>
 
 											<div class="hide_when_no_image">
-												<button class="only_when_webcam hide_in_cosmo_mode" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
 												<div class="full_example_image_prediction only_when_webcam_on">
 													<div id="webcam" style="display: none"></div>

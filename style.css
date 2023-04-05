@@ -873,3 +873,24 @@ button {
 #own_files {
 	display: flex;
 }
+
+.no_border_button {
+	display: contents;
+}
+
+
+.overlay_each_other {
+}
+
+.overlay_each_other div {
+	padding: 0px;
+}
+
+#canvas_grid_visualization {
+	display: block ruby;
+	z-index: 999999;
+	position: absolute;
+	top: 80px;
+	left: 0px;
+	opacity: 0.5;
+}
