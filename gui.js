@@ -3511,12 +3511,19 @@ function award_cosmo_points_once (id, n = 1) {
 		return;
 	}
 
-	if(!Object.keys(cosmo_points_once).includes(id) || cosmo_points_once[id] <= n) {
+	if(!Object.keys(cosmo_points_once).includes(id)) {
+		cosmo_points_once[id] = 1;
+
 		cosmo_wave++;
 		show_cosmo_waves();
+	} else {
 		cosmo_points_once[id] += 1;
-	}
 
+		if(cosmo_points_once[id] <= n) {
+			cosmo_wave++;
+			show_cosmo_waves();
+		}
+	}
 }
 
 function add_new_category() {
@@ -3543,8 +3550,8 @@ function add_new_category() {
 		}
 		$(
 			'<div class="own_image_upload_container"><hr>' +
-			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
-			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button show_cosmo_wave_10" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
+			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<div class="manicule_wave_${cosmo_wave + label_nr + 1}" id="${uuid}"></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();award_cosmo_points_once('${uuid}')">&#128190;</button>`
@@ -5442,6 +5449,8 @@ function show_cosmo_waves () {
 		return;
 	}
 
+	cosmo_debugger();
+
 	if(typeof(cosmo_wave) == "undefined") {
 		for (var i = 1; i <= cosmo_wave; i++) {
 			$(".show_cosmo_wave_" + i).show();
@@ -5466,6 +5475,8 @@ function show_cosmo_waves () {
 			}
 		}
 	}
+
+	cosmo_debugger();
 }
 
 function show_bars_instead_of_numbers () {

@@ -323,3 +323,7 @@ function data_debug (...data) {
 }
 
 
+
+function cosmo_debugger () {
+	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave) : $("body").append($(`<div id='cosmo_debugger' style='position: absolute; left: 300px; top: 10px;'>${cosmo_wave}</div>`));
+}
