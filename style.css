@@ -896,6 +896,7 @@ button {
 }
 
 #canvas_grid_visualization {
+	pointer-events: none;
 	display: block ruby;
 	z-index: 999999;
 	position: absolute;
