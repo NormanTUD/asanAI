@@ -200,7 +200,7 @@
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<!--<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>-->
 				<span id="custom_webcam_training_data" class="manicule_wave_1 show_cosmo_wave_1" style="display: none" class="only_when_webcam input_shape_is_image symbol_button show_cosmo_wave_2" data-rotated="1" onclick="set_custom_webcam_training_data()">&#128248;</span>
-				<span id="start_stop_training" class="manicule_wave_0 symbol_button show_cosmo_wave_0 manicule_wave_4" onclick="train_neural_network()">&#127947;</span>
+				<span id="start_stop_training" class="manicule_wave_0 symbol_button show_cosmo_wave_0 manicule_wave_6" onclick="train_neural_network()">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">
@@ -1102,7 +1102,7 @@
 
 
 				<div id="help" style="display: none"></div>
-				<div id="toggle_layers_button" data-rotated="1" class="show_cosmo_wave_5 manicule_wave_5"><button style="width: 100%" onclick="toggle_layers()"><span class="large_button">&#9881;&#129302;</span></button></div>
+				<div id="toggle_layers_button" data-rotated="1" class="show_cosmo_wave_7 manicule_wave_7"><button style="width: 100%" onclick="toggle_layers()"><span class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side">
