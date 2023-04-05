@@ -1368,3 +1368,5 @@ var click_on_graphs = 1;
 var has_keyframes_for_manicule = false;
 
 var has_taken_webcam_image_for_cosmo = 0;
+
+var cosmo_points_once = {};

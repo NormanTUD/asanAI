@@ -327,6 +327,54 @@ function data_debug (...data) {
 function cosmo_debugger () {
 	if(is_cosmo_mode) {
 		$("#cosmo_debugger").length ? $("#cosmo_debugger").html("Cosmo-Wave: " + cosmo_wave) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 300px; top: 10px;'>Cosmo-Wave: ${cosmo_wave}</div>`));
+
+		$(".manicule_debugger").remove()
+
+		$("[class^='manicule_wave_'],[class^='show_cosmo_wave_']").each((i, x) => {
+			//log($(x).offset());
+			if(!is_hidden_or_has_hidden_parent(x)) {
+				var l = $(x).offset().left + $(x).width();
+				var t = $(x).offset()["top"];
+				//log(">>>", x.classList, "<<<")
+
+
+				var interesting_classes = $.grep(x.classList, (x) => { if(x.match(/^(manicule|show_cosmo)_wave/)) { return x; } })
+
+				var cosmo_nrs = [];
+				var manicule_nrs = [];
+
+				for (var i = 0; i < interesting_classes.length; i++) {
+					var m_matches = interesting_classes[i].match(/manicule_wave_(\d+)\s*$/)
+					var c_matches = interesting_classes[i].match(/show_cosmo_wave_(\d+)\s*$/)
+
+					log("interesting:", interesting_classes[i], "c-matches:", c_matches, "m-matches:", m_matches);
+
+					if(m_matches) {
+						manicule_nrs.push(parseInt(m_matches[1]));
+					} else if(c_matches) {
+						cosmo_nrs.push(parseInt(c_matches[1]));
+					}
+				}
+
+				var cosmo_debug_arr = [];
+
+				log("c", cosmo_nrs);
+				log("c", manicule_nrs);
+
+				if(cosmo_nrs.length) {
+					cosmo_debug_arr.push("Waves: [" + cosmo_nrs.join(", ") + "]");
+				}
+
+				if(manicule_nrs.length) {
+					cosmo_debug_arr.push("Hands: [" + manicule_nrs.join(",") + "]");
+				}
+
+				var cosmo_debug_str = cosmo_debug_arr.join(", ");
+
+
+				$("body").append(`<div style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+			}
+		})
 	} else {
 		$("#cosmo_debugger").remove();
 	}

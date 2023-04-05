@@ -3504,7 +3504,15 @@ function add_image_to_category (img, category) {
 	imgDiv.append(html);
 }
 
-var cosmo_points_once = {};
+function increase_cosmo_wave_when_clicked_element_is_maniculed (element) {
+	var element_xpath = get_element_xpath(element);
+	var manicule_xpath = get_element_xpath(manicule.element);
+
+	if(element_xpath == manicule_xpath) {
+		cosmo_wave++;
+		show_cosmo_waves();
+	}
+}
 
 function award_cosmo_points_once (id, n = 1) {
 	if(!is_cosmo_mode) {
