@@ -3527,11 +3527,11 @@ function add_new_category() {
 			webcam_button_style = "";
 		}
 		$(
-			`<div class="own_image_upload_container manicule_wave_${cosmo_wave + label_nr + 1}"><hr>` +
+			`<div class="own_image_upload_container"><hr>` +
 				'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
 				`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 				`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button manicule_wave_${cosmo_wave + label_nr + 2}' onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
+				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images,shown_custom_images,drew_custom_image" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 			`</div>`
 		).appendTo("#own_images_container");
 
@@ -3555,6 +3555,8 @@ function add_new_category() {
 	alter_text_webcam_series();
 
 	rename_labels();
+
+	add_cosmo_point("shown_custom_images");
 
 	return uuid;
 }
@@ -4761,6 +4763,7 @@ async function set_custom_webcam_training_data() {
 
 			if(!cam) {
 				show_webcam();
+				add_cosmo_point("show_webcam");
 			}
 
 			if(is_cosmo_mode && !$("#data_origin").attr("data-clicked")) {
@@ -5152,7 +5155,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 	</form>
-	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+	<canvas class='cosmo' data-required_skills="set_custom_images,shown_custom_images" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
 
@@ -5530,7 +5533,7 @@ class ManiC {
 
 		cosmo_debugger();
 
-		console.trace();
+		//console.trace();
 	}
 
 	moveAroundVertically () {
@@ -5691,7 +5694,7 @@ function show_cosmo_elements_depending_on_achieved_goals () {
 }
 
 function remove_manicule (remove=1) {
-	if(remove && Object.keys(manicule).includes("element")) {
+	if(typeof(manicule) == "object" && manicule !== null && remove && Object.keys(manicule).includes("element")) {
 		last_manually_removed_manicule_element = manicule.element;
 	}
 	$(".manicule").remove();

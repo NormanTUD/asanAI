@@ -1345,8 +1345,6 @@ var last_tensor_size_gpu = 0;
 var last_status_hash = "";
 var number_of_currently_running_updated_pages = 0;
 
-var cosmo_wave = 0;
-
 var escapeCount = 0;
 var lastEscapeTime = 0;
 
@@ -1372,8 +1370,10 @@ var has_taken_webcam_image_for_cosmo = 0;
 var cosmo_points_once = {};
 
 var cosmo_goals = [
-	"saved_custom_image",
 	"toggled_layers",
+	"shown_custom_images",
+	"saved_custom_image",
+	"show_webcam",
 	"set_custom_images",
 	"started_training",
 	"finished_training",

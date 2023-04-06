@@ -326,6 +326,7 @@ function highlightElement(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = 'yellow';
+		element.style.margin = '20px';
 	}
 }
 
@@ -333,6 +334,7 @@ function unhighlightElement(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = '';
+		element.style.margin = '0px';
 	}
 }
 
@@ -342,8 +344,8 @@ function cosmo_debugger () {
 		return;
 	}
 
-	var cosmo_wave_debug_str = "Cosmo-Wave: " + cosmo_wave + ", Achieved goals: [" + achieved_goals.join(", ") + "]";
-	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 300px; top: 10px;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
+	var cosmo_wave_debug_str = "Achieved goals: [" + achieved_goals.join(", ") + "]";
+	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 600px; top: 10px;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
 
 	$(".manicule_debugger").remove()
 
@@ -351,29 +353,53 @@ function cosmo_debugger () {
 		if(!is_hidden_or_has_hidden_parent(x)) {
 			var xpath = get_element_xpath(x);
 			var l = $(x).offset().left + $(x).width();
-			var t = $(x).offset()["top"];
+			var t = $(x).offset()["top"] + Math.random() * 20;
 
 			var cosmo_debug_arr = [];
 
 			var r = $(x).data("required_skills");
 
 			if(typeof(r) == "string") {
-				cosmo_debug_arr.push("required_skills: [" + r + "]");
+				r = r.split(/,/);
+				if(r.length) {
+					for (var k = 0; k < r.length; k++) {
+						if(r[k]) {
+							if(achieved_goals.includes(r[k])) {
+								r[k] += "&#9989;";
+							} else {
+								r[k] += "&#10060;";
+							}
+						}
+					}
+				}
+				cosmo_debug_arr.push("required_skills: [" + r.join(", ") + "]");
 			} else {
 				cosmo_debug_arr.push("required_skills empty");
 			}
 
 			var s = $(x).data("show_again_when_new_skill_acquired");
 
-			if(typeof(r) == "string") {
-				cosmo_debug_arr.push("show_again_when_new_skill_acquired: [" + s + "]");
+			if(typeof(s) == "string") {
+				s = s.split(/,/);
+				if(s.length) {
+					for (var k = 0; k < s.length; k++) {
+						if(s[k]) {
+							if(achieved_goals.includes(s[k])) {
+								s[k] += "&#9989;";
+							} else {
+								s[k] += "&#10060;";
+							}
+						}
+					}
+				}
+				cosmo_debug_arr.push("show_again_when_new_skill_acquired: [" + s.join(", ") + "]");
 			} else {
 				cosmo_debug_arr.push("show_again_when_new_skill_acquired empty");
 			}
 
 			var cosmo_debug_str = cosmo_debug_arr.join(", ");
 
-			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 		}
 	}
 
