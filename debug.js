@@ -138,6 +138,7 @@ function add_function_debugger () {
 			    "delay", 
 			    "Swal", 
 			    "add_function_debugger", 
+			    "atrament_data",
 			    "get_model_config_hash",
 			    "gradClassActivationMap",
 			    "enable_train",

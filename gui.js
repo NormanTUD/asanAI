@@ -3531,7 +3531,7 @@ function add_new_category() {
 				'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
 				`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 				`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images,shown_custom_images,drew_custom_image" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
+				`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images,added_custom_category,drew_custom_image" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 			`</div>`
 		).appendTo("#own_images_container");
 
@@ -3556,7 +3556,7 @@ function add_new_category() {
 
 	rename_labels();
 
-	add_cosmo_point("shown_custom_images");
+	add_cosmo_point("added_custom_category");
 
 	return uuid;
 }
@@ -5136,6 +5136,7 @@ function green_marker (element) {
 }
 
 function get_drawing_board_on_page (indiv, idname, customfunc) {
+	logt("get_drawing_board_on_page");
 	if(!customfunc) {
 		customfunc = "";
 	}
@@ -5149,7 +5150,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 	</form>
-	<canvas class='cosmo' data-required_skills="set_custom_images,shown_custom_images" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+	<canvas class='cosmo' data-required_skills="set_custom_images,added_custom_category" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
 
@@ -5163,7 +5164,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
 	// instantiate Atrament
 	atrament_data[idname]["atrament"] = new Atrament(
-		atrament_data[idname]["canvas"] , {
+		atrament_data[idname]["canvas"], {
 			width: atrament_data[idname]["canvas"].offsetWidth,
 			height: atrament_data[idname]["canvas"].offsetHeight
 		}
@@ -5431,7 +5432,7 @@ function cosmo_mode () {
 function sort_by_property(list, property_name_list) {
 	list.sort((a, b) => {
 		for (var p = 0; p < property_name_list.length; p++) {
-			prop = property_name_list[p];
+			var prop = property_name_list[p];
 			if (a[prop] < b[prop]) {
 				return -1;
 			} else if (a[prop] !== a[prop]) {
@@ -5443,6 +5444,7 @@ function sort_by_property(list, property_name_list) {
 }
 
 function chose_next_manicule_target () {
+	logt("chose_next_manicule_target");
 	var possible_indices = [];
 
 	var cosmo = $(".cosmo");
@@ -5684,7 +5686,7 @@ class ManiC {
 	}
 }
 
-function add_cosmo_point (name) {
+function add_cosmo_point (name, show_manicule=1) {
 	if(is_cosmo_mode) {
 		if(cosmo_goals.includes(name)) {
 			if(!current_skills.includes(name)) {
@@ -5701,7 +5703,9 @@ function add_cosmo_point (name) {
 
 	cosmo_debugger();
 
-	chose_next_manicule_target();
+	if(show_manicule) {
+		chose_next_manicule_target();
+	}
 }
 
 

@@ -37,7 +37,7 @@ function reset_gui_before_training () {
 
 async function train_neural_network () {
 	if(is_cosmo_mode) {
-		add_cosmo_point("started_training");
+		add_cosmo_point("started_training", 0);
 		remove_manicule(); 
 	}
 
