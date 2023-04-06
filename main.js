@@ -2,7 +2,7 @@
 
 function on_resize () {
 	reset_view(); 
-	show_cosmo_waves();
+	show_cosmo_elements_depending_on_achieved_goals()
 }
 
 function layer_types_that_dont_have_default_options () {

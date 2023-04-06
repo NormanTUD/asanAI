@@ -1370,3 +1370,19 @@ var has_keyframes_for_manicule = false;
 var has_taken_webcam_image_for_cosmo = 0;
 
 var cosmo_points_once = {};
+
+var cosmo_goals = [
+	"saved_custom_image",
+	"toggled_layers",
+	"set_custom_images",
+	"started_training",
+	"finished_training",
+	"drew_predict_image",
+	"drew_custom_image"
+];
+
+var achieved_goals = [];
+
+var manicule_queue = [];
+
+var last_manually_removed_manicule_element = null;

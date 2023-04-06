@@ -337,53 +337,45 @@ function unhighlightElement(xpath) {
 }
 
 function cosmo_debugger () {
-	if(is_cosmo_mode) {
-		$("#cosmo_debugger").length ? $("#cosmo_debugger").html("Cosmo-Wave: " + cosmo_wave) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 300px; top: 10px;'>Cosmo-Wave: ${cosmo_wave}</div>`));
-
-		$(".manicule_debugger").remove()
-
-		var dbgf = (i, x) => {
-			if(!is_hidden_or_has_hidden_parent(x)) {
-				var xpath = get_element_xpath(x);
-				var l = $(x).offset().left + $(x).width();
-				var t = $(x).offset()["top"];
-
-
-				var interesting_classes = $.grep(x.classList, (x) => { if(x.match(/^(manicule|show_cosmo)_wave/)) { return x; } })
-
-				var cosmo_nrs = [];
-				var manicule_nrs = [];
-
-				for (var i = 0; i < interesting_classes.length; i++) {
-					var m_matches = interesting_classes[i].match(/manicule_wave_(\d+)\s*$/)
-					var c_matches = interesting_classes[i].match(/show_cosmo_wave_(\d+)\s*$/)
-
-					if(m_matches) {
-						manicule_nrs.push(parseInt(m_matches[1]));
-					} else if(c_matches) {
-						cosmo_nrs.push(parseInt(c_matches[1]));
-					}
-				}
-
-				var cosmo_debug_arr = [];
-
-				if(cosmo_nrs.length) {
-					cosmo_debug_arr.push("Waves: [" + cosmo_nrs.join(", ") + "]");
-				}
-
-				if(manicule_nrs.length) {
-					cosmo_debug_arr.push("Hands: [" + manicule_nrs.join(",") + "]");
-				}
-
-				var cosmo_debug_str = cosmo_debug_arr.join(", ");
-
-				$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
-			}
-		}
-
-		$("[class^='manicule_wave_']").each(dbgf)
-		$("[class^='show_cosmo_wave_']").each(dbgf)
-	} else {
+	if(!is_cosmo_mode) {
 		$("#cosmo_debugger").remove();
+		return;
 	}
+
+	var cosmo_wave_debug_str = "Cosmo-Wave: " + cosmo_wave + ", Achieved goals: [" + achieved_goals.join(", ") + "]";
+	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 300px; top: 10px;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
+
+	$(".manicule_debugger").remove()
+
+	var dbgf = (i, x) => {
+		if(!is_hidden_or_has_hidden_parent(x)) {
+			var xpath = get_element_xpath(x);
+			var l = $(x).offset().left + $(x).width();
+			var t = $(x).offset()["top"];
+
+			var cosmo_debug_arr = [];
+
+			var r = $(x).data("required_skills");
+
+			if(typeof(r) == "string") {
+				cosmo_debug_arr.push("required_skills: [" + r + "]");
+			} else {
+				cosmo_debug_arr.push("required_skills empty");
+			}
+
+			var s = $(x).data("show_again_when_new_skill_acquired");
+
+			if(typeof(r) == "string") {
+				cosmo_debug_arr.push("show_again_when_new_skill_acquired: [" + s + "]");
+			} else {
+				cosmo_debug_arr.push("show_again_when_new_skill_acquired empty");
+			}
+
+			var cosmo_debug_str = cosmo_debug_arr.join(", ");
+
+			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+		}
+	}
+
+	$(".cosmo").each(dbgf)
 }
