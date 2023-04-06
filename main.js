@@ -2,7 +2,7 @@
 
 function on_resize () {
 	reset_view(); 
-	show_cosmo_elements_depending_on_achieved_goals()
+	show_cosmo_elements_depending_on_current_skills()
 }
 
 function layer_types_that_dont_have_default_options () {
@@ -484,6 +484,10 @@ $(document).ready(async function() {
 	allow_editable_labels();
 
 	s.close();
+
+	add_cosmo_point("loaded_page");
+
+	chose_next_manicule_target();
 
 	l("Site is ready");
 });

@@ -5210,7 +5210,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
 
 	if(idname == "sketcher") {
-		add_cosmo_point("shown_sketcher");
+		//add_cosmo_point("shown_sketcher");
 	} else {
 		add_cosmo_point("shown_custom_sketcher");
 	}
@@ -5428,66 +5428,70 @@ function cosmo_mode () {
 	show_cosmo_elements_depending_on_current_skills();
 }
 
-function getSubarrayIndicesThatAreSuperset(set, sets) {
-	var supersetIndices = [];
-	for (var i = 0; i < sets.length; i++) {
-		var isSuperset = true;
-		for (var j = 0; j < set.length; j++) {
-			if (!sets[i].includes(set[j])) {
-				isSuperset = false;
-				break;
+function sort_by_property(list, property_name_list) {
+	list.sort((a, b) => {
+		for (var p = 0; p < property_name_list.length; p++) {
+			prop = property_name_list[p];
+			if (a[prop] < b[prop]) {
+				return -1;
+			} else if (a[prop] !== a[prop]) {
+				return 1;
 			}
 		}
-		if (isSuperset) {
-			supersetIndices.push(i);
-		}
-	}
-	return supersetIndices;
+		return 0;
+	});
 }
 
 function chose_next_manicule_target () {
 	var possible_indices = [];
 
-	$(".cosmo").each((i, x) => {
-		var req = $(x).data("required_skills");
-		var sa = $(x).data("show_again_when_new_skill_acquired");
+	var cosmo = $(".cosmo");
 
-		if(typeof(req) == "string") {
-			req = req.split(/,/);
-		}
+	cosmo.each((i, x) => {
+		var $x = $(x);
+		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element)) && !$x.data("clicked")) {
+			var req = $x.data("required_skills");
+			var sa = $x.data("show_again_when_new_skill_acquired");
 
-		if(typeof(sa) == "string") {
-			sa = sa.split(/,/);
-		}
-
-		//log("current_skills:", current_skills);
-		//log("req:", req);
-
-		var p = getSubarrayIndicesThatAreSuperset(current_skills, [req]);
-
-		//for (var m = 0; m < req.length; m++) {
-		//}
-		var possible = true;
-		for (var n = 0; n < req.length; n++) {
-			if(!current_skills.includes(req[n])) {
-				possible = false;
+			if(typeof(req) == "string") {
+				req = req.split(/,/);
 			}
-		}
 
-		if(possible) {
-			log("It seems that current_skills allows you to display index " + i)
-			possible_indices.push(i);
+			// TODO!!!
+			if(typeof(sa) == "string") {
+				sa = sa.split(/,/);
+			}
+
+			//log("current_skills:", current_skills);
+			//log("req:", req);
+
+			//for (var m = 0; m < req.length; m++) {
+			//}
+			var possible = true;
+			for (var n = 0; n < req.length; n++) {
+				if(!current_skills.includes(req[n])) {
+					possible = false;
+				}
+			}
+
+			if(possible) {
+				log("It seems that current_skills allows you to display index " + i, x)
+				possible_indices.push({"index": i, "length": req.length});
+			}
 		}
 	});
 
-	log(possible_indices);
+	sort_by_property(possible_indices, ["length", "index"]);
 
-	return possible_indices;
+	var possible_elements = [];
+	for (var i = 0; i < possible_indices.length; i++) {
+		var _i = possible_indices[i]["index"];
+		var _l = possible_indices[i]["length"];
+		possible_elements.push(cosmo[_i]);
+	}
+
+	new ManiC(possible_elements[0]);
 }
-
-//var set = ["hallo", "welt"];
-//var sets = [[1], [1, 2], ["hallo", "welt"], ["hallo", "welt", "test"], [1, 2, 3]];
-//console.log(getSubarrayIndicesThatAreSuperset(set, sets)); // output: [2, 3]
 
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
@@ -5696,6 +5700,8 @@ function add_cosmo_point (name) {
 	show_cosmo_elements_depending_on_current_skills();
 
 	cosmo_debugger();
+
+	chose_next_manicule_target();
 }
 
 
