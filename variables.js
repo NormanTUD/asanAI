@@ -1378,10 +1378,12 @@ var cosmo_goals = [
 	"started_training",
 	"finished_training",
 	"drew_predict_image",
-	"drew_custom_image"
+	"drew_custom_image",
+	"shown_sketcher",
+	"shown_custom_sketcher"
 ];
 
-var achieved_goals = [];
+var current_skills = [];
 
 var manicule_queue = [];
 

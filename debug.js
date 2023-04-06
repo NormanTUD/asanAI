@@ -344,7 +344,7 @@ function cosmo_debugger () {
 		return;
 	}
 
-	var cosmo_wave_debug_str = "Achieved goals: [" + achieved_goals.join(", ") + "]";
+	var cosmo_wave_debug_str = "current_skills: [" + current_skills.join(", ") + "]";
 	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 600px; top: 10px;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
 
 	$(".manicule_debugger").remove()
@@ -364,7 +364,7 @@ function cosmo_debugger () {
 				if(r.length) {
 					for (var k = 0; k < r.length; k++) {
 						if(r[k]) {
-							if(achieved_goals.includes(r[k])) {
+							if(current_skills.includes(r[k])) {
 								r[k] += "&#9989;";
 							} else {
 								r[k] += "&#10060;";
@@ -384,7 +384,7 @@ function cosmo_debugger () {
 				if(s.length) {
 					for (var k = 0; k < s.length; k++) {
 						if(s[k]) {
-							if(achieved_goals.includes(s[k])) {
+							if(current_skills.includes(s[k])) {
 								s[k] += "&#9989;";
 							} else {
 								s[k] += "&#10060;";

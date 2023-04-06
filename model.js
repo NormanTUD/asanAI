@@ -1263,7 +1263,7 @@ function input_shape_is_image () {
 			for (var i = 0; i < is.length; i++) {
 				if(has_special_cosmo_classes(is[i])) {
 					$(is[i]).hide();
-					show_cosmo_elements_depending_on_achieved_goals();
+					show_cosmo_elements_depending_on_current_skills();
 				}
 			}
 		}

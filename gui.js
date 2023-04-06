@@ -4750,8 +4750,6 @@ async function set_custom_webcam_training_data() {
 		return;
 	}
 
-	new ManiC("", "");
-
 	await init_webcams();
 
 
@@ -4765,12 +4763,6 @@ async function set_custom_webcam_training_data() {
 				show_webcam();
 				add_cosmo_point("show_webcam");
 			}
-
-			if(is_cosmo_mode && !$("#data_origin").attr("data-clicked")) {
-				$("#data_origin").attr("data-clicked", 1);
-
-				add_cosmo_point("set_custom_images");
-			}
 		});
 	} else {
 		if(!cam_data) {
@@ -4783,6 +4775,8 @@ async function set_custom_webcam_training_data() {
 
 		show_tab_label("own_image_data_label", 1);
 	}
+
+	add_cosmo_point("set_custom_images");
 }
 
 function toggle_layers() {
@@ -5214,6 +5208,12 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
+
+	if(idname == "sketcher") {
+		add_cosmo_point("shown_sketcher");
+	} else {
+		add_cosmo_point("shown_custom_sketcher");
+	}
 }
 
 function onclick_math_mode (t, e) {
@@ -5423,12 +5423,71 @@ function cosmo_mode () {
 
 
 		$("#toggle_layers_button").hide();
-
-		//new ManiC($('#start_stop_training')[0]);
 	}
 
-	show_cosmo_elements_depending_on_achieved_goals();
+	show_cosmo_elements_depending_on_current_skills();
 }
+
+function getSubarrayIndicesThatAreSuperset(set, sets) {
+	var supersetIndices = [];
+	for (var i = 0; i < sets.length; i++) {
+		var isSuperset = true;
+		for (var j = 0; j < set.length; j++) {
+			if (!sets[i].includes(set[j])) {
+				isSuperset = false;
+				break;
+			}
+		}
+		if (isSuperset) {
+			supersetIndices.push(i);
+		}
+	}
+	return supersetIndices;
+}
+
+function chose_next_manicule_target () {
+	var possible_indices = [];
+
+	$(".cosmo").each((i, x) => {
+		var req = $(x).data("required_skills");
+		var sa = $(x).data("show_again_when_new_skill_acquired");
+
+		if(typeof(req) == "string") {
+			req = req.split(/,/);
+		}
+
+		if(typeof(sa) == "string") {
+			sa = sa.split(/,/);
+		}
+
+		//log("current_skills:", current_skills);
+		//log("req:", req);
+
+		var p = getSubarrayIndicesThatAreSuperset(current_skills, [req]);
+
+		//for (var m = 0; m < req.length; m++) {
+		//}
+		var possible = true;
+		for (var n = 0; n < req.length; n++) {
+			if(!current_skills.includes(req[n])) {
+				possible = false;
+			}
+		}
+
+		if(possible) {
+			log("It seems that current_skills allows you to display index " + i)
+			possible_indices.push(i);
+		}
+	});
+
+	log(possible_indices);
+
+	return possible_indices;
+}
+
+//var set = ["hallo", "welt"];
+//var sets = [[1], [1, 2], ["hallo", "welt"], ["hallo", "welt", "test"], [1, 2, 3]];
+//console.log(getSubarrayIndicesThatAreSuperset(set, sets)); // output: [2, 3]
 
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
@@ -5624,17 +5683,17 @@ class ManiC {
 function add_cosmo_point (name) {
 	if(is_cosmo_mode) {
 		if(cosmo_goals.includes(name)) {
-			if(!achieved_goals.includes(name)) {
-				achieved_goals.push(name);
+			if(!current_skills.includes(name)) {
+				current_skills.push(name);
 			}
 		} else {
 			alert("UNKNOWN COSMO GOAL: " + name);
 		}
 	} else {
-		achieved_goals = [];
+		current_skills = [];
 	}
 
-	show_cosmo_elements_depending_on_achieved_goals();
+	show_cosmo_elements_depending_on_current_skills();
 
 	cosmo_debugger();
 }
@@ -5646,7 +5705,7 @@ let checkSubset = (parentArray, subsetArray) => {
 	})
 }
 
-function show_cosmo_elements_depending_on_achieved_goals () {
+function show_cosmo_elements_depending_on_current_skills () {
 	// show_again_when_new_skill_acquired TODO
 	var elements = $(".cosmo");
 
@@ -5660,8 +5719,8 @@ function show_cosmo_elements_depending_on_achieved_goals () {
 				s = required_skills.split(/,/);
 			}
 
-			if(checkSubset(achieved_goals, s)) {
-				//log("achieved goals in required_skills", achieved_goals, s);
+			if(checkSubset(current_skills, s)) {
+				//log("current_skills in required_skills", current_skills, s);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
 					log("Not reinserting recently manually removed element");
@@ -5696,6 +5755,9 @@ function show_cosmo_elements_depending_on_achieved_goals () {
 function remove_manicule (remove=1) {
 	if(typeof(manicule) == "object" && manicule !== null && remove && Object.keys(manicule).includes("element")) {
 		last_manually_removed_manicule_element = manicule.element;
+		if(!$(manicule.element).data("keep_cosmo")) {
+			$(manicule.element).removeClass("cosmo");
+		}
 	}
 	$(".manicule").remove();
 	manicule = null;
