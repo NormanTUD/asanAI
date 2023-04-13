@@ -5388,6 +5388,7 @@ function cosmo_mode () {
 		$("#upload_file").show();
 		$("#repredict_examples_button").show();
 		$("#download_data").show();
+		$("#toggle_layers_button").hide();
 		is_cosmo_mode = false;
 
 		new ManiC(null);
@@ -5418,6 +5419,7 @@ function cosmo_mode () {
 
 
 		$("#toggle_layers_button").hide();
+		$("#start_stop_training").show();
 
 		add_cosmo_point("loaded_page");
 	}
@@ -5467,7 +5469,7 @@ function chose_next_manicule_target () {
 			//}
 			var possible = true;
 			for (var n = 0; n < req.length; n++) {
-				if(!current_skills.includes(req[n])) {
+				if(!Object.keys(current_skills).includes(req[n])) {
 					possible = false;
 				}
 			}
@@ -5694,15 +5696,18 @@ class ManiC {
 
 function add_cosmo_point (name, show_manicule=1) {
 	if(is_cosmo_mode) {
-		if(!current_skills.includes(name)) {
-			current_skills.push(name);
+		if(!Object.keys(current_skills).includes(name)) {
+			current_skills[name] = 1;
+		} else {
+
+			current_skills[name]++;
 		}
 
 		show_cosmo_elements_depending_on_current_skills();
 
 		cosmo_debugger();
 	} else {
-		current_skills = [];
+		current_skills = {};
 	}
 
 
@@ -5732,7 +5737,7 @@ function show_cosmo_elements_depending_on_current_skills () {
 				s = required_skills.split(/,/);
 			}
 
-			if(checkSubset(current_skills, s)) {
+			if(checkSubset(Object.keys(current_skills), s)) {
 				//log("current_skills in required_skills", current_skills, s);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {

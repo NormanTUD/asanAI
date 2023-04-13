@@ -1369,7 +1369,7 @@ var has_taken_webcam_image_for_cosmo = 0;
 
 var cosmo_points_once = {};
 
-var current_skills = [];
+var current_skills = {};
 
 var manicule_queue = [];
 
