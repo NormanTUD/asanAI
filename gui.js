@@ -5209,12 +5209,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
-
-	if(idname == "sketcher") {
-		//add_cosmo_point("shown_sketcher");
-	} else {
-		add_cosmo_point("shown_custom_sketcher");
-	}
 }
 
 function onclick_math_mode (t, e) {
