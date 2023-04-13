@@ -5454,8 +5454,26 @@ function chose_next_manicule_target () {
 			var req = $x.data("required_skills");
 			var sa = $x.data("show_again_when_new_skill_acquired");
 
+			var req_full = {};
+
 			if(typeof(req) == "string") {
 				req = req.split(/,/);
+
+				for (var k = 0; k < req.length; k++) {
+					var r = req[k];
+					var matches = r.match(/^(.*?)\[(\d+)\]$/);
+
+					if (matches) {
+						var characters = matches[1]; // captures the characters before the square brackets
+						var number = parseInt(matches[2]); // captures the number within the square brackets and converts it to a number
+
+						req_full[characters] = number;
+					} else {
+						req_full[characters] = 1;
+					}
+				}
+
+				log("req_full", req_full);
 			}
 
 			// TODO!!!
@@ -5463,11 +5481,6 @@ function chose_next_manicule_target () {
 				sa = sa.split(/,/);
 			}
 
-			//log("current_skills:", current_skills);
-			//log("req:", req);
-
-			//for (var m = 0; m < req.length; m++) {
-			//}
 			var possible = true;
 			for (var n = 0; n < req.length; n++) {
 				if(!Object.keys(current_skills).includes(req[n])) {
@@ -5482,13 +5495,9 @@ function chose_next_manicule_target () {
 		}
 	});
 
-	log("X");
-	log("Trying to sort by properties");
 	//sort_by_property(possible_indices, ["length", "index"]);
-	log("Y");
 
 	var possible_elements = [];
-	log("Trying to find different elements");
 	for (var i = 0; i < possible_indices.length; i++) {
 		var _i = possible_indices[i]["index"];
 		var _l = possible_indices[i]["length"];
@@ -5500,8 +5509,6 @@ function chose_next_manicule_target () {
 	log("Trying to initialize ManiC");
 	log("possible_elements:", possible_elements);
 	new ManiC(possible_elements[0]);
-
-	log("Done");
 }
 
 function show_bars_instead_of_numbers () {
