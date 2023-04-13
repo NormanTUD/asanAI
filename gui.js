@@ -5700,12 +5700,8 @@ class ManiC {
 
 function add_cosmo_point (name, show_manicule=1) {
 	if(is_cosmo_mode) {
-		if(cosmo_goals.includes(name)) {
-			if(!current_skills.includes(name)) {
-				current_skills.push(name);
-			}
-		} else {
-			alert("UNKNOWN COSMO GOAL: " + name);
+		if(!current_skills.includes(name)) {
+			current_skills.push(name);
 		}
 
 		show_cosmo_elements_depending_on_current_skills();

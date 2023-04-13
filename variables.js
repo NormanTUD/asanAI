@@ -1369,23 +1369,6 @@ var has_taken_webcam_image_for_cosmo = 0;
 
 var cosmo_points_once = {};
 
-var cosmo_goals = [
-	"toggled_layers",
-	"shown_custom_images",
-	"saved_custom_image",
-	"show_webcam",
-	"set_custom_images",
-	"started_training",
-	"finished_training",
-	"drew_predict_image",
-	"drew_custom_image",
-	"shown_sketcher",
-	"shown_custom_sketcher",
-	"loaded_page",
-	"added_custom_category",
-	"took_2_images"
-];
-
 var current_skills = [];
 
 var manicule_queue = [];
