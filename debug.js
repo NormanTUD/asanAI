@@ -11,7 +11,7 @@ function logt(...msg) {
 
 function log (...args) {
 	args.forEach(arg => console.log(arg))
-	if(1 || enable_log_trace) {
+	if(enable_log_trace) {
 		console.trace();
 	}
 }

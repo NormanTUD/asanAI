@@ -5449,6 +5449,8 @@ function chose_next_manicule_target () {
 
 	var cosmo = $(".cosmo");
 
+	log("B");
+	
 	cosmo.each((i, x) => {
 		var $x = $(x);
 		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element)) && !$x.data("clicked")) {
@@ -5483,16 +5485,26 @@ function chose_next_manicule_target () {
 		}
 	});
 
-	sort_by_property(possible_indices, ["length", "index"]);
+	log("X");
+	log("Trying to sort by properties");
+	//sort_by_property(possible_indices, ["length", "index"]);
+	log("Y");
 
 	var possible_elements = [];
+	log("Trying to find different elements");
 	for (var i = 0; i < possible_indices.length; i++) {
 		var _i = possible_indices[i]["index"];
 		var _l = possible_indices[i]["length"];
-		possible_elements.push(cosmo[_i]);
+		if(cosmo[_i] && !is_hidden_or_has_hidden_parent(cosmo[_i])) {
+			possible_elements.push(cosmo[_i]);
+		}
 	}
 
+	log("Trying to initialize ManiC");
+	log("possible_elements:", possible_elements);
 	new ManiC(possible_elements[0]);
+
+	log("Done");
 }
 
 function show_bars_instead_of_numbers () {
