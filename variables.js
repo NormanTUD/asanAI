@@ -1382,7 +1382,8 @@ var cosmo_goals = [
 	"shown_sketcher",
 	"shown_custom_sketcher",
 	"loaded_page",
-	"added_custom_category"
+	"added_custom_category",
+	"took_2_images"
 ];
 
 var current_skills = [];
