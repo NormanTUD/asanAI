@@ -36,11 +36,6 @@ function reset_gui_before_training () {
 }
 
 async function train_neural_network () {
-	if(is_cosmo_mode) {
-		add_cosmo_point("started_training", 0);
-		remove_manicule(); 
-	}
-
 	if(model === null || !Object.keys(model).includes("layers")) {
 		gui_not_in_training();
 		write_error("Something went wrong with compiling the model. Please reload the site.");
@@ -49,6 +44,11 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
+		if(is_cosmo_mode) {
+			add_cosmo_point("started_training", 0);
+			remove_manicule(); 
+		}
+
 		if($("#show_grad_cam").is(":checked")) {
 			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
 			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
