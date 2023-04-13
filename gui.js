@@ -5424,9 +5424,9 @@ function cosmo_mode () {
 
 
 		$("#toggle_layers_button").hide();
-	}
 
-	show_cosmo_elements_depending_on_current_skills();
+		add_cosmo_point("loaded_page");
+	}
 }
 
 function sort_by_property(list, property_name_list) {
@@ -5695,15 +5695,16 @@ function add_cosmo_point (name, show_manicule=1) {
 		} else {
 			alert("UNKNOWN COSMO GOAL: " + name);
 		}
+
+		show_cosmo_elements_depending_on_current_skills();
+
+		cosmo_debugger();
 	} else {
 		current_skills = [];
 	}
 
-	show_cosmo_elements_depending_on_current_skills();
 
-	cosmo_debugger();
-
-	if(show_manicule) {
+	if(is_cosmo_mode && show_manicule) {
 		chose_next_manicule_target();
 	}
 }

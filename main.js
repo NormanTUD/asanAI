@@ -485,9 +485,5 @@ $(document).ready(async function() {
 
 	s.close();
 
-	add_cosmo_point("loaded_page");
-
-	chose_next_manicule_target();
-
 	l("Site is ready");
 });

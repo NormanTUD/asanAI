@@ -11,7 +11,7 @@ function logt(...msg) {
 
 function log (...args) {
 	args.forEach(arg => console.log(arg))
-	if(enable_log_trace) {
+	if(1 || enable_log_trace) {
 		console.trace();
 	}
 }
@@ -137,7 +137,12 @@ function add_function_debugger () {
 		    ![
 			    "delay", 
 			    "Swal", 
+			    "get_python_name",
+			    "quote_python",
 			    "add_function_debugger", 
+			    "write_model_summary",
+			    "Atrament",
+			    "check_number_values",
 			    "atrament_data",
 			    "get_model_config_hash",
 			    "gradClassActivationMap",
