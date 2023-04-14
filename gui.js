@@ -5526,7 +5526,7 @@ function chose_next_manicule_target () {
 							possible = false;
 						}
 
-
+						/*
 						if(x.nodeName.startsWith("BUTTON")) {
 							log(`
 							var current_key = ${current_key} = Object.keys(req_full)[n];
@@ -5537,12 +5537,13 @@ function chose_next_manicule_target () {
 
 							//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
 						}
+						*/
 					}
 				}
 			}
 
 			if(possible) {
-				log("==== Element: ", x, "req_full", req_full);
+				//log("==== Element: ", x, "req_full", req_full);
 				$(x).show();
 				//log("It seems that current_skills allows you to display index " + i, x)
 				possible_indices.push({"index": i, "length": req_full.length});
