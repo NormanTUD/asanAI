@@ -3521,17 +3521,34 @@ function add_new_category() {
 		label_nr++;
 	}
 
+	var k = 99999;
+
+	if($(".own_image_upload_container").length <= 2) {
+		k = $(".own_image_upload_container").length;
+	}
+
 	if (imgDiv.length == 0 || imgDiv.length <= n) {
 		var webcam_button_style = "display: none";
 		if(cam_data) {
 			webcam_button_style = "";
 		}
 
+		var req = '';
+		var c = '';
+		if([0, 1].includes(k)) {
+			var t = '';
+			if(k != 0) {
+				t = `,took_images[${k}]`;
+			}
+			req = `data-required_skills="set_custom_images[1]${t}"`;
+			c = 'cosmo';
+		}
+
 		var s = `<div class="own_image_upload_container"><hr>` +
-			'<button data-rotated="1" style="' + webcam_button_style + '" class="large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>' +
+			`<button ${req} data-rotated="1" style="${webcam_button_style}" class="${c} large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images,added_custom_category,drew_custom_image" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 		`</div>`;
 
 		$(s).appendTo("#own_images_container");
@@ -5137,10 +5154,17 @@ function green_marker (element) {
 }
 
 function get_drawing_board_on_page (indiv, idname, customfunc) {
-	logt("get_drawing_board_on_page");
+	//logt("get_drawing_board_on_page");
 	if(!customfunc) {
 		customfunc = "";
 	}
+
+	var k = 99999;
+
+	if($(".own_image_upload_container").length <= 2) {
+		k = $(".own_image_upload_container").length;
+	}
+
 	var code = `<form class='no_mark' onkeydown="return event.key != 'Enter';">
 		<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this);"><img width=32 src='pen.png'/></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); "><img width=32 src='Fill-icon.svg'></a></span>
@@ -5151,7 +5175,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 	</form>
-	<canvas class='cosmo' data-required_skills="set_custom_images,added_custom_category" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+	<canvas class='cosmo' data-required_skills="set_custom_images[${k}],added_custom_category[${k}]" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
 
@@ -5440,15 +5464,25 @@ function sort_by_property(list, property_name_list) {
 	});
 }
 
+function parse_required_skills (str) {
+	const matches = str.match(/(\w+)(?:\[(\d+(?:,\d+)*)\])?/);
+	if (!matches) {
+		throw new Error('Invalid string format');
+	}
+	const key = matches[1];
+	const values = matches[2] ? matches[2].split(',').map(Number) : [1];
+	return [key, values];
+}
+
+
 function chose_next_manicule_target () {
 	logt("chose_next_manicule_target");
 	var possible_indices = [];
 
 	var cosmo = $(".cosmo");
 
-	log("B");
-	
 	cosmo.each((i, x) => {
+		log("cosmo.each");
 		var $x = $(x);
 		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element)) && !$x.data("clicked")) {
 			var req = $x.data("required_skills");
@@ -5460,20 +5494,10 @@ function chose_next_manicule_target () {
 				req = req.split(/,/);
 
 				for (var k = 0; k < req.length; k++) {
-					var r = req[k];
-					var matches = r.match(/^(.*?)\[(\d+)\]$/);
-
-					if (matches) {
-						var characters = matches[1]; // captures the characters before the square brackets
-						var number = parseInt(matches[2]); // captures the number within the square brackets and converts it to a number
-
-						req_full[characters] = number;
-					} else {
-						req_full[characters] = 1;
-					}
+					var parsed = parse_required_skills(req[k]);
+					req_full[parsed[0]] = parsed[1];
 				}
 
-				log("req_full", req_full);
 			}
 
 			// TODO!!!
@@ -5482,15 +5506,25 @@ function chose_next_manicule_target () {
 			}
 
 			var possible = true;
-			for (var n = 0; n < req.length; n++) {
-				if(!Object.keys(current_skills).includes(req[n])) {
+			for (var n = 0; n < Object.keys(req_full).length; n++) {
+
+				var current_key = Object.keys(req_full)[n];
+
+				var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
+				var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
+
+				//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "<<<<<<");
+
+				if(!full_req_part_is_part_of_current_skills || !current_skill_nr_matches_required_skill_number) {
 					possible = false;
 				}
 			}
 
 			if(possible) {
-				log("It seems that current_skills allows you to display index " + i, x)
-				possible_indices.push({"index": i, "length": req.length});
+				log("==== Element: ", x, "req_full", req_full);
+				$(x).show();
+				//log("It seems that current_skills allows you to display index " + i, x)
+				possible_indices.push({"index": i, "length": req_full.length});
 			}
 		}
 	});
@@ -5501,7 +5535,8 @@ function chose_next_manicule_target () {
 	for (var i = 0; i < possible_indices.length; i++) {
 		var _i = possible_indices[i]["index"];
 		var _l = possible_indices[i]["length"];
-		if(cosmo[_i] && !is_hidden_or_has_hidden_parent(cosmo[_i])) {
+		if(cosmo[_i]) {
+			$(cosmo[_i]).show();
 			possible_elements.push(cosmo[_i]);
 		}
 	}
@@ -5526,10 +5561,6 @@ class ManiC {
 		//logt("ManiC e:", e);
 
 		remove_manicule(0);
-
-		while(is_hidden_or_has_hidden_parent(e)) {
-			// intentionally do nothing until loaded
-		}
 
 		if(e) {
 			var $e = $(e);
@@ -5722,6 +5753,8 @@ function add_cosmo_point (name, show_manicule=1) {
 	if(is_cosmo_mode && show_manicule) {
 		chose_next_manicule_target();
 	}
+
+	cosmo_debugger();
 }
 
 

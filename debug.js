@@ -369,12 +369,11 @@ function cosmo_debugger () {
 				r = r.split(/,/);
 				if(r.length) {
 					for (var k = 0; k < r.length; k++) {
-						if(r[k]) {
-							if(Object.keys(current_skills).includes(r[k])) {
-								r[k] += "&#9989;";
-							} else {
-								r[k] += "&#10060;";
-							}
+						var s = parse_required_skills(r[k]);
+						if(Object.keys(current_skills).includes(r[k]) && s[0] && s[1] > s[1].includes(current_skills[s[0]])) {
+							r[k] += "&#9989;";
+						} else {
+							r[k] += "&#10060;";
 						}
 					}
 				}
@@ -400,7 +399,7 @@ function cosmo_debugger () {
 				}
 				cosmo_debug_arr.push("show_again_when_new_skill_acquired: [" + s.join(", ") + "]");
 			} else {
-				cosmo_debug_arr.push("show_again_when_new_skill_acquired empty");
+				//cosmo_debug_arr.push("show_again_when_new_skill_acquired empty");
 			}
 
 			var cosmo_debug_str = cosmo_debug_arr.join(", ");
