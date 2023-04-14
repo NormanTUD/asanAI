@@ -3540,7 +3540,7 @@ function add_new_category() {
 			if(k != 0) {
 				t = `,took_images[${k}]`;
 			}
-			req = `data-required_skills="set_custom_images[1]${t}"`;
+			req = `data-required_skills="show_webcam[1]${t}"`;
 			c = 'cosmo';
 		}
 
@@ -5175,7 +5175,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 	</form>
-	<canvas class='cosmo' data-required_skills="set_custom_images[${k}],added_custom_category[${k}]" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+	<canvas class='cosmo' data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
 
@@ -5476,13 +5476,12 @@ function parse_required_skills (str) {
 
 
 function chose_next_manicule_target () {
-	logt("chose_next_manicule_target");
+	//logt("chose_next_manicule_target");
 	var possible_indices = [];
 
 	var cosmo = $(".cosmo");
 
 	cosmo.each((i, x) => {
-		log("cosmo.each");
 		var $x = $(x);
 		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element)) && !$x.data("clicked")) {
 			var req = $x.data("required_skills");
@@ -5511,12 +5510,34 @@ function chose_next_manicule_target () {
 				var current_key = Object.keys(req_full)[n];
 
 				var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
-				var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
-
-				//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "<<<<<<");
-
-				if(!full_req_part_is_part_of_current_skills || !current_skill_nr_matches_required_skill_number) {
+				if(!full_req_part_is_part_of_current_skills) {
+					log("!full_req_part_is_part_of_current_skills");
 					possible = false;
+				} else {
+					log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
+					var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
+					log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
+
+					if(current_skill_nr_matches_required_skill_number) {
+						log("current_skill_nr_matches_required_skill_number");
+
+
+						if(!current_skill_nr_matches_required_skill_number) {
+							possible = false;
+						}
+
+
+						if(x.nodeName.startsWith("BUTTON")) {
+							log(`
+							var current_key = ${current_key} = Object.keys(req_full)[n];
+
+							var full_req_part_is_part_of_current_skills = ${full_req_part_is_part_of_current_skills} = Object.keys(current_skills).includes(current_key)
+							var current_skill_nr_matches_required_skill_number = ${current_skill_nr_matches_required_skill_number} = ${current_skills[current_key]} == ${req_full[current_key]};
+							`);
+
+							log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
+						}
+					}
 				}
 			}
 
@@ -5541,9 +5562,17 @@ function chose_next_manicule_target () {
 		}
 	}
 
-	log("possible_elements:", possible_elements);
-	$(possible_elements[0]).show();
-	new ManiC(possible_elements[0]);
+	if(possible_elements.length) {
+		log("possible_elements:", possible_elements);
+		$(possible_elements[0]).show();
+		remove_manicule(0);
+		alert("Going to " + get_element_xpath(possible_elements[0]));
+		console.trace();
+		new ManiC(possible_elements[0]);
+	} else {
+		log("No possible elements found!");
+		remove_manicule(0);
+	}
 }
 
 function show_bars_instead_of_numbers () {
@@ -5782,7 +5811,7 @@ function show_cosmo_elements_depending_on_current_skills () {
 				//log("current_skills in required_skills", current_skills, s);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
-					log("Not reinserting recently manually removed element (xpath: " + last_manually_removed_manicule_element + ")");
+					log("Not reinserting recently manually removed element (xpath: " + get_element_xpath(last_manually_removed_manicule_element) + ")");
 				} else {
 					if(manicule === null) {
 						new ManiC(elements[i]);

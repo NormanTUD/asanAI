@@ -1257,13 +1257,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	last_shape_layer_warning();
 	tf.engine().endScope();
 
-	if(has_taken_webcam_image_for_cosmo > 2 && increment_counter) {
-		add_cosmo_point("took_images");
-	}
-
-	if(increment_counter) {
-		has_taken_webcam_image_for_cosmo++;
-	}
+	add_cosmo_point("took_images");
 }
 
 function chiSquaredTest(arr) {
