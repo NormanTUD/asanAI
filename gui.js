@@ -3537,16 +3537,19 @@ function add_new_category() {
 		var c = '';
 		if([0, 1].includes(k)) {
 			var t = '';
-			if(k != 0) {
-				t = `,took_images[${k}]`;
+			if(k == 0) {
+				t = ``;
+			} else {
+				t = `,took_images[1]`;
 			}
+
 			req = `data-required_skills="show_webcam[1]${t}"`;
 			c = 'cosmo';
 		}
 
 		var s = `<div class="own_image_upload_container"><hr>` +
-			`<button ${req} data-rotated="1" style="${webcam_button_style}" class="${c} large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
-			`<button data-rotated="1" style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
+			`<button style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 		`</div>`;
@@ -5496,12 +5499,18 @@ function chose_next_manicule_target () {
 					var parsed = parse_required_skills(req[k]);
 					req_full[parsed[0]] = parsed[1];
 				}
-
 			}
+
+			var sa_full = {};
 
 			// TODO!!!
 			if(typeof(sa) == "string") {
 				sa = sa.split(/,/);
+
+				for (var k = 0; k < sa.length; k++) {
+					var parsed = parse_required_skills(sa[k]);
+					sa_full[parsed[0]] = parsed[1];
+				}
 			}
 
 			var possible = true;
@@ -5542,6 +5551,12 @@ function chose_next_manicule_target () {
 				}
 			}
 
+			if(!possible) {
+				if(Object.keys(sa_full).length) {
+					log("=========================================================================", "SA-FULL", sa_full);
+				}
+			}
+
 			if(possible) {
 				//log("==== Element: ", x, "req_full", req_full);
 				$(x).show();
@@ -5570,6 +5585,10 @@ function chose_next_manicule_target () {
 		//alert("Going to " + get_element_xpath(possible_elements[0]));
 		//console.trace();
 		new ManiC(possible_elements[0]);
+
+		$(possible_elements[0]).on("click", function () {
+			$(this).attr("data-clicked", 1)
+		});
 	} else {
 		log("No possible elements found!");
 		remove_manicule(0);
@@ -5795,7 +5814,6 @@ let checkSubset = (parentArray, subsetArray) => {
 }
 
 function show_cosmo_elements_depending_on_current_skills () {
-	// show_again_when_new_skill_acquired TODO
 	var elements = $(".cosmo");
 
 	for (var i = 0; i < elements.length; i++) {
