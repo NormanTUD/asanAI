@@ -199,8 +199,8 @@
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<!--<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>-->
-				<span id="custom_webcam_training_data" style="display: none" data-required_skills="finished_training" class="cosmo only_when_webcam input_shape_is_image symbol_button" data-rotated="1" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1');">&#128248;</span>
-				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page" data-show_again_when_new_skill_acquired="took_2_images" class="cosmo symbol_button" onclick="train_neural_network();$('#start_stop_training').attr('data-clicked', '1');">&#127947;</span>
+				<span id="custom_webcam_training_data" style="display: none" data-required_skills="finished_training[1]" class="cosmo only_when_webcam input_shape_is_image symbol_button" data-rotated="1" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1');">&#128248;</span>
+				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page" data-show_again_when_new_skill_acquired="took_images[4]" class="cosmo symbol_button" onclick="train_neural_network();$('#start_stop_training').attr('data-clicked', '1');">&#127947;</span>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">

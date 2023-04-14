@@ -351,7 +351,7 @@ function cosmo_debugger () {
 	}
 
 	var cosmo_wave_debug_str = "current_skills: [" + JSON.stringify(current_skills) + "]";
-	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 600px; top: 10px;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
+	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 700px; top: 10px; background-color: green; color: white; word-wrap: anywhere;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
 
 	$(".manicule_debugger").remove()
 
