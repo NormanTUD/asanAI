@@ -5541,8 +5541,8 @@ function chose_next_manicule_target () {
 		}
 	}
 
-	log("Trying to initialize ManiC");
 	log("possible_elements:", possible_elements);
+	$(possible_elements[0]).show();
 	new ManiC(possible_elements[0]);
 }
 
@@ -5782,7 +5782,7 @@ function show_cosmo_elements_depending_on_current_skills () {
 				//log("current_skills in required_skills", current_skills, s);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
-					log("Not reinserting recently manually removed element");
+					log("Not reinserting recently manually removed element (xpath: " + last_manually_removed_manicule_element + ")");
 				} else {
 					if(manicule === null) {
 						new ManiC(elements[i]);

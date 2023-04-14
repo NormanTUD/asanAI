@@ -370,7 +370,10 @@ function cosmo_debugger () {
 				if(r.length) {
 					for (var k = 0; k < r.length; k++) {
 						var s = parse_required_skills(r[k]);
-						if(Object.keys(current_skills).includes(r[k]) && s[0] && s[1] > s[1].includes(current_skills[s[0]])) {
+						var name = s[0];
+						var val = s[1];
+
+						if(Object.keys(current_skills).includes(name) && name && Object.keys(current_skills).includes(name) && val == current_skills[name]) {
 							r[k] += "&#9989;";
 						} else {
 							r[k] += "&#10060;";
