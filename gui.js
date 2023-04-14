@@ -4774,21 +4774,21 @@ async function set_custom_webcam_training_data() {
 	if($("#data_origin").val() != "image") {
 		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
 			if(!cam_data) {
-				get_data_from_webcam();
+				await get_data_from_webcam();
 			}
 
 			if(!cam) {
-				show_webcam();
+				await show_webcam();
 				add_cosmo_point("show_webcam");
 			}
 		});
 	} else {
 		if(!cam_data) {
-			get_data_from_webcam();
+			await get_data_from_webcam();
 		}
 
 		if(!cam) {
-			show_webcam();
+			await show_webcam();
 		}
 
 		show_tab_label("own_image_data_label", 1);
@@ -5511,15 +5511,15 @@ function chose_next_manicule_target () {
 
 				var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
 				if(!full_req_part_is_part_of_current_skills) {
-					log("!full_req_part_is_part_of_current_skills");
+					//log("!full_req_part_is_part_of_current_skills");
 					possible = false;
 				} else {
-					log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
+					//log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
 					var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
-					log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
+					//log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
 
 					if(current_skill_nr_matches_required_skill_number) {
-						log("current_skill_nr_matches_required_skill_number");
+						//log("current_skill_nr_matches_required_skill_number");
 
 
 						if(!current_skill_nr_matches_required_skill_number) {
@@ -5535,7 +5535,7 @@ function chose_next_manicule_target () {
 							var current_skill_nr_matches_required_skill_number = ${current_skill_nr_matches_required_skill_number} = ${current_skills[current_key]} == ${req_full[current_key]};
 							`);
 
-							log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
+							//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
 						}
 					}
 				}
@@ -5566,8 +5566,8 @@ function chose_next_manicule_target () {
 		log("possible_elements:", possible_elements);
 		$(possible_elements[0]).show();
 		remove_manicule(0);
-		alert("Going to " + get_element_xpath(possible_elements[0]));
-		console.trace();
+		//alert("Going to " + get_element_xpath(possible_elements[0]));
+		//console.trace();
 		new ManiC(possible_elements[0]);
 	} else {
 		log("No possible elements found!");
