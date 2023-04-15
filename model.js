@@ -1250,7 +1250,7 @@ async function force_reinit (no_msg) {
 		await _force_reinit();
 	}
 
-	rename_labels();
+	await rename_labels();
 	await predict_handdrawn();
 }
 

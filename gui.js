@@ -1623,7 +1623,7 @@ async function add_layer(item) {
 
 	await save_current_status();
 
-	rename_labels();
+	await rename_labels();
 	await predict_handdrawn();
 
 	l("Added layer");
