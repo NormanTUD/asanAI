@@ -250,7 +250,7 @@ async function add_tensor_as_image_to_photos (tensor) {
 		} else {
 			for (var i = 0; i < tensor.shape[0]; i++) {
 				var this_tensor = tf.tensor(tensor.arraySync()[i]);
-				add_tensor_as_image_to_photos(this_tensor);
+				await add_tensor_as_image_to_photos(this_tensor);
 			}
 			return;
 		}
@@ -438,7 +438,7 @@ async function get_xs_and_ys () {
 								if(degree = 0) {
 									l("Rotating image: " + j + "°");
 									var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
-									add_tensor_as_image_to_photos(augmented_img);
+									await add_tensor_as_image_to_photos(augmented_img);
 									x = x.concat(augmented_img);
 									classes.push(this_category_counter);
 
@@ -446,7 +446,7 @@ async function get_xs_and_ys () {
 										l("Inverted image that has been turned " + degree + "°");
 										var add_value = (-255 / parseFloat($("#divide_by").val()));
 										var inverted = tf.abs(tf.add(augmented_img, add_value));
-										add_tensor_as_image_to_photos(inverted);
+										await add_tensor_as_image_to_photos(inverted);
 										x = x.concat(inverted);
 										classes.push(this_category_counter);
 									}
@@ -454,7 +454,7 @@ async function get_xs_and_ys () {
 									if($("#augment_flip_left_right").is(":checked")) {
 										l("Flip left/right image that has been turned " + degree + "°");
 										var flipped = tf.image.flipLeftRight(augmented_img);
-										add_tensor_as_image_to_photos(flipped);
+										await add_tensor_as_image_to_photos(flipped);
 										x = x.concat(flipped);
 										classes.push(label_nr);
 									}
@@ -462,7 +462,7 @@ async function get_xs_and_ys () {
 									if($("#augment_sine_ripple").is(":checked")) {
 										var rippled = await sine_ripple(augmented_img);
 										x = x.concat(rippled.expandDims());
-										add_tensor_as_image_to_photos(rippled);
+										await add_tensor_as_image_to_photos(rippled);
 										classes.push(label_nr);
 									}
 								}
@@ -473,7 +473,7 @@ async function get_xs_and_ys () {
 							l("Inverted image");
 							var add_value = (-255 / parseFloat($("#divide_by").val()));
 							var inverted = tf.abs(tf.add(item, add_value));
-							add_tensor_as_image_to_photos(inverted);
+							await add_tensor_as_image_to_photos(inverted);
 							x = x.concat(inverted);
 							classes.push(this_category_counter);
 						}
@@ -481,7 +481,7 @@ async function get_xs_and_ys () {
 						if($("#augment_flip_left_right").is(":checked")) {
 							l("Flip left/right");
 							var flipped = tf.image.flipLeftRight(item);
-							add_tensor_as_image_to_photos(flipped);
+							await add_tensor_as_image_to_photos(flipped);
 							x = x.concat(flipped);
 							classes.push(label_nr);
 						}
@@ -489,7 +489,7 @@ async function get_xs_and_ys () {
 						if($("#augment_sine_ripple").is(":checked")) {
 							var rippled = await sine_ripple(item);
 							x = x.concat(rippled.expandDims());
-							add_tensor_as_image_to_photos(rippled);
+							await add_tensor_as_image_to_photos(rippled);
 							classes.push(label_nr);
 						}
 					}
@@ -612,7 +612,7 @@ async function get_xs_and_ys () {
 									var rippled = await tf.browser.fromPixels(canvas);
 									$(canvas).remove();
 									log(rippled);
-									add_tensor_as_image_to_photos(rippled);
+									await add_tensor_as_image_to_photos(rippled);
 									x.push(rippled[0]);
 									classes.push(label_nr);
 									*/
