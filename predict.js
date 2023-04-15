@@ -31,12 +31,12 @@ var loadFile = (function(event) {
 	$("#output").removeAttr("src");
 
 	output.src = URL.createObjectURL(event.target.files[0]);
-	output.onload = function() {
+	output.onload = async function() {
 		URL.revokeObjectURL(output.src);
 		$("#output")[0].height = $("#output")[0].naturalHeight;
 		$("#output")[0].width = $("#output")[0].naturalWidth;
 
-		predict(output);
+		await predict(output);
 		
 		$(".only_show_when_predicting_image_file").show();
 	};
@@ -783,7 +783,7 @@ async function show_webcam (force_restart) {
 	}
 
 	if(force_restart && stopped) {
-		show_webcam();
+		await show_webcam();
 	}
 }
 
@@ -918,8 +918,8 @@ async function predict_handdrawn () {
 	allow_editable_labels();
 }
 
-function repredict () {
-	show_prediction();
-	predict_webcam();
-	predict_handdrawn();
+async function repredict () {
+	await show_prediction();
+	await predict_webcam();
+	await predict_handdrawn();
 }

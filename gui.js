@@ -695,7 +695,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 			var inputShape = get_input_shape();
 			inputShape[inputshape_index] = value;
-			set_input_shape("[" + inputShape.join(", ") + "]");
+			await set_input_shape("[" + inputShape.join(", ") + "]");
 			eval(name + " = " + value);
 			layer_structure_cache = null;
 			model = await create_model();
@@ -1089,7 +1089,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	};
 
 
-	var redo_graph = update_python_code();
+	var redo_graph = await update_python_code();
 
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
@@ -1135,7 +1135,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		console.warn(e);
 	}
 
-	var wait_for_show_hide_load_weights = show_or_hide_load_weights()
+	var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
 
 	allow_training();
 
@@ -1565,9 +1565,9 @@ async function remove_layer(item) {
 
 	}
 
-	write_descriptions();
+	await write_descriptions();
 	//rename_labels();
-	predict_handdrawn();
+	await predict_handdrawn();
 
 	l("Removed layer");
 }
@@ -1879,7 +1879,7 @@ async function set_config(index) {
 					title: 'Oops [1]...',
 					text: 'Error loading the model'
 				});
-				write_descriptions();
+				await write_descriptions();
 				log(config);
 				return;
 			}
@@ -1894,7 +1894,7 @@ async function set_config(index) {
 		init_numberoflayers(number_of_layers);
 
 		if (config["input_shape"]) {
-			set_input_shape(config["input_shape"]);
+			await set_input_shape(config["input_shape"]);
 		} else {
 				var is = null;
 				if(Object.keys(config).includes("keras")) {
@@ -1908,7 +1908,7 @@ async function set_config(index) {
 				if(is) {
 					is = remove_empty(is);
 					is = Object.values(is);
-					set_input_shape("[" + is.join(", ") + "]");
+					await set_input_shape("[" + is.join(", ") + "]");
 				} else {
 					l("ERROR: keras not found in config");
 				}
@@ -2058,7 +2058,7 @@ async function set_config(index) {
 
 	show_swal_when_changing_size = true;
 
-	write_descriptions();
+	await write_descriptions();
 
 	l("Updating predictions");
 	await show_prediction(1, 1);
@@ -2282,18 +2282,18 @@ async function init_dataset_category() {
 	init_download_link();
 }
 
-function clean_gui() {
+async function clean_gui() {
 	reset_summary();
 	write_error("");
-	write_descriptions();
+	await write_descriptions();
 }
 
-function set_input_shape(val) {
+async function set_input_shape(val) {
 	assert(typeof (val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof (val));
 
 	$("#inputShape").val(val);
 
-	write_descriptions();
+	await write_descriptions();
 
 	return get_input_shape();
 }
@@ -2689,7 +2689,7 @@ async function login() {
 	document.getElementById("login_error_msg").style.display = 'visible';
 	$.ajax({
 		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
-		success: function (data) {
+		success: async function (data) {
 			if(data["status"] == "ok") {
 				user_id = data["user_id"];
 				color_msg_green("login_error_msg");
@@ -2697,8 +2697,8 @@ async function login() {
 				setCookie("session_id", data["session_id"], 7);
 				$("#register").hide();
 				$("#logout").show();
-				$("#register_dialog").delay(400).fadeOut(400, () => {
-					get_traindata_and_init_categories();
+				$("#register_dialog").delay(400).fadeOut(400, async () => {
+					await get_traindata_and_init_categories();
 				});
 				$(".show_when_logged_in").show();
 			}
@@ -3009,7 +3009,7 @@ async function upload_weights(evt) {
 
 var handle_x_file = async function (evt) {
 	x_file = await evt.target.files[0].text();
-	set_input_shape("[" + get_shape_from_file(x_file) + "]");
+	await set_input_shape("[" + get_shape_from_file(x_file) + "]");
 
 	if (!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape())) {
 		Swal.fire({
@@ -3102,7 +3102,7 @@ async function load_weights(dont_show_msg) {
 				prev_layer_data = [];
 				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
-				show_or_hide_load_weights();
+				await show_or_hide_load_weights();
 			}
 		});
 	}
@@ -3171,7 +3171,7 @@ function disable_hidden_chardin_entries() {
 }
 
 async function update_input_shape() {
-	set_input_shape("[" + get_input_shape().join() + "]");
+	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	await updated_page();
 	if(input_shape_is_image()) {
@@ -3248,21 +3248,21 @@ async function change_data_origin() {
 
 		changed_data_source = false;
 
-		set_default_input_shape();
+		await set_default_input_shape();
 
 		if(!is_cosmo_mode) {
 			show_tab_label("visualization_tab_label", 1);
 			show_tab_label("fcnn_tab_label", 1);
 		}
 
-		update_python_code();
+		await update_python_code();
 	} else {
 		disable_train();
 
 		if ($("#data_origin").val() == "image") {
 			show_own_image_data = 1;
 			show_images_per_category = 1;
-			set_input_shape("[" + height + ", " + width + ", 3]");
+			await set_input_shape("[" + height + ", " + width + ", 3]");
 			$("#max_number_of_files_per_category").val(0).trigger("change");
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
@@ -3321,12 +3321,12 @@ async function change_data_origin() {
 		hide_tab_label("own_tensor_data_label");
 
 		$("#own_images_container").html("");
-		add_new_category();
-		add_new_category();
+		await add_new_category();
+		await add_new_category();
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
-		rename_labels();
+		await rename_labels();
 	} else if (show_own_tensor_data) {
 		show_tab_label("own_tensor_data_label", 1);
 
@@ -3385,7 +3385,7 @@ function auto_adjust_number_of_neurons(n) {
 	}
 }
 
-function delete_category(item, uuid) {
+async function delete_category(item, uuid) {
 	var category_nr = get_category_nr(item);
 
 	$($(".own_image_upload_container")[category_nr]).remove();
@@ -3396,7 +3396,7 @@ function delete_category(item, uuid) {
 
 	disable_start_training_button_custom_images();
 
-	rename_labels();
+	await rename_labels();
 
 	$("#save_button_" + uuid).remove();
 }
@@ -3504,7 +3504,7 @@ function add_image_to_category (img, category) {
 	imgDiv.append(html);
 }
 
-function add_new_category() {
+async function add_new_category() {
 	var n = $(".own_image_label").length;
 
 	var imgDiv = $(".own_images");
@@ -3575,7 +3575,7 @@ function add_new_category() {
 
 	alter_text_webcam_series();
 
-	rename_labels();
+	await rename_labels();
 
 	add_cosmo_point("added_custom_category");
 
@@ -3654,13 +3654,13 @@ function addLayer(canvas_id, transparency) {
 }
 
 
-function rename_labels() {
+async function rename_labels() {
 	reset_labels();
 	$(".own_image_label").each(function (i, x) {
 		labels.push($(x).val());
 	});
 
-	update_python_code(1);
+	await update_python_code(1);
 }
 
 function show_or_hide_hide_delete_category() {
@@ -3783,7 +3783,7 @@ async function show_csv_file(disabled_show_head_data) {
 		}
 
 		var new_input_shape = parsed_data.x.shape.slice(1);
-		set_input_shape("[" + new_input_shape.toString() + "]");
+		await set_input_shape("[" + new_input_shape.toString() + "]");
 		var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
 		if(auto_adjust) {
 			if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
@@ -4085,7 +4085,7 @@ async function set_default_input_shape() {
 		try {
 			var default_input_shape = default_config["input_shape"];
 
-			set_input_shape(default_input_shape);
+			await set_input_shape(default_input_shape);
 
 			await compile_model();
 
@@ -5239,9 +5239,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
 }
 
-function onclick_math_mode (t, e) {
-	log(e);
-	write_model_to_latex_to_page(0, 1);
+async function onclick_math_mode (t, e) {
+	//log(e);
+	await write_model_to_latex_to_page(0, 1);
 	//console.trace();
 }
 
@@ -5870,7 +5870,7 @@ function remove_manicule (remove=1) {
 	manicule = null;
 }
 
-function update_label_by_nr (t, nr) {
+async function update_label_by_nr (t, nr) {
 	var name = $(t).val();
 
 	var t_xpath = get_element_xpath(t);
@@ -5893,7 +5893,7 @@ function update_label_by_nr (t, nr) {
 
 	$($(".own_image_label")[nr]).val(name)
 
-	update_python_code(1);
+	await update_python_code(1);
 }
 
 function allow_editable_labels () {

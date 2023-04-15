@@ -1,7 +1,7 @@
 "use strict";
 
-function except (errname, e) {
-	write_descriptions();
+async function except (errname, e) {
+	await write_descriptions();
 	enable_everything();
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
@@ -38,7 +38,7 @@ async function _create_model () {
 			$("#math_mode_settings").hide();
 		}
 	} catch (e) {
-		except("ERROR1", e);
+		await except("ERROR1", e);
 		if(mode == "beginner") {
 			Swal.fire({
 				icon: 'error',
@@ -127,7 +127,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 		model.compile(model_data);
 	} catch (e) {
-		except("ERROR2", e);
+		await except("ERROR2", e);
 	}
 
 	$("#outputShape").val(JSON.stringify(model.outputShape));
@@ -145,7 +145,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 			if(old_shape_string == new_shape_string) {
 				if(old_weights_string != new_weights_string) {
-					set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
+					await set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
 					model_is_trained = true;
 				}
 			}
@@ -302,7 +302,7 @@ async function get_model_structure() {
 		}
 	}
 
-	write_descriptions();
+	await write_descriptions();
 
 	layer_structure_cache = JSON.stringify(structure);
 	return structure;
@@ -665,7 +665,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 				if(old_shape_string == new_shape_string) {
 					if(old_weights_string != new_weights_string) {
-						set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
+						await set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
 					}
 				}
 			} else {
@@ -681,12 +681,12 @@ async function create_model (old_model, fake_model_structure, force) {
 	return new_model;
 }
 
-function get_fake_data_for_layertype (layer_nr, layer_type) {
+async function get_fake_data_for_layertype (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 	assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
 
-	write_descriptions();
+	await write_descriptions();
 
 	var data = {};
 
@@ -770,7 +770,7 @@ async function create_fake_model_structure (layer_nr, layer_type) {
 	var fake_model_structure = await get_model_structure();
 
 	fake_model_structure[layer_nr]["type"] = layer_type;
-	fake_model_structure[layer_nr]["data"] = get_fake_data_for_layertype(layer_nr, layer_type);
+	fake_model_structure[layer_nr]["data"] = await get_fake_data_for_layertype(layer_nr, layer_type);
 
 	return fake_model_structure;
 }
@@ -1241,17 +1241,17 @@ async function force_reinit (no_msg) {
 			confirmButtonText: 'Yes, re-init!'
 		}).then(async (result) => {
 			if (result.isConfirmed) {
-				_force_reinit();
+				await _force_reinit();
 			} else {
 				l("Re-init cancelled");
 			}
 		});
 	} else {
-		_force_reinit();
+		await _force_reinit();
 	}
 
 	rename_labels();
-	predict_handdrawn();
+	await predict_handdrawn();
 }
 
 function input_shape_is_image () {

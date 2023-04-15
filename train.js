@@ -1,10 +1,10 @@
 "use strict";
 
-function gui_in_training () {
+async function gui_in_training () {
 	started_training = true;
 	disable_everything();
 	favicon_spinner();
-	write_descriptions();
+	await write_descriptions();
 }
 
 function gui_not_in_training () {
@@ -73,7 +73,7 @@ async function train_neural_network () {
 		l("Started training")
 		$("#show_grad_cam").prop("disabled", false);
 		last_training_time = Date.now();
-		gui_in_training();
+		await gui_in_training();
 
 		training_logs_batch = {
 			"loss": {
@@ -254,7 +254,7 @@ function get_fit_data () {
 		}
 
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
-			write_model_to_latex_to_page();
+			await write_model_to_latex_to_page();
 		}
 	};
 
@@ -274,7 +274,7 @@ function get_fit_data () {
 		$("#training_progressbar>div").css("width", percentage + "%")
 	};
 
-	callbacks["onBatchEnd"] = function (batch, logs) {
+	callbacks["onBatchEnd"] = async function (batch, logs) {
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -315,9 +315,9 @@ function get_fit_data () {
 			if($('#predict_own_data').val()) {
 				predict($('#predict_own_data').val());
 			}
-			show_prediction(0, 1);
+			await show_prediction(0, 1);
 			if(input_shape_is_image()) {
-				predict_handdrawn();
+				await predict_handdrawn();
 			}
 		}
 	};
@@ -418,7 +418,7 @@ function show_info_after_run (h) {
 }
 
 async function run_neural_network () {
-	clean_gui();
+	await clean_gui();
 	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
 
 	for (var i = 0; i < model.layers.length; i++) {
@@ -497,7 +497,7 @@ async function run_neural_network () {
 		header("ERROR END");
 		console.trace();
 		favicon_default();
-		write_descriptions();
+		await write_descriptions();
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 		started_training = false;
 		return;
@@ -514,7 +514,7 @@ async function run_neural_network () {
 		try {
 			await compile_model();
 		} catch (e) {
-			write_error_and_reset(e);
+			await write_error_and_reset(e);
 		}
 
 		var fit_data;
@@ -549,7 +549,7 @@ async function run_neural_network () {
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		} catch (e) {
-			write_error_and_reset(e);
+			await write_error_and_reset(e);
 		}
 
 		try {
@@ -569,7 +569,7 @@ async function run_neural_network () {
 
 			dispose(h);
 		} catch (e) {
-			write_error_and_reset(e);
+			await write_error_and_reset(e);
 		}
 
 		var trained_weights = undefined;
@@ -586,7 +586,7 @@ async function run_neural_network () {
 
 			model = await create_model(null, await get_model_structure(), 1);
 		} catch (e) {
-			write_error_and_reset(e);
+			await write_error_and_reset(e);
 		}
 
 		try {
@@ -607,7 +607,7 @@ async function run_neural_network () {
 
 			$("#training_progress_bar").hide();
 		} catch (e) {
-			write_error_and_reset(e);
+			await write_error_and_reset(e);
 		}
 	}
 
@@ -623,18 +623,18 @@ async function run_neural_network () {
 	last_training_time = "";
 }
 
-function write_error_and_reset(e, fn, hide_swal) {
+async function write_error_and_reset(e, fn, hide_swal) {
 	write_error(e, fn, hide_swal);
-	reset_on_error();
+	await reset_on_error();
 }
 
-function reset_on_error () {
+async function reset_on_error () {
 	started_training = false;
 
 	document.body.style.cursor = "default";
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox").prop("disabled", false);
-	write_descriptions();
+	await write_descriptions();
 	Prism.highlightAll();
 
 	var link = document.querySelector("link[rel~='icon']");
