@@ -1657,7 +1657,8 @@
 				var redraw_data = {
 					'architecture_': architecture, 
 					'real_architecture_': real_architecture, 
-					'layerTypes_': layer_types
+					'layerTypes_': layer_types,
+					'colors_': []
 				};
 
 				var redistribute_data = {

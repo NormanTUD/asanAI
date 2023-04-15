@@ -659,12 +659,12 @@ function change_pixel_size() {
 	pixel_size = parseInt($("#pixel_size").val());
 }
 
-function change_height() {
-	change_width_or_height("height", 0);
+async function change_height() {
+	await change_width_or_height("height", 0);
 }
 
-function change_width() {
-	change_width_or_height("width", 1);
+async function change_width() {
+	await change_width_or_height("width", 1);
 }
 
 function change_output_and_example_image_size() {
@@ -679,7 +679,6 @@ function change_output_and_example_image_size() {
 }
 
 async function change_width_or_height(name, inputshape_index) {
-
 	if (["width", "height"].includes(name)) {
 		var value = parseInt($("#" + name).val());
 		if(value && value != eval(name)) {
@@ -704,7 +703,7 @@ async function change_width_or_height(name, inputshape_index) {
 			await updated_page();
 			change_output_and_example_image_size();
 
-			restart_webcams();
+			await restart_webcams();
 
 			if(show_swal_when_changing_size) {
 				Swal.close()
@@ -1093,9 +1092,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var redo_graph = update_python_code();
 
 	if (model && redo_graph && !no_graph_restart) {
-		restart_fcnn(1);
-		restart_lenet(1);
-		restart_alexnet(1);
+		await restart_fcnn(1);
+		await restart_lenet(1);
+		await restart_alexnet(1);
 	}
 
 	prev_layer_data = [];
@@ -1113,7 +1112,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var wait_for_latex_model = Promise.resolve(1);
 
 	if (!no_update_math) {
-		wait_for_latex_model = write_model_to_latex_to_page();
+		wait_for_latex_model = await write_model_to_latex_to_page();
 	}
 
 	last_shape_layer_warning();
@@ -1446,11 +1445,11 @@ function set_option_for_layer_by_layer_nr(nr) {
 	write_descriptions();
 }
 
-function toggle_options(item) {
+async function toggle_options(item) {
 	assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
 
 	$(item).parent().parent().parent().next().toggle();
-	write_descriptions(1);
+	await write_descriptions(1);
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
@@ -1617,7 +1616,7 @@ async function add_layer(item) {
 
 	await updated_page();
 
-	write_descriptions();
+	await write_descriptions();
 
 	$(".remove_layer").prop("disabled", false)
 	$(".remove_layer").show();
@@ -1625,7 +1624,7 @@ async function add_layer(item) {
 	await save_current_status();
 
 	rename_labels();
-	predict_handdrawn();
+	await predict_handdrawn();
 
 	l("Added layer");
 }
@@ -2778,14 +2777,15 @@ function insert_test_users() {
 	}
 }
 
-function delete_model() {
+async function delete_model() {
 	var id = get_id_from_train_data_struct("id");
 	var user_id = get_id_from_train_data_struct("user_id");
 	$.ajax({
 		url: "delete_from_db.php?id=" + id + "&user_id=" + user_id,
 		async: false
 	});
-	get_traindata_and_init_categories();
+
+	await get_traindata_and_init_categories();
 }
 
 function get_id_from_train_data_struct(index) {
@@ -3178,18 +3178,18 @@ async function update_input_shape() {
 		var this_shape = get_input_shape();
 		$("#width").val(this_shape[1]);
 		$("#height").val(this_shape[0]);
-		change_width();
-		change_height();
+		await change_width();
+		await change_height();
 	}
 	highlight_code();
 }
 
-function toggle_show_input_layer() {
+async function toggle_show_input_layer() {
 	show_input_layer = $("#show_input_layer").is(":checked");
 
-	restart_fcnn(1);
-	restart_lenet(1);
-	restart_alexnet(1);
+	await restart_fcnn(1);
+	await restart_lenet(1);
+	await restart_alexnet(1);
 }
 
 function reset_view() {
@@ -3267,7 +3267,7 @@ async function change_data_origin() {
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_origin").val() == "csv") {
-			show_csv_file(1);
+			await show_csv_file(1);
 			if(contains_convolution() && mode != "expert") {
 				await Swal.fire({
 					title: 'Are you sure?',
@@ -4181,9 +4181,9 @@ async function theme_choser () {
 	setCookie("theme", theme);
 
 	write_descriptions();
-	write_model_to_latex_to_page();
-	restart_fcnn();
-	restart_alexnet();
+	await write_model_to_latex_to_page();
+	await restart_fcnn();
+	await restart_alexnet();
 
 	invert_elements_in_dark_mode();
 }
@@ -4202,11 +4202,11 @@ function move_element_to_another_div(element, new_element_id) {
 	return old_parent;
 }
 
-function repeat_while_demo() {
-	show_prediction()
+async function repeat_while_demo() {
+	await show_prediction()
 
 	if (!(model.isTraining || started_training)) {
-		train_neural_network();
+		await train_neural_network();
 	}
 }
 
@@ -5247,7 +5247,7 @@ function onclick_math_mode (t, e) {
 
 async function set_all_strides () {
 	var n = $("#all_strides_val").val();
-	_set_all_strides(n);
+	await _set_all_strides(n);
 	if(looks_like_number(n)) {
 		$("#all_strides_val").val("");
 	}

@@ -147,8 +147,8 @@ async function train_neural_network () {
 		}
 	}
 
-	write_descriptions();
-	write_model_to_latex_to_page();
+	await write_descriptions();
+	await write_model_to_latex_to_page();
 
 	save_current_status();
 }
@@ -378,7 +378,7 @@ function get_fit_data () {
 
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
-		write_model_to_latex_to_page();
+		await write_model_to_latex_to_page();
 		document.title = original_title;
 		restart_fcnn();
 		restart_lenet();

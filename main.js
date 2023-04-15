@@ -244,7 +244,7 @@ async function get_traindata_and_init_categories () {
 	init_categories();
 
 	await init_page_contents();
-	write_descriptions();
+	await write_descriptions();
 }
 
 function init_categories () {
@@ -274,13 +274,13 @@ async function hasBothFrontAndBack () {
 	return hasBothFrontAndBackCached;
 }
 
-function restart_webcams () {
+async function restart_webcams () {
 	if(cam) {
-		show_webcam(1);
+		await show_webcam(1);
 	}
 
 	if(cam_data) {
-		get_data_from_webcam(1);
+		await get_data_from_webcam(1);
 	}
 }
 
@@ -361,7 +361,7 @@ $(document).ready(async function() {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
 
-		reader.onload = function(evt) {
+		reader.onload = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
 				alert('Error while reading file');
@@ -369,9 +369,9 @@ $(document).ready(async function() {
 			}
 
 			var filecontent = evt.target.result;
-			set_weights_from_string(filecontent, 0, 1);
+			await set_weights_from_string(filecontent, 0, 1);
 
-			add_layer_debuggers();
+			//add_layer_debuggers();
 
 			$("#predictcontainer").show();
 		};
@@ -456,7 +456,7 @@ $(document).ready(async function() {
 
 	l("TFJS-Version: " + tf.version["tfjs-core"]);
 
-	toggle_show_input_layer();
+	await toggle_show_input_layer();
 
 	invert_elements_in_dark_mode();
 
