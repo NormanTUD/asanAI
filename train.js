@@ -150,7 +150,7 @@ async function train_neural_network () {
 	await write_descriptions();
 	await write_model_to_latex_to_page();
 
-	save_current_status();
+	await save_current_status();
 }
 
 function getKeyByValue(object, value) {
@@ -272,7 +272,7 @@ function get_fit_data () {
 
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
-	}
+	};
 
 	callbacks["onBatchEnd"] = function (batch, logs) {
 		delete logs["batch"];
@@ -320,8 +320,6 @@ function get_fit_data () {
 				predict_handdrawn();
 			}
 		}
-
-		show_tab_label("tfvis_tab_label", ($("#jump_to_interesting_tab").is(":checked") ? 1 : 0) && batch == 0);
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
@@ -619,7 +617,7 @@ async function run_neural_network () {
 
 	tf.engine().endScope();
 
-	save_current_status();
+	await save_current_status();
 	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
 	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
 	last_training_time = "";
