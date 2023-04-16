@@ -313,7 +313,7 @@ function get_fit_data () {
 
 		if(!is_hidden_or_has_hidden_parent("#predict_tab")) {
 			if($('#predict_own_data').val()) {
-				predict($('#predict_own_data').val());
+				await predict($('#predict_own_data').val());
 			}
 			await show_prediction(0, 1);
 			if(input_shape_is_image()) {
