@@ -709,7 +709,7 @@ async function get_xs_and_ys () {
 			log(Object.keys(e));
 			log(e.__proto__);
 			*/
-			write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () {
+			write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 				$("#loss").val("meanSquaredError").trigger("change");
 				$("#metric").val("meanSquaredError").trigger("change")
 				log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
