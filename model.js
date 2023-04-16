@@ -392,7 +392,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		layers_container_md5 = new_layers_container_md5;
 	}
 
-	var new_current_status_hash = await get_current_status_hash();
+	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
 	if(!force) {
 		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
 			//return old_model;
