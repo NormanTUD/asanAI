@@ -246,7 +246,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
-	enable_everything();
+	await enable_everything();
 
 	var pred_tab = "prediction";
 
@@ -564,7 +564,7 @@ async function draw_heatmap (predictions_tensor, predict_data) {
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
 		/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
-		_create_model();
+		await _create_model();
 
 		if(heatmap) {
 			/*

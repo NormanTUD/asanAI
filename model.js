@@ -2,10 +2,10 @@
 
 async function except (errname, e) {
 	await write_descriptions();
-	enable_everything();
+	await enable_everything();
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
-	write_error(e);
+	await write_error(e);
 	if(throw_compile_exception) { throw e; }
 }
 
@@ -68,7 +68,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 
 	var new_model_config_hash = await get_model_config_hash();
 
-	if(model_config_hash != new_model_config_hash || current_status_hash != get_current_status_hash()) {
+	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash()) {
 		recreate_model = true;
 	}
 

@@ -785,9 +785,9 @@ function url_to_tf (url) {
 	return null;
 }
 
-function determine_input_shape () {
+async function determine_input_shape () {
 	if(input_shape_is_image()) {
-		set_input_shape("[" + width + ", " + height + ", 3]");
+		await set_input_shape("[" + width + ", " + height + ", 3]");
 	}
 }
 

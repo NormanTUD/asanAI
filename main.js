@@ -145,14 +145,14 @@ function init_set_all_options () {
 
 	document.addEventListener('keydown', function(event) {
 		if (event.ctrlKey && event.key === 'z') {
-			undo();
+			undo(); // cannot be async
 		} else if (event.ctrlKey && event.key === 'y') {
-			redo();
+			redo(); // cannot be async
 		} else if (event.ctrlKey && event.key === ';') {
 			$("#jump_to_interesting_tab").click();
-			train_neural_network();
+			train_neural_network(); // cannot be async
 		} else if (event.ctrlKey && event.key === ',') {
-			train_neural_network();
+			train_neural_network(); // cannot be async
 		} else if (event.ctrlKey && event.key === 'L') {
 			$("#jump_to_interesting_tab").click();
 		} else if (event.ctrlKey && event.altKey && event.key === 'h') {
@@ -164,9 +164,9 @@ function init_set_all_options () {
 			$("#math_tab_label").click();
 		} else if (event.ctrlKey && event.key === '#') {
 			if($("#demomode").css("display") == "none") {
-				start_demo_mode();
+				start_demo_mode(); // cannot be async
 			} else {
-				end_demo_mode();
+				end_demo_mode(); // cannot be async
 			}
 		} else if (event.altKey && event.key === 'v') {
 			$("[href='#visualization_ribbon']").click();
@@ -192,7 +192,7 @@ async function init_page_contents (chosen_dataset) {
 	document.getElementById('upload_model').addEventListener('change', upload_model, false);
 	document.getElementById('upload_weights').addEventListener('change', upload_weights, false);
 
-	determine_input_shape();
+	await determine_input_shape();
 
 	$("#layers_container").sortable({
 		placeholder: 'sortable_placeholder',
@@ -200,7 +200,7 @@ async function init_page_contents (chosen_dataset) {
 		opacity: 0.6,
 		revert: true,
 		update: function( ) {
-			updated_page();
+			updated_page(); // cannot be async
 		}
 	});
 
@@ -219,7 +219,7 @@ async function init_page_contents (chosen_dataset) {
 
 	rename_tmp_onchange();
 
-	updated_page();
+	await updated_page();
 
 	disabling_saving_status = false;
 	skip_predictions = false;
@@ -320,7 +320,7 @@ $(document).ready(async function() {
 	var s = swalmsg("Loading page");
 
 	if(getCookie("cosmo_mode") && document.location.href.indexOf('no_cosmo') === -1) {
-		cosmo_mode();
+		cosmo_mode(); // cannot be async
 	}
 
 	l("Trying to set Backend");
@@ -339,7 +339,7 @@ $(document).ready(async function() {
 
 	$("#register_form").submit(function(e) {
 		e.preventDefault();
-		register();
+		register(); // cannot be async
 	});
 
 	if(getCookie("session_id") != null) {
@@ -426,7 +426,7 @@ $(document).ready(async function() {
 	}
 
 	if(urlParams.get("autostart_training")) {
-		train_neural_network();
+		train_neural_network(); // cannot be async
 	}
 
 	if(urlParams.get("data_source")) {
@@ -445,7 +445,7 @@ $(document).ready(async function() {
 
 	l("Installing change-handlers on optimizer_metadata_input");
 	$('.optimizer_metadata_input'). change(function(event) {
-		updated_page();
+		updated_page(); // cannot be async
 	});
 	l("Done installing change handlers on optimizer_metadata_input");
 
@@ -474,7 +474,7 @@ $(document).ready(async function() {
 			if (escapeCount === 3) {
 				escapeCount = 0;
 				lastEscapeTime = 0;
-				cosmo_mode();
+				cosmo_mode(); // cannot be async
 			}
 		}
 	});

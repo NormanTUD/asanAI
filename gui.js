@@ -435,7 +435,7 @@ function insert_initializer_option_trs(layer_nr, initializer_type, option_type) 
 	eval(eval_string);
 }
 
-function insert_activation_options(layer_nr) {
+async function insert_activation_options(layer_nr) {
 	// TODO NOT YET USED
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
@@ -460,7 +460,8 @@ function insert_activation_options(layer_nr) {
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a activation setting");
 	}
-	updated_page();
+
+	await updated_page();
 }
 
 function set_last_layer_activation_function (activation_function) {
@@ -473,7 +474,7 @@ function set_last_layer_activation_function (activation_function) {
 	}
 }
 
-function insert_regularizer_options(layer_nr, regularizer_type) {
+async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
@@ -493,10 +494,10 @@ function insert_regularizer_options(layer_nr, regularizer_type) {
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
 	}
-	updated_page();
+	await updated_page();
 }
 
-function insert_initializer_options(layer_nr, initializer_type) {
+async function insert_initializer_options(layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
@@ -523,7 +524,7 @@ function insert_initializer_options(layer_nr, initializer_type) {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
 
-	updated_page();
+	await updated_page();
 }
 
 async function get_number_of_training_items() {
@@ -940,7 +941,7 @@ if len(sys.argv) == 1:
 
 	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
-	highlight_code();
+	await highlight_code();
 
 	return redo_graph;
 }
@@ -1130,7 +1131,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	}
 
 	try {
-		write_descriptions();
+		await write_descriptions();
 	} catch (e) {
 		console.warn(e);
 	}
@@ -1190,13 +1191,13 @@ async function typeset() {
 	}
 }
 
-function change_optimizer() {
+async function change_optimizer() {
 	var type = $("#optimizer").val();
 	$(".optimizer_metadata").hide();
 
 	$("#" + type + "_metadata").show();
 
-	updated_page();
+	await updated_page();
 }
 
 function set_momentum(val) {
@@ -1329,12 +1330,12 @@ function init_epochs(val) {
 	set_epochs(val);
 }
 
-function init_numberoflayers(val) {
+async function init_numberoflayers(val) {
 	assert(typeof (val) == "number", "init_numberoflayers(" + val + ") is not an integer but " + typeof (val));
 
-	set_numberoflayers(val);
+	await set_numberoflayers(val);
 
-	show_layers(val);
+	await show_layers(val);
 
 	number_of_initialized_layers = val;
 	//updated_page();
@@ -1395,7 +1396,7 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
-function initializer_layer_options(thisitem) {
+async function initializer_layer_options(thisitem) {
 	if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
 		return;
 	}
@@ -1411,7 +1412,7 @@ function initializer_layer_options(thisitem) {
 
 	assert(typeof (nr) == "number", "found nr is not an integer but " + typeof (nr));
 
-	set_option_for_layer_by_layer_nr(nr);
+	await set_option_for_layer_by_layer_nr(nr);
 
 	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val()
 	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
@@ -1422,10 +1423,10 @@ function initializer_layer_options(thisitem) {
 		}
 	})
 
-	updated_page(null, 1);
+	await updated_page(null, 1);
 }
 
-function set_option_for_layer_by_layer_nr(nr) {
+async function set_option_for_layer_by_layer_nr(nr) {
 	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
 	var layer = $(".layer_options_internal")[nr];
@@ -1442,7 +1443,7 @@ function set_option_for_layer_by_layer_nr(nr) {
 		}
 	}
 
-	write_descriptions();
+	await write_descriptions();
 }
 
 async function toggle_options(item) {
@@ -1699,7 +1700,7 @@ function disable_all_non_selected_layer_types() {
 	l("Disabled all non-selected layer types");
 }
 
-function show_layers(number) {
+async function show_layers(number) {
 	assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
 
 	var layers_container = $("#layers_container");
@@ -1735,7 +1736,7 @@ function show_layers(number) {
 	layers_container[0].innerHTML = layers_container_str;
 
 	for (var i = 0; i < number; i++) {
-		initializer_layer_options(i);
+		await initializer_layer_options(i);
 	}
 
 	$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
@@ -1891,7 +1892,7 @@ async function set_config(index) {
 		}
 
 		//log("number_of_layers: " + number_of_layers);
-		init_numberoflayers(number_of_layers);
+		await init_numberoflayers(number_of_layers);
 
 		if (config["input_shape"]) {
 			await set_input_shape(config["input_shape"]);
@@ -2278,13 +2279,13 @@ async function init_dataset_category() {
 	show_tab_label("visualization_tab_label", 1);
 	show_tab_label("fcnn_tab_label", 1);
 
-	updated_page();
+	await updated_page();
 	init_download_link();
 }
 
 async function clean_gui() {
 	reset_summary();
-	write_error("");
+	await write_error("");
 	await write_descriptions();
 }
 
@@ -2312,13 +2313,13 @@ function get_input_shape() {
 	return eval(code);
 }
 
-function change_metrics() {
+async function change_metrics() {
 	var new_metric = $("#metric").val();
 
 	l("Changed metrics");
 	$("#metric_equation").html("");
 
-	updated_page(1);
+	await updated_page(1);
 }
 
 function get_activation_list() {
@@ -2352,21 +2353,21 @@ function favicon_spinner() {
 }
 
 
-function disable_everything() {
+async function disable_everything() {
 	document.body.style.cursor = "wait";
 	$("#layers_container").sortable("disable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", true);
 	$(".show_data").prop("disabled", false);
-	write_descriptions();
-	highlight_code();
+	await write_descriptions();
+	await highlight_code();
 }
 
-function enable_everything() {
+async function enable_everything() {
 	document.body.style.cursor = "default";
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
-	write_descriptions();
-	highlight_code();
+	await write_descriptions();
+	await highlight_code();
 }
 
 function detect_kernel_initializer(original_kernel_initializer_data) {
@@ -2449,7 +2450,7 @@ function hide_empty_groups(layer_nr) {
 	})
 }
 
-function set_all_kernel_initializers() {
+async function set_all_kernel_initializers() {
 	var chosen_value = $("#set_all_kernel_initializers").val();
 	l("Setting all kernel initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
@@ -2459,10 +2460,10 @@ function set_all_kernel_initializers() {
 
 	$("#set_all_kernel_initializers").val("none");
 
-	updated_page();
+	await updated_page();
 }
 
-function set_all_bias_initializers() {
+async function set_all_bias_initializers() {
 	var chosen_value = $("#set_all_bias_initializers").val();
 	l("Setting all bias initializers to " + chosen_value);
 	var initializer_keys = Object.keys(initializers);
@@ -2472,10 +2473,10 @@ function set_all_bias_initializers() {
 
 	$("#set_all_bias_initializers").val("none");
 
-	updated_page();
+	await updated_page();
 }
 
-function set_all_activation_functions_except_last_layer() {
+async function set_all_activation_functions_except_last_layer() {
 	var chosen_value = $("#set_all_activation_functions_except_last_layer").val();
 	l("Setting all activation functions (except for last layer) to " + chosen_value);
 	var keys = Object.keys(activations);
@@ -2488,11 +2489,11 @@ function set_all_activation_functions_except_last_layer() {
 
 	$("#set_all_activation_functions_except_last_layer").val("none");
 
-	updated_page();
+	await updated_page();
 }
 
 
-function set_all_activation_functions() {
+async function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
 	l("Setting all activation functions to " + chosen_value);
 	var keys = Object.keys(activations);
@@ -2502,7 +2503,7 @@ function set_all_activation_functions() {
 
 	$("#set_all_activation_functions").val("none");
 
-	updated_page();
+	await updated_page();
 }
 
 function last_index(array) {
@@ -2561,7 +2562,7 @@ async function undo() {
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
 
-	write_descriptions();
+	await write_descriptions();
 
 	l("Undone last change");
 }
@@ -2587,7 +2588,7 @@ async function redo() {
 
 	show_hide_undo_buttons();
 	set_shown_advanced(shown);
-	write_descriptions();
+	await write_descriptions();
 
 	l("Redone last undone change");
 }
@@ -2645,7 +2646,7 @@ function show_register_button(elem) {
 	}
 }
 
-function register() {
+async function register() {
 	var email = document.getElementById("register_email").value;
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
@@ -2680,7 +2681,8 @@ function register() {
 		color_msg_red("register_error_msg");
 		document.getElementById("register_error_msg").innerHTML = "Email must contain an '@'.";
 	}
-	write_descriptions();
+
+	await write_descriptions();
 }
 
 async function login() {
@@ -2733,19 +2735,19 @@ async function logout() {
 	await get_traindata_and_init_categories();
 }
 
-function sources_popup() {
-	openPopup("sources_popup");
+async function sources_popup() {
+	await openPopup("sources_popup");
 }
 
-function losses_popup() {
+async function losses_popup() {
 	if ($("#explanation").children().length == 0) {
 		add_loss_functions_to_plotly_visualizer();
 	}
-	openPopup("losses_popup");
+	await openPopup("losses_popup");
 }
 
-function close_losses() {
-	closePopup("losses_popup");
+async function close_losses() {
+	await closePopup("losses_popup");
 }
 
 function model_name_already_exists() {
@@ -2817,11 +2819,11 @@ function display_delete_button() {
 	}
 }
 
-function manage_download() {
+async function manage_download() {
 	if(!getCookie("session_id") === null) {
 		save_model();
 	} else {
-		open_save_model_dialog();
+		await open_save_model_dialog();
 	}
 }
 
@@ -2929,19 +2931,19 @@ async function save_to_db_wrapper () {
 	}
 }
 
-function open_save_model_dialog() {
-	openPopup("save_model_dialog");
+async function open_save_model_dialog() {
+	await openPopup("save_model_dialog");
 }
 
-function open_register_dialog() {
-	openPopup("register_dialog");
+async function open_register_dialog() {
+	await openPopup("register_dialog");
 }
 
-function open_save_dialog() {
-	openPopup("save_dialog");
+async function open_save_dialog() {
+	await openPopup("save_dialog");
 }
 
-function openPopup(name) {
+async function openPopup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
@@ -2951,15 +2953,15 @@ function openPopup(name) {
 	} else {
 		el.style.display = 'none';
 	}
-	write_descriptions();
+	await write_descriptions();
 }
 
-function closePopup(name) {
+async function closePopup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = 'none';
-	write_descriptions();
+	await write_descriptions();
 }
 
 async function upload_model(evt) {
@@ -3181,7 +3183,8 @@ async function update_input_shape() {
 		await change_width();
 		await change_height();
 	}
-	highlight_code();
+
+	await highlight_code();
 }
 
 async function toggle_show_input_layer() {
@@ -3822,7 +3825,7 @@ async function show_csv_file(disabled_show_head_data) {
 		}
 
 		if (csv_allow_training) {
-			hide_error();
+			await hide_error();
 		}
 
 		if($("#auto_one_hot_y").is(":checked")) {
@@ -3931,7 +3934,7 @@ function disable_start_training_button_custom_images() {
 	}
 }
 
-function write_error(e, fn, hide_swal) {
+async function write_error(e, fn, hide_swal) {
 	if (e) {
 		var msg = e;
 
@@ -3942,7 +3945,7 @@ function write_error(e, fn, hide_swal) {
 		}
 
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
-		write_descriptions();
+		await write_descriptions();
 		console.warn(e);
 		console.trace();
 
@@ -3963,14 +3966,14 @@ function write_error(e, fn, hide_swal) {
 		fn();
 	}
 
-	enable_everything();
-	write_descriptions();
+	await enable_everything();
+	await write_descriptions();
 }
 
-function hide_error() {
+async function hide_error() {
 	$("#error").html("").hide().parent().hide();
-	enable_everything();
-	write_descriptions();
+	await enable_everything();
+	await write_descriptions();
 }
 
 function find_layer_number_by_element(element) {
@@ -3979,7 +3982,7 @@ function find_layer_number_by_element(element) {
 	while (!$(item_parent).hasClass("layer_setting")) {
 		item_parent = $(item_parent).parent();
 		if (get_element_xpath($("body")[0]) == get_element_xpath(item_parent[0])) {
-			write_error("Infinite recursion");
+			write_error("Infinite recursion"); // cannot be async
 			return;
 		}
 	}
@@ -4091,7 +4094,7 @@ async function set_default_input_shape() {
 
 			await identify_layers(get_number_of_layers());
 
-			write_descriptions();
+			await write_descriptions();
 		} catch (e) {
 			log(e);
 		}
@@ -4144,10 +4147,10 @@ function _allow_training() {
 	}
 }
 
-function show_layer_view() {
+async function show_layer_view() {
 	$("#layers_container_left").show();
 	$(".descriptions_of_layers").show();
-	write_descriptions();
+	await write_descriptions();
 	$("#toggle_layer_view_button").html("&#x1F5D6;");
 }
 
@@ -4157,14 +4160,14 @@ function hide_layer_view () {
 	$("#toggle_layer_view_button").html("&#x1F5D7;");
 }
 
-function toggle_layer_view() {
+async function toggle_layer_view() {
 	if (is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
-		show_layer_view();
+		await show_layer_view();
 	} else {
 		hide_layer_view();
 	}
 
-	write_descriptions();
+	await write_descriptions();
 }
 
 function fix_viz_width () {
@@ -4180,7 +4183,7 @@ async function theme_choser () {
 
 	setCookie("theme", theme);
 
-	write_descriptions();
+	await write_descriptions();
 	await write_model_to_latex_to_page();
 	await restart_fcnn();
 	await restart_alexnet();
@@ -4212,7 +4215,7 @@ async function repeat_while_demo() {
 
 async function start_demo_mode() {
 	if (!(model.isTraining || started_training)) {
-		train_neural_network();
+		train_neural_network(); // cannot be in async
 	}
 
 	await delay(1000);
@@ -4254,13 +4257,13 @@ async function start_demo_mode() {
 	demo_interval = window.setInterval(repeat_while_demo, 10000);
 }
 
-function end_demo_mode() {
+async function end_demo_mode() {
 	if (demo_interval) {
 		window.clearInterval(demo_interval);
 	}
 
 	if (!(model.isTraining || started_training)) {
-		train_neural_network();
+		train_neural_network(); // cannot be async
 	}
 	var demo_mode_keys = Object.keys(demo_mode_data_origin);
 	for (var i = 0; i < demo_mode_keys.length; i++) {
@@ -4271,7 +4274,7 @@ function end_demo_mode() {
 	$("#mainsite").show();
 	$("#demomode").hide();
 
-	write_descriptions();
+	await write_descriptions();
 }
 
 async function change_model_dataset() {
@@ -4578,7 +4581,7 @@ function plotly_show_loss_graph() {
 		Plotly.newPlot('explanation', plot_data);
 	});
 
-	write_descriptions();
+	write_descriptions(); // cannot be async
 }
 
 function add_row_to_plotly_loss() {
@@ -4592,7 +4595,7 @@ function add_row_to_plotly_loss() {
 		$(".delete_row").prop("disabled", true);
 	}
 
-	write_descriptions();
+	write_descriptions(); // cannot be async
 }
 
 function remove_plotly_table_element(item) {
@@ -4631,7 +4634,7 @@ function create_plotly_table() {
 
 	$("#table_div").html(str);
 
-	write_descriptions();
+	write_descriptions(); // cannot be async
 }
 
 function add_loss_functions_to_plotly_visualizer(data) {
@@ -4800,10 +4803,10 @@ async function set_custom_webcam_training_data() {
 	add_cosmo_point("set_custom_images");
 }
 
-function toggle_layers() {
+async function toggle_layers() {
 	$(".left_side").toggle();
 
-	write_descriptions(1);
+	await write_descriptions(1);
 	
 	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
 		add_cosmo_point("toggled_layers");
@@ -5397,11 +5400,11 @@ function sparkle_one_element (element) {
 	}
 }
 
-function cosmo_mode () {
+async function cosmo_mode () {
 	if(is_cosmo_mode) {
 		l("Exiting cosmo mode");
 		setCookie("cosmo_mode", "0", 1);
-		show_layer_view();
+		await show_layer_view();
 		show_ribbon();
 		//$("#show_layer_data").prop("checked", false)
 		$("#show_hide_ribbon_button").show();

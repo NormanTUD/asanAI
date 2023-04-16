@@ -2,12 +2,12 @@
 
 async function gui_in_training () {
 	started_training = true;
-	disable_everything();
+	await disable_everything();
 	favicon_spinner();
 	await write_descriptions();
 }
 
-function gui_not_in_training () {
+async function gui_not_in_training () {
 	started_training = false;
 	$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 	favicon_default();
@@ -20,7 +20,7 @@ function gui_not_in_training () {
 		log(e);
 	}
 
-	enable_everything();
+	await enable_everything();
 	$(".show_after_training").show();
 }
 
@@ -37,8 +37,8 @@ function reset_gui_before_training () {
 
 async function train_neural_network () {
 	if(model === null || !Object.keys(model).includes("layers")) {
-		gui_not_in_training();
-		write_error("Something went wrong with compiling the model. Please reload the site.");
+		await gui_not_in_training();
+		await write_error("Something went wrong with compiling the model. Please reload the site.");
 
 		return;
 	}
@@ -67,7 +67,7 @@ async function train_neural_network () {
 		}
 
 		document.title = original_title;
-		gui_not_in_training();
+		await gui_not_in_training();
 		l("Stopped training");
 	} else {
 		l("Started training")
@@ -138,7 +138,7 @@ async function train_neural_network () {
 
 		await run_neural_network();
 
-		enable_everything();
+		await enable_everything();
 
 		await show_prediction();
 
@@ -450,7 +450,7 @@ async function run_neural_network () {
 		var error_string = "";
 		show_info_pre_run();
 
-		disable_everything();
+		await disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
@@ -504,7 +504,7 @@ async function run_neural_network () {
 	}
 
 	if(started_training) {
-		var inputShape = set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
+		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
 		$("#training_content").clone().appendTo("#tfvis_tab");
 
@@ -603,7 +603,7 @@ async function run_neural_network () {
 			$("#predictcontainer").show();
 			$("#predict_error").hide().html("");
 
-			enable_everything();
+			await enable_everything();
 
 			$("#training_progress_bar").hide();
 		} catch (e) {
@@ -611,7 +611,7 @@ async function run_neural_network () {
 		}
 	}
 
-	gui_not_in_training();
+	await gui_not_in_training();
 
 	reset_data();
 
@@ -624,7 +624,7 @@ async function run_neural_network () {
 }
 
 async function write_error_and_reset(e, fn, hide_swal) {
-	write_error(e, fn, hide_swal);
+	await write_error(e, fn, hide_swal);
 	await reset_on_error();
 }
 

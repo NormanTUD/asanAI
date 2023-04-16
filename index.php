@@ -1,4 +1,9 @@
 <?php
+/*
+Command for finding non awaited JS functions:
+
+for i in $(grep "^async\s*function " variables.js main.js gui.js model.js train.js tests.js debug.js data.js explain.js safety.js predict.js | sed -e 's#.*async\s*function\s*##' | sed -e 's#\s*(.*##'); do egrep "\s$i\s*\(" variables.js main.js gui.js model.js train.js tests.js debug.js data.js explain.js safety.js predict.js; done | grep -v async | grep -v await | sort | grep -v tests.js
+ */
 	include("functions.php");
 	
 	show_admin_register();

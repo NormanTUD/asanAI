@@ -8,13 +8,13 @@ function assertationFailed (message) {
 function assert(boolean_value, exception_message) {
 	if(!boolean_value) {
 		console.trace();
-		write_error(exception_message);
+		write_error(exception_message); // cannot be async
 
 		document.body.style.cursor = "default";
 		$("#layers_container").sortable("enable");
 		$("#ribbon,select,input,checkbox").prop("disabled", false);
-		write_descriptions();
-		highlight_code();
+		write_descriptions(); // cannot be async
+		highlight_code(); // cannot be async
 
 		var link = document.querySelector("link[rel~='icon']");
 		if (!link) {
