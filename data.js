@@ -1200,7 +1200,7 @@ async function take_image_from_webcam_n_times (elem) {
 		l("Done taking " + number + " images");
 	});
 
-	last_shape_layer_warning();
+	await last_shape_layer_warning();
 
 }
 
@@ -1254,7 +1254,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	}
 
 
-	last_shape_layer_warning();
+	await last_shape_layer_warning();
 	tf.engine().endScope();
 
 	add_cosmo_point("took_images");

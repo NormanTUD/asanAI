@@ -1116,7 +1116,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		wait_for_latex_model = await write_model_to_latex_to_page();
 	}
 
-	last_shape_layer_warning();
+	await last_shape_layer_warning();
 
 	hide_no_conv_stuff();
 
@@ -3444,7 +3444,7 @@ function delete_custom_drawing_layer () {
 	}
 }
 
-function last_shape_layer_warning() {
+async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (model.outputShape.length == 2) {
 			is_classification = true;
@@ -3481,7 +3481,7 @@ function last_shape_layer_warning() {
 					$("#metric").val("meanSquaredError").trigger("change");
 				}
 
-				change_last_responsible_layer_for_image_output();
+				await change_last_responsible_layer_for_image_output();
 			}
 		}
 	} else {
@@ -3574,7 +3574,7 @@ async function add_new_category() {
 
 	show_or_hide_hide_delete_category();
 
-	last_shape_layer_warning();
+	await last_shape_layer_warning();
 
 	alter_text_webcam_series();
 

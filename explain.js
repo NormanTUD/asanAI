@@ -563,7 +563,7 @@ function write_layer_identification (nr, text) {
 
 function get_layer_identification (i) {
 	if(model === null) {
-		write_error("model is not defined");
+		write_error("model is not defined"); // cannot be async
 		return;
 	}
 
