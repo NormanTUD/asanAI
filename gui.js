@@ -2737,9 +2737,9 @@ function sources_popup() {
 	openPopup("sources_popup");
 }
 
-async function losses_popup() {
+function losses_popup() {
 	if ($("#explanation").children().length == 0) {
-		await add_loss_functions_to_plotly_visualizer();
+		add_loss_functions_to_plotly_visualizer();
 	}
 	openPopup("losses_popup");
 }
@@ -4606,7 +4606,7 @@ function remove_plotly_table_element(item) {
 	plotly_show_loss_graph();
 }
 
-async function create_plotly_table() {
+function create_plotly_table() {
 	var str = `<table id="data_table" border=1 style="border-collapse: collapse;">` +
 		`	<tr>` +
 		`		<th>Y true</th>` +
@@ -4631,11 +4631,11 @@ async function create_plotly_table() {
 
 	$("#table_div").html(str);
 
-	await write_descriptions();
+	write_descriptions();
 }
 
-async function add_loss_functions_to_plotly_visualizer(data) {
-	await create_plotly_table();
+function add_loss_functions_to_plotly_visualizer(data) {
+	create_plotly_table();
 	plotly_show_loss_graph();
 }
 
