@@ -79,9 +79,7 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	var old_weights_string = false;
 
 	if(!model) {
-		if(!fake_model_structure) {
-			model = await create_model(model, await get_model_structure());
-		}
+		model = await create_model(model, await get_model_structure());
 	} else {
 		if(keep_weights && model && Object.keys(model).includes("layers")) {
 			old_weights_string = await get_weights_as_string();
