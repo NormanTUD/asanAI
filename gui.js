@@ -3552,7 +3552,7 @@ async function add_new_category() {
 
 		var s = `<div class="own_image_upload_container"><hr>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
-			`<button style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button show_cosmo_wave_10" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			`<button style="${webcam_button_style}" class="large_button webcam_data_button webcam_series_button" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 		`</div>`;
@@ -5515,6 +5515,8 @@ function chose_next_manicule_target () {
 					sa_full[parsed[0]] = parsed[1];
 				}
 			}
+
+			log("sa:", sa);
 
 			var possible = true;
 			for (var n = 0; n < Object.keys(req_full).length; n++) {
