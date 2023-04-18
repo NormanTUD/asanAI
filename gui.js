@@ -5554,16 +5554,20 @@ function chose_next_manicule_target () {
 							//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
 						}
 						*/
+						/*
 					} else {
 						log("NOT current_skill_nr_matches_required_skill_number");
+						*/
 					}
 				}
 			}
 
+			/*
 			if(!possible) {
 				log("=========================================================================", "req-FULL", req_full);
 				log("=========================================================================", "SA-FULL", sa_full);
 			}
+			*/
 
 			if(possible) {
 				//log("==== Element: ", x, "req_full", req_full);
