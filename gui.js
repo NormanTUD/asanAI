@@ -5491,68 +5491,79 @@ function chose_next_manicule_target () {
 
 	cosmo.each((i, x) => {
 		var $x = $(x);
-		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element)) && !$x.data("clicked")) {
-			var req = $x.data("required_skills");
-			var sa = $x.data("show_again_when_new_skill_acquired");
+		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element))) {
+			if(!$x.data("clicked")) {
+				var req = $x.data("required_skills");
 
-			var req_full = {};
+				var req_full = {};
 
-			if(typeof(req) == "string") {
-				req = req.split(/,/);
+				if(typeof(req) == "string") {
+					req = req.split(/,/);
 
-				for (var k = 0; k < req.length; k++) {
-					var parsed = parse_required_skills(req[k]);
-					req_full[parsed[0]] = parsed[1];
-				}
-			}
-
-			var sa_full = {};
-
-			// TODO!!!
-			if(typeof(sa) == "string") {
-				sa = sa.split(/,/);
-
-				for (var k = 0; k < sa.length; k++) {
-					var parsed = parse_required_skills(sa[k]);
-					sa_full[parsed[0]] = parsed[1];
-				}
-			}
-
-			log("sa:", sa);
-
-			var possible = true;
-			for (var n = 0; n < Object.keys(req_full).length; n++) {
-
-				var current_key = Object.keys(req_full)[n];
-
-				var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
-				if(!full_req_part_is_part_of_current_skills) {
-					//log("!full_req_part_is_part_of_current_skills");
-					possible = false;
-				} else {
-					//log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
-					var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
-					//log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
-
-					if(current_skill_nr_matches_required_skill_number) {
-						log("current_skill_nr_matches_required_skill_number");
-					} else {
-						possible = false;
+					for (var k = 0; k < req.length; k++) {
+						var parsed = parse_required_skills(req[k]);
+						req_full[parsed[0]] = parsed[1];
 					}
 				}
-			}
 
-			/*
-			if(!possible) {
-				log("=========================================================================", "req-FULL", req_full);
-				log("=========================================================================", "SA-FULL", sa_full);
-			}
-			*/
+				var possible = true;
+				for (var n = 0; n < Object.keys(req_full).length; n++) {
+					var current_key = Object.keys(req_full)[n];
 
-			if(possible) {
-				//log("==== Element: ", x, "req_full", req_full);
-				//log("It seems that current_skills allows you to display index " + i, x)
-				possible_indices.push({"index": i, "length": req_full.length});
+					var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
+					if(!full_req_part_is_part_of_current_skills) {
+						//log("!full_req_part_is_part_of_current_skills");
+						possible = false;
+					} else {
+						//log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
+						var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
+						//log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
+
+						if(!current_skill_nr_matches_required_skill_number) {
+							possible = false;
+						}
+					}
+				}
+
+				if(possible) {
+					//log("==== Element: ", x, "req_full", req_full);
+					//log("It seems that current_skills allows you to display index " + i, x)
+					possible_indices.push({"index": i, "length": req_full.length});
+				}
+			} else {
+				var show_again = $x.data("show_again_when_new_skill_acquired");
+				if(show_again) {
+					var show_again_full = {};
+					var possible = true;
+
+					// TODO!!!
+					if(typeof(show_again) == "string") {
+						show_again = show_again.split(/,/);
+
+						for (var k = 0; k < show_again.length; k++) {
+							var parsed = parse_required_skills(show_again[k]);
+							show_again_full[parsed[0]] = parsed[1];
+						}
+					}
+
+					log("element/show_again_full:", $(x), show_again_full);
+
+					for (var k = 0; k < Object.keys(show_again_full).length; k++) {
+						var key = Object.keys(show_again_full)[k];
+						if(Object.keys(current_skills).includes(key)) {
+							if(!current_skills[key] == show_again[key]) {
+								possible = false;	
+							}
+						} else {
+							possible = false;
+						}
+
+					}
+
+					if(possible) {
+						possible_indices.push({"index": i, "length": show_again_full.length});
+					}
+				}
 			}
 		}
 	});
