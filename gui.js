@@ -3590,7 +3590,7 @@ function has_special_cosmo_classes (x) {
 	var c = x.classList;
 
 	for (var i = 0; i < c.length; i++) {
-		if(c[i].match(/(show_cosmo|manicule)_wave_/)) {
+		if(c[i].match(/cosmo/)) {
 			s = true;
 			break;
 		}
@@ -5428,7 +5428,7 @@ async function cosmo_mode () {
 		$("#beginner").click();
 		// switch to cosmo mode
 		setCookie("cosmo_mode", "1", 365);
-		hide_layer_view();
+		await hide_layer_view();
 		hide_ribbon();
 		//$("#show_layer_data").prop("checked", true)
 		$("#show_hide_ribbon_button").hide();
@@ -5571,6 +5571,7 @@ function chose_next_manicule_target () {
 
 			if(possible) {
 				//log("==== Element: ", x, "req_full", req_full);
+				log("!!!!!!!!!!!!!!!!!!!!!!!!! SHOW THIS NOW:", $(x));
 				$(x).show();
 				//log("It seems that current_skills allows you to display index " + i, x)
 				possible_indices.push({"index": i, "length": req_full.length});
