@@ -5453,6 +5453,8 @@ async function cosmo_mode () {
 		$("#start_stop_training").show();
 
 		add_cosmo_point("loaded_page");
+
+		chose_next_manicule_target();
 	}
 }
 
@@ -5533,7 +5535,7 @@ function chose_next_manicule_target () {
 					//log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
 
 					if(current_skill_nr_matches_required_skill_number) {
-						//log("current_skill_nr_matches_required_skill_number");
+						log("current_skill_nr_matches_required_skill_number");
 
 
 						if(!current_skill_nr_matches_required_skill_number) {
@@ -5552,14 +5554,15 @@ function chose_next_manicule_target () {
 							//log(">>>>>>", "req_full", req_full, "element:", x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_skill_nr_matches_required_skill_number:", current_skill_nr_matches_required_skill_number, "possible?", possible, "<<<<<<");
 						}
 						*/
+					} else {
+						log("NOT current_skill_nr_matches_required_skill_number");
 					}
 				}
 			}
 
 			if(!possible) {
-				if(Object.keys(sa_full).length) {
-					log("=========================================================================", "SA-FULL", sa_full);
-				}
+				log("=========================================================================", "req-FULL", req_full);
+				log("=========================================================================", "SA-FULL", sa_full);
 			}
 
 			if(possible) {
