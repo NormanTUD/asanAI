@@ -5502,6 +5502,18 @@ function getSortedHash(inputHash){
 	return resultHash;
 }
 
+function getSortedHashReverse(inputHash){
+  var resultHash = {};
+
+  var keys = Object.keys(inputHash);
+  keys.sort(function(a, b) {
+    return inputHash[a] - inputHash[b]
+  }).reverse().forEach(function(k) {
+    resultHash[k] = inputHash[k];
+  });
+  return resultHash;
+}
+
 
 function chose_next_manicule_target () {
 	//logt("chose_next_manicule_target");
@@ -5583,11 +5595,13 @@ function chose_next_manicule_target () {
 	
 
 	if(possible_indices.length) {
+		/*
 		log("possible_indices before sorting:", possible_indices);
 
-		getSortedHash(possible_indices);
+		getSortedHashReverse(possible_indices);
 
 		log("possible_indices after sorting:", possible_indices);
+		*/
 
 		var possible_elements = [];
 		for (var i = 0; i < possible_indices.length; i++) {
@@ -5600,12 +5614,14 @@ function chose_next_manicule_target () {
 		}
 
 		if(possible_elements.length) {
+			var index_to_chose = possible_elements.length - 1;
+
 			log("possible_elements:", possible_elements);
-			$(possible_elements[0]).show();
+			$(possible_elements[index_to_chose]).show();
 			remove_manicule(0);
 			//alert("Going to " + get_element_xpath(possible_elements[0]));
 			//console.trace();
-			new ManiC(possible_elements[0]);
+			new ManiC(possible_elements[index_to_chose]);
 
 			$(possible_elements[0]).on("click", function () {
 				$(this).attr("data-clicked", 1)
@@ -5843,16 +5859,16 @@ function show_cosmo_elements_depending_on_current_skills () {
 
 	for (var i = 0; i < elements.length; i++) {
 		var required_skills = $(elements[i]).data("required_skills");
-		log("!!! required_skills !!! : ", required_skills);
+		//log("!!! required_skills !!! : ", required_skills);
 		if(typeof(required_skills) == "string") {
 			var s = {};
 			if(!required_skills == "") {
 				s = parse_required_skills(required_skills);
 			}
 
-			log("!!! s:", s);
+			//log("!!! s:", s);
 
-			log("if(checkSubset(", Object.keys(current_skills), ", ", Object.keys(s) + ")) { = ", checkSubset(Object.keys(current_skills), Object.keys(s)));
+			//log("if(checkSubset(", Object.keys(current_skills), ", ", Object.keys(s) + ")) { = ", checkSubset(Object.keys(current_skills), Object.keys(s)));
 
 			if(checkSubset(Object.keys(current_skills), Object.keys(s))) {
 				//log("current_skills in required_skills", current_skills, s);
