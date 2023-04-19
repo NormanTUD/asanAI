@@ -5473,13 +5473,21 @@ function sort_by_property(list, property_name_list) {
 }
 
 function parse_required_skills (str) {
-	const matches = str.match(/(\w+)(?:\[(\d+(?:,\d+)*)\])?/);
-	if (!matches) {
-		throw new Error('Invalid string format');
+	var splitted = str.split(/,/);
+
+	var res = {};
+
+	for (var i = 0; i < splitted.length; i++) {
+		var matches = splitted[i].match(/(\w+)(?:\[(\d+(?:,\d+)*)\])?/);
+		if (!matches) {
+			throw new Error('Invalid string format');
+		}
+		var key = matches[1];
+		var values = matches[2] ? matches[2].split(',').map(Number) : [1];
+
+		res[key] = values;
 	}
-	const key = matches[1];
-	const values = matches[2] ? matches[2].split(',').map(Number) : [1];
-	return [key, values];
+	return res;
 }
 
 function getSortedHash(inputHash){
@@ -5510,12 +5518,7 @@ function chose_next_manicule_target () {
 				var req_full = {};
 
 				if(typeof(req) == "string") {
-					req = req.split(/,/);
-
-					for (var k = 0; k < req.length; k++) {
-						var parsed = parse_required_skills(req[k]);
-						req_full[parsed[0]] = parsed[1];
-					}
+					req_full = parse_required_skills(req);
 				}
 
 				var possible = true;
@@ -5550,12 +5553,7 @@ function chose_next_manicule_target () {
 
 					// TODO!!!
 					if(typeof(show_again) == "string") {
-						show_again = show_again.split(/,/);
-
-						for (var k = 0; k < show_again.length; k++) {
-							var parsed = parse_required_skills(show_again[k]);
-							show_again_full[parsed[0]] = parsed[1];
-						}
+						show_again_full = parse_required_skills(show_again);
 					}
 
 					log("element/show_again_full:", $(x), show_again_full);
@@ -5845,15 +5843,18 @@ function show_cosmo_elements_depending_on_current_skills () {
 
 	for (var i = 0; i < elements.length; i++) {
 		var required_skills = $(elements[i]).data("required_skills");
+		log("!!! required_skills !!! : ", required_skills);
 		if(typeof(required_skills) == "string") {
-			var s;
-			if(required_skills == "") {
-				s = [];
-			} else {
-				s = required_skills.split(/,/);
+			var s = {};
+			if(!required_skills == "") {
+				s = parse_required_skills(required_skills);
 			}
 
-			if(checkSubset(Object.keys(current_skills), s)) {
+			log("!!! s:", s);
+
+			log("if(checkSubset(", Object.keys(current_skills), ", ", Object.keys(s) + ")) { = ", checkSubset(Object.keys(current_skills), Object.keys(s)));
+
+			if(checkSubset(Object.keys(current_skills), Object.keys(s))) {
 				//log("current_skills in required_skills", current_skills, s);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
