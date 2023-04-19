@@ -5515,7 +5515,6 @@ function getSortedHashReverse(inputHash){
 
 
 function chose_next_manicule_target () {
-	//logt("chose_next_manicule_target");
 	var possible_indices = [];
 
 	var cosmo = $(".cosmo");
@@ -5538,12 +5537,9 @@ function chose_next_manicule_target () {
 
 					var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
 					if(!full_req_part_is_part_of_current_skills) {
-						//log("!full_req_part_is_part_of_current_skills");
 						possible = false;
 					} else {
-						//log("checking if current_skill_nr_matches_required_skill_number for key " + current_key + "...");
 						var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
-						//log("Result for " + current_key + ": " + current_skill_nr_matches_required_skill_number);
 
 						if(!current_skill_nr_matches_required_skill_number) {
 							possible = false;
@@ -5552,8 +5548,6 @@ function chose_next_manicule_target () {
 				}
 
 				if(possible) {
-					//log("==== Element: ", x, "req_full", req_full);
-					//log("It seems that current_skills allows you to display index " + i, x)
 					possible_indices.push({"index": i, "length": Object.keys(req_full).length});
 				}
 			} else {
@@ -5566,8 +5560,6 @@ function chose_next_manicule_target () {
 					if(typeof(show_again) == "string") {
 						show_again_full = parse_required_skills(show_again);
 					}
-
-					//log("element/show_again_full:", $(x), show_again_full);
 
 					for (var k = 0; k < Object.keys(show_again_full).length; k++) {
 						var key = Object.keys(show_again_full)[k];
@@ -5582,7 +5574,6 @@ function chose_next_manicule_target () {
 					}
 
 					if(possible) {
-						//log("show_again_full:", show_again_full);
 						possible_indices.push({"index": i, "length": Object.keys(show_again_full).length});
 					}
 				}
@@ -5590,18 +5581,7 @@ function chose_next_manicule_target () {
 		}
 	});
 
-	//sort_by_property(possible_indices, ["length", "index"]);
-	
-
 	if(possible_indices.length) {
-		/*
-		log("possible_indices before sorting:", possible_indices);
-
-		getSortedHashReverse(possible_indices);
-
-		log("possible_indices after sorting:", possible_indices);
-		*/
-
 		var possible_elements = [];
 		for (var i = 0; i < possible_indices.length; i++) {
 			var _i = possible_indices[i]["index"];
@@ -5614,18 +5594,9 @@ function chose_next_manicule_target () {
 
 		if(possible_elements.length) {
 			var index_to_chose = possible_elements.length - 1;
-
-			/*
-			log("possible_elements:", possible_elements);
-			log("!!! SHOWING ", possible_elements[index_to_chose]);
-			*/
-
 			$(possible_elements[index_to_chose]).show();
 			remove_manicule(0);
-			//alert("Going to " + get_element_xpath(possible_elements[0]));
-			//console.trace();
 			new ManiC(possible_elements[index_to_chose]);
-
 			$(possible_elements[0]).on("click", function () {
 				$(this).attr("data-clicked", 1)
 			});
@@ -5857,6 +5828,23 @@ let checkSubset = (parentArray, subsetArray) => {
 	})
 }
 
+function each_skill_level_matches (c, s) {
+	var s_keys = Object.keys(s);
+	for (var i = 0; i < s_keys.length; i++) {
+		var keyname = s_keys[i];
+
+		if(!Object.keys(s).includes(keyname)) {
+			return false;
+		}
+
+		if(s[keyname] != c[keyname]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 function show_cosmo_elements_depending_on_current_skills () {
 	var elements = $(".cosmo");
 
@@ -5873,8 +5861,9 @@ function show_cosmo_elements_depending_on_current_skills () {
 
 			//log("if(checkSubset(", Object.keys(current_skills), ", ", Object.keys(s) + ")) { = ", checkSubset(Object.keys(current_skills), Object.keys(s)));
 
-			if(checkSubset(Object.keys(current_skills), Object.keys(s))) {
+			if(checkSubset(Object.keys(current_skills), Object.keys(s)) && each_skill_level_matches(current_skills, s)) {
 				//log("current_skills in required_skills", current_skills, s);
+				log("Showing ", elements[i]);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
 					log("Not reinserting recently manually removed element (xpath: " + get_element_xpath(last_manually_removed_manicule_element) + ")");
