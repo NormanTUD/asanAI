@@ -1197,11 +1197,12 @@ async function take_image_from_webcam_n_times (elem) {
 			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
 		}
+		add_cosmo_point("took_images");
+
 		l("Done taking " + number + " images");
 	});
 
 	await last_shape_layer_warning();
-
 }
 
 async function take_image_from_webcam (elem, nol, increment_counter=true) {
@@ -1256,8 +1257,6 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	await last_shape_layer_warning();
 	tf.engine().endScope();
-
-	add_cosmo_point("took_images");
 }
 
 function chiSquaredTest(arr) {
