@@ -5419,7 +5419,6 @@ async function cosmo_mode () {
 		$("#upload_file").show();
 		$("#repredict_examples_button").show();
 		$("#download_data").show();
-		$("#toggle_layers_button").hide();
 		is_cosmo_mode = false;
 
 		new ManiC(null);
@@ -5448,14 +5447,14 @@ async function cosmo_mode () {
 		//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 		is_cosmo_mode = true;
 
-
-		$("#toggle_layers_button").hide();
 		$("#start_stop_training").show();
 
 		add_cosmo_point("loaded_page");
 
 		chose_next_manicule_target();
 	}
+
+	$("#toggle_layers_button").hide();
 }
 
 function sort_by_property(list, property_name_list) {
@@ -5568,7 +5567,7 @@ function chose_next_manicule_target () {
 						show_again_full = parse_required_skills(show_again);
 					}
 
-					log("element/show_again_full:", $(x), show_again_full);
+					//log("element/show_again_full:", $(x), show_again_full);
 
 					for (var k = 0; k < Object.keys(show_again_full).length; k++) {
 						var key = Object.keys(show_again_full)[k];
@@ -5583,7 +5582,7 @@ function chose_next_manicule_target () {
 					}
 
 					if(possible) {
-						log("show_again_full:", show_again_full);
+						//log("show_again_full:", show_again_full);
 						possible_indices.push({"index": i, "length": Object.keys(show_again_full).length});
 					}
 				}
@@ -5616,7 +5615,11 @@ function chose_next_manicule_target () {
 		if(possible_elements.length) {
 			var index_to_chose = possible_elements.length - 1;
 
+			/*
 			log("possible_elements:", possible_elements);
+			log("!!! SHOWING ", possible_elements[index_to_chose]);
+			*/
+
 			$(possible_elements[index_to_chose]).show();
 			remove_manicule(0);
 			//alert("Going to " + get_element_xpath(possible_elements[0]));
