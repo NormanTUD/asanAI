@@ -350,6 +350,11 @@ function cosmo_debugger () {
 		return;
 	}
 
+	if(!enable_cosmo_debugger) {
+		$("#cosmo_debugger").remove();
+		return;	
+	}
+
 	var cosmo_wave_debug_str = "current_skills: [" + JSON.stringify(current_skills) + "]";
 	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 700px; top: 10px; background-color: green; color: white; word-wrap: anywhere;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
 
