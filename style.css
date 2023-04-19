@@ -908,3 +908,7 @@ button {
 .own_image_upload_container {
 	width: 250px;
 }
+
+#robot_layer {
+	box-shadow: none !important;
+}
