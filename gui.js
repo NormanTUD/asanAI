@@ -3550,7 +3550,7 @@ async function add_new_category() {
 			c = 'cosmo';
 		}
 
-		var s = `<div class="own_image_upload_container"><hr>` +
+		var s = `<div class="own_image_upload_container" class='cosmo' data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]"><hr>` +
 			`<button style="${webcam_button_style}" class="hide_in_cosmo_mode large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button cosmo" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
@@ -5181,7 +5181,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 	</form>
-	<canvas class='cosmo' data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]" style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
 
 	var drawingboard = $(code);
 
