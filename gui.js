@@ -5482,6 +5482,18 @@ function parse_required_skills (str) {
 	return [key, values];
 }
 
+function getSortedHash(inputHash){
+	var resultHash = {};
+
+	var keys = Object.keys(inputHash);
+	keys.sort(function(a, b) {
+		return inputHash[a] - inputHash[b]
+	}).forEach(function(k) {
+		resultHash[k] = inputHash[k];
+	});
+	return resultHash;
+}
+
 
 function chose_next_manicule_target () {
 	//logt("chose_next_manicule_target");
@@ -5528,7 +5540,7 @@ function chose_next_manicule_target () {
 				if(possible) {
 					//log("==== Element: ", x, "req_full", req_full);
 					//log("It seems that current_skills allows you to display index " + i, x)
-					possible_indices.push({"index": i, "length": req_full.length});
+					possible_indices.push({"index": i, "length": Object.keys(req_full).length});
 				}
 			} else {
 				var show_again = $x.data("show_again_when_new_skill_acquired");
@@ -5561,7 +5573,8 @@ function chose_next_manicule_target () {
 					}
 
 					if(possible) {
-						possible_indices.push({"index": i, "length": show_again_full.length});
+						log("show_again_full:", show_again_full);
+						possible_indices.push({"index": i, "length": Object.keys(show_again_full).length});
 					}
 				}
 			}
@@ -5569,30 +5582,42 @@ function chose_next_manicule_target () {
 	});
 
 	//sort_by_property(possible_indices, ["length", "index"]);
+	
 
-	var possible_elements = [];
-	for (var i = 0; i < possible_indices.length; i++) {
-		var _i = possible_indices[i]["index"];
-		var _l = possible_indices[i]["length"];
-		if(cosmo[_i]) {
-			$(cosmo[_i]).show();
-			possible_elements.push(cosmo[_i]);
+	if(possible_indices.length) {
+		log("possible_indices before sorting:", possible_indices);
+
+		getSortedHash(possible_indices);
+
+		log("possible_indices after sorting:", possible_indices);
+
+		var possible_elements = [];
+		for (var i = 0; i < possible_indices.length; i++) {
+			var _i = possible_indices[i]["index"];
+			var _l = possible_indices[i]["length"];
+			if(cosmo[_i]) {
+				$(cosmo[_i]).show();
+				possible_elements.push(cosmo[_i]);
+			}
 		}
-	}
 
-	if(possible_elements.length) {
-		log("possible_elements:", possible_elements);
-		$(possible_elements[0]).show();
-		remove_manicule(0);
-		//alert("Going to " + get_element_xpath(possible_elements[0]));
-		//console.trace();
-		new ManiC(possible_elements[0]);
+		if(possible_elements.length) {
+			log("possible_elements:", possible_elements);
+			$(possible_elements[0]).show();
+			remove_manicule(0);
+			//alert("Going to " + get_element_xpath(possible_elements[0]));
+			//console.trace();
+			new ManiC(possible_elements[0]);
 
-		$(possible_elements[0]).on("click", function () {
-			$(this).attr("data-clicked", 1)
-		});
+			$(possible_elements[0]).on("click", function () {
+				$(this).attr("data-clicked", 1)
+			});
+		} else {
+			log("No possible elements found!");
+			remove_manicule(0);
+		}
 	} else {
-		log("No possible elements found!");
+		log("No possible elements found (2)!");
 		remove_manicule(0);
 	}
 }
