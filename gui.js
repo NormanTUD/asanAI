@@ -4852,7 +4852,7 @@ async function highlight_code () {
 	Prism.highlightAll();
 }
 
-async function easter_egg_fireworks () {
+async function easter_egg_fireworks (force=0) {
 	if(in_fireworks) {
 		return;
 	}
@@ -4860,7 +4860,7 @@ async function easter_egg_fireworks () {
 	fireworks_counter++;
 	console.warn(fireworks_counter);
 
-	if(fireworks_counter && fireworks_counter % 10 == 0) {
+	if(force || fireworks_counter && fireworks_counter % 10 == 0) {
 		$(".fireworks-container").show();
 		in_fireworks = true;
 		var fw = new Fireworks(document.querySelector('.fireworks-container'))
