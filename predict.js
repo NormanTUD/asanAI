@@ -553,8 +553,8 @@ function get_index_of_highest_category (predictions_tensor) {
 	return highest_index;
 }
 
-async function draw_heatmap (predictions_tensor, predict_data) {
-	if(input_shape_is_image() && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
+async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
+	if(input_shape_is_image(is_from_webcam) && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
 		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
 
@@ -625,7 +625,7 @@ async function predict_webcam () {
 
 	var predictions_tensor = await model.predict([predict_data], [1, 1]);
 
-	await draw_heatmap(predictions_tensor, predict_data);
+	await draw_heatmap(predictions_tensor, predict_data, 1);
 
 	var predictions = predictions_tensor.dataSync();
 
