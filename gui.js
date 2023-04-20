@@ -5171,7 +5171,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		k = $(".own_image_upload_container").length;
 	}
 
-	var code = `<form class='no_mark' onkeydown="return event.key != 'Enter';">
+	var code = `<form class='no_mark cosmo' data-required_skills="took_images[4]" onkeydown="return event.key != 'Enter';">
 		<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this);"><img width=32 src='pen.png'/></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); "><img width=32 src='Fill-icon.svg'></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this);"><img width=32 src='Eraser_icon.svg'/></a></span>
@@ -5180,8 +5180,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
-	</form>
-	<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>`;
+		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>
+	</form>`;
 
 	var drawingboard = $(code);
 
