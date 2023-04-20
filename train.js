@@ -256,6 +256,11 @@ function get_fit_data () {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			await write_model_to_latex_to_page();
 		}
+
+
+		if(is_cosmo_mode) {
+			show_tab_label("tfvis_tab_label", 1);
+		}
 	};
 
 	callbacks["onEpochBegin"] = async function () {
