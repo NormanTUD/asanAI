@@ -1252,12 +1252,12 @@ async function force_reinit (no_msg) {
 	await predict_handdrawn();
 }
 
-function input_shape_is_image () {
+function input_shape_is_image (is_from_webcam=0) {
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
 		is.show();
-		if(is_cosmo_mode) {
+		if(!is_from_webcam && is_cosmo_mode) {
 			for (var i = 0; i < is.length; i++) {
 				if(has_special_cosmo_classes(is[i])) {
 					$(is[i]).hide();
@@ -1265,6 +1265,7 @@ function input_shape_is_image () {
 				}
 			}
 		}
+
 		return true;
 	}
 	is.hide();

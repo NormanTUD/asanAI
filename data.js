@@ -1102,7 +1102,7 @@ async function get_data_from_webcam (force_restart) {
 
 	var stopped = 0;
 
-	if(input_shape_is_image()) {
+	if(input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
 			l("Stopping webcam");
