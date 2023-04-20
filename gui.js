@@ -5626,6 +5626,10 @@ class ManiC {
 
 		remove_manicule(0);
 
+		if(started_training) {
+			return;
+		}
+
 		if(e) {
 			var $e = $(e);
 

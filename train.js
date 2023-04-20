@@ -46,7 +46,7 @@ async function train_neural_network () {
 	if(started_training) {
 		if(is_cosmo_mode) {
 			add_cosmo_point("started_training", 0);
-			remove_manicule();
+			remove_manicule(1);
 		}
 
 		if($("#show_grad_cam").is(":checked")) {
