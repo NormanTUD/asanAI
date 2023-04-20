@@ -1369,7 +1369,7 @@
 
 								<div class="container" id="predictcontainer">
 									<div>
-										<div id="own_files">
+										<div id="own_files cosmo" data-required_skills='added_custom_category[2]'>
 											<div class="hide_when_image">
 												<div id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
