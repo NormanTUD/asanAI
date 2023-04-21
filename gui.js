@@ -4873,6 +4873,12 @@ async function easter_egg_fireworks (force=0) {
 }
 
 async function fireworks_and_reload () {
+	if(in_fireworks) {
+		return;
+	}
+
+	in_fireworks++;
+
 	$(".fireworks-container").show();
 	var fw = new Fireworks(document.querySelector('.fireworks-container'))
 	fw.start();
