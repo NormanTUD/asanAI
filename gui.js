@@ -3559,7 +3559,7 @@ async function add_new_category() {
 
 		$(s).appendTo("#own_images_container");
 
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="category ' + label_nr + '" /><input type="file" class="own_image_files hide_in_cosmo_mode" multiple accept="image/*"><br/></form>').appendTo($(".own_image_upload_container")[n]);
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="category ' + label_nr + '" /><input type="file" class="own_image_files hide_in_cosmo_mode" multiple accept="image/*"><br/></form>').prependTo($(".own_image_upload_container")[n]);
 
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
 
