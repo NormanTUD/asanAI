@@ -5171,7 +5171,14 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		k = $(".own_image_upload_container").length;
 	}
 
-	var code = `<form class='no_mark' onkeydown="return event.key != 'Enter';">
+	var classes = "";
+	var required_skills = "";
+	if(!idname == "sketcher") {
+		classes = " cosmo";
+		required_skills = ' data-required_skills="took_images[4]" ';
+	}
+
+	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
 		<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this);"><img width=32 src='pen.png'/></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); "><img width=32 src='Fill-icon.svg'></a></span>
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this);"><img width=32 src='Eraser_icon.svg'/></a></span>
@@ -5234,7 +5241,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			eval(customfunc);
 		}
 
-		add_cosmo_point("drew_custom_image");
+		if(idname != "sketcher") {
+			add_cosmo_point("drew_custom_image");
+		}
 	});
 
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
