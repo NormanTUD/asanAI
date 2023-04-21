@@ -5173,9 +5173,14 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	var classes = "";
 	var required_skills = "";
-	if(!idname == "sketcher") {
+
+
+
+	if(idname != "sketcher") {
 		classes = " cosmo";
 		required_skills = ' data-required_skills="took_images[4]" ';
+	} else {
+		log(`!!!!!!${idname}!!!!!!`)
 	}
 
 	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
