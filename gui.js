@@ -4872,6 +4872,16 @@ async function easter_egg_fireworks (force=0) {
 	}
 }
 
+async function fireworks_and_reload () {
+	$(".fireworks-container").show();
+	var fw = new Fireworks(document.querySelector('.fireworks-container'))
+	fw.start();
+	await delay(10000);
+	fw.stop();
+
+	location.reload();
+}
+
 async function init_webcams () {
 	if(inited_webcams) {
 		return;
@@ -5815,7 +5825,7 @@ class ManiC {
 	}
 }
 
-function add_cosmo_point (name, show_manicule=1) {
+async function add_cosmo_point (name, show_manicule=1) {
 	if(is_cosmo_mode) {
 		if(!Object.keys(current_skills).includes(name)) {
 			current_skills[name] = 1;
@@ -5824,7 +5834,7 @@ function add_cosmo_point (name, show_manicule=1) {
 			current_skills[name]++;
 		}
 
-		show_cosmo_elements_depending_on_current_skills();
+		await show_cosmo_elements_depending_on_current_skills();
 
 		cosmo_debugger();
 	} else {
@@ -5863,7 +5873,7 @@ function each_skill_level_matches (c, s) {
 	return true;
 }
 
-function show_cosmo_elements_depending_on_current_skills () {
+async function show_cosmo_elements_depending_on_current_skills () {
 	var elements = $(".cosmo");
 
 	for (var i = 0; i < elements.length; i++) {
@@ -5912,6 +5922,10 @@ function show_cosmo_elements_depending_on_current_skills () {
 		} else {
 			console.warn("ELEMENT HAS NO REQUIRED SKILLS, YET IS IN COSMO CLASS:", elements[i]);
 		}
+	}
+
+	if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 3) {
+		await fireworks_and_reload();
 	}
 }
 
