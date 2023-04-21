@@ -1217,7 +1217,7 @@
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
-									Number of images in a series: <input type='number' min=1 value='40' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
+								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
 									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
 								</div>
 								<button class='add_category' onclick="add_new_category();">+</button>
