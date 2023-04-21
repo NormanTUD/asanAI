@@ -5884,7 +5884,7 @@ function show_cosmo_elements_depending_on_current_skills () {
 				//log("Showing ", elements[i]);
 				$(elements[i]).show();
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
-					log("Not reinserting recently manually removed element (xpath: " + get_element_xpath(last_manually_removed_manicule_element) + ")");
+					//log("Not reinserting recently manually removed element (xpath: " + get_element_xpath(last_manually_removed_manicule_element) + ")");
 				} else {
 					if(manicule === null) {
 						new ManiC(elements[i]);
