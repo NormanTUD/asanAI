@@ -1327,7 +1327,7 @@
 									<div id="training_content">
 										<div id="simplest_training_data_visualization" style="display: none"></div>
 										<div style="display: none">
-											<h3>Epochs:</h3>
+											<h3 class="hide_in_cosmo_mode">Epochs:</h3>
 											<div id="plotly_epoch_history"></div>
 										</div>
 
