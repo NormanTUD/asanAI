@@ -4879,11 +4879,15 @@ async function fireworks_and_reload () {
 
 	in_fireworks++;
 
+	remove_manicule(1);
+
 	$(".fireworks-container").show();
 	var fw = new Fireworks(document.querySelector('.fireworks-container'))
 	fw.start();
 	await delay(10000);
 	fw.stop();
+
+	remove_manicule(1);
 
 	location.reload();
 }
