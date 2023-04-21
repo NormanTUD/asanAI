@@ -302,8 +302,10 @@ function get_fit_data () {
 
 		var this_plot_data = [training_logs_batch["loss"]];
 
-		$("#plotly_batch_history").parent().show();
-		$("#plotly_time_per_batch").parent().show();
+		if(!is_cosmo_mode) {
+			$("#plotly_batch_history").parent().show();
+			$("#plotly_time_per_batch").parent().show();
+		}
 
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parseInt($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {

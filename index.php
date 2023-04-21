@@ -1318,7 +1318,7 @@
 
 							<div id="tfvis_tab" style="float: right; width: 100%">
 								<br>
-								<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
+								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
 								<div class="overlay_each_other">
 									<span id="canvas_grid_visualization"></span>
@@ -1331,17 +1331,17 @@
 											<div id="plotly_epoch_history"></div>
 										</div>
 
-										<div style="display: none">
+										<div style="display: none" class="hide_in_cosmo_mode">
 											<h3>Batches:</h3>
 											<div id="plotly_batch_history"></div>
 										</div>
 
-										<div style="display: none">
+										<div style="display: none" class="hide_in_cosmo_mode">
 											<h3>Time per batch (in seconds):</h3>
 											<div id="plotly_time_per_batch"></div>
 										</div>
 
-										<div style="display: none">
+										<div style="display: none" class="hide_in_cosmo_mode">
 											<h1>Memory usage while training (per batch):</h1>
 											<div id="plotly_memory_history"></div>
 										</div>
