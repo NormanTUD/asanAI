@@ -1551,6 +1551,16 @@
 
 			var currentLayer = 0;
 
+			var seed_two = 1;
+			function random_two(min, max) { // Seeded PRNG
+				var x = Math.sin(seed_two++) * 10000;
+				result = x - Math.floor(x);
+				result = ((max - min) * result) + min;
+				return result;
+			}
+
+
+
 			var seed = 1;
 			function random(min, max) { // Seeded PRNG
 				var x = Math.sin(seed++) * 10000;

@@ -728,7 +728,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var h = image.height * scale;
 
 		var imageX = xPos - width / 2;
-		imageX += randomInRange(-(2*targetSize), 2*targetSize);
+		imageX += random_two(-(2*targetSize), 2*targetSize);
 
 		if((imageX + targetSize) > canvas.width) {
 			imageX = canvas.width - targetSize;
@@ -754,6 +754,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 }
 
 function visualize_train () {
+	seed_two = 2;
 	if(!$("#visualize_images_in_grid").is(":checked")) {
 		$("#canvas_grid_visualization").html("");
 		return;

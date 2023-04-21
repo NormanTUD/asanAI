@@ -2228,38 +2228,38 @@ function array_to_html(array) {
 }
 
 function applyColorMap(x) {
-  tf.util.assert(
-      x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
-  tf.util.assert(
-      x.shape[0] === 1,
-      `Expected exactly one example, but got ${x.shape[0]} examples`);
-  tf.util.assert(
-      x.shape[3] === 1,
-      `Expected exactly one channel, but got ${x.shape[3]} channels`);
+	tf.util.assert(
+		x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
+	tf.util.assert(
+		x.shape[0] === 1,
+		`Expected exactly one example, but got ${x.shape[0]} examples`);
+	tf.util.assert(
+		x.shape[3] === 1,
+		`Expected exactly one channel, but got ${x.shape[3]} channels`);
 
-  return tf.tidy(() => {
-    // Get normalized x.
-    const EPSILON = 1e-5;
-    const xRange = x.max().sub(x.min());
-    const xNorm = x.sub(x.min()).div(xRange.add(EPSILON));
-    const xNormData = xNorm.dataSync();
+	return tf.tidy(() => {
+		// Get normalized x.
+		const EPSILON = 1e-5;
+		const xRange = x.max().sub(x.min());
+		const xNorm = x.sub(x.min()).div(xRange.add(EPSILON));
+		const xNormData = xNorm.dataSync();
 
-    const h = x.shape[1];
-    const w = x.shape[2];
-    const buffer = tf.buffer([1, h, w, 3]);
+		const h = x.shape[1];
+		const w = x.shape[2];
+		const buffer = tf.buffer([1, h, w, 3]);
 
-    const colorMapSize = RGB_COLORMAP.length / 3;
-    for (let i = 0; i < h; ++i) {
-      for (let j = 0; j < w; ++j) {
-        const pixelValue = xNormData[i * w + j];
-        const row = Math.floor(pixelValue * colorMapSize);
-        buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
-        buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
-        buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
-      }
-    }
-    return buffer.toTensor();
-  });
+		const colorMapSize = RGB_COLORMAP.length / 3;
+		for (let i = 0; i < h; ++i) {
+			for (let j = 0; j < w; ++j) {
+				const pixelValue = xNormData[i * w + j];
+				const row = Math.floor(pixelValue * colorMapSize);
+				buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
+				buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
+				buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
+			}
+		}
+		return buffer.toTensor();
+	});
 }
 
 function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
