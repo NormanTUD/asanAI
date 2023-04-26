@@ -1545,6 +1545,8 @@
 					throw_compile_exception = true;
 					$(".expert_mode_only").show();
 				}
+
+				disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 			}
 			
 			var clicked_on_tab = 0;

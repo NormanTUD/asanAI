@@ -394,6 +394,8 @@ $(document).ready(async function() {
 	setInterval(write_model_summary, 200);
 	setInterval(write_descriptions, 500);
 
+	//setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
+
 	allow_edit_inputShape();
 
 	copy_options();

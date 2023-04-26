@@ -353,7 +353,7 @@ function add_visualize_option(type, nr) {
 		style = ' style="display: none" '
 	}
 
-	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
+	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
 }
 
 function add_pool_size_option(type, nr) {
@@ -1161,6 +1161,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	number_of_currently_running_updated_pages--;
 
 	allow_editable_labels();
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 	return 1;
 }
@@ -6030,4 +6032,49 @@ function allow_editable_labels () {
 			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 		}
 	})
+}
+
+function enable_every_layer () {
+	$(".configtable").find("input,select,button").prop("disabled", false);
+	$(".layer_setting").find("button").prop("disabled", false);
+}
+
+function disable_flatten_layer () {
+	//log("disable_flatten_layer()");
+	if(!model) {
+		//log("No model found");
+		return;
+	}
+
+	var flatten_layer = null;
+	for (var i = 0; i < model.layers.length; i++) {
+		//log(model.layers[i].name);
+		//log(`if(!${flatten_layer} && ${model.layers[i].name}.startsWith("flatten")) {`) ;
+		if(!flatten_layer && model.layers[i].name.startsWith("flatten")) {
+			flatten_layer = i;
+		}
+	}
+
+
+	if(!!flatten_layer) {
+		$($(".layer_setting")[flatten_layer]).find(".add_remove_layer_button").prop("disabled", true);
+	} else {
+		log("No layer found, flatten-layer: ", flatten_layer);
+	}
+
+}
+
+function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
+	enable_every_layer();
+
+	if(mode == "beginner") {
+		$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
+		$($(".layer_setting")[$(".layer_setting").length - 1]).find("button").prop("disabled", true);
+		$($(".layer_setting")[$(".layer_setting").length - 1]).find(".show_data").prop("disabled", false);
+		$($(".layer_setting")[$(".layer_setting").length - 1]).find(".visualize_layer_button").prop("disabled", false);
+
+		disable_flatten_layer();
+
+		l("Disabling last layer in beginner mode");
+	}
 }
