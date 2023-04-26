@@ -5462,6 +5462,8 @@ async function cosmo_mode () {
 		is_cosmo_mode = false;
 
 		new ManiC(null);
+
+		await write_descriptions(1)
 	} else {
 		l("Starting cosmo mode");
 		$("#beginner").click();
