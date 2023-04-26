@@ -513,7 +513,9 @@ async function run_neural_network () {
 	if(started_training) {
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
-		$("#training_content").clone().appendTo("#tfvis_tab");
+		if(!is_cosmo_mode) {
+			$("#training_content").clone().appendTo("#tfvis_tab");
+		}
 
 		$("#plotly_epoch_history").parent().hide();
 		$("#plotly_epoch_history").html("");

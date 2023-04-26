@@ -4872,7 +4872,7 @@ async function easter_egg_fireworks (force=0) {
 	}
 }
 
-async function fireworks_and_reload () {
+async function fireworks_and_reload (reload=1) {
 	if(in_fireworks) {
 		return;
 	}
@@ -4889,7 +4889,9 @@ async function fireworks_and_reload () {
 
 	remove_manicule(1);
 
-	location.reload();
+	if(reload) {
+		location.reload();
+	}
 }
 
 async function init_webcams () {
@@ -5501,10 +5503,12 @@ async function cosmo_mode () {
 		});
 
 		function timerIncrement() {
-			idleTime = idleTime + 1;
-			if (idleTime > 1) { // 2 minutes
-				window.location.reload();
-				location.reload();
+			if(Object.keys(current_skills).length > 1) {
+				idleTime = idleTime + 1;
+				if (idleTime > 2) { // 2 minutes
+					window.location.reload();
+					location.reload();
+				}
 			}
 		}
 	}
@@ -5956,7 +5960,7 @@ async function show_cosmo_elements_depending_on_current_skills () {
 	}
 
 	if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 3) {
-		await fireworks_and_reload();
+		await fireworks_and_reload(0);
 	}
 }
 
