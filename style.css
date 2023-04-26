@@ -912,3 +912,7 @@ button {
 #robot_layer {
 	box-shadow: none !important;
 }
+
+.fireworks-container {
+	pointer-events: none;
+}
