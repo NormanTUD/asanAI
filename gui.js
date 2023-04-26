@@ -5515,6 +5515,8 @@ async function cosmo_mode () {
 				}
 			}
 		}
+
+		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 	}
 
 	$("#toggle_layers_button").hide();
