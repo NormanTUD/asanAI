@@ -4877,7 +4877,7 @@ async function fireworks_and_reload (reload=1) {
 		return;
 	}
 
-	in_fireworks++;
+	in_fireworks = true;
 
 	remove_manicule(1);
 
@@ -4886,6 +4886,8 @@ async function fireworks_and_reload (reload=1) {
 	fw.start();
 	await delay(10000);
 	fw.stop();
+
+	in_fireworks = false;
 
 	remove_manicule(1);
 
