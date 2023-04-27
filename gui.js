@@ -6062,8 +6062,8 @@ function disable_flatten_layer () {
 
 	if(!!flatten_layer) {
 		$($(".layer_setting")[flatten_layer]).find(".add_remove_layer_button").prop("disabled", true);
-	} else {
-		log("No layer found, flatten-layer: ", flatten_layer);
+	//} else {
+	//	log("No layer found, flatten-layer: ", flatten_layer);
 	}
 
 }
