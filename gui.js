@@ -6079,6 +6079,6 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 
 		disable_flatten_layer();
 
-		l("Disabling last layer in beginner mode");
+		//l("Disabling last layer in beginner mode");
 	}
 }
