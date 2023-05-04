@@ -1151,7 +1151,7 @@ It's important to keep in mind that the zero initialization is not always the be
 			<h3>Target Shape</h3>
 			In the reshape layer, the target shape option is used to specify the desired shape of the output tensor. This can be useful when you want to change the dimensions of the input tensor to match the requirements of the next layer.
 <br>
-			The target shape can be specified by providing a tuple of integers which defines the desired shape of the output tensor. The number of integers in the tuple must match the number of dimensions of the input tensor. For example, if the input tensor is of shape (batch_size, height, width, channels), and you want to reshape it to \([batch_size, height*width, channels]\), you can use the reshape layer with target shape option as \([batch_size, height*width, channels]\).
+The target shape can be specified by providing a tuple of integers which defines the desired shape of the output tensor. The number of integers in the tuple must match the number of dimensions of the input tensor. For example, if the input tensor is of shape (batch_size, height, width, channels), and you want to reshape it to \([\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]\), you can use the reshape layer with target shape option as \([\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]\).
 <br>
 			For reshaping, the multiplication of all the shape's part must remain the same. E.g. if you have \([10, 20, 3]\), you cannot reshape it to \([10, 2]\), because \(10*20*3 != 10*2\).
 
