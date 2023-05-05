@@ -1374,7 +1374,7 @@
 												<div id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 													<br>
-													<button onclick="predict($('#predict_own_data').val())">Predict</button>
+													<button onclick="predict($('#predict_own_data').val());repredict()">Predict</button>
 												</div>
 											</div>
 
