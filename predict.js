@@ -414,7 +414,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		dispose(predict_data);
 		dispose(predictions_tensor);
 	} catch (e) {
-		_predict_error(e);
+		if(!e.includes("yped")) {
+			_predict_error(e);
+		} else {
+			console.error(e);
+		}
 	}
 
 	tf.engine().endScope();
