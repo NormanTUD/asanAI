@@ -324,7 +324,7 @@ function get_fit_data () {
 			}
 			await show_prediction(0, 1);
 			if(input_shape_is_image()) {
-				await predict_handdrawn();
+				await repredict();
 			}
 		}
 	};

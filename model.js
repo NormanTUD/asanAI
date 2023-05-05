@@ -1250,7 +1250,6 @@ async function force_reinit (no_msg) {
 
 	await rename_labels();
 	await repredict();
-	await predict_handdrawn();
 }
 
 function input_shape_is_image (is_from_webcam=0) {
