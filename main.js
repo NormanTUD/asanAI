@@ -319,7 +319,7 @@ async function set_backend() {
 $(document).ready(async function() {
 	var s = swalmsg("Loading page");
 
-	if(getCookie("cosmo_mode") && document.location.href.indexOf('no_cosmo') === -1) {
+	if(getCookie("cosmo_mode") == "1" && document.location.href.indexOf('no_cosmo') === -1) {
 		cosmo_mode(); // cannot be async
 	}
 

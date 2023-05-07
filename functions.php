@@ -5,7 +5,7 @@
 	$GLOBALS['smtppass'] = "test123";
 	$GLOBALS['smtphost'] = "scads";
 	$GLOBALS["mysqli"] = null;
-	if(file_exists('/etc/dbpw')) {
+	if(file_exists('/etc/dbpw') && 0) {
 		try {
 			$GLOBALS['password'] = trim(file_get_contents('/etc/dbpw'));
 			$GLOBALS['mysqli'] = new mysqli("localhost", "root", $GLOBALS['password']);
