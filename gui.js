@@ -1887,7 +1887,14 @@ async function set_config(index) {
 				return;
 			}
 
-			number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+			try {
+				number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+			} catch (e) {
+				Swal.close()
+				console.error(e);
+				l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
+				return;
+			}
 			l("Found model structure");
 		} else {
 			number_of_layers = config["model_structure"].length;
@@ -2034,12 +2041,19 @@ async function set_config(index) {
 	l("Compiling model");
 	await compile_model();
 
-	if (config["weights"]) {
-		l("Setting weights from config-weights");
-		var weights_string = JSON.stringify(config["weights"]);
-		await set_weights_from_string(weights_string, 1, 1)
-	} else {
-		await load_weights(1);
+	try {
+		if (config["weights"]) {
+			l("Setting weights from config-weights");
+			var weights_string = JSON.stringify(config["weights"]);
+			await set_weights_from_string(weights_string, 1, 1)
+		} else {
+			await load_weights(1);
+		}
+	} catch (e) {
+		console.error(e);
+		l("ERROR: Failed to load. Failed to load model and/or weights");
+		Swal.close()
+		return;
 	}
 
 	disable_all_non_selected_layer_types();
