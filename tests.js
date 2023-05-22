@@ -347,7 +347,7 @@ async function run_tests () {
 
 
 		// testing shuffling
-		$("#dataset").val("mnist").trigger("change");
+		$("#dataset").val("signs").trigger("change");
 		$("#epochs").val(1).trigger("change");
 		$("#max_number_of_files_per_category").val(1).trigger("change");
 		$("#shuffle_before_each_epoch").prop("checked", true).trigger("change")
