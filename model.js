@@ -848,6 +848,10 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 		}
 	}
 
+	if(mode == "beginner" && ["reshape"].includes(layer_type)) {
+		return false;
+	}
+
 	return true;
 }
 
