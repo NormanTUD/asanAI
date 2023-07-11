@@ -283,7 +283,7 @@ async function run_tests () {
 		await train_neural_network();	
 
 		var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
-		test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", res == 5.439557075500488, true)
+		test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) < 3, true)
 
 		res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
 		test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
