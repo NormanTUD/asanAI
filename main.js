@@ -446,6 +446,7 @@ $(document).ready(async function() {
 	}
 
 	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
+	await predict_handdrawn();
 
 	l("Installing change-handlers on optimizer_metadata_input");
 	$('.optimizer_metadata_input'). change(function(event) {
