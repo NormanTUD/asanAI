@@ -138,7 +138,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 				await draw_heatmap(predictions_tensor, tensor_img);
 			} catch (e) {
-
+				l("Error (101): " + e);
 				log("================================= Tensor_Img");
 				log(tensor_img);
 				tensor_img.print();
@@ -305,6 +305,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(!tensor_shape_matches_model(predict_data)) {
 			var expected = eval(JSON.stringify(model.layers[0].input.shape));
 			expected[0] = "null";
+			l('Error: Expected input shape: [' + eval(JSON.stringify(expected)).join(', ') + '], but got [' + predict_data.shape.join(', ') + ']');
 			throw new Error('Expected input shape: [' + eval(JSON.stringify(expected)).join(', ') + '], but got [' + predict_data.shape.join(', ') + ']');
 			return;
 		}
@@ -316,7 +317,15 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		//log(predict_data.arraySync());
-		var predictions_tensor = await model.predict([predict_data], [1, 1]);
+		var predictions_tensor = null;
+		try {
+			predictions_tensor = await model.predict([predict_data], [1, 1]);
+		} catch (e) {
+			l("Predict data shape:" + predict_data.shape);
+			console.error(e);
+			l("Error (1201): " + e);
+			return;
+		}
 
 		await draw_heatmap(predictions_tensor, predict_data);
 
@@ -627,7 +636,15 @@ async function predict_webcam () {
 		predict_data = tf.divNoNan(predict_data, divide_by);
 	}
 
-	var predictions_tensor = await model.predict([predict_data], [1, 1]);
+	var predictions_tensor = null;
+	try {
+		predictions_tensor = await model.predict([predict_data], [1, 1]);
+	} catch (e) {
+		l("Predict data shape:" + predict_data.shape);
+		console.error(e);
+		l("Error (512): " + e);
+		return;
+	}
 
 	await draw_heatmap(predictions_tensor, predict_data, 1);
 
@@ -830,7 +847,15 @@ async function predict_handdrawn () {
 		img = tf.divNoNan(img, divide_by);
 	}
 
-	var predictions_tensor = model.predict(img);
+	var predictions_tensor = null;
+	try {
+		predictions_tensor = await model.predict([predict_data], [1, 1]);
+	} catch (e) {
+		l("Predict data shape:" + predict_data.shape);
+		console.error(e);
+		l("Error (443): " + e);
+		return;
+	}
 
 	await draw_heatmap(predictions_tensor, img);
 
