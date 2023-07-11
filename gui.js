@@ -5487,6 +5487,10 @@ async function cosmo_mode () {
 			clearInterval(idleInterval);
 			idleInterval = null;
 		}
+
+		if(manicule) {
+			manicule.hide();
+		}
 	} else {
 		l("Starting cosmo mode");
 		$("#beginner").click();
