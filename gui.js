@@ -5522,28 +5522,33 @@ async function cosmo_mode () {
 
 		chose_next_manicule_target();
 
+		function timerIncrement() {
+			log("timerIncrement");
+			if(Object.keys(current_skills).length > 1) {
+				idleTime = idleTime + 1;
+				if (idleTime > reload_time) { // 5 minutes
+					window.location.reload();
+					location.reload();
+				}
+			}
+			
+			show_idle_time();
+		}
+
 		$(document).ready(function () {
 			// Increment the idle time counter every minute.
-			idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+			idleInterval = setInterval(timerIncrement, 1000); // 1 sekunde
 
 			// Zero the idle timer on mouse movement.
 			$(this).mousemove(function (e) {
 				idleTime = 0;
 			});
+
 			$(this).keypress(function (e) {
 				idleTime = 0;
 			});
 		});
 
-		function timerIncrement() {
-			if(Object.keys(current_skills).length > 1) {
-				idleTime = idleTime + 1;
-				if (idleTime > 5) { // 5 minutes
-					window.location.reload();
-					location.reload();
-				}
-			}
-		}
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 	}
