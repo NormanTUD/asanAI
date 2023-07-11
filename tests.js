@@ -291,11 +291,21 @@ async function run_tests () {
 
 			log_test("Test Training images");
 
+			log_test("Waiting 2 seconds...");
 			await delay(2000);
+			log_test("Done waiting 2 seconds...");
+
 			$("#dataset").val("signs").trigger("change");
+
+			log_test("Waiting 2 seconds...");
 			await delay(2000);
+			log_test("Done waiting 2 seconds...");
+
 			$("#model_dataset").val("signs").trigger("change");
+
+			log_test("Waiting 3 seconds...");
 			await delay(3000);
+			log_test("Done waiting 3 seconds.");
 
 			await _set_initializers();
 
