@@ -839,12 +839,12 @@ async function predict_handdrawn () {
 	}
 
 	tf.engine().startScope();
-	var img = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+	var predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		img = tf.divNoNan(img, divide_by);
+		predict_data = tf.divNoNan(predict_data, divide_by);
 	}
 
 	var predictions_tensor = null;
@@ -857,7 +857,7 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	await draw_heatmap(predictions_tensor, img);
+	await draw_heatmap(predictions_tensor, predict_data);
 
 	var handdrawn_predictions = $("#handdrawn_predictions");
 	handdrawn_predictions.html("");
