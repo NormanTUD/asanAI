@@ -1513,7 +1513,7 @@ function option_for_layer(nr) {
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
-	str += "<button style='cursor: context-menu' class='show_data' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
+	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
 	str += "</td>";
 	str += "<td>";
 	str += "<div style='display: none' class='progressbar'>a</div>";

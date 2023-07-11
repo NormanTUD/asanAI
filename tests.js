@@ -5,6 +5,22 @@ var num_tests = 0;
 var num_tests_failed = 0;
 var mem_history = [];
 
+async function _set_initializers() {
+	$(".layer_options_button").click()
+
+	l("Setting initializer");
+	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change") 
+	$("#set_all_bias_initializers").val("glorotUniform").trigger("change")
+	l("Done setting initializer");
+
+	await delay(2000);
+
+	l("Setting seed to 42");
+	$(".kernel_initializer_seed").val(42).trigger("change");
+	$(".bias_initializer_seed").val(42).trigger("change");
+	l("Done setting seed to 42");
+}
+
 function test_not_equal (name, is, should_be) {
 	num_tests++;
 	if(!is_equal(is, should_be)) {
@@ -221,7 +237,9 @@ async function run_tests () {
 		$("#dataset").val("and_xor").trigger("change");
 		await delay(2000);
 		$("#model_dataset").val("and").trigger("change");
-		await delay(2000);
+		await delay(3000);
+
+		await _set_initializers();
 
 		await set_epochs(3);
 
@@ -255,7 +273,7 @@ async function run_tests () {
 		log_test("Train on CSV")
 		expect_memory_leak = "";
 
-		set_epochs(50);
+		set_epochs(200);
 
 		$("#data_origin").val("csv").trigger("change")
 		delay(1000);
@@ -276,7 +294,9 @@ async function run_tests () {
 		$("#dataset").val("signs").trigger("change");
 		await delay(2000);
 		$("#model_dataset").val("signs").trigger("change");
-		await delay(2000);
+		await delay(3000);
+
+		await _set_initializers();
 
 		await set_epochs(20);
 

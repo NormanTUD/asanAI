@@ -423,7 +423,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		dispose(predict_data);
 		dispose(predictions_tensor);
 	} catch (e) {
-		if(!e.includes("yped")) {
+		var estr = "" + e;
+		if(!estr.includes("yped")) {
 			_predict_error(e);
 		} else {
 			console.error(e);
