@@ -4658,14 +4658,18 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function setCookie(name, value, days=365) {
+function setCookie(name, value, days = 365) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
-		date.setTime(date.getTime() + (days*24*60*60*1000));
+		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
 		expires = "; expires=" + date.toUTCString();
 	}
-	document.cookie = name + "=" + (value || "")  + expires + "; path=/;";
+
+	// Set SameSite and secure attributes
+	var cookieOptions = "; SameSite=None; secure";
+
+	document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
 }
 
 function getCookie(name) {
