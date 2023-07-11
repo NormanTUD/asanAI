@@ -1376,3 +1376,5 @@ var last_manually_removed_manicule_element = null;
 var enable_cosmo_debugger = false;
 
 var idleTime = 0;
+
+var idleInterval = null;

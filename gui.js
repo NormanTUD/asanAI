@@ -5482,6 +5482,11 @@ async function cosmo_mode () {
 		new ManiC(null);
 
 		await write_descriptions(1)
+
+		if(idleInterval) {
+			clearInterval(idleInterval);
+			idleInterval = null;
+		}
 	} else {
 		l("Starting cosmo mode");
 		$("#beginner").click();
@@ -5515,7 +5520,7 @@ async function cosmo_mode () {
 
 		$(document).ready(function () {
 			// Increment the idle time counter every minute.
-			var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+			idleInterval = setInterval(timerIncrement, 60000); // 1 minute
 
 			// Zero the idle timer on mouse movement.
 			$(this).mousemove(function (e) {
@@ -5529,7 +5534,7 @@ async function cosmo_mode () {
 		function timerIncrement() {
 			if(Object.keys(current_skills).length > 1) {
 				idleTime = idleTime + 1;
-				if (idleTime > 2) { // 2 minutes
+				if (idleTime > 5) { // 5 minutes
 					window.location.reload();
 					location.reload();
 				}
