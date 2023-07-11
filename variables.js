@@ -1379,4 +1379,4 @@ var idleTime = 0;
 
 var idleInterval = null;
 
-var reload_time = 5 * 60;
+var reload_time = 10 * 60;

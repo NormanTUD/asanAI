@@ -5523,10 +5523,9 @@ async function cosmo_mode () {
 		chose_next_manicule_target();
 
 		function timerIncrement() {
-			log("timerIncrement");
 			if(Object.keys(current_skills).length > 1) {
 				idleTime = idleTime + 1;
-				if (idleTime > reload_time) { // 5 minutes
+				if (idleTime > reload_time) { // 10 minutes
 					window.location.reload();
 					location.reload();
 				}
