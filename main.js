@@ -320,8 +320,9 @@ $(document).ready(async function() {
 	var s = swalmsg("Loading page");
 
 	if(getCookie("cosmo_mode") == "1" && document.location.href.indexOf('no_cosmo') === -1) {
-		cosmo_mode(); // cannot be async
+		await cosmo_mode(); // cannot be async
 	}
+
 
 	l("Trying to set Backend");
 	await set_backend();
