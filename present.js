@@ -65,6 +65,12 @@ function addScrollRightButton () {
 }
 
 function addScrollButtons (currentDivPresentationIndex, maxIndex) {
+	if(done_presenting) {
+		$("#scroll_left").remove();
+		$("#scroll_right").remove();
+		return;
+	}
+
 	if(currentDivPresentationIndex <= 0) {
 		$("#scroll_left").remove();
 	} else {
