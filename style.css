@@ -920,8 +920,11 @@ button {
 }
 
 .slide {
+	max-width: 100%;
+	max-height: 100%;
 	background-color: white;
 	pointer-events: none;
+	display: none;
 }
 
 .next_prev_buttons {

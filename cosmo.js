@@ -529,9 +529,11 @@ function runPresentation(divName) {
 	function showFullScreen(divs, currentIndex) {
 		var div = divs[currentIndex];
 
+		$(div).show();
+
 		log("showFullScreen", div);
-		div.style.width = '100vw';
-		div.style.height = '100vh';
+		div.style.width = '100%';
+		div.style.height = '100%';
 		div.style.position = 'fixed';
 		div.style.top = '0';
 		div.style.left = '0';
