@@ -434,5 +434,7 @@ function show_idle_time () {
 		$("body").append(`<div id="cosmo_reload_debugger" style='position: absolute; bottom: 100px; left: ${l}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'></div>`);
 	}
 
-	$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
+	if(idleTime) {
+		$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
+	}
 }
