@@ -129,6 +129,10 @@ class ManiC {
 		if(e) {
 			var $e = $(e);
 
+			if($e.data("no_manicule") == "1") {
+				return;
+			}
+
 			manicule_element_xpath = get_element_xpath($e[0]);
 
 			this.element = e;
@@ -373,9 +377,13 @@ function chose_next_manicule_target () {
 			var _l = possible_indices[i]["length"];
 			if(cosmo[_i]) {
 				$(cosmo[_i]).show();
-				possible_elements.push(cosmo[_i]);
+				if(!$(cosmo[_i]).data("no_manicule")) {
+					possible_elements.push(cosmo[_i]);
+				}
 			}
 		}
+
+		log(possible_elements);
 
 		if(possible_elements.length) {
 			var index_to_chose = possible_elements.length - 1;
@@ -386,11 +394,11 @@ function chose_next_manicule_target () {
 				$(this).attr("data-clicked", 1)
 			});
 		} else {
-			log("No possible elements found!");
+			log("No possible elements found for Manicule!");
 			remove_manicule(0);
 		}
 	} else {
-		log("No possible elements found (2)!");
+		log("No possible indices found for Manicule!");
 		remove_manicule(0);
 	}
 }
@@ -488,6 +496,8 @@ async function cosmo_mode () {
 
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+		runPresentation('cosmo_presentation');
 	}
 
 	$("#toggle_layers_button").hide();
@@ -506,4 +516,104 @@ function has_special_cosmo_classes (x) {
 	}
 
 	return s;
+}
+
+function runPresentation(divName) {
+	var container = document.getElementById(divName);
+	var divs = container.getElementsByTagName('div');
+	var currentIndex = 0;
+
+	// Function to display a div in full screen
+	function showFullScreen(div) {
+		div.style.width = '100vw';
+		div.style.height = '100vh';
+		div.style.position = 'fixed';
+		div.style.top = '0';
+		div.style.left = '0';
+		div.style.zIndex = '9999';
+		document.body.style.overflow = 'hidden';
+	}
+
+	// Function to remove full screen styles
+	function removeFullScreen(div) {
+		div.style.width = '';
+		div.style.height = '';
+		div.style.position = '';
+		div.style.top = '';
+		div.style.left = '';
+		div.style.zIndex = '';
+		document.body.style.overflow = '';
+	}
+
+	// Function to handle scrolling left or right
+	function handleScroll(event) {
+		var delta = Math.sign(event.deltaY || event.wheelDelta);
+		if (delta > 0) {
+			showNextDiv();
+		} else if (delta < 0) {
+			showPreviousDiv();
+		}
+	}
+
+	// Function to show the next div
+	function showNextDiv() {
+		if (currentIndex < divs.length - 1) {
+			removeFullScreen(divs[currentIndex]);
+			currentIndex++;
+			showFullScreen(divs[currentIndex]);
+		} else {
+			endPresentation();
+		}
+	}
+
+	// Function to show the previous div
+	function showPreviousDiv() {
+		if (currentIndex > 0) {
+			removeFullScreen(divs[currentIndex]);
+			currentIndex--;
+			showFullScreen(divs[currentIndex]);
+		}
+	}
+
+	// Function to handle touch events for swiping
+	function handleTouch(event) {
+		var x = event.touches[0].clientX;
+		var deltaX = x - startX;
+
+		if (deltaX > 0 && currentIndex > 0) {
+			showPreviousDiv();
+		} else if (deltaX < 0 && currentIndex < divs.length - 1) {
+			showNextDiv();
+		}
+	}
+
+	// Function to handle touch start event
+	function handleTouchStart(event) {
+		startX = event.touches[0].clientX;
+	}
+
+	// Function to handle touch end event
+	function handleTouchEnd(event) {
+		startX = null;
+	}
+
+	// Function to end the presentation
+	function endPresentation() {
+		removeFullScreen(divs[currentIndex]);
+		document.removeEventListener('wheel', handleScroll);
+		document.removeEventListener('touchstart', handleTouchStart);
+		document.removeEventListener('touchmove', handleTouch);
+		document.removeEventListener('touchend', handleTouchEnd);
+		$("#cosmo_presentation").hide();
+		add_cosmo_point('watched_presentation');
+	}
+
+	// Add event listeners for scrolling and touch events
+	document.addEventListener('wheel', handleScroll);
+	document.addEventListener('touchstart', handleTouchStart);
+	document.addEventListener('touchmove', handleTouch);
+	document.addEventListener('touchend', handleTouchEnd);
+
+	// Start the presentation
+	showFullScreen(divs[currentIndex]);
 }
