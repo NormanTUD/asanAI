@@ -941,6 +941,8 @@ button {
 	z-index: 99999;
 	position: absolute;
 	font-size: 50px;
+	color: black;
+	cursor: pointer;
 	width: 50px;
 	top: 50%;
 }
