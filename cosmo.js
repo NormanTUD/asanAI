@@ -605,7 +605,8 @@ function runPresentation(divName) {
 		document.removeEventListener('touchstart', handleTouchStart);
 		document.removeEventListener('touchmove', handleTouch);
 		document.removeEventListener('touchend', handleTouchEnd);
-		$("#cosmo_presentation").hide();
+		log("removing", $("#" + divName));
+		$("#" + divName).remove();
 		add_cosmo_point('watched_presentation');
 	}
 
