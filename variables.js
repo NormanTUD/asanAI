@@ -1385,3 +1385,7 @@ var idleTime = 0;
 var idleInterval = null;
 
 var reload_time = 10 * 60;
+
+var is_presenting = false;
+
+var done_presenting = false;

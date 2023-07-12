@@ -520,14 +520,21 @@ function has_special_cosmo_classes (x) {
 	return s;
 }
 
+var currentDivPresentationIndex = 0;
+
 function runPresentation(divName) {
+	if(done_presenting) {
+		return;
+	}
+
+	is_presenting = true;
+
 	var container = document.getElementById(divName);
 	var divs = container.getElementsByTagName('div');
-	var currentIndex = 0;
 
 	// Function to display a div in full screen
-	function showFullScreen(divs, currentIndex) {
-		var div = divs[currentIndex];
+	function showFullScreen(divs, currentDivPresentationIndex) {
+		var div = divs[currentDivPresentationIndex];
 
 		$(div).show();
 
@@ -540,12 +547,12 @@ function runPresentation(divName) {
 		div.style.zIndex = '9999';
 		document.body.style.overflow = 'hidden';
 
-		addScrollButtons(currentIndex, divs.length);
+		addScrollButtons(currentDivPresentationIndex, divs.length);
 	}
 
 	// Function to remove full screen styles
-	function removeFullScreen(divs, currentIndex) {
-		var div = divs[currentIndex];
+	function removeFullScreen(divs, currentDivPresentationIndex) {
+		var div = divs[currentDivPresentationIndex];
 		div.style.width = '';
 		div.style.height = '';
 		div.style.position = '';
@@ -575,14 +582,14 @@ function runPresentation(divName) {
 		$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>");
 	}
 
-	function addScrollButtons (currentIndex, maxIndex) {
-		if(currentIndex == 0) {
+	function addScrollButtons (currentDivPresentationIndex, maxIndex) {
+		if(currentDivPresentationIndex <= 0) {
 			$("#scroll_left").remove();
 		} else {
 			addScrollLeftButton();
 		}
 		
-		if(currentIndex == maxIndex) {
+		if(currentDivPresentationIndex >= maxIndex) {
 			$("#scroll_right").remove();
 		} else {
 			addScrollRightButton();
@@ -591,10 +598,10 @@ function runPresentation(divName) {
 
 	// Function to show the next div
 	function showNextDiv() {
-		if (currentIndex < divs.length - 1) {
-			removeFullScreen(divs, currentIndex);
-			currentIndex++;
-			showFullScreen(divs, currentIndex);
+		if (currentDivPresentationIndex < divs.length - 1) {
+			removeFullScreen(divs, currentDivPresentationIndex);
+			currentDivPresentationIndex++;
+			showFullScreen(divs, currentDivPresentationIndex);
 		} else {
 			endPresentation();
 		}
@@ -602,10 +609,10 @@ function runPresentation(divName) {
 
 	// Function to show the previous div
 	function showPreviousDiv() {
-		if (currentIndex > 0) {
-			removeFullScreen(divs, currentIndex);
-			currentIndex--;
-			showFullScreen(divs, currentIndex);
+		if (currentDivPresentationIndex > 0) {
+			removeFullScreen(divs, currentDivPresentationIndex);
+			currentDivPresentationIndex--;
+			showFullScreen(divs, currentDivPresentationIndex);
 		}
 	}
 
@@ -614,9 +621,9 @@ function runPresentation(divName) {
 		var x = event.touches[0].clientX;
 		var deltaX = x - startX;
 
-		if (deltaX > 0 && currentIndex > 0) {
+		if (deltaX > 0 && currentDivPresentationIndex > 0) {
 			showPreviousDiv();
-		} else if (deltaX < 0 && currentIndex < divs.length - 1) {
+		} else if (deltaX < 0 && currentDivPresentationIndex < divs.length - 1) {
 			showNextDiv();
 		}
 	}
@@ -633,7 +640,7 @@ function runPresentation(divName) {
 
 	// Function to end the presentation
 	function endPresentation() {
-		removeFullScreen(divs, currentIndex);
+		removeFullScreen(divs, currentDivPresentationIndex);
 		document.removeEventListener('wheel', handleScroll);
 		document.removeEventListener('touchstart', handleTouchStart);
 		document.removeEventListener('touchmove', handleTouch);
@@ -641,7 +648,11 @@ function runPresentation(divName) {
 		log("removing", $("#" + divName));
 		$("#" + divName).remove();
 		$(".next_prev_buttons").remove();
-		add_cosmo_point('watched_presentation');
+		if(!Object.keys(current_skills).includes("watched_presentation")) {
+			add_cosmo_point('watched_presentation');
+		}
+
+		done_presenting = true;
 	}
 
 	// Add event listeners for scrolling and touch events
@@ -650,6 +661,31 @@ function runPresentation(divName) {
 	document.addEventListener('touchmove', handleTouch);
 	document.addEventListener('touchend', handleTouchEnd);
 
+	// Function to handle keydown events
+	function handleKeydown(event) {
+		if(done_presenting || !is_presenting) {
+			return;
+		}
+
+		switch (event.keyCode) {
+			case 37: // Left arrow key
+				showPreviousDiv();
+				break;
+			case 39: // Right arrow key
+				showNextDiv();
+				break;
+			case 37: // LEFT key
+				showPreviousDiv();
+				break;
+			case 39: // RIGHT key
+				showNextDiv();
+				break;
+		}
+	}
+
+	// Add event listener for keydown events
+	document.addEventListener('keydown', handleKeydown);
+
 	// Start the presentation
-	showFullScreen(divs, currentIndex);
+	showFullScreen(divs, currentDivPresentationIndex);
 }
