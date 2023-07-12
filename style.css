@@ -921,6 +921,7 @@ button {
 
 .slide {
 	background-color: white;
+	pointer-events: none;
 }
 
 .next_prev_buttons {
