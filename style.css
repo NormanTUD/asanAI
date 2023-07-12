@@ -928,6 +928,7 @@ button {
 	background-color: red;
 	position: absolute;
 	width: 50px;
+	top: 50%;
 }
 
 #scroll_right {
