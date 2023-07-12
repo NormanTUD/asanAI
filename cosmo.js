@@ -525,6 +525,7 @@ function runPresentation(divName) {
 
 	// Function to display a div in full screen
 	function showFullScreen(div) {
+		log("showFullScreen", div);
 		div.style.width = '100vw';
 		div.style.height = '100vh';
 		div.style.position = 'fixed';

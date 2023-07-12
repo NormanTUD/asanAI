@@ -206,9 +206,9 @@
 				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="watched_presentation" data-show_again_when_new_skill_acquired="took_images[2]" class="cosmo symbol_button" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
 			</div>
 			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
-				<div>Slide 1</div>
-				<div>Slide 2</div>
-				<div>Slide 3</div>
+				<div class="slide">Slide 1</div>
+				<div class="slide">Slide 2</div>
+				<div class="slide">Slide 3</div>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">

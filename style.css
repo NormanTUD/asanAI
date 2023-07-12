@@ -918,3 +918,7 @@ button {
 .fireworks-container {
 	pointer-events: none;
 }
+
+.slide {
+	background-color: white;
+}
