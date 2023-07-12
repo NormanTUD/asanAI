@@ -396,6 +396,7 @@ function chose_next_manicule_target () {
 }
 
 async function cosmo_mode () {
+	console.trace();
 	if(is_cosmo_mode) {
 		l("Exiting cosmo mode");
 		setCookie("cosmo_mode", "0", 1);

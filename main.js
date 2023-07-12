@@ -319,14 +319,12 @@ async function set_backend() {
 $(document).ready(async function() {
 	var s = swalmsg("Loading page");
 
-	if(getCookie("cosmo_mode") == "1" && document.location.href.indexOf('no_cosmo') === -1) {
-		await cosmo_mode(); // cannot be async
-	}
-
 	if(!is_cosmo_mode) {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
-				await cosmo_mode();
+			await cosmo_mode();
 		}
+	} else {
+
 	}
 
 	l("Trying to set Backend");
@@ -471,6 +469,7 @@ $(document).ready(async function() {
 
 	invert_elements_in_dark_mode();
 
+	/*
 	document.addEventListener('keydown', (event) => {
 		const currentTime = new Date().getTime();
 
@@ -489,6 +488,7 @@ $(document).ready(async function() {
 			}
 		}
 	});
+	*/
 
 	click_on_graphs = 0;
 
