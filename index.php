@@ -120,6 +120,7 @@
 		<?php minify_js("data.js"); ?>
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
+		<?php minify_js("cosmo.js"); ?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
 		
