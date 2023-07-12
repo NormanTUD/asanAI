@@ -1375,6 +1375,11 @@ var last_manually_removed_manicule_element = null;
 
 var enable_cosmo_debugger = false;
 
+if(("" + window.location).includes("http://localhost/")) {
+	console.log("Enabling cosmo debugger because you are on localhost");
+	enable_cosmo_debugger = true;
+}
+
 var idleTime = 0;
 
 var idleInterval = null;
