@@ -548,6 +548,8 @@ function runPresentation(divName) {
 		document.body.style.overflow = 'hidden';
 
 		addScrollButtons(currentDivPresentationIndex, divs.length);
+
+		$($(".slide")[currentDivPresentationIndex]).focus()
 	}
 
 	// Function to remove full screen styles
@@ -596,12 +598,14 @@ function runPresentation(divName) {
 		}
 	}
 
+
 	// Function to show the next div
 	function showNextDiv() {
 		if (currentDivPresentationIndex < divs.length - 1) {
 			removeFullScreen(divs, currentDivPresentationIndex);
 			currentDivPresentationIndex++;
 			showFullScreen(divs, currentDivPresentationIndex);
+			divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 		} else {
 			endPresentation();
 		}
@@ -613,6 +617,7 @@ function runPresentation(divName) {
 			removeFullScreen(divs, currentDivPresentationIndex);
 			currentDivPresentationIndex--;
 			showFullScreen(divs, currentDivPresentationIndex);
+			divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 		}
 	}
 
@@ -640,6 +645,15 @@ function runPresentation(divName) {
 
 	// Function to end the presentation
 	function endPresentation() {
+		if(done_presenting) {
+			return;
+		}
+
+		if(!is_presenting) {
+			log("Not ending presentation because seemingly it has already ended");
+			return;
+		}
+
 		removeFullScreen(divs, currentDivPresentationIndex);
 		document.removeEventListener('wheel', handleScroll);
 		document.removeEventListener('touchstart', handleTouchStart);
@@ -663,23 +677,10 @@ function runPresentation(divName) {
 
 	// Function to handle keydown events
 	function handleKeydown(event) {
-		if(done_presenting || !is_presenting) {
-			return;
-		}
-
-		switch (event.keyCode) {
-			case 37: // Left arrow key
-				showPreviousDiv();
-				break;
-			case 39: // Right arrow key
-				showNextDiv();
-				break;
-			case 37: // LEFT key
-				showPreviousDiv();
-				break;
-			case 39: // RIGHT key
-				showNextDiv();
-				break;
+		if (event.key === "ArrowLeft" || event.key === "Left") {
+			showPreviousDiv();
+		} else if (event.key === "ArrowRight" || event.key === "Right") {
+			showNextDiv();
 		}
 	}
 
