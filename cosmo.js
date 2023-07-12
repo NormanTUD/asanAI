@@ -370,6 +370,8 @@ function chose_next_manicule_target () {
 		}
 	});
 
+	log("Possible indices:", possible_indices);
+
 	if(possible_indices.length) {
 		var possible_elements = [];
 		for (var i = 0; i < possible_indices.length; i++) {
