@@ -323,6 +323,11 @@ $(document).ready(async function() {
 		await cosmo_mode(); // cannot be async
 	}
 
+	if(!is_cosmo_mode) {
+		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
+				await cosmo_mode();
+		}
+	}
 
 	l("Trying to set Backend");
 	await set_backend();
