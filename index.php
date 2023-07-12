@@ -120,6 +120,7 @@
 		<?php minify_js("data.js"); ?>
 		<?php minify_js("debug.js"); ?>
 		<?php minify_js("gui.js"); ?>
+		<?php minify_js("present.js"); ?>
 		<?php minify_js("cosmo.js"); ?>
 		<?php minify_js("train.js"); ?>
 		<?php minify_js("predict.js"); ?>
@@ -210,7 +211,7 @@
 				$files = scandir('presentation/');
 				foreach($files as $file) {
 					if(preg_match("/\.png$/i", $file)) {
-						print "<div class='slide'><img style='width: 100%' src='presentation/$file'></div>";
+						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 100%; max-height: 100%' src='presentation/$file'></div>";
 					}
 				}
 ?>

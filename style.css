@@ -919,7 +919,16 @@ button {
 	pointer-events: none;
 }
 
+#cosmo_presentation {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
 .slide {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
 	max-width: 100%;
 	max-height: 100%;
 	background-color: white;
@@ -928,6 +937,7 @@ button {
 }
 
 .next_prev_buttons {
+	user-select: none;
 	z-index: 99999;
 	background-color: red;
 	position: absolute;
