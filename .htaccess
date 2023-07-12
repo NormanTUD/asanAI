@@ -1,3 +1,14 @@
 php_value upload_max_filesize 500M
 php_value post_max_size 500M
 RedirectMatch 404 /\.git
+
+RewriteEngine On
+RewriteBase /
+
+# Internal redirection for "/cosmo/"
+RewriteRule ^cosmo/$ index.php?start_cosmo=1 [L]
+
+# Pass other parameters to index.php
+RewriteCond %{QUERY_STRING} !^$
+RewriteRule ^index\.php$ index.php [QSA,L]
+
