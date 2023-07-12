@@ -3,15 +3,8 @@ php_value post_max_size 500M
 RedirectMatch 404 /\.git
 
 RewriteEngine On
+RewriteBase /tf/
 
-# Redirect "/cosmo/" to "index.php?start_cosmo=1"
-RewriteRule ^cosmo/$ index.php?start_cosmo=1 [L]
-
-# Pass other parameters to index.php
-RewriteCond %{QUERY_STRING} !^$
-RewriteRule ^index\.php$ index.php [QSA,L]
-
-# Handle requests for existing files or directories
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+# Redirect "/cosmo/" to the same subdirectory's index.php with query parameter
+RewriteRule ^cosmo/$ index.php?start_cosmo=1 [QSA,L]
+RewriteRule ^cosmo/(.*)$ /tf/$1 [L]
