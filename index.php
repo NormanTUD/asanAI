@@ -206,9 +206,14 @@
 				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="watched_presentation" data-show_again_when_new_skill_acquired="took_images[2]" class="cosmo symbol_button" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
 			</div>
 			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
-				<div class="slide">Slide 1</div>
-				<div class="slide">Slide 2</div>
-				<div class="slide">Slide 3</div>
+<?php
+				$files = scandir('presentation/');
+				foreach($files as $file) {
+					if(preg_match("/\.png$/i", $file)) {
+						print "<div class='slide'><img style='width: 100%' src='presentation/$file'></div>";
+					}
+				}
+?>
 			</div>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">

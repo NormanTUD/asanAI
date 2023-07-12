@@ -524,7 +524,9 @@ function runPresentation(divName) {
 	var currentIndex = 0;
 
 	// Function to display a div in full screen
-	function showFullScreen(div) {
+	function showFullScreen(divs, currentIndex) {
+		var div = divs[currentIndex];
+
 		log("showFullScreen", div);
 		div.style.width = '100vw';
 		div.style.height = '100vh';
@@ -536,7 +538,8 @@ function runPresentation(divName) {
 	}
 
 	// Function to remove full screen styles
-	function removeFullScreen(div) {
+	function removeFullScreen(divs, currentIndex) {
+		var div = divs[currentIndex];
 		div.style.width = '';
 		div.style.height = '';
 		div.style.position = '';
@@ -556,12 +559,18 @@ function runPresentation(divName) {
 		}
 	}
 
+	function addScrollRightButton () {
+		$("#scroll_right").remove();
+		$("body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>");
+		$("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>").append("body");
+	}
+
 	// Function to show the next div
 	function showNextDiv() {
 		if (currentIndex < divs.length - 1) {
-			removeFullScreen(divs[currentIndex]);
+			removeFullScreen(divs, currentIndex);
 			currentIndex++;
-			showFullScreen(divs[currentIndex]);
+			showFullScreen(divs, currentIndex);
 		} else {
 			endPresentation();
 		}
@@ -570,9 +579,9 @@ function runPresentation(divName) {
 	// Function to show the previous div
 	function showPreviousDiv() {
 		if (currentIndex > 0) {
-			removeFullScreen(divs[currentIndex]);
+			removeFullScreen(divs, currentIndex);
 			currentIndex--;
-			showFullScreen(divs[currentIndex]);
+			showFullScreen(divs, currentIndex);
 		}
 	}
 
@@ -600,13 +609,14 @@ function runPresentation(divName) {
 
 	// Function to end the presentation
 	function endPresentation() {
-		removeFullScreen(divs[currentIndex]);
+		removeFullScreen(divs, currentIndex);
 		document.removeEventListener('wheel', handleScroll);
 		document.removeEventListener('touchstart', handleTouchStart);
 		document.removeEventListener('touchmove', handleTouch);
 		document.removeEventListener('touchend', handleTouchEnd);
 		log("removing", $("#" + divName));
 		$("#" + divName).remove();
+		$(".next_prev_buttons").remove();
 		add_cosmo_point('watched_presentation');
 	}
 
@@ -617,5 +627,5 @@ function runPresentation(divName) {
 	document.addEventListener('touchend', handleTouchEnd);
 
 	// Start the presentation
-	showFullScreen(divs[currentIndex]);
+	showFullScreen(divs, currentIndex);
 }

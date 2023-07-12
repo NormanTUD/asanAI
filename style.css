@@ -922,3 +922,8 @@ button {
 .slide {
 	background-color: white;
 }
+
+.next_prev_buttons {
+	z-index: 99999;
+	background-color: red;
+}
