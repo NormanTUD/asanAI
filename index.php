@@ -192,7 +192,7 @@
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	</head>
-	<body data-chardin-sequenced="true">
+	<body id='body' data-chardin-sequenced="true">
 		<noscript>
 			<span style="font-size: 50px; color: red">You must enable JavaScript for this site to work. Please add an exception to NoScript if you have it installed.</span>
 		</noscript>

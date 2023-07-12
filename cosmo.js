@@ -537,6 +537,8 @@ function runPresentation(divName) {
 		div.style.left = '0';
 		div.style.zIndex = '9999';
 		document.body.style.overflow = 'hidden';
+
+		addScrollButtons(currentIndex, divs.length);
 	}
 
 	// Function to remove full screen styles
@@ -561,10 +563,28 @@ function runPresentation(divName) {
 		}
 	}
 
+	function addScrollLeftButton () {
+		$("#scroll_left").remove();
+		$("#body").append("<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>LEFT</span>");
+	}
+
 	function addScrollRightButton () {
 		$("#scroll_right").remove();
-		$("body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>");
-		$("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>").append("body");
+		$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>");
+	}
+
+	function addScrollButtons (currentIndex, maxIndex) {
+		if(currentIndex == 0) {
+			$("#scroll_left").remove();
+		} else {
+			addScrollLeftButton();
+		}
+		
+		if(currentIndex == maxIndex) {
+			$("#scroll_right").remove();
+		} else {
+			addScrollRightButton();
+		}
 	}
 
 	// Function to show the next div

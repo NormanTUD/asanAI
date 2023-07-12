@@ -926,4 +926,14 @@ button {
 .next_prev_buttons {
 	z-index: 99999;
 	background-color: red;
+	position: absolute;
+	width: 50px;
+}
+
+#scroll_right {
+	right: 0px;
+}
+
+#scroll_left {
+	left: 0px;
 }
