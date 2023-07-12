@@ -56,12 +56,12 @@ function handleScroll(event) {
 
 function addScrollLeftButton () {
 	$("#scroll_left").remove();
-	$("#body").append("<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>LEFT</span>");
+	$("#body").append("<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>&#12296;</span>");
 }
 
 function addScrollRightButton () {
 	$("#scroll_right").remove();
-	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>RIGHT</span>");
+	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
 }
 
 function addScrollButtons (currentDivPresentationIndex, maxIndex) {

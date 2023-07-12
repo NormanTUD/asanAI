@@ -939,8 +939,8 @@ button {
 .next_prev_buttons {
 	user-select: none;
 	z-index: 99999;
-	background-color: red;
 	position: absolute;
+	font-size: 50px;
 	width: 50px;
 	top: 50%;
 }
