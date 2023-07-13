@@ -367,10 +367,15 @@ function get_fit_data () {
 		}
 
 		$("#plotly_epoch_history").parent().show();
-		if(epochNr == 1) {
-			Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_layout);
+		if(!is_cosmo_mode) {
+			$("#plotly_epoch_history").show();
+			if(epochNr == 1) {
+				Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_layout);
+			} else {
+				Plotly.update('plotly_epoch_history', this_plot_data, plotly_layout);
+			}
 		} else {
-			Plotly.update('plotly_epoch_history', this_plot_data, plotly_layout);
+			$("#plotly_epoch_history").hide();
 		}
 
 		var this_plot_data = [training_logs_batch["loss"]];
@@ -793,6 +798,14 @@ function visualize_train () {
 	var probabilities = [];
 
 	var max = parseInt($("#max_number_of_images_in_grid").val());
+
+	if(is_cosmo_mode) {
+		$("#plotly_epoch_history").hide();
+		$("#canvas_grid_visualization").css({"position": "inherit"});
+	} else {
+		$("#plotly_epoch_history").show();
+		$("#canvas_grid_visualization").css({"position": "absolute"});
+	}
 
 	if(labels.length) {
 		var image_elements = shuffle($("#photos").find("img"));
