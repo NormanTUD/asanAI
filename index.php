@@ -1391,12 +1391,22 @@
 												</div>
 											</div>
 
-											<span class="hide_when_no_image">
-												<div id="upload_file" class="show_data no_box_shadow">
+											<span class="hide_when_no_image custom_image_data">
+												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
+												<div class="full_example_image_prediction only_when_webcam_on">
+													<div id="webcam" style="display: none"></div>
+													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
+												</div>
+											</span>
+
+											<span class="hide_when_no_image custom_image_data">
+												<div id="upload_file" class="show_data no_box_shadow ">
 													<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229</span>
 													<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
 												</div>
-												<div class="full_example_image_prediction only_show_when_predicting_image_file">
+												<br>
+												<div class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
 													<img style="display:none" id="output"/>
 
 													<br>
@@ -1404,19 +1414,8 @@
 													<div id="predict_error" style="overflow: scroll; display: none"></div>
 													<div id="prediction" style="display: none"></div>
 												</div>
-
 											</span>
 
-											<div class="hide_when_no_image">
-												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
-												<div class="full_example_image_prediction only_when_webcam_on">
-													<div id="webcam" style="display: none"></div>
-													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
-												</div>
-											</div>
-
-											
 											<div id="prediction_non_image" style="display: none"></div>
 										</div>
 
@@ -1428,6 +1427,7 @@
 											</div>
 										</div>
 
+										<br>
 
 										<div class="hide_when_custom_data">
 											<!--

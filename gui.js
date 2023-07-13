@@ -5219,7 +5219,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this);"><img width=32 src='Eraser_icon.svg'/></a></span>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>&#10060;</span><br>
-		<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
+		<img src='colorpicker.svg' width=32 /> <input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
 		<br />
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>

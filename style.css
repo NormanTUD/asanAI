@@ -954,3 +954,8 @@ button {
 #scroll_left {
 	left: 0px;
 }
+
+.custom_image_data {
+	display: inline;
+	float: left;
+}

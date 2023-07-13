@@ -92,6 +92,8 @@ in creating this program:
 
 - [Manicule](https://news.lib.wvu.edu/2017/08/28/the-first-post-it-note-the-manicule/)
 
+- [Color Picker Icon](https://commons.wikimedia.org/wiki/File:Inkscape_icons_color_picker.svg)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
