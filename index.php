@@ -1239,6 +1239,16 @@
 							</div>
 
 							<div id="training_data_tab">
+								<div class="show_only_in_cosmo_mode">
+									Hier sind 5 Bilder, eines aus jeder Kategorie, die das Netzwerk lernen soll:
+									<ul>
+										<li>- Warnung (warning)</li>
+										<li>- Rettung (resque)</li>
+										<li>- Verbot (prohibition)</li>
+										<li>- Verpflichtend (mandatory)</li>
+										<li>- Feuer (fire)</li>
+									</ul>
+								</div>
 								<div id="percentage" class="reset_before_train_network"></div>
 								<button id="stop_downloading" onclick="stop_downloading_data=true" style="display: none">Stop downloading and start training</button>
 								<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>

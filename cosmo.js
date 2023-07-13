@@ -439,6 +439,8 @@ async function cosmo_mode () {
 		if(manicule) {
 			manicule.hide();
 		}
+
+		$(".show_only_in_cosmo_mode").hide();
 	} else {
 		l("Starting cosmo mode");
 		$("#beginner").click();
@@ -498,6 +500,8 @@ async function cosmo_mode () {
 
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+		$(".show_only_in_cosmo_mode").show();
 
 		runPresentation('cosmo_presentation');
 	}

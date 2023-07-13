@@ -959,3 +959,7 @@ button {
 	display: inline;
 	float: left;
 }
+
+.show_only_in_cosmo_mode {
+	display: none;
+}

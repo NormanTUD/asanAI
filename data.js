@@ -149,8 +149,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		}
 	}
 
-	urls = shuffle(urls);
-
+	//urls = shuffle(urls);
 
 	var percentage_div = $("#percentage");
 
