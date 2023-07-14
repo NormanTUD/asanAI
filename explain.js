@@ -958,7 +958,9 @@ async function get_image_from_url (url) {
 }
 
 async function draw_maximally_activated_layer (layer, type) {
-	show_tab_label("maximally_activated_label", 1);
+	if(!is_cosmo_mode) {
+		show_tab_label("maximally_activated_label", 1);
+	}
 
 	var neurons = 1;
 
@@ -1013,8 +1015,10 @@ async function draw_maximally_activated_layer (layer, type) {
 		});
 
 
-		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		if(!is_cosmo_mode) {
+			show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+			show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		}
 
 
 		var start = Date.now();
@@ -1083,7 +1087,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 			if(res) {
 				$("#maximally_activated_content").prepend(canvas);
-				show_tab_label("maximally_activated_label", 1)
+				if(!is_cosmo_mode) {
+					show_tab_label("maximally_activated_label", 1)
+				}
 			} else {
 				log("Res: " + res);
 			}
@@ -2370,3 +2376,12 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 
 // grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
 // tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
+
+async function cosmo_maximally_activate_last_layer () {
+    $("#maximally_activated_content").html("")
+    $("#cosmo_visualize_last_layer").html("");
+    var lt = get_layer_type_array();
+    await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+    $(".h2_maximally_activated_layer_contents").html("So denkt die KI dass die Kategorien aussehen:");
+    move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
+}

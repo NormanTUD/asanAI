@@ -138,6 +138,10 @@ async function train_neural_network () {
 
 		await run_neural_network();
 
+		if(is_cosmo_mode) {
+			await cosmo_maximally_activate_last_layer();
+		}
+
 		await enable_everything();
 
 		await show_prediction();

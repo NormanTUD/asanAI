@@ -1393,6 +1393,8 @@
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
 								</span>
 
+								<span id="cosmo_visualize_last_layer" class="show_only_in_cosmo_mode" style="display: none"></span>
+
 								<canvas id="grad_cam_heatmap" style="position: fixed; left: 50px; bottom: 50px; display: none"></canvas>
 
 								<div class="container" id="predictcontainer">
