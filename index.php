@@ -1344,6 +1344,11 @@
 								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
 								<div class="overlay_each_other">
+									<div class="show_only_in_cosmo_mode" style="display: none">
+										Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.
+
+										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.
+									</div>
 									<span id="canvas_grid_visualization"></span>
 									<span id="show_visualization_here_in_cosmo"></span>
 									<br>
