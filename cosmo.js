@@ -476,8 +476,10 @@ async function cosmo_mode () {
 			if(Object.keys(current_skills).length > 1) {
 				idleTime = idleTime + 1;
 				if (idleTime > reload_time) { // 10 minutes
-					window.location.reload();
-					location.reload();
+					if(is_cosmo_mode) {
+						window.location.reload();
+						location.reload();
+					}
 				}
 			}
 			
