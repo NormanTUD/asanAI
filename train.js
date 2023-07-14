@@ -806,9 +806,11 @@ function visualize_train () {
 	if(is_cosmo_mode) {
 		$("#plotly_epoch_history").hide();
 		$("#canvas_grid_visualization").css({"position": "inherit"});
+		$("#canvas_grid_visualization").css({"opacity": "1"});
 	} else {
 		$("#plotly_epoch_history").show();
 		$("#canvas_grid_visualization").css({"position": "absolute"});
+		$("#canvas_grid_visualization").css({"opacity": "0.5"});
 	}
 
 	if(labels.length) {
