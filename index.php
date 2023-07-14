@@ -1239,7 +1239,7 @@
 							</div>
 
 							<div id="training_data_tab">
-								<div class="show_only_in_cosmo_mode">
+								<div class="show_only_in_cosmo_mode" style="display: none">
 									Hier sind 5 Bilder, eines aus jeder Kategorie, die das Netzwerk lernen soll:
 									<ul>
 										<li>- Warnung (warning)</li>
