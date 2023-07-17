@@ -1389,3 +1389,11 @@ var reload_time = 5 * 60;
 var is_presenting = false;
 
 var done_presenting = false;
+
+var cosmo_categories = [
+	"Warnung",
+	"Rettung",
+	"Verbot",
+	"Verpflichtend",
+	"Feuer"
+];
