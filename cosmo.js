@@ -509,6 +509,8 @@ async function cosmo_mode () {
 
 		$(".glass_box").css("border", "none");
 		$(".glass_box").css("box-shadow", "none");
+
+		$("#body").css("text-align", "center");
 	}
 
 	$("#toggle_layers_button").hide();
