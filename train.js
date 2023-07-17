@@ -281,6 +281,7 @@ function get_fit_data () {
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
 
 		if(is_cosmo_mode) {
+			time_estimate = human_readable_time_german(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
 			$("#current_epoch_cosmo_display").html(current_epoch);
 			$("#max_epoch_cosmo_display").html(max_number_epochs);
 			$("#time_estimate_cosmo").html(time_estimate);
