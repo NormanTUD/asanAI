@@ -2384,7 +2384,7 @@ async function cosmo_maximally_activate_last_layer () {
 	$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
-	$(".h2_maximally_activated_layer_contents").html("So denkt die KI dass die Kategorien aussehen:");
+	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
 
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
