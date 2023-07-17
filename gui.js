@@ -3516,7 +3516,7 @@ function alter_text_webcam_series () {
 
 	var s = "&#128248; x " + number;
 	if(!is_cosmo_mode) {
-		s = s + " (" + (1/delaybetween) + "/s)"
+		s = s + " (" + (1 / delaybetween) + "/s)"
 	}
 
 	$(".webcam_series_button").html(s);
