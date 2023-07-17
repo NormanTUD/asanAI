@@ -1002,10 +1002,10 @@ async function draw_maximally_activated_layer (layer, type) {
 		document.title = swal_msg;
 
 		await Swal.fire({
-			title: 'Generating Image...',
+			title: 'Generating visualizations of neurons...',
 			html: swal_msg,
 			timer: 2000,
-			showCancelButton: true,
+			showCancelButton: !is_cosmo_mode,
 			showConfirmButton: false
 		}).then((e)=>{
 			if(e.isDismissed && e.dismiss == "cancel") {
