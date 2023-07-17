@@ -140,6 +140,7 @@ async function train_neural_network () {
 
 		if(is_cosmo_mode) {
 			await cosmo_maximally_activate_last_layer();
+			$("#show_webcam_button").click();
 		}
 
 		await enable_everything();

@@ -1003,7 +1003,7 @@ async function get_shape_from_array(a) {
 }
 
 function stop_webcam() {
-	$("#show_webcam_button").html("<span class='large_button'>&#128247;</span>");
+	$("#show_webcam_button").html("<span class='show_webcam_button large_button'>&#128247;</span>");
 	if (cam) {
 		cam.stop();
 	}
