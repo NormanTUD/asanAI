@@ -506,6 +506,9 @@ async function cosmo_mode () {
 		$(".show_only_in_cosmo_mode").show();
 
 		runPresentation('cosmo_presentation');
+
+		$(".glass_box").css("border", "none");
+		$(".glass_box").css("box-shadow", "none");
 	}
 
 	$("#toggle_layers_button").hide();
