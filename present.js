@@ -29,6 +29,10 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	addScrollButtons(currentDivPresentationIndex, divs.length);
 
 	$($(".slide")[currentDivPresentationIndex]).focus()
+
+	$("#presentation_site_nr").remove();
+
+	$("#body").append(`<div id='presentation_site_nr' style='z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`);
 }
 
 // Function to remove full screen styles
