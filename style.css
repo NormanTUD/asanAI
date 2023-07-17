@@ -952,6 +952,7 @@ button {
 }
 
 #scroll_left {
+	font-size: 1em;
 	left: 0px;
 }
 
