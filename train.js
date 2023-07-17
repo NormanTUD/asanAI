@@ -279,6 +279,12 @@ function get_fit_data () {
 
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
 
+		if(is_cosmo_mode) {
+			$("#current_epoch_cosmo_display").html(current_epoch);
+			$("#max_epoch_cosmo_display").html(max_number_epochs);
+			$("#time_estimate_cosmo").html(time_estimate);
+		}
+
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
 	};
