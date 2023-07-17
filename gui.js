@@ -3342,6 +3342,11 @@ async function change_data_origin() {
 		$("#own_images_container").html("");
 		await add_new_category();
 		await add_new_category();
+		if(is_cosmo_mode) {
+			await add_new_category();
+			await add_new_category();
+			await add_new_category();
+		}
 		disable_start_training_button_custom_images();
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
