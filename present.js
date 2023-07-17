@@ -157,6 +157,8 @@ function endPresentation() {
 
 	done_presenting = true;
 
+	$("#presentation_site_nr").remove();
+
 	chose_next_manicule_target();
 }
 
