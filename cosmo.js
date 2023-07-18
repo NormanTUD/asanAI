@@ -515,11 +515,19 @@ async function cosmo_mode () {
 		// Attach event listener to the document or a specific parent element
 		document.addEventListener("click", function(event) {
 			// Check if the clicked element does not have its own event handler
-			if (!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit']")) {
+			if (!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input]")) {
 				// Execute your function
 				autochoose_next();
 			}
 		});
+
+		// To make the entire document unselectable
+		document.documentElement.style.userSelect = 'none';
+
+		// To make a specific element with ID "body" unselectable
+		var bodyElement = document.getElementById('body');
+		bodyElement.style.userSelect = 'none';
+
 	}
 
 	$("#toggle_layers_button").hide();
