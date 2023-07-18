@@ -285,6 +285,7 @@ function get_fit_data () {
 			$("#current_epoch_cosmo_display").html(current_epoch);
 			$("#max_epoch_cosmo_display").html(max_number_epochs);
 			$("#time_estimate_cosmo").html(time_estimate);
+			idleTime = 0;
 		}
 
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
@@ -810,6 +811,9 @@ function visualize_train () {
 	var probabilities = [];
 
 	var max = parseInt($("#max_number_of_images_in_grid").val());
+	if(is_cosmo_mode) {
+		max = 100000;
+	}
 
 	if(is_cosmo_mode) {
 		$("#plotly_epoch_history").hide();
