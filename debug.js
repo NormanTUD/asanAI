@@ -363,7 +363,7 @@ function cosmo_debugger () {
 	var dbgf = (i, x) => {
 		if(!is_hidden_or_has_hidden_parent(x)) {
 			var xpath = get_element_xpath(x);
-			var l = $(x).offset().left + $(x).width();
+			var left = $(x).offset().left + $(x).width();
 			var t = $(x).offset()["top"] + Math.random() * 20;
 
 			var cosmo_debug_arr = [];
@@ -412,7 +412,7 @@ function cosmo_debugger () {
 
 			var cosmo_debug_str = cosmo_debug_arr.join(", ");
 
-			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${l}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 		}
 	}
 
@@ -431,7 +431,8 @@ function show_idle_time () {
 	}
 
 	if(!$("#cosmo_reload_debugger").length) {
-		$("body").append(`<div id="cosmo_reload_debugger" style='position: absolute; bottom: 100px; left: ${l}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'></div>`);
+		var left = 50;
+		$("body").append(`<div id="cosmo_reload_debugger" style="position: absolute; bottom: 100px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;" class="manicule_debugger"></div>`);
 	}
 
 	if(idleTime) {
