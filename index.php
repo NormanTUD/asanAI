@@ -1439,7 +1439,7 @@
 											<div id="prediction_non_image" style="display: none"></div>
 										</div>
 
-										<div class="handdrawn hide_when_no_image">
+										<div class="handdrawn hide_when_no_image" style='text-align: justify'>
 											<div class="full_example_image_prediction">
 												<div id='predict_handdrawn_canvas'></div>
 
