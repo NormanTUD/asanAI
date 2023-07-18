@@ -528,6 +528,7 @@ async function cosmo_mode () {
 		var bodyElement = document.getElementById('body');
 		bodyElement.style.userSelect = 'none';
 
+		addBackgroundGradient();
 	}
 
 	$("#toggle_layers_button").hide();
@@ -556,4 +557,11 @@ function autochoose_next () {
 	} else {
 		console.warn("No manicule element found...");
 	}
+}
+
+function addBackgroundGradient() {
+	var body = document.querySelector("body");
+	var from = "d3e4f3";
+	var to = "ffffff";
+	body.style.background = `linear-gradient(to bottom, #${from} 0%, #${to} 100%)`;
 }
