@@ -11,40 +11,41 @@ function handleKeydown(event) {
 	}
 }
 
-
 // Function to display a div in full screen
 function showFullScreen(divs, currentDivPresentationIndex) {
 	var div = divs[currentDivPresentationIndex];
 
 	$(div).show();
 
-	div.style.width = '100%';
-	div.style.height = '100%';
-	div.style.position = 'fixed';
-	div.style.top = '0';
-	div.style.left = '0';
-	div.style.zIndex = '9999';
-	document.body.style.overflow = 'hidden';
+	div.style.width = "100%";
+	div.style.height = "100%";
+	div.style.position = "fixed";
+	div.style.top = "0";
+	div.style.left = "0";
+	div.style.zIndex = "9999";
+	document.body.style.overflow = "hidden";
 
 	addScrollButtons(currentDivPresentationIndex, divs.length);
 
-	$($(".slide")[currentDivPresentationIndex]).focus()
+	$($(".slide")[currentDivPresentationIndex]).focus();
 
 	$("#presentation_site_nr").remove();
 
-	$("#body").append(`<div id='presentation_site_nr' style='z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`);
+	$("#body").append(
+		`<div id='presentation_site_nr' style='z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
+	);
 }
 
 // Function to remove full screen styles
 function removeFullScreen(divs, currentDivPresentationIndex) {
 	var div = divs[currentDivPresentationIndex];
-	div.style.width = '';
-	div.style.height = '';
-	div.style.position = '';
-	div.style.top = '';
-	div.style.left = '';
-	div.style.zIndex = '';
-	document.body.style.overflow = '';
+	div.style.width = "";
+	div.style.height = "";
+	div.style.position = "";
+	div.style.top = "";
+	div.style.left = "";
+	div.style.zIndex = "";
+	document.body.style.overflow = "";
 }
 
 // Function to handle scrolling left or right
@@ -57,36 +58,42 @@ function handleScroll(event) {
 	}
 }
 
-function addScrollLeftButton () {
+// Function to add the "go left" button
+function addScrollLeftButton() {
 	$("#scroll_left").remove();
-	$("#body").append("<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>&#12296;</span>");
+	$("#body").append(
+		"<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>&#12296;</span>"
+	);
 }
 
-function addScrollRightButton () {
+// Function to add the "go right" button
+function addScrollRightButton() {
 	$("#scroll_right").remove();
-	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
+	$("#body").append(
+		"<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>"
+	);
 }
 
-function addScrollButtons (currentDivPresentationIndex, maxIndex) {
-	if(done_presenting) {
+// Function to add or remove the scroll buttons
+function addScrollButtons(currentDivPresentationIndex, maxIndex) {
+	if (done_presenting) {
 		$("#scroll_left").remove();
 		$("#scroll_right").remove();
 		return;
 	}
 
-	if(currentDivPresentationIndex <= 0) {
+	if (currentDivPresentationIndex <= 0) {
 		$("#scroll_left").remove();
 	} else {
 		addScrollLeftButton();
 	}
-	
-	if(currentDivPresentationIndex >= maxIndex) {
+
+	if (currentDivPresentationIndex >= maxIndex - 1) {
 		$("#scroll_right").remove();
 	} else {
 		addScrollRightButton();
 	}
 }
-
 
 // Function to show the next div
 function showNextDiv() {
@@ -134,25 +141,25 @@ function handleTouchEnd(event) {
 
 // Function to end the presentation
 function endPresentation() {
-	if(done_presenting) {
+	if (done_presenting) {
 		return;
 	}
 
-	if(!is_presenting) {
+	if (!is_presenting) {
 		log("Not ending presentation because seemingly it has already ended");
 		return;
 	}
 
 	removeFullScreen(divs, currentDivPresentationIndex);
-	document.removeEventListener('wheel', handleScroll);
-	document.removeEventListener('touchstart', handleTouchStart);
-	document.removeEventListener('touchmove', handleTouch);
-	document.removeEventListener('touchend', handleTouchEnd);
+	document.removeEventListener("wheel", handleScroll);
+	document.removeEventListener("touchstart", handleTouchStart);
+	document.removeEventListener("touchmove", handleTouch);
+	document.removeEventListener("touchend", handleTouchEnd);
 	log("removing", $("#" + divName));
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
-	if(!Object.keys(current_skills).includes("watched_presentation")) {
-		add_cosmo_point('watched_presentation');
+	if (!Object.keys(current_skills).includes("watched_presentation")) {
+		add_cosmo_point("watched_presentation");
 	}
 
 	done_presenting = true;
@@ -162,26 +169,40 @@ function endPresentation() {
 	chose_next_manicule_target();
 }
 
+// Function to run the presentation
 function runPresentation(dn) {
 	divName = dn;
-	if(done_presenting) {
+	if (done_presenting) {
 		return;
 	}
 
 	is_presenting = true;
 
 	var container = document.getElementById(divName);
-	divs = container.getElementsByTagName('div');
+	divs = container.getElementsByTagName("div");
 
 	// Add event listeners for scrolling and touch events
-	document.addEventListener('wheel', handleScroll);
-	document.addEventListener('touchstart', handleTouchStart);
-	document.addEventListener('touchmove', handleTouch);
-	document.addEventListener('touchend', handleTouchEnd);
+	document.addEventListener("wheel", handleScroll);
+	document.addEventListener("touchstart", handleTouchStart);
+	document.addEventListener("touchmove", handleTouch);
+	document.addEventListener("touchend", handleTouchEnd);
 
 	// Add event listener for keydown events
-	document.addEventListener('keydown', handleKeydown);
+	document.addEventListener("keydown", handleKeydown);
 
 	// Start the presentation
 	showFullScreen(divs, currentDivPresentationIndex);
+
+	// Add event listener for click events
+	document.addEventListener("click", handleClick);
+}
+
+// Function to handle click events during presentation
+function handleClick(event) {
+	if (event.target.id === "scroll_left") {
+		return; // Do not advance to the next page
+	}
+
+	// Clicked anywhere else, show the next slide
+	showNextDiv();
 }
