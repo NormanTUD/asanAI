@@ -1002,7 +1002,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		document.title = swal_msg;
 
 		await Swal.fire({
-			title: 'Generating visualizations of neurons...',
+			title: is_cosmo_mode ? 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...' : 'Generating visualizations of neurons...',
 			html: swal_msg,
 			timer: 2000,
 			showCancelButton: !is_cosmo_mode,

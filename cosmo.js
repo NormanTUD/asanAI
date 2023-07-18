@@ -511,6 +511,15 @@ async function cosmo_mode () {
 		$(".glass_box").css("box-shadow", "none");
 
 		$("#body").css("text-align", "center");
+
+		// Attach event listener to the document or a specific parent element
+		document.addEventListener("click", function(event) {
+			// Check if the clicked element does not have its own event handler
+			if (!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit']")) {
+				// Execute your function
+				autochoose_next();
+			}
+		});
 	}
 
 	$("#toggle_layers_button").hide();
@@ -531,3 +540,12 @@ function has_special_cosmo_classes (x) {
 	return s;
 }
 
+// Function to be executed
+function autochoose_next () {
+	console.log("clicked anywhere in cosmo mode!");
+	if(manicule) {
+		 $(manicule.element).click()
+	} else {
+		console.warn("No manicule element found...");
+	}
+}
