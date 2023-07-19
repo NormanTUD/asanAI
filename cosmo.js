@@ -408,139 +408,109 @@ function chose_next_manicule_target () {
 async function cosmo_mode () {
 	//console.trace();
 	if(is_cosmo_mode) {
-		l("Exiting cosmo mode");
-		setCookie("cosmo_mode", "0", 1);
-		await show_layer_view();
-		show_ribbon();
-		//$("#show_layer_data").prop("checked", false)
-		$("#show_hide_ribbon_button").show();
-		$(".vis_button").show();
-		$("#toggle_layer_view_button").show();
-		$("#show_grad_cam").parent().show();
-		$("#show_layer_data").parent().show();
-		$("#navbar1").show();
-		$(".navi_list").show();
-		$("#hr_nav").show();
-		//move_element_to_another_div($("#show_visualization_here_in_cosmo")[0], $("#layer_visualizations_tab")[0]);
-		$("#upload_file").show();
-		$("#repredict_examples_button").show();
-		$("#download_data").show();
-		is_cosmo_mode = false;
-
-		new ManiC(null);
-
-		await write_descriptions(1)
-
-		if(idleInterval) {
-			clearInterval(idleInterval);
-			idleInterval = null;
-		}
-
-		if(manicule) {
-			manicule.hide();
-		}
-
-		$(".show_only_in_cosmo_mode").hide();
-	} else {
-		l("Starting cosmo mode");
-		$("#beginner").click();
-		// switch to cosmo mode
-		setCookie("cosmo_mode", "1", 365);
-		await hide_layer_view();
-		hide_ribbon();
-		//$("#show_layer_data").prop("checked", true)
-		$("#show_hide_ribbon_button").hide();
-		$(".vis_button").hide();
-		$("#toggle_layer_view_button").hide();
-		$("#show_grad_cam").parent().hide();
-		$("#show_layer_data").parent().hide();
-		$("#navbar1").hide();
-		$(".navi_list").hide();
-		$("#hr_nav").hide();
-		$("#upload_file").hide();
-		$("#repredict_examples_button").hide();
-		$("#download_data").hide();
-		if(!disable_alexnet) {
-			$("#alexnet_tab_label").click();
-		}
-		//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
-		is_cosmo_mode = true;
-
-		$("#start_stop_training").show();
-
-		add_cosmo_point("loaded_page");
-
-		chose_next_manicule_target();
-
-		function timerIncrement() {
-			if(Object.keys(current_skills).length > 1) {
-				idleTime = idleTime + 1;
-				if (idleTime > reload_time) { // 10 minutes
-					if(is_cosmo_mode) {
-						window.location.reload();
-						location.reload();
-					}
-				}
-			}
-			
-			show_idle_time();
-		}
-
-		$(document).ready(function () {
-			// Increment the idle time counter every minute.
-			idleInterval = setInterval(timerIncrement, 1000); // 1 sekunde
-
-			// Zero the idle timer on mouse movement.
-			$(this).mousemove(function (e) {
-				idleTime = 0;
-			});
-
-			$(this).keypress(function (e) {
-				idleTime = 0;
-			});
-		});
-
-
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
-		$(".show_only_in_cosmo_mode").show();
-
-		runPresentation('cosmo_presentation');
-
-		$(".glass_box").css("border", "none");
-		$(".glass_box").css("box-shadow", "none");
-
-		$("#body").css("text-align", "center");
-
-		const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
-
-		// Attach event listener to the document or a specific parent element
-		document.addEventListener("click", function (event) {
-			// Get the color picker element based on its unique structure and properties
-			const colorPickerContainer = findColorPickerContainer(event.target);
-
-			// Check if the clicked element does not have its own event handler
-			if (
-				!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
-				!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer)
-			) {
-				// Execute your function
-				autochoose_next();
-			}
-		});
-
-
-		// To make the entire document unselectable
-		document.documentElement.style.userSelect = 'none';
-
-		// To make a specific element with ID "body" unselectable
-		var bodyElement = document.getElementById('body');
-		bodyElement.style.userSelect = 'none';
-
-		addBackgroundGradient();
+		l("Is already cosmo mode, not doing anything");
+		return;
 	}
 
+	l("Starting cosmo mode");
+	$("#beginner").click();
+	// switch to cosmo mode
+	setCookie("cosmo_mode", "1", 365);
+	await hide_layer_view();
+	hide_ribbon();
+	//$("#show_layer_data").prop("checked", true)
+	$("#show_hide_ribbon_button").hide();
+	$(".vis_button").hide();
+	$("#toggle_layer_view_button").hide();
+	$("#show_grad_cam").parent().hide();
+	$("#show_layer_data").parent().hide();
+	$("#navbar1").hide();
+	$(".navi_list").hide();
+	$("#hr_nav").hide();
+	$("#upload_file").hide();
+	$("#repredict_examples_button").hide();
+	$("#download_data").hide();
+	if(!disable_alexnet) {
+		$("#alexnet_tab_label").click();
+	}
+	//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
+	is_cosmo_mode = true;
+
+	$("#start_stop_training").show();
+
+	add_cosmo_point("loaded_page");
+
+	chose_next_manicule_target();
+
+	function timerIncrement() {
+		if(Object.keys(current_skills).length > 1) {
+			idleTime = idleTime + 1;
+			if (idleTime > reload_time) { // 10 minutes
+				if(is_cosmo_mode) {
+					window.location.reload();
+					location.reload();
+				}
+			}
+		}
+		
+		show_idle_time();
+	}
+
+	$(document).ready(function () {
+		// Increment the idle time counter every minute.
+		idleInterval = setInterval(timerIncrement, 1000); // 1 sekunde
+
+		// Zero the idle timer on mouse movement.
+		$(this).mousemove(function (e) {
+			idleTime = 0;
+		});
+
+		$(this).keypress(function (e) {
+			idleTime = 0;
+		});
+	});
+
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+	$(".show_only_in_cosmo_mode").show();
+
+	runPresentation('cosmo_presentation');
+
+	$(".glass_box").css("border", "none");
+	$(".glass_box").css("box-shadow", "none");
+
+	$("#body").css("text-align", "center");
+
+	const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
+
+	// Attach event listener to the document or a specific parent element
+	document.addEventListener("click", function (event) {
+		// Get the color picker element based on its unique structure and properties
+		const colorPickerContainer = findColorPickerContainer(event.target);
+
+		// Check if the clicked element does not have its own event handler
+		if (
+			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
+			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer)
+		) {
+			// Execute your function
+			autochoose_next();
+		}
+	});
+
+
+	// To make the entire document unselectable
+	document.documentElement.style.userSelect = 'none';
+
+	// To make a specific element with ID "body" unselectable
+	var bodyElement = document.getElementById('body');
+	bodyElement.style.userSelect = 'none';
+
+	addBackgroundGradient();
+
 	$("#toggle_layers_button").hide();
+	$("#show_webcam_button").hide()
 }
 
 function findColorPickerContainer(element) {
