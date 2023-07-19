@@ -777,6 +777,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 
 function visualize_train () {
 	seed_two = 2;
+
 	if(!$("#visualize_images_in_grid").is(":checked")) {
 		$("#canvas_grid_visualization").html("");
 		return;
