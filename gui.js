@@ -4322,7 +4322,7 @@ function hide_ribbon() {
 
 function human_readable_time_german(seconds) {
 	if (!seconds) {
-		return "1 sec";
+		return "eine Sekunde";
 	}
 	var levels = [
 		[Math.floor(seconds / 31536000), 'Jahre'],
