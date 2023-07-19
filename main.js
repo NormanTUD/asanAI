@@ -1,5 +1,26 @@
 "use strict";
 
+function show_idle_time () {
+	if(!is_cosmo_mode) {
+		$("#cosmo_reload_debugger").remove();
+		return;
+	}
+
+	if(!enable_cosmo_debugger) {
+		$("#cosmo_reload_debugger").remove();
+		return;	
+	}
+
+	if(!$("#cosmo_reload_debugger").length) {
+		var left = 50;
+		$("body").append(`<div id="cosmo_reload_debugger" style="position: absolute; bottom: 100px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;" class="manicule_debugger"></div>`);
+	}
+
+	if(idleTime) {
+		$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
+	}
+}
+
 function on_resize () {
 	reset_view(); 
 	show_cosmo_elements_depending_on_current_skills()
