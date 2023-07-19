@@ -104,7 +104,7 @@ async function force_download_image_preview_data () {
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
 		force_download = 1;
-		await get_image_data(0, 0, {title: "Loading example images", html: ""});
+		await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""});
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
@@ -114,8 +114,8 @@ async function force_download_image_preview_data () {
 }
 
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
-	title: 'Generating tensors from images [0]...',
-	html: "This may take some time, but your computer is working!"
+	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
+	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
 }) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
@@ -528,8 +528,8 @@ async function get_xs_and_ys () {
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(data_origin == "image") {
 			Swal.fire({
-				title: 'Generating tensors from images [1]...',
-				html: "This may take some time, but your computer is working!",
+				title: is_cosmo_mode ? 'Lade Bilder in den Speicher' : 'Generating tensors from images [1]...',
+				html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!",
 				timer: 2000,
 				showConfirmButton: false
 			});
