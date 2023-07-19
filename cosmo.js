@@ -515,7 +515,10 @@ async function cosmo_mode () {
 		const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
 
 		// Attach event listener to the document or a specific parent element
-		document.addEventListener("click", function(event) {
+		document.addEventListener("click", function (event) {
+			// Get the color picker element based on its unique structure and properties
+			const colorPickerContainer = findColorPickerContainer(event.target);
+
 			// Check if the clicked element does not have its own event handler
 			if (
 				!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
@@ -525,6 +528,7 @@ async function cosmo_mode () {
 				autochoose_next();
 			}
 		});
+
 
 		// To make the entire document unselectable
 		document.documentElement.style.userSelect = 'none';
@@ -539,13 +543,26 @@ async function cosmo_mode () {
 	$("#toggle_layers_button").hide();
 }
 
-// Function to check if the click event coordinates are inside the color picker container
-function isInsideColorPicker(x, y, colorPickerContainer) {
-	if(colorPickerContainer) {
-		const rect = colorPickerContainer.getBoundingClientRect();
-		return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+function findColorPickerContainer(element) {
+	// Traverse up the DOM until a color picker container is found
+	while (element && !isColorPickerContainer(element)) {
+		element = element.parentElement;
 	}
-	return false;
+	return element;
+}
+
+function isColorPickerContainer(element) {
+	// Modify this check based on specific properties or elements of your color picker
+	// For example, you can check if the element has a specific set of child elements or CSS properties unique to the color picker.
+	// This is just a simple example, and you may need to adjust it based on your actual color picker's structure.
+	return element.style.zIndex === "1000" && element.style.position === "absolute";
+}
+
+function isInsideColorPicker(x, y, colorPickerContainer) {
+	if (!colorPickerContainer) return false;
+
+	const rect = colorPickerContainer.getBoundingClientRect();
+	return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
 
 
