@@ -211,8 +211,8 @@
 <?php
 				$files = scandir('presentation/');
 				foreach($files as $file) {
-					if(preg_match("/\.png$/i", $file)) {
-						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; width: 100%; height: fit-content;' src='presentation/$file'></div>";
+					if(preg_match("/\.svg$/i", $file)) {
+						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; width: max-content; height: max-content;' src='presentation/$file'></div>";
 					}
 				}
 ?>
