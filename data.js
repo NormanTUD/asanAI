@@ -125,7 +125,9 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
-		$("#stop_downloading").show();
+		if(!is_cosmo_mode) {
+			$("#stop_downloading").show(); // already cosmofied
+		}
 	}
 
 
