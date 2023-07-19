@@ -496,5 +496,7 @@ $(document).ready(async function() {
 
 	s.close();
 
+	await show_prediction()
+
 	l("Site is ready");
 });

@@ -512,10 +512,15 @@ async function cosmo_mode () {
 
 		$("#body").css("text-align", "center");
 
+		const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
+
 		// Attach event listener to the document or a specific parent element
 		document.addEventListener("click", function(event) {
 			// Check if the clicked element does not have its own event handler
-			if (!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input]")) {
+			if (
+				!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
+				!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer)
+			) {
 				// Execute your function
 				autochoose_next();
 			}
@@ -532,6 +537,15 @@ async function cosmo_mode () {
 	}
 
 	$("#toggle_layers_button").hide();
+}
+
+// Function to check if the click event coordinates are inside the color picker container
+function isInsideColorPicker(x, y, colorPickerContainer) {
+	if(colorPickerContainer) {
+		const rect = colorPickerContainer.getBoundingClientRect();
+		return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+	}
+	return false;
 }
 
 
