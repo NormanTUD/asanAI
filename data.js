@@ -409,6 +409,10 @@ async function get_xs_and_ys () {
 					category_counter++;
 				}
 
+				if(is_cosmo_mode) {
+					labels = cosmo_categories.reverse();
+				}
+
 				if($("#shuffle_data").is(":checked")) {
 					this_data = shuffle(this_data);
 				}
