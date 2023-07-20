@@ -969,6 +969,6 @@ button {
 	user-select: none;
 }
 
-.layer_visualizations_tab {
+#layer_visualizations_tab {
 	text-align: center;
 }
