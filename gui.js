@@ -5202,10 +5202,12 @@ function clear_attrament (idname) {
 		return;
 	}
 
+	/*
 	if(Object.keys(atrament_data).includes(idname)) {
 		console.warn(`${idname} is not a key of atrament_data`);
 		return;
 	}
+	*/
 
 	try {
 		atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
