@@ -436,6 +436,36 @@ function isMouseOverElement(className) {
 	return false;
 }
 
+function isMouseOverElementVariables(elements) {
+  if (mouseX === -1 || mouseY === -1) {
+    if (is_cosmo_mode) {
+      console.warn("No mouse movement detected yet");
+    } else {
+      console.warn("isMouseOverElementVariables: not in cosmo mode, returning false.");
+    }
+    return false;
+  }
+
+  // Check if any element in the elements array is visible and mouse is over it
+  for (const element of elements) {
+    if (!is_hidden_or_has_hidden_parent(element)) {
+      const rect = element.getBoundingClientRect();
+
+      if (
+        mouseX >= rect.left &&
+        mouseX <= rect.right &&
+        mouseY >= rect.top &&
+        mouseY <= rect.bottom
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+
 async function cosmo_mode () {
 	//console.trace();
 	if(is_cosmo_mode) {
@@ -525,11 +555,14 @@ async function cosmo_mode () {
 		// Get the color picker element based on its unique structure and properties
 		const colorPickerContainer = findColorPickerContainer(event.target);
 
+		var colorPickerElementsList = getColorPickerElements();
+
 		// Check if the clicked element does not have its own event handler
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
 			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
-			!isMouseOverElement('no_autochoose_next_on_click')
+			!isMouseOverElement('no_autochoose_next_on_click') &&
+			!isMouseOverElementVariables(colorPickerElementsList)
 		) {
 			// Execute your function
 			autochoose_next();
@@ -603,3 +636,35 @@ function addBackgroundGradient() {
 	var to = "ffffff";
 	body.style.background = `linear-gradient(to bottom, #${from} 0%, #${to} 100%)`;
 }
+
+function findColorPickerElements(node, colorPickerElements) {
+	if (!node) return;
+
+	// Check if the current node resembles the structure of the color picker base div
+	if (
+		node.style &&
+		node.style.position === 'absolute' &&
+		node.style.width === '239px' &&
+		node.style.height === '129px' &&
+		node.style.zIndex === '1000'
+	) {
+		colorPickerElements.push(node);
+	}
+
+	// Recursively check child nodes
+	for (const child of node.children) {
+		findColorPickerElements(child, colorPickerElements);
+	}
+}
+
+function getColorPickerElements() {
+	const colorPickerElements = [];
+	findColorPickerElements(document.body, colorPickerElements);
+	return colorPickerElements;
+}
+
+/*
+// Get the list of all color picker base div elements available on the current page
+var colorPickerElementsList = getColorPickerElements();
+console.log(colorPickerElementsList);
+*/
