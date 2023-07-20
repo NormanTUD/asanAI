@@ -968,3 +968,7 @@ button {
 .data_flow_visualization {
 	user-select: none;
 }
+
+.layer_visualizations_tab {
+	text-align: center;
+}
