@@ -1402,7 +1402,7 @@
 
 								<div class="container" id="predictcontainer">
 									<div>
-										<span id="own_files">
+										<span id="own_files" class="no_autochoose_next_on_click">
 											<span class="hide_when_image">
 												<span id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
