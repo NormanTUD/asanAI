@@ -1397,3 +1397,6 @@ var cosmo_categories = [
 	"Verpflichtend",
 	"Feuer"
 ];
+
+let mouseX = -1;
+let mouseY = -1;

@@ -405,57 +405,36 @@ function chose_next_manicule_target () {
 	}
 }
 
-function isMouseOrTouchOverElement(className) {
-	// Check if the device supports touch events
-	const isTouchSupported = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+function isMouseOverElement(className) {
+	const elements = document.getElementsByClassName(className);
 
-	// Function to check if an element has the specified class
-	const hasClass = (element, className) => element.classList.contains(className);
-
-	// Function to check if the event originated from an element with the specified class
-	const checkEventTarget = (event, className) => {
-		const target = event.target;
-		return hasClass(target, className) || target.closest(`.${className}`) !== null;
-	};
-
-	// Function to handle mouse events
-	const handleMouseEvents = (event) => {
-		return checkEventTarget(event, className);
-	};
-
-	// Function to handle touch events
-	const handleTouchEvents = (event) => {
-		if (isTouchSupported) {
-			const touches = event.changedTouches;
-			for (const touch of touches) {
-				if (checkEventTarget(touch, className)) {
-					return true;
-				}
-			}
+	if(mouseX == -1 || mouseY == -1) {
+		if(is_cosmo_mode) {
+			console.warn("No mouse movement detected yet");
+		} else {
+			console.warn("isMouseOverElement: not in cosmo mode, returning false.");
 		}
 		return false;
-	};
-
-	// Function to handle mouseover and mouseout events
-	const handleMouseOverOutEvents = (event) => {
-		return event.type === 'mouseover' ? handleMouseEvents(event) : false;
-	};
-
-	// Attach the event listeners to the document
-	document.addEventListener('mouseover', handleMouseOverOutEvents);
-	document.addEventListener('mouseout', handleMouseOverOutEvents);
-
-	// Attach touch events only if touch is supported
-	if (isTouchSupported) {
-		document.addEventListener('touchstart', handleTouchEvents);
-		document.addEventListener('touchend', handleTouchEvents);
-		document.addEventListener('touchcancel', handleTouchEvents);
 	}
 
-	// Return the result based on touch or mouse event
-	return isTouchSupported ? handleTouchEvents : handleMouseEvents;
-}
+	// Check if any element with the specified class name is visible and mouse is over it
+	for (const element of elements) {
+		if (!is_hidden_or_has_hidden_parent(element)) {
+			const rect = element.getBoundingClientRect();
 
+			if (
+				mouseX >= rect.left &&
+				mouseX <= rect.right &&
+				mouseY >= rect.top &&
+				mouseY <= rect.bottom
+			) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 
 async function cosmo_mode () {
 	//console.trace();
@@ -523,6 +502,11 @@ async function cosmo_mode () {
 	});
 
 
+	document.addEventListener('mousemove', (event) => {
+		mouseX = event.clientX;
+		mouseY = event.clientY;
+	});
+
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 	$(".show_only_in_cosmo_mode").show();
@@ -545,7 +529,7 @@ async function cosmo_mode () {
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
 			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
-			isMouseOrTouchOverElement('no_autochoose_next_on_click')
+			!isMouseOverElement('no_autochoose_next_on_click')
 		) {
 			// Execute your function
 			autochoose_next();

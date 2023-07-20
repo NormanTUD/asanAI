@@ -882,7 +882,7 @@ button {
 }
 
 #own_files {
-	display: flex;
+	display: inline flow-root list-item;
 }
 
 .no_border_button {
