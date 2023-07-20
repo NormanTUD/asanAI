@@ -5575,6 +5575,9 @@ async function update_label_by_nr (t, nr) {
 }
 
 function allow_editable_labels () {
+	if(is_cosmo_mode) {
+		return;
+	}
 	$(".label_element").each((i, x) => {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
