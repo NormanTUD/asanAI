@@ -405,6 +405,36 @@ function chose_next_manicule_target () {
 	}
 }
 
+function isMouseOrTouchOverElementWithClass(className) {
+  const elements = document.querySelectorAll('.' + className);
+
+  function isMouseOrTouchOverElement(event) {
+    for (let i = 0; i < elements.length; i++) {
+      const element = elements[i];
+      const rect = element.getBoundingClientRect();
+      const isInsideElement =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      if (isInsideElement) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function handleMouseMoveOrTouchMove(event) {
+    const isOverElement = isMouseOrTouchOverElement(event);
+    console.log(isOverElement); // You can do whatever you want with this value (true or false)
+  }
+
+  document.addEventListener('mousemove', handleMouseMoveOrTouchMove);
+  document.addEventListener('touchmove', handleMouseMoveOrTouchMove);
+}
+
 async function cosmo_mode () {
 	//console.trace();
 	if(is_cosmo_mode) {
@@ -492,7 +522,8 @@ async function cosmo_mode () {
 		// Check if the clicked element does not have its own event handler
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
-			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer)
+			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
+			isMouseOrTouchOverElementWithClass('no_autochoose_next_on_click');
 		) {
 			// Execute your function
 			autochoose_next();

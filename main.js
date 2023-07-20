@@ -517,7 +517,7 @@ $(document).ready(async function() {
 
 	s.close();
 
-	await show_prediction()
+	await show_prediction(0, 1);
 
 	l("Site is ready");
 });

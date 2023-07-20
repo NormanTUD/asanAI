@@ -1402,14 +1402,14 @@
 
 								<div class="container" id="predictcontainer">
 									<div>
-										<div id="own_files cosmo" data-required_skills='added_custom_category[2]'>
-											<div class="hide_when_image">
-												<div id="predict_own">
+										<span id="own_files">
+											<span class="hide_when_image">
+												<span id="predict_own">
 													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 													<br>
 													<button onclick="predict($('#predict_own_data').val());repredict()">Predict</button>
-												</div>
-											</div>
+												</span>
+											</span>
 
 											<span class="hide_when_no_image custom_image_data">
 												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
@@ -1436,16 +1436,16 @@
 												</div>
 											</span>
 
-											<div id="prediction_non_image" style="display: none"></div>
-										</div>
+											<span id="prediction_non_image" style="display: none"></span>
 
-										<div class="handdrawn hide_when_no_image" style='text-align: justify'>
-											<div class="full_example_image_prediction">
-												<div id='predict_handdrawn_canvas'></div>
+											<span class="handdrawn hide_when_no_image" style='text-align: justify'>
+												<div class="full_example_image_prediction">
+													<div id='predict_handdrawn_canvas'></div>
 
-												<div id="handdrawn_predictions"></div>
-											</div>
-										</div>
+													<div id="handdrawn_predictions"></div>
+												</div>
+											</span>
+										</span>
 
 										<br>
 
