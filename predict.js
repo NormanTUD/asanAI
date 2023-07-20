@@ -463,7 +463,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				var full_dir = "traindata/" + dataset + "/example/";
 				var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
 				if(is_cosmo_mode) {
-					dataset_url = url + "&cosmo=1";
+					dataset_url = dataset_url + "&cosmo=1";
 				}
 
 				var x = await get_cached_json(dataset_url);
