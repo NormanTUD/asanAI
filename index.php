@@ -1358,7 +1358,7 @@
 										Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.<br>
 										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.
 									</div>
-									<div class="show_only_in_cosmo_mode" style="display: none">
+									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										Aktuell hat sich die Software alle Daten <span id='current_epoch_cosmo_display'>0</span> von <span id="max_epoch_cosmo_display"></span> mal angesehen. Es wird noch ca. <span id="time_estimate_cosmo">00:00</span> dauern.
 									</div>
 									<span id="canvas_grid_visualization"></span>

@@ -277,17 +277,23 @@ function get_fit_data () {
 		var current_time = Date.now();
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
 		var epochs_left = max_number_epochs - current_epoch;
-		var time_estimate = human_readable_time(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
+		var seconds_left = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+		var time_estimate = human_readable_time(seconds_left);
 
 		$("#training_progress_bar").show();
 
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
 
 		if(is_cosmo_mode) {
-			time_estimate = human_readable_time_german(parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5);
-			$("#current_epoch_cosmo_display").html(current_epoch);
-			$("#max_epoch_cosmo_display").html(max_number_epochs);
-			$("#time_estimate_cosmo").html(time_estimate);
+			time_estimate = human_readable_time_german(seconds_left);
+			if(max_number_epochs && current_epoch > 0 && time_estimate && seconds_left) {
+				$("#current_epoch_cosmo_display").html(current_epoch);
+				$("#max_epoch_cosmo_display").html(max_number_epochs);
+				$("#time_estimate_cosmo").html(time_estimate);
+				$('#show_cosmo_epoch_status').show();
+			} else {
+				$('#show_cosmo_epoch_status').hide();
+			}
 			idleTime = 0;
 		}
 
