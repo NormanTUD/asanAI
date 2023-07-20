@@ -797,6 +797,9 @@ async function determine_input_shape () {
 
 async function _get_training_data() {
 	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
+	if(is_cosmo_mode) {
+		url = url + "&cosmo=1";
+	}
 	return await get_cached_json(url);
 }
 
