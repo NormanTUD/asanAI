@@ -964,3 +964,7 @@ button {
 .show_only_in_cosmo_mode {
 	display: none;
 }
+
+.data_flow_visualization {
+	user-select: none;
+}
