@@ -1375,8 +1375,8 @@ var last_manually_removed_manicule_element = null;
 
 var enable_cosmo_debugger = false;
 
-if(("" + window.location).includes("http://localhost/")) {
-	console.log("Enabling cosmo debugger because you are on localhost");
+if(enable_cosmo_debug) {
+	console.log("Enabling cosmo debugger /etc/cosmo_debug existed");
 	enable_cosmo_debugger = true;
 }
 

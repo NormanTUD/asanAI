@@ -23,6 +23,15 @@
 		<link rel="manifest" href="manifest.json" />
 		<style id="manicule_animation_css"></style>
 		<script>
+			var enable_cosmo_debug = false;
+<?php
+			if(file_exists("/etc/cosmo_debug")) {
+?>
+				enable_cosmo_debug = true;
+<?php
+			}
+?>
+
 			function hasWebGL() {
 				var supported;
 
