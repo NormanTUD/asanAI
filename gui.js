@@ -5197,13 +5197,27 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 }
 
 function clear_attrament (idname) {
-	atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
-	atrament_data[idname]['atrament'].context.fillRect(
-		0, 
-		0, 
-		atrament_data[idname]['atrament'].canvas.width, 
-		atrament_data[idname]['atrament'].canvas.height
-	);
+	if(!atrament_data) {
+		console.warn("atrament_data not defined");
+		return;
+	}
+
+	if(Object.keys(atrament_data).includes(idname)) {
+		console.warn(`${idname} is not a key of atrament_data`);
+		return;
+	}
+
+	try {
+		atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
+		atrament_data[idname]['atrament'].context.fillRect(
+			0, 
+			0, 
+			atrament_data[idname]['atrament'].canvas.width, 
+			atrament_data[idname]['atrament'].canvas.height
+		);
+	} catch (e) {
+		console.error(e);
+	}
 }
 
 function invert_elements_in_dark_mode () {
@@ -5578,6 +5592,7 @@ function allow_editable_labels () {
 	if(is_cosmo_mode) {
 		return;
 	}
+
 	$(".label_element").each((i, x) => {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
