@@ -1009,6 +1009,8 @@ async function draw_maximally_activated_layer (layer, type) {
 		l(swal_msg);
 		document.title = swal_msg;
 
+		$("#show_cosmo_epoch_status").hide();
+
 		await Swal.fire({
 			title: is_cosmo_mode ? 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...' : 'Generating visualizations of neurons...',
 			html: swal_msg,

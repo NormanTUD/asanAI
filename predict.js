@@ -843,7 +843,13 @@ async function predict_handdrawn () {
 	}
 
 	tf.engine().startScope();
-	var predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+	var predict_data;
+	try {
+		predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+	} catch (e) {
+		console.error(e);
+		return;
+	}
 
 	var divide_by = parseFloat($("#divide_by").val());
 
