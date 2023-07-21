@@ -71,8 +71,6 @@
 
 			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
-
-		<link rel="stylesheet" href="./wizard_style.css">
 <?php
 		$GLOBALS['minify'] = 1;
 		if(array_key_exists("no_minify", $_GET)) {
@@ -211,7 +209,6 @@
 		<div id="mainsite">
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
-				<!--<span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span>-->
 				<!--<span id="custom_webcam_training_data" style="display: none" data-required_skills="finished_training" class="cosmo only_when_webcam input_shape_is_image symbol_button" data-rotated="1" data-dont_hide_after_show="1" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>-->
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
 				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="watched_presentation" data-show_again_when_new_skill_acquired="finished_training" class="cosmo symbol_button" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
@@ -221,7 +218,7 @@
 				$files = scandir('presentation/');
 				foreach($files as $file) {
 					if(preg_match("/\.svg$/i", $file)) {
-						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' src='presentation/$file'></div>";
+						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' alt='Presentation, page filename: $file' src='presentation/$file'></div>";
 					}
 				}
 ?>
@@ -233,7 +230,6 @@
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
-					<!--<li><span class="symbol_button" title="Show wizard" onclick="$('#wizard').toggle();write_descriptions()">&#129497;</span></li>-->
 					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
 					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
 					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
@@ -277,7 +273,7 @@
 									<td colspan=2>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
-										<button id="load_weights_button" style="width: 46px;" disabled="true" onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 
@@ -675,6 +671,8 @@
 
 											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+											<td></td>
+											<td></td>
 										</tr>
 									</table>
 								</div>
@@ -701,7 +699,6 @@
 
 											<td>Decay</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax" /></td>
-																				</tr>
 											<td></td>
 											<td></td>
 										</tr>
@@ -794,7 +791,7 @@
 										</tr>
 										<tr>
 											<td>Randomizer limits</td>
-											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" checked /></td>
+											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" /></td>
 										</tr>
 										<tr>
 											<td>Width&amp;height (0 = auto):</td>
@@ -908,91 +905,6 @@
 			</div>
 
 			<div id="maindiv">
-				<div id="wizard" style="height: 250px; display: none">
-					<div class="content">
-						<div class="content__inner">
-							<div class="container overflow-hidden">
-								<div class="multisteps-form">
-									<div class="row">
-										<div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
-											<div class="multisteps-form__progress">
-												<button class="multisteps-form__progress-btn js-active" type="button" title="Network">Network</button>
-												<button class="multisteps-form__progress-btn" type="button" title="Comments">Hyperparameters</button>
-												<button class="multisteps-form__progress-btn" type="button" title="Comments">Train</button>
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-12 col-lg-8 m-auto">
-											<div class="multisteps-form__form">
-												<div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
-													<h3 class="multisteps-form__title">Network Type</h3>
-													<div class="multisteps-form__content">
-														<table>
-															<tr>
-																<td>Examples</td><td><select class="copy_options" data-from_and_to="dataset" id="dataset_wizard"></select></td>
-															</tr>
-															<tr>
-																<td>Dataset</td><td><select class="copy_options" data-from_and_to="model_dataset" id="model_dataset_wizard"></select></td>
-															</tr>
-															<tr>
-																<td>Data-Source</td><td><select class="copy_options" data-from_and_to="data_origin" id="data_origin_wizard"></select></td>
-															</tr>
-														</table>
-
-														<div id="wizard_lr">
-															<div>&nbsp;</div>
-															<div></div>
-															<div><button class="btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
-														</div>
-
-													</div>
-												</div>
-
-												<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-													<h3 class="multisteps-form__title">Hyperparameters</h3>
-													<div class="multisteps-form__content">
-														<table>
-															<tr>
-																<td>Epochs</td><td><input type="number" class="copy_values" data-from_and_to="epochs" id="epochs_wizard"></input></td>
-															</tr>
-															<tr>
-																<td>Batch-Size</td><td><input type="number" class="copy_values" data-from_and_to="batchSize" id="batchSize_wizard"></input></td>
-															</tr>
-															<tr>
-																<td>Validation-Split (in %)</td><td><input type="number" class="copy_values" data-from_and_to="validationSplit" id="validationSplit_wizard"></input></td>
-															</tr>
-														</table>
-
-														<div id="wizard_lr">
-															<div><button class="btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
-															<div></div>
-															<div><button class="btn-primary ml-auto js-btn-next" type="button" title="Next">Next</button></div>
-														</div>
-													</div>
-												</div>
-
-												<div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="scaleIn">
-													<h3 class="multisteps-form__title">Train</h3>
-													<div class="multisteps-form__content">
-														<button class="train_neural_network_button" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 150px; width: 100%" onclick="train_neural_network()">Start training</button>
-
-														<div id="wizard_lr">
-															<div><button class="btn-primary js-btn-prev" type="button" title="Prev">Previous</button></div>
-															<div></div>
-															<div>&nbsp;</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
 				<div id="losses_popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
 						<div id="table_div"></div>
