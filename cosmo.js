@@ -563,6 +563,7 @@ async function cosmo_mode () {
 			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
 			!isMouseOverElement('no_autochoose_next_on_click') &&
 			!isMouseOverElementVariables(colorPickerElementsList) &&
+			done_presenting &&
 			!is_presenting
 		) {
 			// Execute your function
