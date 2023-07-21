@@ -842,15 +842,14 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	tf.engine().startScope();
-	var predict_data;
-
 	if(Object.keys(atrament_data).includes("sketcher")) {
-		console.error("Sketcher is not (yet?) defined");
-		console.trace();
+		console.warning("Sketcher is not (yet?) defined. Not predicting. If this occurs more than once, it may imply a bug.");
 		return;
 	}
 
+
+	tf.engine().startScope();
+	var predict_data;
 	try {
 		predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 	} catch (e) {
