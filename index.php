@@ -1412,14 +1412,14 @@
 			<span id="data_loading_progress_bar" style="display: none">
 				| Loading data:
 				<span id="data_progressbar">
-					<span></span>
+					<div></div>
 				</span>
 			</span>
 
 			<span id="training_progress_bar" style="display: none">
 				| Training:
 				<span id="training_progressbar">
-					<span></span>
+					<div></div>
 				</span>
 				<!--
 				<span style="display: none">
