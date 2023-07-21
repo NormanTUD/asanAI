@@ -20,7 +20,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 		<title>asanAI</title>
 		<meta charset="utf-8">
-		<link rel="manifest" href="manifest.json" />
+		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
 		<script>
 			var enable_cosmo_debug = false;
@@ -250,14 +250,14 @@
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="logo_small.png" />
+								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="logo_small.png">
 							</div>
 						</div>
 					</div>
 
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width:250px">
-							<table width=250>
+							<table class="width_250">
 								<tr>
 									<td>Examples</td>
 									<td colspan="2">
@@ -316,15 +316,15 @@
 								<tr>
 									<td>Shapes</td>
 									<td>
-										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape" />
+										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape">
 										&rarr;
-										<input type="text" value="" style="width: 60px;" readonly id="outputShape" />
+										<input type="text" value="" style="width: 60px;" readonly id="outputShape">
 									</td>
 								</tr>
 								<tr>
 									<td colspan=2>
 										Auto-Input-Shape?
-										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape">
 									</td>
 								</tr>
 							</table>
@@ -336,7 +336,7 @@
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" style="display:none">
 						<div class="ribbon-toolbar" style="width:100px">
-							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%" />
+							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%">
 						</div>
 						<div class="ribbon-group-title">Layers</div>
 					</div>
@@ -344,9 +344,9 @@
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
 						<div class="ribbon-toolbar" style="width: 135px">
 							<table>
-								<tr><td>Epochs</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;" /></td></tr>
-								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;" /></td></tr>
-								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit" /></td></tr>
+								<tr><td>Epochs</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;"></td></tr>
+								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;"></td></tr>
+								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
 							</table>
 							<div class="ribbon-group-title">Hyperparams</div>
 						</div>
@@ -361,19 +361,19 @@
 								<table>
 									<tr>
 										<td>Height</td>
-										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 40px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 40px;"></td>
 									</tr>
 									<tr>
 										<td>Width</td>
-										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;" /></td>
+										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;"></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
 										<td>Img/cat</td>
-										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px" /></td>
+										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px"></td>
 									</tr>
 									<tr class="expert_mode_only">
 										<td>Augment?</td>
-										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment" /></td>
+										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment"></td>
 									</tr>
 								</table>
 							</div>
@@ -396,7 +396,7 @@
 										<span class="symbol_button">&#x1F4C9;</span> Autotab?
 									</td>
 									<td>
-										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked />
+										<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
@@ -404,7 +404,7 @@
 										Divide <i>X</i> by:
 									</td>
 									<td>
-										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()" />
+										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()">
 									</td>
 								</tr>
 								<tr>
@@ -483,15 +483,15 @@
 							<table>
                                                                 <tr>
 								       <td>Keep weights when possible?</td>
-								       <td><input type="checkbox" value=1 checked id="keep_weights" /></td>
+								       <td><input type="checkbox" value=1 checked id="keep_weights"></td>
 								</tr>
                                                                 <tr>
 								       <td>Shuffle before each epoch?</td>
-								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch" /></td>
+								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
 								<tr>
 									<td>Enable TF-Debug</td>
-									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug" /></td>
+									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 								</tr>
 								<tr class="hide_when_no_alexnet">
 									<td>AlexNet-Renderer</td>
@@ -521,7 +521,7 @@
 								<tr>
 									<td>Enable Early Stopping?</td>
 									<td>
-										<input type="checkbox" value=1 id="enable_early_stopping" />
+										<input type="checkbox" value=1 id="enable_early_stopping">
 									</td>
 								</tr>
 								<tr>
@@ -536,13 +536,13 @@
 								<tr>
 									<td>minDelta</td>
 									<td>
-										<input style="width: 60px" type="number" value=0.1 min=0 id="min_delta_early_stopping" />
+										<input style="width: 60px" type="number" value=0.1 min=0 id="min_delta_early_stopping">
 									</td>
 								</tr>
 								<tr>
 									<td>Patience?</td>
 									<td>
-										<input style="width: 60px" type="number" value=1 min=0 step=1 id="patience_early_stopping" />
+										<input style="width: 60px" type="number" value=1 min=0 step=1 id="patience_early_stopping">
 									</td>
 								</tr>
 							</table>
@@ -620,7 +620,7 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
 										</tr>
 									</table>
 								</div>
@@ -629,10 +629,10 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
 
 											<td>Initial accumulator value</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad"></td>
 										</tr>
 									</table>
 								</div>
@@ -641,18 +641,18 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
 
 											<td>&beta;<sub>1</sub></td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>
 										</tr>
 
 										<tr>
 											<td>&beta;<sub>2</sub></td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
 
 											<td>&epsilon;</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam"></td>
 										</tr>
 									</table>
 								</div>
@@ -661,16 +661,16 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta"></td>
 
 											<td>&rho;</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta"></td>
 										</tr>
 
 										<tr>
 
 											<td>&epsilon;</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta"></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -681,13 +681,13 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
 
 											<td>&beta;<sub>1</sub></td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax"></td>
 
 											<td>&epsilon;</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax"></td>
 
 
 
@@ -695,10 +695,10 @@
 										<tr>
 
 											<td>&beta;<sub>2</sub></td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
 
 											<td>Decay</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax"></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -709,17 +709,17 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop" /></td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop"></td>
 
 											<td>Decay</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop" /></td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop"></td>
 										</tr>
 										<tr>
 											<td>Momentum</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop" /></td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop"></td>
 
 											<td>&epsilon;</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop"></td>
 										</tr>
 									</table>
 								</div>
@@ -728,10 +728,10 @@
 									<table>
 										<tr>
 											<td>Learning rate</td>
-											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum" /></td>
+											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum"></td>
 
 											<td>Momentum</td>
-											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum" /></td>
+											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum"></td>
 										</tr>
 									</table>
 								</div>
@@ -749,25 +749,25 @@
 							<table>
                                                                 <tr>
 									<td>Auto rotate images?</td>
-									<td><input type="checkbox" value=1 id="augment_rotate_images" /></td>
+									<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
 									<td>Sine-Ripple?</td>
-									<td><input type="checkbox" value=1 id="augment_sine_ripple" /></td>
+									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 								</tr>
                                                                 <tr>
 									<td>Number of rotations?</td>
-									<td><input type="number" value=4 id="number_of_rotations" /></td>
+									<td><input type="number" value=4 id="number_of_rotations"></td>
 									<td></td>
 									<td></td>
 								</tr>
                                                                 <tr>
 									<td>Invert images?</td>
-									<td><input type="checkbox" value=1 id="augment_invert_images" /></td>
+									<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 									<td></td>
 									<td></td>
 								</tr>
                                                                 <tr>
 									<td>Flip left/right?</td>
-									<td><input type="checkbox" value=1 id="augment_flip_left_right" /></td>
+									<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
 									<td></td>
 									<td></td>
 								</tr>
@@ -787,15 +787,15 @@
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations</td>
-											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;" /></td>
+											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr>
 											<td>Randomizer limits</td>
-											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;" /></td>
+											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
 										</tr>
 										<tr>
 											<td>Width&amp;height (0 = auto):</td>
-											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;" /></td>
+											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
 										</tr>
 									</table>
 								</div>
@@ -812,15 +812,15 @@
 								<table>
 									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
 										<td>Max. neurons FCNN?</td>
-										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px" /></td>
+										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 									</tr>
 									<tr data-intro="Show the input layer in the visualizations?">
 										<td>Show Input-Layer?</td>
-										<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer" /></td>
+										<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer"></td>
 									</tr>
 									<tr data-intro="How many seconds before re-plotting the batch-graph?">
 										<td>Batch-Plot-Minimum-Time (s)</td>
-										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px" /></td>
+										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 									</tr>
 								</table>
 							</div>
@@ -836,15 +836,15 @@
 								<table>
 									<tr data-intro="In the predict page, show visual bars instead of numbers">
 										<td>Show bars instead of numbers?</td>
-										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()" /></td>
+										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
 										<td>Visualize images in grid?</td>
-										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid" /></td>
+										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
 										<td>Number of grid images?</td>
-										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;' /></td>
+										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;'></td>
 									</tr>
 								</table>
 							</div>
@@ -861,15 +861,15 @@
 									<table>
 										<tr data-intro="Show raw data in layer data flow?">
 											<td>Show raw data?</td>
-											<td><input class="show_data" type='checkbox' id="show_raw_data" /></td>
+											<td><input class="show_data" type='checkbox' id="show_raw_data"></td>
 										</tr>
 										<tr>
 											<td>Pixel size</td>
-											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;" /></td>
+											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;"></td>
 										</tr>
 										<tr>
 											<td>Kernel Pixel size</td>
-											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;" /></td>
+											<td><input type="number" min="1" max="100" value="10" onchange="change_kernel_pixel_size()" onkeyup="change_kernel_pixel_size()" id="kernel_pixel_size" style="width: 80px;"></td>
 										</tr>
 									</table>
 								</div>
@@ -894,7 +894,7 @@
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" style="width: 200px" /></a><br><br>
+							<a href='https://scads.ai/imprint' target='_blank'><input type="button" value="Imprint" style="width: 200px"></a><br><br>
 							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
 							<button style="width: 200px" onclick="sources_popup()">Sources and used programs</button>
 						</div>
@@ -963,51 +963,52 @@
 							<div id="register_content"> 
 								<h1>Register</h1>
 
-								<table>
-									<form id="register_form">
+								<form id="register_form">
+									<table>
+										<tr>
+											<td>E-Mail</td>
+											<td><input type="email" id="register_email" required></td>
+										</tr>
+										<tr>
+											<td>Username</td>
+											<td><input id="register_username" minlength="2" required></td>
+										</tr>
+										<tr>
+											<td>Password</td>
+											<td><input type="password" id="register_password" minlength="8" required></td>
+										</tr>
 									<tr>
-										<td>E-Mail</td>
-										<td><input type="email" id="register_email" required></td>
-									</tr>
+											<td colspan=2>Do you agree with our terms of <a target="_blank" href="license.php">license</a>? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
+										</tr>
+										<tr>
+											<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
+										</tr>
+										<tr>
+											<span style="display: none" id="register_error_msg"></span>
+										</tr>
+									</table>
+								</form>
+
+								<h1>Login</h1>
+
+								<table>
 									<tr>
 										<td>Username</td>
-										<td><input id="register_username" minlength="2" required></td>
+										<td><input id="login_username"></td>
 									</tr>
 									<tr>
-									<td>Password</td>
-									<td><input type="password" id="register_password" minlength="8" required></td>
-								</tr>
-								</form>
-								<tr>
-									<td colspan=2>Do you agree with our terms of <a target="_blank" href="license.php">license</a>? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
-								</tr>
-								<tr>
-									<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
-								</tr>
-								<tr>
-									<span style="display: none" id="register_error_msg"></span>
-								</tr>
-							</table>
-
-							<h1>Login</h1>
-
-							<table>
-								<tr>
-									<td>Username</td>
-									<td><input id="login_username"></td>
-								</tr>
-								<tr>
-									<td>Password</td>
-									<td><input type="password" id="login_password"></td>
-								</tr>
-								<tr>
-									<td><button class="save_button" onclick="login()">Login</button></td>
-								</tr>
-								<tr>
-									<span style="display: none" id="login_error_msg" style="background-color: green"></span>
-								</tr>
-							</table>
-						</div><br/>
+										<td>Password</td>
+										<td><input type="password" id="login_password"></td>
+									</tr>
+									<tr>
+										<td><button class="save_button" onclick="login()">Login</button></td>
+									</tr>
+									<tr>
+										<span style="display: none" id="login_error_msg" style="background-color: green"></span>
+									</tr>
+								</table>
+							</div>
+							<br/>
 						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 					</div>
 				</div>
@@ -1021,7 +1022,7 @@
 							<div style="display: none" class="show_when_logged_in">
 								<h1>Save to DB</h1>
 								<span id="save_model_msg" style="display: none"></span><br/>
-								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name" /><br/>
+								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br/>
 								Public: <input id="is_public" type="checkbox"><br/>
 								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
 							</div>
@@ -1092,7 +1093,7 @@
 												</tr>
 												<tr>
 													<td>Separator</td>
-													<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator" /></td>
+													<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator"></td>
 												</tr>
 											</table>
 
@@ -1137,7 +1138,7 @@
 									<input id="upload_y_file" type="file" name="y_data">
 								</div>
 								<br>
-								Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;" />
+								Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
 							</div>
 
 							<div id="own_image_data">
@@ -1152,8 +1153,8 @@
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
-								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()" /><br>
-									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()" /><br>
+								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
+									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
 								</div>
 								<button class='add_category' onclick="add_new_category();">+</button>
 								<div id="own_image_data_categories"></div>
@@ -1254,7 +1255,7 @@
 									<table data-intro="Options for the math mode.">
 										<tr>
 											<td>Number of decimal points (0 = no limit)</td>
-											<td><input class="show_data" type="number" style="width: 50px" value="3" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode" /></td>
+											<td><input class="show_data" type="number" style="width: 50px" value="3" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode"></td>
 										</tr>
 									</table>
 									<div class="typeset_me" id="math_tab_code"></div>
@@ -1308,13 +1309,13 @@
 							<div id="predict_tab">
 								<span>
 									Show layer data flow?
-									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data" /><br>
+									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
 								</span>
 
 								
 								<span class="hide_when_no_conv_visualizations hide_in_cosmo_mode">
 									Show gradCAM?
-									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam" /><br>
+									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam"><br>
 								</span>
 
 								<span id="cosmo_visualize_last_layer" class="show_only_in_cosmo_mode" style="display: none"></span>
@@ -2002,7 +2003,7 @@
 					}
 					var reader = new FileReader();
 					reader.onload = function (e) {
-						var html = '<span class="own_image_span"><img height="90" id="' + uuidv4() + '_image" src="' + e.target.result + '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+						var html = '<span class="own_image_span"><img height="90" id="' + uuidv4() + '_image" src="' + e.target.result + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 						imgDiv.append(html);
 						disable_start_training_button_custom_images();
 					}

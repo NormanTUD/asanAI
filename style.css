@@ -977,3 +977,7 @@ button {
 	font-family: monospace;
 	background-color: #D3D3D3;
 }
+
+.width_250 {
+	width: 250px;
+}
