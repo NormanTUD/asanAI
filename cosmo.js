@@ -581,6 +581,8 @@ async function cosmo_mode () {
 
 	$("#toggle_layers_button").hide();
 	$("#show_webcam_button").hide()
+
+	$("#max_activation_iterations").val(50)
 }
 
 function findColorPickerContainer(element) {
