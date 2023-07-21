@@ -969,22 +969,29 @@
 											<td>E-Mail</td>
 											<td><input type="email" id="register_email" required></td>
 										</tr>
+
 										<tr>
 											<td>Username</td>
 											<td><input id="register_username" minlength="2" required></td>
 										</tr>
+
 										<tr>
 											<td>Password</td>
 											<td><input type="password" id="register_password" minlength="8" required></td>
 										</tr>
-									<tr>
+
+										<tr>
 											<td colspan=2>Do you agree with our terms of <a target="_blank" href="license.php">license</a>? <input id="license" type="checkbox" onclick="show_register_button(this)"></td>
 										</tr>
+
 										<tr>
 											<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
+											<td></td>
 										</tr>
+
 										<tr>
 											<td><span style="display: none" id="register_error_msg"></span></td>
+											<td></td>
 										</tr>
 									</table>
 								</form>
@@ -1002,13 +1009,15 @@
 									</tr>
 									<tr>
 										<td><button class="save_button" onclick="login()">Login</button></td>
+										<td></td>
 									</tr>
 									<tr>
-										<span style="display: none" id="login_error_msg" style="background-color: green"></span>
+										<td><span style="display: none; background-color: green" id="login_error_msg"></span></td>
+										<td></td>
 									</tr>
 								</table>
 							</div>
-							<br/>
+							<br>
 						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
 					</div>
 				</div>
@@ -1021,13 +1030,13 @@
 
 							<div style="display: none" class="show_when_logged_in">
 								<h1>Save to DB</h1>
-								<span id="save_model_msg" style="display: none"></span><br/>
-								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br/>
-								Public: <input id="is_public" type="checkbox"><br/>
+								<span id="save_model_msg" style="display: none"></span><br>
+								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br>
+								Public: <input id="is_public" type="checkbox"><br>
 								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
 							</div>
 						</div>
-						<br/>
+						<br>
 						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
 					</div>
 				</div>
@@ -1066,30 +1075,30 @@
 
 							<div id="own_csv_data">
 								<br>
-								<table border=1>
+								<table class="table_border_1px">
 									<tr>
 										<td>
 											
 											<table>
 												<tr>
 													<td>Auto-adjust last layer's number of neurons?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="csv_auto_adjust_number_of_neurons" checked></td>
 												</tr>
 												<tr>
 													<td>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_set_last_layer_activation" checked></td>
 												</tr>
 												<tr>
 													<td>Shuffle data before doing validation split (recommended)?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="shuffle_data" checked></td>
 												</tr>
 												<tr>
 													<td>Auto One-Hot-encode Y (disables "divide by")?</td>
-													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" checked /></td>
+													<td><input type="checkbox" value="1" onchange="show_csv_file(1)" id="auto_one_hot_y" checked></td>
 												</tr>
 												<tr>
 													<td>Auto loss/metric?</td>
-													<td><input type="checkbox" value="1" id="auto_loss_metric" checked /></td>
+													<td><input type="checkbox" value="1" id="auto_loss_metric" checked></td>
 												</tr>
 												<tr>
 													<td>Separator</td>
@@ -1145,11 +1154,11 @@
 								<span class="hide_in_cosmo_mode">
 									<button onclick="create_and_download_zip()">Download custom data in a .zip file</button>
 									<br>
-									Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked />
+									Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
 									<br>
 									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
 								</span>
-								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
 								<div id="last_layer_shape_warning"></div>
 								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
@@ -1335,27 +1344,28 @@
 
 											<span class="hide_when_no_image custom_image_data">
 												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img src="rotate_camera.svg" width=32 height=32 />Switch to other cam</button>
-												<div class="full_example_image_prediction only_when_webcam_on">
+												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
+												<span class="full_example_image_prediction only_when_webcam_on">
 													<div id="webcam" style="display: none"></div>
 													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
-												</div>
+												</span>
+												<br>
 											</span>
 
 											<span class="hide_when_no_image custom_image_data">
-												<div id="upload_file" class="show_data no_box_shadow ">
-													<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229</span>
+												<span id="upload_file" class="show_data no_box_shadow ">
+													<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
 													<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
-												</div>
+												</span>
 												<br>
-												<div class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
-													<img style="display:none" id="output"/>
+												<span class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
+													<img style="display:none" alt="Output Image" id="output">
 
 													<br>
 
-													<div id="predict_error" style="overflow: scroll; display: none"></div>
-													<div id="prediction" style="display: none"></div>
-												</div>
+													<span id="predict_error" style="overflow: scroll; display: none"></span><br>
+													<span id="prediction" style="display: none"></span>
+												</span>
 											</span>
 
 											<span id="prediction_non_image" style="display: none"></span>

@@ -981,3 +981,7 @@ button {
 .width_250 {
 	width: 250px;
 }
+
+.table_border_1px {
+	border: 1px black;
+}
