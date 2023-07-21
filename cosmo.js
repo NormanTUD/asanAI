@@ -566,7 +566,6 @@ async function cosmo_mode () {
 			done_presenting &&
 			!is_presenting
 		) {
-			// Execute your function
 			autochoose_next();
 		}
 	});
@@ -627,6 +626,8 @@ function has_special_cosmo_classes (x) {
 // Function to be executed
 function autochoose_next () {
 	console.log("clicked anywhere in cosmo mode!");
+	log("is_presenting?", is_presenting);
+	log("done_presenting?", done_presenting);
 	if(manicule) {
 		 $(manicule.element).click()
 	} else {
