@@ -168,6 +168,26 @@ async function endPresentation() {
 
 	$("#presentation_site_nr").remove();
 	chose_next_manicule_target();
+
+	// Attach event listener to the document or a specific parent element
+	document.addEventListener("click", function (event) {
+		// Get the color picker element based on its unique structure and properties
+		const colorPickerContainer = findColorPickerContainer(event.target);
+
+		var colorPickerElementsList = getColorPickerElements();
+
+		// Check if the clicked element does not have its own event handler
+		if (
+			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
+			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
+			!isMouseOverElement('no_autochoose_next_on_click') &&
+			!isMouseOverElementVariables(colorPickerElementsList) &&
+			done_presenting &&
+			!is_presenting
+		) {
+			autochoose_next();
+		}
+	});
 }
 
 // Function to run the presentation
