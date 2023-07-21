@@ -151,7 +151,7 @@ async function endPresentation() {
 	}
 
 	if (!Object.keys(current_skills).includes("watched_presentation")) {
-		await add_cosmo_point("watched_presentation", 0);
+		await add_cosmo_point("watched_presentation", 1);
 	}
 
 	removeFullScreen(divs, currentDivPresentationIndex);
@@ -167,7 +167,6 @@ async function endPresentation() {
 	$(".next_prev_buttons").remove();
 
 	$("#presentation_site_nr").remove();
-
 	chose_next_manicule_target();
 }
 
