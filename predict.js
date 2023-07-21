@@ -847,6 +847,7 @@ async function predict_handdrawn () {
 
 	if(Object.keys(atrament_data).includes("sketcher")) {
 		console.error("Sketcher is not (yet?) defined");
+		console.trace();
 		return;
 	}
 

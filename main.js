@@ -471,7 +471,6 @@ $(document).ready(async function() {
 	}
 
 	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
-	await predict_handdrawn();
 
 	l("Installing change-handlers on optimizer_metadata_input");
 	$('.optimizer_metadata_input'). change(function(event) {
@@ -518,6 +517,10 @@ $(document).ready(async function() {
 	s.close();
 
 	await show_prediction(0, 1);
+
+	if(atrament_data.sketcher && await input_shape_is_image()) {
+		await predict_handdrawn();
+	}
 
 	l("Site is ready");
 });
