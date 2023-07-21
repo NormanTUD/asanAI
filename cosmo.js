@@ -603,9 +603,7 @@ function has_special_cosmo_classes (x) {
 // Function to be executed
 function autochoose_next () {
 	//console.trace();
-	console.log("clicked anywhere in cosmo mode!");
-	log("is_presenting?", is_presenting);
-	log("done_presenting?", done_presenting);
+	//console.log("clicked anywhere in cosmo mode!");
 	if(manicule) {
 		 $(manicule.element).click()
 	} else {
