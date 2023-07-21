@@ -1252,11 +1252,11 @@
 								<div class="show_only_in_cosmo_mode" style="display: none">
 									Hier sind 5 Bilder, eines aus jeder Kategorie, die das Netzwerk lernen soll:
 									<ul>
-										<li>- Warnung (warning)</li>
-										<li>- Rettung (resque)</li>
-										<li>- Verbot (prohibition)</li>
-										<li>- Verpflichtend (mandatory)</li>
-										<li>- Feuer (fire)</li>
+										<li>- Warnung</li>
+										<li>- Rettung</li>
+										<li>- Verbot</li>
+										<li>- Verpflichtend</li>
+										<li>- Feuer</li>
 									</ul>
 								</div>
 								<div id="percentage" class="reset_before_train_network"></div>
