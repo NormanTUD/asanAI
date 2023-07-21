@@ -844,6 +844,12 @@ async function predict_handdrawn () {
 
 	tf.engine().startScope();
 	var predict_data;
+
+	if(Object.keys(atrament_data).includes("sketcher")) {
+		console.error("Sketcher is not (yet?) defined");
+		return;
+	}
+
 	try {
 		predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 	} catch (e) {
