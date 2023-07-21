@@ -150,7 +150,14 @@ async function endPresentation() {
 		return;
 	}
 
+	if (!Object.keys(current_skills).includes("watched_presentation")) {
+		await add_cosmo_point("watched_presentation");
+	}
+
 	removeFullScreen(divs, currentDivPresentationIndex);
+	is_presenting = false;
+	done_presenting = true;
+
 	document.removeEventListener("wheel", handleScroll);
 	document.removeEventListener("touchstart", handleTouchStart);
 	document.removeEventListener("touchmove", handleTouch);
@@ -158,17 +165,8 @@ async function endPresentation() {
 	log("removing", $("#" + divName));
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
-	if (!Object.keys(current_skills).includes("watched_presentation")) {
-		await add_cosmo_point("watched_presentation");
-	}
-
-	done_presenting = true;
 
 	$("#presentation_site_nr").remove();
-	is_presenting = false;
-
-	chose_next_manicule_target();
-
 }
 
 // Function to run the presentation
