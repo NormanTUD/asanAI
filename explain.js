@@ -2390,8 +2390,8 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 var already_moved_to_predict_for_cosmo = false;
 
 async function cosmo_maximally_activate_last_layer () {
-	$("#maximally_activated_content").html("")
-	$("#cosmo_visualize_last_layer").html("");
+	$("#maximally_activated_content").html("");
+	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
