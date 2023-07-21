@@ -562,7 +562,8 @@ async function cosmo_mode () {
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
 			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
 			!isMouseOverElement('no_autochoose_next_on_click') &&
-			!isMouseOverElementVariables(colorPickerElementsList)
+			!isMouseOverElementVariables(colorPickerElementsList) &&
+			!is_presenting
 		) {
 			// Execute your function
 			autochoose_next();
