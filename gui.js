@@ -5670,6 +5670,3 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 		//l("Disabling last layer in beginner mode");
 	}
 }
-
-
-
