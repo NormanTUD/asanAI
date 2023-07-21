@@ -260,7 +260,7 @@
 							<table class="width_250">
 								<tr>
 									<td>Examples</td>
-									<td colspan="2">
+									<td>
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
 										<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())">Reset</button>
@@ -270,7 +270,7 @@
 									<td>
 										Dataset
 									</td>
-									<td colspan=2>
+									<td>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
 										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" data-position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
