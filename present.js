@@ -3,11 +3,11 @@ var currentDivPresentationIndex = 0;
 var divs = [];
 
 // Function to handle keydown events
-function handleKeydown(event) {
+async function handleKeydown(event) {
 	if (event.key === "ArrowLeft" || event.key === "Left") {
 		showPreviousDiv();
 	} else if (event.key === "ArrowRight" || event.key === "Right") {
-		showNextDiv();
+		await showNextDiv();
 	}
 }
 
@@ -49,10 +49,10 @@ function removeFullScreen(divs, currentDivPresentationIndex) {
 }
 
 // Function to handle scrolling left or right
-function handleScroll(event) {
+async function handleScroll(event) {
 	var delta = Math.sign(event.deltaY || event.wheelDelta);
 	if (delta > 0) {
-		showNextDiv();
+		await showNextDiv();
 	} else if (delta < 0) {
 		showPreviousDiv();
 	}
@@ -96,14 +96,14 @@ function addScrollButtons(currentDivPresentationIndex, maxIndex) {
 }
 
 // Function to show the next div
-function showNextDiv() {
+async function showNextDiv() {
 	if (currentDivPresentationIndex < divs.length - 1) {
 		removeFullScreen(divs, currentDivPresentationIndex);
 		currentDivPresentationIndex++;
 		showFullScreen(divs, currentDivPresentationIndex);
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	} else {
-		endPresentation();
+		await endPresentation();
 	}
 }
 
@@ -118,14 +118,14 @@ function showPreviousDiv() {
 }
 
 // Function to handle touch events for swiping
-function handleTouch(event) {
+async function handleTouch(event) {
 	var x = event.touches[0].clientX;
 	var deltaX = x - startX;
 
 	if (deltaX > 0 && currentDivPresentationIndex > 0) {
 		showPreviousDiv();
 	} else if (deltaX < 0 && currentDivPresentationIndex < divs.length - 1) {
-		showNextDiv();
+		await showNextDiv();
 	}
 }
 
@@ -140,7 +140,7 @@ function handleTouchEnd(event) {
 }
 
 // Function to end the presentation
-function endPresentation() {
+async function endPresentation() {
 	if (done_presenting) {
 		return;
 	}
@@ -159,14 +159,16 @@ function endPresentation() {
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
 	if (!Object.keys(current_skills).includes("watched_presentation")) {
-		add_cosmo_point("watched_presentation");
+		await add_cosmo_point("watched_presentation");
 	}
 
 	done_presenting = true;
 
 	$("#presentation_site_nr").remove();
+	is_presenting = false;
 
 	chose_next_manicule_target();
+
 }
 
 // Function to run the presentation
@@ -198,11 +200,11 @@ function runPresentation(dn) {
 }
 
 // Function to handle click events during presentation
-function handleClick(event) {
+async function handleClick(event) {
 	if (event.target.id === "scroll_left") {
 		return; // Do not advance to the next page
 	}
 
 	// Clicked anywhere else, show the next slide
-	showNextDiv();
+	await showNextDiv();
 }

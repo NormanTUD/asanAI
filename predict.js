@@ -7,7 +7,7 @@ async function switch_to_next_camera_predict () {
 }
 
 async function get_label_data () {
-	if(($("#data_origin").val() == "image" || input_shape_is_image()) && $("#data_origin").val() == "default") {
+	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
 		let imageData = await get_image_data(1);
 
 		reset_labels();
@@ -260,7 +260,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	try {
 		var predict_data = null;
 
-		if(input_shape_is_image()) {
+		if(await input_shape_is_image()) {
 			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 		} else {
 			var data = "";
@@ -333,7 +333,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		//log(predictions);
 
-		if(!input_shape_is_image() && labels.length == 0) {
+		if(!await input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 			pred_tab = "prediction_non_image";
 			$("#" + pred_tab).html("");
@@ -458,7 +458,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		if($("#data_origin").val() == "default") {
 			var count = 0;
 
-			if(input_shape_is_image()) {
+			if(await input_shape_is_image()) {
 				var dataset = $("#dataset").val();
 				var full_dir = "traindata/" + dataset + "/example/";
 				var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
@@ -571,7 +571,7 @@ function get_index_of_highest_category (predictions_tensor) {
 }
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
-	if(input_shape_is_image(is_from_webcam) && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
+	if(await input_shape_is_image(is_from_webcam) && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
 		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
 
@@ -657,7 +657,7 @@ async function predict_webcam () {
 	var webcam_prediction = $("#webcam_prediction");
 	webcam_prediction.html("").show();
 
-	if(!input_shape_is_image() && labels.length == 0) {
+	if(!await input_shape_is_image() && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
 		$("#webcam_prediction").append(str);
 	} else {
@@ -760,7 +760,7 @@ async function show_webcam (force_restart) {
 
 	var stopped = 0;
 
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
 		if(cam) {
 			stop_webcam();
@@ -833,7 +833,7 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	if(!input_shape_is_image()) {
+	if(!await input_shape_is_image()) {
 		return;
 	}
 

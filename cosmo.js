@@ -499,7 +499,7 @@ async function cosmo_mode () {
 
 	$("#start_stop_training").show();
 
-	add_cosmo_point("loaded_page");
+	await add_cosmo_point("loaded_page");
 
 	chose_next_manicule_target();
 

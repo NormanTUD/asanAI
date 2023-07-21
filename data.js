@@ -99,7 +99,7 @@ function load_image(url) {
 }
 
 async function force_download_image_preview_data () {
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		var old_img_cat = $("#max_number_of_files_per_category").val();
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
@@ -175,6 +175,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 
 	for (var i = 0; i < urls.length; i++) {
+		//log(urls[i]);
 		var start_time = Date.now();
 		if(started_training || force_download) {
 			var percentage = parseInt((i / urls.length) * 100);
@@ -204,6 +205,14 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 				}
 				if(tf_data !== null || skip_real_image_download) {
 					data[keys[url]].push(tf_data);
+				} else {
+					if(tf_data === null) {
+						log("tf_data is null");
+					}
+
+					if(skip_real_image_download) {
+						log("skip_real_image_download is set, not downloading");
+					}
 				}
 			} else {
 				if(!shown_stop_downloading) {
@@ -211,6 +220,17 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 					shown_stop_downloading = 1;
 				}
 			}
+		} else {
+			//log("SKIP");
+			/*
+			if(!started_training) {
+				log("getImageData: not downloading images because training was not started.");
+			}
+
+			if(!force_download) {
+				log("getImageData: not downloading because force_download was not set.");
+			}
+			*/
 		}
 		var end_time = Date.now();
 
@@ -391,7 +411,7 @@ async function get_xs_and_ys () {
 			var y;
 			var category_counter = 0;
 
-			if(input_shape_is_image()) {
+			if(await input_shape_is_image()) {
 				$("#photos").html("");
 				let imageData = await get_image_data(0);
 
@@ -425,6 +445,7 @@ async function get_xs_and_ys () {
 				x = tf.ones(imgs_shape).expandDims();
 
 				//log("this_data:", this_data);
+				//log("this_data.length", this_data.length);
 				for (var i = 0; i < this_data.length; i++) {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
@@ -795,7 +816,7 @@ function url_to_tf (url) {
 }
 
 async function determine_input_shape () {
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		await set_input_shape("[" + width + ", " + height + ", 3]");
 	}
 }
@@ -1114,7 +1135,7 @@ async function get_data_from_webcam (force_restart) {
 
 	var stopped = 0;
 
-	if(input_shape_is_image(1)) {
+	if(await input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam_data) {
 			l("Stopping webcam");
@@ -1209,7 +1230,7 @@ async function take_image_from_webcam_n_times (elem) {
 			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
 		}
-		add_cosmo_point("took_images");
+		await add_cosmo_point("took_images");
 
 		l("Done taking " + number + " images");
 	});

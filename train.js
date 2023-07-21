@@ -45,7 +45,7 @@ async function train_neural_network () {
 
 	if(started_training) {
 		if(is_cosmo_mode) {
-			add_cosmo_point("started_training", 0);
+			await add_cosmo_point("started_training", 0);
 			remove_manicule(1);
 		}
 
@@ -139,7 +139,7 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			predict_handdrawn();
+			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
 			if(!cam) {
 				$("#show_webcam_button").click();
@@ -151,7 +151,7 @@ async function train_neural_network () {
 		await show_prediction();
 
 		if(is_cosmo_mode) {
-			add_cosmo_point("finished_training");
+			await add_cosmo_point("finished_training");
 		}
 	}
 
@@ -345,7 +345,7 @@ function get_fit_data () {
 				await predict($('#predict_own_data').val());
 			}
 			await show_prediction(0, 1);
-			if(input_shape_is_image()) {
+			if(await input_shape_is_image()) {
 				await repredict();
 			}
 		}
@@ -405,7 +405,7 @@ function get_fit_data () {
 		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
 		last_batch_plot_time = false;
 
-		visualize_train();
+		visualize_train(); // await not possible here
 	}
 
 	callbacks["onTrainEnd"] = async function () {
@@ -784,7 +784,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	}
 }
 
-function visualize_train () {
+async function visualize_train () {
 	seed_two = 2;
 
 	if(!$("#visualize_images_in_grid").is(":checked")) {
@@ -804,7 +804,7 @@ function visualize_train () {
 		return;
 	}
 
-	if(!input_shape_is_image()) {
+	if(!await input_shape_is_image()) {
 		l("Disable visualize_train because the input shape is not image-like.");
 		$("#canvas_grid_visualization").html("");
 		return;

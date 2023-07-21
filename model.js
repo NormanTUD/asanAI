@@ -440,7 +440,8 @@ async function create_model (old_model, fake_model_structure, force) {
 	html += "			async function load_model () {\n";
 	html += "				model = await tf.loadLayersModel('./model.json');\n";
 	html += "			}\n";
-	if(input_shape_is_image()) {
+	var input_shape_is_image_val = await input_shape_is_image();
+	if(input_shape_is_image_val) {
 		html += "			var load_file = (function(event) {\n";
 		html += "				var output = document.getElementById('output');\n";
 		html += "				$('#output').removeAttr('src');\n";
@@ -488,7 +489,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		html += "			}\n"
 	}
 	html += "			</script>\n";
-	if(input_shape_is_image()) {
+	if(input_shape_is_image_val) {
 		html += "				<input type='file' id='upload_img' onchange='load_file(event)' />\n";
 		html += "			<div id='results_container' style='display: none'>\n";
 		html += "				<img id='output' />\n";
@@ -1256,7 +1257,7 @@ async function force_reinit (no_msg) {
 	await repredict();
 }
 
-function input_shape_is_image (is_from_webcam=0) {
+async function input_shape_is_image (is_from_webcam=0) {
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
@@ -1266,7 +1267,7 @@ function input_shape_is_image (is_from_webcam=0) {
 				if(has_special_cosmo_classes(is[i])) {
 					$(is[i]).hide();
 					if(!is_from_webcam) {
-						show_cosmo_elements_depending_on_current_skills();
+						await show_cosmo_elements_depending_on_current_skills();
 					}
 				}
 			}

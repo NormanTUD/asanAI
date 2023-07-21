@@ -21,9 +21,9 @@ function show_idle_time () {
 	}
 }
 
-function on_resize () {
+async function on_resize () {
 	reset_view(); 
-	show_cosmo_elements_depending_on_current_skills()
+	await show_cosmo_elements_depending_on_current_skills()
 }
 
 function layer_types_that_dont_have_default_options () {

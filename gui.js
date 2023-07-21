@@ -745,7 +745,10 @@ async function update_python_code(dont_reget_labels) {
 	python_code += "# python3 -m venv asanaienv\n";
 	python_code += "# source asanaienv/bin/activate\n";
 	python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
-	if (input_shape_is_image()) {
+
+	var input_shape_is_image_val = await input_shape_is_image();
+
+	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python ";
 	}
 	python_code += "\n";
@@ -753,7 +756,7 @@ async function update_python_code(dont_reget_labels) {
 	python_code += "if not os.path.exists('keras_model'):\n";
 	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
-	if (input_shape_is_image()) {
+	if (input_shape_is_image_val) {
 		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
 	} else {
 		python_code += "# python3 nn.py\n";
@@ -774,7 +777,7 @@ async function update_python_code(dont_reget_labels) {
 		await get_label_data();
 	}
 
-	if (input_shape_is_image()) {
+	if (input_shape_is_image_val) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
 		python_code += "from PIL import Image\n";
 		python_code += "import numpy as np\n";
@@ -835,7 +838,7 @@ async function update_python_code(dont_reget_labels) {
 		var data = {};
 
 		if (i == 0) {
-			if (input_shape_is_image()) {
+			if (input_shape_is_image_val) {
 				data["input_shape"] = x_shape;
 			} else {
 				data["input_shape"] = "get_shape('x.txt')";
@@ -891,7 +894,7 @@ async function update_python_code(dont_reget_labels) {
 		}
 	}
 
-	if(input_shape_is_image()) {
+	if(input_shape_is_image_val) {
 		python_code += `
 if len(sys.argv) == 1:
     import cv2
@@ -946,7 +949,7 @@ if len(sys.argv) == 1:
 	return redo_graph;
 }
 
-function hide_no_conv_stuff() {
+async function hide_no_conv_stuff() {
 	var any_conv_visualizations = 0;
 
 	var keys = Object.keys(conv_visualizations);
@@ -970,7 +973,7 @@ function hide_no_conv_stuff() {
 		$(".hide_in_cosmo_mode").hide();
 	}
 
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
 	} else {
@@ -1118,7 +1121,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	await last_shape_layer_warning();
 
-	hide_no_conv_stuff();
+	await hide_no_conv_stuff();
 
 	var current_input_shape = get_input_shape();
 	if (current_input_shape.length != 3) {
@@ -1148,7 +1151,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	await wait_for_latex_model;
 	await wait_for_show_hide_load_weights;
-	if(atrament_data.sketcher && input_shape_is_image()) {
+	if(atrament_data.sketcher && await input_shape_is_image()) {
 		await predict_handdrawn();
 	}
 
@@ -2222,7 +2225,7 @@ async function init_dataset_category() {
 
 	var item_names = Object.keys(show_items);
 
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		for (var i = 0; i < show_items["image"].length; i++) {
 			var item_name = show_items["image"][i];
 			if (item_name.endsWith(".parent")) {
@@ -3192,7 +3195,7 @@ async function update_input_shape() {
 	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	await updated_page();
-	if(input_shape_is_image()) {
+	if(await input_shape_is_image()) {
 		var this_shape = get_input_shape();
 		$("#width").val(this_shape[1]);
 		$("#height").val(this_shape[0]);
@@ -3256,7 +3259,7 @@ async function change_data_origin() {
 	var show_own_csv_data = 0;
 
 	if (new_origin == "default") {
-		if (input_shape_is_image()) {
+		if (await input_shape_is_image()) {
 			show_images_per_category = 1;
 		}
 
@@ -3381,7 +3384,7 @@ async function change_data_origin() {
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {
-		if (input_shape_is_image()) {
+		if (await input_shape_is_image()) {
 			if(!is_cosmo_mode) {
 				$("#show_webcam_button").show();
 			} else {
@@ -3611,7 +3614,7 @@ async function add_new_category() {
 
 	await rename_labels();
 
-	add_cosmo_point("added_custom_category");
+	await add_cosmo_point("added_custom_category");
 
 	return uuid;
 }
@@ -4826,7 +4829,7 @@ async function set_custom_webcam_training_data() {
 
 			if(!cam) {
 				await show_webcam();
-				add_cosmo_point("show_webcam");
+				await add_cosmo_point("show_webcam");
 			}
 		});
 	} else {
@@ -4841,7 +4844,7 @@ async function set_custom_webcam_training_data() {
 		show_tab_label("own_image_data_label", 1);
 	}
 
-	add_cosmo_point("set_custom_images");
+	await add_cosmo_point("set_custom_images");
 }
 
 async function toggle_layers() {
@@ -4850,7 +4853,7 @@ async function toggle_layers() {
 	await write_descriptions(1);
 	
 	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
-		add_cosmo_point("toggled_layers");
+		await add_cosmo_point("toggled_layers");
 		$(".left_side").attr("data-clicked", 1)
 	}
 }
@@ -5322,13 +5325,13 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		}
 	});
 
-	atrament_data[idname]["atrament"].addEventListener('strokeend', () => {
+	atrament_data[idname]["atrament"].addEventListener('strokeend', async () => {
 		if(customfunc) {
 			eval(customfunc);
 		}
 
 		if(idname != "sketcher") {
-			add_cosmo_point("drew_custom_image");
+			await add_cosmo_point("drew_custom_image");
 		}
 	});
 
