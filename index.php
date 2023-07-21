@@ -1346,7 +1346,7 @@
 												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
 												<span class="full_example_image_prediction only_when_webcam_on">
-													<div id="webcam" style="display: none"></div>
+													<span id="webcam" style="display: none"></span>
 													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 												</span>
 												<br>
@@ -1359,7 +1359,7 @@
 												</span>
 												<br>
 												<span class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
-													<img style="display:none" alt="Output Image" id="output">
+													<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
 
 													<br>
 
@@ -1371,11 +1371,10 @@
 											<span id="prediction_non_image" style="display: none"></span>
 
 											<span class="handdrawn hide_when_no_image" style='text-align: justify'>
-												<div class="full_example_image_prediction">
-													<div id='predict_handdrawn_canvas'></div>
-
-													<div id="handdrawn_predictions"></div>
-												</div>
+												<span class="full_example_image_prediction">
+													<span id='predict_handdrawn_canvas'></span><br>
+													<span id="handdrawn_predictions"></span>
+												</span>
 											</span>
 										</span>
 
@@ -1413,14 +1412,14 @@
 			<span id="data_loading_progress_bar" style="display: none">
 				| Loading data:
 				<span id="data_progressbar">
-					<div></div>
+					<span></span>
 				</span>
 			</span>
 
 			<span id="training_progress_bar" style="display: none">
 				| Training:
 				<span id="training_progressbar">
-					<div></div>
+					<span></span>
 				</span>
 				<!--
 				<span style="display: none">
