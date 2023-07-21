@@ -430,8 +430,10 @@ async function get_xs_and_ys () {
 				}
 
 				if(is_cosmo_mode) {
-					labels = cosmo_categories;
-					labels.reverse();
+					labels = [];
+					for (let i = cosmo_categories.length - 1; i >= 0; i--) {
+						labels.push(cosmo_categories[i]);
+					}
 				}
 
 				if($("#shuffle_data").is(":checked")) {
