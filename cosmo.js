@@ -10,16 +10,14 @@ async function add_cosmo_point (name, show_manicule=1) {
 		await show_cosmo_elements_depending_on_current_skills();
 
 		cosmo_debugger();
+
+		if(show_manicule) {
+			chose_next_manicule_target();
+		}
 	} else {
 		current_skills = {};
 	}
 
-
-	if(is_cosmo_mode && show_manicule) {
-		chose_next_manicule_target();
-	}
-
-	cosmo_debugger();
 }
 
 async function show_cosmo_elements_depending_on_current_skills () {
