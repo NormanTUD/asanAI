@@ -894,7 +894,7 @@
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<a href='https://scads.ai/imprint' target='_blank'><button style="width: 200px">Imprint</button></a><br><br>
+							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px">Imprint</button><br><br>
 							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
 							<button style="width: 200px" onclick="sources_popup()">Sources and used programs</button>
 						</div>
