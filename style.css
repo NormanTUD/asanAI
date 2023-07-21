@@ -972,3 +972,8 @@ button {
 #layer_visualizations_tab {
 	text-align: center;
 }
+
+.tt {
+	font-family: monospace;
+	background-color: #D3D3D3;
+}

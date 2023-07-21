@@ -232,7 +232,7 @@
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Delete model" id="delete_model" onclick="delete_model()" style="cursor: pointer">&#10006;</span></li>
 					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
-					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
+					<li><span id="custom_image_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 					if($GLOBALS["use_db"]) {
@@ -242,7 +242,7 @@
 <?php
 					}
 ?>
-					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
+					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
 				</ul>
 
 
@@ -932,23 +932,23 @@
 						<div> 
 							<table>
 								<tr>
-									<td>Upload Model (<tt>.json</tt>)</td>
+									<td>Upload Model (<span class='tt'>.json</span>)</td>
 									<td><input accept="application/json" type="file" id="upload_model" value="Upload Model"></td>
 								</tr>
 								<tr>
-									<td>Upload Model weights from TFD trained model (<tt>.json</tt>)</td>
+									<td>Upload Model weights from TFD trained model (<span class='tt'>.json</span>)</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
 								</tr>
 								<tr class="expert_mode_only">
 									<td colspan=2>
 										<p>Use this command to convert TensorFlow to TFJS-models:</p>
-										<p><tt>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</tt></p>
+										<p><span class='tt'>tensorflowjs_converter --input_format=keras_saved_model --output_format=tfjs_layers_model model jsmodel</span></p>
 
 										<p>Notice: You need to upload JSON <i>and</i> BIN-files from the trained models to have specified weights. Only one is not sufficient!</p>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
-									<td>Upload Model weights from Keras (<tt>.bin</tt>)</td>
+									<td>Upload Model weights from Keras (<span class='tt'>.bin</span>)</td>
 									<td><input accept="application/octet-stream" type="file" id="upload_weights" value="Upload Weights"></td>
 								</tr>
 							</table>
