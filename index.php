@@ -273,7 +273,7 @@
 									<td colspan=2>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
-										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
+										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" data-position="right" data-intro="Click here to load pretrained weights for the chosen model">Load</button>
 									</td>
 								</tr>
 
@@ -933,11 +933,11 @@
 							<table>
 								<tr>
 									<td>Upload Model (<span class='tt'>.json</span>)</td>
-									<td><input accept="application/json" type="file" id="upload_model" value="Upload Model"></td>
+									<td><input accept="application/json" type="file" id="upload_model"></td>
 								</tr>
 								<tr>
 									<td>Upload Model weights from TFD trained model (<span class='tt'>.json</span>)</td>
-									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights" value="Upload Weights"></td>
+									<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights"></td>
 								</tr>
 								<tr class="expert_mode_only">
 									<td colspan=2>
@@ -949,7 +949,7 @@
 								</tr>
 								<tr class="expert_mode_only">
 									<td>Upload Model weights from Keras (<span class='tt'>.bin</span>)</td>
-									<td><input accept="application/octet-stream" type="file" id="upload_weights" value="Upload Weights"></td>
+									<td><input accept="application/octet-stream" type="file" id="upload_weights"></td>
 								</tr>
 							</table>
 
@@ -984,7 +984,7 @@
 											<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
 										</tr>
 										<tr>
-											<span style="display: none" id="register_error_msg"></span>
+											<td><span style="display: none" id="register_error_msg"></span></td>
 										</tr>
 									</table>
 								</form>
