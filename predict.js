@@ -763,9 +763,11 @@ async function show_webcam (force_restart) {
 	if(await input_shape_is_image()) {
 		$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
 		if(cam) {
-			stop_webcam();
-			stopped = 1;
-			$(".only_when_webcam_on").hide();
+			if(!cosmo_mode) {
+				stop_webcam();
+				stopped = 1;
+				$(".only_when_webcam_on").hide();
+			}
 		} else {
 			var webcam = $("#webcam");
 			webcam.hide().html("");
