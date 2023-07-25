@@ -100,7 +100,6 @@
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
 		<!-- jquery -->
-		<?php minify_js("sparkle.min.js"); ?>
 		<?php minify_js("zip.js"); ?>
 		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>
@@ -2034,9 +2033,5 @@
 		<?php minify_js("prism/prism.js"); ?>
 		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
-
-		<span style="display: none">
-			<span class='sparkle_star'>&#11088;</span>
-		</span>
 	</body>
 </html>

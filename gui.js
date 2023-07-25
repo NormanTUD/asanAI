@@ -5484,23 +5484,6 @@ async function change_last_responsible_layer_for_image_output () {
 	}
 }
 
-function sparkle_one_element (element) {
-	if(last_sparkle_element) {
-		$(last_sparkle_element).find("sparkle-div").remove()
-	}
-
-	if(element) {
-		$(element)[0].sparkle({
-			starsource: document.querySelector(".sparkle_star"),
-			count: 1,
-			minAge: 3000,
-			maxAge: 7000
-		});
-
-		last_sparkle_element = element;
-	}
-}
-
 function sort_by_property(list, property_name_list) {
 	list.sort((a, b) => {
 		for (var p = 0; p < property_name_list.length; p++) {
