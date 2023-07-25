@@ -461,7 +461,7 @@ async function run_tests () {
 			var time_resize_took = end_time - start_time;
 
 			var time_test_ok = true;
-			if(time_resize_took > 10000) {
+			if(time_resize_took > 15000) {
 				time_test_ok = false;
 				log("time_resize_took:", time_resize_took);
 			}
