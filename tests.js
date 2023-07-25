@@ -244,6 +244,7 @@ async function run_tests () {
 			log_test("Test Training Logic");
 
 			$("#dataset").val("and_xor").trigger("change");
+			log_test("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
 			log_test("Done waiting 3 seconds...");
@@ -309,7 +310,6 @@ async function run_tests () {
 			log_test("Done waiting 2 seconds...");
 
 			$("#dataset").val("signs").trigger("change");
-
 			log_test("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
@@ -321,9 +321,6 @@ async function run_tests () {
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
-
-			log_test("Done waiting 3 seconds.");
-
 			await set_epochs(100);
 			await train_neural_network();	
 
