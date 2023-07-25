@@ -22,7 +22,7 @@ async function _set_initializers() {
 
 	await delay(2000);
 
-	await set_seeds(42);
+	await _set_seeds(42);
 }
 
 function test_not_equal (name, is, should_be) {
@@ -172,11 +172,11 @@ async function run_tests () {
 				darkmode = 1;
 			}
 
-
 			var color = "black";
 			if(darkmode) {
 				color = "white";
 			}
+
 			test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"" + color + "\"]}]");
 			test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"OrangeRed\"]}]");
 			test_equal('color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"SeaGreen\"]}]");
@@ -238,12 +238,14 @@ async function run_tests () {
 
 			log_test("Test Training Logic");
 
-			await delay(2000);
 			$("#dataset").val("and_xor").trigger("change");
-			await delay(2000);
-			$("#model_dataset").val("and").trigger("change");
 			await delay(3000);
+			await _set_initializers();
+			log_test("Done waiting 3 seconds...");
 
+			$("#model_dataset").val("and").trigger("change");
+			log_test("Waiting 3 seconds...");
+			await delay(3000);
 			await _set_initializers();
 
 			await set_epochs(30);
@@ -301,17 +303,17 @@ async function run_tests () {
 
 			$("#dataset").val("signs").trigger("change");
 
-			log_test("Waiting 2 seconds...");
-			await delay(2000);
-			log_test("Done waiting 2 seconds...");
-
-			$("#model_dataset").val("signs").trigger("change");
-
 			log_test("Waiting 3 seconds...");
 			await delay(3000);
-			log_test("Done waiting 3 seconds.");
-
 			await _set_initializers();
+			log_test("Done waiting 3 seconds...");
+
+			$("#model_dataset").val("signs").trigger("change");
+			log_test("Waiting 3 seconds...");
+			await delay(3000);
+			await _set_initializers();
+
+			log_test("Done waiting 3 seconds.");
 
 			await set_epochs(20);
 
