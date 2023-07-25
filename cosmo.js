@@ -655,9 +655,11 @@ console.log(colorPickerElementsList);
 function switch_predict_mode () {
 	if($("#own_files").css("display") == "none") {
 		$("#own_files").show();
+		$("#own_files").css("display", "inline-block");
 		$("#example_predictions").hide();
 	} else {
 		$("#own_files").hide();
+		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 	}
 }
