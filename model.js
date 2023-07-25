@@ -379,49 +379,7 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-async function create_model (old_model, fake_model_structure, force) {
-	weights_as_string_cache = false;
-
-	if(has_missing_values) {
-		l("Not creating model because some values are missing (create model)");
-		return old_model;
-	}
-
-	var new_layers_container_md5 = await get_layers_container_md5();
-	if(!layers_container_md5 || force) {
-		layers_container_md5 = new_layers_container_md5;
-	}
-
-	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
-	if(!force) {
-		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-			//return old_model;
-		}
-	}
-
-	if(!force) {
-		if(disable_show_python_and_create_model) {
-			return;
-		}
-	}
-
-	var old_weights_string = false;
-	if(model && Object.keys(model).includes("layers")) {
-		old_weights_string = last_weights_as_string;
-	}
-
-	current_status_hash = new_current_status_hash;
-
-	$(".warning_container").hide();
-
-
-	var new_model = tf.sequential();
-
-	var model_structure = fake_model_structure;
-	if(model_structure === undefined) {
-		model_structure = await get_model_structure();
-	}
-
+async function get_html_from_model () {
 	var html = '';
 
 	html += '<html>' + "\n";
@@ -511,6 +469,54 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 	html += "        </body>\n";
 	html += '</html>' + "\n";
+
+	return html;
+}
+
+async function create_model (old_model, fake_model_structure, force) {
+	weights_as_string_cache = false;
+
+	if(has_missing_values) {
+		l("Not creating model because some values are missing (create model)");
+		return old_model;
+	}
+
+	var new_layers_container_md5 = await get_layers_container_md5();
+	if(!layers_container_md5 || force) {
+		layers_container_md5 = new_layers_container_md5;
+	}
+
+	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
+	if(!force) {
+		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
+			//return old_model;
+		}
+	}
+
+	if(!force) {
+		if(disable_show_python_and_create_model) {
+			return;
+		}
+	}
+
+	var old_weights_string = false;
+	if(model && Object.keys(model).includes("layers")) {
+		old_weights_string = last_weights_as_string;
+	}
+
+	current_status_hash = new_current_status_hash;
+
+	$(".warning_container").hide();
+
+
+	var new_model = tf.sequential();
+
+	var model_structure = fake_model_structure;
+	if(model_structure === undefined) {
+		model_structure = await get_model_structure();
+	}
+
+	var html = await get_html_from_model();
 
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
@@ -779,21 +785,60 @@ async function compile_fake_model(layer_nr, layer_type) {
 	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
 
 	tf.engine().startScope();
+
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
 	var ret = false;
 
 	try {
 		var start_tensors = tf.memory()["numTensors"];
+		console.log("Before creating fake_model: " + start_tensors + " tensors");
 
 		var fake_model = await create_model(null, fake_model_structure);
+		var after_create_model_tensors = tf.memory()["numTensors"];
+		if (after_create_model_tensors > start_tensors) {
+			console.log("After creating fake_model: " + after_create_model_tensors + " tensors");
+			// Log the tensors that are created but not disposed
+			const memoryInfo = tf.memory();
+			if (memoryInfo.hasOwnProperty("tensors")) {
+				const createdTensors = memoryInfo.tensors;
+				createdTensors.forEach((tensor) => {
+					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
+				});
+			}
+		}
+
 		var model_data = get_model_data();
 
 		fake_model.compile(model_data);
+		var after_compile_tensors = tf.memory()["numTensors"];
+		if (after_compile_tensors > after_create_model_tensors) {
+			console.log("After compiling fake_model: " + after_compile_tensors + " tensors");
+			// Log the tensors that are created but not disposed after compilation
+			const memoryInfo = tf.memory();
+			if (memoryInfo.hasOwnProperty("tensors")) {
+				const createdTensors = memoryInfo.tensors;
+				createdTensors.forEach((tensor) => {
+					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
+				});
+			}
+		}
 
 		model_data.dispose();
 		fake_model.dispose();
 		await tf.nextFrame(); // Allow time for disposal to take effect
+		var after_dispose_tensors = tf.memory()["numTensors"];
+		if (after_dispose_tensors > after_compile_tensors) {
+			console.log("After disposing fake_model and model_data: " + after_dispose_tensors + " tensors");
+			// Log the tensors that are still not disposed after the dispose calls
+			const memoryInfo = tf.memory();
+			if (memoryInfo.hasOwnProperty("tensors")) {
+				const createdTensors = memoryInfo.tensors;
+				createdTensors.forEach((tensor) => {
+					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
+				});
+			}
+		}
 
 		ret = true;
 	} catch (e) {
@@ -802,14 +847,22 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 	tf.engine().endScope();
 	await tf.nextFrame(); // Allow time for disposal to take effect
-
-	var after_compile_tensors = (tf.memory()["numTensors"] - start_tensors);
-	if(after_compile_tensors > 0) {
-		log("after compile [1]: " + after_compile_tensors + " new tensors");
+	var after_end_scope_tensors = tf.memory()["numTensors"];
+	if (after_end_scope_tensors > start_tensors) {
+		console.log("After tf.engine().endScope(): " + after_end_scope_tensors + " tensors");
+		// Log the tensors that are still not disposed after the endScope call
+		const memoryInfo = tf.memory();
+		if (memoryInfo.hasOwnProperty("tensors")) {
+			const createdTensors = memoryInfo.tensors;
+			createdTensors.forEach((tensor) => {
+				console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
+			});
+		}
 	}
 
 	return ret;
 }
+
 
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
