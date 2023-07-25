@@ -82,7 +82,7 @@ function log_test (name) {
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
-				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors);
+				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
 			}
 		}
 	}
@@ -324,8 +324,7 @@ async function run_tests () {
 
 			log_test("Done waiting 3 seconds.");
 
-			await set_epochs(20);
-
+			await set_epochs(100);
 			await train_neural_network();	
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
@@ -334,10 +333,8 @@ async function run_tests () {
 			$("[href='#predict_tab']").click()
 			await delay(5000);
 
-
 			var results = [];
 			var pd = $(".predict_demo_result");
-
 
 			for (var i = 0; i < pd.length; i++) {
 				var all_tds = $(pd[i]).find("table>tbody>tr>td");
