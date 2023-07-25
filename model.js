@@ -549,6 +549,18 @@ function _check_data (data, type) {
 
 	data = check_initializers(data, has_keys);
 
+	if(type == "rnn") {
+		// never worked...
+		var lstm_cells = [];
+		for (var index = 0; index < data["units"]; index++) {
+			lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+		}
+		data["cell"] = lstm_cells;
+		log(data);
+	}
+
+
+
 	return data;
 }
 
@@ -596,16 +608,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		var data = model_structure[i]["data"];
 
 		data = _check_data(data, type);
-
-		if(type == "rnn") {
-			// never worked...
-			var lstm_cells = [];
-			for (var index = 0; index < data["units"]; index++) {
-				lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
-			}
-			data["cell"] = lstm_cells;
-			log(data);
-		}
 
 		data = remove_empty(data);
 
