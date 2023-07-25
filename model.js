@@ -650,6 +650,16 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	current_layer_status_hash = await get_current_layer_container_status_hash();
 
+	_set_old_weights (force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string)
+
+	if(!fake_model_structure) {
+		l("Model compiled successfully");
+	}
+
+	return new_model;
+}
+
+async function _set_old_weights (force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string) {
 	if(!force_dont_keep_weights) {
 		if(old_weights_string) {
 			if(layers_container_md5 == new_layers_container_md5) {
@@ -670,12 +680,6 @@ async function create_model (old_model, fake_model_structure, force) {
 			}
 		}
 	}
-
-	if(!fake_model_structure) {
-		l("Model compiled successfully");
-	}
-
-	return new_model;
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
