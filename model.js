@@ -649,8 +649,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	enable_train();
 
 	if(typeof(fake_model_structure) == "undefined") {
-		var html = await get_html_from_model();
-		$("#html").text(html);
+		$("#html").text(await get_html_from_model());
 	}
 
 	current_layer_status_hash = await get_current_layer_container_status_hash();
