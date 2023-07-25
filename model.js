@@ -881,7 +881,7 @@ async function get_valid_layer_types (layer_nr) {
 	console.trace();
 	*/
 
-	log("last_allowed_layers_update:", last_allowed_layers_update);
+	//log("last_allowed_layers_update:", last_allowed_layers_update);
 
 	if(typeof(last_allowed_layers_update) != "undefined") {
 		if(last_allowed_layers_update == await get_current_status_hash(0)) {
