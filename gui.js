@@ -5605,22 +5605,30 @@ function allow_editable_labels () {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(label_index !== undefined) {
-			var tmp_label = labels[label_index];
-			
-			if(tmp_label === undefined) {
-				console.warn("tmp_label undefined");
-			} else {
-				tmp_label = tmp_label.replaceAll(/'/g, "");
-				if(tmp_label) {
-					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-						$(x).find("input").val(tmp_label);
+
+			if(typeof(labels) == "object") {
+				if(labels.length) {
+					var tmp_label = labels[label_index];
+					if(tmp_label === undefined) {
+						console.warn("tmp_label undefined");
 					} else {
-						$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+						tmp_label = tmp_label.replaceAll(/'/g, "");
+						if(tmp_label) {
+							if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+								$(x).find("input").val(tmp_label);
+							} else {
+								$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+							}
+						} else {
+							tmp_label = $(x).text();
+							$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+						}
 					}
 				} else {
-					tmp_label = $(x).text();
-					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					console.warn("labels is an array, but is empty.");
 				}
+			} else {
+				console.warn("labels is not an array/object");
 			}
 		} else {
 			var tmp_label = $(x).text();
