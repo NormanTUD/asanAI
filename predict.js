@@ -845,7 +845,10 @@ async function predict_handdrawn () {
 	}
 
 	if(Object.keys(atrament_data).includes("sketcher")) {
-		console.warn("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
+		if(sketcher_warning >= 1) {
+			console.warn("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
+		}
+		sketcher_warning++;
 	}
 
 
