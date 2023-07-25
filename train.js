@@ -824,9 +824,6 @@ async function visualize_train () {
 	var probabilities = [];
 
 	var max = parseInt($("#max_number_of_images_in_grid").val());
-	if(is_cosmo_mode) {
-		max = 100000;
-	}
 
 	if(is_cosmo_mode) {
 		$("#plotly_epoch_history").hide();
