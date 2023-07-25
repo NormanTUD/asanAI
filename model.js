@@ -601,8 +601,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		model_structure = await get_model_structure();
 	}
 
-	var html = await get_html_from_model();
-
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];
@@ -651,6 +649,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	enable_train();
 
 	if(typeof(fake_model_structure) == "undefined") {
+		var html = await get_html_from_model();
 		$("#html").text(html);
 	}
 
