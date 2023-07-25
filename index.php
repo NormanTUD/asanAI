@@ -218,6 +218,9 @@
 		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite">
+			<span>
+				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
+			</span>
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<!--<span id="custom_webcam_training_data" style="display: none" data-required_skills="finished_training" class="cosmo only_when_webcam input_shape_is_image symbol_button" data-rotated="1" data-dont_hide_after_show="1" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>-->

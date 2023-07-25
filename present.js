@@ -188,6 +188,9 @@ async function endPresentation() {
 			autochoose_next();
 		}
 	});
+
+	$("#scads_logo_cosmo_mode").show();
+	$("#graphs_here").css("margin-top", "30px");
 }
 
 // Function to run the presentation

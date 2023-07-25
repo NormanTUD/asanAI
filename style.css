@@ -981,3 +981,11 @@ button {
 .table_border_1px {
 	border: 1px black;
 }
+
+#scads_logo_cosmo_mode {
+	height: 67px;
+	position: fixed;
+	left: 10px;
+	top: 10px;
+	display: none;
+}
