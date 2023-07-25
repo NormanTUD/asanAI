@@ -559,7 +559,7 @@ function _check_data (data, type) {
 		log(data);
 	}
 
-
+	data = remove_empty(data);
 
 	return data;
 }
@@ -608,8 +608,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		var data = model_structure[i]["data"];
 
 		data = _check_data(data, type);
-
-		data = remove_empty(data);
 
 		var data_keys = Object.keys(data);
 		for (var k = 0; k < data_keys.length; k++) {
