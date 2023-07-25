@@ -774,40 +774,46 @@ async function create_fake_model_structure (layer_nr, layer_type) {
 	return fake_model_structure;
 }
 
-async function compile_fake_model (layer_nr, layer_type) {
-	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
-	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+async function compile_fake_model(layer_nr, layer_type) {
+	assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
+	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
 
-	tf.engine().startScope();
-	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
+	tf.engine().startScope();                                                                                                                                                                                                      
+	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);                                                                                                                                            
 
-	var ret = false;
+	var ret = false;           
 
-	try {
+	try {                                                   
 		var start_tensors = tf.memory()["numTensors"];
 
-		var fake_model = await create_model(null, fake_model_structure);
+		var fake_model = await create_model(null, fake_model_structure);                                                                                                                                                       
 		var model_data = get_model_data();
 
-		/*
-		 *	Number of hours wasted to fix memory leak here: 1
-		 *	Please increment accordingly
-		 */
+		/*                        
+		 *      Number of hours wasted to fix memory leak here: 1
+		 *      Please increment accordingly                                  
+		 */                                                                                                                                                                                                                    
 
-		fake_model.compile(model_data);
+		fake_model.compile(model_data);                                                                                                                                                                                        
 
 		model_data.dispose();
 		fake_model.dispose();
+		await tf.nextFrame(); // Allow time for disposal to take effect
 
-		ret = true;
-	} catch (e) {
-		ret = false;
+		ret = true;             
+	} catch (e) {    
+		ret = false;  
+	}                
+
+	tf.engine().endScope();   
+	await tf.nextFrame(); // Allow time for disposal to take effect
+	
+	var after_compile_tensors = (tf.memory()["numTensors"] - start_tensors);
+	if(after_compile_tensors > 0) {
+		log("after compile [1]: " + after_compile_tensors + " new tensors");                                                                                                                                         
 	}
 
-	tf.engine().endScope();
-	log("after compile: " + (tf.memory()["numTensors"] - start_tensors) + " new tensors");
-
-	return ret;
+	return ret;          
 }
 
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
