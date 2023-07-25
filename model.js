@@ -473,6 +473,39 @@ async function get_html_from_model () {
 	return html;
 }
 
+function check_initializers (data, has_keys) {
+	valid_initializer_types.forEach((init_or_regularizer_type) => {
+		["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
+			var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
+			if(regularizer_or_init == "Initializer") {
+				if(has_keys.includes(keyname)) {
+					var original_name = data[keyname]["name"];
+					var options_stringified = JSON.stringify(data[keyname]["config"]);
+					if(original_name) {
+						data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+					} else {
+						data[keyname] = null;
+					}
+				}
+			} else if(regularizer_or_init == "Regularizer") {
+				if(has_keys.includes(keyname)) {
+					var original_name = data[keyname]["name"];
+					var options_stringified = JSON.stringify(data[keyname]["config"]);
+					if(original_name && original_name != "none") {
+						data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+					} else {
+						data[keyname] = null;
+					}
+				}
+			} else {
+				log("Invalid regularizer_or_init: " + regularizer_or_init);
+			}
+		});
+	});
+
+	return data;
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	weights_as_string_cache = false;
 
@@ -556,35 +589,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			}
 		});
 
-		valid_initializer_types.forEach((init_or_regularizer_type) => {
-			["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
-				var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
-				if(regularizer_or_init == "Initializer") {
-					//log("checking for: " + keyname);
-					if(has_keys.includes(keyname)) {
-						var original_name = data[keyname]["name"];
-						var options_stringified = JSON.stringify(data[keyname]["config"]);
-						if(original_name) {
-							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-						} else {
-							data[keyname] = null;
-						}
-					}
-				} else if(regularizer_or_init == "Regularizer") {
-					if(has_keys.includes(keyname)) {
-						var original_name = data[keyname]["name"];
-						var options_stringified = JSON.stringify(data[keyname]["config"]);
-						if(original_name && original_name != "none") {
-							data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-						} else {
-							data[keyname] = null;
-						}
-					}
-				} else {
-					log("Invalid regularizer_or_init: " + regularizer_or_init);
-				}
-			});
-		});
+		data = check_initializers(data, has_keys);
 
 		if(type == "rnn") {
 			// never worked...
