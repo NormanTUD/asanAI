@@ -637,13 +637,12 @@ async function create_model (old_model, fake_model_structure, force) {
 					set_layer_background(i, "red");
 				}
 			}
+
 			return model;
 		}
-
-		enable_train();
 	}
 
-
+	enable_train();
 
 	if(typeof(fake_model_structure) == "undefined") {
 		$("#html").text(html);
