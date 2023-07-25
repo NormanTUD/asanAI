@@ -1198,6 +1198,7 @@
 								<div id="percentage" class="reset_before_train_network"></div>
 								<button id="stop_downloading" onclick="stop_downloading_data=true" class="hide_in_cosmo_mode" style="display: none">Stop downloading and start training</button>
 								<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<div id="cosmo_mode_visualization"></div>
 								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div class="" id="download_data" style="display: none"></div>
 							</div>
