@@ -566,12 +566,6 @@ async function create_model (old_model, fake_model_structure, force) {
 						var options_stringified = JSON.stringify(data[keyname]["config"]);
 						if(original_name) {
 							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-							/*
-							header("=====");
-							log(`tf.initializers.${original_name}(${options_stringified})`);
-							log(keyname + ":");
-							log(data[keyname]);
-							*/
 						} else {
 							data[keyname] = null;
 						}
