@@ -74,6 +74,11 @@ async function train_neural_network () {
 		l("Stopped training");
 	} else {
 		l("Started training")
+
+		if(is_cosmo_mode) {
+			$("#start_stop_training").css("visibility", "hidden");
+		}
+
 		$("#show_grad_cam").prop("disabled", false);
 		last_training_time = Date.now();
 		await gui_in_training();
@@ -155,6 +160,8 @@ async function train_neural_network () {
 
 		if(is_cosmo_mode) {
 			await add_cosmo_point("finished_training");
+
+			$("#start_stop_training").css("visibility", "visible");
 		}
 	}
 
