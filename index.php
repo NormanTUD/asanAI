@@ -198,6 +198,18 @@
 		<meta name="theme-color" content="#7299d2">
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+<?php
+		if(isset($_GET["start_cosmo"])) {
+?>
+			<style>
+				html {
+					font-size: 20px !important;
+				}
+			</style>
+<?php
+		}
+?>
 	</head>
 	<body id='body' data-chardin-sequenced="true">
 		<noscript>
