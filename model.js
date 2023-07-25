@@ -506,7 +506,23 @@ function check_initializers (data, has_keys) {
 	return data;
 }
 
-function _check_data (data) {
+function _check_data (data, type) {
+	var has_keys = Object.keys(data);
+
+	if(has_keys.includes("dropout_rate") && type == "dropout") {
+		var tmp = data["dropout_rate"];
+		delete data["dropout_rate"];
+		data["rate"] = tmp;
+		has_keys = Object.keys(data);
+	}
+
+	if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
+		var tmp = data["rate"];
+		delete data["rate"];
+		data["dropout"] = tmp;
+		has_keys = Object.keys(data);
+	}
+
 	if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
 		data["targetShape"] = eval("[" + data["targetShape"] + "]");
 	}
@@ -522,6 +538,16 @@ function _check_data (data) {
 	if("units" in data && typeof(data["units"]) == "undefined") {
 		data["units"] = 2;
 	}
+
+	["strides", "kernelSize"].forEach(function (correction_name) {
+		if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
+			for (var k = 0; k < data[correction_name].length; k++) {
+				data[correction_name][k] = 1;
+			}
+		}
+	});
+
+	data = check_initializers(data, has_keys);
 
 	return data;
 }
@@ -569,33 +595,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];
 
-		var has_keys = Object.keys(data);
-
-		if(has_keys.includes("dropout_rate") && type == "dropout") {
-			var tmp = data["dropout_rate"];
-			delete data["dropout_rate"];
-			data["rate"] = tmp;
-			has_keys = Object.keys(data);
-		}
-
-		if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
-			var tmp = data["rate"];
-			delete data["rate"];
-			data["dropout"] = tmp;
-			has_keys = Object.keys(data);
-		}
-
-		data = _check_data(data);
-
-		["strides", "kernelSize"].forEach(function (correction_name) {
-			if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
-				for (var k = 0; k < data[correction_name].length; k++) {
-					data[correction_name][k] = 1;
-				}
-			}
-		});
-
-		data = check_initializers(data, has_keys);
+		data = _check_data(data, type);
 
 		if(type == "rnn") {
 			// never worked...
