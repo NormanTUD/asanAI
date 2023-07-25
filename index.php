@@ -206,6 +206,10 @@
 				html {
 					font-size: 20px !important;
 				}
+
+				.layer_image {
+					width: 80px;
+				}
 			</style>
 <?php
 		}
