@@ -5,6 +5,13 @@ var num_tests = 0;
 var num_tests_failed = 0;
 var mem_history = [];
 
+async function _set_seeds (nr) {
+	l("Setting seed to " + nr);
+	$(".kernel_initializer_seed").val(nr).trigger("change");
+	$(".bias_initializer_seed").val(nr).trigger("change");
+	l("Done setting seed to " + nr);
+}
+
 async function _set_initializers() {
 	$(".layer_options_button").click()
 
@@ -15,10 +22,7 @@ async function _set_initializers() {
 
 	await delay(2000);
 
-	l("Setting seed to 42");
-	$(".kernel_initializer_seed").val(42).trigger("change");
-	$(".bias_initializer_seed").val(42).trigger("change");
-	l("Done setting seed to 42");
+	await set_seeds(42);
 }
 
 function test_not_equal (name, is, should_be) {
@@ -100,7 +104,7 @@ async function run_tests () {
 
 	var backends = ["webgl_backend", "cpu_backend"];
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
-			try {
+		try {
 			log("Setting backend:", backends[backend_id]);
 			$("#" + backends[backend_id]).click().trigger("change");
 			await set_backend();
