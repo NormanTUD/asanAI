@@ -487,11 +487,6 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
-	if(!force) {
-		if(fake_model_structure === undefined && new_current_status_hash == current_status_hash) {
-			//return old_model;
-		}
-	}
 
 	if(!force) {
 		if(disable_show_python_and_create_model) {
