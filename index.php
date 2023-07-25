@@ -210,6 +210,10 @@
 				.layer_image {
 					width: 80px;
 				}
+
+				#own_files {
+					display: none;
+				}
 			</style>
 <?php
 		}

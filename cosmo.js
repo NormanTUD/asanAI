@@ -651,3 +651,13 @@ function getColorPickerElements() {
 var colorPickerElementsList = getColorPickerElements();
 console.log(colorPickerElementsList);
 */
+
+function switch_predict_mode () {
+	if($("#own_files").css("display") == "none") {
+		$("#own_files").show();
+		$("#example_predictions").hide();
+	} else {
+		$("#own_files").hide();
+		$("#example_predictions").show();
+	}
+}
