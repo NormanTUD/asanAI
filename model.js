@@ -508,7 +508,6 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	$(".warning_container").hide();
 
-
 	var new_model = tf.sequential();
 
 	var model_structure = fake_model_structure;
