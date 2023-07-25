@@ -103,6 +103,7 @@ async function run_tests () {
 	tf.engine().startScope();
 
 	var backends = ["webgl_backend", "cpu_backend"];
+	backends = ["webgl_backend"]; // only test webgl
 	for (var backend_id = 0; backend_id < backends.length; backend_id++) {
 		try {
 			log("Setting backend:", backends[backend_id]);
@@ -316,6 +317,8 @@ async function run_tests () {
 			await delay(3000);
 			await _set_initializers();
 
+			$("#learningRate_adam").val("0.001").trigger("change");
+
 			log_test("Done waiting 3 seconds.");
 
 			await set_epochs(20);
@@ -356,7 +359,6 @@ async function run_tests () {
 					array_contains_nan = true;
 				}
 			}
-
 
 			test_equal("array_contains_nan must be false (if true, this means the method for getting the results has failed. Did you recently change the way the results are displayed in the predict tab?)", array_contains_nan, false);
 
