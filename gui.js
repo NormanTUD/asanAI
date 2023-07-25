@@ -5605,7 +5605,6 @@ function allow_editable_labels () {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(label_index !== undefined) {
-
 			if(typeof(labels) == "object") {
 				if(labels.length) {
 					var tmp_label = labels[label_index];
