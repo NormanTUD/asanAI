@@ -265,7 +265,6 @@ async function run_tests () {
 			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true)
 
 			result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
-			log("1 and 1: " + result_and.toString());
 			test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
 			
 			log_test("Add layer");
