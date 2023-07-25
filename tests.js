@@ -242,7 +242,7 @@ async function run_tests () {
 
 			await _set_initializers();
 
-			await set_epochs(3);
+			await set_epochs(30);
 
 			await train_neural_network();	
 
@@ -252,8 +252,8 @@ async function run_tests () {
 			result_and = await model.predict(tf.tensor([[0, 1]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true)
 
-			result_and = await model.predict(tf.tensor([[0, 0]])).arraySync()[0][0];
-			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
+			result_and = await model.predict(tf.tensor([[1, 0]])).arraySync()[0][0];
+			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true)
 
 			result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
 			test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
