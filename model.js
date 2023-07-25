@@ -506,6 +506,26 @@ function check_initializers (data, has_keys) {
 	return data;
 }
 
+function _check_data (data) {
+	if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
+		data["targetShape"] = eval("[" + data["targetShape"] + "]");
+	}
+
+	if("size" in data && typeof(data["size"]) == "string") {
+		data["size"] = eval("[" + data["size"] + "]");
+	}
+
+	if("dilationRate" in data && data["dilationRate"].length == 0) {
+		data["dilationRate"] = null;
+	}
+
+	if("units" in data && typeof(data["units"]) == "undefined") {
+		data["units"] = 2;
+	}
+
+	return data;
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	weights_as_string_cache = false;
 
@@ -565,21 +585,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			has_keys = Object.keys(data);
 		}
 
-		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
-			data["targetShape"] = eval("[" + data["targetShape"] + "]");
-		}
-
-		if("size" in data && typeof(data["size"]) == "string") {
-			data["size"] = eval("[" + data["size"] + "]");
-		}
-
-		if("dilationRate" in data && data["dilationRate"].length == 0) {
-			data["dilationRate"] = null;
-		}
-
-		if("units" in data && typeof(data["units"]) == "undefined") {
-			data["units"] = 2;
-		}
+		data = _check_data(data);
 
 		["strides", "kernelSize"].forEach(function (correction_name) {
 			if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
