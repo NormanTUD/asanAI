@@ -989,3 +989,7 @@ button {
 	top: 10px;
 	display: none;
 }
+
+.pen_size_slider {
+	width: 100px;
+}
