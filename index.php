@@ -1355,65 +1355,63 @@
 								<canvas id="grad_cam_heatmap" style="position: fixed; left: 50px; bottom: 50px; display: none"></canvas>
 
 								<div class="container" id="predictcontainer">
-									<div>
-										<span id="own_files" class="no_autochoose_next_on_click">
-											<span class="hide_when_image">
-												<span id="predict_own">
-													<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
-													<br>
-													<button onclick="predict($('#predict_own_data').val());repredict()">Predict</button>
-												</span>
-											</span>
-
-											<span class="hide_when_no_image custom_image_data">
-												<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-												<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
-												<span style='display: block' class="full_example_image_prediction only_when_webcam_on">
-													<span id="webcam" style="display: none"></span>
-													<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
-												</span>
+									<span id="own_files" class="no_autochoose_next_on_click">
+										<span class="hide_when_image">
+											<span id="predict_own">
+												<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 												<br>
-											</span>
-
-											<span class="hide_when_no_image custom_image_data">
-												<span id="upload_file" class="show_data no_box_shadow ">
-													<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
-													<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
-												</span>
-												<br>
-												<span class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
-													<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
-
-													<br>
-
-													<span id="predict_error" style="overflow: scroll; display: none"></span><br>
-													<span id="prediction" style="display: none"></span>
-												</span>
-											</span>
-
-											<span id="prediction_non_image" style="display: none"></span>
-
-											<span class="handdrawn hide_when_no_image" style='text-align: justify'>
-												<span class="full_example_image_prediction">
-													<span id='predict_handdrawn_canvas'></span><br>
-													<span id="handdrawn_predictions"></span>
-												</span>
+												<button onclick="predict($('#predict_own_data').val());repredict()">Predict</button>
 											</span>
 										</span>
 
-										<br>
-
-										<div class="hide_when_custom_data">
-											<!--
-											<span id="repredict_examples_button">
-												<hr>
-												<button onclick="show_prediction(1);">Re-predict examples</button>
+										<span class="hide_when_no_image custom_image_data">
+											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
+											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
+											<span style='display: block' class="full_example_image_prediction only_when_webcam_on">
+												<span id="webcam" style="display: none"></span>
+												<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
 											</span>
-											<div class="medium_vskip"></div>
-											<h2 class="" style="display: none">Examples</h2>
-											-->
-											<div id="example_predictions">
-											</div>
+											<br>
+										</span>
+
+										<span class="hide_when_no_image custom_image_data">
+											<span id="upload_file" class="show_data no_box_shadow ">
+												<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
+												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
+											</span>
+											<br>
+											<span class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
+												<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
+
+												<br>
+
+												<span id="predict_error" style="overflow: scroll; display: none"></span><br>
+												<span id="prediction" style="display: none"></span>
+											</span>
+										</span>
+
+										<span id="prediction_non_image" style="display: none"></span>
+
+										<span class="handdrawn hide_when_no_image" style='text-align: justify'>
+											<span class="full_example_image_prediction">
+												<span id='predict_handdrawn_canvas'></span><br>
+												<span id="handdrawn_predictions"></span>
+											</span>
+										</span>
+									</span>
+
+									<br>
+
+									<div class="hide_when_custom_data">
+										<!--
+										<span id="repredict_examples_button">
+											<hr>
+											<button onclick="show_prediction(1);">Re-predict examples</button>
+										</span>
+										<div class="medium_vskip"></div>
+										<h2 class="" style="display: none">Examples</h2>
+										-->
+										<div id="example_predictions">
 										</div>
 									</div>
 								</div>
