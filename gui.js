@@ -5496,24 +5496,6 @@ function sort_by_property(list, property_name_list) {
 	});
 }
 
-function parse_required_skills (str) {
-	var splitted = str.split(/,/);
-
-	var res = {};
-
-	for (var i = 0; i < splitted.length; i++) {
-		var matches = splitted[i].match(/(\w+)(?:\[(\d+(?:,\d+)*)\])?/);
-		if (!matches) {
-			throw new Error('Invalid string format');
-		}
-		var key = matches[1];
-		var values = matches[2] ? matches[2].split(',').map(Number) : [1];
-
-		res[key] = values;
-	}
-	return res;
-}
-
 function getSortedHash(inputHash){
 	var resultHash = {};
 
