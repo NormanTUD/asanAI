@@ -785,6 +785,5 @@ function parse_required_skills(str) {
 }
 
 function emergency_button () {
-	alert("OK, EMERGENCY!!!!!");
 	window.location.href = window.location.href;
 }
