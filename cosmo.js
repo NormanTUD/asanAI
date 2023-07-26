@@ -739,6 +739,7 @@ console.log(colorPickerElementsList);
 */
 
 function switch_predict_mode () {
+	add_cosmo_point("eigene_webcam");
 	if($("#own_files").css("display") == "none") {
 		$("#own_files").show();
 		$("#own_files").css("display", "inline-block");
