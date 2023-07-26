@@ -719,7 +719,7 @@ function switch_predict_mode () {
 		$("#own_files").css("display", "inline-block");
 		$("#example_predictions").hide();
 
-		$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Examples
+		$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
 			<img height=32 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png'>
 			<img height=32 src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png'>
 			<img height=32 src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png'>
@@ -732,7 +732,7 @@ function switch_predict_mode () {
 		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 
-		$("#webcam_in_cosmo").html("Webcam 📷");
+		$("#webcam_in_cosmo").html("Kamera 📷");
 	}
 
 	add_cosmo_point("toggled_webcam");
