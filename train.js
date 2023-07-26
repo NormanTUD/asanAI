@@ -169,6 +169,10 @@ async function train_neural_network () {
 	await write_model_to_latex_to_page();
 
 	await save_current_status();
+
+	if(is_cosmo_mode) {
+		chose_next_manicule_target();
+	}
 }
 
 function getKeyByValue(object, value) {

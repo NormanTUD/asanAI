@@ -3024,6 +3024,11 @@ async function upload_weights(evt) {
 
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();
+	if(is_cosmo_mode) {
+		await delay(200);
+		log("TRYING HERE!!!!!!!!");
+		chose_next_manicule_target();
+	}
 }
 
 var handle_x_file = async function (evt) {

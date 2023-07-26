@@ -77,6 +77,7 @@ async function show_cosmo_elements_depending_on_current_skills () {
 }
 
 function remove_manicule (remove=1) {
+	log("Removing manicule");
 	if(typeof(manicule) == "object" && manicule !== null && remove && Object.keys(manicule).includes("element")) {
 		last_manually_removed_manicule_element = manicule.element;
 		if(!$(manicule.element).data("keep_cosmo")) {
@@ -222,11 +223,21 @@ class ManiC {
 	getPos(el) {
 		assert(!!el, "el is empty")
 		if(typeof(el) == "object") {
-			el = el[0];
+			if(Object.keys(el).includes("element")) {
+				el = el["element"];
+			} else {
+				el = el[0];
+			}
 		}
 		
-		var rect = el.getBoundingClientRect();
-		return rect;
+		log(el);
+		if(el) {
+			var rect = el.getBoundingClientRect();
+			return rect;
+		} else {
+			log(el);
+			throw new Error('el was empty');
+		}
 	}
 
 	moveAroundUpDown () {
