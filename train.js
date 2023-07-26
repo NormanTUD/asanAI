@@ -149,6 +149,7 @@ async function train_neural_network () {
 		if(is_cosmo_mode) {
 			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
+			chose_next_manicule_target();
 			if(!cam) {
 				$("#show_webcam_button").click();
 			}
