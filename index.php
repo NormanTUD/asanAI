@@ -240,7 +240,7 @@
 		<div id="mainsite" style="display: none">
 			<span>
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
-				<a><img onclick='emergency_button()' style="width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="Fire-Alarm-Pushbutton.svg" /></a>
+				<a><img onclick='emergency_button()' style="z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="Fire-Alarm-Pushbutton.svg" /></a>
 			</span>
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
