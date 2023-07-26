@@ -113,6 +113,28 @@ async function force_download_image_preview_data () {
 	}
 }
 
+async function load_msg(swal_msg_format) {
+	if(finished_loading) {
+		return await Swal.fire({
+			title: swal_msg_format["title"],
+			html: swal_msg_format["html"],
+			timer: 2000,
+			showConfirmButton: false
+		});
+	} else {
+		var html_msg = "";
+		if(Object.keys(swal_msg_format).includes("title")) {
+			html_msg = "<h1>" + swal_msg_format["title"] + "</h1>";
+		}
+
+		if(Object.keys(swal_msg_format).includes("html")) {
+			html_msg += swal_msg_format["html"]
+		}
+
+		$("#load_msg").html(html_msg);
+	}
+}
+
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
 	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
@@ -244,12 +266,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 	$("#stop_downloading").hide();
 
 	if(!skip_real_image_download && !dont_show_swal) {
-		await Swal.fire({
-			title: swal_msg_format["title"],
-			html: swal_msg_format["html"],
-			timer: 2000,
-			showConfirmButton: false
-		});
+		await load_msg(swal_msg_format);
 	}
 
 	document.title = original_title;

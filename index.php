@@ -225,7 +225,7 @@
 		</noscript>
 		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
-		<div id="mainsite" <?php if(isset($_GET["start_cosmo"])) { print 'style="display: none"'; }?>>
+		<div id="mainsite" style="display: none">
 			<span>
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
 			</span>
@@ -1454,15 +1454,13 @@
 
 			<span id="memory_debugger_div"></span>
 		</div>
-<?php
-		if(isset($_GET["start_cosmo"])) {
-?>
-			<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-				<img src="Loading_icon.gif" alt="Loading..." style="max-width: 100%;">
-			</div>
-<?php
-		}
-?>
+
+		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white;" id="loading_icon_wrapper">
+			<img src="Loading_icon.gif" alt="Loading..." style="max-width: 100%;">
+			<br>
+			<div id="load_msg"></div>
+		</div>
+
 		<script>
 			function get_color_coded_neurons (number_of_layers) {
 				var colors = [

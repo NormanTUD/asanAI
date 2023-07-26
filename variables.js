@@ -1402,3 +1402,5 @@ let mouseX = -1;
 let mouseY = -1;
 
 var sketcher_warning = 0;
+
+var finished_loading = false;

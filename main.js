@@ -338,21 +338,12 @@ async function set_backend() {
 }
 
 $(document).ready(async function() {
-	var s;
-
-
 	if(!is_cosmo_mode) {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
 			await cosmo_mode();
-		} else {
-			$("#status_bar").show();
 		}
 	} else {
 
-	}
-
-	if(!is_cosmo_mode) {
-		s = swalmsg("Loading page");
 	}
 
 	l("Trying to set Backend");
@@ -521,15 +512,19 @@ $(document).ready(async function() {
 
 	allow_editable_labels();
 
-	if(!is_cosmo_mode) {
-		s.close();
-	}
-
 	await show_prediction(0, 1);
 
 	if(atrament_data.sketcher && await input_shape_is_image()) {
 		await predict_handdrawn();
 	}
 
+	$("#loading_icon_wrapper").hide();
+	$("#mainsite").show();
+	if(!is_cosmo_mode) {
+		$("#status_bar").show();
+	}
+
 	l("Site is ready");
+
+	finished_loading = true;
 });

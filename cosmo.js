@@ -566,8 +566,6 @@ async function cosmo_mode () {
 	$("#show_webcam_button").css("visibility", "hidden");
 
 	$("#side_by_side_container").css("padding-top", "70px");
-
-	$("#mainsite").show();
 }
 
 function findColorPickerContainer(element) {

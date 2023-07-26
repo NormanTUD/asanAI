@@ -993,3 +993,8 @@ button {
 .pen_size_slider {
 	width: 100px;
 }
+
+#load_msg {
+	position: absolute;
+	bottom: 5%;
+}
