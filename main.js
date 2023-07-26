@@ -528,6 +528,8 @@ $(document).ready(async function() {
 		$("#presentation_site_nr").show();
 	}
 
+	await restart_fcnn(1);
+
 	l("Site is ready");
 
 	finished_loading = true;
