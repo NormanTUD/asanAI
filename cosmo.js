@@ -317,14 +317,18 @@ function chose_next_manicule_target () {
 				if(typeof(req) == "string") {
 					req_full = parse_required_skills(req);
 				}
-
+				
 				var possible = true;
+                log(">>>>>>>>>>>>>>> TESTING: ", $x);
 				for (var n = 0; n < Object.keys(req_full).length; n++) {
 					var current_key = Object.keys(req_full)[n];
 
-					var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key)
+					var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key);
+                    log("full_req_part_is_part_of_current_skills: ", full_req_part_is_part_of_current_skills, ", current_skills:", current_skills, ", current_key: ", current_key);
 					if(!full_req_part_is_part_of_current_skills) {
-						possible = false;
+                        if(req_full[current_key].includes(0)) {
+                            possible = false;
+                        }
 					} else {
 						var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
 
