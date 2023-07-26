@@ -654,6 +654,12 @@ async function cosmo_mode () {
 	$("#custom_webcam_training_data").hide();
 
 	$("#side_by_side_container").css("padding-top", "70px");
+
+	window.setInterval(function () {
+		if(!is_presenting && (manicule === null || manicule === undefined)) {
+			chose_next_manicule_target();
+		}
+	}, 1000);
 }
 
 function findColorPickerContainer(element) {
