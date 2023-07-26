@@ -216,6 +216,7 @@ class ManiC {
 	}
 
 	getPos(el) {
+		assert(el, "el is empty")
 		if(typeof(el) == "object") {
 			el = el[0];
 		}

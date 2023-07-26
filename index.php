@@ -216,6 +216,18 @@
 				}
 			</style>
 <?php
+			if(isset($_GET["max_number_of_files_per_category"]) && intval($_GET["max_number_of_files_per_category"])) {
+?>
+				<script>
+					$(document).ready(async function() {
+						while (!finished_loading) {
+							await delay(200);
+						}
+						$("#max_number_of_files_per_category").val(<?php print intval($_GET["max_number_of_files_per_category"]); ?>);
+					});
+				</script>
+<?php
+			}
 		}
 ?>
 	</head>
