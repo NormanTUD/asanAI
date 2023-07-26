@@ -520,8 +520,14 @@ $(document).ready(async function() {
 
 	$("#loading_icon_wrapper").hide();
 	$("#mainsite").show();
+
+
 	if(!is_cosmo_mode) {
 		$("#status_bar").show();
+	} else {
+		$("#scroll_left").show();
+		$("#scroll_right").show();
+		$("#presentation_site_nr").show();
 	}
 
 	l("Site is ready");

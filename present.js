@@ -32,7 +32,7 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	$("#presentation_site_nr").remove();
 
 	$("#body").append(
-		`<div id='presentation_site_nr' style='z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
+		`<div id='presentation_site_nr' style='display: none; z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
 	);
 }
 
@@ -62,7 +62,7 @@ async function handleScroll(event) {
 function addScrollLeftButton() {
 	$("#scroll_left").remove();
 	$("#body").append(
-		"<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>&#12296;</span>"
+		"<span onclick='showPreviousDiv()' class='next_prev_buttons' style='display: none' id='scroll_left'>&#12296;</span>"
 	);
 }
 
@@ -70,7 +70,7 @@ function addScrollLeftButton() {
 function addScrollRightButton() {
 	$("#scroll_right").remove();
 	$("#body").append(
-		"<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>"
+		"<span onclick='showNextDiv()' class='next_prev_buttons' style='display: none' id='scroll_right'>&#12297;</span>"
 	);
 }
 
