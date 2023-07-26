@@ -136,6 +136,10 @@ class ManiC {
 				return;
 			}
 
+			if(is_presenting) {
+				return;
+			}
+
 			manicule_element_xpath = get_element_xpath($e[0]);
 
 			this.element = e;
@@ -225,9 +229,13 @@ class ManiC {
 		if(typeof(el) == "object") {
 			if(Object.keys(el).includes("element")) {
 				el = el["element"];
-			} else {
+			} else if(!typeof(el) == "object") {
 				el = el[0];
 			}
+		}
+
+		if(typeof(el) == "object") {
+			el = el[0];
 		}
 		
 		log(el);
