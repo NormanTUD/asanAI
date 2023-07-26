@@ -116,11 +116,12 @@ function each_skill_level_matches (c, s) {
 
 class ManiC {
 	constructor(e, imageUrl = "manicule.svg") {
-		//logt("ManiC e:", e);
+		logt("ManiC e:", e);
 
 		remove_manicule(0);
 
 		if(started_training) {
+			log("Training started");
 			return;
 		}
 
@@ -206,7 +207,7 @@ class ManiC {
 
 			window.scrollTo(x_position_manicule_centered, y_position_manicule_centered)
 		} else {
-			//log("Empty e");
+			log("Empty e");
 		}
 
 		cosmo_debugger();
@@ -331,7 +332,7 @@ function find_unclicked_items ($x, possible_items) {
 			if(!is_possible) {
 				if(get_element_xpath($x[0]).includes("start_stop_training")) {
 
-					log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+					//log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 				}
 				possible = false;
 			}
@@ -367,7 +368,7 @@ function find_unclicked_items ($x, possible_items) {
 	if(possible) {
 		possible_items.push({"item": $x, "length": Object.keys(req_full).length});
 
-		log("!!!! TRUE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		//log("!!!! TRUE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 	}
 
 	return possible_items;
@@ -393,7 +394,8 @@ function chose_next_manicule_target () {
 
 	log("Possible indices:", possible_items);
 
-	if(possible_items.length) {
+	if(!possible_items.length) {
+		log("POSSIBLE ITEMS WERE EMPTY", possible_items, possible_items.length);
 		remove_manicule(0);
 		log("No possible indices found for Manicule!");
 		return;
@@ -415,8 +417,11 @@ function chose_next_manicule_target () {
 
 	var index_to_chose = possible_elements.length - 1;
 	$(possible_elements[index_to_chose]).show();
+	log("Chosing ", possible_elements[index_to_chose]);
 	remove_manicule(0);
-	new ManiC(possible_elements[index_to_chose]);
+	var chosen_element = possible_elements[index_to_chose];
+	log("chosen_element:", chosen_element);
+	new ManiC(chosen_element);
 	$(possible_elements[0]).on("click", function () {
 		$(this).attr("data-clicked", 1)
 	});
