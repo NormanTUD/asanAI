@@ -342,8 +342,6 @@ $(document).ready(async function() {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
 			await cosmo_mode();
 		}
-	} else {
-
 	}
 
 	l("Trying to set Backend");

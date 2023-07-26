@@ -5672,3 +5672,27 @@ function hide_colorpicker_for_eraser (idname) {
 	}
 
 }
+
+async function load_msg(swal_msg_format) {
+	if(finished_loading) {
+		return await Swal.fire({
+			title: swal_msg_format["title"],
+			html: swal_msg_format["html"],
+			timer: 2000,
+			showConfirmButton: false
+		});
+	} else {
+		var html_msg = "";
+		if(Object.keys(swal_msg_format).includes("title")) {
+			html_msg = "<h1>" + swal_msg_format["title"] + "</h1>";
+		}
+
+		if(Object.keys(swal_msg_format).includes("html")) {
+			html_msg += swal_msg_format["html"]
+		}
+
+		$("#load_msg").html(html_msg);
+	}
+}
+
+
