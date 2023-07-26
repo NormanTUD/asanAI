@@ -131,6 +131,10 @@ class ManiC {
 				return;
 			}
 
+			if(is_hidden_or_has_hidden_parent($e)) {
+				return;
+			}
+
 			manicule_element_xpath = get_element_xpath($e[0]);
 
 			this.element = e;
@@ -216,7 +220,7 @@ class ManiC {
 	}
 
 	getPos(el) {
-		assert(el, "el is empty")
+		assert(!!el, "el is empty")
 		if(typeof(el) == "object") {
 			el = el[0];
 		}
@@ -269,6 +273,7 @@ class ManiC {
 
 	moveAroundLeftRight () {
 		// calculate the center point of the element
+		log("!!! this", this);
 		var element_left_absolute = this.getPos(this.element).left;
 		var element_width = parseInt(this.image.style.width);
 
@@ -634,6 +639,7 @@ async function cosmo_mode () {
 
 	$("#show_webcam_button").css("visibility", "hidden");
 	$("#start_stop_training").show().css("display", "initial");
+	$("#custom_webcam_training_data").hide();
 
 	$("#side_by_side_container").css("padding-top", "70px");
 }
