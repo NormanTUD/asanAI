@@ -34,6 +34,10 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	$("#body").append(
 		`<div id='presentation_site_nr' style='display: none; z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
 	);
+	
+	if(finished_loading) {
+		$("#presentation_site_nr").show();
+	}
 }
 
 // Function to remove full screen styles

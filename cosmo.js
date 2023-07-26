@@ -544,7 +544,6 @@ async function cosmo_mode () {
 
 	$(".glass_box").css("border", "none");
 	$(".glass_box").css("box-shadow", "none");
-
 	$("#body").css("text-align", "center");
 
 	const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
@@ -564,6 +563,7 @@ async function cosmo_mode () {
 	$("#max_activation_iterations").val(50)
 
 	$("#show_webcam_button").css("visibility", "hidden");
+	$("#start_stop_training").show();
 
 	$("#side_by_side_container").css("padding-top", "70px");
 }
