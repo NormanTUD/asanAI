@@ -113,10 +113,9 @@ function each_skill_level_matches (c, s) {
 	return true;
 }
 
-
 class ManiC {
 	constructor(e, imageUrl = "manicule.svg") {
-		logt("ManiC e:", e);
+		//logt("ManiC e:", e);
 
 		remove_manicule(0);
 
@@ -140,7 +139,7 @@ class ManiC {
 
 			//log("Manicule Selector:", e);
 
-			//var bottom_y = $e[0].getBoundingClientRect().y + $e[0].getBoundingClientRect().height
+			//var bottom_y = $e[0].getBoundingClientRect().top + $e[0].getBoundingClientRect().height
 
 			this.image.style.position = 'absolute';
 			this.image.style.display = 'block'; // changed to block so that the image is shown by default
@@ -168,20 +167,21 @@ class ManiC {
 				//log(`final_top = element_top + element_height = ${final_top}`);
 				//log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
 
-				this.image.style.top = `${final_top}px`;
-				this.image.style.left = `${element_position_left}px`;
-				this.image.style.height = `${this.hand_height}px`;
+				this.image.top = `${final_top}px`;
+				this.image.left = `${element_position_left}px`;
+				this.image.height = `${this.hand_height}px`;
 				this.image.src = "rotated_90_" + imageUrl;
 			} else {
-				var element_bounding_box_left = $e[0].getBoundingClientRect().x; // + $e[0].getBoundingClientRect().width
+				var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
 				var element_width = $e.width();
 
 				var final_left = element_bounding_box_left + element_width;
 				var final_element_top = element_top + 10;
 
 				this.image.style.width = `${this.hand_height}px`;
-				this.image.style.top =`${final_element_top}px`;
-				this.image.style.left = `${final_left}px`;
+				log("this.element", this.element);
+				this.image.top =`${final_element_top}px`;
+				this.image.left = `${final_left}px`;
 			}
 
 			this.image.classList.add('manicule');
@@ -190,9 +190,9 @@ class ManiC {
 			document.body.appendChild(this.image);
 
 			if($e.data("rotated")) {
-				this.moveAroundVertically();
+				this.moveAroundUpDown();
 			} else {
-				this.moveAroundHorizontally();
+				this.moveAroundLeftRight();
 			}
 
 			manicule = this;
@@ -215,10 +215,19 @@ class ManiC {
 		//console.trace();
 	}
 
-	moveAroundVertically () {
+	getPos(el) {
+		if(typeof(el) == "object") {
+			el = el[0];
+		}
+		
+		var rect = el.getBoundingClientRect();
+		return rect;
+	}
+
+	moveAroundUpDown () {
 		// calculate the center point of the element
-		var element_left = parseInt(this.image.style.left) + (parseInt(this.hand_width) / 10);
-		var element_top = parseInt(this.image.style.top);
+		var element_left = parseInt(this.getPos(this.element).left) + (parseInt(this.hand_width) / 10);
+		var element_top = parseInt(this.getPos(this.element).top);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
@@ -227,8 +236,8 @@ class ManiC {
 		var radius = 20;
 
 		// set up the animation
-		this.image.style.animation = 'moveAroundVertically 2s linear infinite';
-		this.image.style.animationName = 'moveAroundVertically';
+		this.image.style.animation = 'moveAroundUpDown 2s linear infinite';
+		this.image.style.animationName = 'moveAroundUpDown';
 		// define the keyframes for the animation
 		var keyframes = `
 			0% {
@@ -248,16 +257,22 @@ class ManiC {
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
 		styleSheet.innerHTML = `
-			@keyframes moveAroundVertically {
+			@keyframes moveAroundUpDown {
 				${keyframes}
 			}
 		`;
 	}
 
-	moveAroundHorizontally () {
+	moveAroundLeftRight () {
 		// calculate the center point of the element
-		var element_left = parseInt(this.image.style.left) + parseInt(this.image.style.width) / 2;
-		var element_top = parseInt(this.image.style.top);
+		log("THIS ELEMENT!!!!", this.element);
+		var element_left_absolute = this.getPos(this.element).left;
+		var element_width = parseInt(this.image.style.width);
+
+		var element_left = parseInt(element_left_absolute + (element_width / 2));
+		log(`var element_left = ${element_left} = parseInt(${element_left_absolute} + (${element_width} / 2));`);
+
+		var element_top = parseInt(this.getPos(this.element).top);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
@@ -266,8 +281,8 @@ class ManiC {
 		var radius = 20;
 
 		// set up the animation
-		this.image.style.animation = 'moveAroundHorizontally 2s linear infinite';
-		this.image.style.animationName = 'moveAroundHorizontally';
+		this.image.style.animation = 'moveAroundLeftRight 2s linear infinite';
+		this.image.style.animationName = 'moveAroundLeftRight';
 		// define the keyframes for the animation
 
 		var keyframes = `
@@ -285,10 +300,12 @@ class ManiC {
 			}
 		`;
 
+		log(keyframes);
+
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
 		styleSheet.innerHTML = `
-			@keyframes moveAroundHorizontally {
+			@keyframes moveAroundLeftRight {
 				${keyframes}
 			}
 		`;
@@ -551,7 +568,7 @@ async function cosmo_mode () {
 	//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 	is_cosmo_mode = true;
 
-	$("#start_stop_training").show();
+	$("#start_stop_training").show().css("display", "initial");
 
 	await add_cosmo_point("loaded_page");
 
@@ -616,7 +633,7 @@ async function cosmo_mode () {
 	$("#max_activation_iterations").val(50)
 
 	$("#show_webcam_button").css("visibility", "hidden");
-	$("#start_stop_training").show();
+	$("#start_stop_training").show().css("display", "initial");
 
 	$("#side_by_side_container").css("padding-top", "70px");
 }

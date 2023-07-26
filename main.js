@@ -526,7 +526,7 @@ $(document).ready(async function() {
 		$("#scroll_left").show();
 		$("#scroll_right").show();
 		$("#presentation_site_nr").show();
-		$("#start_stop_training").css("display", "block");
+		$("#start_stop_training").css("display", "inline");
 	}
 
 	await restart_fcnn(1);
