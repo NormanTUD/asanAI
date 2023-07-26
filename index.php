@@ -244,7 +244,7 @@
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
-				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1],eigene_webcam[0]" data-show_again_when_new_skill_acquired="finished_training[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
+				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
 			</div>
 			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
 <?php
@@ -1314,7 +1314,8 @@
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
 										Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.<br>
-										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.
+										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.<br>
+										Die Qualität des Ergebnisses hängt vom Zufall ab.
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										Aktuell hat sich die Software alle Daten <span id='current_epoch_cosmo_display'>0</span> von <span id="max_epoch_cosmo_display"></span> mal angesehen. Es wird noch ca. <span id="time_estimate_cosmo">00:00</span> dauern.
@@ -1369,7 +1370,7 @@
 
 								<div class="container" id="predictcontainer">
 									<div class="show_only_in_cosmo_mode">
-										<button class="cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" onclick="switch_predict_mode()">Eigene Webcam anzeigen</button>
+										<button class="cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" id="webcam_in_cosmo" onclick="switch_predict_mode()">Eigene Webcam anzeigen</button>
 									</div>
 									<span id="own_files" class="no_autochoose_next_on_click">
 										<span class="hide_when_image">

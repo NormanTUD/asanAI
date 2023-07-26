@@ -3,7 +3,6 @@ async function add_cosmo_point (name, show_manicule=1) {
 		if(!Object.keys(current_skills).includes(name)) {
 			current_skills[name] = 1;
 		} else {
-
 			current_skills[name]++;
 		}
 
@@ -13,6 +12,12 @@ async function add_cosmo_point (name, show_manicule=1) {
 
 		if(show_manicule) {
 			chose_next_manicule_target();
+		}
+
+		if(name == "eigene_webcam") {
+			chose_next_manicule_target = function () {
+				log("Hack to get infinite loop...");
+			}
 		}
 	} else {
 		current_skills = {};
@@ -740,6 +745,7 @@ console.log(colorPickerElementsList);
 
 function switch_predict_mode () {
 	add_cosmo_point("eigene_webcam");
+	$("#webcam_in_cosmo").attr("data-clicked", "1");
 	if($("#own_files").css("display") == "none") {
 		$("#own_files").show();
 		$("#own_files").css("display", "inline-block");
