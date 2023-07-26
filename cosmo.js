@@ -255,6 +255,7 @@ class ManiC {
 		var radius = 20;
 
 		// set up the animation
+		$(this.image).css("pointer-events", "none");
 		this.image.style.animation = 'moveAroundUpDown 2s linear infinite';
 		this.image.style.animationName = 'moveAroundUpDown';
 		// define the keyframes for the animation
@@ -299,6 +300,7 @@ class ManiC {
 		var radius = 20;
 
 		// set up the animation
+		$(this.image).css("pointer-events", "none");
 		this.image.style.animation = 'moveAroundLeftRight 2s linear infinite';
 		this.image.style.animationName = 'moveAroundLeftRight';
 		// define the keyframes for the animation
