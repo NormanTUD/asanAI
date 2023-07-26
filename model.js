@@ -654,7 +654,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	current_layer_status_hash = await get_current_layer_container_status_hash();
 
-	_set_old_weights(force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string)
+	await _set_old_weights(force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string)
 
 	if(!fake_model_structure) {
 		l("Model compiled successfully");
