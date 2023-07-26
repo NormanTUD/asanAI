@@ -202,11 +202,7 @@ class ManiC {
 
 			document.body.appendChild(this.image);
 
-			if($e.data("rotated")) {
-				this.moveAroundUpDown();
-			} else {
-				this.moveAroundLeftRight();
-			}
+			this.moveAroundLeftRight();
 
 			manicule = this;
 
@@ -241,57 +237,21 @@ class ManiC {
 		}
 	}
 
-	moveAroundUpDown () {
-		// calculate the center point of the element
-		var element_left_absolute = this.getPos(this.element).left;
-		var element_width = parseInt(this.image.style.width);
-
-		var element_left = parseInt(element_left_absolute + (element_width / 2));
-		var element_top = parseInt(this.getPos(this.element).top);
-
-		assert(!isNaN(element_left), "element_left is not a number");
-		assert(!isNaN(element_top), "element_top is not a number");
-
-		// calculate the radius of the circle
-		var radius = 20;
-
-		// set up the animation
-		$(this.image).css("pointer-events", "none");
-		this.image.style.animation = 'moveAroundUpDown 2s linear infinite';
-		this.image.style.animationName = 'moveAroundUpDown';
-		// define the keyframes for the animation
-		var keyframes = `
-			0% {
-				left: ${element_left}px;
-				top: ${element_top}px;
-			}
-			50% {
-				left: ${element_left}px;
-				top: ${element_top + radius}px;
-			}
-			100% {
-				left: ${element_left}px;
-				top: ${element_top}px;
-			}
-		`;
-
-		// add the keyframes to a style sheet
-		var styleSheet = document.getElementById('manicule_animation_css');
-		styleSheet.innerHTML = `
-			@keyframes moveAroundUpDown {
-				${keyframes}
-			}
-		`;
-	}
-
 	moveAroundLeftRight () {
 		// calculate the center point of the element
+		/*
 		var element_left_absolute = this.getPos(this.element).left;
 		var element_width = parseInt(this.image.style.width);
 
 		var element_left = parseInt(element_left_absolute + (element_width / 2));
+		*/
+		//x - width
+
+		var x = this.getPos(this.element).x;
+		var width = this.getPos(this.element).width;
 
 		var element_top = parseInt(this.getPos(this.element).top);
+		var element_left = parseInt(x + width);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
@@ -660,6 +620,8 @@ async function cosmo_mode () {
 			chose_next_manicule_target();
 		}
 	}, 1000);
+
+	$("#emergency_button").show();
 }
 
 function findColorPickerContainer(element) {

@@ -240,7 +240,7 @@
 		<div id="mainsite" style="display: none">
 			<span>
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
-				<a><img onclick='emergency_button()' style="z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="Fire-Alarm-Pushbutton.svg" /></a>
+				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="Fire-Alarm-Pushbutton.svg" /></a>
 			</span>
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
@@ -271,12 +271,12 @@
 					<li><span id="custom_image_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
 					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
-					if($GLOBALS["use_db"]) {
+				if($GLOBALS["use_db"]) {
 ?>
 						<span id="register" onclick="open_register_dialog()">Register/Login</span>
 						<span id="logout" onclick="logout()" style="display: none; user-select: none;">Logout</span>
 <?php
-					}
+				}
 ?>
 					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
 				</ul>
@@ -464,30 +464,30 @@
 								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
-							<script>
-								if(force_cpu_backend) {
-									$($("input[name='backend_chooser']")[0]).click().trigger("change")
-								}
-							</script>
+				<script>
+				if(force_cpu_backend) {
+					$($("input[name='backend_chooser']")[0]).click().trigger("change")
+				}
+				</script>
 							<hr>
 							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The beginner settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
-								<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
-									$checked = 1;
-									if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
-										$checked = 0;
-									}
+							<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
+				$checked = 1;
+				if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+					$checked = 0;
+				}
 
-									if($checked) { print "checked"; }
+				if($checked) { print "checked"; }
 
 ?>>
 								<label for="beginner">&#129466; Beginner</label>
 
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert" <?php
-									$checked = 0;
-									if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
-										$checked = 1;
-									}
-									if($checked) { print "checked"; }
+				$checked = 0;
+				if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
+					$checked = 1;
+				}
+				if($checked) { print "checked"; }
 ?>>
 								<label for="expert">&#9760;&#65039; Expert</label>
 							</fieldset>
@@ -517,11 +517,11 @@
 					<div class="ribbon-group" data-intro="Set options regarding the weights here.">
 						<div class="ribbon-toolbar">
 							<table>
-                                                                <tr>
+								<tr>
 								       <td>Keep weights when possible?</td>
 								       <td><input type="checkbox" value=1 checked id="keep_weights"></td>
 								</tr>
-                                                                <tr>
+								<tr>
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
@@ -783,25 +783,25 @@
 					<div class="ribbon-group" data-intro="Set options regarding automatic data augmentation here.">
 						<div class="ribbon-toolbar">
 							<table>
-                                                                <tr>
+								<tr>
 									<td>Auto rotate images?</td>
 									<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
 									<td>Sine-Ripple?</td>
 									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 								</tr>
-                                                                <tr>
+								<tr>
 									<td>Number of rotations?</td>
 									<td><input type="number" value=4 id="number_of_rotations"></td>
 									<td></td>
 									<td></td>
 								</tr>
-                                                                <tr>
+								<tr>
 									<td>Invert images?</td>
 									<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 									<td></td>
 									<td></td>
 								</tr>
-                                                                <tr>
+								<tr>
 									<td>Flip left/right?</td>
 									<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
 									<td></td>
@@ -954,8 +954,8 @@
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 <?php
-							$file = file_get_contents("README.md");
-							print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
+				$file = file_get_contents("README.md");
+				print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
 ?>
 							<button class="close_button" onclick="closePopup('sources_popup')">Close</button>
 						</div>
@@ -1084,8 +1084,8 @@
 
 
 				<div id="help" style="display: none"></div>
-				<!--<div id="toggle_layers_button" data-rotated="1" data-required_skills="finished_training[2],added_custom_category[2]" class="cosmo" data-dont_hide_after_show="1"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>-->
-				<div id="toggle_layers_button" data-rotated="1"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
+				<!--<div id="toggle_layers_button"  data-required_skills="finished_training[2],added_custom_category[2]" class="cosmo" data-dont_hide_after_show="1"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>-->
+				<div id="toggle_layers_button" ><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side">
