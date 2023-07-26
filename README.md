@@ -96,6 +96,8 @@ in creating this program:
 
 - [Loading Icon](https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif)
 
+- [Fire Alarm Button](https://freesvg.org/drawing-of-fire-alarm-push-button)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
