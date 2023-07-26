@@ -1430,7 +1430,7 @@
 
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
-		<div id="status_bar">
+		<div id="status_bar" style="display: none">
 			<span id="status_bar_log"></span>
 
 			<span id="data_loading_progress_bar" style="display: none">
