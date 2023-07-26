@@ -166,13 +166,19 @@ async function endPresentation() {
 	document.removeEventListener("touchstart", handleTouchStart);
 	document.removeEventListener("touchmove", handleTouch);
 	document.removeEventListener("touchend", handleTouchEnd);
-	log("removing", $("#" + divName));
+	log("removing presentation", $("#" + divName));
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
-
 	$("#presentation_site_nr").remove();
-	chose_next_manicule_target();
+	attach_listener_for_cosmo_outside_click();
 
+	$("#scads_logo_cosmo_mode").show();
+	$("#graphs_here").css("margin-top", "30px");
+
+	chose_next_manicule_target();
+}
+
+function attach_listener_for_cosmo_outside_click () {
 	// Attach event listener to the document or a specific parent element
 	document.addEventListener("click", function (event) {
 		// Get the color picker element based on its unique structure and properties
@@ -193,8 +199,6 @@ async function endPresentation() {
 		}
 	});
 
-	$("#scads_logo_cosmo_mode").show();
-	$("#graphs_here").css("margin-top", "30px");
 }
 
 // Function to run the presentation

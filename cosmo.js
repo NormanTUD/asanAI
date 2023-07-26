@@ -300,9 +300,81 @@ class ManiC {
 }
 
 
+function find_unclicked_items ($x, possible_items) {
+	var req = $x.data("required_skills");
+
+	var req_full = {};
+
+	if(typeof(req) == "string") {
+		req_full = parse_required_skills(req);
+	}
+	
+	var possible = true;
+	//log(">>>>>>>>>>>>>>> TESTING: ", $x);
+	for (var n = 0; n < Object.keys(req_full).length; n++) {
+		var current_skill = Object.keys(req_full)[n];
+		var current_element_skill_level = req_full[Object.keys(req_full)[n]];
+		var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_skill);
+		var current_user_skill = current_skills[current_skill];
+		var required_nrs = req_full[current_skill];
+
+		var allows_zero = current_element_skill_level.includes(0);
+
+		if(!full_req_part_is_part_of_current_skills) {
+			// because it has the value 0:
+			var is_not_in_current_skill = !Object.keys(current_skills).includes(current_skill);
+			if(is_not_in_current_skill) {
+				current_user_skill = 0;	
+			}
+			var is_possible = (current_element_skill_level == 0 || allows_zero) || current_element_skill_level.includes(current_user_skill);
+
+			if(!is_possible) {
+				if(get_element_xpath($x[0]).includes("start_stop_training")) {
+
+					log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+				}
+				possible = false;
+			}
+		} else {
+			var current_element_skill_level_matches_required_skill_number = required_nrs.every(val => current_element_skill_level.includes(val));
+
+			if(!current_element_skill_level_matches_required_skill_number) {
+				log("XXX");
+				possible = false;
+			}
+		}
+
+		/*
+		log("===================================")
+		console.log("Element with index", i);
+		console.log("req_full:", req_full);
+		console.log("show_again_full:", show_again_full);
+		console.log("current_skills:", current_skills);
+		console.log("current_skill:", current_skill);
+		console.log("current_element_skill_level:", current_element_skill_level);
+		console.log("current_user_skill:", current_user_skill);
+		console.log("required_nrs:", required_nrs);
+		console.log("allows_zero:", allows_zero);
+		console.log("is_possible:", is_possible);
+		log("possible:", possible);
+		if(!possible) {
+			log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
+		log("===================================")
+		*/
+	}
+
+	if(possible) {
+		possible_items.push({"item": $x, "length": Object.keys(req_full).length});
+
+		log("!!!! TRUE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+	}
+
+	return possible_items;
+}
 
 function chose_next_manicule_target () {
-	var possible_indices = [];
+	var possible_items = [];
 
 	var cosmo = $(".cosmo");
 
@@ -310,101 +382,75 @@ function chose_next_manicule_target () {
 		var $x = $(x);
 		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element))) {
 			if(!$x.data("clicked")) {
-				var req = $x.data("required_skills");
-
-				var req_full = {};
-
-				if(typeof(req) == "string") {
-					req_full = parse_required_skills(req);
-				}
-				
-				var possible = true;
-                log(">>>>>>>>>>>>>>> TESTING: ", $x);
-				for (var n = 0; n < Object.keys(req_full).length; n++) {
-					var current_key = Object.keys(req_full)[n];
-
-					var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_key);
-                    log("full_req_part_is_part_of_current_skills: ", full_req_part_is_part_of_current_skills, ", current_skills:", current_skills, ", current_key: ", current_key);
-					if(!full_req_part_is_part_of_current_skills) {
-                        if(req_full[current_key].includes(0)) {
-                            possible = false;
-                        }
-					} else {
-						var current_skill_nr_matches_required_skill_number = current_skills[current_key] == req_full[current_key];
-
-						if(!current_skill_nr_matches_required_skill_number) {
-							possible = false;
-						}
-					}
-				}
-
-				if(possible) {
-					possible_indices.push({"index": i, "length": Object.keys(req_full).length});
-				}
+				possible_items = find_unclicked_items($x, possible_items);
+				log("unclicked items:", possible_items);
 			} else {
-				var show_again = $x.data("show_again_when_new_skill_acquired");
-				if(show_again) {
-					var show_again_full = {};
-					var possible = true;
-
-					// TODO!!!
-					if(typeof(show_again) == "string") {
-						show_again_full = parse_required_skills(show_again);
-					}
-
-					for (var k = 0; k < Object.keys(show_again_full).length; k++) {
-						var key = Object.keys(show_again_full)[k];
-						if(Object.keys(current_skills).includes(key)) {
-							if(!current_skills[key] == show_again[key]) {
-								possible = false;	
-							}
-						} else {
-							possible = false;
-						}
-
-					}
-
-					if(possible) {
-						possible_indices.push({"index": i, "length": Object.keys(show_again_full).length});
-					}
-				}
+				possible_items = show_again_when_new_skill_acquired($x, possible_items);
+				log("unclicked + show again items:", possible_items);
 			}
 		}
 	});
 
-	log("Possible indices:", possible_indices);
+	log("Possible indices:", possible_items);
 
-	if(possible_indices.length) {
-		var possible_elements = [];
-		for (var i = 0; i < possible_indices.length; i++) {
-			var _i = possible_indices[i]["index"];
-			var _l = possible_indices[i]["length"];
-			if(cosmo[_i]) {
-				$(cosmo[_i]).show();
-				if(!$(cosmo[_i]).data("no_manicule")) {
-					possible_elements.push(cosmo[_i]);
-				}
+	if(possible_items.length) {
+		remove_manicule(0);
+		log("No possible indices found for Manicule!");
+		return;
+	}
+
+	var possible_elements = [];
+	for (var i = 0; i < possible_items.length; i++) {
+		var _i = possible_items[i]["item"];
+		var _l = possible_items[i]["length"];
+		if(_i) {
+			$(_i).show();
+			if(!$(_i).data("no_manicule")) {
+				possible_elements.push(_i);
 			}
 		}
-
-		log(possible_elements);
-
-		if(possible_elements.length) {
-			var index_to_chose = possible_elements.length - 1;
-			$(possible_elements[index_to_chose]).show();
-			remove_manicule(0);
-			new ManiC(possible_elements[index_to_chose]);
-			$(possible_elements[0]).on("click", function () {
-				$(this).attr("data-clicked", 1)
-			});
-		} else {
-			log("No possible elements found for Manicule!");
-			remove_manicule(0);
-		}
-	} else {
-		log("No possible indices found for Manicule!");
-		remove_manicule(0);
 	}
+
+	log(possible_elements);
+
+	var index_to_chose = possible_elements.length - 1;
+	$(possible_elements[index_to_chose]).show();
+	remove_manicule(0);
+	new ManiC(possible_elements[index_to_chose]);
+	$(possible_elements[0]).on("click", function () {
+		$(this).attr("data-clicked", 1)
+	});
+}
+
+function show_again_when_new_skill_acquired ($x, possible_items) {
+	var show_again = $x.data("show_again_when_new_skill_acquired");
+	if(show_again) {
+		var show_again_full = {};
+		var possible = true;
+
+		// TODO!!!
+		if(typeof(show_again) == "string") {
+			show_again_full = parse_required_skills(show_again);
+		}
+
+		for (var k = 0; k < Object.keys(show_again_full).length; k++) {
+			var key = Object.keys(show_again_full)[k];
+			if(Object.keys(current_skills).includes(key)) {
+				if(!current_skills[key] == show_again[key]) {
+					possible = false;	
+				}
+			} else {
+				possible = false;
+			}
+
+		}
+
+		if(possible) {
+			possible_items.push({"item": $x, "length": Object.keys(show_again_full).length});
+		}
+	}
+
+	return possible_items;
 }
 
 function isMouseOverElement(className) {
@@ -503,8 +549,6 @@ async function cosmo_mode () {
 	$("#start_stop_training").show();
 
 	await add_cosmo_point("loaded_page");
-
-	chose_next_manicule_target();
 
 	function timerIncrement() {
 		if(Object.keys(current_skills).length > 1) {
