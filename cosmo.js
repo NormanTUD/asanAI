@@ -465,6 +465,7 @@ function isMouseOverElementVariables(elements) {
 
 
 async function cosmo_mode () {
+	$("#status_bar").hide();
 	//console.trace();
 	if(is_cosmo_mode) {
 		l("Is already cosmo mode, not doing anything");
@@ -563,6 +564,10 @@ async function cosmo_mode () {
 	$("#max_activation_iterations").val(50)
 
 	$("#show_webcam_button").css("visibility", "hidden");
+
+	$("#side_by_side_container").css("padding-top", "70px");
+
+	$("#mainsite").show();
 }
 
 function findColorPickerContainer(element) {
@@ -662,4 +667,6 @@ function switch_predict_mode () {
 		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 	}
+
+	add_cosmo_point("toggled_webcam");
 }

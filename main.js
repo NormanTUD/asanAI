@@ -338,7 +338,8 @@ async function set_backend() {
 }
 
 $(document).ready(async function() {
-	var s = swalmsg("Loading page");
+	var s;
+
 
 	if(!is_cosmo_mode) {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
@@ -346,6 +347,10 @@ $(document).ready(async function() {
 		}
 	} else {
 
+	}
+
+	if(!is_cosmo_mode) {
+		s = swalmsg("Loading page");
 	}
 
 	l("Trying to set Backend");
@@ -514,7 +519,9 @@ $(document).ready(async function() {
 
 	allow_editable_labels();
 
-	s.close();
+	if(!is_cosmo_mode) {
+		s.close();
+	}
 
 	await show_prediction(0, 1);
 

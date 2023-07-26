@@ -94,6 +94,8 @@ in creating this program:
 
 - [Color Picker Icon](https://commons.wikimedia.org/wiki/File:Inkscape_icons_color_picker.svg)
 
+- [Loading Icon](https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
