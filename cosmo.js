@@ -188,7 +188,6 @@ class ManiC {
 				var final_element_top = element_top + 10;
 
 				this.image.style.width = `${this.hand_height}px`;
-				log("this.element", this.element);
 				this.image.top =`${final_element_top}px`;
 				this.image.left = `${final_left}px`;
 			}
@@ -226,18 +225,7 @@ class ManiC {
 
 	getPos(el) {
 		assert(!!el, "el is empty")
-		if(typeof(el) == "object") {
-			if(Object.keys(el).includes("element")) {
-				el = el["element"];
-			} else if(!typeof(el) == "object") {
-				el = el[0];
-			}
-		}
-
-		if(typeof(el) == "object") {
-			el = el[0];
-		}
-		
+	
 		log(el);
 		if(el) {
 			var rect = el.getBoundingClientRect();
@@ -293,7 +281,6 @@ class ManiC {
 
 	moveAroundLeftRight () {
 		// calculate the center point of the element
-		log("!!! this", this);
 		var element_left_absolute = this.getPos(this.element).left;
 		var element_width = parseInt(this.image.style.width);
 
@@ -427,18 +414,18 @@ function chose_next_manicule_target () {
 		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element))) {
 			if(!$x.data("clicked")) {
 				possible_items = find_unclicked_items($x, possible_items);
-				log("unclicked items:", possible_items);
+				//log("unclicked items:", possible_items);
 			} else {
 				possible_items = show_again_when_new_skill_acquired($x, possible_items);
-				log("unclicked + show again items:", possible_items);
+				//log("unclicked + show again items:", possible_items);
 			}
 		}
 	});
 
-	log("Possible indices:", possible_items);
+	//log("Possible indices:", possible_items);
 
 	if(!possible_items.length) {
-		log("POSSIBLE ITEMS WERE EMPTY", possible_items, possible_items.length);
+		//log("POSSIBLE ITEMS WERE EMPTY", possible_items, possible_items.length);
 		remove_manicule(0);
 		log("No possible indices found for Manicule!");
 		return;
@@ -451,19 +438,18 @@ function chose_next_manicule_target () {
 		if(_i) {
 			$(_i).show();
 			if(!$(_i).data("no_manicule")) {
-				possible_elements.push(_i);
+				possible_elements.push(_i[0]);
 			}
 		}
 	}
 
-	log(possible_elements);
+	//log(possible_elements);
 
 	var index_to_chose = possible_elements.length - 1;
 	$(possible_elements[index_to_chose]).show();
-	log("Chosing ", possible_elements[index_to_chose]);
+	//log("Chosing ", possible_elements[index_to_chose]);
 	remove_manicule(0);
 	var chosen_element = possible_elements[index_to_chose];
-	log("chosen_element:", chosen_element);
 	new ManiC(chosen_element);
 	$(possible_elements[0]).on("click", function () {
 		$(this).attr("data-clicked", 1)
