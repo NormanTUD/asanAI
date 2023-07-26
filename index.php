@@ -1467,6 +1467,9 @@
 				-->
 			</span>
 
+			<span style="left: 43%; position: absolute;">
+				<a target="_blank" href="https://scads.ai/imprint/">Impressum/Imprint</a>
+			</span>
 			<span id="memory_debugger_div"></span>
 		</div>
 
