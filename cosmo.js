@@ -241,8 +241,6 @@ class ManiC {
 	moveAroundLeftRight () {
 		var width = this.getPos(this.element).width;
 
-
-		log("ELEMENT", this.element);
 		var largest_element = findLargestElementWithCoordinates(this.element)
 		var real_x = largest_element["x"];
 		var real_y = largest_element["y"];
@@ -353,33 +351,7 @@ function findLargestElementWithCoordinates(element) {
 		}
 	}
 
-	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y };
-}
-
-function getAbsoluteCoordinates(element) {
-	// Assertion: Check if the element exists in the DOM
-	if (!element) {
-		console.error("Element not found in the DOM.");
-		return null;
-	}
-
-	// Assertion: Check if the element is visible (display is not 'none')
-	const computedStyle = window.getComputedStyle(element);
-	if (computedStyle.display === 'none') {
-		console.error("Element is not visible (display: none).");
-		return null;
-	}
-
-	const originalDisplayStyle = computedStyle.display;
-	element.style.display = 'block'; // Make the element temporarily visible
-
-	const { top, left, right, bottom, width, height } = element.getBoundingClientRect();
-	const x = left + window.scrollX;
-	const y = top + window.scrollY;
-
-	element.style.display = originalDisplayStyle; // Restore the original display style
-
-	return { x: x, y: y, width: width, height: height, top: top, bottom: bottom };
+	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right };
 }
 
 function find_unclicked_items ($x, possible_items) {
