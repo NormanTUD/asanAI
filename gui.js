@@ -3676,7 +3676,7 @@ function addLayer(canvas_id, transparency) {
 	$("#" + canvas_id).parent().append(transparency_slider);
 
 	$("#" + canvas_id).parent().append("<br>Pen size:");
-	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off">`));
+	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
 }
 
 
@@ -5280,7 +5280,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			<img src='colorpicker.svg' width=32 />
 			<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 		</span>
-		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off" />
+		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
 		<br />
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>
 	</form>`;
@@ -5344,6 +5344,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
+
+	atrament_data[idname]['atrament'].weight = 20;
 }
 
 async function onclick_math_mode (t, e) {

@@ -239,7 +239,6 @@ class ManiC {
 		var real_left = largest_element["left"];
 		var real_right = largest_element["right"];
 		var real_width = largest_element["width"];
-		console.log(largest_element);
 
 		var position_switch = $(this.element).attr("data-position");
 		var correction_shift = 0;
@@ -288,8 +287,6 @@ class ManiC {
 				transform: translateX(0px);
 			}
 		`;
-
-		log(keyframes);
 
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
