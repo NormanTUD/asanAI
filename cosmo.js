@@ -262,11 +262,11 @@ class ManiC {
 			}
 			25% {
 				position: ${position};
-				transform: translateX(10px);
+				transform: translateX(${radius}px);
 			}
 			50 % {
 				position: ${position};
-				transform: translateX(-10px);
+				transform: translateX(-${radius}px);
 			}
 			100% {
 				position: ${position};

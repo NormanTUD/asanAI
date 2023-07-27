@@ -225,6 +225,19 @@
 <?php
 			}
 
+			if(0 && isset($_GET["max_iter"]) && intval($_GET["max_iter"])) {
+?>
+				<script>
+					$(document).ready(async function() {
+						while (!finished_loading) {
+							await delay(200);
+						}
+						$("#max_activation_iterations").val(<?php print intval($_GET["max_iter"]); ?>);
+					});
+				</script>
+<?php
+			}
+
 			if(isset($_GET["max_number_of_files_per_category"]) && intval($_GET["max_number_of_files_per_category"])) {
 ?>
 				<script>
