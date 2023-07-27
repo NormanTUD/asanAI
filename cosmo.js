@@ -245,11 +245,12 @@ class ManiC {
 
 		if(position_switch == "fixed") {
 			position = "fixed";
-			if(real_width) {
-				correction_shift = -real_width / 2;
-			}
 		} else {
 			position = "absolute";
+		}
+
+		if(real_width) {
+			correction_shift = -real_width / 2;
 		}
 
 		var element_left = parseInt(real_left + correction_shift);
@@ -300,7 +301,7 @@ class ManiC {
 		if(real_y) {
 			$(".manicule").css("top", real_y);
 		} else if (real_top) {
-			$(".manicule").css("bottom", real_top);
+			$(".manicule").css("top", real_top);
 		} else if (real_bottom) {
 			$(".manicule").css("bottom", real_bottom);
 		}
