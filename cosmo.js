@@ -230,14 +230,15 @@ class ManiC {
 
 		var element_top = parseInt(this.getPos(this.element).top);
 
+		log("ELEMENT", this.element);
 		var position_switch = $(this.element).attr("data-position");
 		var correction_shift = 0;
 		var position;
 		if(position_switch == "fixed") {
 			position = "fixed";
+			correction_shift = -200;
 		} else {
 			position = "absolute";
-			//correction_shift = -200;
 		}
 
 		var element_left = parseInt(x - 2 * this.hand_width + correction_shift);
