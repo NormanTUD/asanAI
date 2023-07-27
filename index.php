@@ -212,6 +212,19 @@
 				}
 			</style>
 <?php
+			if(isset($_GET["epochs"]) && intval($_GET["epochs"])) {
+?>
+				<script>
+					$(document).ready(async function() {
+						while (!finished_loading) {
+							await delay(200);
+						}
+						await set_epochs(<?php print intval($_GET["epochs"]); ?>);
+					});
+				</script>
+<?php
+			}
+
 			if(isset($_GET["max_number_of_files_per_category"]) && intval($_GET["max_number_of_files_per_category"])) {
 ?>
 				<script>
@@ -224,6 +237,7 @@
 				</script>
 <?php
 			}
+
 		}
 ?>
 	</head>

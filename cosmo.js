@@ -229,7 +229,18 @@ class ManiC {
 		var width = this.getPos(this.element).width;
 
 		var element_top = parseInt(this.getPos(this.element).top);
-		var element_left = parseInt(x - 2 * this.hand_width);
+
+		var position_switch = $(this.element).attr("data-position");
+		var correction_shift = 0;
+		var position;
+		if(position_switch == "fixed") {
+			position = "fixed";
+		} else {
+			position = "absolute";
+			correction_shift = -200;
+		}
+
+		var element_left = parseInt(x - 2 * this.hand_width + correction_shift);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
@@ -243,13 +254,6 @@ class ManiC {
 		this.image.style.animationName = 'moveAroundLeftRight';
 		// define the keyframes for the animation
 		
-		var position_switch = $(this.element).attr("data-position");
-		var position;
-		if(position_switch == "fixed") {
-			position = "fixed";
-		} else {
-			position = "absolute";
-		}
 
 		var keyframes = `
 			0% {
