@@ -246,6 +246,25 @@ class ManiC {
 		var keyframes = `
 			0% {
 				position: absolute;
+				transform: translateX(0px);
+			}
+			25% {
+				position: absolute;
+				transform: translateX(10px);
+			}
+			50 % {
+				position: absolute;
+				transform: translateX(-10px);
+			}
+			100% {
+				transform: translateX(0px);
+			}
+		`;
+
+		/*
+		var keyframes = `
+			0% {
+				position: absolute;
 				left: ${element_left}px;
 				top: ${element_top}px;
 			}
@@ -260,6 +279,8 @@ class ManiC {
 				top: ${element_top}px;
 			}
 		`;
+		*/
+
 
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
@@ -268,6 +289,8 @@ class ManiC {
 				${keyframes}
 			}
 		`;
+
+		$(".manicule").css("left", element_left).css("top", element_top);
 	}
 
 	hide() {
@@ -787,27 +810,19 @@ function parse_text_for_item_cosmo_level (inputString) {
 function set_text_for_elements_depending_on_cosmo_level () {
 	$(".cosmo_autoset_text").each((i, e) => {
 		var cosmo_level_text = $(e).attr("data-cosmo_level_text");
-		log("CCC", cosmo_level_text);
 		if(cosmo_level_text) {
 			var parsed = parse_text_for_item_cosmo_level(cosmo_level_text);
 
 			for (var i = 0; i < Object.keys(parsed).length; i++) {
 				var element_skill_name = Object.keys(parsed)[i];
-				log("element_skill_name", element_skill_name);
 				for (var j = 0; j < Object.keys(parsed[element_skill_name]).length; j++) {
 					var element_skill_level = Object.keys(parsed[element_skill_name])[j];
 					var element_skill_text = parsed[element_skill_name][element_skill_level];
-					log("element_skill_level", element_skill_level);
-					log("element_skill_text", element_skill_text);
 
 					if(Object.keys(current_skills).includes(element_skill_name)) {
 						if(parseInt(current_skills[element_skill_name]) == parseInt(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
-						} else {
-							log("X");
 						}
-					} else {
-						log("Y");
 					}
 				}
 			}
