@@ -167,34 +167,21 @@ class ManiC {
 
 			var largest_element = findLargestElementWithCoordinates(this.element)
 			var real_x = largest_element["x"];
-			var real_h = largest_element["y"];
-			var real_top = largest_element["top"];
+			var real_y = largest_element["y"];
 			var real_bottom = largest_element["bottom"];
 			var real_left = largest_element["left"];
 			var real_right = largest_element["right"];
 
-			var assertion_test = real_x !== undefined || real_h !== undefined || real_top !== undefined || real_bottom !== undefined;
+			var assertion_test = real_x !== undefined || real_y !== undefined || real_bottom !== undefined;
 			if(!assertion_test) {
 				console.log("ERROR. largest_element empty:", largest_element);
 			}
 			assert(assertion_test, "Could not get largest element, see Logs");
 
-			var element_width = $e.width();
-			//var {element_width, real_h} = findLargestWidthAndHeight(this.element)
-
-
-			if(largest_element["width"] > element_width) { element_width = largest_element["width"]; }
-			//if(largest_element["height"] > element_height) { element_height = largest_element["height"]; }
-
 			this.image.style.width = `${this.hand_height}px`;
 
-			if(real_bottom) {
-				alert("real bottom set");
-				this.image.bottom =`${real_bottom}px`;
-			}
-
-			if(real_top && !real_bottom) {
-				this.image.top =`${real_top}px`;
+			if(real_y) {
+				this.image.top =`${real_y}px`;
 			}
 
 			this.image.left = `${real_left}px`;
@@ -245,7 +232,6 @@ class ManiC {
 		var largest_element = findLargestElementWithCoordinates(this.element)
 		var real_x = largest_element["x"];
 		var real_y = largest_element["y"];
-		var real_top = largest_element["top"];
 		var real_bottom = largest_element["bottom"];
 		var real_left = largest_element["left"];
 		var real_right = largest_element["right"];
@@ -310,14 +296,7 @@ class ManiC {
 		`;
 
 		$(".manicule").css("left", element_left);
-
-		if (!isNaN(real_bottom)) {
-			$(".manicule").css("bottom", real_bottom);
-		}
-
-		if(!isNaN(real_top) && isNaN(real_top)) {
-			$(".manicule").css("top", real_top);
-		}
+		$(".manicule").css("top", real_y);
 	}
 
 	hide() {
