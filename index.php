@@ -1225,8 +1225,10 @@
 
 							<div id="training_data_tab">
 								<div class="show_only_in_cosmo_mode" style="display: none">
-									<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>
-									Hier sind 5 Bilder, eines aus jeder Kategorie, die das Netzwerk lernen soll:
+									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
+									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
+									<img style='width: 90%' src="signs_network.svg"><br>
+									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
 									<ul>
 										<li>- Warnung</li>
 										<li>- Rettung</li>
