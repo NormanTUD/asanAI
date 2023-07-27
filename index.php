@@ -9,10 +9,6 @@
 		'secure' => true,
 		'samesite' => 'None'
 	];
-
-	if(isset($_GET["no_cosmo"])) {
-		setcookie('cosmo_mode', null, -1, '/');
-	}
 ?>
 <!DOCTYPE html>
 <html lang="en" style="font-size: 0.75em;">
@@ -245,7 +241,7 @@
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
-				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
+				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();">&#127947;</span>
 			</div>
 			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
 <?php
@@ -1485,6 +1481,10 @@
 				<a target="_blank" href="https://scads.ai/imprint/">Impressum/Imprint</a>
 			</span>
 			<span id="memory_debugger_div"></span>
+		</div>
+
+		<div class="cosmo_next_button" style="display: none; position: absolute; bottom: 50px; right: 10px; font-size: 0.7em; max-width: 200px;">
+			<span id="next_button" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#next_button').attr('data-clicked', '1');remove_manicule(1);"><button style="height: 50px" style='pointer-events: none;'>Das Netzwerk trainieren</button></span>
 		</div>
 
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white;" id="loading_icon_wrapper">

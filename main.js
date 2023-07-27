@@ -520,13 +520,15 @@ $(document).ready(async function() {
 	$("#mainsite").show();
 
 
-	if(!is_cosmo_mode) {
-		$("#status_bar").show();
-	} else {
+	if(is_cosmo_mode) {
 		$("#scroll_left").show();
 		$("#scroll_right").show();
 		$("#presentation_site_nr").show();
-		$("#start_stop_training").css("display", "inline");
+		$("#start_stop_training").css("visibility", "hidden");
+		$(".cosmo_next_button").show();
+		$("#photos").css("min-height", "");
+	} else {
+		$("#status_bar").show();
 	}
 
 	await restart_fcnn(1);

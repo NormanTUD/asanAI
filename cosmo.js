@@ -229,7 +229,7 @@ class ManiC {
 		var width = this.getPos(this.element).width;
 
 		var element_top = parseInt(this.getPos(this.element).top);
-		var element_left = parseInt(x - width - this.hand_width);
+		var element_left = parseInt(x - 2 * this.hand_width);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
@@ -245,14 +245,17 @@ class ManiC {
 
 		var keyframes = `
 			0% {
+				position: absolute;
 				left: ${element_left}px;
 				top: ${element_top}px;
 			}
 			50% {
+				position: absolute;
 				left: ${element_left + radius}px;
 				top: ${element_top}px;
 			}
 			100% {
+				position: absolute;
 				left: ${element_left}px;
 				top: ${element_top}px;
 			}
@@ -303,10 +306,10 @@ function find_unclicked_items ($x, possible_items) {
 			var is_possible = (current_element_skill_level == 0 || allows_zero) || current_element_skill_level.includes(current_user_skill);
 
 			if(!is_possible) {
-				if(get_element_xpath($x[0]).includes("start_stop_training")) {
+				//if(get_element_xpath($x[0]).includes("start_stop_training")) {
 
 					//log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-				}
+				//}
 				possible = false;
 			}
 		} else {
@@ -523,8 +526,6 @@ async function cosmo_mode () {
 	//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 	is_cosmo_mode = true;
 
-	$("#start_stop_training").show().css("display", "initial");
-
 	await add_cosmo_point("loaded_page");
 
 	function timerIncrement() {
@@ -588,10 +589,12 @@ async function cosmo_mode () {
 	$("#max_activation_iterations").val(50)
 
 	$("#show_webcam_button").css("visibility", "hidden");
-	$("#start_stop_training").show().css("display", "initial");
+	//$("#start_stop_training").show().css("display", "initial");
 	$("#custom_webcam_training_data").hide();
 
 	$("#side_by_side_container").css("padding-top", "70px");
+
+	$("#emergency_button").show();
 
 	window.setInterval(function () {
 		if(!is_presenting && (manicule === null || manicule === undefined)) {
@@ -599,7 +602,6 @@ async function cosmo_mode () {
 		}
 	}, 1000);
 
-	$("#emergency_button").show();
 }
 
 function findColorPickerContainer(element) {
