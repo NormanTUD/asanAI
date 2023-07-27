@@ -249,6 +249,7 @@ class ManiC {
 		var real_left = largest_element["left"];
 		var real_right = largest_element["right"];
 		var real_width = largest_element["width"];
+		console.log(largest_element);
 
 		var position_switch = $(this.element).attr("data-position");
 		var correction_shift = 0;
@@ -329,11 +330,13 @@ function findLargestElementWithCoordinates(element) {
 	const rect = element.getBoundingClientRect();
 	let maxWidth = rect.width;
 	let maxHeight = rect.height;
-	let x = null;
-	let y = null;
+	let x = parseInt($(element).css("left"));
+	let y = parseInt($(element).css("top"));
+	let left = element.getBoundingClientRect()["left"];
+	let right = element.getBoundingClientRect()["right"];
+
 	let largestElement = element;
-	let left = null;
-	let right = null;
+
 
 	// Traverse through all child elements recursively
 	for (const childElement of element.children) {
@@ -344,8 +347,8 @@ function findLargestElementWithCoordinates(element) {
 			maxWidth = Math.max(maxWidth, width);
 			maxHeight = Math.max(maxHeight, height);
 			largestElement = largestChild;
-			x = childElement.getBoundingClientRect()["x"];
-			y = childElement.getBoundingClientRect()["x"];
+			x = parseInt($(childElement).css("left"));
+			y = parseInt($(childElement).css("top"));
 			left = childElement.getBoundingClientRect()["left"];
 			right = childElement.getBoundingClientRect()["right"];
 		}
