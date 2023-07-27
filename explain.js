@@ -986,7 +986,7 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	for (var i = 0; i <= neurons; i++) {
+	for (var i = 0; i < neurons; i++) {
 		if(stop_generating_images) {
 			continue;
 		}
@@ -2391,14 +2391,16 @@ var already_moved_to_predict_for_cosmo = false;
 async function cosmo_maximally_activate_last_layer () {
 	generating_images = true;
 	$("#maximally_activated_content").html("");
-	//$("#cosmo_visualize_last_layer").html("");
-	var lt = get_layer_type_array();
-	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
-	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
 
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 		already_moved_to_predict_for_cosmo = true;
 	}
+
+	//$("#cosmo_visualize_last_layer").html("");
+	var lt = get_layer_type_array();
+	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
+
 	generating_images = false;
 }

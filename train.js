@@ -147,9 +147,16 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
+			show_tab_label("tfvis_tab_label", 1);
 			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
 			chose_next_manicule_target();
+
+			if(!already_moved_to_predict_for_cosmo) {
+				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
+				already_moved_to_predict_for_cosmo = true;
+			}
+
 			if(!cam) {
 				$("#show_webcam_button").click();
 			}

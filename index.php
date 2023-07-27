@@ -1357,6 +1357,7 @@
 										Die Qualität des Ergebnisses hängt vom Zufall ab.
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
+										<hr>
 										Aktuell hat sich die Software alle Daten <span id='current_epoch_cosmo_display'>0</span> von <span id="max_epoch_cosmo_display"></span> mal angesehen. Es wird noch ca. <span id="time_estimate_cosmo">00:00</span> dauern.
 									</div>
 									<span id="canvas_grid_visualization"></span>
