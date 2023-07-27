@@ -233,6 +233,7 @@ class ManiC {
 		var real_x = largest_element["x"];
 		var real_y = largest_element["y"];
 		var real_bottom = largest_element["bottom"];
+		var real_top = largest_element["top"];
 		var real_left = largest_element["left"];
 		var real_right = largest_element["right"];
 		var real_width = largest_element["width"];
@@ -296,7 +297,13 @@ class ManiC {
 		`;
 
 		$(".manicule").css("left", element_left);
-		$(".manicule").css("top", real_y);
+		if(real_y) {
+			$(".manicule").css("top", real_y);
+		} else if (real_top) {
+			$(".manicule").css("bottom", real_top);
+		} else if (real_bottom) {
+			$(".manicule").css("bottom", real_bottom);
+		}
 	}
 
 	hide() {
@@ -314,6 +321,8 @@ function findLargestElementWithCoordinates(element) {
 	let y = parseInt($(element).css("top"));
 	let left = element.getBoundingClientRect()["left"];
 	let right = element.getBoundingClientRect()["right"];
+	let t = element.getBoundingClientRect()["top"];
+	let bottom = element.getBoundingClientRect()["bottom"];
 
 	let largestElement = element;
 
@@ -331,10 +340,12 @@ function findLargestElementWithCoordinates(element) {
 			y = parseInt($(childElement).css("top"));
 			left = childElement.getBoundingClientRect()["left"];
 			right = childElement.getBoundingClientRect()["right"];
+			t = element.getBoundingClientRect()["top"];
+			bottom = element.getBoundingClientRect()["bottom"];
 		}
 	}
 
-	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right };
+	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right, 'top': t, bottom: bottom };
 }
 
 function find_unclicked_items ($x, possible_items) {
