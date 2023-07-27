@@ -236,7 +236,7 @@ class ManiC {
 		var position;
 		if(position_switch == "fixed") {
 			position = "fixed";
-			correction_shift = -200;
+			correction_shift = -150;
 		} else {
 			position = "absolute";
 		}
