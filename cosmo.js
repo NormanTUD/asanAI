@@ -165,17 +165,37 @@ class ManiC {
 			this.hand_height = 50;
 			this.hand_width = 50;
 
-			var element_top = $e.offset()["top"];
+			var largest_element = findLargestElementWithCoordinates(this.element)
+			var real_x = largest_element["x"];
+			var real_h = largest_element["y"];
+			var real_top = largest_element["top"];
+			var real_bottom = largest_element["bottom"];
+			var real_left = largest_element["left"];
+			var real_right = largest_element["right"];
+
+			var assertion_test = real_x !== undefined || real_h !== undefined || real_top !== undefined || real_bottom !== undefined;
+			if(!assertion_test) {
+				console.log("ERROR. largest_element empty:", largest_element);
+			}
+			assert(assertion_test, "Could not get largest element, see Logs");
 
 			var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
 			var element_width = $e.width();
 			//var {element_width, real_h} = findLargestWidthAndHeight(this.element)
 
-			var final_left = element_bounding_box_left + element_width;
-			var final_element_top = element_top + 10;
+
+			if(largest_element["width"] > element_width) { element_width = largest_element["width"]; }
+			//if(largest_element["height"] > element_height) { element_height = largest_element["height"]; }
+
+
+
+			var final_left = element_bounding_box_left + real_x;
 
 			this.image.style.width = `${this.hand_height}px`;
-			this.image.top =`${final_element_top}px`;
+			if(real_top) {
+				this.image.top =`${real_top}px`;
+			}
+
 			this.image.left = `${final_left}px`;
 
 			this.image.classList.add('manicule');
@@ -219,43 +239,36 @@ class ManiC {
 	}
 
 	moveAroundLeftRight () {
-		// calculate the center point of the element
-		/*
-		var element_left_absolute = this.getPos(this.element).left;
-		var element_width = parseInt(this.image.style.width);
-
-		var element_left = parseInt(element_left_absolute + (element_width / 2));
-		*/
-		//x - width
-
-		var x = this.getPos(this.element).x;
 		var width = this.getPos(this.element).width;
 
 
 		log("ELEMENT", this.element);
-		var {real_w, real_h} = findLargestWidthAndHeight(this.element)
+		var largest_element = findLargestElementWithCoordinates(this.element)
+		var real_x = largest_element["x"];
+		var real_y = largest_element["y"];
+		var real_top = largest_element["top"];
+		var real_bottom = largest_element["bottom"];
+		var real_left = largest_element["left"];
+		var real_right = largest_element["right"];
+		var real_width = largest_element["width"];
+
 		var position_switch = $(this.element).attr("data-position");
 		var correction_shift = 0;
 		var position;
 
-		var element_top = parseInt(this.getPos(this.element).top);
-		var element_bottom = parseInt(this.getPos(this.element).bottom);
-
 		if(position_switch == "fixed") {
 			position = "fixed";
-			if(real_w) {
-				correction_shift = -real_w;
+			if(real_width) {
+				correction_shift = -real_width;
 			}
-			element_top = parseInt(this.getPos(this.element).top);
-			element_bottom = parseInt(this.getPos(this.element).bottom);
 		} else {
 			position = "absolute";
 		}
 
-		var element_left = parseInt(x - 2 * this.hand_width + correction_shift);
+		var element_left = parseInt(real_left + correction_shift);
 
 		assert(!isNaN(element_left), "element_left is not a number");
-		assert(!isNaN(element_top) || !isNaN(element_bottom), "neither element_top nor element_bottom is not a number");
+		assert(!isNaN(real_x) || !isNaN(real_y) || !isNaN(real_width), "neither real_x nor real_y nor real_width is not a number");
 
 		// calculate the radius of the circle
 		var radius = 20;
@@ -297,12 +310,13 @@ class ManiC {
 		`;
 
 		$(".manicule").css("left", element_left);
-		if(!isNaN(element_top)) {
-			$(".manicule").css("top", element_top);
+
+		if (!isNaN(real_bottom)) {
+			$(".manicule").css("bottom", real_bottom);
 		}
 
-		if (!isNaN(element_bottom)) {
-			$(".manicule").css("bottom", element_bottom);
+		if(!isNaN(real_top) && isNaN(real_top)) {
+			$(".manicule").css("top", real_top);
 		}
 	}
 
@@ -312,22 +326,60 @@ class ManiC {
 	}
 }
 
-function findLargestWidthAndHeight(element) {
+function findLargestElementWithCoordinates(element) {
 	// Get the bounding rectangle of the current element
 	const rect = element.getBoundingClientRect();
 	let maxWidth = rect.width;
 	let maxHeight = rect.height;
+	let x = null;
+	let y = null;
+	let largestElement = element;
+	let left = null;
+	let right = null;
 
 	// Traverse through all child elements recursively
 	for (const childElement of element.children) {
-		const { width, height } = findLargestWidthAndHeight(childElement);
+		const { width, height, largestChild } = findLargestElementWithCoordinates(childElement);
 
-		// Update the maximum width and height if necessary
-		maxWidth = Math.max(maxWidth, width);
-		maxHeight = Math.max(maxHeight, height);
+		// Update the maximum width, height, and largestElement if necessary
+		if (width > maxWidth || height > maxHeight) {
+			maxWidth = Math.max(maxWidth, width);
+			maxHeight = Math.max(maxHeight, height);
+			largestElement = largestChild;
+			x = childElement.getBoundingClientRect()["x"];
+			y = childElement.getBoundingClientRect()["x"];
+			left = childElement.getBoundingClientRect()["left"];
+			right = childElement.getBoundingClientRect()["right"];
+		}
 	}
 
-	return { width: maxWidth, height: maxHeight };
+	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y };
+}
+
+function getAbsoluteCoordinates(element) {
+	// Assertion: Check if the element exists in the DOM
+	if (!element) {
+		console.error("Element not found in the DOM.");
+		return null;
+	}
+
+	// Assertion: Check if the element is visible (display is not 'none')
+	const computedStyle = window.getComputedStyle(element);
+	if (computedStyle.display === 'none') {
+		console.error("Element is not visible (display: none).");
+		return null;
+	}
+
+	const originalDisplayStyle = computedStyle.display;
+	element.style.display = 'block'; // Make the element temporarily visible
+
+	const { top, left, right, bottom, width, height } = element.getBoundingClientRect();
+	const x = left + window.scrollX;
+	const y = top + window.scrollY;
+
+	element.style.display = originalDisplayStyle; // Restore the original display style
+
+	return { x: x, y: y, width: width, height: height, top: top, bottom: bottom };
 }
 
 function find_unclicked_items ($x, possible_items) {
