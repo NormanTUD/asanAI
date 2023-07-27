@@ -245,7 +245,7 @@
 			<div id="ribbon_shower">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
-				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1],back_at_home[1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
+				<span id="start_stop_training" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#start_stop_training').attr('data-clicked', '1');remove_manicule(1);">&#127947;</span>
 			</div>
 			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
 <?php
@@ -1206,7 +1206,7 @@
 								<div class="container" id="own_images_container"></div>
 							</div>
 
-							<div style="display: none" id="lenet_cosmo_tab">
+							<!--<div style="display: none" id="lenet_cosmo_tab">
 								<button class="cosmo" data-required_skills="watched_presentation[1],seen_lenet[1]" onclick='switch_to_back_from_lenet_example()'>
 									<span style='pointer-events: none'>Beispielbilder
 										<img height=32 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png'>
@@ -1221,21 +1221,15 @@
 								Jede Ebene kann andere Strukturen lernen: Formen, Farben usw.<br>
 								Was genau jeder Ebene lernt hängt vom Zufall ab.<br>
 								<img style='width: 90%' src="signs_network.svg">
-							</div>
+							</div>-->
 
 							<div id="training_data_tab">
 								<div class="show_only_in_cosmo_mode" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
-									<img style='width: 90%' src="signs_network.svg"><br>
+									<img style='width: 90%; max-height: 200px; max-width: 500px;' src="signs_network.svg"><br>
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
-									<ul>
-										<li>- Warnung</li>
-										<li>- Rettung</li>
-										<li>- Verbot</li>
-										<li>- Verpflichtend</li>
-										<li>- Feuer</li>
-									</ul>
+									Warnung, Rettung, Verbot, Verpflichtend, Feuer
 								</div>
 								<div id="percentage" class="reset_before_train_network"></div>
 								<button id="stop_downloading" onclick="stop_downloading_data=true" class="hide_in_cosmo_mode" style="display: none">Stop downloading and start training</button>

@@ -761,6 +761,7 @@ function emergency_button () {
 	window.location.href = window.location.href;
 }
 
+/*
 function switch_to_lenet_example () {
 	show_tab_label("training_data_tab", 1)
 	add_cosmo_point("seen_lenet");
@@ -771,3 +772,4 @@ function switch_to_lenet_example () {
 	add_cosmo_point("back_at_home");
 	current_skills["back_at_home"] = 1;
 }
+*/
