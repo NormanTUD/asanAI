@@ -166,7 +166,7 @@ async function endPresentation() {
 	document.removeEventListener("touchstart", handleTouchStart);
 	document.removeEventListener("touchmove", handleTouch);
 	document.removeEventListener("touchend", handleTouchEnd);
-	log("removing presentation", $("#" + divName));
+	//log("removing presentation", $("#" + divName));
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
 	$("#presentation_site_nr").remove();

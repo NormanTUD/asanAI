@@ -205,7 +205,7 @@ class ManiC {
 	getPos(el) {
 		assert(!!el, "el is empty")
 	
-		log(el);
+		//log(el);
 		if(el) {
 			var rect = el.getBoundingClientRect();
 			return rect;
@@ -756,7 +756,7 @@ function switch_to_lenet_example () {
 
 //const inputString = "bla[1,2,3]='hello',blubb[5,1]='asdf'";
 
-function parse_text_for_item_cosmo_level () {
+function parse_text_for_item_cosmo_level (inputString) {
 	// Initialize the result object
 	const result = {};
 
@@ -784,19 +784,26 @@ function parse_text_for_item_cosmo_level () {
 
 function set_text_for_elements_depending_on_cosmo_level () {
 	$(".cosmo_autoset_text").each((i, e) => {
-		var cosmo_level_text = $(this).attr("data-cosmo_level_text");
+		var cosmo_level_text = $(e).attr("data-cosmo_level_text");
+		log("CCC", cosmo_level_text);
 		if(cosmo_level_text) {
 			var parsed = parse_text_for_item_cosmo_level(cosmo_level_text);
 
 			for (var i = 0; i < Object.keys(parsed).length; i++) {
 				var element_skill_name = Object.keys(parsed)[i];
+				log("element_skill_name", element_skill_name);
 				for (var j = 0; j < Object.keys(parsed[element_skill_name]).length; j++) {
 					var element_skill_level = parsed[Object.keys(parsed[element_skill_name])[j]];
+					log("element_skill_level", element_skill_level);
 
 					if(Object.keys(current_skills).includes(element_skill_name)) {
-						if(current_skills[element_skill_name] == element_skill_level) {
+						if(current_skills[element_skill_name] == parseInt(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
+						} else {
+							log("X");
 						}
+					} else {
+						log("Y");
 					}
 				}
 			}
