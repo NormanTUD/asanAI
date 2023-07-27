@@ -400,6 +400,8 @@ function chose_next_manicule_target () {
 	$(possible_elements[0]).on("click", function () {
 		$(this).attr("data-clicked", 1)
 	});
+
+	set_text_for_elements_depending_on_cosmo_level();
 }
 
 function show_again_when_new_skill_acquired ($x, possible_items) {

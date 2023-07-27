@@ -1484,7 +1484,7 @@
 		</div>
 
 		<div class="cosmo_next_button" style="display: none; position: absolute; bottom: 50px; right: 10px; font-size: 0.7em; max-width: 200px;">
-			<span id="next_button" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#next_button').attr('data-clicked', '1');remove_manicule(1);"><button data-cosmo_level_text="loaded_page[1]='Erneut trainieren XXX'" class="cosmo_autoset_text cosmo_button green_bg" style="min-height: 50px" style='pointer-events: none;'>Das Netzwerk trainieren</button></span>
+			<span id="next_button" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" class="cosmo symbol_button" data-dont_hide_after_show="1" onclick="remove_manicule(1);train_neural_network();$('#next_button').attr('data-clicked', '1');remove_manicule(1);"><button data-cosmo_level_text="finished_training[1]='Erneut trainieren'" class="cosmo_autoset_text cosmo_button green_bg" style="min-height: 50px" style='pointer-events: none;'>Das Netzwerk trainieren</button></span>
 		</div>
 
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white;" id="loading_icon_wrapper">
