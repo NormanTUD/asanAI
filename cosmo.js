@@ -242,45 +242,35 @@ class ManiC {
 		this.image.style.animation = 'moveAroundLeftRight 2s linear infinite';
 		this.image.style.animationName = 'moveAroundLeftRight';
 		// define the keyframes for the animation
+		
+		var position_switch = $(this.element).attr("data-position");
+		var position;
+		if(position_switch == "fixed") {
+			position = "fixed";
+		} else {
+			position = "absolute";
+		}
 
 		var keyframes = `
 			0% {
-				position: absolute;
+				position: ${position};
 				transform: translateX(0px);
 			}
 			25% {
-				position: absolute;
+				position: ${position};
 				transform: translateX(10px);
 			}
 			50 % {
-				position: absolute;
+				position: ${position};
 				transform: translateX(-10px);
 			}
 			100% {
+				position: ${position};
 				transform: translateX(0px);
 			}
 		`;
 
-		/*
-		var keyframes = `
-			0% {
-				position: absolute;
-				left: ${element_left}px;
-				top: ${element_top}px;
-			}
-			50% {
-				position: absolute;
-				left: ${element_left + radius}px;
-				top: ${element_top}px;
-			}
-			100% {
-				position: absolute;
-				left: ${element_left}px;
-				top: ${element_top}px;
-			}
-		`;
-		*/
-
+		log(keyframes);
 
 		// add the keyframes to a style sheet
 		var styleSheet = document.getElementById('manicule_animation_css');
