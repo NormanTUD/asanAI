@@ -2389,6 +2389,7 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 var already_moved_to_predict_for_cosmo = false;
 
 async function cosmo_maximally_activate_last_layer () {
+	generating_images = true;
 	$("#maximally_activated_content").html("");
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
@@ -2399,4 +2400,5 @@ async function cosmo_maximally_activate_last_layer () {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 		already_moved_to_predict_for_cosmo = true;
 	}
+	generating_images = false;
 }

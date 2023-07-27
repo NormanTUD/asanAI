@@ -423,6 +423,17 @@ function find_unclicked_items ($x, possible_items) {
 }
 
 function chose_next_manicule_target () {
+	if(in_fireworks) {
+		log("Not chosing manicule because a firework is showing");
+		remove_manicule();
+		return;
+	}
+
+	if(generating_images) {
+		log("Not chosing manicule because it is generating images");
+		remove_manicule();
+		return;
+	}
 	var possible_items = [];
 
 	var cosmo = $(".cosmo");
