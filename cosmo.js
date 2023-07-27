@@ -120,7 +120,7 @@ function each_skill_level_matches (c, s) {
 }
 
 class ManiC {
-	constructor(e, imageUrl = "manicule.svg") {
+	constructor(e, imageUrl = "next.svg") {
 		//logt("ManiC e:", e);
 
 		remove_manicule(0);
@@ -160,8 +160,8 @@ class ManiC {
 
 			this.image.style.zIndex = 100000;
 
-			this.hand_height = 70;
-			this.hand_width = 35;
+			this.hand_height = 50;
+			this.hand_width = 50;
 
 			var element_top = $e.offset()["top"];
 
