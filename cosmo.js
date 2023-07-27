@@ -179,7 +179,6 @@ class ManiC {
 			}
 			assert(assertion_test, "Could not get largest element, see Logs");
 
-			var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
 			var element_width = $e.width();
 			//var {element_width, real_h} = findLargestWidthAndHeight(this.element)
 
@@ -187,16 +186,18 @@ class ManiC {
 			if(largest_element["width"] > element_width) { element_width = largest_element["width"]; }
 			//if(largest_element["height"] > element_height) { element_height = largest_element["height"]; }
 
-
-
-			var final_left = element_bounding_box_left + real_x;
-
 			this.image.style.width = `${this.hand_height}px`;
-			if(real_top) {
+
+			if(real_bottom) {
+				alert("real bottom set");
+				this.image.bottom =`${real_bottom}px`;
+			}
+
+			if(real_top && !real_bottom) {
 				this.image.top =`${real_top}px`;
 			}
 
-			this.image.left = `${final_left}px`;
+			this.image.left = `${real_left}px`;
 
 			this.image.classList.add('manicule');
 			this.image.classList.add('invert_in_dark_mode');
@@ -258,7 +259,7 @@ class ManiC {
 		if(position_switch == "fixed") {
 			position = "fixed";
 			if(real_width) {
-				correction_shift = -real_width;
+				correction_shift = -real_width / 2;
 			}
 		} else {
 			position = "absolute";
