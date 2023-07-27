@@ -15,9 +15,11 @@ async function add_cosmo_point (name, show_manicule=1) {
 		}
 
 		if(name == "eigene_webcam") {
+			/*
 			chose_next_manicule_target = function () {
 				log("Hack to get infinite loop...");
 			}
+			*/
 		}
 	} else {
 		current_skills = {};
@@ -167,6 +169,7 @@ class ManiC {
 
 			var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
 			var element_width = $e.width();
+			//var {element_width, real_h} = findLargestWidthAndHeight(this.element)
 
 			var final_left = element_bounding_box_left + element_width;
 			var final_element_top = element_top + 10;
@@ -228,15 +231,23 @@ class ManiC {
 		var x = this.getPos(this.element).x;
 		var width = this.getPos(this.element).width;
 
-		var element_top = parseInt(this.getPos(this.element).top);
 
 		log("ELEMENT", this.element);
+		var {real_w, real_h} = findLargestWidthAndHeight(this.element)
 		var position_switch = $(this.element).attr("data-position");
 		var correction_shift = 0;
 		var position;
+
+		var element_top = parseInt(this.getPos(this.element).top);
+		var element_bottom = parseInt(this.getPos(this.element).bottom);
+
 		if(position_switch == "fixed") {
 			position = "fixed";
-			correction_shift = -150;
+			if(real_w) {
+				correction_shift = -real_w;
+			}
+			element_top = parseInt(this.getPos(this.element).top);
+			element_bottom = parseInt(this.getPos(this.element).bottom);
 		} else {
 			position = "absolute";
 		}
@@ -244,7 +255,7 @@ class ManiC {
 		var element_left = parseInt(x - 2 * this.hand_width + correction_shift);
 
 		assert(!isNaN(element_left), "element_left is not a number");
-		assert(!isNaN(element_top), "element_top is not a number");
+		assert(!isNaN(element_top) || !isNaN(element_bottom), "neither element_top nor element_bottom is not a number");
 
 		// calculate the radius of the circle
 		var radius = 20;
@@ -285,7 +296,14 @@ class ManiC {
 			}
 		`;
 
-		$(".manicule").css("left", element_left).css("top", element_top);
+		$(".manicule").css("left", element_left);
+		if(!isNaN(element_top)) {
+			$(".manicule").css("top", element_top);
+		}
+
+		if (!isNaN(element_bottom)) {
+			$(".manicule").css("bottom", element_bottom);
+		}
 	}
 
 	hide() {
@@ -294,6 +312,23 @@ class ManiC {
 	}
 }
 
+function findLargestWidthAndHeight(element) {
+	// Get the bounding rectangle of the current element
+	const rect = element.getBoundingClientRect();
+	let maxWidth = rect.width;
+	let maxHeight = rect.height;
+
+	// Traverse through all child elements recursively
+	for (const childElement of element.children) {
+		const { width, height } = findLargestWidthAndHeight(childElement);
+
+		// Update the maximum width and height if necessary
+		maxWidth = Math.max(maxWidth, width);
+		maxHeight = Math.max(maxHeight, height);
+	}
+
+	return { width: maxWidth, height: maxHeight };
+}
 
 function find_unclicked_items ($x, possible_items) {
 	var req = $x.data("required_skills");
