@@ -753,3 +753,53 @@ function switch_to_lenet_example () {
 	current_skills["back_at_home"] = 1;
 }
 */
+
+//const inputString = "bla[1,2,3]='hello',blubb[5,1]='asdf'";
+
+function parse_text_for_item_cosmo_level () {
+	// Initialize the result object
+	const result = {};
+
+	// Use regex to match the variable names and their values
+	const regex = /(\w+)\[([\d,]+)\]='([^']+)'(,|$)/g;
+	let match;
+
+	while ((match = regex.exec(inputString)) !== null) {
+		const varName = match[1];
+		const indices = match[2].split(',').map(Number);
+		const value = match[3];
+
+		// Create nested objects based on the indices and values
+		const nestedObj = {};
+		indices.forEach(index => {
+			nestedObj[index] = value;
+		});
+
+		// Assign the nested object to the variable in the result
+		result[varName] = nestedObj;
+	}
+
+	return result;
+}
+
+function set_text_for_elements_depending_on_cosmo_level () {
+	$(".cosmo_autoset_text").each((i, e) => {
+		var cosmo_level_text = $(this).attr("data-cosmo_level_text");
+		if(cosmo_level_text) {
+			var parsed = parse_text_for_item_cosmo_level(cosmo_level_text);
+
+			for (var i = 0; i < Object.keys(parsed).length; i++) {
+				var element_skill_name = Object.keys(parsed)[i];
+				for (var j = 0; j < Object.keys(parsed[element_skill_name]).length; j++) {
+					var element_skill_level = parsed[Object.keys(parsed[element_skill_name])[j]];
+
+					if(Object.keys(current_skills).includes(element_skill_name)) {
+						if(current_skills[element_skill_name] == element_skill_level) {
+							$(e).html(parsed[element_skill_name][element_skill_level]);
+						}
+					}
+				}
+			}
+		}
+	});
+}
