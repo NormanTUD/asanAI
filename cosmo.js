@@ -793,11 +793,13 @@ function set_text_for_elements_depending_on_cosmo_level () {
 				var element_skill_name = Object.keys(parsed)[i];
 				log("element_skill_name", element_skill_name);
 				for (var j = 0; j < Object.keys(parsed[element_skill_name]).length; j++) {
-					var element_skill_level = parsed[Object.keys(parsed[element_skill_name])[j]];
+					var element_skill_level = Object.keys(parsed[element_skill_name])[j];
+					var element_skill_text = parsed[element_skill_name][element_skill_level];
 					log("element_skill_level", element_skill_level);
+					log("element_skill_text", element_skill_text);
 
 					if(Object.keys(current_skills).includes(element_skill_name)) {
-						if(current_skills[element_skill_name] == parseInt(element_skill_level)) {
+						if(parseInt(current_skills[element_skill_name]) == parseInt(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
 						} else {
 							log("X");
