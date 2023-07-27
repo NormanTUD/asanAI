@@ -165,37 +165,15 @@ class ManiC {
 
 			var element_top = $e.offset()["top"];
 
-			if($e.data("rotated")) {
-				//log("$e", $e);
-				var element_position_left = $e.offset()["left"] + ($e.width() / 2) - (this.hand_height / 2);
-				if(element_position_left < 0) {
-					element_position_left = Math.max(-parseInt(this.hand_width / 4), element_position_left);
-				}
+			var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
+			var element_width = $e.width();
 
-				//log("element_position_left", element_position_left);
+			var final_left = element_bounding_box_left + element_width;
+			var final_element_top = element_top + 10;
 
-				//log("$e.height():", $e.height());
-				var element_height = $e.height();
-
-				var final_top = element_top + element_height;
-				//log(`final_top = element_top + element_height = ${final_top}`);
-				//log(`final_top = ${element_top} + ${element_height} = ${final_top}`);
-
-				this.image.top = `${final_top}px`;
-				this.image.left = `${element_position_left}px`;
-				this.image.height = `${this.hand_height}px`;
-				this.image.src = "rotated_90_" + imageUrl;
-			} else {
-				var element_bounding_box_left = $e[0].getBoundingClientRect().left; // + $e[0].getBoundingClientRect().width
-				var element_width = $e.width();
-
-				var final_left = element_bounding_box_left + element_width;
-				var final_element_top = element_top + 10;
-
-				this.image.style.width = `${this.hand_height}px`;
-				this.image.top =`${final_element_top}px`;
-				this.image.left = `${final_left}px`;
-			}
+			this.image.style.width = `${this.hand_height}px`;
+			this.image.top =`${final_element_top}px`;
+			this.image.left = `${final_left}px`;
 
 			this.image.classList.add('manicule');
 			this.image.classList.add('invert_in_dark_mode');
@@ -251,7 +229,7 @@ class ManiC {
 		var width = this.getPos(this.element).width;
 
 		var element_top = parseInt(this.getPos(this.element).top);
-		var element_left = parseInt(x + width);
+		var element_left = parseInt(x - width - this.hand_width);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(element_top), "element_top is not a number");
