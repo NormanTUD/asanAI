@@ -237,7 +237,7 @@ class ManiC {
 			position = "fixed";
 		} else {
 			position = "absolute";
-			correction_shift = -200;
+			//correction_shift = -200;
 		}
 
 		var element_left = parseInt(x - 2 * this.hand_width + correction_shift);
