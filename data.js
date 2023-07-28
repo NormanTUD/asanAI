@@ -151,11 +151,6 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		}
 	}
 
-	// shuffle in normal mode but not cosmo mode
-	if(!is_cosmo_mode) {
-		urls = shuffle(urls);
-	}
-
 	var percentage_div = $("#percentage");
 
 	if(!skip_real_image_download) {
@@ -173,6 +168,15 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 	var data_progressbar_div = $("#data_progressbar>div");
 	var shown_stop_downloading = 0;
 
+	if(is_cosmo_mode) {
+		// shuffle in normal mode but not cosmo mode
+		urls = shuffle(urls);
+
+		if(started_training) {
+			$("#lenet_example_cosmo").hide();
+			$("#beschreibung_cosmo_laden").show();
+		}
+	}
 
 	for (var i = 0; i < urls.length; i++) {
 		//log(urls[i]);
@@ -182,11 +186,20 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
 					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ")...";
-					document.title = "Loading data " + percentage_text;
+					if(is_cosmo_mode) {
+						percentage_text = "Lade Bilder, " + percentage + "% (" + (i + 1) + " von " + urls.length + ")...";
+						document.title = "Lade Bilder: " + percentage + "% - asanAI"
+					} else {
+						document.title = "Loading data " + percentage_text + " - asanAI";
+					}
 					data_progressbar_div.css("width", percentage + "%")
 					percentage_div.html(percentage_text);
 					if(eta) {
-						percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+						if(is_cosmo_mode) {
+							percentage_div.html(percentage_div.html() + ", noch ca. " + human_readable_time_german(eta));
+						} else {
+							percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+						}
 					}
 
 					if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {

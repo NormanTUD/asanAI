@@ -1247,12 +1247,17 @@
 							</div>-->
 
 							<div id="training_data_tab">
-								<div class="show_only_in_cosmo_mode" style="display: none">
+								<div id="lenet_example_cosmo" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
 									<img style='width: 90%; max-height: 200px; max-width: 500px;' src="signs_network.svg"><br>
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
 									Warnung, Rettung, Verbot, Verpflichtend, Feuer
+								</div>
+								<div id="beschreibung_cosmo_laden" style="display: none">
+									Jetzt werden 40 Bilder aus jeder Kategorie geladen.
+									<hr>
+									Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.
 								</div>
 								<div id="percentage" class="reset_before_train_network"></div>
 								<button id="stop_downloading" onclick="stop_downloading_data=true" class="hide_in_cosmo_mode" style="display: none">Stop downloading and start training</button>

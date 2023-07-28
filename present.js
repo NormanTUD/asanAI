@@ -54,6 +54,8 @@ function removeFullScreen(divs, currentDivPresentationIndex) {
 	div.style.left = "";
 	div.style.zIndex = "";
 	document.body.style.overflow = "";
+
+	$("#lenet_example_cosmo").show();
 }
 
 // Function to handle scrolling left or right
