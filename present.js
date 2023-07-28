@@ -199,7 +199,8 @@ function attach_listener_for_cosmo_outside_click () {
 			!isMouseOverElement('no_autochoose_next_on_click') &&
 			!isMouseOverElementVariables(colorPickerElementsList) &&
 			done_presenting &&
-			!is_presenting
+			!is_presenting &&
+			is_hidden_or_has_hidden_parent($("#sketcher"))
 		) {
 			autochoose_next();
 		}
