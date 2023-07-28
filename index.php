@@ -270,18 +270,24 @@
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();">&#127947;</span>
 			</div>
-			<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
 <?php
-				$files = scandir('presentation/');
-				$i = 0;
-				foreach($files as $file) {
-					if(preg_match("/\.svg$/i", $file) && (!isset($_GET["max_presentation"]) || $i <= $_GET["max_presentation"])) {
-						print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' alt='Presentation, page filename: $file' src='presentation/$file'></div>";
-						$i++;
-					}
-				}
+			if(isset($_GET["start_cosmo"])) {
 ?>
-			</div>
+				<div class="cosmo" id="cosmo_presentation" data-required_skills='loaded_page[1]' data-no_manicule="1" style='display: none'>
+<?php
+					$files = scandir('presentation/');
+					$i = 0;
+					foreach($files as $file) {
+						if(preg_match("/\.svg$/i", $file) && (!isset($_GET["max_presentation"]) || $i <= $_GET["max_presentation"])) {
+							print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' alt='Presentation, page filename: $file' src='presentation/$file'></div>";
+							$i++;
+						}
+					}
+?>
+				</div>
+<?php
+			}
+?>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">
 					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
