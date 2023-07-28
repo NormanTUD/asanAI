@@ -119,6 +119,8 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 }) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
+	await add_cosmo_point("started_loading_data");
+
 	if(started_training || force_download) {
 		$("#photos").html("");
 	}

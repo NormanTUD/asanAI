@@ -1786,7 +1786,7 @@ async function set_config(index) {
 	}
 
 	l(swal_msg);
-	load_msg({"title": swal_msg + "..."});
+	await load_msg({"title": swal_msg + "..."});
 
 	var original_disabling_saving_status = disabling_saving_status;
 	disabling_saving_status = true;
@@ -4916,30 +4916,6 @@ async function easter_egg_fireworks (force=0) {
 		fw.stop();
 		in_fireworks = false;
 		$(".fireworks-container").html("").hide();
-	}
-}
-
-async function fireworks_and_reload (reload=1) {
-	if(in_fireworks) {
-		return;
-	}
-
-	in_fireworks = true;
-
-	remove_manicule(1);
-
-	$(".fireworks-container").show();
-	var fw = new Fireworks(document.querySelector('.fireworks-container'))
-	fw.start();
-	await delay(10000);
-	fw.stop();
-
-	in_fireworks = false;
-
-	remove_manicule(1);
-
-	if(reload) {
-		location.reload();
 	}
 }
 

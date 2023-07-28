@@ -1406,3 +1406,55 @@ var sketcher_warning = 0;
 var finished_loading = false;
 
 var generating_images = false;
+
+async function cosmo_set_tiny_training_dataset () {
+	log("Setting Epochs to 10...");
+	await set_epochs(10);
+	log("Setting max files per category to 5...");
+	$("#max_number_of_files_per_category").val(5);
+}
+
+
+
+async function cosmo_set_large_training_dataset () {
+	log("Setting Epochs to 30...");
+	await set_epochs(30);
+	log("Setting max files per category to 40...");
+	$("#max_number_of_files_per_category").val(40);
+}
+
+async function fireworks_and_reload (reload=1) {
+	if(in_fireworks) {
+		return;
+	}
+
+	in_fireworks = true;
+
+	remove_manicule(1);
+
+	$(".fireworks-container").show();
+	var fw = new Fireworks(document.querySelector('.fireworks-container'))
+	fw.start();
+	await delay(10000);
+	fw.stop();
+
+	in_fireworks = false;
+
+	remove_manicule(1);
+
+	if(reload) {
+		location.reload();
+	}
+}
+
+var cosmo_functions_at_milestones = {
+	"finished_training": {
+		1: cosmo_set_large_training_dataset,
+		3: fireworks_and_reload
+	},
+	"started_loading_data": {
+		2: cosmo_set_tiny_training_dataset
+	}
+};
+
+var ran_milestones = [];

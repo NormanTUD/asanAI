@@ -25,6 +25,7 @@ async function add_cosmo_point (name, show_manicule=1) {
 		current_skills = {};
 	}
 
+	await run_cosmo_milestones();
 }
 
 async function show_cosmo_elements_depending_on_current_skills () {
@@ -79,12 +80,11 @@ async function show_cosmo_elements_depending_on_current_skills () {
 	}
 
 	if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 3) {
-		await fireworks_and_reload(0);
 	}
 }
 
 function remove_manicule (remove=1) {
-	log("Removing manicule");
+	//log("Removing manicule");
 	if(typeof(manicule) == "object" && manicule !== null && remove && Object.keys(manicule).includes("element")) {
 		last_manually_removed_manicule_element = manicule.element;
 		if(!$(manicule.element).data("keep_cosmo")) {
@@ -128,7 +128,7 @@ class ManiC {
 		remove_manicule(0);
 
 		if(started_training) {
-			log("Training started");
+			//log("Training started");
 			return;
 		}
 
@@ -207,7 +207,7 @@ class ManiC {
 				window.scrollTo(x_position_manicule_centered, y_position_manicule_centered)
 			}
 		} else {
-			log("Empty e");
+			//log("Empty e");
 		}
 
 		cosmo_debugger();
@@ -429,7 +429,7 @@ function chose_next_manicule_target () {
 	}
 
 	if(generating_images) {
-		log("Not chosing manicule because it is generating images");
+		//log("Not chosing manicule because it is generating images");
 		remove_manicule();
 		return;
 	}
@@ -455,7 +455,7 @@ function chose_next_manicule_target () {
 	if(!possible_items.length) {
 		//log("POSSIBLE ITEMS WERE EMPTY", possible_items, possible_items.length);
 		remove_manicule(0);
-		log("No possible indices found for Manicule!");
+		//log("No possible indices found for Manicule!");
 		return;
 	}
 
@@ -775,8 +775,8 @@ var colorPickerElementsList = getColorPickerElements();
 console.log(colorPickerElementsList);
 */
 
-function switch_predict_mode () {
-	add_cosmo_point("eigene_webcam");
+async function switch_predict_mode () {
+	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
 	if($("#own_files").css("display") == "none") {
 		$("#own_files").show();
@@ -799,7 +799,7 @@ function switch_predict_mode () {
 		$("#webcam_in_cosmo").html("Kamera 📷");
 	}
 
-	add_cosmo_point("toggled_webcam");
+	await add_cosmo_point("toggled_webcam");
 }
 
 function parse_required_skills(str) {
@@ -824,19 +824,6 @@ function parse_required_skills(str) {
 function emergency_button () {
 	window.location.href = window.location.href;
 }
-
-/*
-function switch_to_lenet_example () {
-	show_tab_label("training_data_tab", 1)
-	add_cosmo_point("seen_lenet");
-}
-
-function switch_to_lenet_example () {
-	show_tab_label("lenet_cosmo_tab", 1)
-	add_cosmo_point("back_at_home");
-	current_skills["back_at_home"] = 1;
-}
-*/
 
 //const inputString = "bla[1,2,3]='hello',blubb[5,1]='asdf'";
 
@@ -887,4 +874,30 @@ function set_text_for_elements_depending_on_cosmo_level () {
 			}
 		}
 	});
+}
+
+async function run_cosmo_milestones () {
+	var _keys = Object.keys(cosmo_functions_at_milestones);
+	for (var i = 0; i < _keys.length; i++) {
+		var key = _keys[i];
+		if(Object.keys(current_skills).includes(key)) {
+			var key_keys = Object.keys(cosmo_functions_at_milestones[key]);
+			for (var j = 0; j < key_keys.length; j++) {
+				var fn = cosmo_functions_at_milestones[key][key_keys[j]];
+				var required_level = key_keys[j];
+				if(current_skills[key] == required_level) {
+					var milestone_name = key + ":" + required_level;
+					if(!Object.keys(ran_milestones).includes(milestone_name)) {
+						if(typeof(fn) == "function") {
+							await fn();
+						} else {
+							console.error("fn is not a function", fn);
+						}
+
+						ran_milestones[milestone_name] = 1;
+					}
+				}
+			}
+		}
+	}
 }
