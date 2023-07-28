@@ -1422,7 +1422,7 @@
 
 								<div class="container" id="predictcontainer">
 									<div class="show_only_in_cosmo_mode">
-										<button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera 📷</button>
+										
 									</div>
 									<span id="own_files" class="no_autochoose_next_on_click">
 										<span class="hide_when_image">

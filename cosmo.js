@@ -798,7 +798,7 @@ async function switch_predict_mode () {
 		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 
-		$("#webcam_in_cosmo").html("Kamera 📷");
+		$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷");
 		cosmo_predict_mode = "examples";
 	}
 
