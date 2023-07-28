@@ -793,6 +793,8 @@ async function switch_predict_mode () {
 			</span>
 		`);
 		cosmo_predict_mode = "cam";
+
+		$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
 	} else {
 		$("#own_files").hide();
 		$("#own_files").css("display", "none");
@@ -800,6 +802,7 @@ async function switch_predict_mode () {
 
 		$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷");
 		cosmo_predict_mode = "examples";
+		$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
 	}
 
 	await add_cosmo_point("toggled_webcam");
