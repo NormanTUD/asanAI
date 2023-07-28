@@ -1224,7 +1224,8 @@
 								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
 									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
 								</div>
-								<button class='add_category' onclick="add_new_category();">+</button>
+								<button class='add_category' onclick="add_new_category();">+ Add Category</button>
+								<button onclick="init_webcams()">Search for webcams</button><br>
 								<div id="own_image_data_categories"></div>
 								<div class="container" id="own_images_container"></div>
 							</div>
@@ -1433,9 +1434,9 @@
 										<span class="hide_when_no_image custom_image_data">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
-											<span style='display: block' class="full_example_image_prediction only_when_webcam_on">
-												<span id="webcam" style="display: none"></span>
-												<span id="webcam_prediction" style="display: none; overflow: scroll;"></span>
+											<span style='display: block' class="full_example_image_prediction ">
+												<span id="webcam"></span>
+												<span id="webcam_prediction" style="overflow: scroll;"></span>
 											</span>
 											<br>
 										</span>

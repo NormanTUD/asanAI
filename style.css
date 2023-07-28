@@ -1025,3 +1025,7 @@ button {
 	display: block ruby;
 	height: 300px;
 }
+
+#photos {
+	user-select: none;
+}

@@ -3578,14 +3578,16 @@ async function add_new_category() {
 			}
 
 			req = `data-required_skills="show_webcam[1]${t}"`;
-			c = 'cosmo';
+			if(is_cosmo_mode) {
+				c = 'cosmo';
+			}
 		}
 
-		var s = `<div class="own_image_upload_container" class='cosmo' data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
+		var s = `<div class="own_image_upload_container" data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
 			`<button style="${webcam_button_style}" class="hide_in_cosmo_mode large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
-			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button cosmo" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
+			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button hide_in_cosmo_mode" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button cosmo' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button><hr>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button><hr>` +
 		`</div>`;
 
 		$(s).appendTo("#own_images_container");
@@ -5240,7 +5242,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 
 	if(idname != "sketcher") {
-		classes = " cosmo";
+		if(is_cosmo_mode) {
+			classes = " cosmo";
+		}
 		required_skills = ' data-required_skills="took_images[4]" ';
 	//} else {
 	//	log(`!!!!!!${idname}!!!!!!`)
