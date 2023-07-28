@@ -127,8 +127,6 @@ class ManiC {
 
 		remove_manicule(0);
 
-		return;
-
 		if(started_training) {
 			log("Training started");
 			return;
@@ -191,7 +189,7 @@ class ManiC {
 			this.image.classList.add('manicule');
 			this.image.classList.add('invert_in_dark_mode');
 
-			document.body.appendChild(this.image);
+			//document.body.appendChild(this.image);
 
 			this.moveAroundLeftRight();
 
