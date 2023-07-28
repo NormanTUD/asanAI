@@ -5324,7 +5324,12 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]['atrament'].weight = 20;
 }
 
-function chose_nearest_color_picker () {
+function chose_nearest_color_picker (e) {
+	var input = $(e).parent().find("input");
+
+	$(input)[0].id.replace(/_colorpicker$/, "")
+
+	atrament_data["sketcher"].colorpicker.show()
 	
 }
 

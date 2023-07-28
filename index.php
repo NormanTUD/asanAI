@@ -1251,11 +1251,12 @@
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
 									<img style='width: 90%; max-height: 200px; max-width: 500px;' src="signs_network.svg"><br>
+									<hr>
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
 									Warnung, Rettung, Verbot, Verpflichtend, Feuer
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
-									Jetzt werden 40 Bilder aus jeder Kategorie geladen.
+									Jetzt werden <span class="number_of_images_per_category">5</span> Bilder aus jeder Kategorie geladen.
 									<hr>
 									Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.
 								</div>
