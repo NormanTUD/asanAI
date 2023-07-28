@@ -2415,27 +2415,3 @@ async function cosmo_maximally_activate_last_layer () {
 
 	generating_images = false;
 }
-
-async function cosmo_mode_auto_image_descriptor () {
-	while (generating_images) {
-		await delay(200);
-	}
-
-	while (is_hidden_or_has_hidden_parent($(".layer_image")[0])) {
-		await delay(200);
-	}
-
-
-	$(".auto_image_captions").remove();
-	var margin_top = parseInt($(".layer_image").css("margin-top"));
-	$('.layer_image').each(function(i, e) {
-		var bc = e.getBoundingClientRect();
-
-		var x = bc.x;
-		var y = bc.y - (margin_top / 2);
-
-		var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[i]}</span>`);
-
-		$(window.body).append(span);
-	})
-}
