@@ -2402,5 +2402,12 @@ async function cosmo_maximally_activate_last_layer () {
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
 
+	var ep = get_epochs();
+	if(ep == 10) {
+		$(".h2_maximally_activated_layer_contents").after(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht. Versuche, weiterzutrainieren.<br>`);
+	//} else {
+	//	$(".h2_maximally_activated_layer_contents").after(`<br>`);
+	}
+
 	generating_images = false;
 }
