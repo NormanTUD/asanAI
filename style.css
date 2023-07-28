@@ -1021,3 +1021,7 @@ button {
 	bottom: 50px;
 }
 
+#webcam {
+	display: block ruby;
+	height: 300px;
+}
