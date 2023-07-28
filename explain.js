@@ -992,14 +992,14 @@ async function draw_maximally_activated_layer (layer, type) {
 		}
 		var eta = "";
 		if(times.length) {
-			eta = " (" + human_readable_time(parseInt((i) * median(times))) + " left)";
+			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
 		}
 
 		var swal_msg = (neurons - i) + " Image(s) left " + eta;
 
 		if(is_cosmo_mode) {
 			if(times.length) {
-				eta = " (" + human_readable_time_german(parseInt((i) * median(times))) + " übrig)";
+				eta = " (" + human_readable_time_german(parseInt((neurons - i) * median(times))) + " übrig)";
 			}
 			swal_msg = (neurons - i) + " Bild(er) übrig " + eta;
 		}
