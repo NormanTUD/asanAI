@@ -38,6 +38,10 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	if(finished_loading) {
 		$("#presentation_site_nr").show();
 	}
+
+	if(!is_presenting) {
+		$("#presentation_site_nr").remove();
+	}
 }
 
 // Function to remove full screen styles
