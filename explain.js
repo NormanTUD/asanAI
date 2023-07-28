@@ -2409,5 +2409,7 @@ async function cosmo_maximally_activate_last_layer () {
 	//	$(".h2_maximally_activated_layer_contents").after(`<br>`);
 	}
 
+	$(".layer_image").css("width", "115px")
+
 	generating_images = false;
 }
