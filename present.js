@@ -6,7 +6,7 @@ var divs = [];
 async function handleKeydown(event) {
 	if (event.key === "ArrowLeft" || event.key === "Left") {
 		showPreviousDiv();
-	} else if (event.key === "ArrowRight" || event.key === "Right") {
+	} else if (event.key === "ArrowRight" || event.key === "Right" || event.key === " ") {
 		await showNextDiv();
 	}
 }
