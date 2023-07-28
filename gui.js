@@ -5327,9 +5327,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 function chose_nearest_color_picker (e) {
 	var input = $(e).parent().find("input");
 
-	$(input)[0].id.replace(/_colorpicker$/, "")
+	var id = $(input)[0].id.replace(/_colorpicker$/, "")
 
-	atrament_data["sketcher"].colorpicker.show()
+	atrament_data[id].colorpicker.show()
 	
 }
 
