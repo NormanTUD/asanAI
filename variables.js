@@ -1447,10 +1447,14 @@ async function fireworks_and_reload (reload=1) {
 	}
 }
 
+async function fireworks_no_reload () {
+	await fireworks_and_reload(0);
+}
+
 var cosmo_functions_at_milestones = {
 	"finished_training": {
 		1: cosmo_set_large_training_dataset,
-		3: fireworks_and_reload
+		3: fireworks_no_reload
 	},
 	"started_loading_data": {
 		2: cosmo_set_tiny_training_dataset
@@ -1458,3 +1462,5 @@ var cosmo_functions_at_milestones = {
 };
 
 var ran_milestones = [];
+
+var cosmo_predict_mode = "examples";

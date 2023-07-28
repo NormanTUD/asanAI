@@ -192,6 +192,8 @@ function attach_listener_for_cosmo_outside_click () {
 
 		var colorPickerElementsList = getColorPickerElements();
 
+		log("EVENT:", event);
+
 		// Check if the clicked element does not have its own event handler
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
@@ -203,6 +205,8 @@ function attach_listener_for_cosmo_outside_click () {
 			is_hidden_or_has_hidden_parent($("#sketcher"))
 		) {
 			autochoose_next();
+		} else {
+			log("Do not autochose");
 		}
 	});
 

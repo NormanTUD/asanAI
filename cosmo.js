@@ -791,12 +791,14 @@ async function switch_predict_mode () {
 			<img height=32 src='traindata/signs//fire/116px-Fire_Class_B.svg.png'>
 			</span>
 		`);
+		cosmo_predict_mode = "cam";
 	} else {
 		$("#own_files").hide();
 		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 
 		$("#webcam_in_cosmo").html("Kamera 📷");
+		cosmo_predict_mode = "examples";
 	}
 
 	await add_cosmo_point("toggled_webcam");
