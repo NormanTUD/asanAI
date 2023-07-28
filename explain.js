@@ -2404,9 +2404,9 @@ async function cosmo_maximally_activate_last_layer () {
 
 	var ep = get_epochs();
 	if(ep == 10) {
-		$(".h2_maximally_activated_layer_contents").after(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht. Versuche, weiterzutrainieren.<br>`);
+		$(".h2_maximally_activated_layer_contents").after(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<br>Versuche, weiterzutrainieren.<br>`);
 	} else {
-		$(".h2_maximally_activated_layer_contents").after(`Wenn das Ergebnis gut ist, bist du nun fertig. Sonst kannst du weiter trainieren.<br>`);
+		$(".h2_maximally_activated_layer_contents").after(`Wenn das Ergebnis gut ist, kannst du versuchen, zum Beispiel ein Warndreieck zu malen.<br>Sonst kannst du weiter trainieren.<br>`);
 	}
 
 	$(".layer_image").css("width", "115px")

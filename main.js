@@ -525,7 +525,7 @@ $(document).ready(async function() {
 		$("#scroll_right").show();
 		$("#presentation_site_nr").show();
 		$("#start_stop_training").css("visibility", "hidden");
-		$(".cosmo_next_button").show();
+		$(".cosmo_next_button_span").show();
 		$("#photos").css("min-height", "");
 	} else {
 		$("#status_bar").show();
