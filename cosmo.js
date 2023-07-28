@@ -127,6 +127,8 @@ class ManiC {
 
 		remove_manicule(0);
 
+		return;
+
 		if(started_training) {
 			log("Training started");
 			return;
