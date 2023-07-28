@@ -1317,7 +1317,9 @@ async function input_shape_is_image (is_from_webcam=0) {
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
 		is.show();
-		$(".hide_in_cosmo_mode").hide();
+		if(is_cosmo_mode) {
+			$(".hide_in_cosmo_mode").hide();
+		}
 		/*
 		if(!is_from_webcam && is_cosmo_mode) {
 			for (var i = 0; i < is.length; i++) {

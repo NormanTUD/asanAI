@@ -1225,7 +1225,6 @@
 									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
 								</div>
 								<button class='add_category' onclick="add_new_category();">+ Add Category</button>
-								<button onclick="init_webcams()">Search for webcams</button><br>
 								<div id="own_image_data_categories"></div>
 								<div class="container" id="own_images_container"></div>
 							</div>
@@ -1400,9 +1399,6 @@
 							</div>
 
 							<div id="predict_tab">
-								<span>
-									<button onclick="init_webcams()">Search for webcams</button><br>
-								</span>
 								<span>
 									Show layer data flow?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>

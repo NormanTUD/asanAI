@@ -971,6 +971,8 @@ async function hide_no_conv_stuff() {
 
 	if(is_cosmo_mode) {
 		$(".hide_in_cosmo_mode").hide();
+	} else {
+		$(".hide_in_cosmo_mode").show();
 	}
 
 	if(await input_shape_is_image()) {
@@ -3586,7 +3588,7 @@ async function add_new_category() {
 		var s = `<div class="own_image_upload_container" data-required_skills="loaded_page[1],finished_training[1],added_custom_category[2],show_webcam[1],set_custom_images[${k}],added_custom_category[${k}],drew_custom_image[1]">` +
 			`<button style="${webcam_button_style}" class="hide_in_cosmo_mode large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
-			`<button class="delete_category_button hide_in_cosmo_mode" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
+			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button><hr>` +
 		`</div>`;
 
@@ -3598,7 +3600,7 @@ async function add_new_category() {
 			this_label = cosmo_categories[label_nr];
 		}
 
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="' + this_label + '" /><input type="file" class="own_image_files hide_in_cosmo_mode" multiple accept="image/*"><br/></form>').prependTo($(".own_image_upload_container")[n]);
+		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="' + this_label + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').prependTo($(".own_image_upload_container")[n]);
 
 		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
 

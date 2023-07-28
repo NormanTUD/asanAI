@@ -1194,18 +1194,20 @@ async function get_data_from_webcam (force_restart) {
 			cam_data = await tf.data.webcam(videoElement, cam_config);
 
 			$(".webcam_data_button").show();
-
-			if(is_cosmo_mode) {
-				$(".hide_in_cosmo_mode").hide();
-			}
 		}
 	} else {
 		$(".webcam_data_button").hide();
-		$(".hide_in_cosmo_mode").show();
+
 		$("#webcam_data").hide().html("");
 		if(cam_data) {
 			cam_data.stop();
 		}
+	}
+
+	if(is_cosmo_mode) {
+		$(".hide_in_cosmo_mode").hide();
+	} else {
+		$(".hide_in_cosmo_mode").show();
 	}
 
 	if(force_restart && stopped) {
