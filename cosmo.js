@@ -668,6 +668,8 @@ async function cosmo_mode () {
 
 	addBackgroundGradient();
 
+	$(".graphs_here").css("margin-top", "100px");
+
 	$("#toggle_layers_button").hide();
 	$("#show_webcam_button").hide()
 
