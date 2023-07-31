@@ -202,7 +202,8 @@ function attach_listener_for_cosmo_outside_click () {
 			!isMouseOverElementVariables(colorPickerElementsList) &&
 			done_presenting &&
 			!is_presenting &&
-			is_hidden_or_has_hidden_parent($("#sketcher"))
+			is_hidden_or_has_hidden_parent($("#sketcher")) && 
+			is_hidden_or_has_hidden_parent($(".example_images")[0])
 		) {
 			autochoose_next();
 		} else {

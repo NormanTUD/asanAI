@@ -550,32 +550,32 @@ function isMouseOverElement(className) {
 }
 
 function isMouseOverElementVariables(elements) {
-  if (mouseX === -1 || mouseY === -1) {
-    if (is_cosmo_mode) {
-      console.warn("No mouse movement detected yet");
-    } else {
-      console.warn("isMouseOverElementVariables: not in cosmo mode, returning false.");
-    }
-    return false;
-  }
+	if (mouseX === -1 || mouseY === -1) {
+		if (is_cosmo_mode) {
+			console.warn("No mouse movement detected yet");
+		} else {
+			console.warn("isMouseOverElementVariables: not in cosmo mode, returning false.");
+		}
+		return false;
+	}
 
-  // Check if any element in the elements array is visible and mouse is over it
-  for (const element of elements) {
-    if (!is_hidden_or_has_hidden_parent(element)) {
-      const rect = element.getBoundingClientRect();
+	// Check if any element in the elements array is visible and mouse is over it
+	for (const element of elements) {
+		if (!is_hidden_or_has_hidden_parent(element)) {
+			const rect = element.getBoundingClientRect();
 
-      if (
-        mouseX >= rect.left &&
-        mouseX <= rect.right &&
-        mouseY >= rect.top &&
-        mouseY <= rect.bottom
-      ) {
-        return true;
-      }
-    }
-  }
+			if (
+				mouseX >= rect.left &&
+				mouseX <= rect.right &&
+				mouseY >= rect.top &&
+				mouseY <= rect.bottom
+			) {
+				return true;
+			}
+		}
+	}
 
-  return false;
+	return false;
 }
 
 
