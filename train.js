@@ -309,7 +309,7 @@ function get_fit_data () {
 
 		if(is_cosmo_mode) {
 			time_estimate = human_readable_time_german(seconds_left);
-			if(max_number_epochs && current_epoch > 0 && time_estimate && seconds_left) {
+			if(max_number_epochs && current_epoch > 0 && time_estimate && seconds_left >= 0) {
 				$("#current_epoch_cosmo_display").html(current_epoch);
 				$("#max_epoch_cosmo_display").html(max_number_epochs);
 				$("#time_estimate_cosmo").html(time_estimate);
