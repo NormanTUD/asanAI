@@ -1059,6 +1059,11 @@ async function draw_maximally_activated_layer (layer, type) {
 }
 
 async function predict_maximally_activated (item, force_category) {
+	if(is_cosmo_mode) {
+		$(".maximally_activated_predictions").show();
+		return;
+	}
+
 	var results = await predict(item, force_category, 1);
 	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
 		$(item).next().remove();
