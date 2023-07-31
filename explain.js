@@ -1001,7 +1001,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			if(times.length) {
 				eta = " (" + human_readable_time_german(parseInt((neurons - i) * median(times))) + " übrig)";
 			}
-			if(neurons - i) == 1) {
+			if((neurons - i) == 1) {
 				swal_msg = (neurons - i) + " Bild übrig " + eta;
 			} else {
 				swal_msg = (neurons - i) + " Bilder übrig " + eta;
@@ -2407,15 +2407,14 @@ async function cosmo_maximally_activate_last_layer () {
 	$(".h2_maximally_activated_layer_contents").html("So denkt die KI, dass die Kategorien aussehen:");
 
 	var ep = get_epochs();
-	if(ep == 10) {
-		$(".h2_maximally_activated_layer_contents").after(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr>Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
-	} else {
-		$(".h2_maximally_activated_layer_contents").after(`Wenn das Ergebnis gut ist, kannst du versuchen, zum Beispiel ein Warndreieck zu malen.<br>Sonst kannst du weiter trainieren.<br>`);
-	}
+
+	$(".h2_maximally_activated_layer_contents").after(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr>Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
 
 	cosmo_mode_auto_image_descriptor();
 
 	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px");
 
 	generating_images = false;
+
+	chose_next_manicule_target();
 }
