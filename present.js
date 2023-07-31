@@ -192,7 +192,7 @@ function attach_listener_for_cosmo_outside_click () {
 
 		var colorPickerElementsList = getColorPickerElements();
 
-		log("EVENT:", event);
+		//log("EVENT:", event);
 
 		// Check if the clicked element does not have its own event handler
 		if (
@@ -206,7 +206,7 @@ function attach_listener_for_cosmo_outside_click () {
 		) {
 			autochoose_next();
 		} else {
-			log("Do not autochose");
+			//log("Do not autochose");
 		}
 	});
 
