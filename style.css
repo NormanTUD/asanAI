@@ -1029,3 +1029,7 @@ button {
 #photos {
 	user-select: none;
 }
+
+.h2_maximally_activated_layer_contents {
+	margin: 0px;
+}

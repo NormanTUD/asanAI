@@ -2419,7 +2419,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	cosmo_mode_auto_image_descriptor();
 
-	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px");
+	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
 
 	generating_images = false;
 
