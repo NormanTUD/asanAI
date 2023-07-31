@@ -78,6 +78,7 @@ async function train_neural_network () {
 
 		if(is_cosmo_mode) {
 			$(".cosmo_next_button_span").css("visibility", "hidden");
+			$(".auto_image_captions").remove();
 		}
 
 		$("#show_grad_cam").prop("disabled", false);

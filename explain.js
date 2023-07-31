@@ -1001,7 +1001,11 @@ async function draw_maximally_activated_layer (layer, type) {
 			if(times.length) {
 				eta = " (" + human_readable_time_german(parseInt((neurons - i) * median(times))) + " übrig)";
 			}
-			swal_msg = (neurons - i) + " Bild(er) übrig " + eta;
+			if(neurons - i) == 1) {
+				swal_msg = (neurons - i) + " Bild übrig " + eta;
+			} else {
+				swal_msg = (neurons - i) + " Bilder übrig " + eta;
+			}
 		}
 
 		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
