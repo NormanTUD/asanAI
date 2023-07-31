@@ -1423,7 +1423,7 @@ async function cosmo_set_large_training_dataset () {
 	$("#number_of_images_per_category").val(40);
 }
 
-async function fireworks_and_reload (reload=1) {
+async function fireworks_and_reload (reload=1, waittime=10000) {
 	if(in_fireworks) {
 		return;
 	}
@@ -1435,7 +1435,7 @@ async function fireworks_and_reload (reload=1) {
 	$(".fireworks-container").show();
 	var fw = new Fireworks(document.querySelector('.fireworks-container'))
 	fw.start();
-	await delay(10000);
+	await delay(waittime);
 	fw.stop();
 
 	in_fireworks = false;
@@ -1448,7 +1448,7 @@ async function fireworks_and_reload (reload=1) {
 }
 
 async function fireworks_no_reload () {
-	await fireworks_and_reload(0);
+	await fireworks_and_reload(0, 2000);
 }
 
 var cosmo_functions_at_milestones = {
