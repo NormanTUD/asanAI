@@ -46,6 +46,7 @@ async function train_neural_network () {
 	if(started_training) {
 		if(is_cosmo_mode) {
 			$(".auto_image_captions").remove();
+			$("#webcam_in_cosmo").show();
 			return;
 			/*
 			await add_cosmo_point("started_training", 0);
@@ -79,6 +80,7 @@ async function train_neural_network () {
 		if(is_cosmo_mode) {
 			$(".cosmo_next_button_span").css("visibility", "hidden");
 			$(".auto_image_captions").remove();
+			$("#webcam_in_cosmo").show();
 		}
 
 		$("#show_grad_cam").prop("disabled", false);

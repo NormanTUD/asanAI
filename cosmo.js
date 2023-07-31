@@ -794,7 +794,7 @@ async function switch_predict_mode () {
 			<img height=32 src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png' />
 			<img height=32 src='traindata/signs//fire/116px-Fire_Class_B.svg.png' />
 			</span>
-		`);
+		`).show();
 		cosmo_predict_mode = "cam";
 
 		$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
@@ -803,7 +803,7 @@ async function switch_predict_mode () {
 		$("#own_files").css("display", "none");
 		$("#example_predictions").show();
 
-		$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷");
+		$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷").show();
 		cosmo_predict_mode = "examples";
 		$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
 	}
