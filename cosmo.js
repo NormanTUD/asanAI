@@ -806,6 +806,8 @@ async function switch_predict_mode () {
 	}
 
 	await add_cosmo_point("toggled_webcam");
+
+	cosmo_mode_auto_image_descriptor();
 }
 
 function parse_required_skills(str) {
