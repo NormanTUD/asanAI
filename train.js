@@ -45,6 +45,7 @@ async function train_neural_network () {
 
 	if(started_training) {
 		if(is_cosmo_mode) {
+			$(".auto_image_captions").remove();
 			return;
 			/*
 			await add_cosmo_point("started_training", 0);
@@ -848,6 +849,7 @@ async function visualize_train () {
 		$("#plotly_epoch_history").hide();
 		$("#canvas_grid_visualization").css({"position": "inherit"});
 		$("#canvas_grid_visualization").css({"opacity": "1"});
+		$(".auto_image_captions").remove();
 	} else {
 		$("#plotly_epoch_history").show();
 		$("#canvas_grid_visualization").css({"position": "absolute"});
