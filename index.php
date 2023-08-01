@@ -263,7 +263,8 @@
 		<div id="mainsite" style="display: none">
 			<span>
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
-				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="notaus.png" /></a>
+				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
+				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" src="notaus.png" /></a>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>

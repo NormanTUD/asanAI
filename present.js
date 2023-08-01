@@ -179,6 +179,7 @@ async function endPresentation() {
 	attach_listener_for_cosmo_outside_click();
 
 	$("#scads_logo_cosmo_mode").show();
+	$("#asanai_logo_cosmo").show();
 	$("#graphs_here").css("margin-top", "30px");
 
 	chose_next_manicule_target();
