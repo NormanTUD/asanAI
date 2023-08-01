@@ -1033,3 +1033,10 @@ button {
 .h2_maximally_activated_layer_contents {
 	margin: 0px;
 }
+
+hr {
+	margin-top: 0;
+	margin-bottom: 0;
+	max-width: 50%;
+	min-width: 500px !important;
+}
