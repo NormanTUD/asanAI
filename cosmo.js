@@ -916,6 +916,10 @@ async function run_cosmo_milestones () {
 async function cosmo_mode_auto_image_descriptor () {
 	$(".auto_image_captions").remove();
 
+	if(!is_cosmo_mode) {
+		return;
+	}
+
 	while (generating_images) {
 		await delay(200);
 	}
