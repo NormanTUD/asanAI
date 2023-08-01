@@ -467,6 +467,11 @@ async function write_descriptions (force=0) {
 		last_drawn_descriptions = new_hash;
 	}
 
+	if(is_hidden_or_has_hidden_parent($("#layers_container"))) {
+		$(".descriptions_of_layers").hide()
+		return;
+	}
+
 	if(disable_show_python_and_create_model) {
 		log("!disable_show_python_and_create_model");
 		$(".descriptions_of_layers").remove();
