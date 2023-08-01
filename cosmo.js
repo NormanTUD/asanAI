@@ -928,12 +928,12 @@ async function cosmo_mode_auto_image_descriptor () {
 		await delay(200);
 	}
 
-	var margin_top = parseInt($(".layer_image").css("margin-top"));
+	var margin_top = parseInt($("#body").css("font-size"));
 	$('.layer_image').each(function(i, e) {
 		var bc = e.getBoundingClientRect();
 
 		var x = bc.x;
-		var y = bc.y - (margin_top / 2);
+		var y = bc.y - (2 * margin_top);
 
 		var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[i]}</span>`);
 
