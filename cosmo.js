@@ -673,7 +673,7 @@ async function cosmo_mode () {
 	$("#toggle_layers_button").hide();
 	$("#show_webcam_button").hide()
 
-	$("#max_activation_iterations").val(15);
+	$("#max_activation_iterations").val(30);
 
 	$("#show_webcam_button").css("visibility", "hidden");
 	//$("#start_stop_training").show().css("display", "initial");
