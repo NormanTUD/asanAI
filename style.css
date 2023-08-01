@@ -1045,3 +1045,7 @@ hr {
 	max-width: 50%;
 	min-width: 500px !important;
 }
+
+.user_select_none {
+	user-select: none;
+}

@@ -265,7 +265,7 @@
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
 				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; top: 10px; right: 10px;" id="emergency_button" id="scads_logo_cosmo_mode" src="notaus.png" /></a>
 			</span>
-			<div id="ribbon_shower">
+			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
 				<span id="custom_webcam_training_data" style="display: none" class="hide_in_cosmo_mode only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data();$('#custom_webcam_training_data').attr('data-clicked', '1')">&#128248;</span>
 				<span id="start_stop_training" class="symbol_button" onclick="train_neural_network();">&#127947;</span>
@@ -1117,12 +1117,12 @@
 				<div id="toggle_layers_button" ><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
-					<div id="layers_container_left" class="left_side">
+					<div id="layers_container_left" class="left_side user_select_none">
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
 					<div class="right_side" id="graphs_here">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
-							<div id="navbar1" style="display: flex">
+							<div id="navbar1" class="user_select_none" style="display: flex">
 								<ul class="navi_list">
 									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Model Visualization</a></li>
@@ -1291,9 +1291,11 @@
 
 								<div id="python_tab">
 									<br>
-									<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
-									<button onclick="save_model()">Download model data</button>
-									<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
+									<span class="user_select_none">
+										<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
+										<button onclick="save_model()">Download model data</button>
+										<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
+									</span>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
 								</div>
@@ -1400,7 +1402,7 @@
 								</div>
 							</div>
 
-							<div id="summary_tab">
+							<div id="summary_tab" class="user_select_none">
 								<div class="reset_before_train_network" id="summary"></div>
 							</div>
 
