@@ -530,8 +530,6 @@ async function write_descriptions (force=0) {
 		assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
 		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
 
-		//assert(last_layer_end > first_layer_top, "last_layer_end is larger or equal to than first_layer_top");
-
 		if(keyname != "null") {
 			var height = last_layer_end - first_layer_start - 13;
 			var hidden = '';

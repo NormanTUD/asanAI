@@ -819,7 +819,7 @@ async function visualize_train () {
 	}
 
 	if($("#data_origin").val() != "default") {
-		log("Disabling visualize_train because this only works for default, not for custom data of any kind.");
+		log_once("Disabling visualize_train because this only works for default, not for custom data of any kind.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}

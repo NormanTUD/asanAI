@@ -281,6 +281,7 @@ async function run_tests () {
 			var new_number_of_layers = $(".layer_setting").length;
 			await delay(1000);
 
+			test_equal("Testing whether get_layer_data has the same number of layers as the loaded model after adding 2 layers", new_number_of_layers, get_layer_data().length);
 			test_equal("Checking if the number of layers is +2 after adding 2 layers", new_number_of_layers - old_number_of_layers, 2);
 
 			delay(2000);
@@ -470,6 +471,19 @@ async function run_tests () {
 			test_equal("time resize took was less than 10 seconds", time_test_ok, true);
 
 			show_swal_when_changing_size = false;
+
+			var last = 0;
+			var ok = 1;
+			$(".descriptions_of_layers").each((i, e) => {
+				var t = parseInt(e.style.top); 
+				if(t > last) { 
+					last = t;
+				} else { 
+					ok = 0;
+				}
+			})
+
+			test_equal("descriptions of layers: top positions are below each other", ok, 1);
 
 			/*
 			var landau_linear_approx = least_square(X, Y);

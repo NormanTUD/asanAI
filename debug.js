@@ -1,5 +1,19 @@
 "use strict";
 
+var printed_msgs = [];
+
+function log_once (...args) {
+	var md5 = JSON.stringify(args);
+
+	if(printed_msgs.includes(md5)) {
+		return;
+	}
+
+	printed_msgs.push(md5);
+
+	log(...args);
+}
+
 function colorlog (color, msg) {
 	console.log("%c" + msg, "background: " + color + "; color: white");
 }
