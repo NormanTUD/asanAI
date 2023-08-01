@@ -261,7 +261,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predict_data = null;
 
 		if(await input_shape_is_image()) {
-			predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
+			try {
+				predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
+			} catch (e) {
+				log(e);
+				console.trace();
+			}
 		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
@@ -300,6 +305,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				}
 			}
 			predict_data = tf.tensor(data);
+		}
+
+		if(!predict_data) {
+			return;
 		}
 
 		if(!tensor_shape_matches_model(predict_data)) {
