@@ -1530,7 +1530,7 @@
 			<span class="symbol_button" id="next_button_span"><button id="next_button" data-dont_hide_after_show="1" data-no_scroll="1" data-cosmo_level_text="finished_training[1]='Weiter trainieren'" class="cosmo cosmo_autoset_text cosmo_button green_bg" onclick="remove_manicule(1);train_neural_network();$('#next_button').attr('data-clicked', '1');remove_manicule(1);" style="min-height: 50px; width: 200px; " id="cosmo_next_button" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" data-position="fixed" >Das Netzwerk trainieren</button></span>
 		</div>
 
-		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white;" id="loading_icon_wrapper">
+		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white; user-select: none;" id="loading_icon_wrapper">
 			<img src="scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 67px">
 			<img src="logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 67px">
 			<img src="Loading_icon.gif" alt="Loading..." style="max-width: 100%;">
