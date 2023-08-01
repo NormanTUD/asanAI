@@ -150,6 +150,7 @@ body {
 .left_side {
 	min-width: 500px;
 	float: left;
+	margin-left: -40px;
 }
 
 @media only screen and (min-width: 600px) {
@@ -262,7 +263,7 @@ ul {
 }
 
 .layer_setting {
-	width: 400px;
+	width: 350px;
 }
 
 .input_field {

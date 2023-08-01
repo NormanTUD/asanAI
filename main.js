@@ -24,6 +24,7 @@ function show_idle_time () {
 async function on_resize () {
 	reset_view(); 
 	await show_cosmo_elements_depending_on_current_skills()
+	await write_descriptions(1);
 }
 
 function layer_types_that_dont_have_default_options () {
@@ -410,10 +411,10 @@ $(document).ready(async function() {
 	window.onresize = on_resize;
 
 	setInterval(fix_viz_width, 700);
-	setInterval(check_number_values, 200);
-	setInterval(display_delete_button, 200);
-	setInterval(write_model_summary, 200);
-	setInterval(write_descriptions, 500);
+	setInterval(check_number_values, 100);
+	setInterval(display_delete_button, 300);
+	setInterval(write_model_summary, 300);
+	setInterval(write_descriptions, 1000);
 
 	setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
 

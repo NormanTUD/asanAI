@@ -528,15 +528,13 @@ async function write_descriptions (force=0) {
 		//assert(last_layer_end > first_layer_top, "last_layer_end is larger or equal to than first_layer_top");
 
 		if(keyname != "null") {
-			var height = last_layer_end - first_layer_start - 15;
+			var height = last_layer_end - first_layer_start - 13;
 			var hidden = '';
 			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 				hidden = "display: none;";
 			}
 
 			var new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
-
-			log(new_div_html);
 
 			$(new_div_html).appendTo('#maindiv');
 		}
