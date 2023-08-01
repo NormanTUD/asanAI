@@ -93,6 +93,10 @@ function AlexNet() {
 		while (graph_container.firstChild) {
 			graph_container.removeChild(graph_container.firstChild);
 		}
+
+		var container = document.getElementById('graphs_here');
+		renderer.setSize(Math.min(100, $(container).width()), Math.max($(container).height(), 500));
+
 		graph_container.appendChild(renderer.domElement);
 
 		if (controls) {
