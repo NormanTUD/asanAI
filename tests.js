@@ -90,6 +90,7 @@ function log_test (name) {
 	mem_history.push(current_mem);
 
 	log("Test-name: " + name)
+	l("Test-name: " + name);
 }
 
 async function run_tests () {
