@@ -66,6 +66,7 @@ function AlexNet() {
 	// /////////////////////////////////////////////////////////////////////////////
 
 	function restartRenderer({rendererType_=rendererType}={}) {
+		assert(rendererType_ === "webgl" || rendererType_ === "svg", "Ungültiger rendererType: Erwartet wird 'webgl' oder 'svg'.");
 		var cookie_theme = getCookie("theme");
 		if(cookie_theme == "darkmode") {
 			scene.background = new THREE.Color(0x363636);
@@ -142,6 +143,9 @@ function AlexNet() {
 			showConvDims_=showConvDims
 		}={}
 	) {
+		assert(Array.isArray(architecture_), "Ungültige architecture_: Erwartet wird ein Array von Schichten.");
+		assert(Array.isArray(architecture2_), "Ungültige architecture2_: Erwartet wird ein Array von Schichten.");
+
 		var cookie_theme = getCookie("theme");
 		if(cookie_theme == "darkmode") {
 			scene.background = new THREE.Color(0x363636);
@@ -171,6 +175,7 @@ function AlexNet() {
 
 		architecture.forEach(function(layer, index) {
 			// Layer
+			assert(typeof layer === "object", "Ungültige Schicht (layer): Erwartet wird ein Objekt.");
 			var layer_geometry = new THREE.BoxGeometry(wf(layer), hf(layer), depthFn(layer['depth']));
 			var layer_object = new THREE.Mesh(layer_geometry, box_material);
 			layer_object.position.set(0, 0, layer_offsets[index]);
@@ -247,6 +252,7 @@ function AlexNet() {
 
 		architecture2.forEach(function(layer, index) {
 			// Dense
+			assert(typeof layer === "number" && !isNaN(layer), "Ungültige Schicht (layer): Erwartet wird eine numerische Tiefe.");
 			var layer_geometry = new THREE.BoxGeometry(widthFn(2), depthFn(layer), widthFn(2));
 			var layer_object = new THREE.Mesh(layer_geometry, box_material);
 			layer_object.position.set(0, 0, layer_offsets[architecture.length + index]);
@@ -341,6 +347,15 @@ function AlexNet() {
 		color3        = color3_;
 		rectOpacity   = rectOpacity_;
 		filterOpacity = filterOpacity_;
+
+		// Beispiel-Assertion: Überprüfung, ob color1_, color2_, und color3_ gültige Farbwerte sind.
+		assert(/^#[0-9A-F]{6}$/i.test(color1_), "Ungültige color1_: Erwartet wird eine hexadezimale Farbe.");
+		assert(/^#[0-9A-F]{6}$/i.test(color2_), "Ungültige color2_: Erwartet wird eine hexadezimale Farbe.");
+		assert(/^#[0-9A-F]{6}$/i.test(color3_), "Ungültige color3_: Erwartet wird eine hexadezimale Farbe.");
+
+		// Beispiel-Assertion: Überprüfung, ob rectOpacity_ und filterOpacity_ numerische Werte zwischen 0 und 1 sind.
+		assert(!isNaN(rectOpacity_) && rectOpacity_ >= 0 && rectOpacity_ <= 1, "Ungültige rectOpacity_: Erwartet wird ein Wert zwischen 0 und 1.");
+		assert(!isNaN(filterOpacity_) && filterOpacity_ >= 0 && filterOpacity_ <= 1, "Ungültige filterOpacity_: Erwartet wird ein Wert zwischen 0 und 1.");
 
 		box_material.color = new THREE.Color(color1);
 		conv_material.color = new THREE.Color(color2);
