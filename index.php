@@ -1406,7 +1406,7 @@
 								<div class="reset_before_train_network" id="summary"></div>
 							</div>
 
-							<div id="predict_tab">
+							<div id="predict_tab" class="user_select_none">
 								<span>
 									Show layer data flow?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
