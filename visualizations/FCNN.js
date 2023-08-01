@@ -1,13 +1,17 @@
 "use strict";
 
 function FCNN() {
+	function get_graph_width () {
+		var g = 0.99 * document.getElementById("graphs_here").scrollWidth;
+
+		assert(!isNaN(g), "Ungültige graph_width: Erwartet wird eine numerische Breite.");
+
+		return g;
+	}
+
 	let randomWeight = () => Math.random() * 2 - 1;
 
 	var graph_width = get_graph_width();
-
-	function get_graph_width () {
-		return 0.99 * document.getElementById("graphs_here").scrollWidth;
-	}
 
 	var h = window.innerHeight;
 
@@ -15,13 +19,19 @@ function FCNN() {
 	var g = svg.append("g");
 	svg.style("cursor", "move");
 
+	assert(svg.node() !== null, "SVG-Element mit ID 'fcnn' wurde nicht gefunden.");
+
 	var edgeWidthProportional = false;
 	var edgeWidth = 0.5;
 	var weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
 
+	assert(!isNaN(edgeWidth), "Ungültige edgeWidth: Erwartet wird eine numerische Kantendicke.");
+
 	var edgeOpacityProportional = false;
 	var edgeOpacity = 1.0
 	var weightedEdgeOpacity = d3.scaleLinear().domain([0, 1]).range([0, 1]);
+
+	assert(edgeOpacity >= 0 && edgeOpacity <= 1, "Ungültige edgeOpacity: Erwartet wird ein Wert zwischen 0 und 1.");
 
 	var edgeColorProportional = false;
 	var defaultEdgeColor = "#000000";
@@ -33,6 +43,9 @@ function FCNN() {
 	var negativeEdgeColor = "#0000ff";
 	var positiveEdgeColor = "#ff0000";
 	var weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+
+	assert(/^#[0-9A-F]{6}$/i.test(negativeEdgeColor), "Ungültige negativeEdgeColor: Erwartet wird eine hexadezimale Farbe.");
+	assert(/^#[0-9A-F]{6}$/i.test(positiveEdgeColor), "Ungültige positiveEdgeColor: Erwartet wird eine hexadezimale Farbe.");
 
 	var nodeDiameter = 20;
 	var nodeColor = "#ffffff";
@@ -95,6 +108,9 @@ function FCNN() {
 			colors_=colors
 		}) {
 
+		assert(Array.isArray(architecture_), "Ungültige architecture_: Erwartet wird ein Array von Schichten.");
+		assert(Array.isArray(real_architecture_), "Ungültige real_architecture_: Erwartet wird ein Array von Schichten.");
+
 		cookie_theme = getCookie("theme");
 		if(cookie_theme == "darkmode") {
 			defaultEdgeColor = "#ffffff";
@@ -145,6 +161,14 @@ function FCNN() {
 		});
 
 		link = link.data(graph.links, d => d.id);
+
+		graph.links.forEach((link) => {
+			assert(link.hasOwnProperty("id"), "Die Verbindung (link) muss eine ID haben.");
+			assert(link.hasOwnProperty("source"), "Die Verbindung (link) muss eine Quelle (source) haben.");
+			assert(link.hasOwnProperty("target"), "Die Verbindung (link) muss ein Ziel (target) haben.");
+			assert(link.hasOwnProperty("weight"), "Die Verbindung (link) muss ein Gewicht (weight) haben.");
+		});
+
 		link.exit().remove();
 		link = link.enter()
 			.insert("path", ".node")
@@ -190,6 +214,13 @@ function FCNN() {
 		betweenNodesInLayer = betweenNodesInLayer_;
 		betweenLayers = betweenLayers_;
 		nnDirection = nnDirection_;
+		
+		assert(
+			typeof betweenNodesInLayer_ !== "undefined" &&
+			typeof betweenLayers_ !== "undefined" &&
+			typeof nnDirection_ !== "undefined",
+			"Einer der Parameter zwischenNodesInLayer_, betweenLayers_, nnDirection_ fehlt oder ist undefiniert."
+		);
 
 		var layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
 
