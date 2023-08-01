@@ -423,7 +423,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		dispose(predict_data);
 		dispose(predictions_tensor);
 
-		cosmo_mode_auto_image_descriptor();
+		await cosmo_mode_auto_image_descriptor();
 	} catch (e) {
 		var estr = "" + e;
 		if(!estr.includes("yped")) {

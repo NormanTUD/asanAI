@@ -673,7 +673,7 @@ async function cosmo_mode () {
 	$("#toggle_layers_button").hide();
 	$("#show_webcam_button").hide()
 
-	$("#max_activation_iterations").val(50)
+	$("#max_activation_iterations").val(15);
 
 	$("#show_webcam_button").css("visibility", "hidden");
 	//$("#start_stop_training").show().css("display", "initial");
@@ -689,7 +689,7 @@ async function cosmo_mode () {
 		}
 	}, 1000);
 
-	window.addEventListener('resize', function(event) { cosmo_mode_auto_image_descriptor(); }, true);
+	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
 }
 
 function findColorPickerContainer(element) {
@@ -810,7 +810,7 @@ async function switch_predict_mode () {
 
 	await add_cosmo_point("toggled_webcam");
 
-	cosmo_mode_auto_image_descriptor();
+	await cosmo_mode_auto_image_descriptor();
 }
 
 function parse_required_skills(str) {
