@@ -1111,7 +1111,7 @@ async function draw_maximally_activated_layer (layer, type) {
 		ruler = "<hr>";
 		br = "<br>";
 	}
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}Layer " + layer + types_in_order + "</${type_h2}>${br}`)
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}Layer ${layer + types_in_order}</${type_h2}>${br}`)
 
 	l("Done generating images");
 

@@ -852,7 +852,7 @@
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td>Iterations</td>
-											<td><input type="number" min="1" value="100" id="max_activation_iterations" style="width: 80px;"></td>
+											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr>
 											<td>Randomizer limits</td>
