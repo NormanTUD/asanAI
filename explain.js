@@ -1044,17 +1044,16 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	for (var i = 0; i <= neurons; i++) {
+	for (var i = 0; i < neurons; i++) {
 		if(stop_generating_images) {
 			continue;
 		}
 		var eta = "";
-		var swal_msg = (neurons - i) + " Image(s) left " + eta;
-
 		if(times.length) {
 			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
 		}
 
+		var swal_msg = (neurons - i) + " Image(s) left " + eta;
 
 		if(is_cosmo_mode) {
 			if(times.length) {
@@ -1067,7 +1066,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			}
 		}
 
-		//l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
+		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
 
 		l(swal_msg);
 		document.title = swal_msg;
