@@ -452,45 +452,102 @@ function group_layers (layers) {
 }
 
 async function write_descriptions (force=0) {
+	if(is_cosmo_mode) {
+		log("Not doing anything in cosmo mode");
+		return;
+	}
+
 	if(!force) {
 		var new_hash = await get_model_config_hash() + '_' + $(window).width();
 		if(last_drawn_descriptions == new_hash) {
-			return;
+			log("last_drawn_descriptions == new_hash");
+			$(".descriptions_of_layers").remove();
 		}
 
 		last_drawn_descriptions = new_hash;
 	}
 
-	if(!disable_show_python_and_create_model) {
-		var groups = group_layers(get_layer_type_array());
+	if(disable_show_python_and_create_model) {
+		log("!disable_show_python_and_create_model");
+		$(".descriptions_of_layers").remove();
+		return;
+	}
 
-		if(groups.length > 0) {
-			$(".descriptions_of_layers").remove();
+	var groups = group_layers(get_layer_type_array());
 
-			var layer = $(".layer");
+	if(groups.length <= 0) {
+		log("groups.length <= 0");
+		$(".descriptions_of_layers").remove();
+		return;
+	}
 
-			if(layer.length) {
-				var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
+	$(".descriptions_of_layers").remove();
 
-				for (var i = 0; i < groups.length; i++) {
-					var keyname = Object.keys(groups[i])[0];
-					var layers = groups[i][keyname];
-					var last_layer_nr = layers[layers.length - 1];
+	var layer = $(".layer");
 
-					if(keyname != "null") {
-						var first_layer_top = parseInt($(layer[layers[0]]).position()["top"]);
-						var last_layer_bottom = $(layer[Math.max(0, last_layer_nr - 1)]).position().top + $(layer[last_layer_nr]).height();
-						var height = parseInt($($(".layer_end_marker")[last_layer_nr]).offset()["top"] - $($(".layer_start_marker")[layers[0]]).offset()["top"] - 6.5);
-						var hidden = '';
-						if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
-							hidden = "display: none;";
-						}
+	if(!layer.length) {
+		log("!layer.length!");
+		return;
+	}
 
-						$('<div class="descriptions_of_layers" style="top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>').appendTo('#maindiv');
-					}
-				}
+	var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
+
+	var all_layer_markers = $(".layer_start_marker");
+	assert(all_layer_markers.length >= 1);
+
+	log("A");
+
+	for (var i = 0; i < groups.length; i++) {
+		var group = groups[i];
+		var keyname = Object.keys(groups[i])[0];
+		var layers = groups[i][keyname];
+		var last_layer_nr = layers[layers.length - 1];
+
+		var first_layer = $(layer[layers[0]]);
+		assert(first_layer.length, "first_layer could not be determined");
+
+		var last_layer = $(layer[Math.max(0, last_layer_nr - 1)]);
+		assert(last_layer.length, "last_layer could not be determined");
+
+		var first_layer_idx = Math.min(...group[keyname]);
+		assert(typeof(first_layer_idx) === "number", "first_layer_idx is not a number");
+		assert(!isNaN(first_layer_idx), "first_layer_idx is NaN");
+
+		var first_layer_marker = $(all_layer_markers[first_layer_idx]);
+		assert(first_layer_marker.length, "first_layer_marker could not be determined");
+
+		var first_layer_start = parseInt(first_layer_marker.offset()["top"] - 6.5);
+		assert(first_layer_start, "first_layer_start could not be determined");
+
+		var last_layer_end = parseInt($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
+		assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
+		assert(last_layer_end >= 0, "last_layer_end is not a number");
+
+		var first_layer_top = parseInt(first_layer.position()["top"]);
+		assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
+		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
+
+		//assert(last_layer_end > first_layer_top, "last_layer_end is larger or equal to than first_layer_top");
+
+		if(keyname != "null") {
+			var height = last_layer_end - first_layer_start;
+			var hidden = '';
+			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
+				hidden = "display: none;";
 			}
+
+			var new_div_html = '<div class="descriptions_of_layers" style="position: absolute; top: ' + first_layer_top + 'px; left: ' + right_offset + 'px; height: ' + height + 'px;' + hidden+ '">' + keyname + '</div>';
+
+			log(new_div_html);
+
+			$(new_div_html).appendTo('#maindiv');
 		}
+	}
+
+	if(is_cosmo_mode) {
+		$(".descriptions_of_layers").hide();
+	} else {
+		$(".descriptions_of_layers").show();
 	}
 }
 
