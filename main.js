@@ -517,9 +517,10 @@ $(document).ready(async function() {
 		await predict_handdrawn();
 	}
 
+	await write_descriptions(1);
+
 	$("#loading_icon_wrapper").hide();
 	$("#mainsite").show();
-
 
 	if(is_cosmo_mode) {
 		$("#scroll_left").show();
