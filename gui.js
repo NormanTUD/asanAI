@@ -5704,7 +5704,7 @@ function set_required_seeds (required, type, kernel_or_bias) {
 
 				if(Object.keys(values).includes(val_key)) {
 					var item_selector = "." + kernel_or_bias + val_key;
-					log("item_selector", item_selector);
+					//log("item_selector", item_selector);
 					var ui_elements = $(item_selector);
 					if(ui_elements.length >= 1) {
 						ui_elements.val(val).trigger("change");
@@ -5785,7 +5785,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 			try {
 				set_required_seeds(required, type, kernel_or_bias)
 			} catch (e) {
-				console.warn(e);
+				l("ERROR: " + e);
 			}
 		}
 	});
