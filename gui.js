@@ -353,7 +353,7 @@ function add_seed_option (type, nr) {
 		style = ' style="display: none" '
 	}
 
-	return "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' class='dropout_seed' value='1' /></td></tr>";
+	return "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
 }
 
 function add_visualize_option(type, nr) {
