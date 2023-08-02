@@ -794,36 +794,47 @@ async function compile_fake_model(layer_nr, layer_type) {
 	tf.engine().startScope();
 
 	var start_tensors = tf.memory()["numTensors"];
-	console.log("Before creating fake_model: " + start_tensors + " tensors");
+	//console.log("Before creating fake_model: " + start_tensors + " tensors");
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
 	var ret = false;
 
 	try {
-		var fake_model = await create_model(null, fake_model_structure);
-		var after_create_model_tensors = tf.memory()["numTensors"];
+		var fake_model, after_create_model_tensors, model_data;
 
-		var model_data = get_model_data();
+		try {
+			fake_model = await create_model(null, fake_model_structure);
+			after_create_model_tensors = tf.memory()["numTensors"];
 
-		fake_model.compile(model_data);
+			model_data = get_model_data();
 
+			fake_model.compile(model_data);
+		} catch(e) {
+			console.error(e);
+		}
+
+		/*
 		await tf.nextFrame(); // Allow time for disposal to take effect
 
 		var after_compile_tensors = tf.memory()["numTensors"];
 		if (after_compile_tensors > after_create_model_tensors) {
 			console.log("After compiling fake_model: " + after_compile_tensors + " tensors");
 		}
+		*/
+		var after_compile_tensors = tf.memory()["numTensors"];
 
 		dispose(model_data);
 		dispose(fake_model);
 
+		/*
 		await tf.nextFrame(); // Allow time for disposal to take effect
 
 		var after_dispose_tensors = tf.memory()["numTensors"];
 		if (after_dispose_tensors > after_compile_tensors) {
 			console.log("After disposing fake_model and model_data: " + after_dispose_tensors + " tensors");
 		}
+		*/
 
 		ret = true;
 	} catch (e) {
@@ -833,11 +844,13 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 	tf.engine().endScope();
 
+	/*
 	await tf.nextFrame(); // Allow time for disposal to take effect
 	var after_end_scope_tensors = tf.memory()["numTensors"];
 	if (after_end_scope_tensors > start_tensors) {
 		console.log("After tf.engine().endScope(): " + after_end_scope_tensors + " tensors");
 	}
+	*/
 
 	return ret;
 }
