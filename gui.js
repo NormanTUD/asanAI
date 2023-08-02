@@ -517,8 +517,8 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 			}
 		} else {
 			log("ERROR: Initializer is empty!");
-			log(initializer);
-			log(initializer_name);
+			log("initializer:", initializer);
+			log("initializer_name:", initializer_name);
 		}
 	} else {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
@@ -5770,7 +5770,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 			required = ["value", "stddev", "mean"];
 		} else if(type == "constant") {
 			required = ["value"];
-		} else if(type == "ones" || type == "zeroes") {
+		} else if(type == "ones" || type == "zeros") {
 			// do nothing, the trigger is enough
 		} else {
 			console.error("Unknown initializer type: " + type);

@@ -679,7 +679,7 @@
 											<option value="randomUniform">randomUniform</option>
 											<option value="truncatedNormal">truncatedNormal</option>
 											<option value="varianceScaling">varianceScaling</option>
-											<option value="zeroes">zeroes</option>
+											<option value="zeros">zeros</option>
 										</select>
 									</td>
 								</tr>
@@ -688,7 +688,7 @@
 										Mean:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
@@ -696,7 +696,7 @@
 										Value:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
@@ -728,7 +728,7 @@
 										Scale:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
@@ -736,7 +736,7 @@
 										Maxval:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
@@ -744,7 +744,7 @@
 										Minval:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
@@ -752,7 +752,7 @@
 										Stddev:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
@@ -760,7 +760,7 @@
 										Seed:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 							</table>
