@@ -5678,4 +5678,63 @@ async function load_msg(swal_msg_format) {
 	}
 }
 
+function set_required_seeds (required, type, values, kernel_or_bias) {
+	assert(typeof(type) == "string", "type is not string");
+	assert(typeof(values) == "object", "values is not an object");
+	assert(Object.keys(values).length >= 1, "values does not contain any key");
+	for (var i = 0; i < required.length; i++) {
+		var val_key = required[i];
+		//log("val_key", val_key);
+		if(val_key) {
+			if(Object.keys(values).includes(val_key)) {
+				var val = values[val_key];
+				//log("val", val);
 
+				if(Object.keys(values).includes(val_key)) {
+					var item_selector = "." + kernel_or_bias + val_key;
+					log("item_selector", item_selector);
+					var ui_elements = $(item_selector);
+					if(ui_elements.length >= 1) {
+						ui_elements.val(val).trigger("change");
+					} else {
+						console.error("ui_elements contains no elements. Selector: "  + item_selector)
+					}
+				} else {
+					console.error(`${val_key} is required but not properly defined`);
+				}
+			} else {
+					console.error(`${val_key} is required but not defined at all`);
+			}
+		} else {
+			console.log("val_key not defined or false START");
+			log("required", required);
+			log("type", type);
+			log("values", values);
+			log("kernel_or_bias", kernel_or_bias);
+			console.error("val_key not defined or false END");
+		}
+	}
+}
+
+function set_all_initializers_to_initializer_type (type, values) {
+	assert(typeof(type) == "string", "type is not string");
+	assert(typeof(values) == "object", "values is not an object");
+	assert(Object.keys(values).length >= 1, "values does not contain any key");
+
+	$(".bias_initializer").val(type).trigger("change");
+	$(".kernel_initializer").val(type).trigger("change");
+
+	["kernel_initializer_", "bias_initializer_"].forEach((kernel_or_bias) => {
+		if(type == "glorotUniform") {
+			var required = ["seed"];
+
+			set_required_seeds(required, type, values, kernel_or_bias)
+		} else if(type == "constant") {
+			var required = ["value"];
+
+			set_required_seeds(required, type, values, kernel_or_bias)
+		} else {
+			console.error("Unknown initializer type: " + type);
+		}
+	});
+}
