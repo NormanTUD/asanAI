@@ -618,7 +618,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			var this_key = data_keys[k];
 			var layer_setting = $($(".layer_setting")[i]);
 			var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
-			if(!is_valid_parameter(this_key, data[this_key], i)) {
+			if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
 				header("=================");
 				log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 				header("<<<<<<<<<<<<<<<<<");
