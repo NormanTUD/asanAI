@@ -510,58 +510,62 @@ function check_initializers (data, has_keys) {
 function _check_data (data, type) {
 	var has_keys = Object.keys(data);
 
-	if(has_keys.includes("dropout_rate") && type == "dropout") {
-		var tmp = data["dropout_rate"];
-		delete data["dropout_rate"];
-		data["rate"] = tmp;
-		has_keys = Object.keys(data);
-	}
+	try {
+		if(has_keys.includes("dropout_rate") && type == "dropout") {
+			var tmp = data["dropout_rate"];
+			delete data["dropout_rate"];
+			data["rate"] = tmp;
+			has_keys = Object.keys(data);
+		}
 
-	if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
-		var tmp = data["rate"];
-		delete data["rate"];
-		data["dropout"] = tmp;
-		has_keys = Object.keys(data);
-	}
+		if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
+			var tmp = data["rate"];
+			delete data["rate"];
+			data["dropout"] = tmp;
+			has_keys = Object.keys(data);
+		}
 
-	if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
-		data["targetShape"] = eval("[" + data["targetShape"] + "]");
-	}
+		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
+			data["targetShape"] = eval("[" + data["targetShape"] + "]");
+		}
 
-	if("size" in data && typeof(data["size"]) == "string") {
-		data["size"] = eval("[" + data["size"] + "]");
-	}
+		if("size" in data && typeof(data["size"]) == "string") {
+			data["size"] = eval("[" + data["size"] + "]");
+		}
 
-	if("dilationRate" in data && data["dilationRate"].length == 0) {
-		data["dilationRate"] = null;
-	}
+		if("dilationRate" in data && data["dilationRate"].length == 0) {
+			data["dilationRate"] = null;
+		}
 
-	if("units" in data && typeof(data["units"]) == "undefined") {
-		console.warn("units was not defined. Using 2 as default");
-		data["units"] = 2;
-	}
+		if("units" in data && typeof(data["units"]) == "undefined") {
+			console.warn("units was not defined. Using 2 as default");
+			data["units"] = 2;
+		}
 
-	["strides", "kernelSize"].forEach(function (correction_name) {
-		if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
-			for (var k = 0; k < data[correction_name].length; k++) {
-				data[correction_name][k] = 1;
+		["strides", "kernelSize"].forEach(function (correction_name) {
+			if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
+				for (var k = 0; k < data[correction_name].length; k++) {
+					data[correction_name][k] = 1;
+				}
 			}
-		}
-	});
+		});
 
-	data = check_initializers(data, has_keys);
+		data = check_initializers(data, has_keys);
 
-	if(type == "rnn") {
-		// never worked...
-		var lstm_cells = [];
-		for (var index = 0; index < data["units"]; index++) {
-			lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+		if(type == "rnn") {
+			// never worked...
+			var lstm_cells = [];
+			for (var index = 0; index < data["units"]; index++) {
+				lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+			}
+			data["cell"] = lstm_cells;
+			log(data);
 		}
-		data["cell"] = lstm_cells;
-		log(data);
+
+		data = remove_empty(data);
+	} catch (e) {
+		console.error(e);
 	}
-
-	data = remove_empty(data);
 
 	return data;
 }
@@ -797,8 +801,8 @@ async function compile_fake_model(layer_nr, layer_type) {
 	var ret = false;
 
 	try {
-
 		var fake_model = await create_model(null, fake_model_structure);
+		var after_create_model_tensors = tf.memory()["numTensors"];
 
 		var model_data = get_model_data();
 
@@ -823,6 +827,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 		ret = true;
 	} catch (e) {
+		console.warn(e);
 		ret = false;
 	}
 
@@ -981,6 +986,7 @@ async function get_valid_layer_types (layer_nr) {
 }
 
 function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+	tf.engine().startScope();
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
 		m = model;
@@ -1038,6 +1044,8 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 			'success'
 		);
 	}
+
+	tf.engine().endScope();
 
 	return true;
 }
