@@ -5725,14 +5725,28 @@ function set_all_initializers_to_initializer_type (type, values) {
 	$(".kernel_initializer").val(type).trigger("change");
 
 	["kernel_initializer_", "bias_initializer_"].forEach((kernel_or_bias) => {
-		if(type == "glorotUniform") {
+		if(["glorotUniform", "glorotNormal", "heNormal", "heUniform", "leCunUniform", "leCunNormal"].includes(type)) {
 			var required = ["seed"];
+
+			set_required_seeds(required, type, values, kernel_or_bias)
+		} else if(type == "randomUniform") {
+			var required = ["value", "maxval", "minval"];
+
+			set_required_seeds(required, type, values, kernel_or_bias)
+		} else if(type == "varianceScaling") {
+			var required = ["seed", "distribution", "mode", "scale"];
+
+			set_required_seeds(required, type, values, kernel_or_bias)
+		} else if(type == "randomNormal" || type == "truncatedNormal") {
+			var required = ["value", "stddev", "mean"];
 
 			set_required_seeds(required, type, values, kernel_or_bias)
 		} else if(type == "constant") {
 			var required = ["value"];
 
 			set_required_seeds(required, type, values, kernel_or_bias)
+		} else if(type == "ones" || type == "zeroes") {
+			// do nothing, the trigger is enough
 		} else {
 			console.error("Unknown initializer type: " + type);
 		}
