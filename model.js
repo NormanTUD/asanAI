@@ -624,7 +624,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		try {
 			if(layer_options[type]["custom"]) {
-				eval("new_model.add(new " + type + "(data))");
+				eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
 			} else {
 				new_model.add(tf.layers[type](data));
 			}
