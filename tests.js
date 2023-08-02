@@ -245,13 +245,13 @@ async function run_tests () {
 			log_test("Test Training Logic");
 
 			$("#dataset").val("and_xor").trigger("change");
-			log_test("Waiting 3 seconds...");
+			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
-			log_test("Done waiting 3 seconds...");
+			log("Done waiting 3 seconds...");
 
 			$("#model_dataset").val("and").trigger("change");
-			log_test("Waiting 3 seconds...");
+			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
 
@@ -322,18 +322,18 @@ async function run_tests () {
 
 			log_test("Test Training images");
 
-			log_test("Waiting 2 seconds...");
+			log("Waiting 2 seconds...");
 			await delay(2000);
-			log_test("Done waiting 2 seconds...");
+			log("Done waiting 2 seconds...");
 
 			$("#dataset").val("signs").trigger("change");
-			log_test("Waiting 3 seconds...");
+			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
-			log_test("Done waiting 3 seconds...");
+			log("Done waiting 3 seconds...");
 
 			$("#model_dataset").val("signs").trigger("change");
-			log_test("Waiting 3 seconds...");
+			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
 
