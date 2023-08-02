@@ -517,6 +517,9 @@ $(document).ready(async function() {
 		await predict_handdrawn();
 	}
 
+
+	change_all_initializers();
+
 	await write_descriptions(1);
 
 	$("#loading_icon_wrapper").hide();

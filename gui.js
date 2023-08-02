@@ -5752,7 +5752,8 @@ function get_initializer_set_all_values (required) {
 	return values;
 }
 
-function set_all_initializers_to_initializer_type (type, kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
+function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
+	var type = $("#change_initializers_selector").val();
 	assert(typeof(type) == "string", "type is not string");
 
 	$(".bias_initializer").val(type).trigger("change");
@@ -5788,8 +5789,4 @@ function set_all_initializers_to_initializer_type (type, kernel_bias=["kernel_in
 			}
 		}
 	});
-}
-
-function change_all_initializers () {
-	set_all_initializers_to_initializer_type($("#change_initializers_selector").val())
 }

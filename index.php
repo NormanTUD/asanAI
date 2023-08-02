@@ -666,7 +666,7 @@
 							<table>
 								<tr>
 									<td colspan=2>
-										<select id="change_initializers_selector" onchange="change_all_initializers()" style="width: 120px">
+										<select class="set_all_initializers_input" id="change_initializers_selector" onchange="change_all_initializers()" style="width: 120px">
 											<option value="glorotUniform">glorotUniform</option>
 											<option value="constant">constant</option>
 											<option value="glorotNormal">glorotNormal</option>
@@ -688,7 +688,7 @@
 										Mean:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
@@ -696,31 +696,39 @@
 										Value:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_value" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
 									<td>
-										Distribution (TODO):
+										Distribution:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_distribution" onchange="change_all_initializers()" value="" />
+										<select class="set_all_initializers_input" id="set_all_initializers_value_distribution" onchange="change_all_initializers()">
+											<option value="normal">normal</option>
+											<option value="uniform">uniform</option>
+											<option value="truncatedNormal">truncatedNormal</option>
+										</select>
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_mode" style="display: none">
 									<td>
-										Mode (TODO):
+										Mode:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_mode" onchange="change_all_initializers()" value="" />
+										<select class="set_all_initializers_input" id="set_all_initializers_value_mode" onchange="change_all_initializers()">
+											<option value="fanIn">fanIn</option>
+											<option value="fanOut">fanOut</option>
+											<option value="fanAvg">fanAvg</option>
+										</select>
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_scale" style="display: none">
 									<td>
-										Scale (TODO):
+										Scale:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
@@ -728,7 +736,7 @@
 										Maxval:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
@@ -736,7 +744,7 @@
 										Minval:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
@@ -744,7 +752,7 @@
 										Stddev:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
@@ -752,7 +760,7 @@
 										Seed:
 									</td>
 									<td>
-										<input id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="" />
 									</td>
 								</tr>
 							</table>

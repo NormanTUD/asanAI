@@ -1048,3 +1048,8 @@ hr {
 .user_select_none {
 	user-select: none;
 }
+
+.set_all_initializers_input {
+	width: 80px;
+	height: 18px;
+}
