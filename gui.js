@@ -971,8 +971,6 @@ async function hide_no_conv_stuff() {
 
 	if(is_cosmo_mode) {
 		$(".hide_in_cosmo_mode").hide();
-	} else {
-		$(".hide_in_cosmo_mode").show();
 	}
 
 	if(await input_shape_is_image()) {
