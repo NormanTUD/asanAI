@@ -196,7 +196,6 @@ function get_data_for_layer (type, i, first_layer) {
 			} else {
 				alert("Unknown layer type: " + type);
 			}
-
 		} else if(["trainable", "use_bias"].includes(option_name) ) {
 			data[get_js_name(option_name)] = get_item_value(i, option_name);
 
