@@ -1376,8 +1376,10 @@
 									<hr>
 									Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.
 								</div>
-								<div id="percentage" class="reset_before_train_network"></div>
-								<button id="stop_downloading" onclick="stop_downloading_data=true" class="hide_in_cosmo_mode" style="display: none">Stop downloading and start training</button>
+								<span class="user_select_none">
+									<div id="percentage" class="user_select_none reset_before_train_network"></div>
+									<button id="stop_downloading" onclick="stop_downloading_data=true" class="hide_in_cosmo_mode" style="display: none">Stop downloading and start training</button>
+								</span>
 								<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div id="cosmo_mode_visualization"></div>
 								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
