@@ -190,7 +190,7 @@ var layer_options = {
 	"dropout": {
 		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
 		"options": [
-			"dropout_rate", "dtype"
+			"dropout_rate", "dtype", "seed"
 		],
 		"category": "Basic"
 	},

@@ -345,6 +345,17 @@ function add_number_lstm_cells_option(type, nr) {
 	return get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
 }
 
+function add_seed_option (type, nr) {
+	var style = "";
+
+	var current_input_shape = get_input_shape();
+	if (current_input_shape.length != 3) {
+		style = ' style="display: none" '
+	}
+
+	return "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' class='dropout_seed' value='1' /></td></tr>";
+}
+
 function add_visualize_option(type, nr) {
 	var style = "";
 
