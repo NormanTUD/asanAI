@@ -629,7 +629,7 @@ async function run_neural_network () {
 
 			show_info_after_run(h);
 
-			dispose(h);
+			await dispose(h);
 		} catch (e) {
 			await write_error_and_reset(e);
 		}
@@ -642,7 +642,7 @@ async function run_neural_network () {
 			//log("Training done, getting weights");
 			trained_weights = await get_weights_as_string();
 
-			reset_data();
+			await reset_data();
 
 			tf.disposeVariables();
 
@@ -654,8 +654,8 @@ async function run_neural_network () {
 		try {
 			await set_weights_from_string(trained_weights, 1, 1);
 
-			dispose(xs_and_ys["x"]);
-			dispose(xs_and_ys["y"]);
+			await dispose(xs_and_ys["x"]);
+			await dispose(xs_and_ys["y"]);
 			xs_and_ys = null;
 
 			/* Memory leak hack end */
@@ -675,7 +675,7 @@ async function run_neural_network () {
 
 	await gui_not_in_training();
 
-	reset_data();
+	await reset_data();
 
 	tf.engine().endScope();
 

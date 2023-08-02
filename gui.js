@@ -2226,7 +2226,7 @@ async function init_dataset_category() {
 
 	clicked_on_tab = 0;
 
-	reset_data();
+	await reset_data();
 
 	var show_items = {
 		"image": ["imageresizecontainer", "black_and_white", "resizedimensions", "resizedimensions.parent"],
@@ -3136,7 +3136,7 @@ async function load_weights(dont_show_msg) {
 		$.ajax({
 			url: weights_file,
 			success: async function (data) {
-				set_weights_from_json_object(data, dont_show_msg, 1, model);
+				await set_weights_from_json_object(data, dont_show_msg, 1, model);
 				prev_layer_data = [];
 				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
@@ -3882,8 +3882,8 @@ async function show_csv_file(disabled_show_head_data) {
 		$("#x_y_shape_preview").html(shape_preview);
 		$(".hide_when_no_csv").show();
 
-		dispose(parsed_data.x);
-		dispose(parsed_data.y);
+		await dispose(parsed_data.x);
+		await dispose(parsed_data.y);
 	} else {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
@@ -5172,7 +5172,7 @@ async function save_model_and_data_and_copy_to_taurus (m) {
 			var trained_weights = job_status.weights;
 
 			l("Setting new weights");
-			set_weights_from_json_object(JSON.parse(trained_weights), null, 1);
+			await set_weights_from_json_object(JSON.parse(trained_weights), null, 1);
 			model_is_trained = true;
 
 			Swal.fire({

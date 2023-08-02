@@ -1,5 +1,22 @@
 "use strict";
 
+/*
+var original_tf_tensor = tf.tensor;
+
+tf.tensor = function (...args) {
+	//console.log(args);
+	//console.trace();
+
+	var t = original_tf_tensor(...args);
+
+	//log("new tensor id: ", t.id);
+
+	tensors[t.id] = t;
+
+	return t;
+}
+*/
+
 function show_idle_time () {
 	if(!is_cosmo_mode) {
 		$("#cosmo_reload_debugger").remove();

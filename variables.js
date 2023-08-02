@@ -1,4 +1,5 @@
 "use strict";
+
 function get_plotly_type () {
 	return 'lines';
 }
@@ -731,10 +732,25 @@ var memory_debug_interval = null;
 
 var call_from_show_csv_file = false;
 
-function dispose (item) {
+var tensors = {};
+
+async function dispose (item) {
 	//console.trace();
 	//log(item);
+	var tensor_id = item.id;
 	tf.dispose(item);
+
+	await tf.nextFrame();
+
+	Object.keys(tensors).forEach((key) => { if(!tensors[key].isDisposedInternal) { delete tensors[key]; }})
+
+	if(tensor_id) {
+		if(Object.keys(tensors).includes(tensor_id)) {
+			delete tensors[tensor_id];
+		} else {
+			//logt("Tensor ID " + tensor_id + " was not in global tensors variable");
+		}
+	}
 }
 
 var distribution_modes = {

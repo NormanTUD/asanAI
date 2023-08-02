@@ -547,7 +547,7 @@ async function get_xs_and_ys () {
 				for (let [key, value] of Object.entries(imageData)) {
 					for (var i = 0; i < imageData[key].length; i++) {
 						var item = imageData[key][i];
-						dispose(item);
+						await dispose(item);
 					}
 				}
 
@@ -811,7 +811,7 @@ function url_to_tf (url) {
 				resizeNearestNeighbor([height, width]).
 				toFloat().
 				expandDims();
-			dispose(tf_img);
+			await dispose(tf_img);
 
 			if($("#divide_by").val() != 1) {
 				resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
@@ -864,13 +864,13 @@ function decille (arr, percentage) {
 	return per;
 }
 
-function reset_data () {
+async function reset_data () {
 	if(!xy_data === null) {
 		if(Object.keys(xy_data).includes("x")) {
-			dispose(xy_data["x"]);
+			await dispose(xy_data["x"]);
 		}
 		if(Object.keys(xy_data).includes("y")) {
-			dispose(xy_data["y"]);
+			await dispose(xy_data["y"]);
 		}
 	}
 
@@ -1044,7 +1044,7 @@ function get_csv_seperator () {
 }
 
 async function get_x_y_from_csv () {
-	reset_data();
+	await reset_data();
 
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();

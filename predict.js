@@ -94,9 +94,9 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 		if($("#divide_by").val() != 1) {
 			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
-			dispose(tensor_img);
+			await dispose(tensor_img);
 			tensor_img = tf.tensor(await new_tensor_img.arraySync());
-			dispose(new_tensor_img);
+			await dispose(new_tensor_img);
 		}
 	} catch (e) {
 		_predict_error(e);
@@ -104,7 +104,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 
 	try {
 		if(!tensor_shape_matches_model(tensor_img)) {
-			dispose(tensor_img);
+			await dispose(tensor_img);
 			return;
 		}
 	} catch (e) {
@@ -230,8 +230,8 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 			log("No model");
 		}
 
-		dispose(tensor_img);
-		dispose(predictions_tensor);
+		await dispose(tensor_img);
+		await dispose(predictions_tensor);
 	} catch (e) {
 		_predict_error(e);
 	}
@@ -429,8 +429,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		$("#predict_error").html("").hide();
 
-		dispose(predict_data);
-		dispose(predictions_tensor);
+		await dispose(predict_data);
+		await dispose(predictions_tensor);
 
 		await cosmo_mode_auto_image_descriptor();
 	} catch (e) {

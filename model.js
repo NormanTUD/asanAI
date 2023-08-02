@@ -858,8 +858,8 @@ async function compile_fake_model(layer_nr, layer_type) {
 		*/
 		var after_compile_tensors = tf.memory()["numTensors"];
 
-		dispose(model_data);
-		dispose(fake_model);
+		await dispose(model_data);
+		await dispose(fake_model);
 
 		/*
 		await tf.nextFrame(); // Allow time for disposal to take effect
@@ -1032,7 +1032,7 @@ async function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	tf.engine().startScope();
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
@@ -1067,7 +1067,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 			m.setWeights(tensors);
 
 			for (var i = 0; i < json.length; i++) {
-				dispose(tensors[i]);
+				await dispose(tensors[i]);
 			}
 		} catch (e) {
 			//log(e);
@@ -1100,7 +1100,7 @@ function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 async function set_weights_from_string (string, no_warning, no_error, m) {
 	var json = JSON.parse(string);
 
-	return set_weights_from_json_object(json, no_warning, no_error, m);
+	return await set_weights_from_json_object(json, no_warning, no_error, m);
 }
 
 async function get_weights_as_json (m) {
@@ -1257,7 +1257,8 @@ async function get_weights_shape (weights_as_string, m) {
 	var test_tensor = tf.tensor(weights_array);
 
 	var shape = test_tensor.shape;
-	dispose(test_tensor);
+
+	await dispose(test_tensor);
 
 	return shape;
 }

@@ -2,7 +2,7 @@
 
 var printed_msgs = [];
 
-async function log_once (...args) {
+function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
 	if(printed_msgs.includes(md5)) {
@@ -251,7 +251,7 @@ function memory_debugger () {
 	var bytes = memory["numBytes"];
 	var gpu_bytes = memory["numBytesInGPU"];
 
-	var num_tensors = memory["numTensors"];
+	var num_tensors =  memory["numTensors"]; // Object.keys(tensors).length;
 	var ram_mb = bytes / 1024 / 1024;
 	ram_mb = ram_mb.toFixed(2);
 	var gpu_mb = gpu_bytes / 1024 / 1024;
