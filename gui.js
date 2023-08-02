@@ -5767,7 +5767,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 		} else if(type == "varianceScaling") {
 			required = ["seed", "distribution", "mode", "scale"];
 		} else if(type == "randomNormal" || type == "truncatedNormal") {
-			required = ["value", "stddev", "mean"];
+			required = ["seed", "stddev", "mean"];
 		} else if(type == "constant") {
 			required = ["value"];
 		} else if(type == "ones" || type == "zeros") {
