@@ -254,10 +254,12 @@ function get_data_for_layer (type, i, first_layer) {
 	return data;
 }
 
-async function get_model_structure() {
+async function get_model_structure(is_fake_model = 0) {
 	//console.trace();
-	var new_current_status_hash = await get_current_status_hash();
+	var new_current_status_hash = "";
 	/*
+	if(is_fake_model) {
+		new_current_status_hash = await get_current_status_hash();
 	if(layer_structure_cache && current_status_hash == new_current_status_hash) {
 		//log("Using cache");
 		//console.trace();
@@ -535,6 +537,7 @@ function _check_data (data, type) {
 	}
 
 	if("units" in data && typeof(data["units"]) == "undefined") {
+		console.warn("units was not defined. Using 2 as default");
 		data["units"] = 2;
 	}
 
@@ -786,58 +789,36 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 	tf.engine().startScope();
 
+	var start_tensors = tf.memory()["numTensors"];
+	console.log("Before creating fake_model: " + start_tensors + " tensors");
+
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
 	var ret = false;
 
 	try {
-		var start_tensors = tf.memory()["numTensors"];
-		console.log("Before creating fake_model: " + start_tensors + " tensors");
 
 		var fake_model = await create_model(null, fake_model_structure);
-		var after_create_model_tensors = tf.memory()["numTensors"];
-		if (after_create_model_tensors > start_tensors) {
-			console.log("After creating fake_model: " + after_create_model_tensors + " tensors");
-			// Log the tensors that are created but not disposed
-			const memoryInfo = tf.memory();
-			if (memoryInfo.hasOwnProperty("tensors")) {
-				const createdTensors = memoryInfo.tensors;
-				createdTensors.forEach((tensor) => {
-					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
-				});
-			}
-		}
 
 		var model_data = get_model_data();
 
 		fake_model.compile(model_data);
+
+		await tf.nextFrame(); // Allow time for disposal to take effect
+
 		var after_compile_tensors = tf.memory()["numTensors"];
 		if (after_compile_tensors > after_create_model_tensors) {
 			console.log("After compiling fake_model: " + after_compile_tensors + " tensors");
-			// Log the tensors that are created but not disposed after compilation
-			const memoryInfo = tf.memory();
-			if (memoryInfo.hasOwnProperty("tensors")) {
-				const createdTensors = memoryInfo.tensors;
-				createdTensors.forEach((tensor) => {
-					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
-				});
-			}
 		}
 
-		model_data.dispose();
-		fake_model.dispose();
+		dispose(model_data);
+		dispose(fake_model);
+
 		await tf.nextFrame(); // Allow time for disposal to take effect
+
 		var after_dispose_tensors = tf.memory()["numTensors"];
 		if (after_dispose_tensors > after_compile_tensors) {
 			console.log("After disposing fake_model and model_data: " + after_dispose_tensors + " tensors");
-			// Log the tensors that are still not disposed after the dispose calls
-			const memoryInfo = tf.memory();
-			if (memoryInfo.hasOwnProperty("tensors")) {
-				const createdTensors = memoryInfo.tensors;
-				createdTensors.forEach((tensor) => {
-					console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
-				});
-			}
 		}
 
 		ret = true;
@@ -846,18 +827,11 @@ async function compile_fake_model(layer_nr, layer_type) {
 	}
 
 	tf.engine().endScope();
+
 	await tf.nextFrame(); // Allow time for disposal to take effect
 	var after_end_scope_tensors = tf.memory()["numTensors"];
 	if (after_end_scope_tensors > start_tensors) {
 		console.log("After tf.engine().endScope(): " + after_end_scope_tensors + " tensors");
-		// Log the tensors that are still not disposed after the endScope call
-		const memoryInfo = tf.memory();
-		if (memoryInfo.hasOwnProperty("tensors")) {
-			const createdTensors = memoryInfo.tensors;
-			createdTensors.forEach((tensor) => {
-				console.log("Created Tensor ID: " + tensor.id + ", Shape: " + tensor.shape);
-			});
-		}
 	}
 
 	return ret;
