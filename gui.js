@@ -5510,15 +5510,15 @@ function getSortedHash(inputHash){
 }
 
 function getSortedHashReverse(inputHash){
-  var resultHash = {};
+	var resultHash = {};
 
-  var keys = Object.keys(inputHash);
-  keys.sort(function(a, b) {
-    return inputHash[a] - inputHash[b]
-  }).reverse().forEach(function(k) {
-    resultHash[k] = inputHash[k];
-  });
-  return resultHash;
+	var keys = Object.keys(inputHash);
+	keys.sort(function(a, b) {
+		return inputHash[a] - inputHash[b]
+	}).reverse().forEach(function(k) {
+		resultHash[k] = inputHash[k];
+	});
+	return resultHash;
 }
 
 
@@ -5678,13 +5678,25 @@ async function load_msg(swal_msg_format) {
 	}
 }
 
-function set_required_seeds (required, type, values, kernel_or_bias) {
-	assert(typeof(type) == "string", "type is not string");
-	assert(typeof(values) == "object", "values is not an object");
-	assert(Object.keys(values).length >= 1, "values does not contain any key");
+function show_proper_set_all_initializer (required) {
+	$(".set_all_initializers_tr").hide();
+
 	for (var i = 0; i < required.length; i++) {
 		var val_key = required[i];
-		//log("val_key", val_key);
+		$(".set_all_initializers_" + val_key).show();
+	}
+}
+
+function set_required_seeds (required, type, kernel_or_bias) {
+	var values = get_initializer_set_all_values(required, kernel_or_bias);
+
+	//assert(typeof(type) == "string", "type is not string");
+	//assert(typeof(values) == "object", "values is not an object");
+
+
+	for (var i = 0; i < required.length; i++) {
+		var val_key = required[i];
+
 		if(val_key) {
 			if(Object.keys(values).includes(val_key)) {
 				var val = values[val_key];
@@ -5716,39 +5728,68 @@ function set_required_seeds (required, type, values, kernel_or_bias) {
 	}
 }
 
-function set_all_initializers_to_initializer_type (type, values) {
-	assert(typeof(type) == "string", "type is not string");
+function get_initializer_set_all_values (required) {
+	var values = [];
 	assert(typeof(values) == "object", "values is not an object");
-	assert(Object.keys(values).length >= 1, "values does not contain any key");
+
+	required.forEach((element) => {
+		var selector = "#set_all_initializers_value_" + element;
+		var elements = $(selector);
+		if(elements.length) {
+			var value = elements.val();
+			if(value) {
+				values[element] = value;
+			} else {
+				console.error("value is empty");
+			}
+		} else {
+			console.error("Nothing found for selector " + selector);
+		}
+	});
+
+	//assert(Object.keys(values).length == required.length, "some values are missing: " + Object.keys(values).length + " !=" + required.length);
+
+	return values;
+}
+
+function set_all_initializers_to_initializer_type (type, kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
+	assert(typeof(type) == "string", "type is not string");
 
 	$(".bias_initializer").val(type).trigger("change");
 	$(".kernel_initializer").val(type).trigger("change");
 
-	["kernel_initializer_", "bias_initializer_"].forEach((kernel_or_bias) => {
+	kernel_bias.forEach((kernel_or_bias) => {
+		var required = [];
+		var error_occured = false;
 		if(["glorotUniform", "glorotNormal", "heNormal", "heUniform", "leCunUniform", "leCunNormal"].includes(type)) {
-			var required = ["seed"];
-
-			set_required_seeds(required, type, values, kernel_or_bias)
+			required = ["seed"];
 		} else if(type == "randomUniform") {
-			var required = ["value", "maxval", "minval"];
-
-			set_required_seeds(required, type, values, kernel_or_bias)
+			required = ["seed", "maxval", "minval"];
 		} else if(type == "varianceScaling") {
-			var required = ["seed", "distribution", "mode", "scale"];
-
-			set_required_seeds(required, type, values, kernel_or_bias)
+			required = ["seed", "distribution", "mode", "scale"];
 		} else if(type == "randomNormal" || type == "truncatedNormal") {
-			var required = ["value", "stddev", "mean"];
-
-			set_required_seeds(required, type, values, kernel_or_bias)
+			required = ["value", "stddev", "mean"];
 		} else if(type == "constant") {
-			var required = ["value"];
-
-			set_required_seeds(required, type, values, kernel_or_bias)
+			required = ["value"];
 		} else if(type == "ones" || type == "zeroes") {
 			// do nothing, the trigger is enough
 		} else {
 			console.error("Unknown initializer type: " + type);
+			error_occured = true;
+		}
+
+		show_proper_set_all_initializer(required);
+
+		if(!error_occured) {
+			try {
+				set_required_seeds(required, type, kernel_or_bias)
+			} catch (e) {
+				console.warn(e);
+			}
 		}
 	});
+}
+
+function change_all_initializers () {
+	set_all_initializers_to_initializer_type($("#change_initializers_selector").val())
 }

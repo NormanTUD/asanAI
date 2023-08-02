@@ -661,6 +661,107 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
+					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+						<div class="ribbon-toolbar">
+							<table>
+								<tr>
+									<td colspan=2>
+										<select id="change_initializers_selector" onchange="change_all_initializers()" style="width: 120px">
+											<option value="glorotUniform">glorotUniform</option>
+											<option value="constant">constant</option>
+											<option value="glorotNormal">glorotNormal</option>
+											<option value="heNormal">heNormal</option>
+											<option value="heUniform">heUniform</option>
+											<option value="leCunNormal">leCunNormal</option>
+											<option value="leCunUniform">leCunUniform</option>
+											<option value="ones">ones</option>
+											<option value="randomNormal">randomNormal</option>
+											<option value="randomUniform">randomUniform</option>
+											<option value="truncatedNormal">truncatedNormal</option>
+											<option value="varianceScaling">varianceScaling</option>
+											<option value="zeroes">zeroes</option>
+										</select>
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_mean" style="display: none">
+									<td>
+										Mean:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
+									<td>
+										Value:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_value" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
+									<td>
+										Distribution (TODO):
+									</td>
+									<td>
+										<input id="set_all_initializers_value_distribution" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_mode" style="display: none">
+									<td>
+										Mode (TODO):
+									</td>
+									<td>
+										<input id="set_all_initializers_value_mode" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_scale" style="display: none">
+									<td>
+										Scale (TODO):
+									</td>
+									<td>
+										<input id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
+									<td>
+										Maxval:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
+									<td>
+										Minval:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
+									<td>
+										Stddev:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+								<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
+									<td>
+										Seed:
+									</td>
+									<td>
+										<input id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="" />
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="ribbon-group-title">Set all Initializers</div>
+					</div>
+
+					<div class="ribbon-group-sep"></div>
+					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
 						<div class="ribbon-toolbar">
 							<table>
