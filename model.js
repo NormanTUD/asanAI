@@ -517,39 +517,69 @@ function _check_data (data, type) {
 			data["rate"] = tmp;
 			has_keys = Object.keys(data);
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
 			var tmp = data["rate"];
 			delete data["rate"];
 			data["dropout"] = tmp;
 			has_keys = Object.keys(data);
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
 			data["targetShape"] = eval("[" + data["targetShape"] + "]");
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		if("size" in data && typeof(data["size"]) == "string") {
 			data["size"] = eval("[" + data["size"] + "]");
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		if("dilationRate" in data && data["dilationRate"].length == 0) {
 			data["dilationRate"] = null;
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		if("units" in data && typeof(data["units"]) == "undefined") {
 			console.warn("units was not defined. Using 2 as default");
 			data["units"] = 2;
 		}
+	} catch (e) {
+		console.error(e);
+	}
+
+	try {
 
 		["strides", "kernelSize"].forEach(function (correction_name) {
 			if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
+				data[correction_name] = [];
 				for (var k = 0; k < data[correction_name].length; k++) {
 					data[correction_name][k] = 1;
 				}
 			}
 		});
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		data = check_initializers(data, has_keys);
 
 		if(type == "rnn") {
@@ -561,7 +591,11 @@ function _check_data (data, type) {
 			data["cell"] = lstm_cells;
 			log(data);
 		}
+	} catch (e) {
+		console.error(e);
+	}
 
+	try {
 		data = remove_empty(data);
 	} catch (e) {
 		console.error(e);
