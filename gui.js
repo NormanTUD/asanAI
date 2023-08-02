@@ -2082,6 +2082,8 @@ async function set_config(index) {
 
 	l("Updating predictions");
 	await show_prediction(1, 1);
+ 
+	$(".kernel_initializer").trigger("change");
 
 	l("Loaded configuration");
 }
