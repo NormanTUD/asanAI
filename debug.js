@@ -3,7 +3,7 @@
 var printed_msgs = [];
 
 async function log_once (...args) {
-	var md5 = await md5(JSON.stringify(args));
+	var md5 = JSON.stringify(args);
 
 	if(printed_msgs.includes(md5)) {
 		return;
