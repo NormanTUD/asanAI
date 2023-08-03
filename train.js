@@ -643,7 +643,12 @@ async function run_neural_network () {
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 			var start_tensors = log_num_tensors("model.fit", -1);
+			tf.engine().startScope();
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+			log(h);
+			tf.disposeVariables();
+			await tf.nextFrame();
+			tf.engine().endScope();
 			log_num_tensors("model.fit done", start_tensors);
 			l("Finished model.fit");
 

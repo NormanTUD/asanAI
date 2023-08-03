@@ -19,9 +19,9 @@ function log_num_tensors (name="", oldNumTensors=null) {
 	} else {
 		if(numTensors > oldNumTensors) {
 			if(name != "") {
-				console.error(name + "LEAK!!! In: " + name + ", number of tensors: " + numTensors);
+				console.error("MEMORY LEAK IN " + name + "!!! In: " + name + ", number of new tensors: " + Math.abs(oldNumTensors - numTensors));
 			} else {
-				console.error("LEAK!!! Number of tensors: " + numTensors);
+				console.error("MEMORY LEAK!!! Number of new tensors: " + Math.abs(oldNumTensors - numTensors));
 			}
 			console.trace();
 		}
