@@ -148,9 +148,7 @@ async function train_neural_network () {
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		var start_tensors = log_num_tensors("run_neural_network", -1);
 		await run_neural_network();
-		log_num_tensors("run_neural_network", start_tensors);
 
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
@@ -494,6 +492,7 @@ function show_info_after_run (h) {
 }
 
 async function run_neural_network () {
+	var start_tensors = log_num_tensors("run_neural_network", -1);
 	await clean_gui();
 	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
 
@@ -710,6 +709,8 @@ async function run_neural_network () {
 	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
 	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
 	last_training_time = "";
+
+	log_num_tensors("run_neural_network", start_tensors);
 }
 
 async function write_error_and_reset(e, fn, hide_swal) {
