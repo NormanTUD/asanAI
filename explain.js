@@ -731,7 +731,10 @@ function hide_unused_layer_visualization_headers () {
 }
 
 function hide_layer_visualization_header_if_unused (layer) {
+	assert(typeof(layer) == "number", "layer is not a number");
+
 	var used = 0;
+
 	if($($(".kernel_image_grid_div")[layer]).css("display") != "none") {
 		used = 1;
 	}
