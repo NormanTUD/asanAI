@@ -901,12 +901,12 @@ async function visualize_train () {
 
 				dispose(img_tensor);
 
-				res = res.arraySync()[0];
+				var res_array = res.arraySync()[0];
 				dispose(res);
-				//log("RES for " + x.src + " :", res);
+				//log("RES for " + x.src + " :", res_array);
 
-				var probability = Math.max(...res);
-				var category = res.indexOf(probability);
+				var probability = Math.max(...res_array);
+				var category = res_array.indexOf(probability);
 
 				categories.push(category);
 				probabilities.push(probability);
