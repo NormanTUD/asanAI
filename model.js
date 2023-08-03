@@ -1002,7 +1002,6 @@ async function get_valid_layer_types (layer_nr) {
 			if(layer_type_always_works(layer_type)) {
 				valid_layer_types.push(layer_type);
 			} else {
-				await write_descriptions();
 				var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
 				var pb_string = layer_type + " (" + percent + "%)";
 				l(pb_string);
@@ -1019,7 +1018,6 @@ async function get_valid_layer_types (layer_nr) {
 			}
 			await write_descriptions();
 		}
-		await write_descriptions();
 	}
 	await write_descriptions();
 
