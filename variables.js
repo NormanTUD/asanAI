@@ -741,16 +741,6 @@ async function dispose (item) {
 	tf.dispose(item);
 
 	await tf.nextFrame();
-
-	Object.keys(tensors).forEach((key) => { if(!tensors[key].isDisposedInternal) { delete tensors[key]; }})
-
-	if(tensor_id) {
-		if(Object.keys(tensors).includes(tensor_id)) {
-			delete tensors[tensor_id];
-		} else {
-			//logt("Tensor ID " + tensor_id + " was not in global tensors variable");
-		}
-	}
 }
 
 var distribution_modes = {
