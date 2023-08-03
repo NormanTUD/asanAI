@@ -389,7 +389,7 @@ function get_fit_data () {
 		log_num_tensors("onBatchEnd end", start_tensors);
 	};
 
-	callbacks["onEpochEnd"] = function (batch, logs) {
+	callbacks["onEpochEnd"] = async function (batch, logs) {
 		var start_tensors = log_num_tensors("onEpochEnd start", -1);
 		delete logs["epoch"];
 		delete logs["size"];
@@ -443,7 +443,7 @@ function get_fit_data () {
 		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
 		last_batch_plot_time = false;
 
-		visualize_train(); // await not possible here
+		await visualize_train();
 		log_num_tensors("onEpochEnd end", start_tensors);
 	}
 
@@ -899,7 +899,10 @@ async function visualize_train () {
 				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 				var res = model.predict(img_tensor);
 
+				dispose(img_tensor);
+
 				res = res.arraySync()[0];
+				dispose(res);
 				//log("RES for " + x.src + " :", res);
 
 				var probability = Math.max(...res);
