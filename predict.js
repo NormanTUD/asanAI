@@ -46,6 +46,7 @@ var loadFile = (function(event) {
 
 function _predict_error (e) {
 	console.warn(e);
+	console.trace();
 	l(e);
 	$("#prediction").hide();
 	$("#predict_error").html(e).show();
@@ -93,6 +94,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		});
 	} catch (e) {
 		_predict_error(e);
+		return;
 	}
 
 	try {
