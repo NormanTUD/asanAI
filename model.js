@@ -1027,8 +1027,6 @@ async function get_valid_layer_types (layer_nr) {
 		l("Checked possible layer types");
 	}
 
-	pb.hide();
-
 	$('body').css('cursor', 'default');
 
 	allowed_layer_cache[layer_nr] = valid_layer_types;
