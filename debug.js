@@ -2,12 +2,16 @@
 
 var printed_msgs = [];
 
-function log_num_tensors () {
+function log_num_tensors (name="") {
 	var numTensors = tf.memory()["numTensors"];
 	if(!numTensors) {
 		numTensors = "none";
 	}
-	log("Number of tensors: " + numTensors);
+	if(name) {
+		log(name + ", number of tensors: " + numTensors);
+	} else {
+		log("Number of tensors: " + numTensors);
+	}
 }
 
 function log_once (...args) {
