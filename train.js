@@ -328,7 +328,6 @@ function get_fit_data () {
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
-		var start_tensors = log_num_tensors("onBatchEnd start");
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -367,6 +366,7 @@ function get_fit_data () {
 			last_batch_plot_time = Date.now();
 		}
 
+		var start_tensors = log_num_tensors("onBatchEnd start");
 		if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
 			if($('#predict_own_data').val()) {
 				await predict($('#predict_own_data').val());
