@@ -936,6 +936,10 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 	return true;
 }
 
+function layer_type_always_works (layer_type) {
+	return !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
+}
+
 function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
@@ -995,7 +999,7 @@ async function get_valid_layer_types (layer_nr) {
 		if(mode == "expert") {
 			valid_layer_types.push(layer_type);
 		} else {
-			if(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category)) {
+			if(layer_type_always_works(layer_type)) {
 				valid_layer_types.push(layer_type);
 			} else {
 				await write_descriptions();
