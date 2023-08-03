@@ -9,11 +9,13 @@ function log_num_tensors (name="", oldNumTensors=null) {
 	}
 
 	if(oldNumTensors == -1) {
+		/*
 		if(name) {
 			log(name + ", number of tensors: " + numTensors);
 		} else {
 			log("Number of tensors: " + numTensors);
 		}
+		*/
 	} else {
 		if(numTensors > oldNumTensors) {
 			if(name) {

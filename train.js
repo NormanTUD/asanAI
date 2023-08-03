@@ -268,6 +268,7 @@ function delay(time) {
 }
 
 function get_fit_data () {
+	var start_tensors = log_num_tensors("get_fit_data start", -1);
 	var epochs = get_epochs();
 	var batchSize = get_batchSize();
 	var validationSplit = parseInt($("#validationSplit").val()) / 100;
@@ -283,6 +284,7 @@ function get_fit_data () {
 	};
 
 	callbacks["onBatchBegin"] = async function () {
+		var start_tensors = log_num_tensors("onBatchBegin start", -1);
 		if(!started_training) {
 			model.stopTraining = true;
 		}
@@ -295,9 +297,12 @@ function get_fit_data () {
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
 		}
+
+		log_num_tensors("onBatchBegin end", start_tensors);
 	};
 
 	callbacks["onEpochBegin"] = async function () {
+		var start_tensors = log_num_tensors("onBatchEnd start", -1);
 		current_epoch++;
 		var max_number_epochs = get_epochs();
 		var current_time = Date.now();
@@ -325,9 +330,12 @@ function get_fit_data () {
 
 		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
+
+		log_num_tensors("onEpochBegin", start_tensors);
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
+		var start_tensors = log_num_tensors("onBatchEnd start", -1);
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -366,7 +374,6 @@ function get_fit_data () {
 			last_batch_plot_time = Date.now();
 		}
 
-		var start_tensors = log_num_tensors("onBatchEnd start", -1);
 		if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
 			if($('#predict_own_data').val()) {
 				await predict($('#predict_own_data').val());
@@ -381,6 +388,7 @@ function get_fit_data () {
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
+		var start_tensors = log_num_tensors("onEpochEnd start", -1);
 		delete logs["epoch"];
 		delete logs["size"];
 
@@ -434,15 +442,18 @@ function get_fit_data () {
 		last_batch_plot_time = false;
 
 		visualize_train(); // await not possible here
+		log_num_tensors("onEpochEnd end", start_tensors);
 	}
 
 	callbacks["onTrainEnd"] = async function () {
+		var start_tensors = log_num_tensors("onTrainEnd start", -1);
 		favicon_default();
 		await write_model_to_latex_to_page();
 		document.title = original_title;
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
+		log_num_tensors("onTrainEnd end", start_tensors);
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {
@@ -466,6 +477,7 @@ function get_fit_data () {
 	traindebug("fit_data:");
 	traindebug(fit_data);
 
+	log_num_tensors("get_fit_data end", start_tensors);
 	return fit_data;
 }
 
