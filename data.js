@@ -360,38 +360,38 @@ async function sine_ripple (img) {
 }
 
 // Funktion zum Rotieren eines Bildes
-async function augment_rotate_images(item, degree, this_category_counter, x, classes, label_nr) {
-    l("Rotating image: " + degree + "°");
-    var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
-    await add_tensor_as_image_to_photos(augmented_img);
-    x = x.concat(augmented_img);
-    classes.push(this_category_counter);
+async function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
+	l("Rotating image: " + degree + "°");
+	var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
+	await add_tensor_as_image_to_photos(augmented_img);
+	x = x.concat(augmented_img);
+	classes.push(this_category_counter);
 
-    if ($("#augment_invert_images").is(":checked")) {
-        l("Inverted image that has been turned " + degree + "°");
-        var add_value = (-255 / parseFloat($("#divide_by").val()));
-        var inverted = tf.abs(tf.add(augmented_img, add_value));
-        await add_tensor_as_image_to_photos(inverted);
-        x = x.concat(inverted);
-        classes.push(this_category_counter);
-    }
+	if ($("#augment_invert_images").is(":checked")) {
+		l("Inverted image that has been turned " + degree + "°");
+		var add_value = (-255 / parseFloat($("#divide_by").val()));
+		var inverted = tf.abs(tf.add(augmented_img, add_value));
+		await add_tensor_as_image_to_photos(inverted);
+		x = x.concat(inverted);
+		classes.push(this_category_counter);
+	}
 
-    if ($("#augment_flip_left_right").is(":checked")) {
-        l("Flip left/right image that has been turned " + degree + "°");
-        var flipped = tf.image.flipLeftRight(augmented_img);
-        await add_tensor_as_image_to_photos(flipped);
-        x = x.concat(flipped);
-        classes.push(label_nr);
-    }
+	if ($("#augment_flip_left_right").is(":checked")) {
+		l("Flip left/right image that has been turned " + degree + "°");
+		var flipped = tf.image.flipLeftRight(augmented_img);
+		await add_tensor_as_image_to_photos(flipped);
+		x = x.concat(flipped);
+		classes.push(label_nr);
+	}
 
-    if ($("#augment_sine_ripple").is(":checked")) {
-        var rippled = await sine_ripple(augmented_img);
-        x = x.concat(rippled.expandDims());
-        await add_tensor_as_image_to_photos(rippled);
-        classes.push(label_nr);
-    }
+	if ($("#augment_sine_ripple").is(":checked")) {
+		var rippled = await sine_ripple(augmented_img);
+		x = x.concat(rippled.expandDims());
+		await add_tensor_as_image_to_photos(rippled);
+		classes.push(label_nr);
+	}
 
-    return x;
+	return x;
 }
 
 // Funktion zum Invertieren eines Bildes
@@ -537,7 +537,7 @@ async function get_xs_and_ys () {
 							log("augment_rotate_images CHECKED")
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 								if (degree === 0) {
-									x = await augment_rotate_images(item, degree, this_category_counter, x, classes, this_category_counter);
+									x = await augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
 								}
 							}
 						}
