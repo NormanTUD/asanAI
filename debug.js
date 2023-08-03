@@ -18,11 +18,12 @@ function log_num_tensors (name="", oldNumTensors=null) {
 		*/
 	} else {
 		if(numTensors > oldNumTensors) {
-			if(name) {
+			if(name != "") {
 				console.error(name + "LEAK!!! In: " + name + ", number of tensors: " + numTensors);
 			} else {
 				console.error("LEAK!!! Number of tensors: " + numTensors);
 			}
+			console.trace();
 		}
 	}
 
@@ -128,6 +129,8 @@ function add_memory_debugger () {
 			    "dispose", 
 			    "get_weights_shape", 
 			    "get_weights_as_string", 
+			    "get_drawing_board_on_page",
+			    "Atrament"
 		    ].includes(i) &&		// exclude these functions
 		    typeof(window[i]) == "function" &&					// use only functions
 		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions

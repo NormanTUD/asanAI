@@ -601,7 +601,7 @@ async function run_neural_network () {
 			fit_data = get_fit_data();
 
 			l("Started model.fit");
-			var start_tensors = log_num_tensors("started model fit", -1);
+			var start_tensors = log_num_tensors("checking data fit", -1);
 
 			if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 				if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
@@ -626,7 +626,7 @@ async function run_neural_network () {
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
-			log_num_tensors("ended model fit", start_tensors);
+			log_num_tensors("checking data fit", start_tensors);
 		} catch (e) {
 			await write_error_and_reset(e);
 		}
@@ -642,8 +642,9 @@ async function run_neural_network () {
 			weights_as_string_cache = false;
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-
+			var start_tensors = log_num_tensors("model.fit", -1);
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+			log_num_tensors("model.fit done", start_tensors);
 			l("Finished model.fit");
 
 			show_info_after_run(h);
