@@ -54,7 +54,7 @@ function _predict_error (e) {
 
 }
 
-let predict_demo = async function (item, nr, tried_again = 0) {
+async function predict_demo (item, nr, tried_again = 0) {
 	//tf.engine().startScope();
 
 	//log("Tensors 0: " + tf.memory()["numTensors"]);
@@ -543,7 +543,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								var res = await model.predict([tensor]);
 
 								var res_array = res.arraySync();
-								dispose(res);
+								await dispose(res);
 
 								html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
 
@@ -556,7 +556,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							}
 						}
 						//log("Tensors L: " + tf.memory()["numTensors"]);
-						dispose(tensor);
+						await dispose(tensor);
 						await tf.nextFrame();
 						//log("Tensors M: " + tf.memory()["numTensors"]);
 					}

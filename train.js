@@ -890,6 +890,7 @@ async function visualize_train () {
 
 	if(labels.length) {
 		var image_elements = shuffle($("#photos").find("img,canvas"));
+		var promises = [];
 		image_elements.each((i,x) => {
 			if(i <= max) {
 				imgs.push(x);
@@ -898,10 +899,10 @@ async function visualize_train () {
 				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 				var res = model.predict(img_tensor);
 
-				dispose(img_tensor);
+				promises.push(dispose(img_tensor));
 
 				var res_array = res.arraySync()[0];
-				dispose(res);
+				promises.push(dispose(res));
 				//log("RES for " + x.src + " :", res_array);
 
 				var probability = Math.max(...res_array);
@@ -911,6 +912,10 @@ async function visualize_train () {
 				probabilities.push(probability);
 			}
 		});
+
+		for (var i = 0; i < promises.length; i++) {
+			await promises[i];
+		}
 
 		if(imgs.length && categories.length && probabilities.length) {
 			//log("drawImagesInGrid:", imgs, categories, probabilities, labels.length);
