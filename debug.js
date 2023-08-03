@@ -17,9 +17,9 @@ function log_num_tensors (name="", oldNumTensors=null) {
 	} else {
 		if(numTensors > oldNumTensors) {
 			if(name) {
-				log(name + ", number of tensors: " + numTensors);
+				console.error(name + "LEAK!!! In: " + name + ", number of tensors: " + numTensors);
 			} else {
-				log("Number of tensors: " + numTensors);
+				console.error("LEAK!!! Number of tensors: " + numTensors);
 			}
 		}
 	}
