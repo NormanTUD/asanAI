@@ -601,6 +601,7 @@ async function run_neural_network () {
 			fit_data = get_fit_data();
 
 			l("Started model.fit");
+			var start_tensors = log_num_tensors("started model fit", -1);
 
 			if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 				if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
@@ -624,9 +625,13 @@ async function run_neural_network () {
 			}
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+
+			log_num_tensors("ended model fit", start_tensors);
 		} catch (e) {
 			await write_error_and_reset(e);
 		}
+
+		var error = 0;
 
 		try {
 			/*
@@ -645,45 +650,48 @@ async function run_neural_network () {
 
 			await dispose(h);
 		} catch (e) {
-			await write_error_and_reset(e);
+			await write_error("" + e);
+			error = 1;
 		}
 
-		var trained_weights = undefined;
-		try {
-			/* Memory leak in model.fit: prevention: save weights as string, delete everything,
-			 * then restore the model with the saved weights. Not pretty, but it works...  */
+		if(!error) {
+			var trained_weights = undefined;
+			try {
+				/* Memory leak in model.fit: prevention: save weights as string, delete everything,
+				 * then restore the model with the saved weights. Not pretty, but it works...  */
 
-			//log("Training done, getting weights");
-			trained_weights = await get_weights_as_string();
+				//log("Training done, getting weights");
+				trained_weights = await get_weights_as_string();
 
-			await reset_data();
+				await reset_data();
 
-			tf.disposeVariables();
+				tf.disposeVariables();
 
-			model = await create_model(null, await get_model_structure(), 1);
-		} catch (e) {
-			await write_error_and_reset(e);
-		}
+				model = await create_model(null, await get_model_structure(), 1);
+			} catch (e) {
+				await write_error_and_reset(e);
+			}
 
-		try {
-			await set_weights_from_string(trained_weights, 1, 1);
+			try {
+				await set_weights_from_string(trained_weights, 1, 1);
 
-			await dispose(xs_and_ys["x"]);
-			await dispose(xs_and_ys["y"]);
-			xs_and_ys = null;
+				await dispose(xs_and_ys["x"]);
+				await dispose(xs_and_ys["y"]);
+				xs_and_ys = null;
 
-			/* Memory leak hack end */
+				/* Memory leak hack end */
 
-			model_is_trained = true;
+				model_is_trained = true;
 
-			$("#predictcontainer").show();
-			$("#predict_error").hide().html("");
+				$("#predictcontainer").show();
+				$("#predict_error").hide().html("");
 
-			await enable_everything();
+				await enable_everything();
 
-			$("#training_progress_bar").hide();
-		} catch (e) {
-			await write_error_and_reset(e);
+				$("#training_progress_bar").hide();
+			} catch (e) {
+				await write_error_and_reset(e);
+			}
 		}
 	}
 
