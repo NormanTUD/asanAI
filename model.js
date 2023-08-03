@@ -1345,6 +1345,7 @@ async function force_reinit (no_msg) {
 }
 
 async function input_shape_is_image (is_from_webcam=0) {
+	var start_tensors = log_num_tensors("input_shape_is_image start", -1);
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
@@ -1365,8 +1366,10 @@ async function input_shape_is_image (is_from_webcam=0) {
 		}
 		*/
 
+		log_num_tensors("input_shape_is_image end", start_tensors);
 		return true;
 	}
 	is.hide();
+	log_num_tensors("input_shape_is_image end", start_tensors);
 	return false;
 }
