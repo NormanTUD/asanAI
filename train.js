@@ -647,7 +647,6 @@ async function run_neural_network () {
 			var start_tensors = log_num_tensors("model.fit", -1);
 			tf.engine().startScope();
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
-			tf.disposeVariables();
 			await tf.nextFrame();
 			tf.engine().endScope();
 			log_num_tensors("model.fit done", start_tensors);
@@ -672,8 +671,6 @@ async function run_neural_network () {
 				trained_weights = await get_weights_as_string();
 
 				await reset_data();
-
-				tf.disposeVariables();
 
 				model = await create_model(null, await get_model_structure(), 1);
 			} catch (e) {
