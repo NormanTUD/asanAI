@@ -389,7 +389,6 @@ function get_fit_data () {
 		training_logs_epoch["loss"]["x"].push(epochNr);
 		training_logs_epoch["loss"]["y"].push(loss);
 
-
 		var other_key_name = "val_loss";
 
 		var this_plot_data = [training_logs_epoch["loss"]];
