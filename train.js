@@ -860,7 +860,7 @@ async function visualize_train () {
 	}
 
 	if(labels.length) {
-		var image_elements = shuffle($("#photos").find("img"));
+		var image_elements = shuffle($("#photos").find("img,canvas"));
 		image_elements.each((i,x) => {
 			if(i <= max) {
 				imgs.push(x);
