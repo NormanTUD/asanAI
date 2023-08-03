@@ -23,7 +23,7 @@ function log_num_tensors (name="", oldNumTensors=null) {
 			} else {
 				console.error("MEMORY LEAK!!! Number of new tensors: " + Math.abs(oldNumTensors - numTensors));
 			}
-			console.trace();
+			//console.trace();
 		}
 	}
 
