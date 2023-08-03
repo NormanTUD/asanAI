@@ -841,7 +841,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 }
 
 async function visualize_train () {
-	var start_tensors = log_num_tensors("visualize_train");
+	//var start_tensors = log_num_tensors("visualize_train");
 	tf.engine().startScope();
 	seed_two = 2;
 
@@ -928,5 +928,5 @@ async function visualize_train () {
 	tf.engine().endScope();
 	await tf.nextFrame();
 
-	log_num_tensors("visualize_train", start_tensors);
+	//log_num_tensors("visualize_train", start_tensors);
 }
