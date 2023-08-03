@@ -511,3 +511,11 @@ function enableTensorTracking() {
 //enableTensorTracking();
 // Führen Sie Ihre TensorFlow.js-Anwendung aus.
 
+
+async function profile (func, ...args) {
+	const profile = await tf.profile(await func(...args));
+
+	console.log(`newBytes: ${profile.newBytes}`);
+	console.log(`newTensors: ${profile.newTensors}`);
+	console.log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+}

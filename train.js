@@ -148,7 +148,9 @@ async function train_neural_network () {
 		$("#percentage").html("");
 		$("#percentage").hide();
 
+		var start_tensors = log_num_tensors("run_neural_network", -1);
 		await run_neural_network();
+		log_num_tensors("run_neural_network", start_tensors);
 
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
