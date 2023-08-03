@@ -276,9 +276,11 @@ async function run_tests () {
 			var new_val = 123;
 
 			$($(".kernel_initializer")[0]).val("constant").trigger("change");
+			await delay(1000);
+
 			$($(".kernel_initializer_value")[0]).val(new_val).trigger("change");
 
-			await delay(200);
+			await delay(1000);
 
 			var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == new_val;
 

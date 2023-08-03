@@ -109,7 +109,9 @@ async function predict_demo (item, nr, tried_again = 0) {
 	try {
 		if(!tensor_shape_matches_model(tensor_img)) {
 			await dispose(tensor_img);
-			await dispose(new_tensor_img);
+			if(new_tensor_img) {
+				await dispose(new_tensor_img);
+			}
 			return;
 		}
 	} catch (e) {

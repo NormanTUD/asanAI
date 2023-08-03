@@ -737,10 +737,15 @@ var tensors = {};
 async function dispose (item) {
 	//console.trace();
 	//log(item);
-	var tensor_id = item.id;
-	tf.dispose(item);
+	if(item) {
+		var tensor_id = item.id;
+		tf.dispose(item);
 
-	await tf.nextFrame();
+		await tf.nextFrame();
+	} else {
+		console.warn("item was empty in dispose():");
+		console.trace();
+	}
 }
 
 var distribution_modes = {
