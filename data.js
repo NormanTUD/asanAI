@@ -104,7 +104,7 @@ async function force_download_image_preview_data () {
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
 		force_download = 1;
-		await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""});
+		await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""}, 1);
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
@@ -116,7 +116,7 @@ async function force_download_image_preview_data () {
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
 	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
-}) {
+}, dont_load_into_tf = 0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");
@@ -216,7 +216,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 				var url = urls[i];
 				let tf_data = null;
 				if(!skip_real_image_download) {
-					tf_data = await url_to_tf(url);
+					tf_data = await url_to_tf(url, dont_load_into_tf);
 				}
 				if(tf_data !== null || skip_real_image_download) {
 					data[keys[url]].push(tf_data);
@@ -330,18 +330,18 @@ async function add_tensor_as_image_to_photos (tensor) {
 
 
 function truncate_text (fullStr, strLen, separator) {
-    if (fullStr.length <= strLen) return fullStr;
+	if (fullStr.length <= strLen) return fullStr;
 
-    separator = separator || '...';
+	separator = separator || '...';
 
-    var sepLen = separator.length,
-        charsToShow = strLen - sepLen,
-        frontChars = Math.ceil(charsToShow/2),
-        backChars = Math.floor(charsToShow/2);
+	var sepLen = separator.length,
+		charsToShow = strLen - sepLen,
+		frontChars = Math.ceil(charsToShow/2),
+		backChars = Math.floor(charsToShow/2);
 
-    return fullStr.substr(0, frontChars) +
-           separator +
-           fullStr.substr(fullStr.length - backChars);
+	return fullStr.substr(0, frontChars) +
+		separator +
+		fullStr.substr(fullStr.length - backChars);
 };
 
 async function sine_ripple (img) {
@@ -720,7 +720,7 @@ async function get_xs_and_ys () {
 
 			l("Done generating data from images");
 			//log("B", x.shape);
-			
+
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if (data_origin == "tensordata") {
 			x = numpy_str_to_tf_tensor(x_file, max_number_values);
@@ -798,7 +798,7 @@ function add_photo_to_gallery(url) {
 	$("#photos").show().prepend(html);
 }
 
-function url_to_tf (url) {
+function url_to_tf (url, dont_load_into_tf = 0) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	headerdatadebug("url_to_tf(" + url + ")");
@@ -806,15 +806,31 @@ function url_to_tf (url) {
 		add_photo_to_gallery(url);
 		var tf_img = (async () => {
 			let img = await load_image(url);
-			tf_img = tf.browser.fromPixels(img);
-			var resized_img = tf_img.
-				resizeNearestNeighbor([height, width]).
-				toFloat().
-				expandDims();
-			await dispose(tf_img);
+			var resized_img = [];
+			if(!dont_load_into_tf) {
+				tf_img = tf.browser.fromPixels(img);
+				resized_img = tf_img.
+					resizeNearestNeighbor([height, width]).
+					toFloat().
+					expandDims();
+				await dispose(tf_img);
 
-			if($("#divide_by").val() != 1) {
-				resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+				if($("#divide_by").val() != 1) {
+					var tries = 0;
+					var success = 0;
+
+					while (!success && tries <= 5) {
+						try {
+							resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+							success = 1;
+						} catch (e) {
+							console.error(e);
+							log(`Trying it again because of previous error, success: ${success}, tries: ${tries}`);
+							tries++;
+							success = 0;
+						}
+					}
+				}
 			}
 
 			return resized_img;
