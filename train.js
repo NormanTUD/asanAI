@@ -366,7 +366,7 @@ function get_fit_data () {
 			last_batch_plot_time = Date.now();
 		}
 
-		if(!is_hidden_or_has_hidden_parent("#predict_tab")) {
+		if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
 			if($('#predict_own_data').val()) {
 				await predict($('#predict_own_data').val());
 			}
