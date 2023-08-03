@@ -2,16 +2,29 @@
 
 var printed_msgs = [];
 
-function log_num_tensors (name="") {
+function log_num_tensors (name="", oldNumTensors=null) {
 	var numTensors = tf.memory()["numTensors"];
 	if(!numTensors) {
 		numTensors = "none";
 	}
-	if(name) {
-		log(name + ", number of tensors: " + numTensors);
+
+	if(typeof(oldNumTensors) == "undefined") {
+		if(name) {
+			log(name + ", number of tensors: " + numTensors);
+		} else {
+			log("Number of tensors: " + numTensors);
+		}
 	} else {
-		log("Number of tensors: " + numTensors);
+		if(numTensors > oldNumTensors) {
+			if(name) {
+				log(name + ", number of tensors: " + numTensors);
+			} else {
+				log("Number of tensors: " + numTensors);
+			}
+		}
 	}
+
+	return numTensors;
 }
 
 function log_once (...args) {

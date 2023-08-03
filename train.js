@@ -328,6 +328,7 @@ function get_fit_data () {
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
+		var start_tensors = log_num_tensors("onBatchEnd start");
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -375,6 +376,8 @@ function get_fit_data () {
 				await repredict();
 			}
 		}
+
+		log_num_tensors("onBatchEnd end", start_tensors);
 	};
 
 	callbacks["onEpochEnd"] = function (batch, logs) {
