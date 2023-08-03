@@ -246,6 +246,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
+	var start_tensors = log_num_tensors("predict end", -1);
 	await enable_everything();
 
 	var pred_tab = "prediction";
@@ -446,10 +447,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	allow_editable_labels();
 
+	log_num_tensors("predict end", start_tensors);
+
 	return str;
 }
 
 async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+	var start_tensors = log_num_tensors("show_prediction", -1);
 	if(skip_predictions) {
 		return;
 	}
@@ -563,6 +567,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		$("#example_predictions").hide();
 		$(".show_when_predicting").hide();
 	}
+
+	log_num_tensors("show_prediction end", start_tensors);
 }
 
 function get_index_of_highest_category (predictions_tensor) {
@@ -979,7 +985,9 @@ async function predict_handdrawn () {
 }
 
 async function repredict () {
+	var start_tensors = log_num_tensors("repredict end", -1);
 	await show_prediction();
 	await predict_webcam();
 	await predict_handdrawn();
+	log_num_tensors("repredict end", start_tensors);
 }
