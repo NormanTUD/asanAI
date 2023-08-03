@@ -985,8 +985,8 @@ async function get_valid_layer_types (layer_nr) {
 
 	$('body').css('cursor', 'wait');
 
-	var pb = $($(".progressbar")[layer_nr])
-	pb.show();
+	var progressbar = $($(".progressbar")[layer_nr])
+	progressbar.show();
 
 	var checked_layers = false;
 
@@ -1000,9 +1000,9 @@ async function get_valid_layer_types (layer_nr) {
 			} else {
 				await write_descriptions();
 				var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
-				var pb_string = percent + "% (" + layer_type + ")";
+				var pb_string = layer_type + " (" + percent + "%)";
 				l(pb_string);
-				pb.html(pb_string);
+				progressbar.html(pb_string);
 				await write_descriptions();
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
@@ -1018,6 +1018,8 @@ async function get_valid_layer_types (layer_nr) {
 		await write_descriptions();
 	}
 	await write_descriptions();
+
+	progressbar.hide();
 
 	if(checked_layers) {
 		l("Checked possible layer types");

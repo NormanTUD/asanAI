@@ -1053,3 +1053,7 @@ hr {
 	width: 80px;
 	height: 18px;
 }
+
+.progressbar {
+	text-align: right;
+}
