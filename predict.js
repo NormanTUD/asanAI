@@ -64,7 +64,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 	//log("Tensors 1: " + tf.memory()["numTensors"]);
 
-	while (is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+	while (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
 		await delay(200);
 	}
 
@@ -511,7 +511,11 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								var img_elem = $("img[src$='" + img_url + "']");
 								if(img_elem.length) {
 									//log("Tensors F: " + tf.memory()["numTensors"]);
-									predict_demo(img_elem[0], i);
+									try {
+										await predict_demo(img_elem[0], i);
+									} catch (e) {
+										log("Predict demo failed, error:", e);
+									}
 									//log("Tensors G: " + tf.memory()["numTensors"]);
 								} else {
 									str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
