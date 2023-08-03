@@ -645,7 +645,6 @@ async function run_neural_network () {
 			var start_tensors = log_num_tensors("model.fit", -1);
 			tf.engine().startScope();
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
-			log(h);
 			tf.disposeVariables();
 			await tf.nextFrame();
 			tf.engine().endScope();
@@ -656,6 +655,7 @@ async function run_neural_network () {
 
 			await dispose(h);
 		} catch (e) {
+			console.log(e);
 			await write_error("" + e);
 			error = 1;
 		}
