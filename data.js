@@ -664,7 +664,6 @@ async function get_xs_and_ys () {
 					}
 				}
 
-
 				x = tf.tensor(x);
 				y = tf.tensor(classes).expandDims();
 			} else {
