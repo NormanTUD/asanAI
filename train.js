@@ -366,7 +366,7 @@ function get_fit_data () {
 			last_batch_plot_time = Date.now();
 		}
 
-		var start_tensors = log_num_tensors("onBatchEnd start");
+		var start_tensors = log_num_tensors("onBatchEnd start", -1);
 		if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
 			if($('#predict_own_data').val()) {
 				await predict($('#predict_own_data').val());

@@ -8,7 +8,7 @@ function log_num_tensors (name="", oldNumTensors=null) {
 		numTensors = "none";
 	}
 
-	if(typeof(oldNumTensors) == "undefined") {
+	if(oldNumTensors == -1) {
 		if(name) {
 			log(name + ", number of tensors: " + numTensors);
 		} else {
