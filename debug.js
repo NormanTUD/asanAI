@@ -2,6 +2,14 @@
 
 var printed_msgs = [];
 
+function log_num_tensors () {
+	var numTensors = tf.memory()["numTensors"];
+	if(!numTensors) {
+		numTensors = "none";
+	}
+	log("Number of tensors: " + numTensors);
+}
+
 function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
