@@ -535,7 +535,7 @@ async function get_xs_and_ys () {
 						l("Auto augmenting images");
 						if ($("#augment_rotate_images").is(":checked")) {
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-								if (degree === 0) {
+								if (degree !== 0) {
 									[classes, x] = await augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
 								}
 							}
