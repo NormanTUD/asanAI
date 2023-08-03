@@ -391,37 +391,37 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 		classes.push(label_nr);
 	}
 
-	return x;
+	return [classes, x];
 }
 
 // Funktion zum Invertieren eines Bildes
 async function augment_invert_images(item, this_category_counter, x, classes) {
-    l("Inverted image");
-    var add_value = (-255 / parseFloat($("#divide_by").val()));
-    var inverted = tf.abs(tf.add(item, add_value));
-    await add_tensor_as_image_to_photos(inverted);
-    x = x.concat(inverted);
-    classes.push(this_category_counter);
-    return x;
+	l("Inverted image");
+	var add_value = (-255 / parseFloat($("#divide_by").val()));
+	var inverted = tf.abs(tf.add(item, add_value));
+	await add_tensor_as_image_to_photos(inverted);
+	x = x.concat(inverted);
+	classes.push(this_category_counter);
+	return [classes, x];
 }
 
 // Funktion zum Spiegeln eines Bildes
 async function augment_flip_left_right(item, this_category_counter, x, classes) {
-    l("Flip left/right");
-    var flipped = tf.image.flipLeftRight(item);
-    await add_tensor_as_image_to_photos(flipped);
-    x = x.concat(flipped);
-    classes.push(this_category_counter);
-    return x;
+	l("Flip left/right");
+	var flipped = tf.image.flipLeftRight(item);
+	await add_tensor_as_image_to_photos(flipped);
+	x = x.concat(flipped);
+	classes.push(this_category_counter);
+	return [classes, x];
 }
 
 // Funktion zur Anwendung einer Sinuswelle auf ein Bild
 async function augment_sine_ripple(item, label_nr, x, classes) {
-    var rippled = await sine_ripple(item);
-    x = x.concat(rippled.expandDims());
-    await add_tensor_as_image_to_photos(rippled);
-    classes.push(label_nr);
-    return x;
+	var rippled = await sine_ripple(item);
+	x = x.concat(rippled.expandDims());
+	await add_tensor_as_image_to_photos(rippled);
+	classes.push(label_nr);
+	return [classes, x];
 }
 
 
@@ -534,24 +534,23 @@ async function get_xs_and_ys () {
 					if ($("#auto_augment").is(":checked")) {
 						l("Auto augmenting images");
 						if ($("#augment_rotate_images").is(":checked")) {
-							log("augment_rotate_images CHECKED")
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 								if (degree === 0) {
-									x = await augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+									[classes, x] = await augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
 								}
 							}
 						}
 
 						if ($("#augment_invert_images").is(":checked")) {
-							x = await augment_invert_images(item, this_category_counter, x, classes);
+							[classes, x] = await augment_invert_images(item, this_category_counter, x, classes);
 						}
 
 						if ($("#augment_flip_left_right").is(":checked")) {
-							x = await augment_flip_left_right(item, this_category_counter, x, classes);
+							[classes, x] = await augment_flip_left_right(item, this_category_counter, x, classes);
 						}
 
 						if ($("#augment_sine_ripple").is(":checked")) {
-							x = await augment_sine_ripple(item, label_nr, x, classes);
+							[classes, x] = await augment_sine_ripple(item, label_nr, x, classes);
 						}
 					}
 				}

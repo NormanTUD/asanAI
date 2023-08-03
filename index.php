@@ -930,7 +930,7 @@
 								</tr>
 								<tr>
 									<td>Number of rotations?</td>
-									<td><input type="number" value=4 id="number_of_rotations"></td>
+									<td><input type="number" min=1 value=4 id="number_of_rotations"></td>
 									<td></td>
 									<td></td>
 								</tr>
