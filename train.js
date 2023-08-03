@@ -899,10 +899,8 @@ async function visualize_train () {
 				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 				var res = model.predict(img_tensor);
 
-				promises.push(dispose(img_tensor));
 
 				var res_array = res.arraySync()[0];
-				promises.push(dispose(res));
 				//log("RES for " + x.src + " :", res_array);
 
 				var probability = Math.max(...res_array);
@@ -910,6 +908,9 @@ async function visualize_train () {
 
 				categories.push(category);
 				probabilities.push(probability);
+
+				promises.push(dispose(res));
+				promises.push(dispose(img_tensor));
 			}
 		});
 
