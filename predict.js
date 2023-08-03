@@ -70,7 +70,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	var tensor_img;
-	var predictions_tensor = undefined;
+	var new_tensor_img;
+	var predictions_tensor;
 
 	try {
 		if(labels.length == 0) {
@@ -87,22 +88,31 @@ async function predict_demo (item, nr, tried_again = 0) {
 		_predict_error(e);
 	}
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
+	
+	if(item.width == 0) {
+		//log("item width is 0, not predicting:", item);
+		return;
+	}
 
 	try {
 		tensor_img = tf.tidy(() => {
 			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
 		});
 	} catch (e) {
+		log("item:", item);
+		log("width:", width);
+		log("height:", height);
+		log("error:", e);
 		_predict_error(e);
 		return;
 	}
 
+	assert(item, "item must at least be true");
+
 	try {
 		if($("#divide_by").val() != 1) {
-			var new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
-			await dispose(tensor_img);
+			new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
 			tensor_img = tf.tensor(await new_tensor_img.arraySync());
-			await dispose(new_tensor_img);
 		}
 	} catch (e) {
 		_predict_error(e);
@@ -243,8 +253,15 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 
-	await dispose(tensor_img);
-	await dispose(predictions_tensor);
+	if(tensor_img) {
+		await dispose(tensor_img);
+	}
+	if(predictions_tensor) {
+		await dispose(predictions_tensor);
+	}
+	if(new_tensor_img) {
+		await dispose(new_tensor_img);
+	}
 
 	//tf.engine().endScope();
 
@@ -516,7 +533,11 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 								if(img_elem.length) {
 									//log("Tensors F: " + tf.memory()["numTensors"]);
 									try {
-										await predict_demo(img_elem[0], i);
+										var img = img_elem;
+										if(Object.keys(img).includes("0")) {
+											img = img_elem[0];
+										}
+										await predict_demo(img, i);
 									} catch (e) {
 										log("Predict demo failed, error:", e);
 									}
