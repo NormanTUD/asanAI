@@ -154,7 +154,7 @@ let predict_demo = async function (item, nr, tried_again = 0) {
 					return;
 				}
 
-				return predict_demo(item, nr, 1);
+				return await predict_demo(item, nr, 1);
 			}
 
 			var desc = $($(".predict_demo_result")[nr]);
@@ -1014,7 +1014,7 @@ async function predict_handdrawn () {
 
 async function repredict () {
 	var start_tensors = log_num_tensors("repredict end", -1);
-	await show_prediction();
+	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
 	log_num_tensors("repredict end", start_tensors);
