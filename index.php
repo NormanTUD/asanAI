@@ -105,7 +105,7 @@
 		<?php minify_js("external/sweetalert2.all.js"); ?>
 
 		<!-- tensorflow.js -->
-		<?php minify_js("tf/tf.min.js"); ?>
+		<?php minify_js("tf/tf.js"); ?>
 		<?php minify_js("jstat.min.js"); ?>
 		<?php minify_js("custom.js"); ?>
 		<?php minify_js("jsmanipulate.js", 1, 1); ?>
