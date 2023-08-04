@@ -761,11 +761,9 @@ async function predict_webcam () {
 		return;
 	}
 
-	tf.engine().startScope("predict_webcam");
-
 	var predict_data = await cam.capture();
 
-	predict_data = _get_resized_webcam(predict_data, height, width);
+	predict_data = tf.tidy(() => { return  _get_resized_webcam(predict_data, height, width); });
 
 	var predictions_tensor = null;
 	try {
@@ -774,6 +772,7 @@ async function predict_webcam () {
 		});
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
+		await dispose(predictions_tensor);
 		await dispose(predict_data);
 		console.error(e);
 		l("Error (512): " + e);
@@ -821,7 +820,6 @@ async function predict_webcam () {
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
-	tf.engine().endScope("predict_webcam");
 	await tf.nextFrame();
 
 	memory_leak_debugger("predict_webcam", start_tensors);

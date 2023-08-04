@@ -492,6 +492,7 @@ function show_info_pre_run () {
 }
 
 function show_info_after_run (h) {
+	log(h);
 	assert(typeof(h) == "object", "history object is not of type object");
 
 	traindebug("Showing tfvis/history/memory");
@@ -648,10 +649,11 @@ async function run_neural_network () {
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 			var start_tensors = memory_leak_debugger();
-			tf.engine().startScope("modelFit");
+
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+
 			await tf.nextFrame();
-			tf.engine().endScope("modelFit");
+
 			memory_leak_debugger("model.fit done", start_tensors);
 			l("Finished model.fit");
 
@@ -660,7 +662,7 @@ async function run_neural_network () {
 			await dispose(h);
 		} catch (e) {
 			console.error(e);
-			if(typeof(e) == "object" && e.includes("message")) {
+			if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 			await write_error("" + e);
