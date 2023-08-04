@@ -180,62 +180,9 @@ async function predict_demo (item, nr, tried_again = 0) {
 			desc.html("");
 
 			if(model.outputShape.length == 4) {
-				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-
-				var pxsz = 1;
-
-				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
-
-				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-				while ((pxsz * largest) < max_height_width) {
-					pxsz += 1;
-				}
-
-				var predictions = predictions_tensor_transposed.arraySync();
-				for (var i = 0; i < predictions.length; i++) {
-					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-						width: pxsz * predictions_tensor.shape[2],
-						height: pxsz * predictions_tensor.shape[1],
-					});
-
-					desc.append(canvas);
-
-					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
-				}
-
-				await dispose(predictions_tensor_transposed);
+				await _predict_image(predictions, desc);
 			} else {
-				var predictions = predictions_tensor.dataSync();
-				if(predictions.length) {
-					var max_i = 0;
-					var max_probability = -9999999;
-
-					for (let i = 0; i < predictions.length; i++) {
-						var probability = predictions[i];
-						if(probability > max_probability) {
-							max_probability = probability;
-							max_i = i;
-						}
-					}
-
-					var fullstr = "";
-
-					fullstr += "<table class='predict_table'>";
-
-					for (let i = 0; i < predictions.length; i++) {
-						var label = labels[i % labels.length];
-						var probability = predictions[i];
-						var w = Math.floor(probability * 50);
-
-						fullstr += _predict_table_row(label, w, max_i, show_green, probability);
-					}
-
-					fullstr += "</table>";
-					desc.html(fullstr);
-				}
-
-				$("#predict_error").hide();
-				$("#predict_error").html("");
+				_predict_table(predictions_tensor, desc, show_green);
 			}
 		} else {
 			console.error("No model");
@@ -244,17 +191,19 @@ async function predict_demo (item, nr, tried_again = 0) {
 		_predict_error(e);
 	}
 
-	memory_leak_debugger("large_try", large_try)
+	if(predictions_tensor) {
+		await dispose(predictions_tensor);
+	}
 
 	if(tensor_img) {
 		await dispose(tensor_img);
 	}
-	if(predictions_tensor) {
-		await dispose(predictions_tensor);
-	}
+
 	if(new_tensor_img) {
 		await dispose(new_tensor_img);
 	}
+
+	memory_leak_debugger("large_try", large_try)
 
 	//tf.engine().endScope();
 
@@ -265,6 +214,72 @@ async function predict_demo (item, nr, tried_again = 0) {
 	allow_editable_labels();
 
 	memory_leak_debugger("predict_demo", start_tensors);
+}
+
+async function _predict_image (predictions, desc) {
+	var start_tensors = memory_leak_debugger();
+	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+
+	var pxsz = 1;
+
+	var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+	var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+	while ((pxsz * largest) < max_height_width) {
+		pxsz += 1;
+	}
+
+	var predictions = predictions_tensor_transposed.arraySync();
+	for (var i = 0; i < predictions.length; i++) {
+		var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+			width: pxsz * predictions_tensor.shape[2],
+			height: pxsz * predictions_tensor.shape[1],
+		});
+
+		desc.append(canvas);
+
+		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+	}
+
+	await dispose(predictions_tensor_transposed);
+	memory_leak_debugger("_predict_image", start_tensors);
+}
+
+function _predict_table(predictions_tensor, desc, show_green) {
+	var start_tensors = memory_leak_debugger();
+	var predictions = predictions_tensor.dataSync();
+	if(predictions.length) {
+		var max_i = 0;
+		var max_probability = -9999999;
+
+		for (let i = 0; i < predictions.length; i++) {
+			var probability = predictions[i];
+			if(probability > max_probability) {
+				max_probability = probability;
+				max_i = i;
+			}
+		}
+
+		var fullstr = "";
+
+		fullstr += "<table class='predict_table'>";
+
+		for (let i = 0; i < predictions.length; i++) {
+			var label = labels[i % labels.length];
+			var probability = predictions[i];
+			var w = Math.floor(probability * 50);
+
+			fullstr += _predict_table_row(label, w, max_i, show_green, probability);
+		}
+
+		fullstr += "</table>";
+		desc.html(fullstr);
+	}
+
+	$("#predict_error").hide();
+	$("#predict_error").html("");
+
+	memory_leak_debugger("_predict_table", start_tensors);
 }
 
 function _predict_table_row (label, w, max_i, show_green, probability) {
