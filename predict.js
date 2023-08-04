@@ -56,18 +56,20 @@ function _predict_error (e) {
 }
 
 function _divide_img_tensor (tensor_img) {
-	if($("#divide_by").val() == 1) {
-		return;
+	var divide_by = parseFloat($("#divide_by").val());
+	if(divide_by == 1) {
+		return tensor_img;
 	}
 
 	var start_tensors = memory_leak_debugger();
+
 	try {
-		tensor_img = tf.tensor(tf.divNoNan(tensor_img, parseFloat($("#divide_by").val())));
+		tensor_img = tf.tidy(() => { return tf.divNoNan(tensor_img, divide_by) });
 	} catch (e) {
 		_predict_error(e);
 	}
 
-	memory_leak_debugger("_divide_img_tensor", start_tensors);
+	memory_leak_debugger("_divide_img_tensor", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
 	return tensor_img;
 }
@@ -83,8 +85,11 @@ function _get_tensor_img (item) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
 		_predict_error(e);
 	}
+	var res = _divide_img_tensor(tensor_img);
+
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
-	return tensor_img;
+
+	return res;
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
