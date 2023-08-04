@@ -138,10 +138,13 @@ async function predict_demo (item, nr, tried_again = 0) {
 	assert(width > 0, "width is not larger than 0");
 	assert(height > 0, "height is not larger than 0");
 
+	tf.engine().startScope();
+
 	var tensor_img = await _get_tensor_img(item);
 
 	if(!tensor_img) {
 		console.warn("tensor_img was empty");
+		tf.engine().endScope();
 		return;
 	}
 
@@ -152,6 +155,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			if(new_tensor_img) {
 				await dispose(new_tensor_img);
 			}
+			tf.engine().endScope();
 			return;
 		}
 	} catch (e) {
@@ -164,12 +168,14 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	if(!model) {
 		console.error("No model");
+		tf.engine().endScope();
 		return;
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
 		await dispose(tensor_img);
+		tf.engine().endScope();
 		return;
 	}
 
@@ -188,9 +194,11 @@ async function predict_demo (item, nr, tried_again = 0) {
 		log("================================= Tensor_Img:", tensor_img);
 		_predict_error(e);
 		if(tried_again) {
+			tf.engine().endScope();
 			return;
 		}
 
+		tf.engine().endScope();
 		await dispose(tensor_img);
 		await dispose(new_tensor_img);
 
@@ -203,6 +211,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	allow_editable_labels();
 
+	tf.engine().endScope();
 	memory_leak_debugger("predict_demo", start_tensors);
 }
 
