@@ -150,6 +150,8 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 				urls.push(url);
 				keys[url] = key;
 			}
+		} else {
+			console.warn("No items found");
 		}
 	}
 

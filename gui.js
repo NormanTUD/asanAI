@@ -5575,33 +5575,38 @@ function allow_editable_labels () {
 	$(".label_element").each((i, x) => {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
-		if(label_index !== undefined) {
-			if(typeof(labels) == "object") {
-				if(labels.length) {
-					var tmp_label = labels[label_index];
-					if(tmp_label === undefined) {
-						console.warn("tmp_label undefined");
-					} else {
-						tmp_label = tmp_label.replaceAll(/'/g, "");
-						if(tmp_label) {
-							if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-								$(x).find("input").val(tmp_label);
-							} else {
-								$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-							}
-						} else {
-							tmp_label = $(x).text();
-							$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-						}
-					}
-				} else {
-					console.warn("labels is an array, but is empty.");
-				}
+		if(typeof(labels) == "object") {
+			console.warn("labels is not an array/object");
+			return;
+		}
+
+		if(!labels.length) {
+			console.warn("labels is an array, but is empty.");
+			return;
+		}
+
+		var tmp_label = labels[label_index];
+		if(tmp_label === undefined) {
+			console.warn("tmp_label undefined");
+			return;
+		}
+
+
+		if(label_index === undefined) {
+			var tmp_label = $(x).text();
+			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+			return;
+		}
+
+		tmp_label = tmp_label.replaceAll(/'/g, "");
+		if(tmp_label) {
+			if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+				$(x).find("input").val(tmp_label);
 			} else {
-				console.warn("labels is not an array/object");
+				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 			}
 		} else {
-			var tmp_label = $(x).text();
+			tmp_label = $(x).text();
 			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 		}
 	})

@@ -242,7 +242,7 @@ async function _predict_result(predictions_tensor, nr) {
 	memory_leak_debugger("_predict_result", start_tensors);
 }
 
-async function _predict_image (predictions, desc) {
+async function _predict_image (predictions_tensor, desc) {
 	var start_tensors = memory_leak_debugger();
 	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 
