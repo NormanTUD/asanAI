@@ -1030,14 +1030,14 @@ async function predict_handdrawn () {
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		predict_data = tf.divNoNan(predict_data, divide_by);
+		predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by); });
 	}
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = await model.predict([predict_data], [1, 1]);
+		predictions_tensor = tf.tidy(() => { return model.predict([predict_data], [1, 1]); });
 	} catch (e) {
-		l("Predict data shape:" + predict_data.shape);
+		l("Predict data shape:", predict_data.shape);
 		console.error(e);
 		await dispose(predictions_tensor);
 		l("Error (443): " + e);
@@ -1049,54 +1049,12 @@ async function predict_handdrawn () {
 	var handdrawn_predictions = $("#handdrawn_predictions");
 	handdrawn_predictions.html("");
 
-	if(model.outputShape.length == 2) {
-		var predictions = predictions_tensor.arraySync();
-
-		var max = 0;
-
-		for (var i = 0; i < predictions[0].length; i++) {
-			if(max < predictions[0][i]) {
-				max = predictions[0][i];
-			}
-		}
-
-		var html = "<table class='predict_table'>";
-
-		for (var i = 0; i < predictions[0].length; i++) {
-			html += draw_bars_or_numbers(i, predictions, max);
-		}
-
-		html += "</table>";
-
-		handdrawn_predictions.html(html);
+	if(model_output_shape_looks_like_classification()) {
+		await _classification_handdrawn(predictions_tensor, handdrawn_predictions);
 	} else if(model.outputShape.length == 4) {
-		var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-		var predictions = predictions_tensor_transposed.arraySync();
-
-		var pxsz = 1;
-
-		var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
-
-		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-		while ((pxsz * largest) < max_height_width) {
-			pxsz += 1;
-		}
-
-
-		for (var i = 0; i < predictions.length; i++) {
-			var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-				width: pxsz * predictions_tensor.shape[2],
-				height: pxsz * predictions_tensor.shape[1],
-			});
-
-			$("#handdrawn_predictions").append(canvas);
-
-			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
-		}
-
-		await dispose(predictions_tensor_transposed);
+		await _image_output_handdrawn(predictions_tensor);
 	} else {
-		log("Different output shapes not yet supported");
+		console.warn("Different output shapes not yet supported");
 	}
 
 	await dispose(predictions_tensor);
@@ -1105,6 +1063,61 @@ async function predict_handdrawn () {
 	allow_editable_labels();
 
 	memory_leak_debugger("predict_handdrawn", start_tensors);
+}
+
+async function _image_output_handdrawn(predictions_tensor) {
+	var start_tensors = memory_leak_debugger();
+	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+	var predictions = predictions_tensor_transposed.arraySync();
+
+	var pxsz = 1;
+
+	var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+
+	var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+	while ((pxsz * largest) < max_height_width) {
+		pxsz += 1;
+	}
+
+
+	for (var i = 0; i < predictions.length; i++) {
+		var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+			width: pxsz * predictions_tensor.shape[2],
+			height: pxsz * predictions_tensor.shape[1],
+		});
+
+		$("#handdrawn_predictions").append(canvas);
+
+		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
+	}
+
+	await dispose(predictions_tensor_transposed);
+	memory_leak_debugger("_image_output_handdrawn", start_tensors);
+}
+
+async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
+	var start_tensors = memory_leak_debugger();
+
+	var predictions = predictions_tensor.arraySync();
+
+	var max = 0;
+
+	for (var i = 0; i < predictions[0].length; i++) {
+		if(max < predictions[0][i]) {
+			max = predictions[0][i];
+		}
+	}
+
+	var html = "<table class='predict_table'>";
+
+	for (var i = 0; i < predictions[0].length; i++) {
+		html += draw_bars_or_numbers(i, predictions, max);
+	}
+
+	html += "</table>";
+
+	handdrawn_predictions.html(html);
+	memory_leak_debugger("_classification_handdrawn", start_tensors);
 }
 
 async function repredict () {

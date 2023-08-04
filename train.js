@@ -654,6 +654,9 @@ async function run_neural_network () {
 			await dispose(h);
 		} catch (e) {
 			console.error(e);
+			if(typeof(e) == "object" && e.includes("message")) {
+				e = e.message;
+			}
 			await write_error("" + e);
 			error = 1;
 		}
@@ -885,14 +888,18 @@ async function visualize_train () {
 	}
 
 	if(labels.length) {
-		var image_elements = shuffle($("#photos").find("img,canvas"));
+		var image_elements = $("#photos").find("img,canvas");
+		if(!image_elements.length) {
+			console.error("could not find image_elements");
+			return;
+		}
 		var promises = [];
-		for (var i = 0; i <= image_elements.length; i++) {
+		for (var i = 0; i < image_elements.length; i++) {
 			var x = image_elements[i];
 			if(i <= max) {
 				imgs.push(x);
 
-				var img_tensor = tf.tidy(() => { tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims() });
+				var img_tensor = tf.tidy(() => { return tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims() });
 				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 				var res = model.predict(img_tensor);
 

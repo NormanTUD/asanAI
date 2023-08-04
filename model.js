@@ -1400,3 +1400,7 @@ async function input_shape_is_image (is_from_webcam=0) {
 	memory_leak_debugger("input_shape_is_image", start_tensors);
 	return false;
 }
+
+function model_output_shape_looks_like_classification () {
+	return model.outputShape.length == 2;
+}
