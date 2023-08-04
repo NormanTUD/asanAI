@@ -683,12 +683,6 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	await _create_model();
 
 	if(heatmap) {
-		/*
-		log(heatmap);
-		log(heatmap.shape);
-		heatmap.print();
-		*/
-
 		var canvas = $("#grad_cam_heatmap")[0];
 		var img = await heatmap.arraySync()[0];
 
@@ -717,6 +711,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	}
 
 	tf.engine().endScope();
+
 	memory_leak_debugger("draw_heatmap", start_tensors);
 }
 
