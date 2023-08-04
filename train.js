@@ -517,8 +517,6 @@ async function run_neural_network () {
 		return;
 	}
 
-	tf.engine().startScope();
-
 	var xs_and_ys;
 
 	try {
@@ -703,8 +701,6 @@ async function run_neural_network () {
 
 	await reset_data();
 
-	tf.engine().endScope();
-
 	await save_current_status();
 	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
 	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
@@ -840,7 +836,6 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 
 async function visualize_train () {
 	var start_tensors = memory_leak_debugger();
-	tf.engine().startScope();
 	seed_two = 2;
 
 	if(!$("#visualize_images_in_grid").is(":checked")) {
@@ -892,14 +887,14 @@ async function visualize_train () {
 	if(labels.length) {
 		var image_elements = shuffle($("#photos").find("img,canvas"));
 		var promises = [];
-		image_elements.each((i,x) => {
+		for (var i = 0; i <= image_elements.length; i++) {
+			var x = image_elements[i];
 			if(i <= max) {
 				imgs.push(x);
 
-				var img_tensor = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims();
+				var img_tensor = tf.tidy(() => { tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims() });
 				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
 				var res = model.predict(img_tensor);
-
 
 				var res_array = res.arraySync()[0];
 				//log("RES for " + x.src + " :", res_array);
@@ -912,8 +907,11 @@ async function visualize_train () {
 
 				promises.push(dispose(res));
 				promises.push(dispose(img_tensor));
+
+				await dispose(res);
+				await dispose(img_tensor)
 			}
-		});
+		}
 
 		for (var i = 0; i < promises.length; i++) {
 			await promises[i];
@@ -929,7 +927,6 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").html("");
 	}
 
-	tf.engine().endScope();
 	await tf.nextFrame();
 
 	memory_leak_debugger("visualize_train", start_tensors);

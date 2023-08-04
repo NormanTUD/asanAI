@@ -835,8 +835,6 @@ async function compile_fake_model(layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
 
-	tf.engine().startScope();
-
 	var start_tensors = memory_leak_debugger();
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
@@ -884,8 +882,6 @@ async function compile_fake_model(layer_nr, layer_type) {
 		console.warn(e);
 		ret = false;
 	}
-
-	tf.engine().endScope();
 
 	memory_leak_debugger("compile_fake_model", start_tensors);
 
@@ -1039,7 +1035,7 @@ async function get_valid_layer_types (layer_nr) {
 
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 	var start_tensors = memory_leak_debugger();
-	tf.engine().startScope();
+
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
 		m = model;
@@ -1098,8 +1094,6 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		);
 	}
 
-	tf.engine().endScope();
-
 	memory_leak_debugger("set_weights_from_json_object", start_tensors);
 
 	return true;
@@ -1146,6 +1140,7 @@ async function get_weights_as_json (m) {
 
 
 async function get_weights_as_string (m) {
+	var start_tensors = memory_leak_debugger();
 	if(weights_as_string_cache !== false && !m) {
 		return weights_as_string_cache;
 	}
@@ -1155,9 +1150,12 @@ async function get_weights_as_string (m) {
 	}
 
 	if(!m) {
-		//log("Could not get model...");
+		console.warn("Could not get model...");
+		memory_leak_debugger("get_weights_as_string", start_tensors);
 		return false;
 	}
+
+	var res;
 
 	if(m) {
 		var weights = await m.getWeights();
@@ -1168,16 +1166,30 @@ async function get_weights_as_string (m) {
 			if(!weights[i].isDisposed) {
 				try {
 					weights_array[i] = weights[i].arraySync();
-				} catch (e) {}
+				} catch (e) {
+					console.error(e);
+				}
+			} else {
+				console.warn("weights is disposed");
 			}
 		}
 
 		last_weights_as_string = JSON.stringify(weights_array);
 		weights_as_string_cache = last_weights_as_string;
-		return last_weights_as_string;
+		res = last_weights_as_string;
+
+		/*
+		for (var i = 0; i < weights.length; i++) {
+			await dispose(weights[i]);
+		}
+		*/
 	} else {
-		return false;
+		res = false;
 	}
+
+	memory_leak_debugger("get_weights_as_string", start_tensors);
+
+	return res;
 }
 
 async function copy_weights_to_clipboard () {

@@ -1079,7 +1079,9 @@ function get_csv_seperator () {
 }
 
 async function get_x_y_from_csv () {
+	var start_tensors = memory_leak_debugger();
 	await reset_data();
+
 
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();
@@ -1148,6 +1150,8 @@ async function get_x_y_from_csv () {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
 	}
 
+	memory_leak_debugger("get_x_y_from_csv", start_tensors);
+
 	return {
 		"x": x,
 		"y": y,
@@ -1163,6 +1167,7 @@ async function get_x_y_from_csv () {
 */
 
 async function get_x_y_as_array () {
+	var start_tensors = memory_leak_debugger();
 	while (started_training) {
 		l("Awaiting finishing of training");
 		await delay(1000)
@@ -1171,7 +1176,14 @@ async function get_x_y_as_array () {
 	var data = await get_xs_and_ys();
 	force_download = 0;
 
-	return JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
+	var ret = JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
+
+	await dispose(data["x"]);
+	await dispose(data["y"]);
+
+	memory_leak_debugger("get_x_y_as_array", start_tensors);
+
+	return ret;
 }
 
 async function get_data_from_webcam (force_restart) {
@@ -1288,7 +1300,7 @@ async function take_image_from_webcam_n_times (elem) {
 }
 
 async function take_image_from_webcam (elem, nol, increment_counter=true) {
-	tf.engine().startScope();
+	var start_tensors = memory_leak_debugger();
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
@@ -1338,7 +1350,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 
 	await last_shape_layer_warning();
-	tf.engine().endScope();
+	memory_leak_debugger("take_image_from_webcam", start_tensors);
 }
 
 function chiSquaredTest(arr) {

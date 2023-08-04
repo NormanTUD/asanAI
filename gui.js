@@ -3791,7 +3791,7 @@ function show_head_data(head) {
 }
 
 async function show_csv_file(disabled_show_head_data) {
-	tf.engine().startScope();
+	var start_tensors = memory_leak_debugger();
 	var csv = $("#csv_file").val();
 
 	var data = parse_csv_file(csv);
@@ -3886,7 +3886,7 @@ async function show_csv_file(disabled_show_head_data) {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
 	}
-	tf.engine().endScope();
+	memory_leak_debugger("show_csv_file", start_tensors);
 }
 
 function get_generated_encoding(nr, max) {
@@ -4804,6 +4804,9 @@ async function get_training_data_as_json () {
 
 	training_data.x = await training_data.x.arraySync()
 	training_data.y = await training_data.y.arraySync()
+
+	await dispose(training_data["x"]);
+	await dispose(training_data["y"]);
 
 	return JSON.stringify(training_data);
 }

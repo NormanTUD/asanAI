@@ -75,7 +75,7 @@ function _divide_img_tensor (tensor_img) {
 }
 
 async function _get_tensor_img(item) {
-	//var start_tensors = memory_leak_debugger();
+	var start_tensors = memory_leak_debugger();
 	var tensor_img = null;
 
 	try {
@@ -92,7 +92,7 @@ async function _get_tensor_img(item) {
 
 	tensor_img = tf.tidy(() => {return _divide_img_tensor(tensor_img)});
 
-	//memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
+	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
 	return tensor_img;
 }
@@ -204,6 +204,13 @@ async function predict_demo (item, nr, tried_again = 0) {
 }
 
 async function _run_predict_and_show (tensor_img, nr) {
+	if(tensor_img.isDisposedInternal) {
+		console.warn("Tensor was disposed internally", tensor_img);
+		console.trace();
+		return;
+
+	}
+
 	if(!tensor_shape_matches_model(tensor_img)) {
 		console.warn("Tensor shape does not match model shape");
 		return;
@@ -426,82 +433,20 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			pred_tab = "prediction_non_image";
 			$("#" + pred_tab).html("");
 		} else {
+			var desc = $("#pred_tab")[0];
 			if(model.outputShape.length == 4) {
 				var pxsz = 1;
-
-				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				//predictions_tensor_transposed.print()
-
-				var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
-
-				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-				while ((pxsz * largest) < max_height_width) {
-					pxsz += 1;
-				}
-
-				predictions = predictions_tensor_transposed.arraySync();
-				for (var i = 0; i < predictions.length; i++) {
-					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-						width: pxsz * predictions_tensor.shape[2],
-						height: pxsz * predictions_tensor.shape[1],
-					});
-
-					$("#" + pred_tab).append(canvas);
-
-					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
-					log(res);
-				}
-
-				dispose(predictions_tensor_transposed);
+				draw_multi_channel(predictions_tensor, desc, pxsz)
 			} else {
-
 				if(predictions.length) {
-					var max_i = 0;
-					var max_probability = -9999999;
-
-					for (let i = 0; i < predictions.length; i++) {
-						var probability = predictions[i];
-						if(probability > max_probability) {
-							max_probability = probability;
-							max_i = i;
-						}
-					}
-
-					if(labels.length == 0) {
-						await get_label_data();
-					}
-
-					str += "<table class='predict_table'>";
-
-					for (let i = 0; i < predictions.length; i++) {
-						var label = labels[i % labels.length];
-						var probability = predictions[i];
-						var this_str = "";
-						if(label) {
-							this_str = label;
-						}
-
-						var w = Math.floor(probability * 50);
-
-						if(show_bars_instead_of_numbers()) {
-							if(i == max_i && get_show_green()) {
-								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-							} else {
-								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-							}
-						} else {
-							if(i == max_i && get_show_green()) {
-								str += "<tr><td>" + this_str + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
-							} else {
-								str += "<tr><td>" + this_str + "</td><td>" + probability + "</td></tr>";
-							}
-						}
-					}
-
-					str += "</table>";
+					await _predict_table(predictions_tensor, desc);
+				} else {
+					console.warn("No predict tensor found");
 				}
 			}
 		}
+
+		await dispose(predictions_tensor_transposed);
 
 		log("attempting to add to ", $("#" + pred_tab));
 		$("#" + pred_tab).append(str).show();
@@ -677,7 +622,6 @@ async function _print_example_predictions (count) {
 
 async function _get_example_string (examples, count, full_dir) {
 	var start_tensors = memory_leak_debugger();
-	tf.engine().startScope();
 	var str = "";
 	for (var i = 0; i < examples.length; i++) {
 		count++;
@@ -698,7 +642,6 @@ async function _get_example_string (examples, count, full_dir) {
 		}
 	}
 
-	tf.engine().endScope();
 	memory_leak_debugger("_get_example_string", start_tensors);
 	return [str, count];
 }
@@ -730,7 +673,6 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		return;
 	}
 
-	tf.engine().startScope();
 	var strongest_category = get_index_of_highest_category(predictions_tensor);
 
 	var original_disable_layer_debuggers = disable_layer_debuggers;
@@ -739,7 +681,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	disable_layer_debuggers = original_disable_layer_debuggers;
 
 	/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
-	await _create_model();
+	//await _create_model();
 
 	if(heatmap) {
 		var canvas = $("#grad_cam_heatmap")[0];
@@ -769,8 +711,6 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		$("#grad_cam_heatmap").hide();
 	}
 
-	tf.engine().endScope();
-
 	memory_leak_debugger("draw_heatmap", start_tensors);
 }
 
@@ -785,15 +725,13 @@ async function predict_webcam () {
 
 	var start_tensors = memory_leak_debugger();
 
-	tf.engine().startScope();
-
 	var predict_data = await cam.capture();
-	predict_data = predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims()
+	predict_data = tf.tidy(() => { return predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims(); });
 
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		predict_data = tf.divNoNan(predict_data, divide_by);
+		predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by) });
 	}
 
 	var predictions_tensor = null;
@@ -801,29 +739,29 @@ async function predict_webcam () {
 		predictions_tensor = await model.predict([predict_data], [1, 1]);
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
+		await dispose(predict_data);
 		console.error(e);
 		l("Error (512): " + e);
+		memory_leak_debugger("predict_webcam", start_tensors);
 		return;
 	}
 
 	await draw_heatmap(predictions_tensor, predict_data, 1);
 
-	var predictions = predictions_tensor.dataSync();
+	await dispose(predict_data);
+
+	var predictions = predictions_tensor.arraySync();
 
 	var webcam_prediction = $("#webcam_prediction");
 	webcam_prediction.html("").show();
 
 	if(!await input_shape_is_image() && labels.length == 0) {
 		var str = "[" + predictions.join(", ") + "]";
-		$("#webcam_prediction").append(str);
+		webcam_prediction.append(str);
 	} else {
 		if(predictions.length) {
-			$("#webcam_prediction").html("");
+			webcam_prediction.html("");
 			if(model.outputShape.length == 4) {
-				//log("=== predictions/transposed shape ===")
-				//log(predictions_tensor.shape);
-				var predictions = predictions_tensor.arraySync();
-
 				var pxsz = 1;
 
 				var largest = Math.max(predictions_tensor[1], predictions_tensor[2]);
@@ -834,81 +772,98 @@ async function predict_webcam () {
 				}
 
 				if(predictions_tensor.shape[3] == 3) {
-					var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-						width: pxsz * predictions_tensor.shape[2],
-						height: pxsz * predictions_tensor.shape[1],
-					});
-
-					$("#webcam_prediction").append(canvas);
-
-					draw_grid(canvas, pxsz, predictions[0], 1, 0);
+					draw_rgb(predictions_tensor, predictions, pxsz, webcam_prediction);
 				} else {
-					var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
-
-					for (var i = 0; i < predictions_tensor.shape[3]; i++) {
-						var canvas = $('<canvas/>', {class: "layer_image"}).prop({
-							height: pxsz * predictions_tensor.shape[1],
-							width: pxsz * predictions_tensor.shape[2]
-						});
-
-						$("#webcam_prediction").append(canvas);
-
-						var d = transposed[i];
-
-						draw_grid(canvas, pxsz, d, 1, 1);
-					}
+					draw_multi_channel(predictions_tensor, webcam_prediction, pxsz)
 				}
 			} else {
-				var max_i = 0;
-				var max_probability = -9999999;
-
-				for (let i = 0; i < predictions.length; i++) {
-					var probability = predictions[i];
-					if(probability > max_probability) {
-						max_probability = probability;
-						max_i = i;
-					}
-				}
-
-				if(labels.length == 0) {
-					await get_label_data();
-				}
-
-				str = "<table class='predict_table'>";
-
-				for (let i = 0; i < predictions.length; i++) {
-					var label = labels[i % labels.length];
-					var probability = predictions[i];
-
-					var w = Math.floor(probability * 50);
-
-					if(show_bars_instead_of_numbers()) {
-						if(i == max_i) {
-							//str = "<b class='max_prediction'>" + str + "</b>";
-							str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-						} else {
-							str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-						}
-					} else {
-						probability = (probability * 50) + "%";
-						if(i == max_i) {
-							str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
-						} else {
-							str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-						}
-					}
-				}
-
-				str += "</table>";
-
-				webcam_prediction.append(str);
+				await _webcam_predict(webcam_prediction, predictions);
 			}
 		}
 	}
 
-	tf.engine().endScope();
+	await dispose(predictions_tensor);
 
 	memory_leak_debugger("predict_webcam", start_tensors);
+}
+
+function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
+	var start_tensors = memory_leak_debugger();
+	var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
+
+	for (var i = 0; i < predictions_tensor.shape[3]; i++) {
+		var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+			height: pxsz * predictions_tensor.shape[1],
+			width: pxsz * predictions_tensor.shape[2]
+		});
+
+		webcam_prediction.append(canvas);
+
+		var d = transposed[i];
+
+		draw_grid(canvas, pxsz, d, 1, 1);
+	}
+
+	memory_leak_debugger("draw_multi_channel", start_tensors);
+}
+
+function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
+	var start_tensors = memory_leak_debugger();
+	var canvas = $('<canvas/>', {class: "layer_image"}).prop({
+		width: pxsz * predictions_tensor.shape[2],
+		height: pxsz * predictions_tensor.shape[1],
+	});
+
+	webcam_prediction.append(canvas);
+
+	draw_grid(canvas, pxsz, predictions[0], 1, 0);
+	memory_leak_debugger("draw_rgb", start_tensors);
+}
+
+async function _webcam_predict (webcam_prediction, predictions) {
+	var max_i = 0;
+	var max_probability = -9999999;
+
+	for (let i = 0; i < predictions.length; i++) {
+		var probability = predictions[i];
+		if(probability > max_probability) {
+			max_probability = probability;
+			max_i = i;
+		}
+	}
+
+	if(labels.length == 0) {
+		await get_label_data();
+	}
+
+	var str = "<table class='predict_table'>";
+
+	for (let i = 0; i < predictions.length; i++) {
+		var label = labels[i % labels.length];
+		var probability = predictions[i];
+
+		var w = Math.floor(probability * 50);
+
+		if(show_bars_instead_of_numbers()) {
+			if(i == max_i) {
+				//str = "<b class='max_prediction'>" + str + "</b>";
+				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+			} else {
+				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+			}
+		} else {
+			probability = (probability * 50) + "%";
+			if(i == max_i) {
+				str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
+			} else {
+				str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
+			}
+		}
+	}
+
+	str += "</table>";
+
+	webcam_prediction.append(str);
 }
 
 async function show_webcam (force_restart) {
@@ -1035,7 +990,7 @@ async function predict_handdrawn () {
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
 		console.error(e);
-		dispose(predictions_tensor);
+		await dispose(predictions_tensor);
 		l("Error (443): " + e);
 		return;
 	}
@@ -1127,7 +1082,7 @@ async function predict_handdrawn () {
 		log("Different output shapes not yet supported");
 	}
 
-	dispose(predictions_tensor);
+	await dispose(predictions_tensor);
 
 	allow_editable_labels();
 
