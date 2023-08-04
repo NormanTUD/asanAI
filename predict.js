@@ -136,6 +136,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	var large_try = memory_leak_debugger();
+
 	try {
 		while (!tf.backend()) {
 			await delay(100);
@@ -924,6 +925,8 @@ async function show_webcam (force_restart) {
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
 function tensor_shape_matches_model (tensor) {
+	var start_tensors = memory_leak_debugger();
+	var res = false;
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
 	input_layer_shape.shift();
 
@@ -931,10 +934,14 @@ function tensor_shape_matches_model (tensor) {
 	tensor_shape.shift();
 
 	if(tensor_shape.join(",") != input_layer_shape.join(",")) {
-		return false;
+		res = false;
 	}
 
-	return true;
+	res = true;
+
+	memory_leak_debugger("tensor_shape_matches_model", start_tensors);
+
+	return res;
 }
 
 async function predict_handdrawn () {
