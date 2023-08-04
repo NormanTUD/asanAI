@@ -58,15 +58,10 @@ async function _create_model () {
 	memory_leak_debugger("_create_model", start_tensors);
 }
 
-async function compile_model (keep_weights, force_dont_keep_weights) {
+async function compile_model () {
 	var start_tensors = memory_leak_debugger();
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 	weights_as_string_cache = false;
-
-	keep_weights = keep_weights && $("#keep_weights").is(":checked");
-	if(force_dont_keep_weights) {
-		keep_weights = 0;
-	}
 
 	var recreate_model = false;
 
@@ -76,18 +71,13 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 		recreate_model = true;
 	}
 
-	if(!keep_weights && force_dont_keep_weights) {
-		recreate_model = true;
-	}
-
 	var old_weights_string = false;
 
 	if(!model) {
-		model = await create_model(model, await get_model_structure());
-	} else {
-		if(keep_weights && model && Object.keys(model).includes("layers")) {
-			old_weights_string = await get_weights_as_string();
+		if(finished_loading) {
+			console.warn("model not given");
 		}
+		model = await create_model(model, await get_model_structure());
 	}
 
 	var model_was_trained_previously = model_is_trained;
@@ -135,24 +125,6 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 	$("#outputShape").val(JSON.stringify(model.outputShape));
 
 	write_model_summary_wait();
-
-	if(keep_weights) {
-		if(old_weights_string) {
-			var new_weights_string = await get_weights_as_string();
-			var old_weights = eval(old_weights_string);
-			var new_weights = eval(new_weights_string);
-
-			var old_shape_string = (await get_shape_from_array(old_weights)).toString();
-			var new_shape_string = (await get_shape_from_array(new_weights)).toString();
-
-			if(old_shape_string == new_shape_string) {
-				if(old_weights_string != new_weights_string) {
-					await set_weights_from_string(JSON.stringify(old_weights), 1, 1, model);
-					model_is_trained = true;
-				}
-			}
-		}
-	}
 
 	memory_leak_debugger("compile_model", start_tensors);
 }
@@ -702,39 +674,12 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	current_layer_status_hash = await get_current_layer_container_status_hash();
 
-	await _set_old_weights(force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string)
-
 	if(!fake_model_structure) {
 		l("Model compiled successfully");
 	}
 
 	memory_leak_debugger("create_model", start_tensors);
 	return new_model;
-}
-
-async function _set_old_weights (force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string) {
-	var start_tensors = memory_leak_debugger();
-	if(!force_dont_keep_weights) {
-		if(old_weights_string) {
-			if(layers_container_md5 == new_layers_container_md5) {
-				var new_weights_string = await get_weights_as_string(new_model);
-				var old_weights = eval(old_weights_string);
-				var new_weights = eval(new_weights_string);
-
-				var old_shape_string = (await get_shape_from_array(old_weights)).toString();
-				var new_shape_string = (await get_shape_from_array(new_weights)).toString();
-
-				if(old_shape_string == new_shape_string) {
-					if(old_weights_string != new_weights_string) {
-						await set_weights_from_string(JSON.stringify(old_weights), 1, 1, new_model);
-					}
-				}
-			} else {
-				layers_container_md5 = new_layers_container_md5;
-			}
-		}
-	}
-	memory_leak_debugger("_set_old_weights", start_tensors);
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
@@ -1065,6 +1010,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	}
 
 	try {
+		var old_model_weights = model.weights;
 		try {
 			m.setWeights(tensors);
 
@@ -1325,14 +1271,7 @@ async function get_tfjs_model () {
 
 async function _force_reinit() {
 	l("Started re-initializing");
-	var old_force_dont_keep_weights = force_dont_keep_weights;
-
-	force_dont_keep_weights = true;
-
 	await compile_model(0, 1);
-
-	force_dont_keep_weights = old_force_dont_keep_weights;
-
 	await updated_page();
 	l("Done re-initializing");
 }

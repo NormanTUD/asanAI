@@ -548,10 +548,6 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-								       <td>Keep weights when possible?</td>
-								       <td><input type="checkbox" value=1 checked id="keep_weights"></td>
-								</tr>
-								<tr>
 								       <td>Shuffle before each epoch?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>

@@ -1060,7 +1060,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		return;
 	}
 
-	var keep_weights = 0;
 	if ($(item).length) {
 		var changed_layer = find_layer_number_by_element($(item));
 		// TODO!!! Only change weights from this specific layer if changing weights is neccessary
@@ -1082,22 +1081,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			"trainable",
 			"dropout_rate"
 		];
-
-		for (var i = 0; i < caller_classes.length; i++) {
-			if (!keep_weights) {
-				for (var j = 0; j < keep_classes.length; j++) {
-					if (!keep_weights) {
-						if (caller_classes[i] == keep_classes[j]) {
-							keep_weights = 1;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	try {
-		await compile_model(keep_weights);
+		await compile_model();
 	} catch (e) {
 		log(e);
 		log("There was an error compiling the model: " + e);
