@@ -106,6 +106,10 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await delay(200);
 	}
 
+	var xpath = get_element_xpath(item);
+
+	tf.engine().startScope("scope_" + xpath);
+
 	var start_tensors = memory_leak_debugger();
 
 	var new_tensor_img;
@@ -201,6 +205,10 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	await dispose(tensor_img);
 	await dispose(new_tensor_img);
+
+	tf.engine().endScope("scope_" + xpath);
+
+	await tf.nextFrame();
 
 	memory_leak_debugger("predict_demo", start_tensors);
 }
@@ -1032,6 +1040,8 @@ async function predict_handdrawn () {
 		return;
 	}
 
+	tf.engine().startScope("scope_predict_handdrawn");
+
 	var start_tensors = memory_leak_debugger();
 
 	if(Object.keys(atrament_data).includes("sketcher")) {
@@ -1092,6 +1102,9 @@ async function predict_handdrawn () {
 	await dispose(predict_data);
 
 	allow_editable_labels();
+
+	tf.engine().endScope("scope_predict_handdrawn");
+
 
 	memory_leak_debugger("predict_handdrawn", start_tensors);
 }
