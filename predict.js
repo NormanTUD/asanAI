@@ -64,7 +64,9 @@ function _divide_img_tensor (tensor_img) {
 	var start_tensors = memory_leak_debugger();
 
 	try {
-		tensor_img = tf.tidy(() => { return tf.divNoNan(tensor_img, divide_by) });
+		tensor_img = tf.tidy(() => {
+			return tf.divNoNan(tensor_img, divide_by)
+		});
 	} catch (e) {
 		_predict_error(e);
 	}
@@ -80,21 +82,37 @@ async function _get_tensor_img(item) {
 
 	try {
 		tensor_img = await tf.tidy(() => {
-			return tf.browser.fromPixels(item)
+			return _divide_img_tensor(tf.browser.fromPixels(item)
 				.resizeNearestNeighbor([height, width])
 				.toFloat()
-				.expandDims();
+				.expandDims());
 		});
 	} catch (e) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
 		_predict_error(e);
+		return null;
 	}
-
-	tensor_img = tf.tidy(() => {return _divide_img_tensor(tensor_img)});
 
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
 	return tensor_img;
+}
+
+function set_item_natural_width (item) {
+	var start_tensors = memory_leak_debugger();
+	try {
+		var $item = $(item);
+		assert($item.length > 0, "$item is empty");
+		var element_vanilla_js = $item[0];
+		$item.prop("width", element_vanilla_js.naturalWidth);
+		$item.prop("height", element_vanilla_js.naturalHeight);
+	} catch (e) {
+		_predict_error(e);
+		return false;
+	}
+	memory_leak_debugger("set_item_natural_width", start_tensors)
+
+	return true;
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
@@ -106,8 +124,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await delay(200);
 	}
 
-	var xpath = get_element_xpath(item);
-
+	//var xpath = get_element_xpath(item);
 	//tf.engine().startScope("scope_" + xpath);
 
 	var start_tensors = memory_leak_debugger();
@@ -120,21 +137,18 @@ async function predict_demo (item, nr, tried_again = 0) {
 		}
 	} catch (e) {
 		_predict_error(e);
+
+		return;
 	}
 
-	try {
-		var $item = $(item);
-		assert($item.length > 0, "$item is empty");
-		var element_vanilla_js = $item[0];
-		$item.prop("width", element_vanilla_js.naturalWidth);
-		$item.prop("height", element_vanilla_js.naturalHeight);
-	} catch (e) {
-		_predict_error(e);
+	if(!set_item_natural_width(item)) {
+		console.log("Setting item to natural height failed. Returning.");
+		return;
 	}
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
 	
 	if(item.width == 0) {
-		//log("item width is 0, not predicting:", item);
+		log("item width is 0, not predicting:", item);
 		return;
 	}
 
@@ -230,8 +244,6 @@ async function _run_predict_and_show (tensor_img, nr) {
 	}
 
 	var predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
-
-	log(predictions_tensor);
 
 	await _predict_result(predictions_tensor, nr);
 	await draw_heatmap(predictions_tensor, tensor_img);
