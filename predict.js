@@ -648,6 +648,7 @@ function get_index_of_highest_category (predictions_tensor) {
 }
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
+	var start_tensors = memory_leak_debugger();
 	if(await input_shape_is_image(is_from_webcam) && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
 		tf.engine().startScope();
 		var strongest_category = get_index_of_highest_category(predictions_tensor);
@@ -695,6 +696,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		}
 		tf.engine().endScope();
 	}
+	memory_leak_debugger("draw_heatmap", start_tensors)
 }
 
 async function predict_webcam () {
@@ -705,6 +707,8 @@ async function predict_webcam () {
 	if(is_hidden_or_has_hidden_parent($("#webcam"))) {
 		return;
 	}
+
+	var start_tensors = memory_leak_debugger();
 
 	tf.engine().startScope();
 
@@ -830,6 +834,8 @@ async function predict_webcam () {
 	}
 
 	tf.engine().endScope();
+
+	memory_leak_debugger("predict_webcam", start_tensors);
 }
 
 async function show_webcam (force_restart) {
@@ -920,6 +926,8 @@ async function predict_handdrawn () {
 		log("ERROR: model is undefined");
 		return;
 	}
+
+	var start_tensors = memory_leak_debugger();
 
 	if(Object.keys(atrament_data).includes("sketcher")) {
 		if(sketcher_warning >= 1) {
@@ -1042,6 +1050,8 @@ async function predict_handdrawn () {
 	tf.engine().endScope();
 
 	allow_editable_labels();
+
+	memory_leak_debugger("predict_handdrawn", start_tensors);
 }
 
 async function repredict () {
