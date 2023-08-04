@@ -459,9 +459,15 @@ function check_initializers (data, has_keys) {
 			if(regularizer_or_init == "Initializer") {
 				if(has_keys.includes(keyname)) {
 					var original_name = data[keyname]["name"];
+					assert(typeof(original_name) == "string", "original_name is not string");
 					var options_stringified = JSON.stringify(data[keyname]["config"]);
 					if(original_name) {
-						data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+						try {
+							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+						} catch (e) {
+							console.error(e);
+							console.trace();
+						}
 					} else {
 						data[keyname] = null;
 					}
@@ -469,9 +475,15 @@ function check_initializers (data, has_keys) {
 			} else if(regularizer_or_init == "Regularizer") {
 				if(has_keys.includes(keyname)) {
 					var original_name = data[keyname]["name"];
+					assert(typeof(original_name) == "string", "original_name is not string");
 					var options_stringified = JSON.stringify(data[keyname]["config"]);
 					if(original_name && original_name != "none") {
-						data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+						try {
+							data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+						} catch (e) {
+							console.error(e);
+							console.trace();
+						}
 					} else {
 						data[keyname] = null;
 					}
