@@ -743,7 +743,7 @@ async function dispose (item) {
 
 		await tf.nextFrame();
 	} else {
-		console.warn("item was empty in dispose():");
+		console.warn("item was empty in dispose():"); // not a real async
 		console.trace();
 	}
 }

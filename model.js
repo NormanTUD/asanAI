@@ -1313,6 +1313,8 @@ async function force_reinit (no_msg) {
 		return;
 	}
 
+	var start_tensors = memory_leak_debugger();
+
 	if(!no_msg) {
 		Swal.fire({
 			title: 'Are you sure?',
@@ -1335,6 +1337,8 @@ async function force_reinit (no_msg) {
 
 	await rename_labels();
 	await repredict();
+
+	memory_leak_debugger("force_reinit", start_tensors);
 }
 
 async function input_shape_is_image (is_from_webcam=0) {
