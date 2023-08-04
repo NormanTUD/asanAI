@@ -682,6 +682,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		!started_training && 
 		(await output_size_at_layer(get_number_of_layers())).length == 2)
 	) {
+		memory_leak_debugger("draw_heatmap", start_tensors);
 		return;
 	}
 
@@ -763,7 +764,18 @@ async function predict_webcam () {
 
 	var predict_data = await cam.capture();
 
-	predict_data = tf.tidy(() => { return  _get_resized_webcam(predict_data, height, width); });
+	var wait = null;
+
+	predict_data = tf.tidy(() => {
+		var new_res = _get_resized_webcam(predict_data, height, width);
+		wait = dispose(predict_data);
+		return new_res;
+	});
+
+	if(wait) {
+		await wait;
+	}
+
 
 	var predictions_tensor = null;
 	try {
