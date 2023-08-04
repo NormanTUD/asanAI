@@ -146,6 +146,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	if(!tensor_img) {
 		console.warn("tensor_img was empty");
+		await dispose(tensor_img);
 		return;
 	}
 
@@ -166,6 +167,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		if(finished_loading) {
 			console.error("No model");
 		}
+		await dispose(tensor_img);
 		return;
 	}
 
@@ -737,19 +739,29 @@ function _get_resized_webcam (predict_data, h, w) {
 		return r;
 	})
 
-	memory_leak_debugger("_get_resized_webcam", start_tensors);
+	memory_leak_debugger("_get_resized_webcam", start_tensors + 1);
 	return res;
 }
 
 async function predict_webcam () {
+	if(currently_predicting_webcam) {
+		return;
+	}
+
+	currently_predicting_webcam = true;
+
 	var start_tensors = memory_leak_debugger();
 	if(!cam) {
+		currently_predicting_webcam = false;
 		return;
 	}
 
 	if(is_hidden_or_has_hidden_parent($("#webcam"))) {
+		currently_predicting_webcam = false;
 		return;
 	}
+
+	tf.engine().startScope("predict_webcam");
 
 	var predict_data = await cam.capture();
 
@@ -766,6 +778,7 @@ async function predict_webcam () {
 		console.error(e);
 		l("Error (512): " + e);
 		memory_leak_debugger("predict_webcam", start_tensors);
+		currently_predicting_webcam = false;
 		return;
 	}
 
@@ -800,13 +813,20 @@ async function predict_webcam () {
 			} else {
 				await _webcam_predict(webcam_prediction, predictions);
 			}
+		} else {
+			log("predictions is empty");
 		}
 	}
 
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
+	tf.engine().endScope("predict_webcam");
+	await tf.nextFrame();
+
 	memory_leak_debugger("predict_webcam", start_tensors);
+
+	currently_predicting_webcam = false;
 }
 
 function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
@@ -868,8 +888,8 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	var start_tensors = memory_leak_debugger();
 	var str = "<table class='predict_table'>";
 
-	for (let i = 0; i < predictions.length; i++) {
-		str += _webcam_prediction_row(i, predictions, max_i);
+	for (let i = 0; i < predictions[0].length; i++) {
+		str += _webcam_prediction_row(i, predictions[0], max_i);
 	}
 
 	str += "</table>";

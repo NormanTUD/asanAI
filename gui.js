@@ -3390,7 +3390,7 @@ async function change_data_origin() {
 			if(!is_cosmo_mode) {
 				$("#show_webcam_button").show();
 			} else {
-				$("#show_webcam_button").hide();
+				//$("#show_webcam_button").hide();
 			}
 		} else {
 			$("#show_webcam_button").hide();

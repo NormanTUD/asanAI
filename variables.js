@@ -1472,3 +1472,5 @@ var cosmo_functions_at_milestones = {
 var ran_milestones = [];
 
 var cosmo_predict_mode = "examples";
+
+var currently_predicting_webcam = false;
