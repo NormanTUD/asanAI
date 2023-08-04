@@ -818,6 +818,7 @@ function add_photo_to_gallery(url) {
 }
 
 function url_to_tf (url, dont_load_into_tf = 0) {
+	var start_tensors = memory_leak_debugger();
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	headerdatadebug("url_to_tf(" + url + ")");
@@ -827,38 +828,31 @@ function url_to_tf (url, dont_load_into_tf = 0) {
 			let img = await load_image(url);
 			var resized_img = [];
 			if(!dont_load_into_tf) {
-				tf_img = tf.browser.fromPixels(img);
-				resized_img = tf_img.
-					resizeNearestNeighbor([height, width]).
-					toFloat().
-					expandDims();
-				await dispose(tf_img);
+				resized_img = tf.tidy(() => {
+					var res = tf.browser.fromPixels(img);
+					resized_img = res.
+						resizeNearestNeighbor([height, width]).
+						toFloat().
+						expandDims();
 
-				if($("#divide_by").val() != 1) {
-					var tries = 0;
-					var success = 0;
-
-					while (!success && tries <= 5) {
-						try {
-							resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
-							success = 1;
-						} catch (e) {
-							console.error(e);
-							log(`Trying it again because of previous error, success: ${success}, tries: ${tries}`);
-							tries++;
-							success = 0;
-						}
+					if($("#divide_by").val() != 1) {
+						resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
 					}
-				}
+
+					return resized_img;
+				});
 			}
 
 			return resized_img;
 		})();
 
+		memory_leak_debugger("url_to_tf", start_tensors + 1); // one new tensor
 		return tf_img;
 	} catch (e) {
 		header_error("url_to_tf(" + url + ") failed: " + e);
 	}
+
+	memory_leak_debugger("url_to_tf", start_tensors); // one new tensor
 	return null;
 }
 
