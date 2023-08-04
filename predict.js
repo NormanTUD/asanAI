@@ -83,8 +83,11 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	try {
-		$(item).prop("width", $(item)[0].naturalWidth);
-		$(item).prop("height", $(item)[0].naturalHeight);
+		var $item = $(item);
+		assert($item.length > 0, "$item is empty");
+		var element_vanilla_js = $item[0];
+		$item.prop("width", element_vanilla_js.naturalWidth);
+		$item.prop("height", element_vanilla_js.naturalHeight);
 	} catch (e) {
 		_predict_error(e);
 	}
@@ -95,15 +98,15 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
+	assert(width > 0, "width is not larger than 0");
+	assert(height > 0, "height is not larger than 0");
+
 	try {
 		tensor_img = tf.tidy(() => {
 			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
 		});
 	} catch (e) {
-		log("item:", item);
-		log("width:", width);
-		log("height:", height);
-		log("error:", e);
+		log("item:", item, "width:", width, "height:", height, "error:", e);
 		_predict_error(e);
 		return;
 	}
