@@ -728,17 +728,21 @@ async function predict_webcam () {
 	var start_tensors = memory_leak_debugger();
 
 	var predict_data = await cam.capture();
-	predict_data = tf.tidy(() => { return predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims(); });
 
-	var divide_by = parseFloat($("#divide_by").val());
+	predict_data = tf.tidy(() => {
+		var divide_by = parseFloat($("#divide_by").val());
+		var res = predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims();
 
-	if(divide_by != 1) {
-		predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by) });
-	}
+		if(divide_by != 1) {
+			res = tf.tidy(() => { return tf.divNoNan(res, divide_by) });
+		}
+
+		return res;
+	});
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = await model.predict([predict_data], [1, 1]);
+		predictions_tensor = tf.tidy(() => { return model.predict([predict_data], [1, 1]); });
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
 		await dispose(predict_data);
@@ -750,7 +754,6 @@ async function predict_webcam () {
 
 	await draw_heatmap(predictions_tensor, predict_data, 1);
 
-	await dispose(predict_data);
 
 	var predictions = predictions_tensor.arraySync();
 
@@ -785,6 +788,7 @@ async function predict_webcam () {
 	}
 
 	await dispose(predictions_tensor);
+	await dispose(predict_data);
 
 	memory_leak_debugger("predict_webcam", start_tensors);
 }
