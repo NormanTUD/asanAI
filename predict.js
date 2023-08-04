@@ -142,17 +142,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 		}
 
 		if(model) {
-			var last_layer_activation = get_last_layer_activation_function();
-			var show_green = last_layer_activation == "softmax" ? 1 : 0;
-
-			var model_input_shape = JSON.parse(JSON.stringify((model.input.shape)));
-			model_input_shape.shift();
-
-			var tensor_img_shape = JSON.parse(JSON.stringify(tensor_img.shape));
-			tensor_img_shape.shift();
-
-			if(JSON.stringify(model_input_shape) != JSON.stringify(tensor_img_shape)) {
-				console.warn("Model input shape: ", model_input_shape, "Tensor-Img-shape:", tensor_img_shape);
+			if(!tensor_shape_matches_model(tensor_img)) {
+				console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
 				return;
 			}
 
@@ -162,8 +153,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 				await draw_heatmap(predictions_tensor, tensor_img);
 			} catch (e) {
 				l("Error (101): " + e);
-				log("================================= Tensor_Img");
-				log(tensor_img);
+				log("================================= Tensor_Img:", tensor_img);
 				tensor_img.print();
 				log("=================================");
 
@@ -179,11 +169,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			var desc = $($(".predict_demo_result")[nr]);
 			desc.html("");
 
-			if(model.outputShape.length == 4) {
-				await _predict_image(predictions, desc);
-			} else {
-				_predict_table(predictions_tensor, desc, show_green);
-			}
+			await _predict_result(predictions_tensor, desc);
 		} else {
 			console.error("No model");
 		}
@@ -216,6 +202,16 @@ async function predict_demo (item, nr, tried_again = 0) {
 	memory_leak_debugger("predict_demo", start_tensors);
 }
 
+async function _predict_result(predictions_tensor, desc) {
+	var start_tensors = memory_leak_debugger();
+	if(model.outputShape.length == 4) {
+		await _predict_image(predictions_tensor, desc);
+	} else {
+		_predict_table(predictions_tensor, desc);
+	}
+	memory_leak_debugger("_predict_result", start_tensors);
+}
+
 async function _predict_image (predictions, desc) {
 	var start_tensors = memory_leak_debugger();
 	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
@@ -245,9 +241,14 @@ async function _predict_image (predictions, desc) {
 	memory_leak_debugger("_predict_image", start_tensors);
 }
 
-function _predict_table(predictions_tensor, desc, show_green) {
+function _predict_table(predictions_tensor, desc) {
 	var start_tensors = memory_leak_debugger();
 	var predictions = predictions_tensor.dataSync();
+
+	var last_layer_activation = get_last_layer_activation_function();
+	var show_green = last_layer_activation == "softmax" ? 1 : 0;
+
+
 	if(predictions.length) {
 		var max_i = 0;
 		var max_probability = -9999999;
@@ -429,8 +430,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					log(res);
 				}
 			} else {
-				var last_layer_activation = get_last_layer_activation_function();
-				var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
 				if(predictions.length) {
 					var max_i = 0;
