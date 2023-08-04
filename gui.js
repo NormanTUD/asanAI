@@ -3121,7 +3121,7 @@ async function load_weights(dont_show_msg) {
 		$.ajax({
 			url: weights_file,
 			success: async function (data) {
-				await set_weights_from_json_object(data, dont_show_msg, 1, model);
+				//await set_weights_from_json_object(data, dont_show_msg, 1, model);
 				prev_layer_data = [];
 				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
@@ -4447,18 +4447,24 @@ function show_tab_label(label, click) {
 	assert($item.length == 1, "Invalid or double $item for label " + label);
 
 	if(is_cosmo_mode) {
-		var href = $item[0].id.replace(/_label$/, "");
-		var element_to_show = $("#" + href);
+		if(click) {
+			var href = $item[0].id.replace(/_label$/, "");
+			var element_to_show = $("#" + href);
 
-		assert(element_to_show.length == 1, "invalid element");
+			assert(element_to_show.length == 1, "invalid element");
 
-		$(".tab").each((i, x) => {
-			$(x).hide();
-		});
+			$(".tab").each((i, x) => {
+				$(x).hide();
+			});
 
-		element_to_show.show().parent().show().parent().show();
+			element_to_show.show().parent().show().parent().show();
+		}
 	} else {
-		$item.show().trigger("click").parent().show();
+		$item.show().parent().show();
+
+		if(click) {
+			$item.trigger("click");
+		}
 	}
 }
 
