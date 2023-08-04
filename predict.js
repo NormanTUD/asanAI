@@ -544,24 +544,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 				var examples = x["example"];
 				if(examples) {
 					var str = "";
-					for (var i = 0; i < examples.length; i++) {
-						count++;
-						var img_url = full_dir + "/" + examples[i];
-						var img_elem = $("img[src$='" + img_url + "']");
-						if(img_elem.length) {
-							try {
-								var img = img_elem;
-								if(Object.keys(img).includes("0")) {
-									img = img_elem[0];
-								}
-								await predict_demo(img, i);
-							} catch (e) {
-								log("Predict demo failed, error:", e);
-							}
-						} else {
-							str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
-						}
-					}
+					[str, count] = await _get_example_string(examples, count, full_dir);
 
 					if(str) {
 						example_predictions.html(str);
@@ -625,6 +608,30 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 	//log("Tensors O: " + tf.memory()["numTensors"]);
 	memory_leak_debugger("show_prediction", start_tensors);
+}
+
+async function _get_example_string (examples, count, full_dir) {
+	var str = "";
+	for (var i = 0; i < examples.length; i++) {
+		count++;
+		var img_url = full_dir + "/" + examples[i];
+		var img_elem = $("img[src$='" + img_url + "']");
+		if(img_elem.length) {
+			try {
+				var img = img_elem;
+				if(Object.keys(img).includes("0")) {
+					img = img_elem[0];
+				}
+				await predict_demo(img, i);
+			} catch (e) {
+				log("Predict demo failed, error:", e);
+			}
+		} else {
+			str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
+		}
+	}
+
+	return [str, count];
 }
 
 function get_index_of_highest_category (predictions_tensor) {
