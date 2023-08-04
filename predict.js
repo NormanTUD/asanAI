@@ -160,6 +160,14 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 				_predict_error(e);
 
+				if(tensor_img) {
+					await dispose(tensor_img);
+				}
+
+				if(predictions_tensor) {
+					await dispose(predictions_tensor);
+				}
+
 				if(tried_again) {
 					return;
 				}
