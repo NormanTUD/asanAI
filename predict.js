@@ -55,6 +55,23 @@ function _predict_error (e) {
 
 }
 
+function _divide_img_tensor (tensor_img) {
+	if($("#divide_by").val() == 1) {
+		return;
+	}
+
+	var start_tensors = memory_leak_debugger();
+	try {
+		tensor_img = tf.tensor(tf.divNoNan(tensor_img, parseFloat($("#divide_by").val())));
+	} catch (e) {
+		_predict_error(e);
+	}
+
+	memory_leak_debugger("_divide_img_tensor", start_tensors);
+
+	return tensor_img;
+}
+
 function _get_tensor_img (item) {
 	var start_tensors = memory_leak_debugger();
 	var tensor_img = null;
@@ -118,15 +135,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-
-	try {
-		if($("#divide_by").val() != 1) {
-			new_tensor_img = tf.divNoNan(tensor_img, parseFloat($("#divide_by").val()));
-			tensor_img = tf.tensor(await new_tensor_img.arraySync());
-		}
-	} catch (e) {
-		_predict_error(e);
-	}
 
 	try {
 		if(!tensor_shape_matches_model(tensor_img)) {
