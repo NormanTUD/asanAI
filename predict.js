@@ -179,7 +179,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 			if(model.outputShape.length == 4) {
 				var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
-				//predictions_tensor_transposed.print()
 
 				var pxsz = 1;
 
@@ -201,6 +200,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 				}
+
+				await dispose(predictions_tensor_transposed);
 			} else {
 				var predictions = predictions_tensor.dataSync();
 				if(predictions.length) {
