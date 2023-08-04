@@ -159,7 +159,9 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!model) {
-		console.error("No model");
+		if(finished_loading) {
+			console.error("No model");
+		}
 		return;
 	}
 
@@ -174,12 +176,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 		await _run_predict_and_show(tensor_img, nr);
 
-		//await dispose(new_tensor_img);
+		await dispose(tensor_img);
 
 		//memory_leak_debugger("inside_try", inside_try);
 	} catch (e) {
 		l("Error (101): " + e);
-		log("================================= Tensor_Img:", tensor_img);
+		log("================================= tensor_img:", tensor_img);
 		_predict_error(e);
 		if(tried_again) {
 			return;
@@ -945,6 +947,46 @@ function tensor_shape_matches_model (tensor) {
 	return res;
 }
 
+function draw_bars_or_numbers (i, predictions, max) {
+	var label = labels[i % labels.length];
+	var val = predictions[0][i];
+	var w = Math.floor(val * 50);
+
+	var html = "";
+
+	if(show_bars_instead_of_numbers()) {
+		if(label) {
+			if(val == max) {
+				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+			} else {
+				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+			}
+		} else {
+			if(val == max) {
+				html = "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+			} else {
+				html = "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+			}
+		}
+	} else {
+		if(label) {
+			if(val == max) {
+				html = "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
+			} else {
+				html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
+			}
+		} else {
+			if(val == max) {
+				html = "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
+			} else {
+				html = "<tr><td>" + predictions[0][i] + "</td></tr>";
+			}
+		}
+	}
+
+	return html;
+}
+
 async function predict_handdrawn () {
 	if(has_zero_output_shape) {
 		return;
@@ -971,10 +1013,17 @@ async function predict_handdrawn () {
 
 	var predict_data;
 	try {
-		predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+		predict_data = tf.tidy(() => {
+			return tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+		});
 	} catch (e) {
 		console.error(e);
 		await dispose(predict_data);
+		return;
+	}
+
+	if(!predict_data) {
+		console.error("no predict data");
 		return;
 	}
 
@@ -1014,39 +1063,7 @@ async function predict_handdrawn () {
 		var html = "<table class='predict_table'>";
 
 		for (var i = 0; i < predictions[0].length; i++) {
-			var label = labels[i % labels.length];
-			var val = predictions[0][i];
-			var w = Math.floor(val * 50);
-
-			if(show_bars_instead_of_numbers()) {
-				if(label) {
-					if(val == max) {
-						html += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-					} else {
-						html += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-					}
-				} else {
-					if(val == max) {
-						html += "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-					} else {
-						html += "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-					}
-				}
-			} else {
-				if(label) {
-					if(val == max) {
-						html += "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
-					} else {
-						html += "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
-					}
-				} else {
-					if(val == max) {
-						html += "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
-					} else {
-						html += "<tr><td>" + predictions[0][i] + "</td></tr>";
-					}
-				}
-			}
+			html += draw_bars_or_numbers(i, predictions, max);
 		}
 
 		html += "</table>";
@@ -1083,6 +1100,7 @@ async function predict_handdrawn () {
 	}
 
 	await dispose(predictions_tensor);
+	await dispose(predict_data);
 
 	allow_editable_labels();
 
