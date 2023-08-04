@@ -271,12 +271,17 @@ async function _predict_image (predictions_tensor, desc) {
 	memory_leak_debugger("_predict_image", start_tensors);
 }
 
+function get_show_green () {
+	var last_layer_activation = get_last_layer_activation_function();
+	var show_green = last_layer_activation == "softmax" ? 1 : 0;
+
+	return show_green;
+}
+
 async function _predict_table(predictions_tensor, desc) {
 	var start_tensors = memory_leak_debugger();
 	var predictions = await predictions_tensor.dataSync();
 
-	var last_layer_activation = get_last_layer_activation_function();
-	var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
 
 	if(predictions.length) {
@@ -300,7 +305,7 @@ async function _predict_table(predictions_tensor, desc) {
 			var probability = predictions[i];
 			var w = Math.floor(probability * 50);
 
-			fullstr += _predict_table_row(label, w, max_i, show_green, probability);
+			fullstr += _predict_table_row(label, w, max_i, probability);
 		}
 
 		fullstr += "</table>";
@@ -313,17 +318,17 @@ async function _predict_table(predictions_tensor, desc) {
 	memory_leak_debugger("_predict_table", start_tensors);
 }
 
-function _predict_table_row (label, w, max_i, show_green, probability) {
+function _predict_table_row (label, w, max_i, probability) {
 	var str = "";
 	if(show_bars_instead_of_numbers()) {
 		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-		if(i == max_i && show_green) {
+		if(i == max_i && get_show_green()) {
 			//str = "<b class='best_result'>" + str + "</b>";
 			str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 		}
 	} else {
 		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-		if(i == max_i && show_green) {
+		if(i == max_i && get_show_green()) {
 			str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
 		}
 	}
@@ -491,13 +496,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						var w = Math.floor(probability * 50);
 
 						if(show_bars_instead_of_numbers()) {
-							if(i == max_i && show_green) {
+							if(i == max_i && get_show_green()) {
 								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 							} else {
 								str += "<tr><td class='label_element'>" + this_str + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
 							}
 						} else {
-							if(i == max_i && show_green) {
+							if(i == max_i && get_show_green()) {
 								str += "<tr><td>" + this_str + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 							} else {
 								str += "<tr><td>" + this_str + "</td><td>" + probability + "</td></tr>";
