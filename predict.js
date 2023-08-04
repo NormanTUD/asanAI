@@ -55,7 +55,7 @@ function _predict_error (e) {
 
 }
 
-async function _divide_img_tensor (tensor_img) {
+function _divide_img_tensor (tensor_img) {
 	var divide_by = parseFloat($("#divide_by").val());
 	if(divide_by == 1) {
 		return tensor_img;
@@ -74,25 +74,27 @@ async function _divide_img_tensor (tensor_img) {
 	return tensor_img;
 }
 
-async function _get_tensor_img (item) {
+async function _get_tensor_img(item) {
 	var start_tensors = memory_leak_debugger();
-
 	var tensor_img = null;
 
 	try {
-		tensor_img = tf.tidy(() => {
-			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
+		tensor_img = await tf.tidy(() => {
+			return tf.browser.fromPixels(item)
+				.resizeNearestNeighbor([height, width])
+				.toFloat()
+				.expandDims();
 		});
 	} catch (e) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
 		_predict_error(e);
 	}
 
-	var res = await _divide_img_tensor(tensor_img);
+	tensor_img = tf.tidy(() => {return _divide_img_tensor(tensor_img)});
 
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
-	return res;
+	return tensor_img;
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
