@@ -150,7 +150,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			tensor_img_shape.shift();
 
 			if(JSON.stringify(model_input_shape) != JSON.stringify(tensor_img_shape)) {
-				log("Model input shape: ", model_input_shape, "Tensor-Img-shape:", tensor_img_shape);
+				console.warn("Model input shape: ", model_input_shape, "Tensor-Img-shape:", tensor_img_shape);
 				return;
 			}
 
@@ -236,9 +236,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 				$("#predict_error").html("");
 			}
 		} else {
-			log("No model");
+			console.error("No model");
 		}
-
 	} catch (e) {
 		_predict_error(e);
 	}
