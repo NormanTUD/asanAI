@@ -111,7 +111,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	assert(item, "item must at least be true");
+	assert(!!item, "item must at least be true");
 
 	try {
 		if($("#divide_by").val() != 1) {
@@ -142,7 +142,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		if(model) {
 			var last_layer_activation = get_last_layer_activation_function();
 			var show_green = last_layer_activation == "softmax" ? 1 : 0;
-
 
 			var model_input_shape = JSON.parse(JSON.stringify((model.input.shape)));
 			model_input_shape.shift();
@@ -225,20 +224,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 						var probability = predictions[i];
 						var w = Math.floor(probability * 50);
 
-						var str = "";
-						if(show_bars_instead_of_numbers()) {
-							str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-							if(i == max_i && show_green) {
-								//str = "<b class='best_result'>" + str + "</b>";
-								str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-							}
-						} else {
-							str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-							if(i == max_i && show_green) {
-								str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
-							}
-						}
-						fullstr += str;
+						fullstr += _predict_table_row(label, w, max_i, show_green, probability);
 					}
 
 					fullstr += "</table>";
@@ -276,6 +262,24 @@ async function predict_demo (item, nr, tried_again = 0) {
 	allow_editable_labels();
 
 	memory_leak_debugger("predict_demo", start_tensors);
+}
+
+function _predict_table_row (label, w, max_i, show_green, probability) {
+	var str = "";
+	if(show_bars_instead_of_numbers()) {
+		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+		if(i == max_i && show_green) {
+			//str = "<b class='best_result'>" + str + "</b>";
+			str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+		}
+	} else {
+		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
+		if(i == max_i && show_green) {
+			str = "<tr><td class='label_element'>" + label + "</td><td><b class='best_result label_input_element'>" + probability+ "</b></td></tr>";
+		}
+	}
+
+	return str;
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
