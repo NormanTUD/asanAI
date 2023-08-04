@@ -746,6 +746,7 @@ function randomInRange(start,end){
 }
 
 function drawImagesInGrid(images, categories, probabilities, numCategories) {
+	var start_tensors = memory_leak_debugger();
 	$("#canvas_grid_visualization").html("");
 	var categoryNames = labels.slice(0, numCategories);
 	var margin = 40;
@@ -841,6 +842,8 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		$(canvas).appendTo($(containerId));
 		$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 	}
+
+	memory_leak_debugger("drawImagesInGrid", start_tensors);
 }
 
 async function visualize_train () {
@@ -899,14 +902,18 @@ async function visualize_train () {
 			console.error("could not find image_elements");
 			return;
 		}
-		var promises = [];
 		for (var i = 0; i < image_elements.length; i++) {
 			var x = image_elements[i];
 			if(i <= max) {
+				tf.engine().startScope()
 				imgs.push(x);
 
-				var img_tensor = tf.tidy(() => { return tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims() });
-				img_tensor = tf.tidy(() => { return tf.divNoNan(img_tensor, parseFloat($("#divide_by").val())) });;
+				var img_tensor = tf.tidy(() => {
+					var res = tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims()
+					res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
+					return res;
+				});
+
 				var res = tf.tidy(() => { return model.predict(img_tensor) });
 
 				var res_array = res.arraySync()[0];
@@ -920,11 +927,8 @@ async function visualize_train () {
 
 				await dispose(res);
 				await dispose(img_tensor)
+				tf.engine().endScope();
 			}
-		}
-
-		for (var i = 0; i < promises.length; i++) {
-			await promises[i];
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
