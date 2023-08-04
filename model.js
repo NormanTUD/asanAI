@@ -827,8 +827,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 	tf.engine().startScope();
 
-	var start_tensors = tf.memory()["numTensors"];
-	//console.log("Before creating fake_model: " + start_tensors + " tensors");
+	var start_tensors = memory_leak_debugger();
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
@@ -878,13 +877,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 	tf.engine().endScope();
 
-	/*
-	await tf.nextFrame(); // Allow time for disposal to take effect
-	var after_end_scope_tensors = tf.memory()["numTensors"];
-	if (after_end_scope_tensors > start_tensors) {
-		console.log("After tf.engine().endScope(): " + after_end_scope_tensors + " tensors");
-	}
-	*/
+	memory_leak_debugger("compile_fake_model", start_tensors);
 
 	return ret;
 }
@@ -1345,7 +1338,7 @@ async function force_reinit (no_msg) {
 }
 
 async function input_shape_is_image (is_from_webcam=0) {
-	var start_tensors = log_num_tensors("input_shape_is_image start", -1);
+	var start_tensors = memory_leak_debugger();
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
@@ -1366,10 +1359,10 @@ async function input_shape_is_image (is_from_webcam=0) {
 		}
 		*/
 
-		log_num_tensors("input_shape_is_image end", start_tensors);
+		memory_leak_debugger("input_shape_is_image end", start_tensors);
 		return true;
 	}
 	is.hide();
-	log_num_tensors("input_shape_is_image end", start_tensors);
+	memory_leak_debugger("input_shape_is_image end", start_tensors);
 	return false;
 }
