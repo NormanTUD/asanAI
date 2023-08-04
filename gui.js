@@ -4417,6 +4417,8 @@ function rename_tmp_onchange() {
 }
 
 function hide_tab_label(label) {
+	assert(typeof(label) == "string", "label is not a string");
+
 	$("#" + label).parent().hide();
 	var children = $("#" + label).parent().parent().children();
 
@@ -4433,7 +4435,7 @@ function hide_tab_label(label) {
 		}
 	}
 
-	if (first_displayable && is_hidden_or_has_hidden_parent(currently_selected)) {
+	if (first_displayable && (is_cosmo_mode || is_hidden_or_has_hidden_parent(currently_selected))) {
 		$($(first_displayable).children()[0]).click()
 	}
 }
@@ -4441,24 +4443,49 @@ function hide_tab_label(label) {
 function show_tab_label(label, click) {
 	//logt(`Trying label ${label} (click: ${click}, global_force_noclick_tab_label: ${global_force_noclick_tab_label})`);
 
+	assert(typeof(label) == "string", "label is not a string");
+
 	var this_label_item = $("#" + label);
 	assert(this_label_item.length == 1, "Invalid or double label " + label);
-	$(this_label_item).show().parent().show();
+
+	//log("showing parent");
+	$("#navbar1").show()
+	$(".navi_list").show();
+
 	if (click && !global_force_noclick_tab_label) {
-		$(this_label_item).click();
+		//log("click label " + label)
+		var $this_label_item = $(this_label_item);
+		$this_label_item.trigger("click");
 
-		var this_label_xpath = get_element_xpath($($(this_label_item)[0]).parent().parent()[0]);
+		var this_label_xpath = get_element_xpath($($this_label_item[0]).parent().parent()[0]);
 
-		var navigation_elements_in_parent = $(this_label_item).parent().parent().parent().parent().find(".navi_list");
+		var navigation_elements_in_parent = $this_label_item.parent().parent().parent().parent().find(".navi_list");
+		assert(navigation_elements_in_parent.length >= 1, "no navigation_elements_in_parent");
 		for (var i = 0; i < navigation_elements_in_parent.length; i++) {
-			if(!is_hidden_or_has_hidden_parent($(navigation_elements_in_parent[i]))) {
-				if(this_label_xpath != get_element_xpath(navigation_elements_in_parent[i])) {
-					var div_name = $(this_label_item).parent().parent().parent().attr("id");
-					$('a[href="#' + div_name + '"]').click();
-					this_label_item.click();
+			if(!is_hidden_or_has_hidden_parent($(navigation_elements_in_parent[i])) || is_cosmo_mode) {
+				var div_name = $this_label_item.parent().parent().parent().attr("id");
+				$('a[href="#' + div_name + '"]').click();
+				$this_label_item.trigger("click");
+				if(is_cosmo_mode) {
+					var href = $this_label_item[0].id.replace(/_label$/, "");
+					var showable = $("#" + href);
+					//log("showable:", showable);
+					if(showable.length) {
+						showable.show();
+					} else {
+						console.info("showable is empty");
+					}
 				}
+				//log("click 2", $this_label_item);
+			} else {
+				log("element is hidden:", $(navigation_elements_in_parent[i]));
 			}
 		}
+	}
+
+	if(is_cosmo_mode) {
+		$("#navbar1").hide()
+		$(".navi_list").show();
 	}
 }
 

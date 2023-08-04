@@ -851,7 +851,7 @@ async function _webcam_predict (webcam_prediction, predictions) {
 		await get_label_data();
 	}
 
-	_predict_webcam_html(predictions, webcam_prediction, max_i);
+	await _predict_webcam_html(predictions, webcam_prediction, max_i);
 
 	memory_leak_debugger("_webcam_predict", start_tensors);
 }

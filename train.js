@@ -151,9 +151,13 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			show_tab_label("tfvis_tab_label", 1);
+			show_tab_label("predict_tab", 1);
+
+			await delay(200);
+
 			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
+
 			chose_next_manicule_target();
 
 			if(!already_moved_to_predict_for_cosmo) {

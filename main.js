@@ -549,13 +549,14 @@ $(document).ready(async function() {
 		$("#start_stop_training").css("visibility", "hidden");
 		$(".cosmo_next_button_span").show();
 		$("#photos").css("min-height", "");
+		show_tab_label("training_data_tab_label", 1);
 	} else {
 		$("#status_bar").show();
 	}
 
 	await restart_fcnn(1);
 
-	l("Site is ready");
 
+	l("Site is ready");
 	finished_loading = true;
 });
