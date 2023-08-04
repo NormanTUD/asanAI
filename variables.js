@@ -1359,9 +1359,6 @@ var number_of_currently_running_updated_pages = 0;
 var escapeCount = 0;
 var lastEscapeTime = 0;
 
-var last_sparkle_element = null;
-
-
 var manicule = null;
 
 var manicule_element_xpath = null;
