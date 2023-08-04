@@ -552,9 +552,8 @@ $(document).ready(async function() {
 		show_tab_label("training_data_tab_label", 1);
 	} else {
 		$("#status_bar").show();
+		await restart_fcnn(1);
 	}
-
-	await restart_fcnn(1);
 
 
 	l("Site is ready");

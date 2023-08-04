@@ -1983,19 +1983,23 @@
 				}
 
 				if(disable_alexnet) {
-					hide_tab_label("alexnet_tab_label");
-					if(!dont_click) {
-						if(clicked_on_tab == 0) {
-							show_tab_label("fcnn_tab_label", click_on_graphs);
-							clicked_on_tab = 1
+					if(!is_cosmo_mode) {
+						hide_tab_label("alexnet_tab_label");
+						if(!dont_click) {
+							if(clicked_on_tab == 0) {
+								show_tab_label("fcnn_tab_label", click_on_graphs);
+								clicked_on_tab = 1
+							}
 						}
 					}
 				} else {
-					show_tab_label("alexnet_tab_label", 0);
-					if(!dont_click) {
-						if(clicked_on_tab == 0) {
-							show_tab_label('alexnet_tab_label', click_on_graphs);
-							clicked_on_tab = 1;
+					if(!is_cosmo_mode) {
+						show_tab_label("alexnet_tab_label", 0);
+						if(!dont_click) {
+							if(clicked_on_tab == 0) {
+								show_tab_label('alexnet_tab_label', click_on_graphs);
+								clicked_on_tab = 1;
+							}
 						}
 					}
 				}
@@ -2110,19 +2114,23 @@
 				}
 
 				if(disable_lenet) {
-					hide_tab_label("lenet_tab_label");
-					if(clicked_on_tab == 0) {
-						if(!dont_click) {
-							show_tab_label("fcnn_tab_label", click_on_graphs);
-							clicked_on_tab = 1;
+					if(!is_cosmo_mode) {
+						hide_tab_label("lenet_tab_label");
+						if(clicked_on_tab == 0) {
+							if(!dont_click) {
+								show_tab_label("fcnn_tab_label", click_on_graphs);
+								clicked_on_tab = 1;
+							}
 						}
 					}
 				} else {
-					show_tab_label("lenet_tab_label", 0);
-					if(clicked_on_tab == 0) {
-						if(!dont_click) {
-							show_tab_label("lenet_tab_label", click_on_graphs);
-							clicked_on_tab = 1;
+					if(!is_cosmo_mode) {
+						show_tab_label("lenet_tab_label", 0);
+						if(clicked_on_tab == 0) {
+							if(!dont_click) {
+								show_tab_label("lenet_tab_label", click_on_graphs);
+								clicked_on_tab = 1;
+							}
 						}
 					}
 				}

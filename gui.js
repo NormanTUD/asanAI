@@ -4441,6 +4441,29 @@ function hide_tab_label(label) {
 }
 
 function show_tab_label(label, click) {
+	assert(typeof(label) == "string", "label is not a string");
+
+	var $item = $("#" + label);
+	assert($item.length == 1, "Invalid or double $item for label " + label);
+
+	if(is_cosmo_mode) {
+		var href = $item[0].id.replace(/_label$/, "");
+		var element_to_show = $("#" + href);
+
+		assert(element_to_show.length == 1, "invalid element");
+
+		$(".tab").each((i, x) => {
+			$(x).hide();
+		});
+
+		log("element_to_show:", element_to_show);
+		element_to_show.show().parent().show().parent().show();
+	} else {
+		$item.show().trigger("click").parent().show();
+	}
+}
+
+function show_tab_label_old(label, click) {
 	//logt(`Trying label ${label} (click: ${click}, global_force_noclick_tab_label: ${global_force_noclick_tab_label})`);
 
 	assert(typeof(label) == "string", "label is not a string");
@@ -4452,7 +4475,11 @@ function show_tab_label(label, click) {
 	$("#navbar1").show()
 	$(".navi_list").show();
 
-	this_label_item.parent().show().parent().show();
+	log("showing:", this_label_item.parent().show().parent().show());
+
+	$(".tab").each((i, x) => {
+		$(x).hide().parent().show();
+	});
 
 	if (click && !global_force_noclick_tab_label) {
 		//log("click label " + label)
@@ -4471,7 +4498,7 @@ function show_tab_label(label, click) {
 			var showable = $("#" + href);
 			//log("showable:", showable);
 			if(showable.length) {
-				showable.show();
+				showable.show().trigger("click");
 			} else {
 				console.info("showable is empty");
 			}
@@ -4482,7 +4509,7 @@ function show_tab_label(label, click) {
 	if(is_cosmo_mode) {
 		$("#navbar1").hide()
 		$(".navi_list").show();
-		this_label_item.parent().hide().parent().hide();
+		//log("hiding: ", this_label_item.parent().hide().parent().hide());
 
 	}
 }
