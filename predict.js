@@ -56,14 +56,9 @@ function _predict_error (e) {
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
-	//tf.engine().startScope();
-
-	//log("Tensors 0: " + tf.memory()["numTensors"]);
-	
 	if(has_zero_output_shape) {
 		return;
 	}
-	//log("Tensors 1: " + tf.memory()["numTensors"]);
 
 	while (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
 		await delay(200);
