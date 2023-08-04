@@ -175,6 +175,11 @@ async function predict_demo (item, nr, tried_again = 0) {
 }
 
 async function _run_predict_and_show (tensor_img, nr) {
+	if(!tensor_shape_matches_model(tensor_img)) {
+		console.warn("Tensor shape does not match model shape");
+		return;
+	}
+
 	var predictions_tensor = await model.predict(tensor_img);
 
 	await _predict_result(predictions_tensor, nr);
@@ -521,56 +526,14 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 		return;
 	}
-	var count = 0;
+
 
 	if(await input_shape_is_image()) {
-		count = _print_example_predictions(count);
+		await _print_example_predictions();
 	} else {
-		var example_predictions = $("#example_predictions");
-		example_predictions.html("");
-		var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
-		var example_predict_data = await get_cached_json(example_url)
-
-		var html_contents = "";
-
-		if(typeof(example_predict_data) == "object" && example_predict_data.length) {
-			for (var i = 0; i < example_predict_data.length; i++) {
-				var tensor = tf.tensor(example_predict_data[i]);
-				//log("Tensors K: " + tf.memory()["numTensors"]);
-				if(tensor_shape_matches_model(tensor)) {
-					try {
-						var res = await model.predict([tensor]);
-
-						var res_array = res.arraySync();
-						await dispose(res);
-
-						html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
-
-						count++;
-						$("#predict_error").html("");
-					} catch (e) {
-						_predict_error(e);
-					}
-				}
-				await dispose(tensor);
-				await tf.nextFrame();
-			}
-		}
-
-		if(html_contents) {
-			example_predictions.html(html_contents);
-		}
+		await _print_predictions_text();
 	}
 
-	if(count) {
-		$(".show_when_has_examples").show();
-		$(".show_when_predicting").show();
-		$("#example_predictions").show();
-	} else {
-		$(".show_when_has_examples").hide();
-		$("#example_predictions").hide();
-		$(".show_when_predicting").hide();
-	}
 
 	if(!dont_go_to_tab) {
 		if($("#jump_to_interesting_tab").is(":checked")) {
@@ -582,8 +545,69 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	memory_leak_debugger("show_prediction", start_tensors);
 }
 
+function show_or_hide_predictions (count) {
+	if(count) {
+		$(".show_when_has_examples").show();
+		$(".show_when_predicting").show();
+		$("#example_predictions").show();
+	} else {
+		$(".show_when_has_examples").hide();
+		$("#example_predictions").hide();
+		$(".show_when_predicting").hide();
+	}
+}
+
+async function _print_predictions_text(count, example_predict_data) {
+	var start_tensors = memory_leak_debugger();
+
+	var count = 0;
+	var example_predictions = $("#example_predictions");
+	example_predictions.html("");
+	var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
+	var example_predict_data = await get_cached_json(example_url)
+
+	var html_contents = "";
+
+	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
+		console.warn("example_predict_data is not an object or empty")
+	}
+
+	for (var i = 0; i < example_predict_data.length; i++) {
+		var tensor = tf.tensor(example_predict_data[i]);
+		//log("Tensors K: " + tf.memory()["numTensors"]);
+		if(tensor_shape_matches_model(tensor)) {
+			try {
+				var res = await model.predict([tensor]);
+
+				var res_array = res.arraySync();
+				await dispose(res);
+
+				html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
+
+				count++;
+				$("#predict_error").html("");
+			} catch (e) {
+				_predict_error(e);
+			}
+		}
+		await dispose(tensor);
+		await tf.nextFrame();
+	}
+
+	if(html_contents) {
+		example_predictions.html(html_contents);
+	}
+
+	memory_leak_debugger("_print_predictions_text", start_tensors);
+
+	show_or_hide_predictions(count);
+
+	return count;
+}
+
 async function _print_example_predictions (count) {
 	var start_tensors = memory_leak_debugger();
+	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
 	var full_dir = "traindata/" + dataset + "/example/";
@@ -613,6 +637,8 @@ async function _print_example_predictions (count) {
 	}
 
 	memory_leak_debugger("_print_example_predictions", start_tensors);
+
+	show_or_hide_predictions(count);
 
 	return count;
 }
