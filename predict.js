@@ -167,14 +167,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return await predict_demo(item, nr, 1);
 	}
 
-	await _predict_result(predictions_tensor, nr);
-
-	if(predictions_tensor) {
-		await dispose(predictions_tensor);
-	}
-
 	if(tensor_img) {
 		await dispose(tensor_img);
+	}
+
+	if(predictions_tensor) {
+		await _predict_result(predictions_tensor, nr);
 	}
 
 	if(new_tensor_img) {
@@ -183,7 +181,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	memory_leak_debugger("large_try", large_try)
 
-	//tf.engine().endScope();
 
 	hide_unused_layer_visualization_headers();
 
@@ -201,7 +198,7 @@ async function _predict_result(predictions_tensor, nr) {
 	if(model.outputShape.length == 4) {
 		await _predict_image(predictions_tensor, desc);
 	} else {
-		_predict_table(predictions_tensor, desc);
+		await _predict_table(predictions_tensor, desc);
 	}
 	memory_leak_debugger("_predict_result", start_tensors);
 }
@@ -235,9 +232,9 @@ async function _predict_image (predictions, desc) {
 	memory_leak_debugger("_predict_image", start_tensors);
 }
 
-function _predict_table(predictions_tensor, desc) {
+async function _predict_table(predictions_tensor, desc) {
 	var start_tensors = memory_leak_debugger();
-	var predictions = predictions_tensor.dataSync();
+	var predictions = await predictions_tensor.dataSync();
 
 	var last_layer_activation = get_last_layer_activation_function();
 	var show_green = last_layer_activation == "softmax" ? 1 : 0;
