@@ -55,7 +55,7 @@ function _predict_error (e) {
 
 }
 
-function _divide_img_tensor (tensor_img) {
+async function _divide_img_tensor (tensor_img) {
 	var divide_by = parseFloat($("#divide_by").val());
 	if(divide_by == 1) {
 		return tensor_img;
@@ -74,7 +74,7 @@ function _divide_img_tensor (tensor_img) {
 	return tensor_img;
 }
 
-function _get_tensor_img (item) {
+async function _get_tensor_img (item) {
 	var start_tensors = memory_leak_debugger();
 
 	var tensor_img = null;
@@ -88,9 +88,9 @@ function _get_tensor_img (item) {
 		_predict_error(e);
 	}
 
-	var res = _divide_img_tensor(tensor_img);
+	var res = await _divide_img_tensor(tensor_img);
 
-	dispose(tensor_img);
+	await dispose(tensor_img);
 
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
@@ -138,7 +138,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	assert(width > 0, "width is not larger than 0");
 	assert(height > 0, "height is not larger than 0");
 
-	var tensor_img = _get_tensor_img(item);
+	var tensor_img = await _get_tensor_img(item);
 
 	if(!tensor_img) {
 		console.warn("tensor_img was empty");
@@ -169,6 +169,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
+		await dispose(tensor_img);
 		return;
 	}
 
