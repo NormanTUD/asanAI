@@ -513,7 +513,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		$(".show_after_training").show();
 	}
 
-	var example_predictions = $("#example_predictions");
 
 	if(!$("#data_origin").val() == "default") {
 		$(".show_when_has_examples").hide();
@@ -525,34 +524,9 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	var count = 0;
 
 	if(await input_shape_is_image()) {
-		var dataset = $("#dataset").val();
-		var full_dir = "traindata/" + dataset + "/example/";
-		var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
-		if(is_cosmo_mode) {
-			dataset_url = dataset_url + "&cosmo=1";
-		}
-
-		var x = await get_cached_json(dataset_url);
-
-		if(x) {
-			if(Object.keys(x).includes("example")) {
-				var this_examples_hash = await md5(JSON.stringify(x["example"]));
-				if(this_examples_hash != predict_examples_hash) {
-					example_predictions.html("");
-					predict_examples_hash = this_examples_hash;
-				}
-				var examples = x["example"];
-				if(examples) {
-					var str = "";
-					[str, count] = await _get_example_string(examples, count, full_dir);
-
-					if(str) {
-						example_predictions.html(str);
-					}
-				}
-			}
-		}
+		count = _print_example_predictions(count);
 	} else {
+		var example_predictions = $("#example_predictions");
 		example_predictions.html("");
 		var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
 		var example_predict_data = await get_cached_json(example_url)
@@ -608,6 +582,38 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 	//log("Tensors O: " + tf.memory()["numTensors"]);
 	memory_leak_debugger("show_prediction", start_tensors);
+}
+
+async function _print_example_predictions (count) {
+	var example_predictions = $("#example_predictions");
+	var dataset = $("#dataset").val();
+	var full_dir = "traindata/" + dataset + "/example/";
+	var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
+	if(is_cosmo_mode) {
+		dataset_url = dataset_url + "&cosmo=1";
+	}
+
+	var x = await get_cached_json(dataset_url);
+	if(x) {
+		if(Object.keys(x).includes("example")) {
+			var this_examples_hash = await md5(JSON.stringify(x["example"]));
+			if(this_examples_hash != predict_examples_hash) {
+				example_predictions.html("");
+				predict_examples_hash = this_examples_hash;
+			}
+			var examples = x["example"];
+			if(examples) {
+				var str = "";
+				[str, count] = await _get_example_string(examples, count, full_dir);
+
+				if(str) {
+					example_predictions.html(str);
+				}
+			}
+		}
+	}
+
+	return count;
 }
 
 async function _get_example_string (examples, count, full_dir) {
