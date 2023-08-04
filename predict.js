@@ -56,7 +56,6 @@ function _predict_error (e) {
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
-	var start_tensors = memory_leak_debugger();
 	//tf.engine().startScope();
 
 	//log("Tensors 0: " + tf.memory()["numTensors"]);
@@ -69,6 +68,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 	while (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
 		await delay(200);
 	}
+
+	var start_tensors = memory_leak_debugger();
 
 	var tensor_img;
 	var new_tensor_img;
@@ -134,6 +135,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		_predict_error(e);
 	}
 
+	var large_try = memory_leak_debugger();
 	try {
 		while (!tf.backend()) {
 			await delay(100);
@@ -242,6 +244,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		_predict_error(e);
 	}
 
+	memory_leak_debugger("large_try", large_try)
 
 	if(tensor_img) {
 		await dispose(tensor_img);
