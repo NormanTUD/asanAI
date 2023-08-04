@@ -167,20 +167,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return await predict_demo(item, nr, 1);
 	}
 
-	if(tensor_img) {
-		await dispose(tensor_img);
-	}
+	await _predict_result(predictions_tensor, nr);
 
-	if(predictions_tensor) {
-		await _predict_result(predictions_tensor, nr);
-	}
-
-	if(new_tensor_img) {
-		await dispose(new_tensor_img);
-	}
+	await dispose(tensor_img);
+	await dispose(new_tensor_img);
 
 	memory_leak_debugger("large_try", large_try)
-
 
 	hide_unused_layer_visualization_headers();
 
