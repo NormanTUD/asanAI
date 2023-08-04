@@ -90,8 +90,6 @@ async function _get_tensor_img (item) {
 
 	var res = await _divide_img_tensor(tensor_img);
 
-	await dispose(tensor_img);
-
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
 
 	return res;
