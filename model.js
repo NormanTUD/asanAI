@@ -459,33 +459,40 @@ function check_initializers (data, has_keys) {
 			if(regularizer_or_init == "Initializer") {
 				if(has_keys.includes(keyname)) {
 					var original_name = data[keyname]["name"];
-					assert(typeof(original_name) == "string", "original_name is not string");
-					var options_stringified = JSON.stringify(data[keyname]["config"]);
-					if(original_name) {
-						try {
-							data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
-						} catch (e) {
-							console.error(e);
-							console.trace();
+					if(typeof(original_name) == "string") {
+						var options_stringified = JSON.stringify(data[keyname]["config"]);
+						if(original_name) {
+							try {
+								data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+							} catch (e) {
+								console.error(e);
+								console.trace();
+							}
+						} else {
+							data[keyname] = null;
 						}
 					} else {
-						data[keyname] = null;
+						log("original_name (A):", original_name);
 					}
 				}
 			} else if(regularizer_or_init == "Regularizer") {
 				if(has_keys.includes(keyname)) {
 					var original_name = data[keyname]["name"];
-					assert(typeof(original_name) == "string", "original_name is not string");
+					assert(typeof(original_name) == "string", "original_name is not string (B)");
 					var options_stringified = JSON.stringify(data[keyname]["config"]);
-					if(original_name && original_name != "none") {
-						try {
-							data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
-						} catch (e) {
-							console.error(e);
-							console.trace();
+					if(typeof(original_name) == "string") {
+						if(original_name && original_name != "none") {
+							try {
+								data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+							} catch (e) {
+								console.error(e);
+								console.trace();
+							}
+						} else {
+							data[keyname] = null;
 						}
 					} else {
-						data[keyname] = null;
+						log("original_name (B):", original_name);
 					}
 				}
 			} else {
