@@ -841,7 +841,6 @@ async function predict_webcam () {
 
 					$("#webcam_prediction").append(canvas);
 
-					//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 					draw_grid(canvas, pxsz, predictions[0], 1, 0);
 				} else {
 					var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
@@ -856,7 +855,6 @@ async function predict_webcam () {
 
 						var d = transposed[i];
 
-						//        draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
 						draw_grid(canvas, pxsz, d, 1, 1);
 					}
 				}
@@ -1016,12 +1014,12 @@ async function predict_handdrawn () {
 	}
 
 
-	tf.engine().startScope();
 	var predict_data;
 	try {
 		predict_data = tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
 	} catch (e) {
 		console.error(e);
+		await dispose(predict_data);
 		return;
 	}
 
@@ -1037,6 +1035,7 @@ async function predict_handdrawn () {
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
 		console.error(e);
+		dispose(predictions_tensor);
 		l("Error (443): " + e);
 		return;
 	}
@@ -1122,11 +1121,13 @@ async function predict_handdrawn () {
 
 			var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 		}
+
+		await dispose(predictions_tensor_transposed);
 	} else {
 		log("Different output shapes not yet supported");
 	}
 
-	tf.engine().endScope();
+	dispose(predictions_tensor);
 
 	allow_editable_labels();
 
