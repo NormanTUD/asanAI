@@ -603,6 +603,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 async function _print_example_predictions (count) {
 	var start_tensors = memory_leak_debugger();
+
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
@@ -617,7 +618,6 @@ async function _print_example_predictions (count) {
 		if(Object.keys(x).includes("example")) {
 			var this_examples_hash = await md5(JSON.stringify(x["example"]));
 			if(this_examples_hash != predict_examples_hash) {
-				example_predictions.html("");
 				predict_examples_hash = this_examples_hash;
 			}
 			var examples = x["example"];
@@ -640,6 +640,8 @@ async function _print_example_predictions (count) {
 }
 
 async function _get_example_string (examples, count, full_dir) {
+	var start_tensors = memory_leak_debugger();
+	tf.engine().startScope();
 	var str = "";
 	for (var i = 0; i < examples.length; i++) {
 		count++;
@@ -660,6 +662,8 @@ async function _get_example_string (examples, count, full_dir) {
 		}
 	}
 
+	tf.engine().endScope();
+	memory_leak_debugger("_get_example_string", start_tensors);
 	return [str, count];
 }
 
