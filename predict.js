@@ -662,54 +662,62 @@ function get_index_of_highest_category (predictions_tensor) {
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
 	var start_tensors = memory_leak_debugger();
-	if(await input_shape_is_image(is_from_webcam) && $("#show_grad_cam").is(":checked") && !started_training && (await output_size_at_layer(get_number_of_layers())).length == 2) {
-		tf.engine().startScope();
-		var strongest_category = get_index_of_highest_category(predictions_tensor);
-
-		var original_disable_layer_debuggers = disable_layer_debuggers;
-		disable_layer_debuggers = 1;
-		var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
-		disable_layer_debuggers = original_disable_layer_debuggers;
-
-		/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
-		await _create_model();
-
-		if(heatmap) {
-			/*
-			log(heatmap);
-			log(heatmap.shape);
-			heatmap.print();
-			*/
-
-			var canvas = $("#grad_cam_heatmap")[0];
-			var img = await heatmap.arraySync()[0];
-
-			var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-
-			var shape = await get_shape_from_array(img);
-			if(shape.length != 3) {
-				$("#grad_cam_heatmap").hide();
-			} else {
-				var height = shape[0];
-				var width = shape[1];
-
-				var largest = Math.max(height, width);
-
-				var pxsz = 1;
-				
-				while ((pxsz * largest) < max_height_width) {
-					pxsz += 1;
-				}
-
-				var res = draw_grid(canvas, pxsz, img, 1, 0);
-				$("#grad_cam_heatmap").show();
-			}
-		} else {
-			$("#grad_cam_heatmap").hide();
-		}
-		tf.engine().endScope();
+	if(!(
+		await input_shape_is_image(is_from_webcam) && 
+		$("#show_grad_cam").is(":checked") && 
+		!started_training && 
+		(await output_size_at_layer(get_number_of_layers())).length == 2)
+	) {
+		return;
 	}
-	memory_leak_debugger("draw_heatmap", start_tensors)
+
+	tf.engine().startScope();
+	var strongest_category = get_index_of_highest_category(predictions_tensor);
+
+	var original_disable_layer_debuggers = disable_layer_debuggers;
+	disable_layer_debuggers = 1;
+	var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
+	disable_layer_debuggers = original_disable_layer_debuggers;
+
+	/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
+	await _create_model();
+
+	if(heatmap) {
+		/*
+		log(heatmap);
+		log(heatmap.shape);
+		heatmap.print();
+		*/
+
+		var canvas = $("#grad_cam_heatmap")[0];
+		var img = await heatmap.arraySync()[0];
+
+		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+
+		var shape = await get_shape_from_array(img);
+		if(shape.length != 3) {
+			$("#grad_cam_heatmap").hide();
+		} else {
+			var height = shape[0];
+			var width = shape[1];
+
+			var largest = Math.max(height, width);
+
+			var pxsz = 1;
+			
+			while ((pxsz * largest) < max_height_width) {
+				pxsz += 1;
+			}
+
+			var res = draw_grid(canvas, pxsz, img, 1, 0);
+			$("#grad_cam_heatmap").show();
+		}
+	} else {
+		$("#grad_cam_heatmap").hide();
+	}
+
+	tf.engine().endScope();
+	memory_leak_debugger("draw_heatmap", start_tensors);
 }
 
 async function predict_webcam () {
