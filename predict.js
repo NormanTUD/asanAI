@@ -716,7 +716,25 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	memory_leak_debugger("draw_heatmap", start_tensors);
 }
 
+function _get_resized_webcam (predict_data, h, w) {
+	var start_tensors = memory_leak_debugger();
+	var res = tf.tidy(() => {
+		var divide_by = parseFloat($("#divide_by").val());
+		var r = predict_data.resizeNearestNeighbor([h, w]).toFloat().expandDims();
+
+		if(divide_by != 1) {
+			r = tf.tidy(() => { return tf.divNoNan(r, divide_by) });
+		}
+
+		return r;
+	})
+
+	memory_leak_debugger("_get_resized_webcam", start_tensors);
+	return res;
+}
+
 async function predict_webcam () {
+	var start_tensors = memory_leak_debugger();
 	if(!cam) {
 		return;
 	}
@@ -725,24 +743,15 @@ async function predict_webcam () {
 		return;
 	}
 
-	var start_tensors = memory_leak_debugger();
-
 	var predict_data = await cam.capture();
 
-	predict_data = tf.tidy(() => {
-		var divide_by = parseFloat($("#divide_by").val());
-		var res = predict_data.resizeNearestNeighbor([height, width]).toFloat().expandDims();
-
-		if(divide_by != 1) {
-			res = tf.tidy(() => { return tf.divNoNan(res, divide_by) });
-		}
-
-		return res;
-	});
+	predict_data = _get_resized_webcam(predict_data, height, width);
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = tf.tidy(() => { return model.predict([predict_data], [1, 1]); });
+		predictions_tensor = tf.tidy(() => {
+			return model.predict([predict_data], [1, 1]);
+		});
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
 		await dispose(predict_data);
@@ -753,7 +762,6 @@ async function predict_webcam () {
 	}
 
 	await draw_heatmap(predictions_tensor, predict_data, 1);
-
 
 	var predictions = predictions_tensor.arraySync();
 
@@ -769,7 +777,7 @@ async function predict_webcam () {
 			if(model.outputShape.length == 4) {
 				var pxsz = 1;
 
-				var largest = Math.max(predictions_tensor[1], predictions_tensor[2]);
+				var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
 
 				var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 				while ((pxsz * largest) < max_height_width) {
@@ -827,6 +835,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 }
 
 async function _webcam_predict (webcam_prediction, predictions) {
+	var start_tensors = memory_leak_debugger();
 	var max_i = 0;
 	var max_probability = -9999999;
 
@@ -842,34 +851,52 @@ async function _webcam_predict (webcam_prediction, predictions) {
 		await get_label_data();
 	}
 
+	_predict_webcam_html(predictions, webcam_prediction, max_i);
+
+	memory_leak_debugger("_webcam_predict", start_tensors);
+}
+
+async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
+	var start_tensors = memory_leak_debugger();
 	var str = "<table class='predict_table'>";
 
 	for (let i = 0; i < predictions.length; i++) {
-		var label = labels[i % labels.length];
-		var probability = predictions[i];
-
-		var w = Math.floor(probability * 50);
-
-		if(show_bars_instead_of_numbers()) {
-			if(i == max_i) {
-				//str = "<b class='max_prediction'>" + str + "</b>";
-				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
-			} else {
-				str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
-			}
-		} else {
-			probability = (probability * 50) + "%";
-			if(i == max_i) {
-				str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
-			} else {
-				str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-			}
-		}
+		str += _webcam_prediction_row(i, predictions, max_i);
 	}
 
 	str += "</table>";
 
 	webcam_prediction.append(str);
+
+	memory_leak_debugger("_predict_webcam_html", start_tensors);
+}
+
+function _webcam_prediction_row (i, predictions, max_i) {
+	var start_tensors = memory_leak_debugger();
+	var str = "";
+	var label = labels[i % labels.length];
+	var probability = predictions[i];
+
+	var w = Math.floor(probability * 50);
+
+	if(show_bars_instead_of_numbers()) {
+		if(i == max_i) {
+			//str = "<b class='max_prediction'>" + str + "</b>";
+			str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+		} else {
+			str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+		}
+	} else {
+		probability = (probability * 50) + "%";
+		if(i == max_i) {
+			str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
+		} else {
+			str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
+		}
+	}
+
+	memory_leak_debugger("_webcam_prediction_row", start_tensors);
+	return str;
 }
 
 async function show_webcam (force_restart) {
