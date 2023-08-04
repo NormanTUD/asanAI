@@ -626,7 +626,10 @@ async function _print_predictions_text(count, example_predict_data) {
 			} catch (e) {
 				_predict_error(e);
 			}
+		} else {
+			console.error("tensor shape does not match model shape (input shape/tensor shape):", get_input_shape(), tensor.shape);
 		}
+
 		await dispose(tensor);
 		await tf.nextFrame();
 	}
@@ -981,7 +984,7 @@ async function show_webcam (force_restart) {
 
 function tensor_shape_matches_model (tensor) {
 	var start_tensors = memory_leak_debugger();
-	var res = false;
+	var res = true;
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
 	input_layer_shape.shift();
 
@@ -991,8 +994,6 @@ function tensor_shape_matches_model (tensor) {
 	if(tensor_shape.join(",") != input_layer_shape.join(",")) {
 		res = false;
 	}
-
-	res = true;
 
 	memory_leak_debugger("tensor_shape_matches_model", start_tensors);
 
