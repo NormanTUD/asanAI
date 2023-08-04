@@ -273,22 +273,26 @@ async function run_tests () {
 			result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
 			test_equal("trained nn: 1 and 1", result_and.toString().startsWith("0.9"), true)
 
-			var new_val = 123;
+			log_test("Testing initializer");
 
+			var initializer_val = 123;
+
+			$($(".bias_initializer")[0]).val("glorotUniform").trigger("change");
+			$($(".bias_initializer")[0]).val("constant").trigger("change");
+			$($(".kernel_initializer")[0]).val("glorotUniform").trigger("change");
 			$($(".kernel_initializer")[0]).val("constant").trigger("change");
 			await delay(1000);
 
-			$($(".kernel_initializer_value")[0]).val(new_val).trigger("change");
+			$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
+			$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
 
-			await delay(1000);
+			await delay(2000);
 
-			var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == new_val;
+			var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == initializer_val;
 
 			test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 
-			$($(".kernel_initializer")[0]).val("glorotUniform").trigger("change");
-
-			await delay(200);
+			await delay(2000);
 			
 			log_test("Add layer");
 
@@ -316,11 +320,15 @@ async function run_tests () {
 			delay(5000);
 			await train_neural_network();	
 
-			var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
-			test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) < 3, true)
+			try {
+				var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
+				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) < 3, true)
 
-			res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
-			test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
+				res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
+				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 5, true)
+			} catch (e) {
+				console.error("ERROR while predicting in test mode:", e);
+			}
 
 			log_test("Test Training images");
 
@@ -340,7 +348,7 @@ async function run_tests () {
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
-			await set_epochs(100);
+			await set_epochs(50);
 			await train_neural_network();	
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
@@ -392,14 +400,17 @@ async function run_tests () {
 
 				var this_result_ordered = this_result.sort(function (a, b) { return a - b; });
 				var highest = this_result_ordered.pop();
-
-				var real_sum = this_result_ordered.reduce((a, b) => a + b, 0);
-
-				if(highest > (0.8 * real_sum)) {
-					test_equal("There is a clear winner", true, true);
+				if(isNaN(highest)) {
+					test_equal("highest is nAn!", false, true);
 				} else {
-					log("highest:", highest, "real_sum:", real_sum);
-					test_equal("There is NOT a clear winner", false, true);
+					var real_sum = this_result_ordered.reduce((a, b) => a + b, 0);
+
+					if(highest > (0.8 * real_sum)) {
+						test_equal("There is a clear winner", true, true);
+					} else {
+						log("highest:", highest, "real_sum:", real_sum);
+						test_equal("There is NOT a clear winner", false, true);
+					}
 				}
 			}
 

@@ -5704,33 +5704,36 @@ function set_required_seeds (required, type, kernel_or_bias) {
 	for (var i = 0; i < required.length; i++) {
 		var val_key = required[i];
 
-		if(val_key) {
-			if(Object.keys(values).includes(val_key)) {
-				var val = values[val_key];
-				//log("val", val);
-
-				if(Object.keys(values).includes(val_key)) {
-					var item_selector = "." + kernel_or_bias + val_key;
-					//log("item_selector", item_selector);
-					var ui_elements = $(item_selector);
-					if(ui_elements.length >= 1) {
-						ui_elements.val(val).trigger("change");
-					} else {
-						console.error("ui_elements contains no elements. Selector: "  + item_selector)
-					}
-				} else {
-					console.error(`${val_key} is required but not properly defined`);
-				}
-			} else {
-					console.error(`${val_key} is required but not defined at all`);
-			}
-		} else {
+		if(!val_key) {
 			console.log("val_key not defined or false START");
 			log("required", required);
 			log("type", type);
 			log("values", values);
 			log("kernel_or_bias", kernel_or_bias);
 			console.error("val_key not defined or false END");
+
+			continue;
+		}
+
+		if(!Object.keys(values).includes(val_key)) {
+			console.error(`${val_key} is required but not defined at all`);
+			continue;
+		}
+
+		var val = values[val_key];
+		//log("val", val);
+
+		if(Object.keys(values).includes(val_key)) {
+			var item_selector = "." + kernel_or_bias + val_key;
+			//log("item_selector", item_selector);
+			var ui_elements = $(item_selector);
+			if(ui_elements.length >= 1) {
+				ui_elements.val(val).trigger("change");
+			} else {
+				console.error("ui_elements contains no elements. Selector: "  + item_selector)
+			}
+		} else {
+			console.error(`${val_key} is required but not properly defined`);
 		}
 	}
 }

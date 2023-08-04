@@ -655,7 +655,7 @@ async function run_neural_network () {
 
 			await dispose(h);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			await write_error("" + e);
 			error = 1;
 		}

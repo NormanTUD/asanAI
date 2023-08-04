@@ -343,7 +343,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	var str = "";
 
-	tf.engine().startScope();
 	try {
 		var predict_data = null;
 
@@ -459,6 +458,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 					log(res);
 				}
+
+				dispose(predictions_tensor_transposed);
 			} else {
 
 				if(predictions.length) {
@@ -526,8 +527,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			console.error(e);
 		}
 	}
-
-	tf.engine().endScope();
 
 	allow_editable_labels();
 
@@ -627,7 +626,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				_predict_error(e);
 			}
 		} else {
-			console.error("tensor shape does not match model shape (input shape/tensor shape):", get_input_shape(), tensor.shape);
+			console.info("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:", get_input_shape(), tensor.shape);
 		}
 
 		await dispose(tensor);
