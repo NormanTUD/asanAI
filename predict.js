@@ -135,53 +135,39 @@ async function predict_demo (item, nr, tried_again = 0) {
 		_predict_error(e);
 	}
 
+	while (!tf.backend()) {
+		await delay(100);
+	}
+
+	if(!model) {
+		console.error("No model");
+		return;
+	}
+
+
+	if(!tensor_shape_matches_model(tensor_img)) {
+		console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
+		return;
+	}
+
 	var large_try = memory_leak_debugger();
 
 	try {
-		while (!tf.backend()) {
-			await delay(100);
-		}
+		predictions_tensor = await model.predict(tensor_img);
 
-		if(model) {
-			if(!tensor_shape_matches_model(tensor_img)) {
-				console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
-				return;
-			}
-
-			try {
-				predictions_tensor = await model.predict(tensor_img);
-
-				await draw_heatmap(predictions_tensor, tensor_img);
-			} catch (e) {
-				l("Error (101): " + e);
-				log("================================= Tensor_Img:", tensor_img);
-				tensor_img.print();
-				log("=================================");
-
-				_predict_error(e);
-
-				if(tensor_img) {
-					await dispose(tensor_img);
-				}
-
-				if(predictions_tensor) {
-					await dispose(predictions_tensor);
-				}
-
-				if(tried_again) {
-					return;
-				}
-
-				return await predict_demo(item, nr, 1);
-			}
-
-			await _predict_result(predictions_tensor, nr);
-		} else {
-			console.error("No model");
-		}
+		await draw_heatmap(predictions_tensor, tensor_img);
 	} catch (e) {
+		l("Error (101): " + e);
+		log("================================= Tensor_Img:", tensor_img);
 		_predict_error(e);
+		if(tried_again) {
+			return;
+		}
+
+		return await predict_demo(item, nr, 1);
 	}
+
+	await _predict_result(predictions_tensor, nr);
 
 	if(predictions_tensor) {
 		await dispose(predictions_tensor);
