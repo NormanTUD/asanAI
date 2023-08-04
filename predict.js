@@ -532,30 +532,23 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			dataset_url = dataset_url + "&cosmo=1";
 		}
 
-		//log("Tensors A: " + tf.memory()["numTensors"]);
-
 		var x = await get_cached_json(dataset_url);
 
 		if(x) {
-			//log("Tensors B: " + tf.memory()["numTensors"]);
 			if(Object.keys(x).includes("example")) {
-				//log("Tensors C: " + tf.memory()["numTensors"]);
 				var this_examples_hash = await md5(JSON.stringify(x["example"]));
 				if(this_examples_hash != predict_examples_hash) {
 					example_predictions.html("");
 					predict_examples_hash = this_examples_hash;
 				}
-				//log("Tensors D: " + tf.memory()["numTensors"]);
 				var examples = x["example"];
 				if(examples) {
-					////log("Tensors E: " + tf.memory()["numTensors"]);
 					var str = "";
 					for (var i = 0; i < examples.length; i++) {
 						count++;
 						var img_url = full_dir + "/" + examples[i];
 						var img_elem = $("img[src$='" + img_url + "']");
 						if(img_elem.length) {
-							//log("Tensors F: " + tf.memory()["numTensors"]);
 							try {
 								var img = img_elem;
 								if(Object.keys(img).includes("0")) {
@@ -565,22 +558,18 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 							} catch (e) {
 								log("Predict demo failed, error:", e);
 							}
-							//log("Tensors G: " + tf.memory()["numTensors"]);
 						} else {
 							str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
 						}
 					}
-					//log("Tensors H: " + tf.memory()["numTensors"]);
 
 					if(str) {
 						example_predictions.html(str);
 					}
-					//log("Tensors I: " + tf.memory()["numTensors"]);
 				}
 			}
 		}
 	} else {
-		//log("Tensors J: " + tf.memory()["numTensors"]);
 		example_predictions.html("");
 		var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
 		var example_predict_data = await get_cached_json(example_url)
@@ -608,10 +597,8 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 						_predict_error(e);
 					}
 				}
-				//log("Tensors L: " + tf.memory()["numTensors"]);
 				await dispose(tensor);
 				await tf.nextFrame();
-				//log("Tensors M: " + tf.memory()["numTensors"]);
 			}
 		}
 
