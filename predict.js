@@ -520,9 +520,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 
 	if(!$("#data_origin").val() == "default") {
-		$(".show_when_has_examples").hide();
-		$("#example_predictions").hide();
-		$(".show_when_predicting").hide();
+		show_or_hide_predictions(0);
 
 		return;
 	}
@@ -533,7 +531,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	} else {
 		await _print_predictions_text();
 	}
-
 
 	if(!dont_go_to_tab) {
 		if($("#jump_to_interesting_tab").is(":checked")) {
