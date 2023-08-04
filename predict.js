@@ -548,8 +548,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 						count++;
 						$("#predict_error").html("");
-
-
 					} catch (e) {
 						_predict_error(e);
 					}
@@ -585,6 +583,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 }
 
 async function _print_example_predictions (count) {
+	var start_tensors = memory_leak_debugger();
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
 	var full_dir = "traindata/" + dataset + "/example/";
@@ -612,6 +611,8 @@ async function _print_example_predictions (count) {
 			}
 		}
 	}
+
+	memory_leak_debugger("_print_example_predictions", start_tensors);
 
 	return count;
 }
