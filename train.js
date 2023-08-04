@@ -906,8 +906,8 @@ async function visualize_train () {
 				imgs.push(x);
 
 				var img_tensor = tf.tidy(() => { return tf.browser.fromPixels(x).resizeBilinear([width, height]).expandDims() });
-				img_tensor = tf.divNoNan(img_tensor, parseFloat($("#divide_by").val()));
-				var res = model.predict(img_tensor);
+				img_tensor = tf.tidy(() => { return tf.divNoNan(img_tensor, parseFloat($("#divide_by").val())) });;
+				var res = tf.tidy(() => { return model.predict(img_tensor) });
 
 				var res_array = res.arraySync()[0];
 				//log("RES for " + x.src + " :", res_array);
@@ -917,9 +917,6 @@ async function visualize_train () {
 
 				categories.push(category);
 				probabilities.push(probability);
-
-				promises.push(dispose(res));
-				promises.push(dispose(img_tensor));
 
 				await dispose(res);
 				await dispose(img_tensor)
