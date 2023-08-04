@@ -153,6 +153,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 	try {
 		var inside_try = memory_leak_debugger();
 
+		tf.engine().startScope();
+
 		predictions_tensor = await model.predict(tensor_img);
 
 		await _predict_result(predictions_tensor, nr);
@@ -161,6 +163,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await dispose(predictions_tensor);
 		await dispose(tensor_img);
 		await dispose(new_tensor_img);
+
+		tf.engine().endScope();
 
 		memory_leak_debugger("inside_try", inside_try);
 	} catch (e) {
