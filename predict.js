@@ -180,7 +180,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	try {
-		var inside_try = memory_leak_debugger();
+		//var inside_try = memory_leak_debugger();
 
 		tf.engine().startScope();
 		await _run_predict_and_show(tensor_img, nr);
@@ -188,7 +188,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 		//await dispose(new_tensor_img);
 
-		memory_leak_debugger("inside_try", inside_try);
+		//memory_leak_debugger("inside_try", inside_try);
 	} catch (e) {
 		l("Error (101): " + e);
 		log("================================= Tensor_Img:", tensor_img);
