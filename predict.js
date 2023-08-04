@@ -173,7 +173,9 @@ async function predict_demo (item, nr, tried_again = 0) {
 	try {
 		var inside_try = memory_leak_debugger();
 
+		tf.engine().startScope();
 		await _run_predict_and_show(tensor_img, nr);
+		tf.engine().endScope();
 
 		//await dispose(new_tensor_img);
 
