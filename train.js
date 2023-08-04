@@ -298,7 +298,7 @@ function get_fit_data () {
 			show_tab_label("tfvis_tab_label", 1);
 		}
 
-		memory_leak_debugger("onBatchBegin end", start_tensors);
+		memory_leak_debugger("onBatchBegin", start_tensors);
 	};
 
 	callbacks["onEpochBegin"] = async function () {
@@ -384,7 +384,7 @@ function get_fit_data () {
 			}
 		}
 
-		memory_leak_debugger("onBatchEnd end", start_tensors);
+		memory_leak_debugger("onBatchEnd", start_tensors);
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -442,7 +442,7 @@ function get_fit_data () {
 		last_batch_plot_time = false;
 
 		await visualize_train();
-		memory_leak_debugger("onEpochEnd end", start_tensors);
+		memory_leak_debugger("onEpochEnd", start_tensors);
 	}
 
 	callbacks["onTrainEnd"] = async function () {
@@ -453,7 +453,7 @@ function get_fit_data () {
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
-		memory_leak_debugger("onTrainEnd end", start_tensors);
+		memory_leak_debugger("onTrainEnd", start_tensors);
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {
@@ -477,7 +477,7 @@ function get_fit_data () {
 	traindebug("fit_data:");
 	traindebug(fit_data);
 
-	memory_leak_debugger("get_fit_data end", start_tensors);
+	memory_leak_debugger("get_fit_data", start_tensors);
 	return fit_data;
 }
 

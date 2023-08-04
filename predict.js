@@ -56,6 +56,7 @@ function _predict_error (e) {
 }
 
 async function predict_demo (item, nr, tried_again = 0) {
+	var start_tensors = memory_leak_debugger();
 	//tf.engine().startScope();
 
 	//log("Tensors 0: " + tf.memory()["numTensors"]);
@@ -270,6 +271,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 	change_output_and_example_image_size();
 
 	allow_editable_labels();
+
+	memory_leak_debugger("predict_demo", start_tensors);
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
@@ -474,7 +477,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	allow_editable_labels();
 
-	memory_leak_debugger("predict end", start_tensors);
+	memory_leak_debugger("predict", start_tensors);
 
 	return str;
 }
@@ -625,7 +628,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	//log("Tensors O: " + tf.memory()["numTensors"]);
-	memory_leak_debugger("show_prediction end", start_tensors);
+	memory_leak_debugger("show_prediction", start_tensors);
 }
 
 function get_index_of_highest_category (predictions_tensor) {
@@ -1046,5 +1049,5 @@ async function repredict () {
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
-	memory_leak_debugger("repredict end", start_tensors);
+	memory_leak_debugger("repredict", start_tensors);
 }

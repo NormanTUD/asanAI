@@ -1359,10 +1359,10 @@ async function input_shape_is_image (is_from_webcam=0) {
 		}
 		*/
 
-		memory_leak_debugger("input_shape_is_image end", start_tensors);
+		memory_leak_debugger("input_shape_is_image", start_tensors);
 		return true;
 	}
 	is.hide();
-	memory_leak_debugger("input_shape_is_image end", start_tensors);
+	memory_leak_debugger("input_shape_is_image", start_tensors);
 	return false;
 }
