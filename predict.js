@@ -55,6 +55,21 @@ function _predict_error (e) {
 
 }
 
+function _get_tensor_img (item) {
+	var start_tensors = memory_leak_debugger();
+	var tensor_img = null;
+	try {
+		tensor_img = tf.tidy(() => {
+			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
+		});
+	} catch (e) {
+		log("item:", item, "width:", width, "height:", height, "error:", e);
+		_predict_error(e);
+	}
+	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
+	return tensor_img;
+}
+
 async function predict_demo (item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		return;
@@ -66,7 +81,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	var start_tensors = memory_leak_debugger();
 
-	var tensor_img;
 	var new_tensor_img;
 
 	try {
@@ -93,20 +107,17 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
+	assert(!!item, "item must at least be true");
 	assert(width > 0, "width is not larger than 0");
 	assert(height > 0, "height is not larger than 0");
 
-	try {
-		tensor_img = tf.tidy(() => {
-			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
-		});
-	} catch (e) {
-		log("item:", item, "width:", width, "height:", height, "error:", e);
-		_predict_error(e);
+	var tensor_img = _get_tensor_img(item);
+
+	if(!tensor_img) {
+		console.warn("tensor_img was empty");
 		return;
 	}
 
-	assert(!!item, "item must at least be true");
 
 	try {
 		if($("#divide_by").val() != 1) {
