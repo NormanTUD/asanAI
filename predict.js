@@ -798,12 +798,15 @@ async function predict_webcam () {
 		});
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
-		await dispose(predictions_tensor);
-		await dispose(predict_data);
+
 		console.error(e);
 		l("Error (512): " + e);
 		memory_leak_debugger("predict_webcam", start_tensors);
 		currently_predicting_webcam = false;
+
+		await dispose(predictions_tensor);
+		await dispose(predict_data);
+
 		return;
 	}
 
@@ -1088,7 +1091,7 @@ async function predict_handdrawn () {
 
 	var start_tensors = memory_leak_debugger();
 
-	if(Object.keys(atrament_data).includes("sketcher")) {
+	if(!Object.keys(atrament_data).includes("sketcher")) {
 		if(sketcher_warning >= 1) {
 			console.warn("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
 		}
