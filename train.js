@@ -487,17 +487,6 @@ function get_fit_data () {
 	return fit_data;
 }
 
-function show_info_pre_run () {
-	write_model_summary_wait();
-}
-
-function show_info_after_run (h) {
-	log(h);
-	assert(typeof(h) == "object", "history object is not of type object");
-
-	traindebug("Showing tfvis/history/memory");
-}
-
 async function run_neural_network () {
 	var start_tensors = memory_leak_debugger();
 	await clean_gui();
@@ -528,7 +517,7 @@ async function run_neural_network () {
 
 	try {
 		var error_string = "";
-		show_info_pre_run();
+		write_model_summary_wait();
 
 		await disable_everything();
 		l("Getting data...");
@@ -657,7 +646,7 @@ async function run_neural_network () {
 			memory_leak_debugger("model.fit done", start_tensors);
 			l("Finished model.fit");
 
-			show_info_after_run(h);
+			assert(typeof(h) == "object", "history object is not of type object");
 
 			await dispose(h);
 		} catch (e) {

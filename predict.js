@@ -108,7 +108,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	var xpath = get_element_xpath(item);
 
-	tf.engine().startScope("scope_" + xpath);
+	//tf.engine().startScope("scope_" + xpath);
 
 	var start_tensors = memory_leak_debugger();
 
@@ -208,7 +208,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	await dispose(tensor_img);
 	await dispose(new_tensor_img);
 
-	tf.engine().endScope("scope_" + xpath);
+	//tf.engine().endScope("scope_" + xpath);
 
 	await tf.nextFrame();
 
@@ -216,6 +216,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 }
 
 async function _run_predict_and_show (tensor_img, nr) {
+	var start_tensors = memory_leak_debugger();
 	if(tensor_img.isDisposedInternal) {
 		console.warn("Tensor was disposed internally", tensor_img);
 		console.trace();
@@ -228,13 +229,17 @@ async function _run_predict_and_show (tensor_img, nr) {
 		return;
 	}
 
-	var predictions_tensor = await model.predict(tensor_img);
+	var predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
+
+	log(predictions_tensor);
 
 	await _predict_result(predictions_tensor, nr);
 	await draw_heatmap(predictions_tensor, tensor_img);
 
 	await dispose(predictions_tensor);
 	await dispose(tensor_img);
+
+	memory_leak_debugger("_run_predict_and_show", start_tensors);
 }
 
 async function _predict_result(predictions_tensor, nr) {
@@ -312,7 +317,7 @@ async function _predict_table(predictions_tensor, desc) {
 			var probability = predictions[i];
 			var w = Math.floor(probability * 50);
 
-			fullstr += _predict_table_row(label, w, max_i, probability);
+			fullstr += _predict_table_row(label, w, max_i, probability, i);
 		}
 
 		fullstr += "</table>";
@@ -325,7 +330,7 @@ async function _predict_table(predictions_tensor, desc) {
 	memory_leak_debugger("_predict_table", start_tensors);
 }
 
-function _predict_table_row (label, w, max_i, probability) {
+function _predict_table_row (label, w, max_i, probability, i) {
 	var str = "";
 	if(show_bars_instead_of_numbers()) {
 		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
@@ -762,25 +767,22 @@ async function predict_webcam () {
 		return;
 	}
 
-	var predict_data = await cam.capture();
+	var cam_img = await cam.capture();
 
 	var wait = null;
 
-	predict_data = tf.tidy(() => {
-		var new_res = _get_resized_webcam(predict_data, height, width);
-		wait = dispose(predict_data);
+	var predict_data = tf.tidy(() => {
+		var new_res = _get_resized_webcam(cam_img, height, width);
 		return new_res;
 	});
 
-	if(wait) {
-		await wait;
-	}
+	await dispose(cam_img);
 
 
 	var predictions_tensor = null;
 	try {
 		predictions_tensor = tf.tidy(() => {
-			return model.predict([predict_data], [1, 1]);
+			return model.predict([predict_data]);
 		});
 	} catch (e) {
 		l("Predict data shape:" + predict_data.shape);
@@ -1070,7 +1072,7 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	tf.engine().startScope("scope_predict_handdrawn");
+	//tf.engine().startScope("scope_predict_handdrawn");
 
 	var start_tensors = memory_leak_debugger();
 
@@ -1133,7 +1135,7 @@ async function predict_handdrawn () {
 
 	allow_editable_labels();
 
-	tf.engine().endScope("scope_predict_handdrawn");
+	//tf.engine().endScope("scope_predict_handdrawn");
 
 
 	memory_leak_debugger("predict_handdrawn", start_tensors);
