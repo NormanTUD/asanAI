@@ -148,23 +148,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	var predictions_tensor;
-
 	try {
 		var inside_try = memory_leak_debugger();
 
-		tf.engine().startScope();
+		await _run_predict_and_show(tensor_img, nr);
 
-		predictions_tensor = await model.predict(tensor_img);
-
-		await _predict_result(predictions_tensor, nr);
-		await draw_heatmap(predictions_tensor, tensor_img);
-
-		await dispose(predictions_tensor);
-		await dispose(tensor_img);
-		await dispose(new_tensor_img);
-
-		tf.engine().endScope();
+		//await dispose(new_tensor_img);
 
 		memory_leak_debugger("inside_try", inside_try);
 	} catch (e) {
@@ -175,7 +164,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 			return;
 		}
 
-		await dispose(predictions_tensor);
 		await dispose(tensor_img);
 		await dispose(new_tensor_img);
 
@@ -189,6 +177,16 @@ async function predict_demo (item, nr, tried_again = 0) {
 	allow_editable_labels();
 
 	memory_leak_debugger("predict_demo", start_tensors);
+}
+
+async function _run_predict_and_show (tensor_img, nr) {
+	var predictions_tensor = await model.predict(tensor_img);
+
+	await _predict_result(predictions_tensor, nr);
+	await draw_heatmap(predictions_tensor, tensor_img);
+
+	await dispose(predictions_tensor);
+	await dispose(tensor_img);
 }
 
 async function _predict_result(predictions_tensor, nr) {
