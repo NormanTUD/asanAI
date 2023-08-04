@@ -648,10 +648,10 @@ async function run_neural_network () {
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 			var start_tensors = memory_leak_debugger();
-			tf.engine().startScope();
+			tf.engine().startScope("modelFit");
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			await tf.nextFrame();
-			tf.engine().endScope();
+			tf.engine().endScope("modelFit");
 			memory_leak_debugger("model.fit done", start_tensors);
 			l("Finished model.fit");
 
