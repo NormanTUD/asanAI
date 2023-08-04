@@ -4456,7 +4456,6 @@ function show_tab_label(label, click) {
 			$(x).hide();
 		});
 
-		log("element_to_show:", element_to_show);
 		element_to_show.show().parent().show().parent().show();
 	} else {
 		$item.show().trigger("click").parent().show();
