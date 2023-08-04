@@ -5575,11 +5575,6 @@ function allow_editable_labels () {
 	$(".label_element").each((i, x) => {
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
-		if(typeof(labels) == "object") {
-			console.warn("labels is not an array/object");
-			return;
-		}
-
 		if(!labels.length) {
 			console.warn("labels is an array, but is empty.");
 			return;
