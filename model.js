@@ -471,8 +471,8 @@ function check_initializers (data, has_keys) {
 						} else {
 							data[keyname] = null;
 						}
-					} else {
-						log("original_name (A):", original_name);
+					//} else {
+					//	log("original_name (A):", original_name);
 					}
 				}
 			} else if(regularizer_or_init == "Regularizer") {
@@ -491,8 +491,8 @@ function check_initializers (data, has_keys) {
 						} else {
 							data[keyname] = null;
 						}
-					} else {
-						log("original_name (B):", original_name);
+					//} else {
+					//	log("original_name (B):", original_name);
 					}
 				}
 			} else {
