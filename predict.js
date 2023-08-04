@@ -76,7 +76,9 @@ function _divide_img_tensor (tensor_img) {
 
 function _get_tensor_img (item) {
 	var start_tensors = memory_leak_debugger();
+
 	var tensor_img = null;
+
 	try {
 		tensor_img = tf.tidy(() => {
 			return tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims()
@@ -85,6 +87,7 @@ function _get_tensor_img (item) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
 		_predict_error(e);
 	}
+
 	var res = _divide_img_tensor(tensor_img);
 
 	memory_leak_debugger("_get_tensor_img", start_tensors + 1); // ein neuer tensor sollte alloziert sein
