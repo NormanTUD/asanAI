@@ -73,7 +73,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	var tensor_img;
 	var new_tensor_img;
-	var predictions_tensor;
 
 	try {
 		if(labels.length == 0) {
@@ -152,10 +151,17 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	var large_try = memory_leak_debugger();
 
+	var predictions_tensor;
+
 	try {
 		predictions_tensor = await model.predict(tensor_img);
 
+		await _predict_result(predictions_tensor, nr);
 		await draw_heatmap(predictions_tensor, tensor_img);
+
+		await dispose(predictions_tensor);
+		await dispose(tensor_img);
+		await dispose(new_tensor_img);
 	} catch (e) {
 		l("Error (101): " + e);
 		log("================================= Tensor_Img:", tensor_img);
@@ -164,13 +170,12 @@ async function predict_demo (item, nr, tried_again = 0) {
 			return;
 		}
 
+		await dispose(predictions_tensor);
+		await dispose(tensor_img);
+		await dispose(new_tensor_img);
+
 		return await predict_demo(item, nr, 1);
 	}
-
-	await _predict_result(predictions_tensor, nr);
-
-	await dispose(tensor_img);
-	await dispose(new_tensor_img);
 
 	memory_leak_debugger("large_try", large_try)
 
