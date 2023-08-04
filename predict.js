@@ -175,10 +175,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 				return await predict_demo(item, nr, 1);
 			}
 
-			var desc = $($(".predict_demo_result")[nr]);
-			desc.html("");
-
-			await _predict_result(predictions_tensor, desc);
+			await _predict_result(predictions_tensor, nr);
 		} else {
 			console.error("No model");
 		}
@@ -211,8 +208,10 @@ async function predict_demo (item, nr, tried_again = 0) {
 	memory_leak_debugger("predict_demo", start_tensors);
 }
 
-async function _predict_result(predictions_tensor, desc) {
+async function _predict_result(predictions_tensor, nr) {
 	var start_tensors = memory_leak_debugger();
+	var desc = $($(".predict_demo_result")[nr]);
+	desc.html("");
 	if(model.outputShape.length == 4) {
 		await _predict_image(predictions_tensor, desc);
 	} else {
