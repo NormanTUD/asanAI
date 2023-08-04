@@ -1096,6 +1096,8 @@ async function predict_handdrawn () {
 			console.warn("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
 		}
 		sketcher_warning++;
+
+		return;
 	}
 
 
@@ -1111,6 +1113,7 @@ async function predict_handdrawn () {
 	}
 
 	if(!predict_data) {
+		await dispose(predict_data);
 		console.error("no predict data");
 		return;
 	}
@@ -1118,12 +1121,20 @@ async function predict_handdrawn () {
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by); });
+		var divided_data = tf.tidy(() => {
+			return tf.divNoNan(predict_data, divide_by);
+		});
+
+		await dispose(predict_data);
+
+		predict_data = divided_data;
 	}
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = tf.tidy(() => { return model.predict([predict_data], [1, 1]); });
+		predictions_tensor = tf.tidy(() => {
+			return model.predict([predict_data]);
+		});
 	} catch (e) {
 		l("Predict data shape:", predict_data.shape);
 		console.error(e);
@@ -1134,16 +1145,7 @@ async function predict_handdrawn () {
 
 	await draw_heatmap(predictions_tensor, predict_data);
 
-	var handdrawn_predictions = $("#handdrawn_predictions");
-	handdrawn_predictions.html("");
-
-	if(model_output_shape_looks_like_classification()) {
-		await _classification_handdrawn(predictions_tensor, handdrawn_predictions);
-	} else if(model.outputShape.length == 4) {
-		await _image_output_handdrawn(predictions_tensor);
-	} else {
-		console.warn("Different output shapes not yet supported");
-	}
+	await _predict_handdrawn(predictions_tensor);
 
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
@@ -1154,6 +1156,27 @@ async function predict_handdrawn () {
 
 
 	memory_leak_debugger("predict_handdrawn", start_tensors);
+}
+
+async function _predict_handdrawn(predictions_tensor) {
+	var start_tensors = memory_leak_debugger();
+
+	var handdrawn_predictions = $("#handdrawn_predictions");
+	handdrawn_predictions.html("");
+
+	var ret = null;
+
+	if(model_output_shape_looks_like_classification()) {
+		ret = await _classification_handdrawn(predictions_tensor, handdrawn_predictions);
+	} else if(model.outputShape.length == 4) {
+		ret = await _image_output_handdrawn(predictions_tensor);
+	} else {
+		console.warn("Different output shapes not yet supported");
+	}
+
+	memory_leak_debugger("_predict_handdrawn", start_tensors);
+
+	return ret;
 }
 
 async function _image_output_handdrawn(predictions_tensor) {
