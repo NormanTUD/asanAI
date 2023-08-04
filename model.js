@@ -25,6 +25,7 @@ async function get_model_config_hash () {
 }
 
 async function _create_model () {
+	var start_tensors = memory_leak_debugger();
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (_create_model)");
 		return model;
@@ -53,9 +54,12 @@ async function _create_model () {
 	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
 	}
+
+	memory_leak_debugger("_create_model", start_tensors);
 }
 
 async function compile_model (keep_weights, force_dont_keep_weights) {
+	var start_tensors = memory_leak_debugger();
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 	weights_as_string_cache = false;
 
@@ -149,6 +153,8 @@ async function compile_model (keep_weights, force_dont_keep_weights) {
 			}
 		}
 	}
+
+	memory_leak_debugger("compile_model", start_tensors);
 }
 
 function get_weight_type_name_from_option_name (on) {
@@ -605,6 +611,7 @@ function _check_data (data, type) {
 }
 
 async function create_model (old_model, fake_model_structure, force) {
+	var start_tensors = memory_leak_debugger();
 	weights_as_string_cache = false;
 
 	if(has_missing_values) {
@@ -701,10 +708,12 @@ async function create_model (old_model, fake_model_structure, force) {
 		l("Model compiled successfully");
 	}
 
+	memory_leak_debugger("create_model", start_tensors);
 	return new_model;
 }
 
 async function _set_old_weights (force_dont_keep_weights, layers_container_md5, new_layers_container_md5, new_model, old_weights_string) {
+	var start_tensors = memory_leak_debugger();
 	if(!force_dont_keep_weights) {
 		if(old_weights_string) {
 			if(layers_container_md5 == new_layers_container_md5) {
@@ -725,6 +734,7 @@ async function _set_old_weights (force_dont_keep_weights, layers_container_md5, 
 			}
 		}
 	}
+	memory_leak_debugger("_set_old_weights", start_tensors);
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
@@ -1028,6 +1038,7 @@ async function get_valid_layer_types (layer_nr) {
 }
 
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+	var start_tensors = memory_leak_debugger();
 	tf.engine().startScope();
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
@@ -1089,13 +1100,20 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 
 	tf.engine().endScope();
 
+	memory_leak_debugger("set_weights_from_json_object", start_tensors);
+
 	return true;
 }
 
 async function set_weights_from_string (string, no_warning, no_error, m) {
+	var start_tensors = memory_leak_debugger();
 	var json = JSON.parse(string);
 
-	return await set_weights_from_json_object(json, no_warning, no_error, m);
+	var res = await set_weights_from_json_object(json, no_warning, no_error, m);
+
+	memory_leak_debugger("set_weights_from_string", start_tensors);
+
+	return res;
 }
 
 async function get_weights_as_json (m) {
