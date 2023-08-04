@@ -143,17 +143,16 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-
 	if(!tensor_shape_matches_model(tensor_img)) {
 		console.warn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
 		return;
 	}
 
-	var large_try = memory_leak_debugger();
-
 	var predictions_tensor;
 
 	try {
+		var inside_try = memory_leak_debugger();
+
 		predictions_tensor = await model.predict(tensor_img);
 
 		await _predict_result(predictions_tensor, nr);
@@ -162,6 +161,8 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await dispose(predictions_tensor);
 		await dispose(tensor_img);
 		await dispose(new_tensor_img);
+
+		memory_leak_debugger("inside_try", inside_try);
 	} catch (e) {
 		l("Error (101): " + e);
 		log("================================= Tensor_Img:", tensor_img);
@@ -176,8 +177,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 		return await predict_demo(item, nr, 1);
 	}
-
-	memory_leak_debugger("large_try", large_try)
 
 	hide_unused_layer_visualization_headers();
 
