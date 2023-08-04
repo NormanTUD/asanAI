@@ -4452,6 +4452,8 @@ function show_tab_label(label, click) {
 	$("#navbar1").show()
 	$(".navi_list").show();
 
+	this_label_item.parent().show().parent().show();
+
 	if (click && !global_force_noclick_tab_label) {
 		//log("click label " + label)
 		var $this_label_item = $(this_label_item);
@@ -4462,30 +4464,26 @@ function show_tab_label(label, click) {
 		var navigation_elements_in_parent = $this_label_item.parent().parent().parent().parent().find(".navi_list");
 		assert(navigation_elements_in_parent.length >= 1, "no navigation_elements_in_parent");
 		for (var i = 0; i < navigation_elements_in_parent.length; i++) {
-			if(!is_hidden_or_has_hidden_parent($(navigation_elements_in_parent[i])) || is_cosmo_mode) {
-				var div_name = $this_label_item.parent().parent().parent().attr("id");
-				$('a[href="#' + div_name + '"]').click();
-				$this_label_item.trigger("click");
-				if(is_cosmo_mode) {
-					var href = $this_label_item[0].id.replace(/_label$/, "");
-					var showable = $("#" + href);
-					//log("showable:", showable);
-					if(showable.length) {
-						showable.show();
-					} else {
-						console.info("showable is empty");
-					}
-				}
-				//log("click 2", $this_label_item);
+			var div_name = $this_label_item.parent().parent().parent().attr("id");
+			$('a[href="#' + div_name + '"]').click();
+			$this_label_item.trigger("click");
+			var href = $this_label_item[0].id.replace(/_label$/, "");
+			var showable = $("#" + href);
+			//log("showable:", showable);
+			if(showable.length) {
+				showable.show();
 			} else {
-				log("element is hidden:", $(navigation_elements_in_parent[i]));
+				console.info("showable is empty");
 			}
+			//log("click 2", $this_label_item);
 		}
 	}
 
 	if(is_cosmo_mode) {
 		$("#navbar1").hide()
 		$(".navi_list").show();
+		this_label_item.parent().hide().parent().hide();
+
 	}
 }
 

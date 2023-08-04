@@ -1358,7 +1358,7 @@
 								<img style='width: 90%' src="signs_network.svg">
 							</div>-->
 
-							<div id="training_data_tab">
+							<div id="training_data_tab" class="tab">
 								<div id="lenet_example_cosmo" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
@@ -1382,13 +1382,13 @@
 								<div class="" id="download_data" style="display: none"></div>
 							</div>
 
-							<div id="code_tab">
+							<div id="code_tab" class="tab">
 								<ul class="navi_list">
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
 								</ul>
 
-								<div id="html_tab">
+								<div id="html_tab" class="tab">
 									<br>
 									<button onclick="save_model()">Download model data</button>
 									<br>
@@ -1397,7 +1397,7 @@
 								</div>
 
 
-								<div id="python_tab">
+								<div id="python_tab" class="tab">
 									<br>
 									<span class="user_select_none">
 										<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
@@ -1410,7 +1410,7 @@
 							</div>
 
 
-							<div id="visualization_tab">
+							<div id="visualization_tab" class="tab">
 								<ul class="navi_list">
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
@@ -1421,27 +1421,27 @@
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 								</ul>
 
-								<div id="alexnet_tab">
+								<div id="alexnet_tab" class="tab">
 									<div id="alexnet"></div>
 									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
 									<button class="vis_button" onclick="restart_alexnet(1)">Restart AlexNet</button>
 								</div>
 
-								<div id="lenet_tab">
+								<div id="lenet_tab" class="tab">
 									<div id="lenet"></div>
 									<button class="vis_button" onclick='reset_view()'>Reset view</button>
 									<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 									<button class="vis_button" onclick="restart_lenet(1)">Restart LeNet</button>
 								</div>
 
-								<div id="fcnn_tab">
+								<div id="fcnn_tab" class="tab">
 									<div id="fcnn"></div>
 									<button class="vis_button" onclick='reset_view()'>Reset view</button>
 									<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
 									<button class="vis_button" onclick="restart_fcnn(1)">Restart FCNN</button>
 								</div>
 
-								<div id="activation_plot_tab">
+								<div id="activation_plot_tab" class="tab">
 									<span id="activation_plot_name" style="display: none"></span>
 									<div id="activation_plot" style="display: none"></div>
 								</div>
@@ -1456,7 +1456,7 @@
 									<div id="maximally_activated_content"></div>
 								</div>
 
-								<div id="math_tab">
+								<div id="math_tab" class="tab" class="tab">
 									<table data-intro="Options for the math mode.">
 										<tr>
 											<td>Number of decimal points (0 = no limit)</td>
@@ -1467,7 +1467,7 @@
 								</div>
 							</div>
 
-							<div id="tfvis_tab" style="float: right; width: 100%">
+							<div id="tfvis_tab" class="tab" style="float: right; width: 100%">
 								<br>
 								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
 								<br>
@@ -1510,11 +1510,11 @@
 								</div>
 							</div>
 
-							<div id="summary_tab" class="user_select_none">
+							<div id="summary_tab" class="tab user_select_none">
 								<div class="reset_before_train_network" id="summary"></div>
 							</div>
 
-							<div id="predict_tab" class="user_select_none">
+							<div id="predict_tab" class="tab user_select_none">
 								<span>
 									Show layer data flow?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
@@ -1595,7 +1595,7 @@
 									</div>
 								</div>
 
-								<div id="layer_visualizations_tab" style="display: none">
+								<div id="layer_visualizations_tab" style="display: none" class="tab">
 								</div>
 							</div>
 						</div>
