@@ -496,143 +496,144 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		return;
 	}
 
-	if(model) {
-		$(".show_when_predicting").show();
-		$(".show_when_has_examples").hide();
-
-		hide_unused_layer_visualization_headers();
-
-		if(!keep_show_after_training_hidden) {
-			$(".show_after_training").show();
-		}
-
-		var example_predictions = $("#example_predictions");
-
-		if($("#data_origin").val() == "default") {
-			var count = 0;
-
-			if(await input_shape_is_image()) {
-				var dataset = $("#dataset").val();
-				var full_dir = "traindata/" + dataset + "/example/";
-				var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
-				if(is_cosmo_mode) {
-					dataset_url = dataset_url + "&cosmo=1";
-				}
-
-				//log("Tensors A: " + tf.memory()["numTensors"]);
-
-				var x = await get_cached_json(dataset_url);
-
-				if(x) {
-					//log("Tensors B: " + tf.memory()["numTensors"]);
-					if(Object.keys(x).includes("example")) {
-						//log("Tensors C: " + tf.memory()["numTensors"]);
-						var this_examples_hash = await md5(JSON.stringify(x["example"]));
-						if(this_examples_hash != predict_examples_hash) {
-							example_predictions.html("");
-							predict_examples_hash = this_examples_hash;
-						}
-						//log("Tensors D: " + tf.memory()["numTensors"]);
-						var examples = x["example"];
-						if(examples) {
-							////log("Tensors E: " + tf.memory()["numTensors"]);
-							var str = "";
-							for (var i = 0; i < examples.length; i++) {
-								count++;
-								var img_url = full_dir + "/" + examples[i];
-								var img_elem = $("img[src$='" + img_url + "']");
-								if(img_elem.length) {
-									//log("Tensors F: " + tf.memory()["numTensors"]);
-									try {
-										var img = img_elem;
-										if(Object.keys(img).includes("0")) {
-											img = img_elem[0];
-										}
-										await predict_demo(img, i);
-									} catch (e) {
-										log("Predict demo failed, error:", e);
-									}
-									//log("Tensors G: " + tf.memory()["numTensors"]);
-								} else {
-									str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
-								}
-							}
-							//log("Tensors H: " + tf.memory()["numTensors"]);
-
-							if(str) {
-								example_predictions.html(str);
-							}
-							//log("Tensors I: " + tf.memory()["numTensors"]);
-						}
-					}
-				}
-			} else {
-				//log("Tensors J: " + tf.memory()["numTensors"]);
-				example_predictions.html("");
-				var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
-				var example_predict_data = await get_cached_json(example_url)
-
-				var html_contents = "";
-
-				if(typeof(example_predict_data) == "object" && example_predict_data.length) {
-					for (var i = 0; i < example_predict_data.length; i++) {
-						var tensor = tf.tensor(example_predict_data[i]);
-						//log("Tensors K: " + tf.memory()["numTensors"]);
-						if(tensor_shape_matches_model(tensor)) {
-							try {
-								var res = await model.predict([tensor]);
-
-								var res_array = res.arraySync();
-								await dispose(res);
-
-								html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
-
-								count++;
-								$("#predict_error").html("");
-
-
-							} catch (e) {
-								_predict_error(e);
-							}
-						}
-						//log("Tensors L: " + tf.memory()["numTensors"]);
-						await dispose(tensor);
-						await tf.nextFrame();
-						//log("Tensors M: " + tf.memory()["numTensors"]);
-					}
-				}
-
-				if(html_contents) {
-					example_predictions.html(html_contents);
-				}
-			}
-
-			if(count) {
-				$(".show_when_has_examples").show();
-				$(".show_when_predicting").show();
-				$("#example_predictions").show();
-			} else {
-				$(".show_when_has_examples").hide();
-				$("#example_predictions").hide();
-				$(".show_when_predicting").hide();
-			}
-			//log("Tensors N: " + tf.memory()["numTensors"]);
-		} else {
-			$(".show_when_has_examples").hide();
-			$("#example_predictions").hide();
-			$(".show_when_predicting").hide();
-		}
-
-		if(!dont_go_to_tab) {
-			if($("#jump_to_interesting_tab").is(":checked")) {
-				$('a[href="#predict_tab"]').click();
-			}
-		}
-	} else {
+	if(!model) {
 		l("ERROR: No model given for show_prediction");
 		$(".show_when_has_examples").hide();
 		$("#example_predictions").hide();
 		$(".show_when_predicting").hide();
+
+		return;
+	}
+	$(".show_when_predicting").show();
+	$(".show_when_has_examples").hide();
+
+	hide_unused_layer_visualization_headers();
+
+	if(!keep_show_after_training_hidden) {
+		$(".show_after_training").show();
+	}
+
+	var example_predictions = $("#example_predictions");
+
+	if(!$("#data_origin").val() == "default") {
+		$(".show_when_has_examples").hide();
+		$("#example_predictions").hide();
+		$(".show_when_predicting").hide();
+
+		return;
+	}
+	var count = 0;
+
+	if(await input_shape_is_image()) {
+		var dataset = $("#dataset").val();
+		var full_dir = "traindata/" + dataset + "/example/";
+		var dataset_url = 'traindata/index.php?&dataset=' + dataset + '&examples=1';
+		if(is_cosmo_mode) {
+			dataset_url = dataset_url + "&cosmo=1";
+		}
+
+		//log("Tensors A: " + tf.memory()["numTensors"]);
+
+		var x = await get_cached_json(dataset_url);
+
+		if(x) {
+			//log("Tensors B: " + tf.memory()["numTensors"]);
+			if(Object.keys(x).includes("example")) {
+				//log("Tensors C: " + tf.memory()["numTensors"]);
+				var this_examples_hash = await md5(JSON.stringify(x["example"]));
+				if(this_examples_hash != predict_examples_hash) {
+					example_predictions.html("");
+					predict_examples_hash = this_examples_hash;
+				}
+				//log("Tensors D: " + tf.memory()["numTensors"]);
+				var examples = x["example"];
+				if(examples) {
+					////log("Tensors E: " + tf.memory()["numTensors"]);
+					var str = "";
+					for (var i = 0; i < examples.length; i++) {
+						count++;
+						var img_url = full_dir + "/" + examples[i];
+						var img_elem = $("img[src$='" + img_url + "']");
+						if(img_elem.length) {
+							//log("Tensors F: " + tf.memory()["numTensors"]);
+							try {
+								var img = img_elem;
+								if(Object.keys(img).includes("0")) {
+									img = img_elem[0];
+								}
+								await predict_demo(img, i);
+							} catch (e) {
+								log("Predict demo failed, error:", e);
+							}
+							//log("Tensors G: " + tf.memory()["numTensors"]);
+						} else {
+							str += "<div class='full_example_image_prediction'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
+						}
+					}
+					//log("Tensors H: " + tf.memory()["numTensors"]);
+
+					if(str) {
+						example_predictions.html(str);
+					}
+					//log("Tensors I: " + tf.memory()["numTensors"]);
+				}
+			}
+		}
+	} else {
+		//log("Tensors J: " + tf.memory()["numTensors"]);
+		example_predictions.html("");
+		var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
+		var example_predict_data = await get_cached_json(example_url)
+
+		var html_contents = "";
+
+		if(typeof(example_predict_data) == "object" && example_predict_data.length) {
+			for (var i = 0; i < example_predict_data.length; i++) {
+				var tensor = tf.tensor(example_predict_data[i]);
+				//log("Tensors K: " + tf.memory()["numTensors"]);
+				if(tensor_shape_matches_model(tensor)) {
+					try {
+						var res = await model.predict([tensor]);
+
+						var res_array = res.arraySync();
+						await dispose(res);
+
+						html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
+
+						count++;
+						$("#predict_error").html("");
+
+
+					} catch (e) {
+						_predict_error(e);
+					}
+				}
+				//log("Tensors L: " + tf.memory()["numTensors"]);
+				await dispose(tensor);
+				await tf.nextFrame();
+				//log("Tensors M: " + tf.memory()["numTensors"]);
+			}
+		}
+
+		if(html_contents) {
+			example_predictions.html(html_contents);
+		}
+	}
+
+	if(count) {
+		$(".show_when_has_examples").show();
+		$(".show_when_predicting").show();
+		$("#example_predictions").show();
+	} else {
+		$(".show_when_has_examples").hide();
+		$("#example_predictions").hide();
+		$(".show_when_predicting").hide();
+	}
+
+	if(!dont_go_to_tab) {
+		if($("#jump_to_interesting_tab").is(":checked")) {
+			$('a[href="#predict_tab"]').click();
+		}
 	}
 
 	//log("Tensors O: " + tf.memory()["numTensors"]);
