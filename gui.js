@@ -5719,6 +5719,11 @@ function hide_colorpicker_for_eraser (idname) {
 }
 
 async function load_msg(swal_msg_format) {
+	if(started_training && stop_downloading_data) {
+		console.info("Training is not started anymore, but the stopped downloading");
+		return;
+	}
+
 	if(finished_loading) {
 		return await Swal.fire({
 			title: swal_msg_format["title"],
