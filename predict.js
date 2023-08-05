@@ -1117,7 +1117,10 @@ async function predict_handdrawn () {
 	var predict_data;
 	try {
 		predict_data = tf.tidy(() => {
-			return tf.image.resizeNearestNeighbor(tf.browser.fromPixels(atrament_data.sketcher.canvas), [height, width]).expandDims();
+			return tf.image.resizeNearestNeighbor(
+				tf.browser.fromPixels(atrament_data.sketcher.canvas),
+				[height, width]
+			).expandDims();
 		});
 	} catch (e) {
 		console.error(e);
