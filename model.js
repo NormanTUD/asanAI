@@ -328,7 +328,7 @@ function is_valid_parameter (keyname, value, layer) {
 		return true;
 	}
 
-	log("keyname: ", keyname, "value: ", value, "layer:", layer);
+	//log("keyname: ", keyname, "value: ", value, "layer:", layer);
 
 	return false;
 }
@@ -601,6 +601,58 @@ function _check_data (data, type) {
 	return data;
 }
 
+async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) {
+	try {
+		if(layer_options[type]["custom"]) {
+			eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
+		} else {
+			//log("adding ", tf.layers[type], ", data: ", data);
+			new_model.add(tf.layers[type](data));
+		}
+		set_layer_background(i, "");
+	} catch (e) {
+		if(!fake_model_structure) {
+			var msg = e;
+			set_model_layer_warning(i, e.toString());
+			l("ERROR: " + e);
+			log(type);
+			log(data);
+
+			if(e.toString().includes("is incompatible with layer")) {
+				set_layer_background(i, "red");
+			}
+
+			await dispose(new_model);
+
+			memory_leak_debugger("create_model", start_tensors);
+
+			return false;
+		}
+
+		memory_leak_debugger("create_model", start_tensors);
+		return false;
+	}
+
+	return new_model;
+}
+
+function _set_layer_gui (data, fake_model_structure) {
+	var data_keys = Object.keys(data);
+	for (var k = 0; k < data_keys.length; k++) {
+		var this_key = data_keys[k];
+		var layer_setting = $($(".layer_setting")[i]);
+		var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
+		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
+			header("=================");
+			log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+			header("<<<<<<<<<<<<<<<<<");
+			current_setting.css("background-color", "red");
+		} else {
+			current_setting.css("background-color", "");
+		}
+	}
+}
+
 async function create_model (old_model, fake_model_structure, force) {
 	var start_tensors = memory_leak_debugger();
 	weights_as_string_cache = false;
@@ -645,50 +697,10 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		data = _check_data(data, type);
 
-		var data_keys = Object.keys(data);
-		for (var k = 0; k < data_keys.length; k++) {
-			var this_key = data_keys[k];
-			var layer_setting = $($(".layer_setting")[i]);
-			var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
-			if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
-				header("=================");
-				log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
-				header("<<<<<<<<<<<<<<<<<");
-				current_setting.css("background-color", "red");
-			} else {
-				current_setting.css("background-color", "");
-			}
-		}
-
-		try {
-			if(layer_options[type]["custom"]) {
-				eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
-			} else {
-				//log("adding ", tf.layers[type], ", data: ", data);
-				new_model.add(tf.layers[type](data));
-			}
-			set_layer_background(i, "");
-		} catch (e) {
-			if(!fake_model_structure) {
-				var msg = e;
-				set_model_layer_warning(i, e.toString());
-				l("ERROR: " + e);
-				log(type);
-				log(data);
-
-				if(e.toString().includes("is incompatible with layer")) {
-					set_layer_background(i, "red");
-				}
-
-				await dispose(new_model);
-
-				memory_leak_debugger("create_model", start_tensors);
-
-				return null;
-			}
-
-			memory_leak_debugger("create_model", start_tensors);
-			return old_model;
+		_set_layer_gui(data, fake_model_structure);
+		
+		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
+			console.error(`Failed to add layer type ${type}`);
 		}
 	}
 
@@ -707,6 +719,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	if(old_model) {
 		await dispose(old_model);
 	}
+
 	memory_leak_debugger("create_model", start_tensors);
 	return new_model;
 }
