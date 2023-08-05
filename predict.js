@@ -243,10 +243,15 @@ async function _run_predict_and_show (tensor_img, nr) {
 		return;
 	}
 
-	var predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
+	try {
+		var predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
 
-	await _predict_result(predictions_tensor, nr);
-	await draw_heatmap(predictions_tensor, tensor_img);
+		await _predict_result(predictions_tensor, nr);
+		await draw_heatmap(predictions_tensor, tensor_img);
+	} catch (e) {
+		console.log(e);
+		console.trace();
+	}
 
 	await dispose(predictions_tensor);
 	await dispose(tensor_img);
