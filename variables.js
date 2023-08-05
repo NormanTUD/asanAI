@@ -1354,7 +1354,7 @@ var last_tensor_size_cpu = 0;
 var last_tensor_size_gpu = 0;
 
 var last_status_hash = "";
-var number_of_currently_running_updated_pages = 0;
+var number_of_currently_running_updated_pages = -1;
 
 var escapeCount = 0;
 var lastEscapeTime = 0;

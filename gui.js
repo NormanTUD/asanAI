@@ -1027,8 +1027,8 @@ function stop_webcam() {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
-	while (number_of_currently_running_updated_pages) {
-		//log("Currently in queue for updated_page");
+	if (0 && number_of_currently_running_updated_pages) {
+		log("Currently in queue for updated_page: " + number_of_currently_running_updated_pages);
 		return;
 	}
 
@@ -1043,11 +1043,13 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	rename_tmp_onchange();
 
 	if($("#width").val() == "" || $("#height").val() == "") {
+		console.warn("Width or height is empty string, returning from updated_page");
 		number_of_currently_running_updated_pages--;
 		return;
 	}
 
 	if (is_setting_config) {
+		console.info("Currently running is_setting_config, returning from updated_page");
 		number_of_currently_running_updated_pages--;
 		return;
 	}
@@ -1056,6 +1058,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	show_or_hide_bias_initializer(numberoflayers);
 
 	if (disable_show_python_and_create_model) {
+		console.info("disable_show_python_and_create_model, returning from updated_page");
 		number_of_currently_running_updated_pages--;
 		return;
 	}
@@ -1081,6 +1084,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			"trainable",
 			"dropout_rate"
 		];
+	} else {
+		console.warn("$(item) is empty");
 	}
 
 	try {
