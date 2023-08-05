@@ -624,7 +624,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	var old_weights_string = false;
-	if(model && Object.keys(model).includes("layers")) {
+	if(old_model && Object.keys(old_model).includes("layers")) {
 		old_weights_string = last_weights_as_string;
 	}
 
@@ -684,11 +684,11 @@ async function create_model (old_model, fake_model_structure, force) {
 
 				memory_leak_debugger("create_model", start_tensors);
 
-				return;
+				return null;
 			}
 
 			memory_leak_debugger("create_model", start_tensors);
-			return model;
+			return old_model;
 		}
 	}
 
