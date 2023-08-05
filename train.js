@@ -658,6 +658,8 @@ async function run_neural_network () {
 			error = 1;
 		}
 
+		await dispose(fit_data);
+
 		if(!error) {
 			var trained_weights = undefined;
 			try {
@@ -677,10 +679,6 @@ async function run_neural_network () {
 			try {
 				await set_weights_from_string(trained_weights, 1, 1);
 
-				await dispose(xs_and_ys["x"]);
-				await dispose(xs_and_ys["y"]);
-				xs_and_ys = null;
-
 				/* Memory leak hack end */
 
 				model_is_trained = true;
@@ -695,6 +693,16 @@ async function run_neural_network () {
 				await write_error_and_reset(e);
 			}
 		}
+	}
+
+
+	try {
+		await dispose(xs_and_ys["x"]);
+		await dispose(xs_and_ys["y"]);
+		xs_and_ys = null;
+	} catch (e) {
+		console.error(e);
+		console.trace();
 	}
 
 	await gui_not_in_training();
