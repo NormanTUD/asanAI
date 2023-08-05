@@ -704,6 +704,9 @@ async function create_model (old_model, fake_model_structure, force) {
 		l("Model compiled successfully");
 	}
 
+	if(old_model) {
+		await dispose(old_model);
+	}
 	memory_leak_debugger("create_model", start_tensors);
 	return new_model;
 }
