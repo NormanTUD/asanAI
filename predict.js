@@ -164,7 +164,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-
 	if(!tensor_shape_matches_model(tensor_img)) {
 		await dispose(tensor_img);
 		if(new_tensor_img) {
@@ -265,8 +264,10 @@ async function _predict_result(predictions_tensor, nr) {
 	desc.html("");
 	if(model.outputShape.length == 4) {
 		await _predict_image(predictions_tensor, desc);
-	} else {
+	} else if(model.outputShape.length == 3) {
 		await _predict_table(predictions_tensor, desc);
+	} else {
+		console.warn("Other input shapes than the length of 3 or 4 are currently not implemented");
 	}
 	memory_leak_debugger("_predict_result", start_tensors);
 }
@@ -309,9 +310,7 @@ function get_show_green () {
 
 async function _predict_table(predictions_tensor, desc) {
 	var start_tensors = memory_leak_debugger();
-	var predictions = await predictions_tensor.dataSync();
-
-
+	var predictions = tf.tidy(() => { predictions_tensor.dataSync() });
 
 	if(predictions.length) {
 		var max_i = 0;
