@@ -1487,6 +1487,10 @@ async function disable_all_invalid_layers_from(start) {
 }
 
 async function enable_valid_layer_types(layer_nr) {
+	if(started_training) {
+		console.info("enable_valid_layer_types disabled because is in training");
+		return;
+	}
 	assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
 
 	var valid_layer_types = await get_valid_layer_types(layer_nr);
@@ -1517,7 +1521,6 @@ function option_for_layer(nr) {
 	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
 	str += "</td>";
 	str += "<td>";
-	str += "<div style='display: none' class='progressbar'>a</div>";
 	str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
 	var last_category = '';
 	for (var key of layer_names) {
