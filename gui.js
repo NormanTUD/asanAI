@@ -2143,7 +2143,7 @@ async function chose_dataset(no_set_config) {
 
 	$("#maximally_activated_content").html("")
 	hide_tab_label("maximally_activated_label");
-	if(!cosmo_mode) {
+	if(!is_cosmo_mode) {
 		show_tab_label("visualization_tab_label", 1);
 	}
 	show_tab_label("fcnn_tab_label", 1);

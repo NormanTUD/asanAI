@@ -962,59 +962,63 @@ function _webcam_prediction_row (i, predictions, max_i) {
 async function show_webcam (force_restart) {
 	await init_webcams();
 
-	var stopped = 0;
+	try {
+		var stopped = 0;
 
-	if(await input_shape_is_image()) {
-		$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
-		if(cam) {
-			if(!cosmo_mode) {
-				stop_webcam();
-				stopped = 1;
-				$(".only_when_webcam_on").hide();
+		if(await input_shape_is_image()) {
+			$("#show_webcam_button").html("<span class='large_button'>&#128711;&#128247;</span>");
+			if(cam) {
+				if(!is_cosmo_mode) {
+					stop_webcam();
+					stopped = 1;
+					$(".only_when_webcam_on").hide();
+				}
+			} else {
+				var webcam = $("#webcam");
+				webcam.hide().html("");
+				var videoElement = document.createElement('video');
+				videoElement.width = 256;
+				videoElement.height = 256;
+				videoElement.playsInline = true;
+				videoElement.playsinline = true;
+				videoElement.muted = true;
+				videoElement.controls = true;
+				videoElement.autoplay = true;
+				webcam.show().append(videoElement);
+
+				var cam_config = {};
+
+				if(await hasBothFrontAndBack()) {
+					l("Using camera " + webcam_modes[webcam_id]);
+					cam_config["facingMode"] = webcam_modes[webcam_id];
+				} else {
+					l("Has only one camera, no front and back camera");
+				}
+
+				if(available_webcams.length > 1) {
+					cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
+				}
+
+				//log(cam_config);
+				cam = await tf.data.webcam(videoElement, cam_config);
+
+				auto_predict_webcam_interval = setInterval(predict_webcam, 100);
+				$(".only_when_webcam_on").show();
 			}
 		} else {
-			var webcam = $("#webcam");
-			webcam.hide().html("");
-			var videoElement = document.createElement('video');
-			videoElement.width = 256;
-			videoElement.height = 256;
-			videoElement.playsInline = true;
-			videoElement.playsinline = true;
-			videoElement.muted = true;
-			videoElement.controls = true;
-			videoElement.autoplay = true;
-			webcam.show().append(videoElement);
-
-			var cam_config = {};
-
-			if(await hasBothFrontAndBack()) {
-				l("Using camera " + webcam_modes[webcam_id]);
-				cam_config["facingMode"] = webcam_modes[webcam_id];
-			} else {
-				l("Has only one camera, no front and back camera");
+			$("#webcam").hide().html("");
+			if(cam) {
+				cam.stop();
 			}
 
-			if(available_webcams.length > 1) {
-				cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
-			}
-
-			//log(cam_config);
-			cam = await tf.data.webcam(videoElement, cam_config);
-
-			auto_predict_webcam_interval = setInterval(predict_webcam, 100);
-			$(".only_when_webcam_on").show();
-		}
-	} else {
-		$("#webcam").hide().html("");
-		if(cam) {
-			cam.stop();
+			clearInterval(auto_predict_webcam_interval);
 		}
 
-		clearInterval(auto_predict_webcam_interval);
-	}
-
-	if(force_restart && stopped) {
-		await show_webcam();
+		if(force_restart && stopped) {
+			await show_webcam();
+		}
+	} catch (e) {
+		console.error(e);
 	}
 }
 
