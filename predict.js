@@ -584,8 +584,9 @@ async function _print_predictions_text(count, example_predict_data) {
 		var tensor = tf.tensor(example_predict_data[i]);
 		//log("Tensors K: " + tf.memory()["numTensors"]);
 		if(tensor_shape_matches_model(tensor)) {
+			var res;
 			try {
-				var res = await model.predict([tensor]);
+				res = await model.predict([tensor]);
 
 				var res_array = res.arraySync();
 				await dispose(res);
@@ -596,6 +597,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				$("#predict_error").html("");
 			} catch (e) {
 				_predict_error(e);
+				await dispose(res);
 			}
 		} else {
 			console.info("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:", get_input_shape(), tensor.shape);
