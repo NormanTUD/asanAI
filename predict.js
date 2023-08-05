@@ -1056,9 +1056,9 @@ function draw_bars_or_numbers (i, predictions, max) {
 	if(show_bars_instead_of_numbers()) {
 		if(label) {
 			if(val == max) {
-				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
 			} else {
-				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+				html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
 			}
 		} else {
 			if(val == max) {
