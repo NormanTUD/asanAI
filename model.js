@@ -315,7 +315,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
-		(keyname == "inputShape" && layer == 0 && is_number_array(value)) ||
+		(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
 		(keyname == "targetShape" && is_number_array(value)) ||
 		(["alpha", "stddev", "depthMultiplier"].includes(keyname) && typeof(value) == "number") ||
 		(keyname == "axis" && typeof(value) == "number" && parseInt(value) == value) ||
@@ -636,7 +636,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 	return new_model;
 }
 
-function _set_layer_gui (data, fake_model_structure) {
+function _set_layer_gui (data, fake_model_structure, i) {
 	var data_keys = Object.keys(data);
 	for (var k = 0; k < data_keys.length; k++) {
 		var this_key = data_keys[k];
@@ -644,7 +644,7 @@ function _set_layer_gui (data, fake_model_structure) {
 		var current_setting = layer_setting.find("." + js_names_to_python_names[this_key]);
 		if(!fake_model_structure && !is_valid_parameter(this_key, data[this_key], i)) {
 			header("=================");
-			log("INVALID PARAMETER: " + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+			log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
 			header("<<<<<<<<<<<<<<<<<");
 			current_setting.css("background-color", "red");
 		} else {
@@ -697,7 +697,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		data = _check_data(data, type);
 
-		_set_layer_gui(data, fake_model_structure);
+		_set_layer_gui(data, fake_model_structure, i);
 		
 		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
 			console.error(`Failed to add layer type ${type}`);
