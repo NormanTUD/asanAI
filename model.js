@@ -118,6 +118,8 @@ async function compile_model () {
 		*/
 
 		model.compile(model_data);
+
+		await dispose(model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}
@@ -602,8 +604,14 @@ function _check_data (data, type) {
 }
 
 async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) {
+	var start_tensors = memory_leak_debugger();
 	try {
 		if(layer_options[type]["custom"]) {
+			if(i == 0) {
+				data["inputShape"] = get_input_shape();
+			} else {
+				delete data["inputShape"];
+			}
 			eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
 		} else {
 			//log("adding ", tf.layers[type], ", data: ", data);
@@ -626,13 +634,15 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 
 			memory_leak_debugger("create_model", start_tensors);
 
+			memory_leak_debugger("_add_layer_to_model", start_tensors);
 			return false;
 		}
 
-		memory_leak_debugger("create_model", start_tensors);
+		memory_leak_debugger("_add_layer_to_model", start_tensors);
 		return false;
 	}
 
+	memory_leak_debugger("_add_layer_to_model", start_tensors + new_model.layers[i].weights.length);
 	return new_model;
 }
 
@@ -659,7 +669,13 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
-		return old_model;
+		if(old_model) {
+			return old_model;
+		}
+
+		console.error("No model found, but has missing values");
+
+		return;
 	}
 
 	var new_layers_container_md5 = await get_layers_container_md5();
@@ -1138,31 +1154,30 @@ async function get_weights_as_string (m) {
 	var res;
 
 	if(m) {
-		var weights = await m.getWeights();
+		try {
+			var weights = await m.getWeights();
 
-		var weights_array = [];
+			var weights_array = [];
 
-		for (var i = 0; i < weights.length; i++) {
-			if(!weights[i].isDisposed) {
-				try {
-					weights_array[i] = weights[i].arraySync();
-				} catch (e) {
-					console.error(e);
+			for (var i = 0; i < weights.length; i++) {
+				if(!weights[i].isDisposed) {
+					try {
+						weights_array[i] = weights[i].arraySync();
+					} catch (e) {
+						console.error(e);
+					}
+				} else {
+					console.warn("weights is disposed");
 				}
-			} else {
-				console.warn("weights is disposed");
 			}
-		}
 
-		last_weights_as_string = JSON.stringify(weights_array);
-		weights_as_string_cache = last_weights_as_string;
-		res = last_weights_as_string;
-
-		/*
-		for (var i = 0; i < weights.length; i++) {
-			await dispose(weights[i]);
+			last_weights_as_string = JSON.stringify(weights_array);
+			weights_as_string_cache = last_weights_as_string;
+			res = last_weights_as_string;
+		} catch (e) {
+			console.error(e);
+			console.trace();
 		}
-		*/
 	} else {
 		res = false;
 	}

@@ -1947,6 +1947,16 @@ function can_be_shown_in_latex () {
 		return false;
 	}
 
+	if(!Object.keys(model).includes("layers")) {
+		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		return false;
+	}
+
+	if(!Object.keys(model["layers"]).includes("0")) {
+		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		return false;
+	}
+
 	if(model.layers[0].input.shape.length != 2) {
 		if($("#math_tab_label").is(":visible")) {
 			l("Hiding math tab because the input tensor is too large.");

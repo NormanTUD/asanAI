@@ -1817,6 +1817,7 @@
 					log("FCNN: No model");
 					return;
 				}
+
 				if(force) {
 					graph_hashes["fcnn"] = "";
 				}
@@ -1828,10 +1829,15 @@
 
 				if(show_input_layer) {
 					layer_types.push("Input layer");
-					var input_layer = Object.values(remove_empty(model.layers[0].input.shape));
-					architecture.push(input_layer[0]);
-					real_architecture.push(input_layer[0]);
-					betweenNodesInLayer.push(10);
+					try {
+						var input_layer = Object.values(remove_empty(model.layers[0].input.shape));
+						architecture.push(input_layer[0]);
+						real_architecture.push(input_layer[0]);
+						betweenNodesInLayer.push(10);
+					} catch (e) {
+						console.error(e);
+						return;
+					}
 				}
 
 				for (var i = 0; i < get_number_of_layers(); i++) {
@@ -1894,28 +1900,33 @@
 
 						if(category == "Convolutional") {
 							var this_layer_arch = {};
-							var input_layer_shape = model.layers[i].getOutputAt(0).shape;
-
-							var push = 0;
-
 							try {
-								this_layer_arch["height"] = input_layer_shape[1];
-								this_layer_arch["width"] = input_layer_shape[2];
-								if(input_layer_shape.length >= 2) {
-									this_layer_arch["depth"] = input_layer_shape[3];
-								} else {
-									disable_alexnet = 1;
-								}
-								this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
-								this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
-								this_layer_arch["rel_x"] = random(0, 0.1);
-								this_layer_arch["rel_y"] = random(0, 0.1);
+								var input_layer_shape = model.layers[i].getOutputAt(0).shape;
 
-								if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
-									push = 1;
+								var push = 0;
+
+								try {
+									this_layer_arch["height"] = input_layer_shape[1];
+									this_layer_arch["width"] = input_layer_shape[2];
+									if(input_layer_shape.length >= 2) {
+										this_layer_arch["depth"] = input_layer_shape[3];
+									} else {
+										disable_alexnet = 1;
+									}
+									this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
+									this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
+									this_layer_arch["rel_x"] = random(0, 0.1);
+									this_layer_arch["rel_y"] = random(0, 0.1);
+
+									if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
+										push = 1;
+									}
+								} catch (e) {
+									console.warn("ERROR: ", e);
 								}
 							} catch (e) {
-								console.warn("ERROR: ", e);
+								console.log(e);
+								return;
 							}
 
 							if(push) {
@@ -2031,33 +2042,37 @@
 						var category = layer_options[layer_type]["category"];
 
 						if((category == "Convolutional" || category == "Pooling") && layer_type.endsWith("2d") && layer_type.startsWith("conv")) {
-							var this_layer_arch = {};
-							this_layer_arch["op"] = layer_type;
-							this_layer_arch["layer"] = ++j;
+							try {
+								var this_layer_arch = {};
+								this_layer_arch["op"] = layer_type;
+								this_layer_arch["layer"] = ++j;
 
-							var layer_config = model.layers[i].getConfig();
-							var push = 0;
-							if("filters" in layer_config) {
-								this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
-								this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
-								this_layer_arch["numberOfSquares"] = layer_config["filters"];
-								push = 1;
-							} else if("poolSize" in layer_config) {
-								var output_size_this_layer = await output_size_at_layer(get_input_shape(), i);
-								this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
-								this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
-								this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
-								push = 1;
-							}
+								var layer_config = model.layers[i].getConfig();
+								var push = 0;
+								if("filters" in layer_config) {
+									this_layer_arch["filterWidth"] = get_item_value(i, "kernel_size_x");
+									this_layer_arch["filterHeight"] = get_item_value(i, "kernel_size_y");
+									this_layer_arch["numberOfSquares"] = layer_config["filters"];
+									push = 1;
+								} else if("poolSize" in layer_config) {
+									var output_size_this_layer = await output_size_at_layer(get_input_shape(), i);
+									this_layer_arch["filterWidth"] = get_item_value(i, "pool_size_x");
+									this_layer_arch["filterHeight"] = get_item_value(i, "pool_size_y");
+									this_layer_arch["numberOfSquares"] = output_size_this_layer[3];
+									push = 1;
+								}
 
-							var input_layer = model.layers[i].getInputAt(0);
-							this_layer_arch["squareWidth"] = input_layer["shape"][1];
-							this_layer_arch["squareHeight"] = input_layer["shape"][2];
+								var input_layer = model.layers[i].getInputAt(0);
+								this_layer_arch["squareWidth"] = input_layer["shape"][1];
+								this_layer_arch["squareHeight"] = input_layer["shape"][2];
 
-							if(push) {
-								architecture.push(this_layer_arch);
-								layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
-								colors.push("#ffffff");
+								if(push) {
+									architecture.push(this_layer_arch);
+									layer_to_lenet_arch[i] = {arch: "architecture", "id": architecture.length - 1};
+									colors.push("#ffffff");
+								}
+							} catch (e) {
+								console.error(e);
 							}
 						} else if (category == "Basic") {
 							try {
