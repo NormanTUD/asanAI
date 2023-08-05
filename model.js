@@ -679,8 +679,15 @@ async function create_model (old_model, fake_model_structure, force) {
 				if(e.toString().includes("is incompatible with layer")) {
 					set_layer_background(i, "red");
 				}
+
+				await dispose(new_model);
+
+				memory_leak_debugger("create_model", start_tensors);
+
+				return;
 			}
 
+			memory_leak_debugger("create_model", start_tensors);
 			return model;
 		}
 	}
@@ -702,6 +709,8 @@ async function create_model (old_model, fake_model_structure, force) {
 }
 
 async function get_fake_data_for_layertype (layer_nr, layer_type) {
+	var start_tensors = memory_leak_debugger();
+
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 	assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
@@ -755,6 +764,8 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 		}
 	}
 
+	memory_leak_debugger("get_fake_data_for_layertype", start_tensors);
+
 	return data;
 }
 
@@ -784,6 +795,7 @@ function get_default_option (layer_type, option_name) {
 }
 
 async function create_fake_model_structure (layer_nr, layer_type) {
+	var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
@@ -791,6 +803,8 @@ async function create_fake_model_structure (layer_nr, layer_type) {
 
 	fake_model_structure[layer_nr]["type"] = layer_type;
 	fake_model_structure[layer_nr]["data"] = await get_fake_data_for_layertype(layer_nr, layer_type);
+
+	memory_leak_debugger("create_fake_model_structure", start_tensors);
 
 	return fake_model_structure;
 }
@@ -812,36 +826,28 @@ async function compile_fake_model(layer_nr, layer_type) {
 			fake_model = await create_model(null, fake_model_structure);
 			after_create_model_tensors = tf.memory()["numTensors"];
 
-			model_data = get_model_data();
+			ret = tf.tidy(() => {
+				try {
+					model_data = get_model_data();
 
-			fake_model.compile(model_data);
+					fake_model.compile(model_data);
+
+					return true;
+				} catch (e) {
+					return false;
+				}
+			});
 		} catch(e) {
 			console.error(e);
+
+			ret = false;
 		}
 
-		/*
-		await tf.nextFrame(); // Allow time for disposal to take effect
-
-		var after_compile_tensors = tf.memory()["numTensors"];
-		if (after_compile_tensors > after_create_model_tensors) {
-			console.log("After compiling fake_model: " + after_compile_tensors + " tensors");
-		}
-		*/
 		var after_compile_tensors = tf.memory()["numTensors"];
 
 		await dispose(model_data);
 		await dispose(fake_model);
 
-		/*
-		await tf.nextFrame(); // Allow time for disposal to take effect
-
-		var after_dispose_tensors = tf.memory()["numTensors"];
-		if (after_dispose_tensors > after_compile_tensors) {
-			console.log("After disposing fake_model and model_data: " + after_dispose_tensors + " tensors");
-		}
-		*/
-
-		ret = true;
 	} catch (e) {
 		console.warn(e);
 		ret = false;
@@ -966,10 +972,9 @@ async function get_valid_layer_types (layer_nr) {
 				valid_layer_types.push(layer_type);
 			} else {
 				var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
-				var pb_string = layer_type + " (" + percent + "%)";
+				var pb_string = "Checking " + layer_type + " (" + percent + "%)";
 				l(pb_string);
 				progressbar.html(pb_string);
-				await write_descriptions();
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
 					var compiled_fake_model = await compile_fake_model(layer_nr, layer_type)
