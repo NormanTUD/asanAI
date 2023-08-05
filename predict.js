@@ -1100,8 +1100,6 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	//tf.engine().startScope("scope_predict_handdrawn");
-
 	var start_tensors = memory_leak_debugger();
 
 	if(!Object.keys(atrament_data).includes("sketcher")) {
@@ -1167,9 +1165,6 @@ async function predict_handdrawn () {
 	await dispose(predict_data);
 
 	allow_editable_labels();
-
-	//tf.engine().endScope("scope_predict_handdrawn");
-
 
 	memory_leak_debugger("predict_handdrawn", start_tensors);
 }
