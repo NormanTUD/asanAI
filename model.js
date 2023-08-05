@@ -104,22 +104,7 @@ async function compile_model () {
 		model_config_hash = new_model_config_hash;
 		var model_data = get_model_data();
 
-		/*
-		model_data.optimizer.original_applyGradients = model_data.optimizer.applyGradients;
-
-		model_data.optimizer.applyGradients = function (vargs) {
-			for (var i = 0; i < vargs.length; i++) {
-				vargs[i].tensor.print();
-			}
-
-			var res = model_data.optimizer.original_applyGradients(vargs);
-			return res;
-		}
-		*/
-
 		model.compile(model_data);
-
-		await dispose(model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}
