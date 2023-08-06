@@ -1026,11 +1026,35 @@ function stop_webcam() {
 	cam = undefined;
 }
 
+function _has_any_warning () {
+	if($("#width").val() == "" || $("#height").val() == "") {
+		console.warn("Width or height is empty string, returning from updated_page");
+		return true;
+	}
+
+	if (disable_show_python_and_create_model) {
+		console.info("disable_show_python_and_create_model, returning from updated_page");
+		return true;
+	}
+
+	if (is_setting_config) {
+		console.info("Currently running is_setting_config, returning from updated_page");
+		return true;
+	}
+
+	if(has_missing_values) {
+		l("Not creating model because some values are missing (updated page)");
+		return true;
+	}
+
+	return false;
+}
+
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	var updated_page_uuid = uuidv4();
 
 	if(number_of_currently_running_updated_pages > 1) {
-		console.info("Only using first one. It will do the job... hopefully...");
+		console.info("Only using first updated_page.");
 		number_of_currently_running_updated_pages--;
 		return;
 	}
@@ -1044,30 +1068,14 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	number_of_currently_running_updated_pages++;
 
 	var fref = async (no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) => {
-		if(has_missing_values) {
-			l("Not creating model because some values are missing (updated page)");
-			return;
+		if(_has_any_warning()) {
+			return false;
 		}
 
 		rename_tmp_onchange();
 
-		if($("#width").val() == "" || $("#height").val() == "") {
-			console.warn("Width or height is empty string, returning from updated_page");
-			return;
-		}
-
-		if (is_setting_config) {
-			console.info("Currently running is_setting_config, returning from updated_page");
-			return;
-		}
-
 		var number_of_layers = get_number_of_layers();
 		show_or_hide_bias_initializer(number_of_layers);
-
-		if (disable_show_python_and_create_model) {
-			console.info("disable_show_python_and_create_model, returning from updated_page");
-			return;
-		}
 
 		if ($(item).length) {
 			var changed_layer = find_layer_number_by_element($(item));
@@ -1178,7 +1186,12 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		return 1;
 	};
 	
-	await fref(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction);
+	var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction);
+
+	if(!ret) {
+		console.warn("updated_page failed");
+	}
+
 
 	number_of_currently_running_updated_pages--;
 }
