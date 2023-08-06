@@ -1067,7 +1067,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	number_of_currently_running_updated_pages++;
 
-	var fref = async (no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) => {
+	var fref = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) => {
 		if(_has_any_warning()) {
 			return false;
 		}
@@ -1076,31 +1076,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		var number_of_layers = get_number_of_layers();
 		show_or_hide_bias_initializer(number_of_layers);
-
-		if ($(item).length) {
-			var changed_layer = find_layer_number_by_element($(item));
-			// TODO!!! Only change weights from this specific layer if changing weights is neccessary
-
-			var caller_classes = $(item).attr("class").split(/\s+/);
-			var keep_classes = [
-				"activation",
-				"padding",
-				"strides_x",
-				"strides_y",
-				"strides_z",
-				"dilation_rate",
-				"kernel_regularizer",
-				"bias_regularizer",
-				"kernel_regularizer_l1",
-				"kernel_regularizer_l2",
-				"bias_regularizer_l1",
-				"bias_regularizer_l2",
-				"trainable",
-				"dropout_rate"
-			];
-		} else {
-			console.warn("$(item) is empty");
-		}
 
 		try {
 			await compile_model();
@@ -1186,7 +1161,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		return 1;
 	};
 	
-	var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction);
+	var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 
 	if(!ret) {
 		console.warn("updated_page failed");
