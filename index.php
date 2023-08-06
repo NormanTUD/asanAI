@@ -1765,7 +1765,11 @@
 							if(filters.length) {
 								units = parseInt($(filters).val());
 							} else {
-								units = Math.max(0, model.layers[i].countParams());
+								try {
+									units = Math.max(0, model.layers[i].countParams());
+								} catch (e) {
+									console.warn("Something went wrong when trying to determine get_units_at_layer");
+								}
 							}
 						}
 					}
