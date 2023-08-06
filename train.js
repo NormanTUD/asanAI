@@ -487,31 +487,48 @@ function get_fit_data () {
 	return fit_data;
 }
 
-async function run_neural_network () {
+function _set_apply_to_original_apply () {
 	var start_tensors = memory_leak_debugger();
-	await clean_gui();
-	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
+
+	assert(Object.keys(model).includes("layers"), "model does not include layers");
+	assert(model.length >= 1, "model does not have any layers");
 
 	for (var i = 0; i < model.layers.length; i++) {
 		if("original_apply" in model.layers[i]) {
-			eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+			try {
+				eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
+			} catch (e) {
+				console.error(e);
+				console.trace();
+			}
 		}
 	}
+	memory_leak_debugger("_set_apply_to_original_apply", start_tensors);
+}
 
-
+async function _create_and_compile_model () {
 	try {
 		model = await create_model(model);
 	} catch (e) {
-		alert("Creating model failed: " + e);
-		return;
+		throw new Error("Creating model failed: " + e);
 	}
 
 	try {
 		await compile_model();
 	} catch (e) {
-		alert("Compiling model failed: " + e);
-		return;
+		throw new Error("Compiling model failed: " + e);
 	}
+}
+
+async function run_neural_network () {
+	var start_tensors = memory_leak_debugger();
+	await clean_gui();
+
+	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
+
+	_set_apply_to_original_apply();
+
+	await _create_and_compile_model();
 
 	var xs_and_ys;
 
@@ -524,31 +541,6 @@ async function run_neural_network () {
 		xs_and_ys = await get_xs_and_ys();
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		l("Got data!");
-
-		if(xs_and_ys) {
-			if(Object.keys(xs_and_ys).includes("x")) {
-				if(xs_and_ys["x"].shape.toString() == "0") {
-					error_string += "No X-data [1]! Do you have custom images loaded? ";
-				}
-			} else {
-				error_string += "No X-data [2]! Do you have custom images loaded? ";
-			}
-
-			if(Object.keys(xs_and_ys).includes("y")) {
-				if(xs_and_ys["y"].shape.toString() == "0") {
-					error_string += "No Y-data [1]! Do you have custom images loaded? ";
-				}
-			} else {
-				error_string += "No Y-data [2]! Do you have custom images loaded? ";
-			}
-		} else {
-			error_string = "No xy_data. Maybe an error while augmenting data?"
-		}
-
-
-		if(error_string) {
-			throw new Error(error_string);
-		}
 	} catch (e) {
 		var explanation = explain_error_msg(e.toString());
 		if(explanation) {

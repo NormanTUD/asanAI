@@ -801,7 +801,38 @@ async function get_xs_and_ys () {
 		$("#validationSplit").val(new_validation_split);
 	}
 
+
+	var error_string  = _xs_xy_warning(xy_data);
+	if(error_string) {
+		throw new Error(error_string);
+	}
+
 	return xy_data;
+}
+
+function _xs_xy_warning (xs_and_ys) {
+	var error_string;
+	if(xs_and_ys) {
+		if(Object.keys(xs_and_ys).includes("x")) {
+			if(xs_and_ys["x"].shape.toString() == "0") {
+				error_string += "No X-data [1]! Do you have custom images loaded? ";
+			}
+		} else {
+			error_string += "No X-data [2]! Do you have custom images loaded? ";
+		}
+
+		if(Object.keys(xs_and_ys).includes("y")) {
+			if(xs_and_ys["y"].shape.toString() == "0") {
+				error_string += "No Y-data [1]! Do you have custom images loaded? ";
+			}
+		} else {
+			error_string += "No Y-data [2]! Do you have custom images loaded? ";
+		}
+	} else {
+		error_string = "No xy_data. Maybe an error while augmenting data?"
+	}
+
+	return error_string;
 }
 
 function add_photo_to_gallery(url) {

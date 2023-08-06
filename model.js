@@ -740,7 +740,11 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 		_set_layer_gui(data, fake_model_structure, i);
 		
 		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
-			console.error(`Failed to add layer type ${type}`);
+			if(fake_model_structure) {
+				console.error(`Failed to add layer type ${type}`);
+			} else {
+				console.info(`Failed to add layer type ${type} (but ok because fake_model)`);
+			}
 		}
 	}
 
