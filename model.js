@@ -3,10 +3,17 @@
 async function except (errname, e) {
 	await write_descriptions();
 	await enable_everything();
+
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
 	await write_error(e);
-	if(throw_compile_exception) { throw e; }
+	if(throw_compile_exception) {
+		throw new Error(e);
+	}
 }
 
 async function get_model_config_hash () {

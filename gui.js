@@ -3968,6 +3968,10 @@ async function write_error(e, fn, hide_swal) {
 	if (e) {
 		var msg = e;
 
+		if(Object.keys(e).includes("message")) {
+			msg = e.message;
+		}
+
 		var explanation = explain_error_msg(e);
 
 		if (explanation) {
@@ -3989,7 +3993,7 @@ async function write_error(e, fn, hide_swal) {
 			l(msg);
 		}
 	} else {
-		$("#error").html(e).show().parent().hide();
+		$("#error").html("No error found, but something went wrong").show().parent().hide();
 	}
 
 	if(typeof(fn) == "function") {
