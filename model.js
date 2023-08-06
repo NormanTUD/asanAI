@@ -695,25 +695,13 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	$(".warning_container").hide();
 
-	var new_model = tf.sequential();
 
 	var model_structure = fake_model_structure;
 	if(model_structure === undefined) {
 		model_structure = await get_model_structure();
 	}
 
-	for (var i = 0; i < model_structure.length; i++) {
-		var type = model_structure[i]["type"];
-		var data = model_structure[i]["data"];
-
-		data = _check_data(data, type);
-
-		_set_layer_gui(data, fake_model_structure, i);
-		
-		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
-			console.error(`Failed to add layer type ${type}`);
-		}
-	}
+	var new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
 
 	enable_train();
 
@@ -732,6 +720,37 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	memory_leak_debugger("create_model", start_tensors);
+	return new_model;
+}
+
+async function _add_layers_to_model (model_structure, fake_model_structure, i) {
+	var start_tensors = memory_leak_debugger();
+
+	var new_model = tf.sequential();
+	for (var i = 0; i < model_structure.length; i++) {
+		var type = model_structure[i]["type"];
+		var data = model_structure[i]["data"];
+
+		data = _check_data(data, type);
+
+		_set_layer_gui(data, fake_model_structure, i);
+		
+		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
+			console.error(`Failed to add layer type ${type}`);
+		}
+	}
+
+	var new_tensors = 0;
+
+	new_model.layers.forEach((elem, nr) => {
+		try {
+			new_tensors += new_model.layers[nr].weights.length;
+		} catch (e) {
+			console.log(e);
+		}
+	});
+
+	memory_leak_debugger("_add_layers_to_model", start_tensors + new_tensors);
 	return new_model;
 }
 
