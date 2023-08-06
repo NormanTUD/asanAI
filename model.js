@@ -1190,8 +1190,12 @@ async function get_weights_as_string (m) {
 			last_weights_as_string = JSON.stringify(weights_array);
 			res = last_weights_as_string;
 		} catch (e) {
-			console.error(e);
-			console.trace();
+			if((""+e).includes("already disposed")) {
+				console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+			} else {
+				console.error(e);
+				console.trace();
+			}
 		}
 	} else {
 		res = false;

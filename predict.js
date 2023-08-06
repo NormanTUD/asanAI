@@ -608,8 +608,12 @@ async function _print_predictions_text(count, example_predict_data) {
 				count++;
 				$("#predict_error").html("");
 			} catch (e) {
-				_predict_error(e);
-				await dispose(res);
+				if((""+e).includes("already disposed")) {
+					console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+				} else {
+					_predict_error(e);
+					await dispose(res);
+				}
 			}
 		} else {
 			console.info("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:", get_input_shape(), tensor.shape);
