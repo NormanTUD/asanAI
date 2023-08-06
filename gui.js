@@ -1027,150 +1027,157 @@ function stop_webcam() {
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
-	if (0 && number_of_currently_running_updated_pages) {
-		log("Currently in queue for updated_page: " + number_of_currently_running_updated_pages);
-		return;
+	var updated_page_uuid = uuidv4();
+	while (number_of_currently_running_updated_pages) {
+		await delay(200);
+		log_once(`Currently in queue for updated_page: ${number_of_currently_running_updated_pages} ${updated_page_uuid}`);
+
+		if(number_of_currently_running_updated_pages > 1) {
+			console.info("Only using first one. It will do the job... hopefully...");
+			return;
+		}
 	}
 
 	number_of_currently_running_updated_pages++;
 
-	if(has_missing_values) {
-		l("Not creating model because some values are missing (updated page)");
-		number_of_currently_running_updated_pages--;
-		return;
-	}
-
-	rename_tmp_onchange();
-
-	if($("#width").val() == "" || $("#height").val() == "") {
-		console.warn("Width or height is empty string, returning from updated_page");
-		number_of_currently_running_updated_pages--;
-		return;
-	}
-
-	if (is_setting_config) {
-		console.info("Currently running is_setting_config, returning from updated_page");
-		number_of_currently_running_updated_pages--;
-		return;
-	}
-
-	var numberoflayers = get_number_of_layers();
-	show_or_hide_bias_initializer(numberoflayers);
-
-	if (disable_show_python_and_create_model) {
-		console.info("disable_show_python_and_create_model, returning from updated_page");
-		number_of_currently_running_updated_pages--;
-		return;
-	}
-
-	if ($(item).length) {
-		var changed_layer = find_layer_number_by_element($(item));
-		// TODO!!! Only change weights from this specific layer if changing weights is neccessary
-
-		var caller_classes = $(item).attr("class").split(/\s+/);
-		var keep_classes = [
-			"activation",
-			"padding",
-			"strides_x",
-			"strides_y",
-			"strides_z",
-			"dilation_rate",
-			"kernel_regularizer",
-			"bias_regularizer",
-			"kernel_regularizer_l1",
-			"kernel_regularizer_l2",
-			"bias_regularizer_l1",
-			"bias_regularizer_l2",
-			"trainable",
-			"dropout_rate"
-		];
-	} else {
-		console.warn("$(item) is empty");
-	}
-
-	try {
-		await compile_model();
-	} catch (e) {
-		log(e);
-		log("There was an error compiling the model: " + e);
-	};
-
-
-	var redo_graph = await update_python_code();
-
-	if (model && redo_graph && !no_graph_restart) {
-		await restart_fcnn(1);
-		await restart_lenet(1);
-		await restart_alexnet(1);
-	}
-
-	prev_layer_data = [];
-
-	await identify_layers(numberoflayers);
-
-	layer_structure_cache = null;
-
-	await save_current_status();
-
-	show_dtype_only_first_layer();
-
-	enable_start_training_custom_tensors();
-
-	var wait_for_latex_model = Promise.resolve(1);
-
-	if (!no_update_math) {
-		wait_for_latex_model = await write_model_to_latex_to_page();
-	}
-
-	await last_shape_layer_warning();
-
-	await hide_no_conv_stuff();
-
-	var current_input_shape = get_input_shape();
-	if (current_input_shape.length != 3) {
-		$(".visualize_button").hide();
-		if (cam) {
-			stop_webcam();
+	var fref = async (no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) => {
+		if(has_missing_values) {
+			l("Not creating model because some values are missing (updated page)");
+			return;
 		}
-	} else {
-		$(".visualize_button").show();
-	}
 
-	try {
-		await write_descriptions();
-	} catch (e) {
-		console.warn(e);
-	}
+		rename_tmp_onchange();
 
-	//var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
+		if($("#width").val() == "" || $("#height").val() == "") {
+			console.warn("Width or height is empty string, returning from updated_page");
+			return;
+		}
 
-	allow_training();
+		if (is_setting_config) {
+			console.info("Currently running is_setting_config, returning from updated_page");
+			return;
+		}
 
-	if (!no_prediction) {
-		await show_prediction(1, 1);
-	}
+		var number_of_layers = get_number_of_layers();
+		show_or_hide_bias_initializer(number_of_layers);
 
-	await typeset();
+		if (disable_show_python_and_create_model) {
+			console.info("disable_show_python_and_create_model, returning from updated_page");
+			return;
+		}
 
-	await wait_for_latex_model;
-	//await wait_for_show_hide_load_weights;
-	if(atrament_data.sketcher && await input_shape_is_image()) {
-		await predict_handdrawn();
-	}
+		if ($(item).length) {
+			var changed_layer = find_layer_number_by_element($(item));
+			// TODO!!! Only change weights from this specific layer if changing weights is neccessary
 
-	if(mode == "beginner") {
-		$(".expert_mode_only").hide();
-	} else {
-		$(".expert_mode_only").show();
-	}
+			var caller_classes = $(item).attr("class").split(/\s+/);
+			var keep_classes = [
+				"activation",
+				"padding",
+				"strides_x",
+				"strides_y",
+				"strides_z",
+				"dilation_rate",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"kernel_regularizer_l1",
+				"kernel_regularizer_l2",
+				"bias_regularizer_l1",
+				"bias_regularizer_l2",
+				"trainable",
+				"dropout_rate"
+			];
+		} else {
+			console.warn("$(item) is empty");
+		}
+
+		try {
+			await compile_model();
+		} catch (e) {
+			log(e);
+			log("There was an error compiling the model: " + e);
+		};
+
+
+		var redo_graph = await update_python_code();
+
+		if (model && redo_graph && !no_graph_restart) {
+			await restart_fcnn(1);
+			await restart_lenet(1);
+			await restart_alexnet(1);
+		}
+
+		prev_layer_data = [];
+
+		await identify_layers(number_of_layers);
+
+		layer_structure_cache = null;
+
+		await save_current_status();
+
+		show_dtype_only_first_layer();
+
+		enable_start_training_custom_tensors();
+
+		var wait_for_latex_model = Promise.resolve(1);
+
+		if (!no_update_math) {
+			wait_for_latex_model = await write_model_to_latex_to_page();
+		}
+
+		await last_shape_layer_warning();
+
+		await hide_no_conv_stuff();
+
+		var current_input_shape = get_input_shape();
+		if (current_input_shape.length != 3) {
+			$(".visualize_button").hide();
+			if (cam) {
+				stop_webcam();
+			}
+		} else {
+			$(".visualize_button").show();
+		}
+
+		try {
+			await write_descriptions();
+		} catch (e) {
+			console.warn(e);
+		}
+
+		//var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
+
+		allow_training();
+
+		if (!no_prediction) {
+			await show_prediction(1, 1);
+		}
+
+		await typeset();
+
+		await wait_for_latex_model;
+		//await wait_for_show_hide_load_weights;
+		if(atrament_data.sketcher && await input_shape_is_image()) {
+			await predict_handdrawn();
+		}
+
+		if(mode == "beginner") {
+			$(".expert_mode_only").hide();
+		} else {
+			$(".expert_mode_only").show();
+		}
+
+
+		allow_editable_labels();
+
+		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+		return 1;
+	};
+	
+	await fref(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction);
 
 	number_of_currently_running_updated_pages--;
-
-	allow_editable_labels();
-
-	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
-	return 1;
 }
 
 async function typeset() {
@@ -1322,14 +1329,14 @@ function set_epochs(val) {
 	document.getElementById("epochs").value = val;
 }
 
-function set_numberoflayers(val) {
+function set_number_of_layers(val) {
 	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
-	document.getElementById("numberoflayers").value = val;
+	document.getElementById("number_of_layers").value = val;
 	return val;
 }
 
 function get_number_of_layers() {
-	return parseInt(document.getElementById("numberoflayers").value);
+	return parseInt(document.getElementById("number_of_layers").value);
 }
 
 function init_epochs(val) {
@@ -1338,10 +1345,10 @@ function init_epochs(val) {
 	set_epochs(val);
 }
 
-async function init_numberoflayers(val) {
-	assert(typeof (val) == "number", "init_numberoflayers(" + val + ") is not an integer but " + typeof (val));
+async function init_number_of_layers(val) {
+	assert(typeof (val) == "number", "init_number_of_layers(" + val + ") is not an integer but " + typeof (val));
 
-	await set_numberoflayers(val);
+	await set_number_of_layers(val);
 
 	await show_layers(val);
 
@@ -1551,7 +1558,7 @@ function option_for_layer(nr) {
 async function remove_layer(item) {
 	assert(typeof (item) == "object", "item is not an object but " + typeof (item));
 
-	var number_of_layers_element = document.getElementById("numberoflayers");
+	var number_of_layers_element = document.getElementById("number_of_layers");
 	var old_value = parseInt(number_of_layers_element.value);
 	if (old_value > 1) {
 		$($(item).parent()[0]).parent().remove()
@@ -1617,7 +1624,7 @@ async function add_layer(item) {
 		}
 	}
 
-	$("#numberoflayers").val(parseInt($("#numberoflayers").val()) + 1);
+	$("#number_of_layers").val(parseInt($("#number_of_layers").val()) + 1);
 
 	var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
 	var new_layer_type = previous_layer_type;
@@ -1908,7 +1915,7 @@ async function set_config(index) {
 		}
 
 		//log("number_of_layers: " + number_of_layers);
-		await init_numberoflayers(number_of_layers);
+		await init_number_of_layers(number_of_layers);
 
 		if (config["input_shape"]) {
 			await set_input_shape(config["input_shape"]);
@@ -2437,9 +2444,9 @@ function detect_kernel_initializer(original_kernel_initializer_data) {
 	}
 }
 
-function show_or_hide_bias_initializer(numberoflayers) {
+function show_or_hide_bias_initializer(number_of_layers) {
 	var layer_settings = $(".layer_setting");
-	for (var i = 0; i < numberoflayers; i++) {
+	for (var i = 0; i < number_of_layers; i++) {
 		var this_layer = $(layer_settings[i]);
 		var use_bias_setting = this_layer.find(".use_bias");
 		if (use_bias_setting.length) {

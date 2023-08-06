@@ -71,8 +71,6 @@ async function compile_model () {
 		recreate_model = true;
 	}
 
-	var old_weights_string = false;
-
 	if(!model) {
 		if(finished_loading) {
 			console.warn("model not given");
@@ -685,11 +683,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		if(disable_show_python_and_create_model) {
 			return;
 		}
-	}
-
-	var old_weights_string = false;
-	if(old_model && Object.keys(old_model).includes("layers")) {
-		old_weights_string = last_weights_as_string;
 	}
 
 	current_status_hash = new_current_status_hash;

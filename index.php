@@ -402,7 +402,7 @@
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" style="display:none">
 						<div class="ribbon-toolbar" style="width:100px">
-							<input type="number" id="numberoflayers" value="2" min="1" step="1" style="width: 85%">
+							<input type="number" id="number_of_layers" value="2" min="1" step="1" style="width: 85%">
 						</div>
 						<div class="ribbon-group-title">Layers</div>
 					</div>

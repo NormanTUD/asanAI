@@ -649,10 +649,10 @@ function get_layer_identification (i) {
 	return "";
 }
 
-async function identify_layers (numberoflayers) {
+async function identify_layers (number_of_layers) {
 	//console.trace();
 	has_zero_output_shape = false;
-	for (var i = 0; i < numberoflayers; i++) {
+	for (var i = 0; i < number_of_layers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);
 
