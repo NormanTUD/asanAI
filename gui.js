@@ -1142,7 +1142,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		console.warn(e);
 	}
 
-	var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
+	//var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
 
 	allow_training();
 
@@ -1153,7 +1153,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	await typeset();
 
 	await wait_for_latex_model;
-	await wait_for_show_hide_load_weights;
+	//await wait_for_show_hide_load_weights;
 	if(atrament_data.sketcher && await input_shape_is_image()) {
 		await predict_handdrawn();
 	}
@@ -2167,7 +2167,7 @@ async function chose_dataset(no_set_config) {
 
 	show_hide_undo_buttons();
 
-	await show_or_hide_load_weights()
+	//await show_or_hide_load_weights()
 	model_is_trained = false;
 	if (!no_set_config) {
 		await set_config();
@@ -3133,7 +3133,7 @@ async function load_weights(dont_show_msg) {
 				prev_layer_data = [];
 				await show_prediction(0, 1);
 				await write_model_to_latex_to_page();
-				await show_or_hide_load_weights();
+				//await show_or_hide_load_weights();
 			}
 		});
 	}

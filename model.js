@@ -627,7 +627,17 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		return false;
 	}
 
-	memory_leak_debugger("_add_layer_to_model", start_tensors + new_model.layers[i].weights.length);
+	var new_tensors = 0;
+
+	new_model.layers.forEach((elem, nr) => {
+		try {
+			new_tensors += new_model.layers[nr].weights.length;
+		} catch (e) {
+			console.log(e);
+		}
+	});
+
+	memory_leak_debugger("_add_layer_to_model", start_tensors + new_tensors);
 	return new_model;
 }
 
