@@ -557,6 +557,67 @@ async function _get_xs_and_ys () {
 	return xs_and_ys;
 }
 
+async function _show_or_hide_simple_visualization (xs_and_ys) {
+	var start_tensors = memory_leak_debugger();
+	if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
+		if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
+			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
+
+			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
+				"model",
+				parseInt($("#epochs").val()), 
+				JSON.stringify(xs_and_ys["x"].arraySync()), 
+				JSON.stringify(xs_and_ys["y"].arraySync()
+			), false, "simplest_training_data_visualization");
+			//log(new_on_batch_end_callback);
+			if(new_on_batch_end_callback) {
+				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
+				//log("tried installing new callbacks in fit_data:", fit_data);
+				$("#simplest_training_data_visualization").show()
+			} else {
+				log("Could not install new callback");
+			}
+
+
+		}
+	} else {
+		old_onEpochEnd = undefined;
+		$("#simplest_training_data_visualization").html("").hide();
+	}
+
+	memory_leak_debugger("_show_or_hide_simple_visualization", start_tensors);
+}
+
+function _clear_plotly_epoch_history () {
+	$("#plotly_epoch_history").parent().hide();
+	$("#plotly_epoch_history").html("");
+}
+
+async function _get_fit_data (xs_and_ys) {
+	var start_tensors = memory_leak_debugger();
+	var fit_data = true;
+
+	try {
+		add_layer_debuggers();
+
+		fit_data = get_fit_data();
+
+		await _show_or_hide_simple_visualization(xs_and_ys);
+
+		var start_tensors = memory_leak_debugger();
+
+		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+
+		memory_leak_debugger("checking data fit", start_tensors);
+	} catch (e) {
+		await write_error_and_reset(e);
+		fit_data = false;
+	}
+
+	memory_leak_debugger("get_fit_data", start_tensors);
+	return fit_data;
+}
+
 async function run_neural_network () {
 	var start_tensors = memory_leak_debugger();
 	await clean_gui();
@@ -581,52 +642,9 @@ async function run_neural_network () {
 			$("#training_content").clone().appendTo("#tfvis_tab");
 		}
 
-		$("#plotly_epoch_history").parent().hide();
-		$("#plotly_epoch_history").html("");
+		_clear_plotly_epoch_history();
 
-		try {
-			await compile_model();
-		} catch (e) {
-			await write_error_and_reset(e);
-		}
-
-		var fit_data;
-
-		try {
-			add_layer_debuggers();
-
-			fit_data = get_fit_data();
-
-			l("Started model.fit");
-			var start_tensors = memory_leak_debugger();
-
-			if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
-				if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
-					old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
-
-					var new_on_batch_end_callback = await get_live_tracking_on_batch_end("model", parseInt($("#epochs").val()), JSON.stringify(xs_and_ys["x"].arraySync()), JSON.stringify(xs_and_ys["y"].arraySync()), false, "simplest_training_data_visualization");
-					//log(new_on_batch_end_callback);
-					if(new_on_batch_end_callback) {
-						fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
-						//log("tried installing new callbacks in fit_data:", fit_data);
-						$("#simplest_training_data_visualization").show()
-					} else {
-						log("Could not install new callback");
-					}
-
-
-				}
-			} else {
-				old_onEpochEnd = undefined;
-				$("#simplest_training_data_visualization").html("").hide();
-			}
-
-			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-
-			memory_leak_debugger("checking data fit", start_tensors);
-		} catch (e) {
-			await write_error_and_reset(e);
-		}
+		var fit_data = await _get_fit_data(xs_and_ys);
 
 		var error = 0;
 
@@ -636,7 +654,6 @@ async function run_neural_network () {
 			log("x-shape:", xs_and_ys["x"].shape);
 			log("y-shape:", xs_and_ys["y"].shape);
 			*/
-			weights_as_string_cache = false;
 
 			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 			var start_tensors = memory_leak_debugger();
@@ -663,37 +680,14 @@ async function run_neural_network () {
 		await dispose(fit_data);
 
 		if(!error) {
-			var trained_weights = undefined;
-			try {
-				/* Memory leak in model.fit: prevention: save weights as string, delete everything,
-				 * then restore the model with the saved weights. Not pretty, but it works...  */
+			model_is_trained = true;
 
-				//log("Training done, getting weights");
-				trained_weights = await get_weights_as_string();
+			$("#predictcontainer").show();
+			$("#predict_error").hide().html("");
 
-				await reset_data();
+			await enable_everything();
 
-				model = await create_model(null, await get_model_structure(), 1);
-			} catch (e) {
-				await write_error_and_reset(e);
-			}
-
-			try {
-				await set_weights_from_string(trained_weights, 1, 1);
-
-				/* Memory leak hack end */
-
-				model_is_trained = true;
-
-				$("#predictcontainer").show();
-				$("#predict_error").hide().html("");
-
-				await enable_everything();
-
-				$("#training_progress_bar").hide();
-			} catch (e) {
-				await write_error_and_reset(e);
-			}
+			$("#training_progress_bar").hide();
 		}
 	}
 

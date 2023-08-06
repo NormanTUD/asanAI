@@ -63,8 +63,6 @@ async function compile_model () {
 
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
-	weights_as_string_cache = false;
-
 	var recreate_model = false;
 
 	var new_model_config_hash = await get_model_config_hash();
@@ -664,7 +662,6 @@ function _set_layer_gui (data, fake_model_structure, i) {
 
 async function create_model (old_model, fake_model_structure, force) {
 	var start_tensors = memory_leak_debugger();
-	weights_as_string_cache = false;
 
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
@@ -1159,9 +1156,6 @@ async function get_weights_as_json (m) {
 
 async function get_weights_as_string (m) {
 	var start_tensors = memory_leak_debugger();
-	if(weights_as_string_cache !== false && !m) {
-		return weights_as_string_cache;
-	}
 
 	if(!m) {
 		m = model;
@@ -1194,7 +1188,6 @@ async function get_weights_as_string (m) {
 			}
 
 			last_weights_as_string = JSON.stringify(weights_array);
-			weights_as_string_cache = last_weights_as_string;
 			res = last_weights_as_string;
 		} catch (e) {
 			console.error(e);
