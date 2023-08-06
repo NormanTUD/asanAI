@@ -148,7 +148,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
 	
 	if(item.width == 0) {
-		log("item width is 0, not predicting:", item);
+		//log("item width is 0, not predicting:", item);
 		return;
 	}
 

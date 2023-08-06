@@ -1028,17 +1028,17 @@ function stop_webcam() {
 
 function _has_any_warning () {
 	if($("#width").val() == "" || $("#height").val() == "") {
-		console.warn("Width or height is empty string, returning from updated_page");
+		//console.warn("Width or height is empty string, returning from updated_page");
 		return true;
 	}
 
 	if (disable_show_python_and_create_model) {
-		console.info("disable_show_python_and_create_model, returning from updated_page");
+		//console.info("disable_show_python_and_create_model, returning from updated_page");
 		return true;
 	}
 
 	if (is_setting_config) {
-		console.info("Currently running is_setting_config, returning from updated_page");
+		//console.info("Currently running is_setting_config, returning from updated_page");
 		return true;
 	}
 
@@ -1054,7 +1054,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var updated_page_uuid = uuidv4();
 
 	if(number_of_currently_running_updated_pages > 1) {
-		console.info("Only using first updated_page.");
+		if(finished_loading) {
+			console.info("Only using first updated_page.");
+		}
 		number_of_currently_running_updated_pages--;
 		return;
 	}
@@ -1164,7 +1166,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 
 	if(!ret) {
-		console.warn("updated_page failed");
+		if(finished_loading) {
+			console.warn("updated_page failed");
+		}
 	}
 
 

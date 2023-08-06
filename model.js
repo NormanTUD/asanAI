@@ -65,27 +65,13 @@ async function _create_model () {
 	memory_leak_debugger("_create_model", start_tensors);
 }
 
-async function compile_model () {
+async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
 	var start_tensors = memory_leak_debugger();
-
-	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
-
 	var recreate_model = false;
-
-	var new_model_config_hash = await get_model_config_hash();
 
 	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash()) {
 		recreate_model = true;
 	}
-
-	if(!model) {
-		if(finished_loading) {
-			console.warn("model not given");
-		}
-		model = await create_model(model, await get_model_structure());
-	}
-
-	var model_was_trained_previously = model_is_trained;
 
 	if(model_is_trained) {
 		if(model_config_hash == new_model_config_hash) {
@@ -98,6 +84,26 @@ async function compile_model () {
 		}
 	}
 
+	memory_leak_debugger("_get_recreate_model", start_tensors);
+	return recreate_model;
+}
+
+async function compile_model () {
+	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+
+	var start_tensors = memory_leak_debugger();
+	var new_model_config_hash = await get_model_config_hash();
+	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
+
+	var recreate_model = await _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash);
+
+	if(!model) {
+		if(finished_loading) {
+			console.warn("model not given");
+		}
+		model = await create_model(model, await get_model_structure());
+	}
+
 	if(recreate_model) {
 		model_is_trained = false;
 		reset_summary();
@@ -108,10 +114,7 @@ async function compile_model () {
 	try {
 		model_config_hash = new_model_config_hash;
 		var model_data = get_model_data();
-
 		model.compile(model_data);
-
-		//await dispose(model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}
@@ -1163,7 +1166,9 @@ async function get_weights_as_string (m) {
 	}
 
 	if(!m) {
-		console.warn("Could not get model...");
+		if(finished_loading) {
+			console.warn("Could not get model...");
+		}
 		memory_leak_debugger("get_weights_as_string", start_tensors);
 		return false;
 	}
