@@ -5752,11 +5752,11 @@ function show_proper_set_all_initializer (required) {
 	}
 }
 
-function set_required_seeds (required, type, kernel_or_bias) {
+function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 	var values = get_initializer_set_all_values(required, kernel_or_bias);
 
-	//assert(typeof(type) == "string", "type is not string");
-	//assert(typeof(values) == "object", "values is not an object");
+	assert(typeof(type) == "string", "type is not string");
+	assert(typeof(values) == "object", "values is not an object");
 
 
 	for (var i = 0; i < required.length; i++) {
@@ -5786,7 +5786,10 @@ function set_required_seeds (required, type, kernel_or_bias) {
 			//log("item_selector", item_selector);
 			var ui_elements = $(item_selector);
 			if(ui_elements.length >= 1) {
-				ui_elements.val(val).trigger("change");
+				var element = ui_elements.val(val).trigger("change");
+				if(trigger) {
+					element.trigger("change");
+				}
 			} else {
 				console.error("ui_elements contains no elements. Selector: "  + item_selector)
 			}
@@ -5823,9 +5826,6 @@ function get_initializer_set_all_values (required) {
 function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
 	var type = $("#change_initializers_selector").val();
 	assert(typeof(type) == "string", "type is not string");
-
-	$(".bias_initializer").val(type).trigger("change");
-	$(".kernel_initializer").val(type).trigger("change");
 
 	kernel_bias.forEach((kernel_or_bias) => {
 		var required = [];
