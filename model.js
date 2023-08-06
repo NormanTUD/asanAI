@@ -108,7 +108,7 @@ async function compile_model () {
 
 		model.compile(model_data);
 
-		await dispose(model_data);
+		//await dispose(model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}

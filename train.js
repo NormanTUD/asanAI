@@ -491,7 +491,6 @@ function _set_apply_to_original_apply () {
 	var start_tensors = memory_leak_debugger();
 
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
-	assert(model.length >= 1, "model does not have any layers");
 
 	for (var i = 0; i < model.layers.length; i++) {
 		if("original_apply" in model.layers[i]) {
@@ -503,6 +502,7 @@ function _set_apply_to_original_apply () {
 			}
 		}
 	}
+
 	memory_leak_debugger("_set_apply_to_original_apply", start_tensors);
 }
 
@@ -520,18 +520,8 @@ async function _create_and_compile_model () {
 	}
 }
 
-async function run_neural_network () {
-	var start_tensors = memory_leak_debugger();
-	await clean_gui();
-
-	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
-
-	_set_apply_to_original_apply();
-
-	await _create_and_compile_model();
-
-	var xs_and_ys;
-
+async function _get_xs_and_ys () {
+	var xs_and_ys = false;
 	try {
 		var error_string = "";
 		write_model_summary_wait();
@@ -561,6 +551,26 @@ async function run_neural_network () {
 		await write_descriptions();
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 		started_training = false;
+		return false;
+	}
+
+	return xs_and_ys;
+}
+
+async function run_neural_network () {
+	var start_tensors = memory_leak_debugger();
+	await clean_gui();
+
+	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
+
+	_set_apply_to_original_apply();
+
+	await _create_and_compile_model();
+
+	var xs_and_ys = await _get_xs_and_ys();
+
+	if(!xs_and_ys) {
+		console.error("Could not get xs_and_ys");
 		return;
 	}
 
