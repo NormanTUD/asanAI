@@ -60,7 +60,9 @@ async function _create_model () {
 
 async function compile_model () {
 	var start_tensors = memory_leak_debugger();
+
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+
 	weights_as_string_cache = false;
 
 	var recreate_model = false;
@@ -105,6 +107,8 @@ async function compile_model () {
 		var model_data = get_model_data();
 
 		model.compile(model_data);
+
+		await dispose(model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}
