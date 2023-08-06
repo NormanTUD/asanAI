@@ -646,40 +646,20 @@ async function run_neural_network () {
 
 		var fit_data = await _get_fit_data(xs_and_ys);
 
-		var error = 0;
+		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 		try {
-			/*
-			log("Model-Input-shape:", model.getInputAt(0).shape);
-			log("x-shape:", xs_and_ys["x"].shape);
-			log("y-shape:", xs_and_ys["y"].shape);
-			*/
-
-			show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 			var start_tensors = memory_leak_debugger();
 
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
+			l("Finished model.fit");
 
 			await tf.nextFrame();
 
 			memory_leak_debugger("model.fit done", start_tensors);
-			l("Finished model.fit");
 
 			assert(typeof(h) == "object", "history object is not of type object");
 
-			await dispose(h);
-		} catch (e) {
-			console.error(e);
-			if(typeof(e) == "object" && Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-			await write_error("" + e);
-			error = 1;
-		}
-
-		await dispose(fit_data);
-
-		if(!error) {
 			model_is_trained = true;
 
 			$("#predictcontainer").show();
@@ -688,7 +668,15 @@ async function run_neural_network () {
 			await enable_everything();
 
 			$("#training_progress_bar").hide();
+		} catch (e) {
+			console.error(e);
+			if(typeof(e) == "object" && Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+			await write_error("" + e);
 		}
+
+		await dispose(fit_data);
 	}
 
 
