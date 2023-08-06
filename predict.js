@@ -242,8 +242,10 @@ async function _run_predict_and_show (tensor_img, nr) {
 		return;
 	}
 
+	var predictions_tensor;
+
 	try {
-		var predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
+		predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
 
 		await _predict_result(predictions_tensor, nr);
 		await draw_heatmap(predictions_tensor, tensor_img);
@@ -253,7 +255,6 @@ async function _run_predict_and_show (tensor_img, nr) {
 	}
 
 	await dispose(predictions_tensor);
-	await dispose(tensor_img);
 
 	memory_leak_debugger("_run_predict_and_show", start_tensors);
 }
