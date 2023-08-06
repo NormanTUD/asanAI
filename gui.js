@@ -1028,14 +1028,17 @@ function stop_webcam() {
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	var updated_page_uuid = uuidv4();
-	while (number_of_currently_running_updated_pages) {
+
+	if(number_of_currently_running_updated_pages > 1) {
+		console.info("Only using first one. It will do the job... hopefully...");
+		number_of_currently_running_updated_pages--;
+		return;
+	}
+
+
+	while (number_of_currently_running_updated_pages > 1) {
 		await delay(200);
 		log_once(`Currently in queue for updated_page: ${number_of_currently_running_updated_pages} ${updated_page_uuid}`);
-
-		if(number_of_currently_running_updated_pages > 1) {
-			console.info("Only using first one. It will do the job... hopefully...");
-			return;
-		}
 	}
 
 	number_of_currently_running_updated_pages++;
