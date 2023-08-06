@@ -1043,7 +1043,6 @@ button {
 hr {
 	margin-top: 0;
 	margin-bottom: 0;
-	max-width: 50%;
 }
 
 .user_select_none {
@@ -1063,4 +1062,8 @@ hr {
 	width: 100%;
 	text-align: left;
 	height: 40px;
+}
+
+#hr_nav {
+	width: 100%;
 }
