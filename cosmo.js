@@ -690,8 +690,6 @@ async function cosmo_mode () {
 	}, 1000);
 
 	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
-
-	setInterval(cosmo_mode_auto_image_descriptor, 1000);
 }
 
 function findColorPickerContainer(element) {
@@ -938,10 +936,12 @@ async function cosmo_mode_auto_image_descriptor () {
 		var x = bc.x;
 		var y = bc.y - (2 * margin_top);
 
-		var j = (layer_images.length - 1 ) - i;
+		if(y > 0) {
+			var j = (layer_images.length - 1 ) - i;
 
-		var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[j]}:</span>`);
+			var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[j]}:</span>`);
 
-		$(window.body).append(span);
+			$(window.body).append(span);
+		}
 	})
 }
