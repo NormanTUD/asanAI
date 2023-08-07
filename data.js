@@ -105,7 +105,6 @@ async function force_download_image_preview_data () {
 		var old_force_download = force_download;
 		force_download = 1;
 		var data = await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""}, 1);
-		log(data);
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
@@ -183,8 +182,6 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	if((started_training || force_download) && !force_no_download) {
 		$("#photos").html("");
-		log("Deleting #photos B");
-		console.trace();
 	}
 
 
@@ -858,7 +855,6 @@ function _xs_xy_warning (xs_and_ys) {
 
 function add_photo_to_gallery(url) {
 	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
-	log(`add_photo_to_gallery(${url})`);
 
 	var photoscontainer = $("#photoscontainer");
 
