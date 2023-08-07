@@ -3609,7 +3609,7 @@ async function add_new_category() {
 		var this_label = 'category ' + label_nr;
 
 		if(is_cosmo_mode) {
-			this_label = cosmo_categories[label_nr];
+			this_label = cosmo_categories[label_nr % cosmo_categories.length];
 		}
 
 		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="' + this_label + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').prependTo($(".own_image_upload_container")[n]);
