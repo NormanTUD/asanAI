@@ -627,7 +627,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 
 			await dispose(new_model);
 
-			memory_leak_debugger("create_model", start_tensors);
+			memory_leak_debugger("create_model (A)", start_tensors);
 
 			memory_leak_debugger("_add_layer_to_model", start_tensors);
 			return false;
@@ -722,7 +722,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose(old_model);
 	}
 
-	memory_leak_debugger("create_model", start_tensors);
+	memory_leak_debugger("create_model (B)", start_tensors);
 	return new_model;
 }
 

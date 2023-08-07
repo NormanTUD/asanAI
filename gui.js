@@ -5551,45 +5551,6 @@ async function change_last_responsible_layer_for_image_output () {
 	}
 }
 
-function sort_by_property(list, property_name_list) {
-	list.sort((a, b) => {
-		for (var p = 0; p < property_name_list.length; p++) {
-			var prop = property_name_list[p];
-			if (a[prop] < b[prop]) {
-				return -1;
-			} else if (a[prop] !== a[prop]) {
-				return 1;
-			}
-		}
-		return 0;
-	});
-}
-
-function getSortedHash(inputHash){
-	var resultHash = {};
-
-	var keys = Object.keys(inputHash);
-	keys.sort(function(a, b) {
-		return inputHash[a] - inputHash[b]
-	}).forEach(function(k) {
-		resultHash[k] = inputHash[k];
-	});
-	return resultHash;
-}
-
-function getSortedHashReverse(inputHash){
-	var resultHash = {};
-
-	var keys = Object.keys(inputHash);
-	keys.sort(function(a, b) {
-		return inputHash[a] - inputHash[b]
-	}).reverse().forEach(function(k) {
-		resultHash[k] = inputHash[k];
-	});
-	return resultHash;
-}
-
-
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
 		if($("#show_bars_instead_of_numbers").is(":checked")) {
@@ -5599,8 +5560,6 @@ function show_bars_instead_of_numbers () {
 
 	return false;
 }
-
-
 
 async function update_label_by_nr (t, nr) {
 	var name = $(t).val();
@@ -5682,8 +5641,6 @@ function disable_flatten_layer () {
 
 	var flatten_layer = null;
 	for (var i = 0; i < model.layers.length; i++) {
-		//log(model.layers[i].name);
-		//log(`if(!${flatten_layer} && ${model.layers[i].name}.startsWith("flatten")) {`) ;
 		if(!flatten_layer && model.layers[i].name.startsWith("flatten")) {
 			flatten_layer = i;
 		}
@@ -5692,8 +5649,6 @@ function disable_flatten_layer () {
 
 	if(!!flatten_layer) {
 		$($(".layer_setting")[flatten_layer]).find(".remove_layer").prop("disabled", true);
-	//} else {
-	//	log("No layer found, flatten-layer: ", flatten_layer);
 	}
 
 }
