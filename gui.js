@@ -2187,7 +2187,9 @@ async function chose_dataset(no_set_config) {
 	await identify_layers(get_number_of_layers());
 	init_download_link();
 
-	await force_download_image_preview_data();
+	if(!is_cosmo_mode) {
+		await force_download_image_preview_data();
+	}
 
 	$("#prediction_non_image").hide();
 }

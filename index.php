@@ -1362,10 +1362,27 @@
 								<div id="lenet_example_cosmo" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
-									<img style='width: 90%; max-height: 200px; max-width: 500px;' src="signs_network.svg"><br>
+									<img style='width: 90%; max-height: 300px; max-width: 500px;' src="signs_network.svg"><br>
 									<hr class="cosmo_hr">
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
-									Warnung, Rettung, Verbot, Verpflichtend, Feuer
+									<center>
+										<table border=0>
+											<tr>
+												<td class='cosmo_example_table'>Feuer:</td>
+												<td class='cosmo_example_table'>Verpflichtend:</td>
+												<td class='cosmo_example_table'>Warnung:</td>
+												<td class='cosmo_example_table'>Rettung:</td>
+												<td class='cosmo_example_table'>Verbot:</td>
+											</tr>
+											<tr>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//fire/116px-Fire_Class_B.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png'></td>
+											</tr>
+										</table>
+									</center>
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
 									Jetzt werden <span id="number_of_images_per_category">5</span> Bilder aus jeder Kategorie geladen.
