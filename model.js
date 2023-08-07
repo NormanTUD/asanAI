@@ -754,9 +754,18 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose(old_model);
 	}
 
-	memory_leak_debugger("create_model (B)", start_tensors + findTensorsWithIsDisposedInternal(model_data).length);
+	var new_tensors = findTensorsWithIsDisposedInternal(model_data).length;
+	for (var k = 0; k < new_model.length; k++) {
+		for (var j = 0; j < new_model.layers[k].weights.length; j++) {
+			if(Object.keys(new_model.layers[k].weights[j]).includes("val")) {
+				new_tensors++;
+			}
+		}
+	}
 
 	var model_data = await get_model_data();
+
+	memory_leak_debugger("create_model (B)", start_tensors + new_tensors);
 
 	return [new_model, model_data];
 }
