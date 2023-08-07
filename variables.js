@@ -1472,3 +1472,5 @@ var ran_milestones = [];
 var cosmo_predict_mode = "examples";
 
 var currently_predicting_webcam = false;
+
+var global_model_data = undefined;

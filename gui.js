@@ -710,7 +710,7 @@ async function change_width_or_height(name, inputshape_index) {
 			await set_input_shape("[" + inputShape.join(", ") + "]");
 			eval(name + " = " + value);
 			layer_structure_cache = null;
-			model = await create_model();
+			[model, global_model_data] = await create_model();
 			is_setting_config = false;
 			await updated_page();
 			change_output_and_example_image_size();
@@ -2045,7 +2045,12 @@ async function set_config(index) {
 	disable_show_python_and_create_model = false;
 
 	l("Creating model");
-	model = await create_model(model);
+
+	if(global_model_data) {
+		await dispose(global_model_data);
+	}
+
+	[model, global_model_data] = await create_model(model);
 
 	l("Compiling model");
 	await compile_model();

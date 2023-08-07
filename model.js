@@ -38,7 +38,7 @@ async function _create_model () {
 		return model;
 	}
 	try {
-		model = await create_model(model);
+		[model, global_model_data] = await create_model(model);
 
 		if(can_be_shown_in_latex()) {
 			$("#math_mode_settings").show();
@@ -101,7 +101,12 @@ async function compile_model () {
 		if(finished_loading) {
 			console.warn("model not given");
 		}
-		model = await create_model(model, await get_model_structure());
+
+		if(global_model_data) {
+			await dispose(global_model_data);
+		}
+
+		[model, global_model_data] = await create_model(model, await get_model_structure());
 	}
 
 	if(recreate_model) {
@@ -113,8 +118,7 @@ async function compile_model () {
 
 	try {
 		model_config_hash = new_model_config_hash;
-		var model_data = get_model_data();
-		model.compile(model_data);
+		model.compile(global_model_data);
 	} catch (e) {
 		await except("ERROR2", e);
 	}
@@ -679,7 +683,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 		console.error("No model found, but has missing values");
 
-		return;
+		return [old_model, null];
 	}
 
 	var new_layers_container_md5 = await get_layers_container_md5();
@@ -690,7 +694,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
 
 	if(!force && disable_show_python_and_create_model) {
-		return;
+		return [old_model, null];
 	}
 
 	current_status_hash = new_current_status_hash;
@@ -723,7 +727,10 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	memory_leak_debugger("create_model (B)", start_tensors);
-	return new_model;
+
+	var model_data = await get_model_data();
+
+	return [new_model, model_data];
 }
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i) {
@@ -873,23 +880,24 @@ async function compile_fake_model(layer_nr, layer_type) {
 	var ret = false;
 
 	try {
-		var fake_model, after_create_model_tensors, model_data;
+		var fake_model, after_create_model_tensors;
 
 		try {
-			fake_model = await create_model(null, fake_model_structure);
+			var tmp_model_data;
+			[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
 			after_create_model_tensors = tf.memory()["numTensors"];
 
 			ret = tf.tidy(() => {
 				try {
-					model_data = get_model_data();
-
-					fake_model.compile(model_data);
+					fake_model.compile(tmp_model_data);
 
 					return true;
 				} catch (e) {
 					return false;
 				}
 			});
+
+			await dispose(tmp_model_data);
 		} catch(e) {
 			console.error(e);
 
@@ -898,7 +906,6 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 		var after_compile_tensors = tf.memory()["numTensors"];
 
-		await dispose(model_data);
 		await dispose(fake_model);
 
 	} catch (e) {
