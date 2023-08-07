@@ -11,7 +11,7 @@ function memory_leak_debugger (name="", oldNumTensors=null) {
 	if(name && oldNumTensors) {
 		if(numTensors > oldNumTensors) {
 			if(name != "") {
-				console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors");
+				console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (currently at " + numTensors + " tensors)");
 			} else {
 				console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
 			}

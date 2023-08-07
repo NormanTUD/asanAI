@@ -142,7 +142,7 @@ async function compile_model () {
 
 	write_model_summary_wait();
 
-	memory_leak_debugger("compile_model", start_tensors);
+	memory_leak_debugger("compile_model", start_tensors + findTensorsWithIsDisposedInternal(global_model_data).length);
 }
 
 function get_weight_type_name_from_option_name (on) {
@@ -741,7 +741,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose(old_model);
 	}
 
-	memory_leak_debugger("create_model (B)", start_tensors);
+	memory_leak_debugger("create_model (B)", start_tensors + findTensorsWithIsDisposedInternal(model_data).length);
 
 	var model_data = await get_model_data();
 
