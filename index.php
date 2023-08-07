@@ -1370,9 +1370,9 @@
 											<tr>
 												<td class='cosmo_example_table'>Feuer:</td>
 												<td class='cosmo_example_table'>Verpflichtend:</td>
-												<td class='cosmo_example_table'>Warnung:</td>
-												<td class='cosmo_example_table'>Rettung:</td>
 												<td class='cosmo_example_table'>Verbot:</td>
+												<td class='cosmo_example_table'>Rettung:</td>
+												<td class='cosmo_example_table'>Warnung:</td>
 											</tr>
 											<tr>
 												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//fire/116px-Fire_Class_B.svg.png'></td>
