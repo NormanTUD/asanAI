@@ -3952,7 +3952,9 @@ function tensor_print_to_string(tensor) {
 
 		return logMessages.join("\n");
 	} catch (e) {
-		console.log("tensor_print_to_string failed:", e);
+		console.error("tensor_print_to_string failed:", e);
+
+		return "<span class='error_msg'>Error getting tensor as string</span>";
 	}
 }
 

@@ -1107,10 +1107,6 @@ async function get_x_y_from_csv () {
 	var start_tensors = memory_leak_debugger();
 	await reset_data();
 
-	if(x_csv) {
-		await dispose(x_csv);
-		await dispose(y_csv);
-	}
 
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();
@@ -1163,15 +1159,15 @@ async function get_x_y_from_csv () {
 		}
 	}
 
-	x_csv = x_data["data"];
-	y_csv = y_data["data"];
+	var x = x_data["data"];
+	var y = y_data["data"];
 
 	var y_between_0_and_1 = y_data["y_between_0_and_1"];
 
 	//log(y)
 
-	x_csv = tf.tensor(x_csv);
-	y_csv = tf.tensor(y_csv);
+	x = tf.keep(tf.tensor(x));
+	y = tf.keep(tf.tensor(y));
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
@@ -1180,8 +1176,8 @@ async function get_x_y_from_csv () {
 	memory_leak_debugger("get_x_y_from_csv", start_tensors);
 
 	return {
-		"x": x_csv,
-		"y": y_csv,
+		"x": x,
+		"y": y,
 		"keys": y_headers,
 		"number_of_categories": y_headers.length,
 		"y_between_0_and_1": y_between_0_and_1,
