@@ -1067,3 +1067,8 @@ hr {
 #hr_nav {
 	width: 100%;
 }
+
+.error_msg {
+	background-color: red;
+	color: white;
+}
