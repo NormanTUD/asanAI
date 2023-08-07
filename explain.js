@@ -1017,11 +1017,7 @@ async function get_image_from_url (url) {
 	return tf_img;
 }
 
-async function draw_maximally_activated_layer (layer, type) {
-	if(!is_cosmo_mode) {
-		show_tab_label("maximally_activated_label", 1);
-	}
-
+function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
 
 	if(type == "conv2d") {
@@ -1030,68 +1026,39 @@ async function draw_maximally_activated_layer (layer, type) {
 		neurons = parseInt(get_item_value(layer, "units"));
 	} else {
 		console.warn("Unknown layer " + layer);
+		return false;
+	}
+
+	return neurons;
+}
+
+async function draw_maximally_activated_layer (layer, type) {
+	if(!is_cosmo_mode) {
+		show_tab_label("maximally_activated_label", 1);
+	}
+
+	var neurons = _get_neurons_last_layer(layer, type);
+
+	if(typeof(neurons) == "boolean" && !neurons)  {
+		console.error("Cannot determine number of neurons in last layer");
 		return;
 	}
 
-	//log("Layer: " + layer);
 	var types_in_order = "";
-	if(get_number_of_layers() - 1 == layer) {
-		if(labels && labels.length) {
-			types_in_order = " (" + labels.join(", ") + ")";
-		}
+	if(get_number_of_layers() - 1 == layer && labels && labels.length) {
+		types_in_order = " (" + labels.join(", ") + ")";
 	}
 
 	var times = [];
 
 	favicon_spinner();
 
-	for (var i = neurons; i > 0; i--) {
+	for (var i = neurons - 1; i >= 0; i--) {
 		if(stop_generating_images) {
 			continue;
 		}
-		var eta = "";
-		if(times.length) {
-			eta = " (" + human_readable_time(parseInt(i * median(times))) + " left)";
-		}
-
-		var swal_msg = i + " Image(s) left " + eta;
-
-		if(is_cosmo_mode) {
-			if(times.length) {
-				eta = " (" + human_readable_time_german(parseInt(i * median(times))) + " übrig)";
-			}
-			if(i == 1) {
-				swal_msg = i + " Bild übrig " + eta;
-			} else {
-				swal_msg = i + " Bilder übrig " + eta;
-			}
-		}
-
-		l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
-
-		l(swal_msg);
-		document.title = swal_msg;
-
-		$("#show_cosmo_epoch_status").hide();
-
-		await Swal.fire({
-			title: is_cosmo_mode ? 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...' : 'Generating visualizations of neurons...',
-			html: swal_msg,
-			timer: 2000,
-			showCancelButton: !is_cosmo_mode,
-			showConfirmButton: false
-		}).then((e)=>{
-			if(e.isDismissed && e.dismiss == "cancel") {
-				l("Stopped generating new images, this may take a while");
-				stop_generating_images = 1;
-			}
-		});
-
-		if(!is_cosmo_mode) {
-			show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-			show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		}
-
+	
+		_show_eta(times, i);
 
 		var start = Date.now();
 
@@ -1123,6 +1090,51 @@ async function draw_maximally_activated_layer (layer, type) {
 	document.title = original_title;
 
 	await allow_editable_labels();
+}
+
+async function _show_eta (times, i) {
+	var eta = "";
+	if(times.length) {
+		eta = " (" + human_readable_time(parseInt(i * median(times))) + " left)";
+	}
+
+	var swal_msg = i + " Image(s) left " + eta;
+
+	if(is_cosmo_mode) {
+		if(times.length) {
+			eta = " (" + human_readable_time_german(parseInt(i * median(times))) + " übrig)";
+		}
+		if(i == 1) {
+			swal_msg = i + " Bild übrig " + eta;
+		} else {
+			swal_msg = i + " Bilder übrig " + eta;
+		}
+	}
+
+	l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
+
+	l(swal_msg);
+	document.title = swal_msg;
+
+	$("#show_cosmo_epoch_status").hide();
+
+	await Swal.fire({
+		title: is_cosmo_mode ? 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...' : 'Generating visualizations of neurons...',
+		html: swal_msg,
+		timer: 2000,
+		showCancelButton: !is_cosmo_mode,
+		showConfirmButton: false
+	}).then((e)=>{
+		if(e.isDismissed && e.dismiss == "cancel") {
+			l("Stopped generating new images, this may take a while");
+			stop_generating_images = 1;
+		}
+	});
+
+	if(!is_cosmo_mode) {
+		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+	}
 }
 
 async function predict_maximally_activated (item, force_category) {
