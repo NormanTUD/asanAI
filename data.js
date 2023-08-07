@@ -113,6 +113,31 @@ async function force_download_image_preview_data () {
 	}
 }
 
+async function _get_urls_and_keys () {
+	var base_url = "traindata/" + get_chosen_dataset() + "/";
+	var data = [];
+	var urls = [];
+	var keys = {};
+
+	var json = await _get_training_data();
+
+	for (const [key, items] of Object.entries(json)) {
+		if(items.length) {
+			data[key] = [];
+			for (var i = 0; i < items.length; i++) {
+				var value = items[i];
+				var url = base_url + "/" + key + "/" + value;
+				urls.push(url);
+				keys[url] = key;
+			}
+		} else {
+			console.warn("No items found");
+		}
+	}
+	
+	return [urls, keys, data];
+}
+
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
 	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
@@ -132,28 +157,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		}
 	}
 
-
-	var json = await _get_training_data();
-
-	var data = [];
-	var urls = [];
-	var keys = {};
-
-	var base_url = "traindata/" + get_chosen_dataset() + "/";
-
-	for (const [key, items] of Object.entries(json)) {
-		if(items.length) {
-			data[key] = [];
-			for (var i = 0; i < items.length; i++) {
-				var value = items[i];
-				var url = base_url + "/" + key + "/" + value;
-				urls.push(url);
-				keys[url] = key;
-			}
-		} else {
-			console.warn("No items found");
-		}
-	}
+	var [urls, keys, data] = await _get_urls_and_keys();
 
 	var percentage_div = $("#percentage");
 
@@ -174,12 +178,14 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	if(is_cosmo_mode) {
 		// shuffle in normal mode but not cosmo mode
-		urls = shuffle(urls);
 
 		if(started_training) {
 			$("#lenet_example_cosmo").hide();
 			$("#beschreibung_cosmo_laden").show();
+			urls = shuffle(urls);
 		}
+	} else {
+		urls = shuffle(urls);
 	}
 
 	for (var i = 0; i < urls.length; i++) {
