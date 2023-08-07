@@ -104,7 +104,8 @@ async function force_download_image_preview_data () {
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
 		force_download = 1;
-		await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""}, 1);
+		var data = await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""}, 1);
+		log(data);
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
@@ -183,6 +184,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		$("#photos").html("");
 	}
 
+
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
 		if(!is_cosmo_mode) {
@@ -222,6 +224,8 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		urls = shuffle(urls);
 	}
 
+	log(urls);
+
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
@@ -237,7 +241,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 					tf_data = await url_to_tf(url, dont_load_into_tf);
 				}
 
-				if(tf_data !== null || skip_real_image_download) {
+				if(tf_data !== null || !skip_real_image_download) {
 					data[keys[url]].push(tf_data);
 				} else {
 					if(tf_data === null) {
@@ -863,6 +867,7 @@ function url_to_tf (url, dont_load_into_tf = 0) {
 	headerdatadebug("url_to_tf(" + url + ")");
 	try {
 		add_photo_to_gallery(url);
+
 		var tf_img = (async () => {
 			let img = await load_image(url);
 			var resized_img = [];
