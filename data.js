@@ -110,6 +110,7 @@ async function force_download_image_preview_data () {
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
 	} else {
+		log("Deleting #photos");
 		$("#photos").html("").hide();
 	}
 }
@@ -175,13 +176,15 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
 	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
-}, dont_load_into_tf = 0) {
+}, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");
 
-	if(started_training || force_download) {
+	if((started_training || force_download) && !force_no_download) {
 		$("#photos").html("");
+		log("Deleting #photos B");
+		console.trace();
 	}
 
 
@@ -237,7 +240,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 						old_percentage = _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf);
-						log("tf_data:", tf_data);
+						//log("tf_data:", tf_data);
 						if(!tf_data && !dont_load_into_tf) {
 							console.warn("tf_data is empty, though it shouldn't be");
 						}
@@ -507,6 +510,7 @@ async function get_xs_and_ys () {
 			var category_counter = 0;
 
 			if(await input_shape_is_image()) {
+				log("Deleting #photos A");
 				$("#photos").html("");
 				let imageData = await get_image_data(0);
 
@@ -854,6 +858,7 @@ function _xs_xy_warning (xs_and_ys) {
 
 function add_photo_to_gallery(url) {
 	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
+	log(`add_photo_to_gallery(${url})`);
 
 	var photoscontainer = $("#photoscontainer");
 
@@ -861,8 +866,8 @@ function add_photo_to_gallery(url) {
 		photoscontainer.show();
 	}
 
-	var html = "<img class='download_img' src='" + url + "' height='90' />";
-	$("#photos").show().prepend(html);
+	var img_tag = "<img class='download_img' src='" + url + "' height='90' />";
+	$("#photos").show().prepend(img_tag);
 }
 
 function url_to_tf (url, dont_load_into_tf=0) {

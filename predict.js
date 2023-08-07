@@ -8,7 +8,10 @@ async function switch_to_next_camera_predict () {
 
 async function get_label_data () {
 	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
-		let imageData = await get_image_data(1);
+		let imageData = await get_image_data(1, 0, {
+			title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
+			html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
+		}, 0, 1);
 
 		reset_labels();
 
