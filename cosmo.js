@@ -929,13 +929,16 @@ async function cosmo_mode_auto_image_descriptor () {
 	}
 
 	var margin_top = parseInt($("#body").css("font-size"));
-	$('.layer_image').each(function(i, e) {
+	var layer_images = $('.layer_image');
+	layer_images.each(function(i, e) {
 		var bc = e.getBoundingClientRect();
 
 		var x = bc.x;
 		var y = bc.y - (2 * margin_top);
 
-		var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[i % cosmo_categories.length]}:</span>`);
+		var j = (layer_images.length - 1 ) - i;
+
+		var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[j]}:</span>`);
 
 		$(window.body).append(span);
 	})
