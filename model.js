@@ -38,6 +38,13 @@ async function _create_model () {
 		return model;
 	}
 	try {
+		if(global_model_data) {
+			var model_data_tensor = findTensorsWithIsDisposedInternal(global_model_data);
+			for (var i = 0; i < model_data_tensor.length; i++) {
+				await dispose(model_data_tensor[i]);
+			}
+		}
+
 		[model, global_model_data] = await create_model(model);
 
 		if(can_be_shown_in_latex()) {
@@ -116,7 +123,7 @@ async function compile_model () {
 
 		if(global_model_data) {
 			var model_data_tensor = findTensorsWithIsDisposedInternal(global_model_data);
-			for (var i = 0; i < model_data.length; i++) {
+			for (var i = 0; i < model_data_tensor.length; i++) {
 				await dispose(model_data_tensor[i]);
 			}
 		}
