@@ -1072,3 +1072,9 @@ hr {
 	background-color: red;
 	color: white;
 }
+
+.cosmo_hr {
+	max-width: 500px;
+	width: 50%;
+	min-width: 100px;
+}

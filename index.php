@@ -1363,13 +1363,13 @@
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
 									<img style='width: 90%; max-height: 200px; max-width: 500px;' src="signs_network.svg"><br>
-									<hr>
+									<hr class="cosmo_hr">
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
 									Warnung, Rettung, Verbot, Verpflichtend, Feuer
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
 									Jetzt werden <span class="number_of_images_per_category">5</span> Bilder aus jeder Kategorie geladen.
-									<hr>
+									<hr class="cosmo_hr">
 									Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.
 								</div>
 								<span class="user_select_none">
@@ -1475,11 +1475,11 @@
 									<div class="show_only_in_cosmo_mode" style="display: none">
 										Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.<br>
 										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.<br>
-										<hr>
+										<hr class="cosmo_hr">
 										Die Qualität des Ergebnisses hängt vom Zufall ab.
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
-										<hr>
+										<hr class="cosmo_hr">
 										Aktuell hat sich die Software alle Daten <span id='current_epoch_cosmo_display'>0</span> von <span id="max_epoch_cosmo_display"></span> mal angesehen. Es wird noch ca. <span id="time_estimate_cosmo">00:00</span> dauern.
 									</div>
 									<span id="canvas_grid_visualization"></span>
