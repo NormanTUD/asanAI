@@ -1045,25 +1045,25 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	favicon_spinner();
 
-	for (var i = 0; i < neurons; i++) {
+	for (var i = neurons; i > 0; i--) {
 		if(stop_generating_images) {
 			continue;
 		}
 		var eta = "";
 		if(times.length) {
-			eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " left)";
+			eta = " (" + human_readable_time(parseInt(i * median(times))) + " left)";
 		}
 
-		var swal_msg = (neurons - i) + " Image(s) left " + eta;
+		var swal_msg = i + " Image(s) left " + eta;
 
 		if(is_cosmo_mode) {
 			if(times.length) {
-				eta = " (" + human_readable_time_german(parseInt((neurons - i) * median(times))) + " übrig)";
+				eta = " (" + human_readable_time_german(parseInt(i * median(times))) + " übrig)";
 			}
-			if((neurons - i) == 1) {
-				swal_msg = (neurons - i) + " Bild übrig " + eta;
+			if(i == 1) {
+				swal_msg = i + " Bild übrig " + eta;
 			} else {
-				swal_msg = (neurons - i) + " Bilder übrig " + eta;
+				swal_msg = i + " Bilder übrig " + eta;
 			}
 		}
 
