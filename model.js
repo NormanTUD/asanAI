@@ -62,7 +62,7 @@ async function _create_model () {
 		add_layer_debuggers();
 	}
 
-	memory_leak_debugger("_create_model", start_tensors);
+	memory_leak_debugger("_create_model", start_tensors + 2); // 2 neue tensoren wegen global_model_data
 }
 
 async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
@@ -88,6 +88,18 @@ async function _get_recreate_model(current_status_hash, model_config_hash, new_m
 	return recreate_model;
 }
 
+function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
+	if (typeof obj === "object") {
+		if (obj.isDisposedInternal !== undefined) {
+			tensorList.push(obj);
+		}
+		for (const key in obj) {
+			findTensorsWithIsDisposedInternal(obj[key], tensorList);
+		}
+	}
+	return tensorList;
+}
+
 async function compile_model () {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
@@ -103,7 +115,10 @@ async function compile_model () {
 		}
 
 		if(global_model_data) {
-			await dispose(global_model_data);
+			var model_data_tensor = findTensorsWithIsDisposedInternal(global_model_data);
+			for (var i = 0; i < model_data.length; i++) {
+				await dispose(model_data_tensor[i]);
+			}
 		}
 
 		[model, global_model_data] = await create_model(model, await get_model_structure());
