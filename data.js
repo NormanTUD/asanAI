@@ -138,6 +138,39 @@ async function _get_urls_and_keys () {
 	return [urls, keys, data];
 }
 
+function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
+	var percentage_text = percentage + "% (" + (i + 1) + " of " + urls_length + ")...";
+	
+	var eta;
+
+	var data_progressbar_div = $("#data_progressbar>div");
+	data_progressbar_div.css("width", percentage + "%")
+	if(is_cosmo_mode) {
+		percentage_text = "Lade Bilder, " + percentage + "% (" + (i + 1) + " von " + urls_length + ")...";
+		document.title = "Lade Bilder: " + percentage + "% - asanAI"
+	} else {
+		document.title = "Loading data " + percentage_text + " - asanAI";
+	}
+
+	percentage_div.html(percentage_text);
+
+	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+		var remaining_items = urls_length - i;
+		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
+
+		eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
+		old_percentage = percentage;
+
+		if(is_cosmo_mode) {
+			percentage_div.html(percentage_div.html() + ", noch ca. " + human_readable_time_german(eta));
+		} else {
+			percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+		}
+	}
+
+	return old_percentage;
+}
+
 async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
 	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
@@ -159,6 +192,8 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	var [urls, keys, data] = await _get_urls_and_keys();
 
+	//console.log("urls, keys, data", urls, keys, data);
+
 	var percentage_div = $("#percentage");
 
 	if(!skip_real_image_download) {
@@ -166,14 +201,13 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		percentage_div.show();
 	}
 
-	var old_percentage, eta;
+	var old_percentage;
 
 	var times = [];
 
 	$("#data_loading_progress_bar").show();
 	$("#data_progressbar").css("display", "inline-block");
 
-	var data_progressbar_div = $("#data_progressbar>div");
 	var shown_stop_downloading = 0;
 
 	if(is_cosmo_mode) {
@@ -189,36 +223,12 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 	}
 
 	for (var i = 0; i < urls.length; i++) {
-		//log(urls[i]);
 		var start_time = Date.now();
 		if(started_training || force_download) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!stop_downloading_data) {
 				if(!skip_real_image_download) {
-					var percentage_text = percentage + "% (" + (i + 1) + " of " + urls.length + ")...";
-					if(is_cosmo_mode) {
-						percentage_text = "Lade Bilder, " + percentage + "% (" + (i + 1) + " von " + urls.length + ")...";
-						document.title = "Lade Bilder: " + percentage + "% - asanAI"
-					} else {
-						document.title = "Loading data " + percentage_text + " - asanAI";
-					}
-					data_progressbar_div.css("width", percentage + "%")
-					percentage_div.html(percentage_text);
-					if(eta) {
-						if(is_cosmo_mode) {
-							percentage_div.html(percentage_div.html() + ", noch ca. " + human_readable_time_german(eta));
-						} else {
-							percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
-						}
-					}
-
-					if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
-						var remaining_items = urls.length - i;
-						var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
-
-						eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
-						old_percentage = percentage;
-					}
+					old_percentage = _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
 				}
 
 				var url = urls[i];
@@ -226,6 +236,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 				if(!skip_real_image_download) {
 					tf_data = await url_to_tf(url, dont_load_into_tf);
 				}
+
 				if(tf_data !== null || skip_real_image_download) {
 					data[keys[url]].push(tf_data);
 				} else {
@@ -239,21 +250,12 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 				}
 			} else {
 				if(!shown_stop_downloading) {
-					log("Stop downloading");
+					log("Stop downloading because stop-download-button was clicked");
 					shown_stop_downloading = 1;
+				} else {
+					log("Stop downloading because of an unknown reason");
 				}
 			}
-		} else {
-			//log("SKIP");
-			/*
-			if(!started_training) {
-				log("getImageData: not downloading images because training was not started.");
-			}
-
-			if(!force_download) {
-				log("getImageData: not downloading because force_download was not set.");
-			}
-			*/
 		}
 		var end_time = Date.now();
 
