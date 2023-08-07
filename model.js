@@ -745,6 +745,12 @@ async function create_model (old_model, fake_model_structure, force) {
 	}
 
 	if(old_model) {
+		for (var k = 0; k < old_model.length; k++) {
+			for (var j = 0; j < old_model.layers[k].weights.length; j++) {
+				await dispose(old_model.layers[k].weights[j].val);
+			}
+		}
+
 		await dispose(old_model);
 	}
 
