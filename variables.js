@@ -1397,11 +1397,11 @@ var is_presenting = false;
 var done_presenting = false;
 
 var cosmo_categories = [
-	"Feuer",
-	"Verpflichtend",
-	"Verbot",
+	"Warnung",
 	"Rettung",
-	"Warnung"
+	"Verbot",
+	"Verpflichtend",
+	"Feuer"
 ];
 
 let mouseX = -1;
