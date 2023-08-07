@@ -1418,7 +1418,7 @@ async function cosmo_set_tiny_training_dataset () {
 	await set_epochs(10);
 	log("Setting max files per category to 5...");
 	$("#max_number_of_files_per_category").val(5);
-	$("#number_of_images_per_category").val(5);
+	$("#number_of_images_per_category").html(5);
 }
 
 async function cosmo_set_large_training_dataset () {
@@ -1426,7 +1426,7 @@ async function cosmo_set_large_training_dataset () {
 	await set_epochs(30);
 	log("Setting max files per category to 40...");
 	$("#max_number_of_files_per_category").val(40);
-	$("#number_of_images_per_category").val(40);
+	$("#number_of_images_per_category").html(40);
 }
 
 async function fireworks_and_reload (reload=1, waittime=10000) {

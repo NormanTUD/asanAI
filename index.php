@@ -1368,7 +1368,7 @@
 									Warnung, Rettung, Verbot, Verpflichtend, Feuer
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
-									Jetzt werden <span class="number_of_images_per_category">5</span> Bilder aus jeder Kategorie geladen.
+									Jetzt werden <span id="number_of_images_per_category">5</span> Bilder aus jeder Kategorie geladen.
 									<hr class="cosmo_hr">
 									Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.
 								</div>
