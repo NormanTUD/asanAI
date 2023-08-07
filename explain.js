@@ -1190,6 +1190,10 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		show_tab_label("fcnn_tab_label", 1);
 		return false;
 	}
+
+	if(is_cosmo_mode) {
+		await cosmo_mode_auto_image_descriptor();
+	}
 }
 
 function array_to_fixed (array, fixnr) {
@@ -2501,7 +2505,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr>Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
 
-	cosmo_mode_auto_image_descriptor(); // await not possible
+	await cosmo_mode_auto_image_descriptor(); // await not possible
 
 	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
 

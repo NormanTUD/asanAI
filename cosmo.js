@@ -920,10 +920,6 @@ async function cosmo_mode_auto_image_descriptor () {
 		return;
 	}
 
-	while (generating_images) {
-		await delay(200);
-	}
-
 	while (is_hidden_or_has_hidden_parent($(".layer_image")[0])) {
 		await delay(200);
 	}
