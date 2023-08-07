@@ -224,32 +224,37 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		urls = shuffle(urls);
 	}
 
-	log(urls);
-
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
 			var percentage = parseInt((i / urls.length) * 100);
 			if(!stop_downloading_data) {
-				if(!skip_real_image_download) {
-					old_percentage = _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
-				}
-
 				var url = urls[i];
 				let tf_data = null;
+
 				if(!skip_real_image_download) {
-					tf_data = await url_to_tf(url, dont_load_into_tf);
+					try {
+						old_percentage = _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
+
+						tf_data = await url_to_tf(url, dont_load_into_tf);
+						log("tf_data:", tf_data);
+						if(!tf_data && !dont_load_into_tf) {
+							console.warn("tf_data is empty, though it shouldn't be");
+						}
+					} catch (e) {
+						console.error(e);
+					}
 				}
 
 				if(tf_data !== null || !skip_real_image_download) {
 					data[keys[url]].push(tf_data);
 				} else {
 					if(tf_data === null) {
-						log("tf_data is null");
+						//log("tf_data is null");
 					}
 
 					if(skip_real_image_download) {
-						log("skip_real_image_download is set, not downloading");
+						//log("skip_real_image_download is set, not downloading");
 					}
 				}
 			} else {
@@ -860,7 +865,7 @@ function add_photo_to_gallery(url) {
 	$("#photos").show().prepend(html);
 }
 
-function url_to_tf (url, dont_load_into_tf = 0) {
+function url_to_tf (url, dont_load_into_tf=0) {
 	var start_tensors = memory_leak_debugger();
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
@@ -885,6 +890,8 @@ function url_to_tf (url, dont_load_into_tf = 0) {
 
 					return resized_img;
 				});
+			} else {
+				return false;
 			}
 
 			return resized_img;
