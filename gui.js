@@ -3938,18 +3938,22 @@ function output_shape_is_same(output_shape_data, output_shape_network) {
 }
 
 function tensor_print_to_string(tensor) {
-	var logBackup = console.log;
-	var logMessages = [];
+	try {
+		var logBackup = console.log;
+		var logMessages = [];
 
-	console.log = function () {
-		logMessages.push.apply(logMessages, arguments);
-	};
+		console.log = function () {
+			logMessages.push.apply(logMessages, arguments);
+		};
 
-	tensor.print(1);
+		tensor.print(1);
 
-	console.log = logBackup;
+		console.log = logBackup;
 
-	return logMessages.join("\n");
+		return logMessages.join("\n");
+	} catch (e) {
+		console.log("tensor_print_to_string failed:", e);
+	}
 }
 
 function contains_convolution() {
