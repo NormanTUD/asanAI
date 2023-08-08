@@ -765,7 +765,7 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var model_data = await get_model_data();
 
-	memory_leak_debugger("create_model (B)", start_tensors + new_tensors);
+	memory_leak_debugger("create_model", start_tensors + new_tensors);
 
 	return [new_model, model_data];
 }
