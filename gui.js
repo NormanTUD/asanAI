@@ -3150,7 +3150,7 @@ function get_chosen_dataset() {
 	return val;
 }
 
-async function load_weights(dont_show_msg) {
+async function load_weights(dont_show_msg) { var start_tensors = memory_leak_debugger();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[dataset];
 
@@ -3168,9 +3168,11 @@ async function load_weights(dont_show_msg) {
 			}
 		});
 	}
+
+	memory_leak_debugger("load_weights", start_tensors);
 }
 
-function show_dtype_only_first_layer() {
+function show_dtype_only_first_layer() { var start_tensors = memory_leak_debugger();
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		if (i == 0) {
 			$($(".dtype")[i]).parent().parent().show()
@@ -3178,15 +3180,17 @@ function show_dtype_only_first_layer() {
 			$($(".dtype")[i]).parent().parent().hide()
 		}
 	}
+	memory_leak_debugger("show_dtype_only_first_layer", start_tensors);
 }
 
-function attrChangeName(elem, attr, new_attr) {
+function attrChangeName(elem, attr, new_attr) { var start_tensors = memory_leak_debugger();
 	var data = $(elem).attr(attr);
 	$(elem).attr(new_attr, data);
 	$(elem).removeAttr(attr);
+	memory_leak_debugger("attrChangeName", start_tensors);
 }
 
-function is_hidden_or_has_hidden_parent(element) {
+function is_hidden_or_has_hidden_parent(element) { var start_tensors = memory_leak_debugger();
 	if ($(element).css("display") == "none") {
 		return true;
 	}
@@ -3195,20 +3199,23 @@ function is_hidden_or_has_hidden_parent(element) {
 
 	for (var i = 0; i < parents.length; i++) {
 		if ($(parents[i]).css("display") == "none") {
+			memory_leak_debugger("is_hidden_or_has_hidden_parent", start_tensors);
 			return true;
 		}
 	}
 
+	memory_leak_debugger("is_hidden_or_has_hidden_parent", start_tensors);
 	return false;
 }
 
-function start_chardin_tour() {
+function start_chardin_tour() { var start_tensors = memory_leak_debugger();
 	disable_hidden_chardin_entries();
 	chardinJs = $("body").chardinJs($("body"));
 	chardinJs.start();
+	memory_leak_debugger("start_chardin_tour", start_tensors);
 }
 
-function disable_hidden_chardin_entries() {
+function disable_hidden_chardin_entries() { var start_tensors = memory_leak_debugger();
 	var items = $("[data-intro],[data-introdisabled]");
 
 	for (var i = 0; i < items.length; i++) {
@@ -3230,9 +3237,10 @@ function disable_hidden_chardin_entries() {
 		$("#chardinjs_help_icon").addClass("disabled_symbol").css("cursor", "not-allowed").attr("onclick", "").unbind("click");
 	}
 
+	memory_leak_debugger("disable_hidden_chardin_entries", start_tensors);
 }
 
-async function update_input_shape() {
+async function update_input_shape() { var start_tensors = memory_leak_debugger();
 	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;
 	await updated_page();
@@ -3245,17 +3253,19 @@ async function update_input_shape() {
 	}
 
 	await highlight_code();
+	memory_leak_debugger("update_input_shape", start_tensors);
 }
 
-async function toggle_show_input_layer() {
+async function toggle_show_input_layer() { var start_tensors = memory_leak_debugger();
 	show_input_layer = $("#show_input_layer").is(":checked");
 
 	await restart_fcnn(1);
 	await restart_lenet(1);
 	await restart_alexnet(1);
+	memory_leak_debugger("toggle_show_input_layer", start_tensors);
 }
 
-function reset_view() {
+function reset_view() { var start_tensors = memory_leak_debugger();
 	var items = $("g");
 
 	for (var i = 0; i < items.length; i++) {
@@ -3276,9 +3286,10 @@ function reset_view() {
 			}
 		}
 	}
+	memory_leak_debugger("reset_view", start_tensors);
 }
 
-async function change_data_origin() {
+async function change_data_origin() { var start_tensors = memory_leak_debugger();
 	currently_running_change_data_origin = 1;
 	l("Change data origin");
 	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
@@ -3437,9 +3448,10 @@ async function change_data_origin() {
 		}
 	}
 	currently_running_change_data_origin = 0;
+	memory_leak_debugger("change_data_origin", start_tensors);
 }
 
-function auto_adjust_number_of_neurons(n) {
+function auto_adjust_number_of_neurons(n) { var start_tensors = memory_leak_debugger();
 	if ($("#auto_adjust_number_of_neurons").is(":checked")) {
 		var last_layer_type = $($(".layer_type")[$(".layer_type").length - 1]).val();
 
@@ -3455,9 +3467,10 @@ function auto_adjust_number_of_neurons(n) {
 			log("last layer not dense");
 		}
 	}
+	memory_leak_debugger("auto_adjust_number_of_neurons", start_tensors);
 }
 
-async function delete_category(item, uuid) {
+async function delete_category(item, uuid) { var start_tensors = memory_leak_debugger();
 	var category_nr = get_category_nr(item);
 
 	$($(".own_image_upload_container")[category_nr]).remove();
@@ -3471,9 +3484,10 @@ async function delete_category(item, uuid) {
 	await rename_labels();
 
 	$("#save_button_" + uuid).remove();
+	memory_leak_debugger("delete_category", start_tensors);
 }
 
-function get_category_nr(elem) {
+function get_category_nr(elem) { var start_tensors = memory_leak_debugger();
 	while (!$(elem).hasClass("own_image_upload_container")) {
 		elem = $(elem).parent();
 	}
@@ -3489,10 +3503,11 @@ function get_category_nr(elem) {
 		}
 	);
 
+	memory_leak_debugger("get_category_nr", start_tensors);
 	return nr;
 }
 
-function delete_custom_drawing_layer () {
+function delete_custom_drawing_layer () { var start_tensors = memory_leak_debugger();
 	var all_current_custom_images = $(".own_image_span");
 	for (var i = 0; i < all_current_custom_images.length; i++) {
 		var imgs = $(all_current_custom_images[i]).find("img,canvas");
@@ -3511,6 +3526,8 @@ function delete_custom_drawing_layer () {
 			}
 		}
 	}
+
+	memory_leak_debugger("delete_custom_drawing_layer", start_tensors);
 }
 
 async function last_shape_layer_warning() { var start_tensors = memory_leak_debugger();
@@ -4390,9 +4407,10 @@ async function end_demo_mode() {
 	await write_descriptions();
 }
 
-async function change_model_dataset() {
+async function change_model_dataset() { var start_tensors = memory_leak_debugger();
 	await load_weights(1);
 	display_delete_button();
+	memory_leak_debugger("change_model_dataset", start_tensors);
 }
 
 function allow_edit_inputShape() {
