@@ -108,6 +108,7 @@ async function get_current_layer_container_status_hash() {
 }
 
 async function get_current_status_hash(use_weights=1) {
+	var start_tensors = memory_leak_debugger();
 	var html_code = '';
 
 	var allitems = [];
@@ -128,6 +129,8 @@ async function get_current_status_hash(use_weights=1) {
 	var new_status_hash = await md5(html_code);
 
 	last_status_hash = new_status_hash;
+
+	memory_leak_debugger("get_current_status_hash", start_tensors);
 
 	return new_status_hash;
 }
@@ -2556,7 +2559,10 @@ async function save_current_status() {
 			return;
 		}
 
-		status_saves[index] = { "model_structure": await get_model_structure(), "weights": await get_weights_as_string() };
+		status_saves[index] = {
+			"model_structure": await get_model_structure(),
+			"weights": await get_weights_as_string()
+		};
 
 		future_state_stack = [];
 
