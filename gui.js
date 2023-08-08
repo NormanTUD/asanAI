@@ -5526,16 +5526,16 @@ function downloadFile(blob) {
 
 
 function saveFile (name, type, data) {
-    if (data !== null && navigator.msSaveBlob)
-        return navigator.msSaveBlob(new Blob([data], { type: type }), name);
-    var a = $("<a style='display: none;'/>");
-    var url = window.URL.createObjectURL(new Blob([data], {type: type}));
-    a.attr("href", url);
-    a.attr("download", name);
-    $("body").append(a);
-    a[0].click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+	if (data !== null && navigator.msSaveBlob)
+		return navigator.msSaveBlob(new Blob([data], { type: type }), name);
+	var a = $("<a style='display: none;'/>");
+	var url = window.URL.createObjectURL(new Blob([data], {type: type}));
+	a.attr("href", url);
+	a.attr("download", name);
+	$("body").append(a);
+	a[0].click();
+	window.URL.revokeObjectURL(url);
+	a.remove();
 }
 
 function save_custom_images_file (blob) {
