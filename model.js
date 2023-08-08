@@ -39,9 +39,9 @@ async function _create_model () {
 	}
 	try {
 		if(global_model_data) {
-			var model_data_tensor = findTensorsWithIsDisposedInternal(global_model_data);
-			for (var i = 0; i < model_data_tensor.length; i++) {
-				await dispose(model_data_tensor[i]);
+			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+			for (var i = 0; i < model_data_tensors.length; i++) {
+				await dispose(model_data_tensors[i]);
 			}
 		}
 
@@ -122,9 +122,10 @@ async function compile_model () {
 		}
 
 		if(global_model_data) {
-			var model_data_tensor = findTensorsWithIsDisposedInternal(global_model_data);
-			for (var i = 0; i < model_data_tensor.length; i++) {
-				await dispose(model_data_tensor[i]);
+			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+			log("dispose global_model_data", model_data_tensors);
+			for (var i = 0; i < model_data_tensors.length; i++) {
+				await dispose(model_data_tensors[i]);
 			}
 		}
 
