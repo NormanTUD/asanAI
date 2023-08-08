@@ -864,7 +864,7 @@ function parse_text_for_item_cosmo_level (inputString) {
 	return result;
 }
 
-function set_text_for_elements_depending_on_cosmo_level () {
+function set_text_for_elements_depending_on_cosmo_level () { var start_tensors = memory_leak_debugger();
 	$(".cosmo_autoset_text").each((i, e) => {
 		var cosmo_level_text = $(e).attr("data-cosmo_level_text");
 		if(cosmo_level_text) {
@@ -885,6 +885,7 @@ function set_text_for_elements_depending_on_cosmo_level () {
 			}
 		}
 	});
+	memory_leak_debugger("set_text_for_elements_depending_on_cosmo_level", start_tensors);
 }
 
 async function run_cosmo_milestones () {
