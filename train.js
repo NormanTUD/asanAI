@@ -35,7 +35,7 @@ function reset_gui_before_training () {
 	reset_summary();
 }
 
-async function train_neural_network () {
+async function train_neural_network () { var start_tensors = memory_leak_debugger();
 	if(model === null || !Object.keys(model).includes("layers")) {
 		await gui_not_in_training();
 		await write_error("Something went wrong with compiling the model. Please reload the site.");
@@ -191,6 +191,8 @@ async function train_neural_network () {
 	if(is_cosmo_mode) {
 		chose_next_manicule_target();
 	}
+
+	memory_leak_debugger("train_neural_network", start_tensors);
 }
 
 function getKeyByValue(object, value) {
@@ -499,7 +501,7 @@ function _set_apply_to_original_apply () { var start_tensors = memory_leak_debug
 	memory_leak_debugger("_set_apply_to_original_apply", start_tensors);
 }
 
-async function _create_and_compile_model () {
+async function _create_and_compile_model () { var start_tensors = memory_leak_debugger();
 	try {
 		[model, global_model_data] = await create_model(model);
 	} catch (e) {
@@ -511,9 +513,11 @@ async function _create_and_compile_model () {
 	} catch (e) {
 		throw new Error("Compiling model failed: " + e);
 	}
+
+	memory_leak_debugger("_create_and_compile_model", start_tensors);
 }
 
-async function _get_xs_and_ys () {
+async function _get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	var xs_and_ys = false;
 	try {
 		var error_string = "";
@@ -544,8 +548,11 @@ async function _get_xs_and_ys () {
 		await write_descriptions();
 		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 		started_training = false;
+		memory_leak_debugger("_get_xs_and_ys", start_tensors);
 		return false;
 	}
+
+	memory_leak_debugger("_get_xs_and_ys", start_tensors);
 
 	return xs_and_ys;
 }
@@ -689,12 +696,13 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 	memory_leak_debugger("run_neural_network", start_tensors);
 }
 
-async function write_error_and_reset(e, fn, hide_swal) {
+async function write_error_and_reset(e, fn, hide_swal) { var start_tensors = memory_leak_debugger();
 	await write_error(e, fn, hide_swal);
 	await reset_on_error();
+	memory_leak_debugger("write_error", start_tensors);
 }
 
-async function reset_on_error () {
+async function reset_on_error () { var start_tensors = memory_leak_debugger();
 	started_training = false;
 
 	document.body.style.cursor = "default";
@@ -710,10 +718,13 @@ async function reset_on_error () {
 		document.getElementsByTagName('head')[0].appendChild(link);
 	}
 	link.href = 'favicon.ico';
+	memory_leak_debugger("reset_on_error", start_tensors);
 }
 
-function randomInRange(start,end){
-       return Math.floor(Math.random() * (end - start + 1) + start);
+function randomInRange(start,end) { var start_tensors = memory_leak_debugger();
+	var res = Math.floor(Math.random() * (end - start + 1) + start);
+	memory_leak_debugger("randomInRange", start_tensors);
+	return res;
 }
 
 function drawImagesInGrid(images, categories, probabilities, numCategories) { var start_tensors = memory_leak_debugger();

@@ -651,7 +651,7 @@ function get_layer_identification (i) {
 	return "";
 }
 
-async function identify_layers (number_of_layers) {
+async function identify_layers (number_of_layers) { var start_tensors = memory_leak_debugger();
 	//console.trace();
 	has_zero_output_shape = false;
 	for (var i = 0; i < number_of_layers; i++) {
@@ -724,6 +724,8 @@ async function identify_layers (number_of_layers) {
 	if(!has_zero_output_shape) {
 		shown_has_zero_data = false;
 	}
+
+	memory_leak_debugger("identify_layers", start_tensors);
 }
 
 function hide_unused_layer_visualization_headers () {
@@ -1003,7 +1005,7 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 
 /* This function gets an image from a URL. It uses the load_image function to load the image, and then uses tf.browser.fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
 
-async function get_image_from_url (url) {
+async function get_image_from_url (url) { var start_tensors = memory_leak_debugger();
 	var tf_img = (async () => {
 		let img = await load_image(url);
 		tf_img = tf.browser.fromPixels(img);
@@ -1016,6 +1018,9 @@ async function get_image_from_url (url) {
 		}
 		return resized_img;
 	})();
+
+	memory_leak_debugger("get_image_from_url", start_tensors + 1);
+
 	return tf_img;
 }
 

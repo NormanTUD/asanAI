@@ -1267,7 +1267,7 @@ async function download_weights_json () {
 	download("weights.json", await get_weights_as_string());
 }
 
-async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
+async function output_size_at_layer (input_size_of_first_layer, layer_nr) { var start_tensors = memory_leak_debugger();
 	if(!model) {
 		await compile_model();
 	}
@@ -1278,6 +1278,9 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 			return output_size;
 		}
 	}
+
+	memory_leak_debugger("output_size_at_layer", start_tensors);
+
 	return output_size;
 }
 
