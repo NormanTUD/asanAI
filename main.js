@@ -342,7 +342,7 @@ function init_losses_and_metrics () {
 }
 
 
-async function set_backend() {
+async function set_backend() { var start_tensors = memory_leak_debugger();
 	l("Setting backend");
 	var backend = get_backend();
 
@@ -353,6 +353,8 @@ async function set_backend() {
 	}
 
 	await tf.setBackend(backend);
+
+	memory_leak_debugger("set_backend", start_tensors);
 }
 
 $(document).ready(async function() {
