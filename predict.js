@@ -524,10 +524,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 }
 
 async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
-	var start_tensors = memory_leak_debugger();
 	if(skip_predictions) {
 		return;
 	}
+
+	var start_tensors = memory_leak_debugger();
 
 	if(!model) {
 		l("ERROR: No model given for show_prediction");
@@ -537,6 +538,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 
 		return;
 	}
+
 	$(".show_when_predicting").show();
 	$(".show_when_has_examples").hide();
 

@@ -7,6 +7,8 @@ function degrees_to_radians(degrees) {
 function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
+	
+	var start_tensors = memory_leak_debugger();
 
 	if(!numpy_str.endsWith("\n")) {
 		numpy_str += "\n";
@@ -55,6 +57,9 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	}
 
 	var x = tf.tensor(data, shape, tensor_type);
+
+
+	memory_leak_debugger("numpy_str_to_tf_tensor", start_tensors);
 
 	return x;
 }

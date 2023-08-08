@@ -8,16 +8,20 @@ function memory_leak_debugger (name="", oldNumTensors=null) {
 		numTensors = "none";
 	}
 
-	if(name && oldNumTensors) {
-		if(numTensors > oldNumTensors) {
-			if(name != "") {
-				console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
-			} else {
-				console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
+	if(old_tensor_number < numTensors) {
+		if(name && oldNumTensors) {
+			if(numTensors > oldNumTensors) {
+				if(name != "") {
+					console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
+				} else {
+					console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
+				}
+				//console.trace();
 			}
-			//console.trace();
 		}
 	}
+
+	old_tensor_number = numTensors;
 
 	return numTensors;
 }

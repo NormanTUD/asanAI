@@ -1474,3 +1474,5 @@ var cosmo_predict_mode = "examples";
 var currently_predicting_webcam = false;
 
 var global_model_data = undefined;
+
+var old_tensor_number = 0;
