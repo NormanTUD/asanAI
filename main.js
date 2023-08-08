@@ -264,7 +264,7 @@ async function init_page_contents (chosen_dataset) {
 	skip_predictions = false;
 }
 
-function dataset_already_there (dataset_name) {
+function dataset_already_there (dataset_name) { var start_tensors = memory_leak_debugger();
 	var already_there = false;
 	$("#dataset").children().each(
 		function (id, e) {
@@ -275,18 +275,21 @@ function dataset_already_there (dataset_name) {
 		}
 	);
 
+	memory_leak_debugger("dataset_already_there", start_tensors);
 	return already_there;
 }
 
-async function get_traindata_and_init_categories () {
+async function get_traindata_and_init_categories () { var start_tensors = memory_leak_debugger();
 	traindata_struct = await get_json("traindata.php");
 	init_categories();
 
 	await init_page_contents();
 	await write_descriptions();
+
+	memory_leak_debugger("get_traindata_and_init_categories", start_tensors);
 }
 
-function init_categories () {
+function init_categories () { var start_tensors = memory_leak_debugger();
 	l("Initializing categories");
 	$("#dataset").html("");
 
@@ -302,6 +305,8 @@ function init_categories () {
 	}
 
 	number_of_initialized_layers = 0;
+
+	memory_leak_debugger("init_categories", start_tensors);
 }
 
 async function hasBothFrontAndBack () { var start_tensors = memory_leak_debugger();
