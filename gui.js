@@ -5729,15 +5729,15 @@ function allow_editable_labels () {
 	})
 }
 
-function enable_every_layer () {
+function enable_every_layer () { var start_tensors = memory_leak_debugger();
 	$(".configtable").find("input,select,button").prop("disabled", false);
 	$(".layer_setting").find("button").prop("disabled", false);
+	memory_leak_debugger("enable_every_layer", start_tensors);
 }
 
-function disable_flatten_layer () {
-	//log("disable_flatten_layer()");
+function disable_flatten_layer () { var start_tensors = memory_leak_debugger();
 	if(!model) {
-		//log("No model found");
+		memory_leak_debugger("disable_flatten_layer", start_tensors);
 		return;
 	}
 
@@ -5748,14 +5748,14 @@ function disable_flatten_layer () {
 		}
 	}
 
-
 	if(!!flatten_layer) {
 		$($(".layer_setting")[flatten_layer]).find(".remove_layer").prop("disabled", true);
 	}
 
+	memory_leak_debugger("disable_flatten_layer", start_tensors);
 }
 
-function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
+function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () { var start_tensors = memory_leak_debugger();
 	enable_every_layer();
 
 	if(mode == "beginner") {
@@ -5768,6 +5768,8 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 
 		//l("Disabling last layer in beginner mode");
 	}
+
+	memory_leak_debugger("disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode", start_tensors);
 }
 
 function hide_colorpicker_for_eraser (idname) { var start_tensors = memory_leak_debugger();
@@ -5807,18 +5809,21 @@ async function load_msg(swal_msg_format) {
 
 		$("#load_msg").html(html_msg);
 	}
+	memory_leak_debugger("load_msg", start_tensors);
 }
 
-function show_proper_set_all_initializer (required) {
+function show_proper_set_all_initializer (required) { var start_tensors = memory_leak_debugger();
 	$(".set_all_initializers_tr").hide();
 
 	for (var i = 0; i < required.length; i++) {
 		var val_key = required[i];
 		$(".set_all_initializers_" + val_key).show();
 	}
+
+	memory_leak_debugger("show_proper_set_all_initializer", start_tensors);
 }
 
-function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
+function set_required_seeds (required, type, kernel_or_bias, trigger=0) { var start_tensors = memory_leak_debugger();
 	var values = get_initializer_set_all_values(required, kernel_or_bias);
 
 	assert(typeof(type) == "string", "type is not string");
@@ -5863,9 +5868,10 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 			console.error(`${val_key} is required but not properly defined`);
 		}
 	}
+	memory_leak_debugger("set_required_seeds", start_tensors)
 }
 
-function get_initializer_set_all_values (required) {
+function get_initializer_set_all_values (required) { var start_tensors = memory_leak_debugger();
 	var values = [];
 	assert(typeof(values) == "object", "values is not an object");
 
@@ -5886,10 +5892,11 @@ function get_initializer_set_all_values (required) {
 
 	//assert(Object.keys(values).length == required.length, "some values are missing: " + Object.keys(values).length + " !=" + required.length);
 
+	memory_leak_debugger("get_initializer_set_all_values", start_tensors);
 	return values;
 }
 
-function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
+function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) { var start_tensors = memory_leak_debugger();
 	var type = $("#change_initializers_selector").val();
 	assert(typeof(type) == "string", "type is not string");
 
@@ -5923,4 +5930,6 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 			}
 		}
 	});
+
+	memory_leak_debugger("change_all_initializers", start_tensors);
 }
