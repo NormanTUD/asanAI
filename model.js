@@ -1010,8 +1010,13 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) { var
 	return true;
 }
 
-function layer_type_always_works (layer_type) {
-	return !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
+function layer_type_always_works (layer_type) { var start_tensors = memory_leak_debugger();
+	var res = !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
+
+	memory_leak_debugger("layer_type_always_works", start_tensors);
+
+
+	return res;
 }
 
 function heuristic_layer_possibility_check (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
