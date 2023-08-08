@@ -348,7 +348,7 @@ async function _predict_table(predictions_tensor, desc) { var start_tensors = me
 	memory_leak_debugger("_predict_table", start_tensors);
 }
 
-function _predict_table_row (label, w, max_i, probability, i) {
+function _predict_table_row (label, w, max_i, probability, i) { var start_tensors = memory_leak_debugger()
 	var str = "";
 	if(show_bars_instead_of_numbers()) {
 		str = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
@@ -363,6 +363,7 @@ function _predict_table_row (label, w, max_i, probability, i) {
 		}
 	}
 
+	memory_leak_debugger("_predict_table_row", start_tensors);
 	return str;
 }
 
@@ -564,7 +565,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	memory_leak_debugger("show_prediction", start_tensors);
 }
 
-function show_or_hide_predictions (count) {
+function show_or_hide_predictions (count) { var start_tensors = memory_leak_debugger();
 	if(count) {
 		$(".show_when_has_examples").show();
 		$(".show_when_predicting").show();
@@ -574,6 +575,7 @@ function show_or_hide_predictions (count) {
 		$("#example_predictions").hide();
 		$(".show_when_predicting").hide();
 	}
+	memory_leak_debugger("show_or_hide_predictions"; start_tensors);
 }
 
 async function _print_predictions_text(count, example_predict_data) { var start_tensors = memory_leak_debugger();
@@ -694,7 +696,7 @@ async function _get_example_string (examples, count, full_dir) { var start_tenso
 	return [str, count];
 }
 
-function get_index_of_highest_category (predictions_tensor) {
+function get_index_of_highest_category (predictions_tensor) { var start_tensors = memory_leak_debugger();
 	var js = predictions_tensor.dataSync();
 
 	var highest_index = 0;
@@ -706,6 +708,8 @@ function get_index_of_highest_category (predictions_tensor) {
 			highest_index = i;
 		}
 	}
+
+	memory_leak_debugger("get_index_of_highest_category", start_tensors);
 
 	return highest_index;
 }
@@ -1049,7 +1053,7 @@ function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_d
 	return res;
 }
 
-function draw_bars_or_numbers (i, predictions, max) {
+function draw_bars_or_numbers (i, predictions, max) { var start_tensors = memory_leak_debugger();
 	var label = labels[i % labels.length];
 	var val = predictions[0][i];
 	var w = Math.floor(val * 50);
@@ -1086,6 +1090,7 @@ function draw_bars_or_numbers (i, predictions, max) {
 		}
 	}
 
+	memory_leak_debugger("draw_bars_or_numbers", start_tensors);
 	return html;
 }
 

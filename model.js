@@ -1462,6 +1462,8 @@ async function input_shape_is_image (is_from_webcam=0) { var start_tensors = mem
 	return false;
 }
 
-function model_output_shape_looks_like_classification () {
-	return model.outputShape.length == 2;
+function model_output_shape_looks_like_classification () { var start_tensors = memory_leak_debugger();
+	var res = model.outputShape.length == 2;
+
+	memory_leak_debugger("model_output_shape_looks_like_classification", start_tensors);
 }
