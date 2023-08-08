@@ -1,6 +1,6 @@
 "use strict";
 
-function set_loss_and_metric (loss, metric) {
+function set_loss_and_metric (loss, metric) {var start_tensors = memory_leak_debugger();
 	if(!metric) {
 		metric = loss;
 		if(metric == "binaryCrossentropy") {
@@ -10,21 +10,25 @@ function set_loss_and_metric (loss, metric) {
 
 	set_loss(loss);
 	set_metric(metric);
+	memory_leak_debugger("set_loss_and_metric", start_tensors)
 }
 
-function reset_labels () {
+function reset_labels () {var start_tensors = memory_leak_debugger();
 	labels = [];
+	memory_leak_debugger("reset_labels", start_tensors)
 }
 
-function enable_train () {
+function enable_train () {var start_tensors = memory_leak_debugger();
 	$(".train_neural_network_button").prop("disabled", false);
+	memory_leak_debugger("enable_train", start_tensors)
 }
 
-function disable_train () {
+function disable_train () {var start_tensors = memory_leak_debugger();
 	$(".train_neural_network_button").prop("disabled", true);
+	memory_leak_debugger("disable_train", start_tensors)
 }
 
-function get_key_from_path(array, keypath) {
+function get_key_from_path(array, keypath) { var start_tensors = memory_leak_debugger();
 	if (keypath.length == 0) {
 		return array;
 	}
@@ -36,14 +40,16 @@ function get_key_from_path(array, keypath) {
 		this_key = keypath[i];
 		tmp = tmp[this_key];
 		if(!tmp) {
+			memory_leak_debugger("get_key_from_path", start_tensors)
 			return null;
 		}
 	}
 
+	memory_leak_debugger("get_key_from_path", start_tensors)
 	return tmp;
 }
 
-function get_full_shape_without_batch(file) {
+function get_full_shape_without_batch(file) { var start_tensors = memory_leak_debugger();
 	if (file === null) {
 		return null;
 	}
@@ -57,10 +63,12 @@ function get_full_shape_without_batch(file) {
 
 	res[0] = null;
 
+	memory_leak_debugger("get_full_shape_without_batch", start_tensors);
+
 	return res;
 }
 
-function get_shape_from_file(file) {
+function get_shape_from_file(file) { var start_tensors = memory_leak_debugger();
 	if (file === null) {
 		return null;
 	}
@@ -69,42 +77,58 @@ function get_shape_from_file(file) {
 	var shape_match = /^#\s*shape\s*:?\s*\(\d+,?\s*(.*)\)$/.exec(input_shape_line);
 
 	if (1 in shape_match) {
+		memory_leak_debugger("get_shape_from_file", start_tensors);
 		return shape_match[1];
 	}
+
+	memory_leak_debugger("get_shape_from_file", start_tensors);
 	return null;
 }
 
-function get_dimensionality_from_layer_name(layer_type) {
+function get_dimensionality_from_layer_name(layer_type) { var start_tensors = memory_leak_debugger();
 	var match = layer_type.match(/(\d+)[dD]$/);
 
 	if (match) {
+		memory_leak_debugger("get_dimensionality_from_layer_name", start_tensors);
 		return match[1];
 	}
+	memory_leak_debugger("get_dimensionality_from_layer_name", start_tensors);
 	return null;
 }
 
-function get_full_shape_from_file(file) {
+function get_full_shape_from_file(file) { var start_tensors = memory_leak_debugger();
 	if (file === null) {
 		return null;
 	}
 	var input_shape_line = file.split("\n")[0];
 	var shape_match = /^#\s*shape \((.*)\)$/.exec(input_shape_line);
 	if (1 in shape_match) {
+		memory_leak_debugger("get_full_shape_from_file", start_tensors);
 		return shape_match[1];
 	}
+
+	memory_leak_debugger("get_full_shape_from_file", start_tensors);
 	return null;
 }
 
-async function md5 (content) {
-	return await hashwasm.md5(content);
+async function md5 (content) { var start_tensors = memory_leak_debugger();
+	res = await hashwasm.md5(content);
+
+	memory_leak_debugger("md5", start_tensors);
+
+	return res;
 }
 
-async function get_current_layer_container_status_hash() {
+async function get_current_layer_container_status_hash() { var start_tensors = memory_leak_debugger();
 	var html = $("#layers_container").html();
 
 	html = html.replaceAll(' disabled=""', "");
 
-	return await md5(html);
+	var res = await md5(html);
+
+	memory_leak_debugger("get_current_layer_container_status_hash", start_tensors);
+
+	return res;
 }
 
 async function get_current_status_hash(use_weights=1) { var start_tensors = memory_leak_debugger();
