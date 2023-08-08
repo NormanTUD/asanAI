@@ -2318,34 +2318,43 @@ async function init_dataset_category() {
 	init_download_link();
 }
 
-async function clean_gui() {
+async function clean_gui() { var start_tensors = memory_leak_debugger();
 	reset_summary();
 	await write_error("");
 	await write_descriptions();
+	memory_leak_debugger("clean_gui", start_tensors);
 }
 
-async function set_input_shape(val) {
+async function set_input_shape(val) {var start_tensors = memory_leak_debugger();
 	assert(typeof (val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof (val));
 
 	$("#inputShape").val(val);
 
 	await write_descriptions();
 
-	return get_input_shape();
+	var res = get_input_shape();
+
+	memory_leak_debugger("set_input_shape", start_tensors)
+
+	return res;
 }
 
-function get_input_shape_with_batch_size() {
+function get_input_shape_with_batch_size() { var start_tensors = memory_leak_debugger();
 	var shape = get_input_shape();
 	shape.unshift(parseInt($("#batchSize").val()));
-	return shape;
+	var res = shape;
+	memory_leak_debugger("get_input_shape_with_batch_size", start_tensors);
+	return res;
 }
 
-function get_input_shape() {
+function get_input_shape() { var start_tensors = memory_leak_debugger();
 	var code = $("#inputShape").val();
 	if (!code.startsWith("[")) {
 		code = "[" + code + "]";
 	}
-	return eval(code);
+	var res = eval(code);
+	memory_leak_debugger("get_input_shape", start_tensors);
+	return res;
 }
 
 async function change_metrics() {

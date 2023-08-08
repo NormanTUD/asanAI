@@ -1,13 +1,14 @@
 "use strict";
 
-async function gui_in_training () {
+async function gui_in_training () { var start_tensors = memory_leak_debugger();
 	started_training = true;
 	await disable_everything();
 	favicon_spinner();
 	await write_descriptions();
+	memory_leak_debugger("gui_in_training", start_tensors);
 }
 
-async function gui_not_in_training () {
+async function gui_not_in_training () { var start_tensors = memory_leak_debugger();
 	started_training = false;
 	$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
 	favicon_default();
@@ -22,9 +23,10 @@ async function gui_not_in_training () {
 
 	await enable_everything();
 	$(".show_after_training").show();
+	memory_leak_debugger("gui_not_in_training", start_tensors);
 }
 
-function reset_gui_before_training () {
+function reset_gui_before_training () { var start_tensors = memory_leak_debugger();
 	prev_layer_data = []
 	$(".reset_before_train_network").html("");
 	$("#percentage").html("");
@@ -33,6 +35,7 @@ function reset_gui_before_training () {
 	$(".output_image_grid").html("");
 	reset_photo_gallery();
 	reset_summary();
+	memory_leak_debugger("reset_gui_before_training", start_tensors);
 }
 
 async function train_neural_network () { var start_tensors = memory_leak_debugger();
