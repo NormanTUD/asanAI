@@ -97,7 +97,7 @@ async function _get_recreate_model(current_status_hash, model_config_hash, new_m
 	return recreate_model;
 }
 
-function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
+function findTensorsWithIsDisposedInternal(obj, tensorList = []) { var start_tensors = memory_leak_debugger();
 	if (typeof obj === "object") {
 		if (obj.isDisposedInternal !== undefined) {
 			tensorList.push(obj);
@@ -106,6 +106,9 @@ function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
 			findTensorsWithIsDisposedInternal(obj[key], tensorList);
 		}
 	}
+
+	memory_leak_debugger("findTensorsWithIsDisposedInternal", start_tensors);
+
 	return tensorList;
 }
 
@@ -358,7 +361,7 @@ function is_valid_parameter (keyname, value, layer) { var start_tensors = memory
 	return false;
 }
 
-function get_key_name_camel_case(keyname) {
+function get_key_name_camel_case(keyname) { var start_tensors = memory_leak_debugger();
 	var letters = keyname.split("");
 	var results = [];
 
@@ -376,11 +379,16 @@ function get_key_name_camel_case(keyname) {
 		}
 	}
 
+	memory_leak_debugger("get_key_name_camel_case", start_tensors);
 	return results.join("");
 }
 
-function remove_empty(obj) {
-	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+function remove_empty(obj) { var start_tensors = memory_leak_debugger();
+	var res = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+
+	memory_leak_debugger("remove_empty", start_tensors);
+
+	return res;
 }
 
 async function get_html_from_model () { var start_tensors = memory_leak_debugger();

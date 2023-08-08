@@ -107,12 +107,16 @@ async function hasFrontBack() { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("hasFront", start_tensors);
 }
 
-function get_get (param) {
+function get_get (param) { var start_tensors = memory_leak_debugger();
 	const queryString = window.location.search;
 
 	const urlParams = new URLSearchParams(queryString);
 
-	return urlParams.get(param);
+	var res = urlParams.get(param);
+
+	memory_leak_debugger("get_get", start_tensors);
+
+	return res;
 }
 
 function init_tabs () { var start_tensors = memory_leak_debugger();
@@ -266,11 +270,13 @@ async function init_page_contents (chosen_dataset) { var start_tensors = memory_
 function dataset_already_there (dataset_name) { var start_tensors = memory_leak_debugger();
 	var already_there = false;
 	$("#dataset").children().each(
-		function (id, e) {
+		function (id, e) { var start_tensors = memory_leak_debugger();
 			if(e.text == dataset_name) {
 				already_there = true;
+				memory_leak_debugger("function (id, e)", start_tensors);
 				return;
 			}
+			memory_leak_debugger("function (id, e)", start_tensors);
 		}
 	);
 
