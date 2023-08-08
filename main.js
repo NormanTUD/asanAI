@@ -357,7 +357,7 @@ async function set_backend() { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("set_backend", start_tensors);
 }
 
-$(document).ready(async function() {
+$(document).ready(async function() { var start_tensors = memory_leak_debugger();
 	if(!is_cosmo_mode) {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
 			await cosmo_mode();
@@ -562,4 +562,6 @@ $(document).ready(async function() {
 
 	l("Site is ready");
 	finished_loading = true;
+
+	memory_leak_debugger("on_document_ready", start_tensors)
 });
