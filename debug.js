@@ -478,36 +478,6 @@ function trackTensorDisposal(tensor) {
 	console.log(tensor);
 }
 
-// Funktion zum Hooking von TensorFlow.js-Funktionen
-// Hier können Sie Funktionen wie tf.tensor() und tf.dispose() umhüllen,
-// um die Protokollierung hinzuzufügen.
-function hookTFFunctions() {
-	// Beispiel für das Umhüllen von tf.tensor() und tf.dispose():
-	const originalTensorFunction = tf.tensor;
-	tf.tensor = function(...args) {
-		const tensor = originalTensorFunction.apply(this, args);
-		trackTensorAllocation(tensor);
-		return tensor;
-	};
-
-	const originalDisposeFunction = tf.dispose;
-	tf.dispose = function(...args) {
-		trackTensorDisposal(args[0]); // Angenommen, das erste Argument ist der Tensor
-		originalDisposeFunction.apply(this, args);
-	};
-}
-
-// Funktion zum Aktivieren der Tensor-Protokollierung
-function enableTensorTracking() {
-	hookTFFunctions();
-	// Fügen Sie hier ggf. weitere Hookings oder Tracking-Logik hinzu, die für Ihre Anwendung relevant sind.
-}
-
-// Beispiel für die Verwendung:
-//enableTensorTracking();
-// Führen Sie Ihre TensorFlow.js-Anwendung aus.
-
-
 async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
