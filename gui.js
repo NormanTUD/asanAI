@@ -3095,7 +3095,7 @@ async function upload_model(evt) {
 	reader.readAsText(f);
 }
 
-async function upload_weights(evt) {
+async function upload_weights(evt) { var start_tensors = memory_leak_debugger();
 	let files = evt.target.files;
 
 	let f = files[0];
@@ -3123,6 +3123,7 @@ async function upload_weights(evt) {
 		log("TRYING HERE!!!!!!!!");
 		chose_next_manicule_target();
 	}
+	memory_leak_debugger("upload_weights", start_tensors);
 }
 
 var handle_x_file = async function (evt) {

@@ -14,13 +14,18 @@ function get_scatter_type () {
 	*/
 }
 
-function uuidv4() {
-	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+function uuidv4() { var start_tensors = memory_leak_debugger();
+	var res = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
+
+
+	memory_leak_debugger("uuidv4", start_tensors);
+	
+	return res;
 }
 
-function calculate_default_target_shape (nr) {
+function calculate_default_target_shape (nr) { var start_tensors = memory_leak_debugger();
 	var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 	var output = [];
@@ -31,11 +36,16 @@ function calculate_default_target_shape (nr) {
 		}
 	}
 
+	memory_leak_debugger("calculate_default_target_shape", start_tensors);
 	return output;
 }
 
-function lowercaseFirstLetter(string) {
-	return string.charAt(0).toLowerCase() + string.slice(1);
+function lowercaseFirstLetter(string) { var start_tensors = memory_leak_debugger();
+	var res = string.charAt(0).toLowerCase() + string.slice(1);
+
+	memory_leak_debugger("lowercaseFirstLetter", start_tensors);
+
+	return res;
 }
 
 var number_of_undos = 50;
@@ -542,22 +552,25 @@ var initializers = {
 	"zeros": "zeros"
 };
 
-function get_name_case_independent (name, from_hash) {
+function get_name_case_independent (name, from_hash) { var start_tensors = memory_leak_debugger();
 	for (var key of Object.keys(from_hash)) {
 		if(key.toLowerCase() == name.toLowerCase() || from_hash[key].toLowerCase() == name.toLowerCase()) {
 			return from_hash[key];
 		}
 	}
+	memory_leak_debugger("get_name_case_independent", start_tensors);
 	return null;
 }
 
-function get_initializer_name (name) {
+function get_initializer_name (name) { var start_tensors = memory_leak_debugger();
 	var res = get_name_case_independent(name, initializers);
 
 	if(!name) {
 		console.warn("Cannot determine the kernel initializer name of " + name);
+		memory_leak_debugger("get_initializer_name", start_tensors);
 		return null;
 	} else {
+		memory_leak_debugger("get_initializer_name", start_tensors);
 		return res;
 	}
 }
@@ -1454,10 +1467,12 @@ async function fireworks_and_reload (reload=1, waittime=10000) { var start_tenso
 	if(reload) {
 		location.reload();
 	}
+	memory_leak_debugger("fireworks_and_reload", start_tensors);
 }
 
-async function fireworks_no_reload () {
+async function fireworks_no_reload () { var start_tensors = memory_leak_debugger();
 	await fireworks_and_reload(0, 2000);
+	memory_leak_debugger("fireworks_no_reload", start_tensors);
 }
 
 var cosmo_functions_at_milestones = {
