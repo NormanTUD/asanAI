@@ -434,6 +434,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		if(!predict_data) {
+			await dispose(predict_data);
 			return;
 		}
 
@@ -448,7 +449,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var divide_by = parseFloat($("#divide_by").val());
 
 		if(divide_by != 1) {
-			predict_data = tf.divNoNan(predict_data, divide_by);
+			predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by); });
 		}
 
 		//log(predict_data.arraySync());
