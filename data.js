@@ -62,13 +62,17 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = me
 	return x;
 }
 
-async function _get_training_data_from_filename(filename) {
+async function _get_training_data_from_filename(filename) { var start_tensors = memory_leak_debugger();
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
-	return await $.get("traindata/" + get_chosen_dataset() + "/" + filename);
+	var res = await $.get("traindata/" + get_chosen_dataset() + "/" + filename);
+
+	memory_leak_debugger("_get_training_data_from_filename", start_tensors);
+
+	return res;
 }
 
-function shuffle (array) {
+function shuffle (array) { var start_tensors = memory_leak_debugger();
 	assert(typeof(array) == "object", "shuffle can only shuffle variables with the type object, not " + typeof(array));
 
 	var randomIndex;
@@ -83,6 +87,8 @@ function shuffle (array) {
 		// And swap it with the current element.
 		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
 	}
+
+	memory_leak_debugger("shuffle", start_tensors);
 
 	return array;
 }
@@ -101,7 +107,7 @@ function load_image(url) {
 	});
 }
 
-async function force_download_image_preview_data () {
+async function force_download_image_preview_data () { var start_tensors = memory_leak_debugger();
 	if(await input_shape_is_image()) {
 		var old_img_cat = $("#max_number_of_files_per_category").val();
 		$("#max_number_of_files_per_category").val(1);
@@ -115,9 +121,10 @@ async function force_download_image_preview_data () {
 		log("Deleting #photos");
 		$("#photos").html("").hide();
 	}
+	memory_leak_debugger("force_download_image_preview_data", start_tensors);
 }
 
-async function _get_urls_and_keys () {
+async function _get_urls_and_keys () { var start_tensors = memory_leak_debugger();
 	var base_url = "traindata/" + get_chosen_dataset() + "/";
 	var data = [];
 	var urls = [];
@@ -139,10 +146,11 @@ async function _get_urls_and_keys () {
 		}
 	}
 	
+	memory_leak_debugger("_get_urls_and_keys", start_tensors);
 	return [urls, keys, data];
 }
 
-function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
+function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) { var start_tensors = memory_leak_debugger();
 	var percentage_text = percentage + "% (" + (i + 1) + " of " + urls_length + ")...";
 	
 	var eta;
@@ -172,13 +180,11 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 		}
 	}
 
+	memory_leak_debugger("_get_set_percentage_text", start_tensors);
 	return old_percentage;
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={
-	title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
-	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
-}, dont_load_into_tf=0, force_no_download=0) {
+async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={ title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...', 	html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!" }, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");
@@ -291,6 +297,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 		percentage_div.hide();
 	}
 
+	memory_leak_debugger("get_image_data", start_tensors);
 	return data;
 }
 
