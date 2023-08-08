@@ -376,7 +376,7 @@ function remove_empty(obj) {
 	return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-async function get_html_from_model () {
+async function get_html_from_model () { var start_tensors = memory_leak_debugger();
 	var html = '';
 
 	html += '<html>' + "\n";
@@ -467,6 +467,7 @@ async function get_html_from_model () {
 	html += "        </body>\n";
 	html += '</html>' + "\n";
 
+	memory_leak_debugger("get_html_from_model", start_tensors)
 	return html;
 }
 
@@ -1244,17 +1245,19 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 	return res;
 }
 
-async function copy_weights_to_clipboard () {
+async function copy_weights_to_clipboard () { var start_tensors = memory_leak_debugger();
 	copy_to_clipboard(await get_weights_as_string());
 
 	Swal.fire(
 		'Done!',
 		'Copied weights to clipboard',
 		'success'
-	)
+	);
+
+	memory_leak_debugger("copy_weights_to_clipboard", start_tensors);
 }
 
-function download(filename, text) {
+function download(filename, text) { var start_tensors = memory_leak_debugger();
 	var element = document.createElement('a');
 	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
 	element.setAttribute('download', filename);
@@ -1265,10 +1268,13 @@ function download(filename, text) {
 	element.click();
 
 	document.body.removeChild(element);
+
+	memory_leak_debugger("download", start_tensors);
 }
 
-async function download_weights_json () {
+async function download_weights_json () { var start_tensors = memory_leak_debugger();
 	download("weights.json", await get_weights_as_string());
+	memory_leak_debugger("download_weights_json", start_tensors);
 }
 
 async function output_size_at_layer (input_size_of_first_layer, layer_nr) { var start_tensors = memory_leak_debugger();
@@ -1289,7 +1295,7 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) { var 
 }
 
 
-function save_model () {
+function save_model () { var start_tensors = memory_leak_debugger();
 	try {
 		model.save('downloads://model');
 	} catch (e) {
@@ -1299,9 +1305,11 @@ function save_model () {
 			text: 'The model may be defective and cannot be saved. Sorry. The error is: ' + e
 		});
 	}
+	
+	memory_leak_debugger("save_model", start_tensors);
 }
 
-function get_current_chosen_object_default_weights_string () {
+function get_current_chosen_object_default_weights_string () { var start_tensors = memory_leak_debugger();
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[dataset];
 
@@ -1321,6 +1329,8 @@ function get_current_chosen_object_default_weights_string () {
 
 		weights_files[weights_file] = JSON.stringify(response);
 	}
+
+	memory_leak_debugger("get_current_chosen_object_default_weights_string", start_tensors);
 
 	return weights_files[weights_file];
 }
@@ -1374,19 +1384,22 @@ async function _show_load_weights () { var start_tensors = memory_leak_debugger(
 	}
 }
 
-async function get_tfjs_model () {
+async function get_tfjs_model () { var start_tensors = memory_leak_debugger();
 	await model.save('localstorage://demo/management/model1');
 
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
 
+	memory_leak_debugger("get_tfjs_model", start_tensors);
+
 	return str;
 }
 
-async function _force_reinit() {
+async function _force_reinit() { var start_tensors = memory_leak_debugger();
 	l("Started re-initializing");
 	await compile_model(0, 1);
 	await updated_page();
 	l("Done re-initializing");
+	memory_leak_debugger("_force_reinit", start_tensors);
 }
 
 async function force_reinit (no_msg) { var start_tensors = memory_leak_debugger();
