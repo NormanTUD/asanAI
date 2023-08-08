@@ -4987,25 +4987,27 @@ function copy_values() {
 	}
 }
 
-function realWidth(obj){
+function realWidth(obj) { var start_tensors = memory_leak_debugger();
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
 	var w = clone.outerWidth();
 	clone.remove();
+	memory_leak_debugger("realWidth", start_tensors);
 	return w;
 }
 
-function realHeight(obj){
+function realHeight(obj) { var start_tensors = memory_leak_debugger();
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
 	var h = clone.outerHeight();
 	clone.remove();
+	memory_leak_debugger("realHeight", start_tensors);
 	return h;
 }
 
-async function get_training_data_as_json () {
+async function get_training_data_as_json () { var start_tensors = memory_leak_debugger();
 	force_download = 1;
 	var training_data = await get_xs_and_ys()
 	force_download = 0;
@@ -5016,10 +5018,11 @@ async function get_training_data_as_json () {
 	await dispose(training_data["x"]);
 	await dispose(training_data["y"]);
 
+	memory_leak_debugger("get_training_data_as_json", start_tensors);
 	return JSON.stringify(training_data);
 }
 
-function l(msg) {
+function l(msg) { var start_tensors = memory_leak_debugger();
 	if(last_l != msg) {
 		var load_time = Date().toLocaleString();
 		load_time = load_time.replace(/ GMT.*/, "");
@@ -5032,12 +5035,14 @@ function l(msg) {
 		}
 		$("#status_bar_log").html(msg);
 	}
+	memory_leak_debugger("l", start_tensors);
 }
 
-async function set_custom_image_training () {
+async function set_custom_image_training () { var start_tensors = memory_leak_debugger();
 	if($("#data_origin").val() != "image") {
 		$("#data_origin").val("image").trigger("change");
 	}
+	memory_leak_debugger("set_custom_image_training", start_tensors);
 }
 
 
@@ -5761,7 +5766,7 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 	}
 }
 
-function hide_colorpicker_for_eraser (idname) {
+function hide_colorpicker_for_eraser (idname) { var start_tensors = memory_leak_debugger();
 	var box = $(atrament_data[idname].canvas).parent();
 
 	if(atrament_data[idname]["atrament"].mode == "erase") {
@@ -5770,6 +5775,7 @@ function hide_colorpicker_for_eraser (idname) {
 		box.find(".colorpicker_elements").css("visibility", "visible")
 	}
 
+	memory_leak_debugger("hide_colorpicker_for_eraser", start_tensors);
 }
 
 async function load_msg(swal_msg_format) {
