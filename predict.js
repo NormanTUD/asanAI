@@ -302,9 +302,11 @@ async function _predict_image (predictions_tensor, desc) { var start_tensors = m
 	memory_leak_debugger("_predict_image", start_tensors);
 }
 
-function get_show_green () {
+function get_show_green () { var start_tensors = memory_leak_debugger();
 	var last_layer_activation = get_last_layer_activation_function();
 	var show_green = last_layer_activation == "softmax" ? 1 : 0;
+
+	memory_leak_debugger("get_show_green", start_tensors);
 
 	return show_green;
 }
