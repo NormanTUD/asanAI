@@ -2149,42 +2149,6 @@ function get_loss_landscape_data (Y, Y_hat, min_x, max_x, min_y, max_y, steps) {
         return landscape;
 }
 
-async function create_loss_landscape () {
-	var old_force_download = force_download;
-	force_download = 1;
-	var xs_ys = await get_xs_and_ys()
-	force_download = old_force_download;
-
-	/*
-	xs_ys.x = tf.tensor([xs_ys.x], null, 'float32');
-	xs_ys.y = tf.tensor([xs_ys.y], null, 'float32');
-	*/
-
-	var Y = model.predict(xs_ys.x);
-	//log(Y);
-	var Y_hat = xs_ys.y.asType("float32");
-	//log(Y_hat);
-
-	//log(xs_ys);
-
-	var landscape = get_loss_landscape_data(Y, Y_hat, -10, 10, -10, 10, 20);
-	log(landscape);
-
-	var data = [{
-		z: landscape,
-		type: 'surface'
-	}];
-
-	var layout = {
-		title: 'Loss Landscape',
-		autosize: true,
-		width: 500,
-		height: 500
-	};
-
-	Plotly.newPlot('graphs_here', data, layout);
-}
-
 async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
 	var id = uuidv4();
 
