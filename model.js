@@ -1012,13 +1012,8 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 }
 
-async function get_valid_layer_types (layer_nr) {
+async function get_valid_layer_types (layer_nr) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
-
-	/*
-	log("get_valid_layer_types");
-	console.trace();
-	*/
 
 	//log("last_allowed_layers_update:", last_allowed_layers_update);
 
@@ -1079,6 +1074,7 @@ async function get_valid_layer_types (layer_nr) {
 
 	allowed_layer_cache[layer_nr] = valid_layer_types;
 
+	memory_leak_debugger("get_valid_layer_types", start_tensors);
 	return valid_layer_types;
 }
 
