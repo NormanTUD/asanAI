@@ -343,11 +343,15 @@ function add_cell_option() {
 	return "";
 }
 
-function add_number_lstm_cells_option(type, nr) {
-	return get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
+function add_number_lstm_cells_option(type, nr) { var start_tensors = memory_leak_debugger();
+	var res = get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
+
+	memory_leak_debugger("add_number_lstm_cells_option", start_tensors)
+
+	return res;
 }
 
-function add_seed_option (type, nr) {
+function add_seed_option (type, nr) { var start_tensors = memory_leak_debugger();
 	var style = "";
 
 	var current_input_shape = get_input_shape();
@@ -355,10 +359,14 @@ function add_seed_option (type, nr) {
 		style = ' style="display: none" '
 	}
 
-	return "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+	var res = "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+
+	memory_leak_debugger("add_seed_option", start_tensors);
+
+	return res;
 }
 
-function add_visualize_option(type, nr) {
+function add_visualize_option(type, nr) { var start_tensors = memory_leak_debugger();
 	var style = "";
 
 	var current_input_shape = get_input_shape();
@@ -366,10 +374,15 @@ function add_visualize_option(type, nr) {
 		style = ' style="display: none" '
 	}
 
-	return "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
+	var res = "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
+
+	memory_leak_debugger("add_visualize_option", start_tensors);
+
+
+	return res;
 }
 
-function add_pool_size_option(type, nr) {
+function add_pool_size_option(type, nr) { var start_tensors = memory_leak_debugger();
 	var str = "";
 
 	var dimensionality = get_dimensionality_from_layer_name(type);
@@ -380,10 +393,13 @@ function add_pool_size_option(type, nr) {
 		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[i] }, nr);
 		letter_code++;
 	}
+
+	memory_leak_debugger("add_pool_size_option", start_tensors);
+
 	return str;
 }
 
-function add_kernel_size_option(type, nr) {
+function add_kernel_size_option(type, nr) { var start_tensors = memory_leak_debugger();
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
@@ -393,10 +409,13 @@ function add_kernel_size_option(type, nr) {
 		str += get_tr_str_for_layer_table("Kernel-Size " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
 		letter_code++;
 	}
+
+	memory_leak_debugger("add_kernel_size_option", start_tensors);
+
 	return str;
 }
 
-function add_strides_option(type, nr) {
+function add_strides_option(type, nr) { var start_tensors = memory_leak_debugger();
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
@@ -406,12 +425,15 @@ function add_strides_option(type, nr) {
 		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[i] }, nr);
 		letter_code++;
 	}
+
+	memory_leak_debugger("add_strides_option", start_tensors);
+
 	return str;
 }
 
 /* activation gui functions end */
 
-function insert_activation_option_trs(layer_nr, option_type) {
+function insert_activation_option_trs(layer_nr, option_type) { var start_tensors = memory_leak_debugger();
 	assert(["alpha", "max_value", "axis", "theta", "alpha_initializer", "alpha_regularizer", "alpha_constraint", "shared_axes"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
 
@@ -422,9 +444,10 @@ function insert_activation_option_trs(layer_nr, option_type) {
 	} else {
 		log("option_type is '" + option_type + "'");
 	}
+	memory_leak_debugger("insert_activation_option_trs", start_tensors);
 }
 
-function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
+function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) { var start_tensors = memory_leak_debugger();
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
@@ -436,9 +459,10 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 	} else {
 		log("option_type is '" + option_type + "'");
 	}
+	memory_leak_debugger("insert_regularizer_option_trs", start_tensors);
 }
 
-function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
+function insert_initializer_option_trs(layer_nr, initializer_type, option_type) { var start_tensors = memory_leak_debugger();
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
@@ -446,6 +470,8 @@ function insert_initializer_option_trs(layer_nr, initializer_type, option_type) 
 	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${initializer_type}_initializer").parent().parent())`;
 
 	eval(eval_string);
+
+	memory_leak_debugger("insert_initializer_option_trs", start_tensors);
 }
 
 async function insert_activation_options(layer_nr) { var start_tensors = memory_leak_debugger();
@@ -479,7 +505,7 @@ async function insert_activation_options(layer_nr) { var start_tensors = memory_
 	memory_leak_debugger("insert_activation_option", start_tensors);
 }
 
-function set_last_layer_activation_function (activation_function) {
+function set_last_layer_activation_function (activation_function) { var start_tensors = memory_leak_debugger();
 	assert(Object.keys(activations).includes(activation_function), "activation function " + activation_function + " is invalid. Must be one of these: " + Object.keys(activations).join(", "));
 
 	var last_layer_nr = $(".layer_type").length - 1;
@@ -487,9 +513,10 @@ function set_last_layer_activation_function (activation_function) {
 	if(activation_item.val() != activation_function) {
 		activation_item.val(activation_function).trigger("change");
 	}
+	memory_leak_debugger("set_last_layer_activation_function", start_tensors);
 }
 
-async function insert_regularizer_options(layer_nr, regularizer_type) {
+async function insert_regularizer_options(layer_nr, regularizer_type) { var start_tensors = memory_leak_debugger();
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
@@ -510,6 +537,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 		log("Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
 	}
 	await updated_page();
+	memory_leak_debugger("insert_regularizer_options", start_tensors);
 }
 
 async function insert_initializer_options(layer_nr, initializer_type) {
