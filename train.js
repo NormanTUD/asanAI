@@ -198,11 +198,15 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 	memory_leak_debugger("train_neural_network", start_tensors);
 }
 
-function getKeyByValue(object, value) {
-	return Object.keys(object).find(key => object[key] === value);
+function getKeyByValue(object, value) { var start_tensors = memory_leak_debugger();
+	var res = Object.keys(object).find(key => object[key] === value);
+
+	memory_leak_debugger("getKeyByValue", start_tensors);
+
+	return res;
 }
 
-function get_model_data (optimizer_name_only) {
+function get_model_data (optimizer_name_only) { var start_tensors = memory_leak_debugger();
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
@@ -250,27 +254,11 @@ function get_model_data (optimizer_name_only) {
 		"sgd": "sgd(model_data['learningRate'])"
 	};
 
-	// TODO:
-	// original_function = tf.train.adam
-	// tf.train.adam = function (e, t, n, r) { log("ADAM etnr:", e, t, n, r); var res = original_function(e, t, n, r); log("res", res); return res; }
-
 	if(!optimizer_name_only) {
 		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
-		/*
-		var old_applyGradients = model_data["optimizer"].applyGradients;
-		model_data["optimizer"].applyGradients = function (...args) {
-			log("Optimizer args:");
-			log(args);
-			
-			var res = old_applyGradients(...args);
-			log("Optimizer res:");
-			log(res);
-
-			return res;
-		}
-		*/
 	}
 
+	memory_leak_debugger("get_model_data", start_tensors);
 	return model_data;
 }
 
