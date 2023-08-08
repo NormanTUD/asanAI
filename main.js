@@ -304,16 +304,17 @@ function init_categories () {
 	number_of_initialized_layers = 0;
 }
 
-async function hasBothFrontAndBack () {
+async function hasBothFrontAndBack () { var start_tensors = memory_leak_debugger();
 	if(hasBothFrontAndBackCached === undefined) {
 		var has_front_and_back_facing_camera = await hasFrontBack();
 		hasBothFrontAndBackCached = has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront;
 	}
 
+	memory_leak_debugger("hasBothFrontAndBack", start_tensors);
 	return hasBothFrontAndBackCached;
 }
 
-async function restart_webcams () {
+async function restart_webcams () { var start_tensors = memory_leak_debugger();
 	if(cam) {
 		await show_webcam(1);
 	}
@@ -321,9 +322,11 @@ async function restart_webcams () {
 	if(cam_data) {
 		await get_data_from_webcam(1);
 	}
+
+	memory_leak_debugger("restart_webcams", start_tensors);
 }
 
-function init_losses_and_metrics () {
+function init_losses_and_metrics () { var start_tensors = memory_leak_debugger();
 	l("Initializing losses");
 	for (var i = 0; i < losses.length; i++) {
 		$('#loss').append($('<option>', {
@@ -339,6 +342,8 @@ function init_losses_and_metrics () {
 			text: metrics[i]
 		}));
 	}
+
+	memory_leak_debugger("init_losses_and_metrics", start_tensors);
 }
 
 
