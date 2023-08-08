@@ -566,7 +566,7 @@ async function get_cached_json(url) {
 
 /* This function gets the configuration for the index passed in. If no index is passed in, it gets the configuration for the currently selected dataset. */
 
-async function _get_configuration(index) {
+async function _get_configuration(index) { var start_tensors = memory_leak_debugger();
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
 	var data = undefined;
@@ -608,10 +608,12 @@ async function _get_configuration(index) {
 			}
 		} catch (e) {
 			log(e);
+			memory_leak_debugger("_get_configuration", start_tensors);
 			return null;
 		}
 	}
 
+	memory_leak_debugger("_get_configuration", start_tensors);
 	return data;
 }
 

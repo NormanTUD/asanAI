@@ -1341,7 +1341,7 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 	memory_leak_debugger("get_data_from_webcam", start_tensors);
 }
 
-async function take_image_from_webcam_n_times (elem) {
+async function take_image_from_webcam_n_times (elem) { var start_tensors = memory_leak_debugger();
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseInt($("#delay_between_images_in_series").val())
 
@@ -1376,6 +1376,7 @@ async function take_image_from_webcam_n_times (elem) {
 	});
 
 	await last_shape_layer_warning();
+	memory_leak_debugger("take_image_from_webcam", start_tensors);
 }
 
 async function take_image_from_webcam (elem, nol, increment_counter=true) { var start_tensors = memory_leak_debugger();
