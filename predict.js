@@ -1193,7 +1193,7 @@ async function _predict_handdrawn(predictions_tensor) { var start_tensors = memo
 	} else if(model.outputShape.length == 4) {
 		ret = await _image_output_handdrawn(predictions_tensor);
 	} else {
-		console.warn("Different output shapes not yet supported");
+		console.warn("Different output shapes not yet supported:", model.outputShape);
 	}
 
 	memory_leak_debugger("_predict_handdrawn", start_tensors);

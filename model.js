@@ -1504,4 +1504,6 @@ function model_output_shape_looks_like_classification () { var start_tensors = m
 	var res = model.outputShape.length == 2;
 
 	memory_leak_debugger("model_output_shape_looks_like_classification", start_tensors);
+
+	return res;
 }
