@@ -1162,12 +1162,13 @@ async function set_weights_from_string (string, no_warning, no_error, m) { var s
 	return res;
 }
 
-async function get_weights_as_json (m) {
+async function get_weights_as_json (m) { var start_tensors = memory_leak_debugger();
 	if(!m) {
 		m = model;
 	}
 
 	if(!m) {
+		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return false;
 	}
 
@@ -1180,12 +1181,16 @@ async function get_weights_as_json (m) {
 			if(!weights[i].isDisposed) {
 				try {
 					weights_array[i] = weights[i].arraySync();
-				} catch (e) {}
+				} catch (e) {
+					console.log(e);
+				}
 			}
 		}
 
+		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return weights_array;
 	} else {
+		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return false;
 	}
 }
