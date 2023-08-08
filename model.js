@@ -255,18 +255,8 @@ function get_data_for_layer (type, i, first_layer) {
 	return data;
 }
 
-async function get_model_structure(is_fake_model = 0) {
-	//console.trace();
+async function get_model_structure(is_fake_model = 0) { var start_tensors = memory_leak_debugger();
 	var new_current_status_hash = "";
-	/*
-	if(is_fake_model) {
-		new_current_status_hash = await get_current_status_hash();
-	if(layer_structure_cache && current_status_hash == new_current_status_hash) {
-		//log("Using cache");
-		//console.trace();
-		return JSON.parse(layer_structure_cache);
-	}
-	*/
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 
@@ -305,19 +295,24 @@ async function get_model_structure(is_fake_model = 0) {
 	await write_descriptions();
 
 	layer_structure_cache = JSON.stringify(structure);
+
+	memory_leak_debugger("get_model_structure", start_tensors);
+
 	return structure;
 }
 
-function is_number_array (value) {
+function is_number_array (value) { var start_tensors = memory_leak_debugger();
 	if(typeof(value) == "object") {
 		for (var i = 0; i < value.length; i++) {
 			if(typeof(value[i]) != "number") {
 				return false;
 			}
 		}
+		memory_leak_debugger("is_number_array", start_tensors);
 		return true;
 	}
 
+	memory_leak_debugger("is_number_array", start_tensors);
 	return false;
 }
 
@@ -1330,7 +1325,7 @@ function get_current_chosen_object_default_weights_string () {
 	return weights_files[weights_file];
 }
 
-async function get_weights_shape (weights_as_string, m) {
+async function get_weights_shape (weights_as_string, m) { var start_tensors = memory_leak_debugger();
 	if(!m) {
 		m = model;
 	}
@@ -1344,6 +1339,8 @@ async function get_weights_shape (weights_as_string, m) {
 	var shape = test_tensor.shape;
 
 	await dispose(test_tensor);
+
+	memory_leak_debugger("get_weights_shape", start_tensors);
 
 	return shape;
 }
