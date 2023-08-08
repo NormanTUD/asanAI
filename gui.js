@@ -5557,7 +5557,7 @@ function getCanvasBlob(canvas) {
 }
 
 
-async function create_zip_with_custom_images () {
+async function create_zip_with_custom_images () { var start_tensor = memory_leak_debugger();
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
 	var canvasses = $(".own_image_span").find("canvas");
@@ -5573,10 +5573,12 @@ async function create_zip_with_custom_images () {
 
 		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
 	}
-	return zipWriter.close();
+	var res = zipWriter.close();
+	memory_leak_debugger("create_zip_with_custom_images", start_tensor);
+	return res;
 }
 
-function downloadFile(blob) {
+function downloadFile(blob) { var start_tensors = memory_leak_debugger();
 	var new_child = Object.assign(document.createElement("a"), {
 		className: "download_link",
 		download: "custom_images.zip",
@@ -5585,10 +5587,11 @@ function downloadFile(blob) {
 	});
 
 	$("#download_zip_file").html(new_child);
+
+	memory_leak_debugger("downloadFile", start_tensors);
 }
 
-
-function saveFile (name, type, data) {
+function saveFile (name, type, data) { var start_tensors = memory_leak_debugger();
 	if (data !== null && navigator.msSaveBlob)
 		return navigator.msSaveBlob(new Blob([data], { type: type }), name);
 	var a = $("<a style='display: none;'/>");
@@ -5599,14 +5602,20 @@ function saveFile (name, type, data) {
 	a[0].click();
 	window.URL.revokeObjectURL(url);
 	a.remove();
+	memory_leak_debugger("saveFile", start_tensors);
 }
 
-function save_custom_images_file (blob) {
+function save_custom_images_file (blob) { var start_tensors = memory_leak_debugger();
 	saveFile("custom_images.zip", "data:application/zip", blob);
+	memory_leak_debugger("save_custom_images_file", start_tensors);
 }
 
-async function create_and_download_zip () {
-	await create_zip_with_custom_images().then(save_custom_images_file);
+async function create_and_download_zip () { var start_tensors = memory_leak_debugger();
+	var res = create_zip_with_custom_images().then(save_custom_images_file);
+
+	memory_leak_debugger("create_and_download_zip", start_tensors);
+
+	return res;
 }
 
 async function change_last_responsible_layer_for_image_output () { var start_tensors = memory_leak_debugger();
@@ -5663,7 +5672,7 @@ function show_bars_instead_of_numbers () { var start_tensors = memory_leak_debug
 	return false;
 }
 
-async function update_label_by_nr (t, nr) {
+async function update_label_by_nr (t, nr) { var start_tensors = memory_leak_debugger();
 	var name = $(t).val();
 
 	var t_xpath = get_element_xpath(t);
@@ -5687,9 +5696,10 @@ async function update_label_by_nr (t, nr) {
 	$($(".own_image_label")[nr]).val(name)
 
 	await update_python_code(1);
+	memory_leak_debugger("update_label_by_nr", start_tensors);
 }
 
-function allow_editable_labels () {
+function allow_editable_labels () { var start_tensors = memory_leak_debugger();
 	if(is_cosmo_mode) {
 		return;
 	}
@@ -5726,7 +5736,9 @@ function allow_editable_labels () {
 			tmp_label = $(x).text();
 			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 		}
-	})
+	});
+
+	memory_leak_debugger("allow_editable_labels", start_tensors);
 }
 
 function enable_every_layer () { var start_tensors = memory_leak_debugger();
@@ -5784,7 +5796,7 @@ function hide_colorpicker_for_eraser (idname) { var start_tensors = memory_leak_
 	memory_leak_debugger("hide_colorpicker_for_eraser", start_tensors);
 }
 
-async function load_msg(swal_msg_format) {
+async function load_msg(swal_msg_format) { var start_tensors = memory_leak_debugger();
 	if(started_training && stop_downloading_data) {
 		console.info("Training is not started anymore, but the stopped downloading");
 		return;

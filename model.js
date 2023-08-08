@@ -709,7 +709,6 @@ function _set_layer_gui (data, fake_model_structure, i) { var start_tensors = me
 }
 
 async function create_model (old_model, fake_model_structure, force) { var start_tensors = memory_leak_debugger();
-
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
 		if(old_model) {
