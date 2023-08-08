@@ -5001,7 +5001,7 @@ async function set_custom_webcam_training_data() { var start_tensors = memory_le
 	memory_leak_debugger("set_custom_webcam_training_data", start_tensors);
 }
 
-async function toggle_layers() {
+async function toggle_layers() { var start_tensors = memory_leak_debugger();
 	$(".left_side").toggle();
 
 	await write_descriptions(1);
@@ -5010,9 +5010,10 @@ async function toggle_layers() {
 		await add_cosmo_point("toggled_layers");
 		$(".left_side").attr("data-clicked", 1)
 	}
+	memory_leak_debugger("toggle_layer", start_tensors);
 }
 
-async function get_available_cams () {
+async function get_available_cams () { var start_tensors = memory_leak_debugger();
 	var webcams = [];
 	var ids = [];
 
@@ -5026,31 +5027,39 @@ async function get_available_cams () {
 		};
 	});
 
+	memory_leak_debugger("get_available_cams", start_tensors);
 	return [webcams, ids];
 }
 
-async function switch_to_next_camera () {
+async function switch_to_next_camera () { var start_tensors = memory_leak_debugger();
 	webcam_id++;
 	webcam_id = webcam_id % (webcam_modes.length);
 	await get_data_from_webcam(1);
+
+	memory_leak_debugger("switch_to_next_camera", start_tensors);
 }
 
-function swalmsg (msg) {
+function swalmsg (msg) { var start_tensors = memory_leak_debugger();
 	l(msg);
 	log(msg);
-	return Swal.fire({
+	var res = Swal.fire({
 		title: msg,
 		allowEscapeKey: false,
 		allowOutsideClick: false,
 		showConfirmButton: false
 	});
+
+	memory_leak_debugger("swalmsg", start_tensors);
+
+	return res;
 }
 
-async function highlight_code () {
+async function highlight_code () { var start_tensors = memory_leak_debugger();
 	Prism.highlightAll();
+	memory_leak_debugger("highlight_code", start_tensors);
 }
 
-async function easter_egg_fireworks (force=0) {
+async function easter_egg_fireworks (force=0) { var start_tensors = memory_leak_debugger();
 	if(in_fireworks) {
 		return;
 	}
@@ -5068,6 +5077,8 @@ async function easter_egg_fireworks (force=0) {
 		in_fireworks = false;
 		$(".fireworks-container").html("").hide();
 	}
+
+	memory_leak_debugger("easter_egg_fireworks", start_tensors);
 }
 
 async function init_webcams () { var start_tensors = memory_leak_debugger();
@@ -5119,7 +5130,7 @@ async function init_webcams () { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("init_webcams", start_tensors);
 }
 
-function show_hide_augment_tab () {
+function show_hide_augment_tab () { var start_tensors = memory_leak_debugger();
 	if($("#auto_augment").is(":checked")) {
 		l("Showing Augmentation tab");
 		$('a[href*="tf_ribbon_augmentation"]').show().parent().show();
@@ -5127,44 +5138,56 @@ function show_hide_augment_tab () {
 		l("Hiding Augmentation tab");
 		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
 	}
+	memory_leak_debugger("show_hide_augment_tab", start_tensors);
 }
 
-function get_last_layer_activation_function () {
+function get_last_layer_activation_function () { var start_tensors = memory_leak_debugger();
 	var layers_container_children = $("#layers_container").children();
 	var number_of_layers = layers_container_children.length;
 
 	var last_layer = $(layers_container_children[number_of_layers - 1]);
 
-	return last_layer.find(".activation").val();
+	var res = last_layer.find(".activation").val();
+
+	memory_leak_debugger("get_last_layer_activation_function", start_tensors);
+
+	return res;
 }
 
-function drag_start(event) {
+function drag_start(event) { var start_tensors = memory_leak_debugger();
 	var style = window.getComputedStyle(event.target, null);
 	var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
 	event.dataTransfer.setData("Text", str);
+	memory_leak_debugger("drag_start", start_tensors);
 }
 
-function drop(event) {
+function drop(event) { var start_tensors = memory_leak_debugger();
 	var offset = event.dataTransfer.getData("Text").split(',');
 	var dm = document.getElementById(offset[2]);
 	dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
 	dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
 	event.preventDefault();
+
+	memory_leak_debugger("drop", start_tensors);
+
 	return false;
 }
 
-function drag_over(event) {
+function drag_over(event) { var start_tensors = memory_leak_debugger();
 	event.preventDefault();
+	memory_leak_debugger("drag_over", start_tensors);
 	return false;
 }
 
-function get_layer_nr_by_name (layer_name) {
+function get_layer_nr_by_name (layer_name) { var start_tensors = memory_leak_debugger();
 	for (var i = 0; i < model.layers.length; i++) {
 		if(model.layers[i].getConfig().name == layer_name) {
+			memory_leak_debugger("get_layer_nr_by_name", start_tensors);
 			return i;
 		}
 	}
 
+	memory_leak_debugger("get_layer_nr_by_name", start_tensors);
 	return -1;
 }
 
