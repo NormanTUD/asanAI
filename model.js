@@ -319,7 +319,7 @@ function is_number_array (value) { var start_tensors = memory_leak_debugger();
 	return false;
 }
 
-function is_valid_parameter (keyname, value, layer) {
+function is_valid_parameter (keyname, value, layer) { var start_tensors = memory_leak_debugger();
 	assert(typeof(keyname) == "string", "keyname " + keyname + " is not a string but " + typeof(keyname));
 	assert(["string", "number", "boolean", "object"].includes(typeof(value)), value + " is not a string/number/boolean but " + typeof(value));
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
@@ -346,11 +346,13 @@ function is_valid_parameter (keyname, value, layer) {
 		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
 		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
+		memory_leak_debugger("is_valid_parameter", start_tensors);
 		return true;
 	}
 
 	//log("keyname: ", keyname, "value: ", value, "layer:", layer);
 
+	memory_leak_debugger("is_valid_parameter", start_tensors);
 	return false;
 }
 
@@ -474,7 +476,7 @@ async function get_html_from_model () { var start_tensors = memory_leak_debugger
 	return html;
 }
 
-function check_initializers (data, has_keys) {
+function check_initializers (data, has_keys) { var start_tensors = memory_leak_debugger();
 	valid_initializer_types.forEach((init_or_regularizer_type) => {
 		["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
 			var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
@@ -523,6 +525,7 @@ function check_initializers (data, has_keys) {
 		});
 	});
 
+	memory_leak_debugger("check_initializers", start_tensors);
 	return data;
 }
 
