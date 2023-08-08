@@ -448,7 +448,7 @@ function insert_initializer_option_trs(layer_nr, initializer_type, option_type) 
 	eval(eval_string);
 }
 
-async function insert_activation_options(layer_nr) {
+async function insert_activation_options(layer_nr) { var start_tensors = memory_leak_debugger();
 	// TODO NOT YET USED
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
@@ -475,6 +475,8 @@ async function insert_activation_options(layer_nr) {
 	}
 
 	await updated_page();
+
+	memory_leak_debugger("insert_activation_option", start_tensors);
 }
 
 function set_last_layer_activation_function (activation_function) {
@@ -4964,7 +4966,7 @@ async function set_custom_image_training () {
 }
 
 
-async function set_custom_webcam_training_data() {
+async function set_custom_webcam_training_data() { var start_tensors = memory_leak_debugger();
 	if(!is_hidden_or_has_hidden_parent($("#own_image_data"))) {
 		return;
 	}
@@ -4996,6 +4998,7 @@ async function set_custom_webcam_training_data() {
 	}
 
 	await add_cosmo_point("set_custom_images");
+	memory_leak_debugger("set_custom_webcam_training_data", start_tensors);
 }
 
 async function toggle_layers() {
