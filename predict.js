@@ -1,9 +1,10 @@
 "use strict";
 
-async function switch_to_next_camera_predict () {
+async function switch_to_next_camera_predict () { var start_tensors = memory_leak_debugger();
 	webcam_id++;
 	webcam_id = webcam_id % (webcam_modes.length);
 	await show_webcam(1);
+	memory_leak_debugger("switch_to_next_camera_predict", start_tensors);
 }
 
 async function get_label_data () { var start_tensors = memory_leak_debugger();
@@ -49,7 +50,7 @@ var loadFile = (function(event) {
 	$("#output").show();
 });
 
-function _predict_error (e) {
+function _predict_error (e) { var start_tensors = memory_leak_debugger();
 	console.warn(e);
 	console.trace();
 	l(e);
@@ -57,7 +58,7 @@ function _predict_error (e) {
 	$("#predict_error").html(e).show();
 	$("#example_predictions").html("");
 	$(".show_when_has_examples").hide();
-
+	memory_leak_debugger("_predict_error", start_tensors)
 }
 
 function _divide_img_tensor (tensor_img) { var start_tensors = memory_leak_debugger();
@@ -962,7 +963,7 @@ function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = me
 	return str;
 }
 
-async function show_webcam (force_restart) {
+async function show_webcam (force_restart) { var start_tensors = memory_leak_debugger();
 	await init_webcams();
 
 	try {
@@ -1023,6 +1024,8 @@ async function show_webcam (force_restart) {
 	} catch (e) {
 		console.error(e);
 	}
+
+	memory_leak_debugger("show_webcam", start_tensors);
 }
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
