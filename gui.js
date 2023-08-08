@@ -1638,7 +1638,7 @@ function get_element_xpath(element) {
 	return segs(element).join('/');
 }
 
-async function add_layer(item) {
+async function add_layer(item) { var start_tensors = memory_leak_debugger();
 	assert(typeof (item) == "object", "item is not an object but " + typeof (item));
 
 	layer_structure_cache = null;
@@ -1679,9 +1679,11 @@ async function add_layer(item) {
 	await predict_handdrawn();
 
 	l("Added layer");
+
+	memory_leak_debugger("add_layer", start_tensors);
 }
 
-function sortable_layers_container(layers_container) {
+function sortable_layers_container(layers_container) { var start_tensors = memory_leak_debugger();
 	assert(typeof (layers_container) == "object", "layers_container is not an object but " + typeof (layers_container));
 
 	var error_div = $("#error");
@@ -1732,6 +1734,8 @@ function sortable_layers_container(layers_container) {
 	layers_container.droppable({
 		tolerance: 'pointer'
 	});
+
+	memory_leak_debugger("sortable_layers_container", start_tensors);
 }
 
 function disable_all_non_selected_layer_types() {
@@ -5237,11 +5241,12 @@ function get_layer_nr_by_name (layer_name) { var start_tensors = memory_leak_deb
 	return -1;
 }
 
-function set_layer_background(nr, color) {
+function set_layer_background(nr, color) { var start_tensors = memory_leak_debugger();
 	$($(".layer_setting")[nr]).css("background-color", color)
+	memory_leak_debugger("set_layer_background", start_tensors);
 }
 
-function set_model_layer_warning(i, warning) {
+function set_model_layer_warning(i, warning) { var start_tensors = memory_leak_debugger();
 	assert(typeof(i) == "number", i + " is not a number");
 	assert(typeof(warning) == "string", warning + " is not a string");
 
@@ -5250,9 +5255,10 @@ function set_model_layer_warning(i, warning) {
 	} else {
 		$($(".warning_layer")[i]).html("").hide().parent().hide();
 	}
+	memory_leak_debugger("set_model_layer_warning", start_tensors);
 }
 
-function download(filename, text) {
+function download(filename, text) { var start_tensors = memory_leak_debugger();
 	var element = document.createElement('a');
 	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
 	element.setAttribute('download', filename);
@@ -5263,20 +5269,23 @@ function download(filename, text) {
 	element.click();
 
 	document.body.removeChild(element);
+	memory_leak_debugger("download", start_tensors);
 }
 
 async function download_current_data_as_json () {
 	download("data.json", JSON.stringify(await get_x_y_as_array())) 
 }
 
-function scroll_down_div (classname) {
+function scroll_down_div (classname) { var start_tensors = memory_leak_debugger();
 	var items = $('.' + classname);
 	for (var i = 0; i < items.length; i++) {
 		items.scrollTop(items[i].scrollHeight - $(items[i]).height());
 	}
+
+	memory_leak_debugger("scroll_down_div", start_tensors);
 }
 
-async function download_model_for_training (m) {
+async function download_model_for_training (m) { var start_tensors = memory_leak_debugger();
 	var data = {
 		"model": JSON.parse(m.toJSON()),
 		"fit_data": get_fit_data(),
@@ -5298,110 +5307,10 @@ async function download_model_for_training (m) {
 			a.click(); //Downloaded file
 		}
 	});
+	memory_leak_debugger("download_model_for_training", start_tensors);
 }
 
-async function save_model_and_data_and_copy_to_taurus (m) {
-	var data = {
-		"model": JSON.parse(m.toJSON()),
-		"fit_data": get_fit_data(),
-		"model_data": await get_model_data(),
-		"weights": await get_weights_as_json(),
-		"data": await get_x_y_as_array()
-	};
-
-	log(data);
-
-	var swal_msg = "Your job was sent to our supercomputer. Please wait. <div class='taurus_wait_popup'></div><textarea style='display: none; left: 0px; width: 500px; height: 500px; position: inherit' class='taurus_log'></textarea>";
-	l(swal_msg);
-	Swal.fire({
-		title: swal_msg,
-		allowEscapeKey: false,
-		allowOutsideClick: false,
-		showConfirmButton: false
-	});
-
-
-	$.ajax({
-		'type': 'POST',
-		'url': 'submit.php',
-		'data': {
-			"data": JSON.stringify(data)
-		},
-		error: function (...msgs) {
-			log(msgs);
-			Swal.close()
-
-			Swal.fire({
-				icon: 'error',
-				title: 'Oops [6]...',
-				html: "Maybe you sent too much data. The sent file can only be ~200MB"
-			});
-		},
-		'success': async function(response) {
-			log(response);
-			var r = JSON.parse(response);
-			var last_shown_line = 0;
-			log(r);
-			var status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"] + "&last_shown_line=" + last_shown_line;
-
-			var waittime = 5000;
-
-			var job_status = await get_json(status_url);
-			while (!job_status["done"]) {
-				await delay(waittime);
-				status_url = "current_status.php?hash=" + r["hash"] + "&slurm_id=" + r["slurmid"] + "&last_shown_line=" + last_shown_line;
-				job_status = await get_json(status_url);
-				log("job_status: ", job_status);
-				if(job_status.errors.length) {
-					log(job_status.errors);
-				}
-
-				if(job_status.seconds_until_estimated_start) {
-					$(".taurus_wait_popup").html("Estimated start time in " + human_readable_time(job_status.seconds_until_estimated_start) + " (not accurate, only a guess!)");
-				}
-
-				if(job_status.logfile) {
-					last_shown_line =  job_status.logfile.split(/\r\n|\r|\n/).length;
-					$(".taurus_log").append(job_status.logfile).show();
-					scroll_down_div("taurus_log");
-					waittime = 1000;
-				}
-			}
-
-			log(job_status);
-			if(job_status.errors.length) {
-				log(job_status.errors);
-			}
-
-			$(".taurus_log").html("").hide();
-			$(".taurus_wait_popup").html("");
-
-			var trained_weights = job_status.weights;
-
-			l("Setting new weights");
-			await set_weights_from_json_object(JSON.parse(trained_weights), null, 1);
-			model_is_trained = true;
-
-			Swal.fire({
-				icon: 'success',
-				title: 'Model was trained',
-				html: "The model was successfully trained on taurus. You can now work with it in asanAI or export it."
-			});
-
-
-			l("The job was done on Taurus.");
-		}
-	});
-
-
-	/*
-	model.setUserDefinedMetadata({"data": await get_x_y_as_array()});
-	var saveResult = await model.save('http://localhost/tf/submit.php'); 
-	return saveResult;
-	*/
-}
-
-function clear_attrament (idname) {
+function clear_attrament (idname) { var start_tensors = memory_leak_debugger()
 	if(!atrament_data) {
 		console.warn("atrament_data not defined");
 		return;
@@ -5425,9 +5334,11 @@ function clear_attrament (idname) {
 	} catch (e) {
 		console.error(e);
 	}
+
+	memory_leak_debugger("clear_attrament", start_tensors);
 }
 
-function invert_elements_in_dark_mode () {
+function invert_elements_in_dark_mode () { var start_tensors = memory_leak_debugger();
 	var is_dark_mode = $("#theme_choser").val() == 'darkmode' ? true : false;
 
 	var el = $(".invert_in_dark_mode");
@@ -5437,15 +5348,17 @@ function invert_elements_in_dark_mode () {
 	if(is_dark_mode) {
 		el.addClass("dark_mode_inverted");
 	}
+
+	memory_leak_debugger("invert_elements_in_dark_mode", start_tensors);
 }
 
-function green_marker (element) {
+function green_marker (element) { var start_tensors = memory_leak_debugger();
 	$(element).parent().parent().find(".green_icon").removeClass("green_icon")
 	$(element).addClass("green_icon");
-
+	memory_leak_debugger("green_marker", start_tensors);
 }
 
-function get_drawing_board_on_page (indiv, idname, customfunc) {
+function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tensors = memory_leak_debugger();
 	//logt("get_drawing_board_on_page");
 	if(!customfunc) {
 		customfunc = "";
@@ -5547,32 +5460,35 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
 
 	atrament_data[idname]['atrament'].weight = 20;
+	memory_leak_debugger("get_drawing_board_on_page", start_tensors);
 }
 
-function chose_nearest_color_picker (e) {
+function chose_nearest_color_picker (e) { var start_tensors = memory_leak_debugger();
 	var input = $(e).parent().find("input");
 
 	var id = $(input)[0].id.replace(/_colorpicker$/, "")
 
 	atrament_data[id].colorpicker.show()
 	
+	memory_leak_debugger("chose_nearest_color_picker", start_tensors);
 }
 
-async function onclick_math_mode (t, e) {
-	//log(e);
+async function onclick_math_mode (t, e) { var start_tensors = memory_leak_debugger();
 	await write_model_to_latex_to_page(0, 1);
-	//console.trace();
+	memory_leak_debugger("onclick_math_mode", start_tensors);
 }
 
-async function set_all_strides () {
+async function set_all_strides () { var start_tensors = memory_leak_debugger();
 	var n = $("#all_strides_val").val();
 	await _set_all_strides(n);
 	if(looks_like_number(n)) {
 		$("#all_strides_val").val("");
 	}
+
+	memory_leak_debugger("set_all_strides", start_tensors);
 }
 
-async function _set_all_strides (n) {
+async function _set_all_strides (n) { var start_tensors = memory_leak_debugger();
 	assert(typeof(n) == "number" || looks_like_number(n), n + " is not an integer and does not look like one");
 	n = parseInt(n);
 
@@ -5581,6 +5497,8 @@ async function _set_all_strides (n) {
 	$(".strides_x").val(n);
 
 	$($(".strides_x")[0]).trigger("change");
+
+	memory_leak_debugger("_set_all_strides", start_tensors);
 }
 
 function hide_empty_tabs (name) {
