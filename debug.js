@@ -2,30 +2,6 @@
 
 var printed_msgs = [];
 
-function memory_leak_debugger (name="", oldNumTensors=null) {
-	var numTensors = tf.memory()["numTensors"];
-	if(!numTensors) {
-		numTensors = "none";
-	}
-
-	if(old_tensor_number < numTensors) {
-		if(name && oldNumTensors) {
-			if(numTensors > oldNumTensors) {
-				if(name != "") {
-					console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
-				} else {
-					console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
-				}
-				//console.trace();
-			}
-		}
-	}
-
-	old_tensor_number = numTensors;
-
-	return numTensors;
-}
-
 function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
