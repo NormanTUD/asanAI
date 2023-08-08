@@ -609,7 +609,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				$("#predict_error").html("");
 			} catch (e) {
 				if((""+e).includes("already disposed")) {
-					console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					console.warn("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else {
 					_predict_error(e);
 					await dispose(res);
