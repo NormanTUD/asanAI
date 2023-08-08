@@ -951,45 +951,58 @@ async function compile_fake_model(layer_nr, layer_type) { var start_tensors = me
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
 
-function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
+function _heuristic_layer_possibility_check(layer_type, layer_input_shape) { var start_tensors = memory_leak_debugger();
 	if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
 		if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
 			if(layer_input_shape.length == 2) {
+				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		} else if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "globalMaxPooling2d", "maxPooling2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 3) {
+				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 4) {
+				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 3) {
+				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 
 	} else if(["gru"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	} else if(["ZeroPadding2D"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length != 4) {
+			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	}
 
 	if(mode == "beginner" && ["reshape"].includes(layer_type)) {
+		memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 		return false;
 	}
+
+	memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 
 	return true;
 }
@@ -998,7 +1011,7 @@ function layer_type_always_works (layer_type) {
 	return !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
 }
 
-function heuristic_layer_possibility_check (layer_nr, layer_type) {
+function heuristic_layer_possibility_check (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
@@ -1012,7 +1025,11 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 		}
 	}
 
-	return _heuristic_layer_possibility_check(layer_type, layer_input_shape);
+	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape);
+
+	memory_leak_debugger("heuristic_layer_possibility_check", start_tensors);
+
+	return res;
 }
 
 async function get_valid_layer_types (layer_nr) { var start_tensors = memory_leak_debugger();
