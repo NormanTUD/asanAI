@@ -783,7 +783,6 @@ async function create_model (old_model, fake_model_structure, force) { var start
 }
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i) { var start_tensors = memory_leak_debugger();
-
 	var new_model = tf.sequential();
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
