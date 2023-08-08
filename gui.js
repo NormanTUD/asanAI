@@ -5642,13 +5642,15 @@ async function change_last_responsible_layer_for_image_output () {
 	}
 }
 
-function show_bars_instead_of_numbers () {
+function show_bars_instead_of_numbers () { var start_tensors = memory_leak_debugger();
 	if(get_last_layer_activation_function() == "softmax") {
 		if($("#show_bars_instead_of_numbers").is(":checked")) {
+			memory_leak_debugger("show_bars_instead_of_numbers", start_tensors);
 			return true;
 		}
 	}
 
+	memory_leak_debugger("show_bars_instead_of_numbers", start_tensors);
 	return false;
 }
 
