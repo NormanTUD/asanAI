@@ -1,6 +1,6 @@
 "use strict";
 
-async function except (errname, e) {
+async function except (errname, e) { var start_tensors = memory_leak_debugger();
 	await write_descriptions();
 	await enable_everything();
 
@@ -14,9 +14,11 @@ async function except (errname, e) {
 	if(throw_compile_exception) {
 		throw new Error(e);
 	}
+
+	memory_leak_debugger("except", start_tensors)
 }
 
-async function get_model_config_hash () {
+async function get_model_config_hash () { var start_tensors = memory_leak_debugger();
 	var arr = [];
 	$("#layers_container").find("input, checkbox, select").each(function (i, x) {
 		if($(x).attr("type") == "checkbox") {
@@ -27,8 +29,10 @@ async function get_model_config_hash () {
 	});
 
 	var str = arr.join(";;;;;;;;;");
-
-	return await md5(str);
+	
+	var res = await md5(str);
+	memory_leak_debugger("get_model_config_hash", start_tensors);
+	return res;
 }
 
 async function _create_model () { var start_tensors = memory_leak_debugger();
