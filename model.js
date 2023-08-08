@@ -123,7 +123,6 @@ async function compile_model () {
 
 		if(global_model_data) {
 			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
-			log("dispose global_model_data", model_data_tensors);
 			for (var i = 0; i < model_data_tensors.length; i++) {
 				await dispose(model_data_tensors[i]);
 			}
