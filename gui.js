@@ -1052,7 +1052,7 @@ function _has_any_warning () {
 	return false;
 }
 
-async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) { var start_tensors = memory_leak_debugger();
 	var updated_page_uuid = uuidv4();
 
 	if(number_of_currently_running_updated_pages > 1) {
@@ -1060,6 +1060,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.info("Only using first updated_page.");
 		}
 		number_of_currently_running_updated_pages--;
+		memory_leak_debugger("updated_page (A)", start_tensors);
 		return;
 	}
 
@@ -1175,6 +1176,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 
 	number_of_currently_running_updated_pages--;
+	memory_leak_debugger("updated_page", start_tensors);
 }
 
 async function typeset() {
