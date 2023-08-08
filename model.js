@@ -531,7 +531,7 @@ function check_initializers (data, has_keys) { var start_tensors = memory_leak_d
 	return data;
 }
 
-function _check_data (data, type) {
+function _check_data (data, type) { var start_tensors = memory_leak_debugger();
 	var has_keys = Object.keys(data);
 
 	try {
@@ -625,6 +625,7 @@ function _check_data (data, type) {
 		console.error(e);
 	}
 
+	memory_leak_debugger("_check_data", start_tensors);
 	return data;
 }
 
@@ -868,7 +869,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) { var start_te
 	return data;
 }
 
-function get_default_option (layer_type, option_name) {
+function get_default_option (layer_type, option_name) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
 	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
 
@@ -890,6 +891,7 @@ function get_default_option (layer_type, option_name) {
 		}
 	}
 
+	memory_leak_debugger("get_default_option", start_tensors);
 	return layer_options_defaults[option_name];
 }
 
