@@ -112,7 +112,7 @@ function get_full_shape_from_file(file) { var start_tensors = memory_leak_debugg
 }
 
 async function md5 (content) { var start_tensors = memory_leak_debugger();
-	res = await hashwasm.md5(content);
+	var res = await hashwasm.md5(content);
 
 	memory_leak_debugger("md5", start_tensors);
 
