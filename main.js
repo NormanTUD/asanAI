@@ -122,7 +122,7 @@ function get_get (param) {
 	return urlParams.get(param);
 }
 
-function init_tabs () {
+function init_tabs () { var start_tensors = memory_leak_debugger();
 	l("Initializing tabs");
 	var tabs_settings = {
 		activate: function (event, ui) {
@@ -146,9 +146,11 @@ function init_tabs () {
 	$("#visualization_tab").tabs(tabs_settings);
 	$("#tfvis_tab").tabs(tabs_settings);
 	$("#code_tab").tabs(tabs_settings);
+
+	memory_leak_debugger("init_tabs", start_tensors);
 }
 
-function init_set_all_options () {
+function init_set_all_options () { var start_tensors = memory_leak_debugger();
 	l("Initializing 'set options for all'");
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
@@ -211,9 +213,11 @@ function init_set_all_options () {
 			$("[href='#visualization_ribbon']").click();
 		}
 	});
+
+	memory_leak_debugger("init_set_all_options", start_tensors);
 }
 
-async function init_page_contents (chosen_dataset) {
+async function init_page_contents (chosen_dataset) { var start_tensors = memory_leak_debugger();
 	l("Initializing page contents");
 	skip_predictions = true;
 	disabling_saving_status = true;
@@ -262,6 +266,8 @@ async function init_page_contents (chosen_dataset) {
 
 	disabling_saving_status = false;
 	skip_predictions = false;
+
+	memory_leak_debugger("init_page_contents", start_tensors);
 }
 
 function dataset_already_there (dataset_name) { var start_tensors = memory_leak_debugger();
