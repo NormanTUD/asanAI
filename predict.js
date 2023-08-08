@@ -579,6 +579,10 @@ function show_or_hide_predictions (count) { var start_tensors = memory_leak_debu
 }
 
 async function _print_predictions_text(count, example_predict_data) { var start_tensors = memory_leak_debugger();
+	if(!finished_loading) {
+		memory_leak_debugger("_print_predictions_text", start_tensors);
+		return;
+	}
 
 	var count = 0;
 	var example_predictions = $("#example_predictions");
