@@ -1,23 +1,6 @@
 "use strict";
 
-/*
-var original_tf_tensor = tf.tensor;
-
-tf.tensor = function (...args) {
-	//console.log(args);
-	//console.trace();
-
-	var t = original_tf_tensor(...args);
-
-	//log("new tensor id: ", t.id);
-
-	tensors[t.id] = t;
-
-	return t;
-}
-*/
-
-function show_idle_time () {
+function show_idle_time () { var start_tensors = memory_leak_debugger();
 	if(!is_cosmo_mode) {
 		$("#cosmo_reload_debugger").remove();
 		return;
@@ -36,15 +19,17 @@ function show_idle_time () {
 	if(idleTime) {
 		$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
 	}
+	memory_leak_debugger("show_idle_time", start_tensors);
 }
 
-async function on_resize () {
+async function on_resize () { var start_tensors = memory_leak_debugger();
 	reset_view(); 
 	await show_cosmo_elements_depending_on_current_skills()
 	await write_descriptions(1);
+	memory_leak_debugger("on_resize", start_tensors);
 }
 
-function layer_types_that_dont_have_default_options () {
+function layer_types_that_dont_have_default_options () { var start_tensors = memory_leak_debugger();
 	var no_options = [];
 
 	var all_options = [];
@@ -68,13 +53,18 @@ function layer_types_that_dont_have_default_options () {
 		}
 	}
 
+	memory_leak_debugger("layer_types_that_dont_have_default_options", start_tensors);
 	return no_options;
 }
 
 
 
-async function hasFrontBack() {
-	let result = {hasBack: false, hasFront: false, videoDevices: []}
+async function hasFrontBack() { var start_tensors = memory_leak_debugger();
+	let result = {
+		hasBack: false, 
+		hasFront: false, 
+		videoDevices: []
+	};
 	try {
 		const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
 		let devices = await navigator.mediaDevices.enumerateDevices();
@@ -110,8 +100,11 @@ async function hasFrontBack() {
 	} catch (ex) {
 		/* log and swallow exception, this is a probe only */
 		l("ERROR: " + ex);
+		memory_leak_debugger("hasFront", start_tensors);
 		return result;
 	}
+
+	memory_leak_debugger("hasFront", start_tensors);
 }
 
 function get_get (param) {
