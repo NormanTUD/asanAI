@@ -265,7 +265,9 @@ async function get_model_data (optimizer_name_only) { var start_tensors = memory
 		global_model_data["optimizer"] = tf.tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]) });
 	}
 
-	memory_leak_debugger("get_model_data", start_tensors);
+	var new_tensors = findTensorsWithIsDisposedInternal(global_model_data).length;
+
+	memory_leak_debugger("get_model_data", start_tensors + new_tensors);
 	return global_model_data;
 }
 
