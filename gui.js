@@ -5024,8 +5024,9 @@ async function easter_egg_fireworks (force=0) {
 	}
 }
 
-async function init_webcams () {
+async function init_webcams () { var start_tensors = memory_leak_debugger();
 	if(inited_webcams) {
+		memory_leak_debugger("init_webcams", start_tensors);
 		return;
 	}
 
@@ -5068,6 +5069,8 @@ async function init_webcams () {
 	}
 
 	l("Done checking webcams");
+
+	memory_leak_debugger("init_webcams", start_tensors);
 }
 
 function show_hide_augment_tab () {
