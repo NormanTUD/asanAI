@@ -1179,7 +1179,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	memory_leak_debugger("updated_page", start_tensors);
 }
 
-async function typeset() {
+async function typeset() { var start_tensors = memory_leak_debugger();
 	var math_elements = $(".typeset_me");
 
 	for (var i = 0; i < math_elements.length; i++) {
@@ -1203,15 +1203,17 @@ async function typeset() {
 			math_items_hashes[xpath] = new_md5;
 		}
 	}
+	memory_leak_debugger("typeset", start_tensors);
 }
 
-async function change_optimizer() {
+async function change_optimizer() { var start_tensors = memory_leak_debugger();
 	var type = $("#optimizer").val();
 	$(".optimizer_metadata").hide();
 
 	$("#" + type + "_metadata").show();
 
 	await updated_page();
+	memory_leak_debugger("change_optimizer", start_tensors)
 }
 
 function set_momentum(val) {
