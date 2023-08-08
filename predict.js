@@ -1170,10 +1170,16 @@ async function predict_handdrawn () {
 			return model.predict([predict_data]);
 		});
 	} catch (e) {
-		l("Predict data shape:", predict_data.shape);
-		console.error(e);
-		await dispose(predictions_tensor);
-		l("Error (443): " + e);
+		if(("" + e).includes("is already disposed")) {
+			console.warn("weights are already disposed. Not predicting handdrawn");
+		} else {
+			l("Predict data shape:", predict_data.shape);
+			console.error(e);
+			await dispose(predictions_tensor);
+			l("Error (443): " + e);
+		}
+
+		memory_leak_debugger("predict_handdrawn", start_tensors);
 		return;
 	}
 

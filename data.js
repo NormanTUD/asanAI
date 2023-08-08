@@ -58,7 +58,6 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 
 	var x = tf.tensor(data, shape, tensor_type);
 
-
 	memory_leak_debugger("numpy_str_to_tf_tensor", start_tensors);
 
 	return x;
@@ -302,6 +301,8 @@ async function add_tensor_as_image_to_photos (tensor) {
 	assert(Object.keys(tensor).includes("shape"), "Tensor must be an object that contains a shape subkey");
 	assert(tensor.shape.length >= 3 && tensor.shape.length <= 4, "Tensor must have 3 or 4 dimensions");	
 
+	var start_tensors = memory_leak_debugger();
+
 	if(tensor.shape.length == 4) {
 		if(tensor.shape[0] == 1) {
 			tensor = tf.tensor(tensor.arraySync()[0]);
@@ -310,6 +311,9 @@ async function add_tensor_as_image_to_photos (tensor) {
 				var this_tensor = tf.tensor(tensor.arraySync()[i]);
 				await add_tensor_as_image_to_photos(this_tensor);
 			}
+
+			memory_leak_debugger("add_tensor_as_image_to_photos", start_tensors)
+
 			return;
 		}
 	}
@@ -350,6 +354,8 @@ async function add_tensor_as_image_to_photos (tensor) {
 		log("Shape:", tensor.shape);
 		tensor.print();
 	}
+
+	memory_leak_debugger("add_tensor_as_image_to_photos", start_tensors)
 }
 
 
@@ -369,6 +375,7 @@ function truncate_text (fullStr, strLen, separator) {
 };
 
 async function sine_ripple (img) {
+	var start_tensors = memory_leak_debugger();
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
 	await tf.browser.toPixels(tf.tensor(img.arraySync()[0]), $("#" + uuid)[0]);
@@ -379,6 +386,8 @@ async function sine_ripple (img) {
 	context.putImageData(data,0,0);
 	var rippled = await tf.browser.fromPixels(canvas);
 	$(canvas).remove();
+
+	memory_leak_debugger("sine_ripple", start_tensors);
 
 	return rippled;
 }
