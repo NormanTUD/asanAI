@@ -152,19 +152,22 @@ async function compile_model () { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("compile_model", start_tensors + findTensorsWithIsDisposedInternal(global_model_data).length);
 }
 
-function get_weight_type_name_from_option_name (on) {
+function get_weight_type_name_from_option_name (on) { var start_tensors = memory_leak_debugger();
 	if(on.match(/_/)) {
 		for (var i = 0; i < valid_initializer_types.length; i++) {
 			var v = valid_initializer_types[i];
 			var re = new RegExp("^" + v + "(?:_.*)?$");
 			if(on.match(re)) {
+				memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 				return v;
 			}
 		}
 	} else {
+		memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 		return on;
 	}
 
+	memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 	return on;
 }
 
