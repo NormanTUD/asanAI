@@ -58,13 +58,11 @@ function _predict_error (e) {
 
 }
 
-function _divide_img_tensor (tensor_img) {
+function _divide_img_tensor (tensor_img) { var start_tensors = memory_leak_debugger();
 	var divide_by = parseFloat($("#divide_by").val());
 	if(divide_by == 1) {
 		return tensor_img;
 	}
-
-	var start_tensors = memory_leak_debugger();
 
 	try {
 		tensor_img = tf.tidy(() => {
@@ -79,8 +77,7 @@ function _divide_img_tensor (tensor_img) {
 	return tensor_img;
 }
 
-async function _get_tensor_img(item) {
-	var start_tensors = memory_leak_debugger();
+async function _get_tensor_img(item) { var start_tensors = memory_leak_debugger();
 	var tensor_img = null;
 
 	try {
@@ -101,8 +98,7 @@ async function _get_tensor_img(item) {
 	return tensor_img;
 }
 
-function set_item_natural_width (item) {
-	var start_tensors = memory_leak_debugger();
+function set_item_natural_width (item) { var start_tensors = memory_leak_debugger();
 	try {
 		var $item = $(item);
 		assert($item.length > 0, "$item is empty");
@@ -118,7 +114,7 @@ function set_item_natural_width (item) {
 	return true;
 }
 
-async function predict_demo (item, nr, tried_again = 0) {
+async function predict_demo (item, nr, tried_again = 0) { var start_tensors = memory_leak_debugger();
 	if(has_zero_output_shape) {
 		return;
 	}
@@ -129,8 +125,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	//var xpath = get_element_xpath(item);
 	//tf.engine().startScope("scope_" + xpath);
-
-	var start_tensors = memory_leak_debugger();
 
 	var new_tensor_img;
 
@@ -231,8 +225,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	memory_leak_debugger("predict_demo", start_tensors);
 }
 
-async function _run_predict_and_show (tensor_img, nr) {
-	var start_tensors = memory_leak_debugger();
+async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memory_leak_debugger();
 	if(tensor_img.isDisposedInternal) {
 		console.warn("Tensor was disposed internally", tensor_img);
 		console.trace();
@@ -262,8 +255,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	memory_leak_debugger("_run_predict_and_show", start_tensors);
 }
 
-async function _predict_result(predictions_tensor, nr) {
-	var start_tensors = memory_leak_debugger();
+async function _predict_result(predictions_tensor, nr) { var start_tensors = memory_leak_debugger();
 	var desc = $($(".predict_demo_result")[nr]);
 	desc.html("");
 	if(model.outputShape.length == 3) {
@@ -279,8 +271,7 @@ async function _predict_result(predictions_tensor, nr) {
 	memory_leak_debugger("_predict_result", start_tensors);
 }
 
-async function _predict_image (predictions_tensor, desc) {
-	var start_tensors = memory_leak_debugger();
+async function _predict_image (predictions_tensor, desc) { var start_tensors = memory_leak_debugger();
 	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 
 	var pxsz = 1;
@@ -315,8 +306,7 @@ function get_show_green () {
 	return show_green;
 }
 
-async function _predict_table(predictions_tensor, desc) {
-	var start_tensors = memory_leak_debugger();
+async function _predict_table(predictions_tensor, desc) { var start_tensors = memory_leak_debugger();
 	var predictions = tf.tidy(() => { return predictions_tensor.dataSync() });
 
 	if(predictions.length) {
@@ -371,8 +361,7 @@ function _predict_table_row (label, w, max_i, probability, i) {
 	return str;
 }
 
-async function predict (item, force_category, dont_write_to_predict_tab) {
-	var start_tensors = memory_leak_debugger();
+async function predict (item, force_category, dont_write_to_predict_tab) { var start_tensors = memory_leak_debugger();
 	await enable_everything();
 
 	var pred_tab = "prediction";
@@ -524,12 +513,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 	return str;
 }
 
-async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) { var start_tensors = memory_leak_debugger();
 	if(skip_predictions) {
 		return;
 	}
-
-	var start_tensors = memory_leak_debugger();
 
 	if(!model) {
 		l("ERROR: No model given for show_prediction");
@@ -584,8 +571,7 @@ function show_or_hide_predictions (count) {
 	}
 }
 
-async function _print_predictions_text(count, example_predict_data) {
-	var start_tensors = memory_leak_debugger();
+async function _print_predictions_text(count, example_predict_data) { var start_tensors = memory_leak_debugger();
 
 	var count = 0;
 	var example_predictions = $("#example_predictions");
@@ -641,8 +627,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	return count;
 }
 
-async function _print_example_predictions (count) {
-	var start_tensors = memory_leak_debugger();
+async function _print_example_predictions (count) { var start_tensors = memory_leak_debugger();
 
 	var count = 0;
 	var example_predictions = $("#example_predictions");
@@ -679,8 +664,7 @@ async function _print_example_predictions (count) {
 	return count;
 }
 
-async function _get_example_string (examples, count, full_dir) {
-	var start_tensors = memory_leak_debugger();
+async function _get_example_string (examples, count, full_dir) { var start_tensors = memory_leak_debugger();
 	var str = "";
 	for (var i = 0; i < examples.length; i++) {
 		count++;
@@ -721,8 +705,7 @@ function get_index_of_highest_category (predictions_tensor) {
 	return highest_index;
 }
 
-async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
-	var start_tensors = memory_leak_debugger();
+async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) { var start_tensors = memory_leak_debugger();
 	if(!(
 		await input_shape_is_image(is_from_webcam) && 
 		$("#show_grad_cam").is(":checked") && 
@@ -774,8 +757,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	memory_leak_debugger("draw_heatmap", start_tensors);
 }
 
-function _get_resized_webcam (predict_data, h, w) {
-	var start_tensors = memory_leak_debugger();
+function _get_resized_webcam (predict_data, h, w) { var start_tensors = memory_leak_debugger();
 	var res = tf.tidy(() => {
 		var divide_by = parseFloat($("#divide_by").val());
 		var r = predict_data.resizeNearestNeighbor([h, w]).toFloat().expandDims();
@@ -791,14 +773,13 @@ function _get_resized_webcam (predict_data, h, w) {
 	return res;
 }
 
-async function predict_webcam () {
+async function predict_webcam () { var start_tensors = memory_leak_debugger();
 	if(currently_predicting_webcam) {
 		return;
 	}
 
 	currently_predicting_webcam = true;
 
-	var start_tensors = memory_leak_debugger();
 	if(!cam) {
 		currently_predicting_webcam = false;
 		return;
@@ -886,8 +867,7 @@ async function predict_webcam () {
 	currently_predicting_webcam = false;
 }
 
-function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
-	var start_tensors = memory_leak_debugger();
+function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) { var start_tensors = memory_leak_debugger();
 	var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
 
 	for (var i = 0; i < predictions_tensor.shape[3]; i++) {
@@ -906,8 +886,7 @@ function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
 	memory_leak_debugger("draw_multi_channel", start_tensors);
 }
 
-function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
-	var start_tensors = memory_leak_debugger();
+function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) { var start_tensors = memory_leak_debugger();
 	var canvas = $('<canvas/>', {class: "layer_image"}).prop({
 		width: pxsz * predictions_tensor.shape[2],
 		height: pxsz * predictions_tensor.shape[1],
@@ -919,8 +898,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 	memory_leak_debugger("draw_rgb", start_tensors);
 }
 
-async function _webcam_predict (webcam_prediction, predictions) {
-	var start_tensors = memory_leak_debugger();
+async function _webcam_predict (webcam_prediction, predictions) { var start_tensors = memory_leak_debugger();
 	var max_i = 0;
 	var max_probability = -9999999;
 
@@ -941,8 +919,7 @@ async function _webcam_predict (webcam_prediction, predictions) {
 	memory_leak_debugger("_webcam_predict", start_tensors);
 }
 
-async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
-	var start_tensors = memory_leak_debugger();
+async function _predict_webcam_html(predictions, webcam_prediction, max_i) { var start_tensors = memory_leak_debugger();
 	var str = "<table class='predict_table'>";
 
 	for (let i = 0; i < predictions[0].length; i++) {
@@ -956,8 +933,7 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	memory_leak_debugger("_predict_webcam_html", start_tensors);
 }
 
-function _webcam_prediction_row (i, predictions, max_i) {
-	var start_tensors = memory_leak_debugger();
+function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = memory_leak_debugger();
 	var str = "";
 	var label = labels[i % labels.length];
 	var probability = predictions[i];
@@ -1049,8 +1025,7 @@ async function show_webcam (force_restart) {
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
-function tensor_shape_matches_model (tensor) {
-	var start_tensors = memory_leak_debugger();
+function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_debugger();
 	var res = true;
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
 	input_layer_shape.shift();
@@ -1107,7 +1082,7 @@ function draw_bars_or_numbers (i, predictions, max) {
 	return html;
 }
 
-async function predict_handdrawn () {
+async function predict_handdrawn () { var start_tensors = memory_leak_debugger();
 	if(has_zero_output_shape) {
 		return;
 	}
@@ -1120,8 +1095,6 @@ async function predict_handdrawn () {
 		log("ERROR: model is undefined");
 		return;
 	}
-
-	var start_tensors = memory_leak_debugger();
 
 	if(!Object.keys(atrament_data).includes("sketcher")) {
 		if(sketcher_warning >= 1) {
@@ -1196,8 +1169,7 @@ async function predict_handdrawn () {
 	memory_leak_debugger("predict_handdrawn", start_tensors);
 }
 
-async function _predict_handdrawn(predictions_tensor) {
-	var start_tensors = memory_leak_debugger();
+async function _predict_handdrawn(predictions_tensor) { var start_tensors = memory_leak_debugger();
 
 	var handdrawn_predictions = $("#handdrawn_predictions");
 	handdrawn_predictions.html("");
@@ -1217,8 +1189,7 @@ async function _predict_handdrawn(predictions_tensor) {
 	return ret;
 }
 
-async function _image_output_handdrawn(predictions_tensor) {
-	var start_tensors = memory_leak_debugger();
+async function _image_output_handdrawn(predictions_tensor) { var start_tensors = memory_leak_debugger();
 	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
 	var predictions = predictions_tensor_transposed.arraySync();
 
@@ -1247,8 +1218,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 	memory_leak_debugger("_image_output_handdrawn", start_tensors);
 }
 
-async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
-	var start_tensors = memory_leak_debugger();
+async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) { var start_tensors = memory_leak_debugger();
 
 	var predictions = predictions_tensor.arraySync();
 
@@ -1272,8 +1242,7 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 	memory_leak_debugger("_classification_handdrawn", start_tensors);
 }
 
-async function repredict () {
-	var start_tensors = memory_leak_debugger();
+async function repredict () { var start_tensors = memory_leak_debugger();
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();

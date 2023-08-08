@@ -143,8 +143,7 @@ function add_memory_debugger () {
 		    try {
 			    var execute_this = `
 			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
-			    window["${i}"] = function (${args_string}) {
-					var start_tensors = tf.memory()["numTensors"];
+			    window["${i}"] = function (${args_string}) { var start_tensors = tf.memory()["numTensors"];
 
 					var result = window["${ORIGINAL_FUNCTION_PREFIX}${i}"](${args_string});
 

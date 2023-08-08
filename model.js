@@ -31,8 +31,7 @@ async function get_model_config_hash () {
 	return await md5(str);
 }
 
-async function _create_model () {
-	var start_tensors = memory_leak_debugger();
+async function _create_model () { var start_tensors = memory_leak_debugger();
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (_create_model)");
 		return model;
@@ -72,8 +71,7 @@ async function _create_model () {
 	memory_leak_debugger("_create_model", start_tensors + 2); // 2 neue tensoren wegen global_model_data
 }
 
-async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
-	var start_tensors = memory_leak_debugger();
+async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) { var start_tensors = memory_leak_debugger();
 	var recreate_model = false;
 
 	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash()) {
@@ -107,10 +105,8 @@ function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
 	return tensorList;
 }
 
-async function compile_model () {
+async function compile_model () { var start_tensors = memory_leak_debugger();
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
-
-	var start_tensors = memory_leak_debugger();
 	var new_model_config_hash = await get_model_config_hash();
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
@@ -624,8 +620,7 @@ function _check_data (data, type) {
 	return data;
 }
 
-async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) {
-	var start_tensors = memory_leak_debugger();
+async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) { var start_tensors = memory_leak_debugger();
 	try {
 		if(layer_options[type]["custom"]) {
 			if(i == 0) {
@@ -694,8 +689,7 @@ function _set_layer_gui (data, fake_model_structure, i) {
 	}
 }
 
-async function create_model (old_model, fake_model_structure, force) {
-	var start_tensors = memory_leak_debugger();
+async function create_model (old_model, fake_model_structure, force) { var start_tensors = memory_leak_debugger();
 
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
@@ -770,8 +764,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	return [new_model, model_data];
 }
 
-async function _add_layers_to_model (model_structure, fake_model_structure, i) {
-	var start_tensors = memory_leak_debugger();
+async function _add_layers_to_model (model_structure, fake_model_structure, i) { var start_tensors = memory_leak_debugger();
 
 	var new_model = tf.sequential();
 	for (var i = 0; i < model_structure.length; i++) {
@@ -805,8 +798,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 	return new_model;
 }
 
-async function get_fake_data_for_layertype (layer_nr, layer_type) {
-	var start_tensors = memory_leak_debugger();
+async function get_fake_data_for_layertype (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
 
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
@@ -891,8 +883,7 @@ function get_default_option (layer_type, option_name) {
 	return layer_options_defaults[option_name];
 }
 
-async function create_fake_model_structure (layer_nr, layer_type) {
-	var start_tensors = memory_leak_debugger();
+async function create_fake_model_structure (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
@@ -906,11 +897,9 @@ async function create_fake_model_structure (layer_nr, layer_type) {
 	return fake_model_structure;
 }
 
-async function compile_fake_model(layer_nr, layer_type) {
+async function compile_fake_model(layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
-
-	var start_tensors = memory_leak_debugger();
 
 	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
 
@@ -1093,8 +1082,7 @@ async function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
-	var start_tensors = memory_leak_debugger();
+async function set_weights_from_json_object (json, dont_show_weights, no_error, m) { var start_tensors = memory_leak_debugger();
 
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
@@ -1160,8 +1148,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	return true;
 }
 
-async function set_weights_from_string (string, no_warning, no_error, m) {
-	var start_tensors = memory_leak_debugger();
+async function set_weights_from_string (string, no_warning, no_error, m) { var start_tensors = memory_leak_debugger();
 	var json = JSON.parse(string);
 
 	var res = await set_weights_from_json_object(json, no_warning, no_error, m);
@@ -1200,8 +1187,7 @@ async function get_weights_as_json (m) {
 }
 
 
-async function get_weights_as_string (m) {
-	var start_tensors = memory_leak_debugger();
+async function get_weights_as_string (m) { var start_tensors = memory_leak_debugger();
 
 	if(!m) {
 		m = model;
@@ -1392,13 +1378,11 @@ async function _force_reinit() {
 	l("Done re-initializing");
 }
 
-async function force_reinit (no_msg) {
+async function force_reinit (no_msg) { var start_tensors = memory_leak_debugger();
 	if(!model) {
 		l("Tried re-initializing, but no model was found");
 		return;
 	}
-
-	var start_tensors = memory_leak_debugger();
 
 	if(!no_msg) {
 		Swal.fire({
@@ -1426,8 +1410,7 @@ async function force_reinit (no_msg) {
 	memory_leak_debugger("force_reinit", start_tensors);
 }
 
-async function input_shape_is_image (is_from_webcam=0) {
-	var start_tensors = memory_leak_debugger();
+async function input_shape_is_image (is_from_webcam=0) { var start_tensors = memory_leak_debugger();
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {

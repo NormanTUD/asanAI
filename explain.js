@@ -2195,8 +2195,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 	var onBatchEnd = null;
 
 	eval(`
-	onBatchEnd = async function (epoch, logs) {
-		var start_tensors = memory_leak_debugger();
+	onBatchEnd = async function (epoch, logs) { var start_tensors = memory_leak_debugger();
 		if(typeof(old_onEpochEnd) == 'function') {
 			old_onEpochEnd(epoch, logs);
 		}

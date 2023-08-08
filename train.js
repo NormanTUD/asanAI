@@ -273,8 +273,7 @@ function delay(time) {
 	return new Promise(resolve => setTimeout(resolve, time));
 }
 
-function get_fit_data () {
-	var start_tensors = memory_leak_debugger();
+function get_fit_data () { var start_tensors = memory_leak_debugger();
 	var epochs = get_epochs();
 	var batchSize = get_batchSize();
 	var validationSplit = parseInt($("#validationSplit").val()) / 100;
@@ -289,8 +288,7 @@ function get_fit_data () {
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	};
 
-	callbacks["onBatchBegin"] = async function () {
-		var start_tensors = memory_leak_debugger();
+	callbacks["onBatchBegin"] = async function () { var start_tensors = memory_leak_debugger();
 		if(!started_training) {
 			model.stopTraining = true;
 		}
@@ -307,8 +305,7 @@ function get_fit_data () {
 		memory_leak_debugger("onBatchBegin", start_tensors);
 	};
 
-	callbacks["onEpochBegin"] = async function () {
-		var start_tensors = memory_leak_debugger();
+	callbacks["onEpochBegin"] = async function () { var start_tensors = memory_leak_debugger();
 		current_epoch++;
 		var max_number_epochs = get_epochs();
 		var current_time = Date.now();
@@ -340,8 +337,7 @@ function get_fit_data () {
 		memory_leak_debugger("onEpochBegin", start_tensors);
 	};
 
-	callbacks["onBatchEnd"] = async function (batch, logs) {
-		var start_tensors = memory_leak_debugger();
+	callbacks["onBatchEnd"] = async function (batch, logs) { var start_tensors = memory_leak_debugger();
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -393,8 +389,7 @@ function get_fit_data () {
 		memory_leak_debugger("onBatchEnd", start_tensors);
 	};
 
-	callbacks["onEpochEnd"] = async function (batch, logs) {
-		var start_tensors = memory_leak_debugger();
+	callbacks["onEpochEnd"] = async function (batch, logs) { var start_tensors = memory_leak_debugger();
 		delete logs["epoch"];
 		delete logs["size"];
 
@@ -451,8 +446,7 @@ function get_fit_data () {
 		memory_leak_debugger("onEpochEnd", start_tensors);
 	}
 
-	callbacks["onTrainEnd"] = async function () {
-		var start_tensors = memory_leak_debugger();
+	callbacks["onTrainEnd"] = async function () { var start_tensors = memory_leak_debugger();
 		favicon_default();
 		await write_model_to_latex_to_page();
 		document.title = original_title;
@@ -487,8 +481,7 @@ function get_fit_data () {
 	return fit_data;
 }
 
-function _set_apply_to_original_apply () {
-	var start_tensors = memory_leak_debugger();
+function _set_apply_to_original_apply () { var start_tensors = memory_leak_debugger();
 
 	assert(Object.keys(model).includes("layers"), "model does not include layers");
 
@@ -557,8 +550,7 @@ async function _get_xs_and_ys () {
 	return xs_and_ys;
 }
 
-async function _show_or_hide_simple_visualization (xs_and_ys) {
-	var start_tensors = memory_leak_debugger();
+async function _show_or_hide_simple_visualization (xs_and_ys) { var start_tensors = memory_leak_debugger();
 	if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 		if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
@@ -593,8 +585,7 @@ function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").html("");
 }
 
-async function _get_fit_data (xs_and_ys) {
-	var start_tensors = memory_leak_debugger();
+async function _get_fit_data (xs_and_ys) { var start_tensors = memory_leak_debugger();
 	var fit_data = true;
 
 	try {
@@ -603,8 +594,6 @@ async function _get_fit_data (xs_and_ys) {
 		fit_data = get_fit_data();
 
 		await _show_or_hide_simple_visualization(xs_and_ys);
-
-		var start_tensors = memory_leak_debugger();
 
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
@@ -618,8 +607,7 @@ async function _get_fit_data (xs_and_ys) {
 	return fit_data;
 }
 
-async function run_neural_network () {
-	var start_tensors = memory_leak_debugger();
+async function run_neural_network () { var start_tensors = memory_leak_debugger();
 	await clean_gui();
 
 	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
@@ -649,14 +637,14 @@ async function run_neural_network () {
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 		try {
-			var start_tensors = memory_leak_debugger();
+			var start_tensors_INTERNAL = memory_leak_debugger();
 
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 
 			await tf.nextFrame();
 
-			memory_leak_debugger("model.fit done", start_tensors);
+			memory_leak_debugger("model.fit done", start_tensors_INTERNAL);
 
 			assert(typeof(h) == "object", "history object is not of type object");
 
@@ -728,8 +716,7 @@ function randomInRange(start,end){
        return Math.floor(Math.random() * (end - start + 1) + start);
 }
 
-function drawImagesInGrid(images, categories, probabilities, numCategories) {
-	var start_tensors = memory_leak_debugger();
+function drawImagesInGrid(images, categories, probabilities, numCategories) { var start_tensors = memory_leak_debugger();
 	$("#canvas_grid_visualization").html("");
 	var categoryNames = labels.slice(0, numCategories);
 	var margin = 40;
@@ -829,8 +816,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	memory_leak_debugger("drawImagesInGrid", start_tensors);
 }
 
-async function visualize_train () {
-	var start_tensors = memory_leak_debugger();
+async function visualize_train () { var start_tensors = memory_leak_debugger();
 	seed_two = 2;
 
 	if(!$("#visualize_images_in_grid").is(":checked")) {

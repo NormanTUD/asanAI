@@ -107,8 +107,7 @@ async function get_current_layer_container_status_hash() {
 	return await md5(html);
 }
 
-async function get_current_status_hash(use_weights=1) {
-	var start_tensors = memory_leak_debugger();
+async function get_current_status_hash(use_weights=1) { var start_tensors = memory_leak_debugger();
 	var html_code = '';
 
 	var allitems = [];
@@ -3800,8 +3799,7 @@ function show_head_data(head) {
 	$("#csv_header_overview").html(html);
 }
 
-async function show_csv_file(disabled_show_head_data) {
-	var start_tensors = memory_leak_debugger();
+async function show_csv_file(disabled_show_head_data) { var start_tensors = memory_leak_debugger();
 	var csv = $("#csv_file").val();
 
 	var data = parse_csv_file(csv);

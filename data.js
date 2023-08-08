@@ -4,11 +4,10 @@ function degrees_to_radians(degrees) {
 	return degrees * (Math.PI / 180);
 }
 
-function numpy_str_to_tf_tensor (numpy_str, max_values) {
+function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = memory_leak_debugger();
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 	
-	var start_tensors = memory_leak_debugger();
 
 	if(!numpy_str.endsWith("\n")) {
 		numpy_str += "\n";
@@ -295,13 +294,11 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 	return data;
 }
 
-async function add_tensor_as_image_to_photos (tensor) {
+async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memory_leak_debugger();
 	// TODO
 	assert(typeof(tensor) == "object", "Tensor must be an object");	
 	assert(Object.keys(tensor).includes("shape"), "Tensor must be an object that contains a shape subkey");
 	assert(tensor.shape.length >= 3 && tensor.shape.length <= 4, "Tensor must have 3 or 4 dimensions");	
-
-	var start_tensors = memory_leak_debugger();
 
 	if(tensor.shape.length == 4) {
 		if(tensor.shape[0] == 1) {
@@ -374,8 +371,7 @@ function truncate_text (fullStr, strLen, separator) {
 		fullStr.substr(fullStr.length - backChars);
 };
 
-async function sine_ripple (img) {
-	var start_tensors = memory_leak_debugger();
+async function sine_ripple (img) { var start_tensors = memory_leak_debugger();
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
 	await tf.browser.toPixels(tf.tensor(img.arraySync()[0]), $("#" + uuid)[0]);
@@ -880,8 +876,7 @@ function add_photo_to_gallery(url) {
 	$("#photos").show().prepend(img_tag);
 }
 
-function url_to_tf (url, dont_load_into_tf=0) {
-	var start_tensors = memory_leak_debugger();
+function url_to_tf (url, dont_load_into_tf=0) { var start_tensors = memory_leak_debugger();
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	headerdatadebug("url_to_tf(" + url + ")");
@@ -1138,8 +1133,7 @@ function get_csv_seperator () {
 	return seperator;
 }
 
-async function get_x_y_from_csv () {
-	var start_tensors = memory_leak_debugger();
+async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	await reset_data();
 
 
@@ -1224,8 +1218,7 @@ async function get_x_y_from_csv () {
  * This function is for saving X and Y data later on to an external DB.
 */
 
-async function get_x_y_as_array () {
-	var start_tensors = memory_leak_debugger();
+async function get_x_y_as_array () { var start_tensors = memory_leak_debugger();
 	while (started_training) {
 		l("Awaiting finishing of training");
 		await delay(1000)
@@ -1357,8 +1350,7 @@ async function take_image_from_webcam_n_times (elem) {
 	await last_shape_layer_warning();
 }
 
-async function take_image_from_webcam (elem, nol, increment_counter=true) {
-	var start_tensors = memory_leak_debugger();
+async function take_image_from_webcam (elem, nol, increment_counter=true) { var start_tensors = memory_leak_debugger();
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
