@@ -1343,7 +1343,7 @@ async function get_weights_shape (weights_as_string, m) {
 	return shape;
 }
 
-async function _show_load_weights () {
+async function _show_load_weights () { var start_tensors = memory_leak_debugger();
 	if(!model) {
 		return false;
 	}
@@ -1364,8 +1364,10 @@ async function _show_load_weights () {
 				return true;
 			}
 		}
+		memory_leak_debugger("_show_load_weights", start_tensors);
 		return false;
 	} catch (e) {
+		memory_leak_debugger("_show_load_weights", start_tensors);
 		return false;
 	}
 }
