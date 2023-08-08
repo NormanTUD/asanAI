@@ -1413,23 +1413,25 @@ var finished_loading = false;
 
 var generating_images = false;
 
-async function cosmo_set_tiny_training_dataset () {
+async function cosmo_set_tiny_training_dataset () { var start_tensors = memory_leak_debugger();
 	log("Setting Epochs to 10...");
 	await set_epochs(10);
 	log("Setting max files per category to 5...");
 	$("#max_number_of_files_per_category").val(5);
 	$("#number_of_images_per_category").html(5);
+	memory_leak_debugger("cosmo_set_tiny_training_dataset", start_tensors);
 }
 
-async function cosmo_set_large_training_dataset () {
+async function cosmo_set_large_training_dataset () { var start_tensors = memory_leak_debugger();
 	log("Setting Epochs to 30...");
 	await set_epochs(30);
 	log("Setting max files per category to 40...");
 	$("#max_number_of_files_per_category").val(40);
 	$("#number_of_images_per_category").html(40);
+	memory_leak_debugger("cosmo_set_large_training_dataset", start_tensors);
 }
 
-async function fireworks_and_reload (reload=1, waittime=10000) {
+async function fireworks_and_reload (reload=1, waittime=10000) { var start_tensors = memory_leak_debugger();
 	if(in_fireworks) {
 		return;
 	}
@@ -1448,6 +1450,7 @@ async function fireworks_and_reload (reload=1, waittime=10000) {
 
 	remove_manicule(1);
 
+	memory_leak_debugger("fireworks_and_reload", start_tensors);
 	if(reload) {
 		location.reload();
 	}
