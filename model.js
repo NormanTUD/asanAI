@@ -171,7 +171,7 @@ function get_weight_type_name_from_option_name (on) { var start_tensors = memory
 	return on;
 }
 
-function get_data_for_layer (type, i, first_layer) {
+function get_data_for_layer (type, i, first_layer) { var start_tensors = memory_leak_debugger();
 	assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
 	assert(typeof(i) == "number", i + " is not a number but " + typeof(i));
 	assert(typeof(first_layer) == "boolean", first_layer + " is not a boolean but " + typeof(first_layer));
@@ -254,6 +254,8 @@ function get_data_for_layer (type, i, first_layer) {
 	}
 
 	delete data["visualize"];
+
+	memory_leak_debugger("get_data_for_layer", start_tensors);
 
 	return data;
 }
@@ -678,7 +680,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 	return new_model;
 }
 
-function _set_layer_gui (data, fake_model_structure, i) {
+function _set_layer_gui (data, fake_model_structure, i) { var start_tensors = memory_leak_debugger();
 	var data_keys = Object.keys(data);
 	for (var k = 0; k < data_keys.length; k++) {
 		var this_key = data_keys[k];
@@ -693,6 +695,8 @@ function _set_layer_gui (data, fake_model_structure, i) {
 			current_setting.css("background-color", "");
 		}
 	}
+
+	memory_leak_debugger("_set_layer_gui", start_tensors);
 }
 
 async function create_model (old_model, fake_model_structure, force) { var start_tensors = memory_leak_debugger();
