@@ -451,7 +451,7 @@ function group_layers (layers) {
         return result;
 }
 
-async function write_descriptions (force=0) {
+async function write_descriptions (force=0) { var start_tensors = memory_leak_debugger();
 	if(is_cosmo_mode) {
 		//log("Not doing anything in cosmo mode");
 		return;
@@ -548,6 +548,8 @@ async function write_descriptions (force=0) {
 	} else {
 		$(".descriptions_of_layers").show();
 	}
+
+	memory_leak_debugger("write_descriptions", start_tensors);
 }
 
 function explain_error_msg (err) {

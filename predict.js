@@ -6,7 +6,7 @@ async function switch_to_next_camera_predict () {
 	await show_webcam(1);
 }
 
-async function get_label_data () {
+async function get_label_data () { var start_tensors = memory_leak_debugger();
 	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
 		let imageData = await get_image_data(1, 0, {
 			title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
@@ -27,6 +27,8 @@ async function get_label_data () {
 			category_counter++;
 		}
 	}
+
+	memory_leak_debugger("get_label_data", start_tensors);
 }
 
 var loadFile = (function(event) {
