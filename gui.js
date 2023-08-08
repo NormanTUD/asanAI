@@ -5609,14 +5609,16 @@ async function create_and_download_zip () {
 	await create_zip_with_custom_images().then(save_custom_images_file);
 }
 
-async function change_last_responsible_layer_for_image_output () {
+async function change_last_responsible_layer_for_image_output () { var start_tensors = memory_leak_debugger();
 	if(is_classification) {
+		memory_leak_debugger("change_last_responsible_layer_for_image_output", start_tensors);
 		return;
 	}
 
 	var current_layer_status_hash = await get_current_layer_container_status_hash();
 
 	if(last_image_output_shape_hash == current_layer_status_hash) {
+		memory_leak_debugger("change_last_responsible_layer_for_image_output", start_tensors);
 		return;
 	}
 
@@ -5645,6 +5647,8 @@ async function change_last_responsible_layer_for_image_output () {
 	} else {
 		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
 	}
+
+	memory_leak_debugger("change_last_responsible_layer_for_image_output", start_tensors);
 }
 
 function show_bars_instead_of_numbers () { var start_tensors = memory_leak_debugger();
