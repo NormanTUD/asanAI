@@ -3511,7 +3511,7 @@ function delete_custom_drawing_layer () {
 	}
 }
 
-async function last_shape_layer_warning() {
+async function last_shape_layer_warning() { var start_tensors = memory_leak_debugger();
 	if ($("#data_origin").val() == "image") {
 		if (model.outputShape.length == 2) {
 			is_classification = true;
@@ -3554,9 +3554,10 @@ async function last_shape_layer_warning() {
 	} else {
 		$("#last_layer_shape_warning").html("");
 	}
+	memory_leak_debugger("last_shape_layer_warning", start_tensors);
 }
 
-function alter_text_webcam_series () {
+function alter_text_webcam_series () { var start_tensors = memory_leak_debugger();
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseFloat($("#delay_between_images_in_series").val())
 
@@ -3566,15 +3567,17 @@ function alter_text_webcam_series () {
 	}
 
 	$(".webcam_series_button").html(s);
+	memory_leak_debugger("alter_text_webcam_series", start_tensors);
 }
 
-function add_image_to_category (img, category) {
+function add_image_to_category (img, category) { var start_tensors = memory_leak_debugger();
 	var imgDiv = $($(".own_images")[category]);
 	var html = '<span class="own_image_span"><img height="90" src="' + img+ '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>';
 	imgDiv.append(html);
+	memory_leak_debugger("add_image_to_category", start_tensors);
 }
 
-async function add_new_category() {
+async function add_new_category() { var start_tensors = memory_leak_debugger();
 	var n = $(".own_image_label").length;
 
 	var imgDiv = $(".own_images");
@@ -3657,10 +3660,11 @@ async function add_new_category() {
 
 	await add_cosmo_point("added_custom_category");
 
+	memory_leak_debugger("add_new_category", start_tensors);
 	return uuid;
 }
 
-function addLayer(canvas_id, transparency) {
+function addLayer(canvas_id, transparency) { var start_tensors = memory_leak_debugger();
 	// Get the canvas element
 	const canvas = document.getElementById(canvas_id);
 
@@ -3715,27 +3719,31 @@ function addLayer(canvas_id, transparency) {
 
 	$("#" + canvas_id).parent().append("<br>Pen size:");
 	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
+	memory_leak_debugger("addLayer", start_tensors);
 }
 
 
-async function rename_labels() {
+async function rename_labels() { var start_tensors = memory_leak_debugger();
 	reset_labels();
 	$(".own_image_label").each(function (i, x) {
 		labels.push($(x).val());
 	});
 
 	await update_python_code(1);
+
+	memory_leak_debugger("rename_labels", start_tensors);
 }
 
-function show_or_hide_hide_delete_category() {
+function show_or_hide_hide_delete_category() { var start_tensors = memory_leak_debugger();
 	if ($(".own_image_label").length > 1) {
 		$(".delete_category_button").show();
 	} else {
 		$(".delete_category_button").hide();
 	}
+	memory_leak_debugger("show_or_hide_hide_delete_category", start_tensors);
 }
 
-function get_shown_advanced() {
+function get_shown_advanced() { var start_tensors = memory_leak_debugger();
 	var layer_options_internal = $(".layer_options_internal");
 
 	var shown = [];
@@ -3749,10 +3757,12 @@ function get_shown_advanced() {
 		}
 	}
 
+	memory_leak_debugger("get_shown_advanced", start_tensors);
+
 	return shown;
 }
 
-function set_shown_advanced(shown) {
+function set_shown_advanced(shown) { var start_tensors = memory_leak_debugger();
 	for (var i = 0; i < shown.length; i++) {
 		if (shown[i]) {
 			$($(".layer_options_internal")[i]).css("display", "table-row-group");
@@ -3760,9 +3770,10 @@ function set_shown_advanced(shown) {
 			$($(".layer_options_internal")[i]).css("display", "none");
 		}
 	}
+	memory_leak_debugger("set_shown_advanced", start_tensors);
 }
 
-function show_head_data(head) {
+function show_head_data(head) { var start_tensors = memory_leak_debugger();
 	var previous_values = [];
 	$(".header_select").each((x, y) => { previous_values.push($(y).val()); });
 
@@ -3812,6 +3823,7 @@ function show_head_data(head) {
 
 	html += "</table>";
 	$("#csv_header_overview").html(html);
+	memory_leak_debugger("show_head_data", start_tensors);
 }
 
 async function show_csv_file(disabled_show_head_data) { var start_tensors = memory_leak_debugger();
@@ -3912,7 +3924,7 @@ async function show_csv_file(disabled_show_head_data) { var start_tensors = memo
 	memory_leak_debugger("show_csv_file", start_tensors);
 }
 
-function get_generated_encoding(nr, max) {
+function get_generated_encoding(nr, max) { var start_tensors = memory_leak_debugger();
 	var array = [];
 	for (var i = 0; i < max; i++) {
 		if(i == nr) {
@@ -3922,19 +3934,24 @@ function get_generated_encoding(nr, max) {
 		}
 	}
 
-	return "[" + array.join(", ") + "]";
+	var res = "[" + array.join(", ") + "]";
+
+	memory_leak_debugger("get_generated_encoding", start_tensors);
+
+	return res;
 }
 
-function ensure_shape_array(shape) {
+function ensure_shape_array(shape) { var start_tensors = memory_leak_debugger();
 	if (typeof (shape) == "string") {
 		return eval(shape);
 	} else if (typeof (shape) == "object") {
 		return shape;
 	}
 	console.warn("Is neither shape nor object: ", shape);
+	memory_leak_debugger("ensure_shape_array", start_tensors)
 }
 
-function output_shape_is_same(output_shape_data, output_shape_network) {
+function output_shape_is_same(output_shape_data, output_shape_network) { var start_tensors = memory_leak_debugger();
 	output_shape_data = ensure_shape_array(output_shape_data);
 	output_shape_network = ensure_shape_array(output_shape_network);
 
@@ -3948,17 +3965,20 @@ function output_shape_is_same(output_shape_data, output_shape_network) {
 		for (var i = 0; i < output_shape_network.length; i++) {
 			var is_equal = output_shape_data[i] === output_shape_network[i] || output_shape_network[i] === null || output_shape_data[i] === null;
 			if (!is_equal) {
+				memory_leak_debugger("output_shape_is_same", start_tensors)
 				return false;
 			}
 		}
 
+		memory_leak_debugger("output_shape_is_same", start_tensors)
 		return true;
 	} else {
+		memory_leak_debugger("output_shape_is_same", start_tensors)
 		return false;
 	}
 }
 
-function tensor_print_to_string(tensor) {
+function tensor_print_to_string(tensor) { var start_tensors = memory_leak_debugger();
 	try {
 		var logBackup = console.log;
 		var logMessages = [];
@@ -3971,36 +3991,41 @@ function tensor_print_to_string(tensor) {
 
 		console.log = logBackup;
 
+		memory_leak_debugger("tensor_print_to_string", start_tensors)
 		return logMessages.join("\n");
 	} catch (e) {
 		console.error("tensor_print_to_string failed:", e);
 
+		memory_leak_debugger("tensor_print_to_string", start_tensors)
 		return "<span class='error_msg'>Error getting tensor as string</span>";
 	}
 }
 
-function contains_convolution() {
+function contains_convolution() { var start_tensors = memory_leak_debugger();
 	var number_of_layers = get_number_of_layers();
 	for (var j = 0; j < get_number_of_layers(); j++) {
 		var layer_type = $($(".layer_type")[j]).val();
 
 		if (layer_type.includes("conv")) {
+			memory_leak_debugger("contains_convolution", start_tensors);
 			return true;
 		}
 	}
 
+	memory_leak_debugger("contains_convolution", start_tensors);
 	return false;
 }
 
-function disable_start_training_button_custom_images() {
+function disable_start_training_button_custom_images() { var start_tensors = memory_leak_debugger();
 	if ($(".own_images").children().length != 0) {
 		enable_train();
 	} else {
 		disable_train();
 	}
+	memory_leak_debugger("disable_start_training_button_custom_images", start_tensors);
 }
 
-async function write_error(e, fn, hide_swal) {
+async function write_error(e, fn, hide_swal) { var start_tensors = memory_leak_debugger();
 	if (e) {
 		var msg = e;
 
@@ -4038,15 +4063,17 @@ async function write_error(e, fn, hide_swal) {
 
 	await enable_everything();
 	await write_descriptions();
+	memory_leak_debugger("write_error", start_tensors);
 }
 
-async function hide_error() {
+async function hide_error() { var start_tensors = memory_leak_debugger();
 	$("#error").html("").hide().parent().hide();
 	await enable_everything();
 	await write_descriptions();
+	memory_leak_debugger("hide_error", start_tensors);
 }
 
-function find_layer_number_by_element(element) {
+function find_layer_number_by_element(element) { var start_tensors = memory_leak_debugger();
 	var item_parent = element;
 
 	while (!$(item_parent).hasClass("layer_setting")) {
@@ -4067,10 +4094,13 @@ function find_layer_number_by_element(element) {
 			nr = counter;
 		}
 	});
+
+	memory_leak_debugger("find_layer_number_by_element", start_tensors);
+
 	return nr;
 }
 
-function get_layer_regularizer_config(layer_nr, regularizer_type) {
+function get_layer_regularizer_config(layer_nr, regularizer_type) { var start_tensors = memory_leak_debugger();
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
 
@@ -4099,10 +4129,11 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 		}
 	}
 
+	memory_leak_debugger("get_layer_regularizer_config", start_tensors)
 	return option_hash;
 }
 
-function get_layer_initializer_config(layer_nr, initializer_type) {
+function get_layer_initializer_config(layer_nr, initializer_type) { var start_tensors = memory_leak_debugger();
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
 
@@ -4133,21 +4164,26 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 		}
 	}
 
+	memory_leak_debugger("get_layer_initializer_config", start_tensors);
 	return option_hash;
 }
 
-function looks_like_number(item) {
+function looks_like_number(item) { var start_tensors = memory_leak_debugger();
 	if(typeof(item) == "number") {
+		memory_leak_debugger("looks_like_number", start_tensors);
 		return true;
 	}
 
 	if (/^[+-]?(?:(?:\d+(?:\.\d+)?))$/.test(item)) {
+		memory_leak_debugger("looks_like_number", start_tensors);
 		return true;
 	}
+
+	memory_leak_debugger("looks_like_number", start_tensors);
 	return false;
 }
 
-async function set_default_input_shape() {
+async function set_default_input_shape() { var start_tensors = memory_leak_debugger();
 	if (!changed_data_source) {
 		return;
 	}
@@ -4169,17 +4205,20 @@ async function set_default_input_shape() {
 			log(e);
 		}
 	}
+
+	memory_leak_debugger("set_default_input_shape", start_tensors);
 }
 
-function allow_training() {
+function allow_training() { var start_tensors = memory_leak_debugger();
 	if (_allow_training()) {
 		enable_train();
 	} else {
 		disable_train();
 	}
+	memory_leak_debugger("allow_training", start_tensors);
 }
 
-function _allow_training() {
+function _allow_training() { var start_tensors = memory_leak_debugger();
 	if(has_missing_values) {
 		return false;
 	}
@@ -4215,6 +4254,8 @@ function _allow_training() {
 			}
 		}
 	}
+
+	memory_leak_debugger("_allow_training", start_tensors);
 }
 
 async function show_layer_view() {
