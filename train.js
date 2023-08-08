@@ -206,7 +206,14 @@ function getKeyByValue(object, value) { var start_tensors = memory_leak_debugger
 	return res;
 }
 
-function get_model_data (optimizer_name_only) { var start_tensors = memory_leak_debugger();
+async function get_model_data (optimizer_name_only) { var start_tensors = memory_leak_debugger();
+	if(global_model_data) {
+		var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+		for (var i = 0; i < model_data_tensors.length; i++) {
+			await dispose(model_data_tensors[i]);
+		}
+	}
+
 	var loss = $("#loss").val();
 	var optimizer_type = $("#optimizer").val();
 	var metric_type = $("#metric").val();
@@ -220,7 +227,7 @@ function get_model_data (optimizer_name_only) { var start_tensors = memory_leak_
 	var validationSplit = parseInt($("#validationSplit").val());
 	var divide_by = parseFloat($("#divide_by").val());
 
-	var model_data = {
+	global_model_data = {
 		loss: loss,
 		optimizer_name: optimizer_type,
 		optimizer: optimizer_type,
@@ -234,32 +241,32 @@ function get_model_data (optimizer_name_only) { var start_tensors = memory_leak_
 	};
 
 	if(!is_hidden_or_has_hidden_parent($("#height"))) {
-		model_data["width"] = width;
-		model_data["height"] = height;
+		global_model_data["width"] = width;
+		global_model_data["height"] = height;
 	}
 
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
 	for (var i = 0; i < optimizer_data_names.length; i++) {
-		model_data[optimizer_data_names[i]] = parseFloat($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
+		global_model_data[optimizer_data_names[i]] = parseFloat($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
 	}
 
 
 	var optimizer_constructors = {
-		"adadelta": "adadelta(model_data['learningRate'], model_data['rho'], model_data['epsilon'])",
-		"adagrad": "adagrad(model_data['learningRate'], model_data['initialAccumulatorValue'])",
-		"adam": "adam(model_data['learningRate'], model_data['beta1'], model_data['beta2'], model_data['epsilon'])",
-		"adamax": "adamax(model_data['learningRate'], model_data['beta1'], model_data['beta2'], model_data['epsilon'], model_data['decay'])",
-		"rmsprop": "rmsprop(model_data['learningRate'], model_data['decay'], model_data['momentum'], model_data['epsilon'], model_data['centered'])",
-		"sgd": "sgd(model_data['learningRate'])"
+		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
+		"adagrad": "adagrad(global_model_data['learningRate'], global_model_data['initialAccumulatorValue'])",
+		"adam": "adam(global_model_data['learningRate'], global_model_data['beta1'], global_model_data['beta2'], global_model_data['epsilon'])",
+		"adamax": "adamax(global_model_data['learningRate'], global_model_data['beta1'], global_model_data['beta2'], global_model_data['epsilon'], global_model_data['decay'])",
+		"rmsprop": "rmsprop(global_model_data['learningRate'], global_model_data['decay'], global_model_data['momentum'], global_model_data['epsilon'], global_model_data['centered'])",
+		"sgd": "sgd(global_model_data['learningRate'])"
 	};
 
 	if(!optimizer_name_only) {
-		model_data["optimizer"] = eval("tf.train." + optimizer_constructors[model_data["optimizer"]]);
+		global_model_data["optimizer"] = eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]);
 	}
 
 	memory_leak_debugger("get_model_data", start_tensors);
-	return model_data;
+	return global_model_data;
 }
 
 function delay(time) {
