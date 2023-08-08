@@ -118,7 +118,6 @@ async function force_download_image_preview_data () { var start_tensors = memory
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();
 	} else {
-		log("Deleting #photos");
 		$("#photos").html("").hide();
 	}
 	memory_leak_debugger("force_download_image_preview_data", start_tensors);
@@ -531,7 +530,6 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 			var category_counter = 0;
 
 			if(await input_shape_is_image()) {
-				log("Deleting #photos A");
 				$("#photos").html("");
 				let imageData = await get_image_data(0);
 
