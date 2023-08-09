@@ -29,7 +29,8 @@
 			"batch_size" => "Batch-Size",
 			"epochs" => "Epochs",
 			"own_data" => "Own data",
-			"filters" => "Filters"
+			"filters" => "Filters",
+			"distribution" => "Distribution"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -60,7 +61,8 @@
 			"batch_size" => "Batchgröße",
 			"epochs" => "Epochen",
 			"own_data" => "Eigenes",
-			"filters" => "Filter"
+			"filters" => "Filter",
+			"distribution" => "Verteilung"
 		)
 	);
 ?>

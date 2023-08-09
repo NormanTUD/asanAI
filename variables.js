@@ -1197,7 +1197,7 @@ var opt = {
 	"initializer": "'XXX_NAME_XXX Initializer', 'XXX_NAME_XXX_initializer', 'select', initializers, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_scale": "'Scale', 'XXX_NAME_XXX_initializer_scale', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_mode": "'Mode', 'XXX_NAME_XXX_initializer_mode', 'select', mode_modes, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_distribution": "'Distribution', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'"
+	"initializer_distribution": `'<span class="TRANSLATEME_distribution"></span>', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'`
 }
 
 var keys_opt = Object.keys(opt);
