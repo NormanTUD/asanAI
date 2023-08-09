@@ -85,7 +85,20 @@
 			"enable_tf_debug" => "Enable TFJS Debugger",
 			"enable_webcam" => "Enable webcam",
 			"switch_to_other_cam" => "Switch to other cam",
-			"copy_to_clipboard" => "Copy to clipboard"
+			"copy_to_clipboard" => "Copy to clipboard",
+			"set_all_initializers" => "Set all Initializers",
+			"augmentation" => "Augmentation",
+			"iterations" => "Iterations",
+			"close" => "Close",
+			"register" => "Register",
+			"csv" => "CSV",
+			"math" => "Math",
+			"smaller" => "Smaller",
+			"larger" => "Larger",
+			"reset" => "Reset",
+			"delete_predictions" => "Delete predictions",
+			"memory_usage_while_training" => "Memory usage while training (per batch)",
+			"img_per_cat" => "Img/cat"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -172,7 +185,20 @@
 			"enable_tf_debug" => "TFJS Debugger aktivieren",
 			"enable_webcam" => "Webcam aktivieren",
 			"switch_to_other_cam" => "Zur anderen Kamera wechseln",
-			"copy_to_clipboard" => "In Zwischenablage kopieren"
+			"copy_to_clipboard" => "In Zwischenablage kopieren",
+			"set_all_initializers" => "Setze alle Initialisierer",
+			"augmentation" => "Augmentierung",
+			"iterations" => "Iterationen",
+			"close" => "Schließen",
+			"register" => "Registrieren",
+			"csv" => "CSV",
+			"math" => "Mathe",
+			"smaller" => "Kleiner",
+			"larger" => "Größer",
+			"reset" => "Zurücksetzen",
+			"delete_predictions" => "Predictions löschen",
+			"memory_usage_while_training" => "Speicherverbrauch während des Trainings (pro Batch)",
+			"img_per_cat" => "Bilder pro Kategorie"
 		)
 	);
 ?>

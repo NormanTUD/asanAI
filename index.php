@@ -439,7 +439,7 @@
 										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;"></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
-										<td>Img/cat</td>
+										<td><span class="TRANSLATEME_img_per_cat" /></td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px"></td>
 									</tr>
 									<tr class="expert_mode_only">
@@ -727,7 +727,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Set all Initializers</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers" /></div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
@@ -874,7 +874,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="ribbon-group-title">Optimizer</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_optimizer" /></div>
 					</div>
 				</div>
 
@@ -910,7 +910,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Augmentation</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_augmentation" /></div>
 					</div>
 				</div>
 
@@ -923,7 +923,7 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
-											<td>Iterations</td>
+											<td><span class="TRANSLATEME_iterations" /></td>
 											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr>
@@ -1031,11 +1031,11 @@
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px">Imprint</button><br><br>
+							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint" /></button><br><br>
 							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
 							<button style="width: 200px" onclick="sources_popup()">Sources and used programs</button>
 						</div>
-						<div class="ribbon-group-title">Imprint</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_imprint" /></div>
 					</div>
 
 				</div>
@@ -1047,7 +1047,7 @@
 						<div id="table_div"></div>
 
 						<div class="loss_explanation" id="explanation"></div>
-						<button onclick="close_losses()">Close</button>
+						<button onclick="close_losses()"><span class="TRANSLATEME_close" /></button>
 					</div>
 				</div>
 
@@ -1058,7 +1058,7 @@
 				$file = file_get_contents("README.md");
 				print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
 ?>
-							<button class="close_button" onclick="closePopup('sources_popup')">Close</button>
+							<button class="close_button" onclick="closePopup('sources_popup')"><span class="TRANSLATEME_close" /></button>
 						</div>
 					</div>
 				</div>
@@ -1090,7 +1090,7 @@
 								</tr>
 							</table>
 
-								<button class="close_button" onclick="closePopup('save_dialog')">Close</button>
+								<button class="close_button" onclick="closePopup('save_dialog')"><span class="TRANSLATEME_close" /></button>
 							</div>
 						</div>
 					</div>
@@ -1098,7 +1098,7 @@
 					<div id="register_dialog" class="popup" style="display: none">
 						<div class="popup_body less_transparent_glass_box">
 							<div id="register_content"> 
-								<h1>Register</h1>
+								<h1><span class="TRANSLATEME_register" /></h1>
 
 								<form id="register_form">
 									<table>
@@ -1174,7 +1174,7 @@
 							</div>
 						</div>
 						<br>
-						<button class="close_button" onclick="closePopup('save_model_dialog')">Close</button>
+						<button class="close_button" onclick="closePopup('save_model_dialog')"><span class="TRANSLATEME_close" /></button>
 					</div>
 				</div>
 
@@ -1201,7 +1201,7 @@
 									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
 									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
-									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv" />CSV</a></li>
+									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv" /><span class="TRANSLATEME_csv" /></a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training" /></a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict" /></a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code" /></a></li>
@@ -1379,7 +1379,7 @@
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
-									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label">Math</a></li>
+									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math" /></a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
@@ -1412,10 +1412,10 @@
 
 								<div id="maximally_activated" class="tab maximally_activated_class">
 									<br>
-									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
-									<button onclick="larger_maximally_activated_neurons()">Larger</button>
-									<button onclick="reset_maximally_activated_neurons()">Reset</button>
-									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
+									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller" /></button>
+									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger" /></button>
+									<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset" /></button>
+									<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions" /></button>
 									<div id="maximally_activated_content"></div>
 								</div>
 
@@ -1432,7 +1432,7 @@
 
 							<div id="tfvis_tab" class="tab" style="float: right; width: 100%">
 								<br>
-								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()">Start training</button>
+								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training" /></button>
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
@@ -1451,7 +1451,7 @@
 									<div id="training_content">
 										<div id="simplest_training_data_visualization" style="display: none"></div>
 										<div style="display: none">
-											<h3 class="hide_in_cosmo_mode">Epochs:</h3>
+											<h3 class="hide_in_cosmo_mode"><span class="TRANSLATEME_epochs" />:</h3>
 											<div id="plotly_epoch_history"></div>
 										</div>
 
@@ -1466,7 +1466,7 @@
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h1>Memory usage while training (per batch):</h1>
+											<h1><span class="TRANSLATEME_memory_usage_while_training" />:</h1>
 											<div id="plotly_memory_history"></div>
 										</div>
 									</div>
