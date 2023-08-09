@@ -1083,7 +1083,7 @@ async function draw_maximally_activated_layer (layer, type) {
 	var br = "";
 	if(is_cosmo_mode) {
 		type_h2 = "span";
-		ruler = "<hr>";
+		ruler = "<hr class='cosmo_hr'>";
 		br = "<br>";
 	}
 	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}Layer ${layer + types_in_order}</${type_h2}>${br}`)
@@ -2485,11 +2485,11 @@ async function cosmo_maximally_activate_last_layer () {
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
-	$(".h2_maximally_activated_layer_contents").html("<hr>So denkt die KI, dass die Kategorien aussehen:");
+	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'>So denkt die KI, dass die Kategorien aussehen:");
 
 	var ep = get_epochs();
 
-	$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr>Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
+	$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur 25 Bildern und 10 Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr class="cosmo_hr">Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr class='cosmo_hr'>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
 
 	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
 
