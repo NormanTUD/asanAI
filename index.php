@@ -448,7 +448,7 @@
 									</tr>
 								</table>
 							</div>
-							<div class="ribbon-group-title">Image Options</div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_image_options"></span></div>
 						</div>
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>

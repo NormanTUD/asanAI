@@ -38,7 +38,7 @@ function updateTranslations() {
 		const translationKey = element.classList[0].substring(12);
 		const translation = language[lang][translationKey];
 		if (translation) {
-			element.textContent = translation;
+			element.innerHTML = translation;
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}

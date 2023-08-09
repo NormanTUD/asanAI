@@ -374,7 +374,7 @@ function group_layers (layers) {
 		},
                 {
 			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))", 
-			"name": "Feature ex&shy;traction"
+			"name": "<span class='TRANSLATEME_feature_extraction'></span>"
 		},
                 {
 			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))", 
@@ -548,6 +548,8 @@ async function write_descriptions (force=0) { var start_tensors = memory_leak_de
 	} else {
 		$(".descriptions_of_layers").show();
 	}
+
+	updateTranslations();
 
 	memory_leak_debugger("write_descriptions", start_tensors);
 }

@@ -30,7 +30,9 @@
 			"epochs" => "Epochs",
 			"own_data" => "Own data",
 			"filters" => "Filters",
-			"distribution" => "Distribution"
+			"distribution" => "Distribution",
+			"image_options" => "Image Options",
+			"feature_extraction" => "Feature ex&shy;traction"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -62,7 +64,9 @@
 			"epochs" => "Epochen",
 			"own_data" => "Eigenes",
 			"filters" => "Filter",
-			"distribution" => "Verteilung"
+			"distribution" => "Verteilung",
+			"image_options" => "Bildoptionen",
+			"feature_extraction" => "Merkmalsex&shy;traktion"
 		)
 	);
 ?>
