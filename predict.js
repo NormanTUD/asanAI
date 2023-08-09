@@ -965,6 +965,10 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) { var
 }
 
 function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = memory_leak_debugger();
+	assert(typeof(i) == "number", "i is not a number");
+	assert(typeof(max_i) == "number", "max_i is not a number");
+	assert(typeof(predictions) == "object", "predictions is not an object");
+
 	var str = "";
 	var label = labels[i % labels.length];
 	var probability = predictions[i];
