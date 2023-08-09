@@ -840,12 +840,11 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 		} else if(("" + e).includes("n is undefined")) {
 			console.warn("Model weights probably already disposed, this is usually not harmful");
 		} else {
-			l("Predict data shape:" + predict_data.shape);
+			l("Error (512): " + e);
 
 			console.error(e);
 		}
 
-		l("Error (512): " + e);
 		memory_leak_debugger("predict_webcam", start_tensors);
 		currently_predicting_webcam = false;
 
