@@ -130,7 +130,8 @@
 			"set_optimizer_to" => "Setting optimizer to ",
 			"set_metric_to" => "Setting metric to ",
 			"set_loss_to" => "Setting loss to ",
-			"show_bars_instead_of_numbers" => "Show bars instead of numbers"
+			"show_bars_instead_of_numbers" => "Show bars instead of numbers",
+			"number_of_grid_images" => "Number of grid images"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -262,7 +263,8 @@
 			"set_optimizer_to" => "Setze den Optimierer auf ",
 			"set_metric_to" => "Setze die Metrik auf ",
 			"set_loss_to" => "Setze den Loss auf ",
-			"show_bars_instead_of_numbers" => "Balken statt Zahlen verwenden"
+			"show_bars_instead_of_numbers" => "Balken statt Zahlen verwenden",
+			"number_of_grid_images" => "Anzahl Bilder im Grid"
 		)
 	);
 ?>
