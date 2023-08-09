@@ -1456,7 +1456,7 @@
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h3>Batches:</h3>
+											<h3><span class="TRANSLATEME_batches" />:</h3>
 											<div id="plotly_batch_history"></div>
 										</div>
 
