@@ -125,7 +125,10 @@
 			"visualize_images_in_grid" => "Visualize images in grid",
 			"model_compiled_successfully" => "Model compiled successfully",
 			"not_creating_model_because_values_are_missing" => "Not creating model because some values are missing",
-			"tensors" => "Tensors"
+			"tensors" => "Tensors",
+			"set_val_split_to" => "Set validationSplit to ",
+			"set_optimizer_to" => "Setting optimizer to ",
+			"set_metric_to" => "Setting metric to "
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -252,7 +255,10 @@
 			"visualize_images_in_grid" => "Bilder in Grid visualisieren",
 			"model_compiled_successfully" => "Model erfolgreich kompiliert",
 			"not_creating_model_because_values_are_missing" => "Kann Modell nicht erstellen, weil Werte fehlen",
-			"tensors" => "Tensoren"
+			"tensors" => "Tensoren",
+			"set_val_split_to" => "Setze den Validation-Split auf ",
+			"set_optimizer_to" => "Setze den Optimierer auf ",
+			"set_metric_to" => "Setze die Metrik auf "
 		)
 	);
 ?>

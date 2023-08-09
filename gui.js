@@ -1280,7 +1280,7 @@ function set_momentum(val) {
 
 function set_validationSplit(val) {
 	assert(typeof(val) == "number", val + " is not an number but " + typeof(number));
-	l("Set validationSplit to " + val);
+	l(language[lang]["set_val_split_to"] + val);
 	$("#validationSplit").val(val);
 }
 
@@ -1339,12 +1339,12 @@ function reset_summary() {
 
 function set_optimizer(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
-	l("Setting optimizer to " + val);
+	l(language[lang]["set_optimizer_to"] + val);
 	$("#optimizer").val(val).trigger("change");
 }
 
 function set_metric(val) {
-	l("Setting metric to " + val);
+	l(language[lang]["set_metric_to"] + val);
 
 	if(Object.keys(metric_shortnames).includes(val)) {
 		val = metric_shortnames[val];
