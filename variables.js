@@ -1518,3 +1518,6 @@ var currently_predicting_webcam = false;
 var global_model_data = undefined;
 
 var old_tensor_number = 0;
+
+var csv_x_data = null;
+var csv_y_data = null;

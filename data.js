@@ -1162,7 +1162,6 @@ function get_csv_seperator () {
 async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	await reset_data();
 
-
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();
 	var is_one_hot_encoded = false;
@@ -1198,7 +1197,7 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = await tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();
+				y_data["data"] = tf.tidy(() => { return tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
