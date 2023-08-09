@@ -8,7 +8,10 @@
 			"forbidden" => "Forbiden",
 			"resque" => "Resque",
 			"warning" => "Warning",
-			"the_more_variations_the_model_sees" => "The more variations the model sees, the better it can learn important features of the images."
+			"the_more_variations_the_model_sees" => "The more variations the model sees, the better it can learn important features of the images.",
+			"quality_depends_on_random" => "The quality of the results depends on randomness.",
+			"program_looks_at_data" => "The program now looks at the data repeadetly and tries to learn to categorize the images.",
+			"the_further_on_top_the_better" => "The further to the top the images are, the more sure the network is in classifying the images into the categories."
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -18,7 +21,10 @@
 			"forbidden" => "Verbot",
 			"resque" => "Rettung",
 			"warning" => "Warnung",
-			"the_more_variations_the_model_sees" => "Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen."
+			"the_more_variations_the_model_sees" => "Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.",
+			"quality_depends_on_random" => "Die Qualität des Ergebnisses hängt vom Zufall ab.",
+			"program_looks_at_data" => "Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.",
+			"the_further_on_top_the_better" => "Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie."
 		)
 	);
 ?>

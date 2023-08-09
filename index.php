@@ -1477,10 +1477,10 @@
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
-										Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.<br>
-										Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.<br>
+										<span class="TRANSLATEME_program_looks_at_data"></span><br>
+										<span class="TRANSLATEME_the_further_on_top_the_better"></span><br>
 										<hr class="cosmo_hr">
-										Die Qualität des Ergebnisses hängt vom Zufall ab.
+										<span class="TRANSLATEME_quality_depends_on_random"></span>
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										<hr class="cosmo_hr">
