@@ -107,7 +107,10 @@
 			"email" => "E-Mail",
 			"public" => "Public",
 			"save" => "Save",
-			"augment" => "Augment"
+			"augment" => "Augment",
+			"download_model_data" => "Download model data",
+			"logout" => "Logout",
+			"load" => "Load"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -216,7 +219,10 @@
 			"email" => "E-Mail",
 			"public" => "Öffentlich",
 			"save" => "Speichern",
-			"augment" => "Augmentieren"
+			"augment" => "Augmentieren",
+			"download_model_data" => "Modeldaten downloaden",
+			"logout" => "Abmelden",
+			"load" => "laden"
 		)
 	);
 ?>
