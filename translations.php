@@ -128,7 +128,8 @@
 			"tensors" => "Tensors",
 			"set_val_split_to" => "Set validationSplit to ",
 			"set_optimizer_to" => "Setting optimizer to ",
-			"set_metric_to" => "Setting metric to "
+			"set_metric_to" => "Setting metric to ",
+			"set_loss_to" => "Setting loss to "
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -258,7 +259,8 @@
 			"tensors" => "Tensoren",
 			"set_val_split_to" => "Setze den Validation-Split auf ",
 			"set_optimizer_to" => "Setze den Optimierer auf ",
-			"set_metric_to" => "Setze die Metrik auf "
+			"set_metric_to" => "Setze die Metrik auf ",
+			"set_loss_to" => "Setze den Loss auf "
 		)
 	);
 ?>

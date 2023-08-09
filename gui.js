@@ -1359,7 +1359,7 @@ function set_metric(val) {
 }
 
 function set_loss(val) {
-	l("Setting loss to " + val);
+	l(language[lang]["set_loss_to"] + val);
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 
