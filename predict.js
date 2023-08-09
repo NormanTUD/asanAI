@@ -808,8 +808,7 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 	var wait = null;
 
 	var predict_data = tf.tidy(() => {
-		var new_res = _get_resized_webcam(cam_img, height, width);
-		return new_res;
+		return _get_resized_webcam(cam_img, height, width);
 	});
 
 	await dispose(cam_img);
