@@ -68,7 +68,10 @@
 			"dimensionality_reduction" => "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion",
 			"shy_activation_function" => "Ac&shy;ti&shy;va&shy;tion fun&shy;ction",
 			"shy_overfitting_prevention" => "Pre&shy;vent Over&shy;fit&shy;ting",
-			"rescale_and_recenter" => "Re-scale and re-center data"
+			"rescale_and_recenter" => "Re-scale and re-center data",
+			"show_layer_data_flow" => "Show layer data flow",
+			"show_grad_cam" => "Show gradCAM",
+			"switch_to_other_cam" => "Switch to other cam"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -138,7 +141,10 @@
 			"dimensionality_reduction" => "Di&shy;men&shy;sio&shy;ns&shy;re&shy;duk&shy;tion",
 			"shy_activation_function" => "Ak&shy;ti&shy;vier&shy;ungsfun&shy;ktion",
 			"shy_overfitting_prevention" => "Over&shy;fit&shy;ting ver&shy;hinderung",
-			"rescale_and_recenter" => "Reskalierung und Zentrierung"
+			"rescale_and_recenter" => "Reskalierung und Zentrierung",
+			"show_layer_data_flow" => "Datenfluss anzeigen",
+			"show_grad_cam" => "gradCAM anzeigen",
+			"switch_to_other_cam" => "Zu anderer Kamera wechseln"
 		)
 	);
 ?>

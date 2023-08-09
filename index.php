@@ -1481,13 +1481,13 @@
 
 							<div id="predict_tab" class="tab user_select_none">
 								<span>
-									Show layer data flow?
+									<span class="TRANSLATEME_show_layer_data_flow"></span>?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_kernel_images();add_layer_debuggers()" id="show_layer_data"><br>
 								</span>
 
 								
 								<span class="hide_when_no_conv_visualizations hide_in_cosmo_mode">
-									Show gradCAM?
+									<span class="TRANSLATEME_show_grad_cam"></span>?
 									<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam"><br>
 								</span>
 
@@ -1510,7 +1510,7 @@
 
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
+											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
 											<span style='display: block' class="full_example_image_prediction ">
 												<span id="webcam"></span>
 												<span id="webcam_prediction" style="overflow: scroll;"></span>
