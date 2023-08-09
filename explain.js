@@ -2479,9 +2479,6 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 	}
 }
 
-// grid_search(tf.tensor([1, 1, 5]), tf.tensor([2, 1, 1]), 0, 1, 0, 1, 10)
-// tf.metrics.meanSquaredError(tf.tensor([1, 1]), tf.tensor([2, 1])).print() 
-
 var already_moved_to_predict_for_cosmo = false;
 
 async function cosmo_maximally_activate_last_layer () {
