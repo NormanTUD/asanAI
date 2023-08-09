@@ -116,7 +116,7 @@
 			"images_left" => "Bilder übrig",
 			"beginner" => "Anfänger",
 			"expert" => "Experte",
-			"except_last_layer" => "außer dem letzten Layer",
+			"except_last_layer" => "außer letztem Layer",
 			"activation_functions" => "Aktivierungsfunktionen",
 			"set_for_all_layers" => "Einstellungen für alle Layer",
 			"shuffle_before_each_epoch" => "Vor jeder Epoche zufällig sortieren",
