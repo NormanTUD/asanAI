@@ -934,7 +934,7 @@
 									</table>
 								</div>
 							</div>
-							<div class="ribbon-group-title">Max. activated neurons</div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_max_activated_neurons" /></div>
 						</div>
 					</div>
 

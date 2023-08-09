@@ -111,7 +111,8 @@
 			"download_model_data" => "Download model data",
 			"logout" => "Logout",
 			"load" => "Load",
-			"download_for_local_taurus" => "Download for local/taurus training"
+			"download_for_local_taurus" => "Download for local/taurus training",
+			"max_activated_neurons" => "Max. activated neurons"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -224,7 +225,8 @@
 			"download_model_data" => "Modeldaten downloaden",
 			"logout" => "Abmelden",
 			"load" => "laden",
-			"download_for_local_taurus" => "Für lokales oder Taurus-Training herunterladen"
+			"download_for_local_taurus" => "Für lokales oder Taurus-Training herunterladen",
+			"max_activated_neurons" => "Maximal aktivierte Neuronen"
 		)
 	);
 ?>
