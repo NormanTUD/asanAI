@@ -977,7 +977,7 @@
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
-										<td>Number of grid images?</td>
+										<td><span class="TRANSLATE_number_of_grid_images" />?</td>
 										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;'></td>
 									</tr>
 								</table>
@@ -994,7 +994,7 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 									<table>
 										<tr data-intro="Show raw data in layer data flow?">
-											<td>Show raw data?</td>
+											<td><span class="TRANSLATEME_show_raw_data" />?</td>
 											<td><input class="show_data" type='checkbox' id="show_raw_data"></td>
 										</tr>
 										<tr>
