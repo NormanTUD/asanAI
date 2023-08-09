@@ -37,7 +37,15 @@
 			"flatten" => "Flatten",
 			"dataset_and_network" => "Dataset and network",
 			"model_visualization" => "Model Visualization",
-			"data" => "Data"
+			"data" => "Data",
+			"currently_the_network_has_seen" => "Currently, the network has seen all data",
+			"of" => "of",
+			"times_seen" => "times.",
+			"it_will_take_about" => "It will take about",
+			"remain_left" => " ",
+			"camera_draw_self" => "Camera/draw",
+			"click_on" => "Click on",
+			"if_bad_continue_training" => "If it is still bad, continue training."
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -76,7 +84,15 @@
 			"flatten" => "Verflachen",
 			"dataset_and_network" => "Datensatz und Netzwerk",
 			"model_visualization" => "Modellvisualisierung",
-			"data" => "Daten"
+			"data" => "Daten",
+			"currently_the_network_has_seen" => "Aktuell hat sich die Software alle Daten",
+			"of" => "von",
+			"times_seen" => "mal angesehen",
+			"it_will_take_about" => "Es wird noch ca.",
+			"remain_left" => "dauern",
+			"camera_draw_self" => "Kamera/selbstmalen",
+			"click_on" => "Klicke auf",
+			"if_bad_continue_training" => "Wenn es noch zu schlecht ist, trainiere weiter."
 		)
 	);
 ?>
