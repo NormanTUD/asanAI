@@ -840,8 +840,6 @@ async function switch_predict_mode () {
 	return ret;
 }
 
-await switch_predict_mode();
-
 function parse_required_skills(str) {
 	// Step 1: Split the input string into individual key-value pairs using regex
 	var keyValuePairs = str.split(/,(?=\w+\[)/);
