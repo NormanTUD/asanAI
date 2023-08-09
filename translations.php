@@ -71,7 +71,21 @@
 			"rescale_and_recenter" => "Re-scale and re-center data",
 			"show_layer_data_flow" => "Show layer data flow",
 			"show_grad_cam" => "Show gradCAM",
-			"switch_to_other_cam" => "Switch to other cam"
+			"code" => "Code",
+			"own_csv" => "Own CSV",
+			"training" => "Training",
+			"predict" => "Predict",
+			"hyperparameters" => "Hyperparameters",
+			"valsplit" => "Val.-Split",
+			"divide_x_by" => "Divide <i>X</i> by",
+			"metric" => "Metric",
+			"loss" => "Loss",
+			"optimizer" => "Optimizer",
+			"learning_rate" => "Learning Rate",
+			"enable_tf_debug" => "Enable TFJS Debugger",
+			"enable_webcam" => "Enable webcam",
+			"switch_to_other_cam" => "Switch to other cam",
+			"copy_to_clipboard" => "Copy to clipboard"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -144,7 +158,21 @@
 			"rescale_and_recenter" => "Reskalierung und Zentrierung",
 			"show_layer_data_flow" => "Datenfluss anzeigen",
 			"show_grad_cam" => "gradCAM anzeigen",
-			"switch_to_other_cam" => "Zu anderer Kamera wechseln"
+			"code" => "Quellcode",
+			"own_csv" => "Eigene CSV",
+			"training" => "Training",
+			"predict" => "Predict",
+			"hyperparameters" => "Hyperparameter",
+			"valsplit" => "Val.-Split",
+			"divide_x_by" => "Teile <i>X</i> durch",
+			"metric" => "Metrik",
+			"loss" => "Loss",
+			"optimizer" => "Optimierer",
+			"learning_rate" => "Lernrate",
+			"enable_tf_debug" => "TFJS Debugger aktivieren",
+			"enable_webcam" => "Webcam aktivieren",
+			"switch_to_other_cam" => "Zur anderen Kamera wechseln",
+			"copy_to_clipboard" => "In Zwischenablage kopieren"
 		)
 	);
 ?>

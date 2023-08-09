@@ -371,14 +371,14 @@
 						<div class="ribbon-toolbar" style="width: 210px">
 							<table>
 								<tr>
-									<td>Loss<sup onclick="losses_popup()">?</sup></td>
+									<td><span class="TRANSLATEME_loss" /><sup onclick="losses_popup()">?</sup></td>
 									<td style="width: 200px">
 										<select id="loss" onchange="updated_page()" style="width: 150px">
 										</select>
 									</td>
 								</tr>
 								<tr>
-									<td>Metric</td>
+									<td><span class="TRANSLATEME_metric" /></td>
 									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 150px">
 										</select>
@@ -417,9 +417,9 @@
 							<table>
 								<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;"></td></tr>
 								<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;"></td></tr>
-								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
+								<tr><td><span class="TRANSLATEME_valsplit" />&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
 							</table>
-							<div class="ribbon-group-title">Hyperparams</div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters" /></div>
 						</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
@@ -472,7 +472,7 @@
 								</tr>
 								<tr class="expert_mode_only">
 									<td>
-										Divide <i>X</i> by:
+										<span class="TRANSLATEME_divide_x_by" />:
 									</td>
 									<td>
 										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()">
@@ -557,7 +557,7 @@
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
 								<tr>
-									<td>Enable TF-Debug</td>
+									<td><span class="TRANSLATEME_enable_tf_debug" /></td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 								</tr>
 								<tr class="hide_when_no_alexnet">
@@ -736,7 +736,7 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-									<td>Optimizer</td>
+									<td><span class="TRANSLATEME_optimizer" /></td>
 									<td>
 										<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
 											<option value="adam">adam</option>
@@ -756,7 +756,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
 										</tr>
 									</table>
@@ -765,7 +765,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="adagrad_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
 
 											<td>Initial accumulator value</td>
@@ -777,7 +777,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="adam_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
 
 											<td>&beta;<sub>1</sub></td>
@@ -797,7 +797,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="adadelta_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta"></td>
 
 											<td>&rho;</td>
@@ -817,7 +817,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="adamax_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
 
 											<td>&beta;<sub>1</sub></td>
@@ -845,7 +845,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="rmsprop_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop"></td>
 
 											<td>Decay</td>
@@ -864,7 +864,7 @@
 								<div class="optimizer_metadata" style="display: none;" id="momentum_metadata">
 									<table>
 										<tr>
-											<td>Learning rate</td>
+											<td><span class='TRANSLATEME_learning_rate' /></td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum"></td>
 
 											<td>Momentum</td>
@@ -1021,7 +1021,7 @@
 						<div class="ribbon-toolbar">
 							<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
-						<button onclick="copy_to_clipboard($('#log').val());">Copy to clipboard</button>
+						<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard" /></button>
 						<div class="ribbon-group-title">Log</div>
 					</div>
 
@@ -1201,10 +1201,10 @@
 									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
 									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
-									<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV</a></li>
-									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
-									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
-									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network.">Code</a></li>
+									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv" />CSV</a></li>
+									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training" /></a></li>
+									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict" /></a></li>
+									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code" /></a></li>
 								</ul>
 								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
@@ -1271,7 +1271,7 @@
 
 	write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
 	write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data</code></pre>
-									<button onclick="copy_id_to_clipboard('convert_data_python')">Copy to clipboard</button>
+									<button onclick="copy_id_to_clipboard('convert_data_python')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
 								</div>
 								<br>
 								<div class="upload-btn-wrapper">
@@ -1292,14 +1292,13 @@
 									<br>
 									Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
 									<br>
-									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()">Enable webcam</button>
+									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()"><span class="TRANSLATEME_enable_webcam" /></button>
 								</span>
-								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32>Switch to other cam</button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam" /></button>
 								<div id="last_layer_shape_warning"></div>
-								<!--<button onclick="enable_drawing_custom_data();">Enable drawing for each category</button>-->
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
 								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
-									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
+								Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
 								</div>
 								<button class='add_category' onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>
 								<div id="own_image_data_categories"></div>
@@ -1358,14 +1357,14 @@
 									<button onclick="save_model()">Download model data</button>
 									<br>
 									<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
-									<button onclick="copy_id_to_clipboard('html')">Copy to clipboard</button>
+									<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
 								</div>
 
 
 								<div id="python_tab" class="tab">
 									<br>
 									<span class="user_select_none">
-										<button onclick="copy_id_to_clipboard('python')">Copy to clipboard</button>
+										<button onclick="copy_id_to_clipboard('python')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
 										<button onclick="save_model()">Download model data</button>
 										<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
 									</span>
@@ -1416,7 +1415,6 @@
 									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
 									<button onclick="larger_maximally_activated_neurons()">Larger</button>
 									<button onclick="reset_maximally_activated_neurons()">Reset</button>
-									<!--<button onclick="predict_all_maximally_activated_neurons()">Predict all visible images</button>-->
 									<button onclick="delete_maximally_activated_predictions()">Delete predictions</button>
 									<div id="maximally_activated_content"></div>
 								</div>
@@ -1504,7 +1502,7 @@
 											<span id="predict_own">
 												<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 												<br>
-												<button onclick="predict($('#predict_own_data').val());repredict()">Predict</button>
+												<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict" /></button>
 											</span>
 										</span>
 
