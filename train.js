@@ -156,8 +156,6 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 		if(is_cosmo_mode) {
 			show_tab_label("predict_tab", 1);
 
-			await delay(200);
-
 			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
 
@@ -455,11 +453,6 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
-
-		if(is_cosmo_mode) {
-			_predict_mode_examples();
-		}
-
 		memory_leak_debugger("onTrainEnd", start_tensors);
 	}
 

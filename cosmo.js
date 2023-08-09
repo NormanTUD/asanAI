@@ -813,6 +813,7 @@ function _predict_mode_custom () {
 async function switch_predict_mode () {
 	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
+
 	if($("#own_files").css("display") == "none") {
 		_predict_mode_examples();
 	} else {
