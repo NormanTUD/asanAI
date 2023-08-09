@@ -119,7 +119,8 @@
 			"yes_own_images" => "&#128444; Yes, own images/webcam",
 			"width_amp_height" => "Width&amp;height (0 = auto)",
 			"randomizer_limits" => "Randomizer Limits",
-			"max_neurons_fcnn" => "Max. neurons FCNN"
+			"max_neurons_fcnn" => "Max. neurons FCNN",
+			"various_plots" => "Various Plots"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -240,7 +241,8 @@
 			"yes_own_images" => "&#128444; Ja, eigene Bilder/Webcam",
 			"width_amp_height" => "Höhe&amp;Breite (0 = auto)",
 			"randomizer_limits" => "Randomisierergrenzen",
-			"max_neurons_fcnn" => "Max. Neuronen FCNN"
+			"max_neurons_fcnn" => "Max. Neuronen FCNN",
+			"various_plots" => "Verschiedene Plots"
 		)
 	);
 ?>

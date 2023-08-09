@@ -983,7 +983,7 @@
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title">Various Plots</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_various_plots" /></div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
