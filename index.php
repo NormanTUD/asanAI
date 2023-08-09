@@ -1030,7 +1030,7 @@
 						<div class="ribbon-toolbar">
 							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint" /></button><br><br>
 							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
-							<button style="width: 200px" onclick="sources_popup()">Sources and used programs</button>
+							<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs" /></button>
 						</div>
 						<div class="ribbon-group-title"><span class="TRANSLATEME_imprint" /></div>
 					</div>
@@ -1052,8 +1052,8 @@
 					<div class="popup_body less_transparent_glass_box">
 						<div> 
 <?php
-				$file = file_get_contents("README.md");
-				print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
+							$file = file_get_contents("README.md");
+							print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
 ?>
 							<button class="close_button" onclick="closePopup('sources_popup')"><span class="TRANSLATEME_close" /></button>
 						</div>
