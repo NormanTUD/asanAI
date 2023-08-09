@@ -132,7 +132,8 @@
 			"set_loss_to" => "Setting loss to ",
 			"show_bars_instead_of_numbers" => "Show bars instead of numbers",
 			"number_of_grid_images" => "Number of grid images",
-			"show_raw_data" => "Show raw data"
+			"show_raw_data" => "Show raw data",
+			"pixel_size" => "Pixel size"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -266,7 +267,8 @@
 			"set_loss_to" => "Setze den Loss auf ",
 			"show_bars_instead_of_numbers" => "Balken statt Zahlen verwenden",
 			"number_of_grid_images" => "Anzahl Bilder im Grid",
-			"show_raw_data" => "Rohdaten anzeigen"
+			"show_raw_data" => "Rohdaten anzeigen",
+			"pixel_size" => "Pixelgröße"
 		)
 	);
 ?>
