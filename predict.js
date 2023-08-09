@@ -881,7 +881,7 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 					draw_multi_channel(predictions_tensor, webcam_prediction, pxsz)
 				}
 			} else {
-				await _webcam_predict_text(webcam_prediction, predictions);
+				await _webcam_predict_text(webcam_prediction, predictions[0]);
 			}
 		} else {
 			console.warn("predictions is empty for predict_webcam");
@@ -953,8 +953,8 @@ async function _webcam_predict_text (webcam_prediction, predictions) { var start
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) { var start_tensors = memory_leak_debugger();
 	var str = "<table class='predict_table'>";
 
-	for (let i = 0; i < predictions[0].length; i++) {
-		str += _webcam_prediction_row(i, predictions[0], max_i);
+	for (let i = 0; i < predictions.length; i++) {
+		str += _webcam_prediction_row(i, predictions, max_i);
 	}
 
 	str += "</table>";
