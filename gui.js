@@ -430,7 +430,7 @@ function add_kernel_size_option(type, nr) { var start_tensors = memory_leak_debu
 	var letter_code = 'x'.charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
-		str += get_tr_str_for_layer_table("Kernel-Size " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
+		str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_size'></span> " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
 		letter_code++;
 	}
 
@@ -4119,7 +4119,8 @@ async function write_error(e, fn, hide_swal) { var start_tensors = memory_leak_d
 			msg = msg + "\n<br><br>\n" + explanation;
 		}
 
-		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
+		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+		updateTranslations();
 		await write_descriptions();
 		console.warn(e);
 		console.trace();

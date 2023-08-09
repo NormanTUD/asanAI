@@ -10,7 +10,8 @@ async function gui_in_training () { var start_tensors = memory_leak_debugger();
 
 async function gui_not_in_training () { var start_tensors = memory_leak_debugger();
 	started_training = false;
-	$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
+	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+	updateTranslations();
 	favicon_default();
 
 	try {
@@ -552,7 +553,8 @@ async function _get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 		console.trace();
 		favicon_default();
 		await write_descriptions();
-		$(".train_neural_network_button").html("Start training").removeClass("stop_training").addClass("start_training");
+		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+		updateTranslations();
 		started_training = false;
 		memory_leak_debugger("_get_xs_and_ys", start_tensors);
 		return false;
@@ -623,7 +625,8 @@ async function _get_fit_data (xs_and_ys) { var start_tensors = memory_leak_debug
 async function run_neural_network () { var start_tensors = memory_leak_debugger();
 	await clean_gui();
 
-	$(".train_neural_network_button").html("Stop training").removeClass("start_training").addClass("stop_training");
+	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
+	updateTranslations();
 
 	_set_apply_to_original_apply();
 

@@ -49,7 +49,19 @@
 			"the_ai_thinks_categories_look_like_this" => "This is how the AI thinks the categories look like",
 			"it_might_only_be_noise" => "Thats why you are probably only seeing random noise and the detection may not work properly yet.",
 			"image_left" => "Image left",
-			"images_left" => "Images left"
+			"images_left" => "Images left",
+			"beginner" => "Beginner",
+			"expert" => "Expert",
+			"except_last_layer" => "except last layer",
+			"activation_functions" => "Activation functions",
+			"set_for_all_layers" => "Set for all layers",
+			"shuffle_before_each_epoch" => "Shuffle before each epoch",
+			"summary" => "Summary",
+			"own_images" => "Own images",
+			"own_tensors" => "Own tensors",
+			"kernel_size" => "Kernel-Size",
+			"start_training" => "Start training",
+			"stop_training" => "Stop training"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -100,7 +112,19 @@
 			"the_ai_thinks_categories_look_like_this" => "So denkt die KI, dass die Kategorien aussehen",
 			"it_might_only_be_noise" => "Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.",
 			"image_left" => "Bild übrig",
-			"images_left" => "Bilder übrig"
+			"images_left" => "Bilder übrig",
+			"beginner" => "Anfänger",
+			"expert" => "Experte",
+			"except_last_layer" => "außer dem letzten Layer",
+			"activation_functions" => "Aktivierungsfunktionen",
+			"set_for_all_layers" => "Einstellungen für alle Layer",
+			"shuffle_before_each_epoch" => "Vor jeder Epoche zufällig sortieren",
+			"summary" => "Zusammenfassung",
+			"own_images" => "Eigene Bilder",
+			"own_tensors" => "Eigene Tensoren",
+			"kernel_size" => "Kernel-Größe",
+			"start_training" => "Training starten",
+			"stop_training" => "Training stoppen"
 		)
 	);
 ?>

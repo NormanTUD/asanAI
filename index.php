@@ -459,7 +459,7 @@
 							<table>
 								<tr>
 									<td colspan=2>
-										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()">Start training</button>
+										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
@@ -515,7 +515,7 @@
 				if($checked) { print "checked"; }
 
 ?>>
-								<label for="beginner">&#129466; Beginner</label>
+								<label for="beginner">&#129466; <span class='TRANSLATEME_beginner'></span></label>
 
 								<input type="radio" onchange="set_mode()" name="mode_chooser" value="expert" id="expert" <?php
 				$checked = 0;
@@ -524,7 +524,7 @@
 				}
 				if($checked) { print "checked"; }
 ?>>
-								<label for="expert">&#9760;&#65039; Expert</label>
+								<label for="expert">&#9760;&#65039; <span class="TRANSLATEME_expert"></span></label>
 							</fieldset>
 							Theme: <select id="theme_choser" class="show_data" onchange="theme_choser()">
 								<option value="lightmode">Light Mode</option>
@@ -553,7 +553,7 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-								       <td>Shuffle before each epoch?</td>
+								       <td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
 								<tr>
@@ -579,52 +579,13 @@
 						<div class="ribbon-group-title">Weights/Shuffle/Renderer/Debug</div>
 					</div>
 
-					<!--
-					<div class="ribbon-group-sep"></div>
-					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Options regarding Early Stopping.">
-						<div class="ribbon-toolbar">
-							<table>
-								<tr>
-									<td>Enable Early Stopping?</td>
-									<td>
-										<input type="checkbox" value=1 id="enable_early_stopping">
-									</td>
-								</tr>
-								<tr>
-									<td>What to monitor?</td>
-									<td>
-										<select id="what_to_monitor_early_stopping">
-											<option value="val_loss">val_loss</option>
-											<option value="val_acc">val_acc</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>minDelta</td>
-									<td>
-										<input style="width: 60px" type="number" value=0.1 min=0 id="min_delta_early_stopping">
-									</td>
-								</tr>
-								<tr>
-									<td>Patience?</td>
-									<td>
-										<input style="width: 60px" type="number" value=1 min=0 step=1 id="patience_early_stopping">
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="ribbon-group-title">Early Stopping</div>
-					</div>
-					-->
-
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
 					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-									<td>Kernel initializer</td>
+									<td><span class='TRANSLATEME_kernel_initializer'></span></td>
 									<td>
 										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 120px">
 											<option value="none">&mdash;</option>
@@ -632,7 +593,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td>Bias initializer</td>
+									<td><span class='TRANSLATEME_bias_initializer'></span></td>
 									<td>
 										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 120px">
 											<option value="none">&mdash;</option>
@@ -640,7 +601,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td>Activation functions</td>
+									<td><span class="TRANSLATEME_activation_functions"></span></td>
 									<td>
 										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 120px">
 											<option value="none">&mdash;</option>
@@ -648,7 +609,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td>&rdca; except last layer</td>
+									<td>&rdca; <span class='TRANSLATEME_except_last_layer'></span></td>
 									<td>
 										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 120px">
 											<option value="none">&mdash;</option>
@@ -657,7 +618,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Set for all layers</div>
+						<div class="ribbon-group-title"><span class=''></span></div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
@@ -1237,9 +1198,9 @@
 								<ul class="navi_list">
 									<li><a id="training_data_tab_label" href="#training_data_tab"><span class='TRANSLATEME_data'></span></a></li>
 									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want."><span class='TRANSLATEME_model_visualization'></span></a></li>
-									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
-									<li><a id="own_image_data_label" href="#own_image_data">Own images</a></li>
-									<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensors</a></li>
+									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
+									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
+									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
 									<li><a id="own_csv_data_label" href="#own_csv_data">Own CSV</a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress.">Training</a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model.">Predict</a></li>
