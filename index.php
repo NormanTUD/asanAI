@@ -2,6 +2,8 @@
 #Command for finding non awaited JS functions:
 #for i in $(grep "^async\s*function " variables.js cosmo.js present.js main.js gui.js model.js train.js tests.js debug.js data.js explain.js safety.js predict.js | sed -e 's#.*async\s*function\s*##' | sed -e 's#\s*(.*##'); do egrep "\s$i\s*\(" variables.js cosmo.js present.js main.js gui.js model.js train.js tests.js debug.js data.js explain.js safety.js predict.js; done | grep -v async | grep -v await | sort | grep -v tests.js | grep -v "+=" | grep -v ':\s*//\s*'
 	include("functions.php");
+
+	include("translations.php");
 	
 	show_admin_register();
 	
@@ -19,6 +21,8 @@
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
 		<script>
+			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
+
 			var enable_cosmo_debug = false;
 <?php
 			if(file_exists("/etc/cosmo_debug")) {
@@ -178,6 +182,7 @@
 		</script>
 
 		<?php minify_js("plotly-latest.min.js", 1, 1); ?>
+		<?php minify_js("translations.js", 1, 1); ?>
 
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 		<script type="text/x-mathjax-config">
@@ -1342,11 +1347,11 @@
 
 							<div id="training_data_tab" class="tab">
 								<div id="lenet_example_cosmo" class="tab" style="display: none">
-									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
-									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
+									<span class="TRANSLATEME_lets_suppose_we_have_this_simple_network" style="display: block"></span>
 									<img style='width: 90%; max-height: 400px; max-width: 500px;' src="signs_network.svg"><br>
 									<hr class="cosmo_hr">
-									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
+									<span class="TRANSLATEME_we_want_to_train_this_model_5_categories" style="display: block"></span>
+									<br>
 									<center>
 										<table border=0>
 											<tr>

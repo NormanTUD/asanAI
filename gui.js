@@ -4606,6 +4606,8 @@ function hide_tab_label(label) {
 	if (first_displayable && (is_cosmo_mode || is_hidden_or_has_hidden_parent(currently_selected))) {
 		$($(first_displayable).children()[0]).click()
 	}
+
+	updateTranslations();
 }
 
 function show_tab_label(label, click) {
@@ -4634,6 +4636,8 @@ function show_tab_label(label, click) {
 			$item.trigger("click");
 		}
 	}
+
+	updateTranslations();
 }
 
 function check_number_values() {
