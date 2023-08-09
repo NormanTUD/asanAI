@@ -834,6 +834,8 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
 			console.warn("Model Tensor already disposed");
+		} else if(("" + e).includes("n is undefined")) {
+			console.warn("Model weights probably already disposed, this is usually not harmful");
 		} else {
 			l("Predict data shape:" + predict_data.shape);
 
@@ -971,7 +973,6 @@ function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = me
 
 	if(show_bars_instead_of_numbers()) {
 		if(i == max_i) {
-			//str = "<b class='max_prediction'>" + str + "</b>";
 			str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
 		} else {
 			str += "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
@@ -979,7 +980,7 @@ function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = me
 	} else {
 		probability = (probability * 50) + "%";
 		if(i == max_i) {
-			str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
+			str += "<tr><td class='label_element'>" + label + "</td><td><b class='highest_bar'>" + probability + "</b></td></tr>";
 		} else {
 			str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 		}
@@ -1178,6 +1179,8 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
 			console.warn("weights are already disposed. Not predicting handdrawn");
+		} else if(("" + e).includes("n is undefined")) {
+			console.warn("Model weights probably already disposed, this is usually not harmful");
 		} else {
 			l("Predict data shape:", predict_data.shape);
 			console.error(e);
