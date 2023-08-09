@@ -2111,14 +2111,19 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 				} else { // sub array contains more arrays (kernels most probably))
 					color_diff[layer_nr][this_key][item_nr] = [];
 					for (var kernel_nr = 0; kernel_nr < this_old_sub_array[item_nr].length; kernel_nr++) {
-						if(this_old_sub_array[item_nr][kernel_nr] == this_new_sub_array[item_nr][kernel_nr]) {
-							color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
-						} else {
-							if(this_old_sub_array[item_nr][kernel_nr] > this_new_sub_array[item_nr][kernel_nr]) {
-								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "OrangeRed";
-							} else if(this_old_sub_array[item_nr][kernel_nr] < this_new_sub_array[item_nr][kernel_nr]) {
-								color_diff[layer_nr][this_key][item_nr][kernel_nr] = "SeaGreen";
+						try {
+							if(this_old_sub_array[item_nr][kernel_nr] == this_new_sub_array[item_nr][kernel_nr]) {
+								color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
+							} else {
+								if(this_old_sub_array[item_nr][kernel_nr] > this_new_sub_array[item_nr][kernel_nr]) {
+									color_diff[layer_nr][this_key][item_nr][kernel_nr] = "OrangeRed";
+								} else if(this_old_sub_array[item_nr][kernel_nr] < this_new_sub_array[item_nr][kernel_nr]) {
+									color_diff[layer_nr][this_key][item_nr][kernel_nr] = "SeaGreen";
+								}
 							}
+						} catch (e) {
+							console.warn(e);
+							console.trace();
 						}
 					}
 				}
