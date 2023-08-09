@@ -209,7 +209,7 @@
 			"math" => "Mathe",
 			"smaller" => "Kleiner",
 			"larger" => "Größer",
-			"reset" => "Zurücksetzen",
+			"reset" => "Reset",
 			"delete_predictions" => "Predictions löschen",
 			"memory_usage_while_training" => "Speicherverbrauch während des Trainings (pro Batch)",
 			"img_per_cat" => "Bilder pro Kategorie",
