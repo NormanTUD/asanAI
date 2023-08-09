@@ -330,7 +330,7 @@
 						<div class="ribbon-toolbar" style="width:250px">
 							<table class="width_250">
 								<tr>
-									<td>Examples</td>
+									<td><span class="TRANSLATEME_examples"></span></td>
 									<td>
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
@@ -339,7 +339,7 @@
 								</tr>
 								<tr>
 									<td>
-										Dataset
+										<span class="TRANSLATEME_dataset"></span>
 									</td>
 									<td>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
@@ -349,7 +349,7 @@
 								</tr>
 
 								<tr>
-									<td style="white-space: nowrap;">Own data?</td>
+									<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data'></span>?</td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 155px;">
 											<option value="default">No, default data</option>
@@ -415,8 +415,8 @@
 					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
 						<div class="ribbon-toolbar" style="width: 135px">
 							<table>
-								<tr><td>Epochs</td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;"></td></tr>
-								<tr><td>Batch-Size</td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;"></td></tr>
+								<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;"></td></tr>
+								<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;"></td></tr>
 								<tr><td>Val.-Split&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
 							</table>
 							<div class="ribbon-group-title">Hyperparams</div>
@@ -431,11 +431,11 @@
 							<div class="ribbon-toolbar" style="width:115px">
 								<table>
 									<tr>
-										<td>Height</td>
+										<td><span class='TRANSLATEME_height'></span></td>
 										<td><input type="number" min="1" value="" onchange="change_height()" onkeyup="change_height()" id="height" style="width: 40px;"></td>
 									</tr>
 									<tr>
-										<td>Width</td>
+										<td><span class='TRANSLATEME_width'></span></td>
 										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;"></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
@@ -1586,14 +1586,6 @@
 									<br>
 
 									<div class="hide_when_custom_data">
-										<!--
-										<span id="repredict_examples_button">
-											<hr>
-											<button onclick="show_prediction(1);">Re-predict examples</button>
-										</span>
-										<div class="medium_vskip"></div>
-										<h2 class="" style="display: none">Examples</h2>
-										-->
 										<div id="example_predictions">
 										</div>
 									</div>

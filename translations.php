@@ -21,7 +21,14 @@
 			"kernel_initializer" => "Kernel-Initializer",
 			"trainable" => "Trainable",
 			"visualize_layer" => "Visualize layer",
-			"visualize_this_layer" => "Visualize this layer"
+			"visualize_this_layer" => "Visualize this layer",
+			"examples" => "Examples",
+			"dataset" => "Dataset",
+			"height" => "Height",
+			"width" => "Width",
+			"batch_size" => "Batch-Size",
+			"epochs" => "Epochs",
+			"own_data" => "Own data"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -44,7 +51,14 @@
 			"kernel_initializer" => "Kernel-Initialisierer",
 			"trainable" => "Trainierbar",
 			"visualize_layer" => "Layer visualisieren",
-			"visualize_this_layer" => "Diesen Layer visualisieren"
+			"visualize_this_layer" => "Diesen Layer visualisieren",
+			"examples" => "Beispiele",
+			"dataset" => "Datensatz",
+			"height" => "Höhe",
+			"width" => "Breite",
+			"batch_size" => "Batchgröße",
+			"epochs" => "Epochen",
+			"own_data" => "Eigenes"
 		)
 	);
 ?>
