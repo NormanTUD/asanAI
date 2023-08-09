@@ -46,7 +46,7 @@
 			"camera_draw_self" => "Camera/draw",
 			"click_on" => "Click on",
 			"if_bad_continue_training" => "If it is still bad, continue training.",
-			"the_ai_thinks_categories_look_like_this" => "This is how the AI thinks the categories look like"
+			"the_ai_thinks_categories_look_like_this" => "This is how the AI thinks the categories look like",
 			"it_might_only_be_noise" => "Thats why you are probably only seeing random noise and the detection may not work properly yet."
 		),
 		"de" => array(
