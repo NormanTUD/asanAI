@@ -1236,7 +1236,7 @@ var general_options = {
 	'target_shape': '"Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr',
 	'dilation_rate': '"Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr',
 	'padding': '"Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr',
-	'filters': '"Filters", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": get_default_option(type, "filters") }, nr',
+	'filters': `"<span class='TRANSLATEME_filters'></span>", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": get_default_option(type, "filters") }, nr`,
 	'alpha': '"&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr',
 	'dropout_rate': '"Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr',
 	'center': '"Center?", "center", "checkbox", { "status": "checked" }, nr',
