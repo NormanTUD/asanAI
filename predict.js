@@ -701,21 +701,34 @@ async function _get_example_string (examples, count, full_dir) { var start_tenso
 }
 
 function get_index_of_highest_category (predictions_tensor) { var start_tensors = memory_leak_debugger();
-	var js = predictions_tensor.dataSync();
+	try {
+		var js = predictions_tensor.dataSync();
 
-	var highest_index = 0;
-	var highest = 0;
+		var highest_index = 0;
+		var highest = 0;
 
-	for (var i = 0; i < js.length; i++) {
-		if(js[i] > highest) {
-			highest = js[i];
-			highest_index = i;
+		for (var i = 0; i < js.length; i++) {
+			if(js[i] > highest) {
+				highest = js[i];
+				highest_index = i;
+			}
 		}
+
+		memory_leak_debugger("get_index_of_highest_category", start_tensors);
+
+		return highest_index;
+	} catch (e) {
+		if(("" + e).includes("disposed")) {
+			console.warn("Tensor, probably predictions_tensor, already disposed");
+			console.trace();
+		} else {
+			console.warn(e);
+		}
+
+		memory_leak_debugger("get_index_of_highest_category", start_tensors);
+
+		return null;
 	}
-
-	memory_leak_debugger("get_index_of_highest_category", start_tensors);
-
-	return highest_index;
 }
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) { var start_tensors = memory_leak_debugger();
