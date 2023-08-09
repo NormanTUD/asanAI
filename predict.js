@@ -865,7 +865,7 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 				await _webcam_predict(webcam_prediction, predictions);
 			}
 		} else {
-			log("predictions is empty");
+			console.warn("predictions is empty for predict_webcam");
 		}
 	}
 
