@@ -12,7 +12,11 @@
 			"quality_depends_on_random" => "The quality of the results depends on randomness.",
 			"program_looks_at_data" => "The program now looks at the data repeadetly and tries to learn to categorize the images.",
 			"the_further_on_top_the_better" => "The further to the top the images are, the more sure the network is in classifying the images into the categories.",
-			"add_category" => "Add category"
+			"add_category" => "Add category",
+			"settings" => "Settings",
+			"description" => "Description",
+			"use_bias" => "Use Bias",
+			"activation_function" => "Activation function"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -26,7 +30,11 @@
 			"quality_depends_on_random" => "Die Qualität des Ergebnisses hängt vom Zufall ab.",
 			"program_looks_at_data" => "Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.",
 			"the_further_on_top_the_better" => "Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.",
-			"add_category" => "Kategorie hinzufügen"
+			"add_category" => "Kategorie hinzufügen",
+			"settings" => "Einstellungen",
+			"description" => "Beschreibung",
+			"use_bias" => "Bias benutzen",
+			"activation_function" => "Aktivierungsfunktion"
 		)
 	);
 ?>

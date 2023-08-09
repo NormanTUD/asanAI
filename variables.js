@@ -1252,7 +1252,7 @@ var general_options = {
 	'max_features': '"Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "max_features") }, nr',
 	'momentum': '"Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": get_default_option(type, "momentum") }, nr',
 	'units': '"Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": get_default_option(type, "units") }, nr',
-	'use_bias': '"Use Bias", "use_bias", "checkbox", { "status": "checked" }, nr',
+	'use_bias': `"<span class='TRANSLATEME_use_bias'></span>", "use_bias", "checkbox", { "status": "checked" }, nr`,
 	'dtype': '"DType", "dtype", "select", dtypes, nr, null, 1, 1',
 	'interpolation': '"Interpolation", "interpolation", "select", interpolation, nr',
 	'stddev': '"Standard-Deviation", "stddev", "number", { "min": 0, "value": get_default_option(type, "stddev") }, nr',
@@ -1284,7 +1284,7 @@ var general_options = {
 	'activation_max_value': '"Max-Value", "activation_max_value", "number", { "value": 1 }, nr, "activation_tr"',
 	'activation_alpha': '"&alpha;", "activation_alpha", "number", { "value": 1 }, nr, "activation_tr"',
 	'activation_theta': '"&theta;", "activation_theta", "number", { "value": 0.01 }, nr, "activation_tr"',
-	'recurrent_activation': '"Recurrent Activation function", "recurrent_activation", "select", activations, nr',
+	'recurrent_activation': `"Recurrent Activation function", "recurrent_activation", "select", activations, nr`,
 
 	// regularizer
 	'bias_regularizer': '"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr, null, 0, 1',

@@ -218,7 +218,7 @@ function set_item_value(layer, classname, value) {
 
 function get_tr_str_for_description(desc) {
 	assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
-	return "<tr><td>Description:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
+	return "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
 }
 
 function isNumeric(str) {
@@ -1437,7 +1437,7 @@ function get_option_for_layer_by_type(nr) {
 
 	var kernel_initializer_string = get_tr_str_for_layer_table("Kernel Initializer", "kernel_initializer", "select", initializers, nr);
 	var bias_initializer_string = get_tr_str_for_layer_table("Bias Initializer", "bias_initializer", "select", initializers, nr);
-	var activation_string = get_tr_str_for_layer_table("Activation function", "activation", "select", activations, nr);
+	var activation_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr);
 
 	for (var [key, value] of Object.entries(layer_options)) {
 		if (key == type) {
@@ -1589,7 +1589,7 @@ function option_for_layer(nr) {
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
-	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;Settings</button>";
+	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>";
 	str += "</td>";
 	str += "<td>";
 	str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
