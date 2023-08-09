@@ -1341,7 +1341,11 @@ function get_layer_data() {
 				}
 			}
 		} catch (e) {
-			console.error(e);
+			if(("" + e).includes("Tensor is disposed") {
+				console.warn("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+			} else {
+				console.error(e);
+			}
 		}
 
 		layer_data.push(this_layer_weights);	
