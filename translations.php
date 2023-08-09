@@ -123,7 +123,9 @@
 			"various_plots" => "Various Plots",
 			"sources_and_used_programs" => "Sources and used programs",
 			"visualize_images_in_grid" => "Visualize images in grid",
-			"model_compiled_successfully" => "Model compiled successfully"
+			"model_compiled_successfully" => "Model compiled successfully",
+			"not_creating_model_because_values_are_missing" => "Not creating model because some values are missing",
+			"tensors" => "Tensors"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -248,7 +250,9 @@
 			"various_plots" => "Verschiedene Plots",
 			"sources_and_used_programs" => "Quellen und genutzte Programme",
 			"visualize_images_in_grid" => "Bilder in Grid visualisieren",
-			"model_compiled_successfully" => "Model erfolgreich kompiliert"
+			"model_compiled_successfully" => "Model erfolgreich kompiliert",
+			"not_creating_model_because_values_are_missing" => "Kann Modell nicht erstellen, weil Werte fehlen",
+			"tensors" => "Tensoren"
 		)
 	);
 ?>

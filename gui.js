@@ -1103,7 +1103,7 @@ function _has_any_warning () {
 	}
 
 	if(has_missing_values) {
-		l("Not creating model because some values are missing (updated page)");
+		l(language[lang]["not_creating_model_because_values_are_missing"]);
 		return true;
 	}
 

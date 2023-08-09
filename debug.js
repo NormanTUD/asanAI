@@ -282,7 +282,7 @@ function memory_debugger () {
 		gpu_color = "#ff0000";
 	}
 
-	var debug_string = `Tensors: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
+	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
 	}

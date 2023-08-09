@@ -37,7 +37,7 @@ async function get_model_config_hash () { var start_tensors = memory_leak_debugg
 
 async function _create_model () { var start_tensors = memory_leak_debugger();
 	if(has_missing_values) {
-		l("Not creating model because some values are missing (_create_model)");
+		l(language[lang]["not_creating_model_because_values_are_missing"]);
 		return model;
 	}
 	try {
