@@ -2358,7 +2358,7 @@ function applyColorMap(x) {
 	});
 }
 
-function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
+async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) { var start_tensor = memory_leak_debugger();
 	if(started_training) {
 		l("Cannot show grad CAM while training");
 		return;
@@ -2398,8 +2398,7 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
 		const lastConvLayerOutput = lastConvLayer.output;
-		const subModel1 =
-			tf.model({inputs: model.inputs, outputs: lastConvLayerOutput});
+		const subModel1 = tf.model({inputs: model.inputs, outputs: lastConvLayerOutput});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
@@ -2415,8 +2414,7 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 			// This function runs sub-model 2 and extracts the slice of the probability
 			// output that corresponds to the desired class.
 
-			const convOutput2ClassOutput = (input) =>
-				subModel2.apply(input, {training: true}).gather([classIndex], 1);
+			const convOutput2ClassOutput = (input) => subModel2.apply(input, {training: true}).gather([classIndex], 1);
 			// This is the gradient function of the output corresponding to the desired
 			// class with respect to its input (i.e., the output of the last
 			// convolutional layer of the original model).
@@ -2457,9 +2455,11 @@ function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
 			return heatMap.div(heatMap.max()).mul(255);
 		});
 
+		memory_leak_debugger("gradClassActivationMap", start_tensor + 1);
 		return retval;
 	} catch (e) {
 		console.warn(e);
+		memory_leak_debugger("gradClassActivationMap", start_tensor);
 		return null;
 	}
 }

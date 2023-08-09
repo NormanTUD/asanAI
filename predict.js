@@ -736,9 +736,6 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
 	disable_layer_debuggers = original_disable_layer_debuggers;
 
-	/* Workaround: for some reason the last layer apply changes the model. This will re-create the model. It's okay, because it's disabled in training anyways */
-	//await _create_model();
-
 	if(heatmap) {
 		var canvas = $("#grad_cam_heatmap")[0];
 		var img = await heatmap.arraySync()[0];
@@ -766,6 +763,8 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 	} else {
 		$("#grad_cam_heatmap").hide();
 	}
+
+	await dispose(heatmap);
 
 	memory_leak_debugger("draw_heatmap", start_tensors);
 }
@@ -820,9 +819,14 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 			return model.predict([predict_data]);
 		});
 	} catch (e) {
-		l("Predict data shape:" + predict_data.shape);
+		if(("" + e).includes("already disposed")) {
+			console.warn("Model Tensor already disposed");
+		} else {
+			l("Predict data shape:" + predict_data.shape);
 
-		console.error(e);
+			console.error(e);
+		}
+
 		l("Error (512): " + e);
 		memory_leak_debugger("predict_webcam", start_tensors);
 		currently_predicting_webcam = false;
@@ -862,7 +866,7 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 					draw_multi_channel(predictions_tensor, webcam_prediction, pxsz)
 				}
 			} else {
-				await _webcam_predict(webcam_prediction, predictions);
+				await _webcam_predict_text(webcam_prediction, predictions);
 			}
 		} else {
 			console.warn("predictions is empty for predict_webcam");
@@ -910,7 +914,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) { v
 	memory_leak_debugger("draw_rgb", start_tensors);
 }
 
-async function _webcam_predict (webcam_prediction, predictions) { var start_tensors = memory_leak_debugger();
+async function _webcam_predict_text (webcam_prediction, predictions) { var start_tensors = memory_leak_debugger();
 	var max_i = 0;
 	var max_probability = -9999999;
 
@@ -928,7 +932,7 @@ async function _webcam_predict (webcam_prediction, predictions) { var start_tens
 
 	await _predict_webcam_html(predictions, webcam_prediction, max_i);
 
-	memory_leak_debugger("_webcam_predict", start_tensors);
+	memory_leak_debugger("_webcam_predict_text", start_tensors);
 }
 
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) { var start_tensors = memory_leak_debugger();
