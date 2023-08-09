@@ -7,7 +7,8 @@
 			"mandatory" => "Mandatory",
 			"forbidden" => "Forbiden",
 			"resque" => "Resque",
-			"warning" => "Warning"
+			"warning" => "Warning",
+			"the_more_variations_the_model_sees" => "The more variations the model sees, the better it can learn important features of the images."
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -16,7 +17,8 @@
 			"mandatory" => "Verpflichtend",
 			"forbidden" => "Verbot",
 			"resque" => "Rettung",
-			"warning" => "Warnung"
+			"warning" => "Warnung",
+			"the_more_variations_the_model_sees" => "Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen."
 		)
 	);
 ?>
