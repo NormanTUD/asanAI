@@ -443,7 +443,7 @@
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px"></td>
 									</tr>
 									<tr class="expert_mode_only">
-										<td>Augment?</td>
+										<td><span class="TRANSLATEME_augment" />?</td>
 										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment"></td>
 									</tr>
 								</table>
