@@ -352,10 +352,10 @@
 									<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data'></span>?</td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 155px;">
-											<option value="default">No, default data</option>
-											<option value="tensordata">&#x2318; Yes, own tensor-data</option>
-											<option class="input_shape_is_image" value="image">&#128444; Yes, own images/webcam</option>
-											<option value="csv">&#128290; Yes, own CSV</option>
+											<option class="TRANSLATEME_no_default_data" value="default"></option>
+											<option value="tensordata" class="TRANSLATEME_yes_own_tensor_data"></option>
+											<option class="TRANSLATEME_yes_own_images" value="image"></option>
+											<option value="csv" class="TRANSLATEME_yes_own_csv"></option>
 										</select>
 									</td>
 								</tr>

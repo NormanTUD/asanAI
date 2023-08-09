@@ -112,7 +112,11 @@
 			"logout" => "Logout",
 			"load" => "Load",
 			"download_for_local_taurus" => "Download for local/taurus training",
-			"max_activated_neurons" => "Max. activated neurons"
+			"max_activated_neurons" => "Max. activated neurons",
+			"no_default_data" => "No, default data",
+			"yes_own_tensor_data" => "&#x2318; Yes, own tensor-data",
+			"yes_own_csv" => "&#128290; Yes, own CSV",
+			"yes_own_images" => "&#128444; Yes, own images/webcam"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -226,7 +230,11 @@
 			"logout" => "Abmelden",
 			"load" => "laden",
 			"download_for_local_taurus" => "Für lokales oder Taurus-Training herunterladen",
-			"max_activated_neurons" => "Maximal aktivierte Neuronen"
+			"max_activated_neurons" => "Maximal aktivierte Neuronen",
+			"no_default_data" => "Nein, Standarddaten",
+			"yes_own_tensor_data" => "&#x2318; Ja, eigene Tensordaten",
+			"yes_own_csv" => "&#128290; Ja, eigene CSV",
+			"yes_own_images" => "&#128444; Ja, eigene Bilder/Webcam"
 		)
 	);
 ?>
