@@ -157,6 +157,7 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 			show_tab_label("predict_tab", 1);
 
 			$("#webcam_tab").hide();
+			$("#example_predictions").show();
 
 			await predict_handdrawn();
 			await cosmo_maximally_activate_last_layer();
