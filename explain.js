@@ -2505,7 +2505,13 @@ async function cosmo_maximally_activate_last_layer () {
 	var images_in_total = parseInt($("#max_number_of_files_per_category").val()) * labels.length;
 	var nr_epochs = get_epochs();
 
-	$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur ${images_in_total} Bildern und ${nr_epochs} Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr class="cosmo_hr">Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr class='cosmo_hr'>Wenn es noch zu schlecht ist, trainiere weiter.<br>`);
+	var str = `Klicke auf <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()">Kamera/selbstmalen 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr class='cosmo_hr'>Wenn es noch zu schlecht ist, trainiere weiter.<br>`;
+
+	if(nr_epochs == 10) {
+		$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur ${images_in_total} Bildern und ${nr_epochs} Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr class="cosmo_hr">${str}`);
+	} else {
+		$(".h2_maximally_activated_layer_contents").before(str);
+	}
 
 	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
 
