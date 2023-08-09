@@ -973,6 +973,8 @@ function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = me
 	var label = labels[i % labels.length];
 	var probability = predictions[i];
 
+	assert(typeof(probability) == "number", "probability is not a number");
+
 	var w = Math.floor(probability * 50);
 
 	if(show_bars_instead_of_numbers()) {
