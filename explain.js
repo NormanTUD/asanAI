@@ -358,19 +358,19 @@ function group_layers (layers) {
 		},
                 { 
 			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)", 
-			"name": "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion"
+			"name": "<span class='TRANSLATEME_dimensionality_reduction'></span>"
 		},
 		{
 			"re": "((?:" + list_activation_layers.join("|") + ")+)", 
-			"name": "Ac&shy;ti&shy;va&shy;tion fun&shy;ction"
+			"name": "<span class='TRANSLATEME_shy_activation_function'></span>"
 		},
                 {
 			"re": "((?:dropout;?)+)", 
-			"name": "Pre&shy;vent Over&shy;fit&shy;ting" 
+			"name": "<span class='TRANSLATEME_shy_overfitting_prevention'></span>"
 		},
                 {
 			"re": batch_or_layer_normalization, 
-			"name": "Re-scale and re-center data" 
+			"name": "<span class='TRANSLATEME_rescale_and_recenter'></span>"
 		},
                 {
 			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))", 
@@ -390,11 +390,11 @@ function group_layers (layers) {
 		},
                 {
 			"re": "((?:reshape;?)+;?)", 
-			"name": "Change shape" 
+			"name": "<span class='TRANSLATEME_change_shape'></span>" 
 		},
                 {
 			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
-			"name": "Simulate real data"
+			"name": "<span class='TRANSLATEME_simulate_real_data'></span>" 
 		},
 		{
 			"re": "(DebugLayer)+",

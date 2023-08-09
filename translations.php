@@ -62,7 +62,13 @@
 			"kernel_size" => "Kernel-Size",
 			"start_training" => "Start training",
 			"stop_training" => "Stop training",
-			"imprint" => "Imprint"
+			"imprint" => "Imprint",
+			"change_shape" => "Change shape",
+			"simulate_real_data" => "Simulate real data",
+			"dimensionality_reduction" => "Di&shy;men&shy;sio&shy;na&shy;lity re&shy;duc&shy;tion",
+			"shy_activation_function" => "Ac&shy;ti&shy;va&shy;tion fun&shy;ction",
+			"shy_overfitting_prevention" => "Pre&shy;vent Over&shy;fit&shy;ting",
+			"rescale_and_recenter" => "Re-scale and re-center data"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -126,7 +132,13 @@
 			"kernel_size" => "Kernel-Größe",
 			"start_training" => "Training starten",
 			"stop_training" => "Training stoppen",
-			"imprint" => "Impressum"
+			"imprint" => "Impressum",
+			"change_shape" => "Shape verändern",
+			"simulate_real_data" => "Echten Daten simulieren",
+			"dimensionality_reduction" => "Di&shy;men&shy;sio&shy;ns&shy;re&shy;duk&shy;tion",
+			"shy_activation_function" => "Ak&shy;ti&shy;vier&shy;ungsfun&shy;ktion",
+			"shy_overfitting_prevention" => "Over&shy;fit&shy;ting ver&shy;hinderung",
+			"rescale_and_recenter" => "Reskalierung und Zentrierung"
 		)
 	);
 ?>
