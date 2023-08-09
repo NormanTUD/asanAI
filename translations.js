@@ -1,5 +1,8 @@
 // Get the language from the cookie or use the default language
-let lang = getCookie('lang') || 'de';
+let lang =  'en';
+if(is_cosmo_mode) {
+	lang = 'de';
+}
 
 // Function to set the language and update translations
 function setLang(l) {

@@ -6,12 +6,13 @@
 			"fire" => "Fire",
 			"mandatory" => "Mandatory",
 			"forbidden" => "Forbiden",
-			"resque" => "Resque",
+			"rescue" => "Rescue",
 			"warning" => "Warning",
 			"the_more_variations_the_model_sees" => "The more variations the model sees, the better it can learn important features of the images.",
 			"quality_depends_on_random" => "The quality of the results depends on randomness.",
 			"program_looks_at_data" => "The program now looks at the data repeadetly and tries to learn to categorize the images.",
-			"the_further_on_top_the_better" => "The further to the top the images are, the more sure the network is in classifying the images into the categories."
+			"the_further_on_top_the_better" => "The further to the top the images are, the more sure the network is in classifying the images into the categories.",
+			"add_category" => "Add category"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -19,12 +20,13 @@
 			"fire" => "Feuer",
 			"mandatory" => "Verpflichtend",
 			"forbidden" => "Verbot",
-			"resque" => "Rettung",
+			"rescue" => "Rettung",
 			"warning" => "Warnung",
 			"the_more_variations_the_model_sees" => "Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.",
 			"quality_depends_on_random" => "Die Qualität des Ergebnisses hängt vom Zufall ab.",
 			"program_looks_at_data" => "Das Programm schaut sich jetzt alle diese Bilder immer wieder an und versucht zu lernen, sie zu kategorisieren.",
-			"the_further_on_top_the_better" => "Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie."
+			"the_further_on_top_the_better" => "Umso weiter oben die Bilder sind, desto sicherer ist sich das Netzwerk in der Einordnung in die jeweilige Kategorie.",
+			"add_category" => "Kategorie hinzufügen"
 		)
 	);
 ?>

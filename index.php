@@ -1340,7 +1340,7 @@
 								Number of images in a series: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
 									Delay in seconds between images in a series: <input type='number' value='0.5' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
 								</div>
-								<button class='add_category' onclick="add_new_category();">+ Add Category</button>
+								<button class='add_category' onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>
 								<div id="own_image_data_categories"></div>
 								<div class="container" id="own_images_container"></div>
 							</div>
@@ -1358,7 +1358,7 @@
 												<td class='cosmo_example_table'><span class="TRANSLATEME_fire"></span>:</td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_mandatory"></span>:</td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_forbidden"></span>:</td>
-												<td class='cosmo_example_table'><span class="TRANSLATEME_resque"></span>:</td>
+												<td class='cosmo_example_table'><span class="TRANSLATEME_rescue"></span>:</td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_warning"></span>:</td>
 											</tr>
 											<tr>
