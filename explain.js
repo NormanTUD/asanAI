@@ -2458,7 +2458,11 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		memory_leak_debugger("gradClassActivationMap", start_tensor + 1);
 		return retval;
 	} catch (e) {
-		console.warn(e);
+		if(("" + e).includes("already disposed")) {
+			console.warn("Model weights are disposed. Probably the model was recompiled during prediction");
+		} else {
+			console.warn(e);
+		}
 		memory_leak_debugger("gradClassActivationMap", start_tensor);
 		return null;
 	}

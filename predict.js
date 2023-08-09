@@ -724,7 +724,6 @@ function get_index_of_highest_category (predictions_tensor) { var start_tensors 
 	} catch (e) {
 		if(("" + e).includes("disposed")) {
 			console.warn("Tensor, probably predictions_tensor, already disposed");
-			console.trace();
 		} else {
 			console.warn(e);
 		}
