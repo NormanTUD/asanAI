@@ -1100,17 +1100,17 @@
 								<form id="register_form">
 									<table>
 										<tr>
-											<td>E-Mail</td>
+											<td><span class="TRANSLATEME_email" /></td>
 											<td><input type="email" id="register_email" required></td>
 										</tr>
 
 										<tr>
-											<td>Username</td>
+											<td><span class="TRANSLATEME_username" /></td>
 											<td><input id="register_username" minlength="2" required></td>
 										</tr>
 
 										<tr>
-											<td>Password</td>
+											<td><span class="TRANSLATEME_password" /></td>
 											<td><input type="password" id="register_password" minlength="8" required></td>
 										</tr>
 
@@ -1134,15 +1134,15 @@
 
 								<table>
 									<tr>
-										<td>Username</td>
+										<td><span class="TRANSLATEME_username" /></td>
 										<td><input id="login_username"></td>
 									</tr>
 									<tr>
-										<td>Password</td>
+										<td><span class="TRANSLATEME_password" /></td>
 										<td><input type="password" id="login_password"></td>
 									</tr>
 									<tr>
-										<td><button class="save_button" onclick="login()">Login</button></td>
+										<td><button class="save_button" onclick="login()"><span class="TRANSLATEME_login" /></button></td>
 										<td></td>
 									</tr>
 									<tr>
@@ -1152,22 +1152,22 @@
 								</table>
 							</div>
 							<br>
-						<button class="close_button" onclick="closePopup('register_dialog')">Close</button>
+						<button class="close_button" onclick="closePopup('register_dialog')"><span class="TRANSLATEME_close" /></button>
 					</div>
 				</div>
 
 				<div id="save_model_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
 						<div id="save_model_content"> 
-							<h1>Download</h1>
-							<button class="save_button" onclick="save_model();download_weights_json();">Download</button>
+							<h1><span class="TRANSLATEME_download" /></h1>
+							<button class="save_button" onclick="save_model();download_weights_json();"><span class="TRANSLATEME_download" /></button>
 
 							<div style="display: none" class="show_when_logged_in">
 								<h1>Save to DB</h1>
 								<span id="save_model_msg" style="display: none"></span><br>
 								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br>
-								Public: <input id="is_public" type="checkbox"><br>
-								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled>Save</button>
+								<span class="TRANSLATEME_public" />: <input id="is_public" type="checkbox"><br>
+								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled><span class="TRANSLATEME_save" /></button>
 							</div>
 						</div>
 						<br>

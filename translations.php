@@ -100,7 +100,13 @@
 			"memory_usage_while_training" => "Memory usage while training (per batch)",
 			"img_per_cat" => "Img/cat",
 			"batches" => "Batches",
-			"login" => "Login"
+			"login" => "Login",
+			"username" => "Username",
+			"password" => "Password",
+			"download" => "Download",
+			"email" => "E-Mail",
+			"public" => "Public",
+			"save" => "Save"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -202,7 +208,13 @@
 			"memory_usage_while_training" => "Speicherverbrauch während des Trainings (pro Batch)",
 			"img_per_cat" => "Bilder pro Kategorie",
 			"batches" => "Batches",
-			"login" => "Anmelden"
+			"login" => "Anmelden",
+			"username" => "Benutzername",
+			"password" => "Passwort",
+			"download" => "Herunterladen",
+			"email" => "E-Mail",
+			"public" => "Öffentlich",
+			"save" => "Speichern"
 		)
 	);
 ?>
