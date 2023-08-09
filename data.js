@@ -195,8 +195,10 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
-		if(!is_cosmo_mode) {
+		if(!is_cosmo_mode && !dont_load_into_tf) {
 			$("#stop_downloading").show(); // already cosmofied
+		} else {
+			$("#stop_downloading").hide(); // already cosmofied
 		}
 	}
 

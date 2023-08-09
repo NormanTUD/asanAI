@@ -26,7 +26,10 @@ async function add_cosmo_point (name, show_manicule=1) {
 	}
 
 	await run_cosmo_milestones();
+
 	$(".hide_in_cosmo_mode").hide();
+
+	$("#stop_downloading").hide();
 }
 
 async function show_cosmo_elements_depending_on_current_skills () {
