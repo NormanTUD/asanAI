@@ -110,7 +110,8 @@
 			"augment" => "Augment",
 			"download_model_data" => "Download model data",
 			"logout" => "Logout",
-			"load" => "Load"
+			"load" => "Load",
+			"download_for_local_taurus" => "Download for local/taurus training"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -222,7 +223,8 @@
 			"augment" => "Augmentieren",
 			"download_model_data" => "Modeldaten downloaden",
 			"logout" => "Abmelden",
-			"load" => "laden"
+			"load" => "laden",
+			"download_for_local_taurus" => "Für lokales oder Taurus-Training herunterladen"
 		)
 	);
 ?>

@@ -1363,7 +1363,7 @@
 									<span class="user_select_none">
 										<button onclick="copy_id_to_clipboard('python')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
 										<button onclick="save_model()"><span class="TRANSLATEME_download_model_data" /></button>
-										<button onclick="download_model_for_training(model)">Download for local/taurus training</button>
+										<button onclick="download_model_for_training(model)"><span class="TRANSLATEME_download_for_local_taurus" /></button>
 									</span>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
