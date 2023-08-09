@@ -233,7 +233,7 @@
 			"reset" => "Reset",
 			"delete_predictions" => "Predictions löschen",
 			"memory_usage_while_training" => "Speicherverbrauch während des Trainings (pro Batch)",
-			"img_per_cat" => "Bilder/Kategorie",
+			"img_per_cat" => "Bilder/Kat.",
 			"batches" => "Batches",
 			"login" => "Anmelden",
 			"username" => "Benutzername",

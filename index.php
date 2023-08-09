@@ -998,7 +998,7 @@
 											<td><input class="show_data" type='checkbox' id="show_raw_data"></td>
 										</tr>
 										<tr>
-											<td>Pixel size</td>
+											<td><span class="TRANSLATEME_pixel_size" /></td>
 											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;"></td>
 										</tr>
 										<tr>
