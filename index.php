@@ -485,7 +485,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Training</div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_training" /></div>
 					</div>
 				</div>
 
@@ -825,9 +825,6 @@
 
 											<td>&epsilon;</td>
 											<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax"></td>
-
-
-
 										</tr>
 										<tr>
 
