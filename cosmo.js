@@ -837,8 +837,9 @@ async function switch_predict_mode () {
 
 	await cosmo_mode_auto_image_descriptor();
 
+	updateTranslations();
+
 	return ret;
-}
 
 function parse_required_skills(str) {
 	// Step 1: Split the input string into individual key-value pairs using regex
