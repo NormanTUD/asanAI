@@ -1477,6 +1477,8 @@ async function input_shape_is_image (is_from_webcam=0) { var start_tensors = mem
 		is.show();
 		if(is_cosmo_mode) {
 			$(".hide_in_cosmo_mode").hide();
+		} else {
+			$(".hide_in_cosmo_mode").show();
 		}
 		/*
 		if(!is_from_webcam && is_cosmo_mode) {
