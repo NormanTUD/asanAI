@@ -135,7 +135,8 @@
 			"show_raw_data" => "Show raw data",
 			"pixel_size" => "Pixel size",
 			"auto_rotate_images" => "Auto rotate images",
-			"number_of_rotations" => "Number of rotations"
+			"number_of_rotations" => "Number of rotations",
+			"pretext_prepare_data" => "You must prepare your dataset yourself! You can use this piece of code to generate the data file in the correct format after you pre-processed them."
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -272,7 +273,8 @@
 			"show_raw_data" => "Rohdaten anzeigen",
 			"pixel_size" => "Pixelgröße",
 			"auto_rotate_images" => "Bilder automatisch rotieren",
-			"number_of_rotations" => "Anzahl Rotationen"
+			"number_of_rotations" => "Anzahl Rotationen",
+			"pretext_prepare_data" => "Du musst deine Daten selbst vorbereiten! Du kannst folgenden Code nehmen, um Datenstrukturen aus Python in das richtige Format umzuwandeln, das du mit asanAI benutzen kannst."
 		)
 	);
 ?>

@@ -888,7 +888,7 @@
 									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 								</tr>
 								<tr>
-									<td>Number of rotations?</td>
+									<td><span class="TRANSLATEME_number_of_rotations" />?</td>
 									<td><input type="number" min=1 value=4 id="number_of_rotations"></td>
 									<td></td>
 									<td></td>
@@ -1257,9 +1257,8 @@
 
 							<div id="own_tensor_data" class="tab">
 									<div id="prepare_data">
-									You must prepare your dataset yourself! You can use this piece of code to generate
-									the data file in the correct format after you pre-processed them.
-									<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
+										<span class="TRANSLATEME_pretext_prepare_data" />
+										<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
 	with open(name + '.txt', 'w') as outfile:
 	outfile.write('# shape: {0}\n'.format(data.shape))
 	for data_slice in data:
