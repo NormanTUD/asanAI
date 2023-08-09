@@ -1391,14 +1391,14 @@ HALLO
 
 								<div id="lenet_tab" class="tab">
 									<div id="lenet"></div>
-									<button class="vis_button" onclick='reset_view()'>Reset view</button>
+									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
 									<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 									<button class="vis_button" onclick="restart_lenet(1)">Restart LeNet</button>
 								</div>
 
 								<div id="fcnn_tab" class="tab">
 									<div id="fcnn"></div>
-									<button class="vis_button" onclick='reset_view()'>Reset view</button>
+									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
 									<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
 									<button class="vis_button" onclick="restart_fcnn(1)">Restart FCNN</button>
 								</div>
