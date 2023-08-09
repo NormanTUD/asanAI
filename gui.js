@@ -1435,8 +1435,8 @@ function get_option_for_layer_by_type(nr) {
 
 	var str = "";
 
-	var kernel_initializer_string = get_tr_str_for_layer_table("Kernel Initializer", "kernel_initializer", "select", initializers, nr);
-	var bias_initializer_string = get_tr_str_for_layer_table("Bias Initializer", "bias_initializer", "select", initializers, nr);
+	var kernel_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr);
+	var bias_initializer_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span", "bias_initializer", "select", initializers, nr);
 	var activation_string = get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr);
 
 	for (var [key, value] of Object.entries(layer_options)) {

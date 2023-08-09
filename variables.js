@@ -1240,7 +1240,7 @@ var general_options = {
 	'alpha': '"&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr',
 	'dropout_rate': '"Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr',
 	'center': '"Center?", "center", "checkbox", { "status": "checked" }, nr',
-	'trainable': '"Trainable", "trainable", "checkbox", { "status": "checked" }, nr',
+	'trainable': `"<span class='TRANSLATEME_trainable'></span>", "trainable", "checkbox", { "status": "checked" }, nr`,
 	'scale': '"Scale?", "scale", "checkbox", { "status": "checked" }, nr',
 	'unroll': '"Unroll?", "unroll", "checkbox", { "status": "checked" }, nr',
 	'unit_forget_bias': '"Unit forget bias", "unit_forget_bias", "checkbox", { "status": "checked" }, nr',

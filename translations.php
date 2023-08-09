@@ -16,7 +16,10 @@
 			"settings" => "Settings",
 			"description" => "Description",
 			"use_bias" => "Use Bias",
-			"activation_function" => "Activation function"
+			"activation_function" => "Activation function",
+			"bias_initializer" => "Bias-Initializer",
+			"kernel_initializer" => "Kernel-Initializer",
+			"trainable" => "Trainable"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -34,7 +37,10 @@
 			"settings" => "Einstellungen",
 			"description" => "Beschreibung",
 			"use_bias" => "Bias benutzen",
-			"activation_function" => "Aktivierungsfunktion"
+			"activation_function" => "Aktivierungsfunktion",
+			"bias_initializer" => "Bias-Initialisierer",
+			"kernel_initializer" => "Kernel-Initialisierer",
+			"trainable" => "Trainierbar"
 		)
 	);
 ?>
