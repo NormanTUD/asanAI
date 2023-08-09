@@ -2089,7 +2089,6 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 			if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
 				console.warn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
-				console.trace();
 			}
 
 			color_diff[layer_nr][this_key] = [];
@@ -2111,7 +2110,12 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 				} else { // sub array contains more arrays (kernels most probably))
 					color_diff[layer_nr][this_key][item_nr] = [];
 					for (var kernel_nr = 0; kernel_nr < this_old_sub_array[item_nr].length; kernel_nr++) {
-						try {
+						if(
+							Object.keys(this_new_sub_array).includes(item_nr) &&
+							Object.keys(this_old_sub_array).includes(item_nr) &&
+							Object.keys(this_new_sub_array[item_nr]).includes(kernel_nr) &&
+							Object.keys(this_old_sub_array[item_nr]).includes(kernel_nr)
+						) {
 							if(this_old_sub_array[item_nr][kernel_nr] == this_new_sub_array[item_nr][kernel_nr]) {
 								color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
 							} else {
@@ -2121,9 +2125,6 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 									color_diff[layer_nr][this_key][item_nr][kernel_nr] = "SeaGreen";
 								}
 							}
-						} catch (e) {
-							console.warn(e);
-							console.trace();
 						}
 					}
 				}
