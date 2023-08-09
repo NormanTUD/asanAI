@@ -782,33 +782,41 @@ var colorPickerElementsList = getColorPickerElements();
 console.log(colorPickerElementsList);
 */
 
+function _predict_mode_examples() {
+	$("#own_files").show();
+	$("#own_files").css("display", "inline-block");
+	$("#example_predictions").hide();
+
+	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
+		<img height=20 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png' />
+		<img height=20 src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png' />
+		<img height=20 src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png' />
+		<img height=20 src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png' />
+		<img height=20 src='traindata/signs//fire/116px-Fire_Class_B.svg.png' />
+		</span>
+	`).show();
+	cosmo_predict_mode = "cam";
+
+	$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
+}
+
+function _predict_mode_custom () {
+	$("#own_files").hide();
+	$("#own_files").css("display", "none");
+	$("#example_predictions").show();
+
+	$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷").show();
+	cosmo_predict_mode = "examples";
+	$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
+}
+
 async function switch_predict_mode () {
 	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
 	if($("#own_files").css("display") == "none") {
-		$("#own_files").show();
-		$("#own_files").css("display", "inline-block");
-		$("#example_predictions").hide();
-
-		$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
-			<img height=20 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png' />
-			<img height=20 src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png' />
-			<img height=20 src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png' />
-			<img height=20 src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png' />
-			<img height=20 src='traindata/signs//fire/116px-Fire_Class_B.svg.png' />
-			</span>
-		`).show();
-		cosmo_predict_mode = "cam";
-
-		$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
+		_predict_mode_examples();
 	} else {
-		$("#own_files").hide();
-		$("#own_files").css("display", "none");
-		$("#example_predictions").show();
-
-		$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷").show();
-		cosmo_predict_mode = "examples";
-		$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
+		_predict_mode_custom();
 	}
 
 	await add_cosmo_point("toggled_webcam");

@@ -455,6 +455,11 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
+
+		if(is_cosmo_mode) {
+			_predict_mode_examples();
+		}
+
 		memory_leak_debugger("onTrainEnd", start_tensors);
 	}
 
