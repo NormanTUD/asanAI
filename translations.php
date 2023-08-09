@@ -32,7 +32,12 @@
 			"filters" => "Filters",
 			"distribution" => "Distribution",
 			"image_options" => "Image Options",
-			"feature_extraction" => "Feature ex&shy;traction"
+			"feature_extraction" => "Feature ex&shy;traction",
+			"classification" => "Classi&shy;fication",
+			"flatten" => "Flatten",
+			"dataset_and_network" => "Dataset and network",
+			"model_visualization" => "Model Visualization",
+			"data" => "Data"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -66,7 +71,12 @@
 			"filters" => "Filter",
 			"distribution" => "Verteilung",
 			"image_options" => "Bildoptionen",
-			"feature_extraction" => "Merkmalsex&shy;traktion"
+			"feature_extraction" => "Merkmalsex&shy;traktion",
+			"classification" => "Klassi&shy;fikation",
+			"flatten" => "Verflachen",
+			"dataset_and_network" => "Datensatz und Netzwerk",
+			"model_visualization" => "Modellvisualisierung",
+			"data" => "Daten"
 		)
 	);
 ?>

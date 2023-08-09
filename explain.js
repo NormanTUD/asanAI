@@ -382,11 +382,11 @@ function group_layers (layers) {
 		},
                 { 
 			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)", 
-			"name": "Classi&shy;fication" 
+			"name": "<span class='TRANSLATEME_classification'></span>" 
 		},
                 { 
 			"re": "((?:flatten;?)+;?)", 
-			"name": "Flatten" 
+			"name": "<span class='TRANSLATEME_flatten'></span>" 
 		},
                 {
 			"re": "((?:reshape;?)+;?)", 

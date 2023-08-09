@@ -362,7 +362,7 @@
 							</table>
 
 						</div>
-						<div class="ribbon-group-title">Dataset and Network</div>
+						<div class="ribbon-group-title"><span class='TRANSLATEME_dataset_and_network'></span></div>
 					</div>
 
 					<div class="ribbon-group-sep expert_mode_only"></div>
@@ -1235,8 +1235,8 @@
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 							<div id="navbar1" class="user_select_none" style="display: flex">
 								<ul class="navi_list">
-									<li><a id="training_data_tab_label" href="#training_data_tab">Data</a></li>
-									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want.">Model Visualization</a></li>
+									<li><a id="training_data_tab_label" href="#training_data_tab"><span class='TRANSLATEME_data'></span></a></li>
+									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want."><span class='TRANSLATEME_model_visualization'></span></a></li>
 									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model">Summary</a></li>
 									<li><a id="own_image_data_label" href="#own_image_data">Own images</a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data">Own tensors</a></li>
