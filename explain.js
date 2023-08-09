@@ -1065,7 +1065,7 @@ async function draw_maximally_activated_layer (layer, type) {
 			continue;
 		}
 	
-		await _show_eta(times, i);
+		await _show_eta(times, i + 1);
 
 		var start = Date.now();
 
