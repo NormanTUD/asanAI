@@ -5564,7 +5564,7 @@ function save_custom_images_file (blob) { var start_tensors = memory_leak_debugg
 }
 
 async function create_and_download_zip () { var start_tensors = memory_leak_debugger();
-	var res = create_zip_with_custom_images().then(save_custom_images_file);
+	var res = await create_zip_with_custom_images().then(save_custom_images_file);
 
 	memory_leak_debugger("create_and_download_zip", start_tensors);
 

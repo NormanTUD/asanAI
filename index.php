@@ -1570,7 +1570,7 @@
 
 										<span id="prediction_non_image" style="display: none"></span>
 
-										<span class="handdrawn hide_when_no_image" style='text-align: justify'>
+										<span id="handdrawn_img" class="handdrawn hide_when_no_image" style='text-align: justify'>
 											<span class="full_example_image_prediction">
 												<span id='predict_handdrawn_canvas'></span><br>
 												<span id="handdrawn_predictions"></span>

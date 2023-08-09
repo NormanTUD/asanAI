@@ -783,9 +783,8 @@ console.log(colorPickerElementsList);
 */
 
 function _predict_mode_examples() {
-	$("#own_files").show();
-	$("#own_files").css("display", "inline-block");
-	$("#example_predictions").hide();
+	$("#example_predictions").show();
+	$("#handdrawn_img").hide()
 
 	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
 		<img height=20 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png' />
@@ -798,32 +797,50 @@ function _predict_mode_examples() {
 	cosmo_predict_mode = "cam";
 
 	$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
+
+	$("#own_files").css("display", "none");
 }
 
 function _predict_mode_custom () {
-	$("#own_files").hide();
-	$("#own_files").css("display", "none");
-	$("#example_predictions").show();
+	$("#example_predictions").hide();
+	$("#handdrawn_img").show().parent().show()
 
 	$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷").show();
 	cosmo_predict_mode = "examples";
 	$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
+
+	$("#own_files").css("display", "inline-block");
 }
 
 async function switch_predict_mode () {
 	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
 
-	if($("#own_files").css("display") == "none") {
+	var ret = "";
+
+	var own_files_display = $("#own_files").css("display");
+
+	var _show_examples = (own_files_display == "none") ? false : true;
+
+	//log("own_files.display: " + own_files_display);
+	//log("_show_examples: " + _show_examples);
+
+	if(_show_examples) {
 		_predict_mode_examples();
+		ret = "_predict_mode_examples();";
 	} else {
 		_predict_mode_custom();
+		ret = "_predict_mode_custom();";
 	}
 
 	await add_cosmo_point("toggled_webcam");
 
 	await cosmo_mode_auto_image_descriptor();
+
+	return ret;
 }
+
+await switch_predict_mode();
 
 function parse_required_skills(str) {
 	// Step 1: Split the input string into individual key-value pairs using regex

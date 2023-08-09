@@ -1069,6 +1069,8 @@ async function draw_maximally_activated_layer (layer, type) {
 
 		var start = Date.now();
 
+		var currentURL = window.location.href;
+		var urlParams = new URLSearchParams(window.location.search);
 		await draw_maximally_activated_neuron(layer, i);
 
 		var end = Date.now();
@@ -2488,7 +2490,9 @@ async function cosmo_maximally_activate_last_layer () {
 
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
+
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+
 	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'>So denkt die KI, dass die Kategorien aussehen:");
 
 	var ep = get_epochs();
