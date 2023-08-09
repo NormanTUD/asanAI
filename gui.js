@@ -3377,7 +3377,9 @@ async function change_data_origin() { var start_tensors = memory_leak_debugger()
 		reset_labels();
 		await get_label_data();
 
-		$(".hide_when_custom_data").show();
+		if(!is_cosmo_mode) {
+			$(".hide_when_custom_data").show();
+		}
 
 		changed_data_source = false;
 
