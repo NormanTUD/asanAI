@@ -146,7 +146,7 @@ async function predict_demo (item, nr, tried_again = 0) { var start_tensors = me
 		return;
 	}
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
-	
+
 	if(item.width == 0) {
 		//log("item width is 0, not predicting:", item);
 		return;
@@ -249,8 +249,12 @@ async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memo
 		await _predict_result(predictions_tensor, nr);
 		await draw_heatmap(predictions_tensor, tensor_img);
 	} catch (e) {
-		console.log(e);
-		console.trace();
+		if(("" + e).includes("already disposed")) {
+			console.warn("Tensors already disposed. Probably the model was recompiled while predicting.");
+		} else {
+			console.log(e);
+			console.trace();
+		}
 	}
 
 	await dispose(predictions_tensor);
@@ -765,7 +769,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 			var largest = Math.max(height, width);
 
 			var pxsz = 1;
-			
+
 			while ((pxsz * largest) < max_height_width) {
 				pxsz += 1;
 			}
