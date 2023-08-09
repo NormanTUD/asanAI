@@ -924,7 +924,7 @@
 											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr>
-											<td>Randomizer limits</td>
+											<td><span class="TRANSLATEME_randomizer_limits" /></td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
 										</tr>
 										<tr>
@@ -945,7 +945,7 @@
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
 									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
-										<td>Max. neurons FCNN?</td>
+										<td><span class="TRANSLATEME_max_neurons_fcnn" />?</td>
 										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 									</tr>
 									<tr data-intro="Show the input layer in the visualizations?">
