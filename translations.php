@@ -121,7 +121,8 @@
 			"randomizer_limits" => "Randomizer Limits",
 			"max_neurons_fcnn" => "Max. neurons FCNN",
 			"various_plots" => "Various Plots",
-			"sources_and_used_programs" => "Sources and used programs"
+			"sources_and_used_programs" => "Sources and used programs",
+			"visualize_images_in_grid" => "Visualize images in grid"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -244,7 +245,8 @@
 			"randomizer_limits" => "Randomisierergrenzen",
 			"max_neurons_fcnn" => "Max. Neuronen FCNN",
 			"various_plots" => "Verschiedene Plots",
-			"sources_and_used_programs" => "Quellen und genutzte Programme"
+			"sources_and_used_programs" => "Quellen und genutzte Programme",
+			"visualize_images_in_grid" => "Bilder in Grid visualisieren"
 		)
 	);
 ?>

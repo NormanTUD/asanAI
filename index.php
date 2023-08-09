@@ -973,7 +973,7 @@
 										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
-										<td>Visualize images in grid?</td>
+										<td><span class="TRANSLATEME_visualize_images_in_grid" />?</td>
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
