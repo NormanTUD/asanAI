@@ -840,6 +840,7 @@ async function switch_predict_mode () {
 	updateTranslations();
 
 	return ret;
+}
 
 function parse_required_skills(str) {
 	// Step 1: Split the input string into individual key-value pairs using regex

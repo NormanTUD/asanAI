@@ -2497,7 +2497,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
-	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'>So denkt die KI, dass die Kategorien aussehen:");
+	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:");
 
 	var ep = get_epochs();
 
@@ -2507,7 +2507,7 @@ async function cosmo_maximally_activate_last_layer () {
 	var str = `<span class="TRANSLATEME_click_on"></span> <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()"><span class='TRANSLATEME_camera_draw_self'></span> 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr class='cosmo_hr'><span class='TRANSLATEME_if_bad_continue_training'></span><br>`;
 
 	if(nr_epochs == 10) {
-		$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur ${images_in_total} Bildern und ${nr_epochs} Epochen gemacht.<br>Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.<hr class="cosmo_hr">${str}`);
+		$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur ${images_in_total} Bildern und ${nr_epochs} Epochen gemacht.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
 	} else {
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
