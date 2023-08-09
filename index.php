@@ -1344,7 +1344,7 @@
 								<div id="lenet_example_cosmo" class="tab" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
-									<img style='width: 90%; max-height: 300px; max-width: 500px;' src="signs_network.svg"><br>
+									<img style='width: 90%; max-height: 400px; max-width: 500px;' src="signs_network.svg"><br>
 									<hr class="cosmo_hr">
 									Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:<br>
 									<center>
