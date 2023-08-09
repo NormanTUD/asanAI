@@ -47,7 +47,9 @@
 			"click_on" => "Click on",
 			"if_bad_continue_training" => "If it is still bad, continue training.",
 			"the_ai_thinks_categories_look_like_this" => "This is how the AI thinks the categories look like",
-			"it_might_only_be_noise" => "Thats why you are probably only seeing random noise and the detection may not work properly yet."
+			"it_might_only_be_noise" => "Thats why you are probably only seeing random noise and the detection may not work properly yet.",
+			"image_left" => "Image left",
+			"images_left" => "Images left"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -96,7 +98,9 @@
 			"click_on" => "Klicke auf",
 			"if_bad_continue_training" => "Wenn es noch zu schlecht ist, trainiere weiter.",
 			"the_ai_thinks_categories_look_like_this" => "So denkt die KI, dass die Kategorien aussehen",
-			"it_might_only_be_noise" => "Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht."
+			"it_might_only_be_noise" => "Daher siehst du hier wahrscheinlich nur Rauschen und die Erkennung geht noch nicht.",
+			"image_left" => "Bild übrig",
+			"images_left" => "Bilder übrig"
 		)
 	);
 ?>

@@ -1116,9 +1116,9 @@ async function _show_eta (times, i) {
 			eta = " (" + human_readable_time_german(parseInt(i * median(times))) + " übrig)";
 		}
 		if(i == 1) {
-			swal_msg = i + " Bild übrig " + eta;
+			swal_msg = i + " " + language[lang]["image_left"] + " " + eta;
 		} else {
-			swal_msg = i + " Bilder übrig " + eta;
+			swal_msg = i + " " + language[lang]["images_left"] + " " + eta;
 		}
 	}
 
