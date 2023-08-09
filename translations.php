@@ -99,7 +99,8 @@
 			"delete_predictions" => "Delete predictions",
 			"memory_usage_while_training" => "Memory usage while training (per batch)",
 			"img_per_cat" => "Img/cat",
-			"batches" => "Batches"
+			"batches" => "Batches",
+			"login" => "Login"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -200,7 +201,8 @@
 			"delete_predictions" => "Predictions löschen",
 			"memory_usage_while_training" => "Speicherverbrauch während des Trainings (pro Batch)",
 			"img_per_cat" => "Bilder pro Kategorie",
-			"batches" => "Batches"
+			"batches" => "Batches",
+			"login" => "Anmelden"
 		)
 	);
 ?>

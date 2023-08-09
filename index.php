@@ -1119,7 +1119,7 @@
 										</tr>
 
 										<tr>
-											<td><button id="register_button" onclick="register()" style="display: none">Register</button></td>
+											<td><button id="register_button" onclick="register()" style="display: none"><span class="TRANSLATEME_register" /></button></td>
 											<td></td>
 										</tr>
 
@@ -1130,7 +1130,7 @@
 									</table>
 								</form>
 
-								<h1>Login</h1>
+								<h1><span class="TRANSLATEME_login" /></h1>
 
 								<table>
 									<tr>
