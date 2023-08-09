@@ -133,7 +133,9 @@
 			"show_bars_instead_of_numbers" => "Show bars instead of numbers",
 			"number_of_grid_images" => "Number of grid images",
 			"show_raw_data" => "Show raw data",
-			"pixel_size" => "Pixel size"
+			"pixel_size" => "Pixel size",
+			"auto_rotate_images" => "Auto rotate images",
+			"number_of_rotations" => "Number of rotations"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -268,7 +270,9 @@
 			"show_bars_instead_of_numbers" => "Balken statt Zahlen verwenden",
 			"number_of_grid_images" => "Anzahl Bilder im Grid",
 			"show_raw_data" => "Rohdaten anzeigen",
-			"pixel_size" => "Pixelgröße"
+			"pixel_size" => "Pixelgröße",
+			"auto_rotate_images" => "Bilder automatisch rotieren",
+			"number_of_rotations" => "Anzahl Rotationen"
 		)
 	);
 ?>

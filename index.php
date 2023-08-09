@@ -882,7 +882,7 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-									<td>Auto rotate images?</td>
+									<td><span class="TRANSLATEME_auto_rotate_images" />?</td>
 									<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
 									<td>Sine-Ripple?</td>
 									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
