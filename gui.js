@@ -398,7 +398,7 @@ function add_visualize_option(type, nr) { var start_tensors = memory_leak_debugg
 		style = ' style="display: none" '
 	}
 
-	var res = "<tr class='visualize_button' " + style + "><td>Visualize this layer?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'>Visualize layer</button></td></tr>";
+	var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
 
 	memory_leak_debugger("add_visualize_option", start_tensors);
 

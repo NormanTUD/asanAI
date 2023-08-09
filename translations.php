@@ -19,7 +19,9 @@
 			"activation_function" => "Activation function",
 			"bias_initializer" => "Bias-Initializer",
 			"kernel_initializer" => "Kernel-Initializer",
-			"trainable" => "Trainable"
+			"trainable" => "Trainable",
+			"visualize_layer" => "Visualize layer",
+			"visualize_this_layer" => "Visualize this layer"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -40,7 +42,9 @@
 			"activation_function" => "Aktivierungsfunktion",
 			"bias_initializer" => "Bias-Initialisierer",
 			"kernel_initializer" => "Kernel-Initialisierer",
-			"trainable" => "Trainierbar"
+			"trainable" => "Trainierbar",
+			"visualize_layer" => "Layer visualisieren",
+			"visualize_this_layer" => "Diesen Layer visualisieren"
 		)
 	);
 ?>
