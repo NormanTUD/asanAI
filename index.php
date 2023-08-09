@@ -1586,7 +1586,7 @@
 			</span>
 
 			<span style="left: 50%; right: 50%; position: absolute;">
-				<a style="color: inherit; text-decoration: underline;" target="_blank" href="https://scads.ai/imprint/">Impressum/Imprint</a>
+				<a style="color: inherit; text-decoration: underline;" target="_blank" href="https://scads.ai/imprint/"><span class="TRANSLATEME_imprint"></span></a>
 			</span>
 			<span id="memory_debugger_div"></span>
 		</div>

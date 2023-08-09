@@ -61,7 +61,8 @@
 			"own_tensors" => "Own tensors",
 			"kernel_size" => "Kernel-Size",
 			"start_training" => "Start training",
-			"stop_training" => "Stop training"
+			"stop_training" => "Stop training",
+			"imprint" => "Imprint"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -124,7 +125,8 @@
 			"own_tensors" => "Eigene Tensoren",
 			"kernel_size" => "Kernel-Größe",
 			"start_training" => "Training starten",
-			"stop_training" => "Training stoppen"
+			"stop_training" => "Training stoppen",
+			"imprint" => "Impressum"
 		)
 	);
 ?>
