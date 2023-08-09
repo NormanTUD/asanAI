@@ -786,6 +786,7 @@ function _predict_mode_examples() {
 	$("#own_files").show();
 	$("#own_files").css("display", "inline-block");
 	$("#example_predictions").hide();
+	$("#webcam_tab").hide();
 
 	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
 		<img height=20 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png' />
@@ -804,6 +805,7 @@ function _predict_mode_custom () {
 	$("#own_files").hide();
 	$("#own_files").css("display", "none");
 	$("#example_predictions").show();
+	$("#webcam_tab").show();
 
 	$("#webcam_in_cosmo").html("Kamera/selbstmalen 📷").show();
 	cosmo_predict_mode = "examples";
