@@ -1244,7 +1244,7 @@
 							</div>
 							<hr id="hr_nav">
 
-							<div id="own_csv_data">
+							<div id="own_csv_data" class="tab">
 								<br>
 								<table class="table_border_1px">
 									<tr>
@@ -1292,8 +1292,7 @@
 								</table>
 							</div>
 
-							<div id="own_tensor_data">
-
+							<div id="own_tensor_data" class="tab">
 									<div id="prepare_data">
 									You must prepare your dataset yourself! You can use this piece of code to generate
 									the data file in the correct format after you pre-processed them.
@@ -1321,7 +1320,7 @@
 								Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
 							</div>
 
-							<div id="own_image_data">
+							<div id="own_image_data" class="tab">
 								<span class="hide_in_cosmo_mode">
 									<button onclick="create_and_download_zip()">Download custom data in a .zip file</button>
 									<br>
@@ -1341,25 +1340,8 @@
 								<div class="container" id="own_images_container"></div>
 							</div>
 
-							<!--<div style="display: none" id="lenet_cosmo_tab">
-								<button class="cosmo" data-required_skills="watched_presentation[1],seen_lenet[1]" onclick='switch_to_back_from_lenet_example()'>
-									<span style='pointer-events: none'>Beispielbilder
-										<img height=32 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png'>
-										<img height=32 src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png'>
-										<img height=32 src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png'>
-										<img height=32 src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png'>
-										<img height=32 src='traindata/signs//fire/116px-Fire_Class_B.svg.png'>
-									</span>
-</button>
-								Das ist die KI, durch die die Daten durchgehen.<br>
-								Es kommt ein Bild rein und 5 Werte heraus &mdash; Einen für jede Kategorie.<br>
-								Jede Ebene kann andere Strukturen lernen: Formen, Farben usw.<br>
-								Was genau jeder Ebene lernt hängt vom Zufall ab.<br>
-								<img style='width: 90%' src="signs_network.svg">
-							</div>-->
-
 							<div id="training_data_tab" class="tab">
-								<div id="lenet_example_cosmo" style="display: none">
+								<div id="lenet_example_cosmo" class="tab" style="display: none">
 									<!--<button class="cosmo" data-required_skills="watched_presentation[1]" onclick='switch_to_lenet_example()'>Netzwerk anzeigen</button><br>-->
 									Nehmen wir an, wir haben ein einfaches Bilderkennungsmodell:<br>
 									<img style='width: 90%; max-height: 300px; max-width: 500px;' src="signs_network.svg"><br>
@@ -1393,9 +1375,9 @@
 									<div id="percentage" class="user_select_none reset_before_train_network"></div>
 									<button id="stop_downloading" onclick="stop_downloading_data=true" style="display: none">Stop downloading and start training</button>
 								</span>
-								<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
-								<div id="cosmo_mode_visualization"></div>
-								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<div id="photos" style="display: none; height: 95%; min-height: 400px; overflow-y: auto" class="tab reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
+								<div id="cosmo_mode_visualization" class="tab"></div>
+								<div id="xy_display_data" style="display: none; height: 400px; max-height: 400px; overflow-y: auto" class="tab reset_before_train_network"><br>Click 'Start training' to start downloading the training data and then train on them.</div>
 								<div class="" id="download_data" style="display: none"></div>
 							</div>
 
@@ -1463,7 +1445,7 @@
 									<div id="activation_plot" style="display: none"></div>
 								</div>
 
-								<div id="maximally_activated" class="maximally_activated_class">
+								<div id="maximally_activated" class="tab maximally_activated_class">
 									<br>
 									<button onclick="smaller_maximally_activated_neurons()">Smaller</button>
 									<button onclick="larger_maximally_activated_neurons()">Larger</button>

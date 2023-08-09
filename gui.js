@@ -4634,57 +4634,6 @@ function show_tab_label(label, click) {
 	}
 }
 
-function show_tab_label_old(label, click) {
-	//logt(`Trying label ${label} (click: ${click}, global_force_noclick_tab_label: ${global_force_noclick_tab_label})`);
-
-	assert(typeof(label) == "string", "label is not a string");
-
-	var this_label_item = $("#" + label);
-	assert(this_label_item.length == 1, "Invalid or double label " + label);
-
-	//log("showing parent");
-	$("#navbar1").show()
-	$(".navi_list").show();
-
-	log("showing:", this_label_item.parent().show().parent().show());
-
-	$(".tab").each((i, x) => {
-		$(x).hide().parent().show();
-	});
-
-	if (click && !global_force_noclick_tab_label) {
-		//log("click label " + label)
-		var $this_label_item = $(this_label_item);
-		$this_label_item.trigger("click");
-
-		var this_label_xpath = get_element_xpath($($this_label_item[0]).parent().parent()[0]);
-
-		var navigation_elements_in_parent = $this_label_item.parent().parent().parent().parent().find(".navi_list");
-		assert(navigation_elements_in_parent.length >= 1, "no navigation_elements_in_parent");
-		for (var i = 0; i < navigation_elements_in_parent.length; i++) {
-			var div_name = $this_label_item.parent().parent().parent().attr("id");
-			$('a[href="#' + div_name + '"]').click();
-			$this_label_item.trigger("click");
-			var href = $this_label_item[0].id.replace(/_label$/, "");
-			var showable = $("#" + href);
-			//log("showable:", showable);
-			if(showable.length) {
-				showable.show().trigger("click");
-			} else {
-				console.info("showable is empty");
-			}
-			//log("click 2", $this_label_item);
-		}
-	}
-
-	if(is_cosmo_mode) {
-		$("#navbar1").hide()
-		$(".navi_list").show();
-		//log("hiding: ", this_label_item.parent().hide().parent().hide());
-
-	}
-}
-
 function check_number_values() {
 	var all_fields = document.querySelectorAll('input[type="number"]');
 	var default_bg_color = $("input").css("background-color");
