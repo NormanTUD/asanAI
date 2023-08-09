@@ -969,7 +969,7 @@
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
 									<tr data-intro="In the predict page, show visual bars instead of numbers">
-										<td>Show bars instead of numbers?</td>
+										<td><span class="TRANSLATEME_show_bars_instead_of_numbers" />?</td>
 										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
