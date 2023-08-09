@@ -984,7 +984,7 @@ function _webcam_prediction_row (i, predictions, max_i) { var start_tensors = me
 	} else {
 		probability = (probability * 50) + "%";
 		if(i == max_i) {
-			str += "<tr><td class='label_element'>" + label + "</td><td><b class='highest_bar'>" + probability + "</b></td></tr>";
+			str += "<tr><td class='label_element'>" + label + "</td><td><b class='max_prediction'>" + probability + "</b></td></tr>";
 		} else {
 			str += "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
 		}

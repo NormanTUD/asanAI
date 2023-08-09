@@ -407,7 +407,7 @@ body {
 }
 
 .max_prediction {
-	color: #66FF99;
+	color: #0FFF50 !important;
 }
 
 .own_image_span {
