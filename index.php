@@ -928,7 +928,7 @@
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
 										</tr>
 										<tr>
-											<td>Width&amp;height (0 = auto):</td>
+											<td><span class="TRANSLATEME_width_amp_height" />:</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
 										</tr>
 									</table>

@@ -116,7 +116,8 @@
 			"no_default_data" => "No, default data",
 			"yes_own_tensor_data" => "&#x2318; Yes, own tensor-data",
 			"yes_own_csv" => "&#128290; Yes, own CSV",
-			"yes_own_images" => "&#128444; Yes, own images/webcam"
+			"yes_own_images" => "&#128444; Yes, own images/webcam",
+			"width_amp_height" => "Width&amp;height (0 = auto)"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -234,7 +235,8 @@
 			"no_default_data" => "Nein, Standarddaten",
 			"yes_own_tensor_data" => "&#x2318; Ja, eigene Tensordaten",
 			"yes_own_csv" => "&#128290; Ja, eigene CSV",
-			"yes_own_images" => "&#128444; Ja, eigene Bilder/Webcam"
+			"yes_own_images" => "&#128444; Ja, eigene Bilder/Webcam",
+			"width_amp_height" => "Höhe&amp;Breite (0 = auto)"
 		)
 	);
 ?>
