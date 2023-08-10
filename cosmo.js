@@ -786,12 +786,12 @@ function _predict_mode_examples() {
 	$("#example_predictions").show();
 	$("#handdrawn_img").hide()
 
-	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>Beispielbilder
-		<img height=20 src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png' />
-		<img height=20 src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png' />
-		<img height=20 src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png' />
-		<img height=20 src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png' />
-		<img height=20 src='traindata/signs//fire/116px-Fire_Class_B.svg.png' />
+	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>${language[lang]["example_images"]}
+			<img height=20 src='traindata/signs/warning/120px-D-W002_Warning_orange.svg.png' />
+			<img height=20 src='traindata/signs/rescue/120px-DIN_4844-2_WSE001.svg.png' />
+			<img height=20 src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png' />
+			<img height=20 src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png' />
+			<img height=20 src='traindata/signs/fire/116px-Fire_Class_B.svg.png' />
 		</span>
 	`).show();
 	cosmo_predict_mode = "cam";

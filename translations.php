@@ -200,8 +200,8 @@
 			'second' => 'second',
 			'days' => 'days',
 			'day' => 'day',
-			'left' => 'left'
-
+			'left' => 'left',
+			"example_images" => "Example Images"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -403,7 +403,8 @@
 			'second' => 'Sekunde',
 			'days' => 'Tage',
 			'day' => 'Tag',
-			'left' => 'übrig'
+			'left' => 'übrig',
+			"example_images" => "Beispielbilder"
 		)
 	);
 ?>
