@@ -1137,7 +1137,7 @@ async function _show_eta (times, i) {
 		showConfirmButton: false
 	}).then((e)=>{
 		if(e.isDismissed && e.dismiss == "cancel") {
-			l(languages[lang]["stopped_generating_images"]);
+			l(language[lang]["stopped_generating_images"]);
 			stop_generating_images = 1;
 		}
 	});
