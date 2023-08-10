@@ -1262,8 +1262,7 @@
 
 							<div id="own_tensor_data" class="tab">
 									<div id="prepare_data">
-										<span class="TRANSLATEME_pretext_prepare_data" /><br>
-HALLO
+										<span class="TRANSLATEME_pretext_prepare_data"></span><br>
 										<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):
 	with open(name + '.txt', 'w') as outfile:
 	outfile.write('# shape: {0}\n'.format(data.shape))
@@ -1274,7 +1273,7 @@ HALLO
 	write_file_for_tfjs("x", x_train)	# Writes x.txt with x-data
 	write_file_for_tfjs("y", y_train)	# Writes y.txt with y-data
 </code></pre>
-									<button onclick="copy_id_to_clipboard('convert_data_python')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
+									<button class="TRANSLATEME_copy_to_clipboard" onclick="copy_id_to_clipboard('convert_data_python')"></button>
 								</div>
 								<br>
 								<div class="upload-btn-wrapper">
