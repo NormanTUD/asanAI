@@ -428,7 +428,7 @@
 
 					<div id="image_resize_dimensions" class="hide_when_no_image">
 						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
-							<div class="ribbon-toolbar" style="width:115px">
+							<div class="ribbon-toolbar" style="width:150px">
 								<table>
 									<tr>
 										<td><span class='TRANSLATEME_height'></span></td>
