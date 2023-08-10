@@ -42,6 +42,8 @@ function updateTranslations() {
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}
+
+		typeset()
 	});
 }
 

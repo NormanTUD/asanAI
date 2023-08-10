@@ -211,325 +211,314 @@ for (var key of Object.keys(js_names_to_python_names)) {
 
 var layer_options = {
 	"dense": {
-		"description": "Creates a dense (fully connected) layer.<br>This layer implements the operation: $$\\mathrm{output} = \\mathrm{activation}\\left(\\mathrm{input} \\cdot \\mathrm{kernel} + \\text{bias}\\right)$$ activation is the element-wise activation function passed as the activation argument.<br><tt>kernel</tt> is a weights matrix created by the layer.<br><tt>bias</tt> is a bias vector created by the layer (only applicable if useBias is true).",
+		"description": "<span class=\"TRANSLATEME_dense_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "kernel_regularizer", "bias_regularizer", "visualize", "dtype"
+			"trainable",
+			"use_bias",
+			"units",
+			"activation",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_regularizer",
+			"bias_regularizer",
+			"visualize",
+			"dtype"
 		],
 		"category": "Basic"
 	},
 	"flatten": {
-		"description": "Flattens the input. Does not affect the batch size. A Flatten layer flattens each batch in its inputs to 1D (making the output 2D).",
+		"description": "<span class=\"TRANSLATEME_flatten_description\" \/>",
 		"options": [],
 		"category": "Basic"
 	},
 	"dropout": {
-		"description": "Dropout consists in randomly setting a fraction rate of input units to 0 at each update during training time, which helps prevent overfitting.",
+		"description": "<span class=\"TRANSLATEME_dropout_description\" \/>",
 		"options": [
-			"dropout_rate", "dtype", "seed"
+			"dropout_rate",
+			"dtype",
+			"seed"
 		],
 		"category": "Basic"
 	},
 	"reshape": {
-		"description": "Reshapes an input to a certain shape.",
+		"description": "<span class=\"TRANSLATEME_reshape_description\" \/>",
 		"options": [
-			'target_shape', "dtype"
+			"target_shape",
+			"dtype"
 		],
 		"category": "Basic"
 	},
-
 	"elu": {
-		"description": "Exponetial Linear Unit (ELU).<br>It follows: $$\\text{elu}\\left(x\\right) = \\left\\{\\begin{array}{ll} \\alpha \\cdot \\left(e^x - 1\\right) & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0\\end{array}\\right.$$",
+		"description": "<span class=\"TRANSLATEME_elu_description\" \/>",
 		"options": [
-			"alpha", "dtype"
+			"alpha",
+			"dtype"
 		],
 		"category": "Activation"
 	},
-
 	"leakyReLU": {
-		"description": "Leaky version of a rectified linear unit.<br>It allows a small gradient when the unit is not active: $$ \\text{leakyReLU}(x) = \\left\\{\\begin{array}{ll} \\alpha \\cdot x & \\text{for } x < 0 \\\\\n x & \\text{for } x >= 0 \\end{array}\\right.$$",
+		"description": "<span class=\"TRANSLATEME_leakyReLU_description\" \/>",
 		"options": [
-			"alpha", "dtype"
+			"alpha",
+			"dtype"
 		],
 		"category": "Activation"
 	},
-	/*
-	"prelu": {
-		"description": "Parameterized version of a leaky rectified linear unit. It follows $$ f(x) = \\begin{cases}\n\\alpha * x & x < 0 \\\\ x & x >= 0\\end{cases}. wherein $$\\alpha$$ is a trainable weight.",
-		"options": [
-			"alpha", "dtype"
-		],
-		"category": "Activation"
-	},
-	*/
-
 	"reLU": {
-		"description": "Rectified Linear Unit activation function. $$\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)$$",
+		"description": "<span class=\"TRANSLATEME_reLU_description\" \/>",
 		"options": [
-			"max_value", "dtype"
+			"max_value",
+			"dtype"
 		],
 		"category": "Activation"
 	},
 	"softmax": {
-		"description": "Softmax activation layer. $$\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}$$",
+		"description": "<span class=\"TRANSLATEME_softmax_description\" \/>",
 		"options": [
-			"axis", "dtype"
+			"axis",
+			"dtype"
 		],
 		"category": "Activation"
 	},
 	"thresholdedReLU": {
-		"description": "Thresholded Rectified Linear Unit. It follows: $$f(x) = \\left\\{\\begin{array}{ll} x & \\text{for } x > \\theta \\\\\n 0 & \\text{otherwise}\\end{array}\\right.$$",
+		"description": "<span class=\"TRANSLATEME_thresholdedReLU_description\" \/>",
 		"options": [
 			"theta"
 		],
 		"category": "Activation"
 	},
-	/*
-	"activation": {
-		"description": "Applies an activation function to an output.",
-		"options": [
-			"activation", "dtype"
-		],
-		"category": "Activation"
-	},
-	*/
-
-
 	"batchNormalization": {
-		"description": "Batch normalization layer (<a href='https://arxiv.org/abs/1502.03167' target='_blank'>Ioffe and Szegedy, 2014</a>).<br>Normalize the activations of the previous layer at each batch, i.e. applies a transformation that maintains the mean activation close to 0 and the activation standard deviation close to 1.",
+		"description": "<span class=\"TRANSLATEME_batchNormalization_description\" \/>",
 		"options": [
-			"trainable", "center", "scale", "axis", "epsilon",
-			"gamma_initializer", "gamma_constraint",
-			"beta_initializer", "beta_constraint",
-			"moving_mean_initializer", "moving_variance_initializer",
+			"trainable",
+			"center",
+			"scale",
+			"axis",
+			"epsilon",
+			"gamma_initializer",
+			"gamma_constraint",
+			"beta_initializer",
+			"beta_constraint",
+			"moving_mean_initializer",
+			"moving_variance_initializer",
 			"dtype"
 		],
 		"category": "Normalization"
 	},
 	"layerNormalization": {
-		"description": "Layer-normalization layer (<a target='_blank' href='https://arxiv.org/abs/1607.06450'>Ba et al., 2016</a>). Normalizes the activations of the previous layer for each given example in a batch independently, instead of across a batch like in batchNormalization. In other words, this layer applies a transformation that maintanis the mean activation within each example close to0 and activation variance close to 1.",
+		"description": "<span class=\"TRANSLATEME_layerNormalization_description\" \/>",
 		"options": [
-			"center", "scale", "axis", "epsilon",  "beta_initializer",
-			"gamma_initializer", "dtype"
+			"center",
+			"scale",
+			"axis",
+			"epsilon",
+			"beta_initializer",
+			"gamma_initializer",
+			"dtype"
 		],
 		"category": "Normalization"
 	},
-
-
 	"conv1d": {
-		"description": "1D convolution layer (e.g., temporal convolution).<br>This layer creates a convolution kernel that is convolved with the layer input over a single spatial (or temporal) dimension to produce a tensor of outputs.<br>If <tt>use_bias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not <tt>null</tt>, it is applied to the outputs as well.",
+		"description": "<span class=\"TRANSLATEME_conv1d_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters",
-			"kernel_size", "strides", "dilation_rate", "kernel_initializer",
-			"bias_initializer", "kernel_regularizer", "bias_regularizer", "dtype"
+			"trainable",
+			"use_bias",
+			"activation",
+			"padding",
+			"filters",
+			"kernel_size",
+			"strides",
+			"dilation_rate",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_regularizer",
+			"bias_regularizer",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv2d": {
-		"description": "2D convolution layer (e.g. spatial convolution over images).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.<br>If <tt>useBias</tt> is True, a bias vector is created and added to the outputs.<br>If <tt>activation</tt> is not null, it is applied to the outputs as well.",
+		"description": "<span class=\"TRANSLATEME_conv2d_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size",
-			"strides", "dilation_rate", "kernel_initializer", "bias_initializer",
-			"kernel_regularizer", "bias_regularizer", "visualize", "dtype"
+			"trainable",
+			"use_bias",
+			"activation",
+			"padding",
+			"filters",
+			"kernel_size",
+			"strides",
+			"dilation_rate",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_regularizer",
+			"bias_regularizer",
+			"visualize",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv2dTranspose": {
-		"description": "Transposed convolutional layer (sometimes called Deconvolution). The need for transposed convolutions generally arises from the desire to use a transformation going in the opposite direction of a normal convolution, i.e., from something that has the shape of the output of some convolution to something that has the shape of its input while maintaining a connectivity pattern that is compatible with said convolution.",
+		"description": "<span class=\"TRANSLATEME_conv2dTranspose_description\" \/>",
 		"options": [
-			"filters", "kernel_size", "strides", "padding", "dilation_rate", "activation",
-			"use_bias", "kernel_initializer", "bias_initializer", "kernel_constraint",
-			"bias_constraint", "trainable", "kernel_regularizer", "bias_regularizer",
+			"filters",
+			"kernel_size",
+			"strides",
+			"padding",
+			"dilation_rate",
+			"activation",
+			"use_bias",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_constraint",
+			"bias_constraint",
+			"trainable",
+			"kernel_regularizer",
+			"bias_regularizer",
 			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"conv3d": {
-		"description": "3D convolution layer (e.g. spatial convolution over volumes).<br>This layer creates a convolution kernel that is convolved with the layer input to produce a tensor of outputs.",
+		"description": "<span class=\"TRANSLATEME_conv3d_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "activation", "padding", "filters", "kernel_size",
-			"strides", "dilation_rate", "kernel_initializer", "bias_initializer",
-			"kernel_regularizer", "bias_regularizer", "dtype"
+			"trainable",
+			"use_bias",
+			"activation",
+			"padding",
+			"filters",
+			"kernel_size",
+			"strides",
+			"dilation_rate",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_regularizer",
+			"bias_regularizer",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"depthwiseConv2d": {
-		"description": "Depthwise separable 2D convolution. Depthwise Separable convolutions consists in performing just the first step in a depthwise spatial convolution (which acts on each input channel separately). The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
+		"description": "<span class=\"TRANSLATEME_depthwiseConv2d_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "activation", "kernel_size",
-			"strides", "depth_multiplier", "depthwise_initializer",
-			"depthwise_constraint", "padding", "dilation_rate",
-			 "kernel_initializer", "bias_initializer",
-			"kernel_constraint", "bias_constraint", "dtype"
+			"trainable",
+			"use_bias",
+			"activation",
+			"kernel_size",
+			"strides",
+			"depth_multiplier",
+			"depthwise_initializer",
+			"depthwise_constraint",
+			"padding",
+			"dilation_rate",
+			"kernel_initializer",
+			"bias_initializer",
+			"kernel_constraint",
+			"bias_constraint",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"separableConv2d": {
-		"description": "Depthwise separable 2D convolution. Separable convolution consists of first performing a depthwise spatial convolution (which acts on each input channel separately) followed by a pointwise convolution which mixes together the resulting output channels. The depthMultiplier argument controls how many output channels are generated per input channel in the depthwise step.",
+		"description": "<span class=\"TRANSLATEME_separableConv2d_description\" \/>",
 		"options": [
-			"trainable", "use_bias", "depth_multiplier", "depthwise_initializer",
-			"pointwise_initializer", "depthwise_constraint",
-			"pointwise_constraint", "filters", "kernel_size",
-			"strides", "padding", "dilation_rate", "activation",
-			"bias_initializer", "bias_constraint",
-			"kernel_regularizer", "bias_regularizer",
+			"trainable",
+			"use_bias",
+			"depth_multiplier",
+			"depthwise_initializer",
+			"pointwise_initializer",
+			"depthwise_constraint",
+			"pointwise_constraint",
+			"filters",
+			"kernel_size",
+			"strides",
+			"padding",
+			"dilation_rate",
+			"activation",
+			"bias_initializer",
+			"bias_constraint",
+			"kernel_regularizer",
+			"bias_regularizer",
 			"dtype"
 		],
 		"category": "Convolutional"
 	},
 	"upSampling2d": {
-		"description": "Upsampling layer for 2D inputs. Repeats the rows and columns of the data by size[0] and size[1] respectively.",
+		"description": "<span class=\"TRANSLATEME_upSampling2d_description\" \/>",
 		"options": [
-			"trainable", "size", "interpolation", "dtype"
+			"trainable",
+			"size",
+			"interpolation",
+			"dtype"
 		],
 		"category": "Convolutional"
 	},
-
 	"averagePooling1d": {
-		"description": "Average pooling operation for spatial data.",
+		"description": "<span class=\"TRANSLATEME_averagePooling1d_description\" \/>",
 		"options": [
-			"padding", "pool_size", "strides", "dtype"
+			"padding",
+			"pool_size",
+			"strides",
+			"dtype"
 		],
 		"category": "Pooling"
 	},
 	"averagePooling2d": {
-		"description": "Average pooling operation for spatial data.",
+		"description": "<span class=\"TRANSLATEME_averagePooling2d_description\" \/>",
 		"options": [
-			"padding", "pool_size", "strides", "dtype"
+			"padding",
+			"pool_size",
+			"strides",
+			"dtype"
 		],
 		"category": "Pooling"
 	},
-
 	"maxPooling1d": {
-		"description": "Max pooling operation for temporal data.",
+		"description": "<span class=\"TRANSLATEME_maxPooling1d_description\" \/>",
 		"options": [
-			"pool_size", "strides", "padding", "dtype"
+			"pool_size",
+			"strides",
+			"padding",
+			"dtype"
 		],
 		"category": "Pooling"
 	},
 	"maxPooling2d": {
-		"description": "Global max pooling operation for spatial data.",
+		"description": "<span class=\"TRANSLATEME_maxPooling2d_description\" \/>",
 		"options": [
-			"pool_size", "strides", "padding", "dtype"
-		],
-		"category": "Pooling"
-	},
-	/*
-	"globalAveragePooling1d": {
-		"description": "Global average pooling operation for temporal data.",
-		"options": [
-			"trainable", "dtype"
-		],
-		"category": "Pooling"
-	},
-	"globalAveragePooling2d": {
-		"description": "Global average pooling operation for temporal data.",
-		"options": [
-			"trainable", "dtype"
-		],
-		"category": "Pooling"
-	},
-
-	"globalMaxPooling1d": {
-		"description": "Global max pooling operation for temporal data.",
-		"options": [],
-		"category": "Pooling"
-	},
-	"globalMaxPooling2d": {
-		"description": "Global max pooling operation for spatial data.",
-		"options": [],
-		"category": "Pooling"
-	},
-
-	"gru": {
-		"description": "Gated Recurrent Unit - Cho et al. 2014.",
-		"options": [
-			"recurrent_activation", "implementation", "units", "activation",
-			"use_bias", "kernel_initializer", "recurrent_initializer",
-			"bias_initializer", "recurrent_initializer",
-			"kernel_constraint", "bias_constraint", "dropout",
-			"recurrent_dropout", "return_sequences", "return_state",
-			"stateful", "unroll", "trainable", "kernel_regularizer", "bias_regularizer",
-			"dtype"
-			
-		],
-		"category": "Recurrent"
-	},
-
-	"lstm": {
-		"description": "Long-Short Term Memory layer - Hochreiter 1997.",
-		"options": [
-			"recurrent_activation", "unit_forget_bias", "implementation", "units", "activation", "use_bias", "kernel_initializer",
-			"recurrent_initializer", "bias_initializer", "kernel_constraint", "recurrent_constraint", "bias_constraint",
-			"dropout", "recurrent_dropout", "return_sequences", "return_state", "go_backwards", "unroll", "trainable", "kernel_regularizer", "bias_regularizer"
-		],
-		"category": "Recurrent"
-	},
-	"rnn": {
-		"description": "Base class for recurrent layers.",
-		"options": [
-			"units", "cell", "return_sequences", "return_state", "go_backwards", "stateful", "unroll"
-		],
-		"category": "Recurrent"
-	},
-	"simpleRNN": {
-		"description": "Fully-connected RNN where the output is to be fed back to input.",
-		"options": [
-			"trainable", "use_bias", "units", "activation", "kernel_initializer", "bias_initializer", "recurrent_initializer",
-			"recurrent_constraint", "bias_constraint", "dropout", "recurrent_dropout", "return_sequences", "unroll", "kernel_constraint",
-			"return_state", "dtype"
-		],
-		"category": "Recurrent"
-	},
-
-	"convLstm2d": {
-		"description": "Convolutional LSTM layer - Xingjian Shi 2015.",
-		"options": [
-			"activation", "use_bias", "kernel_initializer", "recurrent_initializer",
-			"bias_initializer", "dropout", "trainable", "recurrent_activation",
-			"unit_forget_bias", "implementation", "return_sequences", "return_state",
-			"go_backwards", "stateful", "unroll", "filters", "kernel_size",
-			"strides", "padding", "dilation_rate", "kernel_regularizer", "bias_regularizer",
+			"pool_size",
+			"strides",
+			"padding",
 			"dtype"
 		],
-		"category": "Recurrent"
+		"category": "Pooling"
 	},
-	*/
-
 	"alphaDropout": {
-		"description": "Applies Alpha Dropout to the input. As it is a regularization layer, it is only active at training time.",
+		"description": "<span class=\"TRANSLATEME_alphaDropout_description\" \/>",
 		"options": [
-			"rate", "dtype"
+			"rate",
+			"dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianDropout": {
-		"description": "Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
+		"description": "<span class=\"TRANSLATEME_gaussianDropout_description\" \/>",
 		"options": [
-			"rate", "dtype"
+			"rate",
+			"dtype"
 		],
 		"category": "Noise"
 	},
 	"gaussianNoise": {
-		"description": "Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
+		"description": "<span class=\"TRANSLATEME_gaussianNoise_description\" \/>",
 		"options": [
-			"stddev", "dtype"
+			"stddev",
+			"dtype"
 		],
 		"category": "Noise"
 	},
-
-	/*
-	,"zeroPadding2d": {
-		"description": "Zero-padding layer for 2D input (e.g., image).",
-		"options": [
-			"padding", "trainable"
-		],
-		"category": "Padding"
-	}
-	*/
 	"DebugLayer": {
-		"description": "Log internal state of the data to the developers console. Does nothing to the data itself.",
-		"options": [
-		],
+		"description": "<span class=\"TRANSLATEME_DebugLayer_description\" \/>",
+		"options": [],
 		"category": "Debug",
 		"custom": 1
 	}
