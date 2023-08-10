@@ -1285,7 +1285,7 @@
 									<input id="upload_y_file" type="file" name="y_data">
 								</div>
 								<br>
-								<span class="TRANSLATEME_max_number_of_values" />: <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
+								<span class="TRANSLATEME_max_number_of_values"></span>: <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
 							</div>
 
 							<div id="own_image_data" class="tab">
