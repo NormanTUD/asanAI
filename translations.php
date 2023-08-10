@@ -177,7 +177,10 @@
 			'provide_y_data' => 'Provide Y-data file',
 			'download_custom_zip_file' => 'Download custom data in a .zip file',
 			'delay_between_images' => 'Delay in seconds between images in a series',
-			'number_of_images_in_series' => 'Number of images in a series'
+			'number_of_images_in_series' => 'Number of images in a series',
+			'restart_fcnn' => "Restart FCNN",
+			'restart_alexnet' => 'Restart AlexNet',
+			'restart_lenet' => 'Restart LeNet'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -356,7 +359,10 @@
 			'provide_y_data' => 'Y-Daten',
 			'download_custom_zip_file' => 'Downloade die eigenen Daten als .zip-Datei',
 			'delay_between_images' => 'Wartezeit zwischen den Bildern in der Serie',
-			'number_of_images_in_series' => 'Anzahl Bilder pro Serie'
+			'number_of_images_in_series' => 'Anzahl Bilder pro Serie',
+			'restart_fcnn' => "FCNN neustarten",
+			'restart_alexnet' => 'AlexNet neustarten',
+			'restart_lenet' => 'LeNet neustarten'
 		)
 	);
 ?>

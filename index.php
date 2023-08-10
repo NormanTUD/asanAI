@@ -1390,21 +1390,21 @@
 								<div id="alexnet_tab" class="tab">
 									<div id="alexnet"></div>
 									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
-									<button class="vis_button" onclick="restart_alexnet(1)">Restart AlexNet</button>
+									<button class="vis_button" onclick="restart_alexnet(1)"><span class="TRANSLATEME_restart_alexnet"></span></button>
 								</div>
 
 								<div id="lenet_tab" class="tab">
 									<div id="lenet"></div>
 									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
 									<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
-									<button class="vis_button" onclick="restart_lenet(1)">Restart LeNet</button>
+									<button class="vis_button" onclick="restart_lenet(1)"><span class="TRANSLATEME_restart_lenet"></span></button>
 								</div>
 
 								<div id="fcnn_tab" class="tab">
 									<div id="fcnn"></div>
 									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
 									<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
-									<button class="vis_button" onclick="restart_fcnn(1)">Restart FCNN</button>
+									<button class="vis_button" onclick="restart_fcnn(1)"><span class="TRANSLATEME_restart_fcnn"></span></button>
 								</div>
 
 								<div id="activation_plot_tab" class="tab">
