@@ -67,10 +67,14 @@ window.addEventListener('popstate', function () {
 	}
 });
 
-function updateLang(la) {
+async function updateLang(la) {
 	lang = la;
 	updateTranslations();
 	setLangCookie(lang, 99999);
+
+	if(is_cosmo_mode) {
+		await cosmo_set_labels();
+	}
 }
 
 // Update translations on initial page load

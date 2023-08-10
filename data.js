@@ -183,7 +183,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	return old_percentage;
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={ title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...', 	html: language[lang]["this_may_take_a_while"] }, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
+async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={ title: language[lang]["loading_images_into_memory"], html: language[lang]["this_may_take_a_while"] }, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");

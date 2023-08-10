@@ -972,3 +972,35 @@ async function cosmo_mode_auto_image_descriptor () {
 		}
 	})
 }
+
+async function force_redo_image_captions () {
+	$(".auto_image_captions").remove();
+	await cosmo_mode_auto_image_descriptor();
+}
+
+async function cosmo_set_labels () {
+	if(lang == "de") {
+		cosmo_categories = [
+			"Warnung",
+			"Rettung",
+			"Verbot",
+			"Verpflichtend",
+			"Feuer"
+		];
+		labels = cosmo_categories;
+	} else if(lang == "en") {
+		cosmo_categories = [
+			"Warning",
+			"Rescue",
+			"Forbidden",
+			"Mandatory",
+			"Fire"
+		];
+		labels = cosmo_categories;
+	} else {
+		console.error("Unknown language: " + lang);
+	}
+
+	await force_redo_image_captions();
+	await repredict();
+}
