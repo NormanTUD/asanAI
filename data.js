@@ -173,7 +173,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 		old_percentage = percentage;
 
 		if(is_cosmo_mode) {
-			percentage_div.html(percentage_div.html() + ", noch ca. " + human_readable_time_german(eta));
+			percentage_div.html(percentage_div.html() + ", ca. " + human_readable_time(eta) + " " + language[lang]["left"]);
 		} else {
 			percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
 		}

@@ -328,7 +328,7 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
 
 		if(is_cosmo_mode) {
-			time_estimate = human_readable_time_german(seconds_left);
+			time_estimate = human_readable_time(seconds_left);
 			if(max_number_epochs && current_epoch > 0 && time_estimate && seconds_left >= 0) {
 				$("#current_epoch_cosmo_display").html(current_epoch);
 				$("#max_epoch_cosmo_display").html(max_number_epochs);

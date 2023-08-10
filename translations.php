@@ -190,7 +190,18 @@
 			'stop_generating_images' => 'Stop generating images',
 			'stopped_generating_images' => "Stopped generating new images, this may take a while",
 			'now_being' => 'Now, ',
-			'images_of_each_category' => 'Images of each categories are being loaded.'
+			'images_of_each_category' => 'Images of each categories are being loaded.',
+			'one_second' => "one second",
+			'years' => 'years',
+			'year' => 'year',
+			'minutes' => 'minutes',
+			'minute' => 'minute',
+			'seconds' => 'seconds',
+			'second' => 'second',
+			'days' => 'days',
+			'day' => 'day',
+			'left' => 'left'
+
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -382,7 +393,17 @@
 			'stop_generating_images' => 'Bildgenerierung stoppen',
 			'stopped_generating_images' => "Die Bildgenerierung wurde gestoppt. Das kann einen Moment dauern.",
 			'now_being' => 'Jetzt werden',
-			'images_of_each_category' => 'Bilder aus jeder Kategorie geladen.'
+			'images_of_each_category' => 'Bilder aus jeder Kategorie geladen.',
+			'one_second' => "Eine Sekunde",
+			'years' => 'Jahre',
+			'year' => 'Jahr',
+			'minutes' => 'Minuten',
+			'minute' => 'Minute',
+			'seconds' => 'Sekunden',
+			'second' => 'Sekunde',
+			'days' => 'Tage',
+			'day' => 'Tag',
+			'left' => 'übrig'
 		)
 	);
 ?>

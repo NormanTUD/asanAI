@@ -4495,36 +4495,16 @@ function hide_ribbon() {
 	$("#status_bar").hide();
 }
 
-function human_readable_time_german(seconds) {
-	if (!seconds) {
-		return "eine Sekunde";
-	}
-	var levels = [
-		[Math.floor(seconds / 31536000), 'Jahre'],
-		[Math.floor((seconds % 31536000) / 86400), 'Tage'],
-		[Math.floor(((seconds % 31536000) % 86400) / 3600), 'Stunden'],
-		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'Minuten'],
-		[(((seconds % 31536000) % 86400) % 3600) % 60, 'Sekunden'],
-	];
-	var returntext = '';
-
-	for (var i = 0, max = levels.length; i < max; i++) {
-		if (levels[i][0] === 0) continue;
-		returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length - 1) : levels[i][1]);
-	};
-	return returntext.trim();
-}
-
 function human_readable_time(seconds) {
 	if (!seconds) {
-		return "1 sec";
+		return language[lang]["one_second"];
 	}
 	var levels = [
-		[Math.floor(seconds / 31536000), 'years'],
-		[Math.floor((seconds % 31536000) / 86400), 'days'],
-		[Math.floor(((seconds % 31536000) % 86400) / 3600), 'hours'],
-		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'mins'],
-		[(((seconds % 31536000) % 86400) % 3600) % 60, 'secs'],
+		[Math.floor(seconds / 31536000), language[lang]['years']],
+		[Math.floor((seconds % 31536000) / 86400), language[lang]['days']],
+		[Math.floor(((seconds % 31536000) % 86400) / 3600), language[lang]['hours']],
+		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), language[lang]['mins']],
+		[(((seconds % 31536000) % 86400) % 3600) % 60, language[lang]['seconds']],
 	];
 	var returntext = '';
 

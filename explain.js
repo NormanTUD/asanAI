@@ -1106,15 +1106,12 @@ async function draw_maximally_activated_layer (layer, type) {
 async function _show_eta (times, i) {
 	var eta = "";
 	if(times.length) {
-		eta = " (" + human_readable_time(parseInt(i * median(times))) + " left)";
+		eta = " (" + human_readable_time(parseInt(i * median(times))) + " " + language[lang]["left"] + ")";
 	}
 
 	var swal_msg = i + " Image(s) left " + eta;
 
 	if(is_cosmo_mode) {
-		if(times.length) {
-			eta = " (" + human_readable_time_german(parseInt(i * median(times))) + " übrig)";
-		}
 		if(i == 1) {
 			swal_msg = i + " " + language[lang]["image_left"] + " " + eta;
 		} else {
@@ -1122,7 +1119,7 @@ async function _show_eta (times, i) {
 		}
 	}
 
-	l(swal_msg + ` <button onclick='stop_generating_images=1'>${languages[lang]["stop_generating_images"]}</button>`);
+	l(swal_msg + ` <button onclick='stop_generating_images=1'>${language[lang]["stop_generating_images"]}</button>`);
 
 	l(swal_msg);
 	document.title = swal_msg;
