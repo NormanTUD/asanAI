@@ -201,7 +201,7 @@
 			'width' => 'Breite',
 			'batch_size' => 'Batchgröße',
 			'epochs' => 'Epochen',
-			'own_data' => 'Eigenes',
+			'own_data' => 'Nutzerdaten',
 			'filters' => 'Filter',
 			'distribution' => 'Verteilung',
 			'image_options' => 'Bildoptionen',

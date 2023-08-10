@@ -327,8 +327,8 @@
 					</div>
 
 					<div class="ribbon-group">
-						<div class="ribbon-toolbar" style="width:250px">
-							<table class="width_250">
+						<div class="ribbon-toolbar" style="width:254px">
+							<table class="width_254">
 								<tr>
 									<td><span class="TRANSLATEME_examples"></span></td>
 									<td>
@@ -349,7 +349,7 @@
 								</tr>
 
 								<tr>
-									<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data'></span>?</td>
+									<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data' /></td>
 									<td>
 										<select id="data_origin" onchange="change_data_origin(1)" style="width: 155px;">
 											<option class="TRANSLATEME_no_default_data" value="default"></option>
@@ -1037,7 +1037,7 @@
 
 				</div>
 
-				<div style="position: absolute; top: 2px; right: 10px">
+				<div style="position: absolute; top: 2px; right: 20width_250px">
 					<span onclick='updateLang("de")'>&#127465;&#127466;</span>
 					<span onclick='updateLang("en")'>&#127468;&#127463;</span>
 				</div>
