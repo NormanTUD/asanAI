@@ -1384,7 +1384,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) { var 
 	}
 
 	if(!cam) {
-		set_custom_webcam_training_data()
+		await set_custom_webcam_training_data()
 	}
 
 	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
