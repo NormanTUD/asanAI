@@ -10,7 +10,7 @@
 			'warning' => 'Warning',
 			'the_more_variations_the_model_sees' => 'The more variations the model sees, the better it can learn important features of the images.',
 			'quality_depends_on_random' => 'The quality of the results depends on randomness.',
-			'program_looks_at_data' => 'The program now looks at the data repeadetly and tries to learn to categorize the images.',
+			'program_looks_at_data' => 'The program now looks at the data repeatedly and tries to learn to categorize the images.',
 			'the_further_on_top_the_better' => 'The further to the top the images are, the more sure the network is in classifying the images into the categories.',
 			'add_category' => 'Add category',
 			'settings' => 'Settings',
