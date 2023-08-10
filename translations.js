@@ -42,9 +42,8 @@ function updateTranslations() {
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}
-	});
 
-	typeset();
+	});
 }
 
 // Update translations when language selector links are clicked

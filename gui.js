@@ -1238,9 +1238,12 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 }
 
 async function typeset() { var start_tensors = memory_leak_debugger();
-	var math_elements = $(".typeset_me");
+	var math_elements = $('.typeset_me,[class^="TRANSLATEME_"]');
 
 	for (var i = 0; i < math_elements.length; i++) {
+		if($(math_elements[i]).html().includes("$$")) {
+			continue;
+		}
 		var xpath = get_element_xpath(math_elements[i]);
 		var new_md5 = await md5($(math_elements[i]).html());
 		var old_md5 = math_items_hashes[xpath];
