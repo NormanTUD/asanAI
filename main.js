@@ -329,7 +329,7 @@ async function restart_webcams () { var start_tensors = memory_leak_debugger();
 		await show_webcam(1);
 	}
 
-	if(cam_data) {
+	if(cam) {
 		await get_data_from_webcam(1);
 	}
 

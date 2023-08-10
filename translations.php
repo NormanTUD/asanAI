@@ -174,7 +174,10 @@
 			'DebugLayer_description' => "Log internal state of the data to the developer's console. Does nothing to the data itself.",
 			'max_number_of_values' => 'Max number of values (0 = no limit)',
 			'provide_x_data' => 'Provide X-data file',
-			'provide_y_data' => 'Provide Y-data file'
+			'provide_y_data' => 'Provide Y-data file',
+			'download_custom_zip_file' => 'Download custom data in a .zip file',
+			'delay_between_images' => 'Delay in seconds between images in a series',
+			'number_of_images_in_series' => 'Number of images in a series'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -350,7 +353,10 @@
 			'DebugLayer_description' => 'Protokolliert den internen Zustand der Daten in die Entwicklerkonsole. Tut nichts mit den Daten selbst.',
 			'max_number_of_values' => 'Maximale Anzahl an Werten (0 = kein Limit)',
 			'provide_x_data' => 'X-Daten',
-			'provide_y_data' => 'Y-Daten'
+			'provide_y_data' => 'Y-Daten',
+			'download_custom_zip_file' => 'Downloade die eigenen Daten als .zip-Datei',
+			'delay_between_images' => 'Wartezeit zwischen den Bildern in der Serie',
+			'number_of_images_in_series' => 'Anzahl Bilder pro Serie'
 		)
 	);
 ?>

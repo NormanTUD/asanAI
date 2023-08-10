@@ -1272,15 +1272,15 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 
 	if(await input_shape_is_image(1)) {
 		$("#show_webcam_button_data").html("Stop webcam");
-		if(cam_data) {
+		if(cam) {
 			l("Stopping webcam");
 			$("#webcam_start_stop").html("Enable webcam");
 
 			$(".webcam_data_button").hide();
 			$("#webcam_data").hide().html("");
-			if(cam_data) {
-				cam_data.stop();
-				cam_data = null;
+			if(cam) {
+				cam.stop();
+				cam= null;
 			}
 			stopped = 1;
 		} else {
@@ -1314,7 +1314,7 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 			}
 
 			//log(cam_config);
-			cam_data = await tf.data.webcam(videoElement, cam_config);
+			cam = await tf.data.webcam(videoElement, cam_config);
 
 			$(".webcam_data_button").show();
 		}
@@ -1322,8 +1322,8 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 		$(".webcam_data_button").hide();
 
 		$("#webcam_data").hide().html("");
-		if(cam_data) {
-			cam_data.stop();
+		if(cam) {
+			cam.stop();
 		}
 	}
 
@@ -1383,11 +1383,15 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) { var 
 		l("Taking photo from webcam...");
 	}
 
+	if(!cam) {
+		cam = await init_webcams();
+	}
+
 	var stream_width = cam.stream.getVideoTracks(0)[0].getSettings().width;
 	var stream_height = cam.stream.getVideoTracks(0)[0].getSettings().height;
 
 	var category = $(elem).parent();
-	var cam_image = await cam_data.capture();
+	var cam_image = await cam.capture();
 	cam_image = cam_image.resizeNearestNeighbor([stream_height, stream_width]).toFloat().expandDims()
 	cam_image = await cam_image.arraySync()[0];
 

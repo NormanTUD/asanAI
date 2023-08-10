@@ -1061,6 +1061,8 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 	}
 
 	memory_leak_debugger("show_webcam", start_tensors);
+
+	return cam;
 }
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */

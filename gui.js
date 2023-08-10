@@ -3685,7 +3685,7 @@ async function add_new_category() { var start_tensors = memory_leak_debugger();
 
 	if (imgDiv.length == 0 || imgDiv.length <= n) {
 		var webcam_button_style = "display: none";
-		if(cam_data) {
+		if(cam) {
 			webcam_button_style = "";
 		}
 
@@ -5017,7 +5017,7 @@ async function set_custom_webcam_training_data() { var start_tensors = memory_le
 
 	if($("#data_origin").val() != "image") {
 		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
-			if(!cam_data) {
+			if(!cam) {
 				await get_data_from_webcam();
 			}
 
@@ -5027,7 +5027,7 @@ async function set_custom_webcam_training_data() { var start_tensors = memory_le
 			}
 		});
 	} else {
-		if(!cam_data) {
+		if(!cam) {
 			await get_data_from_webcam();
 		}
 
