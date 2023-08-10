@@ -5,11 +5,35 @@ if(is_cosmo_mode) {
 	lang = 'de';
 }
 
+
+function swapImageSrcLanguage() {
+	// Get all image elements on the page
+	const images = document.getElementsByTagName('img');
+
+	// Loop through each image element
+	for (let i = 0; i < images.length; i++) {
+		const img = images[i];
+		const currentSrc = img.getAttribute('src');
+
+		if (lang === 'en' && currentSrc.startsWith('de')) {
+			// Replace 'de' with 'en'
+			const newSrc = currentSrc.replace(/^de/, 'en');
+			img.setAttribute('src', newSrc);
+		} else if (lang === 'de' && currentSrc.startsWith('en')) {
+			// Replace 'en' with 'de'
+			const newSrc = currentSrc.replace(/^en/, 'de');
+			img.setAttribute('src', newSrc);
+		}
+	}
+}
+
 // Function to set the language and update translations
 function setLang(l) {
 	lang = l;
 	setCookie('lang', l, 30); // Save the language in a cookie for 30 days
 	updateTranslations();
+
+	swapImageSrcLanguage();
 }
 
 // Function to retrieve a cookie value
