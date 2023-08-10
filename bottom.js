@@ -40,8 +40,8 @@ function get_mode() {
 
 		show_hide_undo_buttons();
 		Swal.fire(
-			'Undo/redo stack lost!',
-			"Changing the mode deletes the undo/redo stack.",
+			language[lang]["undo_redo_stack_lost"],
+			language[lang]["changing_mode_deletes_stack"],
 			'warning'
 		);
 		l("Changed mode " + old_mode + " to " + mode + ", lost undo/redo stack");

@@ -180,7 +180,9 @@
 			'number_of_images_in_series' => 'Number of images in a series',
 			'restart_fcnn' => "Restart FCNN",
 			'restart_alexnet' => 'Restart AlexNet',
-			'restart_lenet' => 'Restart LeNet'
+			'restart_lenet' => 'Restart LeNet',
+			'undo_redo_stack_lost' => 'Undo/redo stack lost!',
+			'changing_mode_deletes_stack' => 'Changing the mode deletes the undo/redo stack.'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -362,7 +364,9 @@
 			'number_of_images_in_series' => 'Anzahl Bilder pro Serie',
 			'restart_fcnn' => "FCNN neustarten",
 			'restart_alexnet' => 'AlexNet neustarten',
-			'restart_lenet' => 'LeNet neustarten'
+			'restart_lenet' => 'LeNet neustarten',
+			'undo_redo_stack_lost' => 'Rückgängig/wiederherstellen-Stack verloren!',
+			'changing_mode_deletes_stack' => 'Das ändern des Modus löscht den gesamten Undo/Redo-Stack.'
 		)
 	);
 ?>
