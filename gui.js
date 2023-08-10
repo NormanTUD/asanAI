@@ -3709,7 +3709,7 @@ async function add_new_category() { var start_tensors = memory_leak_debugger();
 			`<button style="${webcam_button_style}" class="hide_in_cosmo_mode large_button webcam_data_button" onclick="take_image_from_webcam(this)">&#128248; Webcam</button>` +
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
-			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button><hr>` +
+			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();atrament_data['${uuid}_sketcher']['atrament'].clear();add_cosmo_point('saved_custom_image')">&#128190;</button>` +
 		`</div>`;
 
 		$(s).appendTo("#own_images_container");
