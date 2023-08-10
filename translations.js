@@ -33,7 +33,7 @@ function setLangCookie(value, days) {
 }
 
 // Function to update the translation of elements
-function updateTranslations() {
+async function updateTranslations() {
 	var elements = document.querySelectorAll('[class^="TRANSLATEME_"]');
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
@@ -45,6 +45,10 @@ function updateTranslations() {
 		}
 
 	});
+
+	if(is_cosmo_mode) {
+		await cosmo_set_labels();
+	}
 }
 
 // Update translations when language selector links are clicked
@@ -69,12 +73,8 @@ window.addEventListener('popstate', function () {
 
 async function updateLang(la) {
 	lang = la;
-	updateTranslations();
+	await updateTranslations();
 	setLangCookie(lang, 99999);
-
-	if(is_cosmo_mode) {
-		await cosmo_set_labels();
-	}
 }
 
 // Update translations on initial page load
