@@ -294,7 +294,7 @@
 			'randomizer_limits' => 'Randomisierergrenzen',
 			'max_neurons_fcnn' => 'Max. Neuronen FCNN',
 			'various_plots' => 'Verschiedene Plots',
-			'sources_and_used_programs' => 'Quellen und genutzte Programme',
+			'sources_and_used_programs' => 'Quellen',
 			'visualize_images_in_grid' => 'Bilder in Grid visualisieren',
 			'model_compiled_successfully' => 'Model erfolgreich kompiliert',
 			'not_creating_model_because_values_are_missing' => 'Kann Modell nicht erstellen, weil Werte fehlen',
