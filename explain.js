@@ -2495,10 +2495,13 @@ async function cosmo_maximally_activate_last_layer () {
 	generating_images = true;
 	$("#maximally_activated_content").html("");
 
+	await cosmo_mode_auto_image_descriptor();
+
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 		already_moved_to_predict_for_cosmo = true;
 	}
+
 
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
