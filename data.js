@@ -1327,11 +1327,7 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 		}
 	}
 
-	if(is_cosmo_mode) {
-		$(".hide_in_cosmo_mode").hide();
-	} else {
-		$(".hide_in_cosmo_mode").show();
-	}
+	show_hide_cosmo_stuff();
 
 	if(force_restart && stopped) {
 		await get_data_from_webcam();

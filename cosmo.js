@@ -27,7 +27,7 @@ async function add_cosmo_point (name, show_manicule=1) {
 
 	await run_cosmo_milestones();
 
-	$(".hide_in_cosmo_mode").hide();
+	show_hide_cosmo_stuff();
 
 	$("#stop_downloading").hide();
 }

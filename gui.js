@@ -1038,11 +1038,7 @@ async function hide_no_conv_stuff() {
 		$("#data_plotter").hide();
 	}
 
-	if(is_cosmo_mode) {
-		$(".hide_in_cosmo_mode").hide();
-	} else {
-		$(".hide_in_cosmo_mode").show();
-	}
+	show_hide_cosmo_stuff();
 
 	if(await input_shape_is_image()) {
 		$(".hide_when_no_image").show();
@@ -5905,4 +5901,14 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 	});
 
 	memory_leak_debugger("change_all_initializers", start_tensors);
+}
+
+function show_hide_cosmo_stuff() {
+	log("show_hide_cosmo_stuff");
+	console.trace();
+	if(is_cosmo_mode) {
+		$(".hide_in_cosmo_mode").hide();
+	} else {
+		$(".hide_in_cosmo_mode").show();
+	}
 }
