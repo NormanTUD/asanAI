@@ -144,7 +144,8 @@
 			"loss_metric_data_and_shape" => "Loss, Metric, Data and Shapes",
 			"sine_ripple" => "Sine-Ripple",
 			"invert_images" => "Invert images",
-			"flip_left_right" => "Flip left and right"
+			"flip_left_right" => "Flip left and right",
+			"layer_data_flow" => "Layer data flow"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -290,7 +291,8 @@
 			"loss_metric_data_and_shape" => "Loss, Metrik, Daten und Shapes",
 			"sine_ripple" => "Sinus-Kräusel",
 			"invert_images" => "Bilder invertieren",
-			"flip_left_right" => "Bilder spiegeln"
+			"flip_left_right" => "Bilder spiegeln",
+			"layer_data_flow" => "Layer-Datenfluss"
 		)
 	);
 ?>

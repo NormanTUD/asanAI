@@ -1008,7 +1008,7 @@
 									</table>
 								</div>
 							</div>
-							<div class="ribbon-group-title">Layer data flow</div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_layer_data_flow" /></div>
 						</div>
 					</div>
 				</div>
