@@ -623,7 +623,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+					<div class="ribbon-group" style="width: 150px" data-intro="Here you can set specific options that are then applied to all layers.">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
