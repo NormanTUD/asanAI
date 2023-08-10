@@ -10,8 +10,8 @@ async function switch_to_next_camera_predict () { var start_tensors = memory_lea
 async function get_label_data () { var start_tensors = memory_leak_debugger();
 	if(($("#data_origin").val() == "image" || await input_shape_is_image()) && $("#data_origin").val() == "default") {
 		let imageData = await get_image_data(1, 0, {
-			title: is_cosmo_mode ? 'Lade Bilder in den Speicher...' : 'Generating tensors from images [0]...',
-			html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!"
+			title: language[lang]["loading_images_into_memory"],
+			html: language[lang]["this_may_take_a_while"]
 		}, 0, 1);
 
 		reset_labels();
