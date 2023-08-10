@@ -630,8 +630,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(data_origin == "image") {
 			Swal.fire({
-				title: is_cosmo_mode ? 'Lade Bilder in den Speicher' : 'Generating tensors from images [1]...',
-				html: is_cosmo_mode ? 'Das kann einen Moment dauern...' : "This may take some time, but your computer is working!",
+				title: language[lang]["loading_images_into_memory"],
+				html: language[lang]["this_may_take_a_while"],
 				timer: 2000,
 				showConfirmButton: false
 			});
