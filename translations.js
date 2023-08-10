@@ -66,5 +66,10 @@ window.addEventListener('popstate', function () {
 	}
 });
 
+function updateLang(la) {
+	lang = la;
+	updateTranslations();
+}
+
 // Update translations on initial page load
 updateTranslations();
