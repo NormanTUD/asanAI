@@ -5904,8 +5904,6 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 }
 
 function show_hide_cosmo_stuff() {
-	log("show_hide_cosmo_stuff");
-	console.trace();
 	if(is_cosmo_mode) {
 		$(".hide_in_cosmo_mode").hide();
 	} else {
