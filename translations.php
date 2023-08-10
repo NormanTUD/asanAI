@@ -185,7 +185,10 @@
 			'changing_mode_deletes_stack' => 'Changing the mode deletes the undo/redo stack.',
 			'auto_adjust_last_layer_if_dense' => "Auto-adjust last layer's number of neurons (if Dense)",
 			'load_images' => 'Load Images',
-			"loading_data" => 'Loading data'
+			"loading_data" => 'Loading data',
+			'ai_tries_to_draw' => 'The AI tries to draw how it thinks the categories look like...',
+			'stop_generating_images' => 'Stop generating images',
+			'stopped_generating_images' => "Stopped generating new images, this may take a while"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -372,7 +375,10 @@
 			'changing_mode_deletes_stack' => 'Das ändern des Modus löscht den gesamten Undo/Redo-Stack.',
 			'auto_adjust_last_layer_if_dense' => "Automatisch den letzten Layer anpassen (wenn Dense)",
 			'load_images' => 'Lade Bilder',
-			"loading_data" => 'Lade Daten'
+			"loading_data" => 'Lade Daten',
+			'ai_tries_to_draw' => 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...',
+			'stop_generating_images' => 'Bildgenerierung stoppen',
+			'stopped_generating_images' => "Die Bildgenerierung wurde gestoppt. Das kann einen Moment dauern."
 		)
 	);
 ?>

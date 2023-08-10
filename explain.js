@@ -1122,7 +1122,7 @@ async function _show_eta (times, i) {
 		}
 	}
 
-	l(swal_msg + " <button onclick='stop_generating_images=1'>Stop generating images</button>");
+	l(swal_msg + ` <button onclick='stop_generating_images=1'>${languages[lang]["stop_generating_images"]}</button>`);
 
 	l(swal_msg);
 	document.title = swal_msg;
@@ -1130,14 +1130,14 @@ async function _show_eta (times, i) {
 	$("#show_cosmo_epoch_status").hide();
 
 	await Swal.fire({
-		title: is_cosmo_mode ? 'Die KI versucht zu malen, wie sie diese Kategorien gelernt hat...' : 'Generating visualizations of neurons...',
+		title: language[lang]["ai_tries_to_draw"],
 		html: swal_msg,
 		timer: 2000,
 		showCancelButton: !is_cosmo_mode,
 		showConfirmButton: false
 	}).then((e)=>{
 		if(e.isDismissed && e.dismiss == "cancel") {
-			l("Stopped generating new images, this may take a while");
+			l(languages[lang]["stopped_generating_images"]);
 			stop_generating_images = 1;
 		}
 	});
