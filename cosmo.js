@@ -905,6 +905,7 @@ function set_text_for_elements_depending_on_cosmo_level () { var start_tensors =
 					if(Object.keys(current_skills).includes(element_skill_name)) {
 						if(parseInt(current_skills[element_skill_name]) == parseInt(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
+							updateTranslations();
 						}
 					}
 				}
