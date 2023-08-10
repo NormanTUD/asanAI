@@ -1113,9 +1113,13 @@ async function _show_eta (times, i) {
 
 	if(is_cosmo_mode) {
 		if(i == 1) {
-			swal_msg = i + " " + language[lang]["image_left"] + " " + eta;
+			swal_msg = i + " " + language[lang]["image_left"];
 		} else {
-			swal_msg = i + " " + language[lang]["images_left"] + " " + eta;
+			swal_msg = i + " " + language[lang]["images_left"];
+		}
+
+		if(eta) {
+			swal_msg += " " + eta;
 		}
 	}
 

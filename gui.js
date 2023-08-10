@@ -4504,18 +4504,47 @@ function human_readable_time(seconds) {
 		[Math.floor(seconds / 31536000), language[lang]['years']],
 		[Math.floor((seconds % 31536000) / 86400), language[lang]['days']],
 		[Math.floor(((seconds % 31536000) % 86400) / 3600), language[lang]['hours']],
-		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), language[lang]['mins']],
+		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), language[lang]['minutes']],
 		[(((seconds % 31536000) % 86400) % 3600) % 60, language[lang]['seconds']],
 	];
+
 	var returntext = '';
 
-	for (var i = 0; i < levels.length; i++) {
-		if (!levels[i][0] === 0) {
-			returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length - 1) : levels[i][1]);
+	if (levels[0][0] !== 0) {
+		returntext += levels[0][0] + ' ' + (levels[0][0] === 1 ? levels[0][1].substr(0, levels[0][1].length - 1) : levels[0][1]);
+	}
+
+	if (levels[1][0] !== 0) {
+		if (returntext) {
+			returntext += ', ';
 		}
-	};
-	return returntext.trim();
+		returntext += levels[1][0] + ' ' + (levels[1][0] === 1 ? levels[1][1].substr(0, levels[1][1].length - 1) : levels[1][1]);
+	}
+
+	if (levels[2][0] !== 0) {
+		if (returntext) {
+			returntext += ', ';
+		}
+		returntext += levels[2][0] + ' ' + (levels[2][0] === 1 ? levels[2][1].substr(0, levels[2][1].length - 1) : levels[2][1]);
+	}
+
+	if (levels[3][0] !== 0) {
+		if (returntext) {
+			returntext += ', ';
+		}
+		returntext += levels[3][0] + ' ' + (levels[3][0] === 1 ? levels[3][1].substr(0, levels[3][1].length - 1) : levels[3][1]);
+	}
+
+	if (levels[4][0] !== 0) {
+		if (returntext) {
+			returntext += ', ';
+		}
+		returntext += levels[4][0] + ' ' + (levels[4][0] === 1 ? levels[4][1].substr(0, levels[4][1].length - 1) : levels[4][1]);
+	}
+
+	return returntext;
 }
+
 
 function delete_own_image(elem) {
 	$(elem).parent().next().remove()
