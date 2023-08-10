@@ -400,7 +400,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title">Loss, Metric, Data and Shapes</div>
+						<div class="ribbon-group-title"><span class="loss_metric_data_and_shape" /></div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>

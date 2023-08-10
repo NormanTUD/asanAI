@@ -140,7 +140,8 @@
 			"reset_view" => "Reset view",
 			"reinitialize_weights" => "Reinitialize weights",
 			"show_input_layer" => "Show Input-Layer",
-			"batch_plot_minimum_time" => "Batch-Plot-Minimum-Time"
+			"batch_plot_minimum_time" => "Batch-Plot-Minimum-Time",
+			"loss_metric_data_and_shape" => "Loss, Metric, Data and Shapes"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -282,7 +283,8 @@
 			"reset_view" => "Ansicht zurücksetzen",
 			"reinitialize_weights" => "Gewichte reinitialisieren",
 			"show_input_layer" => "Input-Layer anzeigen",
-			"batch_plot_minimum_time" => "Minimale Zeit zwischen Batch-Plots"
+			"batch_plot_minimum_time" => "Minimale Zeit zwischen Batch-Plots",
+			"loss_metric_data_and_shape" => "Loss, Metrik, Daten und Shapes"
 		)
 	);
 ?>
