@@ -2508,10 +2508,11 @@ async function cosmo_maximally_activate_last_layer () {
 	var images_in_total = parseInt($("#max_number_of_files_per_category").val()) * labels.length;
 	var nr_epochs = get_epochs();
 
-	var str = `<span class="TRANSLATEME_click_on"></span> <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()"><span class='TRANSLATEME_camera_draw_self'></span> 📷</button> <span id='warnschild_oder_zurueck'>und versuche ein Warnschild zu malen</span>.<hr class='cosmo_hr'><span class='TRANSLATEME_if_bad_continue_training'></span><br>`;
+	var str = `<span class="TRANSLATEME_click_on"></span> <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()"><span class='TRANSLATEME_camera_draw_self'></span> 📷</button> <span id='warnschild_oder_zurueck' class="TRANSLATEME_and_try_to_draw_a_warning_sign">${language[lang]["and_try_to_draw_a_warning_sign"]}</span>.<hr class='cosmo_hr'><span class='TRANSLATEME_if_bad_continue_training'></span><br>`;
 
 	if(nr_epochs == 10) {
-		$(".h2_maximally_activated_layer_contents").before(`Das Training wurde mit insgesamt nur ${images_in_total} Bildern und ${nr_epochs} Epochen gemacht.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
+		$(".h2_maximally_activated_layer_contents").before(`<span class='TRANSLATEME_the_training_was_only_with'></span> ${images_in_total} <span class='TRANSLATEME_images_and'></span> ${nr_epochs} <span class='TRANSLATEME_epochs_done'></span>.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
+		updateTranslations();
 	} else {
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
