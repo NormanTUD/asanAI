@@ -138,7 +138,9 @@
 			"number_of_rotations" => "Number of rotations",
 			"pretext_prepare_data" => "You must prepare your dataset yourself! You can use this piece of code to generate the data file in the correct format after you pre-processed them.",
 			"reset_view" => "Reset view",
-			"reinitialize_weights" => "Reinitialize weights"
+			"reinitialize_weights" => "Reinitialize weights",
+			"show_input_layer" => "Show Input-Layer",
+			"batch_plot_minimum_time" => "Batch-Plot-Minimum-Time"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -278,7 +280,9 @@
 			"number_of_rotations" => "Anzahl Rotationen",
 			"pretext_prepare_data" => "Du musst deine Daten selbst vorbereiten! Du kannst folgenden Code nehmen, um Datenstrukturen aus Python in das richtige Format umzuwandeln, das du mit asanAI benutzen kannst.",
 			"reset_view" => "Ansicht zurücksetzen",
-			"reinitialize_weights" => "Gewichte reinitialisieren"
+			"reinitialize_weights" => "Gewichte reinitialisieren",
+			"show_input_layer" => "Input-Layer anzeigen",
+			"batch_plot_minimum_time" => "Minimale Zeit zwischen Batch-Plots"
 		)
 	);
 ?>

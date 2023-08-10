@@ -949,11 +949,11 @@
 										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 									</tr>
 									<tr data-intro="Show the input layer in the visualizations?">
-										<td>Show Input-Layer?</td>
+										<td><span class="TRANSLATEME_show_input_layer" />?</td>
 										<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer"></td>
 									</tr>
 									<tr data-intro="How many seconds before re-plotting the batch-graph?">
-										<td>Batch-Plot-Minimum-Time (s)</td>
+										<td><span class="TRANSLATEME_batch_plot_minimum_time" /> (s)</td>
 										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 									</tr>
 								</table>
