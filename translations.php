@@ -190,7 +190,7 @@
 			'stop_generating_images' => 'Stop generating images',
 			'stopped_generating_images' => "Stopped generating new images, this may take a while",
 			'now_being' => 'Now, ',
-			'images_of_each_category' => 'Images of each categories are being loaded'
+			'images_of_each_category' => 'Images of each categories are being loaded.'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',

@@ -1334,7 +1334,7 @@
 									</center>
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
-									<span class="TRANSLATEME_now_being"></span> <span id="number_of_images_per_category">5</span> <span class=""></span>
+									<span class="TRANSLATEME_now_being"></span> <span id="number_of_images_per_category">5</span> <span class="TRANSLATEME_images_of_each_category"></span>
 									<hr class="cosmo_hr">
 									<span class="TRANSLATEME_the_more_variations_the_model_sees"></span>
 								</div>
