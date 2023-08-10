@@ -1025,7 +1025,7 @@
 				</div>
 
 
-				<div id="imprint_ribbon" class="ribbon_tab_content" title="Imprint&Contact">
+				<div id="imprint_ribbon" class="ribbon_tab_content" title="Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
 							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint" /></button><br><br>
