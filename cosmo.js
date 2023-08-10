@@ -796,7 +796,7 @@ function _predict_mode_examples() {
 	`).show();
 	cosmo_predict_mode = "cam";
 
-	$("#warnschild_oder_zurueck").html("und versuche ein Warnschild zu malen");
+	$("#warnschild_oder_zurueck").html(language[lang]["and_try_to_draw_a_warning_sign"]);
 
 	$("#own_files").css("display", "none");
 }
@@ -807,7 +807,7 @@ function _predict_mode_custom () {
 
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
 	cosmo_predict_mode = "examples";
-	$("#warnschild_oder_zurueck").html("um zu den Beispielbildern zurückzugehen");
+	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
 
 	$("#own_files").css("display", "inline-block");
 }
@@ -821,9 +821,6 @@ async function switch_predict_mode () {
 	var own_files_display = $("#own_files").css("display");
 
 	var _show_examples = (own_files_display == "none") ? false : true;
-
-	//log("own_files.display: " + own_files_display);
-	//log("_show_examples: " + _show_examples);
 
 	if(_show_examples) {
 		_predict_mode_examples();

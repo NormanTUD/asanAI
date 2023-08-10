@@ -201,7 +201,9 @@
 			'days' => 'days',
 			'day' => 'day',
 			'left' => 'left',
-			"example_images" => "Example Images"
+			"example_images" => "Example Images",
+			"and_try_to_draw_a_warning_sign" => "and try to draw a warning sign",
+			"go_back_to_examples" => "to go back to example images"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -404,7 +406,9 @@
 			'days' => 'Tage',
 			'day' => 'Tag',
 			'left' => 'übrig',
-			"example_images" => "Beispielbilder"
+			"example_images" => "Beispielbilder",
+			"and_try_to_draw_a_warning_sign" => "und versuche ein Warnschild zu malen",
+			"go_back_to_examples" => "um zu den Beispielbildern zurückzugehen"
 		)
 	);
 ?>
