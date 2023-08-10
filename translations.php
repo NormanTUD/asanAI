@@ -210,7 +210,8 @@
 			'epochs_done' => 'epochs done. Thus, the results are probably bad. Try continuing training',
 			'this_may_take_a_while' => 'This may take a while',
 			"loading_images_into_memory" => "Loading images into memory",
-			"train_the_neural_network" => "Train the neural network"
+			"train_the_neural_network" => "Train the neural network",
+			"train_further" => "Train the network further"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -422,7 +423,8 @@
 			'epochs_done' => 'Epochen gemacht. Die Ergebnisse sind also wahrscheinlich schlecht. Versuche, weiterzutrainieren',
 			'this_may_take_a_while' => 'Das kann einen Moment dauern',
 			"loading_images_into_memory" => "Lade die Bilder in den Speicher",
-			"train_the_neural_network" => "Das neuronale Netzwerk trainieren"
+			"train_the_neural_network" => "Das neuronale Netzwerk trainieren",
+			"train_further" => "Das Netzwerk weiter trainieren"
 		)
 	);
 ?>
