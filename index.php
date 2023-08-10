@@ -480,7 +480,7 @@
 								</tr>
 								<tr>
 									<td colspan=2>
-										<button class="expert_mode_only" style="width:100%" onclick="force_reinit()">Reinitialize weights</button>
+										<button class="TRANSLATEME_reinitialize_weights expert_mode_only" style="width:100%" onclick="force_reinit()"></button>
 									</td>
 								</tr>
 							</table>
@@ -977,7 +977,7 @@
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
-										<td><span class="TRANSLATE_number_of_grid_images" />?</td>
+										<td><span class="TRANSLATEME_number_of_grid_images" />?</td>
 										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;'></td>
 									</tr>
 								</table>
