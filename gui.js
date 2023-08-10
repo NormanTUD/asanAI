@@ -4499,6 +4499,7 @@ function human_readable_time(seconds) {
 	if (!seconds) {
 		return language[lang]["one_second"];
 	}
+
 	var levels = [
 		[Math.floor(seconds / 31536000), language[lang]['years']],
 		[Math.floor((seconds % 31536000) / 86400), language[lang]['days']],
@@ -4508,7 +4509,7 @@ function human_readable_time(seconds) {
 	];
 	var returntext = '';
 
-	for (var i = 0, max = levels.length; i < max; i++) {
+	for (var i = 0; i < levels.length; i++) {
 		if (!levels[i][0] === 0) {
 			returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length - 1) : levels[i][1]);
 		}

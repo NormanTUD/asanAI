@@ -206,7 +206,7 @@
 			"go_back_to_examples" => "to go back to example images",
 			'the_training_was_only_with' => 'The training has been done with only',
 			'images_and' => 'images and',
-			'epochs_done' => 'epochs done. Thus, the results are probably bad. Try continuing training.'
+			'epochs_done' => 'epochs done. Thus, the results are probably bad. Try continuing training'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -414,7 +414,7 @@
 			"go_back_to_examples" => "um zu den Beispielbildern zurückzugehen",
 			'the_training_was_only_with' => 'Das Training wurde mit insgesamt nur',
 			'images_and' => 'Bildern und',
-			'epochs_done' => 'Epochen gemacht. Die Ergebnisse sind also wahrscheinlich schlecht. Versuche, weiterzutrainieren.'
+			'epochs_done' => 'Epochen gemacht. Die Ergebnisse sind also wahrscheinlich schlecht. Versuche, weiterzutrainieren'
 		)
 	);
 ?>
