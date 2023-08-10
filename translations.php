@@ -345,6 +345,7 @@
 			"gaussianDropout_description" => "Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 			"gaussianNoise_description" => "Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.",
 			"DebugLayer_description" => "Protokolliert den internen Zustand der Daten in die Entwicklerkonsole. Tut nichts mit den Daten selbst.",
+
 		)
 	);
 ?>
