@@ -1,5 +1,6 @@
 // Get the language from the cookie or use the default language
-let lang =  'en';
+let lang_cookie_name = "language_cookie";
+let lang = getLangCookie();
 if(is_cosmo_mode) {
 	lang = 'de';
 }
@@ -12,23 +13,23 @@ function setLang(l) {
 }
 
 // Function to retrieve a cookie value
-function getCookie(name) {
+function getLangCookie() {
 	const cookies = document.cookie.split(';');
 	for (let i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
-		if (cookie.startsWith(name + '=')) {
-			return cookie.substring(name.length + 1);
+		if (cookie.startsWith(lang_cookie_name + '=')) {
+			return cookie.substring(lang_cookie_name.length + 1);
 		}
 	}
-	return null;
+	return 'en';
 }
 
 // Function to set a cookie value
-function setCookie(name, value, days) {
+function setLangCookie(value, days) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
 	const cookieValue = encodeURIComponent(value) + '; expires=' + expirationDate.toUTCString() + '; path=/';
-	document.cookie = name + '=' + cookieValue;
+	document.cookie = lang_cookie_name + '=' + cookieValue;
 }
 
 // Function to update the translation of elements
@@ -69,6 +70,7 @@ window.addEventListener('popstate', function () {
 function updateLang(la) {
 	lang = la;
 	updateTranslations();
+	setLangCookie(lang, 99999);
 }
 
 // Update translations on initial page load
