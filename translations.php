@@ -183,7 +183,9 @@
 			'restart_lenet' => 'Restart LeNet',
 			'undo_redo_stack_lost' => 'Undo/redo stack lost!',
 			'changing_mode_deletes_stack' => 'Changing the mode deletes the undo/redo stack.',
-			'auto_adjust_last_layer_if_dense' => "Auto-adjust last layer's number of neurons (if Dense)"
+			'auto_adjust_last_layer_if_dense' => "Auto-adjust last layer's number of neurons (if Dense)",
+			'load_images' => 'Load Images',
+			"loading_data" => 'Loading data'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -368,7 +370,9 @@
 			'restart_lenet' => 'LeNet neustarten',
 			'undo_redo_stack_lost' => 'Rückgängig/wiederherstellen-Stack verloren!',
 			'changing_mode_deletes_stack' => 'Das ändern des Modus löscht den gesamten Undo/Redo-Stack.',
-			'auto_adjust_last_layer_if_dense' => "Automatisch den letzten Layer anpassen (wenn Dense)"
+			'auto_adjust_last_layer_if_dense' => "Automatisch den letzten Layer anpassen (wenn Dense)",
+			'load_images' => 'Lade Bilder',
+			"loading_data" => 'Lade Daten'
 		)
 	);
 ?>

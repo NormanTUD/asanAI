@@ -157,10 +157,10 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%")
 	if(is_cosmo_mode) {
-		percentage_text = "Lade Bilder, " + percentage + "% (" + (i + 1) + " von " + urls_length + ")...";
-		document.title = "Lade Bilder: " + percentage + "% - asanAI"
+		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " von " + urls_length + ")...";
+		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI"
 	} else {
-		document.title = "Loading data " + percentage_text + " - asanAI";
+		document.title = language[lang]["loading_data"] + " " + percentage_text + " - asanAI";
 	}
 
 	percentage_div.html(percentage_text);
