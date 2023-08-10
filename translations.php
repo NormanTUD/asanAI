@@ -172,6 +172,9 @@
 			'gaussianDropout_description' => 'Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.',
 			'gaussianNoise_description' => 'Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.',
 			'DebugLayer_description' => "Log internal state of the data to the developer's console. Does nothing to the data itself.",
+			'max_number_of_values' => 'Max number of values (0 = no limit)',
+			'provide_x_data' => 'Provide X-data file',
+			'provide_y_data' => 'Provide Y-data file'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -345,7 +348,9 @@
 			'gaussianDropout_description' => 'Apply multiplicative 1-centered Gaussian noise. As it is a regularization layer, it is only active at training time.',
 			'gaussianNoise_description' => 'Apply additive zero-centered Gaussian noise. As it is a regularization layer, it is only active at training time.',
 			'DebugLayer_description' => 'Protokolliert den internen Zustand der Daten in die Entwicklerkonsole. Tut nichts mit den Daten selbst.',
-
+			'max_number_of_values' => 'Maximale Anzahl an Werten (0 = kein Limit)',
+			'provide_x_data' => 'X-Daten',
+			'provide_y_data' => 'Y-Daten'
 		)
 	);
 ?>

@@ -1278,15 +1278,15 @@ HALLO
 								</div>
 								<br>
 								<div class="upload-btn-wrapper">
-									<button class="">Provide X-data file</button>
+									<button class=""><span class="TRANSLATEME_provide_x_data" /></button>
 									<input id="upload_x_file" type="file" name="x_data">
 								</div>
 								<div class="upload-btn-wrapper">
-									<button class="">Provide Y-data file</button>
+									<button class="TRANSLATEME_provide_y_data"></button>
 									<input id="upload_y_file" type="file" name="y_data">
 								</div>
 								<br>
-								Max number of values (0 = no limit): <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
+								<span class="TRANSLATEME_max_number_of_values" />: <input type="number" min="1" value="0" id="max_number_values" style="width: 50px;">
 							</div>
 
 							<div id="own_image_data" class="tab">
