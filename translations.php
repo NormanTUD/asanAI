@@ -141,7 +141,10 @@
 			"reinitialize_weights" => "Reinitialize weights",
 			"show_input_layer" => "Show Input-Layer",
 			"batch_plot_minimum_time" => "Batch-Plot-Minimum-Time",
-			"loss_metric_data_and_shape" => "Loss, Metric, Data and Shapes"
+			"loss_metric_data_and_shape" => "Loss, Metric, Data and Shapes",
+			"sine_ripple" => "Sine-Ripple",
+			"invert_images" => "Invert images",
+			"flip_left_right" => "Flip left and right"
 		),
 		"de" => array(
 			"lets_suppose_we_have_this_simple_network" => "Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:",
@@ -284,7 +287,10 @@
 			"reinitialize_weights" => "Gewichte reinitialisieren",
 			"show_input_layer" => "Input-Layer anzeigen",
 			"batch_plot_minimum_time" => "Minimale Zeit zwischen Batch-Plots",
-			"loss_metric_data_and_shape" => "Loss, Metrik, Daten und Shapes"
+			"loss_metric_data_and_shape" => "Loss, Metrik, Daten und Shapes",
+			"sine_ripple" => "Sinus-Kräusel",
+			"invert_images" => "Bilder invertieren",
+			"flip_left_right" => "Bilder spiegeln"
 		)
 	);
 ?>

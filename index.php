@@ -884,7 +884,7 @@
 								<tr>
 									<td><span class="TRANSLATEME_auto_rotate_images" />?</td>
 									<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
-									<td>Sine-Ripple?</td>
+									<td><span class="TRANSLATEME_sine_ripple" />?</td>
 									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 								</tr>
 								<tr>
@@ -894,7 +894,7 @@
 									<td></td>
 								</tr>
 								<tr>
-									<td>Invert images?</td>
+									<td><span class="TRANSLATEME_invert_images" />?</td>
 									<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 									<td></td>
 									<td></td>
