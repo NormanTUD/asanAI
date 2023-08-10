@@ -5,7 +5,7 @@
 			"we_want_to_train_this_model_5_categories" => "We want to train that model to differentiate between 5 categories of signs:",
 			"fire" => "Fire",
 			"mandatory" => "Mandatory",
-			"forbidden" => "Forbiden",
+			"forbidden" => "Forbidden",
 			"rescue" => "Rescue",
 			"warning" => "Warning",
 			"the_more_variations_the_model_sees" => "The more variations the model sees, the better it can learn important features of the images.",
