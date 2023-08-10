@@ -42,13 +42,10 @@ function updateTranslations() {
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}
-
-		typeset()
 	});
-}
 
-// Update translations on initial page load
-updateTranslations();
+	typeset();
+}
 
 // Update translations when language selector links are clicked
 var languageSelectors = $(".language-selector").find("span");
@@ -70,3 +67,5 @@ window.addEventListener('popstate', function () {
 	}
 });
 
+// Update translations on initial page load
+updateTranslations();
