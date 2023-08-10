@@ -271,7 +271,7 @@
 				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
 				<span style="height: 64px; font-size: 60px; top: 5px; left: 25%; position: absolute" onclick='setLang("de")'>&#x1F1E9;&#x1F1EA;</span>
 				<span style="height: 64px; font-size: 60px; top: 5px; left: 75%; position: absolute" onclick='setLang("en")'>&#127468;&#127463;</span>
-				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 80px; height: 80px; position: absolute; top: 10px; right: 10px;" id="emergency_button" src="notaus.png" /></a>
+				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 80px; height: 80px; position: absolute; top: 10px; right: 10px;" id="emergency_button" src="de_notaus.png" /></a>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>
