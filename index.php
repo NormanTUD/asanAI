@@ -1292,7 +1292,7 @@
 								<span class="hide_in_cosmo_mode">
 									<button onclick="create_and_download_zip()"><span class="TRANSLATEME_download_custom_zip_file"></span></button>
 									<br>
-									Auto-adjust last layer's number of neurons (if Dense)? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
+									<span class="TRANSLATEME_auto_adjust_last_layer_if_dense"></span>? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
 									<br>
 									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()"><span class="TRANSLATEME_enable_webcam" /></button>
 								</span>
