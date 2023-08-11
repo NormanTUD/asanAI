@@ -474,7 +474,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 		if(!await input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
-			log(str);
 			pred_tab = "prediction_non_image";
 			$("#" + pred_tab).html("");
 		} else {
