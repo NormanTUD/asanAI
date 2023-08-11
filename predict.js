@@ -470,6 +470,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 		if(!await input_shape_is_image() && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
+			log(str);
 			pred_tab = "prediction_non_image";
 			$("#" + pred_tab).html("");
 		} else {
@@ -624,7 +625,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				}
 			}
 		} else {
-			console.info("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:", get_input_shape(), tensor.shape);
+			log_once("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(tensor.shape));
 		}
 
 		await dispose(tensor);

@@ -565,7 +565,7 @@ async function _get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	return xs_and_ys;
 }
 
-async function _show_or_hide_simple_visualization (xs_and_ys) { var start_tensors = memory_leak_debugger();
+async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) { var start_tensors = memory_leak_debugger();
 	if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 		if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
@@ -608,7 +608,7 @@ async function _get_fit_data (xs_and_ys) { var start_tensors = memory_leak_debug
 
 		fit_data = get_fit_data();
 
-		await _show_or_hide_simple_visualization(xs_and_ys);
+		await _show_or_hide_simple_visualization(fit_data, xs_and_ys);
 
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
