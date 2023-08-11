@@ -389,8 +389,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			try {
 				predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 			} catch (e) {
-				log(e);
-				console.trace();
+				if(("" + e).includes("Expected input shape")) {
+					console.warn("" + e);
+				} else {
+					log(e);
+					console.trace();
+				}
 			}
 		} else {
 			var data = "";
