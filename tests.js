@@ -429,6 +429,10 @@ async function run_tests () {
 			force_download = false;
 
 			var y_test = await xy_data.y.arraySync();
+
+			await dispose(xy_data["x"]);
+			await dispose(xy_data["y"]);
+
 			test_equal("last 3 items are shuffled", !!JSON.stringify(y_test[y_test.length - 1]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 2]).match(/1\]$/) && !!JSON.stringify(y_test[y_test.length - 3]).match(/1\]$/), false);
 
 			log_test("Testing speed");
