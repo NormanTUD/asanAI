@@ -808,7 +808,12 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 		$("#reset_data").hide();
 	}
 
-	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && !traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] && is_classification) {
+	if(
+		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
+		!traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] &&
+		is_classification &&
+		classes.length > 1
+	) {
 		try {
 			//log("C", xy_data.x.shape);
 			xy_data.y = tf.tidy(() => { return tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
