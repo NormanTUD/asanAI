@@ -2964,15 +2964,15 @@ function has_network_name(elem) {
 	}
 }
 
-function color_msg_green(id) {
+function color_msg_green(id) { // start_tensors
 	document.getElementById(id).style = "background-color: green";
 }
 
-function color_msg_red(id) {
+function color_msg_red(id) { // start_tensors
 	document.getElementById(id).style = "background-color: red";
 }
 
-function network_name_is_empty(name) {
+function network_name_is_empty(name) { // start_tensors
 	if(name.match(/^ *$/) || (name == "")) {
 		return true;
 	} else {
@@ -2980,17 +2980,7 @@ function network_name_is_empty(name) {
 	}
 }
 
-// function get_classifications() {
-// 	var op = "";
-// 	for(var i = 0; i < Object.keys(traindata_struct).length; i++) {
-// 		op = document.createElement("option");
-// 		op.innerText = Object.keys(traindata_struct)[i];
-// 		op.value = traindata_struct[Object.keys(traindata_struct)[i]]["category_name"];
-// 		$("#select_classification").append(op);
-// 	}
-// }
-
-function save_to_db(model_structure, model_weights, model_data, requests_public) {
+function save_to_db(model_structure, model_weights, model_data, requests_public) { var start_tensors = memory_leak_debugger();
 	document.getElementById("save_model_msg").style.display = 'visible';
 	$.ajax({
 		url: "save_to_db.php",
@@ -3002,7 +2992,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 			network_name: $("#network_name").val()
 		},
 		method: "POST",
-		success: async function (data) {
+		success: async function (data) { // start_tensors
 			log(data);
 			if(data["status"] == "ok") {
 				color_msg_green("save_model_msg");
@@ -3013,7 +3003,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 						model_id: data["id"]
 					},
 					method: "POST",
-					error: function (object, error, msg) {
+					error: function (object, error, msg) { // start_tensors
 						color_msg_red("save_model_msg");
 						document.getElementById("save_model_msg").innerText = msg;
 					}
@@ -3023,16 +3013,16 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 				color_msg_red("save_model_msg");
 			}
 		},
-		error: function (object, error, msg) {
+		error: function (object, error, msg) { // start_tensors
 			color_msg_red("save_model_msg");
 			document.getElementById("save_model_msg").innerText = msg;
 		}
 	});
 
-
+	memory_leak_debugger("save_to_db", start_tensors);
 }
 
-async function save_to_db_wrapper () {
+async function save_to_db_wrapper () {var start_tensors = memory_leak_debugger();
 	if(!model_name_exists()) {
 		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
 		$("#save_to_db").prop("disabled", true);
@@ -3041,21 +3031,22 @@ async function save_to_db_wrapper () {
 		document.getElementById("save_model_msg").innerText = "Please choose a different name for this model.";
 		$("#save_model_msg").show();
 	}
+	memory_leak_debugger("save_to_db_wrapper", start_tensors);
 }
 
-async function open_save_model_dialog() {
+async function open_save_model_dialog() { // start_tensors
 	await openPopup("save_model_dialog");
 }
 
-async function open_register_dialog() {
+async function open_register_dialog() { // start_tensors
 	await openPopup("register_dialog");
 }
 
-async function open_save_dialog() {
+async function open_save_dialog() { // start_tensors
 	await openPopup("save_dialog");
 }
 
-async function openPopup(name) {
+async function openPopup(name) {var start_tensors = memory_leak_debugger();
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
@@ -3066,17 +3057,19 @@ async function openPopup(name) {
 		el.style.display = 'none';
 	}
 	await write_descriptions();
+	memory_leak_debugger("openPopup", start_tensors);
 }
 
-async function closePopup(name) {
+async function closePopup(name) { var start_tensors = memory_leak_debugger();
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = 'none';
 	await write_descriptions();
+	memory_leak_debugger("closePopup", start_tensors);
 }
 
-async function upload_model(evt) {
+async function upload_model(evt) { var start_tensors = memory_leak_debugger();
 	let files = evt.target.files;
 
 	let f = files[0];
@@ -3094,6 +3087,8 @@ async function upload_model(evt) {
 	})(f);
 
 	reader.readAsText(f);
+
+	memory_leak_debugger("upload_model", start_tensors);
 }
 
 async function upload_weights(evt) { var start_tensors = memory_leak_debugger();
@@ -3127,7 +3122,7 @@ async function upload_weights(evt) { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("upload_weights", start_tensors);
 }
 
-var handle_x_file = async function (evt) {
+var handle_x_file = async function (evt) { // start_tensors
 	x_file = await evt.target.files[0].text();
 	await set_input_shape("[" + get_shape_from_file(x_file) + "]");
 
@@ -3152,7 +3147,7 @@ var handle_x_file = async function (evt) {
 	enable_start_training_custom_tensors();
 }
 
-var handle_y_file = async function (evt) {
+var handle_y_file = async function (evt) { // start_tensors
 	y_file = await evt.target.files[0].text();
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
@@ -3162,7 +3157,7 @@ var handle_y_file = async function (evt) {
 	enable_start_training_custom_tensors();
 }
 
-function enable_start_training_custom_tensors() {
+function enable_start_training_custom_tensors() { var start_tensors = memory_leak_debugger();
 	if (!$("#data_origin").val() == "tensordata") {
 		return;
 	}
@@ -3188,9 +3183,11 @@ function enable_start_training_custom_tensors() {
 	}
 
 	current_status_hash = "";
+
+	memory_leak_debugger("enable_start_training_custom_tensors", start_tensors);
 }
 
-function get_sum_of_items_childrens_width(item) {
+function get_sum_of_items_childrens_width(item) { // start_tensors
 	var total_width = 0;
 
 	$(item).each(function (index) {
@@ -3200,7 +3197,7 @@ function get_sum_of_items_childrens_width(item) {
 	return total_width;
 }
 
-function get_chosen_dataset() {
+function get_chosen_dataset() { // start_tensors
 	var val = $("#model_dataset").val();
 	if (!val) {
 		val = $("#dataset").val();
@@ -4344,20 +4341,20 @@ function _allow_training() { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("_allow_training", start_tensors);
 }
 
-async function show_layer_view() {
+async function show_layer_view() { // start_tensors
 	$("#layers_container_left").show();
 	$(".descriptions_of_layers").show();
 	await write_descriptions();
 	$("#toggle_layer_view_button").html("&#x1F5D6;");
 }
 
-function hide_layer_view () {
+function hide_layer_view () { // start_tensors
 	$("#layers_container_left").hide();
 	$(".descriptions_of_layers").hide();
 	$("#toggle_layer_view_button").html("&#x1F5D7;");
 }
 
-async function toggle_layer_view() {
+async function toggle_layer_view() { // start_tensors
 	if (is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 		await show_layer_view();
 	} else {
@@ -4367,12 +4364,12 @@ async function toggle_layer_view() {
 	await write_descriptions();
 }
 
-function fix_viz_width () {
+function fix_viz_width () { // start_tensors
 	$("#lenet").find("svg").attr("width", $("#lenet").css("width"));
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
 
-async function theme_choser () {
+async function theme_choser () { var start_tensors = memory_leak_debugger();
 	var theme = $("#theme_choser").val();
 
 	document.getElementById('css_mode').href = theme + '.css';
@@ -4386,31 +4383,41 @@ async function theme_choser () {
 	await restart_alexnet();
 
 	invert_elements_in_dark_mode();
+
+	memory_leak_debugger("theme_choser", start_tensors);
 }
 
-function move_to_demo_mode(element) {
+function move_to_demo_mode(element) { var start_tensors = memory_leak_debugger();
 	var old_parent = move_element_to_another_div(element, "#demomode");
-	return old_parent;
+	var res = old_parent;
+
+	memory_leak_debugger("move_to_demo_mode", start_tensors);
+
+	return res;
 }
 
 // Returns: old parent div
-function move_element_to_another_div(element, new_element_id) {
+function move_element_to_another_div(element, new_element_id) { var start_tensors = memory_leak_debugger();
 	var old_parent = $(element).parent();
 
 	$(element).detach().appendTo(new_element_id);
 
+	memory_leak_debugger("move_element_to_another_div", start_tensors);
+
 	return old_parent;
 }
 
-async function repeat_while_demo() {
+async function repeat_while_demo() { var start_tensors = memory_leak_debugger();
 	await show_prediction()
 
 	if (!(model.isTraining || started_training)) {
 		await train_neural_network();
 	}
+
+	memory_leak_debugger("repeat_while_demo", start_tensors);
 }
 
-async function start_demo_mode() {
+async function start_demo_mode() { var start_tensors = memory_leak_debugger();
 	if (!(model.isTraining || started_training)) {
 		train_neural_network(); // cannot be in async
 	}
@@ -4452,9 +4459,11 @@ async function start_demo_mode() {
 
 	await delay(5000);
 	demo_interval = window.setInterval(repeat_while_demo, 10000);
+
+	memory_leak_debugger("start_demo_mode", start_tensors);
 }
 
-async function end_demo_mode() {
+async function end_demo_mode() {  var start_tensors = memory_leak_debugger();
 	if (demo_interval) {
 		window.clearInterval(demo_interval);
 	}
@@ -4472,6 +4481,8 @@ async function end_demo_mode() {
 	$("#demomode").hide();
 
 	await write_descriptions();
+
+	memory_leak_debugger("end_demo_mode", start_tensors);
 }
 
 async function change_model_dataset() { var start_tensors = memory_leak_debugger();
@@ -4480,7 +4491,7 @@ async function change_model_dataset() { var start_tensors = memory_leak_debugger
 	memory_leak_debugger("change_model_dataset", start_tensors);
 }
 
-function allow_edit_inputShape() {
+function allow_edit_inputShape() { // start_tensors
 	l("Checking whether to allow editing input shape or not");
 	if ($("#auto_input_shape").is(":checked")) {
 		$("#inputShape").attr("readonly", true);
@@ -4489,19 +4500,19 @@ function allow_edit_inputShape() {
 	}
 }
 
-function show_ribbon() {
+function show_ribbon() { // start_tensors
 	$("#ribbon").show();
 	$("#ribbon_shower").hide();
 	$("#status_bar").show();
 }
 
-function hide_ribbon() {
+function hide_ribbon() { // start_tensors
 	$("#ribbon").hide();
 	$("#ribbon_shower").show();
 	$("#status_bar").hide();
 }
 
-function human_readable_time(seconds) {
+function human_readable_time(seconds) { // start_tensors
 	if (!seconds) {
 		return language[lang]["one_second"];
 	}
@@ -4552,37 +4563,43 @@ function human_readable_time(seconds) {
 }
 
 
-function delete_own_image(elem) {
+function delete_own_image(elem) { var start_tensors = memory_leak_debugger();
 	$(elem).parent().next().remove()
 	$(elem).parent().remove();
+	memory_leak_debugger("delete_own_image", start_tensors);
 }
 
-function larger_maximally_activated_neurons() {
+function larger_maximally_activated_neurons() { var start_tensors = memory_leak_debugger();
 	$(".layer_image").css({ height: '+=50px', width: '+=50px' })
+	memory_leak_debugger("larger_maximally_activated_neurons", start_tensors)
 }
 
-function smaller_maximally_activated_neurons() {
+function smaller_maximally_activated_neurons() { var start_tensors = memory_leak_debugger();
 	$(".layer_image").css({ height: '-=50px', width: '-=50px' })
 	if ($(".layer_image").css("width") == "0px") {
 		$(".layer_image").css({ height: 'auto', width: 'auto' })
 	}
+	memory_leak_debugger("smaller_maximally_activated_neurons", start_tensors);
 }
 
-function reset_maximally_activated_neurons() {
+function reset_maximally_activated_neurons() { var start_tensors = memory_leak_debugger();
 	$(".layer_image").css({ height: 'auto', width: 'auto' })
+	memory_leak_debugger("reset_maximally_activated_neurons", start_tensors);
 }
 
-function delete_maximally_activated_predictions() {
+function delete_maximally_activated_predictions() { var start_tensors = memory_leak_debugger();
 	$(".maximally_activated_predictions").remove();
+	memory_leak_debugger("delete_maximally_activated_predictions", start_tensors);
 }
 
-async function predict_all_maximally_activated_neurons() {
+async function predict_all_maximally_activated_neurons() { var start_tensors = memory_leak_debugger();
 	await $(".layer_image").each(async function (i, x) {
 		await predict_maximally_activated(x, 'image');
 	});
+	memory_leak_debugger("predict_all_maximally_activated_neurons", start_tensors);
 }
 
-async function get_layers_container_md5() {
+async function get_layers_container_md5() { var start_tensors = memory_leak_debugger();
 	await delay(1);
 	var layers_container_str = "";
 	$("#layers_container").find("select,input,checkbox").each(function (i, x) {
@@ -4590,18 +4607,24 @@ async function get_layers_container_md5() {
 		layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
 	})
 
-	return await md5(layers_container_str);
+	var res = await md5(layers_container_str);
+
+	memory_leak_debugger("get_layers_container_md5", start_tensors);
+
+	return res;
 }
 
-function rename_tmp_onchange() {
+function rename_tmp_onchange() { var start_tensors = memory_leak_debugger();
 	$("*[_onchange]").each(function (i, x) {
 		var elem = $(this);
 		elem.attr("onchange", elem.attr('_onchange'));
 		elem.removeAttr('_onchange');
 	})
+
+	memory_leak_debugger("rename_tmp_onchange", start_tensors);
 }
 
-function hide_tab_label(label) {
+function hide_tab_label(label) { var start_tensors = memory_leak_debugger();
 	assert(typeof(label) == "string", "label is not a string");
 
 	$("#" + label).parent().hide();
@@ -4625,9 +4648,11 @@ function hide_tab_label(label) {
 	}
 
 	updateTranslations();
+
+	memory_leak_debugger("hide_tab_label", start_tensors);
 }
 
-function show_tab_label(label, click) {
+function show_tab_label(label, click) { var start_tensors = memory_leak_debugger();
 	assert(typeof(label) == "string", "label is not a string");
 
 	var $item = $("#" + label);
@@ -4655,9 +4680,11 @@ function show_tab_label(label, click) {
 	}
 
 	updateTranslations();
+
+	memory_leak_debugger("show_tab_label", start_tensors);
 }
 
-function check_number_values() {
+function check_number_values() { var start_tensors = memory_leak_debugger();
 	var all_fields = document.querySelectorAll('input[type="number"]');
 	var default_bg_color = $("input").css("background-color");
 
@@ -4703,9 +4730,11 @@ function check_number_values() {
 			enable_train();
 		}
 	}
+
+	memory_leak_debugger("check_number_values", start_tensors);
 }
 
-function summary_to_table(lines) {
+function summary_to_table(lines) { var start_tensors = memory_leak_debugger();
 	var new_array = [];
 
 	var colspan_nr = 0;
@@ -4752,10 +4781,13 @@ function summary_to_table(lines) {
 	}
 
 	table += "</table>\n";
+
+	memory_leak_debugger("summary_to_table", start_tensors);
+
 	return "<center>" + table + "</center>";
 }
 
-function plotly_show_loss_graph() {
+function plotly_show_loss_graph() { var start_tensors = memory_leak_debugger();
 	tf.tidy(() => {
 		var y_true_table = [];
 		$(".data_table_y_true").each((i, x) => {
@@ -4821,9 +4853,11 @@ function plotly_show_loss_graph() {
 	});
 
 	write_descriptions(); // cannot be async
+
+	memory_leak_debugger("plotly_show_loss_graph", start_tensors);
 }
 
-function add_row_to_plotly_loss() {
+function add_row_to_plotly_loss() { var start_tensors = memory_leak_debugger();
 	$('#data_table tbody tr:last').clone().insertAfter('#data_table tbody tr:last');
 
 	plotly_show_loss_graph();
@@ -4835,9 +4869,11 @@ function add_row_to_plotly_loss() {
 	}
 
 	write_descriptions(); // cannot be async
+	
+	memory_leak_debugger("add_row_to_plotly_loss", start_tensors);
 }
 
-function remove_plotly_table_element(item) {
+function remove_plotly_table_element(item) { var start_tensors = memory_leak_debugger();
 	var item_parent_parent = $(item).parent().parent();
 	if (item_parent_parent.parent().children().length <= 4) {
 		$(".delete_row").prop("disabled", true);
@@ -4846,9 +4882,11 @@ function remove_plotly_table_element(item) {
 	}
 	item_parent_parent.remove();
 	plotly_show_loss_graph();
+
+	memory_leak_debugger("remove_plotly_table_element", start_tensors);
 }
 
-function create_plotly_table() {
+function create_plotly_table() { var start_tensors = memory_leak_debugger();
 	var str = `<table id="data_table" border=1 style="border-collapse: collapse;">` +
 		`	<tr>` +
 		`		<th>Y true</th>` +
@@ -4874,11 +4912,14 @@ function create_plotly_table() {
 	$("#table_div").html(str);
 
 	write_descriptions(); // cannot be async
+
+	memory_leak_debugger("create_plotly_table", start_tensors);
 }
 
-function add_loss_functions_to_plotly_visualizer(data) {
+function add_loss_functions_to_plotly_visualizer(data) { var start_tensors = memory_leak_debugger();
 	create_plotly_table();
 	plotly_show_loss_graph();
+	memory_leak_debugger("add_loss_functions_to_plotly_visualizer", start_tensors);
 }
 
 function setCookie(name, value, days = 365) { // var start_tensors
@@ -4910,7 +4951,7 @@ function eraseCookie(name) { // var start_tensors
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-function copy_options () {
+function copy_options () { var start_tensors = memory_leak_debugger();
 	var selects = $(".copy_options");
 	for (var i = 0; i  < selects.length; i++) {
 		var sink = $(selects[i]);
@@ -4932,9 +4973,11 @@ function copy_options () {
 			};
 		}(origin_id, sink_id));
 	}
+
+	memory_leak_debugger("copy_options", start_tensors);
 }
 
-function copy_values() {
+function copy_values() { var start_tensors = memory_leak_debugger();
 	var inputs = $(".copy_values");
 	for (var i = 0; i  < inputs.length; i++) {
 		var sink = $(inputs[i]);
@@ -4959,6 +5002,8 @@ function copy_values() {
 		}(origin_id, sink_id));
 
 	}
+
+	memory_leak_debugger("copy_values", start_tensors);
 }
 
 function realWidth(obj) { var start_tensors = memory_leak_debugger();
