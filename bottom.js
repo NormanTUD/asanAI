@@ -254,57 +254,61 @@ async function restart_alexnet(dont_click) {
 		if(typeof(layer_type) === 'undefined') {
 			return;
 		}
-		if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
-			var category = layer_options[layer_type].category;
+		if(Object.keys(model).includes("0")) {
+			if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
+				var category = layer_options[layer_type].category;
 
-			if(category == "Convolutional") {
-				var this_layer_arch = {};
-				try {
-					var input_layer_shape = model.layers[i].getOutputAt(0).shape;
-
-					var push = 0;
-
+				if(category == "Convolutional") {
+					var this_layer_arch = {};
 					try {
-						this_layer_arch["height"] = input_layer_shape[1];
-						this_layer_arch["width"] = input_layer_shape[2];
-						if(input_layer_shape.length >= 2) {
-							this_layer_arch["depth"] = input_layer_shape[3];
-						} else {
-							disable_alexnet = 1;
-						}
-						this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
-						this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
-						this_layer_arch["rel_x"] = random(0, 0.1);
-						this_layer_arch["rel_y"] = random(0, 0.1);
+						var input_layer_shape = model.layers[i].getOutputAt(0).shape;
 
-						if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
-							push = 1;
+						var push = 0;
+
+						try {
+							this_layer_arch["height"] = input_layer_shape[1];
+							this_layer_arch["width"] = input_layer_shape[2];
+							if(input_layer_shape.length >= 2) {
+								this_layer_arch["depth"] = input_layer_shape[3];
+							} else {
+								disable_alexnet = 1;
+							}
+							this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
+							this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
+							this_layer_arch["rel_x"] = random(0, 0.1);
+							this_layer_arch["rel_y"] = random(0, 0.1);
+
+							if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
+								push = 1;
+							}
+						} catch (e) {
+							console.warn("ERROR: ", e);
 						}
 					} catch (e) {
-						console.warn("ERROR: ", e);
+						console.log(e);
+						return;
 					}
-				} catch (e) {
-					console.log(e);
-					return;
-				}
 
-				if(push) {
-					architecture.push(this_layer_arch);
-				}
-			} else if (category == "Basic") {
-				try {
-					var units_at_layer = get_units_at_layer(i, 0);
-					if(units_at_layer) {
-						architecture2.push(units_at_layer);
+					if(push) {
+						architecture.push(this_layer_arch);
 					}
-				} catch (e) {
-					log(e);
-					return;
+				} else if (category == "Basic") {
+					try {
+						var units_at_layer = get_units_at_layer(i, 0);
+						if(units_at_layer) {
+							architecture2.push(units_at_layer);
+						}
+					} catch (e) {
+						log(e);
+						return;
+					}
 				}
+			} else {
+				log("Cannot get category of layer type of layer " + i);
+				return;
 			}
 		} else {
-			log("Cannot get category of layer type of layer " + i);
-			return;
+			console.warn("Model has no first layer. Skipping restart_alexnet");
 		}
 	}
 
