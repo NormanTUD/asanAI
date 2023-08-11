@@ -803,7 +803,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	if(["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) && !traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] && is_classification) {
 		try {
 			//log("C", xy_data.x.shape);
-			xy_data.y = tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]);
+			xy_data.y = tf.tidy(() => { return tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
 			//log("D", xy_data.x.shape);
 		} catch (e) {
 			/*
@@ -1224,8 +1224,8 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 
 	//log(y)
 
-	x = tf.tensor(x);
-	y = tf.tensor(y);
+	x = tf.tidy(() => { return tf.tensor(x); });
+	y = tf.tidy(() => { return tf.tensor(y); });
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
