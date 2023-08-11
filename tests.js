@@ -5,14 +5,14 @@ var num_tests = 0;
 var num_tests_failed = 0;
 var mem_history = [];
 
-async function _set_seeds (nr) {
+async function _set_seeds (nr) { // var start_tensors
 	l("Setting seed to " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
 	$(".bias_initializer_seed").val(nr).trigger("change");
 	l("Done setting seed to " + nr);
 }
 
-async function _set_initializers() {
+async function _set_initializers() { // var start_tensors
 	$(".layer_options_button").click()
 
 	l("Setting initializer");
@@ -25,11 +25,11 @@ async function _set_initializers() {
 	await _set_seeds(42);
 }
 
-function getCurrentTimestamp () {
+function getCurrentTimestamp () { // var start_tensors
 	return Date.now()
 }
 
-function test_not_equal (name, is, should_be) {
+function test_not_equal (name, is, should_be) { // var start_tensors
 	num_tests++;
 	if(!is_equal(is, should_be)) {
 		//console.log("%c" + name + " OK", "background: green; color: white");
@@ -41,7 +41,7 @@ function test_not_equal (name, is, should_be) {
 	}
 }
 
-function test_equal (name, is, should_be) {
+function test_equal (name, is, should_be) { // var start_tensors
 	num_tests++;
 	if(is_equal(is, should_be)) {
 		//console.log("%c" + name + ": OK", "background: green; color: white");
@@ -53,7 +53,7 @@ function test_equal (name, is, should_be) {
 	}
 }
 
-function is_equal (a, b) {
+function is_equal (a, b) { // var start_tensors
 	if(typeof(a) == typeof(b)) {
 		if(JSON.stringify(a) == JSON.stringify(b)) {
 			return true;
@@ -63,7 +63,7 @@ function is_equal (a, b) {
 	return false;
 }
 
-function test_summary () {
+function test_summary () { // var start_tensors
 	var tests_ok = num_tests - num_tests_failed;
 
 
@@ -75,7 +75,7 @@ function test_summary () {
 	}
 }
 
-function log_test (name) {
+function log_test (name) { // var start_tensors
 	var current_mem = get_mem();
 	if(mem_history.length) {
 		var last_num_tensors = mem_history[mem_history.length - 1]["numTensors"];
@@ -93,7 +93,7 @@ function log_test (name) {
 	l("Test-name: " + name);
 }
 
-async function run_tests () {
+async function run_tests () { // var start_tensors
 	mem_history = [];
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
