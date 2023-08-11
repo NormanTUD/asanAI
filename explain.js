@@ -2506,17 +2506,17 @@ function applyColorMap(x) { var start_tensors = memory_leak_debugger();
 
 async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) { var start_tensors = memory_leak_debugger();
 	if(started_training) {
-		l("Cannot show grad CAM while training");
+		l("Cannot show gradCAM while training");
 		return;
 	}
 
 	if(!contains_convolution()) {
-		l("Cannot continue using grad CAM when you have no convolutional layers");
+		l("Cannot continue using gradCAM when you have no convolutional layers");
 		return;
 	}
 
 	if(is_hidden_or_has_hidden_parent("#grad_cam_heatmap")) {
-		l("Not wasting resources on grad CAM when the predict tab is not visible anyways.");
+		l("Not wasting resources on gradCAM when the predict tab is not visible anyways.");
 		return;
 	}
 
