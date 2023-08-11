@@ -783,7 +783,6 @@ console.log(colorPickerElementsList);
 */
 
 function _predict_mode_examples() {
-	$("#example_predictions").show();
 	$("#handdrawn_img").hide()
 
 	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>${language[lang]["example_images"]}
@@ -799,10 +798,10 @@ function _predict_mode_examples() {
 	$("#warnschild_oder_zurueck").html(language[lang]["and_try_to_draw_a_warning_sign"]);
 
 	$("#own_files").css("display", "none");
+	$("#example_predictions").show();
 }
 
 function _predict_mode_custom () {
-	$("#example_predictions").hide();
 	$("#handdrawn_img").show().parent().show()
 
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
@@ -810,6 +809,7 @@ function _predict_mode_custom () {
 	cosmo_predict_mode = "examples";
 
 	$("#own_files").css("display", "inline-block");
+	$("#example_predictions").hide();
 }
 
 async function switch_predict_mode () {

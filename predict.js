@@ -570,6 +570,10 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 }
 
 function show_or_hide_predictions (count) { var start_tensors = memory_leak_debugger();
+	if(is_cosmo_mode) {
+		return;
+	}
+
 	if(count) {
 		$(".show_when_has_examples").show();
 		$(".show_when_predicting").show();
