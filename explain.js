@@ -2295,7 +2295,6 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 	var onBatchEnd = null;
 
-	eval(`
 	onBatchEnd = async function (epoch, logs) { var start_tensors = memory_leak_debugger();
 		if(typeof(old_onEpochEnd) == 'function') {
 			old_onEpochEnd(epoch, logs);
@@ -2304,8 +2303,8 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 		try {
 			var current_epoch = epoch + 1;
 			if(current_epoch == 1) {
-				$("#${append_to_id}").html("");
-				$("<div id='${id}_training_data_graph'></div>").appendTo($("#${append_to_id}"));
+				$(`#${append_to_id}`).html("");
+				$(`<div id='${id}_training_data_graph'></div>`).appendTo($(`#${append_to_id}`));
 			}
 
 			var real_trace = {
@@ -2322,8 +2321,8 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				name: "Prediction"
 			};
 
-			var x_data = ${x_data_json};
-			var y_data = ${y_data_json};
+			var x_data = eval(x_data_json);
+			var y_data = eval(y_data_json);
 
 			//1) combine the arrays:
 			var list = [];
@@ -2351,7 +2350,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					real_trace.y.push(y_data[i][0]);
 
 					var predict_me = tf.tensor(x_data[i]);
-					var predicted_tensor = await ${global_model_name}.predict(predict_me);
+					var predicted_tensor = await eval(global_model_name).predict(predict_me);
 					var predicted = predicted_tensor.arraySync()[0][0];
 
 					predicted_trace.y.push(predicted);
@@ -2389,13 +2388,16 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 			var data = [real_trace, predicted_trace];
 
-			Plotly.newPlot('${id}_training_data_graph', data, layout);
+			if(current_epoch == 1) {
+				Plotly.newPlot(`${id}_training_data_graph`, data, layout);
+			} else {
+				Plotly.update(`${id}_training_data_graph`, data, layout);
+			}
 		} catch (e) {
 			console.error(e);
 		}
 		memory_leak_debugger("async onBatchEnd", start_tensors);
 	}
-	`);
 
 	memory_leak_debugger("get_live_tracking_on_batch_end", start_tensors);
 	return onBatchEnd;
