@@ -499,7 +499,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 		await dispose(predictions_tensor);
 
-		log("attempting to add to ", $("#" + pred_tab));
 		$("#" + pred_tab).append(str).show();
 
 		$("#predict_error").html("").hide();
