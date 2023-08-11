@@ -806,8 +806,8 @@ function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
-	cosmo_predict_mode = "examples";
 	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
+	cosmo_predict_mode = "examples";
 
 	$("#own_files").css("display", "inline-block");
 }
