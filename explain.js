@@ -976,7 +976,7 @@ function tensor_normalize_to_rgb_min_max (x) { var start_tensors = memory_leak_d
 		return x;
 	});
 
-	memory_leak_debugger("tensor_normalize_to_rgb_min_max", start_tensors);
+	memory_leak_debugger("tensor_normalize_to_rgb_min_max", start_tensors + 1);
 
 	return x;
 }
