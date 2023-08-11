@@ -1027,7 +1027,7 @@ function parse_line (line, seperator) {
 	return items;
 }
 
-function parse_csv_file (csv_file) {
+function parse_csv_file (csv_file) { var start_tensors = memory_leak_debugger();
 	var seperator = get_csv_seperator();
 
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
@@ -1056,6 +1056,9 @@ function parse_csv_file (csv_file) {
 			data.push(parse_line(lines[i], seperator));
 		}
 	}
+
+
+	memory_leak_debugger("parse_csv_file", start_tensors);
 
 	return {"head": head, "data": data};
 }
@@ -1181,6 +1184,7 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 		l("X-Data is yet incomplete");
 		return "incomplete";
 	}
+
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
 		l("Y-Data is yet incomplete");
@@ -1220,8 +1224,8 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 
 	//log(y)
 
-	x = tf.keep(tf.tensor(x));
-	y = tf.keep(tf.tensor(y));
+	x = tf.tensor(x);
+	y = tf.tensor(y);
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
