@@ -2,7 +2,7 @@
 
 var printed_msgs = [];
 
-function log_once (...args) {
+function log_once (...args) { // var start_tensors
 	var md5 = JSON.stringify(args);
 
 	if(printed_msgs.includes(md5)) {
@@ -14,60 +14,60 @@ function log_once (...args) {
 	log(...args);
 }
 
-function colorlog (color, msg) {
+function colorlog (color, msg) { // var start_tensors
 	console.log("%c" + msg, "background: " + color + "; color: white");
 }
 
-function logt(...msg) {
+function logt(...msg) { // var start_tensors
 	log(msg);
 	console.trace();
 }
 
-function log (...args) {
+function log (...args) { // var start_tensors
 	args.forEach(arg => console.log(arg))
 	if(enable_log_trace) {
 		console.trace();
 	}
 }
 
-function header_error (msg) {
+function header_error (msg) { // var start_tensors
 	console.log("%c" + msg, "background: red; color: white");
 }
 
-function header (msg) {
+function header (msg) { // var start_tensors
 	console.log("%c" + msg, "background: #222; color: #bada55");
 }
 
-function datadebug (msg) {
+function datadebug (msg) { // var start_tensors
 	if (window.location.href.indexOf("datadebug") > -1) {
 		console.log(msg);
 	}
 }
 
-function traindebug (msg) {
+function traindebug (msg) { // var start_tensors
 	if (window.location.href.indexOf("traindebug") > -1) {
 		console.log(msg);
 	}
 }
 
-function headerdatadebug (msg) {
+function headerdatadebug (msg) { // var start_tensors
 	if (window.location.href.indexOf("datadebug") > -1) {
 		console.log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
-function headerguidebug (msg) {
+function headerguidebug (msg) { // var start_tensors
 	if (window.location.href.indexOf("guidebug") > -1) {
 		console.log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
 
-function get_current_model_weights_identifier () {
+function get_current_model_weights_identifier () { // var start_tensors
 	tf.sum(model.layers[0].getWeights()[0]).print();
 }
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var ARGUMENT_NAMES = /([^\s,]+)/g;
-function getParamNames(func) {
+function getParamNames(func) { // var start_tensors
 	var fnStr = func.toString().replace(STRIP_COMMENTS, '');
 	var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
 	if(result === null)
@@ -76,7 +76,7 @@ function getParamNames(func) {
 }
 
 
-function add_memory_debugger () {
+function add_memory_debugger () { // var start_tensors
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
 	var current_functions = Object.keys(window);
 
@@ -142,7 +142,7 @@ function add_memory_debugger () {
 	}
 }
 
-function add_function_debugger () {
+function add_function_debugger () { // var start_tensors
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
 	var current_functions = Object.keys(window);
 
@@ -232,21 +232,21 @@ function add_function_debugger () {
 	}
 }
 
-function tf_debug () {
+function tf_debug () { // var start_tensors
 	if($("#enable_tf_debug").is(":checked")) {
 		tf.enableDebugMode();
 		$("#enable_tf_debug").prop("disabled", true);
 	}
 }
 
-function colorize (text, color) {
+function colorize (text, color) { // var start_tensors
 	if(color) {
 		return "<span style='color: " + color + "'>" + text + "</span>";
 	}
 	return text;
 }
 
-function memory_debugger () {
+function memory_debugger () { // var start_tensors
 	var memory = tf.memory();
 
 	var bytes = memory["numBytes"];
@@ -294,7 +294,7 @@ function memory_debugger () {
 	last_tensor_size_gpu = gpu_mb;
 }
 
-function install_memory_debugger () {
+function install_memory_debugger () { // var start_tensors
 	l("Installing Memory debugger");
 	$(function(){
 		memory_debugger();
@@ -303,17 +303,17 @@ function install_memory_debugger () {
 
 }
 
-function log_mem () {
+function log_mem () { // var start_tensors
 	log("=====================");
 	log("Number of tensors: " + tf.memory()["numTensors"]);
 	log("MB in RAM:" + (tf.memory().numBytes / (1024*1024)) + "MB");
 }
 
-function get_mem () {
+function get_mem () { // var start_tensors
 	return tf.memory();
 }
 
-function add_optimizer_debugger () {
+function add_optimizer_debugger () { // var start_tensors
 	tf.train.sgd = function (e) { log("SGD. Learning rate:", e); var res = original_sgd(e); log("Result:", res); return res; }
 	tf.train.rmsprop = function (e, t, n, r, a) { log("RMSProp. learningRate, decay, momentum, epsilon, centered:", e, t, n, r, a); var res = original_rmsprop(e, t, n, r, a); log("Result:", res); return res; }
 	tf.train.adamax = function (e, t, n, r, a) { log("adamax. learningRate, beta1, beta2, epsilon, decay:", e, t, n, r, a); var res = original_adamax(e, t, n, r, a); log("Result:", res); return res; }
@@ -324,7 +324,7 @@ function add_optimizer_debugger () {
 
 }
 
-function data_debug (...data) {
+function data_debug (...data) { // var start_tensors
 	log(">>>>>>>>>>>>>>>>>>");
 	for (var i = 0; i < data.length; i++) {
 		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
@@ -343,7 +343,7 @@ function data_debug (...data) {
 	log("<<<<<<<<<<<<<<<<<<");
 }
 
-function highlightElement(xpath) {
+function highlightElement(xpath) { // var start_tensors
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = 'yellow';
@@ -351,7 +351,7 @@ function highlightElement(xpath) {
 	}
 }
 
-function unhighlightElement(xpath) {
+function unhighlightElement(xpath) { // var start_tensors
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = '';
@@ -359,7 +359,7 @@ function unhighlightElement(xpath) {
 	}
 }
 
-function cosmo_debugger () {
+function cosmo_debugger () { // var start_tensors
 	if(!is_cosmo_mode) {
 		$("#cosmo_debugger").remove();
 		return;
@@ -435,25 +435,25 @@ function cosmo_debugger () {
 }
 
 // Funktion zum Verfolgen des TensorFlow.js-Memory-Objekts
-function trackTFMemory() {
+function trackTFMemory() { // var start_tensors
 	const memory = tf.memory();
 	console.log('TensorFlow.js Memory:');
 	console.log(memory);
 }
 
 // Funktion zum Verfolgen der Tensor-Allokationen
-function trackTensorAllocation(tensor) {
+function trackTensorAllocation(tensor) { // var start_tensors
 	console.log('Tensor Allocated:');
 	console.log(tensor);
 }
 
 // Funktion zum Verfolgen der Tensor-Befreiungen
-function trackTensorDisposal(tensor) {
+function trackTensorDisposal(tensor) { // var start_tensors
 	console.log('Tensor Disposed:');
 	console.log(tensor);
 }
 
-async function profile (func, ...args) {
+async function profile (func, ...args) { // var start_tensors
 	const profile = await tf.profile(await func(...args));
 
 	console.log(`newBytes: ${profile.newBytes}`);

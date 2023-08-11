@@ -1,7 +1,11 @@
 "use strict";
 
-function degrees_to_radians(degrees) {
-	return degrees * (Math.PI / 180);
+function degrees_to_radians(degrees) { var start_tensors = memory_leak_debugger();
+	var res = degrees * (Math.PI / 180);
+
+	memory_leak_debugger("degrees_to_radians", start_tensors);
+
+	return res;
 }
 
 function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = memory_leak_debugger();
@@ -94,10 +98,10 @@ function shuffle (array) { var start_tensors = memory_leak_debugger();
 }
 
 
-function load_image(url) {
+function load_image(url) { var start_tensors = memory_leak_debugger();
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
-	return new Promise((resolve, reject) => {
+	var res = new Promise((resolve, reject) => {
 		const img = new Image();
 		img.addEventListener("load", () => resolve(img));
 		img.addEventListener("error", () => {
@@ -105,6 +109,10 @@ function load_image(url) {
 		});
 		img.src = url;
 	});
+
+	memory_leak_debugger("load_image", start_tensors);
+
+	return res;
 }
 
 async function force_download_image_preview_data () { var start_tensors = memory_leak_debugger();
@@ -955,7 +963,7 @@ async function _get_training_data() { var start_tensors = memory_leak_debugger()
 	return res;
 }
 
-function median(values){
+function median(values) { var start_tensors = memory_leak_debugger();
 	if(values.length ===0) throw new Error("No inputs");
 
 	values.sort(function(a,b){
@@ -964,16 +972,21 @@ function median(values){
 
 	var half = Math.floor(values.length / 2);
 
-	if (values.length % 2)
+	if (values.length % 2) {
+		memory_leak_debugger("median", start_tensors)
 		return values[half];
+	}
 
+	memory_leak_debugger("median", start_tensors)
 	return (values[half - 1] + values[half]) / 2.0;
 }
 
-function decille (arr, percentage) {
+function decille (arr, percentage) { var start_tensors = memory_leak_debugger();
 	arr.sort();
 	var len = arr.length;
 	var per =  Math.floor(len*percentage) - 1;
+
+	memory_leak_debugger("decille", start_tensors)
 
 	return per;
 }
@@ -993,17 +1006,20 @@ async function reset_data () { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("reset_data", start_tensors);
 }
 
-function parse_dtype (val) {
+function parse_dtype (val) { var start_tensors = memory_leak_debugger();
 	if(val.match(/^[+-]?\d+$/)) {
+		memory_leak_debugger("parse_dtype", start_tensors);
 		return parseInt(val);
 	} else if(val.match(/^[+-]?\d+\.\d+$/)) {
+		memory_leak_debugger("parse_dtype", start_tensors);
 		return parseFloat(val);
 	} else {
+		memory_leak_debugger("parse_dtype", start_tensors);
 		return val;
 	}
 }
 
-function parse_line (line, seperator) {
+function parse_line (line, seperator) { var start_tensors = memory_leak_debugger();
 	var c = line.split("");
 
 	var i = 0;
@@ -1023,6 +1039,8 @@ function parse_line (line, seperator) {
 	}
 
 	items.push(parse_dtype(current_item));
+
+	memory_leak_debugger("parse_line", start_tensors)
 
 	return items;
 }
@@ -1063,7 +1081,7 @@ function parse_csv_file (csv_file) { var start_tensors = memory_leak_debugger();
 	return {"head": head, "data": data};
 }
 
-function get_or_insert_label (item) {
+function get_or_insert_label (item) { var start_tensors = memory_leak_debugger();
         for (var i = 0; i < labels.length; i++) {
                 if(labels[i] == item) {
                         return i;
@@ -1071,6 +1089,8 @@ function get_or_insert_label (item) {
         }
 
         labels.push(item);
+
+	memory_leak_debugger("get_or_insert_label", start_tensors);
 
         return labels.length - 1;
 }
@@ -1134,7 +1154,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 	return { "data": data, "y_between_0_and_1": y_between_0_and_1, "is_incomplete": is_incomplete };
 }
 
-function get_headers (headers) {
+function get_headers (headers) { var start_tensors = memory_leak_debugger();
 	var x_headers = [];
 	var y_headers = [];
 
@@ -1149,15 +1169,19 @@ function get_headers (headers) {
 		}
 	}
 
+	memory_leak_debugger("get_headers", start_tensors);
+
 	return {"x": x_headers, "y": y_headers};
 }
 
-function get_csv_seperator () {
+function get_csv_seperator () { var start_tensors = memory_leak_debugger();
 	var seperator = $("#seperator").val() || ",";
 
 	if(seperator == "\\t") {
 		return "\t";
 	}
+
+	memory_leak_debugger("get_csv_seperator", start_tensors);
 
 	return seperator;
 }
@@ -1435,7 +1459,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) { var 
 	memory_leak_debugger("take_image_from_webcam", start_tensors);
 }
 
-function chiSquaredTest(arr) {
+function chiSquaredTest(arr) { var start_tensors = memory_leak_debugger();
 	// Create a histogram of the data
 	const histogram = {};
 	for (let i = 0; i < arr.length; i++) {
@@ -1463,18 +1487,28 @@ function chiSquaredTest(arr) {
 	const degreesOfFreedom = Object.keys(histogram).length - 1;
 	const probability = jStat.chisquare.cdf(chiSquared, degreesOfFreedom);
 
+	memory_leak_debugger("chiSquared", start_tensors);
+
 	return probability;
 }
 
-function array_likelyhood_of_being_random (array) {
+function array_likelyhood_of_being_random (array) { var start_tensors = memory_leak_debugger();
 	var chi = chiSquaredTest(array);
 
-	return 1 - chi;
+	var res = 1 - chi;
+
+	memory_leak_debugger("array_likelyhood_of_being_random", start_tensors);
+
+	return res;
 }
 
-function image_element_looks_random (imgelem) {
+function image_element_looks_random (imgelem) { var start_tensors = memory_leak_debugger();
 	var t = tf.reshape(tf.browser.fromPixels(imgelem), [-1]);
-	return array_likelyhood_of_being_random(t.arraySync())
+	var res = array_likelyhood_of_being_random(t.arraySync())
+
+	memory_leak_debugger("image_element_looks_random", start_tensors);
+
+	return res;
 }
 
 function maximally_activated_neurons_randomness () { var start_tensors = memory_leak_debugger();
