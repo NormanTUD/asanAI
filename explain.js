@@ -893,8 +893,8 @@ function reset_zoom_kernel_images () {
 
 /* The deprocessImage function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
 
-function deprocessImage(x) {
-        return tf.tidy(() => {
+function deprocessImage(x) { var start_tensors = memory_leak_debugger();
+        var res = tf.tidy(() => {
                 const {mean, variance} = tf.moments(x);
                 x = x.sub(mean);
                 // Add a small positive number (EPSILON) to the denominator to prevent
@@ -906,24 +906,34 @@ function deprocessImage(x) {
                 x = x.mul(255);
                 return tf.clipByValue(x, 0, 255).asType('int32');
         });
+
+	memory_leak_debugger("deprocessImage", start_tensors + 1);
+
+	return res;
 }
 
 /* This function normalizes a given tensor so that it's minimum value is 0 and it's maximum value is 1. This is done by subtracting the minimum value from the tensor, and then dividing by the difference between the maximum and minimum values. */
 
-function tensor_normalize_to_rgb_min_max (x) {
-	var max = x.max();
-	var min = x.min();
+function tensor_normalize_to_rgb_min_max (x) { var start_tensors = memory_leak_debugger();
+	x = tf.tidy(() => {
+		var max = x.max();
+		var min = x.min();
 
-	var x_minus_min = x.sub(min);
+		var x_minus_min = x.sub(min);
 
-	x = x_minus_min.div(max.sub(min));
+		x = x_minus_min.div(max.sub(min));
+
+		return x;
+	});
+
+	memory_leak_debugger("tensor_normalize_to_rgb_min_max", start_tensors);
 
 	return x;
 }
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
-function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
+function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) { var start_tensors = memory_leak_debugger();
 	var worked = 0;
         var full_data = {};
 
@@ -1002,6 +1012,8 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 
 	full_data["worked"] = worked;
 
+	memory_leak_debugger("inputGradientAscent", start_tensors);
+
 	return full_data;
 }
 
@@ -1026,7 +1038,7 @@ async function get_image_from_url (url) { var start_tensors = memory_leak_debugg
 	return tf_img;
 }
 
-function _get_neurons_last_layer (layer, type) {
+function _get_neurons_last_layer (layer, type) { var start_tensors = memory_leak_debugger();
 	var neurons = 1;
 
 	if(type == "conv2d") {
@@ -1035,13 +1047,16 @@ function _get_neurons_last_layer (layer, type) {
 		neurons = parseInt(get_item_value(layer, "units"));
 	} else {
 		console.warn("Unknown layer " + layer);
+		memory_leak_debugger("_get_neurons_last_layer", start_tensors);
 		return false;
 	}
+
+	memory_leak_debugger("_get_neurons_last_layer", start_tensors);
 
 	return neurons;
 }
 
-async function draw_maximally_activated_layer (layer, type) {
+async function draw_maximally_activated_layer (layer, type) { var start_tensors = memory_leak_debugger();
 	if(!is_cosmo_mode) {
 		show_tab_label("maximally_activated_label", 1);
 	}
@@ -1050,6 +1065,7 @@ async function draw_maximally_activated_layer (layer, type) {
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
 		console.error("Cannot determine number of neurons in last layer");
+		memory_leak_debugger("draw_maximally_activated_", start_tensors);
 		return;
 	}
 
@@ -1085,11 +1101,13 @@ async function draw_maximally_activated_layer (layer, type) {
 	var type_h2 = "h2";
 	var ruler = "";
 	var br = "";
+
 	if(is_cosmo_mode) {
 		type_h2 = "span";
 		ruler = "<hr class='cosmo_hr'>";
 		br = "<br>";
 	}
+
 	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}Layer ${layer + types_in_order}</${type_h2}>${br}`)
 
 	l("Done generating images");
@@ -1101,9 +1119,11 @@ async function draw_maximally_activated_layer (layer, type) {
 	document.title = original_title;
 
 	await allow_editable_labels();
+
+	memory_leak_debugger("draw_maximally_activated_", start_tensors);
 }
 
-async function _show_eta (times, i) {
+async function _show_eta (times, i) { var start_tensors = memory_leak_debugger();
 	var eta = "";
 	if(times.length) {
 		eta = " (" + human_readable_time(parseInt(i * median(times))) + " " + language[lang]["left"] + ")";
@@ -1147,11 +1167,14 @@ async function _show_eta (times, i) {
 		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	}
+
+	memory_leak_debugger("_show_eta", start_tensors);
 }
 
-async function predict_maximally_activated (item, force_category) {
+async function predict_maximally_activated (item, force_category) { var start_tensors = memory_leak_debugger();
 	if(is_cosmo_mode) {
 		$(".maximally_activated_predictions").show();
+		memory_leak_debugger("predict_maximally_activated", start_tensors);
 		return;
 	}
 
@@ -1166,10 +1189,11 @@ async function predict_maximally_activated (item, force_category) {
 	await cosmo_mode_auto_image_descriptor();
 }
 
-async function draw_maximally_activated_neuron (layer, neuron) {
+async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
 	var current_input_shape = get_input_shape();
 
 	if(current_input_shape.length != 3) {
+		memory_leak_debugger("predict_maximally_activated", start_tensors);
 		return;
 	}
 
@@ -1218,10 +1242,13 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 	if(is_cosmo_mode) {
 		await cosmo_mode_auto_image_descriptor();
 	}
+
+	memory_leak_debugger("predict_maximally_activated", start_tensors);
 }
 
-function array_to_fixed (array, fixnr) {
+function array_to_fixed (array, fixnr) { var start_tensors = memory_leak_debugger();
 	if(fixnr == 0) {
+		memory_leak_debugger("array_to_fixed", start_tensors);
 		return array;
 	}
 	var x = 0;
@@ -1232,10 +1259,12 @@ function array_to_fixed (array, fixnr) {
 		}
 		x++;
 	}
+
+	memory_leak_debugger("array_to_fixed", start_tensors);
 	return array;
 }
 
-function array_to_color (array, color) {
+function array_to_color (array, color) { var start_tensors = memory_leak_debugger();
 	var x = 0;
 	var len = array.length
 	var new_array = [];
@@ -1247,6 +1276,9 @@ function array_to_color (array, color) {
 		new_array.push("\\color{" + this_color + "}{" + array[x] + "}");
 		x++;
 	}
+
+	memory_leak_debugger("array_to_color", start_tensors);
+
 	return new_array;
 }
 
@@ -1278,7 +1310,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 }
 
 
-function array_to_latex (array, desc, newline_instead_of_ampersand) {
+function array_to_latex (array, desc, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var str = "";
 	str = "\\underbrace{\\begin{pmatrix}\n";
 
@@ -1298,11 +1330,17 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 
 	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
 
+	memory_leak_debugger("array_to_latex", start_tensors);
+
 	return str;
 }
 
-function a_times_b (a, b) {
-	return a + " \\times " + b;
+function a_times_b (a, b) { var start_tensors = memory_leak_debugger();
+	var res = a + " \\times " + b;
+
+	memory_leak_debugger("a_times_b", start_tensors);
+
+	return res;
 }
 
 function get_weight_name_by_layer_and_weight_index (layer, index) { var start_tensors = memory_leak_debugger();
@@ -1327,7 +1365,7 @@ function get_weight_name_by_layer_and_weight_index (layer, index) { var start_te
 	return null;
 }
 
-function get_layer_data() {
+function get_layer_data() { var start_tensors = memory_leak_debugger();
 	var layer_data = [];
 
 	var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance"];
@@ -1363,19 +1401,27 @@ function get_layer_data() {
 		layer_data.push(this_layer_weights);	
 	}
 
+	memory_leak_debugger("get_layer_data", start_tensors);
+
 	return layer_data;
 }
 
-function array_size (ar) {
+function array_size (ar) { var start_tensors = memory_leak_debugger();
 	var row_count = ar.length;
 	var row_sizes = []
+
 	for(var i = 0; i < row_count; i++){
 		row_sizes.push(ar[i].length)
 	}
-	return [row_count, Math.min.apply(null, row_sizes)]
+
+	var res = [row_count, Math.min.apply(null, row_sizes)]
+
+	memory_leak_debugger("array_size", start_tensors);
+
+	return res;
 }
 
-function get_layer_output_shape_as_string (i) {
+function get_layer_output_shape_as_string (i) { var start_tensors = memory_leak_debugger();
 	assert(typeof(i) == "number", i + " is not a number");
 	assert(i < model.layers.length, i + " is larger than " + model.layers.length);
 	if(Object.keys(model).includes("layers")) {
@@ -1383,6 +1429,7 @@ function get_layer_output_shape_as_string (i) {
 			var str = model.layers[i].outputShape.toString()
 			str = str.replace(/^,|,$/g,'');;
 			str = "[" + str + "]";
+			memory_leak_debugger("get_layer_output_shape_as_string", start_tensors);
 			return str;
 		} catch (e) {
 			console.error(e);
@@ -1390,13 +1437,19 @@ function get_layer_output_shape_as_string (i) {
 	} else {
 		log("Layers not in model");
 	}
+
+	memory_leak_debugger("get_layer_output_shape_as_string", start_tensors);
 }
 
-function _get_h (i) {
-	return "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+function _get_h (i) { var start_tensors = memory_leak_debugger();
+	var res = "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+
+	memory_leak_debugger("_get_h", start_tensors);
+
+	return res;
 }
 
-function array_to_latex_matrix (array, level=0, no_brackets) { // TODO color
+function array_to_latex_matrix (array, level=0, no_brackets) { var start_tensors = memory_leak_debugger(); // TODO color
         var base_tab = "";
         for (var i = 0; i < level; i++) {
                 base_tab += "\t";
@@ -1423,17 +1476,22 @@ function array_to_latex_matrix (array, level=0, no_brackets) { // TODO color
         } else {
                 str += base_tab + "\t" + array + "\n";
         }
+
         str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n"
+
+	memory_leak_debugger("array_to_latex_matrix", start_tensors);
+
         return str;
 }
 
-function model_to_latex () {
+function model_to_latex () { var start_tensors = memory_leak_debugger();
 	var layers = model.layers;
 
 	var input_shape = model.layers[0].input.shape;
 
 	if(input_shape.length != 2) {
 		l("Math mode works only in input shape [n] (or [null, n] with batch)");
+		memory_leak_debugger("model_to_latex", start_tensors);
 		return;
 	}
 
@@ -1441,6 +1499,7 @@ function model_to_latex () {
 
 	if(output_shape.length != 2) {
 		l("Math mode works only in output shape [n] (or [null, n] with batch)");
+		memory_leak_debugger("model_to_latex", start_tensors);
 		return;
 	}
 
@@ -1970,12 +2029,16 @@ function model_to_latex () {
 	prev_layer_data = layer_data;
 
 	if(activation_string && str) {
+		memory_leak_debugger("model_to_latex", start_tensors);
 		return "<h2>Activation functions:</h2> " + activation_string + str;
 	} else {
 		if(str) {
+			memory_leak_debugger("model_to_latex", start_tensors);
 			return str;
 		}
 	}
+
+	memory_leak_debugger("model_to_latex", start_tensors);
 }
 
 function can_be_shown_in_latex () { var start_tensors = memory_leak_debugger();
