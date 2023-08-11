@@ -4000,6 +4000,7 @@ async function show_csv_file(disabled_show_head_data) { var start_tensors = memo
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
 	}
+
 	memory_leak_debugger("show_csv_file", start_tensors);
 }
 
@@ -5684,29 +5685,37 @@ function allow_editable_labels () { var start_tensors = memory_leak_debugger();
 			return;
 		}
 
-		var tmp_label = labels[label_index];
-		if(tmp_label === undefined) {
-			console.warn("tmp_label undefined");
-			return;
-		}
+		try {
+			var tmp_label = labels[label_index];
+			if(tmp_label === undefined) {
+				console.warn("tmp_label undefined");
+				return;
+			}
 
 
-		if(label_index === undefined) {
-			var tmp_label = $(x).text();
-			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-			return;
-		}
+			if(label_index === undefined) {
+				var tmp_label = $(x).text();
+				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				return;
+			}
 
-		tmp_label = tmp_label.replaceAll(/'/g, "");
-		if(tmp_label) {
-			if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-				$(x).find("input").val(tmp_label);
+			tmp_label = tmp_label.replaceAll(/'/g, "");
+			if(tmp_label) {
+				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+					$(x).find("input").val(tmp_label);
+				} else {
+					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				}
 			} else {
+				tmp_label = $(x).text();
 				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 			}
-		} else {
-			tmp_label = $(x).text();
-			$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+		} catch (e) {
+			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
+				console.warn("This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
+			} else {
+				console.error(e);
+			}
 		}
 	});
 
