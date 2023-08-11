@@ -4881,7 +4881,7 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function setCookie(name, value, days = 365) {
+function setCookie(name, value, days = 365) { // var start_tensors
 	var expires = "";
 	if (days) {
 		var date = new Date();
@@ -4895,7 +4895,7 @@ function setCookie(name, value, days = 365) {
 	document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
 }
 
-function getCookie(name) {
+function getCookie(name) { // var start_tensors
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
 	for(var i=0;i < ca.length;i++) {
@@ -4906,7 +4906,7 @@ function getCookie(name) {
 	return null;
 }
 
-function eraseCookie(name) {
+function eraseCookie(name) { // var start_tensors
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
@@ -5522,7 +5522,7 @@ function hide_empty_tabs (name) {
 	$("[href='#" + name + "']").parent().hide()
 }
 
-function getCanvasBlob(canvas) {
+function getCanvasBlob(canvas) { // start_tensors
 	return new Promise(function(resolve, reject) {
 		canvas.toBlob(function(blob) {
 			resolve(blob)
@@ -5928,7 +5928,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 	memory_leak_debugger("change_all_initializers", start_tensors);
 }
 
-function show_hide_cosmo_stuff() {
+function show_hide_cosmo_stuff() { // start_tensors
 	if(is_cosmo_mode) {
 		$(".hide_in_cosmo_mode").hide();
 	} else {

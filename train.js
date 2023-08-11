@@ -278,7 +278,7 @@ async function get_model_data (optimizer_name_only) { var start_tensors = memory
 	return global_model_data;
 }
 
-function delay(time) {
+function delay(time) { // var start_tensors
 	return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -595,7 +595,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) { var st
 	memory_leak_debugger("_show_or_hide_simple_visualization", start_tensors);
 }
 
-function _clear_plotly_epoch_history () {
+function _clear_plotly_epoch_history () { // var start_tensors
 	$("#plotly_epoch_history").parent().hide();
 	$("#plotly_epoch_history").html("");
 }
