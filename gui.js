@@ -1852,10 +1852,8 @@ async function set_config(index) {
 
 	show_swal_when_changing_size = false;
 
-	var swal_msg = "Loading model";
-	if(is_cosmo_mode) {
-		swal_msg = "Lade Modell";
-	}
+	var swal_msg = language[lang]["loading_model"];
+
 	if (index) {
 		swal_msg = "Undoing/redoing";
 	}
