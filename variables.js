@@ -1,6 +1,6 @@
 "use strict";
 
-function memory_leak_debugger (name="", oldNumTensors=null) {
+function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors
 	var numTensors = tf.memory()["numTensors"];
 	if(!numTensors) {
 		numTensors = "none";
@@ -24,11 +24,11 @@ function memory_leak_debugger (name="", oldNumTensors=null) {
 	return numTensors;
 }
 
-function get_plotly_type () {
+function get_plotly_type () { // start_tensors
 	return 'lines';
 }
 
-function get_scatter_type () {
+function get_scatter_type () { // start_tensors
 	return "scatter";
 	/*
 	if(has_webgl) {
@@ -760,7 +760,7 @@ var call_from_show_csv_file = false;
 
 var tensors = {};
 
-async function dispose (item) {
+async function dispose (item) { // start_tensors
 	//console.trace();
 	//log(item);
 	if(item) {
