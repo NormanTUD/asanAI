@@ -3924,6 +3924,7 @@ async function show_csv_file(disabled_show_head_data) { var start_tensors = memo
 		var parsed_data = await get_x_y_from_csv();
 
 		if(typeof parsed_data == "string" && parsed_data == "incomplete") {
+			memory_leak_debugger("show_csv_file (incomplte)", start_tensors);
 			return;
 		}
 
