@@ -14,7 +14,7 @@ function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors
 				} else {
 					console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
 				}
-				console.trace();
+				//console.trace();
 			}
 		}
 	}
