@@ -3992,8 +3992,6 @@ async function show_csv_file(disabled_show_head_data) { var start_tensors = memo
 		$("#x_y_shape_preview").html(shape_preview);
 		$(".hide_when_no_csv").show();
 
-		await dispose(parsed_data.x);
-		await dispose(parsed_data.y);
 	} else {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;

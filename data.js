@@ -1133,6 +1133,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 				}
 
 				if(!in_goto) {
+					memory_leak_debugger("get_data_struct_by_header", start_tensors);
 					return get_data_struct_by_header(header, parsed, skip_nr, true);
 				}
 
@@ -1141,6 +1142,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 			}
 
 			if(Number.isNaN(to_push) || to_push === undefined || (typeof(to_push) == "string" && to_push == "")) {
+				memory_leak_debugger("get_data_struct_by_header", start_tensors);
 				return { "is_incomplete": true };
 			}
 			line.push(to_push);
@@ -1206,12 +1208,15 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	var x_data = get_data_struct_by_header(x_headers, parsed, 0, false);
 	if(x_data.is_incomplete) {
 		l("X-Data is yet incomplete");
+		l("Y-Data is yet incomplete");
+		memory_leak_debugger("get_x_y_from_csv", start_tensors);
 		return "incomplete";
 	}
 
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
 		l("Y-Data is yet incomplete");
+		memory_leak_debugger("get_x_y_from_csv", start_tensors);
 		return "incomplete";
 	}
 
