@@ -2295,7 +2295,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 	var onBatchEnd = null;
 
-	onBatchEnd = async function (epoch, logs) { var start_tensors = memory_leak_debugger();
+	onBatchEnd = function (epoch, logs) { var start_tensors = memory_leak_debugger();
 		if(typeof(old_onEpochEnd) == 'function') {
 			old_onEpochEnd(epoch, logs);
 		}
@@ -2350,13 +2350,13 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					real_trace.y.push(y_data[i][0]);
 
 					var predict_me = tf.tensor(x_data[i]);
-					var predicted_tensor = await eval(global_model_name).predict(predict_me);
+					var predicted_tensor = eval(global_model_name).predict(predict_me);
 					var predicted = predicted_tensor.arraySync()[0][0];
 
 					predicted_trace.y.push(predicted);
 
-					await dispose(predict_me);
-					await dispose(predicted_tensor);
+					dispose(predict_me); // no await possible
+					dispose(predicted_tensor); // no await possible
 				} catch (e) {
 					console.error(e);
 					console.trace();
@@ -2383,16 +2383,13 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					title: 'x',
 					side: 'bottom',
 					showgrid: false
-				}
+				},
+				renderer: 'webgl'
 			};
 
 			var data = [real_trace, predicted_trace];
 
-			if(current_epoch == 1) {
-				Plotly.newPlot(`${id}_training_data_graph`, data, layout);
-			} else {
-				Plotly.update(`${id}_training_data_graph`, data, layout);
-			}
+			Plotly.react(`${id}_training_data_graph`, data, layout);  // Use Plotly.react() to update the existing plot
 		} catch (e) {
 			console.error(e);
 		}

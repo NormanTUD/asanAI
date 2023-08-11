@@ -820,11 +820,15 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 			log(Object.keys(e));
 			log(e.__proto__);
 			*/
-			write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
-				$("#loss").val("meanSquaredError").trigger("change");
-				$("#metric").val("meanSquaredError").trigger("change")
-				log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
-			} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
+			if(("" + e).includes("Error in oneHot: depth must be >=2, but it is 1")) {
+				console.warn("For whatever reason, it was tries to do oneHot, but only has one vector. Loss:", loss);
+			} else {
+				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
+					$("#loss").val("meanSquaredError").trigger("change");
+					$("#metric").val("meanSquaredError").trigger("change")
+					log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
+				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
+			}
 		}
 	}
 

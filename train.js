@@ -677,7 +677,11 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 			if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 				e = e.message;
 			}
-			await write_error("" + e);
+			if(("" + e).includes("n is undefined")) {
+				console.warn("n is undefined. This may be because the model was recompiled while training for some strange reason");
+			} else {
+				await write_error("" + e);
+			}
 		}
 
 		await dispose(fit_data);
