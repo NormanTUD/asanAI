@@ -2240,10 +2240,15 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					predicted_trace.x.push(x_data[i][0]);
 
 					real_trace.y.push(y_data[i][0]);
-					var predicted_tensor = await ${global_model_name}.predict(tf.tensor(x_data[i]));
+
+					var predict_me = tf.tensor(x_data[i]);
+					var predicted_tensor = await ${global_model_name}.predict(predict_me);
 					var predicted = predicted_tensor.arraySync()[0][0];
-					await dispose(predicted_tensor);
+
 					predicted_trace.y.push(predicted);
+
+					await dispose(predict_me);
+					await dispose(predicted_tensor);
 				} catch (e) {
 					console.error(e);
 					console.trace();
