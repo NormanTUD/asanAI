@@ -4073,9 +4073,13 @@ function tensor_print_to_string(tensor) { var start_tensors = memory_leak_debugg
 		memory_leak_debugger("tensor_print_to_string", start_tensors)
 		return logMessages.join("\n");
 	} catch (e) {
-		console.error("tensor_print_to_string failed:", e);
+		if(("" + e).includes("Error: Tensor is disposed")) {
+			console.error("tensor to be printed was already disposed");
+		} else {
+			console.error("tensor_print_to_string failed:", e);
 
-		memory_leak_debugger("tensor_print_to_string", start_tensors)
+			memory_leak_debugger("tensor_print_to_string", start_tensors)
+		}
 		return "<span class='error_msg'>Error getting tensor as string</span>";
 	}
 }
