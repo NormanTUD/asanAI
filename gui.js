@@ -5531,7 +5531,7 @@ function getCanvasBlob(canvas) {
 }
 
 
-async function create_zip_with_custom_images () { var start_tensor = memory_leak_debugger();
+async function create_zip_with_custom_images () { var start_tensors = memory_leak_debugger();
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
 	var canvasses = $(".own_image_span").find("canvas");
@@ -5548,7 +5548,7 @@ async function create_zip_with_custom_images () { var start_tensor = memory_leak
 		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
 	}
 	var res = zipWriter.close();
-	memory_leak_debugger("create_zip_with_custom_images", start_tensor);
+	memory_leak_debugger("create_zip_with_custom_images", start_tensors);
 	return res;
 }
 

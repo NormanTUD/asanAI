@@ -1250,7 +1250,7 @@ function array_to_color (array, color) {
 	return new_array;
 }
 
-function array_to_latex_color (original_array, desc, color, newline_instead_of_ampersand) {
+function array_to_latex_color (original_array, desc, color, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var array = JSON.parse(JSON.stringify(original_array));
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
@@ -1270,6 +1270,9 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 	str += arr.join("\\\\\n");
 
 	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
+
+
+	memory_leak_debugger("array_to_latex_color", start_tensors);
 
 	return str;
 }
@@ -1302,7 +1305,7 @@ function a_times_b (a, b) {
 	return a + " \\times " + b;
 }
 
-function get_weight_name_by_layer_and_weight_index (layer, index) {
+function get_weight_name_by_layer_and_weight_index (layer, index) { var start_tensors = memory_leak_debugger();
 	assert(typeof(layer) == "number", layer + " is not a number");
 	assert(typeof(index) == "number", index + " is not a number");
 
@@ -1312,11 +1315,15 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 	if(matches === null) {
 		console.error("matches is null. Could not determine name from " + original_name);
 	} else if(1 in matches) {
+		memory_leak_debugger("get_weight_name_by_layer_and_weight_index", start_tensors);
 		return matches[1];
 	} else {
 		console.error("Could not determine name from " + original_name + ", matches: ");
 		log(matches)
 	}
+
+	memory_leak_debugger("get_weight_name_by_layer_and_weight_index", start_tensors);
+
 	return null;
 }
 
@@ -1971,21 +1978,24 @@ function model_to_latex () {
 	}
 }
 
-function can_be_shown_in_latex () {
+function can_be_shown_in_latex () { var start_tensors = memory_leak_debugger();
 	if(!model) {
 		if(load_time != "") {
 			l("Hiding Math tab because there is no model. This might be a bug.");
 		}
+		memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 		return false;
 	}
 
 	if(!Object.keys(model).includes("layers")) {
 		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 		return false;
 	}
 
 	if(!Object.keys(model["layers"]).includes("0")) {
 		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 		return false;
 	}
 
@@ -1993,11 +2003,13 @@ function can_be_shown_in_latex () {
 		if($("#math_tab_label").is(":visible")) {
 			l("Hiding math tab because the input tensor is too large.");
 		}
+		memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 		return false;
 	}
 
 	if(model.layers[model.layers.length - 1].input.shape.length != 2) {
 		l("Hiding math tab because the output tensor has too many dimensions. It has " + model.layers[model.layers.length - 1].input.shape.length + ". Must be 2.");
+		memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 		return false;
 	}
 
@@ -2006,24 +2018,28 @@ function can_be_shown_in_latex () {
 		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization", "DebugLayer", "gaussianNoise"];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
+			memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 			return false
 		}
 	}
 
+	memory_leak_debugger("can_be_shown_in_latex", start_tensors);
 	return true;
 }
 
-async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
+async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var start_tensors = memory_leak_debugger();
 	if(!can_be_shown_in_latex()) {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
 			show_tab_label("math_tab_label", 1);
 		} else {
 			hide_tab_label("math_tab_label");
 		}
+		memory_leak_debugger("write_model_to_latex_to_page", start_tensors);
 		return;
 	}
 
 	if(!force && $("#math_tab_label").css("display") == "none") {
+		memory_leak_debugger("write_model_to_latex_to_page", start_tensors);
 		return;
 	}
 
@@ -2058,11 +2074,13 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	} else {
 		hide_tab_label("math_tab_label");
 	}
+
+	memory_leak_debugger("write_model_to_latex_to_page", start_tensors);
 }
 
 /* This function is used to compare old and new layer data to see if there are any differences. The default color is black, but if darkmode is true, the default color will be white. The color diff variable will contain an array of objects, with each object representing a layer. The keys of each object represent the different data sets within that layer, and the values are arrays of colors, with each color representing the difference between the old and new data for that particular data set. */
 
-function color_compare_old_and_new_layer_data (old_data, new_data) {
+function color_compare_old_and_new_layer_data (old_data, new_data) { var start_tensors = memory_leak_debugger();
 	assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");
 
 	var default_color = "black";
@@ -2142,35 +2160,13 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 	}
 
+
+	memory_leak_debugger("color_compare_old_and_new_layer_data", start_tensors);
+
 	return color_diff;
 }
 
-function get_loss_landscape_data (Y, Y_hat, min_x, max_x, min_y, max_y, steps) {
-        var x_diff = Math.abs(min_x - max_x);
-        var y_diff = Math.abs(min_y - max_y);
-        var x_step_size = x_diff / steps;
-        var y_step_size = y_diff / steps;
-
-        var x_pos = Math.min(max_x, min_x);
-        var y_pos = Math.min(max_y, min_y);
-
-        var landscape = [];
-
-        while (x_pos <= max_x) {
-                y_pos = Math.min(max_y, min_y);
-                while (y_pos <= max_x) {
-                        //log("x: " + x_pos + ", y: " + y_pos);
-                        y_pos += y_step_size;
-			var this_loss = median(eval("tf.metrics." + $("#loss").val() + "(Y, Y_hat).arraySync()"));
-                        landscape.push([x_pos, y_pos, this_loss]);
-                }
-                x_pos += x_step_size;
-        }
-
-        return landscape;
-}
-
-async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) {
+async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_data_json, y_data_json, show_loss, append_to_id) { var start_tensors = memory_leak_debugger();
 	var id = uuidv4();
 
 	/*
@@ -2288,10 +2284,11 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 	}
 	`);
 
+	memory_leak_debugger("get_live_tracking_on_batch_end", start_tensors);
 	return onBatchEnd;
 }
 
-function least_square (x_array, y_array) {
+function least_square (x_array, y_array) { var start_tensors = memory_leak_debugger();
 	assert(x_array.length == y_array.length, "x and y arrays must have the same number of components");
 	assert(x_array.length != 0, "x or y cannot be empty");
 
@@ -2320,20 +2317,24 @@ function least_square (x_array, y_array) {
 
 	var b = Y - (m * X);
 
+	memory_leak_debugger("least_square", start_tensors);
+
 	return [m, b];
 }
 
-function least_square_equation (x_array, y_array) {
+function least_square_equation (x_array, y_array) { var start_tensors = memory_leak_debugger();
 	var r = least_square(x_array, y_array);
 	var m = r[0];
 	var b = r[1];
 
 	var equation = `y = ${m}x + ${b}`;
 
+	memory_leak_debugger("least_square_equation", start_tensors);
+
 	return equation;
 }
 
-function array_to_html(array) {
+function array_to_html(array) { var start_tensors = memory_leak_debugger();
 	var m = '';
 	for (var i = 0; i < array.length; i++) {
 		if(typeof(array[i]) == "object") {
@@ -2346,10 +2347,12 @@ function array_to_html(array) {
 		m += "<br>";
 	}
 
+	memory_leak_debugger("array_to_html", start_tensors);
+
 	return m;
 }
 
-function applyColorMap(x) {
+function applyColorMap(x) { var start_tensors = memory_leak_debugger();
 	tf.util.assert(
 		x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
 	tf.util.assert(
@@ -2359,7 +2362,7 @@ function applyColorMap(x) {
 		x.shape[3] === 1,
 		`Expected exactly one channel, but got ${x.shape[3]} channels`);
 
-	return tf.tidy(() => {
+	var res = tf.tidy(() => {
 		// Get normalized x.
 		const EPSILON = 1e-5;
 		const xRange = x.max().sub(x.min());
@@ -2382,9 +2385,13 @@ function applyColorMap(x) {
 		}
 		return buffer.toTensor();
 	});
+
+	memory_leak_debugger("applyColorMap", start_tensors);
+
+	return res;
 }
 
-async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) { var start_tensor = memory_leak_debugger();
+async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) { var start_tensors = memory_leak_debugger();
 	if(started_training) {
 		l("Cannot show grad CAM while training");
 		return;
@@ -2481,7 +2488,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 			return heatMap.div(heatMap.max()).mul(255);
 		});
 
-		memory_leak_debugger("gradClassActivationMap", start_tensor + 1);
+		memory_leak_debugger("gradClassActivationMap", start_tensors + 1);
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
@@ -2489,14 +2496,14 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		} else {
 			console.warn(e);
 		}
-		memory_leak_debugger("gradClassActivationMap", start_tensor);
+		memory_leak_debugger("gradClassActivationMap", start_tensors);
 		return null;
 	}
 }
 
 var already_moved_to_predict_for_cosmo = false;
 
-async function cosmo_maximally_activate_last_layer () {
+async function cosmo_maximally_activate_last_layer () { var start_tensors = memory_leak_debugger();
 	generating_images = true;
 	$("#maximally_activated_content").html("");
 
@@ -2538,4 +2545,6 @@ async function cosmo_maximally_activate_last_layer () {
 	await cosmo_mode_auto_image_descriptor();
 
 	updateTranslations();
+
+	memory_leak_debugger("cosmo_maximally_activate_last_layer", start_tensors);
 }
