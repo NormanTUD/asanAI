@@ -121,7 +121,7 @@ async function force_download_image_preview_data () { var start_tensors = memory
 		$("#max_number_of_files_per_category").val(1);
 		var old_force_download = force_download;
 		force_download = 1;
-		var data = await get_image_data(0, 0, {title: is_cosmo_mode ? 'Lade Beispielbilder...' : "Loading example images", html: ""}, 1);
+		var data = await get_image_data(0, 0, {title: language[lang]["loading_example_images"], html: ""}, 1);
 		force_download = old_force_download;
 		$("#max_number_of_files_per_category").val(old_img_cat);
 		$("#photos").show();

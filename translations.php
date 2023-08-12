@@ -212,7 +212,8 @@
 			"loading_images_into_memory" => "Loading images into memory",
 			"train_the_neural_network" => "Train the neural network",
 			"train_further" => "Train the network further",
-			"loading_model" => "Loading model"
+			"loading_model" => "Loading model",
+			"loading_example_images" => "Loading example images"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -426,7 +427,8 @@
 			"loading_images_into_memory" => "Lade die Bilder in den Speicher",
 			"train_the_neural_network" => "Das neuronale Netzwerk trainieren",
 			"train_further" => "Das Netzwerk weiter trainieren",
-			"loading_model" => "Lade Modell"
+			"loading_model" => "Lade Modell",
+			"loading_example_images" => "Lade Beispielbilder"
 		)
 	);
 ?>
