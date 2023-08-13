@@ -308,7 +308,9 @@ async function restart_alexnet(dont_click) {
 				return;
 			}
 		} else {
-			console.warn("Model has no first layer. Skipping restart_alexnet");
+			if(finished_loading) {
+				console.warn("Model has no first layer. Skipping restart_alexnet");
+			}
 		}
 	}
 
@@ -636,4 +638,3 @@ install_memory_debugger();
 
 load_time = Date().toLocaleString();
 set_mode();
-
