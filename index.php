@@ -1510,6 +1510,8 @@
 											</span>
 										</span>
 
+										<span id="prediction_non_image" style="display: none"></span>
+
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
@@ -1535,8 +1537,6 @@
 												<span id="prediction" style="display: none"></span>
 											</span>
 										</span>
-
-										<span id="prediction_non_image" style="display: none"></span>
 
 										<span id="handdrawn_img" class="handdrawn hide_when_no_image" style='text-align: justify'>
 											<span class="full_example_image_prediction">
