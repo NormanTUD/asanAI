@@ -439,6 +439,14 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 		if(!predict_data) {
 			await dispose(predict_data);
 			return;
+		} else {
+			if(predict_data.shape.includes(0)) {
+				await dispose(predict_data);
+
+				l("Empty predict data. Not predicting.");
+
+				return;
+			}
 		}
 
 		if(!tensor_shape_matches_model(predict_data)) {
