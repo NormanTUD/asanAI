@@ -884,6 +884,7 @@ button {
 
 #own_files {
 	display: inline-block;
+	width: 100%;
 }
 
 .no_border_button {
