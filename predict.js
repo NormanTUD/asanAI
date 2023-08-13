@@ -382,6 +382,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 	var str = "";
 
+	var ok = 1;
+
 	try {
 		var predict_data = null;
 
@@ -471,6 +473,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			l("Predict data shape:" + predict_data.shape);
 			console.error(e);
 			l("Error (1201): " + e);
+			ok = 0;
 			return;
 		}
 
@@ -525,11 +528,18 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 		} else {
 			console.error(e);
 		}
+		ok = 0;
 	}
 
 	allow_editable_labels();
 
 	memory_leak_debugger("predict", start_tensors);
+
+	if(ok) {
+		l("Prediction done");
+	} else {
+		l("ERROR: Prediction failed");
+	}
 
 	return str;
 }

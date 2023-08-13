@@ -1,5 +1,32 @@
 "use strict";
 
+function get_expected_input_shape_without_batch_as_string () {
+	if(!model) {
+		console.warn("No model found");
+		return "";
+	}
+
+	if(!model.input) {
+		console.warn("No model.input found");
+		return "";
+	}
+
+	if(!model.input.shape) {
+		console.warn("No model.input.shape found");
+		return "";
+	}
+
+	var inputWithoutBatch = [];
+	model.input.shape.forEach((i, x) => {
+		if(i) {
+			inputWithoutBatch.push(i);
+		}
+	});
+
+	inputWithoutBatch = inputWithoutBatch.join(", ")
+	return inputWithoutBatch;
+}
+
 async function except (errname, e) { var start_tensors = memory_leak_debugger();
 	await write_descriptions();
 	await enable_everything();
