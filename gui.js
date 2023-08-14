@@ -2421,7 +2421,11 @@ function get_input_shape() { var start_tensors = memory_leak_debugger();
 		memory_leak_debugger("get_input_shape", start_tensors);
 		return res;
 	} else {
-		return [];
+		if(model && typeof(model.input.shape) == "object") {
+			return model.input.shape.filter(n => n);
+		} else {
+			return [];
+		}
 	}
 }
 
