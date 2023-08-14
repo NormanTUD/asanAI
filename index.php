@@ -313,7 +313,7 @@
 				if($GLOBALS["use_db"]) {
 ?>
 						<span id="register" onclick="open_register_dialog()">Register/Login</span>
-						<span id="logout" onclick="logout()" style="display: none; user-select: none;"><span class="TRANSLATEME_logout" /></span>
+						<span id="logout" onclick="logout()" style="display: none; user-select: none;"><span class="TRANSLATEME_logout"></span></span>
 <?php
 				}
 ?>
@@ -338,7 +338,7 @@
 									<td>
 										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
 										</select>
-										<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset" /></button>
+										<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 									</td>
 								</tr>
 								<tr>
@@ -348,7 +348,7 @@
 									<td>
 										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
 										</select>
-										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" data-position="right" data-intro="Click here to load pretrained weights for the chosen model"><span class="TRANSLATEME_load" /></button>
+										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" data-position="right" data-intro="Click here to load pretrained weights for the chosen model"><span class="TRANSLATEME_load"></span></button>
 									</td>
 								</tr>
 
@@ -375,14 +375,14 @@
 						<div class="ribbon-toolbar" style="width: 210px">
 							<table>
 								<tr>
-									<td><span class="TRANSLATEME_loss" /><sup onclick="losses_popup()">?</sup></td>
+									<td><span class="TRANSLATEME_loss"></span><sup onclick="losses_popup()">?</sup></td>
 									<td style="width: 200px">
 										<select id="loss" onchange="updated_page()" style="width: 150px">
 										</select>
 									</td>
 								</tr>
 								<tr>
-									<td><span class="TRANSLATEME_metric" /></td>
+									<td><span class="TRANSLATEME_metric"></span></td>
 									<td style="width: 110px">
 										<select id="metric" onchange="change_metrics()" style="width: 150px">
 										</select>
@@ -421,9 +421,9 @@
 							<table>
 								<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" id="epochs" value="2" min="1" step="1" style="width: 40px;"></td></tr>
 								<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" id="batchSize" value="10" min="1" step="1" style="width: 40px;"></td></tr>
-								<tr><td><span class="TRANSLATEME_valsplit" />&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
+								<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
 							</table>
-							<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters" /></div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters"></span></div>
 						</div>
 					</div>
 					<div class="ribbon-group-sep"></div>
@@ -443,11 +443,11 @@
 										<td><input type="number" min="1" value="" onchange="change_width()" onkeyup="change_width()" id="width" style="width: 40px;"></td>
 									</tr>
 									<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
-										<td><span class="TRANSLATEME_img_per_cat" /></td>
+										<td><span class="TRANSLATEME_img_per_cat"></span></td>
 										<td><input type="number" min="0" value="100" id="max_number_of_files_per_category" style="width: 40px"></td>
 									</tr>
 									<tr class="expert_mode_only">
-										<td><span class="TRANSLATEME_augment" />?</td>
+										<td><span class="TRANSLATEME_augment"></span>?</td>
 										<td><input type="checkbox" onclick="show_hide_augment_tab()" id="auto_augment"></td>
 									</tr>
 								</table>
@@ -476,7 +476,7 @@
 								</tr>
 								<tr class="expert_mode_only">
 									<td>
-										<span class="TRANSLATEME_divide_x_by" />:
+										<span class="TRANSLATEME_divide_x_by"></span>:
 									</td>
 									<td>
 										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()">
@@ -489,7 +489,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_training" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_training"></span></div>
 					</div>
 				</div>
 
@@ -561,7 +561,7 @@
 								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
 								<tr>
-									<td><span class="TRANSLATEME_enable_tf_debug" /></td>
+									<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
 									<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 								</tr>
 								<tr class="hide_when_no_alexnet">
@@ -731,7 +731,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers"></span></div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
@@ -740,7 +740,7 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-									<td><span class="TRANSLATEME_optimizer" /></td>
+									<td><span class="TRANSLATEME_optimizer"></span></td>
 									<td>
 										<select id="optimizer" onchange='change_optimizer()' style="width: 100px">
 											<option value="adam">adam</option>
@@ -875,7 +875,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_optimizer" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_optimizer"></span></div>
 					</div>
 				</div>
 
@@ -886,19 +886,19 @@
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-									<td><span class="TRANSLATEME_auto_rotate_images" />?</td>
+									<td><span class="TRANSLATEME_auto_rotate_images"></span>?</td>
 									<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
-									<td><span class="TRANSLATEME_sine_ripple" />?</td>
+									<td><span class="TRANSLATEME_sine_ripple"></span>?</td>
 									<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 								</tr>
 								<tr>
-									<td><span class="TRANSLATEME_number_of_rotations" />?</td>
+									<td><span class="TRANSLATEME_number_of_rotations"></span>?</td>
 									<td><input type="number" min=1 value=4 id="number_of_rotations"></td>
 									<td></td>
 									<td></td>
 								</tr>
 								<tr>
-									<td><span class="TRANSLATEME_invert_images" />?</td>
+									<td><span class="TRANSLATEME_invert_images"></span>?</td>
 									<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 									<td></td>
 									<td></td>
@@ -911,7 +911,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_augmentation" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_augmentation"></span></div>
 					</div>
 				</div>
 
@@ -924,21 +924,21 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
-											<td><span class="TRANSLATEME_iterations" /></td>
+											<td><span class="TRANSLATEME_iterations"></span></td>
 											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr>
-											<td><span class="TRANSLATEME_randomizer_limits" /></td>
+											<td><span class="TRANSLATEME_randomizer_limits"></span></td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
 										</tr>
 										<tr>
-											<td><span class="TRANSLATEME_width_amp_height" />:</td>
+											<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
 										</tr>
 									</table>
 								</div>
 							</div>
-							<div class="ribbon-group-title"><span class="TRANSLATEME_max_activated_neurons" /></div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_max_activated_neurons"></span></div>
 						</div>
 					</div>
 
@@ -949,15 +949,15 @@
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
 									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
-										<td><span class="TRANSLATEME_max_neurons_fcnn" />?</td>
+										<td><span class="TRANSLATEME_max_neurons_fcnn"></span>?</td>
 										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 									</tr>
 									<tr data-intro="Show the input layer in the visualizations?">
-										<td><span class="TRANSLATEME_show_input_layer" />?</td>
+										<td><span class="TRANSLATEME_show_input_layer"></span>?</td>
 										<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer"></td>
 									</tr>
 									<tr data-intro="How many seconds before re-plotting the batch-graph?">
-										<td><span class="TRANSLATEME_batch_plot_minimum_time" /> (s)</td>
+										<td><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</td>
 										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 									</tr>
 								</table>
@@ -973,21 +973,21 @@
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
 									<tr data-intro="In the predict page, show visual bars instead of numbers">
-										<td><span class="TRANSLATEME_show_bars_instead_of_numbers" />?</td>
+										<td><span class="TRANSLATEME_show_bars_instead_of_numbers"></span>?</td>
 										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
-										<td><span class="TRANSLATEME_visualize_images_in_grid" />?</td>
+										<td><span class="TRANSLATEME_visualize_images_in_grid"></span>?</td>
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
-										<td><span class="TRANSLATEME_number_of_grid_images" />?</td>
+										<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
 										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;'></td>
 									</tr>
 								</table>
 							</div>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_various_plots" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_various_plots"></span></div>
 					</div>
 
 					<div id="data_plotter" style="display: none">
@@ -998,11 +998,11 @@
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 									<table>
 										<tr data-intro="Show raw data in layer data flow?">
-											<td><span class="TRANSLATEME_show_raw_data" />?</td>
+											<td><span class="TRANSLATEME_show_raw_data"></span>?</td>
 											<td><input class="show_data" type='checkbox' id="show_raw_data"></td>
 										</tr>
 										<tr>
-											<td><span class="TRANSLATEME_pixel_size" /></td>
+											<td><span class="TRANSLATEME_pixel_size"></span></td>
 											<td><input type="number" min="1" max="100" value="1" onchange="change_pixel_size()" onkeyup="change_pixel_size()" id="pixel_size" style="width: 80px;"></td>
 										</tr>
 										<tr>
@@ -1012,7 +1012,7 @@
 									</table>
 								</div>
 							</div>
-							<div class="ribbon-group-title"><span class="TRANSLATEME_layer_data_flow" /></div>
+							<div class="ribbon-group-title"><span class="TRANSLATEME_layer_data_flow"></span></div>
 						</div>
 					</div>
 				</div>
@@ -1022,7 +1022,7 @@
 						<div class="ribbon-toolbar">
 							<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
-						<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard" /></button>
+						<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 						<div class="ribbon-group-title">Log</div>
 					</div>
 
@@ -1032,11 +1032,11 @@
 				<div id="imprint_ribbon" class="ribbon_tab_content" title="Contact">
 					<div class="ribbon-group" style="width: auto;">
 						<div class="ribbon-toolbar">
-							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint" /></button><br><br>
+							<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint"></span></button><br><br>
 							<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
-							<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs" /></button>
+							<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
 						</div>
-						<div class="ribbon-group-title"><span class="TRANSLATEME_imprint" /></div>
+						<div class="ribbon-group-title"><span class="TRANSLATEME_imprint"></span></div>
 					</div>
 
 				</div>
@@ -1053,7 +1053,7 @@
 						<div id="table_div"></div>
 
 						<div class="loss_explanation" id="explanation"></div>
-						<button onclick="close_losses()"><span class="TRANSLATEME_close" /></button>
+						<button onclick="close_losses()"><span class="TRANSLATEME_close"></span></button>
 					</div>
 				</div>
 
@@ -1064,7 +1064,7 @@
 							$file = file_get_contents("README.md");
 							print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
 ?>
-							<button class="close_button" onclick="closePopup('sources_popup')"><span class="TRANSLATEME_close" /></button>
+							<button class="close_button" onclick="closePopup('sources_popup')"><span class="TRANSLATEME_close"></span></button>
 						</div>
 					</div>
 				</div>
@@ -1096,7 +1096,7 @@
 								</tr>
 							</table>
 
-								<button class="close_button" onclick="closePopup('save_dialog')"><span class="TRANSLATEME_close" /></button>
+								<button class="close_button" onclick="closePopup('save_dialog')"><span class="TRANSLATEME_close"></span></button>
 							</div>
 						</div>
 					</div>
@@ -1104,22 +1104,22 @@
 					<div id="register_dialog" class="popup" style="display: none">
 						<div class="popup_body less_transparent_glass_box">
 							<div id="register_content"> 
-								<h1><span class="TRANSLATEME_register" /></h1>
+								<h1><span class="TRANSLATEME_register"></span></h1>
 
 								<form id="register_form">
 									<table>
 										<tr>
-											<td><span class="TRANSLATEME_email" /></td>
+											<td><span class="TRANSLATEME_email"></span></td>
 											<td><input type="email" id="register_email" required></td>
 										</tr>
 
 										<tr>
-											<td><span class="TRANSLATEME_username" /></td>
+											<td><span class="TRANSLATEME_username"></span></td>
 											<td><input id="register_username" minlength="2" required></td>
 										</tr>
 
 										<tr>
-											<td><span class="TRANSLATEME_password" /></td>
+											<td><span class="TRANSLATEME_password"></span></td>
 											<td><input type="password" id="register_password" minlength="8" required></td>
 										</tr>
 
@@ -1128,7 +1128,7 @@
 										</tr>
 
 										<tr>
-											<td><button id="register_button" onclick="register()" style="display: none"><span class="TRANSLATEME_register" /></button></td>
+											<td><button id="register_button" onclick="register()" style="display: none"><span class="TRANSLATEME_register"></span></button></td>
 											<td></td>
 										</tr>
 
@@ -1139,19 +1139,19 @@
 									</table>
 								</form>
 
-								<h1><span class="TRANSLATEME_login" /></h1>
+								<h1><span class="TRANSLATEME_login"></span></h1>
 
 								<table>
 									<tr>
-										<td><span class="TRANSLATEME_username" /></td>
+										<td><span class="TRANSLATEME_username"></span></td>
 										<td><input id="login_username"></td>
 									</tr>
 									<tr>
-										<td><span class="TRANSLATEME_password" /></td>
+										<td><span class="TRANSLATEME_password"></span></td>
 										<td><input type="password" id="login_password"></td>
 									</tr>
 									<tr>
-										<td><button class="save_button" onclick="login()"><span class="TRANSLATEME_login" /></button></td>
+										<td><button class="save_button" onclick="login()"><span class="TRANSLATEME_login"></span></button></td>
 										<td></td>
 									</tr>
 									<tr>
@@ -1161,26 +1161,26 @@
 								</table>
 							</div>
 							<br>
-						<button class="close_button" onclick="closePopup('register_dialog')"><span class="TRANSLATEME_close" /></button>
+						<button class="close_button" onclick="closePopup('register_dialog')"><span class="TRANSLATEME_close"></span></button>
 					</div>
 				</div>
 
 				<div id="save_model_dialog" class="popup" style="display: none">
 					<div class="popup_body less_transparent_glass_box">
 						<div id="save_model_content"> 
-							<h1><span class="TRANSLATEME_download" /></h1>
-							<button class="save_button" onclick="save_model();download_weights_json();"><span class="TRANSLATEME_download" /></button>
+							<h1><span class="TRANSLATEME_download"></span></h1>
+							<button class="save_button" onclick="save_model();download_weights_json();"><span class="TRANSLATEME_download"></span></button>
 
 							<div style="display: none" class="show_when_logged_in">
 								<h1>Save to DB</h1>
 								<span id="save_model_msg" style="display: none"></span><br>
 								<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br>
-								<span class="TRANSLATEME_public" />: <input id="is_public" type="checkbox"><br>
-								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled><span class="TRANSLATEME_save" /></button>
+								<span class="TRANSLATEME_public"></span>: <input id="is_public" type="checkbox"><br>
+								<button class="save_button" id="save_to_db" onclick="save_to_db_wrapper()" disabled><span class="TRANSLATEME_save"></span></button>
 							</div>
 						</div>
 						<br>
-						<button class="close_button" onclick="closePopup('save_model_dialog')"><span class="TRANSLATEME_close" /></button>
+						<button class="close_button" onclick="closePopup('save_model_dialog')"><span class="TRANSLATEME_close"></span></button>
 					</div>
 				</div>
 
@@ -1207,10 +1207,10 @@
 									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
 									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
-									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv" /><span class="TRANSLATEME_csv" /></a></li>
-									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training" /></a></li>
-									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict" /></a></li>
-									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code" /></a></li>
+									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span><span class="TRANSLATEME_csv"></span></a></li>
+									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training"></span></a></li>
+									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict"></span></a></li>
+									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code"></span></a></li>
 								</ul>
 								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
@@ -1281,7 +1281,7 @@
 								</div>
 								<br>
 								<div class="upload-btn-wrapper">
-									<button class=""><span class="TRANSLATEME_provide_x_data" /></button>
+									<button class=""><span class="TRANSLATEME_provide_x_data"></span></button>
 									<input id="upload_x_file" type="file" name="x_data">
 								</div>
 								<div class="upload-btn-wrapper">
@@ -1298,9 +1298,9 @@
 									<br>
 									<span class="TRANSLATEME_auto_adjust_last_layer_if_dense"></span>? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
 									<br>
-									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()"><span class="TRANSLATEME_enable_webcam" /></button>
+									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()"><span class="TRANSLATEME_enable_webcam"></span></button>
 								</span>
-								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam" /></button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
 								<div id="last_layer_shape_warning"></div>
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
 								<span class="TRANSLATEME_number_of_images_in_series"></span>: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
@@ -1360,19 +1360,19 @@
 
 								<div id="html_tab" class="tab">
 									<br>
-									<button onclick="save_model()"><span class="TRANSLATEME_download_model_data" /></button>
+									<button onclick="save_model()"><span class="TRANSLATEME_download_model_data"></span></button>
 									<br>
 									<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
-									<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
+									<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 								</div>
 
 
 								<div id="python_tab" class="tab">
 									<br>
 									<span class="user_select_none">
-										<button onclick="copy_id_to_clipboard('python')"><span class="TRANSLATEME_copy_to_clipboard" /></button>
-										<button onclick="save_model()"><span class="TRANSLATEME_download_model_data" /></button>
-										<button onclick="download_model_for_training(model)"><span class="TRANSLATEME_download_for_local_taurus" /></button>
+										<button onclick="copy_id_to_clipboard('python')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
+										<button onclick="save_model()"><span class="TRANSLATEME_download_model_data"></span></button>
+										<button onclick="download_model_for_training(model)"><span class="TRANSLATEME_download_for_local_taurus"></span></button>
 									</span>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
@@ -1385,7 +1385,7 @@
 									<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
-									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math" /></a></li>
+									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
@@ -1399,14 +1399,14 @@
 
 								<div id="lenet_tab" class="tab">
 									<div id="lenet"></div>
-									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
+									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
 									<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
 									<button class="vis_button" onclick="restart_lenet(1)"><span class="TRANSLATEME_restart_lenet"></span></button>
 								</div>
 
 								<div id="fcnn_tab" class="tab">
 									<div id="fcnn"></div>
-									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view" /></button>
+									<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
 									<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
 									<button class="vis_button" onclick="restart_fcnn(1)"><span class="TRANSLATEME_restart_fcnn"></span></button>
 								</div>
@@ -1418,10 +1418,10 @@
 
 								<div id="maximally_activated" class="tab maximally_activated_class">
 									<br>
-									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller" /></button>
-									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger" /></button>
-									<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset" /></button>
-									<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions" /></button>
+									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
+									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
+									<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset"></span></button>
+									<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions"></span></button>
 									<div id="maximally_activated_content"></div>
 								</div>
 
@@ -1438,7 +1438,7 @@
 
 							<div id="tfvis_tab" class="tab" style="float: right; width: 100%">
 								<br>
-								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training" /></button>
+								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
@@ -1457,12 +1457,12 @@
 									<div id="training_content">
 										<div id="simplest_training_data_visualization" style="display: none"></div>
 										<div style="display: none">
-											<h3 class="hide_in_cosmo_mode"><span class="TRANSLATEME_epochs" />:</h3>
+											<h3 class="hide_in_cosmo_mode"><span class="TRANSLATEME_epochs"></span>:</h3>
 											<div id="plotly_epoch_history"></div>
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h3><span class="TRANSLATEME_batches" />:</h3>
+											<h3><span class="TRANSLATEME_batches"></span>:</h3>
 											<div id="plotly_batch_history"></div>
 										</div>
 
@@ -1472,7 +1472,7 @@
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h1><span class="TRANSLATEME_memory_usage_while_training" />:</h1>
+											<h1><span class="TRANSLATEME_memory_usage_while_training"></span>:</h1>
 											<div id="plotly_memory_history"></div>
 										</div>
 									</div>
@@ -1508,7 +1508,7 @@
 											<span id="predict_own">
 												<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>
 												<br>
-												<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict" /></button>
+												<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict"></span></button>
 											</span>
 										</span>
 

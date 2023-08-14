@@ -2415,7 +2415,7 @@ function get_input_shape() { var start_tensors = memory_leak_debugger();
 	if (!code.startsWith("[")) {
 		code = "[" + code + "]";
 	}
-	var match = code.match(/^\s*\[\s*(?:(?:\s*\d+\s*,\s*)*\d+)?\s*\]$/);
+	var match = code.match(/^\s*\[\s*(?:(?:\s*\d+\s*,\s*)*\d+)?\s*\]\s*$/);
 	if(match) {
 		var res = eval(code);
 		memory_leak_debugger("get_input_shape", start_tensors);
