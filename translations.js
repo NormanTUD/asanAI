@@ -1,10 +1,13 @@
 // Get the language from the cookie or use the default language
 let lang_cookie_name = "language_cookie";
 let lang = getLangCookie();
-if(is_cosmo_mode) {
+
+const urlParams = new URLSearchParams(window.location.search);
+
+// Check if the parameter "start_cosmo" exists
+if (urlParams.has('start_cosmo')) {
 	lang = 'de';
 }
-
 
 function swapImageSrcLanguage() {
 	// Get all image elements on the page
