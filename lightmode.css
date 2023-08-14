@@ -62,7 +62,7 @@ select {
 	color: black;
 }
 
-select:hover, input:hover, button:hover {
+select:hover, input:hover, button:hover, .input_field:hover {
 	background-color: #b7c8dc;
 }
 
