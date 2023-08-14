@@ -673,14 +673,18 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 
 			$("#training_progress_bar").hide();
 		} catch (e) {
-			console.error(e);
-			if(typeof(e) == "object" && Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-			if(("" + e).includes("n is undefined")) {
-				console.warn("n is undefined. This may be because the model was recompiled while training for some strange reason");
+			if(("" + e).includes("is already disposed")) {
+				console.error("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
 			} else {
-				await write_error("" + e);
+				console.error(e);
+				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+				if(("" + e).includes("n is undefined")) {
+					console.warn("n is undefined. This may be because the model was recompiled while training for some strange reason");
+				} else {
+					await write_error("" + e);
+				}
 			}
 		}
 
