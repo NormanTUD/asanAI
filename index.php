@@ -99,6 +99,9 @@
 		<?php minify_css("prism/prism.min.css"); ?>
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
+		<!-- polyfill -->
+		<?php minify_js("canvas-to-blob.min.js"); ?>
+
 		<!-- jquery -->
 		<?php minify_js("zip.js"); ?>
 		<?php minify_js("md5.umd.min.js"); ?>
