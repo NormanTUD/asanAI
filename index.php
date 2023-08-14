@@ -391,15 +391,15 @@
 								<tr>
 									<td>Shapes</td>
 									<td>
-										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape">
+										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape" />
 										&rarr;
-										<input type="text" value="" style="width: 60px;" readonly id="outputShape">
+										<input type="text" value="" style="width: 60px;" readonly id="outputShape" />
 									</td>
 								</tr>
 								<tr>
 									<td colspan=2>
 										Auto-Input-Shape?
-										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape">
+										<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_inputShape()" id="auto_input_shape" />
 									</td>
 								</tr>
 							</table>

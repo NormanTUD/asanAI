@@ -2415,9 +2415,14 @@ function get_input_shape() { var start_tensors = memory_leak_debugger();
 	if (!code.startsWith("[")) {
 		code = "[" + code + "]";
 	}
-	var res = eval(code);
-	memory_leak_debugger("get_input_shape", start_tensors);
-	return res;
+	var match = code.match(/^\s*\[\s*(?:(?:\s*\d+\s*,\s*)*\d+)?\s*\]$/);
+	if(match) {
+		var res = eval(code);
+		memory_leak_debugger("get_input_shape", start_tensors);
+		return res;
+	} else {
+		return [];
+	}
 }
 
 async function change_metrics() {
