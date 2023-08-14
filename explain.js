@@ -1236,7 +1236,9 @@ async function predict_maximally_activated (item, force_category) { var start_te
 
 	await predict($('#predict_own_data').val())
 
-	await cosmo_mode_auto_image_descriptor();
+	if(is_cosmo_mode) {
+		await force_redo_image_captions();
+	}
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
@@ -1291,7 +1293,7 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 	}
 
 	if(is_cosmo_mode) {
-		await cosmo_mode_auto_image_descriptor();
+		await force_redo_image_captions();
 	}
 
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
@@ -2620,7 +2622,9 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	generating_images = true;
 	$("#maximally_activated_content").html("");
 
-	await cosmo_mode_auto_image_descriptor();
+	if(is_cosmo_mode) {
+		await force_redo_image_captions();
+	}
 
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
@@ -2655,7 +2659,9 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	chose_next_manicule_target();
 
-	await cosmo_mode_auto_image_descriptor();
+	if(is_cosmo_mode) {
+		await force_redo_image_captions();
+	}
 
 	updateTranslations();
 

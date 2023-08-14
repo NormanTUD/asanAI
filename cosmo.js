@@ -692,7 +692,7 @@ async function cosmo_mode () {
 		}
 	}, 1000);
 
-	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
+	window.addEventListener('resize', async function(event) { await force_redo_image_captions(); }, true);
 }
 
 function findColorPickerContainer(element) {
@@ -832,7 +832,7 @@ async function switch_predict_mode () {
 
 	await add_cosmo_point("toggled_webcam");
 
-	await cosmo_mode_auto_image_descriptor();
+	await force_redo_image_captions();
 
 	updateTranslations();
 
