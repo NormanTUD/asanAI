@@ -5575,7 +5575,7 @@ function getCanvasBlob(canvas) { // start_tensors
 async function create_zip_with_custom_images () { var start_tensors = memory_leak_debugger();
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
-	var canvasses = $(".own_image_span").find("canvas");
+	var canvasses = $(".own_image_span").find("canvas,img");
 
 	for (var i = 0; i < canvasses.length; i++) {
 		var canvas = canvasses[i];
