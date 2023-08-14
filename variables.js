@@ -1421,11 +1421,11 @@ var is_presenting = false;
 var done_presenting = false;
 
 var cosmo_categories = [
-	"Warnung",
-	"Rettung",
-	"Verbot",
+	"Feuer",
 	"Verpflichtend",
-	"Feuer"
+	"Verbot",
+	"Rettung",
+	"Warnung"
 ];
 
 let mouseX = -1;

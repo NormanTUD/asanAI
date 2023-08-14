@@ -982,20 +982,20 @@ async function force_redo_image_captions () {
 async function cosmo_set_labels () {
 	if(lang == "de") {
 		cosmo_categories = [
-			"Warnung",
-			"Rettung",
-			"Verbot",
+			"Feuer",
 			"Verpflichtend",
-			"Feuer"
+			"Verbot",
+			"Rettung",
+			"Warnung"
 		];
 		labels = cosmo_categories;
 	} else if(lang == "en") {
 		cosmo_categories = [
-			"Warning",
-			"Rescue",
-			"Forbidden",
+			"Fire",
 			"Mandatory",
-			"Fire"
+			"Forbidden",
+			"Rescue",
+			"Warning"
 		];
 		labels = cosmo_categories;
 	} else {
