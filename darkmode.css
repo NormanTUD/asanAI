@@ -52,12 +52,7 @@ button, select, input, #predict_own_data {
 	color: white;
 }
 
-button {
-	background-color: #444444;
-	color: white;
-}
-
-select {
+select, button {
 	background-color: #444444;
 	color: white;
 }
