@@ -391,9 +391,9 @@
 								<tr>
 									<td>Shapes</td>
 									<td>
-										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape" />
+										<input type="text" value="" style="width: 60px;" onchange="update_input_shape()" readonly id="inputShape"></input>
 										&rarr;
-										<input type="text" value="" style="width: 60px;" readonly id="outputShape" />
+										<input type="text" value="" style="width: 60px;" readonly id="outputShape"></input>
 									</td>
 								</tr>
 								<tr>
