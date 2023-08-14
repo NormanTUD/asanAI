@@ -1092,9 +1092,9 @@ function _get_neurons_last_layer (layer, type) { var start_tensors = memory_leak
 	var neurons = 1;
 
 	if(type == "conv2d") {
-		neurons = parseInt(get_item_value(layer, "filters"));
+		neurons = model.layers[layer].filters;
 	} else if (type == "dense") {
-		neurons = parseInt(get_item_value(layer, "units"));
+		neurons = model.layers[layer].units;
 	} else {
 		console.warn("Unknown layer " + layer);
 		memory_leak_debugger("_get_neurons_last_layer", start_tensors);
@@ -1128,7 +1128,7 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 
 	favicon_spinner();
 
-	for (var i = neurons - 1; i >= 0; i--) {
+	for (var i = 0; i < neurons; i++) {
 		if(stop_generating_images) {
 			continue;
 		}
@@ -1243,6 +1243,7 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 	var current_input_shape = get_input_shape();
 
 	if(current_input_shape.length != 3) {
+		console.warn("input-shape does not have 3 values (without batch), is: ", model.input.shape);
 		memory_leak_debugger("predict_maximally_activated", start_tensors);
 		return;
 	}
