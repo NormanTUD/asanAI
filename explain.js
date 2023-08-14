@@ -983,7 +983,7 @@ function tensor_normalize_to_rgb_min_max (x) { var start_tensors = memory_leak_d
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
-function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) { var start_tensors = memory_leak_debugger();
+function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var start_tensors = memory_leak_debugger();
 	var worked = 0;
         var full_data = {};
 
@@ -1001,7 +1001,7 @@ function inputGradientAscent(layerIndex, filterIndex, iterations, start_image) {
 
                 // This function calculates the value of the convolutional layer's
                 // output at the designated filter index.
-                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([filterIndex], -1);
+                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
 
                 // This returned function (`gradFunction`) calculates the gradient of the
                 // convolutional filter's output with respect to the input image.
