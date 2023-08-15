@@ -1181,22 +1181,16 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 
 	var img_left = (neurons - i);
 
-	var swal_msg = img_left + " " + language[lang]["images_left"] + ", " + eta;
-	if(img_left == 1) {
-		swal_msg = img_left + " " + language[lang]["image_left"] + ", " + eta;
+	var swal_msg = "";
+
+	if((neurons - i) == 1) {
+		swal_msg = img_left + " " + language[lang]["image_left"];
+	} else {
+		swal_msg = img_left + " " + language[lang]["images_left"];
 	}
 
-
-	if(is_cosmo_mode) {
-		if((neurons - i) == 1) {
-			swal_msg = img_left + " " + language[lang]["image_left"];
-		} else {
-			swal_msg = img_left + " " + language[lang]["images_left"];
-		}
-
-		if(eta) {
-			swal_msg += " " + eta;
-		}
+	if(eta) {
+		swal_msg += " " + eta;
 	}
 
 	l(swal_msg + ` <button onclick='stop_generating_images=1'>${language[lang]["stop_generating_images"]}</button>`);
