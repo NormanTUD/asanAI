@@ -1235,7 +1235,7 @@ async function predict_maximally_activated (item, force_category) { var start_te
 
 	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
 
-	await predict($('#predict_own_data').val())
+	//await predict($('#predict_own_data').val())
 
 	if(is_cosmo_mode) {
 		await force_redo_image_captions();

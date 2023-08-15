@@ -343,13 +343,17 @@ async function _predict_table(predictions_tensor, desc) { var start_tensors = me
 		}
 
 		fullstr += "</table>";
-		desc.html(fullstr);
+		if(desc) {
+			desc.html(fullstr);
+		}
 	}
 
 	$("#predict_error").hide();
 	$("#predict_error").html("");
 
 	memory_leak_debugger("_predict_table", start_tensors);
+
+	return fullstr;
 }
 
 function _predict_table_row (label, w, max_i, probability, i) { var start_tensors = memory_leak_debugger()
@@ -503,7 +507,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 					draw_multi_channel(predictions_tensor, desc, pxsz)
 				} else {
 					if(predictions.length) {
-						await _predict_table(predictions_tensor, desc);
+						var r = await _predict_table(predictions_tensor, desc);
+						if(r) {
+							str += r;
+						}
 					} else {
 						console.warn("No predict tensor found");
 					}
