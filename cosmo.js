@@ -967,7 +967,7 @@ async function cosmo_mode_auto_image_descriptor () {
 		if(y > 0) {
 			var j = (layer_images.length - 1 ) - i;
 
-			var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[j]}:</span>`);
+			var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[cosmo_categories.length - j - 1]}:</span>`);
 
 			$(window.body).append(span);
 		}

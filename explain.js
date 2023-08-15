@@ -1139,7 +1139,7 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 
 		var currentURL = window.location.href;
 		var urlParams = new URLSearchParams(window.location.search);
-		await draw_maximally_activated_neuron(layer, i);
+		await draw_maximally_activated_neuron(layer, neurons - i - 1);
 
 		var end = Date.now();
 
