@@ -786,9 +786,7 @@ console.log(colorPickerElementsList);
 function _predict_mode_examples() {
 	$("#handdrawn_img").hide()
 
-
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
-	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
 
 	cosmo_predict_mode = "cam";
 
@@ -801,6 +799,7 @@ function _predict_mode_examples() {
 function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
+	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
 
 	cosmo_predict_mode = "examples";
 
