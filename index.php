@@ -986,7 +986,7 @@
 									</tr>
 									<tr data-intro="Visualize images by grouping visually">
 										<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
-										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" style='width: 50px;'></td>
+										<td><input class="show_data" type='text' value='50' id="max_number_of_images_in_grid" min=0 max=1000 style='width: 50px;'></td>
 									</tr>
 								</table>
 							</div>
