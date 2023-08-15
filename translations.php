@@ -213,7 +213,8 @@
 			"train_the_neural_network" => "Train the neural network",
 			"train_further" => "Train the network further",
 			"loading_model" => "Loading model",
-			"loading_example_images" => "Loading example images"
+			"loading_example_images" => "Loading example images",
+			"undoing_redoing" => "Undoing/redoing"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -428,7 +429,8 @@
 			"train_the_neural_network" => "Das neuronale Netzwerk trainieren",
 			"train_further" => "Das Netzwerk weiter trainieren",
 			"loading_model" => "Lade Modell",
-			"loading_example_images" => "Lade Beispielbilder"
+			"loading_example_images" => "Lade Beispielbilder",
+			"undoing_redoing" => "Rückgängig machen/wiederherstellen"
 		)
 	);
 ?>

@@ -1855,7 +1855,11 @@ async function set_config(index) {
 	var swal_msg = language[lang]["loading_model"];
 
 	if (index) {
-		swal_msg = "Undoing/redoing";
+		if(is_cosmo_mode) {
+			log("Cannot undo/redo in cosmo mode");
+			return;
+		}
+		swal_msg = language[lang]["undoing_redoing"];
 	}
 
 	l(swal_msg);
