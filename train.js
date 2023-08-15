@@ -807,36 +807,44 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 
 		var canvasIndex = category;
 		var canvas = canvases[canvasIndex + 1];
-		var ctx = canvas.getContext("2d");
+		if(canvas) {
+			var ctx = canvas.getContext("2d");
 
-		// draw image
-		var scale = targetSize / Math.max(image.width, image.height);
-		var w = image.width * scale;
-		var h = image.height * scale;
+			// draw image
+			var scale = targetSize / Math.max(image.width, image.height);
+			var w = image.width * scale;
+			var h = image.height * scale;
 
-		var imageX = xPos - width / 2;
-		imageX += random_two(-(2*targetSize), 2*targetSize);
+			var imageX = xPos - width / 2;
+			imageX += random_two(-(2*targetSize), 2*targetSize);
 
-		if((imageX + targetSize) > canvas.width) {
-			imageX = canvas.width - targetSize;
+			if((imageX + targetSize) > canvas.width) {
+				imageX = canvas.width - targetSize;
+			}
+
+			if(imageX < 0) {
+				imageX = 0;
+			}
+
+			var imageY = yPos - h / 2;
+			//log("DEBUG:", image, imageX, imageY, w, h);
+			ctx.drawImage(image, imageX, imageY, w, h);
+		} else {
+			console.warn("Canvas not defined. Canvasses:", canasses, "canvasIndex + 1:", canvasIndex + 1);
 		}
-
-		if(imageX < 0) {
-			imageX = 0;
-		}
-
-		var imageY = yPos - h / 2;
-		//log("DEBUG:", image, imageX, imageY, w, h);
-		ctx.drawImage(image, imageX, imageY, w, h);
 	}
 
 	// append each canvas to its corresponding element
 	for (let i = 0; i < (numCategories + 1); i++) {
 		var canvas = canvases[i];
-		//var containerId = "#canvas_grid_visualization_" + (i + 1);
-		var containerId = "#canvas_grid_visualization";
-		$(canvas).appendTo($(containerId));
-		$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
+		if(canvas) {
+			//var containerId = "#canvas_grid_visualization_" + (i + 1);
+			var containerId = "#canvas_grid_visualization";
+			$(canvas).appendTo($(containerId));
+			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
+		} else {
+			console.warn("Canvas could not be appended!");
+		}
 	}
 
 	memory_leak_debugger("drawImagesInGrid", start_tensors);
