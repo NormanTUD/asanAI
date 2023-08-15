@@ -1133,7 +1133,7 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 			continue;
 		}
 	
-		await _show_eta(times, i + 1);
+		await _show_eta(times, i, neurons);
 
 		var start = Date.now();
 
@@ -1173,19 +1173,19 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 	memory_leak_debugger("draw_maximally_activated_", start_tensors);
 }
 
-async function _show_eta (times, i) { var start_tensors = memory_leak_debugger();
+async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_debugger();
 	var eta = "";
 	if(times.length) {
-		eta = " (" + human_readable_time(parseInt(i * median(times))) + " " + language[lang]["left"] + ")";
+		eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
 	}
 
 	var swal_msg = i + " Image(s) left " + eta;
 
 	if(is_cosmo_mode) {
-		if(i == 1) {
-			swal_msg = i + " " + language[lang]["image_left"];
+		if((neurons - i) == 1) {
+			swal_msg = (neurons - i) + " " + language[lang]["image_left"];
 		} else {
-			swal_msg = i + " " + language[lang]["images_left"];
+			swal_msg = (neurons - i) + " " + language[lang]["images_left"];
 		}
 
 		if(eta) {
