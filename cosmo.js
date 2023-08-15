@@ -786,14 +786,10 @@ console.log(colorPickerElementsList);
 function _predict_mode_examples() {
 	$("#handdrawn_img").hide()
 
-	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>${language[lang]["example_images"]}
-			<img height=20 src='traindata/signs/warning/120px-D-W002_Warning_orange.svg.png' />
-			<img height=20 src='traindata/signs/rescue/120px-DIN_4844-2_WSE001.svg.png' />
-			<img height=20 src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png' />
-			<img height=20 src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png' />
-			<img height=20 src='traindata/signs/fire/116px-Fire_Class_B.svg.png' />
-		</span>
-	`).show();
+
+	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
+	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
+
 	cosmo_predict_mode = "cam";
 
 	$("#warnschild_oder_zurueck").html(language[lang]["and_try_to_draw_a_warning_sign"]);
@@ -805,8 +801,7 @@ function _predict_mode_examples() {
 function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
-	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
-	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
+
 	cosmo_predict_mode = "examples";
 
 	$("#own_files").css("display", "inline-block");
@@ -816,6 +811,15 @@ function _predict_mode_custom () {
 async function switch_predict_mode () {
 	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
+
+	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>${language[lang]["example_images"]}
+			<img height=20 src='traindata/signs/fire/116px-Fire_Class_B.svg.png' />
+			<img height=20 src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png' />
+			<img height=20 src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png' />
+			<img height=20 src='traindata/signs/rescue/120px-DIN_4844-2_WSE001.svg.png' />
+			<img height=20 src='traindata/signs/warning/120px-D-W002_Warning_orange.svg.png' />
+		</span>
+	`).show();
 
 	var ret = "";
 
