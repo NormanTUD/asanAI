@@ -965,7 +965,7 @@ async function cosmo_mode_auto_image_descriptor () {
 		var bc = e.getBoundingClientRect();
 
 		var x = bc.x;
-		var y = bc.y - (2 * margin_top);
+		var y = $(e).offset().top - (2 * margin_top);
 
 		if(y > 0) {
 			var j = (layer_images.length - 1 ) - i;
