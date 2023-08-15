@@ -693,6 +693,7 @@ async function cosmo_mode () {
 	}, 1000);
 
 	window.addEventListener('resize', async function(event) { await force_redo_image_captions(); }, true);
+	window.addEventListener('scroll', async function(event) { await force_redo_image_captions(); }, true);
 }
 
 function findColorPickerContainer(element) {
@@ -955,6 +956,8 @@ async function cosmo_mode_auto_image_descriptor () {
 	while(started_training) {
 		await delay(200);
 	}
+
+	$(".auto_image_captions").remove();
 
 	var margin_top = parseInt($("#body").css("font-size"));
 	var layer_images = $('.layer_image');
