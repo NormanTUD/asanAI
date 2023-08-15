@@ -1232,11 +1232,16 @@ async function predict_maximally_activated (item, force_category) { var start_te
 	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
 		$(item).next().remove();
 	}
+
 	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+
+	await predict($('#predict_own_data').val())
 
 	if(is_cosmo_mode) {
 		await force_redo_image_captions();
 	}
+
+	memory_leak_debugger("predict_maximally_activated", start_tensors);
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
