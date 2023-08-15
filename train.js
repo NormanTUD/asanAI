@@ -888,6 +888,10 @@ async function visualize_train () { var start_tensors = memory_leak_debugger();
 
 	var max = parseInt($("#max_number_of_images_in_grid").val());
 
+	if(max == 0) {
+		return;
+	}
+
 	if(is_cosmo_mode) {
 		$("#plotly_epoch_history").hide();
 		$("#canvas_grid_visualization").css({"position": "inherit"});
