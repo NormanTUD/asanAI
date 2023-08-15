@@ -518,7 +518,9 @@
 					$checked = 0;
 				}
 
-				if($checked) { print "checked"; }
+				if($checked) {
+					print "checked";
+				}
 
 ?>>
 								<label for="beginner">&#129466; <span class='TRANSLATEME_beginner'></span></label>
