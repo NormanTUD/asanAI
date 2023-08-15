@@ -1179,13 +1179,19 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 		eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
 	}
 
-	var swal_msg = i + " Image(s) left " + eta;
+	var img_left = (neurons - i);
+
+	var swal_msg = img_left + " " + language[lang]["images_left"] + ", " + eta;
+	if(img_left == 1) {
+		swal_msg = img_left + " " + language[lang]["image_left"] + ", " + eta;
+	}
+
 
 	if(is_cosmo_mode) {
 		if((neurons - i) == 1) {
-			swal_msg = (neurons - i) + " " + language[lang]["image_left"];
+			swal_msg = img_left + " " + language[lang]["image_left"];
 		} else {
-			swal_msg = (neurons - i) + " " + language[lang]["images_left"];
+			swal_msg = img_left + " " + language[lang]["images_left"];
 		}
 
 		if(eta) {
