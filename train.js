@@ -630,8 +630,6 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 
 	_set_apply_to_original_apply();
 
-	await _create_and_compile_model();
-
 	var xs_and_ys = await _get_xs_and_ys();
 
 	if(!xs_and_ys) {
