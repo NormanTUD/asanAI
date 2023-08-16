@@ -274,8 +274,8 @@ text-align: end;
 			<span>
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
 				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
-				<img style="height: 40px; top: 15px; left: 25%; position: absolute" onclick='setLang("de")' src='_de.svg' />
-				<img style="height: 40px; top: 15px; left: 75%; position: absolute" onclick='setLang("en")' src='_en.svg' />
+				<img style="height: 3vw; top: 15px; left: 25%; position: absolute" onclick='setLang("de")' src='_de.svg' />
+				<img style="height: 3vw; top: 15px; left: 75%; position: absolute" onclick='setLang("en")' src='_en.svg' />
 				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 80px; height: 80px; position: absolute; top: 10px; right: 10px;" id="emergency_button" src="de_notaus.png" /></a>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
