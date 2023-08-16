@@ -71,17 +71,13 @@ async function handleScroll(event) {
 // Function to add the "go left" button
 function addScrollLeftButton() {
 	$("#scroll_left").remove();
-	$("#body").append(
-		"<span onclick='showPreviousDiv()' class='next_prev_buttons' style='display: none' id='scroll_left'>&#12296;</span>"
-	);
+	$("#body").append("<span onclick='showPreviousDiv()' class='next_prev_buttons' id='scroll_left'>&#12296;</span>");
 }
 
 // Function to add the "go right" button
 function addScrollRightButton() {
 	$("#scroll_right").remove();
-	$("#body").append(
-		"<span onclick='showNextDiv()' class='next_prev_buttons' style='display: none' id='scroll_right'>&#12297;</span>"
-	);
+	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
 }
 
 // Function to add or remove the scroll buttons
