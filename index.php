@@ -20,6 +20,7 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
+		<?php minify_js("translations.js", 1, 1); ?>
 		<script>
 			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
@@ -1610,6 +1611,5 @@ text-align: end;
 		<?php minify_js("prism/prism-python.min.js"); ?>
 		<?php minify_js("jscolor.js", 1, 1); ?>
 		<?php minify_js("bottom.js"); ?>
-		<?php minify_js("translations.js", 1, 1); ?>
 	</body>
 </html>
