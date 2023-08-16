@@ -334,7 +334,7 @@ async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memo
 	var uuid = uuidv4();
 	var id = "augmented_photo_" + uuid;
 	//log("image-element-id: ", id);
-	$("#photos").append("<canvas id='" + id + "'></canvas>");
+	$("#photos").prepend("<canvas id='" + id + "'></canvas>");
 	//log("toPixels(tensor, $('#" + id + "')");
 
 	var min_value = 0;

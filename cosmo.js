@@ -1025,3 +1025,4 @@ async function cosmo_set_labels () {
 	await force_redo_image_captions();
 	await repredict();
 }
+

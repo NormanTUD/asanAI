@@ -1486,9 +1486,17 @@ async function fireworks_no_reload () { var start_tensors = memory_leak_debugger
 	memory_leak_debugger("fireworks_no_reload", start_tensors);
 }
 
+function set_augment_for_cosmo () {
+	log("set_augment_for_cosmo");
+	$("#auto_augment").attr("checked", 1).trigger("change");
+	$("#augment_sine_ripple").attr("checked", 1).trigger("change");
+	$("#augment_invert_images").attr("checked", 1).trigger("change");
+}
+
 var cosmo_functions_at_milestones = {
 	"finished_training": {
 		1: cosmo_set_large_training_dataset,
+		//2: set_augment_for_cosmo,
 		3: fireworks_no_reload
 	},
 	"started_loading_data": {
