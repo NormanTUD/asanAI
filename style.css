@@ -372,6 +372,8 @@ body {
 #maindiv {
 	position: relative;
 	width: 98%;
+	-moz-transform: scale(1);
+	-moz-transform-origin: 0 0;
 }
 
 #history_table>table, #history_table>th, #history_table>td {
