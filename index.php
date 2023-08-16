@@ -107,7 +107,6 @@
 		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>
 		<?php minify_js("jquery-ui.js"); ?>
-		<?php minify_js("translations.js", 1, 1); ?>
 
 		<!-- sweetalert -->
 		<?php minify_js("external/sweetalert2.all.js"); ?>
@@ -124,6 +123,7 @@
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
 		<?php minify_js("variables.js"); ?>
+		<?php minify_js("translations.js", 1, 1); ?>
 		<?php minify_js("tests.js"); ?>
 		<?php minify_js("model.js"); ?>
 		<?php minify_js("explain.js"); ?>

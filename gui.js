@@ -772,8 +772,9 @@ async function change_width_or_height(name, inputshape_index) {
 
 	var t_start = Date.now();
 	l("Changing " + name + "...");
+	var s = null;
 	if(show_swal_when_changing_size) {
-		Swal.fire({
+		s = Swal.fire({
 			title: "Loading new " + name,
 			allowEscapeKey: false,
 			allowOutsideClick: false,
@@ -793,9 +794,6 @@ async function change_width_or_height(name, inputshape_index) {
 
 	await restart_webcams();
 
-	if(show_swal_when_changing_size) {
-		swal.close()
-	}
 
 	var t_end = Date.now();
 
@@ -803,6 +801,7 @@ async function change_width_or_height(name, inputshape_index) {
 
 	model_is_trained = false;
 	l("Done changing " + name + ", took " + used_time + "seconds.");
+	swal.close()
 }
 
 async function update_python_code(dont_reget_labels) {
