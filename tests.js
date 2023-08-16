@@ -437,7 +437,6 @@ async function run_tests () { // var start_tensors
 
 			log_test("Testing speed");
 
-			show_swal_when_changing_size = true;
 			var X = [20, 50, 100];
 			var Y = [];
 
@@ -501,8 +500,6 @@ async function run_tests () { // var start_tensors
 			}
 
 			test_equal("time resize took was less than 10 seconds", time_test_ok, true);
-
-			show_swal_when_changing_size = false;
 
 			var last = 0;
 			var ok = 1;
