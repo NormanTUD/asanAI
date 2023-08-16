@@ -694,6 +694,8 @@ async function cosmo_mode () {
 
 	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
 	window.addEventListener('scroll', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
+
+	$(".show_in_cosmo_mode").show();
 }
 
 function findColorPickerContainer(element) {

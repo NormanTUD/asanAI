@@ -383,6 +383,10 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 		}
 	}
 
+	if(!is_cosmo_mode) {
+		$(".show_in_cosmo_mode").hide();
+	}
+
 	l("Trying to set Backend");
 	await set_backend();
 	l("Backend set");

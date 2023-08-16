@@ -271,7 +271,7 @@ text-align: end;
 		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
-			<span>
+			<span style="display: none" class="show_in_cosmo_mode">
 				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
 				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
 				<img style="height: 3vw; top: 15px; left: 25%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("de")' src='_de.svg' />
