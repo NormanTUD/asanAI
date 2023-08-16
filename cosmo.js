@@ -790,7 +790,7 @@ function _predict_mode_examples() {
 
 	cosmo_predict_mode = "cam";
 
-	$("#warnschild_oder_zurueck").html(language[lang]["and_try_to_draw_a_warning_sign"]);
+	$("#warnschild_oder_zurueck").html("<span class='TRANSLATEME_and_try_to_draw_a_warning_sign'></span>");
 
 	$("#own_files").css("display", "none");
 	$("#example_predictions").show();
@@ -799,8 +799,8 @@ function _predict_mode_examples() {
 function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
-	$("#warnschild_oder_zurueck").html(language[lang]["go_back_to_examples"]);
-
+	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
+	$("#warnschild_oder_zurueck").html("<span class='TRANSLATEME_go_back_to_examples'></span>");
 	cosmo_predict_mode = "examples";
 
 	$("#own_files").css("display", "inline-block");
