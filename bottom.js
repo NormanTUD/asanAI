@@ -254,7 +254,7 @@ async function restart_alexnet(dont_click) {
 		if(typeof(layer_type) === 'undefined') {
 			return;
 		}
-		if(Object.keys(model).includes("0")) {
+		if(Object.keys(model.layers).includes("0")) {
 			if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
 				var category = layer_options[layer_type].category;
 
