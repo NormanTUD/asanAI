@@ -766,7 +766,6 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 
 	if(value == eval(name)) {
-		console.error(`${value} is equal to ${eval(name)} (eval(${name}))`);
 		return;
 	}
 
