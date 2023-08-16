@@ -72,8 +72,6 @@ function lowercaseFirstLetter(string) { var start_tensors = memory_leak_debugger
 	return res;
 }
 
-var number_of_undos = 50;
-
 var state_stack = [];
 var future_state_stack = [];
 var status_saves = {};
@@ -752,11 +750,7 @@ var model_config_hash = "";
 
 var show_input_layer = false;
 
-var disable_save_current_status = false;
-
 var memory_debug_interval = null;
-
-var call_from_show_csv_file = false;
 
 var tensors = {};
 
@@ -1361,8 +1355,6 @@ const RGB_COLORMAP = [
   0.9769,   0.9839,  0.0805
 ];
 
-var default_webcam_size = 200;
-
 var is_classification = true;
 
 var last_image_output_shape_hash = "";
@@ -1386,11 +1378,7 @@ var currently_running_change_data_origin = 0;
 
 var global_no_graph_restart = 0;
 
-var global_force_noclick_tab_label = 0;
-
 var click_on_graphs = 1;
-
-var has_keyframes_for_manicule = false;
 
 var cosmo_points_once = {};
 
@@ -1510,6 +1498,3 @@ var currently_predicting_webcam = false;
 var global_model_data = undefined;
 
 var old_tensor_number = 0;
-
-var csv_x_data = null;
-var csv_y_data = null;
