@@ -1496,8 +1496,8 @@ function set_augment_for_cosmo () {
 var cosmo_functions_at_milestones = {
 	"finished_training": {
 		1: cosmo_set_large_training_dataset,
-		//2: set_augment_for_cosmo,
-		3: fireworks_no_reload
+		3: fireworks_no_reload,
+		10: set_augment_for_cosmo
 	},
 	"started_loading_data": {
 		2: cosmo_set_tiny_training_dataset
