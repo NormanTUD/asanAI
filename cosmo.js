@@ -794,24 +794,38 @@ function _predict_mode_examples() {
 
 	$("#own_files").css("display", "none");
 	$("#example_predictions").show();
+
+	updateTranslations();
 }
 
 function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
-	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
+	$("#webcam_in_cosmo").html(`
+	    <span style='pointer-events: none'><span class='TRANSLATEME_example_images'></span>
+		<img height=20 src='traindata/signs/fire/116px-Fire_Class_B.svg.png' />
+		<img height=20 src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png' />
+		<img height=20 src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png' />
+		<img height=20 src='traindata/signs/rescue/120px-DIN_4844-2_WSE001.svg.png' />
+		<img height=20 src='traindata/signs/warning/120px-D-W002_Warning_orange.svg.png' />
+	    </span>
+	`).show();
+
 	$("#warnschild_oder_zurueck").html("<span class='TRANSLATEME_go_back_to_examples'></span>");
 	cosmo_predict_mode = "examples";
 
 	$("#own_files").css("display", "inline-block");
 	$("#example_predictions").hide();
+
+	updateTranslations();
 }
 
 async function switch_predict_mode () {
 	await add_cosmo_point("eigene_webcam");
 	$("#webcam_in_cosmo").attr("data-clicked", "1");
 
-	$("#webcam_in_cosmo").html(`<span style='pointer-events: none'>${language[lang]["example_images"]}
+	$("#webcam_in_cosmo").html(`
+	    <span style='pointer-events: none'><span class='TRANSLATEME_example_images'></span>
 			<img height=20 src='traindata/signs/fire/116px-Fire_Class_B.svg.png' />
 			<img height=20 src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png' />
 			<img height=20 src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png' />
