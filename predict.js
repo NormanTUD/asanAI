@@ -528,7 +528,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 		await dispose(predictions_tensor);
 
 		if(is_cosmo_mode) {
-			await force_redo_image_captions();
+			await cosmo_mode_auto_image_descriptor();
 		}
 	} catch (e) {
 		var estr = "" + e;
