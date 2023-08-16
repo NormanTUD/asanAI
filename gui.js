@@ -4656,7 +4656,11 @@ function hide_tab_label(label) { var start_tensors = memory_leak_debugger();
 		$($(first_displayable).children()[0]).click()
 	}
 
-	updateTranslations();
+	try {
+		updateTranslations();
+	} catch (e) {
+		console.error(e);
+	}
 
 	memory_leak_debugger("hide_tab_label", start_tensors);
 }
