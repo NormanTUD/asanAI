@@ -20,7 +20,6 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
-		<?php minify_js("translations.js", 1, 1); ?>
 		<script>
 			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
@@ -108,6 +107,7 @@
 		<?php minify_js("md5.umd.min.js"); ?>
 		<?php minify_js("jquery.js"); ?>
 		<?php minify_js("jquery-ui.js"); ?>
+		<?php minify_js("translations.js", 1, 1); ?>
 
 		<!-- sweetalert -->
 		<?php minify_js("external/sweetalert2.all.js"); ?>

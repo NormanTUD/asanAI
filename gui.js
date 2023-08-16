@@ -749,48 +749,60 @@ function change_output_and_example_image_size() {
 }
 
 async function change_width_or_height(name, inputshape_index) {
-	if (["width", "height"].includes(name)) {
-		var value = parseInt($("#" + name).val());
-		if(value && value != eval(name)) {
-			var t_start = Date.now();
-			l("Changing " + name + "...");
-			if(show_swal_when_changing_size) {
-				Swal.fire({
-					title: "Loading new " + name,
-					allowEscapeKey: false,
-					allowOutsideClick: false,
-					showConfirmButton: false
-				});
-			}
+	var is_valid_name = ["width", "height"].includes(name);
 
-			var inputShape = get_input_shape();
-			inputShape[inputshape_index] = value;
-			await set_input_shape("[" + inputShape.join(", ") + "]");
-			eval(name + " = " + value);
-			layer_structure_cache = null;
-			[model, global_model_data] = await create_model();
-			is_setting_config = false;
-			await updated_page();
-			change_output_and_example_image_size();
-
-			await restart_webcams();
-
-			if(show_swal_when_changing_size) {
-				Swal.close()
-			}
-
-			var t_end = Date.now();
-
-			var used_time = ((t_end - t_start) / 1000).toFixed(5);
-
-			model_is_trained = false;
-			l("Done changing " + name + ", took " + used_time + "seconds.");
-		}
-	} else {
-		console.error("Invalid name in change_width_or_height: " + name + ", must be either 'width' or 'height'");
+	if(!is_valid_name) {
+		console.error(`${name} is neither 'width' nor 'height'`);
+		return;
 	}
 
+	var value = parseInt($("#" + name).val());
 
+	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
+
+	if(!value) {
+		console.error("value is not defined");
+		return;
+	}
+
+	if(value == eval(name)) {
+		console.error(`${value} is equal to ${eval(name)} (eval(${name}))`);
+		return;
+	}
+
+	var t_start = Date.now();
+	l("Changing " + name + "...");
+	if(show_swal_when_changing_size) {
+		Swal.fire({
+			title: "Loading new " + name,
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			showConfirmButton: false
+		});
+	}
+
+	var inputShape = get_input_shape();
+	inputShape[inputshape_index] = value;
+	await set_input_shape("[" + inputShape.join(", ") + "]");
+	eval(name + " = " + value);
+	layer_structure_cache = null;
+	[model, global_model_data] = await create_model();
+	is_setting_config = false;
+	await updated_page();
+	change_output_and_example_image_size();
+
+	await restart_webcams();
+
+	if(show_swal_when_changing_size) {
+		swal.close()
+	}
+
+	var t_end = Date.now();
+
+	var used_time = ((t_end - t_start) / 1000).toFixed(5);
+
+	model_is_trained = false;
+	l("Done changing " + name + ", took " + used_time + "seconds.");
 }
 
 async function update_python_code(dont_reget_labels) {
