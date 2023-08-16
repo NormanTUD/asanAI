@@ -772,15 +772,6 @@ async function change_width_or_height(name, inputshape_index) {
 
 	var t_start = Date.now();
 	l("Changing " + name + "...");
-	var s = null;
-	if(show_swal_when_changing_size) {
-		s = Swal.fire({
-			title: "Loading new " + name,
-			allowEscapeKey: false,
-			allowOutsideClick: false,
-			showConfirmButton: false
-		});
-	}
 
 	var inputShape = get_input_shape();
 	inputShape[inputshape_index] = value;
@@ -1861,8 +1852,6 @@ async function set_config(index) {
 
 	$(".only_show_when_predicting_image_file").hide();
 
-	show_swal_when_changing_size = false;
-
 	var swal_msg = language[lang]["loading_model"];
 
 	if (index) {
@@ -2166,8 +2155,6 @@ async function set_config(index) {
 	await updated_page(null, null, null, 1);
 
 	Swal.close();
-
-	show_swal_when_changing_size = true;
 
 	await write_descriptions();
 

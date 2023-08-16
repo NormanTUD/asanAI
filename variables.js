@@ -1326,8 +1326,6 @@ var old_onEpochEnd = undefined;
 
 var last_weights_as_string = "";
 
-var show_swal_when_changing_size = false;
-
 var last_batch_plot_time = false;
 
 var enable_log_trace = false;
