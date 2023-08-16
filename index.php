@@ -216,6 +216,7 @@
 
 				#own_files {
 					display: none;
+text-align: end;
 				}
 			</style>
 <?php
