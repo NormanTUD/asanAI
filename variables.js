@@ -91,7 +91,6 @@ var number_channels = 3;
 var height = 32;
 var width = 32;
 var labels = [];
-var vector_counter = 1;
 var disable_show_python_and_create_model = false;
 var layer_structure_cache = null;
 var allowed_layer_cache = [];
@@ -588,8 +587,6 @@ function get_initializer_name (name) { var start_tensors = memory_leak_debugger(
 
 var current_status_hash = "";
 
-var loaded_plotly = 0;
-
 var constraints = {
 	"": "None",
 	"maxNorm": "maxNorm",
@@ -1035,8 +1032,6 @@ var webcam_modes = ["user", "environment"];
 
 var hasBothFrontAndBackCached = undefined;
 
-var last_highlighting_md5 = "";
-
 var training_logs_batch = {
 	"loss": {
 		"x": [],
@@ -1298,8 +1293,6 @@ var padding_options = {
 
 var cookie_theme = "lightmode";
 
-var enable_drawing_custom_data = 0;
-
 var atrament_data = {};
 
 var shown_has_zero_data = false;
@@ -1376,11 +1369,7 @@ var manicule_element_xpath = null;
 
 var currently_running_change_data_origin = 0;
 
-var global_no_graph_restart = 0;
-
 var click_on_graphs = 1;
-
-var cosmo_points_once = {};
 
 var current_skills = {};
 
