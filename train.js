@@ -955,4 +955,8 @@ async function visualize_train () { var start_tensors = memory_leak_debugger();
 	await tf.nextFrame();
 
 	memory_leak_debugger("visualize_train", start_tensors);
+
+	if(is_cosmo_mode) {
+		await fit_to_window();
+	}
 }

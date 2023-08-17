@@ -996,8 +996,6 @@ async function cosmo_mode_auto_image_descriptor () {
 			$(window.body).append(span);
 		}
 	})
-
-	await fit_to_window();
 }
 
 async function cosmo_set_labels () {
