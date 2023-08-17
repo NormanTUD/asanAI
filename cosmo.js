@@ -488,6 +488,8 @@ function chose_next_manicule_target () {
 	});
 
 	set_text_for_elements_depending_on_cosmo_level();
+
+	fit_to_window(); // no await possible
 }
 
 function show_again_when_new_skill_acquired ($x, possible_items) {
@@ -989,7 +991,7 @@ async function cosmo_mode_auto_image_descriptor () {
 		if(y > 0) {
 			var j = (layer_images.length - 1 ) - i;
 
-			var span = $(`<span class='auto_image_captions' style='position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[cosmo_categories.length - j - 1]}:</span>`);
+			var span = $(`<span class='auto_image_captions' style='font-size: 8px; position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[cosmo_categories.length - j - 1]}:</span>`);
 
 			$(window.body).append(span);
 		}
@@ -1023,3 +1025,19 @@ async function cosmo_set_labels () {
 	await repredict();
 }
 
+async function fit_to_window () {
+	var doc_height = window.innerHeight;
+	doc_height -= $("#scads_logo_cosmo_mode").height();
+	var maindiv_height = $("#maindiv")[0].clientHeight;
+	var windowWidth = window.innerWidth;
+
+	var relation =  doc_height / maindiv_height;
+
+	if(relation >= 1) {
+		relation = 1
+	}
+
+	$("#maindiv").css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
+
+	await cosmo_mode_auto_image_descriptor();
+}
