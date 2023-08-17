@@ -18,8 +18,6 @@ function get_last_good_input_shape_as_string () {
 			return last_known_good_input_shape;
 		}
 	}
-
-	return "[]";
 }
 
 function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors

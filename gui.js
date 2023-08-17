@@ -1227,7 +1227,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 			var last_good = get_last_good_input_shape_as_string();
 			l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
-			await set_input_shape(last_good, 1);
+			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+				await set_input_shape(last_good, 1);
+			}
 		} else {
 			l(e);
 		}
@@ -1238,7 +1240,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.warn("updated_page failed");
 
 			var last_good = get_last_good_input_shape_as_string();
-			if(last_good != get_input_shape_as_string()) {
+			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
 				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 				await set_input_shape(last_good, 1);
 			}
@@ -1862,6 +1864,8 @@ function set_xyz_values(j, name, values) {
 
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
+
+	last_known_good_input_shape = "[]";
 
 	$(".only_show_when_predicting_image_file").hide();
 
