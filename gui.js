@@ -1237,7 +1237,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	if(!ret) {
 		if(finished_loading) {
-			console.warn("updated_page failed");
+			//console.warn("updated_page failed");
 
 			var last_good = get_last_good_input_shape_as_string();
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
@@ -5771,7 +5771,7 @@ function allow_editable_labels () { var start_tensors = memory_leak_debugger();
 		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(!labels.length) {
-			console.warn("labels is an array, but is empty.");
+			//console.warn("labels is an array, but is empty.");
 			return;
 		}
 

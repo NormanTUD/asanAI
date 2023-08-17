@@ -1315,7 +1315,7 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 		} catch (e) {
 			if((""+e).includes("already disposed")) {
 				if(finished_loading) {
-					console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					//console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				}
 			} else {
 				console.error(e);
