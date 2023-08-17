@@ -94,8 +94,8 @@
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
 		<?php minify_css("ribbon.css"); ?>
-		<?php minify_css("${theme_base}mode.css", "css_mode"); ?>
-		<?php minify_css("ribbon${theme_base}mode.css", "css_ribbon"); ?>
+		<?php minify_css($theme_base."mode.css", "css_mode"); ?>
+		<?php minify_css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
 		<?php minify_css("prism/prism.min.css"); ?>
 		<?php minify_css("external/sweetalert2.min.css"); ?>
 
