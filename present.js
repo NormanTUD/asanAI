@@ -32,7 +32,7 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	$("#presentation_site_nr").remove();
 
 	$("#body").append(
-		`<div id='presentation_site_nr' style='display: none; z-index: 999999; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
+		`<div id='presentation_site_nr' style='display: none; z-index: 1000000; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
 	);
 	
 	if(finished_loading) {
