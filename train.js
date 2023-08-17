@@ -453,6 +453,9 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 		last_batch_plot_time = false;
 
 		await visualize_train();
+		if(is_cosmo_mode) {
+			await fit_to_window
+		}
 		memory_leak_debugger("onEpochEnd", start_tensors);
 	}
 
