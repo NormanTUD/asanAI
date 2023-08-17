@@ -1135,6 +1135,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} catch (e) {
 			log(e);
 			log("There was an error compiling the model: " + e);
+			throw new Error(e);
 		};
 
 
@@ -2411,9 +2412,6 @@ async function set_input_shape(val, force=0) { var start_tensors = memory_leak_d
 
 		var new_height = new_input_shape[0];
 		var new_width = new_input_shape[1];
-
-
-		log("height:", height, "new_height:", new_height, "width:", width, "new_width:", new_width);
 
 		if(height != new_height) {
 			$("#height").val(new_height).trigger("change");
