@@ -64,7 +64,7 @@
 				$trainable_data[] = $file_basename;
 
 				foreach ($trainable_data as $this_trainable_data) {
-					$weights_file = "$this_path/${this_trainable_data}_weights.json";
+					$weights_file = "$this_path/".$this_trainable_data."_weights.json";
 					if(!is_file($weights_file)) {
 						$weights_file = "";
 					}

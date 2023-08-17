@@ -6,7 +6,7 @@
 	include_once('php/src/SMTP.php');
 	include_once('php/src/Exception.php');
 
-	function oMailerSend ($to = array(), $subject, $body) {
+	function oMailerSend ($to = array(), $subject = "", $body = "") {
 		$oMailer = new PHPMailer;
 		$oMailer->isSMTP();
 		$oMailer->Host = $GLOBALS['smtphost'];
