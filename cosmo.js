@@ -996,6 +996,8 @@ async function cosmo_mode_auto_image_descriptor () {
 			$(window.body).append(span);
 		}
 	})
+
+	await fit_to_window();
 }
 
 async function cosmo_set_labels () {
@@ -1039,5 +1041,5 @@ async function fit_to_window () {
 
 	$("#maindiv").css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
 
-	await cosmo_mode_auto_image_descriptor();
+	$(body).css("overflow", "hidden");
 }
