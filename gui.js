@@ -777,13 +777,24 @@ async function change_width_or_height(name, inputshape_index) {
 	await set_input_shape("[" + inputShape.join(", ") + "]");
 	eval(name + " = " + value);
 	layer_structure_cache = null;
-	[model, global_model_data] = await create_model();
-	is_setting_config = false;
+	try {
+		[model, global_model_data] = await create_model();
+		is_setting_config = false;
+
+	} catch (e) {
+		var last_good = get_last_good_input_shape_as_string();
+		l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+		await set_input_shape(last_good, 1);
+
+		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index]
+
+		$("#" + name).val(new_size).trigger("change");
+	}
+
 	await updated_page();
 	change_output_and_example_image_size();
 
 	await restart_webcams();
-
 
 	var t_end = Date.now();
 
@@ -791,7 +802,6 @@ async function change_width_or_height(name, inputshape_index) {
 
 	model_is_trained = false;
 	l("Done changing " + name + ", took " + used_time + "seconds.");
-	swal.close()
 }
 
 async function update_python_code(dont_reget_labels) {
@@ -1138,7 +1148,13 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		prev_layer_data = [];
 
-		await identify_layers(number_of_layers);
+		try {
+			await identify_layers(number_of_layers);
+
+			last_known_good_input_shape = get_input_shape_as_string();
+		} catch (e) {
+			throw new Error(e);
+		}
 
 		layer_structure_cache = null;
 
@@ -1201,14 +1217,30 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-		return 1;
+		return true;
 	};
 	
-	var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
+	try {
+		var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
+	} catch (e) {
+		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
+			var last_good = get_last_good_input_shape_as_string();
+			l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+			await set_input_shape(last_good, 1);
+		} else {
+			l(e);
+		}
+	}
 
 	if(!ret) {
 		if(finished_loading) {
 			console.warn("updated_page failed");
+
+			var last_good = get_last_good_input_shape_as_string();
+			if(last_good != get_input_shape_as_string()) {
+				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+				await set_input_shape(last_good, 1);
+			}
 		}
 	}
 
@@ -2370,8 +2402,27 @@ async function clean_gui() { var start_tensors = memory_leak_debugger();
 	memory_leak_debugger("clean_gui", start_tensors);
 }
 
-async function set_input_shape(val) {var start_tensors = memory_leak_debugger();
+async function set_input_shape(val, force=0) { var start_tensors = memory_leak_debugger();
 	assert(typeof (val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof (val));
+
+	if(force && await input_shape_is_image()) {
+		var new_input_shape = val;
+		new_input_shape = new_input_shape.replace("[", "").replace("]", "").split(", ");
+
+		var new_height = new_input_shape[0];
+		var new_width = new_input_shape[1];
+
+
+		log("height:", height, "new_height:", new_height, "width:", width, "new_width:", new_width);
+
+		if(height != new_height) {
+			$("#height").val(new_height).trigger("change");
+		}
+
+		if(width != new_width) {
+			$("#width").val(new_width).trigger("change");
+		}
+	}
 
 	$("#inputShape").val(val);
 

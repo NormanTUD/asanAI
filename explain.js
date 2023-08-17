@@ -698,6 +698,7 @@ function get_layer_identification (i) { var start_tensors = memory_leak_debugger
 async function identify_layers (number_of_layers) { var start_tensors = memory_leak_debugger();
 	//console.trace();
 	has_zero_output_shape = false;
+
 	for (var i = 0; i < number_of_layers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);
@@ -721,32 +722,21 @@ async function identify_layers (number_of_layers) { var start_tensors = memory_l
 			}
 
 			if(has_zero_output_shape) {
-				var zero_output_shape_current_status_hash = await get_current_layer_container_status_hash();
+				var basemsg = "ERROR: There are zeroes in the output shape. ";
+				var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
 
-				if(zero_output_shape_current_status_hash != last_zero_output_shape_status) {
-					var basemsg = "ERROR: There are zeroes in the output shapes. ";
-					var msg = basemsg + "This may cause a lot of problems. Keep that in mind when you continue.<br>If you use images, try larger input image sizes, or remove some layers that reduce the output shape's dimensions.<br>The affected layers output shapes are marked <span style='color: red'>red</span>.<br>Training and saving is disabled.";
-					l(msg);
-					if(!shown_has_zero_data) {
-						if(!swal.isVisible()) {
-							Swal.fire({
-								icon: 'error',
-								title: 'Oops [6]...',
-								html: msg
-							});
-						}
-						shown_has_zero_data = true;
-					}
-					last_zero_output_shape_status = zero_output_shape_current_status_hash;
-					disable_train();
-				}
+				disable_train();
+
+				throw new Error(msg);
+
+				return;
 			} else {
-				if(!has_zero_output_shape && !shown_has_zero_data) {
-					enable_train();
-				}
+				enable_train();
 			}
 		} catch (e) {
-			console.warn(e);
+			throw new Error(e);
+
+			return;
 		}
 
 		var activation_function_string = "";
@@ -759,7 +749,7 @@ async function identify_layers (number_of_layers) { var start_tensors = memory_l
 				}
 			}
 		} catch (e) {
-			console.warn(e);
+			throw new Error(e);
 		}
 
 		write_layer_identification(i, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");

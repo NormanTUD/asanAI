@@ -158,7 +158,11 @@ async function compile_model () { var start_tensors = memory_leak_debugger();
 			}
 		}
 
-		[model, global_model_data] = await create_model(model, await get_model_structure());
+		try {
+			[model, global_model_data] = await create_model(model, await get_model_structure());
+		} catch (e) {
+			throw new Error(e);
+		}
 	}
 
 	if(recreate_model) {
@@ -695,7 +699,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			memory_leak_debugger("create_model (A)", start_tensors);
 
 			memory_leak_debugger("_add_layer_to_model", start_tensors);
-			return false;
+
+			throw new Error(e);
 		}
 
 		memory_leak_debugger("_add_layer_to_model", start_tensors);
@@ -709,6 +714,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			new_tensors += new_model.layers[nr].weights.length;
 		} catch (e) {
 			console.log(e);
+
+			throw new Error(e);
 		}
 	});
 
@@ -769,7 +776,14 @@ async function create_model (old_model, fake_model_structure, force) { var start
 
 	assert(typeof(model_structure) == "object", "model_structure is not an object");
 
-	var new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
+	var new_model;
+	try {
+		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
+	} catch (e) {
+		throw new Error(e);
+
+		return;
+	}
 
 	enable_train();
 
@@ -819,12 +833,16 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 
 		_set_layer_gui(data, fake_model_structure, i);
 		
-		if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
-			if(!fake_model_structure) {
-				console.error(`Failed to add layer type ${type}`);
-			} else {
-				console.info(`Failed to add layer type ${type} (but ok because fake_model)`);
+		try {
+			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
+				if(!fake_model_structure) {
+					console.error(`Failed to add layer type ${type}`);
+				} else {
+					console.info(`Failed to add layer type ${type} (but ok because fake_model)`);
+				}
 			}
+		} catch (e) {
+			throw new Error(e);
 		}
 	}
 
@@ -835,6 +853,9 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 			new_tensors += new_model.layers[nr].weights.length;
 		} catch (e) {
 			console.log(e);
+			throw new Error(e);
+
+			return;
 		}
 	});
 

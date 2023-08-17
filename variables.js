@@ -1,5 +1,27 @@
 "use strict";
 
+var last_known_good_input_shape = "[]";
+
+function get_input_shape_as_string () {
+	var is = get_input_shape();
+	if(is.length) {
+		return "[" + is.join(", ") + "]"
+	} else {
+		return "[]";
+	}
+}
+
+function get_last_good_input_shape_as_string () {
+	var is = get_input_shape_as_string();
+	if(is != "[]") {
+		if(last_known_good_input_shape != "[]") {
+			return last_known_good_input_shape;
+		}
+	}
+
+	return "[]";
+}
+
 function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors
 	var numTensors = tf.memory()["numTensors"];
 	if(!numTensors) {
@@ -1157,8 +1179,6 @@ var metric_shortnames = {
 }
 
 var current_status_hash = "";
-
-var last_zero_output_shape_status = "";
 
 var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean"];
 
