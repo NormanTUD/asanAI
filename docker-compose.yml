@@ -1,0 +1,7 @@
+version: '3'
+services:
+  asanai:
+    build:
+      context: .
+    ports:
+      - $LOCAL_PORT:80
