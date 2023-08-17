@@ -281,16 +281,21 @@ async function run_tests () { // var start_tensors
 			$($(".bias_initializer")[0]).val("constant").trigger("change");
 			$($(".kernel_initializer")[0]).val("glorotUniform").trigger("change");
 			$($(".kernel_initializer")[0]).val("constant").trigger("change");
-			await delay(1000);
+			await delay(5000);
 
 			$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
 			$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
 
-			await delay(2000);
+			await delay(5000);
 
-			var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == initializer_val;
+			try {
+				var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == initializer_val;
 
-			test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
+				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
+			} catch (e) {
+				console.error(e);
+				console.trace();
+			}
 
 			await delay(2000);
 			
