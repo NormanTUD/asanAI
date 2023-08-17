@@ -157,6 +157,8 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 		if(is_cosmo_mode) {
 			show_tab_label("predict_tab", 1);
 
+			set_right_border_between_example_predictions();
+
 			$("#own_files").hide();
 
 			_predict_mode_examples();
@@ -167,7 +169,6 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 
 			await cosmo_maximally_activate_last_layer();
 		
-
 			chose_next_manicule_target();
 
 			if(!already_moved_to_predict_for_cosmo) {

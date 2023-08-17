@@ -6024,3 +6024,11 @@ function show_hide_cosmo_stuff() { // start_tensors
 		$(".hide_in_cosmo_mode").show();
 	}
 }
+
+function set_right_border_between_example_predictions() {
+	var expred = $("#example_predictions").find(".full_example_image_prediction");
+
+	for (var i = 0; i < expred.length - 1; i++) {
+	    $(expred[i]).css("padding-right", "50px").css("border-right", "thin double #000000");
+	}
+}
