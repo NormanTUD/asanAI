@@ -995,7 +995,8 @@ button {
 }
 
 #scads_logo_cosmo_mode {
-	height: 67px;
+	height: 2vw;
+	max-height: 32px;
 	position: absolute;
 	left: 10px;
 	top: 10px;
