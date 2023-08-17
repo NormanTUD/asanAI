@@ -316,13 +316,14 @@ async function run_tests () { // var start_tensors
 			log_test("Train on CSV")
 			expect_memory_leak = "";
 
-			set_epochs(200);
+			set_epochs(100);
 
 			$("#data_origin").val("csv").trigger("change")
-			delay(1000);
+			delay(5000);
 
 			$("#csv_file").val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").trigger("keyup");
 			delay(5000);
+
 			await train_neural_network();	
 
 			try {

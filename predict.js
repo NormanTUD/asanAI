@@ -388,6 +388,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 	var ok = 1;
 
+
+	var estr = "";
+
 	try {
 		var predict_data = null;
 
@@ -531,9 +534,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			await cosmo_mode_auto_image_descriptor();
 		}
 	} catch (e) {
-		var estr = "" + e;
+		estr = "" + e;
 		if(!estr.includes("yped")) {
-			_predict_error(e);
+			if(!estr.includes("Expected input shape")) {
+				_predict_error(e);
+			} else {
+				$("#prediction_non_image").html(estr);
+			}
 		} else {
 			console.error(e);
 		}
@@ -547,7 +554,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 	if(ok) {
 		l("Prediction done");
 	} else {
-		l("ERROR: Prediction failed");
+		if(estr) {
+			l(estr);
+			$("#prediction_non_image").html("<span style='color: red'>" + estr + "</span>");
+		} else {
+			l("ERROR: Prediction failed");
+		}
 	}
 
 	return str;
