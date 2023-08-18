@@ -1523,7 +1523,7 @@ text-align: end;
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
 											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
-											<span style='display: block' class="full_example_image_prediction ">
+											<span style='display: block' class="full_example_image_prediction display_contents">
 												<span id="webcam"></span>
 												<span id="webcam_prediction" style="overflow: scroll;"></span>
 											</span>
@@ -1536,7 +1536,7 @@ text-align: end;
 												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
 											</span>
 											<br>
-											<span class="full_example_image_prediction only_show_when_predicting_image_file custom_image_data">
+											<span class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">
 												<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
 
 												<br>
@@ -1547,7 +1547,7 @@ text-align: end;
 										</span>
 
 										<span id="handdrawn_img" class="handdrawn hide_when_no_image" style='text-align: justify'>
-											<span class="full_example_image_prediction">
+											<span class="full_example_image_prediction display_inline_block">
 												<span id='predict_handdrawn_canvas'></span><br>
 												<span id="handdrawn_predictions"></span>
 											</span>

@@ -848,6 +848,19 @@ button {
 	border: 2px solid rgba(0, 200, 140, 0.4);
 }
 
+.inline_block {
+	display: inline-block;
+}
+
+.display_contents {
+	display: contents !important;
+}
+
+.block {
+	display: block;
+}
+
+
 .full_example_image_prediction {
 	width: fit-content;
 	display: inline-block;
@@ -857,7 +870,6 @@ button {
 	margin-top: 10px;
 	width: 210px;
 	padding: 10px;
-	display: inline-block;
 }
 
 .rotate_90_deg {
@@ -885,7 +897,7 @@ button {
 }
 
 #own_files {
-	display: inline-block;
+	display: flex;
 	width: 100%;
 }
 
@@ -1095,4 +1107,8 @@ hr {
 
 .cosmo_example_table {
 	text-align: center;
+}
+
+.force_display_flex {
+	display: flex !important;
 }

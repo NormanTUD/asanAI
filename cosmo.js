@@ -820,7 +820,7 @@ async function _predict_mode_custom () {
 	$("#warnschild_oder_zurueck").html("<span class='TRANSLATEME_go_back_to_examples'></span>");
 	cosmo_predict_mode = "examples";
 
-	$("#own_files").css("display", "inline-block");
+	$("#own_files").css("display", "flex");
 	$("#example_predictions").hide();
 
 	await updateTranslations();
