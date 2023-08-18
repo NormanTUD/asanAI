@@ -1227,79 +1227,11 @@ async function predict_maximally_activated (item, force_category) { var start_te
 
 	//await predict($('#predict_own_data').val())
 
+	if(is_cosmo_mode) {
+		await cosmo_mode_auto_image_descriptor();
+	}
+
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
-}
-
-
-function resizeCanvas(canvas_element, w = 0, h = 0, position = "center", scaleWidthFactor = 1) {
-	// Save the current canvas data
-	const tempCanvas = document.createElement('canvas');
-	tempCanvas.width = canvas_element.width;
-	tempCanvas.height = canvas_element.height;
-	const tempCtx = tempCanvas.getContext('2d');
-	tempCtx.drawImage(canvas_element, 0, 0);
-
-	// Resize the canvas
-	if (w === 0) {
-		w = canvas_element.width;
-	}
-	if (h === 0) {
-		h = canvas_element.height;
-	}
-	canvas_element.width = w;
-	canvas_element.height = h;
-
-	// Calculate scaled width based on scaleWidthFactor
-	const scaledWidth = w * scaleWidthFactor;
-	const scaledHeight = h * scaleWidthFactor;
-
-	// Redraw the canvas at the specified position with scaling
-	const ctx = canvas_element.getContext('2d');
-	switch (position) {
-		case "lefttop":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, 0, 0, scaledWidth, scaledHeight);
-			break;
-		case "righttop":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, scaledWidth - scaledWidth, 0, scaledWidth, scaledHeight);
-			break;
-		case "leftmiddle":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, 0, (scaledHeight - tempCanvas.height) / 2, scaledWidth, scaledHeight);
-			break;
-		case "rightmiddle":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, scaledWidth - scaledWidth, (scaledHeight - tempCanvas.height) / 2, scaledWidth, scaledHeight);
-			break;
-		case "leftbottom":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, 0, scaledHeight - tempCanvas.height, scaledWidth, scaledHeight);
-			break;
-		case "rightbottom":
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, scaledWidth - scaledWidth, scaledHeight - tempCanvas.height, scaledWidth, scaledHeight);
-			break;
-		case "centerbottom":
-			var sx = 0;
-			var sy = 0;
-
-			var sWidth = canvas_element.width;
-			var sHeight = canvas_element.height;
-
-			var dx = (canvas_element.width - scaledWidth) / 2; // Calculate the correct x position
-			var dy = canvas_element.height - scaledHeight; // Calculate the y position for the bottom
-
-			ctx.drawImage(tempCanvas, sx, sy, sWidth, sHeight, dx, dy, scaledWidth, scaledHeight);
-			break;
-		case "center":
-		default:
-			console.warn("not tested"); console.trace();
-			ctx.drawImage(tempCanvas, (scaledWidth - scaledWidth) / 2, (scaledHeight - tempCanvas.height) / 2, scaledWidth, scaledHeight);
-			break;
-	}
-
-	return canvas_element;
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
@@ -1323,7 +1255,6 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 
 		if(full_data["worked"]) {
 			var data = full_data["image"][0];
-			
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
 			var data_hash = {
@@ -1334,17 +1265,6 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 			};
 
 			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
-
-			resizeCanvas(canvas, width * 4, height * 4 + 20, "centerbottom", 2);
-
-			var ctx = canvas.getContext('2d');
-
-			// Set font properties
-			ctx.font = "16px Arial";
-			ctx.fillStyle = "black";
-
-			// Draw text on the canvas
-			ctx.fillText(labels[neuron] + ":", 0, 31);
 
 			if(res) {
 				$("#maximally_activated_content").prepend(canvas);
@@ -1363,6 +1283,10 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
 		return false;
+	}
+
+	if(is_cosmo_mode) {
+		await cosmo_mode_auto_image_descriptor();
 	}
 
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
@@ -2691,6 +2615,10 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	generating_images = true;
 	$("#maximally_activated_content").html("");
 
+	if(is_cosmo_mode) {
+		await cosmo_mode_auto_image_descriptor();
+	}
+
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 		already_moved_to_predict_for_cosmo = true;
@@ -2718,9 +2646,15 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
 
+	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
+
 	generating_images = false;
 
 	chose_next_manicule_target();
+
+	if(is_cosmo_mode) {
+		await cosmo_mode_auto_image_descriptor();
+	}
 
 	updateTranslations();
 
