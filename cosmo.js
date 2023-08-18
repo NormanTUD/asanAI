@@ -1004,3 +1004,9 @@ async function fit_to_window () {
 
 	$(body).css("overflow", "hidden");
 }
+
+async function click_next_button () {
+	remove_manicule(1);
+	await train_neural_network();
+	$('#next_button').attr('data-clicked', '1');remove_manicule(1);
+}

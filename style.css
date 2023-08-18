@@ -1040,7 +1040,8 @@ button {
 .cosmo_autoset_text {
 	min-height: 50px;
 	position: fixed;
-	max-width: 200px;
+	right: 100px;
+	display: contents;
 }
 
 #webcam {

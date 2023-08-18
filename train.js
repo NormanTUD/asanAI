@@ -161,7 +161,7 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 
 			$("#own_files").hide();
 
-			_predict_mode_examples();
+			await _predict_mode_examples();
 			$("#example_predictions").show();
 
 			await predict_handdrawn();

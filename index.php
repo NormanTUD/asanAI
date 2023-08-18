@@ -1568,6 +1568,33 @@ text-align: end;
 						</div>
 					</div>
 				</div>
+
+				<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 0.7em; width: 200px;">
+					<span 
+						class="green_bg cosmo_button" 
+						id="next_button_span"
+						data-keep_cosmo="1"
+						data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]"
+						data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]"
+						data-position="fixed"
+						data-dont_hide_after_show="1"
+						data-no_scroll="1" 
+						data-cosmo_level_text="finished_training[1]='<span class=\'TRANSLATEME_train_further\'></span>'" 
+						style="min-height: 50px; width: 200px;"
+						onclick="click_next_button()" 
+					>
+						<span
+							class="TRANSLATEME_train_the_neural_network cosmo cosmo_autoset_text" 
+							data-keep_cosmo="1"
+							data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]"
+							data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]"
+							data-position="fixed"
+							data-dont_hide_after_show="1"
+							data-no_scroll="1" 
+							data-cosmo_level_text="finished_training[1]='<span class=\'TRANSLATEME_train_further\'></span>'" 
+						>
+					</span>
+				</div>
 			</div>
 		</div>
 
@@ -1594,10 +1621,6 @@ text-align: end;
 				<a style="color: inherit; text-decoration: underline;" target="_blank" href="https://scads.ai/imprint/"><span class="TRANSLATEME_imprint"></span></a>
 			</span>
 			<span id="memory_debugger_div"></span>
-		</div>
-
-		<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 0.7em; width: 200px;">
-			<span class="symbol_button" id="next_button_span"><button id="next_button" data-dont_hide_after_show="1" data-no_scroll="1" data-cosmo_level_text="finished_training[1]='<span class=\'TRANSLATEME_train_further\'></span>'" class="cosmo cosmo_autoset_text cosmo_button green_bg" onclick="remove_manicule(1);train_neural_network();$('#next_button').attr('data-clicked', '1');remove_manicule(1);" style="min-height: 50px; width: 200px; " id="cosmo_next_button" data-keep_cosmo="1" data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]" data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]" data-position="fixed" ><span class='TRANSLATEME_train_the_neural_network'></button></span>
 		</div>
 
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white; user-select: none;" id="loading_icon_wrapper">
