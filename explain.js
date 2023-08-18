@@ -2621,7 +2621,7 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await fit_to_window();
 
-	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_forbidden'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_rescue'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:");
+	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_mandatory'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_forbidden'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_rescue'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_warning'></span>:");
 
 	updateTranslations();
 	await fit_to_window();
