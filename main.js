@@ -97,12 +97,12 @@ async function hasFrontBack() { var start_tensors = memory_leak_debugger();
 			}
 		}
 		return result;
-	} catch (ex) {
+	} catch (e) {
 		/* log and swallow exception, this is a probe only */
 		if(("" + e).includes("NotAllowedError")) {
 			console.info("Webcam access was denied");
 		} else {
-			l("ERROR: " + ex);
+			l("ERROR: " + e);
 		}
 		memory_leak_debugger("hasFront", start_tensors);
 		return result;

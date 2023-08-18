@@ -5124,8 +5124,13 @@ async function set_custom_webcam_training_data() { var start_tensors = memory_le
 			}
 
 			if(!cam) {
-				await show_webcam();
-				await add_cosmo_point("show_webcam");
+				try {
+					await show_webcam();
+					await add_cosmo_point("show_webcam");
+				} catch (e) {
+					console.error(e);
+					console.trace()
+				}
 			}
 		});
 	} else {
