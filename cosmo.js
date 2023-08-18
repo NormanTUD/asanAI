@@ -965,6 +965,7 @@ async function run_cosmo_milestones () {
 }
 
 async function cosmo_mode_auto_image_descriptor () {
+	return;
 	$(".auto_image_captions").remove();
 
 	if(!is_cosmo_mode) {

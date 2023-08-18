@@ -1234,6 +1234,109 @@ async function predict_maximally_activated (item, force_category) { var start_te
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
 }
 
+/*
+function resizeCanvas(canvas_element, width = 0, height = 0, position = "center") {
+	// Save the current canvas data
+	const tempCanvas = document.createElement('canvas');
+	tempCanvas.width = canvas_element.width;
+	tempCanvas.height = canvas_element.height;
+	const tempCtx = tempCanvas.getContext('2d');
+	tempCtx.drawImage(canvas_element, 0, 0);
+
+	// Resize the canvas
+	if (width === 0) {
+		width = canvas_element.width;
+	}
+	if (height === 0) {
+		height = canvas_element.height;
+	}
+	canvas_element.width = width;
+	canvas_element.height = height;
+
+	// Redraw the canvas at the specified position
+	const ctx = canvas_element.getContext('2d');
+	switch (position) {
+		case "lefttop":
+			ctx.drawImage(tempCanvas, 0, 0);
+			break;
+		case "righttop":
+			ctx.drawImage(tempCanvas, width - tempCanvas.width, 0);
+			break;
+		case "leftmiddle":
+			ctx.drawImage(tempCanvas, 0, (height - tempCanvas.height) / 2);
+			break;
+		case "rightmiddle":
+			ctx.drawImage(tempCanvas, width - tempCanvas.width, (height - tempCanvas.height) / 2);
+			break;
+		case "leftbottom":
+			ctx.drawImage(tempCanvas, 0, height - tempCanvas.height);
+			break;
+		case "rightbottom":
+			ctx.drawImage(tempCanvas, width - tempCanvas.width, height - tempCanvas.height);
+			break;
+		case "center":
+		default:
+			ctx.drawImage(tempCanvas, (width - tempCanvas.width) / 2, (height - tempCanvas.height) / 2);
+			break;
+	}
+
+	return canvas_element;
+}
+*/
+
+function resizeCanvas(canvas_element, width = 0, height = 0, position = "center", scaleWidthFactor = 1) {
+	// Save the current canvas data
+	const tempCanvas = document.createElement('canvas');
+	tempCanvas.width = canvas_element.width;
+	tempCanvas.height = canvas_element.height;
+	const tempCtx = tempCanvas.getContext('2d');
+	tempCtx.drawImage(canvas_element, 0, 0);
+
+	// Resize the canvas
+	if (width === 0) {
+		width = canvas_element.width;
+	}
+	if (height === 0) {
+		height = canvas_element.height;
+	}
+	canvas_element.width = width;
+	canvas_element.height = height;
+
+	// Calculate scaled width based on scaleWidthFactor
+	const scaledWidth = width * scaleWidthFactor;
+
+	// Redraw the canvas at the specified position with scaling
+	const ctx = canvas_element.getContext('2d');
+	switch (position) {
+		case "lefttop":
+			ctx.drawImage(tempCanvas, 0, 0, scaledWidth, height);
+			break;
+		case "righttop":
+			ctx.drawImage(tempCanvas, width - scaledWidth, 0, scaledWidth, height);
+			break;
+		case "leftmiddle":
+			ctx.drawImage(tempCanvas, 0, (height - tempCanvas.height) / 2, scaledWidth, height);
+			break;
+		case "rightmiddle":
+			ctx.drawImage(tempCanvas, width - scaledWidth, (height - tempCanvas.height) / 2, scaledWidth, height);
+			break;
+		case "leftbottom":
+			ctx.drawImage(tempCanvas, 0, height - tempCanvas.height, scaledWidth, height);
+			break;
+		case "rightbottom":
+			ctx.drawImage(tempCanvas, width - scaledWidth, height - tempCanvas.height, scaledWidth, height);
+			break;
+		case "center":
+		default:
+			ctx.drawImage(tempCanvas, (width - scaledWidth) / 2, (height - tempCanvas.height) / 2, scaledWidth, height);
+			break;
+	}
+
+	return canvas_element;
+}
+
+
+
 async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
 	var current_input_shape = get_input_shape();
 
@@ -1255,6 +1358,7 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 
 		if(full_data["worked"]) {
 			var data = full_data["image"][0];
+			
 			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
 			var data_hash = {
@@ -1265,6 +1369,17 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 			};
 
 			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
+
+			resizeCanvas(canvas, 115, 200, "center");
+
+			var ctx = canvas.getContext('2d');
+
+			// Set font properties
+			ctx.font = "20px Arial";
+			ctx.fillStyle = "black";
+
+			// Draw text on the canvas
+			ctx.fillText(labels[neuron] + ":", 0, 31);
 
 			if(res) {
 				$("#maximally_activated_content").prepend(canvas);
