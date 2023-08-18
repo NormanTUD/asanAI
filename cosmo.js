@@ -697,6 +697,8 @@ async function cosmo_mode () {
 	window.addEventListener('resize', async function(event) { await fit_to_window(); }, true);
 
 	$(".show_in_cosmo_mode").show();
+
+	$("#own_files").css("display", "flex").css("justify-content", "center");
 }
 
 function findColorPickerContainer(element) {
@@ -990,11 +992,13 @@ async function cosmo_set_labels () {
 
 async function fit_to_window () {
 	var doc_height = window.innerHeight;
+	var doc_width = window.innerWidth;
 	doc_height -= $("#scads_logo_cosmo_mode").height();
 	var maindiv_height = $("#maindiv")[0].clientHeight;
+	var maindiv_width = $("#maindiv")[0].clientWidth;
 	var windowWidth = window.innerWidth;
 
-	var relation =  doc_height / maindiv_height;
+	var relation =  Math.min(doc_width / maindiv_width, doc_height / maindiv_height);
 
 	$("#maindiv").css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
 

@@ -1058,8 +1058,8 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 				var webcam = $("#webcam");
 				webcam.hide().html("");
 				var videoElement = document.createElement('video');
-				videoElement.width = 256;
-				videoElement.height = 190;
+				videoElement.width = 400;
+				videoElement.height = 400;
 				videoElement.playsInline = true;
 				videoElement.playsinline = true;
 				videoElement.muted = true;

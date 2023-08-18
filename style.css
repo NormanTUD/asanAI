@@ -650,7 +650,6 @@ button:disabled:hover {
 */
 
 .atrament_buttons_small {
-	font-size: 1.5vw;
 }
 
 .atrament_buttons {
@@ -858,6 +857,7 @@ button {
 	margin-top: 10px;
 	width: 210px;
 	padding: 10px;
+	display: inline-block;
 }
 
 .rotate_90_deg {
@@ -1032,7 +1032,7 @@ button {
 }
 
 #webcam {
-	display: block ruby;
+	display: contents;
 	height: 332px;
 }
 
