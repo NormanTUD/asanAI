@@ -695,6 +695,7 @@ async function cosmo_mode () {
 	}, 1000);
 
 	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
+	window.addEventListener('resize', async function(event) { await fit_to_window(); }, true);
 	window.addEventListener('scroll', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
 
 	$(".show_in_cosmo_mode").show();
