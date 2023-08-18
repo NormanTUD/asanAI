@@ -234,13 +234,14 @@ text-align: end;
 <?php
 			}
 
-			if(0 && isset($_GET["max_iter"]) && intval($_GET["max_iter"])) {
+			if(isset($_GET["max_iter"]) && intval($_GET["max_iter"])) {
 ?>
 				<script>
 					$(document).ready(async function() {
 						while (!finished_loading) {
 							await delay(200);
 						}
+						log("Setting max_activation_iterations to <?php print intval($_GET["max_iter"]); ?>");
 						$("#max_activation_iterations").val(<?php print intval($_GET["max_iter"]); ?>);
 					});
 				</script>
@@ -277,7 +278,7 @@ text-align: end;
 				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
 				<img style="height: 2vw; max-height: 32px; top: 15px; left: 25%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("de")' src='_de.svg' />
 				<img style="height: 2vw; max-height: 32px; top: 15px; left: 75%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("en")' src='_en.svg' />
-				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 80px; height: 80px; position: absolute; top: 10px; right: 10px;" id="emergency_button" src="de_notaus.png" /></a>
+				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 10vw; height: 10vw; position: absolute; top: 10px; right: 10px; max-width: 64px; max-height: 64px;" id="emergency_button" src="de_notaus.png" /></a>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>

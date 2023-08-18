@@ -1044,21 +1044,6 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 			} else {
 				prev_img_str = image.dataSync().join(";");
 			}
-
-			if(i % 10 == 0) {
-				var tmpImg = deprocessImage(image).arraySync();
-
-				var canvas = $("#current_image_canvas");
-				if(canvas.length) {
-					canvas = canvas[0];
-
-					var data_hash = {};
-
-					var res = draw_grid(canvas, 3, tmpImg[0], 1, 0, "", null, data_hash);
-
-					$("current_image_span").show();
-				}
-			}
                 }
 
 		worked = 1;
@@ -1208,8 +1193,8 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 	$("#current_image").remove();
 
 	await Swal.fire({
-		title: language[lang]["ai_tries_to_draw"] + "<span id='current_image_span' style='display: none'><canvas id='current_image_canvas'></canvas></span>",
-		html: swal_msg,
+		title: language[lang]["ai_tries_to_draw"],
+		html: swal_msg + "<span id='current_image_span' style='display: none'><canvas id='current_image_canvas'></canvas></span>",
 		timer: 2000,
 		showCancelButton: !is_cosmo_mode,
 		showConfirmButton: false
@@ -1482,7 +1467,7 @@ function get_layer_output_shape_as_string (i) { var start_tensors = memory_leak_
 	if(Object.keys(model).includes("layers")) {
 		try {
 			var str = model.layers[i].outputShape.toString()
-			str = str.replace(/^,|,$/g,'');;
+			str = str.replace(/^,|,$/g,'');
 			str = "[" + str + "]";
 			memory_leak_debugger("get_layer_output_shape_as_string", start_tensors);
 			return str;
@@ -2638,7 +2623,10 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await fit_to_window();
 
-	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_mandatory'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_forbidden'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_rescue'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_warning'></span>:");
+	// ugly hack...
+	var base_nbsp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+
+	$(".h2_maximally_activated_layer_contents").html(`<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:${base_nbsp}<span class='TRANSLATEME_mandatory'></span>:${base_nbsp}<span class='TRANSLATEME_forbidden'></span>:${base_nbsp}<span class='TRANSLATEME_rescue'></span>:${base_nbsp}<span class='TRANSLATEME_warning'></span>:`);
 
 	updateTranslations();
 	await fit_to_window();
