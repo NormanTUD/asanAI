@@ -1012,7 +1012,7 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 
 		var prev_img_str = image.dataSync().join(";");
 
-                for (var i = 1; i <= iterations; i++) {
+                for (var i = 0; i < iterations; i++) {
 			if(stop_generating_images) {
 				continue;
 			}
@@ -1043,6 +1043,21 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 				return deprocessImage(image).arraySync();
 			} else {
 				prev_img_str = image.dataSync().join(";");
+			}
+
+			if(i % 10 == 0) {
+				var tmpImg = deprocessImage(image).arraySync();
+
+				var canvas = $("#current_image_canvas");
+				if(canvas.length) {
+					canvas = canvas[0];
+
+					var data_hash = {};
+
+					var res = draw_grid(canvas, 3, tmpImg[0], 1, 0, "", null, data_hash);
+
+					$("current_image_span").show();
+				}
 			}
                 }
 
@@ -1190,8 +1205,10 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 
 	$("#show_cosmo_epoch_status").hide();
 
+	$("#current_image").remove();
+
 	await Swal.fire({
-		title: language[lang]["ai_tries_to_draw"],
+		title: language[lang]["ai_tries_to_draw"] + "<span id='current_image_span' style='display: none'><canvas id='current_image_canvas'></canvas></span>",
 		html: swal_msg,
 		timer: 2000,
 		showCancelButton: !is_cosmo_mode,
