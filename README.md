@@ -7,6 +7,10 @@ This software is dedicated to my mother, who died on the 31st of march 2022 afte
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
 fully in your browser.
 
+# Run in docker
+
+`bash docker.sh --local-port 5312` (This bash script was only tested on Debian 11)
+
 # Status
 
 This is a very early alpha.
