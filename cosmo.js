@@ -786,7 +786,7 @@ var colorPickerElementsList = getColorPickerElements();
 console.log(colorPickerElementsList);
 */
 
-function _predict_mode_examples() {
+async function _predict_mode_examples() {
 	$("#handdrawn_img").hide()
 
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
@@ -798,10 +798,11 @@ function _predict_mode_examples() {
 	$("#own_files").css("display", "none");
 	$("#example_predictions").show();
 
-	updateTranslations();
+	await updateTranslations();
+	await fit_to_window();
 }
 
-function _predict_mode_custom () {
+async function _predict_mode_custom () {
 	$("#handdrawn_img").show().parent().show()
 
 	$("#webcam_in_cosmo").html(`
@@ -820,7 +821,8 @@ function _predict_mode_custom () {
 	$("#own_files").css("display", "inline-block");
 	$("#example_predictions").hide();
 
-	updateTranslations();
+	await updateTranslations();
+	await fit_to_window();
 }
 
 async function switch_predict_mode () {
@@ -844,10 +846,10 @@ async function switch_predict_mode () {
 	var _show_examples = (own_files_display == "none") ? false : true;
 
 	if(_show_examples) {
-		_predict_mode_examples();
+		await _predict_mode_examples();
 		ret = "_predict_mode_examples();";
 	} else {
-		_predict_mode_custom();
+		await _predict_mode_custom();
 		ret = "_predict_mode_custom();";
 	}
 

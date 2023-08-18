@@ -2612,15 +2612,19 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 		already_moved_to_predict_for_cosmo = true;
 	}
 
+	await fit_to_window();
 
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
 
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
+	await fit_to_window();
+
 	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_forbidden'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_rescue'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:");
 
 	updateTranslations();
+	await fit_to_window();
 
 	var ep = get_epochs();
 
