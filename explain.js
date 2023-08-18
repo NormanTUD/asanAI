@@ -1227,10 +1227,6 @@ async function predict_maximally_activated (item, force_category) { var start_te
 
 	//await predict($('#predict_own_data').val())
 
-	if(is_cosmo_mode) {
-		await cosmo_mode_auto_image_descriptor();
-	}
-
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
 }
 
@@ -1283,10 +1279,6 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
 		return false;
-	}
-
-	if(is_cosmo_mode) {
-		await cosmo_mode_auto_image_descriptor();
 	}
 
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
@@ -2615,10 +2607,6 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	generating_images = true;
 	$("#maximally_activated_content").html("");
 
-	if(is_cosmo_mode) {
-		await cosmo_mode_auto_image_descriptor();
-	}
-
 	if(!already_moved_to_predict_for_cosmo) {
 		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 		already_moved_to_predict_for_cosmo = true;
@@ -2630,7 +2618,9 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
-	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:");
+	$(".h2_maximally_activated_layer_contents").html("<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_forbidden'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_rescue'></span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='TRANSLATEME_fire'></span>:");
+
+	updateTranslations();
 
 	var ep = get_epochs();
 
@@ -2646,15 +2636,11 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
 
-	$(".layer_image").css("width", "115px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
+	$(".layer_image").css("width", "170px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
 
 	generating_images = false;
 
 	chose_next_manicule_target();
-
-	if(is_cosmo_mode) {
-		await cosmo_mode_auto_image_descriptor();
-	}
 
 	updateTranslations();
 

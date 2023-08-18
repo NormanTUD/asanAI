@@ -694,9 +694,7 @@ async function cosmo_mode () {
 		}
 	}, 1000);
 
-	window.addEventListener('resize', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
 	window.addEventListener('resize', async function(event) { await fit_to_window(); }, true);
-	window.addEventListener('scroll', async function(event) { await cosmo_mode_auto_image_descriptor(); }, true);
 
 	$(".show_in_cosmo_mode").show();
 }
@@ -855,8 +853,6 @@ async function switch_predict_mode () {
 
 	await add_cosmo_point("toggled_webcam");
 
-	await cosmo_mode_auto_image_descriptor();
-
 	updateTranslations();
 
 	return ret;
@@ -964,41 +960,6 @@ async function run_cosmo_milestones () {
 	}
 }
 
-async function cosmo_mode_auto_image_descriptor () {
-	$(".auto_image_captions").remove();
-
-	if(!is_cosmo_mode) {
-		return;
-	}
-
-	while (is_hidden_or_has_hidden_parent($(".layer_image")[0])) {
-		await delay(200);
-	}
-
-	while(started_training) {
-		await delay(200);
-	}
-
-	$(".auto_image_captions").remove();
-
-	var margin_top = parseInt($("#body").css("font-size"));
-	var layer_images = $('.layer_image');
-	layer_images.each(function(i, e) {
-		var bc = e.getBoundingClientRect();
-
-		var x = bc.x;
-		var y = $(e).offset().top - (2 * margin_top);
-
-		if(y > 0) {
-			var j = (layer_images.length - 1 ) - i;
-
-			var span = $(`<span class='auto_image_captions' style='font-size: 8px; position: absolute; pointer-events: none; left: ${x}px; top: ${y}px;'>${cosmo_categories[cosmo_categories.length - j - 1]}:</span>`);
-
-			$(window.body).append(span);
-		}
-	})
-}
-
 async function cosmo_set_labels () {
 	if(lang == "de") {
 		cosmo_categories = [
@@ -1022,7 +983,6 @@ async function cosmo_set_labels () {
 		console.error("Unknown language: " + lang);
 	}
 
-	await cosmo_mode_auto_image_descriptor();
 	await repredict();
 }
 
