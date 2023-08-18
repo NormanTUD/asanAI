@@ -994,10 +994,6 @@ async function fit_to_window () {
 
 	var relation =  doc_height / maindiv_height;
 
-	if(relation >= 1) {
-		relation = 1
-	}
-
 	$("#maindiv").css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
 
 	$(body).css("overflow", "hidden");
