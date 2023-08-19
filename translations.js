@@ -18,13 +18,13 @@ function swapImageSrcLanguage() {
 		const img = images[i];
 		const currentSrc = img.getAttribute('src');
 
-		if (lang === 'en' && currentSrc.startsWith('de')) {
+		if (lang === 'en' && currentSrc.startsWith('lang/__de__')) {
 			// Replace 'de' with 'en'
-			const newSrc = currentSrc.replace(/^de/, 'en');
+			const newSrc = currentSrc.replace(/__de__/, '__en__');
 			img.setAttribute('src', newSrc);
-		} else if (lang === 'de' && currentSrc.startsWith('en')) {
+		} else if (lang === 'de' && currentSrc.startsWith('lang/__en__')) {
 			// Replace 'en' with 'de'
-			const newSrc = currentSrc.replace(/^en/, 'de');
+			const newSrc = currentSrc.replace(/__en__/, '__de__');
 			img.setAttribute('src', newSrc);
 		}
 	}
