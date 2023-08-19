@@ -1214,7 +1214,7 @@ text-align: end;
 									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
 									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
-									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span><span class="TRANSLATEME_csv"></span></a></li>
+									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span></a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training"></span></a></li>
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict"></span></a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code"></span></a></li>
