@@ -991,16 +991,16 @@ async function cosmo_set_labels () {
 }
 
 async function fit_to_window (_parent = window, _child = $("#maindiv")) {
-	var doc_height = _parent.innerHeight;
-	var doc_width = _parent.innerWidth;
+	var doc_height = $(_parent)[0].innerHeight;
+	var doc_width = $(_parent)[0].innerWidth;
 	doc_height -= $("#scads_logo_cosmo_mode").height();
-	var maindiv_height = _child[0].clientHeight;
-	var maindiv_width = _child[0].clientWidth;
-	var windowWidth = _parent.innerWidth;
+	var maindiv_height = $(_child)[0].clientHeight;
+	var maindiv_width = $(_child)[0].clientWidth;
+	var windowWidth = $(_parent)[0].innerWidth;
 
 	var relation =  Math.min(doc_width / maindiv_width, doc_height / maindiv_height);
 
-	_child.css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
+	$(_child).css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
 
 	$(body).css("overflow", "hidden");
 }
