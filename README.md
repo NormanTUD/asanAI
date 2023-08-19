@@ -9,7 +9,18 @@ fully in your browser.
 
 # Run in docker
 
-`bash docker.sh --local-port 5312` (This bash script was only tested on Debian 11)
+## Debian
+
+`bash docker.sh --local-port 5312`
+
+## Other
+
+```console
+LOCAL_PORT=5312
+echo "LOCAL_PORT=$LOCAL_PORT" >> .env
+sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
+firefox localhost:$LOCAL_PORT/
+```
 
 # Status
 
