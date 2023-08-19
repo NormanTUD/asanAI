@@ -1321,7 +1321,7 @@ text-align: end;
 							<div id="training_data_tab" class="tab">
 								<div id="lenet_example_cosmo" class="tab" style="display: none">
 									<span class="TRANSLATEME_lets_suppose_we_have_this_simple_network" style="display: block"></span>
-									<img style='width: 90%; max-height: 400px; max-width: 500px;' src="signs_network.svg"><br>
+									<img style='width: 90%; max-height: 400px; max-width: 500px;' src="cosmo/signs_network.svg"><br>
 									<hr class="cosmo_hr">
 									<span class="TRANSLATEME_we_want_to_train_this_model_5_categories" style="display: block"></span>
 									<br>
