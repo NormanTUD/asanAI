@@ -990,17 +990,17 @@ async function cosmo_set_labels () {
 	await repredict();
 }
 
-async function fit_to_window () {
-	var doc_height = window.innerHeight;
-	var doc_width = window.innerWidth;
+async function fit_to_window (_parent = window, _child = $("#maindiv")) {
+	var doc_height = _parent.innerHeight;
+	var doc_width = _parent.innerWidth;
 	doc_height -= $("#scads_logo_cosmo_mode").height();
-	var maindiv_height = $("#maindiv")[0].clientHeight;
-	var maindiv_width = $("#maindiv")[0].clientWidth;
-	var windowWidth = window.innerWidth;
+	var maindiv_height = _child[0].clientHeight;
+	var maindiv_width = _child[0].clientWidth;
+	var windowWidth = _parent.innerWidth;
 
 	var relation =  Math.min(doc_width / maindiv_width, doc_height / maindiv_height);
 
-	$("#maindiv").css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
+	_child.css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
 
 	$(body).css("overflow", "hidden");
 }
@@ -1008,5 +1008,6 @@ async function fit_to_window () {
 async function click_next_button () {
 	remove_manicule(1);
 	await train_neural_network();
-	$('#next_button').attr('data-clicked', '1');remove_manicule(1);
+	$('#next_button').attr('data-clicked', '1');
+	remove_manicule(1);
 }
