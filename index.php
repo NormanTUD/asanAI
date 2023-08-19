@@ -97,28 +97,28 @@
 		<?php minify_css($theme_base."mode.css", "css_mode"); ?>
 		<?php minify_css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
 		<?php minify_css("prism/prism.min.css"); ?>
-		<?php minify_css("external/sweetalert2.min.css"); ?>
+		<?php minify_css("libs/sweetalert2.min.css"); ?>
 
 		<!-- polyfill -->
-		<?php minify_js("canvas-to-blob.min.js"); ?>
+		<?php minify_js("libs/canvas-to-blob.min.js"); ?>
 
 		<!-- jquery -->
-		<?php minify_js("zip.js"); ?>
-		<?php minify_js("md5.umd.min.js"); ?>
-		<?php minify_js("jquery.js"); ?>
-		<?php minify_js("jquery-ui.js"); ?>
+		<?php minify_js("libs/zip.js"); ?>
+		<?php minify_js("libs/md5.umd.min.js"); ?>
+		<?php minify_js("libs/jquery.js"); ?>
+		<?php minify_js("libs/jquery-ui.js"); ?>
 
 		<!-- sweetalert -->
-		<?php minify_js("external/sweetalert2.all.js"); ?>
+		<?php minify_js("libs/sweetalert2.all.js"); ?>
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
-		<?php minify_js("jstat.min.js"); ?>
-		<?php minify_js("custom.js"); ?>
-		<?php minify_js("jsmanipulate.js", 1, 1); ?>
+		<?php minify_js("libs/jstat.min.js"); ?>
+		<?php minify_js("custom_layers.js"); ?>
+		<?php minify_js("libs/jsmanipulate.js", 1, 1); ?>
 
 		<!-- Easter Egg -->
-		<?php minify_js("fireworks.js", 1, 1); ?>
+		<?php minify_js("libs/fireworks.js", 1, 1); ?>
 
 		<!-- my own js stuff -->
 		<?php minify_js("safety.js"); ?>
@@ -147,12 +147,12 @@
 		<?php minify_js("visualizations/FCNN.js"); ?>
 		
 		<!-- ChardinJS -->
-		<?php minify_js("chardinjs.js"); ?>
+		<?php minify_js("libs/chardinjs.js"); ?>
 		
-		<?php minify_css("chardinjs.css"); ?>
+		<?php minify_css("libs/chardinjs.css"); ?>
 
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("atrament.js", 1, 1); ?>
+		<?php minify_js("libs/atrament.js", 1, 1); ?>
 		<?php minify_js("main.js"); ?>
 		
 		<script>
@@ -185,7 +185,7 @@
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
-		<?php minify_js("plotly-latest.min.js", 1, 1); ?>
+		<?php minify_js("libs/plotly-latest.min.js", 1, 1); ?>
 
 		<script src="mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
 		<script type="text/x-mathjax-config">
@@ -1633,7 +1633,7 @@ text-align: end;
 		</div>
 		<?php minify_js("prism/prism.js"); ?>
 		<?php minify_js("prism/prism-python.min.js"); ?>
-		<?php minify_js("jscolor.js", 1, 1); ?>
+		<?php minify_js("libs/jscolor.js", 1, 1); ?>
 		<?php minify_js("bottom.js"); ?>
 	</body>
 </html>
