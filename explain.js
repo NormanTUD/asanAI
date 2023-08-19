@@ -719,6 +719,8 @@ async function identify_layers (number_of_layers) { var start_tensors = memory_l
 					output_shape_string = "Output:&nbsp;" + shape;
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
+			} else {
+				console.warn(`identify_layers: i = ${i} is not in model.layers. model.layers.length = ${model.layers.length}`);
 			}
 
 			if(has_zero_output_shape) {
