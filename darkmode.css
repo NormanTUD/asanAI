@@ -134,3 +134,7 @@ hr {
 	border-top: 1px solid #585858;
 	border-bottom: 1px solid #585858;
 }
+
+#loading_icon_wrapper {
+	filter: invert(100%);
+}
