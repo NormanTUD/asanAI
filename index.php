@@ -274,8 +274,8 @@ text-align: end;
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
 			<span style="display: none" class="show_in_cosmo_mode">
-				<img id="scads_logo_cosmo_mode" src="scads_logo.svg" />
-				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="logo_small.png" id="asanai_logo_cosmo" />
+				<img id="scads_logo_cosmo_mode" src="gui/scads_logo.svg" />
+				<img style="display: none; z-index: 999999999999; width: 64px; height: 64px; position: absolute; margin: auto; left: 0px; right: 0px; text-align: center;" src="gui/logo_small.png" id="asanai_logo_cosmo" />
 				<img style="height: 2vw; max-height: 32px; top: 15px; left: 25%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("de")' src='lang/_de.svg' />
 				<img style="height: 2vw; max-height: 32px; top: 15px; left: 75%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("en")' src='lang/_en.svg' />
 				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 10vw; height: 10vw; position: absolute; top: 10px; right: 10px; max-width: 64px; max-height: 64px;" id="emergency_button" src="lang/__de__notaus.png" /></a>
@@ -330,7 +330,7 @@ text-align: end;
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="logo_small.png">
+								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="gui/logo_small.png">
 							</div>
 						</div>
 					</div>
@@ -1625,8 +1625,8 @@ text-align: end;
 		</div>
 
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white; user-select: none;" id="loading_icon_wrapper">
-			<img src="scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 67px">
-			<img src="logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 67px">
+			<img src="gui/scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 67px">
+			<img src="gui/logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 67px">
 			<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 100%;">
 			<br>
 			<div id="load_msg"></div>
