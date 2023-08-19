@@ -28,19 +28,19 @@ This is a very early alpha.
 
 # Screenshots
 
-![Screenshot](screen0.png "Visualization at the start page")
+![Screenshot](screens/screen0.png "Visualization at the start page")
 
-![Screenshot](screen1.png "Math visualization of the network")
+![Screenshot](screens/screen1.png "Math visualization of the network")
 
-![Screenshot](screen2.png "Yet another visualization at the start page")
+![Screenshot](screens/screen2.png "Yet another visualization at the start page")
 
-![Screenshot](screen4.png "Training")
+![Screenshot](screens/screen4.png "Training")
 
-![Screenshot](screen5.png "Predict mode")
+![Screenshot](screens/screen5.png "Predict mode")
 
-![Screenshot](screen3.png "Dark mode")
+![Screenshot](screens/screen3.png "Dark mode")
 
-![Screenshot](screen6.png "Maximally activated neurons")
+![Screenshot](screens/screen6.png "Maximally activated neurons")
 
 
 # Installation
