@@ -138,3 +138,7 @@ hr {
 #loading_icon_wrapper {
 	filter: invert(100%);
 }
+
+#load_msg {
+	color: black;
+}
