@@ -1627,7 +1627,7 @@ text-align: end;
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; pointer-events: none; background-color: white; user-select: none;" id="loading_icon_wrapper">
 			<img src="scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 67px">
 			<img src="logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 67px">
-			<img src="Loading_icon.gif" alt="Loading..." style="max-width: 100%;">
+			<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 100%;">
 			<br>
 			<div id="load_msg"></div>
 		</div>

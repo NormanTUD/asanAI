@@ -1322,7 +1322,7 @@ function byteToMB(varbyte) {
 }
 
 function write_model_summary_wait () {
-	document.getElementById('summary').innerHTML = "<center><img width=32 height=32 src='loading_favicon.gif' /></center>";
+	document.getElementById('summary').innerHTML = "<center><img width=32 height=32 src='gui/loading_icon.gif' /></center>";
 	write_model_summary();
 }
 
@@ -2500,7 +2500,7 @@ function favicon_default() {
 }
 
 function favicon_spinner() {
-	change_favicon("loading_favicon.gif");
+	change_favicon("gui/loading_favicon.gif");
 }
 
 
