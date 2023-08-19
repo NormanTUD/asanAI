@@ -474,10 +474,7 @@
 	}
 
 	function get_git_hash () {
-		$rev = "UNKNOWN";
-		if(file_exists(".git/refs/heads/master")) {
-			$rev = chop(file_get_contents(".git/refs/heads/master"));
-		}
+		$rev = chop(shell_exec("git rev-parse HEAD"));
 		return $rev;
 	}
 ?>
