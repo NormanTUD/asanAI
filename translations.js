@@ -2,6 +2,8 @@
 let lang_cookie_name = "language_cookie";
 let lang = getLangCookie();
 
+var labels_lang = 'de';
+
 const urlParams = new URLSearchParams(window.location.search);
 
 // Check if the parameter "start_cosmo" exists
@@ -74,7 +76,10 @@ async function updateTranslations() {
 	});
 
 	if(is_cosmo_mode) {
-		await cosmo_set_labels();
+		if(lang != labels_lang) {
+			await cosmo_set_labels();
+			labels_lang = lang;
+		}
 	}
 }
 
