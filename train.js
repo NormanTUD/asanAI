@@ -755,7 +755,13 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 	// create a canvas for each category
 	for (let i = 0; i < (numCategories + 1); i++) {
 		var canvas = document.createElement("canvas");
-		canvas.width = parseInt($("#tfvis_tab").width() / (numCategories + 2));
+		var pw = parseInt($("#tfvis_tab").width());
+		if(is_cosmo_mode) {
+			w = $("#maindiv")[0].clientWidth;
+		}
+		var w = parseInt(pw / (numCategories + 2));
+
+		canvas.width = w;
 		canvas.height = 400;
 
 		var ctx = canvas.getContext("2d");

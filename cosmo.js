@@ -998,9 +998,9 @@ async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 	var maindiv_width = $(_child)[0].clientWidth;
 	var windowWidth = $(_parent)[0].innerWidth;
 
-	var relation =  Math.min(doc_width / maindiv_width, doc_height / maindiv_height);
+	relationScale =  Math.min(doc_width / maindiv_width, doc_height / maindiv_height);
 
-	$(_child).css("transform", "scale(" + relation + ")").css("width", (windowWidth * (1/relation)) + "px");
+	$(_child).css("transform", "scale(" + relationScale + ")").css("width", (windowWidth * (1/relationScale)) + "px");
 
 	$(body).css("overflow", "hidden");
 }
