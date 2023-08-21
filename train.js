@@ -165,7 +165,8 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 			$("#example_predictions").show();
 
 			await predict_handdrawn();
-			
+
+			await fit_to_window();
 
 			await cosmo_maximally_activate_last_layer();
 		
@@ -191,6 +192,8 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 			await add_cosmo_point("finished_training");
 
 			$(".cosmo_next_button_span").css("visibility", "visible");
+
+			await fit_to_window();
 		}
 	}
 
