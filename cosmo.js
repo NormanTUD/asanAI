@@ -1018,7 +1018,7 @@ async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 
 	$(_child).css("transform", "scale(" + relationScale + ")").css("width", (windowWidth * (1/relationScale)) + "px");
 
-	$(body).css("overflow", "hidden");
+	$(body).css("overflow", "hidden").css("backface-visibility", "hidden").css("-webkit-font-smoothing", "subpixel-antialiased");
 
 	show_or_hide_logo();
 }
