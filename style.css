@@ -1110,6 +1110,8 @@ hr {
 }
 
 #skip_presentation_button {
+	width: 80px;
+	height: 50px;
 	background-color: #E42217;
 	color: white;
 	position: absolute;
