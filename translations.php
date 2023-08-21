@@ -215,7 +215,13 @@
 			"loading_model" => "Loading model",
 			"loading_example_images" => "Loading example images",
 			"undoing_redoing" => "Undoing/redoing",
-			"skip_presentation" => "Skip &rarr;"
+			"skip_presentation" => "Skip &rarr;",
+			"very_unsure" => "Very unsure",
+			"quite_unsure" => "Quite unsure",
+			"a_bit_unsure" => "A bit unsure",
+			"neutral" => "Neutral",
+			"relatively_sure" => "Relatively sure",
+			"very_sure" => "Very sure"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -432,7 +438,13 @@
 			"loading_model" => "Lade Modell",
 			"loading_example_images" => "Lade Beispielbilder",
 			"undoing_redoing" => "Rückgängig machen/wiederherstellen",
-			"skip_presentation" => "Überspringen &rarr;"
+			"skip_presentation" => "Überspringen &rarr;",
+			"very_unsure" => "Sehr unsicher",
+			"quite_unsure" => "Eher unsicher",
+			"a_bit_unsure" => "Ein wenig unsicher",
+			"neutral" => "Neutral",
+			"relatively_sure" => "Relativ sicher",
+			"very_sure" => "Sehr sicher"
 		)
 	);
 ?>

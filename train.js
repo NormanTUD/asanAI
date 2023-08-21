@@ -788,8 +788,27 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 		var ctx = canvases[0].getContext("2d");
 		for (let j = 0; j <= 10; j += 2) {
 			var yPos = margin + graphHeight - j / 10 * graphHeight;
+			var neg = -10;
 			var label = (j / 10 * maxProb).toFixed(2);
-			ctx.fillText(label, margin - 10, yPos);
+			if(is_cosmo_mode) {
+				if (label == "0.00") {
+					label = language[lang]["very_unsure"];
+				} else if (label == "0.20") {
+					label = language[lang]["quite_unsure"];
+				} else if (label == "0.40") {
+					label = language[lang]["a_bit_unsure"];
+				} else if (label == "0.60") {
+					label = language[lang]["neutral"];
+				} else if (label == "0.80") {
+					label = language[lang]["relatively_sure"];
+				} else if (label == "1.00") {
+					label = language[lang]["very_sure"];
+				} else {
+					console.warn("cosmo-label not found for " + label + " probability");
+				}
+				neg = +90;
+			}
+			ctx.fillText(label, margin + neg, yPos);
 		}
 	}
 
