@@ -757,7 +757,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 		var canvas = document.createElement("canvas");
 		var pw = parseInt($("#tfvis_tab").width());
 		if(is_cosmo_mode) {
-			w = $("#maindiv")[0].clientWidth;
+			w = $("#maindiv")[0].clientWidth * relationScale;
 		}
 		var w = parseInt(pw / (numCategories + 2));
 
@@ -922,7 +922,7 @@ async function visualize_train () { var start_tensors = memory_leak_debugger();
 		for (var i = 0; i < image_elements.length; i++) {
 			var x = image_elements[i];
 			if(i <= max) {
-				tf.engine().startScope()
+				tf.engine().startScope();
 				imgs.push(x);
 
 				var img_tensor = tf.tidy(() => {
