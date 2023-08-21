@@ -84,7 +84,7 @@ function addScrollRightButton() {
 function addEndPresentationButton (force=0) {
 	$("#skip_presentation_button").remove();
 	if((finished_loading && is_presenting) || force) {
-		var new_element = $("<span onclick='endPresentation();$(this).remove()' id='skip_presentation_button' class=TRANSLATEME_skip_presentation></span>");
+		var new_element = $("<span onclick='endPresentation();$(this).remove()' id='skip_presentation_button' class='TRANSLATEME_skip_presentation'></span>");
 		$("body").append(new_element)
 		updateTranslations();
 	}
