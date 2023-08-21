@@ -1005,6 +1005,8 @@ async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 	$(_child).css("transform", "scale(" + relationScale + ")").css("width", (windowWidth * (1/relationScale)) + "px");
 
 	$(body).css("overflow", "hidden");
+
+	show_or_hide_logo();
 }
 
 async function click_next_button () {
@@ -1012,4 +1014,45 @@ async function click_next_button () {
 	await train_neural_network();
 	$('#next_button').attr('data-clicked', '1');
 	remove_manicule(1);
+}
+
+function doImagesOverlap(imageId1, imageId2) {
+	const image1 = document.getElementById(imageId1);
+	const image2 = document.getElementById(imageId2);
+
+	const rect1 = image1.getBoundingClientRect();
+	const rect2 = image2.getBoundingClientRect();
+
+	// Check for horizontal overlap
+	const horizontalOverlap = rect1.left < rect2.right && rect1.right > rect2.left;
+
+	// Check for vertical overlap
+	const verticalOverlap = rect1.top < rect2.bottom && rect1.bottom > rect2.top;
+
+	return horizontalOverlap && verticalOverlap;
+}
+
+function show_or_hide_logo () {
+	var old_display = $("#scads_logo_cosmo_mode").css("display");
+	var old_visibility = $("#scads_logo_cosmo_mode").css("visibility", "none");
+
+	if(old_display == "none") {
+		$("#scads_logo_cosmo_mode").css("visibility", "none");
+		$("#scads_logo_cosmo_mode").show();
+	}
+
+	var shown = 0;
+	if(doImagesOverlap("scads_logo_cosmo_mode", "asanai_logo_cosmo")) {
+		$("#scads_logo_cosmo_mode").hide();
+	} else {
+		$("#scads_logo_cosmo_mode").show();
+		shown++;
+	}
+
+	if(old_display == "none") {
+		$("#scads_logo_cosmo_mode").css("visibility", "inherit");
+		if(!shown) {
+			$("#scads_logo_cosmo_mode").hide();
+		}
+	}
 }
