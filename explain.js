@@ -2625,12 +2625,10 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await fit_to_window();
 
-	var example_image_width = $($(".layer_image")[0]).width() / relationScale;
-	var example_image_margin = $($(".layer_image")[0]).css("margin");
-	var first_example_image_left = $($(".layer_image")[0]).offset().left;
+	var example_image_width = $($(".layer_image")[0]).width();
 
-	var style_internal = `width: ${example_image_width}px; margin-left: 50px; margin-right: 50px; display: inline-block;`;
-	var style = ` style='${style_internal}' `;
+	var style_internal = `width: ${example_image_width}px;`;
+	var style = ` class='cosmo_labels_above_generated_images' style='${style_internal}' `;
 
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
