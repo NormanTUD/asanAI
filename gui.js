@@ -2514,7 +2514,7 @@ async function disable_everything() {
 }
 
 async function enable_everything() {
-	document.body.style.cursor = "default";
+	document.body.style.cursor = get_cursor_or_none("default");
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
 	await write_descriptions();
@@ -6036,4 +6036,12 @@ function set_right_border_between_example_predictions() {
 	for (var i = 0; i < expred.length - 1; i++) {
 	    $(expred[i]).css("padding-right", "50px").css("border-right", "thick double #000000");
 	}
+}
+
+function get_cursor_or_none (cursorname) {
+	if(isTouchDevice()) {
+		return "none";
+	}
+
+	return cursorname;
 }

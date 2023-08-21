@@ -10,7 +10,7 @@ function assert(boolean_value, exception_message) {
 		console.trace();
 		write_error(exception_message); // cannot be async
 
-		document.body.style.cursor = "default";
+		document.body.style.cursor = get_cursor_or_none("default");
 		$("#layers_container").sortable("enable");
 		$("#ribbon,select,input,checkbox").prop("disabled", false);
 		write_descriptions(); // cannot be async
@@ -26,6 +26,6 @@ function assert(boolean_value, exception_message) {
 
 		throw new assertationFailed(exception_message);
 	} else {
-		document.body.style.cursor = "default";
+		document.body.style.cursor = get_cursor_or_none("default");
 	}
 }

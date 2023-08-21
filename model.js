@@ -1158,7 +1158,7 @@ async function get_valid_layer_types (layer_nr) { var start_tensors = memory_lea
 		l("Checked possible layer types");
 	}
 
-	$('body').css('cursor', 'default');
+	$('body').css('cursor', get_cursor_or_none("default"));
 
 	allowed_layer_cache[layer_nr] = valid_layer_types;
 

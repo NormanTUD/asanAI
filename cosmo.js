@@ -700,6 +700,19 @@ async function cosmo_mode () {
 
 	$("#own_files").css("display", "flex").css("justify-content", "center");
 	$("#theme_choser").val("lightmode").trigger("change");
+
+	$('body').css('cursor', get_cursor_or_none("default"));
+}
+
+function isTouchDevice() {
+	var res = (('ontouchstart' in window) ||
+		(navigator.maxTouchPoints > 0) ||
+		(navigator.msMaxTouchPoints > 0));
+
+	if(!res) {
+		res = !!window.matchMedia("(pointer: coarse)").matches;
+	}
+	return res;
 }
 
 function findColorPickerContainer(element) {

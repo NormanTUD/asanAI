@@ -731,7 +731,7 @@ async function write_error_and_reset(e, fn, hide_swal) { var start_tensors = mem
 async function reset_on_error () { var start_tensors = memory_leak_debugger();
 	started_training = false;
 
-	document.body.style.cursor = "default";
+	document.body.style.cursor = get_cursor_or_none("default");
 	$("#layers_container").sortable("enable");
 	$("#ribbon,select,input,checkbox").prop("disabled", false);
 	await write_descriptions();
