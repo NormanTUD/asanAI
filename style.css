@@ -1094,8 +1094,8 @@ hr {
 }
 
 .example_imgs_cosmo_mode {
-	margin-left: 5vw;
-	margin-right: 5vw;
+	margin-left: 2em;
+	margin-right: 2em;
 	width: 8vw;
 	max-width: 120px;
 }

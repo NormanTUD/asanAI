@@ -1577,7 +1577,7 @@ text-align: end;
 					</div>
 				</div>
 
-				<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 0.7em; width: 200px;">
+				<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 1em; width: 200px;">
 					<span 
 						class="green_bg cosmo_button" 
 						id="next_button_span"
