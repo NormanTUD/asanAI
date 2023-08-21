@@ -28,6 +28,14 @@ function swapImageSrcLanguage() {
 			// Replace 'en' with 'de'
 			const newSrc = currentSrc.replace(/__en__/, '__de__');
 			img.setAttribute('src', newSrc);
+		} else if (lang === 'en' && currentSrc.startsWith('presentation/de/')) {
+			// Replace 'de' with 'en'
+			const newSrc = currentSrc.replace(/\/de\//, '/en/');
+			img.setAttribute('src', newSrc);
+		} else if (lang === 'de' && currentSrc.startsWith('presentation/en/')) {
+			// Replace 'en' with 'de'
+			const newSrc = currentSrc.replace(/\/en\//, '/de/');
+			img.setAttribute('src', newSrc);
 		}
 	}
 }
