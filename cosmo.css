@@ -1,0 +1,18 @@
+#webcam_tab {
+	display: contents;
+}
+
+.cosmo_display_contents {
+	display: contents;
+}
+
+#handdrawn_img {
+	display: contents;
+}
+#predict_handdrawn_canvas {
+	display: contents;
+}
+
+.no_mark {
+	margin-left: 200px;
+}
