@@ -1036,15 +1036,17 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
 			
 			var randomizer_limits = parseFloat($("#randomizer_limits").val());
-			if(randomizer_limits != 0) {
+			if(randomizer_limits != 0 && i < 10) {
 				image = image.add(tf.randomUniform(image.shape, -randomizer_limits, randomizer_limits));
 			}
 
-			if(image.dataSync().join(";") == prev_img_str && i >= 5) {
-				header_error("Image has not changed");
-				return deprocessImage(image).arraySync();
-			} else {
-				prev_img_str = image.dataSync().join(";");
+			if(!is_cosmo_mode) {
+				if(image.dataSync().join(";") == prev_img_str && i >= 5) {
+					header_error("Image has not changed");
+					return deprocessImage(image).arraySync();
+				} else {
+					prev_img_str = image.dataSync().join(";");
+				}
 			}
                 }
 
