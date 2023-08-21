@@ -1508,4 +1508,4 @@ var old_tensor_number = 0;
 
 var relationScale = 1;
 
-var set_label_debug = true;
+var set_label_debug = false;
