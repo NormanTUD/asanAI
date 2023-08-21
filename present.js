@@ -240,7 +240,19 @@ function runPresentation(dn) {
 
 // Function to handle click events during presentation
 async function handleClick(event) {
+	if (event.target.id === "scroll_right") {
+		return; // Do not advance to the next page
+	}
+
 	if (event.target.id === "scroll_left") {
+		return; // Do not advance to the next page
+	}
+
+	if (event.target.id === "set_german_language") {
+		return; // Do not advance to the next page
+	}
+
+	if (event.target.id === "set_english_language") {
 		return; // Do not advance to the next page
 	}
 
