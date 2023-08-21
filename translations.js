@@ -117,5 +117,13 @@ async function updateLang(la) {
 	setLangCookie(lang, 99999);
 }
 
+function trm (name) {
+	if(Object.keys(language[lang]).includes(name)) {
+		return `<span class='TRANSLATEME_${name}'></span>`
+	}
+
+	return `${NAME} NOT FOUND`;
+}
+
 // Update translations on initial page load
 updateTranslations();
