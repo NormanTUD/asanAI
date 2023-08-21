@@ -99,6 +99,10 @@
 ?>
 			<?php minify_css("ribbon_media.css"); ?>
 <?php
+		} else {
+?>
+			<?php minify_css("cosmo.css"); ?>
+<?php
 		}
 ?>
 		<?php minify_css($theme_base."mode.css", "css_mode"); ?>
@@ -1555,7 +1559,7 @@ text-align: end;
 										</span>
 
 										<span id="handdrawn_img" class="handdrawn hide_when_no_image" style='text-align: justify'>
-											<span class="full_example_image_prediction display_inline_block">
+											<span class="full_example_image_prediction display_inline_block cosmo_display_contents">
 												<span id='predict_handdrawn_canvas'></span><br>
 												<span id="handdrawn_predictions"></span>
 											</span>

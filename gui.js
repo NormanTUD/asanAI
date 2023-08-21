@@ -5494,7 +5494,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tenso
 		</span>
 		<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
 		<br />
-		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 1px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>
+		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>
 	</form>`;
 
 	var drawingboard = $(code);
@@ -6034,6 +6034,6 @@ function set_right_border_between_example_predictions() {
 	var expred = $("#example_predictions").find(".full_example_image_prediction");
 
 	for (var i = 0; i < expred.length - 1; i++) {
-	    $(expred[i]).css("padding-right", "50px").css("border-right", "thin double #000000");
+	    $(expred[i]).css("padding-right", "50px").css("border-right", "thick double #000000");
 	}
 }
