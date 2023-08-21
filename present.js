@@ -81,10 +81,13 @@ function addScrollRightButton() {
 	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
 }
 
-function addEndPresentationButton () {
+function addEndPresentationButton (force=0) {
 	$("#skip_presentation_button").remove();
-	var new_element = $("<span onclick='endPresentation()' id='skip_presentation_button' class=TRANSLATEME_skip_presentation></span>");
-	$("body").append(new_element)
+	if((finished_loading && is_presenting) || force) {
+		var new_element = $("<span onclick='endPresentation();$(this).remove()' id='skip_presentation_button' class=TRANSLATEME_skip_presentation></span>");
+		$("body").append(new_element)
+		updateTranslations();
+	}
 }
 
 // Function to add or remove the scroll buttons
@@ -116,8 +119,11 @@ async function showNextDiv() {
 		showFullScreen(divs, currentDivPresentationIndex);
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	} else {
+		$("#skip_presentation_button").remove();
 		await endPresentation();
 	}
+
+	addEndPresentationButton();
 }
 
 // Function to show the previous div
@@ -128,6 +134,8 @@ function showPreviousDiv() {
 		showFullScreen(divs, currentDivPresentationIndex);
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	}
+
+	addEndPresentationButton();
 }
 
 // Function to handle touch events for swiping
@@ -154,6 +162,8 @@ function handleTouchEnd(event) {
 
 // Function to end the presentation
 async function endPresentation() {
+	$("#skip_presentation_button").remove();
+
 	if (done_presenting) {
 		return;
 	}
@@ -179,7 +189,6 @@ async function endPresentation() {
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
 	$("#presentation_site_nr").remove();
-	$("#skip_presentation_button").remove();
 	attach_listener_for_cosmo_outside_click();
 
 	$("#scads_logo_cosmo_mode").show();
@@ -187,6 +196,8 @@ async function endPresentation() {
 	$("#graphs_here").css("margin-top", "30px");
 
 	chose_next_manicule_target();
+
+	$("#skip_presentation_button").remove();
 }
 
 function attach_listener_for_cosmo_outside_click () {

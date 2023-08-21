@@ -586,6 +586,7 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 
 	if(is_cosmo_mode) {
 		addScrollRightButton();
+		addEndPresentationButton(1);
 	}
 
 	finished_loading = true;
