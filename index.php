@@ -94,6 +94,13 @@
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
 		<?php minify_css("ribbon.css"); ?>
+<?php
+		if(!isset($_GET["start_cosmo"])) {
+?>
+			<?php minify_css("ribbon_media.css"); ?>
+<?php
+		}
+?>
 		<?php minify_css($theme_base."mode.css", "css_mode"); ?>
 		<?php minify_css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
 		<?php minify_css("prism/prism.min.css"); ?>
