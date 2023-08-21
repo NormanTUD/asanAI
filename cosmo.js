@@ -699,6 +699,7 @@ async function cosmo_mode () {
 	$(".show_in_cosmo_mode").show();
 
 	$("#own_files").css("display", "flex").css("justify-content", "center");
+	$("#theme_choser").val("lightmode").trigger("change");
 }
 
 function findColorPickerContainer(element) {

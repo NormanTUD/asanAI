@@ -90,6 +90,10 @@
 			}
 		}
 
+		if(!isset($_GET["start_cosmo"])) {
+			$theme_base = "light";
+		}
+
 ?>
 		<?php minify_css("jquery-ui.css"); ?>
 		<?php minify_css("style.css"); ?>
@@ -272,6 +276,11 @@ text-align: end;
 <?php
 			}
 
+?>
+			<script>
+				$("#theme_choser").val("light").trigger("change");
+			</script>
+<?php
 		}
 ?>
 	</head>
