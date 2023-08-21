@@ -2633,7 +2633,7 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
 		<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
-		<br>
+		<br><br>
 		<span ${style}><span class='TRANSLATEME_fire'></span>:</span>
 		<span ${style}><span class='TRANSLATEME_mandatory'></span>:</span>
 		<span ${style}><span class='TRANSLATEME_forbidden'></span>:</span>
