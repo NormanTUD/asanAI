@@ -82,7 +82,7 @@ function addScrollRightButton() {
 
 // Function to add or remove the scroll buttons
 function addScrollButtons(currentDivPresentationIndex, maxIndex) {
-	if (done_presenting) {
+	if (done_presenting || !finished_loading) {
 		$("#scroll_left").remove();
 		$("#scroll_right").remove();
 		return;
