@@ -760,7 +760,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 		var canvas = document.createElement("canvas");
 		var pw = parseInt($("#tfvis_tab").width());
 		if(is_cosmo_mode) {
-			w = $("#maindiv")[0].clientWidth * relationScale;
+			w = $("#maindiv")[0].clientWidth / relationScale;
 		}
 		var w = parseInt(pw / (numCategories + 2));
 
@@ -971,7 +971,6 @@ async function visualize_train () { var start_tensors = memory_leak_debugger();
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
-			//log("drawImagesInGrid:", imgs, categories, probabilities, labels.length);
 			drawImagesInGrid(imgs, categories, probabilities, labels.length);
 		} else {
 			$("#canvas_grid_visualization").html("");
