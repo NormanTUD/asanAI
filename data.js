@@ -558,10 +558,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				}
 
 				if(is_cosmo_mode) {
-					labels = [];
-					for (let i = cosmo_categories.length - 1; i >= 0; i--) {
-						labels.push(cosmo_categories[i]);
-					}
+					cosmo_set_labels();
 				}
 
 				if($("#shuffle_data").is(":checked")) {

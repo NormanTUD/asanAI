@@ -460,3 +460,12 @@ async function profile (func, ...args) { // var start_tensors
 	console.log(`newTensors: ${profile.newTensors}`);
 	console.log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 }
+
+function label_debug (...args) {
+	if(!set_label_debug) {
+		return;
+	}
+
+	console.log(...args);
+	console.trace();
+}

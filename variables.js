@@ -1507,3 +1507,5 @@ var global_model_data = undefined;
 var old_tensor_number = 0;
 
 var relationScale = 1;
+
+var set_label_debug = true;

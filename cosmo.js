@@ -974,6 +974,7 @@ async function cosmo_set_labels () {
 			"Warnung"
 		];
 		labels = cosmo_categories;
+		label_debug("cosmo_set_labels, lang de (labels, cosmo_categories)", labels);
 	} else if(lang == "en") {
 		cosmo_categories = [
 			"Fire",
@@ -983,6 +984,7 @@ async function cosmo_set_labels () {
 			"Warning"
 		];
 		labels = cosmo_categories;
+		label_debug("cosmo_set_labels, lang en (labels, cosmo_categories)", labels);
 	} else {
 		console.error("Unknown language: " + lang);
 	}
