@@ -2625,10 +2625,23 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await fit_to_window();
 
-	// ugly hack...
-	var base_nbsp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+	var example_image_width = $($(".layer_image")[0]).width() / relationScale;
+	var example_image_margin = $($(".layer_image")[0]).css("margin");
+	var first_example_image_left = $($(".layer_image")[0]).offset().left;
 
-	$(".h2_maximally_activated_layer_contents").html(`<hr class='cosmo_hr'><span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:<br><br><span class='TRANSLATEME_fire'></span>:${base_nbsp}<span class='TRANSLATEME_mandatory'></span>:${base_nbsp}<span class='TRANSLATEME_forbidden'></span>:${base_nbsp}<span class='TRANSLATEME_rescue'></span>:${base_nbsp}<span class='TRANSLATEME_warning'></span>:`);
+	var style_internal = `width: ${example_image_width}px; margin-left: 50px; margin-right: 50px; display: inline-block;`;
+	var style = ` style='${style_internal}' `;
+
+	$(".h2_maximally_activated_layer_contents").html(`
+		<hr class='cosmo_hr'>
+		<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
+		<br>
+		<span ${style}><span class='TRANSLATEME_fire'></span>:</span>
+		<span ${style}><span class='TRANSLATEME_mandatory'></span>:</span>
+		<span ${style}><span class='TRANSLATEME_forbidden'></span>:</span>
+		<span ${style}><span class='TRANSLATEME_rescue'></span>:</span>
+		<span ${style}><span class='TRANSLATEME_warning'></span>:</span>
+	`);
 
 	updateTranslations();
 	await fit_to_window();
