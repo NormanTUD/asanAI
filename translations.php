@@ -214,7 +214,8 @@
 			"train_further" => "Train the network further",
 			"loading_model" => "Loading model",
 			"loading_example_images" => "Loading example images",
-			"undoing_redoing" => "Undoing/redoing"
+			"undoing_redoing" => "Undoing/redoing",
+			"skip_presentation" => "Skip presentation"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -430,7 +431,8 @@
 			"train_further" => "Das Netzwerk weiter trainieren",
 			"loading_model" => "Lade Modell",
 			"loading_example_images" => "Lade Beispielbilder",
-			"undoing_redoing" => "Rückgängig machen/wiederherstellen"
+			"undoing_redoing" => "Rückgängig machen/wiederherstellen",
+			"skip_presentation" => "Präsentation überspringen"
 		)
 	);
 ?>

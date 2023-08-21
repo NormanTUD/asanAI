@@ -1108,3 +1108,12 @@ hr {
 .force_display_flex {
 	display: flex !important;
 }
+
+#skip_presentation_button {
+	background-color: #E42217;
+	color: white;
+	position: absolute;
+	right: 2vw;
+	bottom: 10px;
+	z-index: 10000;
+}

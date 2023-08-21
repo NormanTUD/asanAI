@@ -26,6 +26,7 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	document.body.style.overflow = "hidden";
 
 	addScrollButtons(currentDivPresentationIndex, divs.length);
+	addEndPresentationButton();
 
 	$($(".slide")[currentDivPresentationIndex]).focus();
 
@@ -78,6 +79,12 @@ function addScrollLeftButton() {
 function addScrollRightButton() {
 	$("#scroll_right").remove();
 	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
+}
+
+function addEndPresentationButton () {
+	$("#skip_presentation_button").remove();
+	var new_element = $("<span onclick='endPresentation()' id='skip_presentation_button' class=TRANSLATEME_skip_presentation></span>");
+	$("body").append(new_element)
 }
 
 // Function to add or remove the scroll buttons
@@ -172,6 +179,7 @@ async function endPresentation() {
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
 	$("#presentation_site_nr").remove();
+	$("#skip_presentation_button").remove();
 	attach_listener_for_cosmo_outside_click();
 
 	$("#scads_logo_cosmo_mode").show();
