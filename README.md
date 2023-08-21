@@ -115,6 +115,8 @@ in creating this program:
 
 - [A green circle icon with a(n) arrow-right symbol from the Emoji One BW icon font.](https://de.wikipedia.org/wiki/Datei:Eo_circle_green_arrow-right.svg)
 
+- [Smooth arrow animation](https://codepen.io/vlt_dev/pen/NWMNzpE)
+
 [comment]: <> (EndSources)
 
 # PHP Settings

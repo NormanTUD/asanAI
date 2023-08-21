@@ -106,6 +106,7 @@
 		} else {
 ?>
 			<?php minify_css("cosmo.css"); ?>
+			<?php minify_css("arrow.css"); ?>
 <?php
 		}
 ?>
@@ -1590,7 +1591,7 @@ text-align: end;
 					</div>
 				</div>
 
-				<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 1em; width: 200px;">
+				<div class="cosmo_next_button_span" style="display: none; position: absolute; top: 150px; right: 150px; font-size: 1em; width: 150px;">
 					<span 
 						class="green_bg cosmo_button" 
 						id="next_button_span"
@@ -1604,6 +1605,12 @@ text-align: end;
 						style="min-height: 50px; width: 200px;"
 						onclick="click_next_button()" 
 					>
+						<div class="arrow" style="left: 0px;">
+							<span></span>
+							<span></span>
+							<span></span>
+						</div>
+
 						<span
 							class="TRANSLATEME_train_the_neural_network cosmo cosmo_autoset_text" 
 							data-keep_cosmo="1"
