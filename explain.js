@@ -2629,7 +2629,7 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	var example_image_width = $($(".layer_image")[0]).width();
 
-	var style_internal = `width: ${example_image_width}px;`;
+	var style_internal = `width: ${example_image_width + 65}px;`;
 	var style = ` class='cosmo_labels_above_generated_images' style='${style_internal}' `;
 
 	$(".h2_maximally_activated_layer_contents").html(`
@@ -2660,7 +2660,7 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
 
-	$(".layer_image").css("width", "170px").css("margin-top", "50px").css("margin-left", "50px").css("margin-right", "50px").css("margin-bottom", "0px");
+	$(".layer_image").css("width", "170px").css("margin-top", "30px").css("margin-left", "65px").css("margin-right", "65px").css("margin-bottom", "0px");
 
 	generating_images = false;
 

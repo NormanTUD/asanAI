@@ -15,7 +15,7 @@
 	border-right: 5px solid white;
 	transform: rotate(45deg);
 	margin: -10px;
-	animation: animate 30s infinite;
+	animation: animate 60s infinite;
 }
 
 .arrow span:nth-child(2) {
@@ -31,7 +31,7 @@
 		opacity: 0;
 	}
 
-	50% {
+	60% {
 		opacity: 0;
 	}
 
