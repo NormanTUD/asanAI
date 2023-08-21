@@ -164,11 +164,15 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 			await _predict_mode_examples();
 			$("#example_predictions").show();
 
-			await predict_handdrawn();
-
 			await fit_to_window();
 
 			await cosmo_maximally_activate_last_layer();
+
+			await fit_to_window();
+
+			await predict_handdrawn();
+
+			await fit_to_window();
 		
 			chose_next_manicule_target();
 
