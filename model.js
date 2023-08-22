@@ -686,22 +686,42 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		} else {
 			//log("adding ", tf.layers[type], ", data: ", data);
 			new_model.add(tf.layers[type](data));
+
+			if(new_model && new_model.layers) {
+				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0);
+				/*
+				for (i in new_output_shape) {
+					if(new_output_shape[i] == 0) {
+						throw new Error("Input shape contains 0");
+					}
+				}
+				*/
+
+				try {
+					var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
+					throw new Error(`Layer ${i} has more than one output head!`);
+				} catch (e) {
+					if(("" + e).includes("Has Multi-Output")) {
+						throw new Error(e);
+					}
+				}
+			}
 		}
 		set_layer_background(i, "");
 	} catch (e) {
 		if(!fake_model_structure) {
 			var msg = e;
-			if(("" + e).includes("Negative dimension size caused by adding layer")) {
+			if(
+				("" + e).includes("Negative dimension size caused by adding layer") ||
+				("" + e).includes("Has Multi-Output") ||
+				("" + e).includes("is incompatible with layer")
+			) {
 				set_layer_background(i, "red");
 			} else {
 				set_model_layer_warning(i, e.toString());
 				l("ERROR: " + e);
 				log(type);
 				log(data);
-			}
-
-			if(e.toString().includes("is incompatible with layer")) {
-				set_layer_background(i, "red");
 			}
 
 			await dispose(new_model);
@@ -797,6 +817,26 @@ async function create_model (old_model, fake_model_structure, force) { var start
 		}
 
 		return;
+	}
+
+	if(model && model.layers && model.layers.length) {
+		if(i in model.layers) {
+			try {
+				var ok = 1;
+				try {
+					model.layers[i].input.shape;
+					ok = 0;
+				} catch (er) { // ignore delibaretly, when it fails, its ok
+				}
+
+				if(!ok) {
+					throw new Error(`model.layers[${i}] is a multibound head`);
+				}
+			} catch(e) {
+				console.error(e);
+				console.warn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+			}
+		}
 	}
 
 	enable_train();
