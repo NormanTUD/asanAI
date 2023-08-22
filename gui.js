@@ -801,7 +801,7 @@ async function change_width_or_height(name, inputshape_index) {
 	var used_time = ((t_end - t_start) / 1000).toFixed(5);
 
 	model_is_trained = false;
-	l("Done changing " + name + ", took " + used_time + "seconds.");
+	l("Done changing " + name + ", took " + parseInt(used_time) + " seconds.");
 }
 
 async function update_python_code(dont_reget_labels) {
