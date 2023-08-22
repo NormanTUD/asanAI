@@ -686,7 +686,7 @@ async function cosmo_mode () {
 
 	$("#side_by_side_container").css("padding-top", "70px");
 
-	$("#emergency_button").show();
+	$("#emergency_button").css("display", "inline-block");
 
 	window.setInterval(function () {
 		if(!is_presenting && (manicule === null || manicule === undefined)) {
