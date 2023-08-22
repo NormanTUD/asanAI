@@ -15,7 +15,7 @@
 	border-right: 0.5em solid white;
 	transform: rotate(45deg);
 	margin: -1vw;
-	animation: animate 5s infinite;
+	animation: animate 60s infinite;
 }
 
 .arrow span:nth-child(2) {
