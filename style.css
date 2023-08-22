@@ -139,7 +139,7 @@ body {
 	width: 99%;
 	margin: auto;
 	margin-bottom: 30px;
-	padding: 10px;
+	padding: 2vw;
 }
 
 .left_side {
@@ -159,7 +159,6 @@ body {
 	overflow: hidden;
 	margin-bottom: 50px;
 	opacity: 0.95;
-	//backdrop-filter: blur(3px);
 }
 
 ul {
