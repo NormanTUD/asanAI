@@ -169,7 +169,9 @@ var fcnn = FCNN();
 
 async function restart_fcnn(force) {
 	if(!model) {
-		log("FCNN: No model");
+		if(finished_loading) {
+			log("FCNN: No model");
+		}
 		return;
 	}
 
