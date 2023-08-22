@@ -1003,11 +1003,24 @@ button {
 }
 
 #scads_logo_cosmo_mode {
-	height: 36px;
+	height: 5vw;
 	position: absolute;
 	left: 10px;
 	top: 10px;
 	display: none;
+}
+
+#asanai_logo_cosmo {
+	display: none;
+	z-index: 999999999999; 
+	max-width: 4.5vw; 
+	height: 4.5vw; 
+	position: absolute; 
+	margin: auto; 
+	left: 0px; 
+	right: 0px; 
+	text-align: center; 
+	top: 10px;
 }
 
 .pen_size_slider {
