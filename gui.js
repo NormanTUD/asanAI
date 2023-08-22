@@ -2609,8 +2609,6 @@ async function set_all_kernel_initializers() {
 
 	$("#set_all_kernel_initializers").val("none");
 
-	$("#change_initializers_selector").val(chosen_value).trigger("change");
-
 	await updated_page();
 }
 
@@ -2623,8 +2621,6 @@ async function set_all_bias_initializers() {
 	}
 
 	$("#set_all_bias_initializers").val("none");
-
-	$("#change_initializers_selector").val(chosen_value).trigger("change");
 
 	await updated_page();
 }
