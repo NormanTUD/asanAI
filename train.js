@@ -684,6 +684,9 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 		} catch (e) {
 			if(("" + e).includes("is already disposed")) {
 				console.error("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
+				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
+			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
+				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else {
 				console.error(e);
 				if(typeof(e) == "object" && Object.keys(e).includes("message")) {

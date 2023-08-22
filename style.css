@@ -368,7 +368,7 @@ body {
 	width: 98%;
 	-moz-transform: scale(1);
 	-moz-transform-origin: 0 0;
-	margin-top: -1vw;
+	margin-top: 0vw;
 }
 
 #history_table>table, #history_table>th, #history_table>td {
