@@ -24,3 +24,40 @@
 #presentation_site_nr {
 	font-size: 2vw;
 }
+
+#set_german_language {
+	height: 2vw;
+	top: 1vw; 
+	left: 25%; 
+	position: absolute; 
+	z-index: 9999999999999999999999999999999999999999999999;
+}
+
+#set_english_language {
+	height: 2vw;
+	top: 1vw; 
+	left: 75%; 
+	position: absolute; 
+	z-index: 9999999999999999999999999999999999999999999999;
+}
+
+.next_prev_buttons {
+	user-select: none;
+	z-index: 99999;
+	position: absolute;
+	font-size: 2vw;
+	color: black;
+	cursor: pointer;
+	top: 50%;
+}
+
+#scroll_right {
+	right: 0px;
+}
+
+#scroll_left {
+	font-size: 1.5vw;
+	left: 0px;
+}
+
+

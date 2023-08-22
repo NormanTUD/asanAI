@@ -948,26 +948,6 @@ button {
 	display: none;
 }
 
-.next_prev_buttons {
-	user-select: none;
-	z-index: 99999;
-	position: absolute;
-	font-size: 50px;
-	color: black;
-	cursor: pointer;
-	width: 50px;
-	top: 50%;
-}
-
-#scroll_right {
-	right: 0px;
-}
-
-#scroll_left {
-	font-size: 1em;
-	left: 0px;
-}
-
 .custom_image_data {
 	display: inline;
 	float: left;
