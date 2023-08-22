@@ -710,6 +710,12 @@ async function identify_layers (number_of_layers) { var start_tensors = memory_l
 		var output_shape_string = "";
 		try {
 			if(i in model.layers) {
+				try {
+					model.layers[i].input.shape;
+				} catch(e) {
+					console.warn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+				}
+
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
 				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
 					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
