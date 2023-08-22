@@ -1485,22 +1485,18 @@ text-align: end;
 									<div id="training_content">
 										<div id="simplest_training_data_visualization" style="display: none"></div>
 										<div style="display: none">
-											<h3 class="hide_in_cosmo_mode"><span class="TRANSLATEME_epochs"></span>:</h3>
 											<div id="plotly_epoch_history"></div>
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h3><span class="TRANSLATEME_batches"></span>:</h3>
 											<div id="plotly_batch_history"></div>
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h3>Time per batch (in seconds):</h3>
 											<div id="plotly_time_per_batch"></div>
 										</div>
 
 										<div style="display: none" class="hide_in_cosmo_mode">
-											<h1><span class="TRANSLATEME_memory_usage_while_training"></span>:</h1>
 											<div id="plotly_memory_history"></div>
 										</div>
 									</div>

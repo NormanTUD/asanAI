@@ -1111,26 +1111,34 @@ var training_memory_history = {
 	}
 };
 
-var plotly_layout = {
-	paper_bgcolor: "rgba(0, 0, 0, 0)",
-	plot_bgcolor: "rgba(0, 0, 0, 0)",
-	gridcolor: "#7c7c7c",
-	font: {
-		family: 'Courier New, monospace',
-		size: 18,
-		color: '#7f7f7f'
-	},
-	xaxis: {
-		dtick: 0,
-		showline: false,
-		showgrid: false
-	},
-	yaxis: {
-		showline: false,
-		showgrid: false
+function get_plotly_layout (name="") {
+	var plotly_layout = {
+		paper_bgcolor: "rgba(0, 0, 0, 0)",
+		plot_bgcolor: "rgba(0, 0, 0, 0)",
+		gridcolor: "#7c7c7c",
+		font: {
+			family: 'Courier New, monospace',
+			size: 18,
+			color: '#7f7f7f'
+		},
+		xaxis: {
+			dtick: 0,
+			showline: false,
+			showgrid: false
+		},
+		yaxis: {
+			showline: false,
+			showgrid: false
+		}
+
+	};
+
+	if(name) {
+		plotly_layout["title"] = name;
 	}
 
-};
+	return plotly_layout;
+}
 
 var stop_generating_images = false;
 

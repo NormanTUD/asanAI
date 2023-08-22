@@ -221,7 +221,9 @@
 			"a_bit_unsure" => "A bit unsure",
 			"neutral" => "Neutral",
 			"relatively_sure" => "Relatively sure",
-			"very_sure" => "Very sure"
+			"very_sure" => "Very sure",
+			"time_per_batch" => "Time per Batch",
+			"training" => "Training"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -444,7 +446,9 @@
 			"a_bit_unsure" => "Ein wenig unsicher",
 			"neutral" => "Neutral",
 			"relatively_sure" => "Relativ sicher",
-			"very_sure" => "Sehr sicher"
+			"very_sure" => "Sehr sicher",
+			"time_per_batch" => "Zeit pro Batch",
+			"training" => "Training"
 		)
 	);
 ?>

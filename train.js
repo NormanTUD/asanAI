@@ -384,11 +384,11 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parseInt($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {
-				Plotly.newPlot('plotly_batch_history', this_plot_data, plotly_layout);
-				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+				Plotly.newPlot('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
+				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 			} else {
-				Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
-				Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+				Plotly.update('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
+				Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 			}
 			last_batch_plot_time = Date.now();
 		}
@@ -428,7 +428,7 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 					"x": [],
 					"y": [],
 					"type": get_scatter_type(),
-					"mode": get_plotly_type(),
+					"mode": get_plotly_layout(),
 					"name": 'Loss'
 				};
 			}
@@ -446,17 +446,17 @@ function get_fit_data () { var start_tensors = memory_leak_debugger();
 		if(!is_cosmo_mode) {
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
-				Plotly.newPlot('plotly_epoch_history', this_plot_data, plotly_layout);
+				Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			} else {
-				Plotly.update('plotly_epoch_history', this_plot_data, plotly_layout);
+				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
 		} else {
 			$("#plotly_epoch_history").hide();
 		}
 
 		var this_plot_data = [training_logs_batch["loss"]];
-		Plotly.update('plotly_batch_history', this_plot_data, plotly_layout);
-		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], plotly_layout);
+		Plotly.update('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
+		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 		last_batch_plot_time = false;
 
 		await visualize_train();
