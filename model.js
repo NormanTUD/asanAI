@@ -93,7 +93,7 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 				Swal.fire({
 					icon: 'error',
 					title: 'Oops [4]...',
-					text: e
+					text: "" + e
 				});
 			} else {
 				l("ERROR: " + e);
@@ -688,37 +688,40 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			new_model.add(tf.layers[type](data));
 
 			if(new_model && new_model.layers) {
-				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0);
-				/*
-				for (i in new_output_shape) {
-					if(new_output_shape[i] == 0) {
-						throw new Error("Input shape contains 0");
+				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
+				if(new_output_shape) {
+					for (j in new_output_shape) {
+						if(new_output_shape[j] === 0) {
+							console.log(new_output_shape.shape);
+							throw new Error("Input shape contains 0 at layer " + j);
+						}
 					}
-				}
-				*/
 
-				try {
-					var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
-					throw new Error(`Layer ${i} has more than one output head!`);
-				} catch (e) {
-					if(("" + e).includes("Has Multi-Output")) {
-						throw new Error(e);
+					try {
+						var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
+						throw new Error(`Layer ${i} has more than one output head!`);
+					} catch (e) {
+						if(("" + e).includes("Has Multi-Output")) {
+							throw new Error(e);
+						}
 					}
 				}
 			}
 		}
 		set_layer_background(i, "");
 	} catch (e) {
-		if(!fake_model_structure) {
+		if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
 			var msg = e;
 			if(
 				("" + e).includes("Negative dimension size caused by adding layer") ||
 				("" + e).includes("Has Multi-Output") ||
+				("" + e).includes("Input shape contains 0") ||
 				("" + e).includes("is incompatible with layer")
 			) {
 				set_layer_background(i, "red");
 			} else {
-				set_model_layer_warning(i, e.toString());
+				log(i);
+				set_model_layer_warning(i, "" + e);
 				l("ERROR: " + e);
 				log(type);
 				log(data);
