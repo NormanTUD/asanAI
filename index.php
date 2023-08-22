@@ -690,7 +690,7 @@ text-align: end;
 										Value:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
+										<input type="number" step="1" class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
@@ -722,7 +722,7 @@ text-align: end;
 										Scale:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" type="number" step="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
@@ -730,7 +730,7 @@ text-align: end;
 										Maxval:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" type="number" step="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
@@ -738,7 +738,7 @@ text-align: end;
 										Minval:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" type="number" step="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
@@ -746,7 +746,7 @@ text-align: end;
 										Stddev:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" type="number" step="1" />
 									</td>
 								</tr>
 								<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
@@ -754,7 +754,7 @@ text-align: end;
 										Seed:
 									</td>
 									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" />
+										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" type="number" step="1" />
 									</td>
 								</tr>
 							</table>
