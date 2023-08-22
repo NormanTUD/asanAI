@@ -63,3 +63,8 @@
 .side_by_side_container {
 	padding: 2vw;
 }
+
+#cosmo_mode_header_line {
+	height: fit-content;
+	display: inline-block;
+}

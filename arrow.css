@@ -9,10 +9,10 @@
 
 .arrow span {
 	display: block;
-	width: 1.5vw;
-	height: 1.5vw;
-	border-bottom: 0.5vw solid white;
-	border-right: 0.5vw solid white;
+	width: 1.5em;
+	height: 1.5em;
+	border-bottom: 0.5em solid white;
+	border-right: 0.5em solid white;
 	transform: rotate(45deg);
 	margin: -1vw;
 	animation: animate 5s infinite;

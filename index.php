@@ -294,7 +294,7 @@ text-align: end;
 		<div id="webcam_data" style="display: none"></div>
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
-			<span style="display: none" class="show_in_cosmo_mode">
+			<span id='cosmo_mode_header_line' style="display: none" class="show_in_cosmo_mode">
 				<img id="scads_logo_cosmo_mode" src="gui/scads_logo.svg" />
 				<img src="gui/logo_small.png" id="asanai_logo_cosmo" />
 				<img id="set_german_language" onclick='setLang("de")' src='lang/_de.svg' />
