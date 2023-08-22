@@ -685,10 +685,14 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 	} catch (e) {
 		if(!fake_model_structure) {
 			var msg = e;
-			set_model_layer_warning(i, e.toString());
-			l("ERROR: " + e);
-			log(type);
-			log(data);
+			if(("" + e).includes("Negative dimension size caused by adding layer")) {
+				set_layer_background(i, "red");
+			} else {
+				set_model_layer_warning(i, e.toString());
+				l("ERROR: " + e);
+				log(type);
+				log(data);
+			}
 
 			if(e.toString().includes("is incompatible with layer")) {
 				set_layer_background(i, "red");
@@ -780,7 +784,11 @@ async function create_model (old_model, fake_model_structure, force) { var start
 	try {
 		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
 	} catch (e) {
-		throw new Error(e);
+		if(("" + e).includes("Negative dimension size caused by adding layer")) {
+			console.warn(e);
+		} else {
+			throw new Error(e);
+		}
 
 		return;
 	}
