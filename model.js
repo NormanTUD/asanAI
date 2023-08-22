@@ -820,6 +820,10 @@ async function create_model (old_model, fake_model_structure, force) { var start
 
 	memory_leak_debugger("create_model", start_tensors + new_tensors);
 
+	if(!fake_model_structure) {
+		last_known_good_input_shape = get_input_shape_as_string();
+	}
+
 	return [new_model, model_data];
 }
 

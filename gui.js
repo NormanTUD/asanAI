@@ -1151,8 +1151,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		try {
 			await identify_layers(number_of_layers);
-
-			last_known_good_input_shape = get_input_shape_as_string();
 		} catch (e) {
 			throw new Error(e);
 		}
