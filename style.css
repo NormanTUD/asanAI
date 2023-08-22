@@ -1010,6 +1010,16 @@ button {
 	display: none;
 }
 
+#emergency_button {
+	display: none;
+	z-index: 999999999999;
+	width: 5vw;
+	max-height: 6vw; 
+	position: absolute; 
+	top: 10px; 
+	right: 10px; 
+}
+
 #asanai_logo_cosmo {
 	display: none;
 	z-index: 999999999999; 
@@ -1123,13 +1133,14 @@ hr {
 }
 
 #skip_presentation_button {
-	width: 80px;
-	height: 50px;
+	font-size: 2vw;
+	width: 10vw;
+	height: 4vw;
 	background-color: #E42217;
 	color: white;
 	position: absolute;
-	right: 2vw;
-	bottom: 10px;
+	right: 12vw;
+	bottom: 0.5vw;
 	z-index: 10000;
 }
 
@@ -1138,3 +1149,5 @@ hr {
 	margin-right: 100px; 
 	display: inline-block;
 }
+
+

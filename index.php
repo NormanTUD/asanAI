@@ -299,7 +299,7 @@ text-align: end;
 				<img src="gui/logo_small.png" id="asanai_logo_cosmo" />
 				<img id="set_german_language" style="height: 2vw; max-height: 32px; top: 15px; left: 25%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("de")' src='lang/_de.svg' />
 				<img id="set_english_language" style="height: 2vw; max-height: 32px; top: 15px; left: 75%; position: absolute; z-index: 9999999999999999999999999999999999999999999999;" onclick='setLang("en")' src='lang/_en.svg' />
-				<a><img onclick='emergency_button()' style="display: none; z-index: 999999999999; width: 10vw; height: 10vw; position: absolute; top: 10px; right: 10px; max-width: 64px; max-height: 64px;" id="emergency_button" src="lang/__de__notaus.png" /></a>
+				<a><img onclick='emergency_button()' style="" id="emergency_button" src="lang/__de__notaus.png" /></a>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
 				<span class="symbol_button" id="show_hide_ribbon_button" onclick="show_ribbon()">&#9776;</span>

@@ -16,3 +16,11 @@
 .no_mark {
 	margin-left: 200px;
 }
+
+#ribbon_shower {
+	font-size: 0px !important;
+}
+
+#presentation_site_nr {
+	font-size: 2vw;
+}
