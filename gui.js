@@ -5886,7 +5886,7 @@ async function load_msg(swal_msg_format) { var start_tensors = memory_leak_debug
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
-			html_msg = "<h1>" + swal_msg_format["title"] + "</h1>";
+			html_msg = "<h1 style='font-size: 3vw;'>" + swal_msg_format["title"] + "</h1>";
 		}
 
 		if(Object.keys(swal_msg_format).includes("html")) {
