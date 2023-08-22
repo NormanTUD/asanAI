@@ -687,16 +687,15 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
+			} else if (("" + e).includes("n is undefined")) {
+				console.warning("Error: " + e + ". This is probably harmless, since it usually means the model was recompiled during this step..");
 			} else {
 				console.error(e);
 				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 					e = e.message;
 				}
-				if(("" + e).includes("n is undefined")) {
-					console.warn("n is undefined. This may be because the model was recompiled while training for some strange reason");
-				} else {
-					await write_error("" + e);
-				}
+
+				await write_error("" + e);
 			}
 		}
 
