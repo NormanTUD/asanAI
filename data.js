@@ -559,7 +559,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				}
 
 				if(is_cosmo_mode) {
-					cosmo_set_labels();
+					await cosmo_set_labels();
 				}
 
 				if($("#shuffle_data").is(":checked")) {
