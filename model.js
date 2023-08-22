@@ -815,6 +815,8 @@ async function create_model (old_model, fake_model_structure, force) { var start
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
 			console.warn(e);
+		} else if(("" + e).includes("Input shape contains 0")) {
+			console.warn(e);
 		} else {
 			throw new Error(e);
 		}
