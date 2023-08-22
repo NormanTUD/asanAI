@@ -65,6 +65,6 @@
 }
 
 #cosmo_mode_header_line {
-	height: fit-content;
+	height: 4vw;
 	display: inline-block;
 }
