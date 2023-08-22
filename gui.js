@@ -2943,15 +2943,24 @@ async function delete_model() {
 }
 
 function get_id_from_train_data_struct(index) {
-	var dataset_index = document.getElementById("dataset").selectedIndex;
+	try {
+		var dataset_index = document.getElementById("dataset").selectedIndex;
 
-	if(dataset_index >= 0) {
-		var dataset = document.getElementById("dataset").children[dataset_index].innerText;
-		if(dataset != undefined) {
-			var id = traindata_struct[dataset][index];
-			return id;
+		if(dataset_index >= 0) {
+			var dataset = document.getElementById("dataset").children[dataset_index].innerText;
+			if(dataset != undefined) {
+				var id = traindata_struct[dataset][index];
+				return id;
+			}
+		}
+	} catch (e) {
+		if(("" + e).includes("TypeError: document.getElementById")) {
+			console.warn("Was the ribbon removed manually?");
+		} else {
+
 		}
 	}
+
 	return false;
 }
 

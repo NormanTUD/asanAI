@@ -1037,6 +1037,12 @@ function doImagesOverlap(imageId1, imageId2) {
 	const rect1 = image1.getBoundingClientRect();
 	const rect2 = image2.getBoundingClientRect();
 
+	
+	if(!rect1 || !rect2) {
+		console.warn("doImagesOverlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
+		return false;
+	}
+
 	// Check for horizontal overlap
 	const horizontalOverlap = rect1.left < rect2.right && rect1.right > rect2.left;
 
