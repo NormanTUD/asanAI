@@ -321,7 +321,23 @@ async function run_tests () { // var start_tensors
 			$("#data_origin").val("csv").trigger("change")
 			delay(5000);
 
-			$("#csv_file").val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").trigger("keyup");
+
+			$("#csv_file").
+				click().
+				val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").
+				trigger("keyup").
+				trigger("change").
+				click()
+			;
+
+			$("#asanai_main_logo").click();
+			$("#csv_file").click();
+			$("#asanai_main_logo").click();
+
+			delay(5000);
+
+			await _set_initializers(1234);
+
 			delay(5000);
 
 			await train_neural_network();	

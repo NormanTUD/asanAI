@@ -351,7 +351,7 @@ text-align: end;
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" src="gui/logo_small.png">
+								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="gui/logo_small.png">
 							</div>
 						</div>
 					</div>
