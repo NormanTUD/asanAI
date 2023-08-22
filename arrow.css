@@ -11,11 +11,11 @@
 	display: block;
 	width: 1.5vw;
 	height: 1.5vw;
-	border-bottom: 5px solid white;
-	border-right: 5px solid white;
+	border-bottom: 0.5vw solid white;
+	border-right: 0.5vw solid white;
 	transform: rotate(45deg);
-	margin: -10px;
-	animation: animate 60s infinite;
+	margin: -1vw;
+	animation: animate 5s infinite;
 }
 
 .arrow span:nth-child(2) {

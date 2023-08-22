@@ -985,8 +985,8 @@ button {
 #scads_logo_cosmo_mode {
 	height: 5vw;
 	position: absolute;
-	left: 10px;
-	top: 10px;
+	left: 0.1vw;
+	top: 0.1vw;
 	display: none;
 }
 
@@ -996,8 +996,8 @@ button {
 	width: 5vw;
 	max-height: 6vw; 
 	position: absolute; 
-	top: 10px; 
-	right: 10px; 
+	top: 0.1vw; 
+	right: 0.1vw; 
 }
 
 #asanai_logo_cosmo {
@@ -1010,7 +1010,7 @@ button {
 	left: 0px; 
 	right: 0px; 
 	text-align: center; 
-	top: 10px;
+	top: 0.1vw;
 }
 
 .pen_size_slider {
