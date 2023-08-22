@@ -287,7 +287,13 @@ function memory_debugger () { // var start_tensors
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
 	}
 
-	document.querySelector('#memory_debugger_div').innerHTML = debug_string;
+	var memdeb = document.querySelector('#memory_debugger_div');
+
+	if(memdeb) {
+		memdeb.innerHTML = debug_string;
+	} else {
+		console.warn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
+	}
 
 	last_num_global_tensors = num_tensors;
 	last_tensor_size_cpu = ram_mb;
