@@ -67,6 +67,7 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
 		return model;
 	}
+
 	try {
 		if(global_model_data) {
 			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
@@ -83,15 +84,20 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 			$("#math_mode_settings").hide();
 		}
 	} catch (e) {
-		await except("ERROR1", e);
-		if(mode == "beginner") {
-			Swal.fire({
-				icon: 'error',
-				title: 'Oops [4]...',
-				text: e
-			});
+		if(("" + e).includes("undefined has no properties")) {
+			console.warn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
+			return;
 		} else {
-			l("ERROR: " + e);
+			await except("ERROR1", e);
+			if(mode == "beginner") {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops [4]...',
+					text: e
+				});
+			} else {
+				l("ERROR: " + e);
+			}
 		}
 	}
 
