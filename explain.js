@@ -1113,7 +1113,7 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 				//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
 				
 				var randomizer_limits = parseFloat($("#randomizer_limits").val());
-				if(randomizer_limits != 0 && i < 10) {
+				if(randomizer_limits != 0) {
 					data = data.add(tf.randomUniform(data.shape, -randomizer_limits, randomizer_limits));
 				}
 
