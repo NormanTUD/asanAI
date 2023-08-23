@@ -383,7 +383,7 @@ function add_seed_option (type, nr) { var start_tensors = memory_leak_debugger()
 		style = ' style="display: none" '
 	}
 
-	var res = "<tr class='visualize_button' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
 
 	memory_leak_debugger("add_seed_option", start_tensors);
 
@@ -393,15 +393,9 @@ function add_seed_option (type, nr) { var start_tensors = memory_leak_debugger()
 function add_visualize_option(type, nr) { var start_tensors = memory_leak_debugger();
 	var style = "";
 
-	var current_input_shape = get_input_shape();
-	if (current_input_shape.length != 3) {
-		style = ' style="display: none" '
-	}
-
 	var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
 
 	memory_leak_debugger("add_visualize_option", start_tensors);
-
 
 	return res;
 }
@@ -1174,13 +1168,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await hide_no_conv_stuff();
 
 		var current_input_shape = get_input_shape();
-		if (current_input_shape.length != 3) {
-			$(".visualize_button").hide();
-			if (cam) {
-				stop_webcam();
-			}
-		} else {
-			$(".visualize_button").show();
+		if (cam) {
+			stop_webcam();
 		}
 
 		try {
