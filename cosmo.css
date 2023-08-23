@@ -66,7 +66,7 @@
 
 #cosmo_mode_header_line {
 	height: 6vw;
-	display: inline-block;
+	display: block;
 }
 
 #example_predictions {
