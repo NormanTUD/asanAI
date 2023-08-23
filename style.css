@@ -749,6 +749,7 @@ input {
 	overflow: scroll;
 	width: 99%; 
 	max-height: 100%; 
+	font-size: 1vw;
 }
 
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
