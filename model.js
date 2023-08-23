@@ -824,6 +824,8 @@ async function create_model (old_model, fake_model_structure, force) { var start
 		return;
 	}
 
+	$(".warning_container").html("").hide();
+
 	if(model && model.layers && model.layers.length) {
 		if(i in model.layers) {
 			try {
@@ -905,6 +907,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 				}
 			}
 		} catch (e) {
+			$($(".warning_container")[i]).html("" + e).show()
 			throw new Error(e);
 		}
 	}
