@@ -248,16 +248,20 @@ async function run_tests () { // var start_tensors
 			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
+			await delay(3000);
 			log("Done waiting 3 seconds...");
 
 			$("#model_dataset").val("and").trigger("change");
 			log("Waiting 3 seconds...");
 			await delay(3000);
 			await _set_initializers();
+			await delay(3000);
 
 			$("#learningRate_adam").val("0.01").trigger("change");
+			await delay(3000);
 
 			await set_epochs(200);
+			await delay(3000);
 
 			await train_neural_network();	
 
@@ -281,8 +285,9 @@ async function run_tests () { // var start_tensors
 
 			result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
 			var r = result_and.toString();
-			if(r.startsWith("0.9") || r.startsWith("0.8")) {
-				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true)
+			test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true)
+			if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
+				log("trained nn: 1 and 1 results:" + result_and.toString());
 			}
 
 			log_test("Testing initializer");
