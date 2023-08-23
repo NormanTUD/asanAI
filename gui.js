@@ -6046,8 +6046,14 @@ function set_right_border_between_example_predictions() {
 }
 
 function get_cursor_or_none (cursorname) {
-	if(isTouchDevice()) {
-		return "none";
+	try {
+		if(isTouchDevice()) {
+			return "none";
+		}
+	} catch (e) {
+		if(("" + e).includes("isTouchDevice is not defined")) {
+			return cursorname;
+		}
 	}
 
 	return cursorname;
