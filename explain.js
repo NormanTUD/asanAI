@@ -985,86 +985,156 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 	var worked = 0;
         var full_data = {};
 
+	if(model.input.shape.length == 4) {
+		full_data["image"] = tf.tidy(() => {
+			var imageH = model.inputs[0].shape[1];
+			var imageW = model.inputs[0].shape[2];
+			const imageDepth = model.inputs[0].shape[3];
 
-	full_data["image"] = tf.tidy(() => {
-                var imageH = model.inputs[0].shape[1];
-                var imageW = model.inputs[0].shape[2];
-                const imageDepth = model.inputs[0].shape[3];
+			// Create an auxiliary model of which input is the same as the original
+			// model but the output is the output of the convolutional layer of
+			// interest.
+			const layerOutput = model.getLayer(null, layerIndex).output;
+			const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
 
-                // Create an auxiliary model of which input is the same as the original
-                // model but the output is the output of the convolutional layer of
-                // interest.
-                const layerOutput = model.getLayer(null, layerIndex).output;
-                const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
+			// This function calculates the value of the convolutional layer's
+			// output at the designated filter index.
+			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
 
-                // This function calculates the value of the convolutional layer's
-                // output at the designated filter index.
-                const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
+			// This returned function (`gradFunction`) calculates the gradient of the
+			// convolutional filter's output with respect to the input image.
+			const gradFunction = tf.grad(lossFunction);
 
-                // This returned function (`gradFunction`) calculates the gradient of the
-                // convolutional filter's output with respect to the input image.
-                const gradFunction = tf.grad(lossFunction);
-
-                // Form a random image as the starting point of the gradient ascent.
-		
-		if(parseInt($("#max_activated_neuron_image_size").val()) && $($(".layer_type")[layerIndex]).val() != "dense") {
-			imageH = imageW = parseInt($("#max_activated_neuron_image_size").val());
-		}
-
-                var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 255);
-		if(typeof(start_image) != "undefined") {
-			image = start_image;
-		}
-
-		image = image.div(parseFloat($("#divide_by").val()));
-
-		var prev_img_str = image.dataSync().join(";");
-		var first_img_str = image.dataSync().join(";");
-
-                for (var i = 0; i < iterations; i++) {
-			if(stop_generating_images) {
-				continue;
-			}
-
-                        const scaledGrads = tf.tidy(() => {
-                                const grads = gradFunction(image);
-                                const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
-                                // Important trick: scale the gradient with the magnitude (norm)
-                                // of the gradient.
-                                return grads.div(norm);
-                        });
-
-                        // Perform one step of gradient ascent: Update the image along the
-                        // direction of the gradient.
-
-			image = tensor_normalize_to_rgb_min_max(image);
-
-			image = image.add(scaledGrads);
-			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
+			// Form a random image as the starting point of the gradient ascent.
 			
-			var randomizer_limits = parseFloat($("#randomizer_limits").val());
-			if(randomizer_limits != 0 && i < 10) {
-				image = image.add(tf.randomUniform(image.shape, -randomizer_limits, randomizer_limits));
+			if(parseInt($("#max_activated_neuron_image_size").val()) && $($(".layer_type")[layerIndex]).val() != "dense") {
+				imageH = imageW = parseInt($("#max_activated_neuron_image_size").val());
 			}
 
-			if(!is_cosmo_mode) {
-				if(image.dataSync().join(";") == prev_img_str && i >= 10) {
-					if(prev_img_str != first_img_str) {
-						header_warning("Early stopping...");
+			var image = tf.randomUniform([1, imageH, imageW, imageDepth], 0, 255);
+			if(typeof(start_image) != "undefined") {
+				image = start_image;
+			}
+
+			image = image.div(parseFloat($("#divide_by").val()));
+
+			var prev_img_str = image.dataSync().join(";");
+			var first_img_str = image.dataSync().join(";");
+
+			for (var i = 0; i < iterations; i++) {
+				if(stop_generating_images) {
+					continue;
+				}
+
+				const scaledGrads = tf.tidy(() => {
+					const grads = gradFunction(image);
+					const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
+					// Important trick: scale the gradient with the magnitude (norm)
+					// of the gradient.
+					return grads.div(norm);
+				});
+
+				// Perform one step of gradient ascent: Update the image along the
+				// direction of the gradient.
+
+				image = tensor_normalize_to_rgb_min_max(image);
+
+				image = image.add(scaledGrads);
+				//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
+				
+				var randomizer_limits = parseFloat($("#randomizer_limits").val());
+				if(randomizer_limits != 0 && i < 10) {
+					image = image.add(tf.randomUniform(image.shape, -randomizer_limits, randomizer_limits));
+				}
+
+				if(!is_cosmo_mode) {
+					if(image.dataSync().join(";") == prev_img_str && i >= 10) {
+						if(prev_img_str != first_img_str) {
+							header_warning("Early stopping...");
+						} else {
+							header_error("Image has not changed");
+						}
+						worked = 1;
+						return deprocessImage(image).arraySync();
 					} else {
-						header_error("Image has not changed");
+						prev_img_str = image.dataSync().join(";");
 					}
-					worked = 1;
-					return deprocessImage(image).arraySync();
-				} else {
-					prev_img_str = image.dataSync().join(";");
 				}
 			}
-                }
 
-		worked = 1;
-                return deprocessImage(image).arraySync();
-        });
+			worked = 1;
+			return deprocessImage(image).arraySync();
+		});
+	} else {
+		full_data["data"] = tf.tidy(() => {
+			// Create an auxiliary model of which input is the same as the original
+			// model but the output is the output of the convolutional layer of
+			// interest.
+			const layerOutput = model.getLayer(null, layerIndex).output;
+			const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
+
+			// This function calculates the value of the convolutional layer's
+			// output at the designated filter index.
+			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
+
+			// This returned function (`gradFunction`) calculates the gradient of the
+			// convolutional filter's output with respect to the input image.
+			const gradFunction = tf.grad(lossFunction);
+
+			// Form a random image as the starting point of the gradient ascent.
+			
+			var data = tf.randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
+			if(typeof(start_image) != "undefined") {
+				data = start_image;
+			}
+
+			var prev_img_str = data.dataSync().join(";");
+			var first_img_str = data.dataSync().join(";");
+
+			for (var i = 0; i < iterations; i++) {
+				if(stop_generating_images) {
+					continue;
+				}
+
+				const scaledGrads = tf.tidy(() => {
+					const grads = gradFunction(data);
+					const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
+					// Important trick: scale the gradient with the magnitude (norm)
+					// of the gradient.
+					return grads.div(norm);
+				});
+
+				// Perform one step of gradient ascent: Update the image along the
+				// direction of the gradient.
+
+				data = tensor_normalize_to_rgb_min_max(data);
+
+				data = data.add(scaledGrads);
+				//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
+				
+				var randomizer_limits = parseFloat($("#randomizer_limits").val());
+				if(randomizer_limits != 0 && i < 10) {
+					data = data.add(tf.randomUniform(data.shape, -randomizer_limits, randomizer_limits));
+				}
+
+				if(data.dataSync().join(";") == prev_img_str && i >= 10) {
+					if(prev_img_str != first_img_str) {
+						header_warning("[DATA] Early stopping...");
+					} else {
+						header_error("[DATA] has not changed");
+					}
+					worked = 1;
+					return data.arraySync();
+				} else {
+					prev_img_str = data.dataSync().join(";");
+				}
+			}
+
+			worked = 1;
+			return data.arraySync();
+		});
+
+	}
 
 	full_data["worked"] = worked;
 
@@ -1314,7 +1384,6 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 
 	try {
 		var start_image = undefined;
-
 		var full_data = inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
