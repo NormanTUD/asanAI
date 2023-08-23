@@ -2690,12 +2690,8 @@ function _temml () {
 	for (var i in items) {
 		var item = items[i];
 		if(!$(item).attr("data-rendered") == 1) {
-			try {
-				temml.render($(item).text(), item);
-				$(item).attr("data-rendered", 1);
-			} catch (e) {
-				throw new Error(e);
-			}
+			temml.render($(item).text(), item);
+			$(item).attr("data-rendered", 1);
 		}
 	}
 }

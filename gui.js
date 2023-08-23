@@ -2955,9 +2955,11 @@ function get_id_from_train_data_struct(index) {
 		}
 	} catch (e) {
 		if(("" + e).includes("TypeError: document.getElementById")) {
-			console.warn("Was the ribbon removed manually?");
+			if(finished_loading) {
+				console.warn("Was the ribbon removed manually?");
+			}
 		} else {
-
+			console.error(e);
 		}
 	}
 
