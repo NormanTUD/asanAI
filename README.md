@@ -77,6 +77,8 @@ in creating this program:
 
 - [MathJax](https://www.mathjax.org/)
 
+- [temml](https://temml.org/)
+
 - [Convolution arithmetic](https://github.com/vdumoulin/conv_arithmetic)
 
 - [TensorFlow.js Examples](https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet)
