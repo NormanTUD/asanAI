@@ -1019,6 +1019,7 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 		image = image.div(parseFloat($("#divide_by").val()));
 
 		var prev_img_str = image.dataSync().join(";");
+		var first_img_str = image.dataSync().join(";");
 
                 for (var i = 0; i < iterations; i++) {
 			if(stop_generating_images) {
@@ -1048,7 +1049,11 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 
 			if(!is_cosmo_mode) {
 				if(image.dataSync().join(";") == prev_img_str && i >= 10) {
-					header_error("Image has not changed");
+					if(prev_img_str != first_img_str) {
+						header_warning("Early stopping...");
+					} else {
+						header_error("Image has not changed");
+					}
 					worked = 1;
 					return deprocessImage(image).arraySync();
 				} else {
@@ -1107,7 +1112,7 @@ function _get_neurons_last_layer (layer, type) { var start_tensors = memory_leak
 	return neurons;
 }
 
-async function draw_maximally_activated_layer (layer, type) { var start_tensors = memory_leak_debugger();
+async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { var start_tensors = memory_leak_debugger();
 	if(!is_cosmo_mode) {
 		show_tab_label("maximally_activated_label", 1);
 		window.scrollTo(0,0);
@@ -1148,7 +1153,38 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 
 		var currentURL = window.location.href;
 		var urlParams = new URLSearchParams(window.location.search);
-		await draw_maximally_activated_neuron(layer, neurons - i - 1);
+
+		var tries_left = 3;
+
+		try {
+			await draw_maximally_activated_neuron(layer, neurons - i - 1);
+		} catch (e) {
+			if(("" + e).includes("already disposed")) {
+				if(!is_recursive) {
+					while (tries_left) {
+						await delay(200);
+						try {
+							await draw_maximally_activated_layer(layer, type, 1);
+						} catch (e) {
+							if(("" + e).includes("already disposed")) {
+								
+							} else {
+								throw new Error(e);
+							}
+						}
+						tries_left--;
+					}
+
+					if(tries_left) {
+
+					}
+				} else {
+					console.log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+				}
+			} else {
+				throw new Error(e);
+			}
+		}
 
 		var end = Date.now();
 

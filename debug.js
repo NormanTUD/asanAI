@@ -30,6 +30,10 @@ function log (...args) { // var start_tensors
 	}
 }
 
+function header_warning (msg) { // var start_tensors
+	console.log("%c" + msg, "background: orange; color: black");
+}
+
 function header_error (msg) { // var start_tensors
 	console.log("%c" + msg, "background: red; color: white");
 }
