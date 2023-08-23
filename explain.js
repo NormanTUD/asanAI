@@ -1335,7 +1335,7 @@ function array_to_color (array, color) { var start_tensors = memory_leak_debugge
 
 function array_to_latex_color (original_array, desc, color, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var array = JSON.parse(JSON.stringify(original_array));
-	var str = "\\underbrace{\\begin{vmatrix}\n";
+	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1352,7 +1352,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{vmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
 
 
 	memory_leak_debugger("array_to_latex_color", start_tensors);
@@ -1363,7 +1363,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 function array_to_latex (array, desc, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var str = "";
-	str = "\\underbrace{\\begin{vmatrix}\n";
+	str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1379,7 +1379,7 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) { var start_
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{vmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
 
 	memory_leak_debugger("array_to_latex", start_tensors);
 
