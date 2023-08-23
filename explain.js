@@ -1111,6 +1111,8 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 	if(!is_cosmo_mode) {
 		show_tab_label("maximally_activated_label", 1);
 		window.scrollTo(0,0);
+
+		$('body').css('cursor', 'wait');
 	}
 
 	var neurons = _get_neurons_last_layer(layer, type);
@@ -1169,7 +1171,7 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 		br = "<br>";
 	}
 
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}Layer ${layer + types_in_order}</${type_h2}>${br}`)
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`)
 
 	l("Done generating images");
 
@@ -1185,6 +1187,7 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 	
 	if(!is_cosmo_mode) {
 		window.scrollTo(0,0);
+		$('body').css('cursor', 'default');
 	}
 }
 

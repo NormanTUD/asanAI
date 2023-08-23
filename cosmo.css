@@ -83,3 +83,7 @@
 .atrament_settings {
 	display: grid;
 }
+
+.h2_maximally_activated_layer_contents {
+	pointer-events: none;
+}
