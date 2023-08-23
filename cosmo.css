@@ -79,3 +79,7 @@
 
 .atrament_buttons {
 }
+
+.atrament_settings {
+	display: grid;
+}
