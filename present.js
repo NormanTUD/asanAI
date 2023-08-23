@@ -86,11 +86,7 @@ function addEndPresentationButton (force=0) {
 	if((finished_loading && is_presenting) || force) {
 		var new_element = $(`
 			<span onclick='endPresentation();$(this).remove()' id='skip_presentation_button'>
-				SKIP <div class="arrow" style="left: 15px; 8px;">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
+				SKIP
 			</span>
 		`);
 		$("body").append(new_element)

@@ -106,7 +106,6 @@
 		} else {
 ?>
 			<?php minify_css("cosmo.css"); ?>
-			<?php minify_css("arrow.css"); ?>
 <?php
 		}
 ?>
@@ -1593,12 +1592,6 @@ P
 						style="min-height: 50px; width: 200px;"
 						onclick="click_next_button()" 
 					>
-						<div class="arrow" style="left: 0px;">
-							<span></span>
-							<span></span>
-							<span></span>
-						</div>
-
 						<span
 							class="TRANSLATEME_train_the_neural_network cosmo cosmo_autoset_text" 
 							data-keep_cosmo="1"
