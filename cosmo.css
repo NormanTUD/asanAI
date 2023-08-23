@@ -68,3 +68,7 @@
 	height: 6vw;
 	display: inline-block;
 }
+
+#example_predictions {
+	display: block ruby;
+}

@@ -1526,7 +1526,6 @@ text-align: end;
 												<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict"></span></button>
 											</div>
 										</div>
-P
 										<div id="prediction_non_image" style="display: none"></div>
 
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
