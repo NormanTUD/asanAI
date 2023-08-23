@@ -1526,9 +1526,8 @@ text-align: end;
 												<br>
 												<button onclick="predict($('#predict_own_data').val());repredict()"><span class="TRANSLATEME_predict"></span></button>
 											</span>
+											<span id="prediction_non_image" style="display: none"></span>
 										</span>
-
-										<span id="prediction_non_image" style="display: none"></span>
 
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
