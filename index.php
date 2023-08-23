@@ -600,7 +600,7 @@ text-align: end;
 							</table>
 
 						</div>
-						<div class="ribbon-group-title">Weights/Shuffle/Renderer/Debug</div>
+						<div class="ribbon-group-title">Weights/Shuffle/Renderer</div>
 					</div>
 
 					<div class="ribbon-group-sep"></div>
