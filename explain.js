@@ -1209,7 +1209,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 		br = "<br>";
 	}
 
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`)
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`)
 
 	l("Done generating images");
 
