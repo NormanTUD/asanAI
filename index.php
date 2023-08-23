@@ -935,7 +935,7 @@ text-align: end;
 				</div>
 
 				<div id="visualization_ribbon" class="ribbon_tab_content" title="Visualization">
-					<div class="hide_when_no_conv_visualizations">
+					<div>
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
 						<div class="ribbon-group">
@@ -950,7 +950,7 @@ text-align: end;
 											<td><span class="TRANSLATEME_randomizer_limits"></span></td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
 										</tr>
-										<tr>
+										<tr class="hide_when_no_conv_visualizations">
 											<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
 										</tr>
