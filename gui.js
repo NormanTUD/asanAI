@@ -5492,7 +5492,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tenso
 	}
 
 	var w = 300;
-	var h = 350;
+	var h = 300;
 
 	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
