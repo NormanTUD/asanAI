@@ -1373,12 +1373,6 @@ async function predict_maximally_activated (item, force_category) { var start_te
 async function draw_maximally_activated_neuron (layer, neuron) { var start_tensors = memory_leak_debugger();
 	var current_input_shape = get_input_shape();
 
-	if(current_input_shape.length != 3) {
-		console.warn("input-shape does not have 3 values (without batch), is: ", model.input.shape);
-		memory_leak_debugger("predict_maximally_activated", start_tensors);
-		return;
-	}
-
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
 
@@ -1389,25 +1383,29 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
 		if(full_data["worked"]) {
-			var data = full_data["image"][0];
-			var canvas = get_canvas_in_class(layer, "maximally_activated_class");
+			if(Object.keys(full_data).includes("data")) {
+				console.log("Maximally activated tensors:", tensor_print_to_string(tf.tensor(full_data["data"])));
+			} else if (Object.keys(full_data).includes("image")) {
+				var data = full_data["image"][0];
+				var canvas = get_canvas_in_class(layer, "maximally_activated_class");
 
-			var data_hash = {
-				layer: layer, 
-				neuron: neuron,
-				model_hash: await get_model_config_hash()
-				
-			};
+				var data_hash = {
+					layer: layer, 
+					neuron: neuron,
+					model_hash: await get_model_config_hash()
+					
+				};
 
-			var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
+				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
 
-			if(res) {
-				$("#maximally_activated_content").prepend(canvas);
-				if(!is_cosmo_mode) {
-					show_tab_label("maximally_activated_label", 1)
+				if(res) {
+					$("#maximally_activated_content").prepend(canvas);
+					if(!is_cosmo_mode) {
+						show_tab_label("maximally_activated_label", 1)
+					}
+				} else {
+					log("Res: " + res);
 				}
-			} else {
-				log("Res: " + res);
 			}
 
 			return res;
