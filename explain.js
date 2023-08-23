@@ -1324,7 +1324,7 @@ function array_to_color (array, color) { var start_tensors = memory_leak_debugge
 		if(!this_color) {
 			this_color = "orange";
 		}
-		new_array.push("\\color{" + this_color + "}{" + array[x] + "}");
+		new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
 		x++;
 	}
 
@@ -1335,7 +1335,7 @@ function array_to_color (array, color) { var start_tensors = memory_leak_debugge
 
 function array_to_latex_color (original_array, desc, color, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var array = JSON.parse(JSON.stringify(original_array));
-	var str = "\\underbrace{\\begin{pmatrix}\n";
+	var str = "\\underbrace{\\begin{vmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1352,7 +1352,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{vmatrix}}_{\\mathrm{" + desc + "}}\n";
 
 
 	memory_leak_debugger("array_to_latex_color", start_tensors);
@@ -1363,7 +1363,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 function array_to_latex (array, desc, newline_instead_of_ampersand) { var start_tensors = memory_leak_debugger();
 	var str = "";
-	str = "\\underbrace{\\begin{pmatrix}\n";
+	str = "\\underbrace{\\begin{vmatrix}\n";
 
 	var joiner = " & ";
 	if(newline_instead_of_ampersand) {
@@ -1379,7 +1379,7 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) { var start_
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{vmatrix}}_{\\mathrm{" + desc + "}}\n";
 
 	memory_leak_debugger("array_to_latex", start_tensors);
 
@@ -1559,7 +1559,8 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 			"equation": "\\mathrm{sigmoid}\\left(x\\right) = \\sigma\\left(x\\right) = \\frac{1}{1+e^{-x}}",
 			"equation_no_function_name": "\\sigma\\left(REPLACEME\\right) = \\frac{1}{1+e^{-REPLACEME}}",
 			"lower_limit": 0,
-			"upper_limit": 1
+			"upper_limit": 1,
+			"math_ml": 1
 		},
 		"tanh": {
 			"equation": "\\mathrm{tanh}\\left(x\\right) = \\frac{e^x-e^{-x}}{e^x+e^{-x}}",
@@ -1808,7 +1809,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 			str += "<h2>Layers:</h2>";
 		}
 
-		str += "$$ \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
+		str += "<div class='temml_me'> \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
 
 		if(this_layer_type == "dense") {
 			var activation_name = model.layers[i].activation.constructor.className;
@@ -1833,7 +1834,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 						this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
 					}
 
-					activation_string += "$$" + this_activation_string + "$$\n";
+					activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
 
 					shown_activation_equations.push(activation_name);
 				}
@@ -1946,7 +1947,6 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 					this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
 				}
 
-
 				if(max_value_item.length) {
 					var max_value = max_value_item.val();
 					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");		
@@ -2012,7 +2012,8 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 		} else {
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
-		str += "$$";
+
+		str += "</div><br>";
 		/*
 		if(i != model.layers.length - 1) {
 			str += "<hr class='full_width_hr'>";
@@ -2021,7 +2022,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 	}
 
 	if(Object.keys(loss_equations).includes($("#loss").val())) {
-		str += "<h2>Loss:</h2>$$" + loss_equations[$("#loss").val()] + "$$ ";
+		str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[$("#loss").val()] + "</div><br>";
 	}
 
 	var optimizer = $("#optimizer").val();
@@ -2045,7 +2046,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 				var origin = this_optimizer.variables[thisvarname]["origin"];
 
 
-				str += "$$ \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
+				str += "<div class='temml_me'> \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
 				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
 					str += " = " + this_optimizer.variables[thisvarname]["value"];
 				} else if(origin !== undefined) {
@@ -2053,10 +2054,10 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 					var valofparam = $("#" + origin).val();
 					str += " = " + valofparam;
 				}
-				str += " $$";
+				str += "</div><br>";
 
 				if(Object.keys(this_optimizer.variables).includes("example")) {
-					str += "$$ \\displaystyle " + this_optimizer.variables.example + " $$";
+					str += "<div class='temml_me'> \\displaystyle " + this_optimizer.variables.example + " </div><br>";
 				}
 			}
 
@@ -2065,11 +2066,11 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 
 		for (var m = 0; m < dependencies.length; m++) {
 			if(dependencies[m] != optimizer) {
-				str += "$$ \\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" $$\n$$ ") + " $$";
+				str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 			}
 		}
 
-		str += "$$ \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" $$\n$$ ") + " $$";
+		str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 	} else {
 		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
 	}
@@ -2176,14 +2177,19 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 			var old_md5 = math_items_hashes[xpath];
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
-				await MathJax.typesetPromise([math_tab_code_elem]);
+				//await MathJax.typesetPromise([math_tab_code_elem]);
+				_temml();
 				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
-			var mathjax_error_explanation = "Are you online?";
-			console.warn(e);
-			$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+			if(("" + e).includes("can't assign to property")) {
+				console.warn("failed temml");
+			} else {
+				var mathjax_error_explanation = "Are you online?";
+				console.warn(e);
+				$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+			}
 		}
 	} else {
 		hide_tab_label("math_tab_label");
@@ -2197,14 +2203,14 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 function color_compare_old_and_new_layer_data (old_data, new_data) { var start_tensors = memory_leak_debugger();
 	assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");
 
-	var default_color = "black";
+	var default_color = "#ffffff";
 	var cookie_theme = getCookie("theme");
 	var darkmode = 0;
 	if(cookie_theme == "darkmode") {
 		darkmode = 1;
 	}
 	if(darkmode) {
-		default_color = "white";
+		default_color = "#353535";
 	}
 
 	var color_diff = [];
@@ -2243,9 +2249,9 @@ function color_compare_old_and_new_layer_data (old_data, new_data) { var start_t
 								color_diff[layer_nr][this_key][item_nr] = default_color;
 							} else {
 								if(this_old_item > this_new_item) {
-									color_diff[layer_nr][this_key][item_nr] = "OrangeRed";
+									color_diff[layer_nr][this_key][item_nr] = "#800020";
 								} else if(this_old_item < this_new_item) {
-									color_diff[layer_nr][this_key][item_nr] = "SeaGreen";
+									color_diff[layer_nr][this_key][item_nr] = "#2E8B57";
 								}
 							}
 						} else { // sub array contains more arrays (kernels most probably))
@@ -2256,9 +2262,9 @@ function color_compare_old_and_new_layer_data (old_data, new_data) { var start_t
 										color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
 									} else {
 										if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
-											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "OrangeRed";
+											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#800020";
 										} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
-											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "SeaGreen";
+											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#2E8B57";
 										}
 									}
 								} catch (e) {
@@ -2676,4 +2682,16 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	updateTranslations();
 
 	memory_leak_debugger("cosmo_maximally_activate_last_layer", start_tensors);
+}
+
+function _temml () {
+	var items = $(".temml_me");
+
+	for (var i in items) {
+		var item = items[i];
+		if(!$(item).attr("data-rendered") == 1) {
+			temml.render($(item).text(), item);
+			$(item).attr("data-rendered", 1);
+		}
+	}
 }
