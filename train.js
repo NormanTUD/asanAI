@@ -771,12 +771,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 		var w = parseInt(pw / (numCategories + 2));
 
 		if(is_cosmo_mode) {
-			var older_canvasses = $("#canvas_grid_visualization").find("canvas");
-			if(older_canvasses.length) {
-				var new_w = older_canvasses[0].width;
-				log(`old w = ${w}, new_w = ${new_w}`);
-				w = new_w / relationScale;
-			}
+			w = 200;
 		}
 
 		canvas.width = w;
