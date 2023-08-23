@@ -1271,7 +1271,7 @@ async function typeset() { var start_tensors = memory_leak_debugger();
 		}
 
 		if(retypeset) {
-			MathJax.typeset([math_elements[i]]);
+			//MathJax.typeset([math_elements[i]]);
 			math_items_hashes[xpath] = new_md5;
 		}
 	}

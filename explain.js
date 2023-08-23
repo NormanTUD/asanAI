@@ -2184,7 +2184,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 			}
 		} catch (e) {
 			if(("" + e).includes("can't assign to property")) {
-				console.warn("failed temml");
+				console.warn("failed temml:", e);
 			} else {
 				var mathjax_error_explanation = "Are you online?";
 				console.warn(e);
@@ -2690,8 +2690,12 @@ function _temml () {
 	for (var i in items) {
 		var item = items[i];
 		if(!$(item).attr("data-rendered") == 1) {
-			temml.render($(item).text(), item);
-			$(item).attr("data-rendered", 1);
+			try {
+				temml.render($(item).text(), item);
+				$(item).attr("data-rendered", 1);
+			} catch (e) {
+				throw new Error(e);
+			}
 		}
 	}
 }
