@@ -1128,4 +1128,6 @@ hr {
 	display: inline-block;
 }
 
-
+.maximally_activated_predictions>.predict_table {
+	width: 200px;
+}
