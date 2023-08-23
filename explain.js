@@ -2249,7 +2249,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) { var start_t
 								color_diff[layer_nr][this_key][item_nr] = default_color;
 							} else {
 								if(this_old_item > this_new_item) {
-									color_diff[layer_nr][this_key][item_nr] = "#800020";
+									color_diff[layer_nr][this_key][item_nr] = "#cf1443";
 								} else if(this_old_item < this_new_item) {
 									color_diff[layer_nr][this_key][item_nr] = "#2E8B57";
 								}
@@ -2262,7 +2262,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) { var start_t
 										color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
 									} else {
 										if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
-											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#800020";
+											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#cf1443";
 										} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
 											color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#2E8B57";
 										}
