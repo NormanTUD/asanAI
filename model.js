@@ -90,6 +90,8 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 		} else {
 			if(("" + e).includes("Input 0 is incompatible with layer")) {
 				throw Error("" + e);
+			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
+				throw Error("" + e);
 			} else {
 				await except("ERROR1", e);
 				if(mode == "beginner") {
