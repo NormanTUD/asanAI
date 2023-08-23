@@ -1173,6 +1173,10 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 	await allow_editable_labels();
 
 	memory_leak_debugger("draw_maximally_activated_", start_tensors);
+	
+	if(!is_cosmo_mode) {
+		window.scrollTo(0,0);
+	}
 }
 
 async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_debugger();
