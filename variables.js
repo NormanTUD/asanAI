@@ -1410,10 +1410,12 @@ var last_manually_removed_manicule_element = null;
 
 var enable_cosmo_debugger = false;
 
-if(enable_cosmo_debug) {
-	console.log("Enabling cosmo debugger /etc/cosmo_debug existed");
-	enable_cosmo_debugger = true;
-}
+try {
+	if(enable_cosmo_debug) {
+		console.log("Enabling cosmo debugger /etc/cosmo_debug existed");
+		enable_cosmo_debugger = true;
+	}
+} catch (e) {}
 
 var idleTime = 0;
 
