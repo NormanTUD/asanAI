@@ -192,7 +192,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	return old_percentage;
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_msg_format={ title: language[lang]["loading_images_into_memory"], html: language[lang]["this_may_take_a_while"] }, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
+async function get_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");
@@ -295,10 +295,6 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, swal_m
 
 	stop_downloading_data = false;
 	$("#stop_downloading").hide();
-
-	if(!skip_real_image_download && !dont_show_swal) {
-		await load_msg(swal_msg_format);
-	}
 
 	document.title = original_title;
 
@@ -635,13 +631,6 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 		} else if(data_origin == "image") {
-			Swal.fire({
-				title: language[lang]["loading_images_into_memory"],
-				html: language[lang]["this_may_take_a_while"],
-				timer: 2000,
-				showConfirmButton: false
-			});
-
 			l("Generating data from images");
 
 			var category_counter = $(".own_image_label").length;
