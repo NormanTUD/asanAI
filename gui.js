@@ -4566,6 +4566,11 @@ function human_readable_time(seconds) { // start_tensors
 		return language[lang]["one_second"];
 	}
 
+	if(seconds > 86400 * 365) {
+		console.warn("Seconds is very large:", seconds, "Please check the source of that");
+		console.trace();
+	}
+
 	var levels = [
 		[Math.floor(seconds / 31536000), language[lang]['years']],
 		[Math.floor((seconds % 31536000) / 86400), language[lang]['days']],

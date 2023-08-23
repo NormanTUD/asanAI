@@ -680,10 +680,6 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 
 			$("#predictcontainer").show();
 			$("#predict_error").hide().html("");
-
-			await enable_everything();
-
-			$("#training_progress_bar").hide();
 		} catch (e) {
 			if(("" + e).includes("is already disposed")) {
 				console.error("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
@@ -701,6 +697,9 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 				await write_error("" + e);
 			}
 		}
+
+		await enable_everything();
+		$("#training_progress_bar").hide();
 
 		await dispose(fit_data);
 	}
@@ -721,7 +720,7 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 
 	await save_current_status();
 	var training_time = parseInt(parseInt(Date.now() - last_training_time) / 1000);
-	l("Done training, took " + human_readable_time(training_time) + " (" + training_time + "s)");
+	l(language[lang]["done_training_took"] + " " + human_readable_time(training_time) + " (" + training_time + "s)");
 	last_training_time = "";
 
 	memory_leak_debugger("run_neural_network", start_tensors);
