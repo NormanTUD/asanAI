@@ -635,6 +635,9 @@ async function _get_fit_data (xs_and_ys) { var start_tensors = memory_leak_debug
 
 async function run_neural_network () { var start_tensors = memory_leak_debugger();
 	await clean_gui();
+	if(is_cosmo_mode) {
+		await fit_to_window();
+	}
 
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
 	updateTranslations();
@@ -766,6 +769,15 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 		var canvas = document.createElement("canvas");
 		var pw = parseInt($("#tfvis_tab").width() * relationScale);
 		var w = parseInt(pw / (numCategories + 2));
+
+		if(is_cosmo_mode) {
+			var older_canvasses = $("#canvas_grid_visualization").find("canvas");
+			if(older_canvasses.length) {
+				var new_w = older_canvasses[0].width;
+				log(`old w = ${w}, new_w = ${new_w}`);
+				w = new_w / relationScale;
+			}
+		}
 
 		canvas.width = w;
 		canvas.height = 400;

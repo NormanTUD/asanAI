@@ -1004,6 +1004,7 @@ async function cosmo_set_labels () {
 
 async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 	$(_child).css("width", "");
+
 	var doc_height = $(_parent)[0].innerHeight;
 	var doc_width = $(_parent)[0].innerWidth;
 	doc_height -= $("#scads_logo_cosmo_mode").height();
