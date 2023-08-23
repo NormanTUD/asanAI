@@ -264,6 +264,7 @@ async function run_tests () { // var start_tensors
 			await delay(3000);
 
 			await train_neural_network();	
+			await delay(3000);
 
 			var result_and = await model.predict(tf.tensor([[0, 0]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
