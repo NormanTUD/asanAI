@@ -1519,6 +1519,13 @@ text-align: end;
 										
 									</div>
 									<span id="own_files" class="no_autochoose_next_on_click">
+										<div id="generate_images_msg_wrapper" style="display:none">
+											<div id="generate_images_msg"></div>
+											<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;" />
+											<button onclick='stop_generating_images=1'>
+												<span class="TRANSLATEME_stop_generating_images"></span>
+											</button>
+										</div>
 										<div class="hide_when_image">
 											<div id="predict_own">
 												<textarea id="predict_own_data" style="width: 100%; height: 200px"></textarea>

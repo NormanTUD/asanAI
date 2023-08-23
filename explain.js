@@ -1130,8 +1130,13 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 
 	favicon_spinner();
 
+	
 	for (var i = 0; i < neurons; i++) {
+		$("#generate_images_msg_wrapper").hide();
+		$("#generate_images_msg").html("");
+
 		if(stop_generating_images) {
+			console.info("Stopped generating images because the stop generating images button was clicked");
 			continue;
 		}
 	
@@ -1149,6 +1154,10 @@ async function draw_maximally_activated_layer (layer, type) { var start_tensors 
 
 		times.push(time);
 	}
+
+	$("#generate_images_msg_wrapper").hide();
+	$("#generate_images_msg").html("");
+
 
 	var type_h2 = "h2";
 	var ruler = "";
@@ -1208,6 +1217,7 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 
 	$("#current_image").remove();
 
+	/*
 	await Swal.fire({
 		title: language[lang]["ai_tries_to_draw"],
 		html: swal_msg + "<span id='current_image_span' style='display: none'><canvas id='current_image_canvas'></canvas></span>",
@@ -1220,6 +1230,7 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 			stop_generating_images = 1;
 		}
 	});
+	*/
 
 	if(!is_cosmo_mode) {
 		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
