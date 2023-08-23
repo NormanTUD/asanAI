@@ -1101,6 +1101,8 @@ function _get_neurons_last_layer (layer, type) { var start_tensors = memory_leak
 		neurons = model.layers[layer].filters;
 	} else if (type == "dense") {
 		neurons = model.layers[layer].units;
+	} else if (type == "flatten") {
+		neurons = 1;
 	} else {
 		console.warn("Unknown layer " + layer);
 		memory_leak_debugger("_get_neurons_last_layer", start_tensors);

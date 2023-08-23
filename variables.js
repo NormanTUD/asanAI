@@ -250,7 +250,9 @@ var layer_options = {
 	},
 	"flatten": {
 		"description": "<span class=\"TRANSLATEME_flatten_description\" \/>",
-		"options": [],
+		"options": [
+			"visualize"
+		],
 		"category": "Basic"
 	},
 	"dropout": {
