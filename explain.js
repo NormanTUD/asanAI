@@ -2178,7 +2178,13 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				//await MathJax.typesetPromise([math_tab_code_elem]);
-				_temml();
+				try {
+					_temml();
+				} catch (e) {
+					if(!("" + e).includes("assign to property")) {
+						console.info("" + e);
+					}
+				}
 				show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
