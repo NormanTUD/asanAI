@@ -88,15 +88,19 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 			console.warn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
 			return;
 		} else {
-			await except("ERROR1", e);
-			if(mode == "beginner") {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops [4]...',
-					text: "" + e
-				});
+			if(("" + e).includes("Input 0 is incompatible with layer")) {
+				throw Error("" + e);
 			} else {
-				l("ERROR: " + e);
+				await except("ERROR1", e);
+				if(mode == "beginner") {
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops [4]...',
+						text: "" + e
+					});
+				} else {
+					l("ERROR: " + e);
+				}
 			}
 		}
 	}
