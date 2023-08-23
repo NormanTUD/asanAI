@@ -5491,6 +5491,9 @@ function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tenso
 	//	log(`!!!!!!${idname}!!!!!!`)
 	}
 
+	var w = 300;
+	var h = 350;
+
 	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
 			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='gui/pen.png'/></a></span>
@@ -5505,7 +5508,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tenso
 			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
 			<br />
 		</span>
-		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: 200px; height: 200px" width=200 height=200 id="${idname}"></canvas>
+		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: ${w}px; height: ${h}px" width=${w} height=${h} id="${idname}"></canvas>
 	</form>`;
 
 	var drawingboard = $(code);

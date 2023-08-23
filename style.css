@@ -1136,3 +1136,7 @@ hr {
 .maximally_activated_predictions>.predict_table {
 	width: 200px;
 }
+
+.no_mark {
+	display: flex;
+}
