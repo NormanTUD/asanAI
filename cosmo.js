@@ -767,7 +767,7 @@ function addBackgroundGradient() {
 	var body = document.querySelector("body");
 	var from = "d3e4f3";
 	var to = "ffffff";
-	body.style.background = `linear-gradient(to bottom, #${from} 0px, #${to} 100px)`;
+	body.style.background = `linear-gradient(to bottom, #${from} 0px, #${to} 10vh)`;
 }
 
 function findColorPickerElements(node, colorPickerElements) {
