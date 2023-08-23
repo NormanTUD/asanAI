@@ -1,3 +1,7 @@
+html, body{
+	scroll-behavior: smooth;
+}
+
 html {
 	min-height:100%;
 	outline: none;

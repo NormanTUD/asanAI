@@ -1110,6 +1110,7 @@ function _get_neurons_last_layer (layer, type) { var start_tensors = memory_leak
 async function draw_maximally_activated_layer (layer, type) { var start_tensors = memory_leak_debugger();
 	if(!is_cosmo_mode) {
 		show_tab_label("maximally_activated_label", 1);
+		window.scrollTo(0,0);
 	}
 
 	var neurons = _get_neurons_last_layer(layer, type);
@@ -2644,7 +2645,10 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 
 	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
+	await tf.nextFrame();
+
 	await fit_to_window();
+
 
 	var example_image_width = $($(".layer_image")[0]).width();
 
