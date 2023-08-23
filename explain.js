@@ -1047,8 +1047,9 @@ function inputGradientAscent(layerIndex, neuron, iterations, start_image) { var 
 			}
 
 			if(!is_cosmo_mode) {
-				if(image.dataSync().join(";") == prev_img_str && i >= 5) {
+				if(image.dataSync().join(";") == prev_img_str && i >= 10) {
 					header_error("Image has not changed");
+					worked = 1;
 					return deprocessImage(image).arraySync();
 				} else {
 					prev_img_str = image.dataSync().join(";");
