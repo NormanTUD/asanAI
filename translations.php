@@ -224,7 +224,8 @@
 			"very_sure" => "Very sure",
 			"time_per_batch" => "Time per Batch",
 			"training" => "Training",
-			"done_training_took" => "Done Training, took"
+			"done_training_took" => "Done Training, took",
+			"done_generating_images" => "Done generating images"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -450,7 +451,8 @@
 			"very_sure" => "Sehr sicher",
 			"time_per_batch" => "Zeit pro Batch",
 			"training" => "Training",
-			"done_training_took" => "Training fertig, es dauerte"
+			"done_training_took" => "Training fertig, es dauerte",
+			"done_generating_images" => "Bilder fertig generiert"
 		)
 	);
 ?>

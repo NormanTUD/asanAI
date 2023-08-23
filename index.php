@@ -1441,6 +1441,7 @@ text-align: end;
 									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
 									<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset"></span></button>
 									<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions"></span></button>
+									<button style="display: none" onclick="stop_generating_images=1"><span id="stop_generating_images_button" class="TRANSLATEME_stop_generating_images"></span></button>
 									<div id="maximally_activated_content"></div>
 								</div>
 

@@ -1209,6 +1209,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 
 	favicon_spinner();
 
+	$("#stop_generating_images_button").show();
 	
 	for (var i = 0; i < neurons; i++) {
 		$("#generate_images_msg_wrapper").hide();
@@ -1219,7 +1220,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 			continue;
 		}
 	
-		await _show_eta(times, i, neurons);
+		_show_eta(times, i, neurons);
 
 		var start = Date.now();
 
@@ -1229,6 +1230,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 		var tries_left = 3;
 
 		try {
+			l(`Generating image for ${i + 1} of ${neurons}`);
 			await draw_maximally_activated_neuron(layer, neurons - i - 1);
 		} catch (e) {
 			if(("" + e).includes("already disposed")) {
@@ -1236,6 +1238,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 					while (tries_left) {
 						await delay(200);
 						try {
+							l(`Generating image for ${i + 1} of ${neurons} failed. Trying again...`);
 							await draw_maximally_activated_layer(layer, type, 1);
 						} catch (e) {
 							if(("" + e).includes("already disposed")) {
@@ -1265,9 +1268,9 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 		times.push(time);
 	}
 
+	$("#stop_generating_images_button").hide();
 	$("#generate_images_msg_wrapper").hide();
 	$("#generate_images_msg").html("");
-
 
 	var type_h2 = "h2";
 	var ruler = "";
@@ -1281,7 +1284,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 
 	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`)
 
-	l("Done generating images");
+	l(language[lang]["done_generating_images"]);
 
 	stop_generating_images = false;
 
@@ -1299,7 +1302,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 	}
 }
 
-async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_debugger();
+function _show_eta (times, i, neurons) { var start_tensors = memory_leak_debugger();
 	var eta = "";
 	if(times.length) {
 		eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
@@ -1327,21 +1330,6 @@ async function _show_eta (times, i, neurons) { var start_tensors = memory_leak_d
 	$("#show_cosmo_epoch_status").hide();
 
 	$("#current_image").remove();
-
-	/*
-	await Swal.fire({
-		title: language[lang]["ai_tries_to_draw"],
-		html: swal_msg + "<span id='current_image_span' style='display: none'><canvas id='current_image_canvas'></canvas></span>",
-		timer: 2000,
-		showCancelButton: !is_cosmo_mode,
-		showConfirmButton: false
-	}).then((e)=>{
-		if(e.isDismissed && e.dismiss == "cancel") {
-			l(language[lang]["stopped_generating_images"]);
-			stop_generating_images = 1;
-		}
-	});
-	*/
 
 	if(!is_cosmo_mode) {
 		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
@@ -1422,6 +1410,8 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 	}
 
 	memory_leak_debugger("predict_maximally_activated", start_tensors);
+
+	await tf.nextFrame();
 }
 
 function array_to_fixed (array, fixnr) { var start_tensors = memory_leak_debugger();
