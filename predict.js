@@ -667,7 +667,6 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				log("out_data:", res_array, "latex_output", latex_output);
 
 				html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
-
 				count++;
 				$("#predict_error").html("");
 			} catch (e) {
@@ -693,6 +692,11 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 	memory_leak_debugger("_print_predictions_text", start_tensors);
 
 	show_or_hide_predictions(count);
+
+	try {
+		_temml();
+	} catch (e) {
+	}
 
 	return count;
 }

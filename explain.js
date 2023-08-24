@@ -2782,7 +2782,7 @@ async function _arbitrary_array_to_latex (arr) {
 					for (var j in arr[i]) {
 						var item = arr[i][j];
 						var res = await _arbitrary_array_to_latex(item);
-						if(res !== undefined && res !== null) {
+						if(res !== undefined && res !== null && !res.toString().match(/^\s*$/)) {
 							line_array.push(res);
 						}
 					}
