@@ -2263,6 +2263,9 @@ async function chose_dataset(no_set_config) {
 	}
 
 	$("#prediction_non_image").hide();
+
+	model = await _create_model();
+	await compile_model();
 }
 
 function init_weight_file_list() {
@@ -3544,10 +3547,12 @@ async function change_data_origin() { var start_tensors = memory_leak_debugger()
 			stop_webcam();
 		}
 	}
+
+	model = await _create_model();
+	await compile_model();
+
 	currently_running_change_data_origin = 0;
 
-	model = await _create_model()
-	await compile_model()
 
 	memory_leak_debugger("change_data_origin", start_tensors);
 }
