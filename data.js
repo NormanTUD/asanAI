@@ -1642,3 +1642,43 @@ async function optimize_all_layers_once () { var start_tensors = memory_leak_deb
 	}
 	memory_leak_debugger("optimize_all_layers_once", start_tensors);
 }
+
+async function get_own_tensor_data (element) {
+	assert(typeof(element) == "object", "element is not an object");
+
+	var text = $(element).val();
+	var id = $(element).attr("id");
+
+	var msg = "";
+	var latex = "";
+	var tensor_array = [];
+
+	try {
+		tensor_array = JSON.parse(text);
+	} catch (e) {
+		msg += "" + e;
+	}
+
+	try {
+		latex = await arbitrary_array_to_latex(tensor_array)
+	} catch (e) {
+		msg += "" + e;
+	}
+
+	if(latex) {
+		msg += latex;
+	}
+
+	if(msg) {
+		if(id == "x_tensor") {
+			$("#x_preview").html(msg).show();
+		} else if (id == "y_tensor") {
+			$("#y_preview").html(msg).show();
+		} else {
+			throw new Error("Unknown field: " + id);
+		}
+	}
+
+	log([tensor_array, latex])
+	return [tensor_array, latex];
+}

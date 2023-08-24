@@ -2769,13 +2769,16 @@ async function _arbitrary_array_to_latex (arr) {
 
 			var shape = await get_shape_from_array(arr);
 
+			var line_end_marker = " \\\\\n ";
+			var cell_end_marker = " & ";
+
 			if(shape.length == 1) {
 				for (var i in arr) {
 					var item = arr[i];
 					str_array.push(await _arbitrary_array_to_latex(item));
 				}
 
-				str += str_array.join("\\\\\n");
+				str += str_array.join(line_end_marker);
 			} else if (shape.length == 2) {
 				for (var i in arr) {
 					var line_array = [];
@@ -2787,17 +2790,17 @@ async function _arbitrary_array_to_latex (arr) {
 						}
 					}
 
-					str_array.push(line_array.join(" \\\\\n "));
+					str_array.push(line_array.join(cell_end_marker));
 				}
 
-				str += str_array.join(" & ");
+				str += str_array.join(line_end_marker);
 			} else {
 				for (var i in arr) {
 					var item = arr[i];
 					str_array.push(await _arbitrary_array_to_latex(item));
 				}
 
-				str += str_array.join("\\\\\n");
+				str += str_array.join(line_end_marker);
 			}
 
 
