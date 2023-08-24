@@ -1436,6 +1436,7 @@ text-align: end;
 								</div>
 
 								<div id="maximally_activated" class="tab maximally_activated_class">
+									<span class="temml_me">\frac{x}{y}</span>
 									<br>
 									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
 									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>

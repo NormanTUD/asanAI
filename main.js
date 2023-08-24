@@ -581,6 +581,15 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 		await restart_fcnn(1);
 	}
 
+	try {
+		_temml();
+	} catch (e) {
+		if(("" + e).includes("not an object")) {
+			// ignore
+		} else {
+			console.error(e);
+		}
+	}
 
 	l("Site is ready");
 
