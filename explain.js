@@ -1154,8 +1154,10 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 
 		var tries_left = 3;
 
+		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${i + 1} ${language[lang]["of"]} ${neurons}`;
+
 		try {
-			l(`Generating image for ${i + 1} of ${neurons}`);
+			l(base_msg);
 			await draw_maximally_activated_neuron(layer, neurons - i - 1);
 		} catch (e) {
 			if(("" + e).includes("already disposed")) {
@@ -1163,7 +1165,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 					while (tries_left) {
 						await delay(200);
 						try {
-							l(`Generating image for ${i + 1} of ${neurons} failed. Trying again...`);
+							l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
 							await draw_maximally_activated_layer(layer, type, 1);
 						} catch (e) {
 							if(("" + e).includes("already disposed")) {
