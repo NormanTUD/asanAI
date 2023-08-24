@@ -1442,7 +1442,7 @@ text-align: end;
 										<div class="temml_me">W = \textrm{Weights}</div>
 										<div class="temml_me">b = \textrm{Bias}</div>
 										<div class="temml_me">f(\textbf{x}; \textbf{W}, b) = \textrm{Activation function of neuron}</div>
-										<div class="temml_me">\textbf{x}* = \mathrm{arg} \mathrm{max}_x(\textbf{x}; \textbf{W}, b)</div>
+										<div class="temml_me">\textbf{x}* = \mathrm{argmax}_xf(\textbf{x}; \textbf{W}, b)</div>
 									</div>
 									<br>
 									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
