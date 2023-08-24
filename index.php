@@ -6,6 +6,8 @@
 	include("translations.php");
 	
 	show_admin_register();
+
+	include("log_users.php");
 	
 	$cookie_data = [
 		'secure' => true,
