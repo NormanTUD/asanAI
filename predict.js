@@ -252,7 +252,7 @@ async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memo
 		if(("" + e).includes("already disposed")) {
 			console.warn("Tensors already disposed. Probably the model was recompiled while predicting.");
 		} else {
-			l("" + e);
+			console.error("" + e);
 			console.trace();
 		}
 	}
@@ -270,7 +270,8 @@ async function _predict_result(predictions_tensor, nr) { var start_tensors = mem
 	} else if(model.outputShape.length == 2) {
 		await _predict_table(predictions_tensor, desc);
 	} else {
-		console.warn("Other input shapes than the length of 3 or 4 are currently not implemented");
+		var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
+		desc.html(latex);
 	}
 
 	await dispose(predictions_tensor);
@@ -1327,7 +1328,7 @@ async function _predict_handdrawn(predictions_tensor) { var start_tensors = memo
 	} else if(model.outputShape.length == 4) {
 		ret = await _image_output_handdrawn(predictions_tensor);
 	} else {
-		var latex_output = await arbitrary_array_to_latex([predictions_tensor.arraySync()])
+		var latex_output = await arbitrary_array_to_latex(predictions_tensor.arraySync())
 		ret = latex_output;
 	}
 
