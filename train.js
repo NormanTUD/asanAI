@@ -687,6 +687,11 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 
 		_clear_plotly_epoch_history();
 
+		if(!model) {
+			model = await create_model();
+			compile_model();
+		}
+
 		var fit_data = await _get_fit_data(xs_and_ys);
 
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
