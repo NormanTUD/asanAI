@@ -53,9 +53,9 @@ var loadFile = (function(event) {
 function _predict_error (e) { var start_tensors = memory_leak_debugger();
 	console.warn(e);
 	console.trace();
-	l(e);
+	l("" + e);
 	$("#prediction").hide();
-	$("#predict_error").html(e).show();
+	$("#predict_error").html("" + e).show();
 	$("#example_predictions").html("");
 	$(".show_when_has_examples").hide();
 	memory_leak_debugger("_predict_error", start_tensors)
@@ -252,7 +252,7 @@ async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memo
 		if(("" + e).includes("already disposed")) {
 			console.warn("Tensors already disposed. Probably the model was recompiled while predicting.");
 		} else {
-			console.log(e);
+			l("" + e);
 			console.trace();
 		}
 	}
@@ -401,7 +401,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 				if(("" + e).includes("Expected input shape")) {
 					console.warn("" + e);
 				} else {
-					log(e);
+					l("" + e);
 					console.trace();
 				}
 			}

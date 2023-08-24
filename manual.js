@@ -295,7 +295,7 @@ function eval_base64 (b, uuid) {
 		eval(code);
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
-		log(e);
+		log("" + e);
 		$("#" + uuid + "_error").html(e);
 	}
 
@@ -380,7 +380,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			log("RES has not enough (4) values: ", res);
 		}
 	} catch (e) {
-		log(e);
+		log("" + e);
 		$("#" + uuid + "_error").html(e);
 		return;
 	}

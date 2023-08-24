@@ -1218,7 +1218,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else {
-			l(e);
+			l("" + e);
 		}
 	}
 
@@ -5089,6 +5089,9 @@ async function get_training_data_as_json () { var start_tensors = memory_leak_de
 }
 
 function l(msg) { var start_tensors = memory_leak_debugger();
+	assert(!!msg, "msg is false");
+	assert(typeof(msg) == "string", "message is not string");
+
 	try {
 		if(last_l != msg) {
 			var load_time = Date().toLocaleString();

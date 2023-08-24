@@ -752,7 +752,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		try {
 			new_tensors += new_model.layers[nr].weights.length;
 		} catch (e) {
-			console.log(e);
+			console.log("" + e);
 
 			throw new Error(e);
 		}
@@ -927,7 +927,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 		try {
 			new_tensors += new_model.layers[nr].weights.length;
 		} catch (e) {
-			console.log(e);
+			console.log("" + e);
 			throw new Error(e);
 
 			return;
@@ -1280,7 +1280,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 				await dispose(tensors[i]);
 			}
 		} catch (e) {
-			//log(e);
+			//log("" + e);
 		}
 	} catch (e) {
 		if(!no_error) {
@@ -1337,7 +1337,7 @@ async function get_weights_as_json (m) { var start_tensors = memory_leak_debugge
 				try {
 					weights_array[i] = weights[i].arraySync();
 				} catch (e) {
-					console.log(e);
+					console.log("" + e);
 				}
 			}
 		}
