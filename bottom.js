@@ -494,8 +494,7 @@ async function restart_lenet(dont_click) {
 			disable_lenet = 1;
 		}
 	} catch (e) {
-		log("ERROR: ");
-		log(e);
+		log("ERROR: ", e);
 		disable_lenet = 2;
 	}
 
