@@ -528,7 +528,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			$("#" + pred_tab).append(str).show();
 		} else {
 			var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
-			log("PREDICTION LATEX:", latex);
 			$("#" + pred_tab).append("<span class='temml_me'>" + latex + "</span>").show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}

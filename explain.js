@@ -2769,7 +2769,7 @@ async function arbitrary_array_to_latex (arr) {
 					str_array.push(await arbitrary_array_to_latex(item));
 				}
 
-				str += str_array.join(" & ");
+				str += str_array.join("\\\\\n");
 			} else if (shape.length == 2) {
 				for (var i in arr) {
 					var line_array = [];
@@ -2781,10 +2781,10 @@ async function arbitrary_array_to_latex (arr) {
 						}
 					}
 
-					str_array.push(line_array.join(" & "));
+					str_array.push(line_array.join(" \\\\\n "));
 				}
 
-				str += str_array.join("\\\\\n");
+				str += str_array.join(" & ");
 			} else {
 				for (var i in arr) {
 					var item = arr[i];
@@ -2805,7 +2805,6 @@ async function arbitrary_array_to_latex (arr) {
 	} else {
 		console.warn("Unknown type:", typeof(arr));
 	}
-
 	return str;
 }
 
