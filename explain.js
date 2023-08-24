@@ -2750,6 +2750,12 @@ function _temml () {
 }
 
 async function arbitrary_array_to_latex (arr) {
+	var latex = await _arbitrary_array_to_latex(arr);
+	var res = "<span class='temml_me'>" + latex + "</span>"
+	return res;
+}
+
+async function _arbitrary_array_to_latex (arr) {
 	var str = "";
 	if(typeof(arr) == "number") {
 		return arr;
@@ -2766,7 +2772,7 @@ async function arbitrary_array_to_latex (arr) {
 			if(shape.length == 1) {
 				for (var i in arr) {
 					var item = arr[i];
-					str_array.push(await arbitrary_array_to_latex(item));
+					str_array.push(await _arbitrary_array_to_latex(item));
 				}
 
 				str += str_array.join("\\\\\n");
@@ -2775,8 +2781,8 @@ async function arbitrary_array_to_latex (arr) {
 					var line_array = [];
 					for (var j in arr[i]) {
 						var item = arr[i][j];
-						var res = await arbitrary_array_to_latex(item);
-						if(res) {
+						var res = await _arbitrary_array_to_latex(item);
+						if(res !== undefined && res !== null) {
 							line_array.push(res);
 						}
 					}
@@ -2788,7 +2794,7 @@ async function arbitrary_array_to_latex (arr) {
 			} else {
 				for (var i in arr) {
 					var item = arr[i];
-					str_array.push(await arbitrary_array_to_latex(item));
+					str_array.push(await _arbitrary_array_to_latex(item));
 				}
 
 				str += str_array.join("\\\\\n");
@@ -2800,7 +2806,7 @@ async function arbitrary_array_to_latex (arr) {
 			log("OBJECTs NOT IMPLEMENTED YET");
 		}
 	} else if (typeof(arr) == "function") {
-		//log("arbitrary_array_to_latex was called with function argument");
+		//log("_arbitrary_array_to_latex was called with function argument");
 		//console.trace();
 	} else {
 		console.warn("Unknown type:", typeof(arr));
@@ -2809,9 +2815,9 @@ async function arbitrary_array_to_latex (arr) {
 }
 
 /*
-log("1 = ", await arbitrary_array_to_latex(1));
-log("[1, 1]", await arbitrary_array_to_latex([1, 1]));
-log("[[1, 2], [3, 4]]", await arbitrary_array_to_latex([[1,2],[3,4]]));
-log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", await arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
-log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", await arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
+log("1 = ", await _arbitrary_array_to_latex(1));
+log("[1, 1]", await _arbitrary_array_to_latex([1, 1]));
+log("[[1, 2], [3, 4]]", await _arbitrary_array_to_latex([[1,2],[3,4]]));
+log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", await _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
+log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", await _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */

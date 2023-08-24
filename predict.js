@@ -528,7 +528,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			$("#" + pred_tab).append(str).show();
 		} else {
 			var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
-			$("#" + pred_tab).append("<span class='temml_me'>" + latex + "</span>").show();
+			$("#" + pred_tab).append(latex).show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}
 
@@ -651,7 +651,6 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var tensor = tf.tensor(example_predict_data[i]);
-		//log("Tensors K: " + tf.memory()["numTensors"]);
 		if(tensor_shape_matches_model(tensor)) {
 			var res;
 			try {
@@ -660,7 +659,14 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				var res_array = res.arraySync();
 				await dispose(res);
 
-				html_contents += JSON.stringify(example_predict_data[i]) + " = " + JSON.stringify(res_array) + "<br>";
+				var network_name = get_layer_type_array().join(" \\rightarrow ") 
+				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
+				var latex_output = await _arbitrary_array_to_latex(res_array);
+
+				log("data:", example_predict_data[i], "latex_input:", latex_input);
+				log("out_data:", res_array, "latex_output", latex_output);
+
+				html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
 
 				count++;
 				$("#predict_error").html("");
