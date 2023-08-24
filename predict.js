@@ -1303,6 +1303,10 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 
 	await _predict_handdrawn(predictions_tensor);
 
+	try {
+		_temml();
+	} catch (e) {}
+
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
@@ -1323,10 +1327,13 @@ async function _predict_handdrawn(predictions_tensor) { var start_tensors = memo
 	} else if(model.outputShape.length == 4) {
 		ret = await _image_output_handdrawn(predictions_tensor);
 	} else {
-		console.warn("Different output shapes not yet supported:", model.outputShape);
+		var latex_output = await arbitrary_array_to_latex([predictions_tensor.arraySync()])
+		ret = latex_output;
 	}
 
 	memory_leak_debugger("_predict_handdrawn", start_tensors);
+
+	handdrawn_predictions.html(ret);
 
 	return ret;
 }
