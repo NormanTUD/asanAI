@@ -5089,6 +5089,8 @@ async function get_training_data_as_json () { var start_tensors = memory_leak_de
 }
 
 function l(msg) { var start_tensors = memory_leak_debugger();
+	msg = msg.replace(/^(Error:\s*)+/, "Error: ");
+
 	if(last_l != msg) {
 		var load_time = Date().toLocaleString();
 		load_time = load_time.replace(/ GMT.*/, "");

@@ -913,7 +913,10 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 				}
 			}
 		} catch (e) {
-			$($(".warning_container")[i]).html("" + e).show()
+			var msg = "" + e;
+			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
+			$($(".warning_container")[i]).html(msg).show()
+			write_descriptions();
 			throw new Error(e);
 		}
 	}
