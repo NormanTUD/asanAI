@@ -78,3 +78,10 @@ a2enmod rewrite
 a2enmod env
 
 service apache2 restart
+
+if [[ -d "/docker/" ]]; then
+	echo "Not using visitors log in docker, yet..."
+else
+	mkdir /var/log/
+	sudo touch /var/log/asanai_visitors.log
+fi
