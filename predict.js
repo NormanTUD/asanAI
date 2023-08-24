@@ -1166,6 +1166,12 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
 function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_debugger();
+	if(!model || !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
+		console.warn("model or model.layers or model.layers.0 not defined!!! Hopefully, this is internally solved somewhere...");
+		console.trace();
+		return false;
+	}
+
 	var res = true;
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
 	input_layer_shape.shift();
