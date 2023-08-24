@@ -5089,19 +5089,23 @@ async function get_training_data_as_json () { var start_tensors = memory_leak_de
 }
 
 function l(msg) { var start_tensors = memory_leak_debugger();
-
-	if(last_l != msg) {
-		var load_time = Date().toLocaleString();
-		load_time = load_time.replace(/ GMT.*/, "");
-		msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
-		$("#log").prepend(load_time + ": " + msg + "\n")
-		last_l = msg;
-		if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
-			console.error(msg);
-			console.trace();
-			msg = "<span style='color: red'>" + msg + "</span>";
+	try {
+		if(last_l != msg) {
+			var load_time = Date().toLocaleString();
+			load_time = load_time.replace(/ GMT.*/, "");
+			msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
+			$("#log").prepend(load_time + ": " + msg + "\n")
+			last_l = msg;
+			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
+				console.error(msg);
+				console.trace();
+				msg = "<span style='color: red'>" + msg + "</span>";
+			}
+			$("#status_bar_log").html(msg);
 		}
-		$("#status_bar_log").html(msg);
+	} catch (e) {
+		console.error("Some thing went wrong with the `l` function!", e);
+		log(msg);
 	}
 	memory_leak_debugger("l", start_tensors);
 }
