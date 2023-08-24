@@ -126,7 +126,7 @@ var x_file = null;
 var y_file = null;
 var y_shape = null;
 
-var xy_data = null;
+var xy_data_global = null;
 
 var js_names_to_python_names = {
 	"dtype": "dtype",

@@ -506,7 +506,9 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 
 	var classes = [];
 
-	if(traindata_struct[$("#dataset option:selected").text()]["has_custom_data"]) {
+	var xy_data = null;
+
+	if(Object.keys(traindata_struct[$("#dataset option:selected").text()]).includes("has_custom_data")) {
 		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
 
@@ -524,10 +526,12 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
 			}
 		} else {
-			var x_print_string = tensor_print_to_string(xy_data.x);
-			var y_print_string = tensor_print_to_string(xy_data.y);
+			var x_print_string = arbitrary_array_to_latex(xy_data.x.arraySync());
+			var y_print_string = arbitrary_array_to_latex(xy_data.y.arraySync());
 
-			$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+			$("#xy_display_data").html("<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+
+
 		}
 	} else {
 		if(data_origin == "default") {
@@ -847,6 +851,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 		$("#validationSplit").val(new_validation_split);
 	}
 
+	xy_data_global = xy_data;
 
 	var error_string  = _xs_xy_warning(xy_data);
 	if(error_string) {
@@ -988,16 +993,16 @@ function decille (arr, percentage) { var start_tensors = memory_leak_debugger();
 }
 
 async function reset_data () { var start_tensors = memory_leak_debugger();
-	if(!xy_data === null) {
-		if(Object.keys(xy_data).includes("x")) {
-			await dispose(xy_data["x"]);
+	if(!xy_data_global === null) {
+		if(Object.keys(xy_data_global).includes("x")) {
+			await dispose(xy_data_global["x"]);
 		}
-		if(Object.keys(xy_data).includes("y")) {
-			await dispose(xy_data["y"]);
+		if(Object.keys(xy_data_global).includes("y")) {
+			await dispose(xy_data_global["y"]);
 		}
 	}
 
-	xy_data = null;
+	xy_data_global = null;
 	$('#reset_data').hide();
 	memory_leak_debugger("reset_data", start_tensors);
 }

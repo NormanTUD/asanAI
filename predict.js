@@ -663,8 +663,10 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
 				var latex_output = await _arbitrary_array_to_latex(res_array);
 
+				/*
 				log("data:", example_predict_data[i], "latex_input:", latex_input);
 				log("out_data:", res_array, "latex_output", latex_output);
+				*/
 
 				html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
 				count++;
