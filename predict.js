@@ -631,6 +631,38 @@ function show_or_hide_predictions (count) { var start_tensors = memory_leak_debu
 	memory_leak_debugger("show_or_hide_predictions", start_tensors);
 }
 
+function create_network_name () {
+	function transformArray(inputArray) {
+		const transformedArray = [];
+		let currentElement = inputArray[0];
+		let count = 1;
+
+		for (let i = 1; i < inputArray.length; i++) {
+			if (inputArray[i] === currentElement) {
+				count++;
+			} else {
+				if (count > 1) {
+					transformedArray.push(`${currentElement}^${count}`);
+				} else {
+					transformedArray.push(currentElement);
+				}
+				currentElement = inputArray[i];
+				count = 1;
+			}
+		}
+
+		if (count > 1) {
+			transformedArray.push(`${currentElement}^${count}`);
+		} else {
+			transformedArray.push(currentElement);
+		}
+
+		return transformedArray;
+	}
+
+	return transformArray(get_layer_type_array()).join(" \\rightarrow ") ;
+}
+
 async function _print_predictions_text(count, example_predict_data) { var start_tensors = memory_leak_debugger();
 	if(!finished_loading) {
 		memory_leak_debugger("_print_predictions_text", start_tensors);
@@ -659,7 +691,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				var res_array = res.arraySync();
 				await dispose(res);
 
-				var network_name = get_layer_type_array().join(" \\rightarrow ") 
+				var network_name =  create_network_name();
 				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
 				var latex_output = await _arbitrary_array_to_latex(res_array);
 
