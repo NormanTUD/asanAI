@@ -2748,3 +2748,71 @@ function _temml () {
 		}
 	}
 }
+
+async function arbitrary_array_to_latex (arr) {
+	var str = "";
+	if(typeof(arr) == "number") {
+		return arr;
+	} else if (typeof(arr) == "string") {
+		return `\\textrm{${arr}}`;
+	} else if (typeof(arr) == "object") {
+		if(Array.isArray(arr)) {
+			str += "\\begin{pmatrix}\n";
+
+			var str_array = [];
+
+			var shape = await get_shape_from_array(arr);
+
+			if(shape.length == 1) {
+				for (var i in arr) {
+					var item = arr[i];
+					str_array.push(await arbitrary_array_to_latex(item));
+				}
+
+				str += str_array.join(" & ");
+			} else if (shape.length == 2) {
+				for (var i in arr) {
+					var line_array = [];
+					for (var j in arr[i]) {
+						var item = arr[i][j];
+						var res = await arbitrary_array_to_latex(item);
+						if(res) {
+							line_array.push(res);
+						}
+					}
+
+					str_array.push(line_array.join(" & "));
+				}
+
+				str += str_array.join("\\\\\n");
+			} else {
+				for (var i in arr) {
+					var item = arr[i];
+					str_array.push(await arbitrary_array_to_latex(item));
+				}
+
+				str += str_array.join("\\\\\n");
+			}
+
+
+			str += "\\end{pmatrix}\n";
+		} else {
+			log("OBJECTs NOT IMPLEMENTED YET");
+		}
+	} else if (typeof(arr) == "function") {
+		//log("arbitrary_array_to_latex was called with function argument");
+		//console.trace();
+	} else {
+		console.warn("Unknown type:", typeof(arr));
+	}
+
+	return str;
+}
+
+/*
+log("1 = ", await arbitrary_array_to_latex(1));
+log("[1, 1]", await arbitrary_array_to_latex([1, 1]));
+log("[[1, 2], [3, 4]]", await arbitrary_array_to_latex([[1,2],[3,4]]));
+log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", await arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
+log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", await arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
+*/

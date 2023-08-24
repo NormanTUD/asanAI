@@ -394,7 +394,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 	try {
 		var predict_data = null;
 
-		if(await input_shape_is_image()) {
+		var is_image_prediction = await input_shape_is_image();
+		var has_html = false;
+
+		if(is_image_prediction) {
 			try {
 				predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 			} catch (e) {
@@ -490,7 +493,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 
 		//log(predictions);
 
-		if(!await input_shape_is_image() && labels.length == 0) {
+		if(!is_image_prediction && labels.length == 0) {
 			str = "[" + predictions.join(", ") + "]";
 			pred_tab = "prediction_non_image";
 			$("#" + pred_tab).html("");
@@ -521,9 +524,14 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			}
 		}
 
-		await dispose(predictions_tensor);
-
-		$("#" + pred_tab).append(str).show();
+		if(is_image_prediction || labels.length) {
+			$("#" + pred_tab).append(str).show();
+		} else {
+			var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
+			log("PREDICTION LATEX:", latex);
+			$("#" + pred_tab).append("<span class='temml_me'>" + latex + "</span>").show();
+			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
+		}
 
 		$("#predict_error").html("").hide();
 
