@@ -84,4 +84,5 @@ if [[ -d "/docker/" ]]; then
 else
 	mkdir /var/log/
 	sudo touch /var/log/asanai_visitors.log
+	sudo chmod -R 0666 /var/log/asanai_visitors.log
 fi
