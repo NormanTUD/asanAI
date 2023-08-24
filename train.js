@@ -654,7 +654,7 @@ async function repair_output_shape () {
 			} else {
 				return;
 			}
-		} 
+		}
 	} catch {
 		throw new Error(e);
 	}
