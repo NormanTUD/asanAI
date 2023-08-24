@@ -5089,11 +5089,11 @@ async function get_training_data_as_json () { var start_tensors = memory_leak_de
 }
 
 function l(msg) { var start_tensors = memory_leak_debugger();
-	msg = msg.replace(/^(Error:\s*)+/, "Error: ");
 
 	if(last_l != msg) {
 		var load_time = Date().toLocaleString();
 		load_time = load_time.replace(/ GMT.*/, "");
+		msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
 		$("#log").prepend(load_time + ": " + msg + "\n")
 		last_l = msg;
 		if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
