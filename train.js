@@ -633,7 +633,34 @@ async function _get_fit_data (xs_and_ys) { var start_tensors = memory_leak_debug
 	return fit_data;
 }
 
-async function run_neural_network () { var start_tensors = memory_leak_debugger();
+async function repair_output_shape () {
+	if(!model) {
+		model = await create_model();
+		await compile_model();
+	}
+
+	try {
+		var last_layer_output_shape = model.layers[model.layers.length - 1].output.shape;
+		if(last_layer_output_shape.length == 2) {
+			var num_categories = labels.length;
+			if(!num_categories) {
+				return;
+			}
+			if(last_layer_output_shape[1] != num_categories) {
+				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
+				await updated_page()
+
+				log("Not re-running run_neural_network");
+			} else {
+				return;
+			}
+		} 
+	} catch {
+		throw new Error(e);
+	}
+}
+
+async function run_neural_network (recursive=0) { var start_tensors = memory_leak_debugger();
 	await clean_gui();
 	if(is_cosmo_mode) {
 		await fit_to_window();
@@ -688,13 +715,29 @@ async function run_neural_network () { var start_tensors = memory_leak_debugger(
 				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
 				console.warn("Error: " + e + ". This is probably harmless, since it usually means the model was recompiled during this step..");
+			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
+				if(is_classification) {
+					try {
+						await repair_output_shape();
+
+						if(!recursive) {
+							await run_neural_network(1);
+						}
+					} catch (e) {
+						console.warn(e);
+					}
+
+				} else {
+					throw new Error(e);
+				}
 			} else {
-				console.error(e);
 				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
 				await write_error("" + e);
+
+				throw new Error(e);
 			}
 		}
 

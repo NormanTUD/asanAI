@@ -3548,11 +3548,20 @@ async function change_data_origin() { var start_tensors = memory_leak_debugger()
 		}
 	}
 
-	model = await _create_model();
-	await compile_model();
+	try {
+		model = await _create_model();
+		await compile_model();
+	} catch (e) {
+		console.error(e);
+	}
 
 	currently_running_change_data_origin = 0;
 
+	try {
+		await repair_output_shape();
+	} catch (e) {
+		console.error(e);
+	}
 
 	memory_leak_debugger("change_data_origin", start_tensors);
 }
