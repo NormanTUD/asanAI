@@ -1436,7 +1436,14 @@ text-align: end;
 								</div>
 
 								<div id="maximally_activated" class="tab maximally_activated_class">
-									<span class="temml_me">\frac{x}{y}</span>
+									<div class="hide_in_cosmo_mode">
+										<div class="temml_me">x = \textrm{Input Image}</div>
+										<div class="temml_me">x* = \textrm{Generated image}</div>
+										<div class="temml_me">W = \textrm{Weights}</div>
+										<div class="temml_me">b = \textrm{Bias}</div>
+										<div class="temml_me">f(\textbf{x}; \textbf{W}, b) = \textrm{Activation function of neuron}</div>
+										<div class="temml_me">\textbf{x}* = \mathrm{arg} \mathrm{max}_x(\textbf{x}; \textbf{W}, b)</div>
+									</div>
 									<br>
 									<button onclick="smaller_maximally_activated_neurons()"><span class="TRANSLATEME_smaller"></span></button>
 									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
