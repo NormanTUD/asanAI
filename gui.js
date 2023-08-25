@@ -938,14 +938,14 @@ async function update_python_code(dont_reget_labels) {
 	return redo_graph;
 }
 
-function orNone (str) {
+function orNone (str, prepend = '"', append = '"') {
 	if(str) {
 		if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
 			return parseFloat(str);
 		} else if(("" + str).match(/^[+-]?\d+$/)) {
 			return parseInt(str);
 		}
-		return '"' + get_python_name(str) + '"';
+		return prepend + get_python_name(str) + append;
 	}
 	return "None";
 }
@@ -989,7 +989,7 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${orNone(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
-		str += `model.add(layers.UpSampling2D(size=${orNone(data.size)}, data_format=${orNone(data.data_format)}, interpolation=${orNone(data.interpolation)}))\n`;
+		str += `model.add(layers.UpSampling2D(size=${orNone(data.size, "(", ")")}, data_format=${orNone(data.data_format)}, interpolation=${orNone(data.interpolation)}))\n`;
 	} else if (layer_type == "SeparableConv1D") {
 		str += `model.add(layers.SeparableConv1D(filters=${data.filters},
 	kernel_size=${data.kernel_size},
@@ -1024,7 +1024,8 @@ function model_add_python_structure (layer_type, data) {
 	beta_regularizer=${orNone(data.beta_regularizer)}, 
 	gamma_regularizer=${orNone(data.gamma_regularizer)}, 
 	beta_constraint=${orNone(data.beta_constraint)},
-	gamma_constraint=${orNone(data.gamma_constraint)}, synchronized=${data.synchronized}
+	gamma_constraint=${orNone(data.gamma_constraint)},
+	synchronized=${orNone(data.synchronized)}
 ))\n`;
 	} else if (layer_type == "ThresholdedReLU") {
 		str += `model.add(layers.ThresholdedReLU(theta=${data.theta}))\n`;
@@ -1109,15 +1110,37 @@ function model_add_python_structure (layer_type, data) {
 	padding=${data.padding[0]},
 	data_format=${orNone(data.data_format)}
 ))\n`;
+	} else if (layer_type == "SeparableConv2D") {
+		str += `model.add(layers.SeparableConv2D(
+	filters=${data.filters},
+	kernel_size=${data.kernel_size},
+	strides=${orNone(data.strides)},
+	padding=${orNone(data.padding)},
+	data_format=${orNone(data.data_format)},
+	dilation_rate=${orNone(data.dilation_rate)},
+	depth_multiplier=${data.depth_multiplier},
+	activation=${orNone(data.activation)},
+	use_bias=${data.use_bias},
+	depthwise_initializer=${orNone(data.depthwise_initializer)},
+	pointwise_initializer=${orNone(data.pointwise_initializer)},
+	bias_initializer=${orNone(data.bias_initializer)},
+	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
+	pointwise_regularizer=${orNone(data.pointwise_regularizer)},
+	bias_regularizer=${orNone(data.bias_regularizer)},
+	activity_regularizer=${orNone(data.activity_regularizer)},
+	depthwise_constraint=${orNone(data.depthwise_constraint)},
+	pointwise_constraint=${orNone(data.pointwise_constraint)},
+	bias_constraint=${orNone(data.bias_constraint)}
+))\n`;
 	} else if (layer_type == "AveragePooling2D") {
-		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size[0]}, ${data.pool_size[1]}),
-	strides=(${data.strides[0]}, ${data.strides[1]}), 
+		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size.join(", ")}}),
+	strides=(${data.strides.join(",")}), 
 	padding=${data.padding},
 	data_format=${orNone(data.data_format)}
 ))\n`;
 	} else if (layer_type == "AveragePooling3D") {
-		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
-	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}), 
+		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size.join(", ")}),
+	strides=(${data.strides.join(", ")}), 
 	padding=${data.padding},
 	data_format=${orNone(data.data_format)}
 ))\n`;
@@ -1164,7 +1187,7 @@ function model_add_python_structure (layer_type, data) {
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return `model.add(layers.Flatten())\n`
-	} else if(layer_type == "Debug") {
+	} else if(layer_type == "DebugLayer") {
 		return `# Debug layer are custom to asanAI and are not available in TensorFlow\n`;
 	} else {
 		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
