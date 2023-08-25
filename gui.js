@@ -912,21 +912,15 @@ async function update_python_code(dont_reget_labels) {
 
 		var wh = "";
 
-		if(input_shape_is_image_val) {
-			wh += "height = " + height + "\n";
-			wh += "width = " + width + "\n";
-		}
-
 		var is = get_input_shape_with_batch_size(); is[0] = "None"; ;
 
-		expert_code = python_boilerplate(input_shape_is_image_val) + 
+		expert_code =
+			python_boilerplate(input_shape_is_image_val) + 
 			labels_str +
-			wh +
-			"divideby = " + $("#divide_by").val() + "\n\n" +
 
-			"\nmodel = tf.keras.Sequential()\n\n" +
+			"model = tf.keras.Sequential()\n\n" +
 
-			"\nfrom keras import layers\n" +
+			"from keras import layers\n" +
 
 			expert_code +
 
