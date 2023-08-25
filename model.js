@@ -1393,6 +1393,8 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 				if(finished_loading) {
 					//console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				}
+			} else if((""+e).includes("e is undefined")) {
+				console.warn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
 			} else {
 				console.error(e);
 				console.trace();
