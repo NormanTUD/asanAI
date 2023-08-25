@@ -6096,18 +6096,26 @@ function model_is_ok () {
 	var red = "&#128308;";
 	var orange = "&#128992;";
 
-	var _model_is_ok = 1;
 	var color = green;
 	var msg = "Model is loaded properly";
 
-	if(!model) {
+	try {
+		if(!model) {
+			color = red;
+			msg = "Model is not defined";
+		} else if(model && !Object.keys(model).includes("layers")) {
+			color = orange;
+			msg = "Model does not have any layers";
+		}
+	} catch (e) {
 		color = red;
-		msg = "Model is not defined";
+		msg = "" + e;
 	}
 
-	if(!Object.keys(model).includes("layers")) {
-		color = orange;
-		msg = "Model does not have any layers";
+	if(color == red) {
+		console.error(msg);
+	} else if (color == orange) {
+		console.warn(msg);
 	}
 
 	model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
