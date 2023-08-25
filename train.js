@@ -644,15 +644,16 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		if(last_layer_output_shape.length == 2) {
 			var num_categories = labels.length;
 			if(!num_categories) {
-				return;
+				return false;
 			}
 			if(last_layer_output_shape[1] != num_categories) {
 				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
 				await updated_page()
 
 				log("Not re-running run_neural_network");
+				return true;
 			} else {
-				return;
+				return false;
 			}
 		} else {
 			if(tries_classification_but_receives_other) {
@@ -776,6 +777,10 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					}
 
 					is_repairing_output_shape = false;
+
+					return true;
+				} else {
+					return false;
 				}
 
 			}
@@ -784,7 +789,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		throw new Error(e);
 	}
 
-	throw new Error("Output shape repaired");
+	return false;
 }
 
 async function run_neural_network (recursive=0) { var start_tensors = memory_leak_debugger();
@@ -804,6 +809,8 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 		console.error("Could not get xs_and_ys");
 		return;
 	}
+
+	var repaired = false;
 
 	if(started_training) {
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
@@ -851,13 +858,9 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 				if(is_classification) {
 					try {
 						try {
-							await repair_output_shape(1);
+							repaired = await repair_output_shape(1);
 						} catch (ee) {
-							if(("" + e).includes("Output shape repaired")) {
-								log("" + e);
-							} else {
-								throw new Error(e);
-							}
+							throw new Error(e);
 						}
 
 
@@ -891,18 +894,9 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 
 					if (r.isConfirmed) {
 						try {
-							await repair_output_shape(1);
+							repaired = await repair_output_shape(1);
 						} catch (ee) {
-							if(("" + ee).includes("Output shape repaired")) {
-								Swal.fire(
-									'Output shape repaired!',
-									'Please try training again.',
-									'success'
-								)
-								log("" + ee);
-							} else {
-								throw new Error(ee);
-							}
+							throw new Error(ee);
 						}
 					} else if (r.isDenied) {
 						Swal.fire('Not doing Input shape repair', '', 'info')
@@ -915,6 +909,14 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 					throw new Error(e);
 				}
 			}
+		}
+
+		if(repaired) {
+			Swal.fire(
+				'Output shape repaired!',
+				'Please try training again.',
+				'success'
+			)
 		}
 
 		await enable_everything();

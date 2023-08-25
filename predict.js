@@ -1167,8 +1167,7 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 
 function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_debugger();
 	if(!model || !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
-		console.warn("model or model.layers or model.layers.0 not defined!!! Hopefully, this is internally solved somewhere...");
-		console.trace();
+		model_is_ok();
 		return false;
 	}
 
