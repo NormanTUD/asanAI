@@ -755,8 +755,10 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							await set_activation_to(get_last_layer(), "softmax");
 
 							$(overlay).remove();
+							$("#start_training").click();
 						} catch (e) {
 							$(overlay).remove();
+							$("#start_training").click();
 							throw new Error(e);
 						}
 					})();
