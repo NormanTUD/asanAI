@@ -1233,7 +1233,7 @@ text-align: end;
 									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict"></span></a></li>
 									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code"></span></a></li>
 								</ul>
-								<span id="toggle_layer_view_button" style="user-select: none; position: relative; top: 6px" onclick="toggle_layer_view()">&#128470;</span>
+								<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
 							<hr id="hr_nav">
 

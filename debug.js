@@ -479,3 +479,7 @@ function label_debug (...args) {
 	console.log(...args);
 	console.trace();
 }
+
+function debug (...args) {
+	console.debug(...args);
+}

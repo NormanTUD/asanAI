@@ -670,12 +670,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					await (async () => {
 						try {
 							function get_last_layer (minus=1) {
-								log(`get_last_layer(${minus})`);
+								debug(`get_last_layer(${minus})`);
 								return $(".layer_type").length - minus;
 							}
 
 							async function change_layer_to (nr, to) {
-								log(`change_layer_to(${nr}, ${to})`);
+								debug(`change_layer_to(${nr}, ${to})`);
 								var layer_type = $(".layer_type")[nr];
 								var $layer_type = $(layer_type);
 
@@ -688,18 +688,18 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 									throw new Error("unknown to-value:" + to);
 								}
 
-								log("changing val to " + to);
+								debug("changing val to " + to);
 								$layer_type.val(to);
 
-								log("changing selectedIndex to " + index);
+								debug("changing selectedIndex to " + index);
 								$layer_type.prop("selectedIndex", index);
 
-								log("triggering $layer_type:", $layer_type);
+								debug("triggering $layer_type:", $layer_type);
 								$layer_type.trigger("change");
 
-								log(`Start waiting for "${$layer_type.val()}" becoming equal to ${to}`);
+								debug(`Start waiting for "${$layer_type.val()}" becoming equal to ${to}`);
 								while ($layer_type.val() != to) {
-									log(`Currently waiting for "${$layer_type.val()}" (layer ${nr}) becoming equal to ${to}`);
+									debug(`Currently waiting for "${$layer_type.val()}" (layer ${nr}) becoming equal to ${to}`);
 									await delay(100);
 								}
 
@@ -707,20 +707,20 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function duplicate_last_layer () {
-								log("Adding layer");
+								debug("Adding layer");
 
 								var $last_layer = $(".add_layer")[get_last_layer()];
 
-								log("Awaiting disable_invalid_layers_event()");
+								debug("Awaiting disable_invalid_layers_event()");
 								
 								enable_all_layer_types();
 
 								var start_layers = model.layers.length;
-								log("Clicking on this item for layer duplication: ", $last_layer)
+								debug("Clicking on this item for layer duplication: ", $last_layer)
 								$last_layer.click();
 
 								while (model.layers.length - (start_layers) > 0) {
-									log(`Waiting until model.layers.length (${model.layers.length}) - (start_layers) (${(start_layers)}) > 0`);
+									debug(`Waiting until model.layers.length (${model.layers.length}) - (start_layers) (${(start_layers)}) > 0`);
 									await delay(200);
 								}
 
@@ -732,7 +732,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function set_activation_to (nr, val) {
-								log(`set_activation_to(${nr}, ${val})`);
+								debug(`set_activation_to(${nr}, ${val})`);
 								$($(".layer_setting")[nr]).find(".activation").val(val).trigger("change");
 								while ($($(".layer_setting")[nr]).find(".activation").val() != val) {
 									await delay(100);
@@ -741,12 +741,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							}
 
 							async function set_dense_layer_units(nr, units) {
-								log("Setting the units of layer " + nr + " to " + units);
+								debug("Setting the units of layer " + nr + " to " + units);
 								var $units = $($(".layer_setting")[nr]).find(".units");
 								$units.val(units);
 
 								while (ll != $units.val()) {
-									log(`Waiting for set_dense_layer_units(${nr}, ${units})`);
+									debug(`Waiting for set_dense_layer_units(${nr}, ${units})`);
 									await delay(100);
 								}
 								await delay(500);

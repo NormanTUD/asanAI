@@ -1139,3 +1139,10 @@ hr {
 .no_mark {
 	display: flex;
 }
+
+#toggle_layer_view_button {
+	user-select: none;
+	position: absolute;
+	top: 6px;
+	right: 10px;
+}
