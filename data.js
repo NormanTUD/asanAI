@@ -526,8 +526,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
 			}
 		} else {
-			var x_print_string = arbitrary_array_to_latex(xy_data.x.arraySync());
-			var y_print_string = arbitrary_array_to_latex(xy_data.y.arraySync());
+			var x_print_string = await arbitrary_array_to_latex(xy_data.x.arraySync());
+			var y_print_string = await arbitrary_array_to_latex(xy_data.y.arraySync());
 
 			$("#xy_display_data").html("<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 
@@ -559,7 +559,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				}
 
 				if(is_cosmo_mode) {
-					cosmo_set_labels(); // aysnc not possible
+					cosmo_set_labels(); // await not possible
 				}
 
 				if($("#shuffle_data").is(":checked")) {

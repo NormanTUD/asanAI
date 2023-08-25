@@ -227,7 +227,8 @@
 			"done_training_took" => "Done Training, took",
 			"done_generating_images" => "Done generating images",
 			"generating_image_for_neuron" => "Generating image for neuron",
-			"failed_try_again" => "failed. Trying again"
+			"failed_try_again" => "failed. Trying again",
+			"fixing_output_shape" => "Output shape is being fixed..."
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -456,7 +457,8 @@
 			"done_training_took" => "Training fertig, es dauerte",
 			"done_generating_images" => "Bilder fertig generiert",
 			"generating_image_for_neuron" => "Generiere Bild für Neuron",
-			"failed_try_again" => "fehlgeschlagen. Versuche es erneut"
+			"failed_try_again" => "fehlgeschlagen. Versuche es erneut",
+			"fixing_output_shape" => "Output-Shape wird repariert"
 		)
 	);
 ?>

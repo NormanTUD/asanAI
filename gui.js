@@ -1560,6 +1560,21 @@ async function disable_all_invalid_layers_from(start) {
 	favicon_default();
 }
 
+function enable_all_layer_types () {
+	for (var layer_nr = 0; layer_nr < model.layers.length; layer_nr++) {
+		var options = $($($('.layer_type')[layer_nr]).children().children());
+
+		for (var i = 0; i < options.length; i++) {
+			if (!$(options[i]).is(":selected")) {
+				$(options[i]).prop("disabled", true);
+				//$(options[i]).prop("hidden", false); // Disabled until hide_empty_groups works
+			}
+
+			$(options[i]).prop("disabled", false);
+		}
+	}
+}
+
 async function enable_valid_layer_types(layer_nr) {
 	if(started_training) {
 		console.info("enable_valid_layer_types disabled because is in training");
@@ -1606,7 +1621,7 @@ function option_for_layer(nr) {
 			str += '<optgroup label="' + this_category + '">';
 			last_category = this_category;
 		}
-		str += "<option value='" + key + "'>" + get_python_name(key) + "</option>";
+		str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + get_python_name(key) + "</option>";
 	}
 	str += "</optgroup>";
 	str += "</select>";
@@ -6125,4 +6140,40 @@ function model_is_ok () {
 	}
 
 	model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
+}
+
+function showWhiteOverlayWithText(text) {
+	try {
+		const overlay = document.createElement('div');
+		overlay.style.position = 'fixed';
+		overlay.style.top = '0';
+		overlay.style.left = '0';
+		overlay.style.width = '100%';
+		overlay.style.height = '100%';
+		overlay.style.backgroundColor = 'white';
+		overlay.style.opacity = '0.9';
+		overlay.style.display = 'flex';
+		overlay.style.alignItems = 'center';
+		overlay.style.justifyContent = 'center';
+		overlay.style.zIndex = '9999';
+		overlay.class = "overlay";
+
+		const textElement = document.createElement('p');
+		textElement.textContent = text;
+		textElement.style.textAlign = 'center';
+		textElement.style.fontFamily = 'Arial, sans-serif';
+		textElement.style.fontSize = '24px';
+		textElement.style.color = 'black';
+		textElement.style.padding = '20px';
+
+		overlay.appendChild(textElement);
+		document.body.appendChild(overlay);
+
+		assert(true, 'Overlay displayed successfully.');
+
+		return overlay;
+	} catch (error) {
+		log('An error occurred:', error);
+		warn('Failed to display overlay.');
+	}
 }

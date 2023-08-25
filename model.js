@@ -336,10 +336,9 @@ async function get_model_structure(is_fake_model = 0) { var start_tensors = memo
 
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
-			header("ACHTUNG!!! IS EMPTY!!!");
+			header("ACHTUNG!!! get_model_structure IS EMPTY!!!");
 			log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
 			log($(layer_type).val());
-			console.trace();
 		}
 	}
 
@@ -866,10 +865,17 @@ async function create_model (old_model, fake_model_structure, force) { var start
 	}
 
 	if(old_model) {
-		for (var k = 0; k < old_model.length; k++) {
-			for (var j = 0; j < old_model.layers[k].weights.length; j++) {
-				await dispose(old_model.layers[k].weights[j].val);
+		var old_model_has_layers = 1;
+		try { var x = old_model.layers; } catch (e) { old_model_has_layers = 0; }
+
+		if(old_model_has_layers && old_model.layers.length) {
+			for (var k = 0; k < old_model.layers.length; k++) {
+				for (var j = 0; j < old_model.layers[k].weights.length; j++) {
+					await dispose(old_model.layers[k].weights[j].val);
+				}
 			}
+		} else {
+			console.info("Old layers had no layers defined");
 		}
 
 		await dispose(old_model);
@@ -917,7 +923,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 			var msg = "" + e;
 			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
 			$($(".warning_container")[i]).html(msg).show()
-			write_descriptions();
+			await write_descriptions();
 			throw new Error(e);
 		}
 	}
@@ -1395,6 +1401,8 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 				}
 			} else if((""+e).includes("e is undefined")) {
 				console.warn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+			} else if((""+e).includes("getWeights is not a function")) {
+				console.warn("getWeights is not a function. The model may have been undefined while attempting this.");
 			} else {
 				console.error(e);
 				console.trace();
