@@ -1535,3 +1535,5 @@ var set_label_debug = false;
 var model_is_ok_icon = null;
 
 var is_repairing_output_shape = false;
+
+var last_model_ok_status = "";

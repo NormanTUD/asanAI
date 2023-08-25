@@ -6170,13 +6170,18 @@ function model_is_ok () {
 		msg = "" + e;
 	}
 
-	if(color == red) {
-		console.error(msg);
-	} else if (color == orange) {
-		console.warn(msg);
-	}
+	if(last_model_ok_status != msg) {
+		if(color == red) {
+			console.debug(msg);
+		} else if (color == orange) {
+			console.debug(msg);
+		}
 
-	model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
+		l(msg);
+
+		model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
+		last_model_ok_status = msg;
+	}
 }
 
 function showWhiteOverlayWithText(text) {

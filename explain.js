@@ -660,8 +660,8 @@ function write_layer_identification (nr, text) { var start_tensors = memory_leak
 }
 
 function get_layer_identification (i) { var start_tensors = memory_leak_debugger();
-	if(model === null) {
-		write_error("model is not defined"); // cannot be async
+	if(model === null || model === undefined) {
+		model_is_ok();
 		memory_leak_debugger("get_layer_identification", start_tensors);
 		return;
 	}
