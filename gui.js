@@ -6100,12 +6100,18 @@ function model_is_ok () {
 	var msg = "Model is loaded properly";
 
 	try {
+		var model_has_input = 1;
+		try { var x = model.input; } catch (e) { model_has_input = 0};
+
 		if(!model) {
 			color = red;
 			msg = "Model is not defined";
 		} else if(model && !Object.keys(model).includes("layers")) {
 			color = orange;
 			msg = "Model does not have any layers";
+		} else if(model && !model_has_input) {
+			color = orange;
+			msg = "Model has no input";
 		}
 	} catch (e) {
 		color = red;
