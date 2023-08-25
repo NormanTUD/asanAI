@@ -1812,7 +1812,7 @@ async function show_layers(number) {
 	var layers_container_str = "";
 	var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
-	var remove = "<button class='add_remove_layer_button remove_layer' onclick='remove_layer(this)'>-</button>&thinsp;";
+	var remove = "<button class='add_remove_layer_button remove_layer' disabled='true' onclick='remove_layer(this)'>-</button>&thinsp;";
 	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
 
 	for (var i = 0; i < number; i++) {

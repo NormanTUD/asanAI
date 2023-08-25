@@ -664,13 +664,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					if(mode == "beginner") {
 						l("Temporarily using expert mode...");
 						change_to_beginner = 1;
-						$("#expert").click();
-						set_mode();
-
-						while (mode != "expert") {
-							log("Waiting for expert mode...");
-							await delay(200);
-						}
+						mode = "expert";
 					}
 
 					await (async () => {
@@ -778,8 +772,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 					})();
 
 					if(change_to_beginner) {
-						$("#beginner").click();
-						set_mode();
+						mode = "beginner";
 					}
 
 					is_repairing_output_shape = false;
