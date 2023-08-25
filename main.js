@@ -602,7 +602,9 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 		addEndPresentationButton(1);
 	} else {
 		model_is_ok_icon = $("#model_is_ok_icon");
+		label_debugger_icon =  $("#label_debugger_icon");
 		setInterval(model_is_ok, 200);
+		setInterval(label_debugger_icon_ok, 200);
 	}
 
 	finished_loading = true;

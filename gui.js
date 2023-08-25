@@ -6107,6 +6107,23 @@ function get_cursor_or_none (cursorname) {
 	return cursorname;
 }
 
+function label_debugger_icon_ok () {
+	if(!model) {
+		return;
+	}
+
+	if(get_last_layer_activation_function() != "softmax") {
+		$("#label_debugger_icon").html("").hide();
+		return;
+	}
+
+	if(labels.length) {
+		$("#label_debugger_icon").html("").hide();
+	} else {
+		$("#label_debugger_icon").html("<span style='background-color: red; color: black;'>[No labels]</span>").show();
+	}
+}
+
 function model_is_ok () {
 	if(!model_is_ok_icon || !finished_loading) {
 		return;
