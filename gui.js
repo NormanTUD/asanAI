@@ -897,11 +897,14 @@ async function update_python_code(dont_reget_labels) {
 		delete data["visualize"];
 
 		if(model && Object.keys(model).includes("layers")) {
+			/*
 			var cdata = convertToPythonString(data)
 			if(cdata == "{}") {
 				cdata = "";
 			}
-			manual_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
+			*/
+			//manual_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
+			manual_code += model_add_python_structure(model.layers[i].getClassName(), data);
 		}
 	}
 
@@ -918,6 +921,8 @@ async function update_python_code(dont_reget_labels) {
 			wh += "width = " + width + "\n";
 		}
 
+		var is = get_input_shape_with_batch_size(); is[0] = "None"; ;
+
 		manual_code = python_boilerplate(input_shape_is_image_val) + 
 			labels_str +
 			wh +
@@ -929,6 +934,7 @@ async function update_python_code(dont_reget_labels) {
 
 			manual_code +
 
+			`model.build(input_shape=[${is.join(", ")}])` +
 			"\n\nmodel.summary()\n";
 	}
 
@@ -942,6 +948,38 @@ async function update_python_code(dont_reget_labels) {
 
 	return redo_graph;
 }
+
+function orNone (str) {
+	if(str) {
+		return '"' + get_python_name(str) + '"';
+	}
+	return "None";
+}
+
+// TODO
+function model_add_python_structure (layer_type, data) {
+	assert(layer_type, "layer_type is not defined");
+	assert(data, "data is not defined");
+
+	var str = "";
+	if(layer_type == "Conv2D") {
+		return `model.add(layers.Conv2D(${data.filters}, (${data.kernel_size}), strides=(${data.strides.join(", ")}),
+  padding=${orNone(data.padding)}, data_format=None, dilation_rate=(${data.dilation_rate.join(", ")}),
+  activation=${orNone(data.activation)}, use_bias=${data.use_bias ? 'True' : 'False'}, kernel_initializer=${orNone(data.kernel_initializer)},
+  bias_initializer=${orNone(data.bias_initializer)}, kernel_regularizer=${orNone(data.kernel_regularizer)},
+  bias_regularizer=${orNone(data.bias_regularizer)}, activity_regularizer=${orNone(data.activity_regularizer)},
+  kernel_constraint=${orNone(data.kernel_constraint)}, bias_constraint=${orNone(data.bias_constraint)}))
+`;
+	} else if(layer_type == "Dense") {
+		return "# DENSE \n";
+	} else if(layer_type == "Flatten") {
+		return `model.add(layers.Flatten())\n`
+	} else {
+		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
+	}
+	return str;
+}
+
 function convertToPythonString(obj) {
 	var pythonCode = '{';
 	var i = 0;
