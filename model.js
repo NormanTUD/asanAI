@@ -392,6 +392,7 @@ function is_valid_parameter (keyname, value, layer) { var start_tensors = memory
 		(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
 		(["theta"].includes(keyname) && typeof(value) == "number") ||
 		(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
+		(["seed"].includes(keyname) && typeof(value) == "number") ||
 		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
 		memory_leak_debugger("is_valid_parameter", start_tensors);

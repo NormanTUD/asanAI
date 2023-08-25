@@ -1526,3 +1526,5 @@ var old_tensor_number = 0;
 var relationScale = 1;
 
 var set_label_debug = false;
+
+var model_is_ok_icon = null;

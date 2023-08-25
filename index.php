@@ -337,6 +337,7 @@ text-align: end;
 				}
 ?>
 					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
+					<li id="model_is_ok_icon"></li>
 				</ul>
 
 

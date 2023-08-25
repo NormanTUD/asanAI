@@ -6086,3 +6086,29 @@ function get_cursor_or_none (cursorname) {
 
 	return cursorname;
 }
+
+function model_is_ok () {
+	if(!model_is_ok_icon || !finished_loading) {
+		return;
+	}
+
+	var green = "&#128994;";
+	var red = "&#128308;";
+	var orange = "&#128992;";
+
+	var _model_is_ok = 1;
+	var color = green;
+	var msg = "Model is loaded properly";
+
+	if(!model) {
+		color = red;
+		msg = "Model is not defined";
+	}
+
+	if(!Object.keys(model).includes("layers")) {
+		color = orange;
+		msg = "Model does not have any layers";
+	}
+
+	model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
+}
