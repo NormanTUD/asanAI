@@ -5140,6 +5140,11 @@ function l(msg) { var start_tensors = memory_leak_debugger();
 	assert(!!msg, "msg is false");
 	assert(typeof(msg) == "string", "message is not string");
 
+	if(l == "[object Object]") {
+		log(l);
+		console.trace();
+	}
+
 	try {
 		if(last_l != msg) {
 			var load_time = Date().toLocaleString();

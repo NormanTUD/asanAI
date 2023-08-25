@@ -823,6 +823,9 @@ async function create_model (old_model, fake_model_structure, force) { var start
 			console.warn(e);
 		} else if(("" + e).includes("Input shape contains 0")) {
 			console.warn(e);
+		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
+			console.warn("Model could not be created because of problems with the input layer.");
+			return;
 		} else {
 			throw new Error(e);
 		}
