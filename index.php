@@ -1376,6 +1376,7 @@ text-align: end;
 							<div id="code_tab" class="tab">
 								<ul class="navi_list">
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
+									<li><a href="#python_manual" id="python_manual_tab_label">Python (manual)</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
 								</ul>
 
@@ -1387,7 +1388,6 @@ text-align: end;
 									<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 								</div>
 
-
 								<div id="python_tab" class="tab">
 									<br>
 									<span class="user_select_none">
@@ -1397,6 +1397,17 @@ text-align: end;
 									</span>
 									<br>
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
+								</div>
+
+								<div id="python_manual_tab" class="tab">
+									<br>
+									<span class="user_select_none">
+										<button onclick="copy_id_to_clipboard('python')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
+										<button onclick="save_model()"><span class="TRANSLATEME_download_model_data"></span></button>
+										<button onclick="download_model_for_training(model)"><span class="TRANSLATEME_download_for_local_taurus"></span></button>
+									</span>
+									<br>
+									<pre><code class="language-python" id="python_manual" style="width: 99%"></code></pre>
 								</div>
 							</div>
 

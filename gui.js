@@ -831,6 +831,10 @@ async function update_python_code(dont_reget_labels) {
 	var layer_types = $(".layer_type");
 	var layer_settings = $(".layer_setting");
 
+	var manual_code = "";
+
+	create_python_code(input_shape_is_image_val)
+
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		var type = $(layer_types[i]).val();
 
@@ -889,16 +893,84 @@ async function update_python_code(dont_reget_labels) {
 				}
 			}
 		}
+
+		delete data["visualize"];
+
+		if(model && Object.keys(model).includes("layers")) {
+			var cdata = convertToPythonString(data)
+			if(cdata == "{}") {
+				cdata = "";
+			}
+			manual_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
+		}
 	}
 
-	document.getElementById("python").innerHTML = create_python_code(input_shape_is_image_val);
+	if(manual_code) {
+		var labels_str = "";
+		if(labels.length) {
+			labels_str = "labels = ['" + labels.join("', '") + "']\n";
+		}
+
+		var wh = "";
+
+		if(input_shape_is_image_val) {
+			wh += "height = " + height + "\n";
+			wh += "width = " + width + "\n";
+		}
+
+		manual_code = python_boilerplate(input_shape_is_image_val) + 
+			labels_str +
+			wh +
+			"divideby = " + $("#divide_by").val() + "\n\n" +
+
+			"\nmodel = tf.keras.Sequential()\n\n" +
+
+			"\nfrom keras import layers\n" +
+
+			manual_code +
+
+			"\n\nmodel.summary()\n";
+	}
+
+	document.getElementById("python").innerHTML = python_code;
 	document.getElementById("python").style.display = "block";
+
+	document.getElementById("python_manual").innerHTML = manual_code;
+	document.getElementById("python_manual").style.display = "block";
+
 	await highlight_code();
 
 	return redo_graph;
 }
+function convertToPythonString(obj) {
+	var pythonCode = '{';
+	var i = 0;
+	for (var key in obj) {
+		if(i == 0) {
+			pythonCode += "\n";
+		}
+		let value = obj[key];
+		if(!("" + value).startsWith("[")) {
+			if (typeof value == 'boolean') {
+				value = value ? 'True' : 'False';
+			} else if (!isNaN(value)) {
+				if (Number.isInteger(parseFloat(value))) {
+					value = parseInt(value);
+				} else {
+					value = parseFloat(value);
+				}
+			} else {
+				value = '"' + value + '"';
+			}
+		}
+		pythonCode += `    ${key}: ${value},\n`;
+		i++;
+	}
+	pythonCode += '}';
+	return pythonCode;
+}
 
-function create_python_code (input_shape_is_image_val) {
+function python_boilerplate (input_shape_is_image_val) {
 	var python_code = "";
 
 	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
@@ -909,18 +981,27 @@ function create_python_code (input_shape_is_image_val) {
 	if (input_shape_is_image_val) {
 		python_code += " scikit-image opencv-python ";
 	}
+
 	python_code += "\n";
 	python_code += "import os\n";
-	python_code += "if not os.path.exists('keras_model'):\n";
+	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
 	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 	python_code += "# Save this file as python-script and run it like this:\n";
+
 	if (input_shape_is_image_val) {
 		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
 	} else {
 		python_code += "# python3 nn.py\n";
 	}
+
 	python_code += "import keras\n";
 	python_code += "import tensorflow as tf\n";
+
+	return python_code;
+}
+
+function create_python_code (input_shape_is_image_val) {
+	var python_code = python_boilerplate(input_shape_is_image_val);
 
 	python_code += "model = tf.keras.models.load_model(\n";
 	python_code += "   'keras_model',\n";
