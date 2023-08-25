@@ -1053,7 +1053,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 		return data;
 	});
 
-	if(model.input.shape.length == 4) {
+	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
 		full_data["image"] = tf.tidy(() => { return deprocessImage(generated_data).arraySync(); });
 	} else {
 		full_data["data"] = tf.tidy(() => { return generated_data.arraySync(); });
@@ -1293,7 +1293,12 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 
 	try {
 		var start_image = undefined;
-		var full_data = await inputGradientAscent(layer, neuron, $("#max_activation_iterations").val(), start_image);
+		var iterations = parseInt($("#max_activation_iterations").val());
+		if(!iterations) {
+			log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+			iterations = 30;
+		}
+		var full_data = await inputGradientAscent(layer, neuron, iterations, start_image);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
