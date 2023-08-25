@@ -29,7 +29,7 @@ class DebugLayer extends tf.layers.Layer {
 	 */
 	call(input) {
 		return tf.tidy(() => {
-			log(input[0].arraySync());
+			log("DebugLayer:", input[0].arraySync());
 			return input[0];
 		});
 	}
