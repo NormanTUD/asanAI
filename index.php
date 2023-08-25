@@ -1410,7 +1410,7 @@ text-align: end;
 									<pre><code class="language-python" id="python" style="width: 99%"></code></pre>
 								</div>
 
-								<div id="python_expert_tab" class="tab">
+								<div id="python_expert_tab" class="tab" style="display: none">
 									<br>
 									<span class="user_select_none">
 										<button onclick="copy_id_to_clipboard('python_expert')">
