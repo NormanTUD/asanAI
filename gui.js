@@ -997,15 +997,51 @@ function model_add_python_structure (layer_type, data) {
 	} else if (layer_type == "UpSampling2D") {
 		str += `model.add(layers.UpSampling2D(size=${orNone(data.size)}, data_format=${orNone(data.data_format)}, interpolation=${orNone(data.interpolation)}))\n`;
 	} else if (layer_type == "SeparableConv1D") {
-		str += `model.add(layers.SeparableConv1D(filters=${data.filters}, kernel_size=${data.kernel_size}, strides=${orNone(data.strides)}, padding=${orNone(data.padding)}, data_format=${orNone(data.data_format)}, dilation_rate=${data.dilation_rate}, depth_multiplier=${data.depth_multiplier}, activation=${orNone(data.activation)}, use_bias=${data.use_bias}, depthwise_initializer=${orNone(data.depthwise_initializer)}, pointwise_initializer=${orNone(data.pointwise_initializer)}, bias_initializer=${orNone(data.bias_initializer)}, depthwise_regularizer=${orNone(data.depthwise_regularizer)}, pointwise_regularizer=${orNone(data.pointwise_regularizer)}, bias_regularizer=${orNone(data.bias_regularizer)}, activity_regularizer=${orNone(data.activity_regularizer)}, depthwise_constraint=${orNone(data.depthwise_constraint)}, pointwise_constraint=${orNone(data.pointwise_constraint)}, bias_constraint=${orNone(data.bias_constraint)}))\n`;
+		str += `model.add(layers.SeparableConv1D(filters=${data.filters},
+	kernel_size=${data.kernel_size},
+	strides=${orNone(data.strides)},
+	padding=${orNone(data.padding)},
+	data_format=${orNone(data.data_format)},
+	dilation_rate=${data.dilation_rate},
+	depth_multiplier=${data.depth_multiplier},
+	activation=${orNone(data.activation)},
+	use_bias=${data.use_bias},
+	depthwise_initializer=${orNone(data.depthwise_initializer)},
+	pointwise_initializer=${orNone(data.pointwise_initializer)},
+	bias_initializer=${orNone(data.bias_initializer)},
+	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
+	pointwise_regularizer=${orNone(data.pointwise_regularizer)},
+	bias_regularizer=${orNone(data.bias_regularizer)},
+	activity_regularizer=${orNone(data.activity_regularizer)},
+	depthwise_constraint=${orNone(data.depthwise_constraint)},
+	pointwise_constraint=${orNone(data.pointwise_constraint)},
+	bias_constraint=${orNone(data.bias_constraint)}
+))\n`;
 	} else if (layer_type == "BatchNormalization") {
-		str += `model.add(layers.BatchNormalization(axis=${data.axis}, momentum=${data.momentum}, epsilon=${data.epsilon}, center=${data.center}, scale=${data.scale}, beta_initializer=${orNone(data.beta_initializer)}, gamma_initializer=${orNone(data.gamma_initializer)}, moving_mean_initializer=${orNone(data.moving_mean_initializer)}, moving_variance_initializer=${orNone(data.moving_variance_initializer)}, beta_regularizer=${orNone(data.beta_regularizer)}, gamma_regularizer=${orNone(data.gamma_regularizer)}, beta_constraint=${orNone(data.beta_constraint)}, gamma_constraint=${orNone(data.gamma_constraint)}, synchronized=${data.synchronized}))\n`;
+		str += `model.add(layers.BatchNormalization(axis=${data.axis},
+	momentum=${orNone(data.momentum)}, 
+	epsilon=${data.epsilon}, 
+	center=${data.center}, 
+	scale=${data.scale}, 
+	beta_initializer=${orNone(data.beta_initializer)}, 
+	gamma_initializer=${orNone(data.gamma_initializer)}, 
+	moving_mean_initializer=${orNone(data.moving_mean_initializer)}, 
+	moving_variance_initializer=${orNone(data.moving_variance_initializer)}, 
+	beta_regularizer=${orNone(data.beta_regularizer)}, 
+	gamma_regularizer=${orNone(data.gamma_regularizer)}, 
+	beta_constraint=${orNone(data.beta_constraint)},
+	gamma_constraint=${orNone(data.gamma_constraint)}, synchronized=${data.synchronized}
+))\n`;
 	} else if (layer_type == "ThresholdedReLU") {
 		str += `model.add(layers.ThresholdedReLU(theta=${data.theta}))\n`;
 	} else if (layer_type == "Softmax") {
 		str += `model.add(layers.Softmax(axis=${data.axis}))\n`;
 	} else if (layer_type == "ReLU") {
-		str += `model.add(layers.ReLU(max_value=${orNone(data.max_value)}, negative_slope=${data.negative_slope}, threshold=${data.threshold}))\n`;
+		str += `model.add(layers.ReLU(
+	max_value=${orNone(data.max_value)},
+	negative_slope=${orNone(data.negative_slope)}, 
+	threshold=${orNone(data.threshold)}
+))\n`;
 	} else if (layer_type == "Conv2DTranspose") {
 		str += `model.add(layers.Conv2DTranspose(
 	${data.filters}, 
