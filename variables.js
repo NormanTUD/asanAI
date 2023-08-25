@@ -4,14 +4,19 @@ var last_known_good_input_shape = "[]";
 
 function get_input_shape_as_string () {
 	var is = "";
-	if(model) {
-		is = model.input.shape.filter(n => n);
-	} else {
-		is = get_input_shape();
-	}
-	if(is.length) {
-		return "[" + is.join(", ") + "]"
-	} else {
+	try {
+		if(model) {
+			is = model.input.shape.filter(n => n);
+		} else {
+			is = get_input_shape();
+		}
+		if(is.length) {
+			return "[" + is.join(", ") + "]"
+		} else {
+			return "[]";
+		}
+	} catch (e) {
+		console.warn(e);
 		return "[]";
 	}
 }
