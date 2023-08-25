@@ -660,6 +660,19 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 				var overlay = showWhiteOverlayWithText(language[lang]["fixing_output_shape"]);
 				if(labels && ll) {
 					is_repairing_output_shape = true;
+					var change_to_beginner = 0;
+					if(mode == "beginner") {
+						l("Temporarily using expert mode...");
+						change_to_beginner = 1;
+						$("#expert").click();
+						set_mode();
+
+						while (mode != "expert") {
+							log("Waiting for expert mode...");
+							await delay(200);
+						}
+					}
+
 					await (async () => {
 						try {
 							function get_last_layer (minus=1) {
@@ -763,6 +776,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							throw new Error(e);
 						}
 					})();
+
+					if(change_to_beginner) {
+						$("#beginner").click();
+						set_mode();
+					}
+
 					is_repairing_output_shape = false;
 				}
 
