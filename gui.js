@@ -946,6 +946,11 @@ async function update_python_code(dont_reget_labels) {
 
 function orNone (str) {
 	if(str) {
+		if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
+			return parseFloat(str);
+		} else if(("" + str).match(/^[+-]?\d+$/)) {
+			return parseInt(str);
+		}
 		return '"' + get_python_name(str) + '"';
 	}
 	return "None";
@@ -989,6 +994,18 @@ function model_add_python_structure (layer_type, data) {
 	kernel_constraint=${orNone(data.kernel_constraint)}, 
 	bias_constraint=${orNone(data.bias_constraint)}
 ))\n`;
+	} else if (layer_type == "UpSampling2D") {
+		str += `model.add(layers.UpSampling2D(size=${orNone(data.size)}, data_format=${orNone(data.data_format)}, interpolation=${orNone(data.interpolation)}))\n`;
+	} else if (layer_type == "SeparableConv1D") {
+		str += `model.add(layers.SeparableConv1D(filters=${data.filters}, kernel_size=${data.kernel_size}, strides=${orNone(data.strides)}, padding=${orNone(data.padding)}, data_format=${orNone(data.data_format)}, dilation_rate=${data.dilation_rate}, depth_multiplier=${data.depth_multiplier}, activation=${orNone(data.activation)}, use_bias=${data.use_bias}, depthwise_initializer=${orNone(data.depthwise_initializer)}, pointwise_initializer=${orNone(data.pointwise_initializer)}, bias_initializer=${orNone(data.bias_initializer)}, depthwise_regularizer=${orNone(data.depthwise_regularizer)}, pointwise_regularizer=${orNone(data.pointwise_regularizer)}, bias_regularizer=${orNone(data.bias_regularizer)}, activity_regularizer=${orNone(data.activity_regularizer)}, depthwise_constraint=${orNone(data.depthwise_constraint)}, pointwise_constraint=${orNone(data.pointwise_constraint)}, bias_constraint=${orNone(data.bias_constraint)}))\n`;
+	} else if (layer_type == "BatchNormalization") {
+		str += `model.add(layers.BatchNormalization(axis=${data.axis}, momentum=${data.momentum}, epsilon=${data.epsilon}, center=${data.center}, scale=${data.scale}, beta_initializer=${orNone(data.beta_initializer)}, gamma_initializer=${orNone(data.gamma_initializer)}, moving_mean_initializer=${orNone(data.moving_mean_initializer)}, moving_variance_initializer=${orNone(data.moving_variance_initializer)}, beta_regularizer=${orNone(data.beta_regularizer)}, gamma_regularizer=${orNone(data.gamma_regularizer)}, beta_constraint=${orNone(data.beta_constraint)}, gamma_constraint=${orNone(data.gamma_constraint)}, synchronized=${data.synchronized}))\n`;
+	} else if (layer_type == "ThresholdedReLU") {
+		str += `model.add(layers.ThresholdedReLU(theta=${data.theta}))\n`;
+	} else if (layer_type == "Softmax") {
+		str += `model.add(layers.Softmax(axis=${data.axis}))\n`;
+	} else if (layer_type == "ReLU") {
+		str += `model.add(layers.ReLU(max_value=${orNone(data.max_value)}, negative_slope=${data.negative_slope}, threshold=${data.threshold}))\n`;
 	} else if (layer_type == "Conv2DTranspose") {
 		str += `model.add(layers.Conv2DTranspose(
 	${data.filters}, 
@@ -1009,7 +1026,7 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${orNone(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AlphaDropout") {
-		str += `model.add(layers.AlphaDropout(rate=${data.rate}, noise_shape=${orNone(data.noise_shape)}, seed=${orNone(data.seed)}))\n`;
+		str += `model.add(layers.AlphaDropout(rate=${data.dropout_rate}, noise_shape=${orNone(data.noise_shape)}, seed=${orNone(data.seed)}))\n`;
 	} else if (layer_type == "Dropout") {
 		str += `model.add(layers.Dropout(rate=${data.rate}, noise_shape=${orNone(data.noise_shape)}, seed=${orNone(data.seed)}))\n`;
 	} else if (layer_type == "GaussianDropout") {
@@ -1033,13 +1050,48 @@ function model_add_python_structure (layer_type, data) {
 	beta_constraint=${orNone(data.beta_constraint)},
 	gamma_constraint=${orNone(data.gamma_constraint)}
 ))\n`;
-	} else if (layer_type.startsWith("MaxPooling")) {
+	} else if (layer_type == "Reshape") {
+		str += `model.add(layers.Reshape(target_shape=[${data.target_shape}]))\n`;
+	} else if (layer_type == "MaxPooling3D") {
 		str += `model.add(layers.${layer_type}(
-	${orNone(data.pool_size)}, 
-	strides=${orNone(data.strides)}, 
+	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}), 
+	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}), 
 	padding=${orNone(data.padding)}, 
 	data_format=${orNone(data.data_format)}
 ))\n`;
+	} else if (layer_type == "MaxPooling2D") {
+		str += `model.add(layers.${layer_type}(
+	(${data.pool_size[0]}, ${data.pool_size[1]}), 
+	strides=(${data.strides[0]}, ${data.strides[1]}), 
+	padding=${orNone(data.padding)}, 
+	data_format=${orNone(data.data_format)}
+))\n`;
+	} else if (layer_type == "MaxPooling1D") {
+		str += `model.add(layers.${layer_type}(
+	(${data.pool_size[0]}), 
+	strides=(${data.strides[0]}), 
+	padding=${orNone(data.padding)}, 
+	data_format=${orNone(data.data_format)}
+))\n`;
+	} else if (layer_type == "AveragePooling1D") {
+		str += `model.add(layers.AveragePooling1D(pool_size=${data.pool_size},
+	strides=${data.strides[0]}, 
+	padding=${data.padding[0]},
+	data_format=${orNone(data.data_format)}
+))\n`;
+	} else if (layer_type == "AveragePooling2D") {
+		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size[0]}, ${data.pool_size[1]}),
+	strides=(${data.strides[0]}, ${data.strides[1]}), 
+	padding=${data.padding},
+	data_format=${orNone(data.data_format)}
+))\n`;
+	} else if (layer_type == "AveragePooling3D") {
+		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
+	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}), 
+	padding=${data.padding},
+	data_format=${orNone(data.data_format)}
+))\n`;
+
 	} else if (layer_type == "LeakyReLU") {
 		str += `model.add(layers.LeakyReLU(alpha=${data.alpha}))\n`;
 	} else if (layer_type == "ELU") {
@@ -1082,6 +1134,8 @@ function model_add_python_structure (layer_type, data) {
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return `model.add(layers.Flatten())\n`
+	} else if(layer_type == "Debug") {
+		return `# Debug layer are custom to asanAI and are not available in TensorFlow\n`;
 	} else {
 		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
 	}
