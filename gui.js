@@ -815,93 +815,18 @@ async function update_python_code(dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
-	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
-	python_code += "# python3 -m venv asanaienv\n";
-	python_code += "# source asanaienv/bin/activate\n";
-	python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
 
 	var input_shape_is_image_val = await input_shape_is_image();
 
-	if (input_shape_is_image_val) {
-		python_code += " scikit-image opencv-python ";
-	}
-	python_code += "\n";
-	python_code += "import os\n";
-	python_code += "if not os.path.exists('keras_model'):\n";
-	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
-	python_code += "# Save this file as python-script and run it like this:\n";
-	if (input_shape_is_image_val) {
-		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
-	} else {
-		python_code += "# python3 nn.py\n";
-	}
-	python_code += "import keras\n";
-	python_code += "import tensorflow as tf\n";
-
-	python_code += "model = tf.keras.models.load_model(\n";
-	python_code += "   'keras_model',\n";
-	python_code += "   custom_objects=None,\n";
-	python_code += "   compile=True\n";
-	python_code += ")\n\n";
-	python_code += "model.summary()\n"
-
 	var x_shape = "";
+
+	if(input_shape_is_image_val) {
+		x_shape = "[height, width, 3]";
+	}
 
 	if (!dont_reget_labels) {
 		await get_label_data();
 	}
-
-	if (input_shape_is_image_val) {
-		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
-		python_code += "from PIL import Image\n";
-		python_code += "import numpy as np\n";
-		python_code += "from skimage import transform\n";
-		python_code += "import sys\n";
-
-		python_code += "labels = ['" + labels.join("', '") + "']\n";
-		python_code += "height = " + height + "\n";
-		python_code += "width = " + width + "\n";
-		python_code += "divideby = " + $("#divide_by").val() + "\n";
-
-		python_code += "def load(filename):\n";
-		python_code += "    np_image = Image.open(filename)\n";
-		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
-		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
-		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
-		python_code += "    return np_image\n";
-
-		python_code += "def load_frame(filename):\n";
-		python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
-		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
-		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
-		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
-		python_code += "    return np_image\n";
-
-		python_code += "for a in range(1, len(sys.argv)):\n";
-		python_code += "    image = load(sys.argv[a])\n";
-		python_code += "    print(sys.argv[a] + ':')\n";
-		python_code += "    prediction = model.predict(image)\n";
-		python_code += "    for i in range(0, len(prediction)):\n";
-		python_code += "        for j in range(0, len(prediction[i])):\n";
-		python_code += "            print(labels[j] + ': ' + str(prediction[i][j]))\n";
-
-
-
-		x_shape = "[height, width, 3]";
-	} else {
-		python_code += "import re\n";
-		python_code += "from pprint import pprint\n";
-		python_code += "import numpy as np\n";
-		python_code += "def get_shape (filename):\n";
-		python_code += "    with open(filename) as f:\n";
-		python_code += "        first_line = f.readline()\n";
-		python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
-		python_code += "        return eval('[' + match[1] + ']')\n";
-		python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
-		python_code += "pprint(model.predict(x))\n";
-	}
-
-	//python_code += "model = keras.models.Sequential()\n";
 
 	var layer_types = $(".layer_type");
 	var layer_settings = $(".layer_setting");
@@ -941,8 +866,6 @@ async function update_python_code(dont_reget_labels) {
 				}
 			}
 
-			//python_code += "model.add(" + get_python_name(type) + "(";
-
 			redo_graph++;
 		}
 
@@ -966,6 +889,90 @@ async function update_python_code(dont_reget_labels) {
 				}
 			}
 		}
+	}
+
+	document.getElementById("python").innerHTML = create_python_code(input_shape_is_image_val);
+	document.getElementById("python").style.display = "block";
+	await highlight_code();
+
+	return redo_graph;
+}
+
+function create_python_code (input_shape_is_image_val) {
+	var python_code = "";
+
+	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
+	python_code += "# python3 -m venv asanaienv\n";
+	python_code += "# source asanaienv/bin/activate\n";
+	python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
+
+	if (input_shape_is_image_val) {
+		python_code += " scikit-image opencv-python ";
+	}
+	python_code += "\n";
+	python_code += "import os\n";
+	python_code += "if not os.path.exists('keras_model'):\n";
+	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
+	python_code += "# Save this file as python-script and run it like this:\n";
+	if (input_shape_is_image_val) {
+		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
+	} else {
+		python_code += "# python3 nn.py\n";
+	}
+	python_code += "import keras\n";
+	python_code += "import tensorflow as tf\n";
+
+	python_code += "model = tf.keras.models.load_model(\n";
+	python_code += "   'keras_model',\n";
+	python_code += "   custom_objects=None,\n";
+	python_code += "   compile=True\n";
+	python_code += ")\n\n";
+	python_code += "model.summary()\n"
+
+	if (input_shape_is_image_val) {
+		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
+		python_code += "from PIL import Image\n";
+		python_code += "import numpy as np\n";
+		python_code += "from skimage import transform\n";
+		python_code += "import sys\n";
+
+		python_code += "labels = ['" + labels.join("', '") + "']\n";
+		python_code += "height = " + height + "\n";
+		python_code += "width = " + width + "\n";
+		python_code += "divideby = " + $("#divide_by").val() + "\n";
+
+		python_code += "def load(filename):\n";
+		python_code += "    np_image = Image.open(filename)\n";
+		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
+		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
+		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
+		python_code += "    return np_image\n";
+
+		python_code += "def load_frame(filename):\n";
+		python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
+		python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
+		python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
+		python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
+		python_code += "    return np_image\n";
+
+		python_code += "for a in range(1, len(sys.argv)):\n";
+		python_code += "    image = load(sys.argv[a])\n";
+		python_code += "    print(sys.argv[a] + ':')\n";
+		python_code += "    prediction = model.predict(image)\n";
+		python_code += "    for i in range(0, len(prediction)):\n";
+		python_code += "        for j in range(0, len(prediction[i])):\n";
+		python_code += "            print(labels[j] + ': ' + str(prediction[i][j]))\n";
+	} else {
+		python_code += "import re\n";
+		python_code += "from pprint import pprint\n";
+		python_code += "import numpy as np\n";
+		python_code += "def get_shape (filename):\n";
+		python_code += "    with open(filename) as f:\n";
+		python_code += "        first_line = f.readline()\n";
+		python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
+		python_code += "        return eval('[' + match[1] + ']')\n";
+		python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
+		python_code += "pprint(model.predict(x))\n";
 	}
 
 	if(input_shape_is_image_val) {
@@ -1016,11 +1023,7 @@ if len(sys.argv) == 1:
 `;
 	}
 
-	document.getElementById("python").innerHTML = python_code;
-	document.getElementById("python").style.display = "block";
-	await highlight_code();
-
-	return redo_graph;
+	return python_code;
 }
 
 async function hide_no_conv_stuff() {
