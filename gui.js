@@ -1576,11 +1576,16 @@ function enable_all_layer_types () {
 }
 
 async function enable_valid_layer_types(layer_nr) {
-	if(started_training) {
+	if(started_training && !is_repairing_output_shape) {
 		console.info("enable_valid_layer_types disabled because is in training");
 		return;
 	}
 	assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
+
+	if(is_repairing_output_shape) {
+		enable_all_layer_types();
+		return;
+	}
 
 	var valid_layer_types = await get_valid_layer_types(layer_nr);
 

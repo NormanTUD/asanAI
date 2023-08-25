@@ -659,6 +659,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 				var ll = labels.length;
 				var overlay = showWhiteOverlayWithText(language[lang]["fixing_output_shape"]);
 				if(labels && ll) {
+					is_repairing_output_shape = true;
 					await (async () => {
 						try {
 							function get_last_layer (minus=1) {
@@ -762,6 +763,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							throw new Error(e);
 						}
 					})();
+					is_repairing_output_shape = false;
 				}
 
 			}

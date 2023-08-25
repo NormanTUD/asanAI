@@ -1533,3 +1533,5 @@ var relationScale = 1;
 var set_label_debug = false;
 
 var model_is_ok_icon = null;
+
+var is_repairing_output_shape = false;
