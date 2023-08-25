@@ -337,7 +337,6 @@ text-align: end;
 				}
 ?>
 					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
-					<li id="model_is_ok_icon"></li>
 				</ul>
 
 
@@ -1628,6 +1627,7 @@ text-align: end;
 		<div id="demomode" class="glass_box" style="display: none"></div>
 
 		<div id="status_bar" style="display: none">
+			<span id="model_is_ok_icon"></span>
 			<span id="status_bar_log"></span>
 
 			<span id="data_loading_progress_bar" style="display: none">
