@@ -882,12 +882,12 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 				if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
 					var r = null;
 					await Swal.fire({
-						title: 'Defective input shape detected',
-						html: 'Do you want to automatically fix the output shape?',
+						title: language[lang]["defective_output_shape"],
+						html: language[lang]["autofix_output_shape"],
 						showDenyButton: true,
 						showCancelButton: false,
-						confirmButtonText: 'Yes',
-						denyButtonText: `No`,
+						confirmButtonText: language[lang]["Yes"],
+						denyButtonText: language[lang]["No"]
 					}).then((result) => {
 						r = result;
 					})
@@ -913,8 +913,8 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 
 		if(repaired) {
 			Swal.fire(
-				'Output shape repaired!',
-				'Please try training again.',
+				language[lang]["output_shape_repaired"],
+				language[lang]["please_try_training_again"],
 				'success'
 			)
 		}

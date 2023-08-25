@@ -228,7 +228,13 @@
 			"done_generating_images" => "Done generating images",
 			"generating_image_for_neuron" => "Generating image for neuron",
 			"failed_try_again" => "failed. Trying again",
-			"fixing_output_shape" => "Output shape is being fixed..."
+			"fixing_output_shape" => "Output shape is being fixed...",
+			"output_shape_repaired" => "Output shape repaired",
+			"please_try_training_again" => 'Please try training again',
+			'No' => 'No',
+			'Yes' => 'Yes',
+			'autofix_output_shape' => 'Do you want to automatically fix the output shape?',
+			'defective_output_shape' => 'Defective output shape detected'
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -458,7 +464,13 @@
 			"done_generating_images" => "Bilder fertig generiert",
 			"generating_image_for_neuron" => "Generiere Bild für Neuron",
 			"failed_try_again" => "fehlgeschlagen. Versuche es erneut",
-			"fixing_output_shape" => "Output-Shape wird repariert"
+			"fixing_output_shape" => "Output-Shape wird repariert",
+			"output_shape_repaired" => "Output shape repariert",
+			"please_try_training_again" => 'Bitte erneut trainieren',
+			'No' => 'Nein',
+			'Yes' => 'Ja',
+			'autofix_output_shape' => 'Möchtest du die Output-Shape automatisch reparieren lassen?',
+			'defective_output_shape' => 'Kaputte Output-Shape entdeckt!'
 		)
 	);
 ?>
