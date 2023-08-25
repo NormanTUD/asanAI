@@ -342,43 +342,24 @@
 	}
 
 	function minify_js ($file, $async=0, $defer=0) {
-		if(0 && ($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css" && $file != 'visualizations/d3.v5.min.js' && $file != "visualizations/three.min.js") {
-			if($async && $defer) {
-				print "<script async defer src='minify.php?file=$file'></script>";
-			} else if($async && !$defer) {
-				print "<script async src='minify.php?file=$file'></script>";
-			} else if(!$async && $defer) {
-				print "<script defer src='minify.php?file=$file'></script>";
-			} else {
-				print "<script src='minify.php?file=$file'></script>";
-			}
+		if($async && $defer) {
+			print "<script async defer src='$file'></script>";
+		} else if($async && !$defer) {
+			print "<script async src='$file'></script>";
+		} else if(!$async && $defer) {
+			print "<script defer defer src='$file'></script>";
 		} else {
-			if($async && $defer) {
-				print "<script async defer src='$file'></script>";
-			} else if($async && !$defer) {
-				print "<script async src='$file'></script>";
-			} else if(!$async && $defer) {
-				print "<script defer defer src='$file'></script>";
-			} else {
-				print "<script src='$file'></script>";
-			}
+			print "<script src='$file'></script>";
 		}
+
 		print "\n";
 	}
 
 	function minify_css ($file, $id=null) {
-		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
-			if($id) {
-				print "<link href='minify.php?file=$file' rel='stylesheet alternative' id='$id'>";
-			} else {
-				print "<link href='minify.php?file=$file' rel='stylesheet'>";
-			}
+		if($id) {
+			print "<link href='$file' rel='stylesheet alternative' id='$id'>";
 		} else {
-			if($id) {
-				print "<link href='$file' rel='stylesheet alternative' id='$id'>";
-			} else {
-				print "<link href='$file' rel='stylesheet'>";
-			}
+			print "<link href='$file' rel='stylesheet'>";
 		}
 		print "\n";
 	}
