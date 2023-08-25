@@ -1096,7 +1096,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 			//log("DEBUG:", image, imageX, imageY, w, h);
 			ctx.drawImage(image, imageX, imageY, w, h);
 		} else {
-			console.warn("Canvas not defined. Canvasses:", canvasses, "canvasIndex + 1:", canvasIndex + 1);
+			console.warn("Canvas not defined. canvasIndex + 1:", canvasIndex + 1);
 		}
 	}
 
