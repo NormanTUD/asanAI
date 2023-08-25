@@ -6127,6 +6127,11 @@ function label_debugger_icon_ok () {
 		return;
 	}
 
+	if(is_setting_config) {
+		$("#label_debugger_icon").html("").hide();
+		return;
+	}
+
 	if(get_last_layer_activation_function() != "softmax") {
 		$("#label_debugger_icon").html("").hide();
 		return;
@@ -6135,7 +6140,11 @@ function label_debugger_icon_ok () {
 	if(labels.length) {
 		$("#label_debugger_icon").html("").hide();
 	} else {
-		$("#label_debugger_icon").html("<span style='background-color: red; color: black;'>[No labels]</span>").show();
+		if(model.layers.last().output.shape.length == 2 && model.layers.last().name.startsWith("dense")) {
+			$("#label_debugger_icon").html("<span style='background-color: red; color: black;'>[No labels]</span>").show();
+		} else {
+			$("#label_debugger_icon").html("").hide();
+		}
 	}
 }
 
