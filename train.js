@@ -771,6 +771,8 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 	} catch (e) {
 		throw new Error(e);
 	}
+
+	throw new Error("Output shape repaired");
 }
 
 async function run_neural_network (recursive=0) { var start_tensors = memory_leak_debugger();
@@ -836,7 +838,16 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification) {
 					try {
-						await repair_output_shape();
+						try {
+							await repair_output_shape(1);
+						} catch (ee) {
+							if(("" + e).includes("Output shape repaired")) {
+								log("" + e);
+							} else {
+								throw new Error(e);
+							}
+						}
+
 
 						if(!recursive) {
 							await run_neural_network(1);
@@ -868,14 +879,40 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 						})
 
 						if (r.isConfirmed) {
-							await repair_output_shape(1);
+							try {
+								await repair_output_shape(1);
+							} catch (ee) {
+								if(("" + ee).includes("Output shape repaired")) {
+									Swal.fire(
+										'Output shape repaired!',
+										'Please try training again.',
+										'success'
+									)
+									log("" + ee);
+								} else {
+									throw new Error(ee);
+								}
+							}
 						} else if (r.isDenied) {
 							Swal.fire('Not doing Input shape repair', '', 'info')
 						} else {
 							log("Unknown swal r: ", r);
 						}
 					} else if (mode == "beginner") {
-						await repair_output_shape(1);
+						try {
+							await repair_output_shape(1);
+						} catch (ee) {
+							if(("" + ee).includes("Output shape repaired")) {
+								Swal.fire(
+									'Output shape repaired!',
+									'Please try training again.',
+									'success'
+								)
+								log("" + ee);
+							} else {
+								throw new Error(ee);
+							}
+						}
 					} else {
 						throw new Error("Unknown mode");
 					}
