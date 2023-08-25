@@ -27,6 +27,10 @@ async function on_resize () { var start_tensors = memory_leak_debugger();
 	await show_cosmo_elements_depending_on_current_skills()
 	await write_descriptions(1);
 	memory_leak_debugger("on_resize", start_tensors);
+
+	if(!$("#ribbon").is(":visible")) {
+		$("#ribbon_shower").show();
+	}
 }
 
 function layer_types_that_dont_have_default_options () { var start_tensors = memory_leak_debugger();
