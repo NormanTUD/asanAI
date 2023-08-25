@@ -1286,12 +1286,20 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = tf.tidy(() => {
-			return model.predict([predict_data]);
-		});
+		try {
+			predictions_tensor = tf.tidy(() => {
+				return model.predict([predict_data]);
+			});
+		} catch (e) {
+			throw new Error(e);
+		}
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
 			console.warn("weights are already disposed. Not predicting handdrawn");
+		} else if(("" + e).includes("but got array with shape")) {
+				var err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+				console.warn(err);
+				l(err);
 		} else if(("" + e).includes("n is undefined")) {
 			console.warn("Model weights probably already disposed, this is usually not harmful");
 		} else {

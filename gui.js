@@ -1191,7 +1191,17 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await wait_for_latex_model;
 		//await wait_for_show_hide_load_weights;
 		if(atrament_data.sketcher && await input_shape_is_image()) {
-			await predict_handdrawn();
+			try {
+				await predict_handdrawn();
+			} catch (e) {
+				if(("" + e).includes("but got array with shape")) {
+					var err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+					console.warn(err);
+					l(err);
+				} else {
+					throw new Error(e);
+				}
+			}
 		}
 
 		if(mode == "beginner") {
