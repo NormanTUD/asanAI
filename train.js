@@ -865,40 +865,19 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 				}
 
 				if(("" + e).match(/expected.*to have (\d+) dimension\(s\). but got array with shape ((?:\d+,?)*\d+)\s*$/)) {
-					if(mode == "expert") {
-						var r = null;
-						await Swal.fire({
-							title: 'Defective input shape detected',
-							html: 'Do you want to automatically fix the output shape?',
-							showDenyButton: true,
-							showCancelButton: false,
-							confirmButtonText: 'Yes',
-							denyButtonText: `No`,
-						}).then((result) => {
-							r = result;
-						})
+					var r = null;
+					await Swal.fire({
+						title: 'Defective input shape detected',
+						html: 'Do you want to automatically fix the output shape?',
+						showDenyButton: true,
+						showCancelButton: false,
+						confirmButtonText: 'Yes',
+						denyButtonText: `No`,
+					}).then((result) => {
+						r = result;
+					})
 
-						if (r.isConfirmed) {
-							try {
-								await repair_output_shape(1);
-							} catch (ee) {
-								if(("" + ee).includes("Output shape repaired")) {
-									Swal.fire(
-										'Output shape repaired!',
-										'Please try training again.',
-										'success'
-									)
-									log("" + ee);
-								} else {
-									throw new Error(ee);
-								}
-							}
-						} else if (r.isDenied) {
-							Swal.fire('Not doing Input shape repair', '', 'info')
-						} else {
-							log("Unknown swal r: ", r);
-						}
-					} else if (mode == "beginner") {
+					if (r.isConfirmed) {
 						try {
 							await repair_output_shape(1);
 						} catch (ee) {
@@ -913,8 +892,10 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 								throw new Error(ee);
 							}
 						}
+					} else if (r.isDenied) {
+						Swal.fire('Not doing Input shape repair', '', 'info')
 					} else {
-						throw new Error("Unknown mode");
+						log("Unknown swal r: ", r);
 					}
 				} else {
 					await write_error("" + e);
