@@ -27,7 +27,7 @@ class DebugLayer extends tf.layers.Layer {
 	 *
 	 * Be sure to use tidy() to avoid WebGL memory leak. 
 	 */
-	call(input) {
+	call(input, ...kwargs) {
 		log(this);
 		return tf.tidy(() => {
 			log(`=== DebugLayer ${this.name} ===`);
@@ -35,6 +35,7 @@ class DebugLayer extends tf.layers.Layer {
 			log("input:", input[0].arraySync());
 			log("min:", tf.min(input[0]).arraySync());
 			log("max:", tf.max(input[0]).arraySync());
+			log("kwargs:", kwargs);
 			log(`=== DebugLayer ${this.name} End ==`);
 			return input[0];
 		});
