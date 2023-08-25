@@ -28,8 +28,14 @@ class DebugLayer extends tf.layers.Layer {
 	 * Be sure to use tidy() to avoid WebGL memory leak. 
 	 */
 	call(input) {
+		log(this);
 		return tf.tidy(() => {
-			log("DebugLayer:", input[0].arraySync());
+			log("=== DebugLayer ===");
+			log("shape: [" + input[0].shape.join(", ") + "]");
+			log("input:", input[0].arraySync());
+			log("min:", tf.min(input[0]).arraySync());
+			log("max:", tf.max(input[0]).arraySync());
+			log("=== DebugLayer End ===")
 			return input[0];
 		});
 	}
