@@ -6539,33 +6539,34 @@ function model_is_ok () {
 	var msg = "Model is loaded properly";
 
 	try {
+
+	} catch (e) {
+		console.warn(e);
+	}
+
+	try {
 		var model_has_input = 1;
 		try { var x = model.input; } catch (e) { model_has_input = 0};
 
 		if(!model) {
 			color = red;
-			msg = "Model is not defined";
+			msg = "Model is not defined.";
 		} else if(model && !Object.keys(model).includes("layers")) {
 			color = orange;
-			msg = "Model does not have any layers";
+			msg = "Model does not have any layers.";
 		} else if(model && !model_has_input) {
 			color = orange;
-			msg = "Model has no input";
+			msg = "Model has no input.";
+		} else if(layer_has_multiple_nodes()) {
+			color = red;
+			msg = "Model has multiple output nodes.";
 		}
 
-		if(layer_has_multiple_nodes()) {
-			if(color == green) {
-				color = orange;
-			}
-			if(color == "green") {
-				msg = ". HAS MULTIPLE OUTPUT NODES";
-			} else {
-				msg = msg + ". HAS MULTIPLE OUTPUT NODES";
-			}
-		}
+
 	} catch (e) {
 		color = red;
 		msg = "" + e;
+		console.error(msg);
 	}
 
 	if(last_model_ok_status != msg) {

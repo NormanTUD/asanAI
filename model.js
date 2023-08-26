@@ -1669,7 +1669,7 @@ function layer_has_multiple_nodes () {
 	try {
 		for (var x in model.layers) {
 			try {
-				model.layers[x].output
+				var zzz = model.layers[x].output;
 			} catch (e) {
 				if(("" + e).includes("multiple inbound nodes")) {
 					return true
