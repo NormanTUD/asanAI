@@ -4051,9 +4051,9 @@ async function last_shape_layer_warning() { var start_tensors = memory_leak_debu
 					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id
 						if(!this_canvas_id.endsWith("_layer")) {
-							var new_canvas_id = "#" + uuidv4() + "_layer";
+							var new_canvas_id = btoa(Math.random()).slice(0, 20); + "_layer";
 							if($(new_canvas_id).length == 0) {
-								l("Drawing layer for custom image " + this_canvas_id);
+								l("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
 								addCanvasLayer(canvasses[j], 0.5, new_canvas_id);
 							}
 						}
@@ -4187,9 +4187,11 @@ async function add_new_category() { var start_tensors = memory_leak_debugger();
 }
 
 function addCanvasLayer(canvas, transparency, id) { var start_tensors = memory_leak_debugger();
+	log("addCanvasLayer(", canvas + ", ", transparency, ", ", id, ")");
+
 	assert(typeof(canvas) == "object", "addCanvasLayer(canvas, transparency, id): canvas is not an object");
-	assert(typeof(canvas) == "string", "addCanvasLayer(canvas, transparency, id): id is not a string");
-	assert(isNumeric(transparency), "addCanvasLayer(canvas_, transparency, id): transparency is not a number");
+	assert(typeof(id) == "string", "addCanvasLayer(canvas, transparency, id): id is not a string");
+	assert(isNumeric(transparency) || typeof(transparency) == "number", "addCanvasLayer(canvas_, transparency, id): transparency is not a number");
 	// Get the canvas element
 
 	// Create a new canvas element for the layer
