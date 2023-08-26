@@ -1007,7 +1007,8 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 		// Create an auxiliary model of which input is the same as the original
 		// model but the output is the output of the convolutional layer of
 		// interest.
-		const layerOutput = model.getLayer(null, layerIndex).output;
+		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
+
 		const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
 
 		// This function calculates the value of the convolutional layer's
