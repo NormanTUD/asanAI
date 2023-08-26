@@ -1305,6 +1305,8 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 				l(err);
 		} else if(("" + e).includes("n is undefined")) {
 			console.warn("Model weights probably already disposed, this is usually not harmful");
+		} else if(("" + e).includes("Unsupported input rank by")) {
+			console.warn("Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 		} else {
 			l("Predict data shape:", predict_data.shape);
 			console.error(e);
