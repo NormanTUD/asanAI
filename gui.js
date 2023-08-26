@@ -6247,36 +6247,55 @@ function enable_every_layer () { var start_tensors = memory_leak_debugger();
 
 function disable_flatten_layer () { var start_tensors = memory_leak_debugger();
 	if(!model) {
+		if(finished_loading) {
+			console.warn("No model found");
+		}
 		memory_leak_debugger("disable_flatten_layer", start_tensors);
 		return;
 	}
 
-	var flatten_layer = null;
-	for (var i = 0; i < model.layers.length; i++) {
-		if(!flatten_layer && model.layers[i].name.startsWith("flatten")) {
-			flatten_layer = i;
+	if(!model.layers) {
+		if(finished_loading) {
+			console.warn("No layers found");
 		}
+		memory_leak_debugger("disable_flatten_layer", start_tensors);
+		return;
 	}
 
-	if(flatten_layer !== null) {
-		$($(".layer_setting")[flatten_layer]).find(".remove_layer").prop("disabled", true);
+	try {
+		var flatten_layer = null;
+		for (var i = 0; i < model.layers.length; i++) {
+			if(!flatten_layer && model.layers[i].name.startsWith("flatten")) {
+				flatten_layer = i;
+			}
+		}
+
+		if(flatten_layer !== null) {
+			$($(".layer_setting")[flatten_layer]).find(".remove_layer").prop("disabled", true);
+		}
+	} catch (e) {
+		throw new Error(e);
 	}
 
 	memory_leak_debugger("disable_flatten_layer", start_tensors);
 }
 
 function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () { var start_tensors = memory_leak_debugger();
-	enable_every_layer();
+	try {
+		enable_every_layer();
 
-	if(mode == "beginner") {
-		$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
-		$($(".layer_setting")[$(".layer_setting").length - 1]).find("button").prop("disabled", true);
-		$($(".layer_setting")[$(".layer_setting").length - 1]).find(".show_data").prop("disabled", false);
-		$($(".layer_setting")[$(".layer_setting").length - 1]).find(".visualize_layer_button").prop("disabled", false);
+		if(mode == "beginner") {
+			$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
+			$($(".layer_setting")[$(".layer_setting").length - 1]).find("button").prop("disabled", true);
+			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".show_data").prop("disabled", false);
+			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".visualize_layer_button").prop("disabled", false);
 
-		disable_flatten_layer();
+			disable_flatten_layer();
 
-		//l("Disabling last layer in beginner mode");
+			//l("Disabling last layer in beginner mode");
+		}
+	} catch (e) {
+		console.error(e);
 	}
 
 	memory_leak_debugger("disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode", start_tensors);

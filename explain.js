@@ -808,26 +808,44 @@ function add_layer_debuggers () { var start_tensors = memory_leak_debugger();
 
 	$(".layer_data").html("")
 
-	for (var i = 0; i < model.layers.length; i++) {
-		if(get_methods(model.layers[i]).includes("original_apply_real")) {
-			model.layers[i].apply = model.layers[i].original_apply_real;
+	if(!model) {
+		if(finished_loading) {
+			console.warn("No model found");
 		}
 
-		model.layers[i].original_apply_real = model.layers[i].apply
+		return;
+	}
 
-		var code = `model.layers[${i}].apply = function (inputs, kwargs) {
-			var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
+	if(!model.layers) {
+		if(finished_loading) {
+			console.warn("No layer found");
+		}
+	}
 
-			if(!disable_layer_debuggers) {
-				if($("#show_layer_data").is(":checked")) {
-					draw_internal_states(${i}, inputs, applied);
-				}
+	try {
+		for (var i = 0; i < model.layers.length; i++) {
+			if(get_methods(model.layers[i]).includes("original_apply_real")) {
+				model.layers[i].apply = model.layers[i].original_apply_real;
 			}
 
-			return applied;
-		}`;
+			model.layers[i].original_apply_real = model.layers[i].apply
 
-		eval(code);
+			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
+				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
+
+				if(!disable_layer_debuggers) {
+					if($("#show_layer_data").is(":checked")) {
+						draw_internal_states(${i}, inputs, applied);
+					}
+				}
+
+				return applied;
+			}`;
+
+			eval(code);
+		}
+	} catch (e) {
+		console.warn(e);
 	}
 
 	memory_leak_debugger("add_layer_debuggers", start_tensors);

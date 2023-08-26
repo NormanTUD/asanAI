@@ -1166,7 +1166,7 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
 function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_debugger();
-	if(!model || !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
+	if(!model || typeof(model) == "object" && !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
 		model_is_ok();
 		return false;
 	}

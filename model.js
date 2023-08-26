@@ -871,14 +871,18 @@ async function create_model (old_model, fake_model_structure, force) { var start
 		var old_model_has_layers = 1;
 		try { var x = old_model.layers; } catch (e) { old_model_has_layers = 0; }
 
-		if(old_model_has_layers && old_model.layers.length) {
-			for (var k = 0; k < old_model.layers.length; k++) {
-				for (var j = 0; j < old_model.layers[k].weights.length; j++) {
-					await dispose(old_model.layers[k].weights[j].val);
+		try {
+			if(old_model_has_layers && old_model.layers && old_model.layers.length) {
+				for (var k = 0; k < old_model.layers.length; k++) {
+					for (var j = 0; j < old_model.layers[k].weights.length; j++) {
+						await dispose(old_model.layers[k].weights[j].val);
+					}
 				}
+			} else {
+				console.info("Old layers had no layers defined");
 			}
-		} else {
-			console.info("Old layers had no layers defined");
+		} catch (e) {
+			throw new Error(e);
 		}
 
 		await dispose(old_model);

@@ -42,7 +42,9 @@ function reset_gui_before_training () { var start_tensors = memory_leak_debugger
 async function train_neural_network () { var start_tensors = memory_leak_debugger();
 	if(model === null || !Object.keys(model).includes("layers")) {
 		await gui_not_in_training();
-		await write_error("Something went wrong with compiling the model. Please reload the site.");
+
+		model = await create_model();
+		compile_model();
 
 		return;
 	}
@@ -904,9 +906,16 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 						log("Unknown swal r: ", r);
 					}
 				} else {
-					await write_error("" + e);
+					if(("" + e).includes("model is null")) {
+						console.info("Model is null. Recompiling model...");
+						model = await create_model();
+						await compile_model()
+						console.info("Model was null. Recompiling model done!");
+					} else {
+						await write_error("" + e);
 
-					throw new Error(e);
+						throw new Error(e);
+					}
 				}
 			}
 		}

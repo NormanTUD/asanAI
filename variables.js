@@ -6,7 +6,15 @@ function get_input_shape_as_string () {
 	var is = "";
 	try {
 		if(model) {
-			is = model.input.shape.filter(n => n);
+			try {
+				is = model.input.shape.filter(n => n);
+			} catch (e) {
+				if(("" + e).includes("model.input is undefined")) {
+					is = get_input_shape();
+				} else {
+					throw new Error(e);
+				}
+			}
 		} else {
 			is = get_input_shape();
 		}
