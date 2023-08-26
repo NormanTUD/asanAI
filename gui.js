@@ -1469,6 +1469,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		try {
 			await compile_model();
 		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
 			log(e);
 			log("There was an error compiling the model: " + e);
 			throw new Error(e);
@@ -1570,6 +1574,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
 			if(("" + e).includes("model.layers[i]")) {
 				return false;
 			} else if (("" + e).includes("model is undefined or null")) {
@@ -4043,9 +4051,10 @@ async function last_shape_layer_warning() { var start_tensors = memory_leak_debu
 					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id
 						if(!this_canvas_id.endsWith("_layer")) {
-							if($("#" + this_canvas_id + "_layer").length == 0) {
+							var new_canvas_id = "#" + uuidv4() + "_layer";
+							if($(new_canvas_id).length == 0) {
 								l("Drawing layer for custom image " + this_canvas_id);
-								addLayer(this_canvas_id, 0.5);
+								addCanvasLayer(canvasses[j], 0.5, new_canvas_id);
 							}
 						}
 					}
@@ -4177,13 +4186,15 @@ async function add_new_category() { var start_tensors = memory_leak_debugger();
 	return uuid;
 }
 
-function addLayer(canvas_id, transparency) { var start_tensors = memory_leak_debugger();
+function addCanvasLayer(canvas, transparency, id) { var start_tensors = memory_leak_debugger();
+	assert(typeof(canvas) == "object", "addCanvasLayer(canvas, transparency, id): canvas is not an object");
+	assert(typeof(canvas) == "string", "addCanvasLayer(canvas, transparency, id): id is not a string");
+	assert(isNumeric(transparency), "addCanvasLayer(canvas_, transparency, id): transparency is not a number");
 	// Get the canvas element
-	const canvas = document.getElementById(canvas_id);
 
 	// Create a new canvas element for the layer
 	const layer = document.createElement("canvas");
-	layer.id = `${canvas_id}_layer`;
+	layer.id = `${id}_layer`;
 	layer.width = canvas.width;
 	layer.height = canvas.height;
 	layer.style.position = "absolute";
@@ -4193,7 +4204,7 @@ function addLayer(canvas_id, transparency) { var start_tensors = memory_leak_deb
 	layer.style.opacity = transparency;
 
 	// Add the new canvas element to the document
-	$("#" + canvas_id).parent().append(layer);
+	$(canvas).parent().append(layer);
 
 	// Create a new Atrament instance for the layer
 	atrament_data[layer.id] = {};
@@ -4221,18 +4232,18 @@ function addLayer(canvas_id, transparency) { var start_tensors = memory_leak_deb
 
 	// Add the transparency slider to the document
 	
-	$("#" + canvas_id).parent().append("<br>");
+	$(canvas).parent().append("<br>");
 	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
-	$("#" + canvas_id).parent().append(color_picker_code);
+	$(canvas).parent().append(color_picker_code);
 	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
 
 
-	$("#" + canvas_id).parent().append("<br>Transparency:");
-	$("#" + canvas_id).parent().append(transparency_slider);
+	$(canvas).parent().append("<br>Transparency:");
+	$(canvas).parent().append(transparency_slider);
 
-	$("#" + canvas_id).parent().append("<br>Pen size:");
-	$("#" + canvas_id).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
-	memory_leak_debugger("addLayer", start_tensors);
+	$(canvas).parent().append("<br>Pen size:");
+	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
+	memory_leak_debugger("addCanvasLayer", start_tensors);
 }
 
 
