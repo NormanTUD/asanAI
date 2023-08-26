@@ -621,16 +621,23 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 
 				imageData = null;
 			} else {
-				var x_string, y_string;
-				x_string = await _get_training_data_from_filename("x.txt");
-				y_string = await _get_training_data_from_filename("y.txt");
-				x = numpy_str_to_tf_tensor(x_string, max_number_values);
-				y = numpy_str_to_tf_tensor(y_string, max_number_values);
+				try {
+					var x_string, y_string;
+					x_string = await _get_training_data_from_filename("x.txt");
+					y_string = await _get_training_data_from_filename("y.txt");
+					x = numpy_str_to_tf_tensor(x_string, max_number_values);
+					y = numpy_str_to_tf_tensor(y_string, max_number_values);
 
-				var x_print_string = tensor_print_to_string(x);
-				var y_print_string = tensor_print_to_string(y);
+					var x_print_string = tensor_print_to_string(x);
+					var y_print_string = tensor_print_to_string(y);
 
-				$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+				} catch (e) {
+					console.warn(e);
+					console.trace();
+					x = tf.tensor([]);
+					y = tf.tensor([]);
+				}
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};

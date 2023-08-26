@@ -2230,7 +2230,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 				try {
 					_temml();
 				} catch (e) {
-					if(!("" + e).includes("assign to property")) {
+					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
 						console.info("" + e);
 					}
 				}
