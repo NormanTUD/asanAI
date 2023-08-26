@@ -265,7 +265,7 @@ async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memo
 async function _predict_result(predictions_tensor, nr) { var start_tensors = memory_leak_debugger();
 	var desc = $($(".predict_demo_result")[nr]);
 	desc.html("");
-	if(model.outputShape.length == 3) {
+	if(model.outputShape.length == 4) {
 		await _predict_image(predictions_tensor, desc);
 	} else if(model.outputShape.length == 2) {
 		await _predict_table(predictions_tensor, desc);
