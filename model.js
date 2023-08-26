@@ -700,7 +700,9 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				if(new_output_shape) {
 					for (j in new_output_shape) {
 						if(new_output_shape[j] === 0) {
-							console.log(new_output_shape.shape);
+							if(new_output_shape.shape) {
+								console.log("New output-shape:", new_output_shape.shape);
+							}
 							throw new Error("Input shape contains 0 at layer " + j);
 						}
 					}
@@ -822,9 +824,9 @@ async function create_model (old_model, fake_model_structure, force) { var start
 		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
-			console.warn(e);
+			console.warn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
 		} else if(("" + e).includes("Input shape contains 0")) {
-			console.warn(e);
+			console.warn("" + e);
 		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
 			console.warn("Model could not be created because of problems with the input layer.");
 			return;
