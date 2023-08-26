@@ -1136,6 +1136,18 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 		$('body').css('cursor', 'wait');
 	}
 
+
+	if(currently_generating_images) {
+		l("Cannot predict 2 layers at the same time. Waiting until done...");
+
+		while (currently_generating_images) {
+			await delay(500);
+		}
+
+	}
+
+	currently_generating_images = true;
+
 	var neurons = _get_neurons_last_layer(layer, type);
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
@@ -1246,6 +1258,8 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) { 
 		window.scrollTo(0,0);
 		$('body').css('cursor', 'default');
 	}
+
+	currently_generating_images = false;
 }
 
 function _show_eta (times, i, neurons) { var start_tensors = memory_leak_debugger();

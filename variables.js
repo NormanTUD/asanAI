@@ -1542,3 +1542,4 @@ var model_is_ok_icon = null;
 var is_repairing_output_shape = false;
 
 var last_model_ok_status = "";
+var currently_generating_images = false;
