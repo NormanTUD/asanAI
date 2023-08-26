@@ -877,6 +877,8 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 					throw new Error(e);
 				}
 			} else {
+				gui_not_in_training();
+
 				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 					e = e.message;
 				}
