@@ -1565,7 +1565,11 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else {
-			l("" + e);
+			if(("" + e).includes("model.layers[i]")) {
+				return false;
+			} else {
+				throw new Error(e);
+			}
 		}
 	}
 
@@ -4935,13 +4939,24 @@ function hide_ribbon() { // start_tensors
 	$("#status_bar").hide();
 }
 
-function human_readable_time(seconds) { // start_tensors
+function human_readable_time(seconds, start="", end="") { // start_tensors
 	if (!seconds) {
 		return language[lang]["one_second"];
 	}
 
 	if(seconds > 86400 * 365) {
-		console.warn("Seconds is very large:", seconds, "Please check the source of that");
+		var params = []; 
+		if(start) {
+			params.push("Start:");
+			params.push(start);
+		}
+
+		if(end) {
+			params.push("End:");
+			params.push(end);
+		}
+
+		console.warn("Seconds is very large:", seconds, "Please check the source of that", params);
 		console.trace();
 	}
 

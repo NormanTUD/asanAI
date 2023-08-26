@@ -40,9 +40,9 @@ function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors
 		if(name && oldNumTensors) {
 			if(numTensors > oldNumTensors) {
 				if(name != "") {
-					console.info("MEMORY LEAK WHILE (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
+					console.debug("Potential memory leak while (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
 				} else {
-					console.info("MEMORY LEAK! New tensors: " + Math.abs(oldNumTensors - numTensors));
+					console.debug("Potential memory leak! New tensors: " + Math.abs(oldNumTensors - numTensors));
 				}
 				//console.trace();
 			}
@@ -68,13 +68,10 @@ function get_scatter_type () { // start_tensors
 	*/
 }
 
-function uuidv4() { var start_tensors = memory_leak_debugger();
+function uuidv4() {
 	var res = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
-
-
-	memory_leak_debugger("uuidv4", start_tensors);
 	
 	return res;
 }
