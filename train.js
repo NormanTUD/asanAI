@@ -948,15 +948,16 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 
 	await save_current_status();
 	var dn = Date.now();
-	var training_time = parseInt(parseInt(dn - last_training_time) / 1000);
-	if(training_time > 60) {
-		l(language[lang]["done_training_took"] + " " + human_readable_time(training_time, dn, last_training_time) + " (" + training_time + "s)");
-	} else {
-		l(language[lang]["done_training_took"] + " " + human_readable_time(training_time));
+	if(last_training_time) {
+		var training_time = parseInt(parseInt(dn - last_training_time) / 1000);
+		if(training_time > 60) {
+			l(language[lang]["done_training_took"] + " " + human_readable_time(training_time, dn, last_training_time) + " (" + training_time + "s)");
+		} else {
+			l(language[lang]["done_training_took"] + " " + human_readable_time(training_time));
+		}
 	}
 
 	await gui_not_in_training();
-	last_training_time = "";
 
 	memory_leak_debugger("run_neural_network", start_tensors);
 }

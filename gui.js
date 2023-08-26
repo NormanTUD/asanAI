@@ -4949,12 +4949,12 @@ function human_readable_time(seconds, start="", end="") { // start_tensors
 
 	if(seconds > 86400 * 365) {
 		var params = []; 
-		if(start) {
+		if(start != "") {
 			params.push("Start:");
 			params.push(start);
 		}
 
-		if(end) {
+		if(end != "") {
 			params.push("End:");
 			params.push(end);
 		}
