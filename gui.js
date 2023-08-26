@@ -6541,7 +6541,7 @@ function label_debugger_icon_ok () {
 		$("#label_debugger_icon").html("").hide();
 	} else {
 		if(model.layers.last().output.shape.length == 2 && model.layers.last().name.startsWith("dense")) {
-			$("#label_debugger_icon").html("<span style='background-color: red; color: black;'>[No labels]</span>").show();
+			$("#label_debugger_icon").html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
 		} else {
 			$("#label_debugger_icon").html("").hide();
 		}
