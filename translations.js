@@ -122,6 +122,8 @@ function trm (name) {
 		return `<span class='TRANSLATEME_${name}'></span>`
 	}
 
+	alert(`${NAME} NOT FOUND`);
+
 	return `${NAME} NOT FOUND`;
 }
 

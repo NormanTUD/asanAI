@@ -165,14 +165,14 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%")
 	if(is_cosmo_mode) {
-		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")...";
-		updateTranslations();
+		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
 		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI"
 	} else {
-		document.title = language[lang]["loading_data"] + " " + percentage_text + " - asanAI";
+		document.title = language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI";
 	}
 
 	percentage_div.html(percentage_text);
+	updateTranslations();
 
 	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
 		var remaining_items = urls_length - i;
@@ -184,7 +184,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 		if(is_cosmo_mode) {
 			percentage_div.html(percentage_div.html() + ", ca. " + human_readable_time(eta) + " " + trm("left"));
 		} else {
-			percentage_div.html(percentage_div.html() + " ETA: " + human_readable_time(eta));
+			percentage_div.html(percentage_div.html() + " ca. " + human_readable_time(eta) + " " + trm("left"));
 		}
 	}
 
@@ -280,8 +280,6 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 				if(!shown_stop_downloading) {
 					log("Stop downloading because stop-download-button was clicked");
 					shown_stop_downloading = 1;
-				} else {
-					log("Stop downloading because of an unknown reason");
 				}
 			}
 		}
@@ -912,7 +910,7 @@ function add_photo_to_gallery(url) { var start_tensors = memory_leak_debugger();
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img class='download_img' src='" + url + "' height='90' />";
+	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' />";
 	$("#photos").show().prepend(img_tag);
 
 	memory_leak_debugger("add_photo_to_gallery", start_tensors);
