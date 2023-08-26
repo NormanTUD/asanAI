@@ -1567,6 +1567,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else {
 			if(("" + e).includes("model.layers[i]")) {
 				return false;
+			} else if (("" + e).includes("model is undefined or null")) {
+				return false;
 			} else {
 				throw new Error(e);
 			}
@@ -5967,7 +5969,12 @@ function get_drawing_board_on_page (indiv, idname, customfunc) { var start_tenso
 
 	atrament_data[idname]["atrament"].addEventListener('strokeend', async () => {
 		if(customfunc) {
-			eval(customfunc);
+			try {
+				eval(customfunc);
+			} catch (e) {
+				console.warn("Cannot run custom atrament function, probably because the model was undefined: " + e);
+				console.trace();
+			}
 		}
 
 		if(idname != "sketcher") {

@@ -1238,7 +1238,7 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 	}
 
 	if(!model) {
-		log("ERROR: model is undefined");
+		throw new Error("model is undefined or null");
 		return;
 	}
 

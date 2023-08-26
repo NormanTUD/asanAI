@@ -633,7 +633,9 @@ function _check_data (data, type) { var start_tensors = memory_leak_debugger();
 
 	try {
 		if("units" in data && typeof(data["units"]) == "undefined") {
-			console.warn("units was not defined. Using 2 as default");
+			if(finished_loading) {
+				console.warn("units was not defined. Using 2 as default");
+			}
 			data["units"] = 2;
 		}
 	} catch (e) {
