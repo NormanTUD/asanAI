@@ -1622,7 +1622,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 
 	var input_shape = model.layers[0].input.shape;
 
-	if(input_shape.length != 2) {
+	if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
 		l("Math mode works only in input shape [n] (or [null, n] with batch)");
 		memory_leak_debugger("model_to_latex", start_tensors);
 		return;
@@ -1630,7 +1630,7 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 
 	var output_shape = model.layers[model.layers.length - 1].outputShape;
 
-	if(output_shape.length != 2) {
+	if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
 		l("Math mode works only in output shape [n] (or [null, n] with batch)");
 		memory_leak_debugger("model_to_latex", start_tensors);
 		return;
@@ -2091,7 +2091,22 @@ function model_to_latex () { var start_tensors = memory_leak_debugger();
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
 		} else if (this_layer_type == "gaussianNoise") {
 			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}"
+		} else if (this_layer_type == "conv1d") {
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)"
+		} else if (this_layer_type == "conv1d") {
+			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+		} else if (this_layer_type == "conv2d") {
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right) + \\text{bias}(k)";
+		} else if (this_layer_type == "conv3d") {
+			str += _get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + _get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right) + \\text{bias}(k)";
+		} else if (this_layer_type == "maxPooling1D") {
+			str += _get_h(i + 1) + "\\max_{i=1}^{N}" + _get_h(i) + "(x+i)";
+		} else if (this_layer_type == "maxPooling2D") {
+			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} " + _get_h(i) + "(x+i, y+j)";
+		} else if (this_layer_type == "maxPooling3D") {
+			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
 		} else {
+			str += "\\mathrm{(The equations for this layer are not yet defined)}"
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 
@@ -2196,7 +2211,11 @@ function can_be_shown_in_latex () { var start_tensors = memory_leak_debugger();
 		return false;
 	}
 
-	if(model.layers[0].input.shape.length != 2) {
+	if($("#allow_math_mode_for_all_layers").is(":checked")) {
+		return true;
+	}
+
+	if(!($("#allow_math_mode_for_all_layers").is(":checked")) && model.layers[0].input.shape.length != 2) {
 		if($("#math_tab_label").is(":visible")) {
 			l("Hiding math tab because the input tensor is too large.");
 		}
@@ -2224,7 +2243,7 @@ function can_be_shown_in_latex () { var start_tensors = memory_leak_debugger();
 			"dropout", 
 			"batchNormalization", 
 			"DebugLayer", 
-			"gaussianNoise"
+			"gaussianNoise",
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
@@ -2278,6 +2297,10 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 				} catch (e) {
 					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
 						console.info("" + e);
+					} else if (("" + e).includes("too many function arguments")) {
+						console.error("TEMML: " + e);
+					} else {
+						throw new Error(e);
 					}
 				}
 				show_tab_label("math_tab_label");
@@ -2794,8 +2817,12 @@ function _temml () {
 	for (var i in items) {
 		var item = items[i];
 		if(!$(item).attr("data-rendered") == 1) {
-			temml.render($(item).text(), item);
-			$(item).attr("data-rendered", 1);
+			if($(item).text()) {
+				temml.render($(item).text(), item);
+				$(item).attr("data-rendered", 1);
+			} else {
+				console.debug("item has no text, cannot be temmld:", item)
+			}
 		}
 	}
 }

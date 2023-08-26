@@ -1406,7 +1406,7 @@ async function hide_no_conv_stuff() {
 	hide_empty_tabs("visualization_ribbon");
 }
 
-async function get_shape_from_array(a) {
+function get_shape_from_array(a) {
 	var dim = [];
 	for (;;) {
 		dim.push(a.length);
@@ -1599,6 +1599,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			}
 		}
 	}
+
+	try {
+		await _temml();
+	} catch (e) {}
 
 	memory_leak_debugger("updated_page", start_tensors);
 }
@@ -3668,14 +3672,13 @@ function show_dtype_only_first_layer() { var start_tensors = memory_leak_debugge
 	memory_leak_debugger("show_dtype_only_first_layer", start_tensors);
 }
 
-function attrChangeName(elem, attr, new_attr) { var start_tensors = memory_leak_debugger();
+function attrChangeName(elem, attr, new_attr) {
 	var data = $(elem).attr(attr);
 	$(elem).attr(new_attr, data);
 	$(elem).removeAttr(attr);
-	memory_leak_debugger("attrChangeName", start_tensors);
 }
 
-function is_hidden_or_has_hidden_parent(element) { var start_tensors = memory_leak_debugger();
+function is_hidden_or_has_hidden_parent(element) {
 	if ($(element).css("display") == "none") {
 		return true;
 	}
@@ -3684,20 +3687,17 @@ function is_hidden_or_has_hidden_parent(element) { var start_tensors = memory_le
 
 	for (var i = 0; i < parents.length; i++) {
 		if ($(parents[i]).css("display") == "none") {
-			memory_leak_debugger("is_hidden_or_has_hidden_parent", start_tensors);
 			return true;
 		}
 	}
 
-	memory_leak_debugger("is_hidden_or_has_hidden_parent", start_tensors);
 	return false;
 }
 
-function start_chardin_tour() { var start_tensors = memory_leak_debugger();
+function start_chardin_tour() {
 	disable_hidden_chardin_entries();
 	chardinJs = $("body").chardinJs($("body"));
 	chardinJs.start();
-	memory_leak_debugger("start_chardin_tour", start_tensors);
 }
 
 function disable_hidden_chardin_entries() { var start_tensors = memory_leak_debugger();
@@ -6023,6 +6023,7 @@ function chose_nearest_color_picker (e) { var start_tensors = memory_leak_debugg
 
 async function onclick_math_mode (t, e) { var start_tensors = memory_leak_debugger();
 	await write_model_to_latex_to_page(0, 1);
+	await _temml();
 	memory_leak_debugger("onclick_math_mode", start_tensors);
 }
 

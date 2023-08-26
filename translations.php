@@ -241,7 +241,8 @@
 			'changed_mode_from' => "Changed mode from",
 			"to" => "to",
 			"lost_undo_redo_stack" => "lost undo/redo stack",
-			"stopped_training" => "Stopped training"
+			"stopped_training" => "Stopped training",
+			"allow_math_mode_for_all_layers" => "Allow math mode for all layers"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -484,7 +485,8 @@
 			'changed_mode_from' => "Modus von",
 			"to" => "nach",
 			"lost_undo_redo_stack" => "Rückgängig/wiederherstellen resettet",
-			"stopped_training" => "Training beendet"
+			"stopped_training" => "Training beendet",
+			"allow_math_mode_for_all_layers" => "Mathe-Modus für alle Layer erlauben"
 		)
 	);
 ?>

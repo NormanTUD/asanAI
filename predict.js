@@ -270,7 +270,7 @@ async function _predict_result(predictions_tensor, nr) { var start_tensors = mem
 	} else if(model.outputShape.length == 2) {
 		await _predict_table(predictions_tensor, desc);
 	} else {
-		var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
+		var latex = arbitrary_array_to_latex(predictions_tensor.arraySync());
 		desc.html(latex);
 	}
 
@@ -528,7 +528,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 		if(is_image_prediction || labels.length) {
 			$("#" + pred_tab).append(str).show();
 		} else {
-			var latex = await arbitrary_array_to_latex(predictions_tensor.arraySync());
+			var latex = arbitrary_array_to_latex(predictions_tensor.arraySync());
 			$("#" + pred_tab).append(latex).show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}
@@ -1346,7 +1346,7 @@ async function _predict_handdrawn(predictions_tensor) { var start_tensors = memo
 	} else if(model.outputShape.length == 4) {
 		ret = await _image_output_handdrawn(predictions_tensor);
 	} else {
-		var latex_output = await arbitrary_array_to_latex(predictions_tensor.arraySync())
+		var latex_output = arbitrary_array_to_latex(predictions_tensor.arraySync())
 		ret = latex_output;
 	}
 
