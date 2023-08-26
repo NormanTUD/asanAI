@@ -765,11 +765,19 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 								var this_img = await resized_img.arraySync();
 								x.push(this_img);
 								classes.push(label_nr);
-								var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
-									resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 
-								var this_map = tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
-								maps.push(this_map)
+								try {
+									var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
+										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
+									var this_map = 
+										tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
+									maps.push(this_map)
+								} catch (e) {
+									console.error(e);
+									continue;
+								}
+
+
 							}
 						}
 					}

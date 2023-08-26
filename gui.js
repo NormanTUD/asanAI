@@ -4051,10 +4051,11 @@ async function last_shape_layer_warning() { var start_tensors = memory_leak_debu
 					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id
 						if(!this_canvas_id.endsWith("_layer")) {
-							var new_canvas_id = btoa(get_element_xpath(canvasses[j])).replaceAll("=", "") + "_layer";
+							var base_id = btoa(get_element_xpath(canvasses[j])).replaceAll("=", "");
+							var new_canvas_id = base_id + "_layer";
 							if($(new_canvas_id).length == 0) {
 								l("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
-								addCanvasLayer(canvasses[j], 0.5, new_canvas_id);
+								addCanvasLayer(canvasses[j], 0.5, base_id);
 							}
 						}
 					}
@@ -4186,17 +4187,18 @@ async function add_new_category() { var start_tensors = memory_leak_debugger();
 	return uuid;
 }
 
-function addCanvasLayer(canvas, transparency, id) { var start_tensors = memory_leak_debugger();
-	log("addCanvasLayer(", canvas + ", ", transparency, ", ", id, ")");
+function addCanvasLayer(canvas, transparency, base_id) { var start_tensors = memory_leak_debugger();
+	log("addCanvasLayer(", canvas + ", ", transparency, ", ", base_id, ")");
 
-	assert(typeof(canvas) == "object", "addCanvasLayer(canvas, transparency, id): canvas is not an object");
-	assert(typeof(id) == "string", "addCanvasLayer(canvas, transparency, id): id is not a string");
-	assert(isNumeric(transparency) || typeof(transparency) == "number", "addCanvasLayer(canvas_, transparency, id): transparency is not a number");
+	assert(typeof(canvas) == "object", "addCanvasLayer(canvas, transparency, base_id): canvas is not an object");
+	assert(typeof(base_id) == "string", "addCanvasLayer(canvas, transparency, base_id): base_id is not a string");
+	assert(isNumeric(transparency) || typeof(transparency) == "number", "addCanvasLayer(canvas_, transparency, base_id): transparency is not a number");
 	// Get the canvas element
 
 	// Create a new canvas element for the layer
 	const layer = document.createElement("canvas");
-	layer.id = `${id}_layer`;
+	canvas.id = base_id;
+	layer.id = `${base_id}_layer`;
 	layer.width = canvas.width;
 	layer.height = canvas.height;
 	layer.style.position = "absolute";

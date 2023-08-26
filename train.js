@@ -1212,11 +1212,27 @@ async function visualize_train () { var start_tensors = memory_leak_debugger();
 				tf.engine().startScope();
 				imgs.push(x);
 
+				if(!x) {
+					tf.engine().endScope();
+					console.warn("x not defined!", x);
+					continue;
+				}
+
 				var img_tensor = tf.tidy(() => {
-					var res = tf.browser.fromPixels(x).resizeBilinear([height, width]).expandDims()
-					res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
-					return res;
+					try {
+						var res = tf.browser.fromPixels(x).resizeBilinear([height, width]).expandDims()
+						res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
+						return res;
+					} catch (e) {
+						console.error(e);
+						return null;
+					}
 				});
+
+				if(img_tensor === null) {
+					console.warn("Could not load image from pixels from this element:", x);
+					continue;
+				}
 
 				var res = tf.tidy(() => { return model.predict(img_tensor) });
 
