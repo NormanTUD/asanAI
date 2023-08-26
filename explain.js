@@ -1406,7 +1406,11 @@ function array_to_color (array, color) { var start_tensors = memory_leak_debugge
 		if(!this_color) {
 			this_color = "orange";
 		}
-		new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
+		if(this_color == "#353535" || this_color == "#ffffff" || this_color == "white" || this_color == "black") {
+			new_array.push(array[x]);
+		} else {
+			new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
+		}
 		x++;
 	}
 
@@ -2812,6 +2816,7 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 }
 
 function _temml () {
+	/*
 	var items = $(".temml_me");
 
 	for (var i in items) {
@@ -2825,6 +2830,14 @@ function _temml () {
 			}
 		}
 	}
+	*/
+
+	$(".temml_me").each((i, e) => {
+		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+			temml.render(e.textContent, e);
+			$(e).attr("data-rendered", 1);
+		}
+	});
 }
 
 async function arbitrary_array_to_latex (arr) {
