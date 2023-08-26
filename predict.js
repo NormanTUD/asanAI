@@ -933,6 +933,9 @@ async function predict_webcam () { var start_tensors = memory_leak_debugger();
 			console.warn("Model Tensor already disposed");
 		} else if(("" + e).includes("n is undefined")) {
 			console.warn("Model weights probably already disposed, this is usually not harmful");
+		} else if(("" + e).includes("but got array with shape")) {
+			console.warn("Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
+			await show_webcam(1);
 		} else {
 			l("Error (512): " + e);
 
