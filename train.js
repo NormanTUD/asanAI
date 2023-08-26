@@ -44,7 +44,7 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 		await gui_not_in_training();
 
 		model = await create_model();
-		compile_model();
+		await compile_model();
 
 		return;
 	}
@@ -877,7 +877,7 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 					throw new Error(e);
 				}
 			} else {
-				gui_not_in_training();
+				await gui_not_in_training();
 
 				if(typeof(e) == "object" && Object.keys(e).includes("message")) {
 					e = e.message;
@@ -946,8 +946,6 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 		console.trace();
 	}
 
-	await gui_not_in_training();
-
 	await reset_data();
 
 	await save_current_status();
@@ -958,6 +956,8 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 	} else {
 		l(language[lang]["done_training_took"] + " " + human_readable_time(training_time));
 	}
+
+	await gui_not_in_training();
 	last_training_time = "";
 
 	memory_leak_debugger("run_neural_network", start_tensors);

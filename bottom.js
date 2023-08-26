@@ -39,15 +39,10 @@ function get_mode() {
 		future_state_stack = [];
 
 		show_hide_undo_buttons();
-		Swal.fire(
-			language[lang]["undo_redo_stack_lost"],
-			language[lang]["changing_mode_deletes_stack"],
-			'warning'
-		);
-		l("Changed mode " + old_mode + " to " + mode + ", lost undo/redo stack");
+		l(language[lang]["changed_mode_from"] + " " + language[lang][old_mode] + " " + language[lang]["to"] + " " + language[lang][mode] + ", " + language[lang]["lost_undo_redo_stack"]);
 	} else {
 		if(mode != old_mode) {
-			l("Changed mode " + old_mode + " to " + mode);
+			l(language[lang]["changed_mode_from"] + " " + language[lang][old_mode] + " " + language[lang]["to"] + " " + language[lang][mode]);
 		}
 	}
 
@@ -71,7 +66,7 @@ function set_mode () {
 		});
 		$("#auto_input_shape").prop('checked', true);
 		$(".expert_mode_only").hide();
-		l("Auto input shape is only available on Expert Mode");
+		l(language[lang]["switched_to_beginner_mode"]);
 	} else {
 		throw_compile_exception = true;
 		$(".expert_mode_only").show();

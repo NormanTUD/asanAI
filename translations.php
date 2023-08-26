@@ -234,7 +234,13 @@
 			'No' => 'No',
 			'Yes' => 'Yes',
 			'autofix_output_shape' => 'Do you want to automatically fix the output shape?',
-			'defective_output_shape' => 'Defective output shape detected'
+			'defective_output_shape' => 'Defective output shape detected',
+			"switched_to_beginner_mode" => "Switched to beginner mode",
+			"beginner" => "Beginner",
+			"expert" => "Expert",
+			'changed_mode_from' => "Changed mode from",
+			"to" => "to",
+			"lost_undo_redo_stack" => "lost undo/redo stack"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -470,7 +476,13 @@
 			'No' => 'Nein',
 			'Yes' => 'Ja',
 			'autofix_output_shape' => 'Möchtest du die Output-Shape automatisch reparieren lassen?',
-			'defective_output_shape' => 'Kaputte Output-Shape entdeckt!'
+			'defective_output_shape' => 'Kaputte Output-Shape entdeckt!',
+			"switched_to_beginner_mode" => "In den Anfängermodus gewechselt",
+			"beginner" => "Anfänger",
+			"expert" => "Experte",
+			'changed_mode_from' => "Modus von",
+			"to" => "nach",
+			"lost_undo_redo_stack" => "Rückgängig/wiederherstellen resettet"
 		)
 	);
 ?>
