@@ -913,6 +913,8 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 						model = await create_model();
 						await compile_model()
 						console.info("Model was null or undefined. Recompiling model done!");
+					} else if(("" + e).includes("but got array with shape")) {
+						console.warn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
 					} else {
 						await write_error("" + e);
 
