@@ -1649,3 +1649,38 @@ function model_output_shape_looks_like_classification () { var start_tensors = m
 
 	return res;
 }
+
+function layer_has_multiple_nodes () {
+	if(!model) {
+		if(finished_loading) {
+			console.warn("no model in layer_has_multiple_nodes");
+		}
+	}
+
+	if(!Object.keys(model).includes("layers")) {
+		if(finished_loading) {
+
+			console.warn("no model.layers in layer_has_multiple_nodes");
+		}
+	}
+
+	var failed = 0;
+
+	try {
+		for (var x in model.layers) {
+			try {
+				model.layers[x].output
+			} catch (e) {
+				if(("" + e).includes("multiple inbound nodes")) {
+					return true
+				} else {
+					throw new Error(e);
+				}
+			}
+		}
+	} catch (e) {
+		throw new Error(e);
+	}
+
+	return false;
+}

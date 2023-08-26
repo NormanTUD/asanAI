@@ -6552,6 +6552,17 @@ function model_is_ok () {
 			color = orange;
 			msg = "Model has no input";
 		}
+
+		if(layer_has_multiple_nodes()) {
+			if(color == green) {
+				color = orange;
+			}
+			if(color == "green") {
+				msg = ". HAS MULTIPLE OUTPUT NODES";
+			} else {
+				msg = msg + ". HAS MULTIPLE OUTPUT NODES";
+			}
+		}
 	} catch (e) {
 		color = red;
 		msg = "" + e;
