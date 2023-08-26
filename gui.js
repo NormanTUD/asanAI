@@ -4054,7 +4054,7 @@ async function last_shape_layer_warning() { var start_tensors = memory_leak_debu
 							var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
 							var new_canvas_id = base_id + "_layer";
 							if($(new_canvas_id).length == 0) {
-								l("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
+								log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
 								addCanvasLayer(canvasses[j], 0.5, base_id);
 							}
 						}
