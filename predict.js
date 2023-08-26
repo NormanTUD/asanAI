@@ -729,7 +729,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 	show_or_hide_predictions(count);
 
 	try {
-		_temml();
+		await _temml();
 	} catch (e) {
 	}
 
@@ -1323,7 +1323,7 @@ async function predict_handdrawn () { var start_tensors = memory_leak_debugger()
 	await _predict_handdrawn(predictions_tensor);
 
 	try {
-		_temml();
+		await _temml();
 	} catch (e) {}
 
 	await dispose(predictions_tensor);

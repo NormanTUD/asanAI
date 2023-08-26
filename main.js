@@ -586,7 +586,7 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 	}
 
 	try {
-		_temml();
+		await _temml();
 	} catch (e) {
 		if(("" + e).includes("not an object")) {
 			// ignore

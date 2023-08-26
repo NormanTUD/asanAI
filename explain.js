@@ -2297,7 +2297,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) { var
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				//await MathJax.typesetPromise([math_tab_code_elem]);
 				try {
-					_temml();
+					await _temml();
 				} catch (e) {
 					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
 						console.info("" + e);
@@ -2815,38 +2815,27 @@ async function cosmo_maximally_activate_last_layer () { var start_tensors = memo
 	memory_leak_debugger("cosmo_maximally_activate_last_layer", start_tensors);
 }
 
-function _temml () {
-	/*
-	var items = $(".temml_me");
-
-	for (var i in items) {
-		var item = items[i];
-		if(!$(item).attr("data-rendered") == 1) {
-			if($(item).text()) {
-				temml.render($(item).text(), item);
-				$(item).attr("data-rendered", 1);
-			} else {
-				console.debug("item has no text, cannot be temmld:", item)
-			}
-		}
+async function _temml () {
+	while ($("#temml_blocker").length) {
+		await delay(200);
 	}
-	*/
-
+	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"))
 	$(".temml_me").each((i, e) => {
 		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
-			temml.render(e.textContent, e);
 			$(e).attr("data-rendered", 1);
+			temml.render(e.textContent, e);
 		}
 	});
+	$("#temml_blocker").remove()
 }
 
-async function arbitrary_array_to_latex (arr) {
-	var latex = await _arbitrary_array_to_latex(arr);
+function arbitrary_array_to_latex (arr) {
+	var latex = _arbitrary_array_to_latex(arr);
 	var res = "<span class='temml_me'>" + latex + "</span>"
 	return res;
 }
 
-async function _arbitrary_array_to_latex (arr) {
+function _arbitrary_array_to_latex (arr) {
 	var str = "";
 	if(typeof(arr) == "number") {
 		return arr;
@@ -2858,7 +2847,7 @@ async function _arbitrary_array_to_latex (arr) {
 
 			var str_array = [];
 
-			var shape = await get_shape_from_array(arr);
+			var shape = get_shape_from_array(arr);
 
 			var line_end_marker = " \\\\\n ";
 			var cell_end_marker = " & ";
@@ -2866,7 +2855,7 @@ async function _arbitrary_array_to_latex (arr) {
 			if(shape.length == 1) {
 				for (var i in arr) {
 					var item = arr[i];
-					str_array.push(await _arbitrary_array_to_latex(item));
+					str_array.push(_arbitrary_array_to_latex(item));
 				}
 
 				str += str_array.join(line_end_marker);
@@ -2875,7 +2864,7 @@ async function _arbitrary_array_to_latex (arr) {
 					var line_array = [];
 					for (var j in arr[i]) {
 						var item = arr[i][j];
-						var res = await _arbitrary_array_to_latex(item);
+						var res = _arbitrary_array_to_latex(item);
 						if(res !== undefined && res !== null && !res.toString().match(/^\s*$/)) {
 							line_array.push(res);
 						}
@@ -2888,7 +2877,7 @@ async function _arbitrary_array_to_latex (arr) {
 			} else {
 				for (var i in arr) {
 					var item = arr[i];
-					str_array.push(await _arbitrary_array_to_latex(item));
+					str_array.push(_arbitrary_array_to_latex(item));
 				}
 
 				str += str_array.join(line_end_marker);
@@ -2909,9 +2898,9 @@ async function _arbitrary_array_to_latex (arr) {
 }
 
 /*
-log("1 = ", await _arbitrary_array_to_latex(1));
-log("[1, 1]", await _arbitrary_array_to_latex([1, 1]));
-log("[[1, 2], [3, 4]]", await _arbitrary_array_to_latex([[1,2],[3,4]]));
-log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", await _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
-log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", await _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
+log("1 = ", _arbitrary_array_to_latex(1));
+log("[1, 1]", _arbitrary_array_to_latex([1, 1]));
+log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
+log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
+log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
