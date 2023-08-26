@@ -605,6 +605,7 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 		label_debugger_icon =  $("#label_debugger_icon");
 		setInterval(model_is_ok, 200);
 		setInterval(label_debugger_icon_ok, 200);
+		setInterval(_temml, 500);
 	}
 
 	finished_loading = true;
