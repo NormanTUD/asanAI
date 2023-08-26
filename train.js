@@ -559,7 +559,7 @@ async function _get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 			'warning'
 		);
 		header("ERROR");
-		log("" + e);
+		log(e);
 		header("ERROR END");
 		console.trace();
 		favicon_default();
