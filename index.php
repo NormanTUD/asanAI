@@ -1005,7 +1005,7 @@ text-align: end;
 										<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
 										<td><input class="show_data" type='number' value='50' id="max_number_of_images_in_grid" min=0 max=1000 style='width: 50px;'></td>
 									</tr>
-									<tr data-intro="Allow math mode for all layers">
+									<tr data-intro="Allow math mode for all layers" class="expert_mode_only">
 										<td><span class="TRANSLATEME_allow_math_mode_for_all_layers"></span>? (ALPHA!)</td>
 										<td><input type='checkbox' onclick='write_model_to_latex_to_page();' id="allow_math_mode_for_all_layers"></td>
 									</tr>
