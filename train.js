@@ -845,6 +845,7 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 			$("#predictcontainer").show();
 			$("#predict_error").hide().html("");
 		} catch (e) {
+			log(e);
 			if(("" + e).includes("is already disposed")) {
 				console.error("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
 				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
@@ -855,6 +856,21 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification) {
 					try {
+						var old_loss = $("#loss").val();
+						var old_metric = $("#metric").val();
+
+						var new_loss = "categoricalCrossentropy";
+						var new_metric = new_loss;
+
+						if(old_loss != new_loss) {
+							$("#loss").val(new_loss).trigger("change");
+							console.warn("Autoset metric to " + new_loss);
+						}
+
+						if(old_metric != new_metric) {
+							$("#metric").val(new_metric).trigger("change");
+							console.warn("Autoset metric to " + new_metric);
+						}
 						try {
 							repaired = await repair_output_shape(1);
 						} catch (ee) {
