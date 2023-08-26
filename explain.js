@@ -2212,7 +2212,20 @@ function can_be_shown_in_latex () { var start_tensors = memory_leak_debugger();
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
-		var valid_layers = ["dense", "flatten", "reshape", "elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU", "dropout", "batchNormalization", "DebugLayer", "gaussianNoise"];
+		var valid_layers = [
+			"dense", 
+			"flatten", 
+			"reshape", 
+			"elu", 
+			"leakyReLU", 
+			"reLU", 
+			"softmax", 
+			"thresholdedReLU", 
+			"dropout", 
+			"batchNormalization", 
+			"DebugLayer", 
+			"gaussianNoise"
+		];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 			memory_leak_debugger("can_be_shown_in_latex", start_tensors);
