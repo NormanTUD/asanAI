@@ -900,7 +900,12 @@ async function update_python_code(dont_reget_labels) {
 			}
 			*/
 			//expert_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
-			expert_code += model_add_python_structure(model.layers[i].getClassName(), data);
+			try {
+				expert_code += model_add_python_structure(model.layers[i].getClassName(), data);
+			} catch (e) {
+				expert_code += "# ERROR while creating code: " + e;
+				log("ERROR in python expert code: ", e, "data:", data);
+			}
 		}
 	}
 
