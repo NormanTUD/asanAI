@@ -1543,3 +1543,5 @@ var is_repairing_output_shape = false;
 
 var last_model_ok_status = "";
 var currently_generating_images = false;
+
+var is_dark_mode = false;

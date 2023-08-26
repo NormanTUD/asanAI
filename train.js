@@ -1013,11 +1013,15 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) { va
 
 		var ctx = canvas.getContext("2d");
 
-		ctx.fillStyle = "#ffffff";
+		ctx.fillStyle = "rgba(255, 255, 255, 0)";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		ctx.font = "14px Arial";
-		ctx.fillStyle = "#000000";
+		if(is_dark_mode) {
+			ctx.fillStyle = "#ffffff";
+		} else {
+			ctx.fillStyle = "#000000";
+		}
 		ctx.textAlign = "right";
 
 		canvases.push(canvas);

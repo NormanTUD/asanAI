@@ -5857,7 +5857,7 @@ function clear_attrament (idname) { var start_tensors = memory_leak_debugger()
 }
 
 function invert_elements_in_dark_mode () { var start_tensors = memory_leak_debugger();
-	var is_dark_mode = $("#theme_choser").val() == 'darkmode' ? true : false;
+	is_dark_mode = $("#theme_choser").val() == 'darkmode' ? true : false;
 
 	var el = $(".invert_in_dark_mode");
 
