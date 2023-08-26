@@ -4051,7 +4051,7 @@ async function last_shape_layer_warning() { var start_tensors = memory_leak_debu
 					for (var j = 0; j < canvasses.length; j++) {
 						var this_canvas_id = canvasses[j].id
 						if(!this_canvas_id.endsWith("_layer")) {
-							var base_id = btoa(get_element_xpath(canvasses[j])).replaceAll("=", "");
+							var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
 							var new_canvas_id = base_id + "_layer";
 							if($(new_canvas_id).length == 0) {
 								l("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
