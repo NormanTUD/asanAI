@@ -40,7 +40,7 @@ function reset_gui_before_training () { var start_tensors = memory_leak_debugger
 }
 
 async function train_neural_network () { var start_tensors = memory_leak_debugger();
-	if(model === null || !Object.keys(model).includes("layers")) {
+	if(model === null || model === undefined || typeof(model) != "object" || !Object.keys(model).includes("layers")) {
 		await gui_not_in_training();
 
 		model = await create_model();
@@ -906,11 +906,11 @@ async function run_neural_network (recursive=0) { var start_tensors = memory_lea
 						log("Unknown swal r: ", r);
 					}
 				} else {
-					if(("" + e).includes("model is null")) {
-						console.info("Model is null. Recompiling model...");
+					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
+						console.info("Model is null or undefined. Recompiling model...");
 						model = await create_model();
 						await compile_model()
-						console.info("Model was null. Recompiling model done!");
+						console.info("Model was null or undefined. Recompiling model done!");
 					} else {
 						await write_error("" + e);
 
