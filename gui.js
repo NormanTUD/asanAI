@@ -6598,10 +6598,10 @@ function showWhiteOverlayWithText(text) {
 		overlay.style.alignItems = 'center';
 		overlay.style.justifyContent = 'center';
 		overlay.style.zIndex = '9999';
-		overlay.class = "overlay";
+		overlay.id = "overlay";
 
 		const textElement = document.createElement('p');
-		textElement.textContent = text;
+		textElement.innerHTML = text;
 		textElement.style.textAlign = 'center';
 		textElement.style.fontFamily = 'Arial, sans-serif';
 		textElement.style.fontSize = '24px';

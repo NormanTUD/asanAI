@@ -58,19 +58,14 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 			await add_cosmo_point("started_training", 0);
 			remove_manicule(1);
 			*/
-		}
+		} else {
+			showWhiteOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
-		if($("#show_grad_cam").is(":checked")) {
-			l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
-			$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
+			if($("#show_grad_cam").is(":checked")) {
+				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+				$("#show_grad_cam").prop("checked", false).prop("disabled", true).trigger("change");
+			}
 		}
-		
-		Swal.fire({
-			title: 'Stopped training',
-			html: "This may take some time...",
-			timer: 1000,
-			showConfirmButton: false
-		});
 
 		if(model.isTraining) {
 			model.stopTraining = true;
@@ -79,6 +74,7 @@ async function train_neural_network () { var start_tensors = memory_leak_debugge
 
 		document.title = original_title;
 		await gui_not_in_training();
+		$("#overlay").remove()
 		l("Stopped training");
 	} else {
 		l("Started training")

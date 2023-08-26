@@ -240,7 +240,8 @@
 			"expert" => "Expert",
 			'changed_mode_from' => "Changed mode from",
 			"to" => "to",
-			"lost_undo_redo_stack" => "lost undo/redo stack"
+			"lost_undo_redo_stack" => "lost undo/redo stack",
+			"stopped_training" => "Stopped training"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -482,7 +483,8 @@
 			"expert" => "Experte",
 			'changed_mode_from' => "Modus von",
 			"to" => "nach",
-			"lost_undo_redo_stack" => "Rückgängig/wiederherstellen resettet"
+			"lost_undo_redo_stack" => "Rückgängig/wiederherstellen resettet",
+			"stopped_training" => "Training beendet"
 		)
 	);
 ?>
