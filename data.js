@@ -910,7 +910,7 @@ function add_photo_to_gallery(url) { var start_tensors = memory_leak_debugger();
 		photoscontainer.show();
 	}
 
-	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' />";
+	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
 	$("#photos").show().prepend(img_tag);
 
 	memory_leak_debugger("add_photo_to_gallery", start_tensors);
