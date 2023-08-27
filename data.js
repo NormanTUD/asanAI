@@ -586,9 +586,11 @@ async function get_xs_and_ys () {
 				var x_arr = await x.arraySync();
 				x_arr.shift();
 				x = tensor(x_arr);
+				global_x = x;
 
 				//log("classes:", classes);
 				y = tensor(classes);
+				global_y = y;
 
 				for (let [key, value] of Object.entries(imageData)) {
 					for (var i = 0; i < imageData[key].length; i++) {
@@ -985,7 +987,6 @@ async function reset_data () {
 		}
 	}
 
-	xy_data_global = null;
 	$('#reset_data').hide();
 }
 

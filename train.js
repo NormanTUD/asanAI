@@ -942,6 +942,9 @@ async function run_neural_network (recursive=0) {
 
 	await reset_data();
 
+	await dispose(global_x);
+	await dispose(global_y);
+
 	await save_current_status();
 	var dn = Date.now();
 	if(last_training_time) {
@@ -954,7 +957,6 @@ async function run_neural_network (recursive=0) {
 	}
 
 	await gui_not_in_training();
-
 }
 
 async function write_error_and_reset(e, fn, hide_swal) {
