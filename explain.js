@@ -1337,7 +1337,7 @@ async function draw_maximally_activated_neuron (layer, neuron) { var start_tenso
 
 		if(full_data["worked"]) {
 			if(Object.keys(full_data).includes("data")) {
-				var t_str = tensor_print_to_string(tf.tensor(full_data["data"]));
+				var t_str = tensor_print_to_string(tensor(full_data["data"]));
 				console.log("Maximally activated tensors:", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1)
@@ -2484,7 +2484,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 					real_trace.y.push(y_data[i][0]);
 
-					var predict_me = tf.tensor(x_data[i]);
+					var predict_me = tensor(x_data[i]);
 					var predicted_tensor = eval(global_model_name).predict(predict_me);
 					var predicted = predicted_tensor.arraySync()[0][0];
 

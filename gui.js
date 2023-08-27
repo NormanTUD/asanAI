@@ -5244,8 +5244,8 @@ function plotly_show_loss_graph() { var start_tensors = memory_leak_debugger();
 			y_pred_table[i] = [i, parseFloat($(x).val())]
 		});
 
-		var y_true = tf.tensor2d(y_true_table);
-		var y_pred = tf.tensor2d(y_pred_table);
+		var y_true = tensor2d(y_true_table);
+		var y_pred = tensor2d(y_pred_table);
 
 		var trace1 = {
 			x: y_true.arraySync().map(x => x[0]),

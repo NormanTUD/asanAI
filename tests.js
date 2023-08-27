@@ -117,9 +117,9 @@ async function run_tests () { // var start_tensors
 			await delay(1000);
 			log("Properly set backend:", backends[backend_id]);
 			log_test("Tensor functions");
-			var test_tensor = tf.tensor([1,2,3]);
+			var test_tensor = tensor([1,2,3]);
 
-			test_equal("tensor_print_to_string(tf.tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]")
+			test_equal("tensor_print_to_string(tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]")
 
 			test_equal("output_shape_is_same([1,2,3], [1,2,3])", output_shape_is_same([1,2,3], [1,2,3]), true);
 			test_not_equal("output_shape_is_same([1,2,3], [5,2,3])", output_shape_is_same([1,2,3], [5,2,3]), true);
@@ -266,25 +266,25 @@ async function run_tests () { // var start_tensors
 			await train_neural_network();	
 			await delay(3000);
 
-			var result_and = await model.predict(tf.tensor([[0, 0]])).arraySync()[0][0];
+			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 0 and 0 results:" + result_and.toString());
 			}
 
-			result_and = await model.predict(tf.tensor([[0, 1]])).arraySync()[0][0];
+			result_and = await model.predict(tensor([[0, 1]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true)
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 0 and 1 results:" + result_and.toString());
 			}
 
-			result_and = await model.predict(tf.tensor([[1, 0]])).arraySync()[0][0];
+			result_and = await model.predict(tensor([[1, 0]])).arraySync()[0][0];
 			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true)
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 1 and 0 results:" + result_and.toString());
 			}
 
-			result_and = await model.predict(tf.tensor([[1, 1]])).arraySync()[0][0];
+			result_and = await model.predict(tensor([[1, 1]])).arraySync()[0][0];
 			var r = result_and.toString();
 			test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true)
 			if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
@@ -361,10 +361,10 @@ async function run_tests () { // var start_tensors
 			await train_neural_network();	
 
 			try {
-				var res = await model.predict(tf.tensor([[1, 1, 1]])).arraySync()[0][0];
+				var res = await model.predict(tensor([[1, 1, 1]])).arraySync()[0][0];
 				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true)
 
-				res = await model.predict(tf.tensor([[3, 3, 3]])).arraySync()[0][0];
+				res = await model.predict(tensor([[3, 3, 3]])).arraySync()[0][0];
 				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true)
 			} catch (e) {
 				console.error("ERROR while predicting in test mode:", e);

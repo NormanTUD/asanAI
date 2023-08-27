@@ -59,7 +59,7 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = me
 		shape[0] = max_values;
 	}
 
-	var x = tf.tensor(data, shape, tensor_type);
+	var x = tensor(data, shape, tensor_type);
 
 	memory_leak_debugger("numpy_str_to_tf_tensor", start_tensors);
 
@@ -313,10 +313,10 @@ async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memo
 
 	if(tensor.shape.length == 4) {
 		if(tensor.shape[0] == 1) {
-			tensor = tf.tensor(tensor.arraySync()[0]);
+			tensor = tensor(tensor.arraySync()[0]);
 		} else {
 			for (var i = 0; i < tensor.shape[0]; i++) {
-				var this_tensor = tf.tensor(tensor.arraySync()[i]);
+				var this_tensor = tensor(tensor.arraySync()[i]);
 				await add_tensor_as_image_to_photos(this_tensor);
 			}
 
@@ -388,7 +388,7 @@ function truncate_text (fullStr, strLen, separator) { var start_tensors = memory
 async function sine_ripple (img) { var start_tensors = memory_leak_debugger();
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-	await tf.browser.toPixels(tf.tensor(img.arraySync()[0]), $("#" + uuid)[0]);
+	await tf.browser.toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
 	var canvas = $("#" + uuid)[0];
 	var context = canvas.getContext("2d");
 	var data = context.getImageData(0,0,canvas.width, canvas.height) 
@@ -512,8 +512,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 
 		var x = JSON.parse(JSON.stringify(xy_data.x));
 
-		xy_data.x = tf.tensor(xy_data.x);
-		xy_data.y = tf.tensor(xy_data.y);
+		xy_data.x = tensor(xy_data.x);
+		xy_data.y = tensor(xy_data.y);
 
 		labels = xy_data.keys;
 
@@ -534,7 +534,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	} else {
 		if(data_origin == "default") {
 			var keys = [];
-			var x = tf.tensor([]);
+			var x = tensor([]);
 			var y;
 			var category_counter = 0;
 
@@ -605,10 +605,10 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 
 				var x_arr = await x.arraySync();
 				x_arr.shift();
-				x = tf.tensor(x_arr);
+				x = tensor(x_arr);
 
 				//log("classes:", classes);
-				y = tf.tensor(classes);
+				y = tensor(classes);
 
 				for (let [key, value] of Object.entries(imageData)) {
 					for (var i = 0; i < imageData[key].length; i++) {
@@ -633,8 +633,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 				} catch (e) {
 					console.warn(e);
 					console.trace();
-					x = tf.tensor([]);
-					y = tf.tensor([]);
+					x = tensor([]);
+					y = tensor([]);
 				}
 			}
 
@@ -730,8 +730,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 					}
 				}
 
-				x = tf.tensor(x);
-				y = tf.tensor(classes).expandDims();
+				x = tensor(x);
+				y = tensor(classes).expandDims();
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
@@ -781,8 +781,8 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 					}
 				}
 
-				x = tf.tensor(x);
-				y = tf.tensor(maps);
+				x = tensor(x);
+				y = tensor(maps);
 			}
 
 			//log("A", x.shape);
@@ -820,7 +820,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	) {
 		try {
 			//log("C", xy_data.x.shape);
-			xy_data.y = tf.tidy(() => { return tf.oneHot(tf.tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
+			xy_data.y = tf.tidy(() => { return tf.oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
 			//log("D", xy_data.x.shape);
 		} catch (e) {
 			/*
@@ -1244,7 +1244,7 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = tf.tidy(() => { return tf.oneHot(tf.tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
+				y_data["data"] = tf.tidy(() => { return tf.oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
@@ -1267,8 +1267,8 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 
 	//log(y)
 
-	x = tf.tidy(() => { return tf.tensor(x); });
-	y = tf.tidy(() => { return tf.tensor(y); });
+	x = tf.tidy(() => { return tensor(x); });
+	y = tf.tidy(() => { return tensor(y); });
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");

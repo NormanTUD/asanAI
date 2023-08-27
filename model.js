@@ -1286,7 +1286,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	}
 
 	for (var i = 0; i < json.length; i++) {
-		tensors.push(tf.tensor(json[i]));
+		tensors.push(tensor(json[i]));
 	}
 
 	try {
@@ -1527,7 +1527,7 @@ async function get_weights_shape (weights_as_string, m) { var start_tensors = me
 	}
 	var weights_array = eval(weights_as_string);
 
-	var test_tensor = tf.tensor(weights_array);
+	var test_tensor = tensor(weights_array);
 
 	var shape = test_tensor.shape;
 

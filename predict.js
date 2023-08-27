@@ -456,7 +456,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 				}
 			}
 
-			predict_data = tf.tensor(data);
+			predict_data = tensor(data);
 		}
 
 		if(!predict_data) {
@@ -704,7 +704,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 	}
 
 	for (var i = 0; i < example_predict_data.length; i++) {
-		var tensor = tf.tensor(example_predict_data[i]);
+		var tensor = tensor(example_predict_data[i]);
 
 		var model_input_shape = model.input.shape.filter(n=>n);
 		var tensor_shape = tensor.shape;

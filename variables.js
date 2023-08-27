@@ -2,6 +2,18 @@
 
 var last_known_good_input_shape = "[]";
 
+function tensor1d (...args) {
+	return tf.tensor1d(...args);
+}
+
+function tensor2d (...args) {
+	return tf.tensor2d(...args);
+}
+
+function tensor (...args) {
+	return tf.tensor(...args);
+}
+
 function get_input_shape_as_string () {
 	var is = "";
 	try {
