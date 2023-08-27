@@ -605,6 +605,9 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		await _print_example_predictions();
 	} else {
 		await _print_predictions_text();
+
+		await predict($('#predict_own_data').val());
+		await repredict()
 	}
 
 	if(!dont_go_to_tab) {
@@ -672,6 +675,11 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 		return;
 	}
 
+	if(!model) {
+		console.warn("model not found");
+		return;
+	}
+
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	example_predictions.html("");
@@ -686,6 +694,9 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var tensor = tf.tensor(example_predict_data[i]);
+
+		var model_input_shape = model.input.shape.filter(n=>n);
+		var tensor_shape = tensor.shape;
 
 		if(tensor_shape_matches_model(tensor)) {
 			var res;
@@ -717,8 +728,6 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 		await dispose(tensor);
 		await tf.nextFrame();
 	}
-
-	log("HTML CONTENTS", html_contents);
 
 	if(html_contents) {
 		example_predictions.html(html_contents);

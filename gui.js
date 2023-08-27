@@ -585,6 +585,11 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
 
+	while (!model) {
+		log("Awaiting model existance for insert_initializer_option_trs");
+		await delay(100);
+	}
+
 	await updated_page();
 }
 
@@ -1580,7 +1585,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 			if(("" + e).includes("model.layers[i]")) {
 				return false;
-			} else if (("" + e).includes("model is undefined or null")) {
+			} else if (("" + e).includes("model is undefined")) {
 				return false;
 			} else {
 				throw new Error(e);
