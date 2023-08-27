@@ -2741,10 +2741,16 @@ async function _temml () {
 		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
 			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 			$(tmp_element).appendTo($(body));
-			temml.render(e.textContent, tmp_element[0]);
+			var original_latex = e.textContent;
+			temml.render(original_latex, tmp_element[0]);
 			$(e)[0].innerHTML = tmp_element[0].innerHTML;
 			$(e).attr("data-rendered", 1);
+			$(e).attr("data-latex", original_latex);
 			$("#tmp_equation").remove();
+			$(e).on( "contextmenu", function(ev) {
+				ev.preventDefault();
+				alert(original_latex);
+			} );
 		}
 	});
 	$("#temml_blocker").remove()
