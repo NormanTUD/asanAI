@@ -1549,8 +1549,13 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			}
 
 			if(("" + e).includes("model.layers[i]")) {
+				console.debug("model.layers[i] (" + i + ") is undefined");
 				return false;
 			} else if (("" + e).includes("model is undefined")) {
+				console.debug("model is undefined");
+				return false;
+			} else if (("" + e).includes("model.input is undefined")) {
+				console.debug("model.input is undefined");
 				return false;
 			} else {
 				throw new Error(e);

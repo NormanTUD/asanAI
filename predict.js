@@ -699,7 +699,6 @@ async function _print_predictions_text(count, example_predict_data) {
 		if(tensor_shape_matches_model(_tensor)) {
 			try {
 				res = await model.predict([_tensor]);
-				await dispose(_tensor);
 
 				var res_array = res.arraySync();
 
