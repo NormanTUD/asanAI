@@ -4,6 +4,25 @@ var getStackTrace = function() {
 	try { var a = {}; a.debug(); } catch(ex) { return (ex.stack) }
 };
 
+
+async function dispose (item) { // start_tensors
+	//console.trace();
+	//log(item);
+	if(item) {
+		var tensor_id = item.id;
+		tf.dispose(item);
+
+		await tf.nextFrame();
+	} else {
+		/*
+		console.warn("item was empty in dispose():"); // not a real async
+		console.trace();
+		*/
+	}
+
+	_clean_custom_tensors();
+}
+
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 

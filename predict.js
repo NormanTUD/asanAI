@@ -705,17 +705,17 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var _tensor = tensor(example_predict_data[i]);
+		var res;
 
 		var model_input_shape = model.input.shape.filter(n=>n);
 		var tensor_shape = _tensor.shape;
 
 		if(tensor_shape_matches_model(_tensor)) {
-			var res;
 			try {
 				res = await model.predict([_tensor]);
+				await dispose(_tensor);
 
 				var res_array = res.arraySync();
-				await dispose(res);
 
 				var network_name =  create_network_name();
 				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
@@ -727,21 +727,20 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
 					console.debug("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
-					await dispose(_tensor);
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
 					console.warn("Total size of new array must be unchanged. Did you use reshape somewhere?");
-					await dispose(_tensor);
 				} else {
 					_predict_error(e);
-					await dispose(res);
 				}
 			}
+
+
 		} else {
 			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 		}
 
 		await dispose(_tensor);
-		await tf.nextFrame();
+		await dispose(res);
 	}
 
 	if(html_contents) {

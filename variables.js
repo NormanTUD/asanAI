@@ -788,22 +788,6 @@ var memory_debug_interval = null;
 
 var tensors = {};
 
-async function dispose (item) { // start_tensors
-	//console.trace();
-	//log(item);
-	if(item) {
-		var tensor_id = item.id;
-		tf.dispose(item);
-
-		await tf.nextFrame();
-	} else {
-		/*
-		console.warn("item was empty in dispose():"); // not a real async
-		console.trace();
-		*/
-	}
-}
-
 var distribution_modes = {
 	"normal": "normal",
 	"uniform": "uniform",
