@@ -1,14 +1,12 @@
 "use strict";
 
-function degrees_to_radians(degrees) { var start_tensors = memory_leak_debugger();
+function degrees_to_radians(degrees) {
 	var res = degrees * (Math.PI / 180);
-
-	memory_leak_debugger("degrees_to_radians", start_tensors);
 
 	return res;
 }
 
-function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = memory_leak_debugger();
+function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
 	
@@ -61,22 +59,18 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) { var start_tensors = me
 
 	var x = tensor(data, shape, tensor_type);
 
-	memory_leak_debugger("numpy_str_to_tf_tensor", start_tensors);
-
 	return x;
 }
 
-async function _get_training_data_from_filename(filename) { var start_tensors = memory_leak_debugger();
+async function _get_training_data_from_filename(filename) {
 	assert(typeof(filename) == "string", "filename must be string, not " + typeof(filename));
 
 	var res = await $.get("traindata/" + get_chosen_dataset() + "/" + filename);
 
-	memory_leak_debugger("_get_training_data_from_filename", start_tensors);
-
 	return res;
 }
 
-function shuffle (array) { var start_tensors = memory_leak_debugger();
+function shuffle (array) {
 	assert(typeof(array) == "object", "shuffle can only shuffle variables with the type object, not " + typeof(array));
 
 	var randomIndex;
@@ -92,13 +86,11 @@ function shuffle (array) { var start_tensors = memory_leak_debugger();
 		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
 	}
 
-	memory_leak_debugger("shuffle", start_tensors);
-
 	return array;
 }
 
 
-function load_image(url) { var start_tensors = memory_leak_debugger();
+function load_image(url) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	var res = new Promise((resolve, reject) => {
@@ -110,12 +102,10 @@ function load_image(url) { var start_tensors = memory_leak_debugger();
 		img.src = url;
 	});
 
-	memory_leak_debugger("load_image", start_tensors);
-
 	return res;
 }
 
-async function force_download_image_preview_data () { var start_tensors = memory_leak_debugger();
+async function force_download_image_preview_data () {
 	if(await input_shape_is_image()) {
 		var old_img_cat = $("#max_number_of_files_per_category").val();
 		$("#max_number_of_files_per_category").val(1);
@@ -128,10 +118,9 @@ async function force_download_image_preview_data () { var start_tensors = memory
 	} else {
 		$("#photos").html("").hide();
 	}
-	memory_leak_debugger("force_download_image_preview_data", start_tensors);
 }
 
-async function _get_urls_and_keys () { var start_tensors = memory_leak_debugger();
+async function _get_urls_and_keys () {
 	var base_url = "traindata/" + get_chosen_dataset() + "/";
 	var data = [];
 	var urls = [];
@@ -153,11 +142,10 @@ async function _get_urls_and_keys () { var start_tensors = memory_leak_debugger(
 		}
 	}
 	
-	memory_leak_debugger("_get_urls_and_keys", start_tensors);
 	return [urls, keys, data];
 }
 
-function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) { var start_tensors = memory_leak_debugger();
+function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
 	var percentage_text = percentage + "% (" + (i + 1) + " " + trm("of") + " " + urls_length + ")...";
 	
 	var eta;
@@ -188,11 +176,10 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 		}
 	}
 
-	memory_leak_debugger("_get_set_percentage_text", start_tensors);
 	return old_percentage;
 }
 
-async function get_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) { var start_tensors = memory_leak_debugger();
+async function get_image_data(skip_real_image_download, dont_show_swal=0, ignoreme, dont_load_into_tf=0, force_no_download=0) {
 	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined, but is " + typeof(skip_real_image_download));
 
 	await add_cosmo_point("started_loading_data");
@@ -301,11 +288,10 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 		percentage_div.hide();
 	}
 
-	memory_leak_debugger("get_image_data", start_tensors);
 	return data;
 }
 
-async function add_tensor_as_image_to_photos (_tensor) { var start_tensors = memory_leak_debugger();
+async function add_tensor_as_image_to_photos (_tensor) {
 	// TODO
 	assert(typeof(_tensor) == "object", "_tensor must be an object");	
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
@@ -320,7 +306,6 @@ async function add_tensor_as_image_to_photos (_tensor) { var start_tensors = mem
 				await add_tensor_as_image_to_photos(this_tensor);
 			}
 
-			memory_leak_debugger("add_tensor_as_image_to_photos", start_tensors)
 
 			return;
 		}
@@ -363,11 +348,10 @@ async function add_tensor_as_image_to_photos (_tensor) { var start_tensors = mem
 		_tensor.print();
 	}
 
-	memory_leak_debugger("add_tensor_as_image_to_photos", start_tensors)
 }
 
 
-function truncate_text (fullStr, strLen, separator) { var start_tensors = memory_leak_debugger();
+function truncate_text (fullStr, strLen, separator) {
 	if (fullStr.length <= strLen) return fullStr;
 
 	separator = separator || '...';
@@ -381,11 +365,10 @@ function truncate_text (fullStr, strLen, separator) { var start_tensors = memory
 		separator +
 		fullStr.substr(fullStr.length - backChars);
 
-	memory_leak_debugger("truncate_text", start_tensors);
 	return res;
 };
 
-async function sine_ripple (img) { var start_tensors = memory_leak_debugger();
+async function sine_ripple (img) {
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
 	await tf.browser.toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
@@ -397,13 +380,12 @@ async function sine_ripple (img) { var start_tensors = memory_leak_debugger();
 	var rippled = await tf.browser.fromPixels(canvas);
 	$(canvas).remove();
 
-	memory_leak_debugger("sine_ripple", start_tensors);
 
 	return rippled;
 }
 
 // Funktion zum Rotieren eines Bildes
-async function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) { var start_tensors = memory_leak_debugger();
+async function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
 	l("Rotating image: " + degree + "°");
 	var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
 	await add_tensor_as_image_to_photos(augmented_img);
@@ -434,45 +416,43 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 		classes.push(label_nr);
 	}
 
-	memory_leak_debugger("augment_rotate_images", start_tensors);
 	return [classes, x];
 }
 
 // Funktion zum Invertieren eines Bildes
-async function augment_invert_images(item, this_category_counter, x, classes) { var start_tensors = memory_leak_debugger();
+async function augment_invert_images(item, this_category_counter, x, classes) {
 	l("Inverted image");
 	var add_value = (-255 / parseFloat($("#divide_by").val()));
 	var inverted = tf.abs(tf.add(item, add_value));
 	await add_tensor_as_image_to_photos(inverted);
 	x = x.concat(inverted);
 	classes.push(this_category_counter);
-	memory_leak_debugger("augment_invert_images", start_tensors);
 	return [classes, x];
 }
 
 // Funktion zum Spiegeln eines Bildes
-async function augment_flip_left_right(item, this_category_counter, x, classes) { var start_tensors = memory_leak_debugger();
+async function augment_flip_left_right(item, this_category_counter, x, classes) {
 	l("Flip left/right");
 	var flipped = tf.image.flipLeftRight(item);
 	await add_tensor_as_image_to_photos(flipped);
 	x = x.concat(flipped);
 	classes.push(this_category_counter);
-	memory_leak_debugger("augment_flip_left_right", start_tensors);
 	return [classes, x];
 }
 
 // Funktion zur Anwendung einer Sinuswelle auf ein Bild
-async function augment_sine_ripple(item, label_nr, x, classes) { var start_tensors = memory_leak_debugger();
+async function augment_sine_ripple(item, label_nr, x, classes) {
 	var rippled = await sine_ripple(item);
 	x = x.concat(rippled.expandDims());
 	await add_tensor_as_image_to_photos(rippled);
 	classes.push(label_nr);
-	memory_leak_debugger("augment_sine_ripple", start_tensors);
 	return [classes, x];
 }
 
 
-async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
+async function get_xs_and_ys () {
+	reset_data();
+
 	headerdatadebug("get_xs_and_ys()");
 
 	$("#xy_display_data").html("").hide();
@@ -871,11 +851,10 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 		throw new Error(error_string);
 	}
 
-	memory_leak_debugger("get_xs_and_ys", start_tensors);
 	return xy_data;
 }
 
-function _xs_xy_warning (xs_and_ys) { var start_tensors = memory_leak_debugger();
+function _xs_xy_warning (xs_and_ys) {
 	var error_string;
 	if(xs_and_ys) {
 		if(Object.keys(xs_and_ys).includes("x")) {
@@ -897,11 +876,10 @@ function _xs_xy_warning (xs_and_ys) { var start_tensors = memory_leak_debugger()
 		error_string = "No xy_data. Maybe an error while augmenting data?"
 	}
 
-	memory_leak_debugger("_xs_xy_warning", start_tensors);
 	return error_string;
 }
 
-function add_photo_to_gallery(url) { var start_tensors = memory_leak_debugger();
+function add_photo_to_gallery(url) {
 	assert(typeof (url) == "string", url + " is not a string but " + typeof (url));
 
 	var photoscontainer = $("#photoscontainer");
@@ -913,10 +891,9 @@ function add_photo_to_gallery(url) { var start_tensors = memory_leak_debugger();
 	var img_tag = "<img class='download_img' src='" + url + "' height='" + height + "' width='" + width + "' />";
 	$("#photos").show().prepend(img_tag);
 
-	memory_leak_debugger("add_photo_to_gallery", start_tensors);
 }
 
-function url_to_tf (url, dont_load_into_tf=0) { var start_tensors = memory_leak_debugger();
+function url_to_tf (url, dont_load_into_tf=0) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
 	headerdatadebug("url_to_tf(" + url + ")");
@@ -947,24 +924,21 @@ function url_to_tf (url, dont_load_into_tf=0) { var start_tensors = memory_leak_
 			return resized_img;
 		})();
 
-		memory_leak_debugger("url_to_tf", start_tensors + 1); // one new tensor
 		return tf_img;
 	} catch (e) {
 		header_error("url_to_tf(" + url + ") failed: " + e);
 	}
 
-	memory_leak_debugger("url_to_tf", start_tensors); // one new tensor
 	return null;
 }
 
-async function determine_input_shape () { var start_tensors = memory_leak_debugger();
+async function determine_input_shape () {
 	if(await input_shape_is_image()) {
 		await set_input_shape("[" + width + ", " + height + ", 3]");
 	}
-	memory_leak_debugger("determine_input_shape", start_tensors);
 }
 
-async function _get_training_data() { var start_tensors = memory_leak_debugger();
+async function _get_training_data() {
 	var url = "traindata/index.php?dataset=" + get_chosen_dataset() + "&max_number_of_files_per_category=" +  $("#max_number_of_files_per_category").val();
 	if(is_cosmo_mode) {
 		url = url + "&cosmo=1";
@@ -972,12 +946,11 @@ async function _get_training_data() { var start_tensors = memory_leak_debugger()
 
 	var res = await get_cached_json(url);
 
-	memory_leak_debugger("_get_training_data", start_tensors);
 
 	return res;
 }
 
-function median(values) { var start_tensors = memory_leak_debugger();
+function median(values) {
 	if(values.length ===0) throw new Error("No inputs");
 
 	values.sort(function(a,b){
@@ -987,25 +960,22 @@ function median(values) { var start_tensors = memory_leak_debugger();
 	var half = Math.floor(values.length / 2);
 
 	if (values.length % 2) {
-		memory_leak_debugger("median", start_tensors)
 		return values[half];
 	}
 
-	memory_leak_debugger("median", start_tensors)
 	return (values[half - 1] + values[half]) / 2.0;
 }
 
-function decille (arr, percentage) { var start_tensors = memory_leak_debugger();
+function decille (arr, percentage) {
 	arr.sort();
 	var len = arr.length;
 	var per =  Math.floor(len*percentage) - 1;
 
-	memory_leak_debugger("decille", start_tensors)
 
 	return per;
 }
 
-async function reset_data () { var start_tensors = memory_leak_debugger();
+async function reset_data () {
 	if(!xy_data_global === null) {
 		if(Object.keys(xy_data_global).includes("x")) {
 			await dispose(xy_data_global["x"]);
@@ -1017,23 +987,19 @@ async function reset_data () { var start_tensors = memory_leak_debugger();
 
 	xy_data_global = null;
 	$('#reset_data').hide();
-	memory_leak_debugger("reset_data", start_tensors);
 }
 
-function parse_dtype (val) { var start_tensors = memory_leak_debugger();
+function parse_dtype (val) {
 	if(val.match(/^[+-]?\d+$/)) {
-		memory_leak_debugger("parse_dtype", start_tensors);
 		return parseInt(val);
 	} else if(val.match(/^[+-]?\d+\.\d+$/)) {
-		memory_leak_debugger("parse_dtype", start_tensors);
 		return parseFloat(val);
 	} else {
-		memory_leak_debugger("parse_dtype", start_tensors);
 		return val;
 	}
 }
 
-function parse_line (line, seperator) { var start_tensors = memory_leak_debugger();
+function parse_line (line, seperator) {
 	var c = line.split("");
 
 	var i = 0;
@@ -1054,12 +1020,11 @@ function parse_line (line, seperator) { var start_tensors = memory_leak_debugger
 
 	items.push(parse_dtype(current_item));
 
-	memory_leak_debugger("parse_line", start_tensors)
 
 	return items;
 }
 
-function parse_csv_file (csv_file) { var start_tensors = memory_leak_debugger();
+function parse_csv_file (csv_file) {
 	var seperator = get_csv_seperator();
 
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
@@ -1090,12 +1055,11 @@ function parse_csv_file (csv_file) { var start_tensors = memory_leak_debugger();
 	}
 
 
-	memory_leak_debugger("parse_csv_file", start_tensors);
 
 	return {"head": head, "data": data};
 }
 
-function get_or_insert_label (item) { var start_tensors = memory_leak_debugger();
+function get_or_insert_label (item) {
         for (var i = 0; i < labels.length; i++) {
                 if(labels[i] == item) {
                         return i;
@@ -1104,12 +1068,11 @@ function get_or_insert_label (item) { var start_tensors = memory_leak_debugger()
 
         labels.push(item);
 
-	memory_leak_debugger("get_or_insert_label", start_tensors);
 
         return labels.length - 1;
 }
 
-function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start_tensors = memory_leak_debugger();
+function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	reset_labels();
 	var y_between_0_and_1 = true;
 	var is_incomplete = false;
@@ -1147,7 +1110,6 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 				}
 
 				if(!in_goto) {
-					memory_leak_debugger("get_data_struct_by_header", start_tensors);
 					return get_data_struct_by_header(header, parsed, skip_nr, true);
 				}
 
@@ -1156,7 +1118,6 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 			}
 
 			if(Number.isNaN(to_push) || to_push === undefined || (typeof(to_push) == "string" && to_push == "")) {
-				memory_leak_debugger("get_data_struct_by_header", start_tensors);
 				return { "is_incomplete": true };
 			}
 			line.push(to_push);
@@ -1166,11 +1127,10 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) { var start
 		data.push(line);
 	}
 
-	memory_leak_debugger("get_data_struct_by_header", start_tensors);
 	return { "data": data, "y_between_0_and_1": y_between_0_and_1, "is_incomplete": is_incomplete };
 }
 
-function get_headers (headers) { var start_tensors = memory_leak_debugger();
+function get_headers (headers) {
 	var x_headers = [];
 	var y_headers = [];
 
@@ -1185,24 +1145,22 @@ function get_headers (headers) { var start_tensors = memory_leak_debugger();
 		}
 	}
 
-	memory_leak_debugger("get_headers", start_tensors);
 
 	return {"x": x_headers, "y": y_headers};
 }
 
-function get_csv_seperator () { var start_tensors = memory_leak_debugger();
+function get_csv_seperator () {
 	var seperator = $("#seperator").val() || ",";
 
 	if(seperator == "\\t") {
 		return "\t";
 	}
 
-	memory_leak_debugger("get_csv_seperator", start_tensors);
 
 	return seperator;
 }
 
-async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
+async function get_x_y_from_csv () {
 	await reset_data();
 
 	var seperator = get_csv_seperator();
@@ -1223,14 +1181,12 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	if(x_data.is_incomplete) {
 		l("X-Data is yet incomplete");
 		l("Y-Data is yet incomplete");
-		memory_leak_debugger("get_x_y_from_csv", start_tensors);
 		return "incomplete";
 	}
 
 	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
 		l("Y-Data is yet incomplete");
-		memory_leak_debugger("get_x_y_from_csv", start_tensors);
 		return "incomplete";
 	}
 
@@ -1274,7 +1230,6 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
 	}
 
-	memory_leak_debugger("get_x_y_from_csv", start_tensors);
 
 	return {
 		"x": x,
@@ -1290,7 +1245,7 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
  * This function is for saving X and Y data later on to an external DB.
 */
 
-async function get_x_y_as_array () { var start_tensors = memory_leak_debugger();
+async function get_x_y_as_array () {
 	while (started_training) {
 		l("Awaiting finishing of training");
 		await delay(1000)
@@ -1304,12 +1259,11 @@ async function get_x_y_as_array () { var start_tensors = memory_leak_debugger();
 	await dispose(data["x"]);
 	await dispose(data["y"]);
 
-	memory_leak_debugger("get_x_y_as_array", start_tensors);
 
 	return ret;
 }
 
-async function get_data_from_webcam (force_restart) { var start_tensors = memory_leak_debugger();
+async function get_data_from_webcam (force_restart) {
 	if(!available_webcams.length) {
 		alert("No webcams found");
 		return;
@@ -1380,10 +1334,9 @@ async function get_data_from_webcam (force_restart) { var start_tensors = memory
 		await get_data_from_webcam();
 	}
 
-	memory_leak_debugger("get_data_from_webcam", start_tensors);
 }
 
-async function take_image_from_webcam_n_times (elem) { var start_tensors = memory_leak_debugger();
+async function take_image_from_webcam_n_times (elem) {
 	var number = parseInt($("#number_of_series_images").val())
 	var delaybetween = parseInt($("#delay_between_images_in_series").val())
 
@@ -1419,10 +1372,9 @@ async function take_image_from_webcam_n_times (elem) { var start_tensors = memor
 	});
 
 	await last_shape_layer_warning();
-	memory_leak_debugger("take_image_from_webcam", start_tensors);
 }
 
-async function take_image_from_webcam (elem, nol, increment_counter=true) { var start_tensors = memory_leak_debugger();
+async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
@@ -1477,10 +1429,9 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) { var 
 
 
 	await last_shape_layer_warning();
-	memory_leak_debugger("take_image_from_webcam", start_tensors);
 }
 
-function chiSquaredTest(arr) { var start_tensors = memory_leak_debugger();
+function chiSquaredTest(arr) {
 	// Create a histogram of the data
 	const histogram = {};
 	for (let i = 0; i < arr.length; i++) {
@@ -1508,31 +1459,28 @@ function chiSquaredTest(arr) { var start_tensors = memory_leak_debugger();
 	const degreesOfFreedom = Object.keys(histogram).length - 1;
 	const probability = jStat.chisquare.cdf(chiSquared, degreesOfFreedom);
 
-	memory_leak_debugger("chiSquared", start_tensors);
 
 	return probability;
 }
 
-function array_likelyhood_of_being_random (array) { var start_tensors = memory_leak_debugger();
+function array_likelyhood_of_being_random (array) {
 	var chi = chiSquaredTest(array);
 
 	var res = 1 - chi;
 
-	memory_leak_debugger("array_likelyhood_of_being_random", start_tensors);
 
 	return res;
 }
 
-function image_element_looks_random (imgelem) { var start_tensors = memory_leak_debugger();
+function image_element_looks_random (imgelem) {
 	var t = tf.reshape(tf.browser.fromPixels(imgelem), [-1]);
 	var res = array_likelyhood_of_being_random(t.arraySync())
 
-	memory_leak_debugger("image_element_looks_random", start_tensors);
 
 	return res;
 }
 
-function maximally_activated_neurons_randomness () { var start_tensors = memory_leak_debugger();
+function maximally_activated_neurons_randomness () {
 	var canvasses = $("#maximally_activated_content").find("canvas"); 
 
 	var struct = {};
@@ -1559,7 +1507,6 @@ function maximally_activated_neurons_randomness () { var start_tensors = memory_
 		//log("Done struct", struct);
 	}
 
-	memory_leak_debugger("maximally_activated_neurons_randomness", start_tensors);
 	return struct;
 }
 
@@ -1568,7 +1515,7 @@ function maximally_activated_neurons_randomness () { var start_tensors = memory_
  * Returns -n if n neurons are random
  * Returns 1 if the number of neurons should be increased
  */
-async function get_new_number_of_neurons_according_to_visualization_randomness (layer) { var start_tensors = memory_leak_debugger();
+async function get_new_number_of_neurons_according_to_visualization_randomness (layer) {
 	if(!model_is_trained) {
 		log("This algorithm is useless when the network is not trained");
 		return 0;
@@ -1601,21 +1548,18 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 		var n = neurons_that_learnt_something - number_of_neurons;
 
 		if (n <= 0) {
-			memory_leak_debugger("get_new_number_of_neurons_according_to_visualization_randomness", start_tensors);
 			return n;
 		} else {
-			memory_leak_debugger("get_new_number_of_neurons_according_to_visualization_randomness", start_tensors);
 			return 1;
 		}
 	} else {
 		log("Cannot visualize layer " + layer);
-		memory_leak_debugger("get_new_number_of_neurons_according_to_visualization_randomness", start_tensors);
 		return null;
 	}
 }
 
 
-async function adjust_number_of_neurons (layer) { var start_tensors = memory_leak_debugger();
+async function adjust_number_of_neurons (layer) {
 	var original_epochs = parseInt($("#epochs").val());
 
 	$("#epochs").val(10);
@@ -1643,17 +1587,15 @@ async function adjust_number_of_neurons (layer) { var start_tensors = memory_lea
 
 
 	$("#epochs").val(original_epochs);
-	memory_leak_debugger("adjust_number_of_neurons", start_tensors);
 	return adjusted_neurons_total;
 }
 
-async function optimize_all_layers_once () { var start_tensors = memory_leak_debugger();
+async function optimize_all_layers_once () {
 	for(var i = 0; i < (get_number_of_layers() - 1); i++) {
 		if($($(".layer_options_internal")[i]).find(".filters,.units").length) {
 			await adjust_number_of_neurons(i);
 		}
 	}
-	memory_leak_debugger("optimize_all_layers_once", start_tensors);
 }
 
 async function get_own_tensor_data (element) {

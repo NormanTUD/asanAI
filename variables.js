@@ -38,30 +38,6 @@ function get_last_good_input_shape_as_string () {
 	}
 }
 
-function memory_leak_debugger (name="", oldNumTensors=null) { // start_tensors
-	var numTensors = tf.memory()["numTensors"];
-	if(!numTensors) {
-		numTensors = "none";
-	}
-
-	if(old_tensor_number < numTensors) {
-		if(name && oldNumTensors) {
-			if(numTensors > oldNumTensors) {
-				if(name != "") {
-					console.debug("Potential memory leak while (but not neccessarily in) " + name + "! +" + Math.abs(oldNumTensors - numTensors) + " Tensors (" + numTensors + " in total)");
-				} else {
-					console.debug("Potential memory leak! New tensors: " + Math.abs(oldNumTensors - numTensors));
-				}
-				//console.trace();
-			}
-		}
-	}
-
-	old_tensor_number = numTensors;
-
-	return numTensors;
-}
-
 function get_plotly_type () { // start_tensors
 	return 'lines';
 }
@@ -84,7 +60,7 @@ function uuidv4() {
 	return res;
 }
 
-function calculate_default_target_shape (nr) { var start_tensors = memory_leak_debugger();
+function calculate_default_target_shape (nr) {
 	var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 	var output = [];
@@ -95,14 +71,12 @@ function calculate_default_target_shape (nr) { var start_tensors = memory_leak_d
 		}
 	}
 
-	memory_leak_debugger("calculate_default_target_shape", start_tensors);
 	return output;
 }
 
-function lowercaseFirstLetter(string) { var start_tensors = memory_leak_debugger();
+function lowercaseFirstLetter(string) {
 	var res = string.charAt(0).toLowerCase() + string.slice(1);
 
-	memory_leak_debugger("lowercaseFirstLetter", start_tensors);
 
 	return res;
 }
@@ -599,25 +573,22 @@ var initializers = {
 	"zeros": "zeros"
 };
 
-function get_name_case_independent (name, from_hash) { var start_tensors = memory_leak_debugger();
+function get_name_case_independent (name, from_hash) {
 	for (var key of Object.keys(from_hash)) {
 		if(key.toLowerCase() == name.toLowerCase() || from_hash[key].toLowerCase() == name.toLowerCase()) {
 			return from_hash[key];
 		}
 	}
-	memory_leak_debugger("get_name_case_independent", start_tensors);
 	return null;
 }
 
-function get_initializer_name (name) { var start_tensors = memory_leak_debugger();
+function get_initializer_name (name) {
 	var res = get_name_case_independent(name, initializers);
 
 	if(!name) {
 		console.warn("Cannot determine the kernel initializer name of " + name);
-		memory_leak_debugger("get_initializer_name", start_tensors);
 		return null;
 	} else {
-		memory_leak_debugger("get_initializer_name", start_tensors);
 		return res;
 	}
 }
@@ -1438,25 +1409,23 @@ var finished_loading = false;
 
 var generating_images = false;
 
-async function cosmo_set_tiny_training_dataset () { var start_tensors = memory_leak_debugger();
+async function cosmo_set_tiny_training_dataset () {
 	log("Setting Epochs to 10...");
 	await set_epochs(10);
 	log("Setting max files per category to 5...");
 	$("#max_number_of_files_per_category").val(5);
 	$("#number_of_images_per_category").html(5);
-	memory_leak_debugger("cosmo_set_tiny_training_dataset", start_tensors);
 }
 
-async function cosmo_set_large_training_dataset () { var start_tensors = memory_leak_debugger();
+async function cosmo_set_large_training_dataset () {
 	log("Setting Epochs to 30...");
 	await set_epochs(30);
 	log("Setting max files per category to 40...");
 	$("#max_number_of_files_per_category").val(40);
 	$("#number_of_images_per_category").html(40);
-	memory_leak_debugger("cosmo_set_large_training_dataset", start_tensors);
 }
 
-async function fireworks_and_reload (reload=1, waittime=10000) { var start_tensors = memory_leak_debugger();
+async function fireworks_and_reload (reload=1, waittime=10000) {
 	if(in_fireworks) {
 		return;
 	}
@@ -1475,16 +1444,13 @@ async function fireworks_and_reload (reload=1, waittime=10000) { var start_tenso
 
 	remove_manicule(1);
 
-	memory_leak_debugger("fireworks_and_reload", start_tensors);
 	if(reload) {
 		location.reload();
 	}
-	memory_leak_debugger("fireworks_and_reload", start_tensors);
 }
 
-async function fireworks_no_reload () { var start_tensors = memory_leak_debugger();
+async function fireworks_no_reload () {
 	await fireworks_and_reload(0, 2000);
-	memory_leak_debugger("fireworks_no_reload", start_tensors);
 }
 
 function set_augment_for_cosmo () {

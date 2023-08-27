@@ -27,7 +27,7 @@ function get_expected_input_shape_without_batch_as_string () {
 	return inputWithoutBatch;
 }
 
-async function except (errname, e) { var start_tensors = memory_leak_debugger();
+async function except (errname, e) {
 	await write_descriptions();
 	await enable_everything();
 
@@ -42,10 +42,9 @@ async function except (errname, e) { var start_tensors = memory_leak_debugger();
 		throw new Error(e);
 	}
 
-	memory_leak_debugger("except", start_tensors)
 }
 
-async function get_model_config_hash () { var start_tensors = memory_leak_debugger();
+async function get_model_config_hash () {
 	var arr = [];
 	$("#layers_container").find("input, checkbox, select").each(function (i, x) {
 		if($(x).attr("type") == "checkbox") {
@@ -58,11 +57,10 @@ async function get_model_config_hash () { var start_tensors = memory_leak_debugg
 	var str = arr.join(";;;;;;;;;");
 	
 	var res = await md5(str);
-	memory_leak_debugger("get_model_config_hash", start_tensors);
 	return res;
 }
 
-async function _create_model () { var start_tensors = memory_leak_debugger();
+async function _create_model () {
 	if(has_missing_values) {
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
 		return model;
@@ -111,10 +109,9 @@ async function _create_model () { var start_tensors = memory_leak_debugger();
 		add_layer_debuggers();
 	}
 
-	memory_leak_debugger("_create_model", start_tensors + 2); // 2 neue tensoren wegen global_model_data
 }
 
-async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) { var start_tensors = memory_leak_debugger();
+async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
 	var recreate_model = false;
 
 	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash()) {
@@ -132,11 +129,10 @@ async function _get_recreate_model(current_status_hash, model_config_hash, new_m
 		}
 	}
 
-	memory_leak_debugger("_get_recreate_model", start_tensors);
 	return recreate_model;
 }
 
-function findTensorsWithIsDisposedInternal(obj, tensorList = []) { var start_tensors = memory_leak_debugger();
+function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
 	if (typeof obj === "object") {
 		if (obj.isDisposedInternal !== undefined) {
 			tensorList.push(obj);
@@ -146,12 +142,11 @@ function findTensorsWithIsDisposedInternal(obj, tensorList = []) { var start_ten
 		}
 	}
 
-	memory_leak_debugger("findTensorsWithIsDisposedInternal", start_tensors);
 
 	return tensorList;
 }
 
-async function compile_model () { var start_tensors = memory_leak_debugger();
+async function compile_model () {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 	var new_model_config_hash = await get_model_config_hash();
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
@@ -195,29 +190,25 @@ async function compile_model () { var start_tensors = memory_leak_debugger();
 
 	write_model_summary_wait();
 
-	memory_leak_debugger("compile_model", start_tensors + findTensorsWithIsDisposedInternal(global_model_data).length);
 }
 
-function get_weight_type_name_from_option_name (on) { var start_tensors = memory_leak_debugger();
+function get_weight_type_name_from_option_name (on) {
 	if(on.match(/_/)) {
 		for (var i = 0; i < valid_initializer_types.length; i++) {
 			var v = valid_initializer_types[i];
 			var re = new RegExp("^" + v + "(?:_.*)?$");
 			if(on.match(re)) {
-				memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 				return v;
 			}
 		}
 	} else {
-		memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 		return on;
 	}
 
-	memory_leak_debugger("get_weight_type_name_from_option_name", start_tensors);
 	return on;
 }
 
-function get_data_for_layer (type, i, first_layer) { var start_tensors = memory_leak_debugger();
+function get_data_for_layer (type, i, first_layer) {
 	assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
 	assert(typeof(i) == "number", i + " is not a number but " + typeof(i));
 	assert(typeof(first_layer) == "boolean", first_layer + " is not a boolean but " + typeof(first_layer));
@@ -301,12 +292,11 @@ function get_data_for_layer (type, i, first_layer) { var start_tensors = memory_
 
 	delete data["visualize"];
 
-	memory_leak_debugger("get_data_for_layer", start_tensors);
 
 	return data;
 }
 
-async function get_model_structure(is_fake_model = 0) { var start_tensors = memory_leak_debugger();
+async function get_model_structure(is_fake_model = 0) {
 	var new_current_status_hash = "";
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
@@ -346,27 +336,24 @@ async function get_model_structure(is_fake_model = 0) { var start_tensors = memo
 
 	layer_structure_cache = JSON.stringify(structure);
 
-	memory_leak_debugger("get_model_structure", start_tensors);
 
 	return structure;
 }
 
-function is_number_array (value) { var start_tensors = memory_leak_debugger();
+function is_number_array (value) {
 	if(typeof(value) == "object") {
 		for (var i = 0; i < value.length; i++) {
 			if(typeof(value[i]) != "number") {
 				return false;
 			}
 		}
-		memory_leak_debugger("is_number_array", start_tensors);
 		return true;
 	}
 
-	memory_leak_debugger("is_number_array", start_tensors);
 	return false;
 }
 
-function is_valid_parameter (keyname, value, layer) { var start_tensors = memory_leak_debugger();
+function is_valid_parameter (keyname, value, layer) {
 	assert(typeof(keyname) == "string", "keyname " + keyname + " is not a string but " + typeof(keyname));
 	assert(["string", "number", "boolean", "object"].includes(typeof(value)), value + " is not a string/number/boolean but " + typeof(value));
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
@@ -394,17 +381,15 @@ function is_valid_parameter (keyname, value, layer) { var start_tensors = memory
 		(["seed"].includes(keyname) && typeof(value) == "number") ||
 		(["cell"].includes(keyname) && typeof(value).includes("object"))
 	) {
-		memory_leak_debugger("is_valid_parameter", start_tensors);
 		return true;
 	}
 
 	//log("keyname: ", keyname, "value: ", value, "layer:", layer);
 
-	memory_leak_debugger("is_valid_parameter", start_tensors);
 	return false;
 }
 
-function get_key_name_camel_case(keyname) { var start_tensors = memory_leak_debugger();
+function get_key_name_camel_case(keyname) {
 	var letters = keyname.split("");
 	var results = [];
 
@@ -422,19 +407,17 @@ function get_key_name_camel_case(keyname) { var start_tensors = memory_leak_debu
 		}
 	}
 
-	memory_leak_debugger("get_key_name_camel_case", start_tensors);
 	return results.join("");
 }
 
-function remove_empty(obj) { var start_tensors = memory_leak_debugger();
+function remove_empty(obj) {
 	var res = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 
-	memory_leak_debugger("remove_empty", start_tensors);
 
 	return res;
 }
 
-async function get_html_from_model () { var start_tensors = memory_leak_debugger();
+async function get_html_from_model () {
 	var html = '';
 
 	html += '<html>' + "\n";
@@ -525,11 +508,10 @@ async function get_html_from_model () { var start_tensors = memory_leak_debugger
 	html += "        </body>\n";
 	html += '</html>' + "\n";
 
-	memory_leak_debugger("get_html_from_model", start_tensors)
 	return html;
 }
 
-function check_initializers (data, has_keys) { var start_tensors = memory_leak_debugger();
+function check_initializers (data, has_keys) {
 	valid_initializer_types.forEach((init_or_regularizer_type) => {
 		["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
 			var keyname = get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
@@ -578,11 +560,10 @@ function check_initializers (data, has_keys) { var start_tensors = memory_leak_d
 		});
 	});
 
-	memory_leak_debugger("check_initializers", start_tensors);
 	return data;
 }
 
-function _check_data (data, type) { var start_tensors = memory_leak_debugger();
+function _check_data (data, type) {
 	var has_keys = Object.keys(data);
 
 	try {
@@ -678,11 +659,10 @@ function _check_data (data, type) { var start_tensors = memory_leak_debugger();
 		console.error(e);
 	}
 
-	memory_leak_debugger("_check_data", start_tensors);
 	return data;
 }
 
-async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) { var start_tensors = memory_leak_debugger();
+async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) {
 	try {
 		if(layer_options[type]["custom"]) {
 			if(i == 0) {
@@ -739,14 +719,11 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 
 			await dispose(new_model);
 
-			memory_leak_debugger("create_model (A)", start_tensors);
 
-			memory_leak_debugger("_add_layer_to_model", start_tensors);
 
 			throw new Error(e);
 		}
 
-		memory_leak_debugger("_add_layer_to_model", start_tensors);
 		return false;
 	}
 
@@ -762,11 +739,10 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		}
 	});
 
-	memory_leak_debugger("_add_layer_to_model", start_tensors + new_tensors);
 	return new_model;
 }
 
-function _set_layer_gui (data, fake_model_structure, i) { var start_tensors = memory_leak_debugger();
+function _set_layer_gui (data, fake_model_structure, i) {
 	var data_keys = Object.keys(data);
 	for (var k = 0; k < data_keys.length; k++) {
 		var this_key = data_keys[k];
@@ -782,10 +758,9 @@ function _set_layer_gui (data, fake_model_structure, i) { var start_tensors = me
 		}
 	}
 
-	memory_leak_debugger("_set_layer_gui", start_tensors);
 }
 
-async function create_model (old_model, fake_model_structure, force) { var start_tensors = memory_leak_debugger();
+async function create_model (old_model, fake_model_structure, force) {
 	if(has_missing_values) {
 		l("Not creating model because some values are missing (create model)");
 		if(old_model) {
@@ -903,7 +878,6 @@ async function create_model (old_model, fake_model_structure, force) { var start
 
 	var model_data = await get_model_data();
 
-	memory_leak_debugger("create_model", start_tensors + new_tensors);
 
 	if(!fake_model_structure) {
 		last_known_good_input_shape = get_input_shape_as_string();
@@ -912,7 +886,7 @@ async function create_model (old_model, fake_model_structure, force) { var start
 	return [new_model, model_data];
 }
 
-async function _add_layers_to_model (model_structure, fake_model_structure, i) { var start_tensors = memory_leak_debugger();
+async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 	var new_model = tf.sequential();
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
@@ -952,11 +926,10 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 		}
 	});
 
-	memory_leak_debugger("_add_layers_to_model", start_tensors + new_tensors);
 	return new_model;
 }
 
-async function get_fake_data_for_layertype (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
+async function get_fake_data_for_layertype (layer_nr, layer_type) {
 
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
@@ -1011,12 +984,11 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) { var start_te
 		}
 	}
 
-	memory_leak_debugger("get_fake_data_for_layertype", start_tensors);
 
 	return data;
 }
 
-function get_default_option (layer_type, option_name) { var start_tensors = memory_leak_debugger();
+function get_default_option (layer_type, option_name) {
 	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
 	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
 
@@ -1038,11 +1010,10 @@ function get_default_option (layer_type, option_name) { var start_tensors = memo
 		}
 	}
 
-	memory_leak_debugger("get_default_option", start_tensors);
 	return layer_options_defaults[option_name];
 }
 
-async function create_fake_model_structure (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
+async function create_fake_model_structure (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
@@ -1051,12 +1022,11 @@ async function create_fake_model_structure (layer_nr, layer_type) { var start_te
 	fake_model_structure[layer_nr]["type"] = layer_type;
 	fake_model_structure[layer_nr]["data"] = await get_fake_data_for_layertype(layer_nr, layer_type);
 
-	memory_leak_debugger("create_fake_model_structure", start_tensors);
 
 	return fake_model_structure;
 }
 
-async function compile_fake_model(layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
+async function compile_fake_model(layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
 
@@ -1098,7 +1068,6 @@ async function compile_fake_model(layer_nr, layer_type) { var start_tensors = me
 		ret = false;
 	}
 
-	memory_leak_debugger("compile_fake_model", start_tensors);
 
 	return ret;
 }
@@ -1107,72 +1076,59 @@ async function compile_fake_model(layer_nr, layer_type) { var start_tensors = me
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
 
-function _heuristic_layer_possibility_check(layer_type, layer_input_shape) { var start_tensors = memory_leak_debugger();
+function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 	if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
 		if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
 			if(layer_input_shape.length == 2) {
-				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		} else if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "globalMaxPooling2d", "maxPooling2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 3) {
-				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 4) {
-				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
 			if(layer_input_shape.length == 3) {
-				memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 				return true;
 			}
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 
 	} else if(["gru"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length < 2) {
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	} else if(["ZeroPadding2D"].includes(layer_type)) {
 		if(layer_type == "gru" && layer_input_shape.length != 4) {
-			memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 			return false;
 		}
 	}
 
 	if(mode == "beginner" && ["reshape"].includes(layer_type)) {
-		memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 		return false;
 	}
 
-	memory_leak_debugger("_heuristic_layer_possibility_check", start_tensors);
 
 	return true;
 }
 
-function layer_type_always_works (layer_type) { var start_tensors = memory_leak_debugger();
+function layer_type_always_works (layer_type) {
 	var res = !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
 
-	memory_leak_debugger("layer_type_always_works", start_tensors);
 
 
 	return res;
 }
 
-function heuristic_layer_possibility_check (layer_nr, layer_type) { var start_tensors = memory_leak_debugger();
+function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
 
@@ -1188,12 +1144,11 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) { var start_te
 
 	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 
-	memory_leak_debugger("heuristic_layer_possibility_check", start_tensors);
 
 	return res;
 }
 
-async function get_valid_layer_types (layer_nr) { var start_tensors = memory_leak_debugger();
+async function get_valid_layer_types (layer_nr) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 
 	//log("last_allowed_layers_update:", last_allowed_layers_update);
@@ -1255,11 +1210,10 @@ async function get_valid_layer_types (layer_nr) { var start_tensors = memory_lea
 
 	allowed_layer_cache[layer_nr] = valid_layer_types;
 
-	memory_leak_debugger("get_valid_layer_types", start_tensors);
 	return valid_layer_types;
 }
 
-async function set_weights_from_json_object (json, dont_show_weights, no_error, m) { var start_tensors = memory_leak_debugger();
+async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 
 	if(!m) {
 		//console.warn("Model not given. Using model singleton.");
@@ -1320,28 +1274,25 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		);
 	}
 
-	memory_leak_debugger("set_weights_from_json_object", start_tensors);
 
 	return true;
 }
 
-async function set_weights_from_string (string, no_warning, no_error, m) { var start_tensors = memory_leak_debugger();
+async function set_weights_from_string (string, no_warning, no_error, m) {
 	var json = JSON.parse(string);
 
 	var res = await set_weights_from_json_object(json, no_warning, no_error, m);
 
-	memory_leak_debugger("set_weights_from_string", start_tensors);
 
 	return res;
 }
 
-async function get_weights_as_json (m) { var start_tensors = memory_leak_debugger();
+async function get_weights_as_json (m) {
 	if(!m) {
 		m = model;
 	}
 
 	if(!m) {
-		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return false;
 	}
 
@@ -1360,16 +1311,14 @@ async function get_weights_as_json (m) { var start_tensors = memory_leak_debugge
 			}
 		}
 
-		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return weights_array;
 	} else {
-		memory_leak_debugger("get_weights_as_json", start_tensors);
 		return false;
 	}
 }
 
 
-async function get_weights_as_string (m) { var start_tensors = memory_leak_debugger();
+async function get_weights_as_string (m) {
 
 	if(!m) {
 		m = model;
@@ -1379,7 +1328,6 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 		if(finished_loading) {
 			console.warn("Could not get model...");
 		}
-		memory_leak_debugger("get_weights_as_string", start_tensors);
 		return false;
 	}
 
@@ -1423,12 +1371,11 @@ async function get_weights_as_string (m) { var start_tensors = memory_leak_debug
 		res = false;
 	}
 
-	memory_leak_debugger("get_weights_as_string", start_tensors);
 
 	return res;
 }
 
-async function copy_weights_to_clipboard () { var start_tensors = memory_leak_debugger();
+async function copy_weights_to_clipboard () {
 	copy_to_clipboard(await get_weights_as_string());
 
 	Swal.fire(
@@ -1437,10 +1384,9 @@ async function copy_weights_to_clipboard () { var start_tensors = memory_leak_de
 		'success'
 	);
 
-	memory_leak_debugger("copy_weights_to_clipboard", start_tensors);
 }
 
-function download(filename, text) { var start_tensors = memory_leak_debugger();
+function download(filename, text) {
 	var element = document.createElement('a');
 	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
 	element.setAttribute('download', filename);
@@ -1452,15 +1398,13 @@ function download(filename, text) { var start_tensors = memory_leak_debugger();
 
 	document.body.removeChild(element);
 
-	memory_leak_debugger("download", start_tensors);
 }
 
-async function download_weights_json () { var start_tensors = memory_leak_debugger();
+async function download_weights_json () {
 	download("weights.json", await get_weights_as_string());
-	memory_leak_debugger("download_weights_json", start_tensors);
 }
 
-async function output_size_at_layer (input_size_of_first_layer, layer_nr) { var start_tensors = memory_leak_debugger();
+async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 	if(!model) {
 		await compile_model();
 	}
@@ -1472,13 +1416,12 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) { var 
 		}
 	}
 
-	memory_leak_debugger("output_size_at_layer", start_tensors);
 
 	return output_size;
 }
 
 
-function save_model () { var start_tensors = memory_leak_debugger();
+function save_model () {
 	try {
 		model.save('downloads://model');
 	} catch (e) {
@@ -1489,10 +1432,9 @@ function save_model () { var start_tensors = memory_leak_debugger();
 		});
 	}
 	
-	memory_leak_debugger("save_model", start_tensors);
 }
 
-function get_current_chosen_object_default_weights_string () { var start_tensors = memory_leak_debugger();
+function get_current_chosen_object_default_weights_string () {
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[dataset];
 
@@ -1513,12 +1455,11 @@ function get_current_chosen_object_default_weights_string () { var start_tensors
 		weights_files[weights_file] = JSON.stringify(response);
 	}
 
-	memory_leak_debugger("get_current_chosen_object_default_weights_string", start_tensors);
 
 	return weights_files[weights_file];
 }
 
-async function get_weights_shape (weights_as_string, m) { var start_tensors = memory_leak_debugger();
+async function get_weights_shape (weights_as_string, m) {
 	if(!m) {
 		m = model;
 	}
@@ -1533,30 +1474,27 @@ async function get_weights_shape (weights_as_string, m) { var start_tensors = me
 
 	await dispose(test_tensor);
 
-	memory_leak_debugger("get_weights_shape", start_tensors);
 
 	return shape;
 }
 
-async function get_tfjs_model () { var start_tensors = memory_leak_debugger();
+async function get_tfjs_model () {
 	await model.save('localstorage://demo/management/model1');
 
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
 
-	memory_leak_debugger("get_tfjs_model", start_tensors);
 
 	return str;
 }
 
-async function _force_reinit() { var start_tensors = memory_leak_debugger();
+async function _force_reinit() {
 	l("Started re-initializing");
 	await compile_model(0, 1);
 	await updated_page();
 	l("Done re-initializing");
-	memory_leak_debugger("_force_reinit", start_tensors);
 }
 
-async function force_reinit (no_msg) { var start_tensors = memory_leak_debugger();
+async function force_reinit (no_msg) {
 	if(!model) {
 		l("Tried re-initializing, but no model was found");
 		return;
@@ -1585,10 +1523,9 @@ async function force_reinit (no_msg) { var start_tensors = memory_leak_debugger(
 	await rename_labels();
 	await repredict();
 
-	memory_leak_debugger("force_reinit", start_tensors);
 }
 
-async function input_shape_is_image (is_from_webcam=0) { var start_tensors = memory_leak_debugger();
+async function input_shape_is_image (is_from_webcam=0) {
 	var shape = get_input_shape();
 	var is = $(".input_shape_is_image");
 	if(shape.length == 3 && shape[2] == 3) {
@@ -1607,18 +1544,15 @@ async function input_shape_is_image (is_from_webcam=0) { var start_tensors = mem
 		}
 		*/
 
-		memory_leak_debugger("input_shape_is_image", start_tensors);
 		return true;
 	}
 	is.hide();
-	memory_leak_debugger("input_shape_is_image", start_tensors);
 	return false;
 }
 
-function model_output_shape_looks_like_classification () { var start_tensors = memory_leak_debugger();
+function model_output_shape_looks_like_classification () {
 	var res = model.outputShape.length == 2;
 
-	memory_leak_debugger("model_output_shape_looks_like_classification", start_tensors);
 
 	return res;
 }

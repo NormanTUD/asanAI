@@ -1,6 +1,6 @@
 "use strict";
 
-function show_idle_time () { var start_tensors = memory_leak_debugger();
+function show_idle_time () {
 	if(!is_cosmo_mode) {
 		$("#cosmo_reload_debugger").remove();
 		return;
@@ -19,21 +19,19 @@ function show_idle_time () { var start_tensors = memory_leak_debugger();
 	if(idleTime) {
 		$("#cosmo_reload_debugger").html(`Last activity: ${idleTime}/${reload_time}`);
 	}
-	memory_leak_debugger("show_idle_time", start_tensors);
 }
 
-async function on_resize () { var start_tensors = memory_leak_debugger();
+async function on_resize () {
 	reset_view(); 
 	await show_cosmo_elements_depending_on_current_skills()
 	await write_descriptions(1);
-	memory_leak_debugger("on_resize", start_tensors);
 
 	if(!$("#ribbon").is(":visible")) {
 		$("#ribbon_shower").show();
 	}
 }
 
-function layer_types_that_dont_have_default_options () { var start_tensors = memory_leak_debugger();
+function layer_types_that_dont_have_default_options () {
 	var no_options = [];
 
 	var all_options = [];
@@ -57,13 +55,12 @@ function layer_types_that_dont_have_default_options () { var start_tensors = mem
 		}
 	}
 
-	memory_leak_debugger("layer_types_that_dont_have_default_options", start_tensors);
 	return no_options;
 }
 
 
 
-async function hasFrontBack() { var start_tensors = memory_leak_debugger();
+async function hasFrontBack() {
 	let result = {
 		hasBack: false, 
 		hasFront: false, 
@@ -108,26 +105,23 @@ async function hasFrontBack() { var start_tensors = memory_leak_debugger();
 		} else {
 			l("ERROR: " + e);
 		}
-		memory_leak_debugger("hasFront", start_tensors);
 		return result;
 	}
 
-	memory_leak_debugger("hasFront", start_tensors);
 }
 
-function get_get (param) { var start_tensors = memory_leak_debugger();
+function get_get (param) {
 	const queryString = window.location.search;
 
 	const urlParams = new URLSearchParams(queryString);
 
 	var res = urlParams.get(param);
 
-	memory_leak_debugger("get_get", start_tensors);
 
 	return res;
 }
 
-function init_tabs () { var start_tensors = memory_leak_debugger();
+function init_tabs () {
 	l("Initializing tabs");
 	var tabs_settings = {
 		activate: function (event, ui) {
@@ -152,10 +146,9 @@ function init_tabs () { var start_tensors = memory_leak_debugger();
 	$("#tfvis_tab").tabs(tabs_settings);
 	$("#code_tab").tabs(tabs_settings);
 
-	memory_leak_debugger("init_tabs", start_tensors);
 }
 
-function init_set_all_options () { var start_tensors = memory_leak_debugger();
+function init_set_all_options () {
 	l("Initializing 'set options for all'");
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
@@ -219,10 +212,9 @@ function init_set_all_options () { var start_tensors = memory_leak_debugger();
 		}
 	});
 
-	memory_leak_debugger("init_set_all_options", start_tensors);
 }
 
-async function init_page_contents (chosen_dataset) { var start_tensors = memory_leak_debugger();
+async function init_page_contents (chosen_dataset) {
 	l("Initializing page contents");
 	skip_predictions = true;
 	disabling_saving_status = true;
@@ -272,37 +264,32 @@ async function init_page_contents (chosen_dataset) { var start_tensors = memory_
 	disabling_saving_status = false;
 	skip_predictions = false;
 
-	memory_leak_debugger("init_page_contents", start_tensors);
 }
 
-function dataset_already_there (dataset_name) { var start_tensors = memory_leak_debugger();
+function dataset_already_there (dataset_name) {
 	var already_there = false;
 	$("#dataset").children().each(
-		function (id, e) { var start_tensors = memory_leak_debugger();
+		function (id, e) {
 			if(e.text == dataset_name) {
 				already_there = true;
-				memory_leak_debugger("function (id, e)", start_tensors);
 				return;
 			}
-			memory_leak_debugger("function (id, e)", start_tensors);
 		}
 	);
 
-	memory_leak_debugger("dataset_already_there", start_tensors);
 	return already_there;
 }
 
-async function get_traindata_and_init_categories () { var start_tensors = memory_leak_debugger();
+async function get_traindata_and_init_categories () {
 	traindata_struct = await get_json("traindata.php");
 	init_categories();
 
 	await init_page_contents();
 	await write_descriptions();
 
-	memory_leak_debugger("get_traindata_and_init_categories", start_tensors);
 }
 
-function init_categories () { var start_tensors = memory_leak_debugger();
+function init_categories () {
 	l("Initializing categories");
 	$("#dataset").html("");
 
@@ -319,20 +306,18 @@ function init_categories () { var start_tensors = memory_leak_debugger();
 
 	number_of_initialized_layers = 0;
 
-	memory_leak_debugger("init_categories", start_tensors);
 }
 
-async function hasBothFrontAndBack () { var start_tensors = memory_leak_debugger();
+async function hasBothFrontAndBack () {
 	if(hasBothFrontAndBackCached === undefined) {
 		var has_front_and_back_facing_camera = await hasFrontBack();
 		hasBothFrontAndBackCached = has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront;
 	}
 
-	memory_leak_debugger("hasBothFrontAndBack", start_tensors);
 	return hasBothFrontAndBackCached;
 }
 
-async function restart_webcams () { var start_tensors = memory_leak_debugger();
+async function restart_webcams () {
 	if(cam) {
 		await show_webcam(1);
 	}
@@ -341,10 +326,9 @@ async function restart_webcams () { var start_tensors = memory_leak_debugger();
 		await get_data_from_webcam(1);
 	}
 
-	memory_leak_debugger("restart_webcams", start_tensors);
 }
 
-function init_losses_and_metrics () { var start_tensors = memory_leak_debugger();
+function init_losses_and_metrics () {
 	l("Initializing losses");
 	for (var i = 0; i < losses.length; i++) {
 		$('#loss').append($('<option>', {
@@ -361,11 +345,10 @@ function init_losses_and_metrics () { var start_tensors = memory_leak_debugger()
 		}));
 	}
 
-	memory_leak_debugger("init_losses_and_metrics", start_tensors);
 }
 
 
-async function set_backend() { var start_tensors = memory_leak_debugger();
+async function set_backend() {
 	l("Setting backend");
 	var backend = get_backend();
 
@@ -377,10 +360,9 @@ async function set_backend() { var start_tensors = memory_leak_debugger();
 
 	await tf.setBackend(backend);
 
-	memory_leak_debugger("set_backend", start_tensors);
 }
 
-$(document).ready(async function() { var start_tensors = memory_leak_debugger();
+$(document).ready(async function() {
 	if(!is_cosmo_mode) {
 		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
 			await cosmo_mode();
@@ -612,5 +594,4 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 
 	finished_loading = true;
 
-	memory_leak_debugger("on_document_ready", start_tensors)
 });

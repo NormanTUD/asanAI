@@ -291,7 +291,7 @@ function memory_debugger () { // var start_tensors
 	}
 	
 	if(Object.keys(_custom_tensors).length) {
-		debug_string += ", Custom: " + Object.keys(_custom_tensors).length;
+		debug_string += ", asanAI: " + Object.keys(_custom_tensors).length;
 	}
 
 	var memdeb = document.querySelector('#memory_debugger_div');
