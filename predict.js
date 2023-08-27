@@ -773,6 +773,10 @@ async function _print_example_predictions (count) { var start_tensors = memory_l
 }
 
 async function _get_example_string (examples, count, full_dir) { var start_tensors = memory_leak_debugger();
+	assert(typeof(examples) == "object", "examples is not an object");
+	assert(typeof(count) == "number", "count is not a number");
+	assert(typeof(full_dir) == "string", "full_dir is not a string");
+
 	var str = "";
 	for (var i = 0; i < examples.length; i++) {
 		count++;
@@ -789,7 +793,13 @@ async function _get_example_string (examples, count, full_dir) { var start_tenso
 				log("Predict demo failed, error:", e);
 			}
 		} else {
-			str += "<div class='full_example_image_prediction inline_block'><img src='" + img_url + "' class='example_images' onload='predict_demo(this, " + i + ")' onclick='predict_demo(this, " + i + ")' /><br><div class='predict_demo_result'></div></div>";
+			str += "<div class='full_example_image_prediction inline_block'><img src='" + 
+				img_url + 
+				"' class='example_images' onload='predict_demo(this, " + 
+				i + 
+				")' onclick='predict_demo(this, " + 
+				i + 
+				")' /><br><div class='predict_demo_result'></div></div>";
 		}
 	}
 
