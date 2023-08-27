@@ -718,6 +718,10 @@ async function _print_predictions_text(count, example_predict_data) {
 					console.warn("Wrong input shape for _print_predictions_text");
 				} else {
 					_predict_error(e);
+					await dispose(_tensor);
+					await dispose(res);
+
+					return;
 				}
 			}
 
