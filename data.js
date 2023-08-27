@@ -305,18 +305,18 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 	return data;
 }
 
-async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memory_leak_debugger();
+async function add_tensor_as_image_to_photos (_tensor) { var start_tensors = memory_leak_debugger();
 	// TODO
-	assert(typeof(tensor) == "object", "Tensor must be an object");	
-	assert(Object.keys(tensor).includes("shape"), "Tensor must be an object that contains a shape subkey");
-	assert(tensor.shape.length >= 3 && tensor.shape.length <= 4, "Tensor must have 3 or 4 dimensions");	
+	assert(typeof(_tensor) == "object", "_tensor must be an object");	
+	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
+	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");	
 
-	if(tensor.shape.length == 4) {
-		if(tensor.shape[0] == 1) {
-			tensor = tensor(tensor.arraySync()[0]);
+	if(_tensor.shape.length == 4) {
+		if(_tensor.shape[0] == 1) {
+			_tensor = _tensor(_tensor.arraySync()[0]);
 		} else {
-			for (var i = 0; i < tensor.shape[0]; i++) {
-				var this_tensor = tensor(tensor.arraySync()[i]);
+			for (var i = 0; i < _tensor.shape[0]; i++) {
+				var this_tensor = _tensor(_tensor.arraySync()[i]);
 				await add_tensor_as_image_to_photos(this_tensor);
 			}
 
@@ -330,12 +330,12 @@ async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memo
 	var id = "augmented_photo_" + uuid;
 	//log("image-element-id: ", id);
 	$("#photos").prepend("<canvas id='" + id + "'></canvas>");
-	//log("toPixels(tensor, $('#" + id + "')");
+	//log("toPixels(_tensor, $('#" + id + "')");
 
 	var min_value = 0;
 	var max_value = 0;
 
-	var min_in_tensor = tf.min(tensor).arraySync();
+	var min_in_tensor = tf.min(_tensor).arraySync();
 
 	if(min_in_tensor < min_value) {
 		min_value = min_in_tensor;
@@ -343,24 +343,24 @@ async function add_tensor_as_image_to_photos (tensor) { var start_tensors = memo
 
 
 	if(min_value < 0) {
-		tensor = tensor.sub(min_value);
+		_tensor = _tensor.sub(min_value);
 	}
 
-	var max_in_tensor = tf.max(tensor).arraySync();
+	var max_in_tensor = tf.max(_tensor).arraySync();
 
 	if(max_in_tensor > max_value) {
 		max_value = max_in_tensor;
 	}
 
 	if(max_value != 0) {
-		tensor = tensor.div(max_value);
+		_tensor = _tensor.div(max_value);
 	}
 
 	try {
-		await tf.browser.toPixels(tensor, $("#" + id)[0]);
+		await tf.browser.toPixels(_tensor, $("#" + id)[0]);
 	} catch (e) {
-		log("Shape:", tensor.shape);
-		tensor.print();
+		log("Shape:", _tensor.shape);
+		_tensor.print();
 	}
 
 	memory_leak_debugger("add_tensor_as_image_to_photos", start_tensors)

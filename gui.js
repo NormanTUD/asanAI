@@ -4478,7 +4478,7 @@ function output_shape_is_same(output_shape_data, output_shape_network) { var sta
 	}
 }
 
-function tensor_print_to_string(tensor) { var start_tensors = memory_leak_debugger();
+function tensor_print_to_string(_tensor) { var start_tensors = memory_leak_debugger();
 	try {
 		var logBackup = console.log;
 		var logMessages = [];
@@ -4487,7 +4487,7 @@ function tensor_print_to_string(tensor) { var start_tensors = memory_leak_debugg
 			logMessages.push.apply(logMessages, arguments);
 		};
 
-		tensor.print(1);
+		_tensor.print(1);
 
 		console.log = logBackup;
 

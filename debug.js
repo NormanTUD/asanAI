@@ -455,15 +455,15 @@ function trackTFMemory() { // var start_tensors
 }
 
 // Funktion zum Verfolgen der Tensor-Allokationen
-function trackTensorAllocation(tensor) { // var start_tensors
+function trackTensorAllocation(_tensor) { // var start_tensors
 	console.log('Tensor Allocated:');
-	console.log(tensor);
+	console.log(_tensor);
 }
 
 // Funktion zum Verfolgen der Tensor-Befreiungen
-function trackTensorDisposal(tensor) { // var start_tensors
+function trackTensorDisposal(_tensor) { // var start_tensors
 	console.log('Tensor Disposed:');
-	console.log(tensor);
+	console.log(_tensor);
 }
 
 async function profile (func, ...args) { // var start_tensors

@@ -1201,21 +1201,21 @@ async function show_webcam (force_restart) { var start_tensors = memory_leak_deb
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
-function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_debugger();
+function tensor_shape_matches_model (_tensor) { var start_tensors = memory_leak_debugger();
 	if(!model || typeof(model) == "object" && !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
 		model_is_ok();
 		return false;
 	}
 
-	assert(tensor, "Tensor is not defined");
-	assert(typeof(tensor) == "object", "Tensor is not an object");
-	assert(Object.keys(tensor).includes("shape"), "Tensor has no shape key");
+	assert(_tensor, "Tensor is not defined");
+	assert(typeof(_tensor) == "object", "Tensor is not an object");
+	assert(Object.keys(_tensor).includes("shape"), "Tensor has no shape key");
 
 	var res = true;
 
 	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape.filter(n => n)));
 
-	var tensor_shape = eval(JSON.stringify(tensor.shape));
+	var tensor_shape = eval(JSON.stringify(_tensor.shape));
 
 	if(tensor_shape.length - 1 == input_layer_shape.length) {
 		input_layer_shape.unshift(null);
