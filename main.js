@@ -608,6 +608,8 @@ $(document).ready(async function() { var start_tensors = memory_leak_debugger();
 		setInterval(_temml, 500);
 	}
 
+	setInterval(_clean_custom_tensors, 200);
+
 	finished_loading = true;
 
 	memory_leak_debugger("on_document_ready", start_tensors)

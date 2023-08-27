@@ -287,8 +287,13 @@ function memory_debugger () { // var start_tensors
 	}
 
 	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
+
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
+	}
+	
+	if(_custom_tensors.length) {
+		debug_string += ", Custom: " + _custom_tensors.length;
 	}
 
 	var memdeb = document.querySelector('#memory_debugger_div');
