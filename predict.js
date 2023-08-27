@@ -737,7 +737,6 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 }
 
 async function _print_example_predictions (count) { var start_tensors = memory_leak_debugger();
-
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
