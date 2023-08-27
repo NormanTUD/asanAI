@@ -451,7 +451,7 @@ async function augment_sine_ripple(item, label_nr, x, classes) {
 
 
 async function get_xs_and_ys () {
-	reset_data();
+	await reset_data();
 
 	headerdatadebug("get_xs_and_ys()");
 
