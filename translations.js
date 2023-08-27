@@ -76,7 +76,11 @@ async function updateTranslations() {
 		const translationKey = element.classList[0].substring(12);
 		const translation = language[lang][translationKey];
 		if (translation) {
-			element.innerHTML = translation;
+			if($(element).attr("data-lang") != lang) {
+				element.innerHTML = translation;
+
+				$(element).attr("data-lang", lang)
+			}
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
 		}
