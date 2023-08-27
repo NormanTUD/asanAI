@@ -1161,7 +1161,13 @@ function get_csv_seperator () {
 }
 
 async function get_x_y_from_csv () {
-	await reset_data();
+	if(csv_global_x) {
+		await dispose(csv_global_x);
+	}
+
+	if(csv_global_y) {
+		await dispose(csv_global_y);
+	}
 
 	var seperator = get_csv_seperator();
 	var csv = $("#csv_file").val();
@@ -1225,6 +1231,9 @@ async function get_x_y_from_csv () {
 
 	x = tf.tidy(() => { return tensor(x); });
 	y = tf.tidy(() => { return tensor(y); });
+
+	csv_global_x = x;
+	csv_global_y = y;
 
 	if(is_one_hot_encoded) {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");

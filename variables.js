@@ -1495,3 +1495,6 @@ var currently_generating_images = false;
 var is_dark_mode = false;
 
 var last_status_hash_text_prediction = "";
+
+var csv_global_x = null;
+var csv_global_y = null;
