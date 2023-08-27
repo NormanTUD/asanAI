@@ -728,6 +728,8 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
 					console.debug("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+				} else if(("" + e).includes("Total size of new array must be unchanged")) {
+					console.warn("Total size of new array must be unchanged. Did you use reshape somewhere?");
 				} else {
 					_predict_error(e);
 					await dispose(res);
