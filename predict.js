@@ -756,7 +756,7 @@ async function _print_example_predictions (count) { var start_tensors = memory_l
 			var examples = x["example"];
 			if(examples) {
 				var str = "";
-				[str, count] = await _get_example_string(examples, count, full_dir);
+				[str, count] = await _get_example_string_image(examples, count, full_dir);
 
 				if(str) {
 					example_predictions.html(str);
@@ -772,7 +772,7 @@ async function _print_example_predictions (count) { var start_tensors = memory_l
 	return count;
 }
 
-async function _get_example_string (examples, count, full_dir) { var start_tensors = memory_leak_debugger();
+async function _get_example_string_image (examples, count, full_dir) { var start_tensors = memory_leak_debugger();
 	assert(typeof(examples) == "object", "examples is not an object");
 	assert(typeof(count) == "number", "count is not a number");
 	assert(typeof(full_dir) == "string", "full_dir is not a string");
@@ -782,12 +782,14 @@ async function _get_example_string (examples, count, full_dir) { var start_tenso
 		count++;
 		var img_url = full_dir + "/" + examples[i];
 		var img_elem = $("img[src$='" + img_url + "']");
+
 		if(img_elem.length) {
 			try {
 				var img = img_elem;
 				if(Object.keys(img).includes("0")) {
 					img = img_elem[0];
 				}
+
 				await predict_demo(img, i);
 			} catch (e) {
 				log("Predict demo failed, error:", e);
@@ -803,7 +805,7 @@ async function _get_example_string (examples, count, full_dir) { var start_tenso
 		}
 	}
 
-	memory_leak_debugger("_get_example_string", start_tensors);
+	memory_leak_debugger("_get_example_string_image", start_tensors);
 	return [str, count];
 }
 
