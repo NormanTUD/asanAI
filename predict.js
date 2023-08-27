@@ -684,6 +684,7 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var tensor = tf.tensor(example_predict_data[i]);
+
 		if(tensor_shape_matches_model(tensor)) {
 			var res;
 			try {
@@ -696,17 +697,12 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
 				var latex_output = await _arbitrary_array_to_latex(res_array);
 
-				/*
-				log("data:", example_predict_data[i], "latex_input:", latex_input);
-				log("out_data:", res_array, "latex_output", latex_output);
-				*/
-
 				html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
 				count++;
 				$("#predict_error").html("");
 			} catch (e) {
-				if((""+e).includes("already disposed")) {
-					//console.warn("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+				if(("" + e).includes("already disposed")) {
+					console.debug("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else {
 					_predict_error(e);
 					await dispose(res);
@@ -1185,20 +1181,29 @@ function tensor_shape_matches_model (tensor) { var start_tensors = memory_leak_d
 		return false;
 	}
 
+	assert(tensor, "Tensor is not defined");
+	assert(typeof(tensor) == "object", "Tensor is not an object");
+	assert(Object.keys(tensor).includes("shape"), "Tensor has no shape key");
+
 	var res = true;
-	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape));
-	input_layer_shape.shift();
+
+	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape.filter(n => n)));
 
 	var tensor_shape = eval(JSON.stringify(tensor.shape));
-	tensor_shape.shift();
 
-	if(tensor_shape.join(",") != input_layer_shape.join(",")) {
-		res = false;
+	if(tensor_shape.length - 1 == input_layer_shape.length) {
+		input_layer_shape.unshift(null);
+	}
+
+	for (var i = 1; i < input_layer_shape.length; i++) {
+		if(!tensor_shape[i] == input_layer_shape[i]) {
+			return false;
+		}
 	}
 
 	memory_leak_debugger("tensor_shape_matches_model", start_tensors);
 
-	return res;
+	return true;
 }
 
 function draw_bars_or_numbers (i, predictions, max) { var start_tensors = memory_leak_debugger();
