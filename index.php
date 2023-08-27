@@ -22,7 +22,6 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
-		<?php minify_js("base_wrappers.js"); ?>
 		<script>
 			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
@@ -131,6 +130,7 @@
 
 		<!-- tensorflow.js -->
 		<?php minify_js("tf/tf.min.js"); ?>
+		<?php minify_js("base_wrappers.js"); ?>
 		<?php minify_js("libs/jstat.min.js"); ?>
 		<?php minify_js("custom_layers.js"); ?>
 		<?php minify_js("libs/jsmanipulate.js", 1, 1); ?>

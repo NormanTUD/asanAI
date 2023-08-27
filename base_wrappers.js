@@ -5,6 +5,8 @@ function tensor1d (...args) {
 
 	_custom_tensors[res.dataId.id] = res;
 
+	_clean_custom_tensors();
+
 	return res;
 }
 
@@ -12,6 +14,8 @@ function tensor2d (...args) {
 	var res = tf.tensor2d(...args);
 
 	_custom_tensors[res.dataId.id] = res;
+
+	_clean_custom_tensors();
 
 	return res;
 }
@@ -21,6 +25,8 @@ function tensor (...args) {
 
 	_custom_tensors[res.dataId.id] = res;
 
+	_clean_custom_tensors();
+
 	return res;
 }
 
@@ -28,6 +34,8 @@ function oneHot (...args) {
 	var res = tf.oneHot(...args);
 
 	_custom_tensors[res.dataId.id] = res;
+
+	_clean_custom_tensors();
 
 	return res;
 }

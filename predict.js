@@ -704,15 +704,15 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 	}
 
 	for (var i = 0; i < example_predict_data.length; i++) {
-		var tensor = tensor(example_predict_data[i]);
+		var _tensor = tensor(example_predict_data[i]);
 
 		var model_input_shape = model.input.shape.filter(n=>n);
-		var tensor_shape = tensor.shape;
+		var tensor_shape = _tensor.shape;
 
-		if(tensor_shape_matches_model(tensor)) {
+		if(tensor_shape_matches_model(_tensor)) {
 			var res;
 			try {
-				res = await model.predict([tensor]);
+				res = await model.predict([_tensor]);
 
 				var res_array = res.arraySync();
 				await dispose(res);
@@ -735,10 +735,10 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				}
 			}
 		} else {
-			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(tensor.shape));
+			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 		}
 
-		await dispose(tensor);
+		await dispose(_tensor);
 		await tf.nextFrame();
 	}
 

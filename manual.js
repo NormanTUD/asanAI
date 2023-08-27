@@ -45,8 +45,8 @@ function toc () {
 async function get_network_type_result_by_array (layer_type, array, config, expand_dims=1, uuid) {
 	assert(typeof(layer_type) == "string", "Layer type must be string, is " + typeof(layer_type));
 
-	var tensor = tf.tensor(array);
-	config["inputShape"] = tensor.shape;
+	var _tensor = tensor(array);
+	config["inputShape"] = _tensor.shape;
 	var layer = null;
 	var reg = ["bias", "kernel", "depthwise", "pointwise"];
 
@@ -96,15 +96,15 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 
 	if(layer) {
 		if(expand_dims) {
-			tensor = tensor.expandDims();
+			_tensor = _tensor.expandDims();
 		}
 
 		var res;
 
 		try {
-			log(layer_type, config, tensor, kwargs);
-			input_shape = tensor.shape;
-			var tensor_res = await layer.apply(tensor, kwargs);
+			log(layer_type, config, _tensor, kwargs);
+			input_shape = _tensor.shape;
+			var tensor_res = await layer.apply(_tensor, kwargs);
 			res = tensor_res.arraySync();
 			output_shape = tensor_res.shape;
 			$("#" + uuid + "_error").html("");
@@ -386,10 +386,10 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 	}
 
 	if(result) {
-		var tensor = tf.tensor(result);
+		var _tensor = tensor(result);
 
 		try {
-			tensor = tensor.transpose([3, 1, 2, 0]);
+			_tensor = _tensor.transpose([3, 1, 2, 0]);
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
 			$("#" + uuid + "_error").html(e);
@@ -428,11 +428,11 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			}
 		}
 
-		for (var i = 0; i < tensor.shape[0]; i++) {
+		for (var i = 0; i < _tensor.shape[0]; i++) {
 			var id = uuidv4()
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
-			draw_grid($("#" + id)[0], 1, tensor.arraySync()[i], 1, 1, "", "");
-			//tf.browser.toPixels(tensor, canvas);
+			draw_grid($("#" + id)[0], 1, _tensor.arraySync()[i], 1, 1, "", "");
+			//tf.browser.toPixels(_tensor, canvas);
 		}
 	}
 
@@ -481,7 +481,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	log(t_y);
 
 	current_model = tf.sequential();
-	current_model.add(tf.layers.dense({units: 128, batchInputShape: tf.tensor(t_x).shape, activation: "relu"}));
+	current_model.add(tf.layers.dense({units: 128, batchInputShape: tensor(t_x).shape, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 128, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));
@@ -505,8 +505,8 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 		tf.util.shuffleCombo(t_x, t_y);
 	}
 
-	var x = tf.tensor(t_x);
-	var y = tf.tensor(t_y);
+	var x = tensor(t_x);
+	var y = tensor(t_y);
 
 	log("x:");
 	x.print();
