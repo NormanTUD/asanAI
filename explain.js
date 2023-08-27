@@ -1052,12 +1052,12 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 	return full_data;
 }
 
-/* This function gets an image from a URL. It uses the load_image function to load the image, and then uses tf.browser.fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
+/* This function gets an image from a URL. It uses the load_image function to load the image, and then uses fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
 
 async function get_image_from_url (url) {
 	var tf_img = (async () => {
 		let img = await load_image(url);
-		tf_img = tf.browser.fromPixels(img);
+		tf_img = fromPixels(img);
 		var resized_img = tf_img.
 			resizeNearestNeighbor([height, width]).
 			toFloat().

@@ -23,6 +23,16 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
+function fromPixels (...args) {
+	var res = tf.browser.fromPixels(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 

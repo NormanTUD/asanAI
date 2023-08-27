@@ -1195,7 +1195,7 @@ async function visualize_train () {
 
 				var img_tensor = tf.tidy(() => {
 					try {
-						var res = tf.browser.fromPixels(x).resizeBilinear([height, width]).expandDims()
+						var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
 						res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
 						return res;
 					} catch (e) {

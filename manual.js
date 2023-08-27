@@ -341,7 +341,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		img_element = img_element[0];
 	}
 
-	var img = tf.browser.fromPixels(img_element); 
+	var img = fromPixels(img_element); 
 	img = img.div(255);
 
 	var config = {};

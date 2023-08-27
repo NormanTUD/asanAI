@@ -81,7 +81,7 @@ async function _get_tensor_img(item) {
 
 	try {
 		tensor_img = await tf.tidy(() => {
-			return _divide_img_tensor(tf.browser.fromPixels(item)
+			return _divide_img_tensor(fromPixels(item)
 				.resizeNearestNeighbor([height, width])
 				.toFloat()
 				.expandDims());
@@ -387,7 +387,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		if(is_image_prediction) {
 			try {
-				predict_data = tf.browser.fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
+				predict_data = fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 			} catch (e) {
 				if(("" + e).includes("Expected input shape")) {
 					console.warn("" + e);
@@ -1265,7 +1265,7 @@ async function predict_handdrawn () {
 	try {
 		predict_data = tf.tidy(() => {
 			return tf.image.resizeNearestNeighbor(
-				tf.browser.fromPixels(atrament_data.sketcher.canvas),
+				fromPixels(atrament_data.sketcher.canvas),
 				[height, width]
 			).expandDims();
 		});

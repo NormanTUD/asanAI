@@ -377,7 +377,7 @@ async function sine_ripple (img) {
 	var data = context.getImageData(0,0,canvas.width, canvas.height) 
 	JSManipulate.sineripple.filter(data); 
 	context.putImageData(data,0,0);
-	var rippled = await tf.browser.fromPixels(canvas);
+	var rippled = await fromPixels(canvas);
 	$(canvas).remove();
 
 
@@ -638,7 +638,7 @@ async function get_xs_and_ys () {
 						for (var j = 0; j < img_elems.length; j++) {
 							var img_elem = img_elems[j];
 
-							var tf_img = tf.browser.fromPixels(img_elem);
+							var tf_img = fromPixels(img_elem);
 							var resized_img = tf_img.
 								resizeNearestNeighbor([height, width]).
 								toFloat();
@@ -697,7 +697,7 @@ async function get_xs_and_ys () {
 									var data = context.getImageData(0,0,canvas.width, canvas.height) 
 									JSManipulate.sineripple.filter(data); 
 									context.putImageData(data,0,0);
-									var rippled = await tf.browser.fromPixels(canvas);
+									var rippled = await fromPixels(canvas);
 									$(canvas).remove();
 									log(rippled);
 									await add_tensor_as_image_to_photos(rippled);
@@ -731,7 +731,7 @@ async function get_xs_and_ys () {
 							var id = img_elem.id;
 
 							if(!id.endsWith("_layer")) {
-								var tf_img = tf.browser.fromPixels(img_elem);
+								var tf_img = fromPixels(img_elem);
 								var resized_img = tf_img.
 									resizeNearestNeighbor([height, width]).
 									toFloat();
@@ -745,7 +745,7 @@ async function get_xs_and_ys () {
 								classes.push(label_nr);
 
 								try {
-									var this_map_tensor = await tf.browser.fromPixels($("#" + id + "_layer")[0]).
+									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 									var this_map = 
 										tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
@@ -905,7 +905,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			var resized_img = [];
 			if(!dont_load_into_tf) {
 				resized_img = tf.tidy(() => {
-					var res = tf.browser.fromPixels(img);
+					var res = fromPixels(img);
 					resized_img = res.
 						resizeNearestNeighbor([height, width]).
 						toFloat().
@@ -1482,7 +1482,7 @@ function array_likelyhood_of_being_random (array) {
 }
 
 function image_element_looks_random (imgelem) {
-	var t = tf.reshape(tf.browser.fromPixels(imgelem), [-1]);
+	var t = tf.reshape(fromPixels(imgelem), [-1]);
 	var res = array_likelyhood_of_being_random(t.arraySync())
 
 
