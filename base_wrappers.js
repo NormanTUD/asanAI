@@ -1,4 +1,4 @@
-var _custom_tensors = [];
+var _custom_tensors = {};
 
 var getStackTrace = function() {
 	try { var a = {}; a.debug(); } catch(ex) { return (ex.stack) }
@@ -7,7 +7,7 @@ var getStackTrace = function() {
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 
-	_custom_tensors[res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -17,7 +17,7 @@ function tensor1d (...args) {
 function tensor2d (...args) {
 	var res = tf.tensor2d(...args);
 
-	_custom_tensors[res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -27,7 +27,7 @@ function tensor2d (...args) {
 function tensor (...args) {
 	var res = tf.tensor(...args);
 
-	_custom_tensors[res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -46,19 +46,29 @@ function oneHot (...args) {
 
 function _clean_custom_tensors () {
 	var keys = Object.keys(_custom_tensors);
+
+	if(!keys.length) {
+		return;
+	}
 	var disposed_keys = [];
 
 	for (var i in keys) {
 		var key = keys[i];
 
-		if(!Object.keys(_custom_tensors).includes(key) || _custom_tensors[key].isDisposedInternal || _custom_tensors[key].isDisposed) {
-			disposed_keys.push(key);
+		try {
+			if(!Object.keys(_custom_tensors).includes(key) || _custom_tensors[key][1].isDisposedInternal || _custom_tensors[key][1].isDisposed) {
+				disposed_keys.push(key);
+			}
+		} catch (e) {
+			if(("" + e).includes("_custom_tensors[key] is undefined")) {
+				//
+			} else {
+				console.warn(e);
+			}
 		}
 	}
 
 	for (var i in disposed_keys) {
 		delete _custom_tensors[disposed_keys[i]];
 	}
-
-	_custom_tensors = _custom_tensors.filter(n=>n);
 }
