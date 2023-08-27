@@ -1158,8 +1158,6 @@ var fireworks_counter = 0;
 
 var in_fireworks = 0;
 
-var predict_examples_hash = "";
-
 var inited_webcams = false;
 
 var last_batch_time = 0;

@@ -251,6 +251,8 @@ async function _run_predict_and_show (tensor_img, nr) { var start_tensors = memo
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
 			console.warn("Tensors already disposed. Probably the model was recompiled while predicting.");
+		} else if(("" + e).includes("but got array with shape")) {
+			console.warn("Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
 		} else {
 			console.error("" + e);
 			console.trace();
@@ -745,16 +747,13 @@ async function _print_example_predictions (count) { var start_tensors = memory_l
 	var x = await get_cached_json(dataset_url);
 	if(x) {
 		if(Object.keys(x).includes("example")) {
-			var this_examples_hash = await md5(JSON.stringify(x["example"]));
-			if(this_examples_hash != predict_examples_hash) {
-				predict_examples_hash = this_examples_hash;
-			}
 			var examples = x["example"];
 			if(examples) {
 				var str = "";
 				[str, count] = await _get_example_string_image(examples, count, full_dir);
 
 				if(str) {
+					log("STR:", str)
 					example_predictions.html(str);
 				}
 			}
