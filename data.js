@@ -514,7 +514,7 @@ async function get_xs_and_ys () {
 	} else {
 		if(data_origin == "default") {
 			var keys = [];
-			var x = tensor([]);
+			var x = null;
 			var y;
 			var category_counter = 0;
 
