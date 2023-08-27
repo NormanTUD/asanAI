@@ -711,12 +711,14 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 				}
 			}
 		} else {
-			log_once("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(tensor.shape));
+			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(tensor.shape));
 		}
 
 		await dispose(tensor);
 		await tf.nextFrame();
 	}
+
+	log("HTML CONTENTS", html_contents);
 
 	if(html_contents) {
 		example_predictions.html(html_contents);
@@ -753,11 +755,14 @@ async function _print_example_predictions (count) { var start_tensors = memory_l
 				[str, count] = await _get_example_string_image(examples, count, full_dir);
 
 				if(str) {
-					log("STR:", str)
 					example_predictions.html(str);
 				}
 			}
 		}
+	}
+
+	if(count == 0) {
+		example_predictions.html("");
 	}
 
 	memory_leak_debugger("_print_example_predictions", start_tensors);
