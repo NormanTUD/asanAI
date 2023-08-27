@@ -2566,10 +2566,6 @@ async function show_or_hide_load_weights() {
 	var dataset = $("#dataset option:selected").text();
 	var this_struct = traindata_struct[dataset];
 	var keys = Object.keys(this_struct);
-
-	if (keys.includes("weights_file") && await _show_load_weights()) {
-		$("#load_weights_button").removeAttr("disabled");
-	}
 }
 
 async function init_dataset() {

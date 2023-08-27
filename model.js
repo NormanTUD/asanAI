@@ -1538,35 +1538,6 @@ async function get_weights_shape (weights_as_string, m) { var start_tensors = me
 	return shape;
 }
 
-async function _show_load_weights () { var start_tensors = memory_leak_debugger();
-	if(!model) {
-		return false;
-	}
-
-	var this_weights_file = traindata_struct[$("#dataset option:selected").text()].weights_file;
-
-	if(!(Object.keys(this_weights_file).length >= 1)) {
-		return false;
-	}
-
-	try {
-		var default_weights_shape = JSON.stringify(await get_weights_shape(get_current_chosen_object_default_weights_string()));
-		var current_network_weights_shape = JSON.stringify(await get_weights_shape());
-		if(default_weights_shape === current_network_weights_shape) {
-			if(get_current_chosen_object_default_weights_string() == await get_weights_as_string()) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-		memory_leak_debugger("_show_load_weights", start_tensors);
-		return false;
-	} catch (e) {
-		memory_leak_debugger("_show_load_weights", start_tensors);
-		return false;
-	}
-}
-
 async function get_tfjs_model () { var start_tensors = memory_leak_debugger();
 	await model.save('localstorage://demo/management/model1');
 

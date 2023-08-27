@@ -1,9 +1,13 @@
 var _custom_tensors = [];
 
+var getStackTrace = function() {
+	try { var a = {}; a.debug(); } catch(ex) { return (ex.stack) }
+};
+
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 
-	_custom_tensors[res.dataId.id] = res;
+	_custom_tensors[res.dataId.id] = [getStackTrace(), res];
 
 	_clean_custom_tensors();
 
@@ -13,7 +17,7 @@ function tensor1d (...args) {
 function tensor2d (...args) {
 	var res = tf.tensor2d(...args);
 
-	_custom_tensors[res.dataId.id] = res;
+	_custom_tensors[res.dataId.id] = [getStackTrace(), res];
 
 	_clean_custom_tensors();
 
@@ -23,7 +27,7 @@ function tensor2d (...args) {
 function tensor (...args) {
 	var res = tf.tensor(...args);
 
-	_custom_tensors[res.dataId.id] = res;
+	_custom_tensors[res.dataId.id] = [getStackTrace(), res];
 
 	_clean_custom_tensors();
 
@@ -33,7 +37,7 @@ function tensor (...args) {
 function oneHot (...args) {
 	var res = tf.oneHot(...args);
 
-	_custom_tensors[res.dataId.id] = res;
+	_custom_tensors[res.dataId.id] = [getStackTrace(), res];
 
 	_clean_custom_tensors();
 
