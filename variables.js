@@ -1543,3 +1543,5 @@ var last_model_ok_status = "";
 var currently_generating_images = false;
 
 var is_dark_mode = false;
+
+var last_status_hash_text_prediction = "";

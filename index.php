@@ -365,9 +365,8 @@ text-align: end;
 										<span class="TRANSLATEME_dataset"></span>
 									</td>
 									<td>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 105px">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 100%">
 										</select>
-										<button id="load_weights_button" style="width: 46px;" disabled onclick="load_weights(1)" data-position="right" data-intro="Click here to load pretrained weights for the chosen model"><span class="TRANSLATEME_load"></span></button>
 									</td>
 								</tr>
 

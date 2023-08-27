@@ -418,6 +418,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 			} else {
 				var original_item = item;
 
+
+				if(item.match(/^\s*$/)) {
+					console.debug("Not trying to predict empty custom item");
+					console.trace();
+					return;
+				}
+
 				var regex_space_start = /^\s+/ig;
 				var regex_space_end = /\s+$/ig;
 				var regex_comma = /,?\s+/ig;
@@ -448,6 +455,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) { var s
 					}
 				}
 			}
+
 			predict_data = tf.tensor(data);
 		}
 
@@ -605,9 +613,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		await _print_example_predictions();
 	} else {
 		await _print_predictions_text();
-
-		await predict($('#predict_own_data').val());
-		await repredict()
 	}
 
 	if(!dont_go_to_tab) {
@@ -680,6 +685,13 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 		return;
 	}
 
+	var csh = await get_current_status_hash(1);
+	if(last_status_hash_text_prediction == csh) {
+		return;
+	}
+
+	last_status_hash_text_prediction = csh;
+
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	example_predictions.html("");
@@ -728,6 +740,8 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 		await dispose(tensor);
 		await tf.nextFrame();
 	}
+
+	console.trace();
 
 	if(html_contents) {
 		example_predictions.html(html_contents);

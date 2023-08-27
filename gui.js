@@ -585,11 +585,6 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
 
-	while (!model) {
-		log("Awaiting model existance for insert_initializer_option_trs");
-		await delay(100);
-	}
-
 	await updated_page();
 }
 
@@ -2529,8 +2524,6 @@ async function set_config(index) {
 			l("Setting weights from config-weights");
 			var weights_string = JSON.stringify(config["weights"]);
 			await set_weights_from_string(weights_string, 1, 1)
-		} else {
-			await load_weights(1);
 		}
 	} catch (e) {
 		console.error(e);
@@ -3642,28 +3635,6 @@ function get_chosen_dataset() { // start_tensors
 		val = $("#dataset").val();
 	}
 	return val;
-}
-
-async function load_weights(dont_show_msg) { var start_tensors = memory_leak_debugger();
-	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct[dataset];
-
-	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
-
-	if (weights_file) {
-		$.ajax({
-			url: weights_file,
-			success: async function (data) {
-				//await set_weights_from_json_object(data, dont_show_msg, 1, model);
-				prev_layer_data = [];
-				await show_prediction(0, 1);
-				await write_model_to_latex_to_page();
-				//await show_or_hide_load_weights();
-			}
-		});
-	}
-
-	memory_leak_debugger("load_weights", start_tensors);
 }
 
 function show_dtype_only_first_layer() { var start_tensors = memory_leak_debugger();
@@ -4941,7 +4912,6 @@ async function end_demo_mode() {  var start_tensors = memory_leak_debugger();
 }
 
 async function change_model_dataset() { var start_tensors = memory_leak_debugger();
-	await load_weights(1);
 	display_delete_button();
 	memory_leak_debugger("change_model_dataset", start_tensors);
 }
