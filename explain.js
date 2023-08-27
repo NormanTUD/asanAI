@@ -2822,8 +2822,12 @@ async function _temml () {
 	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"))
 	$(".temml_me").each((i, e) => {
 		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+			$(tmp_element).appendTo($(body));
+			temml.render(e.textContent, tmp_element[0]);
+			$(e)[0].innerHTML = tmp_element[0].innerHTML;
 			$(e).attr("data-rendered", 1);
-			temml.render(e.textContent, e);
+			$("#tmp_equation").remove();
 		}
 	});
 	$("#temml_blocker").remove()
