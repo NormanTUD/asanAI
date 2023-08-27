@@ -743,8 +743,6 @@ async function _print_predictions_text(count, example_predict_data) { var start_
 		await tf.nextFrame();
 	}
 
-	console.trace();
-
 	if(html_contents) {
 		example_predictions.html(html_contents);
 	}
