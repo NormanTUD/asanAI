@@ -688,6 +688,11 @@ async function _print_predictions_text(count, example_predict_data) {
 		var _tensor = tensor(example_predict_data[i]);
 		var res;
 
+		while (!model) {
+			log("Waiting for model...");
+			await delay(200);
+		}
+
 		var model_input_shape = model.input.shape.filter(n=>n);
 		var tensor_shape = _tensor.shape;
 
@@ -710,6 +715,8 @@ async function _print_predictions_text(count, example_predict_data) {
 					console.debug("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
 					console.warn("Total size of new array must be unchanged. Did you use reshape somewhere?");
+				} else if(("" + e).includes("to have shape")) {
+					console.warn("Wrong input shape for _print_predictions_text");
 				} else {
 					_predict_error(e);
 				}
