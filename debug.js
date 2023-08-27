@@ -290,8 +290,8 @@ function memory_debugger () { // var start_tensors
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
 	}
 	
-	if(_custom_tensors.length) {
-		debug_string += ", Custom: " + _custom_tensors.length;
+	if(Object.keys(_custom_tensors).length) {
+		debug_string += ", Custom: " + Object.keys(_custom_tensors).length;
 	}
 
 	var memdeb = document.querySelector('#memory_debugger_div');
