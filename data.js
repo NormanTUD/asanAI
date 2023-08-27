@@ -820,7 +820,7 @@ async function get_xs_and_ys () { var start_tensors = memory_leak_debugger();
 	) {
 		try {
 			//log("C", xy_data.x.shape);
-			xy_data.y = tf.tidy(() => { return tf.oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
+			xy_data.y = tf.tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
 			//log("D", xy_data.x.shape);
 		} catch (e) {
 			/*
@@ -1244,7 +1244,7 @@ async function get_x_y_from_csv () { var start_tensors = memory_leak_debugger();
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = tf.tidy(() => { return tf.oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
+				y_data["data"] = tf.tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;

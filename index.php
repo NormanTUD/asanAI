@@ -22,6 +22,7 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
+		<?php minify_js("base_wrappers.js"); ?>
 		<script>
 			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
