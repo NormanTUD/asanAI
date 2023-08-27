@@ -810,8 +810,6 @@ async function run_neural_network (recursive=0) {
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 		try {
-
-
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 
@@ -865,6 +863,12 @@ async function run_neural_network (recursive=0) {
 						console.warn(e);
 					}
 
+				} else {
+					throw new Error(e);
+				}
+			} else if (("" + e).includes("n is undefined")) {
+				if(!recursive) {
+					run_neural_network(1);
 				} else {
 					throw new Error(e);
 				}
