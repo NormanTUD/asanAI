@@ -341,7 +341,7 @@
 		}
 	}
 
-	function minify_js ($file, $async=0, $defer=0) {
+	function _js ($file, $async=0, $defer=0) {
 		if($async && $defer) {
 			print "<script async defer src='$file'></script>";
 		} else if($async && !$defer) {

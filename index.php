@@ -117,61 +117,61 @@
 		<?php minify_css("libs/sweetalert2.min.css"); ?>
 
 		<!-- polyfill -->
-		<?php minify_js("libs/canvas-to-blob.min.js"); ?>
+		<?php _js("libs/canvas-to-blob.min.js"); ?>
 
 		<!-- jquery -->
-		<?php minify_js("libs/zip.js"); ?>
-		<?php minify_js("libs/md5.umd.min.js"); ?>
-		<?php minify_js("libs/jquery.js"); ?>
-		<?php minify_js("libs/jquery-ui.js"); ?>
+		<?php _js("libs/zip.js"); ?>
+		<?php _js("libs/md5.umd.min.js"); ?>
+		<?php _js("libs/jquery.js"); ?>
+		<?php _js("libs/jquery-ui.js"); ?>
 
 		<!-- sweetalert -->
-		<?php minify_js("libs/sweetalert2.all.js"); ?>
+		<?php _js("libs/sweetalert2.all.js"); ?>
 
 		<!-- tensorflow.js -->
-		<?php minify_js("tf/tf.min.js"); ?>
-		<?php minify_js("base_wrappers.js"); ?>
-		<?php minify_js("libs/jstat.min.js"); ?>
-		<?php minify_js("custom_layers.js"); ?>
-		<?php minify_js("libs/jsmanipulate.js", 1, 1); ?>
+		<?php _js("tf/tf.min.js"); ?>
+		<?php _js("base_wrappers.js"); ?>
+		<?php _js("libs/jstat.min.js"); ?>
+		<?php _js("custom_layers.js"); ?>
+		<?php _js("libs/jsmanipulate.js", 1, 1); ?>
 
 		<!-- Easter Egg -->
-		<?php minify_js("libs/fireworks.js", 1, 1); ?>
+		<?php _js("libs/fireworks.js", 1, 1); ?>
 
 		<!-- my own js stuff -->
-		<?php minify_js("safety.js"); ?>
-		<?php minify_js("variables.js"); ?>
-		<?php minify_js("translations.js", 1, 1); ?>
-		<?php minify_js("tests.js"); ?>
-		<?php minify_js("model.js"); ?>
-		<?php minify_js("explain.js"); ?>
-		<?php minify_js("data.js"); ?>
-		<?php minify_js("debug.js"); ?>
-		<?php minify_js("gui.js"); ?>
-		<?php minify_js("present.js"); ?>
-		<?php minify_js("cosmo.js"); ?>
-		<?php minify_js("train.js"); ?>
-		<?php minify_js("predict.js"); ?>
+		<?php _js("safety.js"); ?>
+		<?php _js("variables.js"); ?>
+		<?php _js("translations.js", 1, 1); ?>
+		<?php _js("tests.js"); ?>
+		<?php _js("model.js"); ?>
+		<?php _js("explain.js"); ?>
+		<?php _js("data.js"); ?>
+		<?php _js("debug.js"); ?>
+		<?php _js("gui.js"); ?>
+		<?php _js("present.js"); ?>
+		<?php _js("cosmo.js"); ?>
+		<?php _js("train.js"); ?>
+		<?php _js("predict.js"); ?>
 		
 		<!-- visualizations -->
-		<?php minify_js("visualizations/d3.v5.min.js"); ?>
-		<?php minify_js("visualizations/three.min.js"); ?>
-		<?php minify_js("visualizations/OrbitControls.js"); ?>
-		<?php minify_js("visualizations/SVGRenderer.js"); ?>
-		<?php minify_js("visualizations/Projector.js"); ?>
-		<?php minify_js("visualizations/util.js"); ?>
-		<?php minify_js("visualizations/AlexNet.js"); ?>
-		<?php minify_js("visualizations/LeNet.js"); ?>
-		<?php minify_js("visualizations/FCNN.js"); ?>
+		<?php _js("visualizations/d3.v5.min.js"); ?>
+		<?php _js("visualizations/three.min.js"); ?>
+		<?php _js("visualizations/OrbitControls.js"); ?>
+		<?php _js("visualizations/SVGRenderer.js"); ?>
+		<?php _js("visualizations/Projector.js"); ?>
+		<?php _js("visualizations/util.js"); ?>
+		<?php _js("visualizations/AlexNet.js"); ?>
+		<?php _js("visualizations/LeNet.js"); ?>
+		<?php _js("visualizations/FCNN.js"); ?>
 		
 		<!-- ChardinJS -->
-		<?php minify_js("libs/chardinjs.js"); ?>
+		<?php _js("libs/chardinjs.js"); ?>
 		
 		<?php minify_css("libs/chardinjs.css"); ?>
 
 		<?php minify_css("classic.min.css"); ?>
-		<?php minify_js("libs/atrament.js", 1, 1); ?>
-		<?php minify_js("main.js"); ?>
+		<?php _js("libs/atrament.js", 1, 1); ?>
+		<?php _js("main.js"); ?>
 		
 		<script>
 			var force_cpu_backend = 0;
@@ -203,7 +203,7 @@
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 
-		<?php minify_js("libs/plotly-latest.min.js", 1, 1); ?>
+		<?php _js("libs/plotly-latest.min.js", 1, 1); ?>
 
 		<link rel="stylesheet" href="./libs/temml/Temml-Local.css">
 		<script src="./libs/temml/temml.min.js"></script>
@@ -1549,9 +1549,9 @@ text-align: end;
 			<br>
 			<div id="load_msg"></div>
 		</div>
-		<?php minify_js("prism/prism.js"); ?>
-		<?php minify_js("prism/prism-python.min.js"); ?>
-		<?php minify_js("libs/jscolor.js", 1, 1); ?>
-		<?php minify_js("bottom.js"); ?>
+		<?php _js("prism/prism.js"); ?>
+		<?php _js("prism/prism-python.min.js"); ?>
+		<?php _js("libs/jscolor.js", 1, 1); ?>
+		<?php _js("bottom.js"); ?>
 	</body>
 </html>
