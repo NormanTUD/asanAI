@@ -746,6 +746,8 @@ input {
 }
 
 .label_input_element {
+	width: 130px;
+	padding-left: 0px;
 	box-shadow: none !important;
 }
 

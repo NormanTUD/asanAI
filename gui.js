@@ -6022,7 +6022,7 @@ async function update_label_by_nr (t, nr) {
 				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 					$(x).find("input").val(name);
 				} else {
-					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${name}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
+					$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
 				}
 			}
 		}
@@ -6056,7 +6056,7 @@ function allow_editable_labels () {
 
 			if(label_index === undefined) {
 				var tmp_label = $(x).text();
-				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				$(x).html(`<input class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 				return;
 			}
 
@@ -6065,11 +6065,11 @@ function allow_editable_labels () {
 				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 					$(x).find("input").val(tmp_label);
 				} else {
-					$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 				}
 			} else {
 				tmp_label = $(x).text();
-				$(x).html(`<input class='label_input_element' style='width: 130px;' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				$(x).html(`<input class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 			}
 		} catch (e) {
 			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
