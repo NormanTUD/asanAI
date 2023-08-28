@@ -830,6 +830,10 @@ async function run_neural_network (recursive=0) {
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
 				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
+				while (!model) {
+					console.debug("Waiting for model...");
+					delay(500);
+				}
 				console.warn("Error: " + e + ". This is probably harmless, since it usually means the model was recompiled during this step..");
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification) {
