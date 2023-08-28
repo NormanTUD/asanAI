@@ -146,7 +146,7 @@ async function _get_urls_and_keys () {
 }
 
 function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
-	var percentage_text = percentage + "% (" + (i + 1) + " " + trm("of") + " " + urls_length + ")...";
+	var percentage_text = percentage + "% (" + (i + 1) + " / " + urls_length + ")...";
 	
 	var eta;
 
@@ -1370,7 +1370,7 @@ async function take_image_from_webcam_n_times (elem) {
 		}
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
-			l("Taking image " + (i + 1) + " " + trm("of") + " " + number);
+			l("Taking image " + (i + 1) + " / " + number);
 			updateTranslations();
 			await take_image_from_webcam(elem, 1, i == 0);
 			window.scrollTo(0, document.body.scrollHeight);
