@@ -1557,6 +1557,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			} else if (("" + e).includes("model.input is undefined")) {
 				console.debug("model.input is undefined");
 				return false;
+			} else if (("" + e).includes("code is undefined")) {
+				console.debug("This error may happen when the whole DOM is deleted: " + e);
+				return false;
 			} else {
 				throw new Error(e);
 			}
@@ -1749,7 +1752,15 @@ function set_number_of_layers(val) {
 }
 
 function get_number_of_layers() {
-	return parseInt(document.getElementById("number_of_layers").value);
+	try {
+		return parseInt(document.getElementById("number_of_layers").value);
+	} catch (e) {
+		if(("" + e).includes("getElementById(...) is null")) {
+			console.warn("Was the $('#number_of_layers') element removed?");
+		} else {
+			throw new Error(e);
+		}
+	}
 }
 
 function init_epochs(val) {
