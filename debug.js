@@ -297,7 +297,9 @@ function memory_debugger () { // var start_tensors
 	var memdeb = document.querySelector('#memory_debugger_div');
 
 	if(memdeb) {
-		memdeb.innerHTML = debug_string;
+		if(memdeb.innerHTML != debug_string) {
+			memdeb.innerHTML = debug_string;
+		}
 	} else {
 		console.warn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
 	}
@@ -311,7 +313,7 @@ function install_memory_debugger () { // var start_tensors
 	l("Installing Memory debugger");
 	$(function(){
 		memory_debugger();
-		memory_debug_interval = setInterval(memory_debugger, 100);
+		memory_debug_interval = setInterval(memory_debugger, 400);
 	});
 
 }
