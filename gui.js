@@ -6083,7 +6083,6 @@ function allow_editable_labels () {
 }
 
 function enable_every_layer () {
-	console.trace();
 	$(".configtable").find("input,select,button").prop("disabled", false);
 	$(".layer_setting").find("button").prop("disabled", false);
 }
@@ -6122,7 +6121,9 @@ function disable_flatten_layer () {
 
 function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
 	try {
-		//enable_every_layer();
+		if(model && !(model.isTraining || started_training)) {
+			enable_every_layer();
+		}
 
 		if(mode == "beginner") {
 			$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
