@@ -1225,7 +1225,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	currently_generating_images = false;
 
-	if(!model.isTraining) {
+	if(!(started_training || model.isTraining)) {
 		await gui_not_in_training();
 	}
 }
