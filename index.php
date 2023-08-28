@@ -365,7 +365,7 @@ text-align: end;
 										<span class="TRANSLATEME_dataset"></span>
 									</td>
 									<td>
-										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 100%">
+										<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 155px">
 										</select>
 									</td>
 								</tr>
