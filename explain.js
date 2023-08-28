@@ -1095,7 +1095,11 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		show_tab_label("maximally_activated_label", 1);
 		window.scrollTo(0,0);
 
+		await tf.nextFrame();
+
 		$('body').css('cursor', 'wait');
+
+		await gui_in_training();
 	}
 
 
@@ -1220,6 +1224,10 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	}
 
 	currently_generating_images = false;
+
+	if(!model.isTraining) {
+		await gui_not_in_training();
+	}
 }
 
 function _show_eta (times, i, neurons) {
