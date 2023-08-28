@@ -356,15 +356,12 @@
 	}
 
 	function _css ($file, $id=null) {
-		if($file == "style.css") {
-			print "<link href='minify.php?file=$file' rel='stylesheet'>";
+		if($id) {
+			print "<link href='$file' rel='stylesheet alternative' id='$id'>";
 		} else {
-			if($id) {
-				print "<link href='$file' rel='stylesheet alternative' id='$id'>";
-			} else {
-				print "<link href='$file' rel='stylesheet'>";
-			}
+			print "<link href='$file' rel='stylesheet'>";
 		}
+
 		print "\n";
 	}
 

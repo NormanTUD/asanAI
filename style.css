@@ -132,7 +132,7 @@ body {
 	font-weight: bold;
 }
 
-.upload-btn-wrapper input[type=file] {
+.upload-btn-wrapper input[type="file"] {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -152,7 +152,7 @@ body {
 	margin-left: -40px;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and(min-width:600px) {
 	.left_side {
 		min-width: 500px;
 		float: none;
