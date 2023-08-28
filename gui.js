@@ -1670,7 +1670,7 @@ function write_model_summary() {
 		logMessages.push.apply(logMessages, arguments);
 	};
 
-	model.summary(300);
+	model.summary(200);
 
 	document.getElementById('summary').innerHTML = summary_to_table(logMessages);
 
