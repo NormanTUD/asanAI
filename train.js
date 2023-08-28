@@ -564,11 +564,15 @@ async function _get_xs_and_ys () {
 
 async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 	if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
+		if(!model) {
+			return;
+		}
+
 		if(
 			xs_and_ys["y"].shape.length == 2 && 
-			xs_and_ys["y"].shape[0] == 1 && 
+			xs_and_ys["y"].shape[1] == 1 && 
 			model.input.shape.length == 2 &&
-			model.input.shape.length[1] == 1
+			model.input.shape[1] == 1
 		) {
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
