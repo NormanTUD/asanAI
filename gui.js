@@ -1651,9 +1651,17 @@ function byteToMB(varbyte) {
 }
 
 function write_model_summary_wait () {
-	document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' width=32 height=32 src='gui/loading_icon.gif' /></center>";
-	invert_elements_in_dark_mode();
-	write_model_summary();
+	try {
+		document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' width=32 height=32 src='gui/loading_icon.gif' /></center>";
+		invert_elements_in_dark_mode();
+		write_model_summary();
+	} catch (e) {
+		if(("" + e).includes("getElementById(...) is null")) {
+			console.warn("Did you remove the summary tab manually?");
+		} else {
+			throw new Error(e);
+		}
+	}
 }
 
 function write_model_summary() {

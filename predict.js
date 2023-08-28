@@ -244,6 +244,8 @@ async function _run_predict_and_show (tensor_img, nr) {
 			console.warn("Tensors already disposed. Probably the model was recompiled while predicting.");
 		} else if(("" + e).includes("but got array with shape")) {
 			console.warn("Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
+		} else if(("" + e).includes("code is undefined")) {
+			console.error(e + ". This may mean that the whole document was deleted!!!");
 		} else {
 			console.error("" + e);
 			console.trace();
