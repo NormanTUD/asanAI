@@ -97,24 +97,24 @@
 		}
 
 ?>
-		<?php minify_css("jquery-ui.css"); ?>
-		<?php minify_css("style.css"); ?>
-		<?php minify_css("ribbon.css"); ?>
+		<?php _css("jquery-ui.css"); ?>
+		<?php _css("style.css"); ?>
+		<?php _css("ribbon.css"); ?>
 <?php
 		if(!isset($_GET["start_cosmo"])) {
 ?>
-			<?php minify_css("ribbon_media.css"); ?>
+			<?php _css("ribbon_media.css"); ?>
 <?php
 		} else {
 ?>
-			<?php minify_css("cosmo.css"); ?>
+			<?php _css("cosmo.css"); ?>
 <?php
 		}
 ?>
-		<?php minify_css($theme_base."mode.css", "css_mode"); ?>
-		<?php minify_css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
-		<?php minify_css("prism/prism.min.css"); ?>
-		<?php minify_css("libs/sweetalert2.min.css"); ?>
+		<?php _css($theme_base."mode.css", "css_mode"); ?>
+		<?php _css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
+		<?php _css("prism/prism.min.css"); ?>
+		<?php _css("libs/sweetalert2.min.css"); ?>
 
 		<!-- polyfill -->
 		<?php _js("libs/canvas-to-blob.min.js"); ?>
@@ -167,9 +167,9 @@
 		<!-- ChardinJS -->
 		<?php _js("libs/chardinjs.js"); ?>
 		
-		<?php minify_css("libs/chardinjs.css"); ?>
+		<?php _css("libs/chardinjs.css"); ?>
 
-		<?php minify_css("classic.min.css"); ?>
+		<?php _css("classic.min.css"); ?>
 		<?php _js("libs/atrament.js", 1, 1); ?>
 		<?php _js("main.js"); ?>
 		

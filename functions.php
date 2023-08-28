@@ -355,13 +355,9 @@
 		print "\n";
 	}
 
-	function minify_css ($file, $id=null) {
-		if(($GLOBALS["minify"] || $file == "style.css") && $file != "ribbon.css") {
-			if($id) {
-				print "<link href='minify.php?file=$file' rel='stylesheet alternative' id='$id'>";
-			} else {
-				print "<link href='minify.php?file=$file' rel='stylesheet'>";
-			}
+	function _css ($file, $id=null) {
+		if(($file == "style.css") && $file != "ribbon.css" && !$id) {
+			print "<link href='minify.php?file=$file' rel='stylesheet'>";
 		} else {
 			if($id) {
 				print "<link href='$file' rel='stylesheet alternative' id='$id'>";
