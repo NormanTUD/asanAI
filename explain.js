@@ -1099,7 +1099,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 		$('body').css('cursor', 'wait');
 
-		await gui_in_training();
+		await gui_in_training(0);
 	}
 
 
@@ -1226,7 +1226,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	currently_generating_images = false;
 
 	if(!(started_training || model.isTraining)) {
-		await gui_not_in_training();
+		await gui_not_in_training(0);
 	}
 }
 

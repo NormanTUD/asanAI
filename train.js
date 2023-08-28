@@ -1,14 +1,18 @@
 "use strict";
 
-async function gui_in_training () {
-	started_training = true;
+async function gui_in_training (set_started_training=1) {
+	if(set_started_training) {
+		started_training = true;
+	}
 	await disable_everything();
 	favicon_spinner();
 	await write_descriptions();
 }
 
-async function gui_not_in_training () {
-	started_training = false;
+async function gui_not_in_training (set_started_training=1) {
+	if(set_started_training) {
+		started_training = false;
+	}
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
 	updateTranslations();
 	favicon_default();
