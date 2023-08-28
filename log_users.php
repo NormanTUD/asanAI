@@ -1,28 +1,32 @@
 <?php
 	function writeVisitorToLog() {
-		if (!isDocker()) {
-			$logFilePath = '/var/log/asanai_visitors.log';
-			$userId = getUserId();
-			$logLines = array_map('trim', file($logFilePath));
+		try {
+			if (!isDocker()) {
+				$logFilePath = '/var/log/asanai_visitors.log';
+				$userId = getUserId();
+				$logLines = array_map('trim', file($logFilePath));
 
-			$updatedLogLines = [];
-			$userFound = false;
+				$updatedLogLines = [];
+				$userFound = false;
 
-			foreach ($logLines as $line) {
-				list($storedUserId, $visits) = explode(':', $line);
-				if ($storedUserId === $userId) {
-					$visits = intval($visits) + 1;
-					$line = "$userId:$visits";
-					$userFound = true;
+				foreach ($logLines as $line) {
+					list($storedUserId, $visits) = explode(':', $line);
+					if ($storedUserId === $userId) {
+						$visits = intval($visits) + 1;
+						$line = "$userId:$visits";
+						$userFound = true;
+					}
+					$updatedLogLines[] = $line;
 				}
-				$updatedLogLines[] = $line;
-			}
 
-			if (!$userFound) {
-				$updatedLogLines[] = "$userId:1";
-			}
+				if (!$userFound) {
+					$updatedLogLines[] = "$userId:1";
+				}
 
-			file_put_contents($logFilePath, implode("\n", $updatedLogLines));
+				file_put_contents($logFilePath, implode("\n", $updatedLogLines));
+			}
+		} catch (Exception $e) {
+			//
 		}
 	}
 
