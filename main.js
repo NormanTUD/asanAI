@@ -444,9 +444,6 @@ $(document).ready(async function() {
 		reader.readAsText(evt.target.files[0]);
 	};
 
-	l("Show or hide 'load weights'-button");
-	await show_or_hide_load_weights();
-
 	await change_data_origin();
 
 	window.onresize = on_resize;
@@ -604,5 +601,4 @@ $(document).ready(async function() {
 	setInterval(_clean_custom_tensors, 200);
 
 	finished_loading = true;
-
 });

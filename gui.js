@@ -1494,8 +1494,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.warn(e);
 		}
 
-		//var wait_for_show_hide_load_weights = await show_or_hide_load_weights()
-
 		allow_training();
 
 		if (!no_prediction) {
@@ -2561,14 +2559,6 @@ async function set_config(index) {
 	$(overlay).remove();
 }
 
-async function show_or_hide_load_weights() {
-	$("#load_weights_button").attr("disabled", "true");
-
-	var dataset = $("#dataset option:selected").text();
-	var this_struct = traindata_struct[dataset];
-	var keys = Object.keys(this_struct);
-}
-
 async function init_dataset() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
@@ -2631,7 +2621,6 @@ async function chose_dataset(no_set_config) {
 
 	show_hide_undo_buttons();
 
-	//await show_or_hide_load_weights()
 	model_is_trained = false;
 	if (!no_set_config) {
 		await set_config();
