@@ -74,6 +74,13 @@ async function _create_model () {
 			}
 		}
 
+		if(model && model.layers && model.layers.length) {
+			for (var i = 0; i < model.layers.length; i++) {
+				await dispose(model.layers[i].bias);
+				await dispose(model.layers[i].kernel);
+			}
+		}
+
 		[model, global_model_data] = await create_model(model);
 
 		if(can_be_shown_in_latex()) {
