@@ -79,6 +79,8 @@ async function _create_model () {
 				await dispose(model.layers[i].bias);
 				await dispose(model.layers[i].kernel);
 			}
+
+			await dispose(model);
 		}
 
 		[model, global_model_data] = await create_model(model);

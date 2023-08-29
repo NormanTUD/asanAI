@@ -12,6 +12,10 @@ async function dispose (item) { // start_tensors
 		var tensor_id = item.id;
 		tf.dispose(item);
 
+		if(_custom_tensors[tensor_id]) {
+			delete _custom_tensors[tensor_id];
+		}
+
 		await tf.nextFrame();
 	} else {
 		/*
