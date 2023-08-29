@@ -1420,6 +1420,7 @@ text-align: end;
 									<div class="show_only_in_cosmo_mode">
 										
 									</div>
+									<span id="predict_error" style="overflow: scroll; display: none"></span><br>
 									<span id="own_files" class="no_autochoose_next_on_click">
 										<div id="generate_images_msg_wrapper" style="display:none">
 											<div id="generate_images_msg"></div>
@@ -1457,8 +1458,6 @@ text-align: end;
 												<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
 
 												<br>
-
-												<span id="predict_error" style="overflow: scroll; display: none"></span><br>
 												<span id="prediction" style="display: none"></span>
 											</span>
 										</span>

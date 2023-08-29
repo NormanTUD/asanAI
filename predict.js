@@ -443,7 +443,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				}
 			}
 
-			predict_data = tensor(data);
+			predict_data = tensor([data]);
 		}
 
 		if(!predict_data) {
@@ -474,13 +474,24 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		//log(predict_data.arraySync());
+		
+		var mi = model.input.shape;
+		mi[0] = 1;
+
 		var predictions_tensor = null;
+		console.debug(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
+		$("#predict_error").html("").hide();
 		try {
 			predictions_tensor = await model.predict([predict_data], [1, 1]);
 		} catch (e) {
-			l("Predict data shape:" + predict_data.shape);
-			console.error(e);
-			l("Error (1201): " + e);
+			if(("" + e).includes("got array with shape")) {
+				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
+			} else {
+				l("Predict data shape:" + predict_data.shape);
+				console.error(e);
+				l("Error (1201): " + e);
+			}
+
 			ok = 0;
 			return;
 		}
