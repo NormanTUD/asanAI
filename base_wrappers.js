@@ -33,6 +33,46 @@ function fromPixels (...args) {
 	return res;
 }
 
+function randomUniform (...args) {
+	var res = tf.randomUniform(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function tf_square (...args) {
+	var res = tf.square(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function tf_mean (...args) {
+	var res = tf.mean(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function sqrt (...args) {
+	var res = tf.sqrt(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 

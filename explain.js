@@ -933,7 +933,7 @@ function deprocessImage(x) {
                 x = x.sub(mean);
                 // Add a small positive number (EPSILON) to the denominator to prevent
                 // division-by-zero.
-                x = x.div(tf.sqrt(variance).add(tf.backend().epsilon()));
+                x = x.div(sqrt(variance).add(tf.backend().epsilon()));
                 // Clip to [0, 1].
                 x = x.add(0.5);
                 x = tf.clipByValue(x, 0, 1);
@@ -987,7 +987,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 
 		// Form a random image as the starting point of the gradient ascent.
 		
-		var data = tf.randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
+		var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
 		if(typeof(start_image) != "undefined") {
 			data = start_image;
 		}
@@ -999,7 +999,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 
 			const scaledGrads = tf.tidy(() => {
 				const grads = gradFunction(data);
-				const norm = tf.sqrt(tf.mean(tf.square(grads))).add(tf.backend().epsilon());
+				const norm = sqrt(tf_mean(tf_square(grads))).add(tf.backend().epsilon());
 				// Important trick: scale the gradient with the magnitude (norm)
 				// of the gradient.
 				return grads.div(norm);
@@ -2618,7 +2618,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 
 			// Pool the gradient values within each filter of the last convolutional
 			// layer, resulting in a tensor of shape [numFilters].
-			const pooledGradValues = tf.mean(gradValues, [0, 1, 2]);
+			const pooledGradValues = tf_mean(gradValues, [0, 1, 2]);
 			// Scale the convlutional layer's output by the pooled gradients, using
 			// broadcasting.
 			const scaledConvOutputValues =
