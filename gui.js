@@ -6441,13 +6441,20 @@ function model_is_ok () {
 
 function showWhiteOverlayWithText(text, title="") {
 	try {
+		var bg_color = "white";
+		var text_color = "black";
+		if(is_dark_mode) {
+			bg_color = "black";
+			text_color = "white";
+		}
+
 		const overlay = document.createElement('div');
 		overlay.style.position = 'fixed';
 		overlay.style.top = '0';
 		overlay.style.left = '0';
 		overlay.style.width = '100%';
 		overlay.style.height = '100%';
-		overlay.style.backgroundColor = 'white';
+		overlay.style.backgroundColor = bg_color;
 		overlay.style.opacity = '0.9';
 		overlay.style.display = 'flex';
 		overlay.style.alignItems = 'center';
@@ -6460,7 +6467,7 @@ function showWhiteOverlayWithText(text, title="") {
 		textElement.style.textAlign = 'center';
 		textElement.style.fontFamily = 'Arial, sans-serif';
 		textElement.style.fontSize = '24px';
-		textElement.style.color = 'black';
+		textElement.style.color = text_color;
 		textElement.style.padding = '20px';
 
 		overlay.appendChild(textElement);
@@ -6471,7 +6478,7 @@ function showWhiteOverlayWithText(text, title="") {
 			hElement.style.textAlign = 'center';
 			hElement.style.fontFamily = 'Arial, sans-serif';
 			hElement.style.fontSize = '24px';
-			hElement.style.color = 'black';
+			hElement.style.color = text_color;
 			hElement.style.padding = '20px';
 
 			overlay.appendChild(hElement);
@@ -6484,6 +6491,6 @@ function showWhiteOverlayWithText(text, title="") {
 		return overlay;
 	} catch (error) {
 		log('An error occurred:', error);
-		warn('Failed to display overlay.');
+		console.warn('Failed to display overlay.');
 	}
 }
