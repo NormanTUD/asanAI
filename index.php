@@ -174,6 +174,19 @@
 		<?php _js("main.js"); ?>
 		
 		<script>
+
+			var tf_exists = 1;
+			
+			try {
+				tf;
+			} catch (e) {
+				tf_exists = 0
+			}
+
+			if(!tf_exists) {
+				alert("The tensorflow library could not be loaded. This is a serious bug. The site will not work without. Try reloading with CTRL F5.");
+			}
+
 			var force_cpu_backend = 0;
 
 			function get_backend() {
