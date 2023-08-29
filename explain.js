@@ -992,9 +992,6 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 			data = start_image;
 		}
 
-		var prev_img_str = data.dataSync().join(";");
-		var first_img_str = data.dataSync().join(";");
-
 		for (var i = 0; i < iterations; i++) {
 			if(stop_generating_images) {
 				continue;
@@ -1011,27 +1008,17 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 			// Perform one step of gradient ascent: Update the image along the
 			// direction of the gradient.
 
-			data = tensor_normalize_to_rgb_min_max(data);
+			//data = tensor_normalize_to_rgb_min_max(data);
 
 			data = data.add(scaledGrads);
 			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
 			
+			/*
 			var randomizer_limits = parseFloat($("#randomizer_limits").val());
 			if(randomizer_limits != 0) {
 				data = data.add(tf.randomUniform(data.shape, -randomizer_limits, randomizer_limits));
 			}
-
-			if(data.dataSync().join(";") == prev_img_str && i >= 10) {
-				if(prev_img_str != first_img_str) {
-					header_warning("[DATA] Early stopping...");
-				} else {
-					header_error("[DATA] has not changed");
-				}
-				worked = 1;
-				return data;
-			} else {
-				prev_img_str = data.dataSync().join(";");
-			}
+			*/
 		}
 
 		worked = 1;
@@ -1296,6 +1283,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 			iterations = 30;
 		}
+
 		var full_data = await inputGradientAscent(layer, neuron, iterations, start_image);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;

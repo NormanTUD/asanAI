@@ -812,10 +812,10 @@ text-align: end;
 											<td><span class="TRANSLATEME_iterations"></span></td>
 											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
-										<tr>
+										<!--<tr>
 											<td><span class="TRANSLATEME_randomizer_limits"></span></td>
 											<td><input type="number" min="0" max="1000" step="0.00001" value="0.001" id="randomizer_limits" style="width: 80px;"></td>
-										</tr>
+										</tr>-->
 										<tr class="hide_when_no_conv_visualizations">
 											<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
 											<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 80px;"></td>
