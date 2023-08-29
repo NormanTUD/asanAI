@@ -342,6 +342,13 @@
 	}
 
 	function _js ($file, $async=0, $defer=0) {
+		if(!file_exists($file)) {
+			die("$file does not exist");
+		}
+
+		$t = filemtime($file);
+		$file = $file . "?t=$t";
+
 		if($async && $defer) {
 			print "<script async defer src='$file'></script>";
 		} else if($async && !$defer) {
@@ -356,6 +363,13 @@
 	}
 
 	function _css ($file, $id=null) {
+		if(!file_exists($file)) {
+			die("$file does not exist");
+		}
+
+		$t = filemtime($file);
+		$file = $file . "?t=$t";
+
 		if($id) {
 			print "<link href='$file' rel='stylesheet alternative' id='$id'>";
 		} else {
