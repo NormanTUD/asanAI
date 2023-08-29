@@ -26,6 +26,35 @@ async function dispose (item) { // start_tensors
 function tf_sequential(...args) {
 	var res = tf.sequential(...args);
 
+	res.originalAdd = res.add;
+
+	res.add = function (...args) {
+		var r = res.originalAdd(...args);
+
+		try {
+			var k = res.layers[res.layers.length - 1].kernel;
+			if(k) {
+				_custom_tensors["" + k.id] = [getStackTrace(), k, "[kernel]"];
+			}
+		} catch (e) {
+			console.warn(e);
+		}
+
+		try {
+			var b = res.layers[res.layers.length - 1].bias;
+
+			if(b) {
+				_custom_tensors["" + b.id] = [getStackTrace(), b, "[bias]"];
+			}
+		} catch (e) {
+			console.warn(e);
+		}
+
+		_clean_custom_tensors();
+
+		return r;
+	};
+
 	_custom_tensors["" + res.id] = [getStackTrace(), res, "[model]"];
 
 	_clean_custom_tensors();
