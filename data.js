@@ -153,6 +153,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%")
 	if(is_cosmo_mode) {
+		$("#training_data_tab").hide()
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
 		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI"
 	} else {
