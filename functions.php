@@ -473,7 +473,7 @@
 		$rev = chop(shell_exec("git rev-parse HEAD"));
 		if(!$rev) {
 			if(file_exists) {
-				$rev = file_get_contents(".git/refs/heads/master");
+				$rev = chomp(file_get_contents(".git/refs/heads/master"));
 				return $rev;
 			}
 
