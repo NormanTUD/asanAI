@@ -506,6 +506,7 @@ button:disabled:hover {
 	bottom: 0px;
 	border: 1px groove #626262;
 	z-index: 99999;
+	padding-bottom: 5px;
 }
 
 #data_progressbar {

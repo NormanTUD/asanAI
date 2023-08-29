@@ -503,14 +503,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 		throw new Error("x and y arrays must have the same size");
 	}
 
-	if(y_val && y_val.length != x.length) {
-		throw new Error(`x and y_val must have the same size, x.length = ${x.length}, y_val.length = ${y_val.length}`);
-	}
-	
-	if(!y_val) {
+	if((y_val && y_val.length != x.length) || !y_val) {
 		y_val = [];
 	}
-
+	
 	// Create a canvas element
 	const canvas = document.createElement('canvas');
 	canvas.width = w;
