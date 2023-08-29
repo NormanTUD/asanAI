@@ -310,7 +310,6 @@ function memory_debugger () { // var start_tensors
 }
 
 function install_memory_debugger () { // var start_tensors
-	l("Installing Memory debugger");
 	$(function(){
 		memory_debugger();
 		memory_debug_interval = setInterval(memory_debugger, 400);

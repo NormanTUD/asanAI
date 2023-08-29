@@ -384,9 +384,9 @@ $(document).ready(async function() {
 		$(".show_in_cosmo_mode").hide();
 	}
 
-	l("Trying to set Backend");
+	l(language[lang]["trying_to_set_backend"]);
 	await set_backend();
-	l("Backend set");
+	l(language[lang]["backend_set"]);
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
@@ -499,18 +499,16 @@ $(document).ready(async function() {
 
 	cookie_theme = getCookie("theme");
 	if(cookie_theme) {
-		l("Has cookie for " + cookie_theme);
+		l(language[lang]["has_cookie_for"] + " " + cookie_theme);
 		$("#theme_choser").val(cookie_theme).trigger("change")
-		l("Set theme");
+		l(language[lang]["theme_set"]);
 	}
 
 	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
 
-	l("Installing change-handlers on optimizer_metadata_input");
 	$('.optimizer_metadata_input'). change(function(event) {
 		updated_page(); // cannot be async
 	});
-	l("Done installing change handlers on optimizer_metadata_input");
 
 	alter_text_webcam_series();
 	$("#webgl_backend").prop("checked", true).trigger("change");
