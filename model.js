@@ -750,18 +750,6 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		return false;
 	}
 
-	var new_tensors = 0;
-
-	new_model.layers.forEach((elem, nr) => {
-		try {
-			new_tensors += new_model.layers[nr].weights.length;
-		} catch (e) {
-			console.log("" + e);
-
-			throw new Error(e);
-		}
-	});
-
 	return new_model;
 }
 
@@ -890,15 +878,6 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose(old_model);
 	}
 
-	var new_tensors = findTensorsWithIsDisposedInternal(model_data).length;
-	for (var k = 0; k < new_model.length; k++) {
-		for (var j = 0; j < new_model.layers[k].weights.length; j++) {
-			if(Object.keys(new_model.layers[k].weights[j]).includes("val")) {
-				new_tensors++;
-			}
-		}
-	}
-
 	var model_data = await get_model_data();
 
 
@@ -935,19 +914,6 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 			throw new Error(e);
 		}
 	}
-
-	var new_tensors = 0;
-
-	new_model.layers.forEach((elem, nr) => {
-		try {
-			new_tensors += new_model.layers[nr].weights.length;
-		} catch (e) {
-			console.log("" + e);
-			throw new Error(e);
-
-			return;
-		}
-	});
 
 	return new_model;
 }

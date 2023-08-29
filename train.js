@@ -277,8 +277,6 @@ async function get_model_data (optimizer_name_only) {
 		global_model_data["optimizer"] = tf.tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]) });
 	}
 
-	var new_tensors = findTensorsWithIsDisposedInternal(global_model_data).length;
-
 	return global_model_data;
 }
 
