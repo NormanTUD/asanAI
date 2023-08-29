@@ -11,6 +11,8 @@ function get_input_shape_as_string () {
 			} catch (e) {
 				if(("" + e).includes("model.input is undefined")) {
 					is = get_input_shape();
+				} else if(("" + e).includes("model.input.shape is undefined")) {
+					is = get_input_shape();
 				} else {
 					throw new Error(e);
 				}

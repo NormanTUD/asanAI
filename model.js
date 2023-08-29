@@ -99,6 +99,8 @@ async function _create_model () {
 				throw Error("" + e);
 			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
 				throw Error("" + e);
+			} else if(("" + e).includes("model is undefined")) {
+				console.warn("Currently, the model is undefined. This may be fatal, but may also not be");
 			} else {
 				await except("ERROR1", e);
 				if(mode == "beginner") {
@@ -195,7 +197,15 @@ async function compile_model () {
 		await except("ERROR2", e);
 	}
 
-	$("#outputShape").val(JSON.stringify(model.outputShape));
+	try {
+		$("#outputShape").val(JSON.stringify(model.outputShape));
+	} catch (e) {
+		if(("" + e).includes("model is undefined")) {
+			console.warn("model is undefined while compile_model");
+		} else {
+			throw new Error(e);
+		}
+	}
 
 	write_model_summary_wait();
 

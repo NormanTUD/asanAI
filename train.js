@@ -51,6 +51,7 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
+		var overlay = null;
 		if(is_cosmo_mode) {
 			$(".auto_image_captions").remove();
 			$("#webcam_in_cosmo").show();
@@ -60,7 +61,7 @@ async function train_neural_network () {
 			remove_manicule(1);
 			*/
 		} else {
-			showWhiteOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+			overlay = showWhiteOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 			if($("#show_grad_cam").is(":checked")) {
 				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
@@ -470,7 +471,7 @@ function get_fit_data () {
 
 		if(training_logs_epoch["loss"].x.length >= 2) {
 			var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
-			var th = 20;
+			var th = 18;
 			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, th);
 			$("#tiny_graph").html("");
 			$("#tiny_graph").append(plotCanvas).show();
@@ -742,7 +743,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		} else {
 			if(tries_classification_but_receives_other) {
 				var ll = labels.length;
-				var overlay = showWhiteOverlayWithText(language[lang]["fixing_output_shape"]);
+				overlay = showWhiteOverlayWithText(language[lang]["fixing_output_shape"]);
 				if(labels && ll) {
 					is_repairing_output_shape = true;
 					var change_to_beginner = 0;
