@@ -396,7 +396,6 @@ function get_fit_data () {
 				await repredict();
 			}
 		}
-
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -456,6 +455,10 @@ function get_fit_data () {
 		if(is_cosmo_mode) {
 			await fit_to_window();
 		}
+
+		var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null, 50, 20);
+		$("#tiny_graph").html("");
+		$("#tiny_graph").append(plotCanvas).show();
 	}
 
 	callbacks["onTrainEnd"] = async function () {
@@ -465,6 +468,8 @@ function get_fit_data () {
 		restart_fcnn();
 		restart_lenet();
 		restart_alexnet();
+
+		$("#tiny_graph").hide();
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {
@@ -490,6 +495,75 @@ function get_fit_data () {
 
 	return fit_data;
 }
+
+function create_tiny_plot(x, y, y_val, w, h) {
+	// Check if x and y arrays have the same size
+	if (x.length !== y.length) {
+		throw new Error("x and y arrays must have the same size");
+	}
+
+	if(y_val && y_val.length != x.length) {
+		throw new Error(`x and y_val must have the same size, x.length = ${x.length}, y_val.length = ${y_val.length}`);
+	}
+
+	// Create a canvas element
+	const canvas = document.createElement('canvas');
+	canvas.width = w;
+	canvas.height = h;
+	const ctx = canvas.getContext('2d');
+
+	// Define plot parameters
+
+	// Calculate the x-axis scaling factor to fit the entire width
+	const xScale = (w - 2) / (x.length - 1);
+
+	// Find the range of y values
+	const minY = Math.min(Math.min(...y), Math.min(...y_val));
+	const maxY = Math.max(Math.max(...y), Math.max(...y_val));
+
+	// Calculate the y-axis scaling factor
+	const yScale = (h - 2) / (maxY - minY);
+
+	// Plot the training loss (in blue)
+	ctx.beginPath();
+	ctx.strokeStyle = 'blue';
+	ctx.lineWidth = 2;
+
+	ctx.beginPath();
+
+	for (let i = 0; i < x.length; i++) {
+		const xCoord = i * xScale;
+		const yCoord = h - (y[i] - minY) * yScale;
+		//log("x, y:", xCoord, yCoord);
+		//log("h, y, y[i], minY, yScale:", h, y, y[i], minY, yScale, "<<<<<<");
+		if (i === 0) {
+			ctx.moveTo(xCoord, yCoord);
+		} else {
+			ctx.lineTo(xCoord, yCoord);
+		}
+	}
+
+	ctx.stroke();
+
+	if(y_val) {
+		ctx.beginPath();
+		ctx.strokeStyle = 'orange';
+		for (let i = 0; i < y_val.length; i++) {
+			const xCoord = i * xScale;
+			const yCoord = h - (y_val[i] - minY) * yScale;
+			if (i === 0) {
+				ctx.moveTo(xCoord, yCoord);
+			} else {
+				ctx.lineTo(xCoord, yCoord);
+			}
+		}
+		ctx.stroke();
+	}
+
+	return canvas; // Return the canvas element
+}
+
+//var pc = create_tiny_plot([1,2,3,4], [1,2,3,4], [5,6,7,8], 20, 20); $("#tiny_graph").html(""); $("#tiny_graph").append(pc).show();
 
 function _set_apply_to_original_apply () {
 

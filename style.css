@@ -500,7 +500,7 @@ button:disabled:hover {
 
 #status_bar {
 	user-select: none;
-	height: 1.5em;
+	height: 22px;
 	width: 100%;
 	position: fixed;
 	bottom: 0px;

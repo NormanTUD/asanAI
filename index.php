@@ -1518,6 +1518,7 @@ text-align: end;
 
 		<div id="status_bar" style="display: none">
 			<span id="model_is_ok_icon"></span>
+			<span id="tiny_graph" style="display:none"></span>
 			<span id="label_debugger_icon" style="display:none"></span>
 			<span id="status_bar_log"></span>
 
