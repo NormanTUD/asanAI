@@ -1190,8 +1190,8 @@ async function show_webcam (force_restart) {
 
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
-function tensor_shape_matches_model (_tensor) {
-	if(!model || typeof(model) == "object" && !Object.keys(model).includes("layers") && Object.keys(model.layers).includes(0)) {
+function tensor_shape_matches_model (_tensor, m = model) {
+	if(!m || typeof(m) == "object" && !Object.keys(m).includes("layers") && Object.keys(m.layers).includes(0)) {
 		model_is_ok();
 		return false;
 	}
@@ -1202,7 +1202,7 @@ function tensor_shape_matches_model (_tensor) {
 
 	var res = true;
 
-	var input_layer_shape = eval(JSON.stringify(model.layers[0].input.shape.filter(n => n)));
+	var input_layer_shape = eval(JSON.stringify(m.layers[0].input.shape.filter(n => n)));
 
 	var tensor_shape = eval(JSON.stringify(_tensor.shape));
 
