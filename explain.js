@@ -1008,6 +1008,11 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 			data = data.add(scaledGrads);
 		}
 
+		var total_number_of_values = data.shape.reduce((acc, val) => { return acc += val });
+		var _sum = data.sum().arraySync();
+
+		log(`Avg value: ${_sum / total_number_of_values}`);
+
 		worked = 1;
 		return data;
 	});
