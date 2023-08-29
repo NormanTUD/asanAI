@@ -1655,7 +1655,7 @@ function byteToMB(varbyte) {
 
 function write_model_summary_wait () {
 	try {
-		document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' width=32 height=32 src='gui/loading_icon.gif' /></center>";
+		document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' src='gui/loading_icon.gif' /></center>";
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
