@@ -588,7 +588,7 @@ $(document).ready(async function() {
 		}
 	}
 
-	l("Site is ready");
+	l(language[lang]["site_is_ready"]);
 
 	if(is_cosmo_mode) {
 		addScrollRightButton();

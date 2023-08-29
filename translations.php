@@ -247,7 +247,8 @@
 			"loaded_configuration" => "Loaded configuration",
 			"model_is_not_defined" => "Model is not defined",
 			"model_is_ok" => "Model is OK",
-			"got_data" => "Got data"
+			"got_data" => "Got data",
+			"site_is_ready" => "Site is ready"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -496,7 +497,8 @@
 			"loaded_configuration" => "Konfiguration geladen",
 			"model_is_not_defined" => "Modell ist nicht definiert",
 			"model_is_ok" => "Modell ist OK",
-			"got_data" => "Daten geholt"
+			"got_data" => "Daten geholt",
+			"site_is_ready" => "Seite fertig geladen"
 		)
 	);
 
@@ -521,5 +523,7 @@
 		return true;
 	}
 
-	assert(checkSubElementsKeys($GLOBALS["translations"]), "Sub-elements do not have the same keys");
+	if(!checkSubElementsKeys($GLOBALS["translations"])) {
+	       	die("Sub-elements do not have the same keys");
+	}
 ?>
