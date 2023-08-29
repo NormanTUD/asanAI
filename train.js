@@ -943,7 +943,13 @@ async function run_neural_network (recursive=0) {
 					console.debug("Waiting for model...");
 					delay(500);
 				}
-				console.warn("Error: " + e + ". This is probably harmless, since it usually means the model was recompiled during this step..");
+				console.warn("Error: " + e + ". This may mean the model was not yet compiled");
+
+				if(!recursive) {
+					await run_neural_network(1);
+				} else {
+					throw new Error(e);
+				}
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
 				if(is_classification) {
 					try {
@@ -1031,6 +1037,8 @@ async function run_neural_network (recursive=0) {
 					}
 				}
 			}
+
+			$("#tiny_graph").html("");
 		}
 
 		if(repaired) {

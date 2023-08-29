@@ -1582,6 +1582,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await _temml();
 	} catch (e) {}
 
+	last_updated_page = Date.now();
 }
 
 async function typeset() {
@@ -2247,7 +2248,8 @@ async function set_config(index) {
 	}
 
 	l(swal_msg);
-	await load_msg({"title": swal_msg + "..."});
+
+	var overlay = await load_msg({"title": swal_msg + "..."});
 
 	var original_disabling_saving_status = disabling_saving_status;
 	disabling_saving_status = true;
@@ -2521,7 +2523,7 @@ async function set_config(index) {
 	} catch (e) {
 		console.error(e);
 		l("ERROR: Failed to load. Failed to load model and/or weights");
-		Swal.close()
+		$(overlay).remove();
 		return;
 	}
 
@@ -2540,7 +2542,6 @@ async function set_config(index) {
 	l("Call `updated page`-routine");
 	await updated_page(null, null, null, 1);
 
-	Swal.close();
 
 	await write_descriptions();
 
@@ -2550,7 +2551,17 @@ async function set_config(index) {
 	$(".kernel_initializer").trigger("change");
 	$(".bias_initializer").trigger("change");
 
+	if(finished_loading) {
+		var updated_page_wait_uuid = uuidv4();
+		while (Date.now() - last_updated_page < 3000) {
+			console.debug(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be 3 seconds in the past...`);
+			await delay(200);
+		}
+	}
+
 	l("Loaded configuration");
+
+	$(overlay).remove();
 }
 
 async function show_or_hide_load_weights() {
@@ -6176,18 +6187,14 @@ function hide_colorpicker_for_eraser (idname) {
 }
 
 async function load_msg(swal_msg_format) {
+	var overlay = null;
 	if(started_training && stop_downloading_data) {
 		console.info("Training is not started anymore, but the stopped downloading");
 		return;
 	}
 
 	if(finished_loading) {
-		return await Swal.fire({
-			title: swal_msg_format["title"],
-			html: swal_msg_format["html"],
-			timer: 2000,
-			showConfirmButton: false
-		});
+		overlay = showWhiteOverlayWithText(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
@@ -6200,6 +6207,8 @@ async function load_msg(swal_msg_format) {
 
 		$("#load_msg").html(html_msg);
 	}
+
+	return overlay;
 }
 
 function show_proper_set_all_initializer (required) {
@@ -6433,7 +6442,7 @@ function model_is_ok () {
 	}
 }
 
-function showWhiteOverlayWithText(text) {
+function showWhiteOverlayWithText(text, title="") {
 	try {
 		const overlay = document.createElement('div');
 		overlay.style.position = 'fixed';
@@ -6458,6 +6467,19 @@ function showWhiteOverlayWithText(text) {
 		textElement.style.padding = '20px';
 
 		overlay.appendChild(textElement);
+
+		if(title) {
+			const hElement = document.createElement('h1');
+			hElement.innerHTML = title;
+			hElement.style.textAlign = 'center';
+			hElement.style.fontFamily = 'Arial, sans-serif';
+			hElement.style.fontSize = '24px';
+			hElement.style.color = 'black';
+			hElement.style.padding = '20px';
+
+			overlay.appendChild(hElement);
+		}
+
 		document.body.appendChild(overlay);
 
 		assert(true, 'Overlay displayed successfully.');

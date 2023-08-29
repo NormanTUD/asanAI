@@ -1515,3 +1515,5 @@ var csv_global_y = null;
 
 var global_x = null;
 var global_y = null;
+
+var last_updated_page = null;
