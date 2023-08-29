@@ -2542,7 +2542,7 @@ async function set_config(index) {
 
 	await write_descriptions();
 
-	l("Updating predictions");
+	l(language[lang]["updating_predictions"]);
 	await show_prediction(1, 1);
  
 	$(".kernel_initializer").trigger("change");
@@ -6406,7 +6406,7 @@ function model_is_ok () {
 
 		if(!model) {
 			color = red;
-			msg = "Model is not defined.";
+			msg = language[lang]["model_is_not_defined"];
 		} else if(model && !Object.keys(model).includes("layers")) {
 			color = orange;
 			msg = "Model does not have any layers.";
