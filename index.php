@@ -64,6 +64,10 @@
 
 			var git_hash = "<?php print get_git_hash(); ?>";
 
+			if(!git_hash) {
+				console.error("git_hash not defined");
+			}
+
 			var original_title = document.title;
 
 			var traindata_struct =
