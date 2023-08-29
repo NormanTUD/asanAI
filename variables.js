@@ -1104,6 +1104,11 @@ function get_plotly_layout (name="") {
 		plotly_layout["title"] = name;
 	}
 
+	if(is_cosmo_mode) {
+		plotly_layout["width"] = 600;
+		plotly_layout["width"] = 200;
+	}
+
 	return plotly_layout;
 }
 

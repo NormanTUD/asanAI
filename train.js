@@ -437,8 +437,7 @@ function get_fit_data () {
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
 			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 2) {
-				$("#plotly_epoch_history").css("width", "800px");
-				if(epochNr == 1) {
+				if(epochNr == 0 || epochNr == 1) {
 					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 				} else {
 					Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
@@ -881,6 +880,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 async function run_neural_network (recursive=0) {
 	await clean_gui();
 	if(is_cosmo_mode) {
+		$("#training_data_tab").hide()
 		await fit_to_window();
 	}
 

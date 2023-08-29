@@ -87,3 +87,8 @@
 .h2_maximally_activated_layer_contents {
 	pointer-events: none;
 }
+
+.plotly_epoch_history {
+	margin-left: auto;
+	margin-right: auto;
+}
