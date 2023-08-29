@@ -479,7 +479,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		mi[0] = 1;
 
 		var predictions_tensor = null;
-		console.debug(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
+		console.debug(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 		$("#predict_error").html("").hide();
 		try {
 			predictions_tensor = await model.predict([predict_data], [1, 1]);
@@ -1210,8 +1210,12 @@ function tensor_shape_matches_model (_tensor) {
 		input_layer_shape.unshift(null);
 	}
 
-	for (var i = 1; i < input_layer_shape.length; i++) {
-		if(!tensor_shape[i] == input_layer_shape[i]) {
+	for (var i = 1; i < Math.max(input_layer_shape.length, _tensor.shape.length); i++) {
+		try {
+			if(!tensor_shape[i] == input_layer_shape[i]) {
+				return false;
+			}
+		} catch (e) {
 			return false;
 		}
 	}
