@@ -246,7 +246,8 @@
 			"updating_predictions" => "Updating predictions",
 			"loaded_configuration" => "Loaded configuration",
 			"model_is_not_defined" => "Model is not defined",
-			"model_is_ok" => "Model is OK"
+			"model_is_ok" => "Model is OK",
+			"got_data" => "Got data"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -494,7 +495,31 @@
 			"updating_predictions" => "Aktualisiere Predictions",
 			"loaded_configuration" => "Konfiguration geladen",
 			"model_is_not_defined" => "Modell ist nicht definiert",
-			"model_is_ok" => "Modell ist OK"
+			"model_is_ok" => "Modell ist OK",
+			"got_data" => "Daten geholt"
 		)
 	);
+
+	function checkSubElementsKeys($array) {
+		$keys = [];
+
+		foreach ($array as $subArray) {
+			if (!is_array($subArray)) {
+				die("Sub-element is not an array");
+			}
+
+			$subKeys = array_keys($subArray);
+
+			if (empty($keys)) {
+				$keys = $subKeys;
+			} elseif ($keys !== $subKeys) {
+				$missingKeys = array_diff($keys, $subKeys);
+				die("Missing key: " . reset($missingKeys));
+			}
+		}
+
+		return true;
+	}
+
+	assert(checkSubElementsKeys($GLOBALS["translations"]), "Sub-elements do not have the same keys");
 ?>

@@ -626,7 +626,7 @@ async function _get_xs_and_ys () {
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		l("Got data!");
+		l(language[lang]["got_data"]);
 	} catch (e) {
 		var explanation = explain_error_msg(e.toString());
 		if(explanation) {
