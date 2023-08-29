@@ -936,9 +936,9 @@ function deprocessImage(x) {
                 x = x.div(sqrt(variance).add(tf.backend().epsilon()));
                 // Clip to [0, 1].
                 x = x.add(0.5);
-                x = tf.clipByValue(x, 0, 1);
+                x = clipByValue(x, 0, 1);
                 x = x.mul(255);
-                return tf.clipByValue(x, 0, 255).asType('int32');
+                return clipByValue(x, 0, 255).asType('int32');
         });
 
 
@@ -2529,7 +2529,7 @@ function applyColorMap(x) {
 
 		const h = x.shape[1];
 		const w = x.shape[2];
-		const buffer = tf.buffer([1, h, w, 3]);
+		const buffer = buffer([1, h, w, 3]);
 
 		const colorMapSize = RGB_COLORMAP.length / 3;
 		for (let i = 0; i < h; ++i) {
@@ -2592,7 +2592,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
-		const newInput = tf.input({shape: lastConvLayerOutput.shape.slice(1)});
+		const newInput = input({shape: lastConvLayerOutput.shape.slice(1)});
 		layerIndex++;
 		let y = newInput;
 		while (layerIndex < model.layers.length) {
@@ -2633,7 +2633,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 			heatMap = heatMap.div(heatMap.max()).expandDims(-1);
 
 			// Up-sample the heat map to the size of the input image.
-			heatMap = tf.image.resizeBilinear(heatMap, [x.shape[1], x.shape[2]]);
+			heatMap = resizeBilinear(heatMap, [x.shape[1], x.shape[2]]);
 
 			// Apply an RGB colormap on the heatMap. This step is necessary because
 			// the heatMap is a 1-channel (grayscale) image. It needs to be converted

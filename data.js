@@ -320,7 +320,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	var min_value = 0;
 	var max_value = 0;
 
-	var min_in_tensor = tf.min(_tensor).arraySync();
+	var min_in_tensor = min(_tensor).arraySync();
 
 	if(min_in_tensor < min_value) {
 		min_value = min_in_tensor;
@@ -331,7 +331,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 		_tensor = _tensor.sub(min_value);
 	}
 
-	var max_in_tensor = tf.max(_tensor).arraySync();
+	var max_in_tensor = max(_tensor).arraySync();
 
 	if(max_in_tensor > max_value) {
 		max_value = max_in_tensor;
@@ -387,7 +387,7 @@ async function sine_ripple (img) {
 // Funktion zum Rotieren eines Bildes
 async function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
 	l("Rotating image: " + degree + "°");
-	var augmented_img = tf.image.rotateWithOffset(item, degrees_to_radians(degree));
+	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	await add_tensor_as_image_to_photos(augmented_img);
 	x = x.concat(augmented_img);
 	classes.push(this_category_counter);
@@ -395,7 +395,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 	if ($("#augment_invert_images").is(":checked")) {
 		l("Inverted image that has been turned " + degree + "°");
 		var add_value = (-255 / parseFloat($("#divide_by").val()));
-		var inverted = tf.abs(tf.add(augmented_img, add_value));
+		var inverted = abs(add(augmented_img, add_value));
 		await add_tensor_as_image_to_photos(inverted);
 		x = x.concat(inverted);
 		classes.push(this_category_counter);
@@ -403,7 +403,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 
 	if ($("#augment_flip_left_right").is(":checked")) {
 		l("Flip left/right image that has been turned " + degree + "°");
-		var flipped = tf.image.flipLeftRight(augmented_img);
+		var flipped = flipLeftRight(augmented_img);
 		await add_tensor_as_image_to_photos(flipped);
 		x = x.concat(flipped);
 		classes.push(label_nr);
@@ -423,7 +423,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 async function augment_invert_images(item, this_category_counter, x, classes) {
 	l("Inverted image");
 	var add_value = (-255 / parseFloat($("#divide_by").val()));
-	var inverted = tf.abs(tf.add(item, add_value));
+	var inverted = abs(add(item, add_value));
 	await add_tensor_as_image_to_photos(inverted);
 	x = x.concat(inverted);
 	classes.push(this_category_counter);
@@ -433,7 +433,7 @@ async function augment_invert_images(item, this_category_counter, x, classes) {
 // Funktion zum Spiegeln eines Bildes
 async function augment_flip_left_right(item, this_category_counter, x, classes) {
 	l("Flip left/right");
-	var flipped = tf.image.flipLeftRight(item);
+	var flipped = flipLeftRight(item);
 	await add_tensor_as_image_to_photos(flipped);
 	x = x.concat(flipped);
 	classes.push(this_category_counter);
@@ -548,7 +548,7 @@ async function get_xs_and_ys () {
 
 				//log(imgs_shape);
 
-				x = tf.ones(imgs_shape).expandDims();
+				x = ones(imgs_shape).expandDims();
 
 				//log("this_data:", this_data);
 				//log("this_data.length", this_data.length);
@@ -657,19 +657,19 @@ async function get_xs_and_ys () {
 								l("Auto augmenting images");
 								if($("#augment_rotate_images").is(":checked")) {
 									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-										var augmented_img = tf.image.rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
+										var augmented_img = rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
 										x.push(await augmented_img.arraySync());
 										classes.push(label_nr);
 
 										if($("#augment_invert_images").is(":checked")) {
 											l("Inverted image that has been turned " + degree + "°");
-											x.push(await tf.abs(tf.add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
+											x.push(abs(add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
 											classes.push(label_nr);
 										}
 
 										if($("#augment_flip_left_right").is(":checked")) {
 											l("Flip left/right image that has been turned " + degree + "°");
-											x.push(await tf.image.flipLeftRight(augmented_img).arraySync()[0]);
+											x.push(await flipLeftRight(augmented_img).arraySync()[0]);
 											classes.push(label_nr);
 										}
 									}
@@ -677,13 +677,13 @@ async function get_xs_and_ys () {
 
 								if($("#augment_invert_images").is(":checked")) {
 									l("Inverted image");
-									x.push(await tf.abs(tf.add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+									x.push(abs(add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
 									classes.push(label_nr);
 								}
 
 								if($("#augment_flip_left_right").is(":checked")) {
 									l("Flip left/right");
-									var flipped = await tf.image.flipLeftRight(resized_img.expandDims()).arraySync()[0];
+									var flipped = await flipLeftRight(resized_img.expandDims()).arraySync()[0];
 									x.push(flipped);
 									classes.push(label_nr);
 								}
@@ -1483,7 +1483,7 @@ function array_likelyhood_of_being_random (array) {
 }
 
 function image_element_looks_random (imgelem) {
-	var t = tf.reshape(fromPixels(imgelem), [-1]);
+	var t = reshape(fromPixels(imgelem), [-1]);
 	var res = array_likelyhood_of_being_random(t.arraySync())
 
 

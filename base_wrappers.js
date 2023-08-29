@@ -23,8 +23,128 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
+function buffer(...args) {
+	var res = tf.buffer(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function fromPixels (...args) {
 	var res = tf.browser.fromPixels(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function input(...args) {
+	var res = tf.input(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function ones(...args) {
+	var res = tf.ones(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function reshape(...args) {
+	var res = tf.reshape(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function min(...args) {
+	var res = tf.min(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function max(...args) {
+	var res = tf.max(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function add(...args) {
+	var res = tf.add(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function abs(...args) {
+	var res = tf.abs(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function resizeBilinear(...args) {
+	var res = tf.image.resizeBilinear(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function rotateWithOffset (...args) {
+	var res = tf.image.rotateWithOffset(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function flipLeftRight (...args) {
+	var res = tf.image.flipLeftRight(...args);
+
+	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function clipByValue (...args) {
+	var res = tf.clipByValue(...args);
 
 	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 

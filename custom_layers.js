@@ -33,8 +33,8 @@ class DebugLayer extends tf.layers.Layer {
 			log(`=== DebugLayer ${this.name} ===`);
 			log("shape: [" + input[0].shape.join(", ") + "]");
 			log("input:", input[0].arraySync());
-			log("min:", tf.min(input[0]).arraySync());
-			log("max:", tf.max(input[0]).arraySync());
+			log("min:", min(input[0]).arraySync());
+			log("max:", max(input[0]).arraySync());
 			log("kwargs:", kwargs);
 			log(`=== DebugLayer ${this.name} End ==`);
 			return input[0];
