@@ -1210,12 +1210,8 @@ function tensor_shape_matches_model (_tensor) {
 		input_layer_shape.unshift(null);
 	}
 
-	for (var i = 1; i < Math.max(input_layer_shape.length, _tensor.shape.length); i++) {
-		try {
-			if(!tensor_shape[i] == input_layer_shape[i]) {
-				return false;
-			}
-		} catch (e) {
+	for (var i = 1; i < input_layer_shape.length; i++) {
+		if(!tensor_shape[i] == input_layer_shape[i]) {
 			return false;
 		}
 	}
