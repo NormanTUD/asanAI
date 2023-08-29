@@ -480,7 +480,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	log(t_x);
 	log(t_y);
 
-	current_model = tf.sequential();
+	current_model = tf_sequential();
 	current_model.add(tf.layers.dense({units: 128, batchInputShape: tensor(t_x).shape, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 128, activation: "relu"}));
 	current_model.add(tf.layers.dense({units: 64, activation: "relu"}));

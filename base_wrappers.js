@@ -23,6 +23,16 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
+function tf_sequential(...args) {
+	var res = tf.sequential(...args);
+
+	_custom_tensors["" + res.id] = [getStackTrace(), res, "[model]"];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function buffer(...args) {
 	var res = tf.buffer(...args);
 

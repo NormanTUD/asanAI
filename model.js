@@ -887,7 +887,7 @@ async function create_model (old_model, fake_model_structure, force) {
 }
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i) {
-	var new_model = tf.sequential();
+	var new_model = tf_sequential();
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];
