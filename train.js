@@ -456,10 +456,14 @@ function get_fit_data () {
 			await fit_to_window();
 		}
 
-		var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
-		var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, 50, 20);
-		$("#tiny_graph").html("");
-		$("#tiny_graph").append(plotCanvas).show();
+		if(training_logs_epoch["loss"].x.length >= 2) {
+			var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
+			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, 50, 20);
+			$("#tiny_graph").html("");
+			$("#tiny_graph").append(plotCanvas).show();
+		} else {
+			$("#tiny_graph").html("").hide();
+		}
 	}
 
 	callbacks["onTrainEnd"] = async function () {
