@@ -456,7 +456,8 @@ function get_fit_data () {
 			await fit_to_window();
 		}
 
-		var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null, 50, 20);
+		var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
+		var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, 50, 20);
 		$("#tiny_graph").html("");
 		$("#tiny_graph").append(plotCanvas).show();
 	}
@@ -505,6 +506,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 	if(y_val && y_val.length != x.length) {
 		throw new Error(`x and y_val must have the same size, x.length = ${x.length}, y_val.length = ${y_val.length}`);
 	}
+	
+	if(!y_val) {
+		y_val = [];
+	}
 
 	// Create a canvas element
 	const canvas = document.createElement('canvas');
@@ -545,7 +550,7 @@ function create_tiny_plot(x, y, y_val, w, h) {
 
 	ctx.stroke();
 
-	if(y_val) {
+	if(y_val.length) {
 		ctx.beginPath();
 		ctx.strokeStyle = 'orange';
 		for (let i = 0; i < y_val.length; i++) {
