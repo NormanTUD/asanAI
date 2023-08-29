@@ -58,7 +58,6 @@ function set_mode () {
 	mode = get_mode();
 	setCookie("mode", mode);
 	if(mode == "beginner") {
-		throw_compile_exception = false;
 		$(".layer_type").children().children().each(function (t, l) {
 			if(!$(l).is(":checked")) {
 				$(l).attr("disabled", true);
@@ -68,7 +67,6 @@ function set_mode () {
 		$(".expert_mode_only").hide();
 		l(language[lang]["switched_to_beginner_mode"]);
 	} else {
-		throw_compile_exception = true;
 		$(".expert_mode_only").show();
 	}
 

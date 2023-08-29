@@ -2111,8 +2111,6 @@ function sortable_layers_container(layers_container) {
 			$(".descriptions_of_layers").hide();
 		},
 		update: async function (e, ui) {
-			var prev_throw_compile_exception = throw_compile_exception;
-			throw_compile_exception = true;
 			try {
 				await compile_model();
 				error_div.html("");
@@ -2133,7 +2131,6 @@ function sortable_layers_container(layers_container) {
 					error_div.parent().show();
 				}
 			};
-			throw_compile_exception = prev_throw_compile_exception;
 
 			$(".descriptions_of_layers").show();
 			await updated_page();
@@ -2249,7 +2246,7 @@ async function set_config(index) {
 
 	l(swal_msg);
 
-	var overlay = await load_msg({"title": swal_msg + "..."});
+	var overlay = load_msg({"title": swal_msg + "..."});
 
 	var original_disabling_saving_status = disabling_saving_status;
 	disabling_saving_status = true;
@@ -6186,7 +6183,7 @@ function hide_colorpicker_for_eraser (idname) {
 
 }
 
-async function load_msg(swal_msg_format) {
+function load_msg(swal_msg_format) {
 	var overlay = null;
 	if(started_training && stop_downloading_data) {
 		console.info("Training is not started anymore, but the stopped downloading");

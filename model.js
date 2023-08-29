@@ -28,6 +28,8 @@ function get_expected_input_shape_without_batch_as_string () {
 }
 
 async function except (errname, e) {
+	$("#overlay").remove()
+
 	await write_descriptions();
 	await enable_everything();
 
@@ -38,10 +40,7 @@ async function except (errname, e) {
 	console.warn(errname + ": " + e + ". Resetting model.");
 	console.trace();
 	await write_error(e);
-	if(throw_compile_exception) {
-		throw new Error(e);
-	}
-
+	throw new Error(e);
 }
 
 async function get_model_config_hash () {
@@ -159,6 +158,7 @@ function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
 
 async function compile_model () {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+
 	var new_model_config_hash = await get_model_config_hash();
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
@@ -188,6 +188,11 @@ async function compile_model () {
 		reset_summary();
 		await _create_model();
 		await last_shape_layer_warning();
+	}
+
+	if(!model) {
+		console.warn("No model to compile!");
+		return;
 	}
 
 	try {
