@@ -61,7 +61,7 @@ async function train_neural_network () {
 			remove_manicule(1);
 			*/
 		} else {
-			overlay = showWhiteOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+			overlay = showOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 			if($("#show_grad_cam").is(":checked")) {
 				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");

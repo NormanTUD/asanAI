@@ -6191,7 +6191,7 @@ function load_msg(swal_msg_format) {
 	}
 
 	if(finished_loading) {
-		overlay = showWhiteOverlayWithText(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
+		overlay = showOverlayWithText(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
@@ -6439,7 +6439,7 @@ function model_is_ok () {
 	}
 }
 
-function showWhiteOverlayWithText(text, title="") {
+function showOverlayWithText(text, title="") {
 	try {
 		var bg_color = "white";
 		var text_color = "black";
