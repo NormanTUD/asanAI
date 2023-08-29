@@ -1005,20 +1005,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 				return grads.div(norm);
 			});
 
-			// Perform one step of gradient ascent: Update the image along the
-			// direction of the gradient.
-
-			//data = tensor_normalize_to_rgb_min_max(data);
-
 			data = data.add(scaledGrads);
-			//image = tf.clipByValue(image.add(scaledGrads), 0, parseFloat($("#divide_by").val()));
-			
-			/*
-			var randomizer_limits = parseFloat($("#randomizer_limits").val());
-			if(randomizer_limits != 0) {
-				data = data.add(tf.randomUniform(data.shape, -randomizer_limits, randomizer_limits));
-			}
-			*/
 		}
 
 		worked = 1;
