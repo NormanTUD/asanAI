@@ -435,15 +435,30 @@ function get_fit_data () {
 		}
 
 		$("#plotly_epoch_history").parent().show();
-		if(!is_cosmo_mode) {
+		if(is_cosmo_mode) {
+			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 2) {
+				if(epochNr == 1) {
+					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				} else {
+					Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				}
+
+				$("#plotly_epoch_history").show();
+				$("#visualize_images_in_grid").html("").hide();
+				$("#canvas_grid_visualization").html("").hide();
+			} else {
+				$("#plotly_epoch_history").hide();
+
+				await visualize_train();
+			}
+		} else {
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
 				Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			} else {
 				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
-		} else {
-			$("#plotly_epoch_history").hide();
+			await visualize_train();
 		}
 
 		var this_plot_data = [training_logs_batch["loss"]];
@@ -451,7 +466,6 @@ function get_fit_data () {
 		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 		last_batch_plot_time = false;
 
-		await visualize_train();
 		if(is_cosmo_mode) {
 			await fit_to_window();
 		}
@@ -679,7 +693,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 
 }
 
-function _clear_plotly_epoch_history () { // var start_tensors
+function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").parent().hide();
 	$("#plotly_epoch_history").html("");
 }

@@ -1419,10 +1419,12 @@ async function cosmo_set_tiny_training_dataset () {
 
 async function cosmo_set_large_training_dataset () {
 	log("Setting Epochs to 30...");
-	await set_epochs(30);
+	await set_epochs(20);
 	log("Setting max files per category to 40...");
 	$("#max_number_of_files_per_category").val(40);
 	$("#number_of_images_per_category").html(40);
+
+	set_validationSplit(15);
 }
 
 async function fireworks_and_reload (reload=1, waittime=10000) {
