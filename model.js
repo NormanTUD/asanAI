@@ -682,7 +682,21 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
 		} else {
 			//log("adding ", tf.layers[type], ", data: ", data);
-			new_model.add(tf.layers[type](data));
+			var new_layer = tf.layers[type](data);
+
+			new_model.add(new_layer);
+
+			var added_layer = new_model.layers[new_model.layers.length - 1]
+
+			if(added_layer["bias"]) {
+				_custom_tensors["" + added_layer.bias.id] = ["", added_layer.bias, "[bias in _add_layer_to_model]"];
+				_clean_custom_tensors();
+			}
+
+			if(added_layer["kernel"]) {
+				_custom_tensors["" + added_layer.kernel.id] = ["", added_layer.kernel, "[kernel in _add_layer_to_model]"];
+				_clean_custom_tensors();
+			}
 
 			if(new_model && new_model.layers) {
 				var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;

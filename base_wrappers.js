@@ -38,7 +38,7 @@ function tf_sequential(...args) {
 		try {
 			var k = res.layers[res.layers.length - 1].kernel;
 			if(k) {
-				_custom_tensors["" + k.id] = [getStackTrace(), k, "[kernel]"];
+				_custom_tensors["" + k.id] = ["", k, "[kernel in tf_sequential]"];
 			}
 		} catch (e) {
 			console.warn(e);
@@ -48,7 +48,7 @@ function tf_sequential(...args) {
 			var b = res.layers[res.layers.length - 1].bias;
 
 			if(b) {
-				_custom_tensors["" + b.id] = [getStackTrace(), b, "[bias]"];
+				_custom_tensors["" + b.id] = ["", b, "[bias in tf_sequential]"];
 			}
 		} catch (e) {
 			console.warn(e);
@@ -59,7 +59,7 @@ function tf_sequential(...args) {
 		return r;
 	};
 
-	_custom_tensors["" + res.id] = [getStackTrace(), res, "[model]"];
+	_custom_tensors["" + res.id] = ["", res, "[model in tf_sequential]"];
 
 	_clean_custom_tensors();
 
