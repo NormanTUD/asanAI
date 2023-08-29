@@ -470,7 +470,8 @@ function get_fit_data () {
 
 		if(training_logs_epoch["loss"].x.length >= 2) {
 			var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
-			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, 50, 20);
+			var th = 20;
+			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, th);
 			$("#tiny_graph").html("");
 			$("#tiny_graph").append(plotCanvas).show();
 		} else {
