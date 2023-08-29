@@ -2556,7 +2556,7 @@ async function set_config(index) {
 		}
 	}
 
-	l("Loaded configuration");
+	l(language[lang]["loaded_configuration"]);
 
 	$(overlay).remove();
 }
@@ -6392,7 +6392,7 @@ function model_is_ok () {
 	var orange = "&#128992;";
 
 	var color = green;
-	var msg = "Model is loaded properly";
+	var msg = language[lang]["model_is_ok"];
 
 	try {
 

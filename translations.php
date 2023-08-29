@@ -245,7 +245,8 @@
 			"allow_math_mode_for_all_layers" => "Allow math mode for all layers",
 			"updating_predictions" => "Updating predictions",
 			"loaded_configuration" => "Loaded configuration",
-			"model_is_not_defined" => "Model is not defined"
+			"model_is_not_defined" => "Model is not defined",
+			"model_is_ok" => "Model is OK"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -492,7 +493,8 @@
 			"allow_math_mode_for_all_layers" => "Mathe-Modus für alle Layer erlauben",
 			"updating_predictions" => "Aktualisiere Predictions",
 			"loaded_configuration" => "Konfiguration geladen",
-			"model_is_not_defined" => "Modell ist nicht definiert"
+			"model_is_not_defined" => "Modell ist nicht definiert",
+			"model_is_ok" => "Modell ist OK"
 		)
 	);
 ?>
