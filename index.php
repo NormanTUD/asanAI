@@ -1495,20 +1495,10 @@ text-align: end;
 						data-position="fixed"
 						data-dont_hide_after_show="1"
 						data-no_scroll="1" 
-						data-cosmo_level_text="finished_training[1]='<span class=\'TRANSLATEME_train_further\'></span>'" 
 						style="min-height: 50px; width: 200px;"
 						onclick="click_next_button()" 
 					>
-						<span
-							class="TRANSLATEME_train_the_neural_network cosmo cosmo_autoset_text" 
-							data-keep_cosmo="1"
-							data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]"
-							data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]"
-							data-position="fixed"
-							data-dont_hide_after_show="1"
-							data-no_scroll="1" 
-							data-cosmo_level_text="finished_training[1]='<span class=\'TRANSLATEME_train_further\'></span>'" 
-						>
+						<span id="train_train_further"><span class="TRANSLATEME_train_the_neural_network"></span>
 					</span>
 				</div>
 			</div>

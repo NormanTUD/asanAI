@@ -878,9 +878,12 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 }
 
 async function run_neural_network (recursive=0) {
+	if(is_cosmo_mode) {
+		$("#lenet_example_cosmo").parent().hide()
+		await delay(200);
+	}
 	await clean_gui();
 	if(is_cosmo_mode) {
-		$("#training_data_tab").hide()
 		await fit_to_window();
 	}
 

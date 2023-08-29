@@ -1423,6 +1423,8 @@ async function cosmo_set_tiny_training_dataset () {
 }
 
 async function cosmo_set_large_training_dataset () {
+	set_retrain_button();
+
 	log("Setting Epochs to 30...");
 	await set_epochs(20);
 	log("Setting max files per category to 40...");
@@ -1465,6 +1467,12 @@ function set_augment_for_cosmo () {
 	$("#auto_augment").attr("checked", 1).trigger("change");
 	$("#augment_sine_ripple").attr("checked", 1).trigger("change");
 	$("#augment_invert_images").attr("checked", 1).trigger("change");
+}
+
+function set_retrain_button () {
+	var html = "<span class='TRANSLATEME_train_further'></span>"; 
+	$("#train_train_further").html(html);
+	updateTranslations();
 }
 
 var cosmo_functions_at_milestones = {

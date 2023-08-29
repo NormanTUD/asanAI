@@ -153,7 +153,6 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%")
 	if(is_cosmo_mode) {
-		$("#training_data_tab").hide()
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
 		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI"
 	} else {
@@ -223,7 +222,6 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 		// shuffle in normal mode but not cosmo mode
 
 		if(started_training) {
-			$("#lenet_example_cosmo").hide();
 			$("#beschreibung_cosmo_laden").show();
 			urls = shuffle(urls);
 		}
@@ -288,6 +286,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 		percentage_div.html("");
 		percentage_div.hide();
 	}
+
 
 	return data;
 }
