@@ -245,26 +245,25 @@ async function run_tests () { // var start_tensors
 			log_test("Test Training Logic");
 
 			$("#dataset").val("and_xor").trigger("change");
-			log("Waiting 3 seconds...");
-			await delay(3000);
+			await wait_for_updated_page(3);
+
 			await _set_initializers();
-			await delay(3000);
-			log("Done waiting 3 seconds...");
+			await wait_for_updated_page(3);
 
 			$("#model_dataset").val("and").trigger("change");
-			log("Waiting 3 seconds...");
-			await delay(3000);
+			await wait_for_updated_page(3);
+
 			await _set_initializers();
-			await delay(3000);
+			await wait_for_updated_page(3);
 
 			$("#learningRate_adam").val("0.01").trigger("change");
-			await delay(3000);
+			await wait_for_updated_page(3);
 
 			await set_epochs(200);
-			await delay(3000);
+			await wait_for_updated_page(3);
 
 			await train_neural_network();	
-			await delay(3000);
+			await wait_for_updated_page(3);
 
 			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
@@ -299,12 +298,11 @@ async function run_tests () { // var start_tensors
 			$($(".bias_initializer")[0]).val("constant").trigger("change");
 			$($(".kernel_initializer")[0]).val("glorotUniform").trigger("change");
 			$($(".kernel_initializer")[0]).val("constant").trigger("change");
-			await delay(5000);
+			await wait_for_updated_page(3);
 
 			$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
 			$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
-
-			await delay(5000);
+			await wait_for_updated_page(5);
 
 			try {
 				var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == initializer_val;
@@ -315,15 +313,17 @@ async function run_tests () { // var start_tensors
 				console.trace();
 			}
 
-			await delay(2000);
+			await wait_for_updated_page(3);
 			
 			log_test("Add layer");
 
 			var old_number_of_layers = $(".layer_setting").length;
 			$($(".add_layer")[0]).click();
 			$($(".add_layer")[1]).click();
+
+			await wait_for_updated_page(10);
+
 			var new_number_of_layers = $(".layer_setting").length;
-			await delay(5000);
 
 			test_equal("Testing whether get_layer_data has the same number of layers as the loaded model after adding 2 layers", new_number_of_layers, get_layer_data().length);
 			test_equal("Checking if the number of layers is +2 after adding 2 layers", new_number_of_layers - old_number_of_layers, 2);
@@ -373,18 +373,18 @@ async function run_tests () { // var start_tensors
 			log_test("Test Training images");
 
 			log("Waiting 2 seconds...");
-			await delay(2000);
+			await wait_for_updated_page(3);
 			log("Done waiting 2 seconds...");
 
 			$("#dataset").val("signs").trigger("change");
 			log("Waiting 3 seconds...");
-			await delay(3000);
+			await wait_for_updated_page(3);
 			await _set_initializers();
 			log("Done waiting 3 seconds...");
 
 			$("#model_dataset").val("signs").trigger("change");
 			log("Waiting 3 seconds...");
-			await delay(3000);
+			await wait_for_updated_page(3);
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
@@ -396,6 +396,7 @@ async function run_tests () { // var start_tensors
 
 			$("[href='#predict_tab']").click()
 			await delay(5000);
+			await wait_for_updated_page(2);
 
 			var results = [];
 			var pd = $(".predict_demo_result");
@@ -482,17 +483,7 @@ async function run_tests () { // var start_tensors
 
 			$("#dataset").val("signs").trigger("change");
 
-			while (!swal.isVisible()) {
-				log("Is waiting for SWAL...");
-				await delay(10);
-			}
-
-			while (swal.isVisible()) {
-				l("Is still setting config...");
-				await delay(10);
-			}
-
-			await delay(1000)
+			await wait_for_updated_page(3);
 
 			var start_time = getCurrentTimestamp();
 
@@ -504,28 +495,20 @@ async function run_tests () { // var start_tensors
 				$("#width").val(wh).trigger("change");
 
 				var i = 1;
-				while (swal.isVisible()) {
-					l("Is still setting width to " + wh + "...");
-					await delay(10);
-					i++;
-				}
 
 				await delay(1000)
 
 				$("#height").val(wh).trigger("change");
 
 				i = 1;
-				while (swal.isVisible()) {
-					l("Is still setting height " + wh + "... (" + i + ")");
-					await delay(10);
-					i++;
-				}
 
 				await delay(1000)
 
 				var end_time = Date.now();
 
-				var used_time = (end_time - start_time) - 3000;
+				await wait_for_updated_page(5);
+
+				var used_time = (end_time - start_time) - 5000;
 				Y.push(used_time);
 			}
 

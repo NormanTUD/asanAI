@@ -2550,16 +2550,22 @@ async function set_config(index) {
 	$(".bias_initializer").trigger("change");
 
 	if(finished_loading) {
-		var updated_page_wait_uuid = uuidv4();
-		while (Date.now() - last_updated_page < 3000) {
-			console.debug(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be 3 seconds in the past...`);
-			await delay(200);
-		}
+		await wait_for_updated_page(3);
 	}
 
 	l(language[lang]["loaded_configuration"]);
 
 	$(overlay).remove();
+}
+
+async function wait_for_updated_page (seconds) {
+	assert(typeof seconds == undefined || typeof seconds == null || typeof seconds == "number", "seconds must beither be undefined, null or a number, but is " + typeof(seconds));
+
+	var updated_page_wait_uuid = uuidv4();
+	while (Date.now() - last_updated_page < (seconds * 1000)) {
+		console.debug(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
+		await delay(200);
+	}
 }
 
 async function init_dataset() {
@@ -4448,7 +4454,7 @@ function tensor_print_to_string(_tensor) {
 		return logMessages.join("\n");
 	} catch (e) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
-			console.error("tensor to be printed was already disposed");
+			console.warn("tensor to be printed was already disposed");
 		} else {
 			console.error("tensor_print_to_string failed:", e);
 
