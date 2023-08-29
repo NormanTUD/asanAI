@@ -783,7 +783,6 @@ async function update_python_code(dont_reget_labels) {
 
 	$("#pythoncontainer").show();
 
-
 	var input_shape_is_image_val = await input_shape_is_image();
 
 	var x_shape = "";
@@ -873,8 +872,12 @@ async function update_python_code(dont_reget_labels) {
 			try {
 				expert_code += model_add_python_structure(model.layers[i].getClassName(), data);
 			} catch (e) {
-				expert_code += "# ERROR while creating code: " + e;
-				log("ERROR in python expert code: ", e, "data:", data);
+				if(("" + e).includes("model.layers[i] is undefined")) {
+					console.warn("model.layers was undefined. This MAY be harmless.");
+				} else {
+					expert_code += "# ERROR while creating code: " + e;
+					log("ERROR in python expert code: " + e, "data:", data);
+				}
 			}
 		}
 	}

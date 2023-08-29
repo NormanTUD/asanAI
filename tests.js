@@ -179,8 +179,8 @@ async function run_tests () { // var start_tensors
 			}
 
 			var color = "#ffffff";
-			if(darkmode) {
-				color = "#000000";
+			if(is_dark_mode) {
+				color = "#353535";
 			}
 
 			test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"" + color + "\"]}]");
