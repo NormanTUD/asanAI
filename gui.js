@@ -2312,7 +2312,11 @@ async function set_config(index) {
 			}
 
 			set_batchSize(parseInt(config["batchSize"]));
-			set_validationSplit(config["validationSplit"]);
+			if(!is_cosmo_mode) {
+				set_validationSplit(config["validationSplit"]);
+			} else {
+				set_validationSplit(0);
+			}
 		}
 
 		var number_of_layers = 0;
