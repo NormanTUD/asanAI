@@ -123,6 +123,7 @@ function get_get (param) {
 
 function init_tabs () {
 	l("Initializing tabs");
+
 	var tabs_settings = {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
@@ -130,6 +131,16 @@ function init_tabs () {
 		hide: { effect: "fade", duration: 100 },
 		show: { effect: "fade", duration: 100 }
 	};
+
+	if(is_cosmo_mode) {
+		tabs_settings = {
+			activate: function (event, ui) {
+				disable_hidden_chardin_entries();
+			},
+			hide: { effect: "fade", duration: 0 },
+			show: { effect: "fade", duration: 0 }
+		};
+	}
 
 	var tablist = $("#tablist");
 	$("#ribbon").children().each(function (i, e) {
