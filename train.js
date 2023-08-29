@@ -964,7 +964,7 @@ async function run_neural_network (recursive=0) {
 				}
 			} else if (("" + e).includes("n is undefined")) {
 				if(!recursive) {
-					run_neural_network(1);
+					await run_neural_network(1);
 				} else {
 					throw new Error(e);
 				}

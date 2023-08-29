@@ -698,6 +698,9 @@ async function cosmo_mode () {
 	$("#theme_choser").val("lightmode").trigger("change");
 
 	$('body').css('cursor', get_cursor_or_none("default"));
+
+	log("Setting validation split to 0");
+	set_validationSplit(0);
 }
 
 function isTouchDevice() {
