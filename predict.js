@@ -1329,9 +1329,9 @@ async function predict_handdrawn () {
 		if(("" + e).includes("is already disposed")) {
 			console.warn("weights are already disposed. Not predicting handdrawn");
 		} else if(("" + e).includes("but got array with shape")) {
-				var err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-				console.warn(err);
-				l(err);
+			var err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+			console.warn(err);
+			l(err);
 		} else if(("" + e).includes("n is undefined")) {
 			console.warn("Model weights probably already disposed, this is usually not harmful");
 		} else if(("" + e).includes("Unsupported input rank by")) {

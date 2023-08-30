@@ -2276,12 +2276,14 @@ async function set_config(index) {
 				l("Setting width");
 				$("#width").val(config["width"]);
 				trigger_height_change++;
+				width = config["width"];
 			}
 
 			if (config["height"]) {
 				l("Setting height");
 				$("#height").val(config["height"]);
 				trigger_height_change++;
+				height = config["height"];
 			}
 
 
