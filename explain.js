@@ -1374,9 +1374,13 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 	var arr = [];
 
 	for (var i = 0; i < array.length; i++) {
-		array[i] = array_to_fixed(array[i], parseInt($("#decimal_points_math_mode").val() || 0));
-		array[i] = array_to_color(array[i], color[i]);
-		arr.push(array[i].join(joiner));
+		try {
+			array[i] = array_to_fixed(array[i], parseInt($("#decimal_points_math_mode").val() || 0));
+			array[i] = array_to_color(array[i], color[i]);
+			arr.push(array[i].join(joiner));
+		} catch (e) {
+			console.error("ERROR in math mode (e, array, i, color):", e, array, i, color);
+		}
 	}
 
 	str += arr.join("\\\\\n");
