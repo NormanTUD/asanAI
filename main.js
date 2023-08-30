@@ -340,7 +340,7 @@ async function restart_webcams () {
 }
 
 function init_losses_and_metrics () {
-	l("Initializing losses");
+	l(language[lang]["initializing_losses"]);
 	for (var i = 0; i < losses.length; i++) {
 		$('#loss').append($('<option>', {
 			value: losses[i],
@@ -348,7 +348,7 @@ function init_losses_and_metrics () {
 		}));
 	}
 
-	l("Initializing metrics");
+	l(language[lang]["initializing_metrics"]);
 	for (var i = 0; i < metrics.length; i++) {
 		$('#metric').append($('<option>', {
 			value: metrics[i],
@@ -360,7 +360,7 @@ function init_losses_and_metrics () {
 
 
 async function set_backend() {
-	l("Setting backend");
+	l(language[lang]["setting_backend"]);
 	var backend = get_backend();
 
 	if(!has_webgl) {

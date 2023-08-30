@@ -734,7 +734,7 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 
 	var t_start = Date.now();
-	l("Changing " + name + "...");
+	l(language[lang]["changing"] + "" + language[lang][name] + "...");
 
 	var inputShape = get_input_shape();
 	inputShape[inputshape_index] = value;
