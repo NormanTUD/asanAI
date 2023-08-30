@@ -1696,13 +1696,16 @@ function reset_summary() {
 }
 
 
-function set_optimizer(val) {
+function set_optimizer(val, trigger_change = 1) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 	l(language[lang]["set_optimizer_to"] + val);
-	$("#optimizer").val(val).trigger("change");
+	$("#optimizer").val(val);
+	if(trigger_change) {
+		$("#optimizer").trigger("change");
+	}
 }
 
-function set_metric(val) {
+function set_metric(val, trigger_change = 1) {
 	l(language[lang]["set_metric_to"] + val);
 
 	if(Object.keys(metric_shortnames).includes(val)) {
@@ -1713,17 +1716,23 @@ function set_metric(val) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 
 	if($("#metric").val() != val) {
-		$("#metric").val(val).trigger("change");
+		$("#metric").val(val);
+		if(trigger_change) {
+			$("#metric").trigger("change");
+		}
 	}
 }
 
-function set_loss(val) {
+function set_loss(val, trigger_change = 1) {
 	l(language[lang]["set_loss_to"] + val);
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 
 	if($("#metric").val() != val) {
-		$("#loss").val(val).trigger("change");
+		$("#loss").val(val);
+		if(trigger_change) {
+			$("#loss").trigger("change");
+		}
 	}
 }
 
@@ -2260,15 +2269,22 @@ async function set_config(index) {
 
 	if (config) {
 		if (!index) {
+
+			var trigger_height_change = 0;
+
 			if (config["width"]) {
 				l("Setting width");
-				$("#width").val(config["width"]).trigger("change");
+				$("#width").val(config["width"]);
+				trigger_height_change++;
 			}
 
 			if (config["height"]) {
 				l("Setting height");
-				$("#height").val(config["height"]).trigger("change");
+				$("#height").val(config["height"]);
+				trigger_height_change++;
 			}
+
+
 
 			if (config["labels"]) {
 				l("Setting labels from config");
@@ -2289,10 +2305,12 @@ async function set_config(index) {
 			}
 
 			set_epochs(config["epochs"]);
-			set_loss(config["loss"]);
+			set_loss(config["loss"], 0);
 
-			set_metric(config["metric"]);
-			set_optimizer(config["optimizer"]);
+			set_metric(config["metric"], 0);
+			set_optimizer(config["optimizer"], 0);
+
+			$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
 
 			if (config["optimizer"] == "rmsprop") {
 				l("Setting optimizer to rmsprop");
