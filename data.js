@@ -585,6 +585,9 @@ async function get_xs_and_ys () {
 
 				var x_arr = await x.arraySync();
 				x_arr.shift();
+
+				await dispose(x);
+
 				x = tensor(x_arr);
 				global_x = x;
 
