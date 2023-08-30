@@ -259,7 +259,12 @@
 			"setting_backend" => "Setting backend",
 			"width" => "width",
 			"height" => "height",
-			"changing" => "Changing"
+			"changing" => "Changing",
+			"changed_data_source" => "Changed data source",
+			"hiding_augmentation" => "Hiding augmentation",
+			"showing_augmentation" => "Showing augmentation",
+			"input_shape_is_read_only" => "The Input-Shape read-only",
+			"input_shape_is_writable" => "The Input-Shape is editable"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -520,7 +525,12 @@
 			"setting_backend" => "Setze Backend",
 			"width" => "Breite",
 			"height" => "Höhe",
-			"changing" => "Ändere"
+			"changing" => "Ändere",
+			"changed_data_source" => "Datenquelle geändert",
+			"hiding_augmentation" => "Augmentierung versteckt",
+			"showing_augmentation" => "Augmentierung gezeigt",
+			"input_shape_is_read_only" => "Die Input-Shape ist nur lesbar",
+			"input_shape_is_writable" => "Die Input-Shape ist bearbeitbar"
 		)
 	);
 

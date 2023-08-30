@@ -734,7 +734,7 @@ async function change_width_or_height(name, inputshape_index) {
 	}
 
 	var t_start = Date.now();
-	l(language[lang]["changing"] + "" + language[lang][name] + "...");
+	l(language[lang]["changing"] + " " + language[lang][name] + "...");
 
 	var inputShape = get_input_shape();
 	inputShape[inputshape_index] = value;
@@ -3390,15 +3390,15 @@ function has_network_name(elem) {
 	}
 }
 
-function color_msg_green(id) { // start_tensors
+function color_msg_green(id) {
 	document.getElementById(id).style = "background-color: green";
 }
 
-function color_msg_red(id) { // start_tensors
+function color_msg_red(id) {
 	document.getElementById(id).style = "background-color: red";
 }
 
-function network_name_is_empty(name) { // start_tensors
+function network_name_is_empty(name) {
 	if(name.match(/^ *$/) || (name == "")) {
 		return true;
 	} else {
@@ -3418,7 +3418,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 			network_name: $("#network_name").val()
 		},
 		method: "POST",
-		success: async function (data) { // start_tensors
+		success: async function (data) {
 			log(data);
 			if(data["status"] == "ok") {
 				color_msg_green("save_model_msg");
@@ -3429,7 +3429,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 						model_id: data["id"]
 					},
 					method: "POST",
-					error: function (object, error, msg) { // start_tensors
+					error: function (object, error, msg) {
 						color_msg_red("save_model_msg");
 						document.getElementById("save_model_msg").innerText = msg;
 					}
@@ -3439,7 +3439,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 				color_msg_red("save_model_msg");
 			}
 		},
-		error: function (object, error, msg) { // start_tensors
+		error: function (object, error, msg) {
 			color_msg_red("save_model_msg");
 			document.getElementById("save_model_msg").innerText = msg;
 		}
@@ -3458,15 +3458,15 @@ async function save_to_db_wrapper () {
 	}
 }
 
-async function open_save_model_dialog() { // start_tensors
+async function open_save_model_dialog() {
 	await openPopup("save_model_dialog");
 }
 
-async function open_register_dialog() { // start_tensors
+async function open_register_dialog() {
 	await openPopup("register_dialog");
 }
 
-async function open_save_dialog() { // start_tensors
+async function open_save_dialog() {
 	await openPopup("save_dialog");
 }
 
@@ -3542,7 +3542,7 @@ async function upload_weights(evt) {
 	}
 }
 
-var handle_x_file = async function (evt) { // start_tensors
+var handle_x_file = async function (evt) {
 	x_file = await evt.target.files[0].text();
 	await set_input_shape("[" + get_shape_from_file(x_file) + "]");
 
@@ -3567,7 +3567,7 @@ var handle_x_file = async function (evt) { // start_tensors
 	enable_start_training_custom_tensors();
 }
 
-var handle_y_file = async function (evt) { // start_tensors
+var handle_y_file = async function (evt) {
 	y_file = await evt.target.files[0].text();
 	y_shape = get_shape_from_file(y_file);
 	$("#y_shape_div").show();
@@ -3606,7 +3606,7 @@ function enable_start_training_custom_tensors() {
 
 }
 
-function get_sum_of_items_childrens_width(item) { // start_tensors
+function get_sum_of_items_childrens_width(item) {
 	var total_width = 0;
 
 	$(item).each(function (index) {
@@ -3616,7 +3616,7 @@ function get_sum_of_items_childrens_width(item) { // start_tensors
 	return total_width;
 }
 
-function get_chosen_dataset() { // start_tensors
+function get_chosen_dataset() {
 	var val = $("#model_dataset").val();
 	if (!val) {
 		val = $("#dataset").val();
@@ -3734,7 +3734,7 @@ function reset_view() {
 
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
-	l("Change data origin");
+	l(language[lang]["changed_data_source"]);
 	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 	//	force_reinit(1);
 	//}
@@ -4711,20 +4711,20 @@ function _allow_training() {
 
 }
 
-async function show_layer_view() { // start_tensors
+async function show_layer_view() {
 	$("#layers_container_left").show();
 	$(".descriptions_of_layers").show();
 	await write_descriptions();
 	$("#toggle_layer_view_button").html("&#x1F5D6;");
 }
 
-function hide_layer_view () { // start_tensors
+function hide_layer_view () {
 	$("#layers_container_left").hide();
 	$(".descriptions_of_layers").hide();
 	$("#toggle_layer_view_button").html("&#x1F5D7;");
 }
 
-async function toggle_layer_view() { // start_tensors
+async function toggle_layer_view() {
 	if (is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 		await show_layer_view();
 	} else {
@@ -4734,7 +4734,7 @@ async function toggle_layer_view() { // start_tensors
 	await write_descriptions();
 }
 
-function fix_viz_width () { // start_tensors
+function fix_viz_width () {
 	$("#lenet").find("svg").attr("width", $("#lenet").css("width"));
 	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
 }
@@ -4853,28 +4853,29 @@ async function change_model_dataset() {
 	display_delete_button();
 }
 
-function allow_edit_inputShape() { // start_tensors
-	l("Checking whether to allow editing input shape or not");
+function allow_edit_inputShape() {
 	if ($("#auto_input_shape").is(":checked")) {
+		l(language[lang]["input_shape_is_read_only"])
 		$("#inputShape").attr("readonly", true);
 	} else {
+		l(language[lang]["input_shape_is_writable"])
 		$("#inputShape").attr("readonly", false);
 	}
 }
 
-function show_ribbon() { // start_tensors
+function show_ribbon() {
 	$("#ribbon").show();
 	$("#ribbon_shower").hide();
 	$("#status_bar").show();
 }
 
-function hide_ribbon() { // start_tensors
+function hide_ribbon() {
 	$("#ribbon").hide();
 	$("#ribbon_shower").show();
 	$("#status_bar").hide();
 }
 
-function human_readable_time(seconds, start="", end="") { // start_tensors
+function human_readable_time(seconds, start="", end="") {
 	if (!seconds) {
 		return language[lang]["one_second"];
 	}
@@ -5600,9 +5601,10 @@ async function init_webcams () {
 function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
 		l("Showing Augmentation tab");
+		l(language[lang]["showing_augmentation"]);
 		$('a[href*="tf_ribbon_augmentation"]').show().parent().show();
 	} else {
-		l("Hiding Augmentation tab");
+		l(language[lang]["hiding_augmentation"]);
 		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
 	}
 }
@@ -5926,7 +5928,7 @@ function hide_empty_tabs (name) {
 	$("[href='#" + name + "']").parent().hide()
 }
 
-function getCanvasBlob(canvas) { // start_tensors
+function getCanvasBlob(canvas) {
 	return new Promise(function(resolve, reject) {
 		canvas.toBlob(function(blob) {
 			resolve(blob)
@@ -6328,7 +6330,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 
 }
 
-function show_hide_cosmo_stuff() { // start_tensors
+function show_hide_cosmo_stuff() {
 	if(is_cosmo_mode) {
 		$(".hide_in_cosmo_mode").hide();
 	} else {
