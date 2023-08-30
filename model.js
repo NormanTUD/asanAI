@@ -917,7 +917,11 @@ async function dispose_old_model_tensors (model_uuid) {
 	var disposable = [];
 
 	Object.keys(_custom_tensors).forEach((i, e) => {
-		if(_custom_tensors[i][2].match(/(?:kernel|bias) in _add_layer_to_model/)) {
+		if(
+			(_custom_tensors[i][2].match(/(?:kernel|bias) in _add_layer_to_model/) ||
+			_custom_tensors[i][2].match(/model in tf_sequential/)) &&
+			!_custom_tensors[i][2].match(/FAKE/)
+		) {
 			if(_custom_tensors[i][0].match(/UUID:/) && !_custom_tensors[i][0].includes(model_uuid)) {
 				disposable.push(_custom_tensors[i][1]);
 			}
@@ -935,7 +939,7 @@ async function dispose_old_model_tensors (model_uuid) {
 
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
-	var new_model = tf_sequential();
+	var new_model = tf_sequential(model_uuid);
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
 		var data = model_structure[i]["data"];

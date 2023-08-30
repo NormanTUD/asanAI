@@ -27,8 +27,11 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
-function tf_sequential(...args) {
-	var res = tf.sequential(...args);
+function tf_sequential(model_uuid) {
+	assert(model_uuid, "model_uuid is not defined");
+	assert(typeof(model_uuid) == "string", "model_uuid must be a string");
+
+	var res = tf.sequential();
 
 	res.originalAdd = res.add;
 
@@ -38,7 +41,7 @@ function tf_sequential(...args) {
 		try {
 			var k = res.layers[res.layers.length - 1].kernel;
 			if(k) {
-				_custom_tensors["" + k.id] = ["", k, "[kernel in tf_sequential]"];
+				_custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
 			}
 		} catch (e) {
 			console.warn(e);
@@ -48,7 +51,7 @@ function tf_sequential(...args) {
 			var b = res.layers[res.layers.length - 1].bias;
 
 			if(b) {
-				_custom_tensors["" + b.id] = ["", b, "[bias in tf_sequential]"];
+				_custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
 			}
 		} catch (e) {
 			console.warn(e);
@@ -59,7 +62,7 @@ function tf_sequential(...args) {
 		return r;
 	};
 
-	_custom_tensors["" + res.id] = ["", res, "[model in tf_sequential]"];
+	_custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
 
 	_clean_custom_tensors();
 
