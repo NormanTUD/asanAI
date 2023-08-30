@@ -584,12 +584,13 @@ async function get_xs_and_ys () {
 				}
 
 				var x_arr = await x.arraySync();
-				x_arr.shift();
-
-				await dispose(x);
-
-				x = tensor(x_arr);
-				global_x = x;
+				x = tf.tidy(() => {
+					x_arr.shift();
+					x = tensor(x_arr);
+					global_x = x;
+				
+					return x;
+				});
 
 				//log("classes:", classes);
 				y = tensor(classes);
