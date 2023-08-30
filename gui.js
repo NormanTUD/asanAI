@@ -765,7 +765,7 @@ async function change_width_or_height(name, inputshape_index) {
 	var used_time = ((t_end - t_start) / 1000).toFixed(5);
 
 	model_is_trained = false;
-	l("Done changing " + name + ", took " + parseInt(used_time) + " seconds.");
+	l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + human_readable_time(used_time) + " (" + used_time + ")");
 }
 
 async function update_python_code(dont_reget_labels) {
@@ -2147,7 +2147,6 @@ function sortable_layers_container(layers_container) {
 }
 
 function disable_all_non_selected_layer_types() {
-	l("Disabling all non-selected layer types");
 	var all_options = $(".layer_type").children().children();
 
 	for (var i = 0; i < all_options.length; i++) {
@@ -2160,7 +2159,6 @@ function disable_all_non_selected_layer_types() {
 			this_all_options.prop("selected", true)
 		}
 	}
-	l("Disabled all non-selected layer types");
 }
 
 async function show_layers(number) {
@@ -2323,7 +2321,6 @@ async function set_config(index) {
 
 		var keras_layers;
 		if (!config["model_structure"]) {
-			l("Looking for model structure...");
 			var paths = [
 				["keras", "config", "layers"],
 				["keras", "modelTopology", "config", "layers"],
@@ -2361,7 +2358,6 @@ async function set_config(index) {
 				l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
 				return;
 			}
-			l("Found model structure");
 		} else {
 			number_of_layers = config["model_structure"].length;
 		}
@@ -2398,7 +2394,7 @@ async function set_config(index) {
 			var layer_settings = $(".layer_setting");
 			for (var i = 0; i < keras_layers.length; i++) {
 				var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
-				l("Setting layer " + i + " to " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+				l(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
@@ -2467,7 +2463,7 @@ async function set_config(index) {
 			}
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
-				l("Setting options for layer " + i);
+				l(language[lang]["setting_options_for_layer"] + " " + i);
 				var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
 				layer_type.val(config["model_structure"][i]["type"]);
 				layer_type.trigger("change");
@@ -2501,7 +2497,7 @@ async function set_config(index) {
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
-	l("Creating model");
+	l(language[lang]["creating_model"]);
 
 	if(global_model_data) {
 		await dispose(global_model_data);
@@ -2509,7 +2505,7 @@ async function set_config(index) {
 
 	[model, global_model_data] = await create_model(model);
 
-	l("Compiling model");
+	l(language[lang]["compiling_model"]);
 	await compile_model();
 
 	try {
@@ -2532,14 +2528,17 @@ async function set_config(index) {
 		await save_current_status();
 	}
 
-	l("Getting label data");
+	l(language[lang]["getting_labels"]);
 	await get_label_data();
 
 	is_setting_config = false;
 
-	l("Call `updated page`-routine");
+	l(language[lang]["updating_page"]);
+	var start_t = Date.now();
 	await updated_page(null, null, null, 1);
-
+	var end_t = Date.now();
+	var runtime = (end_t - start_t) / 1000;
+	l(language[lang]["page_update_took"] + " " + human_readable_time(runtime));
 
 	await write_descriptions();
 

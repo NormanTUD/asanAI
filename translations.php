@@ -264,7 +264,16 @@
 			"hiding_augmentation" => "Hiding augmentation",
 			"showing_augmentation" => "Showing augmentation",
 			"input_shape_is_read_only" => "The Input-Shape read-only",
-			"input_shape_is_writable" => "The Input-Shape is editable"
+			"input_shape_is_writable" => "The Input-Shape is editable",
+			"updating_page" => "Updating page...",
+			"page_update_took" => "Page update took",
+			"getting_labels" => "Getting labels",
+			"compiling_model" => "Compiling model",
+			"done_changing" => "Done changing",
+			"took" => "took",
+			"setting_layer" => "Setting layer",
+			"setting_options_for_layer" => "Setting options for layer",
+			"creating_model" => "Creating model"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
@@ -530,7 +539,16 @@
 			"hiding_augmentation" => "Augmentierung versteckt",
 			"showing_augmentation" => "Augmentierung gezeigt",
 			"input_shape_is_read_only" => "Die Input-Shape ist nur lesbar",
-			"input_shape_is_writable" => "Die Input-Shape ist bearbeitbar"
+			"input_shape_is_writable" => "Die Input-Shape ist bearbeitbar",
+			"updating_page" => "Update die Seite...",
+			"page_update_took" => "Das Seitenupdate brauchte",
+			"getting_labels" => "Hole Labels",
+			"compiling_model" => "Kompiliere Modell",
+			"done_changing" => "Fertig mit Ändern der",
+			"took" => "brauchte",
+			"setting_layer" => "Setze Layer",
+			"setting_options_for_layer" => "Setze Optionen für Layer",
+			"creating_model" => "Erstelle Modell"
 		)
 	);
 
