@@ -831,6 +831,8 @@ async function create_model (old_model, fake_model_structure, force) {
 	var new_model;
 	try {
 		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, model_uuid);
+
+		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
 			console.warn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
@@ -910,6 +912,27 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	return [new_model, model_data];
 }
+
+async function dispose_old_model_tensors (model_uuid) {
+	var disposable = [];
+
+	Object.keys(_custom_tensors).forEach((i, e) => {
+		if(_custom_tensors[i][2].match(/(?:kernel|bias) in _add_layer_to_model/)) {
+			if(_custom_tensors[i][0].match(/UUID:/) && !_custom_tensors[i][0].includes(model_uuid)) {
+				disposable.push(_custom_tensors[i][1]);
+			}
+		}
+	})
+
+	for (var i in disposable) {
+		if(i != "last") {
+			await dispose(disposable[i]);
+		}
+	}
+
+	_clean_custom_tensors();
+}
+
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
 	var new_model = tf_sequential();
