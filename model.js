@@ -686,7 +686,7 @@ function _check_data (data, type) {
 	return data;
 }
 
-async function _add_layer_to_model (type, data, fake_model_structure, i, new_model) {
+async function _add_layer_to_model (type, data, fake_model_structure, i, new_model, model_uuid) {
 	try {
 		if(layer_options[type]["custom"]) {
 			if(i == 0) {
@@ -704,12 +704,12 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			var added_layer = new_model.layers[new_model.layers.length - 1]
 
 			if(added_layer["bias"]) {
-				_custom_tensors["" + added_layer.bias.id] = ["", added_layer.bias, "[bias in _add_layer_to_model]"];
+				_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
 				_clean_custom_tensors();
 			}
 
 			if(added_layer["kernel"]) {
-				_custom_tensors["" + added_layer.kernel.id] = ["", added_layer.kernel, "[kernel in _add_layer_to_model]"];
+				_custom_tensors["" + added_layer.kernel.id] = ["UUID:" + model_uuid, added_layer.kernel, "[kernel in _add_layer_to_model]"];
 				_clean_custom_tensors();
 			}
 
@@ -820,9 +820,17 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	assert(typeof(model_structure) == "object", "model_structure is not an object");
 
+	var model_uuid = "";
+
+	if(fake_model_structure) {
+		model_uuid = "FAKE_MODEL";
+	} else {
+		model_uuid = uuidv4();
+	}
+
 	var new_model;
 	try {
-		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, new_model);
+		new_model = await _add_layers_to_model(model_structure, fake_model_structure, i, model_uuid);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
 			console.warn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
@@ -903,7 +911,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	return [new_model, model_data];
 }
 
-async function _add_layers_to_model (model_structure, fake_model_structure, i) {
+async function _add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
 	var new_model = tf_sequential();
 	for (var i = 0; i < model_structure.length; i++) {
 		var type = model_structure[i]["type"];
@@ -914,7 +922,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i) {
 		_set_layer_gui(data, fake_model_structure, i);
 		
 		try {
-			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model)) {
+			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
 					console.error(`Failed to add layer type ${type}`);
 				} else {
