@@ -828,7 +828,7 @@ text-align: end;
 									<table>
 										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
 											<td><span class="TRANSLATEME_iterations"></span></td>
-											<td><input type="number" min="1" value="30" id="max_activation_iterations" style="width: 80px;"></td>
+											<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
 										<tr class="hide_when_no_conv_visualizations">
 											<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
