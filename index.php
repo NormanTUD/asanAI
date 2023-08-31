@@ -1378,7 +1378,13 @@ text-align: end;
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
 										<span class="TRANSLATEME_program_looks_at_data"></span><br>
-										<span class="TRANSLATEME_the_further_on_top_the_better"></span><br>
+										<span id="cosmo_first_stage_explanation">
+											<span class="TRANSLATEME_the_further_on_top_the_better"></span><br>
+										</span>
+										<span id="cosmo_second_stage_explanation" style="display: none">
+											<hr class="cosmo_hr">
+											<span class="TRANSLATEME_graph_explanation"></span><br>
+										</span>
 										<hr class="cosmo_hr">
 										<span class="TRANSLATEME_quality_depends_on_random"></span>
 									</div>

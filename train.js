@@ -436,6 +436,9 @@ function get_fit_data () {
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
 			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 1) {
+				$("#cosmo_first_stage_explanation").hide();
+				$("#cosmo_second_stage_explanation").show();
+
 				if(epochNr == 0 || epochNr == 1) {
 					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 				} else {
@@ -446,6 +449,8 @@ function get_fit_data () {
 				$("#visualize_images_in_grid").html("").hide();
 				$("#canvas_grid_visualization").html("").hide();
 			} else {
+				$("#cosmo_first_stage_explanation").show();
+				$("#cosmo_second_stage_explanation").hide();
 				$("#plotly_epoch_history").hide();
 
 				await visualize_train();
