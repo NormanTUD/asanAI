@@ -50,6 +50,9 @@ async function train_neural_network () {
 		return;
 	}
 
+	__from = "example_predictions";
+	__to = "tfvis_tab"
+
 	if(started_training) {
 		var overlay = null;
 		if(is_cosmo_mode) {
@@ -78,6 +81,15 @@ async function train_neural_network () {
 		await gui_not_in_training();
 		$("#overlay").remove()
 		l("Stopped training");
+
+		/*
+		if(is_cosmo_mode) {
+			__to = "tfvis_tab"
+			move_element_to_another_div($("#" + __from)[0], $("#" + __to)[0]);
+
+			await fit_to_window();
+		}
+		*/
 	} else {
 		l("Started training")
 
@@ -199,6 +211,15 @@ async function train_neural_network () {
 
 			await fit_to_window();
 		}
+
+		/*
+		if(is_cosmo_mode) {
+			__to = "example_predictions_parent";
+			move_element_to_another_div($("#" + __from)[0], $("#" + __to)[0]);
+
+			await fit_to_window();
+		}
+		*/
 	}
 
 	await write_descriptions();

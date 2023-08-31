@@ -1496,7 +1496,7 @@ text-align: end;
 
 									<br>
 
-									<div class="hide_when_custom_data">
+									<div class="hide_when_custom_data" id="example_predictions_parent">
 										<div id="example_predictions">
 										</div>
 									</div>

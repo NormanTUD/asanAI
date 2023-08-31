@@ -1536,3 +1536,6 @@ var last_updated_page = null;
 var current_cosmo_stage = 1;
 
 var previously_generated_images = [];
+
+var __from;
+var __to;
