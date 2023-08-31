@@ -6545,3 +6545,33 @@ function cloneCanvas(oldCanvas) {
 	//return the new canvas
 	return newCanvas;
 }
+
+// Function to get the value of a query parameter from the URL
+function get_get(paramName, _default) { 
+	const urlParams = new URLSearchParams(window.location.search); 
+	var res = urlParams.get(paramName); 
+	if(res !== null) { 
+		return res; 
+	} 
+
+	return _default; 
+} 
+
+//log(get_get("epochs", 10), get_get("BLA", "abc"));
+
+// Function to set or update a query parameter in the URL
+function set_get(paramName, paramValue) {
+	const urlParams = new URLSearchParams(window.location.search);
+	urlParams.set(paramName, paramValue);
+
+	// Update the URL with the new parameter
+	const newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
+
+	try {
+		history.replaceState(null, '', newUrl); // Update the URL without reloading the page
+	} catch (error) {
+		// Handle error: Log and warn about the error
+		console.warn('Error updating URL:', error);
+		// You can add more intelligent handling here if needed
+	}
+}

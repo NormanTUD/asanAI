@@ -2664,6 +2664,26 @@ var already_moved_to_predict_for_cosmo = false;
 
 async function cosmo_maximally_activate_last_layer () {
 	generating_images = true;
+
+	var $tmp;
+
+	if($(".layer_image").length) {
+		//$tmp = $("<span id='__tmp__prev_generated' style='display: none'></span>");
+		$tmp = $("<span id='__tmp__prev_generated'></span>");
+
+		var $layer_images = $(".layer_image");
+
+		for (var i = 0; i < $layer_images.length; i++) {
+			var li = $layer_images[i];
+
+			var clone = cloneCanvas(li);
+			$tmp.append(clone);
+		}
+
+	} else {
+		log("No previous layers found");
+	}
+
 	$("#maximally_activated_content").html("");
 
 	if(!already_moved_to_predict_for_cosmo) {
@@ -2724,6 +2744,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	updateTranslations();
 
+	//$("#__tmp__prev_generated").remove();
 }
 
 async function _temml () {

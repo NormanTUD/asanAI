@@ -1414,24 +1414,34 @@ var finished_loading = false;
 
 var generating_images = false;
 
+async function _cosmo_set_environment (_ep, max_number_of_files_per_category, _vs) {
+	log(`Setting Epochs to ${_ep}...`);
+	await set_epochs(_ep);
+
+	log(`Setting max files per category to ${max_number_of_files_per_category}...`);
+	$("#max_number_of_files_per_category").val(max_number_of_files_per_category);
+	$("#number_of_images_per_category").html(max_number_of_files_per_category);
+
+	log(`Setting validation split to ${_vs}`);
+	set_validationSplit(_vs);
+}
+
 async function cosmo_set_tiny_training_dataset () {
-	log("Setting Epochs to 10...");
-	await set_epochs(10);
-	log("Setting max files per category to 5...");
-	$("#max_number_of_files_per_category").val(5);
-	$("#number_of_images_per_category").html(5);
+	var _ep  = parseInt(get_get("epochs", 10));
+	var max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category", 5));
+	var _vs = 0;
+
+	await _cosmo_set_environment(_ep, max_number_of_files_per_category, _vs);
 }
 
 async function cosmo_set_large_training_dataset () {
 	set_retrain_button();
 
-	log("Setting Epochs to 30...");
-	await set_epochs(20);
-	log("Setting max files per category to 40...");
-	$("#max_number_of_files_per_category").val(40);
-	$("#number_of_images_per_category").html(40);
+	var _ep  = parseInt(get_get("epochs", 20));
+	var max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category", 30));
+	var _vs = 15;
 
-	set_validationSplit(15);
+	await _cosmo_set_environment(_ep, max_number_of_files_per_category, _vs);
 }
 
 async function fireworks_and_reload (reload=1, waittime=10000) {
