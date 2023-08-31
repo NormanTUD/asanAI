@@ -1249,7 +1249,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
 			if(is_cosmo_mode) {
-				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, #00429d 0%, #96ffea 80%, lightyellow 100%"); 
+				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%"); 
 			}
 			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 		} else {
