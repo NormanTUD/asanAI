@@ -1485,7 +1485,6 @@ async function fireworks_no_reload () {
 function set_augment_for_cosmo () {
 	log("set_augment_for_cosmo");
 	$("#auto_augment").attr("checked", 1).trigger("change");
-	$("#augment_sine_ripple").attr("checked", 1).trigger("change");
 	$("#augment_invert_images").attr("checked", 1).trigger("change");
 }
 
