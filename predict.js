@@ -116,7 +116,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	while (is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) {
+	while ((is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading) && !is_cosmo_mode) {
 		await delay(200);
 	}
 
@@ -216,7 +216,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 	//tf.engine().endScope("scope_" + xpath);
 
 	await tf.nextFrame();
-
 }
 
 async function _run_predict_and_show (tensor_img, nr) {

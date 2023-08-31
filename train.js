@@ -50,9 +50,6 @@ async function train_neural_network () {
 		return;
 	}
 
-	__from = "example_predictions_parent";
-	__to = "tfvis_tab"
-
 	if(started_training) {
 		var overlay = null;
 		if(is_cosmo_mode) {
@@ -81,15 +78,6 @@ async function train_neural_network () {
 		await gui_not_in_training();
 		$("#overlay").remove()
 		l("Stopped training");
-
-		if(is_cosmo_mode && 0) {
-			__to = "tfvis_tab"
-			move_element_to_another_div($("#" + __from)[0], $("#" + __to)[0]);
-
-			await repredict();
-
-			await fit_to_window();
-		}
 	} else {
 		l("Started training")
 
@@ -208,15 +196,6 @@ async function train_neural_network () {
 			await add_cosmo_point("finished_training");
 
 			$(".cosmo_next_button_span").css("visibility", "visible");
-
-			await fit_to_window();
-		}
-
-		if(is_cosmo_mode && 0) {
-			__to = "example_predictions_parent";
-			move_element_to_another_div($("#" + __from)[0], $("#" + __to)[0]);
-
-			await repredict();
 
 			await fit_to_window();
 		}
@@ -458,7 +437,20 @@ function get_fit_data () {
 
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
-			if(current_cosmo_stage >= 2) {
+			if(current_cosmo_stage == 1) {
+				var elem = $("#example_predictions")[0];
+				var to = $("#tfvis_tab")[0];
+				move_element_to_another_div(elem, to)
+
+				await repredict();
+				updateTranslations();
+			} else if(current_cosmo_stage == 2) {
+				$("#cosmo_first_stage_explanation").show();
+				$("#cosmo_second_stage_explanation").hide();
+				$("#plotly_epoch_history").hide();
+
+				await visualize_train();
+			} else {
 				$("#visualize_images_in_grid").hide();
 				$("#cosmo_first_stage_explanation").hide();
 				$("#cosmo_second_stage_explanation").show();
@@ -472,13 +464,9 @@ function get_fit_data () {
 				$("#plotly_epoch_history").show();
 				$("#visualize_images_in_grid").html("").hide();
 				$("#canvas_grid_visualization").html("").hide();
-			} else {
-				$("#cosmo_first_stage_explanation").show();
-				$("#cosmo_second_stage_explanation").hide();
-				$("#plotly_epoch_history").hide();
-
-				await visualize_train();
 			}
+
+			await fit_to_window();
 		} else {
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
@@ -519,6 +507,15 @@ function get_fit_data () {
 		restart_alexnet();
 
 		$("#tiny_graph").hide();
+
+		if(is_cosmo_mode) {
+			if(current_cosmo_stage == 1) {
+				var elem = $("#example_predictions")[0];
+				var to = $("#example_predictions_parent")[0];
+				log("moving", elem, "to", to);
+				move_element_to_another_div(elem, to)
+			}
+		}
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {

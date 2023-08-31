@@ -1436,6 +1436,12 @@ async function cosmo_stage_one () {
 	current_cosmo_stage = 1;
 }
 
+async function cosmo_stage_three () {
+	log("Cosmo stage 3");
+
+	current_cosmo_stage = 3;
+}
+
 async function cosmo_stage_two () {
 	log("Cosmo stage 2");
 	set_retrain_button();
@@ -1492,6 +1498,7 @@ function set_retrain_button () {
 var cosmo_functions_at_milestones = {
 	"finished_training": {
 		1: cosmo_stage_two,
+		2: cosmo_stage_three,
 		3: fireworks_no_reload,
 		10: set_augment_for_cosmo
 	},
