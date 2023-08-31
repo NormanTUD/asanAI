@@ -1385,8 +1385,10 @@ text-align: end;
 											<hr class="cosmo_hr">
 											<span class="TRANSLATEME_graph_explanation"></span><br>
 										</span>
+<!--
 										<hr class="cosmo_hr">
 										<span class="TRANSLATEME_quality_depends_on_random"></span>
+-->
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										<hr class="cosmo_hr">
