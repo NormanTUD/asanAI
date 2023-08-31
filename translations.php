@@ -3,7 +3,7 @@
 		'en' => array(
 			'lets_suppose_we_have_this_simple_network' => "Let's suppose we have this simple image classification model:",
 			'we_want_to_train_this_model_5_categories' => 'We want to train that model to differentiate between 5 categories of signs:',
-			'fire' => 'Fire',
+			'fire' => 'Fire prevention',
 			'mandatory' => 'Mandatory',
 			'forbidden' => 'Forbidden',
 			'rescue' => 'Rescue',
@@ -274,13 +274,15 @@
 			"setting_layer" => "Setting layer",
 			"setting_options_for_layer" => "Setting options for layer",
 			"creating_model" => "Creating model",
-			"graph_explanation" => "The lines in the graph represent the error. The lower the line, the smaller the error. The blue line indicates the improvements on the data that the network is trained on, while the orange line indicates how well it performs on data it hasn't seen before. Both lines should decrease and look somewhat similar for the training to be progressing well."
+			"graph_explanation" => "The lines in the graph represent the error. The lower the line, the smaller the error. The blue line indicates the improvements on the data that the network is trained on, while the orange line indicates how well it performs on data it hasn't seen before. Both lines should decrease and look somewhat similar for the training to be progressing well.",
+			"previous_images" => "Previous images",
+			"current_images" => "Current images"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Nehmen wir an, wir haben dieses einfache Bilderkennungsmodell:',
 			'we_want_to_train_this_model_5_categories' => 'Wir wollen dieses Modell trainieren, um 5 Kategorien von Zeichen zu unterscheiden:',
-			'fire' => 'Feuer',
-			'mandatory' => 'Verpflichtend',
+			'fire' => 'Brandschutz',
+			'mandatory' => 'Gebot',
 			'forbidden' => 'Verbot',
 			'rescue' => 'Rettung',
 			'warning' => 'Warnung',
@@ -550,7 +552,9 @@
 			"setting_layer" => "Setze Layer",
 			"setting_options_for_layer" => "Setze Optionen für Layer",
 			"creating_model" => "Erstelle Modell",
-			"graph_explanation" => "Die Linien im Graphen zeigen den Fehler an. Umso niedriger die Linie, desto geringer der Fehler. Die blaue Linie zeigt die Verbesserungen auf den Daten, auf denen das Netzwerk trainiert, die orange Linie zeigt an, wie gut es es auf Daten ist , die es nicht gesehen hat. Beide Linien sollten niedriger werden und etwa ähnlich aussehen, damit das Training gut läuft."
+			"graph_explanation" => "Die Linien im Graphen zeigen den Fehler an. Umso niedriger die Linie, desto geringer der Fehler. Die blaue Linie zeigt die Verbesserungen auf den Daten, auf denen das Netzwerk trainiert, die orange Linie zeigt an, wie gut es es auf Daten ist , die es nicht gesehen hat. Beide Linien sollten niedriger werden und etwa ähnlich aussehen, damit das Training gut läuft.",
+			"previous_images" => "Vorherige Bilder",
+			"current_images" => "Aktuelle Bilder"
 		)
 	);
 

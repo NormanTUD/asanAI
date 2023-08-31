@@ -979,8 +979,8 @@ async function run_cosmo_milestones () {
 async function cosmo_set_labels () {
 	if(lang == "de") {
 		cosmo_categories = [
-			"Feuer",
-			"Verpflichtend",
+			"Brandschutz",
+			"Gebot",
 			"Verbot",
 			"Rettung",
 			"Warnung"
@@ -989,7 +989,7 @@ async function cosmo_set_labels () {
 		label_debug("cosmo_set_labels, lang de (labels, cosmo_categories)", labels);
 	} else if(lang == "en") {
 		cosmo_categories = [
-			"Fire",
+			"Fire prevention",
 			"Mandatory",
 			"Forbidden",
 			"Rescue",

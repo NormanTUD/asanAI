@@ -97,3 +97,16 @@
 	width: 800px;
 	display: inline-table;
 }
+
+#previous_images_button {
+	position: absolute;
+	left: 50px;
+	width: 150px;
+	color: white;
+	top: 5vw;
+	pointer-events: all;
+}
+
+#previous_images {
+	display: grid;
+}

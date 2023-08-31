@@ -1290,7 +1290,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
-				var canvas = get_canvas_in_class(layer, "maximally_activated_class");
+				var canvas = get_canvas_in_class(layer, is_cosmo_mode ? "current_images" : "maximally_activated_class");
 
 				var data_hash = {
 					layer: layer, 
@@ -2660,26 +2660,87 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 	}
 }
 
+function toggle_previous_current_generated_images () {
+	if(!$("#current_images").is(":visible")) {
+		$("#previous_images_button").html("&#x2190; <span class='TRANSLATEME_previous_images'></span>");
+		$("#previous_images").hide();
+		$("#current_images").show();
+		$(".layer_image").show();
+	} else {
+		assert(Array.isArray(previously_generated_images), "previously_generated_images should be an array");
+		assert(Array.isArray(labels), "labels should be an array");
+		assert(labels.length > 0, "labels array should not be empty");
+
+		var table = "<table>";
+		var last_cell_nr = 0;
+		var last_line_nr = 0;
+
+		table += "<tr>";
+		table += "<th>" + labels.join("</th><th>") + "</th>";
+		table += "</tr>";
+
+		table += "<tr>";
+
+		var uuids = [];
+
+		for (var i = 0; i < previously_generated_images.length; i++) {
+			var cell_nr = i % labels.length;
+			var line_nr = Math.floor(i / labels.length);
+
+			if (cell_nr == 0) {
+				table += "<tr>";
+			}
+
+			var elem_uuid = uuidv4(); // Assuming you have a function for generating UUIDs
+			uuids.push(elem_uuid);
+			table += `<td><span id='${elem_uuid}'></span></td>`;
+
+			if (cell_nr == (labels.length - 1)) {
+				table += "</tr>";
+			}
+		}
+		table += "</tr>";
+		table += "</table>";
+
+		$(".layer_image").hide();
+
+		$("#previous_images").html(table);
+		
+		for (var i = 0; i < previously_generated_images.length; i++) {
+			var _prev = previously_generated_images[i];
+
+			log("Appending ", _prev, " to ", $("#" + uuids[i]), "#" + uuids[i]);
+
+			$("#" + uuids[i]).append(_prev);
+			$("#" + uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
+		}
+
+
+		$("#previous_images_button").html("<span class='TRANSLATEME_current_images'></span> &#x2192;");
+		$("#current_images").hide();
+		$("#previous_images").show();
+	}
+
+	updateTranslations();
+}
+
 var already_moved_to_predict_for_cosmo = false;
 
 async function cosmo_maximally_activate_last_layer () {
 	generating_images = true;
 
-	var $tmp;
-
 	if($(".layer_image").length) {
-		//$tmp = $("<span id='__tmp__prev_generated' style='display: none'></span>");
-		$tmp = $("<span id='__tmp__prev_generated'></span>");
-
-		var $layer_images = $(".layer_image");
+		var $layer_images = $("#maximally_activated_content>.layer_image");
 
 		for (var i = 0; i < $layer_images.length; i++) {
 			var li = $layer_images[i];
 
 			var clone = cloneCanvas(li);
-			$tmp.append(clone);
+
+			previously_generated_images.push(clone);
 		}
 
+		await fit_to_window();
 	} else {
 		log("No previous layers found");
 	}
@@ -2702,7 +2763,6 @@ async function cosmo_maximally_activate_last_layer () {
 
 	await fit_to_window();
 
-
 	var example_image_width = $($(".layer_image")[0]).width();
 
 	var style_internal = `width: ${example_image_width + 65}px;`;
@@ -2710,14 +2770,27 @@ async function cosmo_maximally_activate_last_layer () {
 
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
-		<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
-		<br><br>
-		<span ${style}><span class='TRANSLATEME_fire'></span>:</span>
-		<span ${style}><span class='TRANSLATEME_mandatory'></span>:</span>
-		<span ${style}><span class='TRANSLATEME_forbidden'></span>:</span>
-		<span ${style}><span class='TRANSLATEME_rescue'></span>:</span>
-		<span ${style}><span class='TRANSLATEME_warning'></span>:</span>
+		<div id='previous_images_button' style='display: none' class='green_bg'>&#x2190; <span class='TRANSLATEME_previous_images'></span></div>
+
+		<span id='current_images'>
+			<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
+			<br><br>
+			<span ${style}><span class='TRANSLATEME_fire'></span>:</span>
+			<span ${style}><span class='TRANSLATEME_mandatory'></span>:</span>
+			<span ${style}><span class='TRANSLATEME_forbidden'></span>:</span>
+			<span ${style}><span class='TRANSLATEME_rescue'></span>:</span>
+			<span ${style}><span class='TRANSLATEME_warning'></span>:</span>
+		</span>
+		<span id='previous_images' style='display:none'>
+		</span>
 	`);
+
+
+	if(previously_generated_images.length) {
+		$("#previous_images_button").show();
+	}
+
+	$("#previous_images_button").on("click", toggle_previous_current_generated_images);
 
 	updateTranslations();
 	await fit_to_window();
