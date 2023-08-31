@@ -700,7 +700,7 @@ async function cosmo_mode () {
 	$('body').css('cursor', get_cursor_or_none("default"));
 
 	log("Setting validation split to 0");
-	set_validationSplit(0);
+	set_validation_split(0);
 }
 
 function isTouchDevice() {

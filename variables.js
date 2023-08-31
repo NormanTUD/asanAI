@@ -1423,7 +1423,7 @@ async function _cosmo_set_environment (_ep, max_number_of_files_per_category, _v
 	$("#number_of_images_per_category").html(max_number_of_files_per_category);
 
 	log(`Setting validation split to ${_vs}`);
-	set_validationSplit(_vs);
+	set_validation_split(_vs);
 }
 
 async function cosmo_set_tiny_training_dataset () {

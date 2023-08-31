@@ -1632,10 +1632,14 @@ function set_momentum(val) {
 	$("#momentum_" + $("#optimizer").val()).val(val);
 }
 
-function set_validationSplit(val) {
-	assert(typeof(val) == "number", val + " is not an number but " + typeof(number));
+function set_validation_split(val) {
+	assert(typeof(val) == "number" || isNumeric(val), val + " is not an number but " + typeof(number));
+	val = parseInt(val);
+
 	l(language[lang]["set_val_split_to"] + val);
 	$("#validationSplit").val(val);
+
+	set_get("validation_split", val);
 }
 
 function set_epsilon(val) {
@@ -1748,14 +1752,17 @@ function get_batchSize() {
 	return parseInt($("#batchSize").val());
 }
 
-function set_batchSize(val) {
-	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
+function set_batch_size(val) {
+	assert(typeof(val) == "number" || isNumeric(val), val + " is not numeric but " + typeof (val));
+	val = parseInt(val);
+
 	l("Set batchsize to " + val);
 	$("#batchSize").val(val);
+
+	set_get("batch_size", val);
 }
 
 function set_epochs(val) {
-	logt(`set_epochs(${val})`);
 	assert(typeof(val) == "number" || isNumeric(val), val + " is not numeric but " + typeof (val));
 	val = parseInt(val);
 	l("Setting epochs to " + val);
@@ -2323,8 +2330,12 @@ async function set_config(index) {
 
 			if(finished_loading) {
 				set_epochs(config["epochs"]);
+				set_batch_size(config["batchSize"]);
+				set_validation_split(config["validationSplit"]);
 			} else {
 				set_epochs(get_get("epochs", config["epochs"]));
+				set_batch_size(get_get("batch_size", config["batchSize"]));
+				set_validation_split(get_get("validation_split", config["validationSplit"]));
 			}
 			set_loss(config["loss"], 0);
 
@@ -2346,13 +2357,6 @@ async function set_config(index) {
 
 			if (["monentum", "rmsprop"].includes(config["optimizer"])) {
 				set_momentum(config["momentum"]);
-			}
-
-			set_batchSize(parseInt(config["batchSize"]));
-			if(!is_cosmo_mode) {
-				set_validationSplit(config["validationSplit"]);
-			} else {
-				set_validationSplit(0);
 			}
 		}
 
@@ -2622,7 +2626,7 @@ async function init_dataset() {
 	clicked_on_tab = 0;
 	init_epochs(2);
 
-	set_batchSize(2);
+	set_batch_size(2);
 
 	$(".training_performance_tabs").hide();
 
