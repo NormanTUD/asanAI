@@ -2716,7 +2716,7 @@ function toggle_previous_current_generated_images () {
 		for (var i = 0; i < previously_generated_images.length; i++) {
 			var _prev = previously_generated_images[i];
 
-			log("Appending ", _prev, " to ", $("#" + uuids[i]), "#" + uuids[i]);
+			//log("Appending ", _prev, " to ", $("#" + uuids[i]), "#" + uuids[i]);
 
 			$("#" + uuids[i]).append(_prev);
 			$("#" + uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
