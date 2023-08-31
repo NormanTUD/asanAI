@@ -1414,34 +1414,38 @@ var finished_loading = false;
 
 var generating_images = false;
 
-async function _cosmo_set_environment (_ep, max_number_of_files_per_category, _vs) {
-	log(`Setting Epochs to ${_ep}...`);
+async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _vs) {
+	log(`_cosmo_set_environment (_ep = ${_ep}, _max_number_of_files_per_category = ${_max_number_of_files_per_category}, _vs = ${_vs})`);
+
 	await set_epochs(_ep);
 
-	log(`Setting max files per category to ${max_number_of_files_per_category}...`);
-	$("#max_number_of_files_per_category").val(max_number_of_files_per_category);
-	$("#number_of_images_per_category").html(max_number_of_files_per_category);
+	$("#max_number_of_files_per_category").val(_max_number_of_files_per_category);
+	$("#number_of_images_per_category").html(_max_number_of_files_per_category);
 
-	log(`Setting validation split to ${_vs}`);
 	set_validation_split(_vs);
 }
 
-async function cosmo_set_tiny_training_dataset () {
+async function cosmo_stage_one () {
+	log("Cosmo stage 1");
 	var _ep  = parseInt(get_get("epochs", 10));
-	var max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category", 5));
+	var _max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category", 5));
 	var _vs = 0;
 
-	await _cosmo_set_environment(_ep, max_number_of_files_per_category, _vs);
+	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
+
+	current_cosmo_stage = 1;
 }
 
-async function cosmo_set_large_training_dataset () {
+async function cosmo_stage_two () {
+	log("Cosmo stage 2");
 	set_retrain_button();
 
-	var _ep  = parseInt(get_get("epochs", 20));
-	var max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category", 30));
+	var _ep  = parseInt(get_get("epochs_stage_2", get_get("epochs", 20)));
+	var _max_number_of_files_per_category = parseInt(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 30)));
 	var _vs = 15;
 
-	await _cosmo_set_environment(_ep, max_number_of_files_per_category, _vs);
+	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
+	current_cosmo_stage = 2;
 }
 
 async function fireworks_and_reload (reload=1, waittime=10000) {
@@ -1487,12 +1491,12 @@ function set_retrain_button () {
 
 var cosmo_functions_at_milestones = {
 	"finished_training": {
-		1: cosmo_set_large_training_dataset,
+		1: cosmo_stage_two,
 		3: fireworks_no_reload,
 		10: set_augment_for_cosmo
 	},
 	"started_loading_data": {
-		2: cosmo_set_tiny_training_dataset
+		2: cosmo_stage_one
 	}
 };
 
@@ -1528,3 +1532,5 @@ var global_x = null;
 var global_y = null;
 
 var last_updated_page = null;
+
+var current_cosmo_stage = 1;
