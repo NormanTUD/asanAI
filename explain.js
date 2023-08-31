@@ -2770,7 +2770,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
-		<div id='previous_images_button' style='display: none' class='green_bg'>&#x2190; <span class='TRANSLATEME_previous_images'></span></div>
+		<div id='previous_images_button' style='display: none' class='green_bg cosmo_button'>&#x2190; <span class='TRANSLATEME_previous_images'></span></div>
 
 		<span id='current_images'>
 			<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
