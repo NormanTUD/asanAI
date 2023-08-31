@@ -689,7 +689,14 @@ async function _print_predictions_text(count, example_predict_data) {
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json"
-	var example_predict_data = await get_cached_json(example_url)
+	var example_predict_data = null;
+
+	try {
+		example_predict_data = await get_cached_json(example_url)
+	} catch (e) {
+		console.error(e);
+		return;
+	}
 
 	var html_contents = "";
 

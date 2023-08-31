@@ -579,9 +579,13 @@ async function get_cached_json(url) {
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
 	}
-	var data = await $.getJSON(url);
-	_cached_json[url] = data;
-	return data;
+	try {
+		var data = await $.getJSON(url);
+		_cached_json[url] = data;
+		return data;
+	} catch (e) {
+		throw new Error(e);
+	}
 }
 
 /* This function gets the configuration for the index passed in. If no index is passed in, it gets the configuration for the currently selected dataset. */
