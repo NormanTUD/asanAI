@@ -1121,12 +1121,12 @@ function randomInRange(start,end) {
 
 function drawImagesInGrid(images, categories, probabilities, numCategories) {
 	$("#canvas_grid_visualization").html("");
-	var categoryNames = labels.slice(0, numCategories);
+	var categoryNames = is_cosmo_mode ? labels : labels.slice(0, numCategories);
 	var margin = 40;
 	var canvases = [];
 
 	// create a canvas for each category
-	for (let i = 0; i < (numCategories + 1); i++) {
+	for (let i = 0; i < (numCategories + (is_cosmo_mode ? 0 : 1)); i++) {
 		var canvas = document.createElement("canvas");
 		var pw = parseInt($("#tfvis_tab").width() * relationScale);
 		var w = parseInt(pw / (numCategories + 2));
@@ -1156,48 +1156,48 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 
 	var graphWidth = canvases[0].width - margin * 2;
 	var graphHeight = canvases[0].height - margin * 2;
-
 	var maxProb = 1;
 
-	{
+	/*
+	if(!is_cosmo_mode) {
+
 		var ctx = canvases[0].getContext("2d");
 		for (let j = 0; j <= 10; j += 2) {
 			var yPos = margin + graphHeight - j / 10 * graphHeight;
 			var neg = -10;
 			var label = (j / 10 * maxProb).toFixed(2);
-			if(is_cosmo_mode) {
-				if (label == "0.00") {
-					label = language[lang]["very_unsure"];
-				} else if (label == "0.20") {
-					label = language[lang]["quite_unsure"];
-				} else if (label == "0.40") {
-					label = language[lang]["a_bit_unsure"];
-				} else if (label == "0.60") {
-					label = language[lang]["neutral"];
-				} else if (label == "0.80") {
-					label = language[lang]["relatively_sure"];
-				} else if (label == "1.00") {
-					label = language[lang]["very_sure"];
-				} else {
-					console.warn("cosmo-label not found for " + label + " probability");
-				}
-				neg = +90;
+			if (label == "0.00") {
+				label = language[lang]["very_unsure"];
+			} else if (label == "0.20") {
+				label = language[lang]["quite_unsure"];
+			} else if (label == "0.40") {
+				label = language[lang]["a_bit_unsure"];
+			} else if (label == "0.60") {
+				label = language[lang]["neutral"];
+			} else if (label == "0.80") {
+				label = language[lang]["relatively_sure"];
+			} else if (label == "1.00") {
+				label = language[lang]["very_sure"];
+			} else {
+				console.warn("cosmo-label not found for " + label + " probability");
 			}
-			ctx.fillText(label, margin + neg, yPos);
+			neg = +90;
 		}
+		ctx.fillText(label, margin + neg, yPos);
 	}
+	*/
 
 	var targetSize = Math.min(40, height, width); // Change this to the desired size
 
 	// draw y-axis labels
 
-	for (let canvasIndex = 1; canvasIndex < (numCategories + 1); canvasIndex++) {
+	for (let canvasIndex = (is_cosmo_mode ? 0 : 1); canvasIndex < (numCategories + (is_cosmo_mode ? 0 : 1)); canvasIndex++) {
 		var canvas = canvases[canvasIndex];
 		var ctx = canvas.getContext("2d");
 
-		if(!canvasIndex == 0) {
+		if(!canvasIndex == 0 || is_cosmo_mode) {
 			ctx.textAlign = "center";
-			var label = categoryNames[canvasIndex - 1];
+			var label = categoryNames[canvasIndex - (is_cosmo_mode ? 0 : 1)];
 			ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
 		}
 	}
@@ -1213,7 +1213,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 		var canvasIndex = category;
-		var canvas = canvases[canvasIndex + 1];
+		var canvas = canvases[canvasIndex + (is_cosmo_mode ? 0 : 1)];
 		if(canvas) {
 			var ctx = canvas.getContext("2d");
 
@@ -1237,7 +1237,7 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 			//log("DEBUG:", image, imageX, imageY, w, h);
 			ctx.drawImage(image, imageX, imageY, w, h);
 		} else {
-			console.warn("Canvas not defined. canvasIndex + 1:", canvasIndex + 1);
+			console.warn("Canvas not defined. canvasIndex + 1:", canvasIndex + (is_cosmo_mode ? 0 : 1));
 		}
 	}
 
@@ -1248,6 +1248,9 @@ function drawImagesInGrid(images, categories, probabilities, numCategories) {
 			//var containerId = "#canvas_grid_visualization_" + (i + 1);
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
+			if(is_cosmo_mode) {
+				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, #00429d 0%, #96ffea 80%, lightyellow 100%"); 
+			}
 			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 		} else {
 			console.warn("Canvas could not be appended!");
