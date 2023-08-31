@@ -435,7 +435,7 @@ function get_fit_data () {
 
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
-			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 1) {
+			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 2) {
 				$("#cosmo_first_stage_explanation").hide();
 				$("#cosmo_second_stage_explanation").show();
 
