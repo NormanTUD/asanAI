@@ -93,10 +93,7 @@
 	margin-right: auto;
 }
 
-.plotly_epoch_history_div {
+#plotly_epoch_history_div {
 	width: 800px;
-}
-
-.overlay_each_other div {
-	display: grid;
+	display: inline-table;
 }

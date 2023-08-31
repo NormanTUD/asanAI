@@ -435,7 +435,7 @@ function get_fit_data () {
 
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
-			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 2) {
+			if(Object.keys(current_skills).includes("finished_training") && current_skills["finished_training"] >= 1) {
 				if(epochNr == 0 || epochNr == 1) {
 					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 				} else {
