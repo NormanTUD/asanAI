@@ -1392,7 +1392,9 @@ text-align: end;
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										<hr class="cosmo_hr">
-										<span class="TRANSLATEME_currently_the_network_has_seen"></span> <span id='current_epoch_cosmo_display'>0</span> <span class="TRANSLATEME_of"></span> <span id="max_epoch_cosmo_display"></span> <span class="TRANSLATEME_times_seen"></span> <span class="TRANSLATEME_it_will_take_about"></span> <span id="time_estimate_cosmo">00:00</span> <span class="TRANSLATEME_remain_left"></span>.
+										<span id="network_has_seen_msg" style="display: none">
+											<span class="TRANSLATEME_currently_the_network_has_seen"></span> <span id='current_epoch_cosmo_display'>0</span> <span class="TRANSLATEME_of"></span> <span id="max_epoch_cosmo_display"></span> <span class="TRANSLATEME_times_seen"></span> <span class="TRANSLATEME_it_will_take_about"></span> <span id="time_estimate_cosmo">00:00</span> <span class="TRANSLATEME_remain_left"></span>.
+										</span>
 									</div>
 									<span id="canvas_grid_visualization"></span>
 									<span id="show_visualization_here_in_cosmo"></span>

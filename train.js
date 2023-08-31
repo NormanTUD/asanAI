@@ -298,6 +298,8 @@ function get_fit_data () {
 		$(".training_performance_tabs").show();
 
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+
+		$("#network_has_seen_msg").hide();
 	};
 
 	callbacks["onBatchBegin"] = async function () {
@@ -484,6 +486,7 @@ function get_fit_data () {
 		} else {
 			$("#tiny_graph").html("").hide();
 		}
+		$("#network_has_seen_msg").show();
 	}
 
 	callbacks["onTrainEnd"] = async function () {
