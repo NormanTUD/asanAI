@@ -2277,6 +2277,7 @@ async function set_config(index) {
 				$("#width").val(config["width"]);
 				trigger_height_change++;
 				width = config["width"];
+				assert(typeof(width) == "number", "width is not a number");
 			}
 
 			if (config["height"]) {
@@ -2284,6 +2285,7 @@ async function set_config(index) {
 				$("#height").val(config["height"]);
 				trigger_height_change++;
 				height = config["height"];
+				assert(typeof(height) == "number", "height is not a number");
 			}
 
 
@@ -2291,20 +2293,26 @@ async function set_config(index) {
 			if (config["labels"]) {
 				l("Setting labels from config");
 				labels = config["labels"];
+				assert(labels.length > 0, "could not get labels even though they are specified");
 			}
 
 			if (config["max_number_of_files_per_category"]) {
+				assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
 				l("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
 				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 			}
 
 			if (config["divide_by"]) {
+				assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
 				l("Setting divide_by to " + config["divide_by"]);
 				$("#divide_by").val(config["divide_by"]);
 			} else {
 				l("Setting divide_by to 1");
 				$("#divide_by").val(1);
 			}
+
+			assert(typeof(config["epochs"]) == "number", "epochs is not a number");
+			assert(typeof(config["loss"]) == "string", "loss is not a string");
 
 			set_epochs(config["epochs"]);
 			set_loss(config["loss"], 0);
