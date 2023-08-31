@@ -110,17 +110,6 @@ async function hasFrontBack() {
 
 }
 
-function get_get (param) {
-	const queryString = window.location.search;
-
-	const urlParams = new URLSearchParams(queryString);
-
-	var res = urlParams.get(param);
-
-
-	return res;
-}
-
 function init_tabs () {
 	l("Initializing tabs");
 
@@ -464,7 +453,7 @@ $(document).ready(async function() {
 
 	const urlParams = new URLSearchParams(window.location.search);
 	if(urlParams.get("epochs")) {
-		$("#epochs").val(urlParams.get("epochs")).trigger("change");
+		set_epochs(urlParams.get("epochs"));
 	}
 
 	if(urlParams.get("imgcat")) {

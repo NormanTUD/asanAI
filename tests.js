@@ -458,7 +458,7 @@ async function run_tests () { // var start_tensors
 
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
-			$("#epochs").val(1).trigger("change");
+			set_epochs(1);
 			$("#max_number_of_files_per_category").val(1).trigger("change");
 			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change")
 

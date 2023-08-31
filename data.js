@@ -1576,7 +1576,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 async function adjust_number_of_neurons (layer) {
 	var original_epochs = parseInt($("#epochs").val());
 
-	$("#epochs").val(10);
+	set_epochs(10);
 
 	await train_neural_network();
 
@@ -1600,7 +1600,7 @@ async function adjust_number_of_neurons (layer) {
 	}
 
 
-	$("#epochs").val(original_epochs);
+	set_epochs(original_epochs);
 	return adjusted_neurons_total;
 }
 

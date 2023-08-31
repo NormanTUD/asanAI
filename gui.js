@@ -1755,9 +1755,14 @@ function set_batchSize(val) {
 }
 
 function set_epochs(val) {
-	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
+	logt(`set_epochs(${val})`);
+	assert(typeof(val) == "number" || isNumeric(val), val + " is not numeric but " + typeof (val));
+	val = parseInt(val);
 	l("Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
+	$(document.getElementById("epochs")).trigger("change");
+
+	set_get("epochs", val);
 }
 
 function set_number_of_layers(val) {
@@ -2292,8 +2297,6 @@ async function set_config(index) {
 				assert(typeof(height) == "number", "height is not a number");
 			}
 
-
-
 			if (config["labels"]) {
 				l("Setting labels from config");
 				labels = config["labels"];
@@ -2318,7 +2321,11 @@ async function set_config(index) {
 			assert(typeof(config["epochs"]) == "number", "epochs is not a number");
 			assert(typeof(config["loss"]) == "string", "loss is not a string");
 
-			set_epochs(config["epochs"]);
+			if(finished_loading) {
+				set_epochs(config["epochs"]);
+			} else {
+				set_epochs(get_get("epochs", config["epochs"]));
+			}
 			set_loss(config["loss"], 0);
 
 			set_metric(config["metric"], 0);
@@ -6550,7 +6557,7 @@ function cloneCanvas(oldCanvas) {
 function get_get(paramName, _default) { 
 	const urlParams = new URLSearchParams(window.location.search); 
 	var res = urlParams.get(paramName); 
-	if(res !== null) { 
+	if(res !== null && res !== "") { 
 		return res; 
 	} 
 
