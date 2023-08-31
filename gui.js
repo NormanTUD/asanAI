@@ -6572,6 +6572,9 @@ function get_get(paramName, _default) {
 
 // Function to set or update a query parameter in the URL
 function set_get(paramName, paramValue) {
+	if(is_cosmo_mode) {
+		log("No set_get in cosmo mode...");
+	}
 	const urlParams = new URLSearchParams(window.location.search);
 	urlParams.set(paramName, paramValue);
 
