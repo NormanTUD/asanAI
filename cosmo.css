@@ -92,3 +92,7 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.plotly_epoch_history_div {
+	width: 800px;
+}

@@ -1391,7 +1391,7 @@ text-align: end;
 									<br>
 									<div id="training_content">
 										<div id="simplest_training_data_visualization" style="display: none"></div>
-										<div style="display: none">
+										<div id="plotly_epoch_history_div" style="display: none">
 											<div id="plotly_epoch_history"></div>
 										</div>
 
