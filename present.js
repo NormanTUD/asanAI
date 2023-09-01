@@ -4,11 +4,26 @@ var divs = [];
 
 // Function to handle keydown events
 async function handleKeydown(event) {
+	$(".remove_me_at_first_tip").remove();
 	if (event.key === "ArrowLeft" || event.key === "Left") {
 		showPreviousDiv();
 	} else if (event.key === "ArrowRight" || event.key === "Right" || event.key === " ") {
 		await showNextDiv();
 	}
+}
+
+var shown_hand = 0;
+
+function show_hand () {
+	if(shown_hand) {
+		return;
+	}
+
+	$(".remove_me_at_first_tip").remove();
+
+	$("<img class='remove_me_at_first_tip' src='tapme.png' style='z-index: 99999999999999; position: absolute;' />").appendTo($(body));
+
+	shown_hand = 1;
 }
 
 // Function to display a div in full screen
@@ -43,6 +58,8 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	if(!is_presenting) {
 		$("#presentation_site_nr").remove();
 	}
+
+	show_hand();
 }
 
 // Function to remove full screen styles
@@ -61,6 +78,7 @@ function removeFullScreen(divs, currentDivPresentationIndex) {
 
 // Function to handle scrolling left or right
 async function handleScroll(event) {
+	$(".remove_me_at_first_tip").remove();
 	var delta = Math.sign(event.deltaY || event.wheelDelta);
 	if (delta > 0) {
 		await showNextDiv();
@@ -144,6 +162,7 @@ function showPreviousDiv() {
 
 // Function to handle touch events for swiping
 async function handleTouch(event) {
+	$(".remove_me_at_first_tip").remove();
 	var x = event.touches[0].clientX;
 	var deltaX = x - startX;
 
@@ -156,11 +175,13 @@ async function handleTouch(event) {
 
 // Function to handle touch start event
 function handleTouchStart(event) {
+	$(".remove_me_at_first_tip").remove();
 	startX = event.touches[0].clientX;
 }
 
 // Function to handle touch end event
 function handleTouchEnd(event) {
+	$(".remove_me_at_first_tip").remove();
 	startX = null;
 }
 
@@ -263,6 +284,7 @@ function runPresentation(dn) {
 
 // Function to handle click events during presentation
 async function handleClick(event) {
+	$(".remove_me_at_first_tip").remove();
 	if (event.target.id === "scroll_right") {
 		return; // Do not advance to the next page
 	}
