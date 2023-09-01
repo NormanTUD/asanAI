@@ -2871,7 +2871,7 @@ async function cosmo_maximally_activate_last_layer () {
 	for (var i = 0; i < canvasses.length; i++) {
 		var _prev = canvasses[i][0];
 		$("#" + table_uuids[i]).append(_prev);
-		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
+		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges").css("margin-right", "65px").css("margin-left", "65px");
 	}
 
 	if(previously_generated_images.length) {
