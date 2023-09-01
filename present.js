@@ -4,7 +4,6 @@ var divs = [];
 
 // Function to handle keydown events
 async function handleKeydown(event) {
-	$(".remove_me_at_first_tip").remove();
 	if (event.key === "ArrowLeft" || event.key === "Left") {
 		showPreviousDiv();
 	} else if (event.key === "ArrowRight" || event.key === "Right" || event.key === " ") {
@@ -135,6 +134,7 @@ function addScrollButtons(currentDivPresentationIndex, maxIndex) {
 
 // Function to show the next div
 async function showNextDiv() {
+	$(".remove_me_at_first_tip").remove();
 	if (currentDivPresentationIndex < divs.length - 1) {
 		removeFullScreen(divs, currentDivPresentationIndex);
 		currentDivPresentationIndex++;
@@ -150,6 +150,7 @@ async function showNextDiv() {
 
 // Function to show the previous div
 function showPreviousDiv() {
+	$(".remove_me_at_first_tip").remove();
 	if (currentDivPresentationIndex > 0) {
 		removeFullScreen(divs, currentDivPresentationIndex);
 		currentDivPresentationIndex--;
@@ -181,12 +182,12 @@ function handleTouchStart(event) {
 
 // Function to handle touch end event
 function handleTouchEnd(event) {
-	$(".remove_me_at_first_tip").remove();
 	startX = null;
 }
 
 // Function to end the presentation
 async function endPresentation() {
+	$(".remove_me_at_first_tip").remove();
 	$("#skip_presentation_button").remove();
 
 	if (done_presenting) {
@@ -284,7 +285,6 @@ function runPresentation(dn) {
 
 // Function to handle click events during presentation
 async function handleClick(event) {
-	$(".remove_me_at_first_tip").remove();
 	if (event.target.id === "scroll_right") {
 		return; // Do not advance to the next page
 	}
