@@ -119,6 +119,8 @@ in creating this program:
 
 - [Smooth arrow animation](https://codepen.io/vlt_dev/pen/NWMNzpE)
 
+- [Multitouch tap.png](https://commons.wikimedia.org/wiki/File:Multitouch_tap.png)
+
 [comment]: <> (EndSources)
 
 # PHP Settings
