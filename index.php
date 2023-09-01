@@ -1378,10 +1378,17 @@ text-align: end;
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
 										<span class="TRANSLATEME_program_looks_at_data"></span><br>
-										<span id="cosmo_first_stage_explanation">
+
+										<span id="cosmo_training_predictions_explanation" style="display:none">
+											<hr class="cosmo_hr">
+											<span class="TRANSLATEME_predictions_explanation_while_training"></span><br>
+										</span>
+
+										<span id="cosmo_training_grid_stage_explanation" style="display: none">
 											<span class="TRANSLATEME_the_further_on_top_the_better"></span><br>
 										</span>
-										<span id="cosmo_second_stage_explanation" style="display: none">
+
+										<span id="cosmo_training_plotly_explanation" style="display:none">
 											<hr class="cosmo_hr">
 											<span class="TRANSLATEME_graph_explanation"></span><br>
 										</span>
