@@ -1,3 +1,7 @@
+.container {
+	width: unset !important;
+}
+
 #webcam_tab {
 	display: contents;
 }
