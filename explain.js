@@ -19,14 +19,21 @@ function normalize_to_rgb_min_max (x, min, max) {
 	return val;
 }
 
-function get_canvas_in_class (layer, classname, dont_append) {
-	var new_canvas = $('<canvas/>', {class: "layer_image"}).prop({
+function get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
+	var _uuid = "";
+	var _uuid_str = "";
+	if (use_uuid) {
+		_uuid = uuidv4();
+		_uuid_str = " id='" + _uuid + "'"
+	}
+	var new_canvas = $('<canvas' + _uuid_str + '/>', {class: "layer_image"}).prop({
 		width: 0,
 		height: 0
 	});
 	if(!dont_append) {
 		$($('.' + classname)[layer]).append(new_canvas);
 	}
+
 	return new_canvas[0];
 }
 
@@ -1091,6 +1098,8 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	}
 
+	var canvasses = [];
+
 	currently_generating_images = true;
 
 	var neurons = _get_neurons_last_layer(layer, type);
@@ -1133,7 +1142,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 		try {
 			l(base_msg);
-			await draw_maximally_activated_neuron(layer, neurons - i - 1);
+			canvasses.push(await draw_maximally_activated_neuron(layer, neurons - i - 1));
 		} catch (e) {
 			if(("" + e).includes("already disposed")) {
 				if(!is_recursive) {
@@ -1141,7 +1150,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 						await delay(200);
 						try {
 							l(`${base_msg} ${language[lang]["failed_try_again"]}...`);
-							await draw_maximally_activated_layer(layer, type, 1);
+							canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 						} catch (e) {
 							if(("" + e).includes("already disposed")) {
 								
@@ -1196,7 +1205,6 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	await allow_editable_labels();
 
-	
 	if(!is_cosmo_mode) {
 		window.scrollTo(0,0);
 		$('body').css('cursor', 'default');
@@ -1207,6 +1215,8 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	if(!(started_training || model.isTraining)) {
 		await gui_not_in_training(0);
 	}
+
+	return canvasses;
 }
 
 function _show_eta (times, i, neurons) {
@@ -1265,6 +1275,8 @@ async function predict_maximally_activated (item, force_category) {
 async function draw_maximally_activated_neuron (layer, neuron) {
 	var current_input_shape = get_input_shape();
 
+	var canvasses = [];
+
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
 
@@ -1290,7 +1302,11 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
-				var canvas = get_canvas_in_class(layer, is_cosmo_mode ? "current_images" : "maximally_activated_class");
+				var to_class = is_cosmo_mode ? "current_images" : "maximally_activated_class";
+				var canvas = get_canvas_in_class(layer, to_class, 0, 1);
+				var _uuid = canvas.id;
+
+				canvasses.push(canvas);
 
 				var data_hash = {
 					layer: layer, 
@@ -1302,18 +1318,17 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
 
 				if(res) {
-					$("#maximally_activated_content").prepend(canvas);
 					if(!is_cosmo_mode) {
-						show_tab_label("maximally_activated_label", 1)
+						$("#maximally_activated_content").prepend(canvas);
+						if(!is_cosmo_mode) {
+							show_tab_label("maximally_activated_label", 1)
+						}
 					}
 				} else {
 					log("Res: " + res);
 				}
 			}
-
-			return res;
 		}
-		return false;
 	} catch (e) {
 		await write_error(e);
 		show_tab_label("visualization_tab", 1);
@@ -1323,6 +1338,8 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 
 	await tf.nextFrame();
+
+	return canvasses;
 }
 
 function array_to_fixed (array, fixnr) {
@@ -2660,31 +2677,73 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 	}
 }
 
-function _create_table (previously_generated_images) {
+function findKeyByValue(obj, valueToFind, _default=null) {
+	try {
+		for (const key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (obj[key] === valueToFind) {
+					return [1, key]; // Found the key
+				}
+			}
+		}
+
+		return [0, _default];
+	} catch (error) {
+		console.warn("Error:", error.message); // Log and warn about the error
+		return [0, _default]; // Return null to indicate that the key was not found
+	}
+}
+
+function _create_table_cosmo (pgi, style="") {
+	assert(Array.isArray(pgi), "pgi is not an array");
+	assert(pgi.length, "pgi is empty");
+
+	log("_create_table_cosmo(", pgi, style, ")");
+
 	var uuids = [];
-	var table = "<table>";
+	var table = "<table" + (style ? " style= '" + style + "' " : "") + ">";
 	table += "<tr>";
-	if((previously_generated_images.length / labels.length) > 1) {
+	if((pgi.length / labels.length) > 1) {
 		table += "<th>Training</th>";
 	}
-	table += "<th>" + labels.join("</th><th>") + "</th>";
+
+	var labels_arr_str = [];
+
+	for (var i in labels) {
+		if(isNumeric(i)) {
+			var _label = findKeyByValue(language[lang], labels[i], labels[i]);
+			log("!!! !!! !!! _label:", _label);
+			if(labels[0]) {
+				labels_arr_str.push(`<span class='TRANSLATEME_${_label[1]}'></span>`);
+			} else {
+				labels_arr_str.push(`${_label[1]} BB`);
+			}
+		}
+	}
+
+	table += "<th>" + labels_arr_str.join("</th><th>") + "</th>";
 	table += "</tr>";
 
 	table += "<tr>";
 
-	for (var i = 0; i < previously_generated_images.length; i++) {
+	for (var i = 0; i < pgi.length; i++) {
 		var cell_nr = i % labels.length;
 		var line_nr = Math.floor(i / labels.length);
 
 		if (cell_nr == 0) {
 			table += "<tr>";
 
-			if((previously_generated_images.length / labels.length) > 1) {
+			if((pgi.length / labels.length) > 1) {
 				table += "<td>" + (line_nr + 1) + "</td>";
 			}
 		}
 
 		var elem_uuid = uuidv4(); // Assuming you have a function for generating UUIDs
+		/*
+		if(Array.isArray(pgi[i])) {
+			elem_uuid = pgi[i][1];
+		}
+		*/
 		uuids.push(elem_uuid);
 		table += `<td><span id='${elem_uuid}'></span></td>`;
 
@@ -2695,7 +2754,11 @@ function _create_table (previously_generated_images) {
 	table += "</tr>";
 	table += "</table>";
 
-	return [table, uuids];
+	var res = [table, uuids];
+
+	log(res);
+
+	return res;
 }
 
 function toggle_previous_current_generated_images () {
@@ -2712,7 +2775,7 @@ function toggle_previous_current_generated_images () {
 		var last_cell_nr = 0;
 		var last_line_nr = 0;
 
-		var table_and_uuids = _create_table(previously_generated_images);
+		var table_and_uuids = _create_table_cosmo(previously_generated_images);
 
 		var table = table_and_uuids[0];
 		var uuids = table_and_uuids[1];
@@ -2774,7 +2837,7 @@ async function cosmo_maximally_activate_last_layer () {
 	//$("#cosmo_visualize_last_layer").html("");
 	var lt = get_layer_type_array();
 
-	await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
 	await tf.nextFrame();
 
@@ -2785,6 +2848,13 @@ async function cosmo_maximally_activate_last_layer () {
 	var style_internal = `width: ${example_image_width + 65}px;`;
 	var style = ` class='cosmo_labels_above_generated_images' style='${style_internal}' `;
 
+	var table_and_uuids = _create_table_cosmo(canvasses, 'display:initial');
+
+	var table = table_and_uuids[0];
+	var table_uuids = table_and_uuids[1];
+
+	log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
+
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
 		<div id='previous_images_button' style='display: none' class='green_bg cosmo_button'>&#x2190; <span class='TRANSLATEME_previous_images'></span></div>
@@ -2792,16 +2862,17 @@ async function cosmo_maximally_activate_last_layer () {
 		<span id='current_images'>
 			<span class='TRANSLATEME_the_ai_thinks_categories_look_like_this'></span>:
 			<br><br>
-			<span ${style}><span class='TRANSLATEME_fire'></span>:</span>
-			<span ${style}><span class='TRANSLATEME_mandatory'></span>:</span>
-			<span ${style}><span class='TRANSLATEME_forbidden'></span>:</span>
-			<span ${style}><span class='TRANSLATEME_rescue'></span>:</span>
-			<span ${style}><span class='TRANSLATEME_warning'></span>:</span>
+			${table}
 		</span>
 		<span id='previous_images' style='display:none'>
 		</span>
 	`);
 
+	for (var i = 0; i < canvasses.length; i++) {
+		var _prev = canvasses[i][0];
+		$("#" + table_uuids[i]).append(_prev);
+		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
+	}
 
 	if(previously_generated_images.length) {
 		$("#previous_images_button").show();

@@ -277,7 +277,8 @@
 			"graph_explanation" => "The lines in the graph represent the error. The lower the line, the smaller the error. The blue line indicates the improvements on the data that the network is trained on, while the orange line indicates how well it performs on data it hasn't seen before. Both lines should decrease and look somewhat similar for the training to be progressing well.",
 			"previous_images" => "Previous images",
 			"current_images" => "Current images",
-			"predictions_explanation_while_training" => "Down below is one example of each category. The bars show the calculated likelyhood of the image to be in that category. The most strongly detected category is green. You can see the values change as the network learns."
+			"predictions_explanation_while_training" => "Down below is one example of each category. The bars show the calculated likelyhood of the image to be in that category. The most strongly detected category is green. You can see the values change as the network learns.",
+			"prohibition" => "Prohibition"
 		),
 		'de' => array(
 			'lets_suppose_we_have_this_simple_network' => 'Wir möchten dieses Bilderkennungsnetzwerk verwenden, um ein Modell zu trainieren.',
@@ -556,7 +557,8 @@
 			"graph_explanation" => "Die Linien im Graphen zeigen den Fehler an. Umso niedriger die Linie, desto geringer der Fehler. Die blaue Linie zeigt die Verbesserungen auf den Daten, auf denen das Netzwerk trainiert, die orange Linie zeigt an, wie gut es es auf Daten ist , die es nicht gesehen hat. Beide Linien sollten niedriger werden und etwa ähnlich aussehen, damit das Training gut läuft.",
 			"previous_images" => "Vorherige Bilder",
 			"current_images" => "Aktuelle Bilder",
-			"predictions_explanation_while_training" => "Unten ist je ein Beispiel aus jeder Kategorie. Die Balken zeigen, wie viel Prozent die jeweilige Kategorie erkannt wurde. Die am meisten erkannte Kategorie ist grün. Du kannst live sehen, wie sich die Werte verändern, während das Netzwerk lernt."
+			"predictions_explanation_while_training" => "Unten ist je ein Beispiel aus jeder Kategorie. Die Balken zeigen, wie viel Prozent die jeweilige Kategorie erkannt wurde. Die am meisten erkannte Kategorie ist grün. Du kannst live sehen, wie sich die Werte verändern, während das Netzwerk lernt.",
+			"prohibition" => "Verbot"
 		)
 	);
 

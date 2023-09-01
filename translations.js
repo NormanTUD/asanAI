@@ -1,3 +1,5 @@
+"use strict";
+
 // Get the language from the cookie or use the default language
 let lang_cookie_name = "language_cookie";
 let lang = getLangCookie();
@@ -126,9 +128,9 @@ function trm (name) {
 		return `<span class='TRANSLATEME_${name}'></span>`
 	}
 
-	alert(`${NAME} NOT FOUND`);
+	alert(`${name} NOT FOUND`);
 
-	return `${NAME} NOT FOUND`;
+	return `${name} NOT FOUND`;
 }
 
 // Update translations on initial page load
