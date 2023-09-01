@@ -1479,7 +1479,7 @@ async function fireworks_and_reload (reload=1, waittime=10000) {
 }
 
 async function fireworks_no_reload () {
-	await fireworks_and_reload(0, 2000);
+	await fireworks_and_reload(0, 5000);
 }
 
 function set_augment_for_cosmo () {
