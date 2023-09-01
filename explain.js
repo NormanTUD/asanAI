@@ -2660,6 +2660,44 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 	}
 }
 
+function _create_table (previously_generated_images) {
+	var uuids = [];
+	var table = "<table>";
+	table += "<tr>";
+	if((previously_generated_images.length / labels.length) > 1) {
+		table += "<th>Training</th>";
+	}
+	table += "<th>" + labels.join("</th><th>") + "</th>";
+	table += "</tr>";
+
+	table += "<tr>";
+
+	for (var i = 0; i < previously_generated_images.length; i++) {
+		var cell_nr = i % labels.length;
+		var line_nr = Math.floor(i / labels.length);
+
+		if (cell_nr == 0) {
+			table += "<tr>";
+
+			if((previously_generated_images.length / labels.length) > 1) {
+				table += "<td>" + (line_nr + 1) + "</td>";
+			}
+		}
+
+		var elem_uuid = uuidv4(); // Assuming you have a function for generating UUIDs
+		uuids.push(elem_uuid);
+		table += `<td><span id='${elem_uuid}'></span></td>`;
+
+		if (cell_nr == (labels.length - 1)) {
+			table += "</tr>";
+		}
+	}
+	table += "</tr>";
+	table += "</table>";
+
+	return [table, uuids];
+}
+
 function toggle_previous_current_generated_images () {
 	if(!$("#current_images").is(":visible")) {
 		$("#previous_images_button").html("&#x2190; <span class='TRANSLATEME_previous_images'></span>");
@@ -2671,43 +2709,13 @@ function toggle_previous_current_generated_images () {
 		assert(Array.isArray(labels), "labels should be an array");
 		assert(labels.length > 0, "labels array should not be empty");
 
-		var table = "<table>";
 		var last_cell_nr = 0;
 		var last_line_nr = 0;
 
-		table += "<tr>";
-		if((previously_generated_images.length / labels.length) > 1) {
-			table += "<th>Training</th>";
-		}
-		table += "<th>" + labels.join("</th><th>") + "</th>";
-		table += "</tr>";
+		var table_and_uuids = _create_table(previously_generated_images);
 
-		table += "<tr>";
-
-		var uuids = [];
-
-		for (var i = 0; i < previously_generated_images.length; i++) {
-			var cell_nr = i % labels.length;
-			var line_nr = Math.floor(i / labels.length);
-
-			if (cell_nr == 0) {
-				table += "<tr>";
-
-				if((previously_generated_images.length / labels.length) > 1) {
-					table += "<td>" + (line_nr + 1) + "</td>";
-				}
-			}
-
-			var elem_uuid = uuidv4(); // Assuming you have a function for generating UUIDs
-			uuids.push(elem_uuid);
-			table += `<td><span id='${elem_uuid}'></span></td>`;
-
-			if (cell_nr == (labels.length - 1)) {
-				table += "</tr>";
-			}
-		}
-		table += "</tr>";
-		table += "</table>";
+		var table = table_and_uuids[0];
+		var uuids = table_and_uuids[1];
 
 		$(".layer_image").hide();
 
