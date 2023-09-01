@@ -2810,7 +2810,7 @@ async function cosmo_maximally_activate_last_layer () {
 	generating_images = true;
 
 	if($(".layer_image").length) {
-		var $layer_images = $("#maximally_activated_content>.layer_image");
+		var $layer_images = $(".layer_image");
 
 		for (var i = 0; i < $layer_images.length; i++) {
 			var li = $layer_images[i];
@@ -2871,7 +2871,7 @@ async function cosmo_maximally_activate_last_layer () {
 	for (var i = 0; i < canvasses.length; i++) {
 		var _prev = canvasses[i][0];
 		$("#" + table_uuids[i]).append(_prev);
-		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges").css("margin-right", "65px").css("margin-left", "65px");
+		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges").css("margin-right", "65px").css("margin-left", "65px").addClass("layer_image");
 	}
 
 	if(previously_generated_images.length) {
@@ -2897,7 +2897,7 @@ async function cosmo_maximally_activate_last_layer () {
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
 
-	$(".layer_image").css("width", "170px").css("margin-top", "30px").css("margin-left", "65px").css("margin-right", "65px").css("margin-bottom", "0px");
+	$(".layer_image").css("width", "170px").css("margin-top", "30px").css("margin-left", "65px").css("margin-right", "65px").css("margin-bottom", "0px").addClass("layer_image");
 
 	generating_images = false;
 
