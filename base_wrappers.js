@@ -27,6 +27,12 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
+function tf_model (...args) {
+	var res = tf.model(...args);
+
+	return res;
+}
+
 function tidy (...args) {
 	var res = tf.tidy(...args);
 

@@ -982,7 +982,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 		// interest.
 		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
 
-		const auxModel = tf.model({inputs: model.inputs, outputs: layerOutput});
+		const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
 
 		// This function calculates the value of the convolutional layer's
 		// output at the designated filter index.
@@ -2609,7 +2609,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
 		const lastConvLayerOutput = lastConvLayer.output;
-		const subModel1 = tf.model({inputs: model.inputs, outputs: lastConvLayerOutput});
+		const subModel1 = tf_model({inputs: model.inputs, outputs: lastConvLayerOutput});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
@@ -2619,7 +2619,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		while (layerIndex < model.layers.length) {
 			y = model.layers[layerIndex++].apply(y);
 		}
-		const subModel2 = tf.model({inputs: newInput, outputs: y});
+		const subModel2 = tf_model({inputs: newInput, outputs: y});
 
 		var retval = tidy(() => {
 			// This function runs sub-model 2 and extracts the slice of the probability
