@@ -650,7 +650,7 @@ async function get_xs_and_ys () {
 								toFloat();
 
 							if($("#divide_by").val() != 1) {
-								resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+								resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
 							}
 
 							var this_img = await resized_img.arraySync();
@@ -743,7 +743,7 @@ async function get_xs_and_ys () {
 									toFloat();
 
 								if($("#divide_by").val() != 1) {
-									resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+									resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
 								}
 
 								var this_img = await resized_img.arraySync();
@@ -754,7 +754,7 @@ async function get_xs_and_ys () {
 									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 									var this_map = 
-										tf.divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
+										divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
 									maps.push(this_map)
 								} catch (e) {
 									console.error(e);
@@ -918,7 +918,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 						expandDims();
 
 					if($("#divide_by").val() != 1) {
-						resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+						resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
 					}
 
 					return resized_img;

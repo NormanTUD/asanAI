@@ -274,7 +274,23 @@ function tensor2d (...args) {
 function tensor (...args) {
 	var res = tf.tensor(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function grad (...args) {
+	var res = tf.grad(...args);
+
+	return res;
+}
+
+function divNoNan (...args) {
+	var res = tf.divNoNan(...args);
+
+	_custom_tensors["" + res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -284,7 +300,7 @@ function tensor (...args) {
 function oneHot (...args) {
 	var res = tf.oneHot(...args);
 
-	_custom_tensors[res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors[res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 

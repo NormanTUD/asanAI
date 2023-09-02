@@ -66,7 +66,7 @@ function _divide_img_tensor (tensor_img) {
 
 	try {
 		tensor_img = tidy(() => {
-			return tf.divNoNan(tensor_img, divide_by)
+			return divNoNan(tensor_img, divide_by)
 		});
 	} catch (e) {
 		_predict_error(e);
@@ -469,7 +469,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var divide_by = parseFloat($("#divide_by").val());
 
 		if(divide_by != 1) {
-			predict_data = tidy(() => { return tf.divNoNan(predict_data, divide_by); });
+			predict_data = tidy(() => { return divNoNan(predict_data, divide_by); });
 		}
 
 		//log(predict_data.arraySync());
@@ -922,7 +922,7 @@ function _get_resized_webcam (predict_data, h, w) {
 		var r = predict_data.resizeNearestNeighbor([h, w]).toFloat().expandDims();
 
 		if(divide_by != 1) {
-			r = tidy(() => { return tf.divNoNan(r, divide_by) });
+			r = tidy(() => { return divNoNan(r, divide_by) });
 		}
 
 		return r;
@@ -1314,7 +1314,7 @@ async function predict_handdrawn () {
 
 	if(divide_by != 1) {
 		var divided_data = tidy(() => {
-			return tf.divNoNan(predict_data, divide_by);
+			return divNoNan(predict_data, divide_by);
 		});
 
 		await dispose(predict_data);

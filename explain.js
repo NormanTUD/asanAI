@@ -990,7 +990,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 
 		// This returned function (`gradFunction`) calculates the gradient of the
 		// convolutional filter's output with respect to the input image.
-		const gradFunction = tf.grad(lossFunction);
+		const gradFunction = grad(lossFunction);
 
 		// Form a random image as the starting point of the gradient ascent.
 		
@@ -1049,7 +1049,7 @@ async function get_image_from_url (url) {
 			toFloat().
 			expandDims();
 		if($("#divide_by").val() != 1) {
-			resized_img = tf.divNoNan(resized_img, parseFloat($("#divide_by").val()));
+			resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
 		}
 		return resized_img;
 	})();
@@ -2629,7 +2629,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 			// This is the gradient function of the output corresponding to the desired
 			// class with respect to its input (i.e., the output of the last
 			// convolutional layer of the original model).
-			const gradFunction = tf.grad(convOutput2ClassOutput);
+			const gradFunction = grad(convOutput2ClassOutput);
 
 			// Calculate the values of the last conv layer's output.
 			const lastConvLayerOutputValues = subModel1.apply(x);

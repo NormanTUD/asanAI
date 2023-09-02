@@ -1368,7 +1368,7 @@ async function visualize_train () {
 				var img_tensor = tidy(() => {
 					try {
 						var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
-						res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
+						res = divNoNan(res, parseFloat($("#divide_by").val()));
 						return res;
 					} catch (e) {
 						console.error(e);
