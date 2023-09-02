@@ -584,7 +584,7 @@ async function get_xs_and_ys () {
 				}
 
 				var x_arr = await x.arraySync();
-				x = tf.tidy(() => {
+				x = tidy(() => {
 					x_arr.shift();
 					x = tensor(x_arr);
 					global_x = x;
@@ -806,7 +806,7 @@ async function get_xs_and_ys () {
 	) {
 		try {
 			//log("C", xy_data.x.shape);
-			xy_data.y = tf.tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
+			xy_data.y = tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
 			//log("D", xy_data.x.shape);
 		} catch (e) {
 			/*
@@ -910,7 +910,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			let img = await load_image(url);
 			var resized_img = [];
 			if(!dont_load_into_tf) {
-				resized_img = tf.tidy(() => {
+				resized_img = tidy(() => {
 					var res = fromPixels(img);
 					resized_img = res.
 						resizeNearestNeighbor([height, width]).
@@ -1211,7 +1211,7 @@ async function get_x_y_from_csv () {
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = tf.tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
+				y_data["data"] = tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
@@ -1234,8 +1234,8 @@ async function get_x_y_from_csv () {
 
 	//log(y)
 
-	x = tf.tidy(() => { return tensor(x); });
-	y = tf.tidy(() => { return tensor(y); });
+	x = tidy(() => { return tensor(x); });
+	y = tidy(() => { return tensor(y); });
 
 	csv_global_x = x;
 	csv_global_y = y;

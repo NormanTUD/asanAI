@@ -1081,7 +1081,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 			[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
 			after_create_model_tensors = tf.memory()["numTensors"];
 
-			ret = tf.tidy(() => {
+			ret = tidy(() => {
 				try {
 					fake_model.compile(tmp_model_data);
 

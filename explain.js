@@ -935,7 +935,7 @@ function reset_zoom_kernel_images () {
 /* The deprocessImage function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
 
 function deprocessImage(x) {
-        var res = tf.tidy(() => {
+        var res = tidy(() => {
                 const {mean, variance} = tf.moments(x);
                 x = x.sub(mean);
                 // Add a small positive number (EPSILON) to the denominator to prevent
@@ -955,7 +955,7 @@ function deprocessImage(x) {
 /* This function normalizes a given tensor so that it's minimum value is 0 and it's maximum value is 1. This is done by subtracting the minimum value from the tensor, and then dividing by the difference between the maximum and minimum values. */
 
 function tensor_normalize_to_rgb_min_max (x) {
-	x = tf.tidy(() => {
+	x = tidy(() => {
 		var max = x.max();
 		var min = x.min();
 
@@ -976,7 +976,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 	var worked = 0;
         var full_data = {};
 
-	var generated_data = tf.tidy(() => {
+	var generated_data = tidy(() => {
 		// Create an auxiliary model of which input is the same as the original
 		// model but the output is the output of the convolutional layer of
 		// interest.
@@ -1004,7 +1004,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 				continue;
 			}
 
-			const scaledGrads = tf.tidy(() => {
+			const scaledGrads = tidy(() => {
 				const grads = gradFunction(data);
 				const norm = sqrt(tf_mean(tf_square(grads))).add(tf.backend().epsilon());
 				// Important trick: scale the gradient with the magnitude (norm)
@@ -1025,9 +1025,9 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 	});
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
-		full_data["image"] = tf.tidy(() => { return deprocessImage(generated_data).arraySync(); });
+		full_data["image"] = tidy(() => { return deprocessImage(generated_data).arraySync(); });
 	} else {
-		full_data["data"] = tf.tidy(() => { return generated_data.arraySync(); });
+		full_data["data"] = tidy(() => { return generated_data.arraySync(); });
 	}
 
 	await dispose(generated_data);
@@ -2541,7 +2541,7 @@ function applyColorMap(x) {
 		x.shape[3] === 1,
 		`Expected exactly one channel, but got ${x.shape[3]} channels`);
 
-	var res = tf.tidy(() => {
+	var res = tidy(() => {
 		// Get normalized x.
 		const EPSILON = 1e-5;
 		const xRange = x.max().sub(x.min());
@@ -2621,7 +2621,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		}
 		const subModel2 = tf.model({inputs: newInput, outputs: y});
 
-		var retval = tf.tidy(() => {
+		var retval = tidy(() => {
 			// This function runs sub-model 2 and extracts the slice of the probability
 			// output that corresponds to the desired class.
 

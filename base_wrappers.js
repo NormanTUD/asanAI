@@ -27,6 +27,12 @@ async function dispose (item) { // start_tensors
 	_clean_custom_tensors();
 }
 
+function tidy (...args) {
+	var res = tf.tidy(...args);
+
+	return res;
+}
+
 function tf_sequential(model_uuid) {
 	assert(model_uuid, "model_uuid is not defined");
 	assert(typeof(model_uuid) == "string", "model_uuid must be a string");

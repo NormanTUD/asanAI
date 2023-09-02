@@ -65,7 +65,7 @@ function _divide_img_tensor (tensor_img) {
 	}
 
 	try {
-		tensor_img = tf.tidy(() => {
+		tensor_img = tidy(() => {
 			return tf.divNoNan(tensor_img, divide_by)
 		});
 	} catch (e) {
@@ -80,7 +80,7 @@ async function _get_tensor_img(item) {
 	var tensor_img = null;
 
 	try {
-		tensor_img = await tf.tidy(() => {
+		tensor_img = await tidy(() => {
 			return _divide_img_tensor(fromPixels(item)
 				.resizeNearestNeighbor([height, width])
 				.toFloat()
@@ -234,7 +234,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	var predictions_tensor;
 
 	try {
-		predictions_tensor = tf.tidy(() => { return model.predict(tensor_img) });
+		predictions_tensor = tidy(() => { return model.predict(tensor_img) });
 
 		await _predict_result(predictions_tensor, nr);
 		await draw_heatmap(predictions_tensor, tensor_img);
@@ -307,7 +307,7 @@ function get_show_green () {
 }
 
 async function _predict_table(predictions_tensor, desc) {
-	var predictions = tf.tidy(() => { return predictions_tensor.dataSync() });
+	var predictions = tidy(() => { return predictions_tensor.dataSync() });
 
 	if(predictions.length) {
 		var max_i = 0;
@@ -469,7 +469,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var divide_by = parseFloat($("#divide_by").val());
 
 		if(divide_by != 1) {
-			predict_data = tf.tidy(() => { return tf.divNoNan(predict_data, divide_by); });
+			predict_data = tidy(() => { return tf.divNoNan(predict_data, divide_by); });
 		}
 
 		//log(predict_data.arraySync());
@@ -917,12 +917,12 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 }
 
 function _get_resized_webcam (predict_data, h, w) {
-	var res = tf.tidy(() => {
+	var res = tidy(() => {
 		var divide_by = parseFloat($("#divide_by").val());
 		var r = predict_data.resizeNearestNeighbor([h, w]).toFloat().expandDims();
 
 		if(divide_by != 1) {
-			r = tf.tidy(() => { return tf.divNoNan(r, divide_by) });
+			r = tidy(() => { return tf.divNoNan(r, divide_by) });
 		}
 
 		return r;
@@ -952,7 +952,7 @@ async function predict_webcam () {
 
 	var wait = null;
 
-	var predict_data = tf.tidy(() => {
+	var predict_data = tidy(() => {
 		return _get_resized_webcam(cam_img, height, width);
 	});
 
@@ -961,7 +961,7 @@ async function predict_webcam () {
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = tf.tidy(() => {
+		predictions_tensor = tidy(() => {
 			return model.predict([predict_data]);
 		});
 	} catch (e) {
@@ -1292,7 +1292,7 @@ async function predict_handdrawn () {
 
 	var predict_data;
 	try {
-		predict_data = tf.tidy(() => {
+		predict_data = tidy(() => {
 			return tf.image.resizeNearestNeighbor(
 				fromPixels(atrament_data.sketcher.canvas),
 				[height, width]
@@ -1313,7 +1313,7 @@ async function predict_handdrawn () {
 	var divide_by = parseFloat($("#divide_by").val());
 
 	if(divide_by != 1) {
-		var divided_data = tf.tidy(() => {
+		var divided_data = tidy(() => {
 			return tf.divNoNan(predict_data, divide_by);
 		});
 
@@ -1325,7 +1325,7 @@ async function predict_handdrawn () {
 	var predictions_tensor = null;
 	try {
 		try {
-			predictions_tensor = tf.tidy(() => {
+			predictions_tensor = tidy(() => {
 				return model.predict([predict_data]);
 			});
 		} catch (e) {

@@ -275,7 +275,7 @@ async function get_model_data (optimizer_name_only) {
 	};
 
 	if(!optimizer_name_only) {
-		global_model_data["optimizer"] = tf.tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]) });
+		global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]) });
 	}
 
 	return global_model_data;
@@ -1365,7 +1365,7 @@ async function visualize_train () {
 					continue;
 				}
 
-				var img_tensor = tf.tidy(() => {
+				var img_tensor = tidy(() => {
 					try {
 						var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
 						res = tf.divNoNan(res, parseFloat($("#divide_by").val()));
@@ -1381,7 +1381,7 @@ async function visualize_train () {
 					continue;
 				}
 
-				var res = tf.tidy(() => { return model.predict(img_tensor) });
+				var res = tidy(() => { return model.predict(img_tensor) });
 
 				var res_array = res.arraySync()[0];
 				//log("RES for " + x.src + " :", res_array);

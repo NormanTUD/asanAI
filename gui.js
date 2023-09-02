@@ -5201,7 +5201,7 @@ function summary_to_table(lines) {
 }
 
 function plotly_show_loss_graph() {
-	tf.tidy(() => {
+	tidy(() => {
 		var y_true_table = [];
 		$(".data_table_y_true").each((i, x) => {
 			y_true_table[i] = [i, parseFloat($(x).val())]

@@ -29,7 +29,7 @@ class DebugLayer extends tf.layers.Layer {
 	 */
 	call(input, ...kwargs) {
 		log(this);
-		return tf.tidy(() => {
+		return tidy(() => {
 			log(`=== DebugLayer ${this.name} ===`);
 			log("shape: [" + input[0].shape.join(", ") + "]");
 			log("input:", input[0].arraySync());
