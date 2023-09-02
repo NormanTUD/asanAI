@@ -4,6 +4,9 @@
 
 # Find untested functions, listed by number of occurences
 #for i in $(ack "function [a-zA-Z_0-9]+" *.js | grep -v tests.js | sed -e 's#.*function\s*##' | sed -e 's#\s*(.*##' | sort); do grep $i tests.js 2>&1 >/dev/null || NUM_OCC=$(ack '(?:(?:^\s*)|=|\"|\()\s*(?:await)?\s*$i\s*\(' *.js | grep -v function | wc -l); echo "$NUM_OCC: $i is untested currently"; done | sort -nr | tac
+
+# analyzeWindowFunctions();
+# cat test.dot | grep -v swal | grep -v sweet | grep -v run_tests | grep -v jscolor | grep -v eval | grep -v Promise | grep -v AlexNet | grep -v LeNet | grep -v FCNN | grep -v Fireworks | grep -v FilterUtils | grep -v EventListener | grep -v restart_alexnet | grep -v restart_lenet | grep -v restart_fcnn  > cleaned.dot; wc -l cleaned.dot; dot -Tsvg cleaned.dot > a.svg; gwenview a.svg
 	include("functions.php");
 
 	include("translations.php");
