@@ -487,3 +487,43 @@ function label_debug (...args) {
 function debug (...args) {
 	console.debug(...args);
 }
+
+function analyzeWindowFunctions() {
+	const dependencies = {};
+
+	for (const functionName in window) {
+		if (typeof window[functionName] === 'function' && functionName !== 'tf') {
+			dependencies[functionName] = [];
+
+			// Extract function body and search for function calls within it
+			const fnBody = window[functionName].toString();
+			const fnCalls = fnBody.match(/\w+\(/g);
+
+				if (fnCalls) {
+					fnCalls.forEach(fnCall => {
+						const calledFunctionName = fnCall.replace('(', '');
+
+						// Ensure it's not referring to itself
+						if (calledFunctionName !== functionName && window[calledFunctionName]) {
+							dependencies[functionName].push(calledFunctionName);
+						}
+					});
+				}
+		}
+	}
+
+	let dotFileContent = 'digraph FunctionCalls {\n';
+	for (const functionName in dependencies) {
+		const calledFunctions = dependencies[functionName];
+		calledFunctions.forEach(calledFunction => {
+			dotFileContent += `  "${functionName}" -> "${calledFunction}";\n`;
+		});
+	}
+	dotFileContent += '}\n';
+
+	// You can log the dotFileContent or use other methods to save it as needed.
+	console.log(dotFileContent); // Example: Logging the content to the console
+}
+
+// Execute the analysis
+// analyzeWindowFunctions();
