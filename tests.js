@@ -121,6 +121,9 @@ async function run_tests () { // var start_tensors
 
 			test_equal("tensor_print_to_string(tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]")
 
+			test_equal("isNumeric(1)", isNumeric(1), true);
+			test_equal("isNumeric('1')", isNumeric('1'), true);
+			test_equal("isNumeric('a')", isNumeric('a'), false);
 			test_equal("output_shape_is_same([1,2,3], [1,2,3])", output_shape_is_same([1,2,3], [1,2,3]), true);
 			test_not_equal("output_shape_is_same([1,2,3], [5,2,3])", output_shape_is_same([1,2,3], [5,2,3]), true);
 
