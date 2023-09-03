@@ -169,7 +169,7 @@ function add_function_debugger () { // var start_tensors
 			    "colorize",
 			    "md5",
 			    "is_hidden_or_has_hidden_parent",
-			    "getCookie",
+			    "get_cookie",
 			    "display_delete_button",
 			    "get_id_from_train_data_struct",
 			    "decille",

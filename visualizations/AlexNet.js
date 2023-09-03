@@ -67,7 +67,7 @@ function AlexNet() {
 
 	function restartRenderer({rendererType_=rendererType}={}) {
 		assert(rendererType_ === "webgl" || rendererType_ === "svg", "Ungültiger rendererType: Erwartet wird 'webgl' oder 'svg'.");
-		var cookie_theme = getCookie("theme");
+		var cookie_theme = get_cookie("theme");
 		if(cookie_theme == "darkmode") {
 			scene.background = new THREE.Color(0x363636);
 		} else {
@@ -118,7 +118,7 @@ function AlexNet() {
 				await delay(200);
 			}
 			requestAnimationFrame(animate);
-			var cookie_theme = getCookie("theme");
+			var cookie_theme = get_cookie("theme");
 			if(cookie_theme == "darkmode") {
 				scene.background = new THREE.Color(0x363636);
 			} else {
@@ -150,7 +150,7 @@ function AlexNet() {
 		assert(Array.isArray(architecture_), "Ungültige architecture_: Erwartet wird ein Array von Schichten.");
 		assert(Array.isArray(architecture2_), "Ungültige architecture2_: Erwartet wird ein Array von Schichten.");
 
-		var cookie_theme = getCookie("theme");
+		var cookie_theme = get_cookie("theme");
 		if(cookie_theme == "darkmode") {
 			scene.background = new THREE.Color(0x363636);
 		} else {

@@ -26,7 +26,7 @@ function FCNN() {
 	var edgeColorProportional = false;
 	var defaultEdgeColor = "#000000";
 
-	var cookie_theme = getCookie("theme");
+	var cookie_theme = get_cookie("theme");
 	if(cookie_theme == "darkmode") {
 		defaultEdgeColor = "#ffffff";
 	}
@@ -95,7 +95,7 @@ function FCNN() {
 			colors_=colors
 		}) {
 
-		cookie_theme = getCookie("theme");
+		cookie_theme = get_cookie("theme");
 		if(cookie_theme == "darkmode") {
 			defaultEdgeColor = "#ffffff";
 		} else {

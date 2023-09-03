@@ -394,7 +394,7 @@ $(document).ready(async function() {
 		register(); // cannot be async
 	});
 
-	if(getCookie("session_id") != null) {
+	if(get_cookie("session_id") != null) {
 		$("#register").hide();
 		$("#logout").show();
 		$(".show_when_logged_in").show();
@@ -486,7 +486,7 @@ $(document).ready(async function() {
 	}
 
 
-	cookie_theme = getCookie("theme");
+	cookie_theme = get_cookie("theme");
 	if(cookie_theme) {
 		l(language[lang]["has_cookie_for"] + " " + cookie_theme);
 		$("#theme_choser").val(cookie_theme).trigger("change")

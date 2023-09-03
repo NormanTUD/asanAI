@@ -3284,7 +3284,7 @@ async function login() {
 
 async function logout() {
 	user_id = null;
-	eraseCookie('session_id');
+	delete_cookie('session_id');
 	$("#logout").hide();
 	$("#register").show();
 	$("#register_email").val("");
@@ -3388,7 +3388,7 @@ function display_delete_button() {
 
 	var dm = $("#delete_model");
 
-	if(user_id.match(/^[0-9]*$/) && !!getCookie("session_id")) {
+	if(user_id.match(/^[0-9]*$/) && !!get_cookie("session_id")) {
 		if(dm.hasClass("disabled_symbol")) {
 			dm.html("&#10060;").removeClass("disabled_symbol");
 		}
@@ -3400,7 +3400,7 @@ function display_delete_button() {
 }
 
 async function manage_download() {
-	if(!getCookie("session_id") === null) {
+	if(!get_cookie("session_id") === null) {
 		save_model();
 	} else {
 		await open_save_model_dialog();
@@ -5344,7 +5344,7 @@ function setCookie(name, value, days = 365) { // var start_tensors
 	document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
 }
 
-function getCookie(name) { // var start_tensors
+function get_cookie(name) { // var start_tensors
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
 	for(var i=0;i < ca.length;i++) {
@@ -5355,7 +5355,7 @@ function getCookie(name) { // var start_tensors
 	return null;
 }
 
-function eraseCookie(name) { // var start_tensors
+function delete_cookie(name) { // var start_tensors
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 

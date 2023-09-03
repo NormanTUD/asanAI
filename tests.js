@@ -175,7 +175,7 @@ async function run_tests () { // var start_tensors
 			test_equal("testing real-random array to have likelyhood 1 of being random", array_likelyhood_of_being_random(real_random) == 1, true);
 
 			log_test("Math mode");
-			var cookie_theme = getCookie("theme");
+			var cookie_theme = get_cookie("theme");
 			var darkmode = 0;
 			if(cookie_theme == "darkmode") {
 				darkmode = 1;

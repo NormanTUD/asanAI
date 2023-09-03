@@ -2270,7 +2270,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 	assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");
 
 	var default_color = "#ffffff";
-	var cookie_theme = getCookie("theme");
+	var cookie_theme = get_cookie("theme");
 	var darkmode = 0;
 	if(cookie_theme == "darkmode") {
 		darkmode = 1;
