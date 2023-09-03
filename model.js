@@ -350,9 +350,11 @@ async function get_model_structure(is_fake_model = 0) {
 
 			traindebug("tf.layers." + type + "(", data, ")");
 		} else {
-			header("ACHTUNG!!! get_model_structure IS EMPTY!!!");
-			log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
-			log($(layer_type).val());
+			if(finished_loading) {
+				header("ACHTUNG!!! get_model_structure IS EMPTY!!!");
+				log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
+				log($(layer_type).val());
+			}
 		}
 	}
 

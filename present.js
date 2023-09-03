@@ -11,21 +11,6 @@ async function handleKeydown(event) {
 	}
 }
 
-var shown_hand = 0;
-
-function show_hand () {
-	return;
-	if(shown_hand) {
-		return;
-	}
-
-	$(".remove_me_at_first_tip").remove();
-
-	$("<img class='remove_me_at_first_tip' src='tapme.png' style='position: absolute; right: 10vw; top: 50%; bottom: 50%; width: 10vw' />").appendTo($(body));
-
-	shown_hand = 1;
-}
-
 // Function to display a div in full screen
 function showFullScreen(divs, currentDivPresentationIndex) {
 	var div = divs[currentDivPresentationIndex];
@@ -58,8 +43,6 @@ function showFullScreen(divs, currentDivPresentationIndex) {
 	if(!is_presenting) {
 		$("#presentation_site_nr").remove();
 	}
-
-	show_hand();
 }
 
 // Function to remove full screen styles
