@@ -351,3 +351,9 @@ function parse_int (...args) {
 function parse_float (...args) {
 	return parseFloat(...args);
 }
+
+async function loadLayersModel (...args) {
+	var res = await tf.loadLayersModel(...args);
+
+	return res;
+}

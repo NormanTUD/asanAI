@@ -2604,17 +2604,10 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			}
 			layerIndex--;
 		}
-		tf.util.assert(
-			layerIndex >= 0, `Failed to find a convolutional layer in model`);
+
+		assert(layerIndex >= 0, `Failed to find a convolutional layer in model`);
 
 		const lastConvLayer = model.layers[layerIndex];
-
-		/*
-		log(
-			`Located last convolutional layer of the model at ` +
-			`index ${layerIndex}: layer type = ${lastConvLayer.getClassName()}; ` +
-			`layer name = ${lastConvLayer.name}`);
-		*/
 
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
