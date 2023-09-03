@@ -173,9 +173,9 @@ function LeNet() {
 		style();
 
 		/*
-		var lenet_width = realWidth($("#lenet"));
-		var lenet_height = realHeight($("#lenet"));
-		var g_width = realWidthG();
+		var lenet_width = real_width($("#lenet"));
+		var lenet_height = real_height($("#lenet"));
+		var g_width = real_widthG();
 		var g_height = $("#lenet_frame")[0].getBoundingClientRect().height;
 
 		var center_x_position = g_width / 2;

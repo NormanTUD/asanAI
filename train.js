@@ -61,7 +61,7 @@ async function train_neural_network () {
 			remove_manicule(1);
 			*/
 		} else {
-			overlay = showOverlayWithText(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+			overlay = show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 			if($("#show_grad_cam").is(":checked")) {
 				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
@@ -287,7 +287,7 @@ function delay(time) { // var start_tensors
 
 function get_fit_data () {
 	var epochs = get_epochs();
-	var batchSize = get_batchSize();
+	var batchSize = get_batch_size();
 	var validationSplit = parseInt($("#validationSplit").val()) / 100;
 
 	var callbacks = {};

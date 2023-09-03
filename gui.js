@@ -867,7 +867,7 @@ async function update_python_code(dont_reget_labels) {
 
 		if(model && Object.keys(model).includes("layers")) {
 			/*
-			var cdata = convertToPythonString(data)
+			var cdata = convert_to_python_string(data)
 			if(cdata == "{}") {
 				cdata = "";
 			}
@@ -1177,7 +1177,7 @@ function model_add_python_structure (layer_type, data) {
 	return str;
 }
 
-function convertToPythonString(obj) {
+function convert_to_python_string(obj) {
 	var pythonCode = '{';
 	var i = 0;
 	for (var key in obj) {
@@ -1748,7 +1748,7 @@ function get_epochs() {
 	return parseInt($("#epochs").val());
 }
 
-function get_batchSize() {
+function get_batch_size() {
 	return parseInt($("#batchSize").val());
 }
 
@@ -4050,7 +4050,7 @@ async function last_shape_layer_warning() {
 							var new_canvas_id = base_id + "_layer";
 							if($(new_canvas_id).length == 0) {
 								log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
-								addCanvasLayer(canvasses[j], 0.5, base_id);
+								add_canvas_layer(canvasses[j], 0.5, base_id);
 							}
 						}
 					}
@@ -4178,12 +4178,12 @@ async function add_new_category() {
 	return uuid;
 }
 
-function addCanvasLayer(canvas, transparency, base_id) {
-	log("addCanvasLayer(", canvas + ", ", transparency, ", ", base_id, ")");
+function add_canvas_layer(canvas, transparency, base_id) {
+	log("add_canvas_layer(", canvas + ", ", transparency, ", ", base_id, ")");
 
-	assert(typeof(canvas) == "object", "addCanvasLayer(canvas, transparency, base_id): canvas is not an object");
-	assert(typeof(base_id) == "string", "addCanvasLayer(canvas, transparency, base_id): base_id is not a string");
-	assert(isNumeric(transparency) || typeof(transparency) == "number", "addCanvasLayer(canvas_, transparency, base_id): transparency is not a number");
+	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
+	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
+	assert(isNumeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
 	// Get the canvas element
 
 	// Create a new canvas element for the layer
@@ -5412,7 +5412,7 @@ function copy_values() {
 
 }
 
-function realWidth(obj) {
+function real_width(obj) {
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
@@ -5421,7 +5421,7 @@ function realWidth(obj) {
 	return w;
 }
 
-function realHeight(obj) {
+function real_height(obj) {
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
 	$('body').append(clone);
@@ -5970,7 +5970,7 @@ function hide_empty_tabs (name) {
 	$("[href='#" + name + "']").parent().hide()
 }
 
-function getCanvasBlob(canvas) {
+function get_canvas_blob(canvas) {
 	return new Promise(function(resolve, reject) {
 		canvas.toBlob(function(blob) {
 			resolve(blob)
@@ -5987,7 +5987,7 @@ async function create_zip_with_custom_images () {
 	for (var i = 0; i < canvasses.length; i++) {
 		var canvas = canvasses[i];
 
-		var blob = await getCanvasBlob(canvas);
+		var blob = await get_canvas_blob(canvas);
 
 		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
 
@@ -5999,7 +5999,7 @@ async function create_zip_with_custom_images () {
 	return res;
 }
 
-function downloadFile(blob) {
+function download_file(blob) {
 	var new_child = Object.assign(document.createElement("a"), {
 		className: "download_link",
 		download: "custom_images.zip",
@@ -6011,7 +6011,7 @@ function downloadFile(blob) {
 
 }
 
-function saveFile (name, type, data) {
+function save_file (name, type, data) {
 	if (data !== null && navigator.msSaveBlob)
 		return navigator.msSaveBlob(new Blob([data], { type: type }), name);
 	var a = $("<a style='display: none;'/>");
@@ -6025,7 +6025,7 @@ function saveFile (name, type, data) {
 }
 
 function save_custom_images_file (blob) {
-	saveFile("custom_images.zip", "data:application/zip", blob);
+	save_file("custom_images.zip", "data:application/zip", blob);
 }
 
 async function create_and_download_zip () {
@@ -6237,7 +6237,7 @@ function load_msg(swal_msg_format) {
 	}
 
 	if(finished_loading) {
-		overlay = showOverlayWithText(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
+		overlay = show_overlay(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
@@ -6485,7 +6485,7 @@ function model_is_ok () {
 	}
 }
 
-function showOverlayWithText(text, title="") {
+function show_overlay(text, title="") {
 	try {
 		var bg_color = "white";
 		var text_color = "black";
@@ -6541,7 +6541,7 @@ function showOverlayWithText(text, title="") {
 	}
 }
 
-function cloneCanvas(oldCanvas) {
+function clone_canvas(oldCanvas) {
 	//create a new canvas
 	var newCanvas = document.createElement('canvas');
 	var context = newCanvas.getContext('2d');

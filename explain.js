@@ -932,9 +932,9 @@ function reset_zoom_kernel_images () {
  * From https://github.com/tensorflow/tfjs-examples/tree/master/visualize-convnet
  */
 
-/* The deprocessImage function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
+/* The deprocess_image function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
 
-function deprocessImage(x) {
+function deprocess_image(x) {
         var res = tidy(() => {
                 const {mean, variance} = tf.moments(x);
                 x = x.sub(mean);
@@ -1025,7 +1025,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 	});
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
-		full_data["image"] = tidy(() => { return deprocessImage(generated_data).arraySync(); });
+		full_data["image"] = tidy(() => { return deprocess_image(generated_data).arraySync(); });
 	} else {
 		full_data["data"] = tidy(() => { return generated_data.arraySync(); });
 	}
@@ -2531,7 +2531,7 @@ function array_to_html(array) {
 	return m;
 }
 
-function applyColorMap(x) {
+function apply_color_map (x) {
 	tf.util.assert(
 		x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
 	tf.util.assert(
@@ -2659,7 +2659,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 			// Apply an RGB colormap on the heatMap. This step is necessary because
 			// the heatMap is a 1-channel (grayscale) image. It needs to be converted
 			// into a color (RGB) one through this function call.
-			heatMap = applyColorMap(heatMap);
+			heatMap = apply_color_map(heatMap);
 
 			// To form the final output, overlay the color heat map on the input image.
 			heatMap = heatMap.mul(overlayFactor).add(x.div(255));
@@ -2815,7 +2815,7 @@ async function cosmo_maximally_activate_last_layer () {
 		for (var i = 0; i < $layer_images.length; i++) {
 			var li = $layer_images[i];
 
-			var clone = cloneCanvas(li);
+			var clone = clone_canvas(li);
 
 			previously_generated_images.push(clone);
 		}

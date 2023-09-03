@@ -1445,7 +1445,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	await last_shape_layer_warning();
 }
 
-function chiSquaredTest(arr) {
+function chi_squared_test(arr) {
 	// Create a histogram of the data
 	const histogram = {};
 	for (let i = 0; i < arr.length; i++) {
@@ -1478,7 +1478,7 @@ function chiSquaredTest(arr) {
 }
 
 function array_likelyhood_of_being_random (array) {
-	var chi = chiSquaredTest(array);
+	var chi = chi_squared_test(array);
 
 	var res = 1 - chi;
 
