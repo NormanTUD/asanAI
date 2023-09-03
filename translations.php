@@ -279,9 +279,17 @@
 			"previous_images" => "Previous images",
 			"current_images" => "Current images",
 			"predictions_explanation_while_training" => "Down below is one example of each category. The bars show the calculated likelyhood of the image to be in that category. The most strongly detected category is green. You can see the Categories change as the network learns.",
-			"prohibition" => "Prohibition"
+			"prohibition" => "Prohibition",
+			'Brandschutz' => 'Fire prevention',
+			'Verbot' => 'Forbidden',
+			'Gebot' => 'Mandatory',
+			'Rettung' => 'Rescue',
+			'Warnung' => 'Warning'
+
 		),
 		'de' => array(
+			'Brandschutz' => 'Brandschutz',
+			'Gebot' => 'Gebot',
 			'lets_suppose_we_have_this_simple_network' => 'Wir möchten dieses Bilderkennungsnetzwerk verwenden, um ein Modell zu trainieren.',
 			'we_want_to_train_this_model_5_categories' => 'Das Modell soll lernen, um 5 Kategorien von Symbolen zu unterscheiden:',
 			'fire' => 'Brandschutz',
@@ -560,7 +568,10 @@
 			"previous_images" => "Vorherige Bilder",
 			"current_images" => "Aktuelle Bilder",
 			"predictions_explanation_while_training" => "Unten ist je ein Beispiel aus jeder Kategorie. Die Balken zeigen, wie viel Prozent die jeweilige Kategorie erkannt wurde. Die am meisten erkannte Kategorie ist grün. Du kannst live sehen, wie sich die Kategorien verändern, während das Netzwerk lernt.",
-			"prohibition" => "Verbot"
+			"prohibition" => "Verbot",
+			"Verbot" => "Verbot",
+			"Rettung" => "Rettung",
+			"Warnung" => "Warnung"
 		)
 	);
 
@@ -578,7 +589,9 @@
 				$keys = $subKeys;
 			} elseif ($keys !== $subKeys) {
 				$missingKeys = array_diff($keys, $subKeys);
-				die("Missing key: " . reset($missingKeys));
+				if($missingKeys) {
+					die("Missing key: " . reset($missingKeys));
+				}
 			}
 		}
 
