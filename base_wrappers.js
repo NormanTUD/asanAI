@@ -92,7 +92,7 @@ function tf_sequential(model_uuid) {
 function buffer(...args) {
 	var res = tf.buffer(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	//_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -112,7 +112,7 @@ function fromPixels (...args) {
 function input(...args) {
 	var res = tf.input(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"];
 
 	_clean_custom_tensors();
 

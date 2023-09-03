@@ -2560,7 +2560,7 @@ function apply_color_map (x) {
 
 		const h = x.shape[1];
 		const w = x.shape[2];
-		const buffer = buffer([1, h, w, 3]);
+		var buffer = buffer([1, h, w, 3]);
 
 		const colorMapSize = RGB_COLORMAP.length / 3;
 		for (let i = 0; i < h; ++i) {
@@ -2681,7 +2681,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 		if(("" + e).includes("already disposed")) {
 			wrn("Model weights are disposed. Probably the model was recompiled during prediction");
 		} else {
-			wrn(e);
+			write_error(e);
 		}
 		return null;
 	}
