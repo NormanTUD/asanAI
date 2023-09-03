@@ -637,7 +637,7 @@ function show_or_hide_predictions (count) {
 }
 
 function create_network_name () {
-	function transformArray(inputArray) {
+	function transform_array(inputArray) {
 		const transformedArray = [];
 		let currentElement = inputArray[0];
 		let count = 1;
@@ -665,7 +665,7 @@ function create_network_name () {
 		return transformedArray;
 	}
 
-	return transformArray(get_layer_type_array()).join(" \\rightarrow ") ;
+	return transform_array(get_layer_type_array()).join(" \\rightarrow ") ;
 }
 
 async function _print_predictions_text(count, example_predict_data) {

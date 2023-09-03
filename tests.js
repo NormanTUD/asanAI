@@ -25,7 +25,7 @@ async function _set_initializers() { // var start_tensors
 	await _set_seeds(42);
 }
 
-function getCurrentTimestamp () { // var start_tensors
+function get_current_timestamp () { // var start_tensors
 	return Date.now()
 }
 
@@ -488,7 +488,7 @@ async function run_tests () { // var start_tensors
 
 			await wait_for_updated_page(3);
 
-			var start_time = getCurrentTimestamp();
+			var start_time = get_current_timestamp();
 
 			for (var k = 0; k < X.length; k++) {
 				var wh = X[k];
@@ -515,7 +515,7 @@ async function run_tests () { // var start_tensors
 				Y.push(used_time);
 			}
 
-			var end_time = getCurrentTimestamp();
+			var end_time = get_current_timestamp();
 
 			var time_resize_took = end_time - start_time;
 

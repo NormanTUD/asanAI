@@ -212,7 +212,7 @@ async function train_neural_network () {
 
 }
 
-function getKeyByValue(object, value) {
+function get_key_by_value(object, value) {
 	var res = Object.keys(object).find(key => object[key] === value);
 
 
@@ -232,7 +232,7 @@ async function get_model_data (optimizer_name_only) {
 	var metric_type = $("#metric").val();
 
 	if(Object.values(metric_shortnames).includes(metric_type)) {
-		metric_type = getKeyByValue(metric_shortnames, metric_type);
+		metric_type = get_key_by_value(metric_shortnames, metric_type);
 	}
 
 	var epochs = parseInt($("#epochs").val());
@@ -1149,12 +1149,7 @@ async function reset_on_error () {
 	link.href = 'favicon.ico';
 }
 
-function randomInRange(start,end) {
-	var res = Math.floor(Math.random() * (end - start + 1) + start);
-	return res;
-}
-
-function drawImagesInGrid(images, categories, probabilities, numCategories) {
+function draw_images_in_grid (images, categories, probabilities, numCategories) {
 	$("#canvas_grid_visualization").html("");
 	var categoryNames = is_cosmo_mode ? labels : labels.slice(0, numCategories);
 	var margin = 40;
@@ -1399,7 +1394,7 @@ async function visualize_train () {
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
-			drawImagesInGrid(imgs, categories, probabilities, labels.length);
+			draw_images_in_grid(imgs, categories, probabilities, labels.length);
 		} else {
 			$("#canvas_grid_visualization").html("");
 		}
