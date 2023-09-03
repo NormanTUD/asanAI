@@ -4539,7 +4539,7 @@ async function write_error(e, fn, hide_swal) {
 			msg = e.message;
 		}
 
-		var explanation = explain_error_msg(e);
+		var explanation = explain_error_msg("" + e);
 
 		if (explanation) {
 			msg = msg + "\n<br><br>\n" + explanation;
