@@ -5447,8 +5447,8 @@ async function get_training_data_as_json () {
 }
 
 function l(msg) {
+	msg = "" + msg;
 	assert(!!msg, "msg is false");
-	assert(typeof(msg) == "string", "message is not string");
 
 	if(l == "[object Object]") {
 		log(l);
