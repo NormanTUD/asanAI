@@ -894,7 +894,9 @@ async function create_model (old_model, fake_model_structure, force) {
 					}
 				}
 			} else {
-				console.info("Old layers had no layers defined");
+				if(finished_loading) {
+					console.info("Old layers had no layers defined");
+				}
 			}
 		} catch (e) {
 			throw new Error(e);
