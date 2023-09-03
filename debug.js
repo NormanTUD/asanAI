@@ -35,7 +35,7 @@ function info (...args) {
 
 	var struct = {
 		'type': 'info',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': args,
 		'time': parse_int(Date.now() / 1000)
 	};
@@ -53,7 +53,7 @@ function err (...args) {
 
 	var struct = {
 		'type': 'err',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': args,
 		'time': parse_int(Date.now() / 1000)
 	};
@@ -71,7 +71,7 @@ function wrn (...args) {
 
 	var struct = {
 		'type': 'warn',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': args,
 		'time': parse_int(Date.now() / 1000)
 	};
@@ -89,7 +89,7 @@ function dbg (...args) {
 
 	var struct = {
 		'type': 'debug',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': args,
 		'time': parse_int(Date.now() / 1000)
 	};
@@ -108,7 +108,7 @@ function log (...args) {
 
 	var struct = {
 		'type': 'log',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': args,
 		'time': parse_int(Date.now() / 1000)
 	};
@@ -595,6 +595,54 @@ function create_graphviz_function_call_graph () {
 // Execute the analysis
 // create_graphviz_function_call_graph();
 
-function get_full_log_as_json () {
-	return JSON.stringify(_full_debug_log);
+function create_html_table_from_json(data) {
+	try {
+		// Parse the input string into a JavaScript object
+
+		// Check if data is an array with at least one element
+		if (Array.isArray(data) && data.length > 0) {
+			// Create an HTML table element
+			var table = document.createElement("table");
+
+			// Create the table header row
+			var headerRow = document.createElement("tr");
+
+			// Extract and store the keys from the first element
+			var keys = Object.keys(data[0]);
+
+			// Iterate through the keys to create header cells
+			keys.forEach(function (key) {
+				var headerCell = document.createElement("th");
+				headerCell.textContent = key;
+				headerRow.appendChild(headerCell);
+			});
+
+			// Append the header row to the table
+			table.appendChild(headerRow);
+
+			// Create table rows for each data element
+			data.forEach(function (item) {
+				var row = document.createElement("tr");
+
+				// Iterate through the keys and create table cells
+				keys.forEach(function (key) {
+					var cell = document.createElement("td");
+					cell.innerHTML = "<pre>" + item[key] + "</pre>";
+					row.appendChild(cell);
+				});
+
+				// Append the row to the table
+				table.appendChild(row);
+			});
+
+			// Add the table to the HTML document
+			return table.outerHTML;
+		} else {
+			// Handle the case when data is empty
+			wrn("Data is empty or not in the expected format.");
+		}
+	} catch (error) {
+		// Log and handle any errors
+		err("An error occurred:", error);
+	}
 }

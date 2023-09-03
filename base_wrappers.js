@@ -1,7 +1,15 @@
 var _custom_tensors = {};
 
-var getStackTrace = function() {
-	try { var a = {}; a.debug(); } catch(ex) { return (ex.stack) }
+var get_stack_trace = function() {
+	var s = "";
+	try {
+		var a = {}; 
+		a.debug();
+	} catch(ex) {
+		s = ("" + ex.stack)
+	}
+
+	return s;
 };
 
 
@@ -84,7 +92,7 @@ function tf_sequential(model_uuid) {
 function buffer(...args) {
 	var res = tf.buffer(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -94,7 +102,7 @@ function buffer(...args) {
 function fromPixels (...args) {
 	var res = tf.browser.fromPixels(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -104,7 +112,7 @@ function fromPixels (...args) {
 function input(...args) {
 	var res = tf.input(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -114,7 +122,7 @@ function input(...args) {
 function ones(...args) {
 	var res = tf.ones(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -124,7 +132,7 @@ function ones(...args) {
 function reshape(...args) {
 	var res = tf.reshape(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -134,7 +142,7 @@ function reshape(...args) {
 function min(...args) {
 	var res = tf.min(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -144,7 +152,7 @@ function min(...args) {
 function max(...args) {
 	var res = tf.max(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -154,7 +162,7 @@ function max(...args) {
 function add(...args) {
 	var res = tf.add(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -164,7 +172,7 @@ function add(...args) {
 function abs(...args) {
 	var res = tf.abs(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -174,7 +182,7 @@ function abs(...args) {
 function resizeBilinear(...args) {
 	var res = tf.image.resizeBilinear(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -184,7 +192,7 @@ function resizeBilinear(...args) {
 function rotateWithOffset (...args) {
 	var res = tf.image.rotateWithOffset(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -194,7 +202,7 @@ function rotateWithOffset (...args) {
 function flipLeftRight (...args) {
 	var res = tf.image.flipLeftRight(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -204,7 +212,7 @@ function flipLeftRight (...args) {
 function clipByValue (...args) {
 	var res = tf.clipByValue(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -214,7 +222,7 @@ function clipByValue (...args) {
 function randomUniform (...args) {
 	var res = tf.randomUniform(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -224,7 +232,7 @@ function randomUniform (...args) {
 function tf_square (...args) {
 	var res = tf.square(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -234,7 +242,7 @@ function tf_square (...args) {
 function tf_mean (...args) {
 	var res = tf.mean(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -244,7 +252,7 @@ function tf_mean (...args) {
 function sqrt (...args) {
 	var res = tf.sqrt(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -254,7 +262,7 @@ function sqrt (...args) {
 function tensor1d (...args) {
 	var res = tf.tensor1d(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -264,7 +272,7 @@ function tensor1d (...args) {
 function tensor2d (...args) {
 	var res = tf.tensor2d(...args);
 
-	_custom_tensors["" + res.dataId.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -274,7 +282,7 @@ function tensor2d (...args) {
 function tensor (...args) {
 	var res = tf.tensor(...args);
 
-	_custom_tensors["" + res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -290,7 +298,7 @@ function grad (...args) {
 function divNoNan (...args) {
 	var res = tf.divNoNan(...args);
 
-	_custom_tensors["" + res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 
@@ -300,7 +308,7 @@ function divNoNan (...args) {
 function oneHot (...args) {
 	var res = tf.oneHot(...args);
 
-	_custom_tensors[res.id] = [getStackTrace(), res, tensor_print_to_string(res)];
+	_custom_tensors[res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
 	_clean_custom_tensors();
 

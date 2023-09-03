@@ -5473,7 +5473,7 @@ function l(msg) {
 
 	var struct = {
 		'type': 'l',
-		'stacktrace': getStackTrace(),
+		'stacktrace': get_stack_trace(),
 		'log': msg,
 		'time': parse_int(Date.now() / 1000)
 	};
