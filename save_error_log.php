@@ -46,7 +46,6 @@
 				} else {
 					// Save the filtered HTML to the log file directory
 					$file_path = $log_file_dir . '/' . $filename;
-					print(">>$html_code<<\n");
 					file_put_contents($file_path, $html_code);
 
 					if (file_exists($file_path)) {
@@ -70,7 +69,7 @@
 	// Example usage:
 	if (isset($_SERVER["REQUEST_METHOD"])) {
 		if ($_SERVER["REQUEST_METHOD"] === "POST") {
-			$html_code = file_get_contents("php://input");
+			$html_code = $_POST["html_code"];
 			if ($html_code !== false) {
 				$log_file_dir = "debuglogs";
 				receiveAndCheckHTML($log_file_dir, $html_code);
