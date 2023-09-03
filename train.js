@@ -784,7 +784,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		} else {
 			if(tries_classification_but_receives_other) {
 				var ll = labels.length;
-				overlay = showWhiteOverlayWithText(language[lang]["fixing_output_shape"]);
+				overlay = show_overlay(language[lang]["fixing_output_shape"]);
 				if(labels && ll) {
 					is_repairing_output_shape = true;
 					var change_to_beginner = 0;
