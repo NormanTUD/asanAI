@@ -346,7 +346,7 @@
 			die("$file does not exist");
 		}
 
-		$t = filemtime($file);
+		$t = get_last_commit_hash_of_file($file);
 		$file = $file . "?t=$t";
 
 		if($async && $defer) {
@@ -367,7 +367,7 @@
 			die("$file does not exist");
 		}
 
-		$t = filemtime($file);
+		$t = get_last_commit_hash_of_file($file);
 		$file = $file . "?t=$t";
 
 		if($id) {
@@ -469,6 +469,14 @@
 		return 'ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=60 scads@taurus.hrsk.tu-dresden.de "'.$command.'"';
 	}
 
+	function get_last_commit_hash_of_file ($file) {
+		if(file_exists($file)) {
+			return chop(shell_exec("git log -n 1 --pretty=format:%H -- $file | cat"));
+		} else {
+			die("$file not found.");
+		}
+	}
+
 	function get_git_hash () {
 		$rev = chop(shell_exec("git rev-parse HEAD"));
 		if(!$rev) {
@@ -482,6 +490,4 @@
 			return $rev;
 		}
 	}
-
-	get_git_hash();
 ?>
