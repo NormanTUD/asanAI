@@ -67,7 +67,7 @@ async function _create_model () {
 
 	try {
 		if(global_model_data) {
-			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 			for (var i = 0; i < model_data_tensors.length; i++) {
 				await dispose(model_data_tensors[i]);
 			}
@@ -142,13 +142,13 @@ async function _get_recreate_model(current_status_hash, model_config_hash, new_m
 	return recreate_model;
 }
 
-function findTensorsWithIsDisposedInternal(obj, tensorList = []) {
+function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 	if (typeof obj === "object") {
 		if (obj.isDisposedInternal !== undefined) {
 			tensorList.push(obj);
 		}
 		for (const key in obj) {
-			findTensorsWithIsDisposedInternal(obj[key], tensorList);
+			find_tensors_with_is_disposed_internal(obj[key], tensorList);
 		}
 	}
 
@@ -170,7 +170,7 @@ async function compile_model () {
 		}
 
 		if(global_model_data) {
-			var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 			for (var i = 0; i < model_data_tensors.length; i++) {
 				await dispose(model_data_tensors[i]);
 			}

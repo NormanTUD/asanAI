@@ -221,7 +221,7 @@ function getKeyByValue(object, value) {
 
 async function get_model_data (optimizer_name_only) {
 	if(global_model_data) {
-		var model_data_tensors = findTensorsWithIsDisposedInternal(global_model_data);
+		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var i = 0; i < model_data_tensors.length; i++) {
 			await dispose(model_data_tensors[i]);
 		}
