@@ -4552,8 +4552,6 @@ async function write_error(e, fn, hide_swal) {
 		console.trace();
 
 		if(!hide_swal) {
-			send_bug_report();
-
 			Swal.fire({
 				icon: 'error',
 				title: 'Oops [5]...',
