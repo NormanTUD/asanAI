@@ -5470,6 +5470,15 @@ function l(msg) {
 		err("Some thing went wrong with the `l` function!", e);
 		log(msg);
 	}
+
+	var struct = {
+		'type': 'l',
+		'stacktrace': getStackTrace(),
+		'log': msg,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 async function set_custom_image_training () {

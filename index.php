@@ -932,6 +932,7 @@ text-align: end;
 							<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
 						</div>
 						<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
+						<button onclick="copy_to_clipboard(get_full_log_as_json());"><span class="TRANSLATEME_copy_to_clipboard_debug"></span></button>
 						<div class="ribbon-group-title">Log</div>
 					</div>
 

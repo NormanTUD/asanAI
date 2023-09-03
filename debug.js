@@ -1,5 +1,7 @@
 "use strict";
 
+var _full_debug_log = [];
+
 var printed_msgs = [];
 
 function log_once (...args) {
@@ -30,6 +32,15 @@ function info (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
+
+	var struct = {
+		'type': 'info',
+		'stacktrace': getStackTrace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 function err (...args) {
@@ -39,6 +50,15 @@ function err (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
+
+	var struct = {
+		'type': 'err',
+		'stacktrace': getStackTrace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 function wrn (...args) {
@@ -48,6 +68,15 @@ function wrn (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
+
+	var struct = {
+		'type': 'warn',
+		'stacktrace': getStackTrace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 function dbg (...args) {
@@ -57,6 +86,15 @@ function dbg (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
+
+	var struct = {
+		'type': 'debug',
+		'stacktrace': getStackTrace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 function log (...args) {
@@ -66,6 +104,16 @@ function log (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
+
+
+	var struct = {
+		'type': 'log',
+		'stacktrace': getStackTrace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
 }
 
 function header_warning (msg) {
@@ -546,3 +594,7 @@ function create_graphviz_function_call_graph () {
 
 // Execute the analysis
 // create_graphviz_function_call_graph();
+
+function get_full_log_as_json () {
+	return JSON.stringify(_full_debug_log);
+}
