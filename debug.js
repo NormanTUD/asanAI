@@ -594,6 +594,15 @@ function create_graphviz_function_call_graph () {
 
 // Execute the analysis
 // create_graphviz_function_call_graph();
+function detect_and_color_stacktrace(input_string) {
+	log(input_string);
+	var pattern = /([\w$]+)@((?:https?|ftp):\/\/[^\s/$.?#].[^\s]*)/g;
+	var coloredString = input_string.replace(pattern, function(match, funcName, url) {
+		return "<span style='color: #af0f0f;'>" + funcName + "</span>@<span style='color: #0f0faf;'>" + url + "</span>";
+	});
+
+	return coloredString;
+}
 
 function create_html_table_from_json(data) {
 	try {
@@ -627,7 +636,7 @@ function create_html_table_from_json(data) {
 				// Iterate through the keys and create table cells
 				keys.forEach(function (key) {
 					var cell = document.createElement("td");
-					cell.innerHTML = "<pre>" + item[key] + "</pre>";
+					cell.innerHTML = "<pre>" + detect_and_color_stacktrace("" + item[key]) + "</pre>";
 					row.appendChild(cell);
 				});
 
