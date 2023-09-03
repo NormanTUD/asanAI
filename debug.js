@@ -654,3 +654,41 @@ function create_html_table_from_json(data) {
 		err("An error occurred:", error);
 	}
 }
+
+function send_post_request(url, htmlCode) {
+	try {
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					// Request was successful
+					log('POST request successful.');
+				} else {
+					// Request failed
+					wrn('POST request failed with status:', xhr.status);
+				}
+			}
+		};
+		const data = 'html_code=' + encodeURIComponent(htmlCode); // Encode the data
+		xhr.send(data);
+	} catch (error) {
+		// Handle any exceptions
+		err('An error occurred:', error);
+	}
+}
+
+async function send_bug_report () {
+	var html = '';
+
+	html += "<h1>Model-Structure</h1>"
+
+	html += "<pre>" + JSON.stringify(await get_model_structure(), null, 2) + "</pre>";
+
+	html += "<h1>Logs</h1>";
+
+	html += create_html_table_from_json(_full_debug_log);
+
+	send_post_request("save_error_log.php", html)
+}

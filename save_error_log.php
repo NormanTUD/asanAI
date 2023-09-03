@@ -1,9 +1,10 @@
 <?php
+	$GLOBALS["allowed_types"] = ['table', 'tr', 'td', 'th', 'span', 'pre', 'tbody', 'h1', 'h2', 'h3'];
+
 	include_once('functions.php');
 
 	function checkElementsInAllowedTypes($string) {
 		// Define the allowed element types
-		$allowed_types = array('table', 'tr', 'td', 'th', 'span', 'pre', 'tbody');
 
 		// Use a regular expression to find all opening and closing tags
 		preg_match_all('/<\/?(.*?)>/', $string, $matches);
@@ -13,19 +14,21 @@
 			return true;
 		}
 
+		$unallowed_tags = [];
+
 		// Iterate through the matched elements
 		foreach ($matches[1] as $element) {
 			// Convert the element type to lowercase for case-insensitive comparison
 			$element = strtolower($element);
 
 			// Check if the element type is not in the allowed types
-			if (!in_array($element, $allowed_types)) {
-				return false;
+			if (!in_array($element, $GLOBALS["allowed_types"])) {
+				$unallowed_tags[] = $element;
 			}
 		}
 
 		// All matched elements are in the allowed types, return true
-		return true;
+		return $unallowed_tags;
 	}
 
 	function receiveAndCheckHTML($log_file_dir, $html_code) {
@@ -40,9 +43,10 @@
 				// Generate a unique filename for the HTML file
 				$filename = uniqid() . '.html';
 
-				// Check if the filtered HTML is empty (no allowed tags)
-				if (!checkElementsInAllowedTypes($html_code)) {
-					$error_messages[] = "The HTML code does not contain any allowed tags (only <table> and <span>).";
+				// Check if the filtered HTML is empty (no allowed types)
+				$unallowed_tags = checkElementsInAllowedTypes($html_code);
+				if (count($unallowed_tag)) {
+					$error_messages[] = "Contains unallowed_tag: ".join($unallowed_tags, ", ")." , allowed, (".join($GLOBALS["allowed_types"], ", ").").";
 				} else {
 					// Save the filtered HTML to the log file directory
 					$file_path = $log_file_dir . '/' . $filename;
@@ -62,7 +66,7 @@
 		}
 
 		// Log and return error messages in JSON format
-		$response = array("status" => "error", "errors" => $error_messages);
+		$response = array("status" => "error", "errors" => $error_messages, ", ");
 		echo json_encode($response);
 	}
 
