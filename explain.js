@@ -2698,7 +2698,7 @@ function _create_table_cosmo (pgi, style="") {
 	assert(Array.isArray(pgi), "pgi is not an array");
 	assert(pgi.length, "pgi is empty");
 
-	log("_create_table_cosmo(", pgi, style, ")");
+	//log("_create_table_cosmo(", pgi, style, ")");
 
 	var uuids = [];
 	var table = "<table" + (style ? " style= '" + style + "' " : "") + ">";
@@ -2712,7 +2712,7 @@ function _create_table_cosmo (pgi, style="") {
 	for (var i in labels) {
 		if(is_numeric(i)) {
 			var _label = find_key_by_value(language[lang], labels[i], labels[i]);
-			log("!!! !!! !!! _label:", _label);
+			//log("!!! !!! !!! _label:", _label);
 			if(labels[0]) {
 				labels_arr_str.push(`<span class='TRANSLATEME_${_label[1]}'></span>`);
 			} else {
@@ -2853,7 +2853,7 @@ async function cosmo_maximally_activate_last_layer () {
 	var table = table_and_uuids[0];
 	var table_uuids = table_and_uuids[1];
 
-	log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
+	//log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
 
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
