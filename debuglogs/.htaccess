@@ -1,0 +1,4 @@
+AuthName "Debuglogs"
+AuthType Basic
+AuthUserFile .htpasswd
+Require valid-user
