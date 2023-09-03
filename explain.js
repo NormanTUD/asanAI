@@ -973,7 +973,7 @@ function tensor_normalize_to_rgb_min_max (x) {
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
-async function input_gradient_ascent(layerIndex, neuron, iterations, start_image) {
+async function input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion = 0) {
 	var worked = 0;
         var full_data = {};
 
@@ -1026,7 +1026,12 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
 			await compile_model();
-			input_gradient_ascent(layerIndex, neuron, iterations, start_image)
+			if(recursion > 5) {
+				await delay(100);
+				return input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1)
+			} else {
+				throw new Error("Too many retries for input_gradient_ascent");
+			}
 		} else {
 			throw new Error(e);
 		}
