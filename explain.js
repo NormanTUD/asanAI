@@ -2710,7 +2710,7 @@ function _create_table_cosmo (pgi, style="") {
 	var labels_arr_str = [];
 
 	for (var i in labels) {
-		if(isNumeric(i)) {
+		if(is_numeric(i)) {
 			var _label = find_key_by_value(language[lang], labels[i], labels[i]);
 			log("!!! !!! !!! _label:", _label);
 			if(labels[0]) {

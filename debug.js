@@ -71,7 +71,7 @@ function get_current_model_weights_identifier () { // var start_tensors
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var ARGUMENT_NAMES = /([^\s,]+)/g;
-function getParamNames(func) { // var start_tensors
+function get_param_names(func) { // var start_tensors
 	var fnStr = func.toString().replace(STRIP_COMMENTS, '');
 	var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
 	if(result === null)
@@ -91,7 +91,7 @@ function add_memory_debugger () { // var start_tensors
 			    "delay", 
 			    "Swal", 
 			    "add_function_debugger", 
-			    "getParamNames", 
+			    "get_param_names", 
 			    "memory_debugger", 
 			    "_allow_training", 
 			    "fix_viz_width", 
@@ -113,7 +113,7 @@ function add_memory_debugger () { // var start_tensors
 		    window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
 		    i != "$"								// Do not debug jquery
 	    ) {
-		    var param_names = getParamNames(window[i]);
+		    var param_names = get_param_names(window[i]);
 
 		    var args_string = param_names.join(", "); 
 
@@ -165,7 +165,7 @@ function add_function_debugger () { // var start_tensors
 			    "get_model_config_hash",
 			    "gradClassActivationMap",
 			    "enable_train",
-			    "isNumeric",
+			    "is_numeric",
 			    "colorize",
 			    "md5",
 			    "is_hidden_or_has_hidden_parent",
@@ -174,7 +174,7 @@ function add_function_debugger () { // var start_tensors
 			    "get_id_from_train_data_struct",
 			    "decille",
 			    "headerdatadebug",
-			    "getParamNames", 
+			    "get_param_names", 
 			    "predict_webcam",
 			    "memory_debugger", 
 			    "_allow_training", 
@@ -195,7 +195,7 @@ function add_function_debugger () { // var start_tensors
 		    window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
 		    i != "$"								// Do not debug jquery
 	    ) {
-		    var param_names = getParamNames(window[i]);
+		    var param_names = get_param_names(window[i]);
 
 		    var args_string = param_names.join(", "); 
 
@@ -357,7 +357,7 @@ function data_debug (...data) { // var start_tensors
 	log("<<<<<<<<<<<<<<<<<<");
 }
 
-function highlightElement(xpath) { // var start_tensors
+function highlight_element(xpath) { // var start_tensors
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = 'yellow';
@@ -365,7 +365,7 @@ function highlightElement(xpath) { // var start_tensors
 	}
 }
 
-function unhighlightElement(xpath) { // var start_tensors
+function unhighlight_element(xpath) { // var start_tensors
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = '';
@@ -441,30 +441,11 @@ function cosmo_debugger () { // var start_tensors
 
 			var cosmo_debug_str = cosmo_debug_arr.join(", ");
 
-			$("body").append(`<div onmouseover='highlightElement("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlightElement("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+			$("body").append(`<div onmouseover='highlight_element("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlight_element("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 		}
 	}
 
 	$(".cosmo").each(dbgf)
-}
-
-// Funktion zum Verfolgen des TensorFlow.js-Memory-Objekts
-function trackTFMemory() { // var start_tensors
-	const memory = tf.memory();
-	console.log('TensorFlow.js Memory:');
-	console.log(memory);
-}
-
-// Funktion zum Verfolgen der Tensor-Allokationen
-function trackTensorAllocation(_tensor) { // var start_tensors
-	console.log('Tensor Allocated:');
-	console.log(_tensor);
-}
-
-// Funktion zum Verfolgen der Tensor-Befreiungen
-function trackTensorDisposal(_tensor) { // var start_tensors
-	console.log('Tensor Disposed:');
-	console.log(_tensor);
 }
 
 async function profile (func, ...args) { // var start_tensors
@@ -488,7 +469,7 @@ function debug (...args) {
 	console.debug(...args);
 }
 
-function analyzeWindowFunctions() {
+function create_graphviz_function_call_graph () {
 	const dependencies = {};
 
 	for (const functionName in window) {
@@ -526,4 +507,4 @@ function analyzeWindowFunctions() {
 }
 
 // Execute the analysis
-// analyzeWindowFunctions();
+// create_graphviz_function_call_graph();

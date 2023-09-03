@@ -584,7 +584,7 @@ document.addEventListener("DOMContentLoaded", init_own_image_files, false);
 
 function init_own_image_files() {
 	$(".own_image_files").unbind("change");
-	$(".own_image_files").change(handleFileSelect);
+	$(".own_image_files").change(handle_file_select);
 	rename_labels();
 }
 
@@ -600,7 +600,7 @@ function get_nr_from_own_image_files (e) {
 	return nr;
 }
 
-function handleFileSelect(e) {
+function handle_file_select(e) {
 	if(!e.target.files || !window.FileReader) return;
 
 	var upload_nr = get_nr_from_own_image_files(e);

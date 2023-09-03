@@ -205,7 +205,7 @@ function get_tr_str_for_description(desc) {
 	return "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
 }
 
-function isNumeric(str) {
+function is_numeric(str) {
 	if (typeof str != "string") return false;
 	return !isNaN(str) && !isNaN(parseFloat(str));
 }
@@ -218,7 +218,7 @@ function quote_python(item) {
 	if (typeof (item) == "object") {
 		return JSON.stringify(item);
 	} else {
-		if (isNumeric(item)) {
+		if (is_numeric(item)) {
 			return item;
 		} else if (/^\d+(,\d+)*$/.test(item)) {
 			return "[" + item + "]";
@@ -920,7 +920,7 @@ async function update_python_code(dont_reget_labels) {
 	return redo_graph;
 }
 
-function orNone (str, prepend = '"', append = '"') {
+function or_none (str, prepend = '"', append = '"') {
 	if(str) {
 		if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
 			return parseFloat(str);
@@ -943,71 +943,71 @@ function model_add_python_structure (layer_type, data) {
 	${data.filters}, 
 	(${data.kernel_size}), 
 	strides=(${data.strides.join(", ")}),
-	padding=${orNone(data.padding)},
+	padding=${or_none(data.padding)},
 	data_format=None,
 	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${orNone(data.activation)}, 
+	activation=${or_none(data.activation)}, 
 	use_bias=${data.use_bias ? 'True' : 'False'}, 
-	kernel_initializer=${orNone(data.kernel_initializer)},
-	bias_initializer=${orNone(data.bias_initializer)}, 
-	kernel_regularizer=${orNone(data.kernel_regularizer)},
-	bias_regularizer=${orNone(data.bias_regularizer)}, 
-	activity_regularizer=${orNone(data.activity_regularizer)},
-	kernel_constraint=${orNone(data.kernel_constraint)}, 
-	bias_constraint=${orNone(data.bias_constraint)})
+	kernel_initializer=${or_none(data.kernel_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)}, 
+	kernel_regularizer=${or_none(data.kernel_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)}, 
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	bias_constraint=${or_none(data.bias_constraint)})
 )
 `;
 	} else if(layer_type == "Dense") {
 		return `model.add(layers.Dense(
 	units=${data.units}, 
-	activation=${orNone(data.activation)}, 
+	activation=${or_none(data.activation)}, 
 	use_bias=${data.use_bias ? 'True' : 'False'}, 
-	kernel_initializer=${orNone(data.kernel_initializer)}, 
-	bias_initializer=${orNone(data.bias_initializer)}, 
-	kernel_regularizer=${orNone(data.kernel_regularizer)}, 
-	bias_regularizer=${orNone(data.bias_regularizer)}, 
-	activity_regularizer=${orNone(data.activity_regularizer)}, 
-	kernel_constraint=${orNone(data.kernel_constraint)}, 
-	bias_constraint=${orNone(data.bias_constraint)}
+	kernel_initializer=${or_none(data.kernel_initializer)}, 
+	bias_initializer=${or_none(data.bias_initializer)}, 
+	kernel_regularizer=${or_none(data.kernel_regularizer)}, 
+	bias_regularizer=${or_none(data.bias_regularizer)}, 
+	activity_regularizer=${or_none(data.activity_regularizer)}, 
+	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
-		str += `model.add(layers.UpSampling2D(size=${orNone(data.size, "(", ")")}, data_format=${orNone(data.data_format)}, interpolation=${orNone(data.interpolation)}))\n`;
+		str += `model.add(layers.UpSampling2D(size=${or_none(data.size, "(", ")")}, data_format=${or_none(data.data_format)}, interpolation=${or_none(data.interpolation)}))\n`;
 	} else if (layer_type == "SeparableConv1D") {
 		str += `model.add(layers.SeparableConv1D(filters=${data.filters},
 	kernel_size=${data.kernel_size},
-	strides=${orNone(data.strides)},
-	padding=${orNone(data.padding)},
-	data_format=${orNone(data.data_format)},
+	strides=${or_none(data.strides)},
+	padding=${or_none(data.padding)},
+	data_format=${or_none(data.data_format)},
 	dilation_rate=${data.dilation_rate},
 	depth_multiplier=${data.depth_multiplier},
-	activation=${orNone(data.activation)},
+	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias},
-	depthwise_initializer=${orNone(data.depthwise_initializer)},
-	pointwise_initializer=${orNone(data.pointwise_initializer)},
-	bias_initializer=${orNone(data.bias_initializer)},
-	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
-	pointwise_regularizer=${orNone(data.pointwise_regularizer)},
-	bias_regularizer=${orNone(data.bias_regularizer)},
-	activity_regularizer=${orNone(data.activity_regularizer)},
-	depthwise_constraint=${orNone(data.depthwise_constraint)},
-	pointwise_constraint=${orNone(data.pointwise_constraint)},
-	bias_constraint=${orNone(data.bias_constraint)}
+	depthwise_initializer=${or_none(data.depthwise_initializer)},
+	pointwise_initializer=${or_none(data.pointwise_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
+	pointwise_regularizer=${or_none(data.pointwise_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	depthwise_constraint=${or_none(data.depthwise_constraint)},
+	pointwise_constraint=${or_none(data.pointwise_constraint)},
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "BatchNormalization") {
 		str += `model.add(layers.BatchNormalization(axis=${data.axis},
-	momentum=${orNone(data.momentum)}, 
+	momentum=${or_none(data.momentum)}, 
 	epsilon=${data.epsilon}, 
 	center=${data.center}, 
 	scale=${data.scale}, 
-	beta_initializer=${orNone(data.beta_initializer)}, 
-	gamma_initializer=${orNone(data.gamma_initializer)}, 
-	moving_mean_initializer=${orNone(data.moving_mean_initializer)}, 
-	moving_variance_initializer=${orNone(data.moving_variance_initializer)}, 
-	beta_regularizer=${orNone(data.beta_regularizer)}, 
-	gamma_regularizer=${orNone(data.gamma_regularizer)}, 
-	beta_constraint=${orNone(data.beta_constraint)},
-	gamma_constraint=${orNone(data.gamma_constraint)},
-	synchronized=${orNone(data.synchronized)}
+	beta_initializer=${or_none(data.beta_initializer)}, 
+	gamma_initializer=${or_none(data.gamma_initializer)}, 
+	moving_mean_initializer=${or_none(data.moving_mean_initializer)}, 
+	moving_variance_initializer=${or_none(data.moving_variance_initializer)}, 
+	beta_regularizer=${or_none(data.beta_regularizer)}, 
+	gamma_regularizer=${or_none(data.gamma_regularizer)}, 
+	beta_constraint=${or_none(data.beta_constraint)},
+	gamma_constraint=${or_none(data.gamma_constraint)},
+	synchronized=${or_none(data.synchronized)}
 ))\n`;
 	} else if (layer_type == "ThresholdedReLU") {
 		str += `model.add(layers.ThresholdedReLU(theta=${data.theta}))\n`;
@@ -1015,53 +1015,53 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.Softmax(axis=${data.axis}))\n`;
 	} else if (layer_type == "ReLU") {
 		str += `model.add(layers.ReLU(
-	max_value=${orNone(data.max_value)},
-	negative_slope=${orNone(data.negative_slope)}, 
-	threshold=${orNone(data.threshold)}
+	max_value=${or_none(data.max_value)},
+	negative_slope=${or_none(data.negative_slope)}, 
+	threshold=${or_none(data.threshold)}
 ))\n`;
 	} else if (layer_type == "Conv2DTranspose") {
 		str += `model.add(layers.Conv2DTranspose(
 	${data.filters}, 
 	(${data.kernel_size}), 
 	strides=(${data.strides.join(", ")}), 
-	padding=${orNone(data.padding)}, 
-	output_padding=${orNone(data.output_padding)}, 
-	data_format=${orNone(data.data_format)}, 
+	padding=${or_none(data.padding)}, 
+	output_padding=${or_none(data.output_padding)}, 
+	data_format=${or_none(data.data_format)}, 
 	dilation_rate=(${data.dilation_rate.join(", ")}), 
-	activation=${orNone(data.activation)}, 
+	activation=${or_none(data.activation)}, 
 	use_bias=${data.use_bias ? 'True' : 'False'}, 
-	kernel_initializer=${orNone(data.kernel_initializer)}, 
-	bias_initializer=${orNone(data.bias_initializer)}, 
-	kernel_regularizer=${orNone(data.kernel_regularizer)}, 
-	bias_regularizer=${orNone(data.bias_regularizer)}, 
-	activity_regularizer=${orNone(data.activity_regularizer)}, 
-	kernel_constraint=${orNone(data.kernel_constraint)}, 
-	bias_constraint=${orNone(data.bias_constraint)}
+	kernel_initializer=${or_none(data.kernel_initializer)}, 
+	bias_initializer=${or_none(data.bias_initializer)}, 
+	kernel_regularizer=${or_none(data.kernel_regularizer)}, 
+	bias_regularizer=${or_none(data.bias_regularizer)}, 
+	activity_regularizer=${or_none(data.activity_regularizer)}, 
+	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AlphaDropout") {
-		str += `model.add(layers.AlphaDropout(rate=${data.dropout_rate}, noise_shape=${orNone(data.noise_shape)}, seed=${orNone(data.seed)}))\n`;
+		str += `model.add(layers.AlphaDropout(rate=${data.dropout_rate}, noise_shape=${or_none(data.noise_shape)}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type == "Dropout") {
-		str += `model.add(layers.Dropout(rate=${data.rate}, noise_shape=${orNone(data.noise_shape)}, seed=${orNone(data.seed)}))\n`;
+		str += `model.add(layers.Dropout(rate=${data.rate}, noise_shape=${or_none(data.noise_shape)}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type == "GaussianDropout") {
-		str += `model.add(layers.GaussianDropout(rate=${data.rate}, seed=${orNone(data.seed)}))\n`;
+		str += `model.add(layers.GaussianDropout(rate=${data.rate}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type == "GaussianNoise") {
-		str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${orNone(data.seed)}))\n`;
+		str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type.startsWith("GlobalAveragePooling")) {
-		str += `model.add(layers.${layer_type}(${orNone(data.data_format)}, keepdims=${orNone(data.keepdims)}))\n`;
+		str += `model.add(layers.${layer_type}(${or_none(data.data_format)}, keepdims=${or_none(data.keepdims)}))\n`;
 	} else if (layer_type.startsWith("GlobalMaxPooling")) {
-		str += `model.add(layers.${layer_type}(${orNone(data.data_format)}, keepdims=${orNone(data.keepdims)}))\n`;
+		str += `model.add(layers.${layer_type}(${or_none(data.data_format)}, keepdims=${or_none(data.keepdims)}))\n`;
 	} else if (layer_type == "LayerNormalization") {
 		str += `model.add(layers.LayerNormalization(
 	axis=${data.axis}, 
 	epsilon=${data.epsilon}, 
 	center=${data.center}, 
 	scale=${data.scale}, 
-	beta_initializer=${orNone(data.beta_initializer)}, 
-	gamma_initializer=${orNone(data.gamma_initializer)}, 
-	beta_regularizer=${orNone(data.beta_regularizer)}, 
-	gamma_regularizer=${orNone(data.gamma_regularizer)}, 
-	beta_constraint=${orNone(data.beta_constraint)},
-	gamma_constraint=${orNone(data.gamma_constraint)}
+	beta_initializer=${or_none(data.beta_initializer)}, 
+	gamma_initializer=${or_none(data.gamma_initializer)}, 
+	beta_regularizer=${or_none(data.beta_regularizer)}, 
+	gamma_regularizer=${or_none(data.gamma_regularizer)}, 
+	beta_constraint=${or_none(data.beta_constraint)},
+	gamma_constraint=${or_none(data.gamma_constraint)}
 ))\n`;
 	} else if (layer_type == "Reshape") {
 		str += `model.add(layers.Reshape(target_shape=[${data.target_shape}]))\n`;
@@ -1069,62 +1069,62 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}), 
 	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}), 
-	padding=${orNone(data.padding)}, 
-	data_format=${orNone(data.data_format)}
+	padding=${or_none(data.padding)}, 
+	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "MaxPooling2D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}, ${data.pool_size[1]}), 
 	strides=(${data.strides[0]}, ${data.strides[1]}), 
-	padding=${orNone(data.padding)}, 
-	data_format=${orNone(data.data_format)}
+	padding=${or_none(data.padding)}, 
+	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "MaxPooling1D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}), 
 	strides=(${data.strides[0]}), 
-	padding=${orNone(data.padding)}, 
-	data_format=${orNone(data.data_format)}
+	padding=${or_none(data.padding)}, 
+	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "AveragePooling1D") {
 		str += `model.add(layers.AveragePooling1D(pool_size=${data.pool_size},
 	strides=${data.strides[0]}, 
 	padding=${data.padding[0]},
-	data_format=${orNone(data.data_format)}
+	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "SeparableConv2D") {
 		str += `model.add(layers.SeparableConv2D(
 	filters=${data.filters},
 	kernel_size=${data.kernel_size},
-	strides=${orNone(data.strides)},
-	padding=${orNone(data.padding)},
-	data_format=${orNone(data.data_format)},
-	dilation_rate=${orNone(data.dilation_rate)},
+	strides=${or_none(data.strides)},
+	padding=${or_none(data.padding)},
+	data_format=${or_none(data.data_format)},
+	dilation_rate=${or_none(data.dilation_rate)},
 	depth_multiplier=${data.depth_multiplier},
-	activation=${orNone(data.activation)},
+	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias},
-	depthwise_initializer=${orNone(data.depthwise_initializer)},
-	pointwise_initializer=${orNone(data.pointwise_initializer)},
-	bias_initializer=${orNone(data.bias_initializer)},
-	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
-	pointwise_regularizer=${orNone(data.pointwise_regularizer)},
-	bias_regularizer=${orNone(data.bias_regularizer)},
-	activity_regularizer=${orNone(data.activity_regularizer)},
-	depthwise_constraint=${orNone(data.depthwise_constraint)},
-	pointwise_constraint=${orNone(data.pointwise_constraint)},
-	bias_constraint=${orNone(data.bias_constraint)}
+	depthwise_initializer=${or_none(data.depthwise_initializer)},
+	pointwise_initializer=${or_none(data.pointwise_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
+	pointwise_regularizer=${or_none(data.pointwise_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	depthwise_constraint=${or_none(data.depthwise_constraint)},
+	pointwise_constraint=${or_none(data.pointwise_constraint)},
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AveragePooling2D") {
 		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size.join(", ")}}),
 	strides=(${data.strides.join(",")}), 
 	padding=${data.padding},
-	data_format=${orNone(data.data_format)}
+	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "AveragePooling3D") {
 		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size.join(", ")}),
 	strides=(${data.strides.join(", ")}), 
 	padding=${data.padding},
-	data_format=${orNone(data.data_format)}
+	data_format=${or_none(data.data_format)}
 ))\n`;
 
 	} else if (layer_type == "LeakyReLU") {
@@ -1135,37 +1135,37 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.DepthwiseConv1D(
 	kernel_size=${data.kernel_size},
 	strides=${data.strides},
-	padding=${orNone(data.padding)},
+	padding=${or_none(data.padding)},
 	depth_multiplier=${data.depth_multiplier},
-	data_format=${orNone(data.data_format)},
+	data_format=${or_none(data.data_format)},
 	dilation_rate=${data.dilation_rate},
-	activation=${orNone(data.activation)},
+	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? 'True' : 'False'},
-	depthwise_initializer=${orNone(data.depthwise_initializer)},
-	bias_initializer=${orNone(data.bias_initializer)},
-	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
-	bias_regularizer=${orNone(data.bias_regularizer)},
-	activity_regularizer=${orNone(data.activity_regularizer)},
-	depthwise_constraint=${orNone(data.depthwise_constraint)},
-	bias_constraint=${orNone(data.bias_constraint)}
+	depthwise_initializer=${or_none(data.depthwise_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	depthwise_constraint=${or_none(data.depthwise_constraint)},
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "DepthwiseConv2D") {
 		str += `model.add(layers.DepthwiseConv2D(
 	(${data.kernel_size}),
 	strides=(${data.strides.join(", ")}),
-	padding=${orNone(data.padding)},
+	padding=${or_none(data.padding)},
 	depth_multiplier=${data.depth_multiplier},
-	data_format=${orNone(data.data_format)},
+	data_format=${or_none(data.data_format)},
 	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${orNone(data.activation)},
+	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? 'True' : 'False'},
-	depthwise_initializer=${orNone(data.depthwise_initializer)},
-	bias_initializer=${orNone(data.bias_initializer)},
-	depthwise_regularizer=${orNone(data.depthwise_regularizer)},
-	bias_regularizer=${orNone(data.bias_regularizer)},
-	activity_regularizer=${orNone(data.activity_regularizer)},
-	depthwise_constraint=${orNone(data.depthwise_constraint)},
-	bias_constraint=${orNone(data.bias_constraint)}
+	depthwise_initializer=${or_none(data.depthwise_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	depthwise_constraint=${or_none(data.depthwise_constraint)},
+	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return `model.add(layers.Flatten())\n`
@@ -1633,7 +1633,7 @@ function set_momentum(val) {
 }
 
 function set_validation_split(val) {
-	assert(typeof(val) == "number" || isNumeric(val), val + " is not an number but " + typeof(number));
+	assert(typeof(val) == "number" || is_numeric(val), val + " is not an number but " + typeof(number));
 	val = parseInt(val);
 
 	l(language[lang]["set_val_split_to"] + val);
@@ -1658,7 +1658,7 @@ function set_learning_rate(val) {
 	$("#learningRate_" + $("#optimizer").val()).val(val);
 }
 
-function byteToMB(varbyte) {
+function byte_to_mb(varbyte) {
 	var mb = Math.round((varbyte / (1024 * 1024)) * 100) / 100;
 	return varbyte + " (" + mb + "MB)";
 }
@@ -1753,7 +1753,7 @@ function get_batch_size() {
 }
 
 function set_batch_size(val) {
-	assert(typeof(val) == "number" || isNumeric(val), val + " is not numeric but " + typeof (val));
+	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
 	val = parseInt(val);
 
 	l("Set batchsize to " + val);
@@ -1763,7 +1763,7 @@ function set_batch_size(val) {
 }
 
 function set_epochs(val) {
-	assert(typeof(val) == "number" || isNumeric(val), val + " is not numeric but " + typeof (val));
+	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
 	val = parseInt(val);
 	l("Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
@@ -3676,7 +3676,7 @@ function show_dtype_only_first_layer() {
 	}
 }
 
-function attrChangeName(elem, attr, new_attr) {
+function attr_change_name(elem, attr, new_attr) {
 	var data = $(elem).attr(attr);
 	$(elem).attr(new_attr, data);
 	$(elem).removeAttr(attr);
@@ -3710,9 +3710,9 @@ function disable_hidden_chardin_entries() {
 	for (var i = 0; i < items.length; i++) {
 		var target = $(items[i]);
 		if (is_hidden_or_has_hidden_parent(target)) {
-			attrChangeName(target, "data-intro", "data-introdisabled");
+			attr_change_name(target, "data-intro", "data-introdisabled");
 		} else {
-			attrChangeName(target, "data-introdisabled", "data-intro");
+			attr_change_name(target, "data-introdisabled", "data-intro");
 		}
 	}
 
@@ -4183,7 +4183,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 
 	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
 	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
-	assert(isNumeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
+	assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
 	// Get the canvas element
 
 	// Create a new canvas element for the layer
@@ -4660,7 +4660,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 				}
 
 				if (value !== "") {
-					option_hash[option_name] = isNumeric(value) ? parseFloat(value) : value;
+					option_hash[option_name] = is_numeric(value) ? parseFloat(value) : value;
 				}
 			}
 		}
@@ -5109,7 +5109,7 @@ function check_number_values() {
 		var item = $(all_fields[i]);
 		var val = item.val();
 
-		if (!isNumeric(val)) {
+		if (!is_numeric(val)) {
 			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
 				item.css("background-color", "red");
 			}
