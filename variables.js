@@ -402,6 +402,7 @@ var layer_options = {
 			"bias_initializer",
 			"kernel_regularizer",
 			"bias_regularizer",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -423,6 +424,7 @@ var layer_options = {
 			"bias_initializer",
 			"kernel_constraint",
 			"bias_constraint",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -447,6 +449,7 @@ var layer_options = {
 			"bias_constraint",
 			"kernel_regularizer",
 			"bias_regularizer",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -457,6 +460,7 @@ var layer_options = {
 			"trainable",
 			"size",
 			"interpolation",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -467,6 +471,7 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
+			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -477,6 +482,7 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
+			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -487,6 +493,7 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
+			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -497,6 +504,7 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
+			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -505,6 +513,7 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_alphaDropout_description\" \/>",
 		"options": [
 			"rate",
+			"visualize",
 			"dtype"
 		],
 		"category": "Noise"
@@ -513,6 +522,7 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_gaussianDropout_description\" \/>",
 		"options": [
 			"rate",
+			"visualize",
 			"dtype"
 		],
 		"category": "Noise"
@@ -521,6 +531,7 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_gaussianNoise_description\" \/>",
 		"options": [
 			"stddev",
+			"visualize",
 			"dtype"
 		],
 		"category": "Noise"
