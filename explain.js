@@ -139,7 +139,7 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	return drew_something;
 }
 
-function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
 	assert(typeof(pixel_size) == "number", "pixel_size must be of type number, is " + typeof(pixel_size));
 	if(!multiply_by) {
 		multiply_by = 1;
@@ -152,6 +152,9 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 
 	$(canvas).attr("width", width * pixel_size);
 	$(canvas).attr("height", height * pixel_size);
+	if(_class) {
+		$(canvas).attr("class", _class);
+	}
 
 	if(typeof(data_hash) == "object") {
 		for (name in data_hash) {
@@ -1310,7 +1313,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 					model_hash: await get_model_config_hash()
 				};
 
-				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
+				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
 				if(res) {
 					if(!is_cosmo_mode) {
