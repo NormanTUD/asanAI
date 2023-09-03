@@ -982,10 +982,10 @@ async function run_neural_network (recursive=0) {
 				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
 				while (!model) {
-					console.debug("Waiting for model...");
+					dbg("Waiting for model...");
 					delay(500);
 				}
-				console.warn("Error: " + e + ". This may mean the model was not yet compiled");
+				wrn("Error: " + e + ". This may mean the model was not yet compiled");
 
 				if(!recursive) {
 					await run_neural_network(1);
@@ -1003,12 +1003,12 @@ async function run_neural_network (recursive=0) {
 
 						if(old_loss != new_loss) {
 							$("#loss").val(new_loss).trigger("change");
-							console.warn("Autoset metric to " + new_loss);
+							wrn("Autoset metric to " + new_loss);
 						}
 
 						if(old_metric != new_metric) {
 							$("#metric").val(new_metric).trigger("change");
-							console.warn("Autoset metric to " + new_metric);
+							wrn("Autoset metric to " + new_metric);
 						}
 						try {
 							repaired = await repair_output_shape(1);
@@ -1021,7 +1021,7 @@ async function run_neural_network (recursive=0) {
 							await run_neural_network(1);
 						}
 					} catch (e) {
-						console.warn(e);
+						wrn(e);
 					}
 
 				} else {
@@ -1071,7 +1071,7 @@ async function run_neural_network (recursive=0) {
 						await compile_model()
 						console.info("Model was null or undefined. Recompiling model done!");
 					} else if(("" + e).includes("but got array with shape")) {
-						console.warn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
+						wrn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
 					} else {
 						await write_error("" + e);
 
@@ -1209,7 +1209,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 			} else if (label == "1.00") {
 				label = language[lang]["very_sure"];
 			} else {
-				console.warn("cosmo-label not found for " + label + " probability");
+				wrn("cosmo-label not found for " + label + " probability");
 			}
 			neg = +90;
 		}
@@ -1267,7 +1267,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 			//log("DEBUG:", image, imageX, imageY, w, h);
 			ctx.drawImage(image, imageX, imageY, w, h);
 		} else {
-			console.warn("Canvas not defined. canvasIndex + 1:", canvasIndex + (is_cosmo_mode ? 0 : 1));
+			wrn("Canvas not defined. canvasIndex + 1:", canvasIndex + (is_cosmo_mode ? 0 : 1));
 		}
 	}
 
@@ -1283,7 +1283,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 			}
 			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 		} else {
-			console.warn("Canvas could not be appended!");
+			wrn("Canvas could not be appended!");
 		}
 	}
 
@@ -1356,7 +1356,7 @@ async function visualize_train () {
 
 				if(!x) {
 					tf.engine().endScope();
-					console.warn("x not defined!", x);
+					wrn("x not defined!", x);
 					continue;
 				}
 
@@ -1372,7 +1372,7 @@ async function visualize_train () {
 				});
 
 				if(img_tensor === null) {
-					console.warn("Could not load image from pixels from this element:", x);
+					wrn("Could not load image from pixels from this element:", x);
 					continue;
 				}
 

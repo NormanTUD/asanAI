@@ -32,10 +32,10 @@ function get_current_timestamp () {
 function test_not_equal (name, is, should_be) {
 	num_tests++;
 	if(!is_equal(is, should_be)) {
-		//console.log("%c" + name + " OK", "background: green; color: white");
+		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		console.log("%c" + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be), "background: red; color: white");
+		log("%c" + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be), "background: red; color: white");
 		num_tests_failed++;
 		return false;
 	}
@@ -44,10 +44,10 @@ function test_not_equal (name, is, should_be) {
 function test_equal (name, is, should_be) {
 	num_tests++;
 	if(is_equal(is, should_be)) {
-		//console.log("%c" + name + ": OK", "background: green; color: white");
+		//log("%c" + name + ": OK", "background: green; color: white");
 		return true;
 	} else {
-		console.log("%c" + name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be), "background: red; color: white");
+		log("%c" + name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be), "background: red; color: white");
 		num_tests_failed++;
 		return false;
 	}
@@ -69,9 +69,9 @@ function test_summary () {
 
 	var tests_results_str = `${num_tests} tests, ok: ${tests_ok}, failed: ${num_tests_failed}`;
 	if(num_tests_failed) {
-		console.log("%c" + tests_results_str, "background: red; color: white");
+		log("%c" + tests_results_str, "background: red; color: white");
 	} else {
-		console.log("%c" + tests_results_str, "background: green; color: white");
+		log("%c" + tests_results_str, "background: green; color: white");
 	}
 }
 
@@ -82,7 +82,7 @@ function log_test (name) {
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
-				console.warn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
+				wrn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
 			}
 		}
 	}

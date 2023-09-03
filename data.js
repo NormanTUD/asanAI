@@ -40,7 +40,7 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 			} else if (tensor_type == "string") {
 				new_items = new_items.map(String);
 			} else {
-				console.warn("Unknown tensor_type: " + tensor_type);
+				wrn("Unknown tensor_type: " + tensor_type);
 			}
 			data[k].push(new_items);
 		}
@@ -137,7 +137,7 @@ async function _get_urls_and_keys () {
 				keys[url] = key;
 			}
 		} else {
-			//console.warn("No items found");
+			//wrn("No items found");
 		}
 	}
 
@@ -243,7 +243,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 						tf_data = await url_to_tf(url, dont_load_into_tf);
 						//log("tf_data:", tf_data);
 						if(!tf_data && !dont_load_into_tf) {
-							console.warn("tf_data is empty, though it shouldn't be");
+							wrn("tf_data is empty, though it shouldn't be");
 						}
 					} catch (e) {
 						console.error(e);
@@ -616,7 +616,7 @@ async function get_xs_and_ys () {
 
 					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 				} catch (e) {
-					console.warn(e);
+					wrn(e);
 					console.trace();
 					x = tensor([]);
 					y = tensor([]);
@@ -815,7 +815,7 @@ async function get_xs_and_ys () {
 			log(e.__proto__);
 			*/
 			if(("" + e).includes("Error in oneHot: depth must be >=2, but it is 1")) {
-				console.warn("For whatever reason, it was tries to do oneHot, but only has one vector. Loss:", loss);
+				wrn("For whatever reason, it was tries to do oneHot, but only has one vector. Loss:", loss);
 			} else {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					$("#loss").val("meanSquaredError").trigger("change");

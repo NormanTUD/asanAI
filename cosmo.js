@@ -79,7 +79,7 @@ async function show_cosmo_elements_depending_on_current_skills () {
 				}
 			}
 		} else {
-			console.warn("ELEMENT HAS NO REQUIRED SKILLS, YET IS IN COSMO CLASS:", elements[i]);
+			wrn("ELEMENT HAS NO REQUIRED SKILLS, YET IS IN COSMO CLASS:", elements[i]);
 		}
 	}
 
@@ -178,7 +178,7 @@ class ManiC {
 
 			var assertion_test = real_x !== undefined || real_y !== undefined || real_bottom !== undefined;
 			if(!assertion_test) {
-				console.log("ERROR. largest_element empty:", largest_element);
+				console.error("ERROR. largest_element empty:", largest_element);
 			}
 			assert(assertion_test, "Could not get largest element, see Logs");
 
@@ -393,16 +393,16 @@ function find_unclicked_items ($x, possible_items) {
 
 		/*
 		log("===================================")
-		console.log("Element with index", i);
-		console.log("req_full:", req_full);
-		console.log("show_again_full:", show_again_full);
-		console.log("current_skills:", current_skills);
-		console.log("current_skill:", current_skill);
-		console.log("current_element_skill_level:", current_element_skill_level);
-		console.log("current_user_skill:", current_user_skill);
-		console.log("required_nrs:", required_nrs);
-		console.log("allows_zero:", allows_zero);
-		console.log("is_possible:", is_possible);
+		log("Element with index", i);
+		log("req_full:", req_full);
+		log("show_again_full:", show_again_full);
+		log("current_skills:", current_skills);
+		log("current_skill:", current_skill);
+		log("current_element_skill_level:", current_element_skill_level);
+		log("current_user_skill:", current_user_skill);
+		log("required_nrs:", required_nrs);
+		log("allows_zero:", allows_zero);
+		log("is_possible:", is_possible);
 		log("possible:", possible);
 		if(!possible) {
 			log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -523,9 +523,9 @@ function is_mouse_over_element(className) {
 
 	if(mouseX == -1 || mouseY == -1) {
 		if(is_cosmo_mode) {
-			console.warn("No mouse movement detected yet");
+			wrn("No mouse movement detected yet");
 		} else {
-			console.warn("is_mouse_over_element: not in cosmo mode, returning false.");
+			wrn("is_mouse_over_element: not in cosmo mode, returning false.");
 		}
 		return false;
 	}
@@ -552,9 +552,9 @@ function is_mouse_over_element(className) {
 function is_mouse_over_element_variables (elements) {
 	if (mouseX === -1 || mouseY === -1) {
 		if (is_cosmo_mode) {
-			console.warn("No mouse movement detected yet");
+			wrn("No mouse movement detected yet");
 		} else {
-			console.warn("is_mouse_over_element_variables: not in cosmo mode, returning false.");
+			wrn("is_mouse_over_element_variables: not in cosmo mode, returning false.");
 		}
 		return false;
 	}
@@ -753,11 +753,11 @@ function has_special_cosmo_classes (x) {
 // Function to be executed
 function autochoose_next () {
 	//console.trace();
-	//console.log("clicked anywhere in cosmo mode!");
+	//log("clicked anywhere in cosmo mode!");
 	if(manicule) {
 		 $(manicule.element).click()
 	} else {
-		console.warn("No manicule element found...");
+		wrn("No manicule element found...");
 	}
 }
 
@@ -797,7 +797,7 @@ function get_color_picker_elements() {
 /*
 // Get the list of all color picker base div elements available on the current page
 var colorPickerElementsList = get_color_picker_elements();
-console.log(colorPickerElementsList);
+log(colorPickerElementsList);
 */
 
 async function _predict_mode_examples() {
@@ -1037,7 +1037,7 @@ function do_images_overlap (imageId1, imageId2) {
 
 
 	if(!rect1 || !rect2) {
-		console.warn("do_images_overlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
+		wrn("do_images_overlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
 		return false;
 	}
 

@@ -15,7 +15,7 @@ function log_once (...args) {
 }
 
 function colorlog (color, msg) {
-	console.log("%c" + msg, "background: " + color + "; color: white");
+	log("%c" + msg, "background: " + color + "; color: white");
 }
 
 function logt(...msg) {
@@ -23,45 +23,65 @@ function logt(...msg) {
 	console.trace();
 }
 
+function wrn (...args) {
+	args.forEach(arg => console.warn(arg));
+	args.forEach(arg => l("[WARN] " + arg));
+
+	if(enable_log_trace) {
+		console.trace();
+	}
+}
+
+function dbg (...args) {
+	args.forEach(arg => console.debug(arg));
+	args.forEach(arg => l("[DEBUG] " + arg));
+
+	if(enable_log_trace) {
+		console.trace();
+	}
+}
+
 function log (...args) {
-	args.forEach(arg => console.log(arg))
+	args.forEach(arg => console.log(arg));
+	args.forEach(arg => l(arg));
+
 	if(enable_log_trace) {
 		console.trace();
 	}
 }
 
 function header_warning (msg) {
-	console.log("%c" + msg, "background: orange; color: black");
+	log("%c" + msg, "background: orange; color: black");
 }
 
 function header_error (msg) {
-	console.log("%c" + msg, "background: red; color: white");
+	log("%c" + msg, "background: red; color: white");
 }
 
 function header (msg) {
-	console.log("%c" + msg, "background: #222; color: #bada55");
+	log("%c" + msg, "background: #222; color: #bada55");
 }
 
 function datadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
-		console.log(msg);
+		log(msg);
 	}
 }
 
 function traindebug (msg) {
 	if (window.location.href.indexOf("traindebug") > -1) {
-		console.log(msg);
+		log(msg);
 	}
 }
 
 function headerdatadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
-		console.log("%c" + msg, "background: #222; color: #bada55");
+		log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
 function headerguidebug (msg) {
 	if (window.location.href.indexOf("guidebug") > -1) {
-		console.log("%c" + msg, "background: #222; color: #bada55");
+		log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
 
@@ -136,7 +156,7 @@ function add_memory_debugger () {
 
 			    eval(execute_this);
 		    } catch (e) {
-			    console.warn(e);
+			    wrn(e);
 			    log(i);
 			    log(param_names);
 			    window[i] = original_function;
@@ -206,7 +226,7 @@ function add_function_debugger () {
 			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
 			    window["${i}"] = function (${args_string}) {
 					call_depth = call_depth + 1;
-					console.log("    ".repeat(call_depth) + "${i}");
+					log("    ".repeat(call_depth) + "${i}");
 					var _start_time = + new Date();
 					if(!Object.keys(function_times).includes("${i}")) {
 						function_times["${i}"] = {};
@@ -225,7 +245,7 @@ function add_function_debugger () {
 
 			    eval(execute_this);
 		    } catch (e) {
-			    console.warn(e);
+			    wrn(e);
 			    log(i);
 			    log(param_names);
 			    window[i] = original_function;
@@ -301,7 +321,7 @@ function memory_debugger () {
 			memdeb.innerHTML = debug_string;
 		}
 	} else {
-		console.warn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
+		wrn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
 	}
 
 	last_num_global_tensors = num_tensors;
@@ -451,9 +471,9 @@ function cosmo_debugger () {
 async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
-	console.log(`newBytes: ${profile.newBytes}`);
-	console.log(`newTensors: ${profile.newTensors}`);
-	console.log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+	log(`newBytes: ${profile.newBytes}`);
+	log(`newTensors: ${profile.newTensors}`);
+	log(`byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 }
 
 function label_debug (...args) {
@@ -461,7 +481,7 @@ function label_debug (...args) {
 		return;
 	}
 
-	console.log(...args);
+	log(...args);
 	console.trace();
 }
 
@@ -503,7 +523,7 @@ function create_graphviz_function_call_graph () {
 	dotFileContent += '}\n';
 
 	// You can log the dotFileContent or use other methods to save it as needed.
-	console.log(dotFileContent); // Example: Logging the content to the console
+	log(dotFileContent); // Example: Logging the content to the console
 }
 
 // Execute the analysis

@@ -26,7 +26,7 @@ function get_input_shape_as_string () {
 			return "[]";
 		}
 	} catch (e) {
-		console.warn(e);
+		wrn(e);
 		return "[]";
 	}
 }
@@ -587,7 +587,7 @@ function get_initializer_name (name) {
 	var res = get_name_case_independent(name, initializers);
 
 	if(!name) {
-		console.warn("Cannot determine the kernel initializer name of " + name);
+		wrn("Cannot determine the kernel initializer name of " + name);
 		return null;
 	} else {
 		return res;
@@ -1190,10 +1190,10 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		func += "\treturn get_tr_str_for_layer_table(" + params + ");\n";
 		func += "}\n";
 
-		//console.log(func);
+		//log(func);
 
 		//if(func_name == "add_kernel_initializer_value_option") {
-		//	console.log(func);
+		//	log(func);
 		//}
 
 		try {
@@ -1382,7 +1382,7 @@ var enable_cosmo_debugger = false;
 
 try {
 	if(enable_cosmo_debug) {
-		console.log("Enabling cosmo debugger /etc/cosmo_debug existed");
+		log("Enabling cosmo debugger /etc/cosmo_debug existed");
 		enable_cosmo_debugger = true;
 	}
 } catch (e) {}

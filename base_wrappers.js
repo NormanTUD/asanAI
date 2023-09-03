@@ -19,7 +19,7 @@ async function dispose (item) { // start_tensors
 		await tf.nextFrame();
 	} else {
 		/*
-		console.warn("item was empty in dispose():"); // not a real async
+		wrn("item was empty in dispose():"); // not a real async
 		console.trace();
 		*/
 	}
@@ -56,7 +56,7 @@ function tf_sequential(model_uuid) {
 				_custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
 			}
 		} catch (e) {
-			console.warn(e);
+			wrn(e);
 		}
 
 		try {
@@ -66,7 +66,7 @@ function tf_sequential(model_uuid) {
 				_custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
 			}
 		} catch (e) {
-			console.warn(e);
+			wrn(e);
 		}
 
 		_clean_custom_tensors();
@@ -326,7 +326,7 @@ function _clean_custom_tensors () {
 			if(("" + e).includes("_custom_tensors[key] is undefined")) {
 				//
 			} else {
-				console.warn(e);
+				wrn(e);
 			}
 		}
 	}

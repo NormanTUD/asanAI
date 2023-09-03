@@ -2,17 +2,17 @@
 
 function get_expected_input_shape_without_batch_as_string () {
 	if(!model) {
-		console.warn("No model found");
+		wrn("No model found");
 		return "";
 	}
 
 	if(!model.input) {
-		console.warn("No model.input found");
+		wrn("No model.input found");
 		return "";
 	}
 
 	if(!model.input.shape) {
-		console.warn("No model.input.shape found");
+		wrn("No model.input.shape found");
 		return "";
 	}
 
@@ -37,7 +37,7 @@ async function except (errname, e) {
 		e = e.message;
 	}
 
-	console.warn(errname + ": " + e + ". Resetting model.");
+	wrn(errname + ": " + e + ". Resetting model.");
 	console.trace();
 	await write_error(e);
 	throw new Error(e);
@@ -92,7 +92,7 @@ async function _create_model () {
 		}
 	} catch (e) {
 		if(("" + e).includes("undefined has no properties")) {
-			console.warn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
+			wrn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
 			return;
 		} else {
 			if(("" + e).includes("Input 0 is incompatible with layer")) {
@@ -100,7 +100,7 @@ async function _create_model () {
 			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
 				throw Error("" + e);
 			} else if(("" + e).includes("model is undefined")) {
-				console.warn("Currently, the model is undefined. This may be fatal, but may also not be");
+				wrn("Currently, the model is undefined. This may be fatal, but may also not be");
 			} else {
 				await except("ERROR1", e);
 				if(mode == "beginner") {
@@ -167,7 +167,7 @@ async function compile_model () {
 
 	if(!model) {
 		if(finished_loading) {
-			console.warn("model not given");
+			wrn("model not given");
 		}
 
 		if(global_model_data) {
@@ -192,7 +192,7 @@ async function compile_model () {
 	}
 
 	if(!model) {
-		console.warn("No model to compile!");
+		wrn("No model to compile!");
 		return;
 	}
 
@@ -207,7 +207,7 @@ async function compile_model () {
 		$("#outputShape").val(JSON.stringify(model.outputShape));
 	} catch (e) {
 		if(("" + e).includes("model is undefined")) {
-			console.warn("model is undefined while compile_model");
+			wrn("model is undefined while compile_model");
 		} else {
 			throw new Error(e);
 		}
@@ -306,7 +306,7 @@ function get_data_for_layer (type, i, first_layer) {
 			} else {
 				if(value == "") {
 					if(!option_name.includes("constraint")) {
-						console.warn("Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
+						wrn("Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
 					}
 				} else {
 					data[get_js_name(option_name)] = is_numeric(value) ? parse_float(value) : value;
@@ -341,7 +341,7 @@ async function get_model_structure(is_fake_model = 0) {
 
 				first_layer = false;
 			} catch (e) {
-				console.warn("Failed to add layer type ", type, ": ", e);
+				wrn("Failed to add layer type ", type, ": ", e);
 				header("DATA:");
 				log(data);
 				$($(".warning_container")[i]).show()
@@ -642,7 +642,7 @@ function _check_data (data, type) {
 	try {
 		if("units" in data && typeof(data["units"]) == "undefined") {
 			if(finished_loading) {
-				console.warn("units was not defined. Using 2 as default");
+				wrn("units was not defined. Using 2 as default");
 			}
 			data["units"] = 2;
 		}
@@ -722,7 +722,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 					for (j in new_output_shape) {
 						if(new_output_shape[j] === 0) {
 							if(new_output_shape.shape) {
-								console.log("New output-shape:", new_output_shape.shape);
+								log("New output-shape:", new_output_shape.shape);
 							}
 							throw new Error("Input shape contains 0 at layer " + j);
 						}
@@ -838,11 +838,11 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
-			console.warn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
+			wrn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
 		} else if(("" + e).includes("Input shape contains 0")) {
-			console.warn("" + e);
+			wrn("" + e);
 		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
-			console.warn("Model could not be created because of problems with the input layer.");
+			wrn("Model could not be created because of problems with the input layer.");
 			return;
 		} else {
 			throw new Error(e);
@@ -868,7 +868,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} catch(e) {
 				console.error(e);
-				console.warn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+				wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 			}
 		}
 	}
@@ -1013,7 +1013,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 			var default_value = get_default_option(layer_type, js_names_to_python_names[js_option_name]);
 
 			if(js_option_name === undefined) {
-				console.warn("Cannot map " + this_option + " to js_option_name");
+				wrn("Cannot map " + this_option + " to js_option_name");
 			} else {
 				if(js_option_name == "dilationRate") {
 					data[js_option_name] = eval(default_value);
@@ -1108,7 +1108,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 		await dispose(fake_model);
 
 	} catch (e) {
-		console.warn(e);
+		wrn(e);
 		ret = false;
 	}
 
@@ -1260,7 +1260,7 @@ async function get_valid_layer_types (layer_nr) {
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
 
 	if(!m) {
-		//console.warn("Model not given. Using model singleton.");
+		//wrn("Model not given. Using model singleton.");
 		m = model;
 	}
 
@@ -1350,7 +1350,7 @@ async function get_weights_as_json (m) {
 				try {
 					weights_array[i] = weights[i].arraySync();
 				} catch (e) {
-					console.log("" + e);
+					wrn("" + e);
 				}
 			}
 		}
@@ -1370,7 +1370,7 @@ async function get_weights_as_string (m) {
 
 	if(!m) {
 		if(finished_loading) {
-			console.warn("Could not get model...");
+			wrn("Could not get model...");
 		}
 		return false;
 	}
@@ -1391,7 +1391,7 @@ async function get_weights_as_string (m) {
 						console.error(e);
 					}
 				} else {
-					console.warn("weights is disposed");
+					wrn("weights is disposed");
 				}
 			}
 
@@ -1400,12 +1400,12 @@ async function get_weights_as_string (m) {
 		} catch (e) {
 			if((""+e).includes("already disposed")) {
 				if(finished_loading) {
-					//console.warn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				}
 			} else if((""+e).includes("e is undefined")) {
-				console.warn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+				wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
 			} else if((""+e).includes("getWeights is not a function")) {
-				console.warn("getWeights is not a function. The model may have been undefined while attempting this.");
+				wrn("getWeights is not a function. The model may have been undefined while attempting this.");
 			} else {
 				console.error(e);
 				console.trace();
@@ -1603,14 +1603,14 @@ function model_output_shape_looks_like_classification () {
 function layer_has_multiple_nodes () {
 	if(!model) {
 		if(finished_loading) {
-			console.warn("no model in layer_has_multiple_nodes");
+			wrn("no model in layer_has_multiple_nodes");
 		}
 	}
 
 	if(!Object.keys(model).includes("layers")) {
 		if(finished_loading) {
 
-			console.warn("no model.layers in layer_has_multiple_nodes");
+			wrn("no model.layers in layer_has_multiple_nodes");
 		}
 	}
 

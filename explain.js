@@ -321,7 +321,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 			return ret;
 		}
 	} catch (e) {
-		console.warn(e);
+		wrn(e);
 	}
 
 	return false;
@@ -693,7 +693,7 @@ async function identify_layers (number_of_layers) {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					console.warn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
@@ -706,7 +706,7 @@ async function identify_layers (number_of_layers) {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				console.warn(`identify_layers: i = ${i} is not in model.layers. model.layers.length = ${model.layers.length}. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				wrn(`identify_layers: i = ${i} is not in model.layers. model.layers.length = ${model.layers.length}. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
@@ -787,7 +787,7 @@ function add_layer_debuggers () {
 
 	if(!model) {
 		if(finished_loading) {
-			console.warn("No model found");
+			wrn("No model found");
 		}
 
 		return;
@@ -795,7 +795,7 @@ function add_layer_debuggers () {
 
 	if(!model.layers) {
 		if(finished_loading) {
-			console.warn("No layer found");
+			wrn("No layer found");
 		}
 	}
 
@@ -822,7 +822,7 @@ function add_layer_debuggers () {
 			eval(code);
 		}
 	} catch (e) {
-		console.warn(e);
+		wrn(e);
 	}
 
 }
@@ -1066,7 +1066,7 @@ function _get_neurons_last_layer (layer, type) {
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		console.warn("Unknown layer " + layer);
+		wrn("Unknown layer " + layer);
 		return false;
 	}
 
@@ -1163,7 +1163,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 					}
 				} else {
-					console.log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
 				}
 			} else {
 				throw new Error(e);
@@ -1294,7 +1294,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			if(Object.keys(full_data).includes("data")) {
 				var _tensor = tensor(full_data["data"]);
 				var t_str = tensor_print_to_string(_tensor);
-				console.log("Maximally activated tensors:", t_str);
+				log("Maximally activated tensors:", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 				show_tab_label("maximally_activated_label", 1)
 				await dispose(_tensor);
@@ -1485,7 +1485,7 @@ function get_layer_data() {
 			}
 		} catch (e) {
 			if(("" + e).includes("Tensor is disposed")) {
-				console.warn("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+				wrn("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
 				console.error(e);
 			}
@@ -2148,12 +2148,12 @@ function can_be_shown_in_latex () {
 	}
 
 	if(!Object.keys(model).includes("layers")) {
-		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		dbg("model does not include layers. Cannot be shown in LaTeX");
 		return false;
 	}
 
 	if(!Object.keys(model["layers"]).includes("0")) {
-		console.debug("model does not include layers. Cannot be shown in LaTeX");
+		dbg("model does not include layers. Cannot be shown in LaTeX");
 		return false;
 	}
 
@@ -2248,10 +2248,10 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			}
 		} catch (e) {
 			if(("" + e).includes("can't assign to property")) {
-				console.warn("failed temml:", e);
+				wrn("failed temml:", e);
 			} else {
 				var mathjax_error_explanation = "Are you online?";
-				console.warn(e);
+				wrn(e);
 				$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
 			}
 		}
@@ -2292,7 +2292,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 			var this_key = keys[key_nr];
 
 			if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
-				//console.warn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
+				//wrn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
 				continue;
 			}
 
@@ -2331,7 +2331,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 										}
 									}
 								} catch (e) {
-									console.warn(e);
+									wrn(e);
 									console.trace();
 								}
 							}
@@ -2597,7 +2597,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		const lastConvLayer = model.layers[layerIndex];
 
 		/*
-		console.log(
+		log(
 			`Located last convolutional layer of the model at ` +
 			`index ${layerIndex}: layer type = ${lastConvLayer.getClassName()}; ` +
 			`layer name = ${lastConvLayer.name}`);
@@ -2666,9 +2666,9 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			console.warn("Model weights are disposed. Probably the model was recompiled during prediction");
+			wrn("Model weights are disposed. Probably the model was recompiled during prediction");
 		} else {
-			console.warn(e);
+			wrn(e);
 		}
 		return null;
 	}
@@ -2686,7 +2686,7 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 
 		return [0, _default];
 	} catch (error) {
-		console.warn("Error:", error.message); // Log and warn about the error
+		wrn("Error:", error.message); // Log and warn about the error
 		return [0, _default]; // Return null to indicate that the key was not found
 	}
 }
@@ -2992,7 +2992,7 @@ function _arbitrary_array_to_latex (arr) {
 		//log("_arbitrary_array_to_latex was called with function argument");
 		//console.trace();
 	} else {
-		console.warn("Unknown type:", typeof(arr));
+		wrn("Unknown type:", typeof(arr));
 	}
 	return str;
 }

@@ -877,7 +877,7 @@ async function update_python_code(dont_reget_labels) {
 				expert_code += model_add_python_structure(model.layers[i].getClassName(), data);
 			} catch (e) {
 				if(("" + e).includes("model.layers[i] is undefined")) {
-					console.warn("model.layers was undefined. This MAY be harmless.");
+					wrn("model.layers was undefined. This MAY be harmless.");
 				} else {
 					expert_code += "# ERROR while creating code: " + e;
 					log("ERROR in python expert code: " + e, "data:", data);
@@ -1408,7 +1408,7 @@ function stop_webcam() {
 
 function _has_any_warning () {
 	if($("#width").val() == "" || $("#height").val() == "") {
-		//console.warn("Width or height is empty string, returning from updated_page");
+		//wrn("Width or height is empty string, returning from updated_page");
 		return true;
 	}
 
@@ -1498,7 +1498,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		try {
 			await write_descriptions();
 		} catch (e) {
-			console.warn(e);
+			wrn(e);
 		}
 
 		allow_training();
@@ -1517,7 +1517,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			} catch (e) {
 				if(("" + e).includes("but got array with shape")) {
 					var err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-					console.warn(err);
+					wrn(err);
 					l(err);
 				} else {
 					throw new Error(e);
@@ -1554,16 +1554,16 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			}
 
 			if(("" + e).includes("model.layers[i]")) {
-				console.debug("model.layers[i] (" + i + ") is undefined");
+				dbg("model.layers[i] (" + i + ") is undefined");
 				return false;
 			} else if (("" + e).includes("model is undefined")) {
-				console.debug("model is undefined");
+				dbg("model is undefined");
 				return false;
 			} else if (("" + e).includes("model.input is undefined")) {
-				console.debug("model.input is undefined");
+				dbg("model.input is undefined");
 				return false;
 			} else if (("" + e).includes("code is undefined")) {
-				console.debug("This error may happen when the whole DOM is deleted: " + e);
+				dbg("This error may happen when the whole DOM is deleted: " + e);
 				return false;
 			} else {
 				throw new Error(e);
@@ -1573,7 +1573,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	if(!ret) {
 		if(finished_loading) {
-			//console.warn("updated_page failed");
+			//wrn("updated_page failed");
 
 			var last_good = get_last_good_input_shape_as_string();
 			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
@@ -1670,7 +1670,7 @@ function write_model_summary_wait () {
 		write_model_summary();
 	} catch (e) {
 		if(("" + e).includes("getElementById(...) is null")) {
-			console.warn("Did you remove the summary tab manually?");
+			wrn("Did you remove the summary tab manually?");
 		} else {
 			throw new Error(e);
 		}
@@ -1783,7 +1783,7 @@ function get_number_of_layers() {
 		return parse_int(document.getElementById("number_of_layers").value);
 	} catch (e) {
 		if(("" + e).includes("getElementById(...) is null")) {
-			console.warn("Was the $('#number_of_layers') element removed?");
+			wrn("Was the $('#number_of_layers') element removed?");
 		} else {
 			throw new Error(e);
 		}
@@ -1821,7 +1821,7 @@ function get_option_for_layer_by_type(nr) {
 			}
 		});
 		type = layer_type.val();
-		console.log("Cannot determine type of layer " + nr);
+		log("Cannot determine type of layer " + nr);
 		return;
 	}
 
@@ -2483,7 +2483,7 @@ async function set_config(index) {
 						} else if (item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
 							set_item_value(i, "dropout_rate", keras_layers[i]["config"]["rate"]);
 						} else {
-							//console.warn("Item not found in keras: " + item_name);
+							//wrn("Item not found in keras: " + item_name);
 						}
 					}
 				});
@@ -2607,7 +2607,7 @@ async function wait_for_updated_page (seconds) {
 	var i = 0;
 	while (Date.now() - last_updated_page < (seconds * 1000)) {
 		if(i % 10) {
-			console.debug(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
+			dbg(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
 		}
 		await delay(200);
 		i++;
@@ -3373,7 +3373,7 @@ function get_id_from_train_data_struct(index) {
 	} catch (e) {
 		if(("" + e).includes("TypeError: document.getElementById")) {
 			if(finished_loading) {
-				console.warn("Was the ribbon removed manually?");
+				wrn("Was the ribbon removed manually?");
 			}
 		} else {
 			console.error(e);
@@ -4020,7 +4020,7 @@ function delete_custom_drawing_layer () {
 					delete(atrament_data[this_canvas_id]);
 				}
 			} catch (e) {
-				//console.log(e);
+				//log(e);
 			}
 		}
 	}
@@ -4457,7 +4457,7 @@ function ensure_shape_array(shape) {
 	} else if (typeof (shape) == "object") {
 		return shape;
 	}
-	console.warn("Is neither shape nor object: ", shape);
+	wrn("Is neither shape nor object: ", shape);
 }
 
 function output_shape_is_same(output_shape_data, output_shape_network) {
@@ -4500,7 +4500,7 @@ function tensor_print_to_string(_tensor) {
 		return logMessages.join("\n");
 	} catch (e) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
-			console.warn("tensor to be printed was already disposed");
+			wrn("tensor to be printed was already disposed");
 		} else {
 			console.error("tensor_print_to_string failed:", e);
 
@@ -4547,7 +4547,7 @@ async function write_error(e, fn, hide_swal) {
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
 		update_translations();
 		await write_descriptions();
-		console.warn(e);
+		wrn(e);
 		console.trace();
 
 		if(!hide_swal) {
@@ -4934,7 +4934,7 @@ function human_readable_time(seconds, start="", end="") {
 			params.push(end);
 		}
 
-		console.warn("Seconds is very large:", seconds, "Please check the source of that", params);
+		wrn("Seconds is very large:", seconds, "Please check the source of that", params);
 		console.trace();
 	}
 
@@ -5577,7 +5577,7 @@ async function easter_egg_fireworks (force=0) {
 	}
 
 	fireworks_counter++;
-	console.warn(fireworks_counter);
+	wrn(fireworks_counter);
 
 	if(force || fireworks_counter && fireworks_counter % 10 == 0) {
 		$(".fireworks-container").show();
@@ -5760,13 +5760,13 @@ async function download_model_for_training (m) {
 
 function clear_attrament (idname) {
 	if(!atrament_data) {
-		console.warn("atrament_data not defined");
+		wrn("atrament_data not defined");
 		return;
 	}
 
 	/*
 	if(Object.keys(atrament_data).includes(idname)) {
-		console.warn(`${idname} is not a key of atrament_data`);
+		wrn(`${idname} is not a key of atrament_data`);
 		return;
 	}
 	*/
@@ -5900,7 +5900,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			try {
 				eval(customfunc);
 			} catch (e) {
-				console.warn("Cannot run custom atrament function, probably because the model was undefined: " + e);
+				wrn("Cannot run custom atrament function, probably because the model was undefined: " + e);
 				console.trace();
 			}
 		}
@@ -6067,7 +6067,7 @@ async function change_last_responsible_layer_for_image_output () {
 			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
 		}
 	} else {
-		console.warn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
+		wrn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
 	}
 
 }
@@ -6117,14 +6117,14 @@ function allow_editable_labels () {
 		var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(!labels.length) {
-			//console.warn("labels is an array, but is empty.");
+			//wrn("labels is an array, but is empty.");
 			return;
 		}
 
 		try {
 			var tmp_label = labels[label_index];
 			if(tmp_label === undefined) {
-				console.warn("tmp_label undefined");
+				wrn("tmp_label undefined");
 				return;
 			}
 
@@ -6148,7 +6148,7 @@ function allow_editable_labels () {
 			}
 		} catch (e) {
 			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
-				console.warn("This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
+				wrn("This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
 			} else {
 				console.error(e);
 			}
@@ -6165,14 +6165,14 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			console.warn("No model found");
+			wrn("No model found");
 		}
 		return;
 	}
 
 	if(!model.layers) {
 		if(finished_loading) {
-			console.warn("No layers found");
+			wrn("No layers found");
 		}
 		return;
 	}
@@ -6273,7 +6273,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 		var val_key = required[i];
 
 		if(!val_key) {
-			console.log("val_key not defined or false START");
+			log("val_key not defined or false START");
 			log("required", required);
 			log("type", type);
 			log("values", values);
@@ -6441,7 +6441,7 @@ function model_is_ok () {
 	try {
 
 	} catch (e) {
-		console.warn(e);
+		wrn(e);
 	}
 
 	try {
@@ -6471,9 +6471,9 @@ function model_is_ok () {
 
 	if(last_model_ok_status != msg) {
 		if(color == red) {
-			console.debug(msg);
+			dbg(msg);
 		} else if (color == orange) {
-			console.debug(msg);
+			dbg(msg);
 		}
 
 		l(msg);
@@ -6535,7 +6535,7 @@ function show_overlay(text, title="") {
 		return overlay;
 	} catch (error) {
 		log('An error occurred:', error);
-		console.warn('Failed to display overlay.');
+		wrn('Failed to display overlay.');
 	}
 }
 
@@ -6583,7 +6583,7 @@ function set_get(paramName, paramValue) {
 		history.replaceState(null, '', newUrl); // Update the URL without reloading the page
 	} catch (error) {
 		// Handle error: Log and warn about the error
-		console.warn('Error updating URL:', error);
+		wrn('Error updating URL:', error);
 		// You can add more intelligent handling here if needed
 	}
 }

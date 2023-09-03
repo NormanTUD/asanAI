@@ -88,7 +88,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
 		$("#" + uuid + "_error").html(e);
-		console.warn(e);
+		wrn(e);
 		output_shape = input_shape;
 	}
 

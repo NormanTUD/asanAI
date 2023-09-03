@@ -112,7 +112,7 @@ function get_units_at_layer(i, use_max_layer_size) {
 					try {
 						units = Math.max(0, model.layers[i].countParams());
 					} catch (e) {
-						console.warn("Something went wrong when trying to determine get_units_at_layer");
+						wrn("Something went wrong when trying to determine get_units_at_layer");
 					}
 				}
 			}
@@ -190,7 +190,7 @@ async function restart_fcnn(force) {
 				return;
 			}
 		} else {
-			console.warn("Model has no first layer. Returning from restart_fcnn");
+			wrn("Model has no first layer. Returning from restart_fcnn");
 		}
 	}
 
@@ -277,10 +277,10 @@ async function restart_alexnet(dont_click) {
 								push = 1;
 							}
 						} catch (e) {
-							console.warn("ERROR: ", e);
+							wrn("ERROR: ", e);
 						}
 					} catch (e) {
-						console.log(e);
+						wrn(e);
 						return;
 					}
 
@@ -304,7 +304,7 @@ async function restart_alexnet(dont_click) {
 			}
 		} else {
 			if(finished_loading) {
-				console.warn("Model has no first layer. Skipping restart_alexnet");
+				wrn("Model has no first layer. Skipping restart_alexnet");
 			}
 		}
 	}
@@ -341,14 +341,14 @@ async function restart_alexnet(dont_click) {
 						graph_hashes["alexnet"] = new_hash;
 					}
 				} catch (e) {
-					console.warn(e);
+					wrn(e);
 					disable_alexnet = 1;
 				}
 			} else {
 				disable_alexnet = 1;
 			}
 		} catch (e) {
-			console.warn(e);
+			wrn(e);
 			disable_alexnet = 1;
 		}
 	}
@@ -452,7 +452,7 @@ async function restart_lenet(dont_click) {
 				return;
 			}
 		} else {
-			console.warn("Model has no first layer. Returning from restart_lenet");
+			wrn("Model has no first layer. Returning from restart_lenet");
 		}
 	}
 
