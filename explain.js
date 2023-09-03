@@ -1166,7 +1166,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 							canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 						} catch (e) {
 							if(("" + e).includes("already disposed")) {
-								//
+								err("" + e);
 							} else {
 								throw new Error(e);
 							}
@@ -1332,12 +1332,10 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				if(res) {
 					if(!is_cosmo_mode) {
 						$("#maximally_activated_content").prepend(canvas);
-						if(!is_cosmo_mode) {
-							show_tab_label("maximally_activated_label", 1)
-						}
+						show_tab_label("maximally_activated_label", 1)
 					}
 				} else {
-					log("Res: " + res);
+					log("Res: ", res);
 				}
 			}
 		}
@@ -2768,7 +2766,7 @@ function _create_table_cosmo (pgi, style="") {
 
 	var res = [table, uuids];
 
-	log(res);
+	//log(res);
 
 	return res;
 }
@@ -2865,7 +2863,7 @@ async function cosmo_maximally_activate_last_layer () {
 	var table = table_and_uuids[0];
 	var table_uuids = table_and_uuids[1];
 
-	//log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
+	console.log("table_and_uuids MAIN", table_and_uuids, "canvasses:", canvasses);
 
 	$(".h2_maximally_activated_layer_contents").html(`
 		<hr class='cosmo_hr'>
@@ -2882,8 +2880,14 @@ async function cosmo_maximally_activate_last_layer () {
 
 	for (var i = 0; i < canvasses.length; i++) {
 		var _prev = canvasses[i][0];
-		$("#" + table_uuids[i]).append(_prev);
-		$("#" + table_uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges").css("margin-right", "65px").css("margin-left", "65px").addClass("layer_image");
+		$("#" + table_uuids[i]).
+			append(_prev).
+			find("canvas").
+			css("width", "170px").
+			css("height", "170px").
+			css("image-rendering", "crisp-edges").
+			css("margin-right", "65px").
+			css("margin-left", "65px")
 	}
 
 	if(previously_generated_images.length) {
