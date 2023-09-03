@@ -2560,19 +2560,19 @@ function apply_color_map (x) {
 
 		const h = x.shape[1];
 		const w = x.shape[2];
-		var buffer = buffer([1, h, w, 3]);
+		var _buffer = buffer([1, h, w, 3]);
 
 		const colorMapSize = RGB_COLORMAP.length / 3;
 		for (let i = 0; i < h; ++i) {
 			for (let j = 0; j < w; ++j) {
 				const pixelValue = xNormData[i * w + j];
 				const row = Math.floor(pixelValue * colorMapSize);
-				buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
-				buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
-				buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
+				_buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
+				_buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
+				_buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
 			}
 		}
-		return buffer.toTensor();
+		return _buffer.toTensor();
 	});
 
 
