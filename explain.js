@@ -1121,7 +1121,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		$("#generate_images_msg").html("");
 
 		if(stop_generating_images) {
-			console.info("Stopped generating images because the stop generating images button was clicked");
+			info("Stopped generating images because the stop generating images button was clicked");
 			continue;
 		}
 
@@ -2234,7 +2234,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 					await _temml();
 				} catch (e) {
 					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
-						console.info("" + e);
+						info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
 						err("TEMML: " + e);
 					} else {

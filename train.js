@@ -1066,10 +1066,10 @@ async function run_neural_network (recursive=0) {
 					}
 				} else {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
-						console.info("Model is null or undefined. Recompiling model...");
+						info("Model is null or undefined. Recompiling model...");
 						model = await create_model();
 						await compile_model()
-						console.info("Model was null or undefined. Recompiling model done!");
+						info("Model was null or undefined. Recompiling model done!");
 					} else if(("" + e).includes("but got array with shape")) {
 						wrn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
 					} else {

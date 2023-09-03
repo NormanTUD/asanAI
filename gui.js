@@ -1413,12 +1413,12 @@ function _has_any_warning () {
 	}
 
 	if (disable_show_python_and_create_model) {
-		//console.info("disable_show_python_and_create_model, returning from updated_page");
+		//info("disable_show_python_and_create_model, returning from updated_page");
 		return true;
 	}
 
 	if (is_setting_config) {
-		//console.info("Currently running is_setting_config, returning from updated_page");
+		//info("Currently running is_setting_config, returning from updated_page");
 		return true;
 	}
 
@@ -1966,7 +1966,7 @@ function enable_all_layer_types () {
 
 async function enable_valid_layer_types(layer_nr) {
 	if(started_training && !is_repairing_output_shape) {
-		console.info("enable_valid_layer_types disabled because is in training");
+		info("enable_valid_layer_types disabled because is in training");
 		return;
 	}
 	assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
@@ -6230,7 +6230,7 @@ function hide_colorpicker_for_eraser (idname) {
 function load_msg(swal_msg_format) {
 	var overlay = null;
 	if(started_training && stop_downloading_data) {
-		console.info("Training is not started anymore, but the stopped downloading");
+		info("Training is not started anymore, but the stopped downloading");
 		return;
 	}
 

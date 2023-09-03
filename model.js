@@ -898,7 +898,7 @@ async function create_model (old_model, fake_model_structure, force) {
 				}
 			} else {
 				if(finished_loading) {
-					console.info("Old layers had no layers defined");
+					info("Old layers had no layers defined");
 				}
 			}
 		} catch (e) {
@@ -958,7 +958,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 				if(!fake_model_structure) {
 					err(`Failed to add layer type ${type}`);
 				} else {
-					console.info(`Failed to add layer type ${type} (but ok because fake_model)`);
+					info(`Failed to add layer type ${type} (but ok because fake_model)`);
 				}
 			}
 		} catch (e) {

@@ -101,7 +101,7 @@ async function hasFrontBack() {
 	} catch (e) {
 		/* log and swallow exception, this is a probe only */
 		if(("" + e).includes("NotAllowedError")) {
-			console.info("Webcam access was denied");
+			info("Webcam access was denied");
 		} else {
 			l("ERROR: " + e);
 		}
