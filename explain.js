@@ -977,51 +977,60 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 	var worked = 0;
         var full_data = {};
 
-	var generated_data = tidy(() => {
-		// Create an auxiliary model of which input is the same as the original
-		// model but the output is the output of the convolutional layer of
-		// interest.
-		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
+	try {
+		var generated_data = tidy(() => {
+			// Create an auxiliary model of which input is the same as the original
+			// model but the output is the output of the convolutional layer of
+			// interest.
+			const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
 
-		const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
+			const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
 
-		// This function calculates the value of the convolutional layer's
-		// output at the designated filter index.
-		const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
+			// This function calculates the value of the convolutional layer's
+			// output at the designated filter index.
+			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
 
-		// This returned function (`gradFunction`) calculates the gradient of the
-		// convolutional filter's output with respect to the input image.
-		const gradFunction = grad(lossFunction);
+			// This returned function (`gradFunction`) calculates the gradient of the
+			// convolutional filter's output with respect to the input image.
+			const gradFunction = grad(lossFunction);
 
-		// Form a random image as the starting point of the gradient ascent.
+			// Form a random image as the starting point of the gradient ascent.
 
-		var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
-		if(typeof(start_image) != "undefined") {
-			data = start_image;
-		}
-
-		for (var i = 0; i < iterations; i++) {
-			if(stop_generating_images) {
-				continue;
+			var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
+			if(typeof(start_image) != "undefined") {
+				data = start_image;
 			}
 
-			const scaledGrads = tidy(() => {
-				const grads = gradFunction(data);
-				const norm = sqrt(tf_mean(tf_square(grads))).add(tf.backend().epsilon());
-				// Important trick: scale the gradient with the magnitude (norm)
-				// of the gradient.
-				return grads.div(norm);
-			});
+			for (var i = 0; i < iterations; i++) {
+				if(stop_generating_images) {
+					continue;
+				}
 
-			data = data.add(scaledGrads);
+				const scaledGrads = tidy(() => {
+					const grads = gradFunction(data);
+					const norm = sqrt(tf_mean(tf_square(grads))).add(tf.backend().epsilon());
+					// Important trick: scale the gradient with the magnitude (norm)
+					// of the gradient.
+					return grads.div(norm);
+				});
+
+				data = data.add(scaledGrads);
+			}
+
+			var total_number_of_values = data.shape.reduce((acc, val) => { return acc += val });
+			var _sum = data.sum().arraySync();
+
+			worked = 1;
+			return data;
+		});
+	} catch (e) {
+		if(("" + e).includes("is already disposed")) {
+			await compile_model();
+			input_gradient_ascent(layerIndex, neuron, iterations, start_image)
+		} else {
+			throw new Error(e);
 		}
-
-		var total_number_of_values = data.shape.reduce((acc, val) => { return acc += val });
-		var _sum = data.sum().arraySync();
-
-		worked = 1;
-		return data;
-	});
+	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
 		full_data["image"] = tidy(() => { return deprocess_image(generated_data).arraySync(); });
