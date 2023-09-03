@@ -121,6 +121,8 @@ in creating this program:
 
 - [Multitouch tap.png](https://commons.wikimedia.org/wiki/File:Multitouch_tap.png)
 
+- [html2canvas](https://html2canvas.hertzen.com/)
+
 [comment]: <> (EndSources)
 
 # PHP Settings

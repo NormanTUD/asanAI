@@ -1,5 +1,5 @@
 <?php
-	$GLOBALS["allowed_types"] = ['table', 'tr', 'td', 'th', 'span', 'pre', 'tbody', 'h1', 'h2', 'h3'];
+	$GLOBALS["allowed_types"] = ['table', 'tr', 'td', 'th', 'span', 'pre', 'tbody', 'h1', 'h2', 'h3', 'img'];
 
 	include_once('functions.php');
 
@@ -10,8 +10,7 @@
 		preg_match_all('/<\/?(.*?)>/', $string, $matches);
 
 		if (empty($matches[1])) {
-			// No opening or closing tags found, return true
-			return true;
+			return [];
 		}
 
 		$unallowed_tags = [];
@@ -27,7 +26,6 @@
 			}
 		}
 
-		// All matched elements are in the allowed types, return true
 		return $unallowed_tags;
 	}
 

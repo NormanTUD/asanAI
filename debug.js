@@ -679,8 +679,31 @@ function send_post_request(url, htmlCode) {
 	}
 }
 
+async function _take_screenshot () {
+	const screenshotTarget = document.body;
+
+	var base_64 = "";
+
+	html2canvas(screenshotTarget).then((canvas) => {
+		base_64 = canvas.toDataURL("image/png");
+	});
+
+	while (!base_64) {
+		log("Waiting for screenshot...");
+		await delay(200);
+	}
+
+	return base_64;
+}
+
 async function send_bug_report () {
 	var html = '';
+
+	if(!cam) {
+		html += "<h1>Screenshot</h1>"
+
+		html += '<img src="' + await _take_screenshot() + '" />';
+	}
 
 	html += "<h1>Browser-Information</h1>"
 
