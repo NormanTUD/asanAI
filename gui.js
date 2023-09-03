@@ -2592,7 +2592,7 @@ async function set_config(index) {
 	$(".bias_initializer").trigger("change");
 
 	if(finished_loading) {
-		await wait_for_updated_page(3);
+		await wait_for_updated_page(2);
 	}
 
 	l(language[lang]["loaded_configuration"]);
