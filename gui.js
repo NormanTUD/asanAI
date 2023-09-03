@@ -1654,7 +1654,7 @@ function set_rho(val) {
 	$("#rho_" + $("#optimizer").val()).val(val);
 }
 
-function set_learningRate(val) {
+function set_learning_rate(val) {
 	$("#learningRate_" + $("#optimizer").val()).val(val);
 }
 
@@ -2352,7 +2352,7 @@ async function set_config(index) {
 			}
 
 			if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-				set_learningRate(config["learningRate"]);
+				set_learning_rate(config["learningRate"]);
 			}
 
 			if (["monentum", "rmsprop"].includes(config["optimizer"])) {
