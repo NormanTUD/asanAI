@@ -8,7 +8,7 @@ function get_number_of_images_per_layer (layer) {
 }
 
 function normalize_to_rgb_min_max (x, min, max) {
-	var val = parseInt(255 * (x - min) / (max - min));
+	var val = parse_int(255 * (x - min) / (max - min));
 	if(val > 255) {
 		val = 255;
 	} else if (val < 0) {
@@ -515,7 +515,7 @@ async function write_descriptions (force=0) {
 		return;
 	}
 
-	var right_offset = parseInt($(layer[0]).offset().left + $(layer[0]).width() + 26);
+	var right_offset = parse_int($(layer[0]).offset().left + $(layer[0]).width() + 26);
 
 	var all_layer_markers = $(".layer_start_marker");
 	assert(all_layer_markers.length >= 1);
@@ -539,14 +539,14 @@ async function write_descriptions (force=0) {
 		var first_layer_marker = $(all_layer_markers[first_layer_idx]);
 		assert(first_layer_marker.length, "first_layer_marker could not be determined");
 
-		var first_layer_start = parseInt(first_layer_marker.offset()["top"] - 6.5);
+		var first_layer_start = parse_int(first_layer_marker.offset()["top"] - 6.5);
 		assert(first_layer_start, "first_layer_start could not be determined");
 
-		var last_layer_end = parseInt($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
+		var last_layer_end = parse_int($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
 		assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
 		assert(last_layer_end >= 0, "last_layer_end is not a number");
 
-		var first_layer_top = parseInt(first_layer.position()["top"]);
+		var first_layer_top = parse_int(first_layer.position()["top"]);
 		assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
 		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
 
@@ -569,7 +569,7 @@ async function write_descriptions (force=0) {
 		$(".descriptions_of_layers").show();
 	}
 
-	updateTranslations();
+	update_translations();
 
 }
 
@@ -1049,7 +1049,7 @@ async function get_image_from_url (url) {
 			toFloat().
 			expandDims();
 		if($("#divide_by").val() != 1) {
-			resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
+			resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 		}
 		return resized_img;
 	})();
@@ -1222,7 +1222,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 function _show_eta (times, i, neurons) {
 	var eta = "";
 	if(times.length) {
-		eta = " (" + human_readable_time(parseInt((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
+		eta = " (" + human_readable_time(parse_int((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
 	}
 
 	var img_left = (neurons - i);
@@ -1282,7 +1282,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 
 	try {
 		var start_image = undefined;
-		var iterations = parseInt($("#max_activation_iterations").val());
+		var iterations = parse_int($("#max_activation_iterations").val());
 		if(!iterations) {
 			log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 			iterations = 30;
@@ -1350,7 +1350,7 @@ function array_to_fixed (array, fixnr) {
 	var len = array.length
 	while(x < len){ 
 		if(looks_like_number(array[x])) {
-			array[x] = parseFloat(parseFloat(array[x]).toFixed(fixnr)); 
+			array[x] = parse_float(parse_float(array[x]).toFixed(fixnr)); 
 		}
 		x++;
 	}
@@ -1392,7 +1392,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 
 	for (var i = 0; i < array.length; i++) {
 		try {
-			array[i] = array_to_fixed(array[i], parseInt($("#decimal_points_math_mode").val() || 0));
+			array[i] = array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val() || 0));
 			array[i] = array_to_color(array[i], color[i]);
 			arr.push(array[i].join(joiner));
 		} catch (e) {
@@ -1422,7 +1422,7 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 	var arr = [];
 
 	for (var i = 0; i < array.length; i++) {
-		array[i] = array_to_fixed(array[i], parseInt($("#decimal_points_math_mode").val()));
+		array[i] = array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val()));
 		arr.push(array[i].join(joiner));
 	}
 
@@ -1959,13 +1959,13 @@ function model_to_latex () {
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 				
-				var alpha = parseFloat(get_item_value(i, "alpha"));
+				var alpha = parse_float(get_item_value(i, "alpha"));
 				if(typeof(alpha) == "number") {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
 					this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 				}
 
-				var theta = parseFloat(get_item_value(i, "theta"));
+				var theta = parse_float(get_item_value(i, "theta"));
 				if(typeof(theta) == "number") {
 					this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
 				}
@@ -2020,11 +2020,11 @@ function model_to_latex () {
 			var beta_string = "";
 			var gamma_string = "";
 			if("beta" in layer_data[i]) {
-				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parseInt($("#decimal_points_math_mode").val())));
+				beta_string = array_to_latex_matrix(array_to_fixed(layer_data[i].beta, parse_int($("#decimal_points_math_mode").val())));
 				beta_string = "\\displaystyle " + beta_string;
 			}
 			if("gamma" in layer_data[i]) {
-				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parseInt($("#decimal_points_math_mode").val())));
+				gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[i].gamma, parse_int($("#decimal_points_math_mode").val())));
 				gamma_string = "\\displaystyle " + gamma_string;
 			}
 
@@ -2040,7 +2040,7 @@ function model_to_latex () {
 			str += "\\displaystyle " + outname + y_equation;
 			str += "\\end{array}\n";
 		} else if (this_layer_type == "dropout") {
-			var dropout_rate = parseInt(parseFloat($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
+			var dropout_rate = parse_int(parse_float($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
 			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
@@ -2399,7 +2399,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 			//1) combine the arrays:
 			var list = [];
 			for (var j = 0; j < x_data.length; j++)
-				list.push({'x_data': parseFloat(x_data[j][0]), 'y_data': parseFloat(y_data[j][0])});
+				list.push({'x_data': parse_float(x_data[j][0]), 'y_data': parse_float(y_data[j][0])});
 
 			//2) sort:
 			list.sort(function(a, b) {
@@ -2799,7 +2799,7 @@ function toggle_previous_current_generated_images () {
 		$("#previous_images").show();
 	}
 
-	updateTranslations();
+	update_translations();
 
 	fit_to_window(); // await not possible
 }
@@ -2880,19 +2880,19 @@ async function cosmo_maximally_activate_last_layer () {
 
 	$("#previous_images_button").on("click", toggle_previous_current_generated_images);
 
-	updateTranslations();
+	update_translations();
 	await fit_to_window();
 
 	var ep = get_epochs();
 
-	var images_in_total = parseInt($("#max_number_of_files_per_category").val()) * labels.length;
+	var images_in_total = parse_int($("#max_number_of_files_per_category").val()) * labels.length;
 	var nr_epochs = get_epochs();
 
 	var str = `<span class="TRANSLATEME_click_on"></span> <button class="green_bg cosmo_button cosmo" data-required_skills="loaded_page[1],watched_presentation[1],finished_training[1]" data-dont_hide_after_show="1" data-keep_cosmo="1" id="webcam_in_cosmo" onclick="switch_predict_mode()"><span class='TRANSLATEME_camera_draw_self'></span> 📷</button> <span id='warnschild_oder_zurueck'>${language[lang]["and_try_to_draw_a_warning_sign"]}</span>.<hr class='cosmo_hr'><span class='TRANSLATEME_if_bad_continue_training'></span><br>`;
 
 	if(current_cosmo_stage == 1) {
 		$(".h2_maximally_activated_layer_contents").before(`<span class='TRANSLATEME_the_training_was_only_with'></span> ${images_in_total} <span class='TRANSLATEME_images_and'></span> ${nr_epochs} <span class='TRANSLATEME_epochs_done'></span>.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
-		updateTranslations();
+		update_translations();
 	} else {
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
@@ -2903,7 +2903,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	chose_next_manicule_target();
 
-	updateTranslations();
+	update_translations();
 
 	//$("#__tmp__prev_generated").remove();
 }

@@ -46,7 +46,7 @@ function swap_image_src_language () {
 function set_lang(l) {
 	lang = l;
 	set_cookie('lang', l, 30); // Save the language in a cookie for 30 days
-	updateTranslations();
+	update_translations();
 
 	swap_image_src_language();
 }
@@ -72,7 +72,7 @@ function set_lang_cookie(value, days) {
 }
 
 // Function to update the translation of elements
-async function updateTranslations() {
+async function update_translations() {
 	var elements = document.querySelectorAll('[class^="TRANSLATEME_"]');
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
@@ -119,7 +119,7 @@ window.addEventListener('popstate', function () {
 
 async function updateLang(la) {
 	lang = la;
-	await updateTranslations();
+	await update_translations();
 	set_lang_cookie(lang, 99999);
 }
 
@@ -134,4 +134,4 @@ function trm (name) {
 }
 
 // Update translations on initial page load
-updateTranslations();
+update_translations();

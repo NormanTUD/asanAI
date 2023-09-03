@@ -251,13 +251,13 @@ function get_data_for_layer (type, i, first_layer) {
 
 		if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
 			if(type.endsWith("1d")) {
-				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x"))];
+				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x"))];
 			} else if(type.endsWith("2d")) {
-				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y"))];
+				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
 			} else if(type.endsWith("3d")) {
-				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y")), parseInt(get_item_value(i, option_name + "_z"))];
+				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y")), parse_int(get_item_value(i, option_name + "_z"))];
 			} else if(type.endsWith("2dTranspose")) {
-				data[get_js_name(option_name)] = [parseInt(get_item_value(i, option_name + "_x")), parseInt(get_item_value(i, option_name + "_y"))];
+				data[get_js_name(option_name)] = [parse_int(get_item_value(i, option_name + "_x")), parse_int(get_item_value(i, option_name + "_y"))];
 			} else {
 				alert("Unknown layer type: " + type);
 			}
@@ -268,10 +268,10 @@ function get_data_for_layer (type, i, first_layer) {
 			data[get_js_name(option_name)] = eval("[" + get_item_value(i, option_name) + "]");
 
 		} else if(option_name == "rate") {
-			data["rate"] = parseFloat(get_item_value(i, "dropout"));
+			data["rate"] = parse_float(get_item_value(i, "dropout"));
 
 		} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
-			data[get_js_name(option_name)] = parseFloat(get_item_value(i, option_name));
+			data[get_js_name(option_name)] = parse_float(get_item_value(i, option_name));
 
 		} else if(option_name == "activation" && $($($($(".layer_setting")[i]).find("." + option_name)[0])).val() == "None") {
 			// Do nothing if activation = None
@@ -308,7 +308,7 @@ function get_data_for_layer (type, i, first_layer) {
 						console.warn("Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
 					}
 				} else {
-					data[get_js_name(option_name)] = is_numeric(value) ? parseFloat(value) : value;
+					data[get_js_name(option_name)] = is_numeric(value) ? parse_float(value) : value;
 				}
 			}
 		}
@@ -399,7 +399,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
 		(keyname == "targetShape" && is_number_array(value)) ||
 		(["alpha", "stddev", "depthMultiplier"].includes(keyname) && typeof(value) == "number") ||
-		(keyname == "axis" && typeof(value) == "number" && parseInt(value) == value) ||
+		(keyname == "axis" && typeof(value) == "number" && parse_int(value) == value) ||
 		(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
 		(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
 		(["theta"].includes(keyname) && typeof(value) == "number") ||
@@ -1039,7 +1039,7 @@ function get_default_option (layer_type, option_name) {
 
 	if(match) {
 		if(typeof(layer_options_defaults[option_name]) == "string" && layer_options_defaults[option_name] == "[]") {
-			var number_of_match_items = parseInt(match[1]);
+			var number_of_match_items = parse_int(match[1]);
 			var number = 1;
 			if(option_name == "kernel_size") {
 				var number = 3;

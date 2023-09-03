@@ -364,7 +364,7 @@ async function set_backend() {
 
 $(document).ready(async function() {
 	if(!is_cosmo_mode) {
-		if(parseInt(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
+		if(parse_int(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
 			await cosmo_mode();
 		}
 	}
@@ -575,8 +575,8 @@ $(document).ready(async function() {
 	l(language[lang]["site_is_ready"]);
 
 	if(is_cosmo_mode) {
-		addScrollRightButton();
-		addEndPresentationButton(1);
+		add_scroll_right_button();
+		add_end_presentation_button(1);
 	} else {
 		model_is_ok_icon = $("#model_is_ok_icon");
 		label_debugger_icon =  $("#label_debugger_icon");

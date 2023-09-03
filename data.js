@@ -160,13 +160,13 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	}
 
 	percentage_div.html(percentage_text);
-	updateTranslations();
+	update_translations();
 
 	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
 		var remaining_items = urls_length - i;
 		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-		eta = parseInt(parseInt(remaining_items * Math.floor(time_per_image)) / 1000);
+		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000);
 		old_percentage = percentage;
 
 		if(is_cosmo_mode) {
@@ -232,7 +232,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 	for (var i = 0; i < urls.length; i++) {
 		var start_time = Date.now();
 		if(started_training || force_download) {
-			var percentage = parseInt((i / urls.length) * 100);
+			var percentage = parse_int((i / urls.length) * 100);
 			if(!stop_downloading_data) {
 				var url = urls[i];
 				let tf_data = null;
@@ -394,7 +394,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 
 	if ($("#augment_invert_images").is(":checked")) {
 		l("Inverted image that has been turned " + degree + "°");
-		var add_value = (-255 / parseFloat($("#divide_by").val()));
+		var add_value = (-255 / parse_float($("#divide_by").val()));
 		var inverted = abs(add(augmented_img, add_value));
 		await add_tensor_as_image_to_photos(inverted);
 		x = x.concat(inverted);
@@ -422,7 +422,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 // Funktion zum Invertieren eines Bildes
 async function augment_invert_images(item, this_category_counter, x, classes) {
 	l("Inverted image");
-	var add_value = (-255 / parseFloat($("#divide_by").val()));
+	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
 	await add_tensor_as_image_to_photos(inverted);
 	x = x.concat(inverted);
@@ -477,7 +477,7 @@ async function get_xs_and_ys () {
 
 	var max_number_values = 0;
 	if(!is_hidden_or_has_hidden_parent($("#max_number_values"))) {
-		max_number_values = parseInt($("#max_number_values").val());
+		max_number_values = parse_int($("#max_number_values").val());
 	}
 
 	var loss = $("#loss").val();
@@ -501,7 +501,7 @@ async function get_xs_and_ys () {
 			$("#photos").show();
 			for (var i = 0; i < xy_data.x.shape[0]; i++) {
 				$("#photos").append("<canvas id='custom_training_data_img_" + i + "'></canvas>");
-				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parseFloat($("#divide_by").val()));
+				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parse_float($("#divide_by").val()));
 			}
 		} else {
 			var x_print_string = arbitrary_array_to_latex(xy_data.x.arraySync());
@@ -650,7 +650,7 @@ async function get_xs_and_ys () {
 								toFloat();
 
 							if($("#divide_by").val() != 1) {
-								resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
+								resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 							}
 
 							var this_img = await resized_img.arraySync();
@@ -667,7 +667,7 @@ async function get_xs_and_ys () {
 
 										if($("#augment_invert_images").is(":checked")) {
 											l("Inverted image that has been turned " + degree + "°");
-											x.push(abs(add(augmented_img, (-255 / parseFloat($("#divide_by").val())))).arraySync());
+											x.push(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val())))).arraySync());
 											classes.push(label_nr);
 										}
 
@@ -681,7 +681,7 @@ async function get_xs_and_ys () {
 
 								if($("#augment_invert_images").is(":checked")) {
 									l("Inverted image");
-									x.push(abs(add(resized_img.expandDims(), (-255 / parseFloat($("#divide_by").val())))).arraySync());
+									x.push(abs(add(resized_img.expandDims(), (-255 / parse_float($("#divide_by").val())))).arraySync());
 									classes.push(label_nr);
 								}
 
@@ -743,7 +743,7 @@ async function get_xs_and_ys () {
 									toFloat();
 
 								if($("#divide_by").val() != 1) {
-									resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
+									resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 								}
 
 								var this_img = await resized_img.arraySync();
@@ -754,7 +754,7 @@ async function get_xs_and_ys () {
 									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 									var this_map = 
-										divNoNan(this_map_tensor, parseFloat($("#divide_by").val())).arraySync();
+										divNoNan(this_map_tensor, parse_float($("#divide_by").val())).arraySync();
 									maps.push(this_map)
 								} catch (e) {
 									console.error(e);
@@ -834,7 +834,7 @@ async function get_xs_and_ys () {
 
 	//data_debug(xy_data["x"], xy_data["y"])
 
-	var validation_split = parseInt($("#validationSplit").val());
+	var validation_split = parse_int($("#validationSplit").val());
 
 	var number_of_training_data = xy_data["y"].shape[0];
 	var number_of_training_data_left_after_split = Math.floor((1-(validation_split/100)) * number_of_training_data);
@@ -918,7 +918,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 						expandDims();
 
 					if($("#divide_by").val() != 1) {
-						resized_img = divNoNan(resized_img, parseFloat($("#divide_by").val()));
+						resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 					}
 
 					return resized_img;
@@ -996,9 +996,9 @@ async function reset_data () {
 
 function parse_dtype (val) {
 	if(val.match(/^[+-]?\d+$/)) {
-		return parseInt(val);
+		return parse_int(val);
 	} else if(val.match(/^[+-]?\d+\.\d+$/)) {
-		return parseFloat(val);
+		return parse_float(val);
 	} else {
 		return val;
 	}
@@ -1095,11 +1095,11 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
-			var header_multiply = parseFloat($($(".header_divide_by")[col_nr + skip_nr]).val());
+			var header_multiply = parse_float($($(".header_divide_by")[col_nr + skip_nr]).val());
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
 			var to_push = undefined;
 			if((!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) || csv_element === undefined) {
-				var ln = parseFloat(csv_element);
+				var ln = parse_float(csv_element);
 				if(header_multiply) {
 					ln = ln / header_multiply;
 				}
@@ -1325,7 +1325,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 
 			if(available_webcams.length > 1) {
-				cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
+				cam_config["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
 			}
 
 			//log(cam_config);
@@ -1351,8 +1351,8 @@ async function get_data_from_webcam (force_restart) {
 }
 
 async function take_image_from_webcam_n_times (elem) {
-	var number = parseInt($("#number_of_series_images").val())
-	var delaybetween = parseInt($("#delay_between_images_in_series").val())
+	var number = parse_int($("#number_of_series_images").val())
+	var delaybetween = parse_int($("#delay_between_images_in_series").val())
 
 	let timerInterval;
 	Swal.fire({
@@ -1375,7 +1375,7 @@ async function take_image_from_webcam_n_times (elem) {
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
 			l("Taking image " + (i + 1) + "/" + number);
-			updateTranslations();
+			update_translations();
 			await take_image_from_webcam(elem, 1, i == 0);
 			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
@@ -1574,7 +1574,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 
 
 async function adjust_number_of_neurons (layer) {
-	var original_epochs = parseInt($("#epochs").val());
+	var original_epochs = parse_int($("#epochs").val());
 
 	set_epochs(10);
 
@@ -1591,7 +1591,7 @@ async function adjust_number_of_neurons (layer) {
 		await train_neural_network();
 		adjust_neurons = await get_new_number_of_neurons_according_to_visualization_randomness(layer);
 
-		var old_value = parseInt($($(".layer_options_internal")[layer]).find(".filters,.units").val());
+		var old_value = parse_int($($(".layer_options_internal")[layer]).find(".filters,.units").val());
 		var new_value = old_value + adjust_neurons;
 		adjusted_neurons_total += Math.abs(adjust_neurons);
 		log("new-value", new_value);

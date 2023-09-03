@@ -100,14 +100,14 @@ function get_units_at_layer(i, use_max_layer_size) {
 	try {
 		var units = get_item_value(i, "units");
 		if(units) {
-			units = parseInt(units);
+			units = parse_int(units);
 		} else {
 			if(model === null) {
 				units = 0;
 			} else {
 				var filters = $($(".layer_setting")[i]).find(".filters");
 				if(filters.length) {
-					units = parseInt($(filters).val());
+					units = parse_int($(filters).val());
 				} else {
 					try {
 						units = Math.max(0, model.layers[i].countParams());
@@ -121,7 +121,7 @@ function get_units_at_layer(i, use_max_layer_size) {
 		log(e);
 	}
 
-	var max_neurons_fcnn = parseInt($("#max_neurons_fcnn").val());
+	var max_neurons_fcnn = parse_int($("#max_neurons_fcnn").val());
 
 	if(units > max_neurons_fcnn && use_max_layer_size) {
 		l("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
@@ -197,7 +197,7 @@ async function restart_fcnn(force) {
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		var number_of_units = get_units_at_layer(i, 1);
 		var layer_type = $($(".layer_type")[i]).val();
-		if(parseInt(number_of_units) > 0) {
+		if(parse_int(number_of_units) > 0) {
 			real_architecture.push(number_of_units);
 			if(number_of_units > 100) {
 				number_of_units = 100;
@@ -268,8 +268,8 @@ async function restart_alexnet(dont_click) {
 							} else {
 								disable_alexnet = 1;
 							}
-							this_layer_arch["filterWidth"] = parseInt(get_item_value(i, "kernel_size_x"));
-							this_layer_arch["filterHeight"] = parseInt(get_item_value(i, "kernel_size_y"));
+							this_layer_arch["filterWidth"] = parse_int(get_item_value(i, "kernel_size_x"));
+							this_layer_arch["filterHeight"] = parse_int(get_item_value(i, "kernel_size_y"));
 							this_layer_arch["rel_x"] = random(0, 0.1);
 							this_layer_arch["rel_y"] = random(0, 0.1);
 

@@ -412,7 +412,7 @@ async function run_tests () { // var start_tensors
 				for (var j = 0; j < all_tds.length; j++) {
 					if(j % 2 == 1) {
 						var pure_number = $(all_tds[j]).html().replace(/<b[^>]*>/, "").replace("</b>", "");
-						r.push(parseFloat(pure_number));
+						r.push(parse_float(pure_number));
 					}
 				}
 
@@ -530,7 +530,7 @@ async function run_tests () { // var start_tensors
 			var last = 0;
 			var ok = 1;
 			$(".descriptions_of_layers").each((i, e) => {
-				var t = parseInt(e.style.top); 
+				var t = parse_int(e.style.top); 
 				if(t > last) { 
 					last = t;
 				} else { 

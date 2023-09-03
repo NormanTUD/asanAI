@@ -335,3 +335,11 @@ function _clean_custom_tensors () {
 		delete _custom_tensors[disposed_keys[i]];
 	}
 }
+
+function parse_int (...args) {
+	return parseInt(...args);
+}
+
+function parse_float (...args) {
+	return parseFloat(...args);
+}

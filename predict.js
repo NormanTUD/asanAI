@@ -59,7 +59,7 @@ function _predict_error (e) {
 }
 
 function _divide_img_tensor (tensor_img) {
-	var divide_by = parseFloat($("#divide_by").val());
+	var divide_by = parse_float($("#divide_by").val());
 	if(divide_by == 1) {
 		return tensor_img;
 	}
@@ -466,7 +466,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			return;
 		}
 
-		var divide_by = parseFloat($("#divide_by").val());
+		var divide_by = parse_float($("#divide_by").val());
 
 		if(divide_by != 1) {
 			predict_data = tidy(() => { return divNoNan(predict_data, divide_by); });
@@ -918,7 +918,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 function _get_resized_webcam (predict_data, h, w) {
 	var res = tidy(() => {
-		var divide_by = parseFloat($("#divide_by").val());
+		var divide_by = parse_float($("#divide_by").val());
 		var r = predict_data.resizeNearestNeighbor([h, w]).toFloat().expandDims();
 
 		if(divide_by != 1) {
@@ -1165,7 +1165,7 @@ async function show_webcam (force_restart) {
 				}
 
 				if(available_webcams.length > 1) {
-					cam_config["deviceId"] = available_webcams_ids[parseInt($("#which_webcam").val())];
+					cam_config["deviceId"] = available_webcams_ids[parse_int($("#which_webcam").val())];
 				}
 
 				//log(cam_config);
@@ -1310,7 +1310,7 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	var divide_by = parseFloat($("#divide_by").val());
+	var divide_by = parse_float($("#divide_by").val());
 
 	if(divide_by != 1) {
 		var divided_data = tidy(() => {

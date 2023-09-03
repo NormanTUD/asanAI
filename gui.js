@@ -207,7 +207,7 @@ function get_tr_str_for_description(desc) {
 
 function is_numeric(str) {
 	if (typeof str != "string") return false;
-	return !isNaN(str) && !isNaN(parseFloat(str));
+	return !isNaN(str) && !isNaN(parse_float(str));
 }
 
 function quote_python(item) {
@@ -690,11 +690,11 @@ function enable_disable_kernel_images() {
 }
 
 function change_kernel_pixel_size() {
-	kernel_pixel_size = parseInt($("#kernel_pixel_size").val());
+	kernel_pixel_size = parse_int($("#kernel_pixel_size").val());
 }
 
 function change_pixel_size() {
-	pixel_size = parseInt($("#pixel_size").val());
+	pixel_size = parse_int($("#pixel_size").val());
 }
 
 async function change_height() {
@@ -724,7 +724,7 @@ async function change_width_or_height(name, inputshape_index) {
 		return;
 	}
 
-	var value = parseInt($("#" + name).val());
+	var value = parse_int($("#" + name).val());
 
 	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
 
@@ -783,7 +783,7 @@ async function update_python_code(dont_reget_labels) {
 	var batchSize = document.getElementById("batchSize").value;
 	var data_origin = document.getElementById("data_origin").value;
 
-	var epochs = parseInt(document.getElementById("epochs").value);
+	var epochs = parse_int(document.getElementById("epochs").value);
 
 	$("#pythoncontainer").show();
 
@@ -821,11 +821,11 @@ async function update_python_code(dont_reget_labels) {
 			for (var j = 0; j < layer_options[type]["options"].length; j++) {
 				var option_name = layer_options[type]["options"][j];
 				if (option_name == "pool_size") {
-					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "pool_size_x")), parseInt(get_item_value(i, "pool_size_y"))];
+					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "pool_size_x")), parse_int(get_item_value(i, "pool_size_y"))];
 				} else if (option_name == "strides") {
-					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "strides_x")), parseInt(get_item_value(i, "strides_y"))];
+					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "strides_x")), parse_int(get_item_value(i, "strides_y"))];
 				} else if (option_name == "kernel_size") {
-					data[get_python_name(option_name)] = [parseInt(get_item_value(i, "kernel_size_x")), parseInt(get_item_value(i, "kernel_size_y"))];
+					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "kernel_size_x")), parse_int(get_item_value(i, "kernel_size_y"))];
 				} else if (option_name == "size") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 				} else if (option_name == "dilation_rate") {
@@ -923,9 +923,9 @@ async function update_python_code(dont_reget_labels) {
 function or_none (str, prepend = '"', append = '"') {
 	if(str) {
 		if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
-			return parseFloat(str);
+			return parse_float(str);
 		} else if(("" + str).match(/^[+-]?\d+$/)) {
-			return parseInt(str);
+			return parse_int(str);
 		}
 		return prepend + get_python_name(str) + append;
 	}
@@ -1189,10 +1189,10 @@ function convert_to_python_string(obj) {
 			if (typeof value == 'boolean') {
 				value = value ? 'True' : 'False';
 			} else if (!isNaN(value)) {
-				if (Number.isInteger(parseFloat(value))) {
-					value = parseInt(value);
+				if (Number.isInteger(parse_float(value))) {
+					value = parse_int(value);
 				} else {
-					value = parseFloat(value);
+					value = parse_float(value);
 				}
 			} else {
 				value = '"' + value + '"';
@@ -1634,7 +1634,7 @@ function set_momentum(val) {
 
 function set_validation_split(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not an number but " + typeof(number));
-	val = parseInt(val);
+	val = parse_int(val);
 
 	l(language[lang]["set_val_split_to"] + val);
 	$("#validationSplit").val(val);
@@ -1745,16 +1745,16 @@ function set_loss(val, trigger_change = 1) {
 }
 
 function get_epochs() {
-	return parseInt($("#epochs").val());
+	return parse_int($("#epochs").val());
 }
 
 function get_batch_size() {
-	return parseInt($("#batchSize").val());
+	return parse_int($("#batchSize").val());
 }
 
 function set_batch_size(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
-	val = parseInt(val);
+	val = parse_int(val);
 
 	l("Set batchsize to " + val);
 	$("#batchSize").val(val);
@@ -1764,7 +1764,7 @@ function set_batch_size(val) {
 
 function set_epochs(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
-	val = parseInt(val);
+	val = parse_int(val);
 	l("Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
@@ -1780,7 +1780,7 @@ function set_number_of_layers(val) {
 
 function get_number_of_layers() {
 	try {
-		return parseInt(document.getElementById("number_of_layers").value);
+		return parse_int(document.getElementById("number_of_layers").value);
 	} catch (e) {
 		if(("" + e).includes("getElementById(...) is null")) {
 			console.warn("Was the $('#number_of_layers') element removed?");
@@ -2030,7 +2030,7 @@ async function remove_layer(item) {
 	assert(typeof (item) == "object", "item is not an object but " + typeof (item));
 
 	var number_of_layers_element = document.getElementById("number_of_layers");
-	var old_value = parseInt(number_of_layers_element.value);
+	var old_value = parse_int(number_of_layers_element.value);
 	if (old_value > 1) {
 		$($(item).parent()[0]).parent().remove()
 
@@ -2095,7 +2095,7 @@ async function add_layer(item) {
 		}
 	}
 
-	$("#number_of_layers").val(parseInt($("#number_of_layers").val()) + 1);
+	$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
 
 	var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
 	var new_layer_type = previous_layer_type;
@@ -2856,7 +2856,7 @@ async function set_input_shape(val, force=0) {
 
 function get_input_shape_with_batch_size() {
 	var shape = get_input_shape();
-	shape.unshift(parseInt($("#batchSize").val()));
+	shape.unshift(parse_int($("#batchSize").val()));
 	var res = shape;
 	return res;
 }
@@ -3652,7 +3652,7 @@ function get_sum_of_items_childrens_width(item) {
 	var total_width = 0;
 
 	$(item).each(function (index) {
-		total_width += parseInt($(this).width(), 10);
+		total_width += parse_int($(this).width(), 10);
 	});
 
 	return total_width;
@@ -3763,7 +3763,7 @@ function reset_view() {
 		var width = items[i].getBoundingClientRect().width;
 
 		if (width) {
-			var translate_left = parseInt(container_width / width);
+			var translate_left = parse_int(container_width / width);
 
 			if (parents_parent_id == "lenet") {
 				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)")
@@ -4075,8 +4075,8 @@ async function last_shape_layer_warning() {
 }
 
 function alter_text_webcam_series () {
-	var number = parseInt($("#number_of_series_images").val())
-	var delaybetween = parseFloat($("#delay_between_images_in_series").val())
+	var number = parse_int($("#number_of_series_images").val())
+	var delaybetween = parse_float($("#delay_between_images_in_series").val())
 
 	var s = "&#128248; x " + number;
 	if(!is_cosmo_mode) {
@@ -4237,7 +4237,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	$(canvas).parent().append(transparency_slider);
 
 	$(canvas).parent().append("<br>Pen size:");
-	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
+	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
 }
 
 
@@ -4545,7 +4545,7 @@ async function write_error(e, fn, hide_swal) {
 		}
 
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-		updateTranslations();
+		update_translations();
 		await write_descriptions();
 		console.warn(e);
 		console.trace();
@@ -4623,7 +4623,7 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 				option_name = option_name.replace(starts_with_string, "");
 				var value = get_item_value(layer_nr, classList[j]);
 				if (looks_like_number(value)) {
-					value = parseFloat(value);
+					value = parse_float(value);
 				}
 				if (value != "") {
 					option_hash[option_name] = value;
@@ -4656,11 +4656,11 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 				var value = get_item_value(layer_nr, classList[j]);
 
 				if (looks_like_number(value)) {
-					value = parseFloat(value);
+					value = parse_float(value);
 				}
 
 				if (value !== "") {
-					option_hash[option_name] = is_numeric(value) ? parseFloat(value) : value;
+					option_hash[option_name] = is_numeric(value) ? parse_float(value) : value;
 				}
 			}
 		}
@@ -5061,7 +5061,7 @@ function hide_tab_label(label) {
 	}
 
 	try {
-		updateTranslations();
+		update_translations();
 	} catch (e) {
 		console.error(e);
 	}
@@ -5095,7 +5095,7 @@ function show_tab_label(label, click) {
 		}
 	}
 
-	updateTranslations();
+	update_translations();
 
 }
 
@@ -5115,11 +5115,11 @@ function check_number_values() {
 			}
 			missing_values++;
 		} else {
-			val = parseFloat(val);
+			val = parse_float(val);
 			item.css("background-color", default_bg_color);
 
-			var max = parseFloat(item.attr("max"));
-			var min = parseFloat(item.attr("min"));
+			var max = parse_float(item.attr("max"));
+			var min = parse_float(item.attr("min"));
 
 			if (max) {
 				if (val > max) {
@@ -5204,12 +5204,12 @@ function plotly_show_loss_graph() {
 	tidy(() => {
 		var y_true_table = [];
 		$(".data_table_y_true").each((i, x) => {
-			y_true_table[i] = [i, parseFloat($(x).val())]
+			y_true_table[i] = [i, parse_float($(x).val())]
 		});
 
 		var y_pred_table = [];
 		$(".data_table_y_pred").each((i, x) => {
-			y_pred_table[i] = [i, parseFloat($(x).val())]
+			y_pred_table[i] = [i, parse_float($(x).val())]
 		});
 
 		var y_true = tensor2d(y_true_table);
@@ -5665,15 +5665,15 @@ function get_last_layer_activation_function () {
 
 function drag_start(event) {
 	var style = window.getComputedStyle(event.target, null);
-	var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
+	var str = (parse_int(style.getPropertyValue("left")) - event.clientX) + ',' + (parse_int(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
 	event.dataTransfer.setData("Text", str);
 }
 
 function drop(event) {
 	var offset = event.dataTransfer.getData("Text").split(',');
 	var dm = document.getElementById(offset[2]);
-	dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
-	dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+	dm.style.left = (event.clientX + parse_int(offset[0], 10)) + 'px';
+	dm.style.top = (event.clientY + parse_int(offset[1], 10)) + 'px';
 	event.preventDefault();
 
 
@@ -5844,7 +5844,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 				<img onclick='chose_nearest_color_picker(this)' src='gui/colorpicker.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 			</span>
-			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parseFloat(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
+			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
 			<br />
 		</span>
 		<canvas style="z-index: 2; margin: 5px; position: relative; outline: solid 5px black; width: ${w}px; height: ${h}px" width=${w} height=${h} id="${idname}"></canvas>
@@ -5943,7 +5943,7 @@ async function set_all_strides () {
 
 async function _set_all_strides (n) {
 	assert(typeof(n) == "number" || looks_like_number(n), n + " is not an integer and does not look like one");
-	n = parseInt(n);
+	n = parse_int(n);
 
 	$(".strides_z").val(n);
 	$(".strides_y").val(n);
@@ -6093,7 +6093,7 @@ async function update_label_by_nr (t, nr) {
 
 	$(".label_element").each((i, x) => {
 		if(1 || get_element_xpath(x) != t_xpath) {
-			var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+			var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 			if(label_index == nr) {
 				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
@@ -6116,7 +6116,7 @@ function allow_editable_labels () {
 	}
 
 	$(".label_element").each((i, x) => {
-		var label_index = parseInt($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+		var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 		if(!labels.length) {
 			//console.warn("labels is an array, but is empty.");
@@ -6390,11 +6390,11 @@ function set_right_border_between_example_predictions() {
 
 function get_cursor_or_none (cursorname) {
 	try {
-		if(isTouchDevice()) {
+		if(is_touch_device()) {
 			return "none";
 		}
 	} catch (e) {
-		if(("" + e).includes("isTouchDevice is not defined")) {
+		if(("" + e).includes("is_touch_device is not defined")) {
 			return cursorname;
 		}
 	}

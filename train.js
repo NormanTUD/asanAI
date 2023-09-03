@@ -14,7 +14,7 @@ async function gui_not_in_training (set_started_training=1) {
 		started_training = false;
 	}
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-	updateTranslations();
+	update_translations();
 	favicon_default();
 
 	try {
@@ -235,10 +235,10 @@ async function get_model_data (optimizer_name_only) {
 		metric_type = get_key_by_value(metric_shortnames, metric_type);
 	}
 
-	var epochs = parseInt($("#epochs").val());
-	var batchSize = parseInt($("#batchSize").val());
-	var validationSplit = parseInt($("#validationSplit").val());
-	var divide_by = parseFloat($("#divide_by").val());
+	var epochs = parse_int($("#epochs").val());
+	var batchSize = parse_int($("#batchSize").val());
+	var validationSplit = parse_int($("#validationSplit").val());
+	var divide_by = parse_float($("#divide_by").val());
 
 	global_model_data = {
 		loss: loss,
@@ -261,7 +261,7 @@ async function get_model_data (optimizer_name_only) {
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
 	for (var i = 0; i < optimizer_data_names.length; i++) {
-		global_model_data[optimizer_data_names[i]] = parseFloat($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
+		global_model_data[optimizer_data_names[i]] = parse_float($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
 	}
 
 
@@ -288,7 +288,7 @@ function delay(time) { // var start_tensors
 function get_fit_data () {
 	var epochs = get_epochs();
 	var batchSize = get_batch_size();
-	var validationSplit = parseInt($("#validationSplit").val()) / 100;
+	var validationSplit = parse_int($("#validationSplit").val()) / 100;
 
 	var callbacks = {};
 
@@ -324,7 +324,7 @@ function get_fit_data () {
 		var current_time = Date.now();
 		var epoch_time = (current_time - this_training_start_time) / current_epoch;
 		var epochs_left = max_number_epochs - current_epoch;
-		var seconds_left = parseInt(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+		var seconds_left = parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
 		var time_estimate = human_readable_time(seconds_left);
 
 		$("#training_progress_bar").show();
@@ -344,7 +344,7 @@ function get_fit_data () {
 			idleTime = 0;
 		}
 
-		var percentage = parseInt((current_epoch / max_number_epochs) * 100);
+		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
 
 	};
@@ -377,7 +377,7 @@ function get_fit_data () {
 			$("#plotly_time_per_batch").parent().show();
 		}
 
-		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parseInt($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {
 				Plotly.newPlot('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
 				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
@@ -451,7 +451,7 @@ function get_fit_data () {
 				move_element_to_another_div(elem, to)
 
 				await repredict();
-				updateTranslations();
+				update_translations();
 			} else if(current_cosmo_stage == 2) {
 				$("#cosmo_training_predictions_explanation").hide();
 				$("#cosmo_training_grid_stage_explanation").show();
@@ -535,8 +535,8 @@ function get_fit_data () {
 	if($("#enable_early_stopping").is(":checked")) {
 		callbacks["earlyStopping"] = tf.callbacks.earlyStopping({
 			monitor: $("#what_to_monitor_early_stopping").val(),
-			minDelta: parseFloat($("#min_delta_early_stopping").val()),
-			patience: parseInt($("#patience_early_stopping").val()),
+			minDelta: parse_float($("#min_delta_early_stopping").val()),
+			patience: parse_int($("#patience_early_stopping").val()),
 		});
 	}
 
@@ -687,7 +687,7 @@ async function _get_xs_and_ys () {
 		favicon_default();
 		await write_descriptions();
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-		updateTranslations();
+		update_translations();
 		started_training = false;
 		return false;
 	}
@@ -712,7 +712,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 
 			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
 				"model",
-				parseInt($("#epochs").val()), 
+				parse_int($("#epochs").val()), 
 				JSON.stringify(xs_and_ys["x"].arraySync()), 
 				JSON.stringify(xs_and_ys["y"].arraySync()
 			), false, "simplest_training_data_visualization");
@@ -929,7 +929,7 @@ async function run_neural_network (recursive=0) {
 	}
 
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
-	updateTranslations();
+	update_translations();
 
 	_set_apply_to_original_apply();
 
@@ -1115,7 +1115,7 @@ async function run_neural_network (recursive=0) {
 	await save_current_status();
 	var dn = Date.now();
 	if(last_training_time) {
-		var training_time = parseInt(parseInt(dn - last_training_time) / 1000);
+		var training_time = parse_int(parse_int(dn - last_training_time) / 1000);
 		if(training_time > 60) {
 			l(language[lang]["done_training_took"] + " " + human_readable_time(training_time, dn, last_training_time) + " (" + training_time + "s)");
 		} else {
@@ -1158,8 +1158,8 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 	// create a canvas for each category
 	for (let i = 0; i < (numCategories + (is_cosmo_mode ? 0 : 1)); i++) {
 		var canvas = document.createElement("canvas");
-		var pw = parseInt($("#tfvis_tab").width() * relationScale);
-		var w = parseInt(pw / (numCategories + 2));
+		var pw = parse_int($("#tfvis_tab").width() * relationScale);
+		var w = parse_int(pw / (numCategories + 2));
 
 		if(is_cosmo_mode) {
 			w = 200;
@@ -1325,7 +1325,7 @@ async function visualize_train () {
 	var categories = [];
 	var probabilities = [];
 
-	var max = parseInt($("#max_number_of_images_in_grid").val());
+	var max = parse_int($("#max_number_of_images_in_grid").val());
 
 	if(max == 0) {
 		return;
@@ -1363,7 +1363,7 @@ async function visualize_train () {
 				var img_tensor = tidy(() => {
 					try {
 						var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
-						res = divNoNan(res, parseFloat($("#divide_by").val()));
+						res = divNoNan(res, parse_float($("#divide_by").val()));
 						return res;
 					} catch (e) {
 						console.error(e);

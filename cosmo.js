@@ -169,7 +169,7 @@ class ManiC {
 			this.hand_height = 50;
 			this.hand_width = 50;
 
-			var largest_element = findLargestElementWithCoordinates(this.element)
+			var largest_element = find_largest_element_with_coordinates(this.element)
 			var real_x = largest_element["x"];
 			var real_y = largest_element["y"];
 			var real_bottom = largest_element["bottom"];
@@ -215,7 +215,7 @@ class ManiC {
 		//console.trace();
 	}
 
-	getPos(el) {
+	get_pos(el) {
 		assert(!!el, "el is empty")
 	
 		//log(el);
@@ -229,9 +229,9 @@ class ManiC {
 	}
 
 	moveAroundLeftRight () {
-		var width = this.getPos(this.element).width;
+		var width = this.get_pos(this.element).width;
 
-		var largest_element = findLargestElementWithCoordinates(this.element)
+		var largest_element = find_largest_element_with_coordinates(this.element)
 		var real_x = largest_element["x"];
 		var real_y = largest_element["y"];
 		var real_bottom = largest_element["bottom"];
@@ -254,7 +254,7 @@ class ManiC {
 			correction_shift = -real_width / 2;
 		}
 
-		var element_left = parseInt(real_left + correction_shift);
+		var element_left = parse_int(real_left + correction_shift);
 
 		assert(!isNaN(element_left), "element_left is not a number");
 		assert(!isNaN(real_x) || !isNaN(real_y) || !isNaN(real_width), "neither real_x nor real_y nor real_width is not a number");
@@ -312,13 +312,13 @@ class ManiC {
 	}
 }
 
-function findLargestElementWithCoordinates(element) {
+function find_largest_element_with_coordinates(element) {
 	// Get the bounding rectangle of the current element
 	const rect = element.getBoundingClientRect();
 	let maxWidth = rect.width;
 	let maxHeight = rect.height;
-	let x = parseInt($(element).css("left"));
-	let y = parseInt($(element).css("top"));
+	let x = parse_int($(element).css("left"));
+	let y = parse_int($(element).css("top"));
 	let left = element.getBoundingClientRect()["left"];
 	let right = element.getBoundingClientRect()["right"];
 	let t = element.getBoundingClientRect()["top"];
@@ -329,15 +329,15 @@ function findLargestElementWithCoordinates(element) {
 
 	// Traverse through all child elements recursively
 	for (const childElement of element.children) {
-		const { width, height, largestChild } = findLargestElementWithCoordinates(childElement);
+		const { width, height, largestChild } = find_largest_element_with_coordinates(childElement);
 
 		// Update the maximum width, height, and largestElement if necessary
 		if (width > maxWidth || height > maxHeight) {
 			maxWidth = Math.max(maxWidth, width);
 			maxHeight = Math.max(maxHeight, height);
 			largestElement = largestChild;
-			x = parseInt($(childElement).css("left"));
-			y = parseInt($(childElement).css("top"));
+			x = parse_int($(childElement).css("left"));
+			y = parse_int($(childElement).css("top"));
 			left = childElement.getBoundingClientRect()["left"];
 			right = childElement.getBoundingClientRect()["right"];
 			t = element.getBoundingClientRect()["top"];
@@ -519,14 +519,14 @@ function show_again_when_new_skill_acquired ($x, possible_items) {
 	return possible_items;
 }
 
-function isMouseOverElement(className) {
+function is_mouse_over_element(className) {
 	const elements = document.getElementsByClassName(className);
 
 	if(mouseX == -1 || mouseY == -1) {
 		if(is_cosmo_mode) {
 			console.warn("No mouse movement detected yet");
 		} else {
-			console.warn("isMouseOverElement: not in cosmo mode, returning false.");
+			console.warn("is_mouse_over_element: not in cosmo mode, returning false.");
 		}
 		return false;
 	}
@@ -550,12 +550,12 @@ function isMouseOverElement(className) {
 	return false;
 }
 
-function isMouseOverElementVariables(elements) {
+function is_mouse_over_element_variables (elements) {
 	if (mouseX === -1 || mouseY === -1) {
 		if (is_cosmo_mode) {
 			console.warn("No mouse movement detected yet");
 		} else {
-			console.warn("isMouseOverElementVariables: not in cosmo mode, returning false.");
+			console.warn("is_mouse_over_element_variables: not in cosmo mode, returning false.");
 		}
 		return false;
 	}
@@ -652,7 +652,7 @@ async function cosmo_mode () {
 
 	$(".show_only_in_cosmo_mode").show();
 
-	runPresentation('cosmo_presentation');
+	run_presentation('cosmo_presentation');
 
 	$(".glass_box").css("border", "none");
 	$(".glass_box").css("box-shadow", "none");
@@ -667,7 +667,7 @@ async function cosmo_mode () {
 	var bodyElement = document.getElementById('body');
 	bodyElement.style.userSelect = 'none';
 
-	addBackgroundGradient();
+	add_background_gradient();
 
 	$(".graphs_here").css("margin-top", "100px");
 
@@ -703,7 +703,7 @@ async function cosmo_mode () {
 	set_validation_split(0);
 }
 
-function isTouchDevice() {
+function is_touch_device () {
 	var res = (('ontouchstart' in window) ||
 		(navigator.maxTouchPoints > 0) ||
 		(navigator.msMaxTouchPoints > 0));
@@ -714,22 +714,22 @@ function isTouchDevice() {
 	return res;
 }
 
-function findColorPickerContainer(element) {
+function find_color_picker_container(element) {
 	// Traverse up the DOM until a color picker container is found
-	while (element && !isColorPickerContainer(element)) {
+	while (element && !is_color_picker_container(element)) {
 		element = element.parentElement;
 	}
 	return element;
 }
 
-function isColorPickerContainer(element) {
+function is_color_picker_container(element) {
 	// Modify this check based on specific properties or elements of your color picker
 	// For example, you can check if the element has a specific set of child elements or CSS properties unique to the color picker.
 	// This is just a simple example, and you may need to adjust it based on your actual color picker's structure.
 	return element.style.zIndex === "1000" && element.style.position === "absolute";
 }
 
-function isInsideColorPicker(x, y, colorPickerContainer) {
+function is_inside_color_picker(x, y, colorPickerContainer) {
 	if (!colorPickerContainer) return false;
 
 	const rect = colorPickerContainer.getBoundingClientRect();
@@ -762,14 +762,14 @@ function autochoose_next () {
 	}
 }
 
-function addBackgroundGradient() {
+function add_background_gradient () {
 	var body = document.querySelector("body");
 	var from = "d3e4f3";
 	var to = "ffffff";
 	body.style.background = `linear-gradient(to bottom, #${from} 0px, #${to} 10vh)`;
 }
 
-function findColorPickerElements(node, colorPickerElements) {
+function find_color_picker_elements(node, colorPickerElements) {
 	if (!node) return;
 
 	// Check if the current node resembles the structure of the color picker base div
@@ -785,19 +785,19 @@ function findColorPickerElements(node, colorPickerElements) {
 
 	// Recursively check child nodes
 	for (const child of node.children) {
-		findColorPickerElements(child, colorPickerElements);
+		find_color_picker_elements(child, colorPickerElements);
 	}
 }
 
-function getColorPickerElements() {
+function get_color_picker_elements() {
 	const colorPickerElements = [];
-	findColorPickerElements(document.body, colorPickerElements);
+	find_color_picker_elements(document.body, colorPickerElements);
 	return colorPickerElements;
 }
 
 /*
 // Get the list of all color picker base div elements available on the current page
-var colorPickerElementsList = getColorPickerElements();
+var colorPickerElementsList = get_color_picker_elements();
 console.log(colorPickerElementsList);
 */
 
@@ -813,7 +813,7 @@ async function _predict_mode_examples() {
 	$("#own_files").css("display", "none");
 	$("#example_predictions").show();
 
-	await updateTranslations();
+	await update_translations();
 	await fit_to_window();
 }
 
@@ -836,7 +836,7 @@ async function _predict_mode_custom () {
 	$("#own_files").css("display", "flex");
 	$("#example_predictions").hide();
 
-	await updateTranslations();
+	await update_translations();
 	await fit_to_window();
 }
 
@@ -870,7 +870,7 @@ async function switch_predict_mode () {
 
 	await add_cosmo_point("toggled_webcam");
 
-	updateTranslations();
+	update_translations();
 
 	return ret;
 }
@@ -939,9 +939,9 @@ function set_text_for_elements_depending_on_cosmo_level () {
 					var element_skill_text = parsed[element_skill_name][element_skill_level];
 
 					if(Object.keys(current_skills).includes(element_skill_name)) {
-						if(parseInt(current_skills[element_skill_name]) == parseInt(element_skill_level)) {
+						if(parse_int(current_skills[element_skill_name]) == parse_int(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
-							updateTranslations();
+							update_translations();
 						}
 					}
 				}
@@ -1029,7 +1029,7 @@ async function click_next_button () {
 	remove_manicule(1);
 }
 
-function doImagesOverlap(imageId1, imageId2) {
+function do_images_overlap (imageId1, imageId2) {
 	const image1 = document.getElementById(imageId1);
 	const image2 = document.getElementById(imageId2);
 
@@ -1038,7 +1038,7 @@ function doImagesOverlap(imageId1, imageId2) {
 
 	
 	if(!rect1 || !rect2) {
-		console.warn("doImagesOverlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
+		console.warn("do_images_overlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
 		return false;
 	}
 
@@ -1061,7 +1061,7 @@ function show_or_hide_logo () {
 	}
 
 	var shown = 0;
-	if(doImagesOverlap("scads_logo_cosmo_mode", "asanai_logo_cosmo")) {
+	if(do_images_overlap("scads_logo_cosmo_mode", "asanai_logo_cosmo")) {
 		$("#scads_logo_cosmo_mode").hide();
 	} else {
 		$("#scads_logo_cosmo_mode").show();

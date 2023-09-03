@@ -24,7 +24,7 @@ function toc () {
 					toc += (new Array(level - openLevel + 1)).join("</ul>");
 				}
 
-				level = parseInt(openLevel);
+				level = parse_int(openLevel);
 
 				var anchor = titleText.replace(/ /g, "_");
 				toc += "<li><a href=\"#" + anchor + "\">" + titleText
@@ -129,14 +129,14 @@ function get_element (item) {
 			var str = $(item).val();
 			var values = str.split(/\s*,\s*/)
 			values = values.map(function (x) {
-				return parseInt(x);
+				return parse_int(x);
 			});
 
 			return values;
 		} else if ($(item).hasClass("rate") || $(item).hasClass("stddev")) {
-			return parseFloat($(item).val());
+			return parse_float($(item).val());
 		} else {
-			return parseInt($(item).val());
+			return parse_int($(item).val());
 		}
 	} else if ($(item).is("select")) {
 		return $(item).val();

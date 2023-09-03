@@ -91,7 +91,7 @@ function add_end_presentation_button (force=0) {
 			</span>
 		`);
 		$("body").append(new_element)
-		updateTranslations();
+		update_translations();
 	}
 }
 
@@ -214,18 +214,18 @@ function attach_listener_for_cosmo_outside_click () {
 	// Attach event listener to the document or a specific parent element
 	document.addEventListener("click", function (event) {
 		// Get the color picker element based on its unique structure and properties
-		const colorPickerContainer = findColorPickerContainer(event.target);
+		const colorPickerContainer = find_color_picker_container(event.target);
 
-		var colorPickerElementsList = getColorPickerElements();
+		var colorPickerElementsList = get_color_picker_elements();
 
 		//log("EVENT:", event);
 
 		// Check if the clicked element does not have its own event handler
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
-			!isInsideColorPicker(event.clientX, event.clientY, colorPickerContainer) &&
-			!isMouseOverElement('no_autochoose_next_on_click') &&
-			!isMouseOverElementVariables(colorPickerElementsList) &&
+			!is_inside_color_picker(event.clientX, event.clientY, colorPickerContainer) &&
+			!is_mouse_over_element('no_autochoose_next_on_click') &&
+			!is_mouse_over_element_variables(colorPickerElementsList) &&
 			done_presenting &&
 			!is_presenting &&
 			is_hidden_or_has_hidden_parent($("#sketcher")) && 
