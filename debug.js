@@ -23,6 +23,15 @@ function logt(...msg) {
 	console.trace();
 }
 
+function err (...args) {
+	args.forEach(arg => console.error(arg));
+	args.forEach(arg => l("[ERROR] " + arg));
+
+	if(enable_log_trace) {
+		console.trace();
+	}
+}
+
 function wrn (...args) {
 	args.forEach(arg => console.warn(arg));
 	args.forEach(arg => l("[WARN] " + arg));

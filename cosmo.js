@@ -178,7 +178,7 @@ class ManiC {
 
 			var assertion_test = real_x !== undefined || real_y !== undefined || real_bottom !== undefined;
 			if(!assertion_test) {
-				console.error("ERROR. largest_element empty:", largest_element);
+				err("ERROR. largest_element empty:", largest_element);
 			}
 			assert(assertion_test, "Could not get largest element, see Logs");
 
@@ -964,7 +964,7 @@ async function run_cosmo_milestones () {
 						if(typeof(fn) == "function") {
 							await fn();
 						} else {
-							console.error("fn is not a function", fn);
+							err("fn is not a function", fn);
 						}
 
 						ran_milestones[milestone_name] = 1;
@@ -997,7 +997,7 @@ async function cosmo_set_labels () {
 		labels = cosmo_categories;
 		label_debug("cosmo_set_labels, lang en (labels, cosmo_categories)", labels);
 	} else {
-		console.error("Unknown language: " + lang);
+		err("Unknown language: " + lang);
 	}
 
 	await repredict();

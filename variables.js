@@ -1199,7 +1199,7 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		try {
 			$.globalEval(func);
 		} catch (e) {
-			console.error(e);
+			err(e);
 		}
 	}
 }
@@ -1283,7 +1283,7 @@ for (var i = 0; i < general_options_keys.length; i++) {
 	try {
 		$.globalEval(func);
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 }
 

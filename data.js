@@ -246,7 +246,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 							wrn("tf_data is empty, though it shouldn't be");
 						}
 					} catch (e) {
-						console.error(e);
+						err(e);
 					}
 				}
 
@@ -756,7 +756,7 @@ async function get_xs_and_ys () {
 										divNoNan(this_map_tensor, parse_float($("#divide_by").val())).arraySync();
 									maps.push(this_map)
 								} catch (e) {
-									console.error(e);
+									err(e);
 									continue;
 								}
 

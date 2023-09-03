@@ -186,7 +186,7 @@ async function restart_fcnn(force) {
 				real_architecture.push(input_layer[0]);
 				betweenNodesInLayer.push(10);
 			} catch (e) {
-				console.error(e);
+				err(e);
 				return;
 			}
 		} else {
@@ -433,7 +433,7 @@ async function restart_lenet(dont_click) {
 							colors.push("#ffffff");
 						}
 					} catch (e) {
-						console.error(e);
+						err(e);
 					}
 				} else if (category == "Basic") {
 					try {

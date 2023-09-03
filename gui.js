@@ -720,7 +720,7 @@ async function change_width_or_height(name, inputshape_index) {
 	var is_valid_name = ["width", "height"].includes(name);
 
 	if(!is_valid_name) {
-		console.error(`${name} is neither 'width' nor 'height'`);
+		err(`${name} is neither 'width' nor 'height'`);
 		return;
 	}
 
@@ -729,7 +729,7 @@ async function change_width_or_height(name, inputshape_index) {
 	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
 
 	if(!value) {
-		console.error("value is not defined");
+		err("value is not defined");
 		return;
 	}
 
@@ -2397,7 +2397,7 @@ async function set_config(index) {
 				number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
 			} catch (e) {
 				Swal.close()
-				console.error(e);
+				err(e);
 				l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
 				return;
 			}
@@ -2558,7 +2558,7 @@ async function set_config(index) {
 			await set_weights_from_string(weights_string, 1, 1)
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 		l("ERROR: Failed to load. Failed to load model and/or weights");
 		$(overlay).remove();
 		return;
@@ -3376,7 +3376,7 @@ function get_id_from_train_data_struct(index) {
 				wrn("Was the ribbon removed manually?");
 			}
 		} else {
-			console.error(e);
+			err(e);
 		}
 	}
 
@@ -3939,7 +3939,7 @@ async function change_data_origin() {
 		model = await _create_model();
 		await compile_model();
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	currently_running_change_data_origin = 0;
@@ -3947,7 +3947,7 @@ async function change_data_origin() {
 	try {
 		await repair_output_shape();
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 }
@@ -4502,7 +4502,7 @@ function tensor_print_to_string(_tensor) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
 			wrn("tensor to be printed was already disposed");
 		} else {
-			console.error("tensor_print_to_string failed:", e);
+			err("tensor_print_to_string failed:", e);
 
 		}
 		return "<span class='error_msg'>Error getting tensor as string</span>";
@@ -5063,7 +5063,7 @@ function hide_tab_label(label) {
 	try {
 		update_translations();
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 }
@@ -5460,14 +5460,14 @@ function l(msg) {
 			$("#log").prepend(load_time + ": " + msg + "\n")
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
-				console.error(msg);
+				err(msg);
 				console.trace();
 				msg = "<span style='color: red'>" + msg + "</span>";
 			}
 			$("#status_bar_log").html(msg);
 		}
 	} catch (e) {
-		console.error("Some thing went wrong with the `l` function!", e);
+		err("Some thing went wrong with the `l` function!", e);
 		log(msg);
 	}
 }
@@ -5498,7 +5498,7 @@ async function set_custom_webcam_training_data() {
 					await show_webcam();
 					await add_cosmo_point("show_webcam");
 				} catch (e) {
-					console.error(e);
+					err(e);
 					console.trace()
 				}
 			}
@@ -5780,7 +5780,7 @@ function clear_attrament (idname) {
 			atrament_data[idname]['atrament'].canvas.height
 		);
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 }
@@ -6150,7 +6150,7 @@ function allow_editable_labels () {
 			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
 				wrn("This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
 			} else {
-				console.error(e);
+				err(e);
 			}
 		}
 	});
@@ -6211,7 +6211,7 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 			//l("Disabling last layer in beginner mode");
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 }
@@ -6278,13 +6278,13 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 			log("type", type);
 			log("values", values);
 			log("kernel_or_bias", kernel_or_bias);
-			console.error("val_key not defined or false END");
+			err("val_key not defined or false END");
 
 			continue;
 		}
 
 		if(!Object.keys(values).includes(val_key)) {
-			console.error(`${val_key} is required but not defined at all`);
+			err(`${val_key} is required but not defined at all`);
 			continue;
 		}
 
@@ -6301,10 +6301,10 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 					element.trigger("change");
 				}
 			} else {
-				console.error("ui_elements contains no elements. Selector: "  + item_selector)
+				err("ui_elements contains no elements. Selector: "  + item_selector)
 			}
 		} else {
-			console.error(`${val_key} is required but not properly defined`);
+			err(`${val_key} is required but not properly defined`);
 		}
 	}
 }
@@ -6321,10 +6321,10 @@ function get_initializer_set_all_values (required) {
 			if(value) {
 				values[element] = value;
 			} else {
-				console.error("value is empty");
+				err("value is empty");
 			}
 		} else {
-			console.error("Nothing found for selector " + selector);
+			err("Nothing found for selector " + selector);
 		}
 	});
 
@@ -6353,7 +6353,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 		} else if(type == "ones" || type == "zeros") {
 			// do nothing, the trigger is enough
 		} else {
-			console.error("Unknown initializer type: " + type);
+			err("Unknown initializer type: " + type);
 			error_occured = true;
 		}
 
@@ -6466,7 +6466,7 @@ function model_is_ok () {
 	} catch (e) {
 		color = red;
 		msg = "" + e;
-		console.error(msg);
+		err(msg);
 	}
 
 	if(last_model_ok_status != msg) {

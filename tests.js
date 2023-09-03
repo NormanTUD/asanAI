@@ -312,7 +312,7 @@ async function run_tests () {
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 			} catch (e) {
-				console.error(e);
+				err(e);
 				console.trace();
 			}
 
@@ -370,7 +370,7 @@ async function run_tests () {
 				res = await model.predict(tensor([[3, 3, 3]])).arraySync()[0][0];
 				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true)
 			} catch (e) {
-				console.error("ERROR while predicting in test mode:", e);
+				err("ERROR while predicting in test mode:", e);
 			}
 
 			log_test("Test Training images");
@@ -572,7 +572,7 @@ async function run_tests () {
 			log_test("Tests ended");
 		} catch (e) {
 			l("ERROR while testing: " + e);
-			console.error("ERROR while testing: ", e);
+			err("ERROR while testing: ", e);
 		}
 	}
 

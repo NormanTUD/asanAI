@@ -551,7 +551,7 @@ function check_initializers (data, has_keys) {
 							try {
 								data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
 							} catch (e) {
-								console.error(e);
+								err(e);
 								console.trace();
 							}
 						} else {
@@ -571,7 +571,7 @@ function check_initializers (data, has_keys) {
 							try {
 								data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
 							} catch (e) {
-								console.error(e);
+								err(e);
 								console.trace();
 							}
 						} else {
@@ -601,7 +601,7 @@ function _check_data (data, type) {
 			has_keys = Object.keys(data);
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -612,7 +612,7 @@ function _check_data (data, type) {
 			has_keys = Object.keys(data);
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -620,7 +620,7 @@ function _check_data (data, type) {
 			data["targetShape"] = eval("[" + data["targetShape"] + "]");
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -628,7 +628,7 @@ function _check_data (data, type) {
 			data["size"] = eval("[" + data["size"] + "]");
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -636,7 +636,7 @@ function _check_data (data, type) {
 			data["dilationRate"] = null;
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -647,7 +647,7 @@ function _check_data (data, type) {
 			data["units"] = 2;
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -661,7 +661,7 @@ function _check_data (data, type) {
 			}
 		});
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
@@ -677,13 +677,13 @@ function _check_data (data, type) {
 			log(data);
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	try {
 		data = remove_empty(data);
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 	return data;
@@ -796,7 +796,7 @@ async function create_model (old_model, fake_model_structure, force) {
 			return old_model;
 		}
 
-		console.error("No model found, but has missing values");
+		err("No model found, but has missing values");
 
 		return [old_model, null];
 	}
@@ -867,7 +867,7 @@ async function create_model (old_model, fake_model_structure, force) {
 					throw new Error(`model.layers[${i}] is a multibound head`);
 				}
 			} catch(e) {
-				console.error(e);
+				err(e);
 				wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 			}
 		}
@@ -956,7 +956,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
-					console.error(`Failed to add layer type ${type}`);
+					err(`Failed to add layer type ${type}`);
 				} else {
 					console.info(`Failed to add layer type ${type} (but ok because fake_model)`);
 				}
@@ -1098,7 +1098,7 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 			await dispose(tmp_model_data);
 		} catch(e) {
-			console.error(e);
+			err(e);
 
 			ret = false;
 		}
@@ -1265,7 +1265,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	}
 
 	if(!m) {
-		console.error("No model");
+		err("No model");
 		return;
 	}
 
@@ -1278,7 +1278,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 			json = JSON.parse(json);
 		} catch (e) {
 			l("An error occured setting the weights. Check the developer's console for more details.");
-			console.error(e);
+			err(e);
 			return;
 		}
 	}
@@ -1306,7 +1306,7 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 				text: e
 			});
 		}
-		console.error(e);
+		err(e);
 		return false;
 	}
 
@@ -1388,7 +1388,7 @@ async function get_weights_as_string (m) {
 					try {
 						weights_array[i] = weights[i].arraySync();
 					} catch (e) {
-						console.error(e);
+						err(e);
 					}
 				} else {
 					wrn("weights is disposed");
@@ -1407,7 +1407,7 @@ async function get_weights_as_string (m) {
 			} else if((""+e).includes("getWeights is not a function")) {
 				wrn("getWeights is not a function. The model may have been undefined while attempting this.");
 			} else {
-				console.error(e);
+				err(e);
 				console.trace();
 			}
 		}

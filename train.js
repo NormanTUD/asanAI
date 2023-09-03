@@ -634,7 +634,7 @@ function _set_apply_to_original_apply () {
 			try {
 				eval("model.layers[" + i + "].apply = model.layers[" + i + "].original_apply;\n");
 			} catch (e) {
-				console.error(e);
+				err(e);
 				console.trace();
 			}
 		}
@@ -936,7 +936,7 @@ async function run_neural_network (recursive=0) {
 	var xs_and_ys = await _get_xs_and_ys();
 
 	if(!xs_and_ys) {
-		console.error("Could not get xs_and_ys");
+		err("Could not get xs_and_ys");
 		return;
 	}
 
@@ -976,10 +976,10 @@ async function run_neural_network (recursive=0) {
 		} catch (e) {
 			log(e);
 			if(("" + e).includes("is already disposed")) {
-				console.error("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
+				err("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
 				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
-				console.error("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
+				err("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
 				while (!model) {
 					dbg("Waiting for model...");
@@ -1103,7 +1103,7 @@ async function run_neural_network (recursive=0) {
 		await dispose(xs_and_ys["y"]);
 		xs_and_ys = null;
 	} catch (e) {
-		console.error(e);
+		err(e);
 		console.trace();
 	}
 
@@ -1345,7 +1345,7 @@ async function visualize_train () {
 	if(labels.length) {
 		var image_elements = $("#photos").find("img,canvas");
 		if(!image_elements.length) {
-			console.error("could not find image_elements");
+			err("could not find image_elements");
 			return;
 		}
 		for (var i = 0; i < image_elements.length; i++) {
@@ -1366,7 +1366,7 @@ async function visualize_train () {
 						res = divNoNan(res, parse_float($("#divide_by").val()));
 						return res;
 					} catch (e) {
-						console.error(e);
+						err(e);
 						return null;
 					}
 				});

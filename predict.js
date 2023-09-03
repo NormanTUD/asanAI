@@ -136,7 +136,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!set_item_natural_width(item)) {
-		console.error("Setting item to natural height failed. Returning.");
+		err("Setting item to natural height failed. Returning.");
 		return;
 	}
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
@@ -172,7 +172,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	if(!model) {
 		if(finished_loading) {
-			console.error("No model");
+			err("No model");
 		}
 		await dispose(tensor_img);
 		return;
@@ -244,9 +244,9 @@ async function _run_predict_and_show (tensor_img, nr) {
 		} else if(("" + e).includes("but got array with shape")) {
 			wrn("Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
 		} else if(("" + e).includes("code is undefined")) {
-			console.error(e + ". This may mean that the whole document was deleted!!!");
+			err(e + ". This may mean that the whole document was deleted!!!");
 		} else {
-			console.error("" + e);
+			err("" + e);
 			console.trace();
 		}
 	}
@@ -487,7 +487,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
 			} else {
 				l("Predict data shape:" + predict_data.shape);
-				console.error(e);
+				err(e);
 				l("Error (1201): " + e);
 			}
 
@@ -553,7 +553,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				$("#prediction_non_image").html(estr);
 			}
 		} else {
-			console.error(e);
+			err(e);
 		}
 		ok = 0;
 	}
@@ -693,7 +693,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	try {
 		example_predict_data = await get_cached_json(example_url)
 	} catch (e) {
-		console.error(e);
+		err(e);
 		return;
 	}
 
@@ -975,7 +975,7 @@ async function predict_webcam () {
 		} else {
 			l("Error (512): " + e);
 
-			console.error(e);
+			err(e);
 		}
 
 		currently_predicting_webcam = false;
@@ -1187,7 +1187,7 @@ async function show_webcam (force_restart) {
 			await show_webcam();
 		}
 	} catch (e) {
-		console.error(e);
+		err(e);
 	}
 
 
@@ -1299,14 +1299,14 @@ async function predict_handdrawn () {
 			).expandDims();
 		});
 	} catch (e) {
-		console.error(e);
+		err(e);
 		await dispose(predict_data);
 		return;
 	}
 
 	if(!predict_data) {
 		await dispose(predict_data);
-		console.error("no predict data");
+		err("no predict data");
 		return;
 	}
 
@@ -1344,7 +1344,7 @@ async function predict_handdrawn () {
 			wrn("Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 		} else {
 			l("Predict data shape:", predict_data.shape);
-			console.error(e);
+			err(e);
 			await dispose(predictions_tensor);
 			l("Error (443): " + e);
 		}

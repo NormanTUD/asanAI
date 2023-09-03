@@ -568,7 +568,7 @@ $(document).ready(async function() {
 		if(("" + e).includes("not an object")) {
 			// ignore
 		} else {
-			console.error(e);
+			err(e);
 		}
 	}
 

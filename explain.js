@@ -1016,8 +1016,6 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 		var total_number_of_values = data.shape.reduce((acc, val) => { return acc += val });
 		var _sum = data.sum().arraySync();
 
-		log(`Avg value: ${_sum / total_number_of_values}`);
-
 		worked = 1;
 		return data;
 	});
@@ -1103,7 +1101,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	var neurons = _get_neurons_last_layer(layer, type);
 
 	if(typeof(neurons) == "boolean" && !neurons)  {
-		console.error("Cannot determine number of neurons in last layer");
+		err("Cannot determine number of neurons in last layer");
 		return;
 	}
 
@@ -1393,7 +1391,7 @@ function array_to_latex_color (original_array, desc, color, newline_instead_of_a
 			array[i] = array_to_color(array[i], color[i]);
 			arr.push(array[i].join(joiner));
 		} catch (e) {
-			console.error("ERROR in math mode (e, array, i, color):", e, array, i, color);
+			err("ERROR in math mode (e, array, i, color):", e, array, i, color);
 		}
 	}
 
@@ -1446,11 +1444,11 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 
 	var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
 	if(matches === null) {
-		console.error("matches is null. Could not determine name from " + original_name);
+		err("matches is null. Could not determine name from " + original_name);
 	} else if(1 in matches) {
 		return matches[1];
 	} else {
-		console.error("Could not determine name from " + original_name + ", matches: ");
+		err("Could not determine name from " + original_name + ", matches: ");
 		log(matches)
 	}
 
@@ -1478,7 +1476,7 @@ function get_layer_data() {
 					if(possible_weight_names.includes(wname)) {
 						this_layer_weights[wname] = Array.from(model.layers[i].weights[k].val.arraySync());
 					} else {
-						console.error("Invalid wname: " + wname);
+						err("Invalid wname: " + wname);
 						log(model.layers[i].weights[k]);
 					}
 				}
@@ -1487,7 +1485,7 @@ function get_layer_data() {
 			if(("" + e).includes("Tensor is disposed")) {
 				wrn("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
-				console.error(e);
+				err(e);
 			}
 		}
 
@@ -1522,7 +1520,7 @@ function get_layer_output_shape_as_string (i) {
 			str = "[" + str + "]";
 			return str;
 		} catch (e) {
-			console.error(e);
+			err(e);
 		}
 	} else {
 		log("Layers not in model");
@@ -1873,7 +1871,7 @@ function model_to_latex () {
 					shown_activation_equations.push(activation_name);
 				}
 			} else {
-				console.error("Activation name '" + activation_name + "' not found");
+				err("Activation name '" + activation_name + "' not found");
 			}
 
 			var activation_start = "";
@@ -1910,7 +1908,7 @@ function model_to_latex () {
 					str += " + " + array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
 				}
 			} catch (e) {
-				console.error(e);
+				err(e);
 			}
 
 			if(activation_name != "linear") {
@@ -2238,7 +2236,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
 						console.info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
-						console.error("TEMML: " + e);
+						err("TEMML: " + e);
 					} else {
 						throw new Error(e);
 					}
@@ -2427,7 +2425,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 					dispose(predict_me); // no await possible
 					dispose(predicted_tensor); // no await possible
 				} catch (e) {
-					console.error(e);
+					err(e);
 					console.trace();
 				}
 			}
@@ -2460,7 +2458,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 			Plotly.react(`${id}_training_data_graph`, data, layout);  // Use Plotly.react() to update the existing plot
 		} catch (e) {
-			console.error(e);
+			err(e);
 		}
 	}
 
