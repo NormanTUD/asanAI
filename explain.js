@@ -2677,7 +2677,7 @@ async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0)
 	}
 }
 
-function findKeyByValue(obj, valueToFind, _default=null) {
+function find_key_by_value(obj, valueToFind, _default=null) {
 	try {
 		for (const key in obj) {
 			if (obj.hasOwnProperty(key)) {
@@ -2711,7 +2711,7 @@ function _create_table_cosmo (pgi, style="") {
 
 	for (var i in labels) {
 		if(isNumeric(i)) {
-			var _label = findKeyByValue(language[lang], labels[i], labels[i]);
+			var _label = find_key_by_value(language[lang], labels[i], labels[i]);
 			log("!!! !!! !!! _label:", _label);
 			if(labels[0]) {
 				labels_arr_str.push(`<span class='TRANSLATEME_${_label[1]}'></span>`);
