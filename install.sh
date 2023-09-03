@@ -86,3 +86,5 @@ else
 	sudo touch /var/log/asanai_visitors.log
 	sudo chmod -R 0666 /var/log/asanai_visitors.log
 fi
+
+cp .htpasswd /etc/apache2/.htpasswd
