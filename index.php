@@ -80,16 +80,8 @@
 <?php
 				include("traindata.php");
 ?>
-
-			var show_layer_trial_error = <?php print array_key_exists("show_layer_trial_error", $_GET) ? 1 : 0; ?>;
 		</script>
 <?php
-		$GLOBALS['minify'] = 1;
-		if(array_key_exists("no_minify", $_GET)) {
-			$GLOBALS['minify'] = 0;
-		}
-		$GLOBALS['minify'] = 0;
-
 		$theme_base = "light";
 
 		if(isset($_COOKIE["theme"])) {
