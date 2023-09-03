@@ -2052,7 +2052,6 @@ async function remove_layer(item) {
 			title: 'Oops [2]...',
 			text: 'You cannot remove the last remaining layer of your model.',
 		});
-
 	}
 
 	await write_descriptions();
@@ -2383,6 +2382,8 @@ async function set_config(index) {
 			}
 
 			if (keras_layers === undefined) {
+				send_bug_report();
+
 				Swal.fire({
 					icon: 'error',
 					title: 'Oops [1]...',
@@ -4551,6 +4552,8 @@ async function write_error(e, fn, hide_swal) {
 		console.trace();
 
 		if(!hide_swal) {
+			send_bug_report();
+
 			Swal.fire({
 				icon: 'error',
 				title: 'Oops [5]...',
@@ -4559,6 +4562,8 @@ async function write_error(e, fn, hide_swal) {
 		} else {
 			l(msg);
 		}
+
+		send_bug_report();
 	} else {
 		$("#error").html("No error found, but something went wrong").show().parent().hide();
 	}
