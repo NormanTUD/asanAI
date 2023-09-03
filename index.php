@@ -99,7 +99,7 @@
 		}
 
 ?>
-		<?php _css("jquery-ui.css"); ?>
+		<?php _css("libs/jquery-ui.css"); ?>
 		<?php _css("style.css"); ?>
 		<?php _css("ribbon.css"); ?>
 <?php
