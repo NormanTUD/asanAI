@@ -209,8 +209,8 @@ async function restart_fcnn(force) {
 	}
 
 	var redraw_data = {
-		'architecture_': architecture, 
-		'real_architecture_': real_architecture, 
+		'architecture_': architecture,
+		'real_architecture_': real_architecture,
 		'layerTypes_': layer_types,
 		'colors_': []
 	};
@@ -550,7 +550,6 @@ function download_visualization (layer_id) {
 		var canvas = $($("#alexnet")[0]).children()[0];
 		content = canvas.toDataURL();
 	}
-				
 
 	var data_url = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(content)))
 	var a = document.createElement("a");

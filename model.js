@@ -54,8 +54,9 @@ async function get_model_config_hash () {
 	});
 
 	var str = arr.join(";;;;;;;;;");
-	
+
 	var res = await md5(str);
+
 	return res;
 }
 
@@ -951,7 +952,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		data = _check_data(data, type);
 
 		_set_layer_gui(data, fake_model_structure, i);
-		
+
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
@@ -1474,7 +1475,6 @@ function save_model () {
 			text: 'The model may be defective and cannot be saved. Sorry. The error is: ' + e
 		});
 	}
-	
 }
 
 function get_current_chosen_object_default_weights_string () {

@@ -25,7 +25,7 @@ class DebugLayer extends tf.layers.Layer {
 	 * tensors as the input and should produce one or more tensors as
 	 * the return value.
 	 *
-	 * Be sure to use tidy() to avoid WebGL memory leak. 
+	 * Be sure to use tidy() to avoid WebGL memory leak.
 	 */
 	call(input, ...kwargs) {
 		log(this);
@@ -52,7 +52,7 @@ class DebugLayer extends tf.layers.Layer {
 	}
 
 	/**
-	 * The static className getter is required by the 
+	 * The static className getter is required by the
 	 * registration step (see below).
 	 */
 	static get className() {

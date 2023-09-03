@@ -41,7 +41,7 @@ var loadFile = (function(event) {
 		$("#output")[0].width = $("#output")[0].naturalWidth;
 
 		await predict(output);
-		
+
 		$(".only_show_when_predicting_image_file").show();
 	};
 
@@ -473,7 +473,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		//log(predict_data.arraySync());
-		
+
 		var mi = model.input.shape;
 		mi[0] = 1;
 
@@ -826,12 +826,12 @@ async function _get_example_string_image (examples, count, full_dir) {
 				log("Predict demo failed, error:", e);
 			}
 		} else {
-			str += "<div class='full_example_image_prediction inline_block'><img src='" + 
-				img_url + 
-				"' class='example_images' onload='predict_demo(this, " + 
-				i + 
-				")' onclick='predict_demo(this, " + 
-				i + 
+			str += "<div class='full_example_image_prediction inline_block'><img src='" +
+				img_url +
+				"' class='example_images' onload='predict_demo(this, " +
+				i +
+				")' onclick='predict_demo(this, " +
+				i +
 				")' /><br><div class='predict_demo_result'></div></div>";
 		}
 	}
@@ -869,9 +869,9 @@ function get_index_of_highest_category (predictions_tensor) {
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
 	if(!(
-		await input_shape_is_image(is_from_webcam) && 
-		$("#show_grad_cam").is(":checked") && 
-		!started_training && 
+		await input_shape_is_image(is_from_webcam) &&
+		$("#show_grad_cam").is(":checked") &&
+		!started_training &&
 		(await output_size_at_layer(get_number_of_layers())).length == 2)
 	) {
 		return;

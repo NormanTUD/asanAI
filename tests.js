@@ -5,18 +5,18 @@ var num_tests = 0;
 var num_tests_failed = 0;
 var mem_history = [];
 
-async function _set_seeds (nr) { // var start_tensors
+async function _set_seeds (nr) {
 	l("Setting seed to " + nr);
 	$(".kernel_initializer_seed").val(nr).trigger("change");
 	$(".bias_initializer_seed").val(nr).trigger("change");
 	l("Done setting seed to " + nr);
 }
 
-async function _set_initializers() { // var start_tensors
+async function _set_initializers() {
 	$(".layer_options_button").click()
 
 	l("Setting initializer");
-	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change") 
+	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change")
 	$("#set_all_bias_initializers").val("glorotUniform").trigger("change")
 	l("Done setting initializer");
 
@@ -25,11 +25,11 @@ async function _set_initializers() { // var start_tensors
 	await _set_seeds(42);
 }
 
-function get_current_timestamp () { // var start_tensors
+function get_current_timestamp () {
 	return Date.now()
 }
 
-function test_not_equal (name, is, should_be) { // var start_tensors
+function test_not_equal (name, is, should_be) {
 	num_tests++;
 	if(!is_equal(is, should_be)) {
 		//console.log("%c" + name + " OK", "background: green; color: white");
@@ -41,7 +41,7 @@ function test_not_equal (name, is, should_be) { // var start_tensors
 	}
 }
 
-function test_equal (name, is, should_be) { // var start_tensors
+function test_equal (name, is, should_be) {
 	num_tests++;
 	if(is_equal(is, should_be)) {
 		//console.log("%c" + name + ": OK", "background: green; color: white");
@@ -53,7 +53,7 @@ function test_equal (name, is, should_be) { // var start_tensors
 	}
 }
 
-function is_equal (a, b) { // var start_tensors
+function is_equal (a, b) {
 	if(typeof(a) == typeof(b)) {
 		if(JSON.stringify(a) == JSON.stringify(b)) {
 			return true;
@@ -63,7 +63,7 @@ function is_equal (a, b) { // var start_tensors
 	return false;
 }
 
-function test_summary () { // var start_tensors
+function test_summary () {
 	var tests_ok = num_tests - num_tests_failed;
 
 
@@ -75,7 +75,7 @@ function test_summary () { // var start_tensors
 	}
 }
 
-function log_test (name) { // var start_tensors
+function log_test (name) {
 	var current_mem = get_mem();
 	if(mem_history.length) {
 		var last_num_tensors = mem_history[mem_history.length - 1]["numTensors"];
@@ -93,7 +93,7 @@ function log_test (name) { // var start_tensors
 	l("Test-name: " + name);
 }
 
-async function run_tests () { // var start_tensors
+async function run_tests () {
 	mem_history = [];
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
@@ -265,7 +265,7 @@ async function run_tests () { // var start_tensors
 			await set_epochs(200);
 			await wait_for_updated_page(3);
 
-			await train_neural_network();	
+			await train_neural_network();
 			await wait_for_updated_page(3);
 
 			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
@@ -317,7 +317,7 @@ async function run_tests () { // var start_tensors
 			}
 
 			await wait_for_updated_page(3);
-			
+
 			log_test("Add layer");
 
 			var old_number_of_layers = $(".layer_setting").length;
@@ -361,7 +361,7 @@ async function run_tests () { // var start_tensors
 
 			delay(5000);
 
-			await train_neural_network();	
+			await train_neural_network();
 
 			try {
 				var res = await model.predict(tensor([[1, 1, 1]])).arraySync()[0][0];
@@ -392,7 +392,7 @@ async function run_tests () { // var start_tensors
 
 			$("#learningRate_adam").val("0.001").trigger("change");
 			await set_epochs(50);
-			await train_neural_network();	
+			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
 			updated_page();
@@ -530,10 +530,10 @@ async function run_tests () { // var start_tensors
 			var last = 0;
 			var ok = 1;
 			$(".descriptions_of_layers").each((i, e) => {
-				var t = parse_int(e.style.top); 
-				if(t > last) { 
+				var t = parse_int(e.style.top);
+				if(t > last) {
 					last = t;
-				} else { 
+				} else {
 					ok = 0;
 				}
 			})

@@ -58,7 +58,7 @@ function uuidv4() {
 	var res = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 	);
-	
+
 	return res;
 }
 
@@ -1489,7 +1489,7 @@ function set_augment_for_cosmo () {
 }
 
 function set_retrain_button () {
-	var html = "<span class='TRANSLATEME_train_further'></span>"; 
+	var html = "<span class='TRANSLATEME_train_further'></span>";
 	$("#train_train_further").html(html);
 	update_translations();
 }

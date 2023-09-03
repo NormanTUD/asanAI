@@ -35,7 +35,7 @@ function show_fullscreen(divs, currentDivPresentationIndex) {
 	$("#body").append(
 		`<div id='presentation_site_nr' style='display: none; z-index: 1000000; position: fixed; bottom: 0; left: 50%; right: 50%;'>${currentDivPresentationIndex + 1}/${divs.length}</div>`
 	);
-	
+
 	if(finished_loading) {
 		$("#presentation_site_nr").show();
 	}
@@ -228,7 +228,7 @@ function attach_listener_for_cosmo_outside_click () {
 			!is_mouse_over_element_variables(colorPickerElementsList) &&
 			done_presenting &&
 			!is_presenting &&
-			is_hidden_or_has_hidden_parent($("#sketcher")) && 
+			is_hidden_or_has_hidden_parent($("#sketcher")) &&
 			is_hidden_or_has_hidden_parent($(".example_images")[0])
 		) {
 			autochoose_next();

@@ -164,7 +164,7 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	}
 
 	var ctx = $(canvas)[0].getContext('2d');
-	ctx.beginPath();    
+	ctx.beginPath();
 
 	var min = 0;
 	var max = 0;
@@ -238,7 +238,6 @@ function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
 
 	var drew_output = draw_image_if_possible(layer, 'output', output_data);
 
-	
 	return drew_input || drew_kernel || drew_output;
 }
 
@@ -341,7 +340,6 @@ function get_layer_type_array () {
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		r.push($($(".layer_type")[i]).val());
 	}
-	
 
 	return r;
 }
@@ -368,53 +366,53 @@ function group_layers (layers) {
 	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
 
         var descs = [
-		{ 
-			"re": "((?:upSampling2d;?)+)", 
+		{
+			"re": "((?:upSampling2d;?)+)",
 			"name": "Scaling up"
 		},
 		{
 			"re": "((?:lstm;)+)",
 			"name": "LSTM"
 		},
-                { 
-			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)", 
+                {
+			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)",
 			"name": "<span class='TRANSLATEME_dimensionality_reduction'></span>"
 		},
 		{
-			"re": "((?:" + list_activation_layers.join("|") + ")+)", 
+			"re": "((?:" + list_activation_layers.join("|") + ")+)",
 			"name": "<span class='TRANSLATEME_shy_activation_function'></span>"
 		},
                 {
-			"re": "((?:dropout;?)+)", 
+			"re": "((?:dropout;?)+)",
 			"name": "<span class='TRANSLATEME_shy_overfitting_prevention'></span>"
 		},
                 {
-			"re": batch_or_layer_normalization, 
+			"re": batch_or_layer_normalization,
 			"name": "<span class='TRANSLATEME_rescale_and_recenter'></span>"
 		},
                 {
-			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))", 
+			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))",
 			"name": "<span class='TRANSLATEME_feature_extraction'></span>"
 		},
                 {
-			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))", 
+			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))",
 			"name": "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
 		},
-                { 
-			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)", 
-			"name": "<span class='TRANSLATEME_classification'></span>" 
-		},
-                { 
-			"re": "((?:flatten;?)+;?)", 
-			"name": "<span class='TRANSLATEME_flatten'></span>" 
+                {
+			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)",
+			"name": "<span class='TRANSLATEME_classification'></span>"
 		},
                 {
-			"re": "((?:reshape;?)+;?)", 
-			"name": "<span class='TRANSLATEME_change_shape'></span>" 
+			"re": "((?:flatten;?)+;?)",
+			"name": "<span class='TRANSLATEME_flatten'></span>"
 		},
                 {
-			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)", 
-			"name": "<span class='TRANSLATEME_simulate_real_data'></span>" 
+			"re": "((?:reshape;?)+;?)",
+			"name": "<span class='TRANSLATEME_change_shape'></span>"
+		},
+                {
+			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)",
+			"name": "<span class='TRANSLATEME_simulate_real_data'></span>"
 		},
 		{
 			"re": "(DebugLayer)+",
@@ -993,7 +991,7 @@ async function inputGradientAscent(layerIndex, neuron, iterations, start_image) 
 		const gradFunction = grad(lossFunction);
 
 		// Form a random image as the starting point of the gradient ascent.
-		
+
 		var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
 		if(typeof(start_image) != "undefined") {
 			data = start_image;
@@ -1119,7 +1117,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	favicon_spinner();
 
 	$("#stop_generating_images_button").show();
-	
+
 	for (var i = 0; i < neurons; i++) {
 		$("#generate_images_msg_wrapper").hide();
 		$("#generate_images_msg").html("");
@@ -1128,7 +1126,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 			console.info("Stopped generating images because the stop generating images button was clicked");
 			continue;
 		}
-	
+
 		_show_eta(times, i, neurons);
 
 		var start = Date.now();
@@ -1153,7 +1151,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 							canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 						} catch (e) {
 							if(("" + e).includes("already disposed")) {
-								
+								//
 							} else {
 								throw new Error(e);
 							}
@@ -1309,10 +1307,9 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				canvasses.push(canvas);
 
 				var data_hash = {
-					layer: layer, 
+					layer: layer,
 					neuron: neuron,
 					model_hash: await get_model_config_hash()
-					
 				};
 
 				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash);
@@ -1348,9 +1345,9 @@ function array_to_fixed (array, fixnr) {
 	}
 	var x = 0;
 	var len = array.length
-	while(x < len){ 
+	while(x < len) {
 		if(looks_like_number(array[x])) {
-			array[x] = parse_float(parse_float(array[x]).toFixed(fixnr)); 
+			array[x] = parse_float(parse_float(array[x]).toFixed(fixnr));
 		}
 		x++;
 	}
@@ -1362,7 +1359,7 @@ function array_to_color (array, color) {
 	var x = 0;
 	var len = array.length
 	var new_array = [];
-	while(x < len){ 
+	while(x < len) {
 		var this_color = color[x];
 		if(!this_color) {
 			this_color = "orange";
@@ -1494,7 +1491,7 @@ function get_layer_data() {
 			}
 		}
 
-		layer_data.push(this_layer_weights);	
+		layer_data.push(this_layer_weights);
 	}
 
 
@@ -1676,7 +1673,7 @@ function model_to_latex () {
 			"name": "Weights"
 		},
 		"eta": {
-			"name": "Learning rate", 
+			"name": "Learning rate",
 			"origin": "learningRate_OPTIMIZERNAME"
 		},
 		"epsilon": {
@@ -1695,7 +1692,7 @@ function model_to_latex () {
 			"dependencies": [],
 			"variables": {
 				"\\eta": {
-					"name": "Learning rate", 
+					"name": "Learning rate",
 					"origin": "learningRate_sgd"
 				},
 				"\\theta": default_vars["theta"],
@@ -1730,7 +1727,7 @@ function model_to_latex () {
 			],
 			"dependencies": [],
 			"variables": {
-				"\\theta": default_vars["theta"], 
+				"\\theta": default_vars["theta"],
 				"\\nabla": default_vars["nabla_operator"],
 				"\\eta": default_vars["eta"],
 			}
@@ -1958,7 +1955,7 @@ function model_to_latex () {
 				var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
 
 				this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
-				
+
 				var alpha = parse_float(get_item_value(i, "alpha"));
 				if(typeof(alpha) == "number") {
 					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
@@ -1986,7 +1983,7 @@ function model_to_latex () {
 
 				if(max_value_item.length) {
 					var max_value = max_value_item.val();
-					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");		
+					this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
 				}
 
 				if(this_activation_array.length) {
@@ -2179,17 +2176,17 @@ function can_be_shown_in_latex () {
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_type = $($(".layer_type")[i]).val();
 		var valid_layers = [
-			"dense", 
-			"flatten", 
-			"reshape", 
-			"elu", 
-			"leakyReLU", 
-			"reLU", 
-			"softmax", 
-			"thresholdedReLU", 
-			"dropout", 
-			"batchNormalization", 
-			"DebugLayer", 
+			"dense",
+			"flatten",
+			"reshape",
+			"elu",
+			"leakyReLU",
+			"reLU",
+			"softmax",
+			"thresholdedReLU",
+			"dropout",
+			"batchNormalization",
+			"DebugLayer",
 			"gaussianNoise",
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
@@ -2303,7 +2300,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 			var this_old_sub_array = this_old_layer[this_key];
 			var this_new_sub_array = this_new_layer[this_key];
-			
+
 			for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
 				if(Object.keys(this_new_sub_array).includes("" + item_nr)) {
 					if(Object.keys(this_old_sub_array).includes("" + item_nr)) {
@@ -2783,7 +2780,7 @@ function toggle_previous_current_generated_images () {
 		$(".layer_image").hide();
 
 		$("#previous_images").html(table);
-		
+
 		for (var i = 0; i < previously_generated_images.length; i++) {
 			var _prev = previously_generated_images[i];
 

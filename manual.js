@@ -150,7 +150,7 @@ function add_table (layer_type, config, onchange, uuid) {
 	for (var i = 0; i < this_layer_options.length; i++) {
 		var nr = 0;
 		var layer_option = this_layer_options[i];
-		
+
 		var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
 
 		if(!["trainable", "dtype", "visualize"].includes(layer_option)) {
@@ -326,7 +326,7 @@ function add_html_for_layer_types (layer_type) {
 	<span id="${shapes_id}"></span>
 	<div id="${uuid}_error"></div>
 	<table id="${uuid}_layer_gui"></table>`;
-	
+
 	$("#" + div_to_add_to).html(html);
 }
 
@@ -341,7 +341,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		img_element = img_element[0];
 	}
 
-	var img = fromPixels(img_element); 
+	var img = fromPixels(img_element);
 	img = img.div(255);
 
 	var config = {};

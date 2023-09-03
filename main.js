@@ -8,7 +8,7 @@ function show_idle_time () {
 
 	if(!enable_cosmo_debugger) {
 		$("#cosmo_reload_debugger").remove();
-		return;	
+		return;
 	}
 
 	if(!$("#cosmo_reload_debugger").length) {
@@ -22,7 +22,7 @@ function show_idle_time () {
 }
 
 async function on_resize () {
-	reset_view(); 
+	reset_view();
 	await show_cosmo_elements_depending_on_current_skills()
 	await write_descriptions(1);
 
@@ -62,8 +62,8 @@ function layer_types_that_dont_have_default_options () {
 
 async function hasFrontBack() {
 	let result = {
-		hasBack: false, 
-		hasFront: false, 
+		hasBack: false,
+		hasFront: false,
 		videoDevices: []
 	};
 	try {

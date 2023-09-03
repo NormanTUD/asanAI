@@ -217,7 +217,7 @@ class ManiC {
 
 	get_pos(el) {
 		assert(!!el, "el is empty")
-	
+
 		//log(el);
 		if(el) {
 			var rect = el.getBoundingClientRect();
@@ -267,7 +267,6 @@ class ManiC {
 		this.image.style.animation = 'moveAroundLeftRight 2s linear infinite';
 		this.image.style.animationName = 'moveAroundLeftRight';
 		// define the keyframes for the animation
-		
 
 		var keyframes = `
 			0% {
@@ -356,7 +355,7 @@ function find_unclicked_items ($x, possible_items) {
 	if(typeof(req) == "string") {
 		req_full = parse_required_skills(req);
 	}
-	
+
 	var possible = true;
 	//log(">>>>>>>>>>>>>>> TESTING: ", $x);
 	for (var n = 0; n < Object.keys(req_full).length; n++) {
@@ -372,7 +371,7 @@ function find_unclicked_items ($x, possible_items) {
 			// because it has the value 0:
 			var is_not_in_current_skill = !Object.keys(current_skills).includes(current_skill);
 			if(is_not_in_current_skill) {
-				current_user_skill = 0;	
+				current_user_skill = 0;
 			}
 			var is_possible = (current_element_skill_level == 0 || allows_zero) || current_element_skill_level.includes(current_user_skill);
 
@@ -503,7 +502,7 @@ function show_again_when_new_skill_acquired ($x, possible_items) {
 			var key = Object.keys(show_again_full)[k];
 			if(Object.keys(current_skills).includes(key)) {
 				if(!current_skills[key] == show_again[key]) {
-					possible = false;	
+					possible = false;
 				}
 			} else {
 				possible = false;
@@ -624,7 +623,7 @@ async function cosmo_mode () {
 				}
 			}
 		}
-		
+
 		show_idle_time();
 	}
 
@@ -1036,7 +1035,7 @@ function do_images_overlap (imageId1, imageId2) {
 	const rect1 = image1.getBoundingClientRect();
 	const rect2 = image2.getBoundingClientRect();
 
-	
+
 	if(!rect1 || !rect2) {
 		console.warn("do_images_overlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");
 		return false;

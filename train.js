@@ -173,7 +173,7 @@ async function train_neural_network () {
 			await predict_handdrawn();
 
 			await fit_to_window();
-		
+
 			chose_next_manicule_target();
 
 			if(!already_moved_to_predict_for_cosmo) {
@@ -281,7 +281,7 @@ async function get_model_data (optimizer_name_only) {
 	return global_model_data;
 }
 
-function delay(time) { // var start_tensors
+function delay(time) {
 	return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -565,7 +565,7 @@ function create_tiny_plot(x, y, y_val, w, h) {
 	if((y_val && y_val.length != x.length) || !y_val) {
 		y_val = [];
 	}
-	
+
 	// Create a canvas element
 	const canvas = document.createElement('canvas');
 	canvas.width = w;
@@ -703,8 +703,8 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		}
 
 		if(
-			xs_and_ys["y"].shape.length == 2 && 
-			xs_and_ys["y"].shape[1] == 1 && 
+			xs_and_ys["y"].shape.length == 2 &&
+			xs_and_ys["y"].shape[1] == 1 &&
 			model.input.shape.length == 2 &&
 			model.input.shape[1] == 1
 		) {
@@ -712,8 +712,8 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 
 			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
 				"model",
-				parse_int($("#epochs").val()), 
-				JSON.stringify(xs_and_ys["x"].arraySync()), 
+				parse_int($("#epochs").val()),
+				JSON.stringify(xs_and_ys["x"].arraySync()),
 				JSON.stringify(xs_and_ys["y"].arraySync()
 			), false, "simplest_training_data_visualization");
 			//log(new_on_batch_end_callback);
@@ -839,7 +839,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 								var $last_layer = $(".add_layer")[get_last_layer()];
 
 								debug("Awaiting disable_invalid_layers_event()");
-								
+
 								enable_all_layer_types();
 
 								var start_layers = model.layers.length;
@@ -1279,7 +1279,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 			var containerId = "#canvas_grid_visualization";
 			$(canvas).appendTo($(containerId));
 			if(is_cosmo_mode) {
-				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%"); 
+				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%");
 			}
 			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
 		} else {

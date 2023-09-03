@@ -897,7 +897,7 @@ async function update_python_code(dont_reget_labels) {
 		var is = get_input_shape_with_batch_size(); is[0] = "None"; ;
 
 		expert_code =
-			python_boilerplate(input_shape_is_image_val) + 
+			python_boilerplate(input_shape_is_image_val) +
 			labels_str +
 
 			"model = tf.keras.Sequential()\n\n" +
@@ -940,34 +940,34 @@ function model_add_python_structure (layer_type, data) {
 	var str = "";
 	if(layer_type == "Conv2D") {
 		return `model.add(layers.Conv2D(
-	${data.filters}, 
-	(${data.kernel_size}), 
+	${data.filters},
+	(${data.kernel_size}),
 	strides=(${data.strides.join(", ")}),
 	padding=${or_none(data.padding)},
 	data_format=None,
 	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)}, 
-	use_bias=${data.use_bias ? 'True' : 'False'}, 
+	activation=${or_none(data.activation)},
+	use_bias=${data.use_bias ? 'True' : 'False'},
 	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)}, 
+	bias_initializer=${or_none(data.bias_initializer)},
 	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)}, 
+	bias_regularizer=${or_none(data.bias_regularizer)},
 	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	kernel_constraint=${or_none(data.kernel_constraint)},
 	bias_constraint=${or_none(data.bias_constraint)})
 )
 `;
 	} else if(layer_type == "Dense") {
 		return `model.add(layers.Dense(
-	units=${data.units}, 
-	activation=${or_none(data.activation)}, 
-	use_bias=${data.use_bias ? 'True' : 'False'}, 
-	kernel_initializer=${or_none(data.kernel_initializer)}, 
-	bias_initializer=${or_none(data.bias_initializer)}, 
-	kernel_regularizer=${or_none(data.kernel_regularizer)}, 
-	bias_regularizer=${or_none(data.bias_regularizer)}, 
-	activity_regularizer=${or_none(data.activity_regularizer)}, 
-	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	units=${data.units},
+	activation=${or_none(data.activation)},
+	use_bias=${data.use_bias ? 'True' : 'False'},
+	kernel_initializer=${or_none(data.kernel_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	kernel_regularizer=${or_none(data.kernel_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	kernel_constraint=${or_none(data.kernel_constraint)},
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
@@ -995,16 +995,16 @@ function model_add_python_structure (layer_type, data) {
 ))\n`;
 	} else if (layer_type == "BatchNormalization") {
 		str += `model.add(layers.BatchNormalization(axis=${data.axis},
-	momentum=${or_none(data.momentum)}, 
-	epsilon=${data.epsilon}, 
-	center=${data.center}, 
-	scale=${data.scale}, 
-	beta_initializer=${or_none(data.beta_initializer)}, 
-	gamma_initializer=${or_none(data.gamma_initializer)}, 
-	moving_mean_initializer=${or_none(data.moving_mean_initializer)}, 
-	moving_variance_initializer=${or_none(data.moving_variance_initializer)}, 
-	beta_regularizer=${or_none(data.beta_regularizer)}, 
-	gamma_regularizer=${or_none(data.gamma_regularizer)}, 
+	momentum=${or_none(data.momentum)},
+	epsilon=${data.epsilon},
+	center=${data.center},
+	scale=${data.scale},
+	beta_initializer=${or_none(data.beta_initializer)},
+	gamma_initializer=${or_none(data.gamma_initializer)},
+	moving_mean_initializer=${or_none(data.moving_mean_initializer)},
+	moving_variance_initializer=${or_none(data.moving_variance_initializer)},
+	beta_regularizer=${or_none(data.beta_regularizer)},
+	gamma_regularizer=${or_none(data.gamma_regularizer)},
 	beta_constraint=${or_none(data.beta_constraint)},
 	gamma_constraint=${or_none(data.gamma_constraint)},
 	synchronized=${or_none(data.synchronized)}
@@ -1016,26 +1016,26 @@ function model_add_python_structure (layer_type, data) {
 	} else if (layer_type == "ReLU") {
 		str += `model.add(layers.ReLU(
 	max_value=${or_none(data.max_value)},
-	negative_slope=${or_none(data.negative_slope)}, 
+	negative_slope=${or_none(data.negative_slope)},
 	threshold=${or_none(data.threshold)}
 ))\n`;
 	} else if (layer_type == "Conv2DTranspose") {
 		str += `model.add(layers.Conv2DTranspose(
-	${data.filters}, 
-	(${data.kernel_size}), 
-	strides=(${data.strides.join(", ")}), 
-	padding=${or_none(data.padding)}, 
-	output_padding=${or_none(data.output_padding)}, 
-	data_format=${or_none(data.data_format)}, 
-	dilation_rate=(${data.dilation_rate.join(", ")}), 
-	activation=${or_none(data.activation)}, 
-	use_bias=${data.use_bias ? 'True' : 'False'}, 
-	kernel_initializer=${or_none(data.kernel_initializer)}, 
-	bias_initializer=${or_none(data.bias_initializer)}, 
-	kernel_regularizer=${or_none(data.kernel_regularizer)}, 
-	bias_regularizer=${or_none(data.bias_regularizer)}, 
-	activity_regularizer=${or_none(data.activity_regularizer)}, 
-	kernel_constraint=${or_none(data.kernel_constraint)}, 
+	${data.filters},
+	(${data.kernel_size}),
+	strides=(${data.strides.join(", ")}),
+	padding=${or_none(data.padding)},
+	output_padding=${or_none(data.output_padding)},
+	data_format=${or_none(data.data_format)},
+	dilation_rate=(${data.dilation_rate.join(", ")}),
+	activation=${or_none(data.activation)},
+	use_bias=${data.use_bias ? 'True' : 'False'},
+	kernel_initializer=${or_none(data.kernel_initializer)},
+	bias_initializer=${or_none(data.bias_initializer)},
+	kernel_regularizer=${or_none(data.kernel_regularizer)},
+	bias_regularizer=${or_none(data.bias_regularizer)},
+	activity_regularizer=${or_none(data.activity_regularizer)},
+	kernel_constraint=${or_none(data.kernel_constraint)},
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AlphaDropout") {
@@ -1052,14 +1052,14 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.${layer_type}(${or_none(data.data_format)}, keepdims=${or_none(data.keepdims)}))\n`;
 	} else if (layer_type == "LayerNormalization") {
 		str += `model.add(layers.LayerNormalization(
-	axis=${data.axis}, 
-	epsilon=${data.epsilon}, 
-	center=${data.center}, 
-	scale=${data.scale}, 
-	beta_initializer=${or_none(data.beta_initializer)}, 
-	gamma_initializer=${or_none(data.gamma_initializer)}, 
-	beta_regularizer=${or_none(data.beta_regularizer)}, 
-	gamma_regularizer=${or_none(data.gamma_regularizer)}, 
+	axis=${data.axis},
+	epsilon=${data.epsilon},
+	center=${data.center},
+	scale=${data.scale},
+	beta_initializer=${or_none(data.beta_initializer)},
+	gamma_initializer=${or_none(data.gamma_initializer)},
+	beta_regularizer=${or_none(data.beta_regularizer)},
+	gamma_regularizer=${or_none(data.gamma_regularizer)},
 	beta_constraint=${or_none(data.beta_constraint)},
 	gamma_constraint=${or_none(data.gamma_constraint)}
 ))\n`;
@@ -1067,28 +1067,28 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.Reshape(target_shape=[${data.target_shape}]))\n`;
 	} else if (layer_type == "MaxPooling3D") {
 		str += `model.add(layers.${layer_type}(
-	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}), 
-	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}), 
-	padding=${or_none(data.padding)}, 
+	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
+	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}),
+	padding=${or_none(data.padding)},
 	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "MaxPooling2D") {
 		str += `model.add(layers.${layer_type}(
-	(${data.pool_size[0]}, ${data.pool_size[1]}), 
-	strides=(${data.strides[0]}, ${data.strides[1]}), 
-	padding=${or_none(data.padding)}, 
+	(${data.pool_size[0]}, ${data.pool_size[1]}),
+	strides=(${data.strides[0]}, ${data.strides[1]}),
+	padding=${or_none(data.padding)},
 	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "MaxPooling1D") {
 		str += `model.add(layers.${layer_type}(
-	(${data.pool_size[0]}), 
-	strides=(${data.strides[0]}), 
-	padding=${or_none(data.padding)}, 
+	(${data.pool_size[0]}),
+	strides=(${data.strides[0]}),
+	padding=${or_none(data.padding)},
 	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "AveragePooling1D") {
 		str += `model.add(layers.AveragePooling1D(pool_size=${data.pool_size},
-	strides=${data.strides[0]}, 
+	strides=${data.strides[0]},
 	padding=${data.padding[0]},
 	data_format=${or_none(data.data_format)}
 ))\n`;
@@ -1116,13 +1116,13 @@ function model_add_python_structure (layer_type, data) {
 ))\n`;
 	} else if (layer_type == "AveragePooling2D") {
 		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size.join(", ")}}),
-	strides=(${data.strides.join(",")}), 
+	strides=(${data.strides.join(",")}),
 	padding=${data.padding},
 	data_format=${or_none(data.data_format)}
 ))\n`;
 	} else if (layer_type == "AveragePooling3D") {
 		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size.join(", ")}),
-	strides=(${data.strides.join(", ")}), 
+	strides=(${data.strides.join(", ")}),
 	padding=${data.padding},
 	data_format=${or_none(data.data_format)}
 ))\n`;
@@ -1538,7 +1538,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		return true;
 	};
-	
+
 	try {
 		var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 	} catch (e) {
@@ -2587,7 +2587,7 @@ async function set_config(index) {
 
 	l(language[lang]["updating_predictions"]);
 	await show_prediction(1, 1);
- 
+
 	$(".kernel_initializer").trigger("change");
 	$(".bias_initializer").trigger("change");
 
@@ -4226,7 +4226,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	});
 
 	// Add the transparency slider to the document
-	
+
 	$(canvas).parent().append("<br>");
 	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
 	$(canvas).parent().append(color_picker_code);
@@ -4923,7 +4923,7 @@ function human_readable_time(seconds, start="", end="") {
 	}
 
 	if(seconds > 86400 * 365) {
-		var params = []; 
+		var params = [];
 		if(start != "") {
 			params.push("Start:");
 			params.push(start);
@@ -5135,7 +5135,7 @@ function check_number_values() {
 
 		}
 	};
-	
+
 	if(missing_values) {
 		has_missing_values = true;
 		disable_train();
@@ -5281,7 +5281,6 @@ function add_row_to_plotly_loss() {
 	}
 
 	write_descriptions(); // cannot be async
-	
 }
 
 function remove_plotly_table_element(item) {
@@ -5330,7 +5329,7 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function set_cookie(name, value, days = 365) { // var start_tensors
+function set_cookie(name, value, days = 365) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
@@ -5344,7 +5343,7 @@ function set_cookie(name, value, days = 365) { // var start_tensors
 	document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
 }
 
-function get_cookie(name) { // var start_tensors
+function get_cookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
 	for(var i=0;i < ca.length;i++) {
@@ -5355,7 +5354,7 @@ function get_cookie(name) { // var start_tensors
 	return null;
 }
 
-function delete_cookie(name) { // var start_tensors
+function delete_cookie(name) {
 	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
@@ -5523,7 +5522,7 @@ async function toggle_layers() {
 	$(".left_side").toggle();
 
 	await write_descriptions(1);
-	
+
 	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
 		await add_cosmo_point("toggled_layers");
 		$(".left_side").attr("data-clicked", 1)
@@ -5724,7 +5723,7 @@ function download(filename, text) {
 }
 
 async function download_current_data_as_json () {
-	download("data.json", JSON.stringify(await get_x_y_as_array())) 
+	download("data.json", JSON.stringify(await get_x_y_as_array()))
 }
 
 function scroll_down_div (classname) {
@@ -5775,9 +5774,9 @@ function clear_attrament (idname) {
 	try {
 		atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
 		atrament_data[idname]['atrament'].context.fillRect(
-			0, 
-			0, 
-			atrament_data[idname]['atrament'].canvas.width, 
+			0,
+			0,
+			atrament_data[idname]['atrament'].canvas.width,
 			atrament_data[idname]['atrament'].canvas.height
 		);
 	} catch (e) {
@@ -5924,7 +5923,6 @@ function chose_nearest_color_picker (e) {
 	var id = $(input)[0].id.replace(/_colorpicker$/, "")
 
 	atrament_data[id].colorpicker.show()
-	
 }
 
 async function onclick_math_mode (t, e) {
@@ -6558,15 +6556,15 @@ function clone_canvas(oldCanvas) {
 }
 
 // Function to get the value of a query parameter from the URL
-function get_get(paramName, _default) { 
-	const urlParams = new URLSearchParams(window.location.search); 
-	var res = urlParams.get(paramName); 
-	if(res !== null && res !== "") { 
-		return res; 
-	} 
+function get_get(paramName, _default) {
+	const urlParams = new URLSearchParams(window.location.search);
+	var res = urlParams.get(paramName);
+	if(res !== null && res !== "") {
+		return res;
+	}
 
-	return _default; 
-} 
+	return _default;
+}
 
 //log(get_get("epochs", 10), get_get("BLA", "abc"));
 

@@ -9,7 +9,6 @@ function degrees_to_radians(degrees) {
 function numpy_str_to_tf_tensor (numpy_str, max_values) {
 	assert(typeof(numpy_str) == "string", "numpy_str must be string, is " + typeof(numpy_str));
 	assert(typeof(max_values) == "number", "max_values must be number, is " + typeof(max_values));
-	
 
 	if(!numpy_str.endsWith("\n")) {
 		numpy_str += "\n";
@@ -141,13 +140,13 @@ async function _get_urls_and_keys () {
 			//console.warn("No items found");
 		}
 	}
-	
+
 	return [urls, keys, data];
 }
 
 function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
 	var percentage_text = percentage + "% (" + (i + 1) + "/" + urls_length + ")...";
-	
+
 	var eta;
 
 	var data_progressbar_div = $("#data_progressbar>div");
@@ -293,9 +292,9 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 async function add_tensor_as_image_to_photos (_tensor) {
 	// TODO
-	assert(typeof(_tensor) == "object", "_tensor must be an object");	
+	assert(typeof(_tensor) == "object", "_tensor must be an object");
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
-	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");	
+	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
 
 	if(_tensor.shape.length == 4) {
 		if(_tensor.shape[0] == 1) {
@@ -374,8 +373,8 @@ async function sine_ripple (img) {
 	await tf.browser.toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
 	var canvas = $("#" + uuid)[0];
 	var context = canvas.getContext("2d");
-	var data = context.getImageData(0,0,canvas.width, canvas.height) 
-	JSManipulate.sineripple.filter(data); 
+	var data = context.getImageData(0,0,canvas.width, canvas.height)
+	JSManipulate.sineripple.filter(data);
 	context.putImageData(data,0,0);
 	var rippled = await fromPixels(canvas);
 	$(canvas).remove();
@@ -588,7 +587,7 @@ async function get_xs_and_ys () {
 					x_arr.shift();
 					x = tensor(x_arr);
 					global_x = x;
-				
+
 					return x;
 				});
 
@@ -700,8 +699,8 @@ async function get_xs_and_ys () {
 									await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
 									var canvas = $("#" + uuid)[0];
 									var context = canvas.getContext("2d");
-									var data = context.getImageData(0,0,canvas.width, canvas.height) 
-									JSManipulate.sineripple.filter(data); 
+									var data = context.getImageData(0,0,canvas.width, canvas.height)
+									JSManipulate.sineripple.filter(data);
 									context.putImageData(data,0,0);
 									var rippled = await fromPixels(canvas);
 									$(canvas).remove();
@@ -753,7 +752,7 @@ async function get_xs_and_ys () {
 								try {
 									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
-									var this_map = 
+									var this_map =
 										divNoNan(this_map_tensor, parse_float($("#divide_by").val())).arraySync();
 									maps.push(this_map)
 								} catch (e) {
@@ -1495,7 +1494,7 @@ function image_element_looks_random (imgelem) {
 }
 
 function maximally_activated_neurons_randomness () {
-	var canvasses = $("#maximally_activated_content").find("canvas"); 
+	var canvasses = $("#maximally_activated_content").find("canvas");
 
 	var struct = {};
 

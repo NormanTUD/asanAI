@@ -2,7 +2,7 @@
 
 var printed_msgs = [];
 
-function log_once (...args) { // var start_tensors
+function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
 	if(printed_msgs.includes(md5)) {
@@ -14,64 +14,64 @@ function log_once (...args) { // var start_tensors
 	log(...args);
 }
 
-function colorlog (color, msg) { // var start_tensors
+function colorlog (color, msg) {
 	console.log("%c" + msg, "background: " + color + "; color: white");
 }
 
-function logt(...msg) { // var start_tensors
+function logt(...msg) {
 	log(msg);
 	console.trace();
 }
 
-function log (...args) { // var start_tensors
+function log (...args) {
 	args.forEach(arg => console.log(arg))
 	if(enable_log_trace) {
 		console.trace();
 	}
 }
 
-function header_warning (msg) { // var start_tensors
+function header_warning (msg) {
 	console.log("%c" + msg, "background: orange; color: black");
 }
 
-function header_error (msg) { // var start_tensors
+function header_error (msg) {
 	console.log("%c" + msg, "background: red; color: white");
 }
 
-function header (msg) { // var start_tensors
+function header (msg) {
 	console.log("%c" + msg, "background: #222; color: #bada55");
 }
 
-function datadebug (msg) { // var start_tensors
+function datadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
 		console.log(msg);
 	}
 }
 
-function traindebug (msg) { // var start_tensors
+function traindebug (msg) {
 	if (window.location.href.indexOf("traindebug") > -1) {
 		console.log(msg);
 	}
 }
 
-function headerdatadebug (msg) { // var start_tensors
+function headerdatadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
 		console.log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
-function headerguidebug (msg) { // var start_tensors
+function headerguidebug (msg) {
 	if (window.location.href.indexOf("guidebug") > -1) {
 		console.log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
 
-function get_current_model_weights_identifier () { // var start_tensors
+function get_current_model_weights_identifier () {
 	tf.sum(model.layers[0].getWeights()[0]).print();
 }
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var ARGUMENT_NAMES = /([^\s,]+)/g;
-function get_param_names(func) { // var start_tensors
+function get_param_names(func) {
 	var fnStr = func.toString().replace(STRIP_COMMENTS, '');
 	var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
 	if(result === null)
@@ -80,7 +80,7 @@ function get_param_names(func) { // var start_tensors
 }
 
 
-function add_memory_debugger () { // var start_tensors
+function add_memory_debugger () {
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
 	var current_functions = Object.keys(window);
 
@@ -88,22 +88,22 @@ function add_memory_debugger () { // var start_tensors
 	    if(
 		    i != "assert" &&							// Disable assert output
 		    ![
-			    "delay", 
-			    "Swal", 
-			    "add_function_debugger", 
-			    "get_param_names", 
-			    "memory_debugger", 
-			    "_allow_training", 
-			    "fix_viz_width", 
-			    "allow_training", 
-			    "allow_training", 
-			    "get_chosen_dataset", 
-			    "show_load_weights", 
-			    "get_current_chosen_object_default_weights_string", 
-			    "get_chosen_dataset", 
-			    "dispose", 
-			    "get_weights_shape", 
-			    "get_weights_as_string", 
+			    "delay",
+			    "Swal",
+			    "add_function_debugger",
+			    "get_param_names",
+			    "memory_debugger",
+			    "_allow_training",
+			    "fix_viz_width",
+			    "allow_training",
+			    "allow_training",
+			    "get_chosen_dataset",
+			    "show_load_weights",
+			    "get_current_chosen_object_default_weights_string",
+			    "get_chosen_dataset",
+			    "dispose",
+			    "get_weights_shape",
+			    "get_weights_as_string",
 			    "get_drawing_board_on_page",
 			    "Atrament"
 		    ].includes(i) &&		// exclude these functions
@@ -115,7 +115,7 @@ function add_memory_debugger () { // var start_tensors
 	    ) {
 		    var param_names = get_param_names(window[i]);
 
-		    var args_string = param_names.join(", "); 
+		    var args_string = param_names.join(", ");
 
 		    var original_function = window[i];
 
@@ -145,7 +145,7 @@ function add_memory_debugger () { // var start_tensors
 	}
 }
 
-function add_function_debugger () { // var start_tensors
+function add_function_debugger () {
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
 	var current_functions = Object.keys(window);
 
@@ -153,11 +153,11 @@ function add_function_debugger () { // var start_tensors
 	    if(
 		    i != "assert" &&							// Disable assert output
 		    ![
-			    "delay", 
-			    "Swal", 
+			    "delay",
+			    "Swal",
 			    "get_python_name",
 			    "quote_python",
-			    "add_function_debugger", 
+			    "add_function_debugger",
 			    "write_model_summary",
 			    "Atrament",
 			    "check_number_values",
@@ -174,20 +174,20 @@ function add_function_debugger () { // var start_tensors
 			    "get_id_from_train_data_struct",
 			    "decille",
 			    "headerdatadebug",
-			    "get_param_names", 
+			    "get_param_names",
 			    "predict_webcam",
-			    "memory_debugger", 
-			    "_allow_training", 
-			    "fix_viz_width", 
-			    "allow_training", 
-			    "allow_training", 
-			    "get_chosen_dataset", 
-			    "show_load_weights", 
-			    "get_current_chosen_object_default_weights_string", 
-			    "get_chosen_dataset", 
-			    "dispose", 
-			    "get_weights_shape", 
-			    "get_weights_as_string", 
+			    "memory_debugger",
+			    "_allow_training",
+			    "fix_viz_width",
+			    "allow_training",
+			    "allow_training",
+			    "get_chosen_dataset",
+			    "show_load_weights",
+			    "get_current_chosen_object_default_weights_string",
+			    "get_chosen_dataset",
+			    "dispose",
+			    "get_weights_shape",
+			    "get_weights_as_string",
 		    ].includes(i) &&		// exclude these functions
 		    typeof(window[i]) == "function" &&					// use only functions
 		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
@@ -197,7 +197,7 @@ function add_function_debugger () { // var start_tensors
 	    ) {
 		    var param_names = get_param_names(window[i]);
 
-		    var args_string = param_names.join(", "); 
+		    var args_string = param_names.join(", ");
 
 		    var original_function = window[i];
 
@@ -234,21 +234,21 @@ function add_function_debugger () { // var start_tensors
 	}
 }
 
-function tf_debug () { // var start_tensors
+function tf_debug () {
 	if($("#enable_tf_debug").is(":checked")) {
 		tf.enableDebugMode();
 		$("#enable_tf_debug").prop("disabled", true);
 	}
 }
 
-function colorize (text, color) { // var start_tensors
+function colorize (text, color) {
 	if(color) {
 		return "<span style='color: " + color + "'>" + text + "</span>";
 	}
 	return text;
 }
 
-function memory_debugger () { // var start_tensors
+function memory_debugger () {
 	var memory = tf.memory();
 
 	var bytes = memory["numBytes"];
@@ -289,7 +289,7 @@ function memory_debugger () { // var start_tensors
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
 	}
-	
+
 	if(Object.keys(_custom_tensors).length) {
 		debug_string += ", asanAI: " + Object.keys(_custom_tensors).length;
 	}
@@ -309,7 +309,7 @@ function memory_debugger () { // var start_tensors
 	last_tensor_size_gpu = gpu_mb;
 }
 
-function install_memory_debugger () { // var start_tensors
+function install_memory_debugger () {
 	$(function(){
 		memory_debugger();
 		memory_debug_interval = setInterval(memory_debugger, 400);
@@ -317,17 +317,17 @@ function install_memory_debugger () { // var start_tensors
 
 }
 
-function log_mem () { // var start_tensors
+function log_mem () {
 	log("=====================");
 	log("Number of tensors: " + tf.memory()["numTensors"]);
 	log("MB in RAM:" + (tf.memory().numBytes / (1024*1024)) + "MB");
 }
 
-function get_mem () { // var start_tensors
+function get_mem () {
 	return tf.memory();
 }
 
-function add_optimizer_debugger () { // var start_tensors
+function add_optimizer_debugger () {
 	tf.train.sgd = function (e) { log("SGD. Learning rate:", e); var res = original_sgd(e); log("Result:", res); return res; }
 	tf.train.rmsprop = function (e, t, n, r, a) { log("RMSProp. learningRate, decay, momentum, epsilon, centered:", e, t, n, r, a); var res = original_rmsprop(e, t, n, r, a); log("Result:", res); return res; }
 	tf.train.adamax = function (e, t, n, r, a) { log("adamax. learningRate, beta1, beta2, epsilon, decay:", e, t, n, r, a); var res = original_adamax(e, t, n, r, a); log("Result:", res); return res; }
@@ -338,7 +338,7 @@ function add_optimizer_debugger () { // var start_tensors
 
 }
 
-function data_debug (...data) { // var start_tensors
+function data_debug (...data) {
 	log(">>>>>>>>>>>>>>>>>>");
 	for (var i = 0; i < data.length; i++) {
 		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
@@ -357,7 +357,7 @@ function data_debug (...data) { // var start_tensors
 	log("<<<<<<<<<<<<<<<<<<");
 }
 
-function highlight_element(xpath) { // var start_tensors
+function highlight_element(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = 'yellow';
@@ -365,7 +365,7 @@ function highlight_element(xpath) { // var start_tensors
 	}
 }
 
-function unhighlight_element(xpath) { // var start_tensors
+function unhighlight_element(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
 		element.style.backgroundColor = '';
@@ -373,7 +373,7 @@ function unhighlight_element(xpath) { // var start_tensors
 	}
 }
 
-function cosmo_debugger () { // var start_tensors
+function cosmo_debugger () {
 	if(!is_cosmo_mode) {
 		$("#cosmo_debugger").remove();
 		return;
@@ -381,7 +381,7 @@ function cosmo_debugger () { // var start_tensors
 
 	if(!enable_cosmo_debugger) {
 		$("#cosmo_debugger").remove();
-		return;	
+		return;
 	}
 
 	var cosmo_wave_debug_str = "current_skills: [" + JSON.stringify(current_skills) + "]";
@@ -448,7 +448,7 @@ function cosmo_debugger () { // var start_tensors
 	$(".cosmo").each(dbgf)
 }
 
-async function profile (func, ...args) { // var start_tensors
+async function profile (func, ...args) {
 	const profile = await tf.profile(await func(...args));
 
 	console.log(`newBytes: ${profile.newBytes}`);
