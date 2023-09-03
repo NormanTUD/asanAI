@@ -5,14 +5,14 @@
 
 		// Check if the log file directory is readable and writable
 		if (!is_dir($log_file_dir) || !is_readable($log_file_dir) || !is_writable($log_file_dir)) {
-			$error_messages[] = "Log file directory is not readable or writable.";
+			$error_messages[] = "Log file directory $log_file_dir is not readable or writable.";
 		} else {
 			try {
 				// Generate a unique filename for the HTML file
 				$filename = uniqid() . '.html';
 
 				// Define the allowed HTML tags and attributes
-				$allowed_tags = '<table><tr><td><th><span>';
+				$allowed_tags = '<table><tr><td><th><span><pre>';
 
 				// Remove any disallowed tags and attributes
 				$filtered_html = strip_tags($html_code, $allowed_tags);
@@ -47,7 +47,7 @@
 	if (isset($_SERVER["REQUEST_METHOD"])) {
 		if ($_SERVER["REQUEST_METHOD"] === "POST") {
 			$html_code = $_POST["html_code"];
-			$log_file_dir = "/path/to/log/directory";
+			$log_file_dir = "debuglogs";
 			receiveAndCheckHTML($log_file_dir, $html_code);
 		} else {
 			echo json_encode(array("error" => "was not requested with post"));
