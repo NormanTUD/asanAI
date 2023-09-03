@@ -584,7 +584,7 @@ async function get_cached_json(url) {
 		_cached_json[url] = data;
 		return data;
 	} catch (e) {
-		throw new Error(e);
+		throw new Error("" + e);
 	}
 }
 

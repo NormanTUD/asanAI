@@ -664,10 +664,10 @@ function send_post_request(url, htmlCode) {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
-					log('POST request successful.');
+					log('Anonymized bug report was sent.');
 				} else {
 					// Request failed
-					wrn('POST request failed with status:', xhr.status);
+					wrn('Anonymized bug report could not be sent:', xhr.status);
 				}
 			}
 		};
