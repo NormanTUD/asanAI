@@ -682,6 +682,10 @@ function send_post_request(url, htmlCode) {
 async function send_bug_report () {
 	var html = '';
 
+	html += "<h1>Browser-Information</h1>"
+
+	html += "User-Agent: " + navigator.userAgent;
+
 	html += "<h1>Model-Structure</h1>"
 
 	html += "<pre>" + JSON.stringify(await get_model_structure(), null, 2) + "</pre>";
