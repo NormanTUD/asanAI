@@ -76,7 +76,7 @@ function calculate_default_target_shape (nr) {
 	return output;
 }
 
-function lowercaseFirstLetter(string) {
+function lowercase_first_letter (string) {
 	var res = string.charAt(0).toLowerCase() + string.slice(1);
 
 
@@ -213,7 +213,7 @@ var js_names_to_python_names = {
 var python_names_to_js_names = {};
 
 for (var key of Object.keys(js_names_to_python_names)) {
-	python_names_to_js_names[js_names_to_python_names[key]] = lowercaseFirstLetter(key);
+	python_names_to_js_names[js_names_to_python_names[key]] = lowercase_first_letter(key);
 }
 
 var layer_options = {

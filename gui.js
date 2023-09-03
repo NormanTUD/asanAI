@@ -3228,7 +3228,7 @@ async function register() {
 				if(data["status"] == "ok") {
 					color_msg_green("register_error_msg");
 					document.getElementById("register_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-					setCookie("session_id", data["session_id"], 7);
+					set_cookie("session_id", data["session_id"], 7);
 					$("#register").hide();
 					$("#delete_button").hide();
 					$("#logout").show();
@@ -3265,7 +3265,7 @@ async function login() {
 				user_id = data["user_id"];
 				color_msg_green("login_error_msg");
 				document.getElementById("login_error_msg").innerHTML = data["status"] + ": " + data["msg"];
-				setCookie("session_id", data["session_id"], 7);
+				set_cookie("session_id", data["session_id"], 7);
 				$("#register").hide();
 				$("#logout").show();
 				$("#register_dialog").delay(400).fadeOut(400, async () => {
@@ -4787,7 +4787,7 @@ async function theme_choser () {
 	document.getElementById('css_mode').href = theme + '.css';
 	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
 
-	setCookie("theme", theme);
+	set_cookie("theme", theme);
 
 	await write_descriptions();
 	await write_model_to_latex_to_page();
@@ -5330,7 +5330,7 @@ function add_loss_functions_to_plotly_visualizer(data) {
 	plotly_show_loss_graph();
 }
 
-function setCookie(name, value, days = 365) { // var start_tensors
+function set_cookie(name, value, days = 365) { // var start_tensors
 	var expires = "";
 	if (days) {
 		var date = new Date();

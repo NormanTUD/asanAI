@@ -591,7 +591,7 @@ async function cosmo_mode () {
 	l("Starting cosmo mode");
 	$("#beginner").click();
 	// switch to cosmo mode
-	setCookie("cosmo_mode", "1", 365);
+	set_cookie("cosmo_mode", "1", 365);
 	await hide_layer_view();
 	hide_ribbon();
 	//$("#show_layer_data").prop("checked", true)

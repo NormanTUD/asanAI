@@ -47,7 +47,7 @@ function get_mode() {
 	}
 
 	if(old_mode != mode) {
-		setCookie("mode", mode);
+		set_cookie("mode", mode);
 	}
 
 	return mode;
@@ -56,7 +56,7 @@ function get_mode() {
 
 function set_mode () {
 	mode = get_mode();
-	setCookie("mode", mode);
+	set_cookie("mode", mode);
 	if(mode == "beginner") {
 		$(".layer_type").children().children().each(function (t, l) {
 			if(!$(l).is(":checked")) {

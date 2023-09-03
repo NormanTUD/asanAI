@@ -2,7 +2,7 @@
 
 // Get the language from the cookie or use the default language
 let lang_cookie_name = "language_cookie";
-let lang = getLangCookie();
+let lang = get_lang_cookie();
 
 var labels_lang = 'de';
 
@@ -13,7 +13,7 @@ if (urlParams.has('start_cosmo')) {
 	lang = 'de';
 }
 
-function swapImageSrcLanguage() {
+function swap_image_src_language () {
 	// Get all image elements on the page
 	const images = document.getElementsByTagName('img');
 
@@ -43,16 +43,16 @@ function swapImageSrcLanguage() {
 }
 
 // Function to set the language and update translations
-function setLang(l) {
+function set_lang(l) {
 	lang = l;
-	setCookie('lang', l, 30); // Save the language in a cookie for 30 days
+	set_cookie('lang', l, 30); // Save the language in a cookie for 30 days
 	updateTranslations();
 
-	swapImageSrcLanguage();
+	swap_image_src_language();
 }
 
 // Function to retrieve a cookie value
-function getLangCookie() {
+function get_lang_cookie() {
 	const cookies = document.cookie.split(';');
 	for (let i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
@@ -64,7 +64,7 @@ function getLangCookie() {
 }
 
 // Function to set a cookie value
-function setLangCookie(value, days) {
+function set_lang_cookie(value, days) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
 	const cookieValue = encodeURIComponent(value) + '; expires=' + expirationDate.toUTCString() + '; path=/';
@@ -104,7 +104,7 @@ Array.from(languageSelectors).forEach((selector) => {
 		event.preventDefault();
 		const newLang = this.dataset.lang;
 		if (newLang !== lang) {
-			setLang(newLang);
+			set_lang(newLang);
 		}
 	});
 });
@@ -113,14 +113,14 @@ Array.from(languageSelectors).forEach((selector) => {
 window.addEventListener('popstate', function () {
 	const newLang = urlParams.get('lang') || 'en';
 	if (newLang !== lang) {
-		setLang(newLang);
+		set_lang(newLang);
 	}
 });
 
 async function updateLang(la) {
 	lang = la;
 	await updateTranslations();
-	setLangCookie(lang, 99999);
+	set_lang_cookie(lang, 99999);
 }
 
 function trm (name) {
