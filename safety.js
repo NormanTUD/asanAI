@@ -1,6 +1,6 @@
 "use strict";
 
-function assertationFailed (message) {
+function assertation_failed (message) {
 	this.message = message;
 };
 
@@ -24,7 +24,7 @@ function assert(boolean_value, exception_message) {
 		}
 		link.href = 'favicon.ico';
 
-		throw new assertationFailed(exception_message);
+		throw new assertation_failed(exception_message);
 	} else {
 		document.body.style.cursor = get_cursor_or_none("default");
 	}

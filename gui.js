@@ -4895,7 +4895,7 @@ async function change_model_dataset() {
 	display_delete_button();
 }
 
-function allow_edit_inputShape() {
+function allow_edit_input_shape() {
 	if ($("#auto_input_shape").is(":checked")) {
 		l(language[lang]["input_shape_is_read_only"])
 		$("#inputShape").attr("readonly", true);

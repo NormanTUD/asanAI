@@ -614,7 +614,7 @@ async function cosmo_mode () {
 
 	await add_cosmo_point("loaded_page");
 
-	function timerIncrement() {
+	function timer_increment() {
 		if(Object.keys(current_skills).length > 1) {
 			idleTime = idleTime + 1;
 			if (idleTime > reload_time) { // 10 minutes
@@ -630,7 +630,7 @@ async function cosmo_mode () {
 
 	$(document).ready(function () {
 		// Increment the idle time counter every minute.
-		idleInterval = setInterval(timerIncrement, 1000); // 1 sekunde
+		idleInterval = setInterval(timer_increment, 1000); // 1 sekunde
 
 		// Zero the idle timer on mouse movement.
 		$(this).mousemove(function (e) {
