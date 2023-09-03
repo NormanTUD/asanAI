@@ -970,7 +970,7 @@ function tensor_normalize_to_rgb_min_max (x) {
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
-async function inputGradientAscent(layerIndex, neuron, iterations, start_image) {
+async function input_gradient_ascent(layerIndex, neuron, iterations, start_image) {
 	var worked = 0;
         var full_data = {};
 
@@ -1284,7 +1284,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 			iterations = 30;
 		}
 
-		var full_data = await inputGradientAscent(layer, neuron, iterations, start_image);
+		var full_data = await input_gradient_ascent(layer, neuron, iterations, start_image);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
@@ -2564,7 +2564,7 @@ function apply_color_map (x) {
 	return res;
 }
 
-async function gradClassActivationMap(model, x, classIndex, overlayFactor = 2.0) {
+async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2.0) {
 	if(started_training) {
 		l("Cannot show gradCAM while training");
 		return;

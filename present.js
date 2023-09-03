@@ -3,11 +3,11 @@ var currentDivPresentationIndex = 0;
 var divs = [];
 
 // Function to handle keydown events
-async function handleKeydown(event) {
+async function handle_keydown(event) {
 	if (event.key === "ArrowLeft" || event.key === "Left") {
 		show_previous_div();
 	} else if (event.key === "ArrowRight" || event.key === "Right" || event.key === " ") {
-		await showNextDiv();
+		await show_next_div();
 	}
 }
 
@@ -64,7 +64,7 @@ async function handle_scroll(event) {
 	$(".remove_me_at_first_tip").remove();
 	var delta = Math.sign(event.deltaY || event.wheelDelta);
 	if (delta > 0) {
-		await showNextDiv();
+		await show_next_div();
 	} else if (delta < 0) {
 		show_previous_div();
 	}
@@ -79,14 +79,14 @@ function add_scroll_left_button () {
 // Function to add the "go right" button
 function add_scroll_right_button () {
 	$("#scroll_right").remove();
-	$("#body").append("<span onclick='showNextDiv()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
+	$("#body").append("<span onclick='show_next_div()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
 }
 
 function add_end_presentation_button (force=0) {
 	$("#skip_presentation_button").remove();
 	if((finished_loading && is_presenting) || force) {
 		var new_element = $(`
-			<span onclick='endPresentation();$(this).remove()' id='skip_presentation_button'>
+			<span onclick='end_presentation();$(this).remove()' id='skip_presentation_button'>
 				SKIP
 			</span>
 		`);
@@ -117,7 +117,7 @@ function add_scroll_buttons(currentDivPresentationIndex, maxIndex) {
 }
 
 // Function to show the next div
-async function showNextDiv() {
+async function show_next_div () {
 	$(".remove_me_at_first_tip").remove();
 	if (currentDivPresentationIndex < divs.length - 1) {
 		remove_full_screen(divs, currentDivPresentationIndex);
@@ -126,7 +126,7 @@ async function showNextDiv() {
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	} else {
 		$("#skip_presentation_button").remove();
-		await endPresentation();
+		await end_presentation();
 	}
 
 	add_end_presentation_button();
@@ -146,7 +146,7 @@ function show_previous_div() {
 }
 
 // Function to handle touch events for swiping
-async function handleTouch(event) {
+async function handle_touch(event) {
 	$(".remove_me_at_first_tip").remove();
 	var x = event.touches[0].clientX;
 	var deltaX = x - startX;
@@ -154,7 +154,7 @@ async function handleTouch(event) {
 	if (deltaX > 0 && currentDivPresentationIndex > 0) {
 		show_previous_div();
 	} else if (deltaX < 0 && currentDivPresentationIndex < divs.length - 1) {
-		await showNextDiv();
+		await show_next_div();
 	}
 }
 
@@ -170,7 +170,7 @@ function handle_touch_end(event) {
 }
 
 // Function to end the presentation
-async function endPresentation() {
+async function end_presentation() {
 	$(".remove_me_at_first_tip").remove();
 	$("#skip_presentation_button").remove();
 
@@ -193,7 +193,7 @@ async function endPresentation() {
 
 	document.removeEventListener("wheel", handle_scroll);
 	document.removeEventListener("touchstart", handle_touch_start);
-	document.removeEventListener("touchmove", handleTouch);
+	document.removeEventListener("touchmove", handle_touch);
 	document.removeEventListener("touchend", handle_touch_end);
 	//log("removing presentation", $("#" + divName));
 	$("#" + divName).remove();
@@ -254,11 +254,11 @@ function run_presentation(dn) {
 	// Add event listeners for scrolling and touch events
 	document.addEventListener("wheel", handle_scroll);
 	document.addEventListener("touchstart", handle_touch_start);
-	document.addEventListener("touchmove", handleTouch);
+	document.addEventListener("touchmove", handle_touch);
 	document.addEventListener("touchend", handle_touch_end);
 
 	// Add event listener for keydown events
-	document.addEventListener("keydown", handleKeydown);
+	document.addEventListener("keydown", handle_keydown);
 
 	// Start the presentation
 	show_fullscreen(divs, currentDivPresentationIndex);
@@ -286,5 +286,5 @@ async function handle_click(event) {
 	}
 
 	// Clicked anywhere else, show the next slide
-	await showNextDiv();
+	await show_next_div();
 }

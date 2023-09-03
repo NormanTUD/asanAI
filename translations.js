@@ -117,7 +117,7 @@ window.addEventListener('popstate', function () {
 	}
 });
 
-async function updateLang(la) {
+async function update_lang(la) {
 	lang = la;
 	await update_translations();
 	set_lang_cookie(lang, 99999);

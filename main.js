@@ -60,7 +60,7 @@ function layer_types_that_dont_have_default_options () {
 
 
 
-async function hasFrontBack() {
+async function has_front_back_camera() {
 	let result = {
 		hasBack: false,
 		hasFront: false,
@@ -310,7 +310,7 @@ function init_categories () {
 
 async function hasBothFrontAndBack () {
 	if(hasBothFrontAndBackCached === undefined) {
-		var has_front_and_back_facing_camera = await hasFrontBack();
+		var has_front_and_back_facing_camera = await has_front_back_camera();
 		hasBothFrontAndBackCached = has_front_and_back_facing_camera.hasBack && has_front_and_back_facing_camera.hasFront;
 	}
 

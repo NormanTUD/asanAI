@@ -951,8 +951,8 @@ text-align: end;
 				</div>
 
 				<div style="position: absolute; top: 2px; right: 20px; user-select: none">
-					<span onclick='updateLang("de")'>&#127465;&#127466;</span>
-					<span onclick='updateLang("en")'>&#127468;&#127463;</span>
+					<span onclick='update_lang("de")'>&#127465;&#127466;</span>
+					<span onclick='update_lang("en")'>&#127468;&#127463;</span>
 				</div>
 			</div>
 
@@ -973,7 +973,7 @@ text-align: end;
 							$file = file_get_contents("README.md");
 							print(parse_markdown_links(get_string_between($file, "[comment]: <> (BeginSources)", "[comment]: <> (EndSources)")));
 ?>
-							<button class="close_button" onclick="closePopup('sources_popup')"><span class="TRANSLATEME_close"></span></button>
+							<button class="close_button" onclick="close_popup('sources_popup')"><span class="TRANSLATEME_close"></span></button>
 						</div>
 					</div>
 				</div>
@@ -1005,7 +1005,7 @@ text-align: end;
 								</tr>
 							</table>
 
-								<button class="close_button" onclick="closePopup('save_dialog')"><span class="TRANSLATEME_close"></span></button>
+								<button class="close_button" onclick="close_popup('save_dialog')"><span class="TRANSLATEME_close"></span></button>
 							</div>
 						</div>
 					</div>
@@ -1070,7 +1070,7 @@ text-align: end;
 								</table>
 							</div>
 							<br>
-						<button class="close_button" onclick="closePopup('register_dialog')"><span class="TRANSLATEME_close"></span></button>
+						<button class="close_button" onclick="close_popup('register_dialog')"><span class="TRANSLATEME_close"></span></button>
 					</div>
 				</div>
 
@@ -1089,7 +1089,7 @@ text-align: end;
 							</div>
 						</div>
 						<br>
-						<button class="close_button" onclick="closePopup('save_model_dialog')"><span class="TRANSLATEME_close"></span></button>
+						<button class="close_button" onclick="close_popup('save_model_dialog')"><span class="TRANSLATEME_close"></span></button>
 					</div>
 				</div>
 
@@ -1487,8 +1487,8 @@ text-align: end;
 
 										<span class="hide_when_no_image custom_image_data">
 											<span id="upload_file" class="show_data no_box_shadow ">
-												<span id="upload_file_styleable"  onclick="document.getElementById('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
-												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="loadFile(event)" style="display:none;">
+												<span id="upload_file_styleable"  onclick="$('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
+												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="load_file(event)" style="display:none;">
 											</span>
 											<br>
 											<span class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">

@@ -3305,18 +3305,18 @@ async function logout() {
 }
 
 async function sources_popup() {
-	await openPopup("sources_popup");
+	await open_popup("sources_popup");
 }
 
 async function losses_popup() {
 	if ($("#explanation").children().length == 0) {
 		add_loss_functions_to_plotly_visualizer();
 	}
-	await openPopup("losses_popup");
+	await open_popup("losses_popup");
 }
 
 async function close_losses() {
-	await closePopup("losses_popup");
+	await close_popup("losses_popup");
 }
 
 function model_name_already_exists() {
@@ -3501,18 +3501,18 @@ async function save_to_db_wrapper () {
 }
 
 async function open_save_model_dialog() {
-	await openPopup("save_model_dialog");
+	await open_popup("save_model_dialog");
 }
 
 async function open_register_dialog() {
-	await openPopup("register_dialog");
+	await open_popup("register_dialog");
 }
 
 async function open_save_dialog() {
-	await openPopup("save_dialog");
+	await open_popup("save_dialog");
 }
 
-async function openPopup(name) {
+async function open_popup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
@@ -3525,7 +3525,7 @@ async function openPopup(name) {
 	await write_descriptions();
 }
 
-async function closePopup(name) {
+async function close_popup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");

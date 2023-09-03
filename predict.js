@@ -881,7 +881,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
-	var heatmap = await gradClassActivationMap(model, predict_data, strongest_category);
+	var heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
 	disable_layer_debuggers = original_disable_layer_debuggers;
 
 	if(heatmap) {
