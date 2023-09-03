@@ -346,7 +346,7 @@
 			die("$file does not exist");
 		}
 
-		$t = get_last_commit_hash_of_file($file);
+		$t = get_file_state_identifier($file);
 		$file = $file . "?t=$t";
 
 		if($async && $defer) {
@@ -367,7 +367,7 @@
 			die("$file does not exist");
 		}
 
-		$t = get_last_commit_hash_of_file($file);
+		$t = get_file_state_identifier($file);
 		$file = $file . "?t=$t";
 
 		if($id) {
@@ -475,6 +475,18 @@
 		} else {
 			die("$file not found.");
 		}
+	}
+
+	function get_file_state_identifier ($file) {
+		$git_hash = get_last_commit_hash_of_file($file);
+		if(!$git_hash) {
+			if(file_exists($file)) {
+				return filemtime($file);
+			} else {
+				die("$file not found");
+			}
+		}
+		return $git_hash;
 	}
 
 	function get_git_hash () {
