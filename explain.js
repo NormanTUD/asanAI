@@ -996,7 +996,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 			// Form a random image as the starting point of the gradient ascent.
 
-			var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
+			var data = randomUniform([1, ...model.input.shape.filter(n=>n)], -1, 1);
 			if(typeof(start_image) != "undefined") {
 				data = start_image;
 			}
@@ -1016,9 +1016,6 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 				data = data.add(scaledGrads);
 			}
-
-			var total_number_of_values = data.shape.reduce((acc, val) => { return acc += val });
-			var _sum = data.sum().arraySync();
 
 			worked = 1;
 			return data;
