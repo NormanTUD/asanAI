@@ -2263,7 +2263,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			if(("" + e).includes("can't assign to property")) {
 				wrn("failed temml:", e);
 			} else {
-				write_error(e);
+				await write_error(e);
 			}
 		}
 	} else {
