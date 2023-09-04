@@ -437,7 +437,18 @@ function get_fit_data () {
 
 		$("#plotly_epoch_history").parent().show();
 		if(is_cosmo_mode) {
-			if(current_cosmo_stage == 1) {
+			if(current_cosmo_stage == 1 || current_cosmo_stage == 2) {
+				$("#cosmo_training_predictions_explanation").hide();
+				$("#cosmo_training_grid_stage_explanation").show();
+				$("#cosmo_training_plotly_explanation").hide();
+
+				$("#plotly_epoch_history").hide();
+
+				await visualize_train();
+
+				$("#visualize_images_in_grid").show();
+			/*
+			} else if(current_cosmo_stage == 2) {
 				$("#visualize_images_in_grid").hide();
 
 				$("#cosmo_training_predictions_explanation").show();
@@ -452,16 +463,8 @@ function get_fit_data () {
 
 				await repredict();
 				update_translations();
-			} else if(current_cosmo_stage == 2) {
-				$("#cosmo_training_predictions_explanation").hide();
-				$("#cosmo_training_grid_stage_explanation").show();
-				$("#cosmo_training_plotly_explanation").hide();
 
-				$("#plotly_epoch_history").hide();
-
-				await visualize_train();
-
-				$("#visualize_images_in_grid").show();
+			*/
 			} else {
 				$("#visualize_images_in_grid").hide();
 

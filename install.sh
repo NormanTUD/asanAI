@@ -87,4 +87,4 @@ else
 	sudo chmod -R 0666 /var/log/asanai_visitors.log
 fi
 
-cp .htpasswd /etc/apache2/.htpasswd
+cp debuglogs/.htpasswd /etc/apache2/.htpasswd
