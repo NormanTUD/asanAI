@@ -917,8 +917,6 @@ function draw_internal_states (layer, inputs, applied) {
 			}
 		}
 	}
-
-	//MathJax.typeset();
 }
 
 function zoom_kernel_images (kernel_image_zoom) {
@@ -2247,7 +2245,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			var old_md5 = math_items_hashes[xpath];
 
 			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
-				//await MathJax.typesetPromise([math_tab_code_elem]);
 				try {
 					await _temml();
 				} catch (e) {
@@ -2266,9 +2263,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			if(("" + e).includes("can't assign to property")) {
 				wrn("failed temml:", e);
 			} else {
-				var mathjax_error_explanation = "Are you online?";
-				wrn(e);
-				$("#math_tab_code").html("<h2>Error</h2>\n" + e + "\n<br>" + mathjax_error_explanation);
+				write_error(e);
 			}
 		}
 	} else {

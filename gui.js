@@ -1507,8 +1507,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			await show_prediction(1, 1);
 		}
 
-		await typeset();
-
 		await wait_for_latex_model;
 		//await wait_for_show_hide_load_weights;
 		if(atrament_data.sketcher && await input_shape_is_image()) {
@@ -1588,35 +1586,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	} catch (e) {}
 
 	last_updated_page = Date.now();
-}
-
-async function typeset() {
-	var math_elements = $('.typeset_me,[class^="TRANSLATEME_"]');
-
-	for (var i = 0; i < math_elements.length; i++) {
-		if($(math_elements[i]).html().includes("$$")) {
-			continue;
-		}
-		var xpath = get_element_xpath(math_elements[i]);
-		var new_md5 = await md5($(math_elements[i]).html());
-		var old_md5 = math_items_hashes[xpath];
-
-		var retypeset = 0;
-		if(new_md5 != old_md5) {
-			retypeset = 1;
-		}
-
-		if($(math_elements[i]).attr("id") == "math_tab_code") {
-			if(is_hidden_or_has_hidden_parent($("#math_tab_code")[0])) {
-				retypeset = 0;
-			}
-		}
-
-		if(retypeset) {
-			//MathJax.typeset([math_elements[i]]);
-			math_items_hashes[xpath] = new_md5;
-		}
-	}
 }
 
 async function change_optimizer() {
