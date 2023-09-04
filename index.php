@@ -1240,7 +1240,7 @@ text-align: end;
 									<hr class="cosmo_hr">
 									<span class="TRANSLATEME_lets_suppose_we_have_this_simple_network" style="display: block"></span>
 									<br>
-									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="cosmo/signs_network.svg"><br>
+									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="lang/__de__signs_network.svg"><br>
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
 									<span class="TRANSLATEME_now_being"></span> <span id="number_of_images_per_category">5</span> <span class="TRANSLATEME_images_of_each_category"></span>
