@@ -478,7 +478,7 @@
 	}
 
 	function get_file_state_identifier ($file) {
-		$git_hash = get_last_commit_hash_of_file($file);
+		$git_hash = ""; #get_last_commit_hash_of_file($file);
 		if(!$git_hash) {
 			if(file_exists($file)) {
 				return filemtime($file);
