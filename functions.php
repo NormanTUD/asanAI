@@ -490,16 +490,11 @@
 	}
 
 	function get_git_hash () {
-		$rev = chop(shell_exec("git rev-parse HEAD"));
-		if(!$rev) {
-			if(file_exists(".git/refs/heads/master") {
-				$rev = chop(file_get_contents(".git/refs/heads/master"));
-				return $rev;
-			}
-
-			return "";
-		} else {
+		if(file_exists(".git/refs/heads/master")) {
+			$rev = chop(file_get_contents(".git/refs/heads/master"));
 			return $rev;
 		}
+
+		return "";
 	}
 ?>
