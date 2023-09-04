@@ -6599,3 +6599,7 @@ function set_get(paramName, paramValue) {
 		// You can add more intelligent handling here if needed
 	}
 }
+
+function jump_to_interesting_tab () {
+	return $("#jump_to_interesting_tab").is(":checked") ? 1 : 0;
+}

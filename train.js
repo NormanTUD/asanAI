@@ -185,7 +185,7 @@ async function train_neural_network () {
 				$("#show_webcam_button").click();
 			}
 		} else {
-			show_tab_label("predict_tab", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+			show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
 
 		await enable_everything();
@@ -297,7 +297,7 @@ function get_fit_data () {
 		this_training_start_time = Date.now()
 		$(".training_performance_tabs").show();
 
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		$("#network_has_seen_msg").hide();
 	};
@@ -669,7 +669,7 @@ async function _get_xs_and_ys (recursive=0) {
 		await disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
 		if(("" + e).includes("n is undefined") && recursive == 0) {
@@ -757,7 +757,7 @@ async function _get_fit_data (xs_and_ys) {
 
 		await _show_or_hide_simple_visualization(fit_data, xs_and_ys);
 
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 	} catch (e) {
 		await write_error_and_reset(e);
@@ -966,7 +966,7 @@ async function run_neural_network (recursive=0) {
 
 		var fit_data = await _get_fit_data(xs_and_ys);
 
-		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		try {
 			await compile_model();
