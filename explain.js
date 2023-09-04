@@ -2269,7 +2269,6 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	} else {
 		hide_tab_label("math_tab_label");
 	}
-
 }
 
 /* This function is used to compare old and new layer data to see if there are any differences. The default color is black, but if darkmode is true, the default color will be white. The color diff variable will contain an array of objects, with each object representing a layer. The keys of each object represent the different data sets within that layer, and the values are arrays of colors, with each color representing the difference between the old and new data for that particular data set. */
