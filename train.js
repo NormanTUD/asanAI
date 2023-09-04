@@ -660,7 +660,7 @@ async function _create_and_compile_model () {
 
 }
 
-async function _get_xs_and_ys () {
+async function _get_xs_and_ys (recursive=0) {
 	var xs_and_ys = false;
 	try {
 		var error_string = "";
@@ -672,21 +672,26 @@ async function _get_xs_and_ys () {
 		show_tab_label("tfvis_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		l(language[lang]["got_data"]);
 	} catch (e) {
-		var explanation = explain_error_msg(e.toString());
-		if(explanation) {
-			explanation = "<br><br>" + explain_error_msg(e.toString());
+		if(("" + e).includes("n is undefined") && recursive == 0) {
+			return await _get_xs_and_ys(recursive + 1);
 		} else {
-			explanation = "";
+			var explanation = explain_error_msg(e.toString());
+			if(explanation) {
+				explanation = "<br><br>" + explain_error_msg(e.toString());
+			} else {
+				explanation = "";
+			}
+			await send_bug_report()
+			Swal.fire(
+				'Error while training',
+				e.toString() + explanation,
+				'warning'
+			);
+			header("ERROR");
+			log(e);
+			header("ERROR END");
+			console.trace();
 		}
-		Swal.fire(
-			'Error while training',
-			e.toString() + explanation,
-			'warning'
-		);
-		header("ERROR");
-		log(e);
-		header("ERROR END");
-		console.trace();
 		favicon_default();
 		await write_descriptions();
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
