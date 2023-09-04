@@ -990,6 +990,12 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			// output at the designated filter index.
 			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
 
+			/*
+			console.log("auxModel:", auxModel);
+			console.log("summary:");
+			auxModel.summary();
+			*/
+
 			// This returned function (`gradFunction`) calculates the gradient of the
 			// convolutional filter's output with respect to the input image.
 			const gradFunction = grad(lossFunction);
@@ -2608,12 +2614,12 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
-		const lastConvLayerOutput = lastConvLayer.output;
-		const subModel1 = tf_model({inputs: model.inputs, outputs: lastConvLayerOutput});
+		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
+		const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
-		const newInput = input({shape: lastConvLayerOutput.shape.slice(1)});
+		const newInput = input({shape: layerOutput.shape.slice(1)});
 		layerIndex++;
 		let y = newInput;
 		while (layerIndex < model.layers.length) {
@@ -2632,7 +2638,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			const gradFunction = grad(convOutput2ClassOutput);
 
 			// Calculate the values of the last conv layer's output.
-			const lastConvLayerOutputValues = subModel1.apply(x);
+			const lastConvLayerOutputValues = auxModel.apply(x);
 			// Calculate the values of gradients of the class output w.r.t. the output
 			// of the last convolutional layer.
 			const gradValues = gradFunction(lastConvLayerOutputValues);
