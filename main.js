@@ -117,8 +117,8 @@ function init_tabs () {
 		activate: function (event, ui) {
 			disable_hidden_chardin_entries();
 		},
-		hide: { effect: "fade", duration: 100 },
-		show: { effect: "fade", duration: 100 }
+		hide: { effect: "fade", duration: 0 },
+		show: { effect: "fade", duration: 0 }
 	};
 
 	if(is_cosmo_mode) {
