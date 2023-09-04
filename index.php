@@ -1229,18 +1229,18 @@ text-align: end;
 												<td class='cosmo_example_table'><span class="TRANSLATEME_warning"></span></td>
 											</tr>
 											<tr>
-												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//fire/116px-Fire_Class_B.svg.png'></td>
-												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//mandatory/120px-DIN_4844-2_D-M001.svg.png'></td>
-												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//prohibition/120px-DIN_4844-2_D-P001.svg.png'></td>
-												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//rescue/120px-DIN_4844-2_WSE001.svg.png'></td>
-												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs//warning/120px-D-W002_Warning_orange.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs/fire/116px-Fire_Class_B.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs/mandatory/120px-DIN_4844-2_D-M001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs/prohibition/120px-DIN_4844-2_D-P001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs/rescue/120px-DIN_4844-2_WSE001.svg.png'></td>
+												<td class='cosmo_example_table'><img class='example_imgs_cosmo_mode' src='traindata/signs/warning/120px-D-W002_Warning_orange.svg.png'></td>
 											</tr>
 										</table>
 									</center>
 									<hr class="cosmo_hr">
 									<span class="TRANSLATEME_lets_suppose_we_have_this_simple_network" style="display: block"></span>
 									<br>
-									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="cosmo/signs_network.svg"><br>
+									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="lang/__de__signs_network_cosmo.svg"><br>
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
 									<span class="TRANSLATEME_now_being"></span> <span id="number_of_images_per_category">5</span> <span class="TRANSLATEME_images_of_each_category"></span>
