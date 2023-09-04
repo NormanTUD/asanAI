@@ -1028,7 +1028,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			await compile_model();
 			if(recursion > 5) {
 				await delay(100);
-				return input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1)
+				return await input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1)
 			} else {
 				throw new Error("Too many retries for input_gradient_ascent");
 			}
@@ -2674,7 +2674,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 		if(("" + e).includes("already disposed")) {
 			wrn("Model weights are disposed. Probably the model was recompiled during prediction");
 		} else {
-			write_error(e);
+			await write_error(e);
 		}
 		return null;
 	}

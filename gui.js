@@ -2382,7 +2382,7 @@ async function set_config(index) {
 			}
 
 			if (keras_layers === undefined) {
-				send_bug_report();
+				await send_bug_report();
 
 				Swal.fire({
 					icon: 'error',
@@ -4561,7 +4561,7 @@ async function write_error(e, fn, hide_swal) {
 			l(msg);
 		}
 
-		send_bug_report();
+		await send_bug_report();
 	} else {
 		$("#error").html("No error found, but something went wrong").show().parent().hide();
 	}
