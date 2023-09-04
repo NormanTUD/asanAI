@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="759.97021"
+   width="749.97021"
    height="139.84476"
    version="1.1"
    id="svg46"
    sodipodi:docname="__en__signs_network.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   viewBox="0 0 759.97022 139.84476"
+   viewBox="0 0 749.97022 139.84476"
+   inkscape:export-filename="__en__signs_network.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -23,12 +26,12 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="0.94458796"
-     inkscape:cx="367.35594"
-     inkscape:cy="-5.8226446"
+     inkscape:zoom="2.6716982"
+     inkscape:cx="722.76127"
+     inkscape:cy="107.23517"
      inkscape:window-width="1920"
      inkscape:window-height="1004"
-     inkscape:window-x="1920"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="g44"
@@ -379,7 +382,7 @@
          id="tspan31141" /></text>
     <g
        id="g98850"
-       transform="translate(-8.3647082,105.48156)"
+       transform="translate(-18.364708,105.48156)"
        inkscape:export-filename="/home/christoph/Downloads/cnn-grafik.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300">
