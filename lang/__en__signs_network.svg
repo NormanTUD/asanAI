@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="771.21002"
+   width="759.97021"
    height="139.84476"
    version="1.1"
    id="svg46"
-   sodipodi:docname="signs_network.svg"
+   sodipodi:docname="__en__signs_network.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   viewBox="0 0 771.21003 139.84476"
+   viewBox="0 0 759.97022 139.84476"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -36,7 +36,7 @@
      inkscape:showpageshadow="2"
      inkscape:deskcolor="#d1d1d1" />
   <g
-     transform="translate(-805.695,-467.51822)"
+     transform="translate(-804.935,-467.51822)"
      id="g44">
     <image
        width="62.045135"
@@ -379,7 +379,7 @@
          id="tspan31141" /></text>
     <g
        id="g98850"
-       transform="translate(3.6352918,105.48156)"
+       transform="translate(-8.3647082,105.48156)"
        inkscape:export-filename="/home/christoph/Downloads/cnn-grafik.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300">
@@ -433,28 +433,28 @@
         <text
            class="info"
            font-family="sans-serif"
-           x="1537.8013"
+           x="1525.5771"
            y="534.01569"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.2987px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text59255"><tspan
              sodipodi:role="line"
-             x="1537.8013"
+             x="1525.5771"
              y="534.01569"
              id="tspan59245">Fire prevention</tspan><tspan
              sodipodi:role="line"
-             x="1537.8013"
+             x="1525.5771"
              y="554.38904"
              id="tspan59247">Mandatory</tspan><tspan
              sodipodi:role="line"
-             x="1537.8013"
+             x="1525.5771"
              y="574.76245"
              id="tspan59249">Forbidden</tspan><tspan
              sodipodi:role="line"
-             x="1537.8013"
+             x="1525.5771"
              y="595.1358"
              id="tspan59251">Rescue</tspan><tspan
              sodipodi:role="line"
-             x="1537.8013"
+             x="1525.5771"
              y="615.50922"
              id="tspan59253">Warning</tspan></text>
       </g>
