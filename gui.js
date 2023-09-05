@@ -3355,6 +3355,8 @@ function get_id_from_train_data_struct(index) {
 }
 
 function display_delete_button() {
+	return;
+	/*
 	var user_id = get_id_from_train_data_struct("user_id").toString();
 
 	var dm = $("#delete_model");
@@ -3368,6 +3370,7 @@ function display_delete_button() {
 			dm.html("&#10006;").addClass("disabled_symbol");
 		}
 	}
+	*/
 }
 
 async function manage_download() {
