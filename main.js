@@ -437,11 +437,28 @@ $(document).ready(async function() {
 
 	window.onresize = on_resize;
 
-	setInterval(fix_viz_width, 700);
-	setInterval(check_number_values, 100);
-	setInterval(write_model_summary_wait, 1000);
-	//setInterval(write_descriptions, 1000);
-	setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
+	try {
+		setInterval(fix_viz_width, 700);
+	} catch (e) {
+		wrn("Function fix_viz_width not found: " + e);
+	}
+
+	try {
+		setInterval(check_number_values, 100);
+	} catch (e) {
+		wrn("Function check_number_values not found: " + e);
+	}
+	try {
+		setInterval(write_model_summary_wait, 1000);
+	} catch (e) {
+		wrn("Function write_model_summary_wait not found: " + e);
+	}
+	try {
+		//setInterval(write_descriptions, 1000);
+		setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
+	} catch (e) {
+		wrn("Function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode not found: " + e);
+	}
 
 	allow_edit_input_shape();
 
