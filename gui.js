@@ -5371,8 +5371,9 @@ function l(msg) {
 	msg = "" + msg;
 	assert(!!msg, "msg is false");
 
-	if(l == "[object Object]") {
-		log(l);
+	if(msg == "[object Object]") {
+		log("[object Object] found:");
+		console.log(msg);
 		console.trace();
 	}
 
@@ -5391,18 +5392,10 @@ function l(msg) {
 			$("#status_bar_log").html(msg);
 		}
 	} catch (e) {
-		err("Some thing went wrong with the `l` function!", e);
-		log(msg);
+		err("Some thing went wrong with the `l` function: " + e);
 	}
 
-	var struct = {
-		'type': 'l',
-		'stacktrace': get_stack_trace(),
-		'log': msg,
-		'time': parse_int(Date.now() / 1000)
-	};
-
-	_full_debug_log.push(struct);
+	log_less(msg);
 }
 
 async function set_custom_image_training () {

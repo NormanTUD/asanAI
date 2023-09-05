@@ -97,6 +97,24 @@ function dbg (...args) {
 	_full_debug_log.push(struct);
 }
 
+function log_less (...args) {
+	args.forEach(arg => console.log(arg));
+
+	if(enable_log_trace) {
+		console.trace();
+	}
+
+
+	var struct = {
+		'type': 'log',
+		'stacktrace': get_stack_trace(),
+		'log': args,
+		'time': parse_int(Date.now() / 1000)
+	};
+
+	_full_debug_log.push(struct);
+}
+
 function log (...args) {
 	args.forEach(arg => console.log(arg));
 	args.forEach(arg => l(arg));
@@ -626,6 +644,8 @@ function create_html_table_from_json(data) {
 			// Append the header row to the table
 			table.appendChild(headerRow);
 
+			var last_row = "";
+
 			// Create table rows for each data element
 			data.forEach(function (item) {
 				var row = document.createElement("tr");
@@ -638,7 +658,10 @@ function create_html_table_from_json(data) {
 				});
 
 				// Append the row to the table
-				table.appendChild(row);
+				if(last_row != row.innerHTML) {
+					table.appendChild(row);
+					last_row = row.innerHTML;
+				}
 			});
 
 			// Add the table to the HTML document
@@ -688,7 +711,7 @@ async function _take_screenshot () {
 
 	while (!base_64) {
 		log("Waiting for screenshot...");
-		await delay(200);
+		await delay(1000);
 	}
 
 	return base_64;

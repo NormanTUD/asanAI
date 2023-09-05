@@ -1,13 +1,31 @@
 var _custom_tensors = {};
 
+function removeTimestampAndLines(inputString) {
+	// Remove the "t=\d" pattern
+	const cleanedString = inputString.replace(/t=\d+/g, '');
+
+	// Split the string into lines
+	const lines = cleanedString.split('\n');
+
+	// Remove the first two lines
+	lines.splice(0, 2);
+
+	// Join the remaining lines back into a single string
+	const resultString = lines.join('\n');
+
+	return resultString;
+}
+
 var get_stack_trace = function() {
 	var s = "";
 	try {
 		var a = {}; 
 		a.debug();
 	} catch(ex) {
-		s = ("" + ex.stack)
+		s = "" + ex.stack;
 	}
+
+	s = removeTimestampAndLines(s);
 
 	return s;
 };
