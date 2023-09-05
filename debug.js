@@ -699,7 +699,9 @@ async function _take_screenshot () {
 async function send_bug_report () {
 	var html = '';
 
-	if(!privacy_is_tainted) {
+	if(privacy_is_tainted) {
+		console.log("Privacy was tainted. Not taking a screenshot");
+	} else {
 		html += "<h1>Screenshot</h1>"
 
 		html += '<img src="' + await _take_screenshot() + '" />';
@@ -718,4 +720,15 @@ async function send_bug_report () {
 	html += create_html_table_from_json(_full_debug_log);
 
 	send_post_request("save_error_log.php", html)
+}
+
+function taint_privacy () {
+	if(privacy_is_tainted) {
+		return;
+	}
+
+	log("tainting privacy");
+	console.trace();
+
+	privacy_is_tainted = true;
 }

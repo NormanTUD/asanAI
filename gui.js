@@ -3828,6 +3828,8 @@ async function change_data_origin() {
 		$(".hide_when_custom_data").hide();
 
 		changed_data_source = true;
+
+		taint_privacy();
 	}
 
 	if (show_images_per_category) {
@@ -5574,11 +5576,11 @@ async function easter_egg_fireworks (force=0) {
 }
 
 async function init_webcams () {
-	privacy_is_tainted = true;
-
 	if(inited_webcams) {
 		return;
 	}
+
+	taint_privacy();
 
 	inited_webcams = true;
 	l("Checking webcams");

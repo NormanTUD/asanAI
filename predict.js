@@ -1267,8 +1267,6 @@ function draw_bars_or_numbers (i, predictions, max) {
 }
 
 async function predict_handdrawn () {
-	privacy_is_tainted = true;
-
 	if(has_zero_output_shape) {
 		return;
 	}
@@ -1291,7 +1289,6 @@ async function predict_handdrawn () {
 		return;
 	}
 
-
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
@@ -1300,8 +1297,15 @@ async function predict_handdrawn () {
 				[height, width]
 			).expandDims();
 		});
+
+		var unique_values = tidy(() => { return tf.unique(tf.reshape(predict_data, [-1])).values.arraySync(); });
+		console.log("unique_values:", unique_values);
+
+		if(unique_values.length > 1) {
+			taint_privacy();
+		}
 	} catch (e) {
-		err(e);
+		write_error("" + e);
 		await dispose(predict_data);
 		return;
 	}
