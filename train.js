@@ -675,7 +675,7 @@ async function _get_xs_and_ys (recursive=0) {
 		if(("" + e).includes("n is undefined") && recursive == 0) {
 			return await _get_xs_and_ys(recursive + 1);
 		} else {
-			var explanation = explain_error_msg(e.toString());
+			var explanation = explain_error_msg("" + e);
 			if(explanation) {
 				explanation = "<br><br>" + explain_error_msg(e.toString());
 			} else {
