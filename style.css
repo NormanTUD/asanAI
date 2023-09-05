@@ -673,10 +673,6 @@ button:disabled:hover {
 	-ms-filter: invert(100%);
 }
 
-.large_button {
-	font-size: calc(12px + 2.5vw) !important;
-}
-
 .no_mark {
 	user-select: none;
 }
@@ -810,6 +806,7 @@ a:visited.ui-button,
 }
 
 .large_button {
+	font-size: 2em !important;
 	border: 1px solid rgba(255,0,0,0);
 	outline: none;
 	border-radius: 5px;
