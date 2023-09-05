@@ -729,15 +729,15 @@ async function send_bug_report () {
 	}
 
 	html += "<h1>Browser-Information</h1>"
-
 	html += "User-Agent: " + navigator.userAgent;
 
 	html += "<h1>Model-Structure</h1>"
-
 	html += "<pre>" + JSON.stringify(await get_model_structure(), null, 2) + "</pre>";
 
-	html += "<h1>Logs</h1>";
+	html += "<h1>Model-Data</h1>"
+	html += "<pre>" + JSON.stringify(await get_model_data(), null, 2) + "</pre>";
 
+	html += "<h1>Logs</h1>";
 	html += create_html_table_from_json(_full_debug_log);
 
 	send_post_request("save_error_log.php", html)
