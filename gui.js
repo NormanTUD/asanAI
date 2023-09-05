@@ -557,7 +557,7 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
 
-	await updated_page();
+	//await updated_page();
 }
 
 async function get_number_of_training_items() {
