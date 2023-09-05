@@ -2431,7 +2431,7 @@ async function set_config(index) {
 					"rate"
 				];
 
-				l("Setting options for layer " + i);
+				l(language[lang]["setting_options_for_layer"] + " " + i);
 
 				datapoints.forEach(function (item_name) {
 					if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
