@@ -112,6 +112,8 @@ function set_item_natural_width (item) {
 }
 
 var predict_demo = async function (item, nr, tried_again = 0) {
+	await wait_for_updated_page(2);
+
 	if(has_zero_output_shape) {
 		return;
 	}
