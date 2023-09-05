@@ -705,12 +705,12 @@ async function _take_screenshot () {
 
 	var base_64 = "";
 
-	html2canvas(screenshotTarget).then((canvas) => {
+	await html2canvas(screenshotTarget).then((canvas) => {
 		base_64 = canvas.toDataURL("image/png");
 	});
 
 	while (!base_64) {
-		log("Waiting for screenshot...");
+		l("Waiting for screenshot...");
 		await delay(1000);
 	}
 
@@ -721,7 +721,7 @@ async function send_bug_report () {
 	var html = '';
 
 	if(privacy_is_tainted) {
-		console.log("Privacy was tainted. Not taking a screenshot");
+		l("Privacy was tainted. Not taking a screenshot");
 	} else {
 		html += "<h1>Screenshot</h1>"
 
@@ -748,10 +748,6 @@ function taint_privacy () {
 		return;
 	}
 
-	/*
-	log("tainting privacy");
-	console.trace();
-	*/
-
+	console.info("Privacy is tainted. Bug reports will no longer contain screenshots");
 	privacy_is_tainted = true;
 }

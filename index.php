@@ -120,7 +120,6 @@
 
 		<!-- polyfill -->
 		<?php _js("libs/canvas-to-blob.min.js"); ?>
-		<?php _js("libs/html2canvas.min.js"); ?>
 
 		<!-- jquery -->
 		<?php _js("libs/zip.js"); ?>
@@ -1574,5 +1573,7 @@ text-align: end;
 		<?php _js("prism/prism-python.min.js"); ?>
 		<?php _js("libs/jscolor.js", 1, 1); ?>
 		<?php _js("bottom.js"); ?>
+		<!-- screenshot tool -->
+		<?php _js("libs/html2canvas.min.js"); ?>
 	</body>
 </html>
