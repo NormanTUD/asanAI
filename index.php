@@ -370,7 +370,7 @@ text-align: end;
 								<tr>
 									<td><span class="TRANSLATEME_examples"></span></td>
 									<td>
-										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');display_delete_button();" style="width: 105px">
+										<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 105px">
 										</select>
 										<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 									</td>
