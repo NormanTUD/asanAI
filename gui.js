@@ -2596,9 +2596,9 @@ async function init_dataset() {
 	hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
-	init_epochs(2);
+	init_epochs(1);
 
-	set_batch_size(2);
+	set_batch_size(1);
 
 	$(".training_performance_tabs").hide();
 
