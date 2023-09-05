@@ -1558,3 +1558,5 @@ var __from;
 var __to;
 
 var privacy_is_tainted = false;
+
+var label_debugger_icon;

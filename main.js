@@ -595,7 +595,7 @@ $(document).ready(async function() {
 		add_end_presentation_button(1);
 	} else {
 		model_is_ok_icon = $("#model_is_ok_icon");
-		label_debugger_icon =  $("#label_debugger_icon");
+		label_debugger_icon = $("#label_debugger_icon");
 		setInterval(model_is_ok, 300);
 		setInterval(label_debugger_icon_ok, 300);
 		setInterval(_temml, 500);
