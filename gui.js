@@ -5574,6 +5574,8 @@ async function easter_egg_fireworks (force=0) {
 }
 
 async function init_webcams () {
+	privacy_is_tainted = true;
+
 	if(inited_webcams) {
 		return;
 	}

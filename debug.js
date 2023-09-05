@@ -699,7 +699,7 @@ async function _take_screenshot () {
 async function send_bug_report () {
 	var html = '';
 
-	if(!cam) {
+	if(!privacy_is_tainted) {
 		html += "<h1>Screenshot</h1>"
 
 		html += '<img src="' + await _take_screenshot() + '" />';

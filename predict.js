@@ -1267,6 +1267,8 @@ function draw_bars_or_numbers (i, predictions, max) {
 }
 
 async function predict_handdrawn () {
+	privacy_is_tainted = true;
+
 	if(has_zero_output_shape) {
 		return;
 	}

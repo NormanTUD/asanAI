@@ -1556,3 +1556,5 @@ var previously_generated_images = [];
 
 var __from;
 var __to;
+
+var privacy_is_tainted = false;
