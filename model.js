@@ -74,7 +74,7 @@ async function _create_model () {
 			}
 		}
 
-		if(model && model.layers && model.layers.length) {
+		if(model && Object.keys(model).includes("layers") && model.layers.length) {
 			for (var i = 0; i < model.layers.length; i++) {
 				await dispose(model.layers[i].bias);
 				await dispose(model.layers[i].kernel);
