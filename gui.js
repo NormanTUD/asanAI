@@ -2578,6 +2578,7 @@ async function wait_for_updated_page (seconds) {
 	while (Date.now() - last_updated_page < (seconds * 1000)) {
 		if(i % 10) {
 			dbg(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
+			l(`Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
 		}
 		await delay(200);
 		i++;
