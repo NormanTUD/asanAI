@@ -880,7 +880,8 @@ async function update_python_code(dont_reget_labels) {
 					wrn("model.layers was undefined. This MAY be harmless.");
 				} else {
 					expert_code += "# ERROR while creating code: " + e;
-					log("ERROR in python expert code: " + e, "data:", data);
+					log("ERROR in python expert code: " + e);
+					console.log("data:", data);
 				}
 			}
 		}
