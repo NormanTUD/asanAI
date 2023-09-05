@@ -3319,63 +3319,6 @@ function insert_test_users() {
 	}
 }
 
-async function delete_model() {
-	var id = get_id_from_train_data_struct("id");
-	var user_id = get_id_from_train_data_struct("user_id");
-	$.ajax({
-		url: "delete_from_db.php?id=" + id + "&user_id=" + user_id,
-		async: false
-	});
-
-	await get_traindata_and_init_categories();
-}
-
-function get_id_from_train_data_struct(index) {
-	try {
-		var dataset_index = document.getElementById("dataset").selectedIndex;
-
-		if(dataset_index >= 0) {
-			var dataset = document.getElementById("dataset").children[dataset_index].innerText;
-			if(dataset != undefined) {
-				var id = traindata_struct[dataset][index];
-				return id;
-			}
-		}
-	} catch (e) {
-		if(("" + e).includes("TypeError: document.getElementById")) {
-			if(finished_loading) {
-				wrn("Was the ribbon removed manually?");
-			}
-		} else {
-			err(e);
-		}
-	}
-
-	return false;
-}
-
-function display_delete_button() {
-	var user_id = get_id_from_train_data_struct("user_id");
-
-	if(!user_id) {
-		return "";
-	}
-
-	user_id = user_id.toString();
-
-	var dm = $("#delete_model");
-
-	if(user_id.match(/^[0-9]*$/) && !!get_cookie("session_id")) {
-		if(dm.hasClass("disabled_symbol")) {
-			dm.html("&#10060;").removeClass("disabled_symbol");
-		}
-	} else {
-		if(!dm.hasClass("disabled_symbol")) {
-			dm.html("&#10006;").addClass("disabled_symbol");
-		}
-	}
-}
-
 async function manage_download() {
 	if(!get_cookie("session_id") === null) {
 		save_model();
@@ -4873,7 +4816,6 @@ async function end_demo_mode() {
 }
 
 async function change_model_dataset() {
-	display_delete_button();
 }
 
 function allow_edit_input_shape() {

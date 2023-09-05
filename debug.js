@@ -237,49 +237,48 @@ function add_function_debugger () {
 
 	for (var i in window) {
 	    if(
-		    i != "assert" &&							// Disable assert output
-		    ![
-			    "delay",
-			    "Swal",
-			    "get_python_name",
-			    "quote_python",
-			    "add_function_debugger",
-			    "write_model_summary",
-			    "Atrament",
-			    "check_number_values",
-			    "atrament_data",
-			    "get_model_config_hash",
-			    "grad_class_activation_map",
-			    "enable_train",
-			    "is_numeric",
-			    "colorize",
-			    "md5",
-			    "is_hidden_or_has_hidden_parent",
-			    "get_cookie",
-			    "display_delete_button",
-			    "get_id_from_train_data_struct",
-			    "decille",
-			    "headerdatadebug",
-			    "get_param_names",
-			    "predict_webcam",
-			    "memory_debugger",
-			    "_allow_training",
-			    "fix_viz_width",
-			    "allow_training",
-			    "allow_training",
-			    "get_chosen_dataset",
-			    "show_load_weights",
-			    "get_current_chosen_object_default_weights_string",
-			    "get_chosen_dataset",
-			    "dispose",
-			    "get_weights_shape",
-			    "get_weights_as_string",
-		    ].includes(i) &&		// exclude these functions
-		    typeof(window[i]) == "function" &&					// use only functions
-		    i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
-		    !current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions
-		    window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
-		    i != "$"								// Do not debug jquery
+		i != "assert" &&							// Disable assert output
+		![
+			"delay",
+			"Swal",
+			"get_python_name",
+			"quote_python",
+			"add_function_debugger",
+			"write_model_summary",
+			"Atrament",
+			"check_number_values",
+			"atrament_data",
+			"get_model_config_hash",
+			"grad_class_activation_map",
+			"enable_train",
+			"is_numeric",
+			"colorize",
+			"md5",
+			"is_hidden_or_has_hidden_parent",
+			"get_cookie",
+			"display_delete_button",
+			"decille",
+			"headerdatadebug",
+			"get_param_names",
+			"predict_webcam",
+			"memory_debugger",
+			"_allow_training",
+			"fix_viz_width",
+			"allow_training",
+			"allow_training",
+			"get_chosen_dataset",
+			"show_load_weights",
+			"get_current_chosen_object_default_weights_string",
+			"get_chosen_dataset",
+			"dispose",
+			"get_weights_shape",
+			"get_weights_as_string",
+		].includes(i) &&		// exclude these functions
+		typeof(window[i]) == "function" &&					// use only functions
+		i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
+		!current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions
+		window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
+		i != "$"								// Do not debug jquery
 	    ) {
 		    var param_names = get_param_names(window[i]);
 
