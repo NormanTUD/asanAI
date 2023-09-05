@@ -596,12 +596,17 @@ $(document).ready(async function() {
 	} else {
 		model_is_ok_icon = $("#model_is_ok_icon");
 		label_debugger_icon =  $("#label_debugger_icon");
-		setInterval(model_is_ok, 200);
-		setInterval(label_debugger_icon_ok, 200);
+		setInterval(model_is_ok, 300);
+		setInterval(label_debugger_icon_ok, 300);
 		setInterval(_temml, 500);
 	}
 
-	setInterval(_clean_custom_tensors, 200);
+	setInterval(_clean_custom_tensors, 400);
 
 	finished_loading = true;
+});
+
+
+window.addEventListener('error', function(e) {
+	write_error(e.message);
 });
