@@ -1304,7 +1304,7 @@ async function predict_handdrawn () {
 			taint_privacy();
 		}
 	} catch (e) {
-		write_error("" + e);
+		await write_error("" + e);
 		await dispose(predict_data);
 		return;
 	}
