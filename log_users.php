@@ -3,6 +3,9 @@
 		try {
 			if (!isDocker()) {
 				$logFilePath = '/var/log/asanai_visitors.log';
+				if(!file_exists($logFilePath)) {
+					return;
+				}
 				$userId = getUserId();
 				$logLines = array_map('trim', file($logFilePath));
 

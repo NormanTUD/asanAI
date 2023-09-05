@@ -83,8 +83,8 @@ if [[ -d "/docker/" ]]; then
 	echo "Not using visitors log in docker, yet..."
 else
 	mkdir /var/log/
-	sudo touch /var/log/asanai_visitors.log
-	sudo chmod -R 0666 /var/log/asanai_visitors.log
+	touch /var/log/asanai_visitors.log
+	chmod -R 0666 /var/log/asanai_visitors.log
 fi
 
 cp debuglogs/.htpasswd /etc/apache2/.htpasswd
