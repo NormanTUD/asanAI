@@ -111,7 +111,7 @@ function set_item_natural_width (item) {
 	return true;
 }
 
-async function predict_demo (item, nr, tried_again = 0) {
+var predict_demo = async function (item, nr, tried_again = 0) {
 	if(has_zero_output_shape) {
 		return;
 	}
