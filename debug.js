@@ -718,7 +718,7 @@ async function _take_screenshot () {
 }
 
 async function send_bug_report () {
-	var html = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> ';
+	var html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body>';
 
 	if(privacy_is_tainted) {
 		l("Privacy was tainted. Not taking a screenshot");
@@ -739,6 +739,8 @@ async function send_bug_report () {
 
 	html += "<h1>Logs</h1>";
 	html += create_html_table_from_json(_full_debug_log);
+
+	html += "</table></html>";
 
 	send_post_request("save_error_log.php", html)
 }
