@@ -96,9 +96,9 @@ async function _create_model () {
 			return;
 		} else {
 			if(("" + e).includes("Input 0 is incompatible with layer")) {
-				throw Error("" + e);
+				throw new Error("" + e);
 			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
-				throw Error("" + e);
+				throw new Error("" + e);
 			} else if(("" + e).includes("model is undefined")) {
 				wrn("Currently, the model is undefined. This may be fatal, but may also not be");
 			} else {
