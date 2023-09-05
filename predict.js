@@ -1299,7 +1299,6 @@ async function predict_handdrawn () {
 		});
 
 		var unique_values = tidy(() => { return tf.unique(tf.reshape(predict_data, [-1])).values.arraySync(); });
-		console.log("unique_values:", unique_values);
 
 		if(unique_values.length > 1) {
 			taint_privacy();

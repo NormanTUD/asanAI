@@ -727,8 +727,10 @@ function taint_privacy () {
 		return;
 	}
 
+	/*
 	log("tainting privacy");
 	console.trace();
+	*/
 
 	privacy_is_tainted = true;
 }
