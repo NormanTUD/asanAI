@@ -256,7 +256,6 @@ function add_function_debugger () {
 			"md5",
 			"is_hidden_or_has_hidden_parent",
 			"get_cookie",
-			"display_delete_button",
 			"decille",
 			"headerdatadebug",
 			"get_param_names",

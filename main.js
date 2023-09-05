@@ -439,7 +439,6 @@ $(document).ready(async function() {
 
 	setInterval(fix_viz_width, 700);
 	setInterval(check_number_values, 100);
-	setInterval(display_delete_button, 300);
 	setInterval(write_model_summary_wait, 1000);
 	//setInterval(write_descriptions, 1000);
 	setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
