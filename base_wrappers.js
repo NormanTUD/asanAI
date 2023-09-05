@@ -2,7 +2,7 @@ var _custom_tensors = {};
 
 function removeTimestampAndLines(inputString) {
 	// Remove the "t=\d" pattern
-	const cleanedString = inputString.replace(/t=\d+/g, '');
+	const cleanedString = inputString.replace(/\?t=\d+/g, '');
 
 	// Split the string into lines
 	const lines = cleanedString.split('\n');
