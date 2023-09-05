@@ -4490,6 +4490,8 @@ async function write_error(e, fn, hide_swal) {
 
 	if(typeof(fn) == "function") {
 		fn();
+	} else {
+		wrn("fn is not a function:", fn);
 	}
 
 	await enable_everything();

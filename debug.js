@@ -718,7 +718,7 @@ async function _take_screenshot () {
 }
 
 async function send_bug_report () {
-	var html = '';
+	var html = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> ';
 
 	if(privacy_is_tainted) {
 		l("Privacy was tainted. Not taking a screenshot");
