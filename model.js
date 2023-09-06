@@ -28,7 +28,7 @@ function get_expected_input_shape_without_batch_as_string () {
 }
 
 async function except (errname, e) {
-	$("#overlay").remove()
+	$(".overlay").remove()
 
 	await write_descriptions();
 	await enable_everything();

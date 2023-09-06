@@ -69,10 +69,12 @@ function test_summary () {
 
 	var tests_results_str = `${num_tests} tests, ok: ${tests_ok}, failed: ${num_tests_failed}`;
 	if(num_tests_failed) {
-		log("%c" + tests_results_str, "background: red; color: white");
+		console.log("%c" + tests_results_str, "background: red; color: white");
 	} else {
-		log("%c" + tests_results_str, "background: green; color: white");
+		console.log("%c" + tests_results_str, "background: green; color: white");
 	}
+
+	l(tests_results_str);
 }
 
 function log_test (name) {

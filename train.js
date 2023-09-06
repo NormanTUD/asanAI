@@ -76,7 +76,7 @@ async function train_neural_network () {
 
 		document.title = original_title;
 		await gui_not_in_training();
-		$("#overlay").remove()
+		$(".overlay").remove()
 		l("Stopped training");
 	} else {
 		l("Started training")
@@ -951,6 +951,8 @@ async function run_neural_network (recursive=0) {
 	var repaired = false;
 
 	if(started_training) {
+		$(".overlay").remove();
+
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
 		if(!is_cosmo_mode) {
