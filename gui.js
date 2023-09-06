@@ -2283,6 +2283,8 @@ async function set_config(index) {
 				assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
 				l("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
 				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
+			} else {
+				dbg("No max_number_of_files_per_category found in config");
 			}
 
 			if (config["divide_by"]) {
@@ -3728,7 +3730,6 @@ async function change_data_origin() {
 
 		if(!is_cosmo_mode) {
 			$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); })
-			logt("Showing custom data");
 		}
 
 		changed_data_source = false;
@@ -3748,7 +3749,6 @@ async function change_data_origin() {
 			show_own_image_data = 1;
 			show_images_per_category = 1;
 			await set_input_shape("[" + height + ", " + width + ", 3]");
-			$("#max_number_of_files_per_category").val(0).trigger("change");
 		} else if ($("#data_origin").val() == "tensordata") {
 			show_own_tensor_data = 1;
 		} else if ($("#data_origin").val() == "csv") {
@@ -3790,7 +3790,6 @@ async function change_data_origin() {
 		$("#max_number_of_files_per_category_tr").show();
 	} else {
 		$("#max_number_of_files_per_category_tr").hide();
-		$("#max_number_of_files_per_category").val(0);
 	}
 
 	/*
