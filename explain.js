@@ -1028,7 +1028,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 		if(("" + e).includes("is already disposed")) {
 			await compile_model();
 			if(recursion > 5) {
-				await delay(100);
+				await delay(recursion * 1000);
 				return await input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1)
 			} else {
 				throw new Error("Too many retries for input_gradient_ascent");
