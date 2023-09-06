@@ -2666,6 +2666,7 @@ async function chose_dataset(no_set_config) {
 	}
 
 	$("#prediction_non_image").hide();
+	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); })
 
 	model = await _create_model();
 	await compile_model();
@@ -3726,7 +3727,8 @@ async function change_data_origin() {
 		await get_label_data();
 
 		if(!is_cosmo_mode) {
-			$(".hide_when_custom_data").show();
+			$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); })
+			logt("Showing custom data");
 		}
 
 		changed_data_source = false;
@@ -3777,7 +3779,7 @@ async function change_data_origin() {
 			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
 
-		$(".hide_when_custom_data").hide();
+		$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); })
 
 		changed_data_source = true;
 
