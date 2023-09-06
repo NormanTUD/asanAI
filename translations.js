@@ -1,8 +1,8 @@
 "use strict";
 
 // Get the language from the cookie or use the default language
-let lang_cookie_name = "language_cookie";
-let lang = get_lang_cookie();
+var lang_cookie_name = "language_cookie";
+var lang = get_lang_cookie();
 
 var labels_lang = 'de';
 
@@ -18,7 +18,7 @@ function swap_image_src_language () {
 	const images = document.getElementsByTagName('img');
 
 	// Loop through each image element
-	for (let i = 0; i < images.length; i++) {
+	for (var i = 0; i < images.length; i++) {
 		const img = images[i];
 		const currentSrc = img.getAttribute('src');
 
@@ -54,7 +54,7 @@ function set_lang(l) {
 // Function to retrieve a cookie value
 function get_lang_cookie() {
 	const cookies = document.cookie.split(';');
-	for (let i = 0; i < cookies.length; i++) {
+	for (var i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
 		if (cookie.startsWith(lang_cookie_name + '=')) {
 			return cookie.substring(lang_cookie_name.length + 1);
