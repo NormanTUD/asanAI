@@ -1319,14 +1319,14 @@ async function visualize_train () {
 		return;
 	}
 
-	if(get_last_layer_activation_function() != "softmax") {
-		log_once("Disable visualize_train because the last layer is not softmax.");
+	if(!await input_shape_is_image()) {
+		log_once("Disable visualize_train because the input shape is not image-like.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
-	if(!await input_shape_is_image()) {
-		log_once("Disable visualize_train because the input shape is not image-like.");
+	if(get_last_layer_activation_function() != "softmax") {
+		log_once("Disable visualize_train because the last layer is not softmax.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
