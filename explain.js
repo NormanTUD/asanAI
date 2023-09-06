@@ -1390,7 +1390,11 @@ function array_to_color (array, color) {
 	return new_array;
 }
 
-function array_to_latex_color (original_array, desc, color, newline_instead_of_ampersand) {
+function array_to_latex_color (original_array, desc, color=null, newline_instead_of_ampersand=0) {
+	if(!color) {
+		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
+	}
+
 	var array = JSON.parse(JSON.stringify(original_array));
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
