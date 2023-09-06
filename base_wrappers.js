@@ -205,10 +205,28 @@ function abs(...args) {
 	return res;
 }
 
+async function tf_data_webcam (...args) {
+	var res = await tf.data.webcam(...args);
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function resizeNearestNeighbor(...args) {
+	var res = tf.image.resizeNearestNeighbor(...args);
+
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"];
+
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function resizeBilinear(...args) {
 	var res = tf.image.resizeBilinear(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"];
 
 	_clean_custom_tensors();
 

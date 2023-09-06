@@ -1328,7 +1328,7 @@ async function get_data_from_webcam (force_restart) {
 			}
 
 			//log(cam_config);
-			cam = await tf.data.webcam(videoElement, cam_config);
+			cam = await tf_data_webcam(videoElement, cam_config);
 
 			$(".webcam_data_button").show();
 		}

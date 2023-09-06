@@ -3953,6 +3953,12 @@ function delete_custom_drawing_layer () {
 
 async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
+		if (!model) {
+			log("last_layer_shape_warning is waiting for the model...");
+			while (!model) {
+				await delay(200);
+			}
+		}
 		if (model.outputShape.length == 2) {
 			is_classification = true;
 			delete_custom_drawing_layer();

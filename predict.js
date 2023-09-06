@@ -1175,7 +1175,7 @@ async function show_webcam (force_restart) {
 				}
 
 				//log(cam_config);
-				cam = await tf.data.webcam(videoElement, cam_config);
+				cam = await tf_data_webcam(videoElement, cam_config);
 
 				auto_predict_webcam_interval = setInterval(predict_webcam, 100);
 				$(".only_when_webcam_on").show();
@@ -1298,7 +1298,7 @@ async function predict_handdrawn () {
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
-			return tf.image.resizeNearestNeighbor(
+			return resizeNearestNeighbor(
 				fromPixels(atrament_data.sketcher.canvas),
 				[height, width]
 			).expandDims();
@@ -1328,6 +1328,9 @@ async function predict_handdrawn () {
 	var new_predict_handdrawn_hash = await get_current_status_hash();
 	if(last_handdrawn_image_hash == new_handdrawn_image_hash && last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
 		info("Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+
+		await dispose(predict_data);
+
 		return;
 	}
 	
@@ -1336,8 +1339,10 @@ async function predict_handdrawn () {
 
 	var divide_by = parse_float($("#divide_by").val());
 
+	var divided_data = null;
+
 	if(divide_by != 1) {
-		var divided_data = tidy(() => {
+		divided_data = tidy(() => {
 			return divNoNan(predict_data, divide_by);
 		});
 
@@ -1373,6 +1378,10 @@ async function predict_handdrawn () {
 			l("Error (443): " + e);
 		}
 
+		await dispose(predictions_tensor);
+		await dispose(predict_data);
+		await dispose(divided_data);
+
 		return;
 	}
 
@@ -1386,9 +1395,9 @@ async function predict_handdrawn () {
 
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
+	await dispose(divided_data);
 
 	allow_editable_labels();
-
 }
 
 async function _predict_handdrawn(predictions_tensor) {
