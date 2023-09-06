@@ -81,7 +81,6 @@ function wrn (...args) {
 
 function dbg (...args) {
 	args.forEach(arg => console.debug(arg));
-	args.forEach(arg => l("[DEBUG] " + arg));
 
 	if(enable_log_trace) {
 		console.trace();

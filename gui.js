@@ -6166,14 +6166,16 @@ function hide_colorpicker_for_eraser (idname) {
 }
 
 function load_msg(swal_msg_format) {
-	var overlay = null;
+	$(".overlay").remove();
+
+	var _overlay = null;
 	if(started_training && stop_downloading_data) {
-		info("Training is not started anymore, but the stopped downloading");
+		info("Training is not started anymore, but stopped downloading. Not showing load_msg");
 		return;
 	}
 
 	if(finished_loading) {
-		overlay = show_overlay(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
+		_overlay = show_overlay(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
@@ -6187,7 +6189,7 @@ function load_msg(swal_msg_format) {
 		$("#load_msg").html(html_msg);
 	}
 
-	return overlay;
+	return _overlay;
 }
 
 function show_proper_set_all_initializer (required) {
