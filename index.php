@@ -1343,6 +1343,7 @@ text-align: end;
 								</div>
 
 								<div id="maximally_activated" class="tab maximally_activated_class">
+									<button id="stop_generating_images_button" style="display: none" onclick="stop_generating_images=1"><span class="TRANSLATEME_stop_generating_images"></span></button>
 									<div class="hide_in_cosmo_mode">
 										<div class="temml_me">x = \textrm{Input Image}</div>
 										<div class="temml_me">x* = \textrm{Generated image}</div>
@@ -1356,7 +1357,6 @@ text-align: end;
 									<button onclick="larger_maximally_activated_neurons()"><span class="TRANSLATEME_larger"></span></button>
 									<button onclick="reset_maximally_activated_neurons()"><span class="TRANSLATEME_reset"></span></button>
 									<button onclick="delete_maximally_activated_predictions()"><span class="TRANSLATEME_delete_predictions"></span></button>
-									<button style="display: none" onclick="stop_generating_images=1"><span id="stop_generating_images_button" class="TRANSLATEME_stop_generating_images"></span></button>
 									<div id="maximally_activated_content"></div>
 								</div>
 
@@ -1456,9 +1456,6 @@ text-align: end;
 										<div id="generate_images_msg_wrapper" style="display:none">
 											<div id="generate_images_msg"></div>
 											<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;" />
-											<button onclick='stop_generating_images=1'>
-												<span class="TRANSLATEME_stop_generating_images"></span>
-											</button>
 										</div>
 										<div class="hide_when_image">
 											<div id="predict_own">

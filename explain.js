@@ -1253,7 +1253,7 @@ function _show_eta (times, i, neurons) {
 		swal_msg += " " + eta;
 	}
 
-	l(swal_msg + ` <button onclick='stop_generating_images=1'>${language[lang]["stop_generating_images"]}</button>`);
+	l(swal_msg + ` `);
 
 	l(swal_msg);
 	document.title = swal_msg;
