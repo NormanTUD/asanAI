@@ -281,6 +281,10 @@ async function get_model_data (optimizer_name_only) {
 	return global_model_data;
 }
 
+function delay(time) {
+	return new Promise(resolve => setTimeout(resolve, time));
+}
+
 function get_fit_data () {
 	var epochs = get_epochs();
 	var batchSize = get_batch_size();

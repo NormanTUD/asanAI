@@ -1,9 +1,5 @@
 "use strict";
 
-function delay(time) {
-	return new Promise(resolve => setTimeout(resolve, time));
-}
-
 var last_known_good_input_shape = "[]";
 
 function get_input_shape_as_string () {
