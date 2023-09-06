@@ -217,7 +217,7 @@ var predict_demo = async function (item, nr, tried_again = 0) {
 
 	//tf.engine().endScope("scope_" + xpath);
 
-	await tf.nextFrame();
+	await nextFrame();
 }
 
 async function _run_predict_and_show (tensor_img, nr) {
@@ -1031,7 +1031,7 @@ async function predict_webcam () {
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
 
-	await tf.nextFrame();
+	await nextFrame();
 
 
 	currently_predicting_webcam = false;

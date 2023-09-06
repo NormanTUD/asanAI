@@ -975,7 +975,7 @@ async function run_neural_network (recursive=0) {
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
 			l("Finished model.fit");
 
-			await tf.nextFrame();
+			await nextFrame();
 
 			assert(typeof(h) == "object", "history object is not of type object");
 
@@ -1411,7 +1411,7 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").html("");
 	}
 
-	await tf.nextFrame();
+	await nextFrame();
 
 
 	if(is_cosmo_mode) {

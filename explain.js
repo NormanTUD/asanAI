@@ -1095,7 +1095,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		show_tab_label("maximally_activated_label", 1);
 		window.scrollTo(0,0);
 
-		await tf.nextFrame();
+		await nextFrame();
 
 		$('body').css('cursor', 'wait');
 
@@ -1348,7 +1348,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 	}
 
 
-	await tf.nextFrame();
+	await nextFrame();
 
 	return canvasses;
 }
@@ -2851,7 +2851,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
-	await tf.nextFrame();
+	await nextFrame();
 
 	await fit_to_window();
 

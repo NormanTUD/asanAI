@@ -31,6 +31,10 @@ var get_stack_trace = function() {
 };
 
 
+async function nextFrame(...args) {
+	await tf.nextFrame(...args);
+}
+
 async function dispose (item) { // start_tensors
 	//console.trace();
 	//log(item);
@@ -42,7 +46,7 @@ async function dispose (item) { // start_tensors
 			delete _custom_tensors[tensor_id];
 		}
 
-		await tf.nextFrame();
+		await nextFrame();
 	} else {
 		/*
 		wrn("item was empty in dispose():"); // not a real async
