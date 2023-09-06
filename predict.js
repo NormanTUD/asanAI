@@ -736,7 +736,7 @@ async function _print_predictions_text(count, example_predict_data) {
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
 					wrn("Total size of new array must be unchanged. Did you use reshape somewhere?");
 				} else if(("" + e).includes("to have shape")) {
-					wrn("Wrong input shape for _print_predictions_text");
+					wrn("Wrong input shape for _print_predictions_text: " + e);
 				} else {
 					_predict_error(e);
 					await dispose(_tensor);

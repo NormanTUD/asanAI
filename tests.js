@@ -331,7 +331,7 @@ async function run_tests () {
 			test_equal("Testing whether get_layer_data has the same number of layers as the loaded model after adding 2 layers", new_number_of_layers, get_layer_data().length);
 			test_equal("Checking if the number of layers is +2 after adding 2 layers", new_number_of_layers - old_number_of_layers, 2);
 
-			delay(2000);
+			await delay(2000);
 
 			expect_memory_leak = "a new layer was added";
 			log_test("Train on CSV")
@@ -340,7 +340,7 @@ async function run_tests () {
 			set_epochs(100);
 
 			$("#data_origin").val("csv").trigger("change")
-			delay(5000);
+			await delay(5000);
 
 
 			$("#csv_file").
@@ -355,13 +355,15 @@ async function run_tests () {
 			$("#csv_file").click();
 			$("#asanai_main_logo").click();
 
-			delay(5000);
+			await delay(5000);
 
 			await _set_initializers(1234);
 
-			delay(5000);
+			await delay(5000);
 
 			await train_neural_network();
+
+			await delay(5000);
 
 			try {
 				var res = await model.predict(tensor([[1, 1, 1]])).arraySync()[0][0];

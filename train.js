@@ -1317,14 +1317,14 @@ async function visualize_train () {
 		return;
 	}
 
-	if(!await input_shape_is_image()) {
-		log_once("Disable visualize_train because the input shape is not image-like.");
+	if(get_last_layer_activation_function() != "softmax") {
+		log_once("Disable visualize_train because the last layer is not softmax.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
 
-	if(get_last_layer_activation_function() != "softmax") {
-		log_once("Disable visualize_train because the last layer is not softmax.");
+	if(!await input_shape_is_image()) {
+		log_once("Disable visualize_train because the input shape is not image-like.");
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
@@ -1387,7 +1387,6 @@ async function visualize_train () {
 				var res = tidy(() => { return model.predict(img_tensor) });
 
 				var res_array = res.arraySync()[0];
-				//log("RES for " + x.src + " :", res_array);
 
 				var probability = Math.max(...res_array);
 				var category = res_array.indexOf(probability);
