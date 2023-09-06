@@ -771,6 +771,10 @@ async function _print_predictions_text(count, example_predict_data) {
 }
 
 async function _print_example_predictions (count) {
+	if(!await input_shape_is_image()) {
+		return false;
+	}
+
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
