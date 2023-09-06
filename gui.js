@@ -2531,7 +2531,7 @@ async function set_config(index) {
 	} catch (e) {
 		err(e);
 		l("ERROR: Failed to load. Failed to load model and/or weights");
-		$(overlay).remove();
+		$(".overlay").remove();
 		return;
 	}
 
@@ -2568,7 +2568,7 @@ async function set_config(index) {
 
 	l(language[lang]["loaded_configuration"]);
 
-	$(overlay).remove();
+	$(".overlay").remove();
 }
 
 async function wait_for_updated_page (seconds) {
