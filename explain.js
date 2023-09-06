@@ -1374,15 +1374,18 @@ function array_to_color (array, color) {
 	var len = array.length
 	var new_array = [];
 	while(x < len) {
-		var this_color = color[x];
-		if(!this_color) {
-			this_color = "orange";
+		var this_color = "";
+
+		if(color && Object.keys(color).includes("" + x)) {
+			this_color = color[x];
 		}
-		if(this_color == "#353535" || this_color == "#ffffff" || this_color == "white" || this_color == "black") {
+
+		if(this_color == "#353535" || this_color == "#ffffff" || this_color == "white" || this_color == "black" || !this_color) {
 			new_array.push(array[x]);
 		} else {
 			new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
 		}
+
 		x++;
 	}
 
@@ -1408,6 +1411,11 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 	for (var i = 0; i < array.length; i++) {
 		try {
 			array[i] = array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val() || 0));
+		} catch (e) {
+			err("ERROR in math mode (e, array, i, color):", e, array, i, color);
+		}
+
+		try {
 			array[i] = array_to_color(array[i], color[i]);
 			arr.push(array[i].join(joiner));
 		} catch (e) {
