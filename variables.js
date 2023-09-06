@@ -1560,3 +1560,7 @@ var __to;
 var privacy_is_tainted = false;
 
 var label_debugger_icon;
+
+var last_predict_handdrawn_hash = "";
+
+var last_handdrawn_image_hash = "";

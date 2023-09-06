@@ -1321,6 +1321,19 @@ async function predict_handdrawn () {
 		return;
 	}
 
+	var as = predict_data.arraySync();
+	var stringified = JSON.stringify(as);
+	var new_handdrawn_image_hash = await md5(stringified);
+	console.log("as:", as, "stringified:", stringified, "new_handdrawn_image_hash:", new_handdrawn_image_hash);
+	var new_predict_handdrawn_hash = await get_current_status_hash();
+	if(last_handdrawn_image_hash == new_handdrawn_image_hash && last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
+		info("Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+		return;
+	}
+	
+	last_predict_handdrawn_hash = new_predict_handdrawn_hash;
+	last_handdrawn_image_hash = new_handdrawn_image_hash;
+
 	var divide_by = parse_float($("#divide_by").val());
 
 	if(divide_by != 1) {
