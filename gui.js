@@ -6435,7 +6435,7 @@ function show_overlay(text, title="") {
 		overlay.style.alignItems = 'center';
 		overlay.style.justifyContent = 'center';
 		overlay.style.zIndex = '9999';
-		overlay.class = "overlay";
+		$(overlay).addClass("overlay");
 
 		const textElement = document.createElement('p');
 		textElement.innerHTML = text;

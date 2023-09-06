@@ -607,6 +607,6 @@ $(document).ready(async function() {
 });
 
 
-window.addEventListener('error', function(e) {
-	write_error(e.message);
+window.addEventListener('error', async function(e) {
+	await write_error(e.message);
 });
