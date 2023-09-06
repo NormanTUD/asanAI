@@ -341,7 +341,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 	try {
-		await tf.browser.toPixels(_tensor, $("#" + id)[0]);
+		await toPixels(_tensor, $("#" + id)[0]);
 	} catch (e) {
 		log("Shape:", _tensor.shape);
 		_tensor.print();
@@ -370,7 +370,7 @@ function truncate_text (fullStr, strLen, separator) {
 async function sine_ripple (img) {
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-	await tf.browser.toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
+	await toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
 	var canvas = $("#" + uuid)[0];
 	var context = canvas.getContext("2d");
 	var data = context.getImageData(0,0,canvas.width, canvas.height)
@@ -696,7 +696,7 @@ async function get_xs_and_ys () {
 									/*
 									var uuid = uuidv4();
 									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-									await tf.browser.toPixels(tf_img, $("#" + uuid)[0]);
+									await toPixels(tf_img, $("#" + uuid)[0]);
 									var canvas = $("#" + uuid)[0];
 									var context = canvas.getContext("2d");
 									var data = context.getImageData(0,0,canvas.width, canvas.height)
@@ -773,7 +773,7 @@ async function get_xs_and_ys () {
 			//log("A", x.shape);
 
 			if($("#shuffle_data").is(":checked")) {
-				tf.util.shuffleCombo(x, y);
+				shuffleCombo(x, y);
 			}
 
 			l("Done generating data from images");
@@ -1201,7 +1201,7 @@ async function get_x_y_from_csv () {
 	}
 
 	if($("#shuffle_data").is(":checked")) {
-		tf.util.shuffleCombo(x_data["data"], y_data["data"]);
+		shuffleCombo(x_data["data"], y_data["data"]);
 	}
 
 	//log(y_data);

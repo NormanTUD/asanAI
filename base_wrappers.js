@@ -35,6 +35,10 @@ async function nextFrame(...args) {
 	await tf.nextFrame(...args);
 }
 
+function shuffleCombo (...args) {
+	return tf.util.shuffleCombo(...args);
+}
+
 async function dispose (item) { // start_tensors
 	//console.trace();
 	//log(item);
@@ -376,6 +380,12 @@ function parse_float (...args) {
 
 async function loadLayersModel (...args) {
 	var res = await tf.loadLayersModel(...args);
+
+	return res;
+}
+
+async function toPixels (...args) {
+	var res = await tf.browser.toPixels(...args);
 
 	return res;
 }

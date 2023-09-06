@@ -2551,14 +2551,9 @@ function array_to_html(array) {
 }
 
 function apply_color_map (x) {
-	tf.util.assert(
-		x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
-	tf.util.assert(
-		x.shape[0] === 1,
-		`Expected exactly one example, but got ${x.shape[0]} examples`);
-	tf.util.assert(
-		x.shape[3] === 1,
-		`Expected exactly one channel, but got ${x.shape[3]} channels`);
+	assert(x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
+	assert(x.shape[0] === 1, `Expected exactly one example, but got ${x.shape[0]} examples`);
+	assert(x.shape[3] === 1, `Expected exactly one channel, but got ${x.shape[3]} channels`);
 
 	var res = tidy(() => {
 		// Get normalized x.

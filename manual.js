@@ -432,7 +432,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			var id = uuidv4()
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
 			draw_grid($("#" + id)[0], 1, _tensor.arraySync()[i], 1, 1, "", "");
-			//tf.browser.toPixels(_tensor, canvas);
+			toPixels(_tensor, canvas);
 		}
 	}
 
@@ -504,7 +504,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	current_model.compile({ optimizer: optimizer_name, loss: "meanSquaredError", batchSize: batchSize });
 
 	if(shuffle) {
-		tf.util.shuffleCombo(t_x, t_y);
+		shuffleCombo(t_x, t_y);
 	}
 
 	var x = tensor(t_x);
