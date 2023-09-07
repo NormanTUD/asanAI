@@ -157,20 +157,20 @@ async function train_neural_network () {
 		if(is_cosmo_mode) {
 			//show_tab_label("predict_tab", 1);
 
-			set_right_border_between_example_predictions();
+			//set_right_border_between_example_predictions();
 
 			$("#own_files").hide();
 
 			await _predict_mode_examples();
-			$("#example_predictions").show();
+			//$("#example_predictions").show();
 
-			await fit_to_window();
+			//await fit_to_window();
 
-			await cosmo_maximally_activate_last_layer();
+			//await cosmo_maximally_activate_last_layer();
 
-			await fit_to_window();
+			//await fit_to_window();
 
-			await predict_handdrawn();
+			//await predict_handdrawn();
 
 			await fit_to_window();
 
@@ -1483,8 +1483,8 @@ async function visualize_train () {
 
 				var predicted_tensor = predictions_tensors[i];
 
-				if(predicted_tensor === null) {
-					wrn("Predicted tensor was null");
+				if(predicted_tensor === null || predicted_tensor === undefined) {
+					wrn("Predicted tensor was null or undefined");
 					return;
 				}
 
