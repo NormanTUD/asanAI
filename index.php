@@ -1481,9 +1481,8 @@ text-align: end;
 										</span>
 
 										<span class="hide_when_no_image custom_image_data">
-											<span id="upload_file" class="show_data no_box_shadow ">
-												<span id="upload_file_styleable"  onclick="$('upload_file_non_styleable').click();" class='large_button'>&#128444;&#128229;</span>
-												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="load_file(event)" style="display:none;">
+											<span id="upload_file" class="show_data no_box_shadow">
+												<input id="upload_file_non_styleable" type="file" accept="image/*" onchange="load_file(event)" value='&#128444;&#128229;'>
 											</span>
 											<br>
 											<span class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">
