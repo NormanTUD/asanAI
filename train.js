@@ -27,6 +27,7 @@ async function gui_not_in_training (set_started_training=1) {
 
 	await enable_everything();
 	$(".show_after_training").show();
+	$("#program_looks_at_data_span").hide();
 }
 
 function reset_gui_before_training () {
@@ -306,6 +307,7 @@ function get_fit_data () {
 		await visualize_train();
 
 		if(is_cosmo_mode) {
+			$("#program_looks_at_data_span").show();
 			$("#show_after_training").hide();
 		}
 	};
