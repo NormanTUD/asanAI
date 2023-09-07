@@ -3056,8 +3056,7 @@ function findIndexByKey(array, key) {
 	}
 }
 
-
-async function _accuracy_rate_from_photos () {
+async function predict_all_imgs (photos) {
 	if(!finished_loading) {
 		info("Cannot determine accuracy rate before the site is fully loaded");
 		$("#show_current_accuracy").hide();
@@ -3076,13 +3075,6 @@ async function _accuracy_rate_from_photos () {
 		return;
 	}
 
-	var photos = $("#photos").find("img");
-
-	if(!photos.length) {
-		wrn("No photos found");
-		$("#show_current_accuracy").hide();
-		return;
-	}
 
 	var total_wrong = 0;
 	var total_correct = 0;
@@ -3095,8 +3087,6 @@ async function _accuracy_rate_from_photos () {
 			if(typeof(i) == "function") {
 				continue;
 			}
-
-			console.log("Trying to predict photo:", photos[i]);
 
 			var this_img_tensor = resizeBilinear(fromPixels(photos[i]), [model.input.shape[1], model.input.shape[2]]).expandDims();
 
@@ -3123,6 +3113,10 @@ async function _accuracy_rate_from_photos () {
 			var src = photos[i].src;
 			if(src) {
 				var category = extractCategoryFromURL(src);
+
+				if(is_cosmo_mode) {
+					category = language[lang][category];
+				}
 
 				var correct_index = -1;
 
@@ -3164,11 +3158,70 @@ async function _accuracy_rate_from_photos () {
 		}
 	}
 
+	for (var i = 0; i < Object.keys(category_overview).length; i++) {
+		var category = Object.keys(category_overview)[i];
+		category_overview[category]["total"] = category_overview[category]["wrong"] + category_overview[category]["correct"];
+	}
+
+	return {
+		"total_wrong": total_wrong,
+		"total_correct": total_correct,
+		"total": total_wrong + total_correct,
+		"category_overview": category_overview,
+		"predictions_tensors": predictions_tensors
+	};
+}
+
+async function _accuracy_rate_from_photos () {
+	var photos = $("#photos").find("img");
+	var res = await predict_all_imgs(photos);
+
+	console.log(res);
+
+	return res;
+}
+
+async function _accuracy_rate_from_photos_table () {
+	console.warn("Currently not supported: _accuracy_rate_from_photos_table");
+	return;
+	if(!finished_loading) {
+		info("Cannot determine accuracy rate before the site is fully loaded");
+		$("#show_current_accuracy").hide();
+		return;
+	}
+
+	if(!is_classification) {
+		info("Cannot get accuracy rate if the network is not classification");
+		$("#show_current_accuracy").hide();
+		return;
+	}
+
+	if(!await input_shape_is_image()) {
+		info("Cannot get accuracy rate if the input shape is not image-like");
+		$("#show_current_accuracy").hide();
+		return;
+	}
+
+	var photos = $("#photos").find("img");
+
+	if(!photos.length) {
+		wrn("No photos found");
+		$("#show_current_accuracy").hide();
+		return;
+	}
+
+	var _all_predictions = predict_all_imgs(photos);
+
+	var total_wrong = _all_predictions[0];
+	var total_correct = _all_predictions[1];
+	var category_overview = _all_predictions[2]
+	var predictions_tensors = _all_predictions[3];
+
 	var total = total_wrong + total_correct;
 
 	var _html = `${trm("currently")}, ${total_correct} ${trm("of")} ${total} ${trm("images_are_being_detected_correctly")}.<br>`;
 
-	var html_table_rows = [];
+	var html_table_rows = {};
 
 	for (var i in Object.keys(category_overview)) {
 		var _label = Object.keys(category_overview)[i];
@@ -3187,23 +3240,31 @@ async function _accuracy_rate_from_photos () {
 
 		var percentage_correct = parseInt((this_label_acc["correct"] / _total) * 100);
 
-		html_table_rows.push(`<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td>${percentage_correct}%</td><td>${total}</td>`);
+		html_table_rows[_label] = `<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td>${percentage_correct}%</td><td>${total}</td>\n`;
 	}
 
-	if(html_table_rows.length) {
-		_html += "<table style='display: inline'>";
-		for (var j = 0; j < html_table_rows.length; j++) {
+	if(Object.keys(html_table_rows).length) {
+		_html += "<table style='display: inline'>\n";
+		for (var j = 0; j < labels.length; j++) {
+			var _key = labels[j];
+
 			if(j == 0) {
-				_html += `<tr><th>${trm('category')}</th><th>${trm('correct')}</th><th>${trm('wrong')}</th><th>${trm("percentage_correct")}</th><th>${trm('total')}</th></tr>`;
+				_html += `<tr><th>${trm('category')}</th><th>${trm('correct')}</th><th>${trm('wrong')}</th><th>${trm("percentage_correct")}</th><th>${trm('total')}</th></tr>\n`;
 			}
-			_html += "<tr>" + html_table_rows[j] + "</tr>";
+
+			if(Object.keys(html_table_rows).includes(_key)) {
+				_html += "<tr>" + html_table_rows[_key] + "</tr>\n";
+			} else {
+				wrn("html_table_rows does not include _key " + key);
+			}
 		}
-		_html += "</table>";
+		_html += "</table>\n";
+	} else {
+		console.log();
 	}
 
 	console.log("HTML:", _html);
 	$("#show_current_accuracy").html(_html).show();
 
 	update_translations();
-
 }

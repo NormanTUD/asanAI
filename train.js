@@ -315,8 +315,6 @@ function get_fit_data () {
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
 		}
-
-		await _accuracy_rate_from_photos();
 	};
 
 	callbacks["onEpochBegin"] = async function () {
@@ -347,8 +345,6 @@ function get_fit_data () {
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
-
-		await _accuracy_rate_from_photos();
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -1161,14 +1157,14 @@ async function reset_on_error () {
 	link.href = 'favicon.ico';
 }
 
-function draw_images_in_grid (images, categories, probabilities, numCategories) {
+function draw_images_in_grid (images, categories, probabilities, numCategories, acc_rate=null) {
 	$("#canvas_grid_visualization").html("");
 	var categoryNames = is_cosmo_mode ? labels : labels.slice(0, numCategories);
 	var margin = 40;
 	var canvases = [];
 
 	// create a canvas for each category
-	for (let i = 0; i < (numCategories + (is_cosmo_mode ? 0 : 1)); i++) {
+	for (let i = 0; i < numCategories; i++) {
 		var canvas = document.createElement("canvas");
 		var pw = parse_int($("#tfvis_tab").width() * relationScale);
 		var w = parse_int(pw / (numCategories + 2));
@@ -1233,14 +1229,32 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 
 	// draw y-axis labels
 
-	for (let canvasIndex = (is_cosmo_mode ? 0 : 1); canvasIndex < (numCategories + (is_cosmo_mode ? 0 : 1)); canvasIndex++) {
+	for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
 		var canvas = canvases[canvasIndex];
 		var ctx = canvas.getContext("2d");
 
 		if(!canvasIndex == 0 || is_cosmo_mode) {
 			ctx.textAlign = "center";
-			var label = categoryNames[canvasIndex - (is_cosmo_mode ? 0 : 1)];
-			ctx.fillText(label, canvas.width / 2, canvas.height - margin + 20);
+			var label = categoryNames[canvasIndex];
+			var _text = label;
+			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
+
+			if(acc_rate) {
+				_text = "";
+				console.log(acc_rate);
+				_text += 
+					acc_rate["category_overview"][labels[canvasIndex]]["correct"] + 
+					" " + 
+					language[lang]["of"] + 
+					" " + 
+					acc_rate["category_overview"][labels[canvasIndex]]["total"] + 
+					" " + 
+					language[lang]["correct"]
+				;
+
+				log("TEXT:", _text);
+				ctx.fillText(_text, canvas.width / 2, canvas.height - margin);
+			}
 		}
 	}
 
@@ -1255,7 +1269,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
 
 		var canvasIndex = category;
-		var canvas = canvases[canvasIndex + (is_cosmo_mode ? 0 : 1)];
+		var canvas = canvases[canvasIndex];
 		if(canvas) {
 			var ctx = canvas.getContext("2d");
 
@@ -1279,7 +1293,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories) 
 			//log("DEBUG:", image, imageX, imageY, w, h);
 			ctx.drawImage(image, imageX, imageY, w, h);
 		} else {
-			wrn("Canvas not defined. canvasIndex + 1:", canvasIndex + (is_cosmo_mode ? 0 : 1));
+			wrn("Canvas not defined. canvasIndex + 1:", canvasIndex);
 		}
 	}
 
@@ -1405,7 +1419,8 @@ async function visualize_train () {
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
-			draw_images_in_grid(imgs, categories, probabilities, labels.length);
+			var acc_rate = await _accuracy_rate_from_photos();
+			draw_images_in_grid(imgs, categories, probabilities, labels.length, acc_rate);
 		} else {
 			$("#canvas_grid_visualization").html("");
 		}
