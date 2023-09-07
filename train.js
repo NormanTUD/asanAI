@@ -300,6 +300,8 @@ function get_fit_data () {
 		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		$("#network_has_seen_msg").hide();
+
+		await visualize_train();
 	};
 
 	callbacks["onBatchBegin"] = async function () {
