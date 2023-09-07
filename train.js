@@ -1466,21 +1466,6 @@ async function visualize_train () {
 		try {
 			var src = x.src;
 			if(src) {
-				var correct_category = extractCategoryFromURL(src);
-
-				if(is_cosmo_mode) {
-					correct_category = language[lang][correct_category];
-				}
-
-				var correct_index = -1;
-
-				try {
-					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels, "Brandschutz", "Gebot", "Verbot", "Rettung", "Warnung", "Fire prevention", "Mandatory", "Prohibition", "Rescue", "Warning"], correct_category) % labels.length;
-				} catch (e) {
-					wrn("" + e);
-					return;
-				}
-
 				var predicted_tensor = predictions_tensors[i];
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
@@ -1490,26 +1475,58 @@ async function visualize_train () {
 
 				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
 
-				if(!Object.keys(category_overview).includes(correct_category)) {
-					category_overview[correct_category] = {
+				var correct_category = extractCategoryFromURL(src);
+
+				var predicted_category = labels[predicted_index];
+
+				if(is_cosmo_mode) {
+					predicted_category = language[lang][predicted_category];
+				}
+
+				var correct_index = -1;
+
+				try {
+					correct_index = findIndexByKey(
+						[
+							...labels, 
+							...cosmo_categories, 
+							...original_labels, 
+							"Brandschutz", 
+							"Gebot", 
+							"Verbot", 
+							"Rettung", 
+							"Warnung", 
+							"Fire prevention", 
+							"Mandatory", 
+							"Prohibition", 
+							"Rescue", 
+							"Warning"
+						], correct_category) % labels.length;
+				} catch (e) {
+					wrn("" + e);
+					return;
+				}
+
+				if(!Object.keys(category_overview).includes(predicted_category)) {
+					category_overview[predicted_category] = {
 						wrong: 0,
 						correct: 0,
 						total: 0
 					}
 				}
 
-				//log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+				//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
 
 				if(predicted_index == correct_index) {
 					total_correct++;
 
-					category_overview[correct_category]["correct"]++;
+					category_overview[predicted_category]["correct"]++;
 				} else {
 					total_wrong++;
 
-					category_overview[correct_category]["wrong"]++;
+					category_overview[predicted_category]["wrong"]++;
 				}
-				category_overview[correct_category]["total"]++;
+				category_overview[predicted_category]["total"]++;
 			}
 		} catch (e) {
 			console.log(e);
