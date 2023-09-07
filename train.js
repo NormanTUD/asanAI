@@ -184,8 +184,6 @@ async function train_neural_network () {
 			if(!cam) {
 				$("#show_webcam_button").click();
 			}
-
-			alert("training done");
 		} else {
 			show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
