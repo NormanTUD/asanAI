@@ -546,7 +546,6 @@ async function run_tests () {
 
 			test_equal("descriptions of layers: top positions are below each other", ok, 1);
 
-			/*
 			var landau_linear_approx = least_square(X, Y);
 
 			var a = 20;
@@ -573,7 +572,6 @@ async function run_tests () {
 				log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
 				test_equal("Size changing test failed", false, true);
 			}
-			*/
 
 			log_test("Tests ended");
 		} catch (e) {
@@ -581,6 +579,8 @@ async function run_tests () {
 			err("ERROR while testing: ", e);
 		}
 	}
+
+	$(".overlay").remove();
 
 	tf.engine().endScope();
 
