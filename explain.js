@@ -3167,6 +3167,7 @@ async function predict_all_imgs (photos) {
 		"total_wrong": total_wrong,
 		"total_correct": total_correct,
 		"total": total_wrong + total_correct,
+		"percent_correct": parseInt(total_correct / (total_wrong + total_correct) * 100),
 		"category_overview": category_overview,
 		"predictions_tensors": predictions_tensors
 	};

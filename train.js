@@ -1243,13 +1243,16 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 				_text = "";
 				console.log(acc_rate);
 				_text += 
-					acc_rate["category_overview"][labels[canvasIndex]]["correct"] + 
+					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["correct"] + 
 					" " + 
 					language[lang]["of"] + 
 					" " + 
-					acc_rate["category_overview"][labels[canvasIndex]]["total"] + 
+					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["total"] + 
 					" " + 
 					language[lang]["correct"]
+					" (" + 
+					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["percent_correct"] + 
+					"%)"
 				;
 
 				log("TEXT:", _text);
