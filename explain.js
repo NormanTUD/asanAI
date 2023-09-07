@@ -324,7 +324,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 			return ret;
 		}
 	} catch (e) {
-		wrn(e);
+		err(e);
 	}
 
 	return false;
@@ -696,7 +696,7 @@ async function identify_layers (number_of_layers) {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
-					wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 
 				var shape = JSON.stringify(model.layers[i].getOutputAt(0).shape);
@@ -709,7 +709,7 @@ async function identify_layers (number_of_layers) {
 					output_shape_string = output_shape_string.replace("null,", "");
 				}
 			} else {
-				wrn(`identify_layers: i = ${i} is not in model.layers. model.layers.length = ${model.layers.length}. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				dbg(`identify_layers: i = ${i} is not in model.layers. model.layers.length = ${model.layers.length}. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 			}
 
 			if(has_zero_output_shape) {
@@ -790,7 +790,7 @@ function add_layer_debuggers () {
 
 	if(!model) {
 		if(finished_loading) {
-			wrn("No model found");
+			dbg("No model found");
 		}
 
 		return;
@@ -798,7 +798,7 @@ function add_layer_debuggers () {
 
 	if(!model.layers) {
 		if(finished_loading) {
-			wrn("No layer found");
+			dbg("No layer found");
 		}
 	}
 
@@ -825,7 +825,7 @@ function add_layer_debuggers () {
 			eval(code);
 		}
 	} catch (e) {
-		wrn(e);
+		err(e);
 	}
 
 }
@@ -1082,7 +1082,7 @@ function _get_neurons_last_layer (layer, type) {
 	} else if (type == "flatten") {
 		neurons = 1;
 	} else {
-		wrn("Unknown layer " + layer);
+		dbg("Unknown layer " + layer);
 		return false;
 	}
 
@@ -1511,7 +1511,7 @@ function get_layer_data() {
 			}
 		} catch (e) {
 			if(("" + e).includes("Tensor is disposed")) {
-				wrn("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
 			} else {
 				err(e);
 			}
@@ -2676,7 +2676,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 		return retval;
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			wrn("Model weights are disposed. Probably the model was recompiled during prediction");
+			dbg("Model weights are disposed. Probably the model was recompiled during prediction");
 		} else {
 			await write_error(e);
 		}
@@ -2696,7 +2696,7 @@ function find_key_by_value(obj, valueToFind, _default=null) {
 
 		return [0, _default];
 	} catch (error) {
-		wrn("Error:", error.message); // Log and warn about the error
+		err("Error in find_key_by_value: " + error.message); // Log and warn about the error
 		return [0, _default]; // Return null to indicate that the key was not found
 	}
 }
@@ -3008,7 +3008,7 @@ function _arbitrary_array_to_latex (arr) {
 		//log("_arbitrary_array_to_latex was called with function argument");
 		//console.trace();
 	} else {
-		wrn("Unknown type:", typeof(arr));
+		wrn("Unknown type: " + typeof(arr));
 	}
 	return str;
 }
