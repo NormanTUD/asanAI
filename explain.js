@@ -3056,7 +3056,7 @@ function findIndexByKey(array, key) {
 	}
 }
 
-async function predict_all_imgs (photos) {
+function predict_all_imgs (photos) {
 	if(!finished_loading) {
 		info("Cannot determine accuracy rate before the site is fully loaded");
 		$("#show_current_accuracy").hide();
@@ -3068,13 +3068,6 @@ async function predict_all_imgs (photos) {
 		$("#show_current_accuracy").hide();
 		return;
 	}
-
-	if(!await input_shape_is_image()) {
-		info("Cannot get accuracy rate if the input shape is not image-like");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
 
 	var total_wrong = 0;
 	var total_correct = 0;
@@ -3112,22 +3105,24 @@ async function predict_all_imgs (photos) {
 		try {
 			var src = photos[i].src;
 			if(src) {
-				var category = extractCategoryFromURL(src);
+				var correct_category = extractCategoryFromURL(src);
 
 				if(is_cosmo_mode) {
-					category = language[lang][category];
+					correct_category = language[lang][correct_category];
 				}
 
 				var correct_index = -1;
 
 				try {
-					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], category) % labels.length;
+					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], correct_category) % labels.length;
 				} catch (e) {
 					wrn("" + e);
 					return;
 				}
 
 				var predicted_tensor = predictions_tensors[i];
+
+				console.log("predicted_tensor:", predicted_tensor);
 
 				if(predicted_tensor === null) {
 					wrn("Predicted tensor was null");
@@ -3136,21 +3131,23 @@ async function predict_all_imgs (photos) {
 
 				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
 
-				if(!Object.keys(category_overview).includes(category)) {
-					category_overview[category] = {
+				if(!Object.keys(category_overview).includes(correct_category)) {
+					category_overview[correct_category] = {
 						wrong: 0,
 						correct: 0
 					}
 				}
 
+				log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+
 				if(predicted_index == correct_index) {
 					total_correct++;
 
-					category_overview[category]["correct"]++;
+					category_overview[correct_category]["correct"]++;
 				} else {
 					total_wrong++;
 
-					category_overview[category]["wrong"]++;
+					category_overview[correct_category]["wrong"]++;
 				}
 			}
 		} catch (e) {
@@ -3169,103 +3166,14 @@ async function predict_all_imgs (photos) {
 		"total": total_wrong + total_correct,
 		"percent_correct": parseInt(total_correct / (total_wrong + total_correct) * 100),
 		"category_overview": category_overview,
-		"predictions_tensors": predictions_tensors
 	};
 }
 
 async function _accuracy_rate_from_photos () {
 	var photos = $("#photos").find("img");
-	var res = await predict_all_imgs(photos);
+	var res = predict_all_imgs(photos);
 
 	console.log(res);
 
 	return res;
-}
-
-async function _accuracy_rate_from_photos_table () {
-	console.warn("Currently not supported: _accuracy_rate_from_photos_table");
-	return;
-	if(!finished_loading) {
-		info("Cannot determine accuracy rate before the site is fully loaded");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-	if(!is_classification) {
-		info("Cannot get accuracy rate if the network is not classification");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-	if(!await input_shape_is_image()) {
-		info("Cannot get accuracy rate if the input shape is not image-like");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-	var photos = $("#photos").find("img");
-
-	if(!photos.length) {
-		wrn("No photos found");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-	var _all_predictions = predict_all_imgs(photos);
-
-	var total_wrong = _all_predictions[0];
-	var total_correct = _all_predictions[1];
-	var category_overview = _all_predictions[2]
-	var predictions_tensors = _all_predictions[3];
-
-	var total = total_wrong + total_correct;
-
-	var _html = `${trm("currently")}, ${total_correct} ${trm("of")} ${total} ${trm("images_are_being_detected_correctly")}.<br>`;
-
-	var html_table_rows = {};
-
-	for (var i in Object.keys(category_overview)) {
-		var _label = Object.keys(category_overview)[i];
-
-		if(typeof _label == "function") {
-			continue;
-		}
-
-		if(!Object.keys(category_overview).includes(_label)) {
-			wrn("category_overview does not contain " + _label);
-			continue;
-		}
-
-		var this_label_acc = category_overview[_label];
-		var _total = this_label_acc["wrong"] + this_label_acc["correct"];
-
-		var percentage_correct = parseInt((this_label_acc["correct"] / _total) * 100);
-
-		html_table_rows[_label] = `<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td>${percentage_correct}%</td><td>${total}</td>\n`;
-	}
-
-	if(Object.keys(html_table_rows).length) {
-		_html += "<table style='display: inline'>\n";
-		for (var j = 0; j < labels.length; j++) {
-			var _key = labels[j];
-
-			if(j == 0) {
-				_html += `<tr><th>${trm('category')}</th><th>${trm('correct')}</th><th>${trm('wrong')}</th><th>${trm("percentage_correct")}</th><th>${trm('total')}</th></tr>\n`;
-			}
-
-			if(Object.keys(html_table_rows).includes(_key)) {
-				_html += "<tr>" + html_table_rows[_key] + "</tr>\n";
-			} else {
-				wrn("html_table_rows does not include _key " + key);
-			}
-		}
-		_html += "</table>\n";
-	} else {
-		console.log();
-	}
-
-	console.log("HTML:", _html);
-	$("#show_current_accuracy").html(_html).show();
-
-	update_translations();
 }
