@@ -1439,7 +1439,7 @@ async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _
 async function cosmo_stage_one () {
 	log("Cosmo stage 1");
 	var _ep  = parse_int(get_get("epochs", 10));
-	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category", 5));
+	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category", 20));
 	var _vs = 0;
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
@@ -1458,7 +1458,7 @@ async function cosmo_stage_two () {
 	set_retrain_button();
 
 	var _ep  = parse_int(get_get("epochs_stage_2", get_get("epochs", 20)));
-	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 30)));
+	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 40)));
 	var _vs = 15;
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
