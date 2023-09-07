@@ -181,9 +181,11 @@ async function train_neural_network () {
 				already_moved_to_predict_for_cosmo = true;
 			}
 
+			/*
 			if(!cam) {
 				$("#show_webcam_button").click();
 			}
+			*/
 		} else {
 			show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
