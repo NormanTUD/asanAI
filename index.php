@@ -1392,7 +1392,6 @@ text-align: end;
 										<span id="show_current_accuracy" style="display: none"></span><br>
 
 										<span id="cosmo_training_plotly_explanation" style="display:none">
-											<hr class="cosmo_hr">
 											<span class="TRANSLATEME_graph_explanation"></span><br>
 										</span>
 <!--
