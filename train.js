@@ -315,6 +315,8 @@ function get_fit_data () {
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
 		}
+
+		await _accuracy_rate_from_photos();
 	};
 
 	callbacks["onEpochBegin"] = async function () {
@@ -346,6 +348,7 @@ function get_fit_data () {
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%")
 
+		await _accuracy_rate_from_photos();
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {

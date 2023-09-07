@@ -284,9 +284,16 @@
 			'Verbot' => 'Forbidden',
 			'Gebot' => 'Mandatory',
 			'Rettung' => 'Rescue',
-			'Warnung' => 'Warning'
-
+			'Warnung' => 'Warning',
+			"currently" => "Currently",
+			"correct" => "Correct",
+			"wrong" => "Wrong",
+			"total" => "Total",
+			"images_are_being_detected_correctly" => "images are being detected correctly",
+			"category" => "Kategorie",
+			"percentage_correct" => "Percentage correct"
 		),
+
 		'de' => array(
 			'Brandschutz' => 'Brandschutz',
 			'Gebot' => 'Gebot',
@@ -571,7 +578,14 @@
 			"prohibition" => "Verbot",
 			"Verbot" => "Verbot",
 			"Rettung" => "Rettung",
-			"Warnung" => "Warnung"
+			"Warnung" => "Warnung",
+			"currently" => "Aktuell",
+			"correct" => "Richtig",
+			"wrong" => "Falsch",
+			"total" => "Gesamt",
+			"images_are_being_detected_correctly" => "Bilder wurden richtig erkannt",
+			"category" => "Kategorie",
+			"percentage_correct" => "Prozent richtig"
 		)
 	);
 

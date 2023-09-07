@@ -3063,6 +3063,16 @@ async function _accuracy_rate_from_photos () {
 		return;
 	}
 
+	if(!is_classification) {
+		info("Cannot get accuracy rate if the network is not classification");
+		return;
+	}
+
+	if(!await input_shape_is_image()) {
+		info("Cannot get accuracy rate if the input shape is not image-like");
+		return;
+	}
+
 	var photos = $("#photos").find("img");
 
 	if(!photos.length) {
@@ -3074,8 +3084,37 @@ async function _accuracy_rate_from_photos () {
 	var total_correct = 0;
 
 	var category_overview = {};
+	var predictions_tensors = [];
+
+	tidy(() => {
+		for (var i = 0; i < photos.length; i++) {
+			if(typeof(i) == "function") {
+				continue;
+			}
+
+			console.log("Trying to predict photo:", photos[i]);
+
+			var this_img_tensor = resizeBilinear(fromPixels(photos[i]), [model.input.shape[1], model.input.shape[2]]).expandDims();
+
+			try {
+				var _pred = model.predict(this_img_tensor).arraySync()[0];
+				predictions_tensors.push(_pred);
+			} catch (e) {
+				throw new Error(e);
+			}
+		}
+	});
+
+	if(!predictions_tensors) {
+		wrn("Could not get predictions tensor");
+		return;
+	}
+
 
 	for (var i in photos) {
+		if(typeof(i) == "function") {
+			continue;
+		}
 		try {
 			var src = photos[i].src;
 			if(src) {
@@ -3090,19 +3129,7 @@ async function _accuracy_rate_from_photos () {
 					return;
 				}
 
-				var predicted_tensor = null;
-
-				try {
-					predicted_tensor = tidy(() => { return model.predict(fromPixels(photos[i]).expandDims()).arraySync()[0]; });
-				} catch (e) {
-					if(("" + e).includes("is already disposed")) {
-						wrn("" + e + ", trying again in 200 ms...");
-						await delay(200);
-						predicted_tensor = tidy(() => { return model.predict(fromPixels(photos[i]).expandDims()).arraySync()[0]; });
-					} else {
-						throw new Error(e);
-					}
-				}
+				var predicted_tensor = predictions_tensors[i];
 
 				if(predicted_tensor === null) {
 					wrn("Predicted tensor was null");
@@ -3110,8 +3137,6 @@ async function _accuracy_rate_from_photos () {
 				}
 
 				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
-
-				console.log("predicted_index: ", predicted_index, "correct_index:", correct_index);
 
 				if(!Object.keys(category_overview).includes(category)) {
 					category_overview[category] = {
@@ -3137,7 +3162,9 @@ async function _accuracy_rate_from_photos () {
 
 	var total = total_wrong + total_correct;
 
-	console.log(`total correctness: ${total_correct} of ${total} are correct`);
+	var _html = `${trm("currently")}, ${total_correct} ${trm("of")} ${total} ${trm("images_are_being_detected_correctly")}.<br>`;
+
+	var html_table_rows = [];
 
 	for (var i in Object.keys(category_overview)) {
 		var _label = Object.keys(category_overview)[i];
@@ -3154,6 +3181,25 @@ async function _accuracy_rate_from_photos () {
 		var this_label_acc = category_overview[_label];
 		var _total = this_label_acc["wrong"] + this_label_acc["correct"];
 
-		console.log(`In the category ${_label}, ${this_label_acc["correct"]} from ${total} are detected correctly`);
+		var percentage_correct = parseInt((this_label_acc["correct"] / _total) * 100);
+
+		html_table_rows.push(`<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td></td><td>${percentage_correct}%</td><td>${total}</td>`);
 	}
+
+	if(html_table_rows.length) {
+		_html += "<table style='display: inline'>";
+		for (var j = 0; j < html_table_rows.length; j++) {
+			if(j == 0) {
+				_html += `<tr><th>${trm('category')}</th><th>${trm('correct')}</th><th>${trm('wrong')}</th><th>${trm("percentage_correct")}</th><th>${trm('total')}</th></tr>`;
+			}
+			_html += "<tr>" + html_table_rows[j] + "</tr>";
+		}
+		_html += "</table>";
+	}
+
+	console.log("HTML:", _html);
+	$("#show_current_accuracy").html(_html).show();
+
+	update_translations();
+
 }
