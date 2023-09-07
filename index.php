@@ -1376,10 +1376,12 @@ text-align: end;
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
-										<span id="program_looks_at_data_span" class="TRANSLATEME_program_looks_at_data"></span><br>
+										<span id="program_looks_at_data_span">
+											<span class="TRANSLATEME_program_looks_at_data"></span><br>
+											<hr class="cosmo_hr">
+										</span>
 
 										<span id="cosmo_training_predictions_explanation" style="display:none">
-											<hr class="cosmo_hr">
 											<span class="TRANSLATEME_predictions_explanation_while_training"></span><br>
 										</span>
 
