@@ -3079,16 +3079,15 @@ async function _accuracy_rate_from_photos () {
 		try {
 			var src = photos[i].src;
 			if(src) {
-				var _category = extractCategoryFromURL(src);
-				var category = language[lang][_category];
+				var category = extractCategoryFromURL(src);
 
 				var correct_index = -1;
 
 				try {
-					correct_index = findIndexByKey(labels, _category);
+					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], category) % labels.length;
 				} catch (e) {
 					wrn("" + e);
-					correct_index = findIndexByKey(labels, category);
+					return;
 				}
 
 				var predicted_tensor = null;

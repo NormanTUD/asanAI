@@ -976,6 +976,7 @@ async function run_cosmo_milestones () {
 }
 
 async function cosmo_set_labels () {
+	original_labels.push(...labels);
 	if(lang == "de") {
 		cosmo_categories = [
 			"Brandschutz",
