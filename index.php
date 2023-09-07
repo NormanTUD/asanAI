@@ -1237,7 +1237,6 @@ text-align: end;
 										</table>
 									</center>
 									<hr class="cosmo_hr">
-									<span class="TRANSLATEME_lets_suppose_we_have_this_simple_network" style="display: block"></span>
 									<br>
 									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="lang/__de__signs_network_cosmo.svg"><br>
 								</div>

@@ -1,7 +1,6 @@
 <?php
 	$GLOBALS['translations'] = array(
 		'en' => array(
-			'lets_suppose_we_have_this_simple_network' => 'We want to use this neural network to train a model..',
 			'we_want_to_train_this_model_5_categories' => 'The computer should now learn to classify the images into one of the five categories.',
 			'fire' => 'Fire prevention',
 			'mandatory' => 'Mandatory',
@@ -297,7 +296,6 @@
 		'de' => array(
 			'Brandschutz' => 'Brandschutz',
 			'Gebot' => 'Gebot',
-			'lets_suppose_we_have_this_simple_network' => 'Wir möchten dieses Bilderkennungsnetzwerk verwenden, um ein Modell zu trainieren.',
 			'we_want_to_train_this_model_5_categories' => 'Der Computer soll nun lernen, Bilder in die jeweils passende der fünf vorgegebenen Kategorien einzuordnen.',
 			'fire' => 'Brandschutz',
 			'mandatory' => 'Gebot',
