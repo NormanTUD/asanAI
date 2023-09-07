@@ -3020,3 +3020,141 @@ log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
 log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
 log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
+
+function extractCategoryFromURL(_url) {
+	try {
+		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
+
+		if (categoryMatch) {
+			const category = categoryMatch[1];
+			return category;
+		} else {
+			console.warn('Category not found in the URL:', _url);
+			return null; // Or handle the error in your specific way
+		}
+	} catch (error) {
+		console.error('Error while extracting category:', error);
+		return null; // Or handle the error in your specific way
+	}
+}
+
+function findIndexByKey(array, key) {
+	try {
+		assert(Array.isArray(array), "Input is not an array");
+		assert(typeof key === "string", "Key is not a string");
+
+		for (let i = 0; i < array.length; i++) {
+			if (array[i] === key) {
+				return i; // Found the key, return its index
+			}
+		}
+
+		assert(false, `Key ${key} not found in the array: ${JSON.stringify(array)}`);
+	} catch (error) {
+		console.log("Error:", error);
+		// Handle the error intelligently, log and/or perform other actions as needed
+	}
+}
+
+
+async function _accuracy_rate_from_photos () {
+	if(!finished_loading) {
+		info("Cannot determine accuracy rate before the site is fully loaded");
+		return;
+	}
+
+	var photos = $("#photos").find("img");
+
+	if(!photos.length) {
+		wrn("No photos found");
+		return;
+	}
+
+	var total_wrong = 0;
+	var total_correct = 0;
+
+	var category_overview = {};
+
+	for (var i in photos) {
+		try {
+			var src = photos[i].src;
+			if(src) {
+				var _category = extractCategoryFromURL(src);
+				var category = language[lang][_category];
+
+				var correct_index = -1;
+
+				try {
+					correct_index = findIndexByKey(labels, _category);
+				} catch (e) {
+					wrn("" + e);
+					correct_index = findIndexByKey(labels, category);
+				}
+
+				var predicted_tensor = null;
+
+				try {
+					predicted_tensor = tidy(() => { return model.predict(fromPixels(photos[i]).expandDims()).arraySync()[0]; });
+				} catch (e) {
+					if(("" + e).includes("is already disposed")) {
+						wrn("" + e + ", trying again in 200 ms...");
+						await delay(200);
+						predicted_tensor = tidy(() => { return model.predict(fromPixels(photos[i]).expandDims()).arraySync()[0]; });
+					} else {
+						throw new Error(e);
+					}
+				}
+
+				if(predicted_tensor === null) {
+					wrn("Predicted tensor was null");
+					return;
+				}
+
+				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
+
+				console.log("predicted_index: ", predicted_index, "correct_index:", correct_index);
+
+				if(!Object.keys(category_overview).includes(category)) {
+					category_overview[category] = {
+						wrong: 0,
+						correct: 0
+					}
+				}
+
+				if(predicted_index == correct_index) {
+					total_correct++;
+
+					category_overview[category]["correct"]++;
+				} else {
+					total_wrong++;
+
+					category_overview[category]["wrong"]++;
+				}
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	var total = total_wrong + total_correct;
+
+	console.log(`total correctness: ${total_correct} of ${total} are correct`);
+
+	for (var i in Object.keys(category_overview)) {
+		var _label = Object.keys(category_overview)[i];
+
+		if(typeof _label == "function") {
+			continue;
+		}
+
+		if(!Object.keys(category_overview).includes(_label)) {
+			wrn("category_overview does not contain " + _label);
+			continue;
+		}
+
+		var this_label_acc = category_overview[_label];
+		var _total = this_label_acc["wrong"] + this_label_acc["correct"];
+
+		console.log(`In the category ${_label}, ${this_label_acc["correct"]} from ${total} are detected correctly`);
+	}
+}
