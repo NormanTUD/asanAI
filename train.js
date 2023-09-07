@@ -1159,7 +1159,6 @@ async function reset_on_error () {
 
 function draw_images_in_grid (images, categories, probabilities, numCategories, category_overview) {
 	$("#canvas_grid_visualization").html("");
-	var categoryNames = is_cosmo_mode ? labels : labels.slice(0, numCategories);
 	var margin = 40;
 	var canvases = [];
 
@@ -1196,35 +1195,6 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 	var graphHeight = canvases[0].height - margin * 2;
 	var maxProb = 1;
 
-	/*
-	if(!is_cosmo_mode) {
-
-		var ctx = canvases[0].getContext("2d");
-		for (let j = 0; j <= 10; j += 2) {
-			var yPos = margin + graphHeight - j / 10 * graphHeight;
-			var neg = -10;
-			var label = (j / 10 * maxProb).toFixed(2);
-			if (label == "0.00") {
-				label = language[lang]["very_unsure"];
-			} else if (label == "0.20") {
-				label = language[lang]["quite_unsure"];
-			} else if (label == "0.40") {
-				label = language[lang]["a_bit_unsure"];
-			} else if (label == "0.60") {
-				label = language[lang]["neutral"];
-			} else if (label == "0.80") {
-				label = language[lang]["relatively_sure"];
-			} else if (label == "1.00") {
-				label = language[lang]["very_sure"];
-			} else {
-				wrn("cosmo-label not found for " + label + " probability");
-			}
-			neg = +90;
-		}
-		ctx.fillText(label, margin + neg, yPos);
-	}
-	*/
-
 	var targetSize = Math.min(40, height, width); // Change this to the desired size
 
 	// draw y-axis labels
@@ -1235,23 +1205,27 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 
 		if(!canvasIndex == 0 || is_cosmo_mode) {
 			ctx.textAlign = "center";
-			var label = categoryNames[canvasIndex];
+			var label = labels[canvasIndex];
 			var _text = label;
 			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
 			if(category_overview) {
 				_text = "";
 				//console.log("category_overview", category_overview);
+				var __key = labels[canvasIndex];
+				if(is_cosmo_mode) {
+					__key = language[lang][labels[canvasIndex]];
+				}
 				_text += 
-					category_overview[language[lang][labels[canvasIndex]]]["correct"] + 
+					category_overview[__key]["correct"] + 
 					" " + 
 					language[lang]["of"] + 
 					" " + 
-					category_overview[language[lang][labels[canvasIndex]]]["total"] + 
+					category_overview[__key]["total"] + 
 					" " + 
 					language[lang]["correct"] +
 					" (" + 
-					category_overview[language[lang][labels[canvasIndex]]]["percentage_correct"] + 
+					category_overview[__key]["percentage_correct"] + 
 					"%)"
 				;
 
