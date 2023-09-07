@@ -1223,7 +1223,7 @@ text-align: end;
 											<tr>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_fire"></span></td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_mandatory"></span></td>
-												<td class='cosmo_example_table'><span class="TRANSLATEME_forbidden"></span></td>
+												<td class='cosmo_example_table'><span class="TRANSLATEME_prohibition"></span></td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_rescue"></span></td>
 												<td class='cosmo_example_table'><span class="TRANSLATEME_warning"></span></td>
 											</tr>

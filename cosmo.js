@@ -991,7 +991,7 @@ async function cosmo_set_labels () {
 		cosmo_categories = [
 			"Fire prevention",
 			"Mandatory",
-			"Forbidden",
+			"Prohibition",
 			"Rescue",
 			"Warning"
 		];

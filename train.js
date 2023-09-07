@@ -1213,9 +1213,11 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 				_text = "";
 				//console.log("category_overview", category_overview);
 				var __key = labels[canvasIndex];
+				/*
 				if(is_cosmo_mode) {
 					__key = language[lang][labels[canvasIndex]];
 				}
+				*/
 				_text += 
 					category_overview[__key]["correct"] + 
 					" " + 
@@ -1463,7 +1465,7 @@ async function visualize_train () {
 				var correct_index = -1;
 
 				try {
-					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], correct_category) % labels.length;
+					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels, "Brandschutz", "Gebot", "Verbot", "Rettung", "Warnung", "Fire prevention", "Mandatory", "Prohibition", "Rescue", "Warning"], correct_category) % labels.length;
 				} catch (e) {
 					wrn("" + e);
 					return;
