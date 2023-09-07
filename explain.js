@@ -3060,16 +3060,19 @@ function findIndexByKey(array, key) {
 async function _accuracy_rate_from_photos () {
 	if(!finished_loading) {
 		info("Cannot determine accuracy rate before the site is fully loaded");
+		$("#show_current_accuracy").hide();
 		return;
 	}
 
 	if(!is_classification) {
 		info("Cannot get accuracy rate if the network is not classification");
+		$("#show_current_accuracy").hide();
 		return;
 	}
 
 	if(!await input_shape_is_image()) {
 		info("Cannot get accuracy rate if the input shape is not image-like");
+		$("#show_current_accuracy").hide();
 		return;
 	}
 
@@ -3077,6 +3080,7 @@ async function _accuracy_rate_from_photos () {
 
 	if(!photos.length) {
 		wrn("No photos found");
+		$("#show_current_accuracy").hide();
 		return;
 	}
 
@@ -3183,7 +3187,7 @@ async function _accuracy_rate_from_photos () {
 
 		var percentage_correct = parseInt((this_label_acc["correct"] / _total) * 100);
 
-		html_table_rows.push(`<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td></td><td>${percentage_correct}%</td><td>${total}</td>`);
+		html_table_rows.push(`<td>${trm(_label)}</td><td>${this_label_acc["correct"]}</td><td>${this_label_acc["wrong"]}</td><td>${percentage_correct}%</td><td>${total}</td>`);
 	}
 
 	if(html_table_rows.length) {
