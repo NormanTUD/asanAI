@@ -304,6 +304,10 @@ function get_fit_data () {
 		$("#network_has_seen_msg").hide();
 
 		await visualize_train();
+
+		if(is_cosmo_mode) {
+			$("#show_after_training").hide();
+		}
 	};
 
 	callbacks["onBatchBegin"] = async function () {
@@ -537,6 +541,9 @@ function get_fit_data () {
 		}
 
 		$("#network_has_seen_msg").hide();
+		if(is_cosmo_mode) {
+			$("#show_after_training").show();
+		}
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {

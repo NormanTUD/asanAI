@@ -290,7 +290,8 @@
 			"total" => "Total",
 			"images_are_being_detected_correctly" => "images are being detected correctly",
 			"category" => "Kategorie",
-			"percentage_correct" => "Percentage correct"
+			"percentage_correct" => "Percentage correct",
+			"training_done_text" => "The training phase is complete. If the accuracy is still insufficient, the network can be further trained to potentially achieve better results."
 		),
 
 		'de' => array(
@@ -583,7 +584,8 @@
 			"total" => "Gesamt",
 			"images_are_being_detected_correctly" => "Bilder wurden richtig erkannt",
 			"category" => "Kategorie",
-			"percentage_correct" => "Prozent richtig"
+			"percentage_correct" => "Prozent richtig",
+			"training_done_text" => "Diese Trainingsphase ist abgeschlossen. Sollte die Genauigkeit noch nicht ausreichend sein, kann das Netz weiter trainiert werden, um möglicherweise bessere Ergebnisse zu erzielen."
 		)
 	);
 

@@ -208,6 +208,9 @@ async function end_presentation() {
 	chose_next_manicule_target();
 
 	$("#skip_presentation_button").remove();
+
+	$("#set_german_language").show();
+	$("#set_english_language").show();
 }
 
 function attach_listener_for_cosmo_outside_click () {
