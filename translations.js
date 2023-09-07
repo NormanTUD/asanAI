@@ -43,8 +43,8 @@ function swap_image_src_language () {
 }
 
 // Function to set the language and update translations
-function set_lang(l) {
-	lang = l;
+function set_lang(la) {
+	lang = la;
 	set_cookie('lang', l, 30); // Save the language in a cookie for 30 days
 	update_translations();
 
