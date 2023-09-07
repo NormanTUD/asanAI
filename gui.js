@@ -2304,9 +2304,11 @@ async function set_config(index) {
 				set_batch_size(config["batchSize"]);
 				set_validation_split(config["validationSplit"]);
 			} else {
-				set_epochs(get_get("epochs", config["epochs"]));
-				set_batch_size(get_get("batch_size", config["batchSize"]));
-				set_validation_split(get_get("validation_split", config["validationSplit"]));
+				if(is_cosmo_mode) {
+					set_epochs(get_get("epochs", config["epochs"]));
+					set_batch_size(get_get("batch_size", config["batchSize"]));
+					set_validation_split(get_get("validation_split", config["validationSplit"]));
+				}
 			}
 			set_loss(config["loss"], 0);
 
@@ -5541,6 +5543,10 @@ async function easter_egg_fireworks (force=0) {
 }
 
 async function init_webcams () {
+	if(is_cosmo_mode) {
+		return;
+	}
+
 	if(inited_webcams) {
 		return;
 	}

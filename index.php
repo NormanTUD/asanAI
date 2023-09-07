@@ -1241,7 +1241,6 @@ text-align: end;
 									<img style='width: 90%; max-height: 600px; max-width: 800px;' src="lang/__de__signs_network_cosmo.svg"><br>
 								</div>
 								<div id="beschreibung_cosmo_laden" style="display: none">
-									<span class="TRANSLATEME_now_being"></span> <span id="number_of_images_per_category">5</span> <span class="TRANSLATEME_images_of_each_category"></span>
 									<hr class="cosmo_hr">
 									<span class="TRANSLATEME_the_more_variations_the_model_sees"></span>
 								</div>

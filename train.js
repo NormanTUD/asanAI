@@ -535,6 +535,8 @@ function get_fit_data () {
 				move_element_to_another_div(elem, to)
 			}
 		}
+
+		$("#network_has_seen_msg").hide();
 	}
 
 	if($("#enable_early_stopping").is(":checked")) {

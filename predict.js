@@ -1130,6 +1130,9 @@ function _webcam_prediction_row (i, predictions, max_i) {
 }
 
 async function show_webcam (force_restart) {
+	if(is_cosmo_mode) {
+		return;
+	}
 	await init_webcams();
 
 	try {
