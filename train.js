@@ -315,7 +315,6 @@ function get_fit_data () {
 		if(is_cosmo_mode) {
 			show_tab_label("tfvis_tab_label", 1);
 		}
-
 	};
 
 	callbacks["onEpochBegin"] = async function () {

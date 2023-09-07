@@ -6409,25 +6409,34 @@ function model_is_ok () {
 			color = red;
 			msg = "Model has multiple output nodes.";
 		}
-
-
 	} catch (e) {
 		color = red;
 		msg = "" + e;
 		err(msg);
 	}
 
-	if(last_model_ok_status != msg) {
+	var _content = `${color}`;
+
+	if(started_training) {
+		_content += "&#129302;&#128214;";
+	}
+
+	if(model_is_trained && color == green ) {
+		_content += "&#9989;";
+	}
+
+	if(last_model_ok_status != _content) {
 		if(color == red) {
-			dbg(msg);
+			err(msg);
 		} else if (color == orange) {
 			dbg(msg);
 		}
 
 		l(msg);
 
-		model_is_ok_icon.html(`<span title='${msg}'>${color}</span>`);
-		last_model_ok_status = msg;
+		model_is_ok_icon.html(`<span title='${msg}'>${_content}</span>`);
+
+		last_model_ok_status = _content;
 	}
 }
 
