@@ -1364,6 +1364,10 @@ async function visualize_train () {
 
 	var max = parse_int($("#max_number_of_images_in_grid").val());
 
+	if(is_cosmo_mode) {
+		max = 10000;
+	}
+
 	if(max == 0) {
 		return;
 	}
@@ -1477,7 +1481,8 @@ async function visualize_train () {
 				if(!Object.keys(category_overview).includes(correct_category)) {
 					category_overview[correct_category] = {
 						wrong: 0,
-						correct: 0
+						correct: 0,
+						total: 0
 					}
 				}
 
@@ -1492,6 +1497,7 @@ async function visualize_train () {
 
 					category_overview[correct_category]["wrong"]++;
 				}
+				category_overview[correct_category]["total"]++;
 			}
 		} catch (e) {
 			console.log(e);
@@ -1501,7 +1507,6 @@ async function visualize_train () {
 
 	for (var i = 0; i < Object.keys(category_overview).length; i++) {
 		var category = Object.keys(category_overview)[i];
-		category_overview[category]["total"] = category_overview[category]["wrong"] + category_overview[category]["correct"];
 		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
