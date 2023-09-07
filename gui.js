@@ -6539,7 +6539,9 @@ function get_get(paramName, _default) {
 function set_get(paramName, paramValue) {
 	if(is_cosmo_mode) {
 		log("No set_get in cosmo mode...");
+		return;
 	}
+
 	const urlParams = new URLSearchParams(window.location.search);
 	urlParams.set(paramName, paramValue);
 
