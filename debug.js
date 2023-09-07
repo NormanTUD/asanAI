@@ -727,6 +727,9 @@ async function send_bug_report () {
 		html += '<img src="' + await _take_screenshot() + '" />';
 	}
 
+	html += "<h1>URL</h1>";
+	html += window.location.toString();
+
 	html += "<h1>Browser-Information</h1>"
 	html += "User-Agent: " + navigator.userAgent;
 

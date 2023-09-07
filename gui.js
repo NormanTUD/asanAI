@@ -5387,7 +5387,11 @@ async function get_training_data_as_json () {
 
 function l(msg) {
 	msg = "" + msg;
-	assert(!!msg, "msg is false");
+
+	if(!msg) {
+		dbg("msg is empty");
+		return;
+	}
 
 	if(msg == "[object Object]") {
 		log("[object Object] found:");
