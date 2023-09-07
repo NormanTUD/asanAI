@@ -114,3 +114,7 @@
 #previous_images {
 	display: grid;
 }
+
+.cosmo_next_button_span {
+	bottom: 10px;
+}
