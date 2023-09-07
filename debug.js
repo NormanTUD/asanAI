@@ -730,6 +730,12 @@ async function send_bug_report () {
 	html += "<h1>URL</h1>";
 	html += window.location.toString();
 
+	var _env_dump = _dump_env_to_html();
+	if (_env_dump) {
+		html += "<h1>Environment</h1>";
+		html += _env_dump;
+	}
+
 	html += "<h1>Browser-Information</h1>"
 	html += "User-Agent: " + navigator.userAgent;
 
@@ -754,4 +760,32 @@ function taint_privacy () {
 
 	console.info("Privacy is tainted. Bug reports will no longer contain screenshots");
 	privacy_is_tainted = true;
+}
+
+function _dump_env_to_html () {
+	var keys = Object.getOwnPropertyNames( window );
+	var value;
+
+	var all_vars = {};
+
+	for( var i = 0; i < keys.length; ++i ) {
+		value = window[ keys[ i ] ];
+		if(!["function", "object"].includes(typeof(value))) {
+			all_vars[keys[i]] = value;
+		}
+	}
+
+	var html = "";
+	var _keys = Object.keys(all_vars);
+	for (var i = 0; i <= _keys.length; i++) {
+		if("" + _keys[i] !== "undefined") {
+			html += `<tr><td>${_keys[i]}</td><td><pre>${all_vars[_keys[i]]}</pre></td></tr>`
+		}
+	}
+
+	if (html) {
+		html = "<table>" + html + "</table>";
+	}
+
+	return html;
 }
