@@ -2578,11 +2578,11 @@ async function wait_for_updated_page (seconds) {
 
 	var updated_page_wait_uuid = uuidv4();
 	var i = 0;
-	l(`Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
+	l(`Waiting for the last page update to be ${seconds} seconds in the past...`);
 
 	while (Date.now() - last_updated_page < (seconds * 1000)) {
 		if(i && i % 10 == 0) {
-			dbg(`${updated_page_wait_uuid}: Waiting for the last last_updated_page to be ${seconds} seconds in the past...`);
+			dbg(`${updated_page_wait_uuid}: Waiting for the page update to be ${seconds} seconds in the past...`);
 		}
 		await delay(200);
 		i++;

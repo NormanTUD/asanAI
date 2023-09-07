@@ -49,9 +49,8 @@ var loadFile = (function(event) {
 });
 
 function _predict_error (e) {
-	wrn(e);
+	err(e);
 	console.trace();
-	l("" + e);
 	$("#prediction").hide();
 	$("#predict_error").html("" + e).show();
 	$("#example_predictions").html("");
@@ -155,7 +154,7 @@ var predict_demo = async function (item, nr, tried_again = 0) {
 	var tensor_img = await _get_tensor_img(item);
 
 	if(!tensor_img) {
-		wrn("tensor_img was empty");
+		err("tensor_img was empty");
 		await dispose(tensor_img);
 		return;
 	}
@@ -181,7 +180,7 @@ var predict_demo = async function (item, nr, tried_again = 0) {
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
-		wrn("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
+		dbg("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
 		await dispose(tensor_img);
 		return;
 	}
@@ -222,14 +221,14 @@ var predict_demo = async function (item, nr, tried_again = 0) {
 
 async function _run_predict_and_show (tensor_img, nr) {
 	if(tensor_img.isDisposedInternal) {
-		wrn("Tensor was disposed internally", tensor_img);
+		dbg("Tensor was disposed internally", tensor_img);
 		console.trace();
 		return;
 
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
-		wrn("Tensor shape does not match model shape");
+		dbg("Tensor shape does not match model shape");
 		return;
 	}
 
@@ -242,7 +241,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		await draw_heatmap(predictions_tensor, tensor_img);
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			wrn("Tensors already disposed. Probably the model was recompiled while predicting.");
+			dbg("Tensors already disposed. Probably the model was recompiled while predicting.");
 		} else if(("" + e).includes("but got array with shape")) {
 			dbg("Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
 		} else if(("" + e).includes("code is undefined")) {
@@ -393,7 +392,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				predict_data = fromPixels(item).resizeNearestNeighbor([height, width]).toFloat().expandDims();
 			} catch (e) {
 				if(("" + e).includes("Expected input shape")) {
-					wrn("" + e);
+					dbg("" + e);
 				} else {
 					l("" + e);
 					console.trace();
@@ -514,7 +513,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			}
 
 			if(desc.length == 0) {
-				wrn("desc is none");
+				dbg("desc is none");
 			} else {
 				desc = desc[0];
 				desc = $(desc);
@@ -528,7 +527,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							str += r;
 						}
 					} else {
-						wrn("No predict tensor found");
+						dbg("No predict tensor found");
 					}
 				}
 			}
@@ -676,7 +675,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	}
 
 	if(!model) {
-		wrn("model not found");
+		dbg("model not found");
 		return;
 	}
 
@@ -702,7 +701,7 @@ async function _print_predictions_text(count, example_predict_data) {
 	var html_contents = "";
 
 	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
-		wrn("example_predict_data is not an object or empty")
+		err("example_predict_data is not an object or empty")
 	}
 
 	for (var i = 0; i < example_predict_data.length; i++) {
@@ -734,9 +733,8 @@ async function _print_predictions_text(count, example_predict_data) {
 				if(("" + e).includes("already disposed")) {
 					dbg("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
-					wrn("Total size of new array must be unchanged. Did you use reshape somewhere?");
+					dbg("Total size of new array must be unchanged. Did you use reshape somewhere?");
 				} else if(("" + e).includes("to have shape")) {
-					wrn("Wrong input shape for _print_predictions_text");
 					dbg("Wrong input shape for _print_predictions_text: " + e);
 				} else {
 					_predict_error(e);
@@ -864,9 +862,9 @@ function get_index_of_highest_category (predictions_tensor) {
 		return highest_index;
 	} catch (e) {
 		if(("" + e).includes("disposed")) {
-			wrn("Tensor, probably predictions_tensor, already disposed");
+			dbg("Tensor, probably predictions_tensor, already disposed");
 		} else {
-			wrn(e);
+			err(e);
 		}
 
 
@@ -973,11 +971,11 @@ async function predict_webcam () {
 		});
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
-			wrn("Model Tensor already disposed");
+			dbg("Model Tensor already disposed");
 		} else if(("" + e).includes("n is undefined")) {
-			wrn("Model weights probably already disposed, this is usually not harmful");
+			dbg("Model weights probably already disposed, this is usually not harmful");
 		} else if(("" + e).includes("but got array with shape")) {
-			wrn("Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
+			dbg("Wrong shape for predict_webcam. This may happen if you resize width and/or height while you predict the webcam. In this case, it's harmless. Restarting webcam...");
 			await show_webcam(1);
 		} else {
 			l("Error (512): " + e);
@@ -1025,7 +1023,7 @@ async function predict_webcam () {
 				await _webcam_predict_text(webcam_prediction, predictions[0]);
 			}
 		} else {
-			wrn("predictions is empty for predict_webcam");
+			dbg("predictions is empty for predict_webcam");
 		}
 	}
 
@@ -1289,7 +1287,7 @@ async function predict_handdrawn () {
 
 	if(!Object.keys(atrament_data).includes("sketcher")) {
 		if(sketcher_warning >= 1 && finished_loading) {
-			wrn("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
+			dbg("Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
 		}
 		sketcher_warning++;
 
@@ -1363,15 +1361,14 @@ async function predict_handdrawn () {
 		}
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
-			wrn("weights are already disposed. Not predicting handdrawn");
+			dbg("weights are already disposed. Not predicting handdrawn");
 		} else if(("" + e).includes("but got array with shape")) {
 			var err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-			wrn(err);
-			l(err);
+			dbg(err);
 		} else if(("" + e).includes("n is undefined")) {
-			wrn("Model weights probably already disposed, this is usually not harmful");
+			dbg("Model weights probably already disposed, this is usually not harmful");
 		} else if(("" + e).includes("Unsupported input rank by")) {
-			wrn("Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
+			dbg("Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
 		} else {
 			l("Predict data shape:", predict_data.shape);
 			err(e);
