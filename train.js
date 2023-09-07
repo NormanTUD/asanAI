@@ -1241,7 +1241,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 
 			if(category_overview) {
 				_text = "";
-				console.log("category_overview", category_overview);
+				//console.log("category_overview", category_overview);
 				_text += 
 					category_overview[language[lang][labels[canvasIndex]]]["correct"] + 
 					" " + 
@@ -1249,13 +1249,13 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 					" " + 
 					category_overview[language[lang][labels[canvasIndex]]]["total"] + 
 					" " + 
-					language[lang]["correct"]
+					language[lang]["correct"] +
 					" (" + 
-					category_overview[language[lang][labels[canvasIndex]]]["percent_correct"] + 
+					category_overview[language[lang][labels[canvasIndex]]]["percentage_correct"] + 
 					"%)"
 				;
 
-				log("TEXT:", _text);
+				//log("TEXT:", _text);
 				ctx.fillText(_text, canvas.width / 2, canvas.height - margin);
 			}
 		}
@@ -1493,8 +1493,6 @@ async function visualize_train () {
 
 				var predicted_tensor = predictions_tensors[i];
 
-				console.log("predicted_tensor:", predicted_tensor);
-
 				if(predicted_tensor === null) {
 					wrn("Predicted tensor was null");
 					return;
@@ -1509,7 +1507,7 @@ async function visualize_train () {
 					}
 				}
 
-				log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+				//log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
 
 				if(predicted_index == correct_index) {
 					total_correct++;
@@ -1530,6 +1528,7 @@ async function visualize_train () {
 	for (var i = 0; i < Object.keys(category_overview).length; i++) {
 		var category = Object.keys(category_overview)[i];
 		category_overview[category]["total"] = category_overview[category]["wrong"] + category_overview[category]["correct"];
+		category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 	}
 
 	if(imgs.length && categories.length && probabilities.length) {
@@ -1543,7 +1542,4 @@ async function visualize_train () {
 	if(is_cosmo_mode) {
 		await fit_to_window();
 	}
-
-
-	await delay(1000);
 }
