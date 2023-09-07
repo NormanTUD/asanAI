@@ -155,7 +155,7 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			show_tab_label("predict_tab", 1);
+			//show_tab_label("predict_tab", 1);
 
 			set_right_border_between_example_predictions();
 
@@ -176,7 +176,7 @@ async function train_neural_network () {
 
 			chose_next_manicule_target();
 
-			if(!already_moved_to_predict_for_cosmo) {
+			if(!already_moved_to_predict_for_cosmo && 0) {
 				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
 				already_moved_to_predict_for_cosmo = true;
 			}
@@ -184,6 +184,8 @@ async function train_neural_network () {
 			if(!cam) {
 				$("#show_webcam_button").click();
 			}
+
+			alert("training done");
 		} else {
 			show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
@@ -523,7 +525,7 @@ function get_fit_data () {
 
 		$("#tiny_graph").hide();
 
-		if(is_cosmo_mode) {
+		if(0 && is_cosmo_mode) {
 			if(current_cosmo_stage == 1) {
 				var elem = $("#example_predictions")[0];
 				var to = $("#example_predictions_parent")[0];
@@ -1157,8 +1159,9 @@ async function reset_on_error () {
 	link.href = 'favicon.ico';
 }
 
-function draw_images_in_grid (images, categories, probabilities, numCategories, category_overview) {
+function draw_images_in_grid (images, categories, probabilities, category_overview) {
 	$("#canvas_grid_visualization").html("");
+	var numCategories = labels.length;
 	var margin = 40;
 	var canvases = [];
 
@@ -1203,38 +1206,47 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 		var canvas = canvases[canvasIndex];
 		var ctx = canvas.getContext("2d");
 
-		if(!canvasIndex == 0 || is_cosmo_mode) {
-			ctx.textAlign = "center";
-			var label = labels[canvasIndex];
-			var _text = label;
-			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
+		ctx.textAlign = "center";
+		var label = labels[canvasIndex];
+		var _text = label;
+		ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
-			if(category_overview) {
-				_text = "";
-				//console.log("category_overview", category_overview);
-				var __key = labels[canvasIndex];
-				/*
-				if(is_cosmo_mode) {
-					__key = language[lang][labels[canvasIndex]];
-				}
-				*/
-				_text += 
-					category_overview[__key]["correct"] + 
-					" " + 
-					language[lang]["of"] + 
-					" " + 
-					category_overview[__key]["total"] + 
-					" " + 
-					language[lang]["correct"] +
-					" (" + 
-					category_overview[__key]["percentage_correct"] + 
-					"%)"
-				;
-
-				//log("TEXT:", _text);
-				ctx.fillText(_text, canvas.width / 2, canvas.height - margin);
-			}
+		if(!category_overview) {
+			dbg("category_overview was empty");
+			continue;
 		}
+
+		var __key = labels[canvasIndex];
+		if(!Object.keys(category_overview).includes(__key)) {
+			if (__key == "fire") { __key = language[lang]["fire"]; }
+			else if (__key == "mandatory") { __key = language[lang]["mandatory"]; }
+			else if (__key == "prohibition") { __key = language[lang]["prohibition"]; }
+			else if (__key == "rescue") { __key = language[lang]["rescue"]; }
+			else if (__key == "warning") { __key = language[lang]["warning"]; }
+		}
+
+		if(!Object.keys(category_overview).includes(__key)) {
+			dbg("category_overview did not contain key " + __key);
+			continue;
+		}
+
+		var _d = category_overview[__key];
+
+		var _acc_text = 
+			_d["correct"] + 
+			" " + 
+			language[lang]["of"] + 
+			" " + 
+			_d["total"] + 
+			" " + 
+			language[lang]["correct"] +
+			" (" + 
+			_d["percentage_correct"] + 
+			"%)"
+		;
+
+		//log("TEXT:", _text);
+		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
 
 
@@ -1277,7 +1289,7 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 	}
 
 	// append each canvas to its corresponding element
-	for (let i = 0; i < (numCategories + 1); i++) {
+	for (let i = 0; i < numCategories; i++) {
 		var canvas = canvases[i];
 		if(canvas) {
 			//var containerId = "#canvas_grid_visualization_" + (i + 1);
@@ -1513,7 +1525,7 @@ async function visualize_train () {
 	}
 
 	if(imgs.length && categories.length && probabilities.length) {
-		draw_images_in_grid(imgs, categories, probabilities, labels.length, category_overview);
+		draw_images_in_grid(imgs, categories, probabilities, category_overview);
 	} else {
 		$("#canvas_grid_visualization").html("");
 	}

@@ -378,7 +378,7 @@ function find_unclicked_items ($x, possible_items) {
 			if(!is_possible) {
 				//if(get_element_xpath($x[0]).includes("start_stop_training")) {
 
-					//log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+				//log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 				//}
 				possible = false;
 			}
