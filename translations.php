@@ -305,7 +305,7 @@
 			'the_more_variations_the_model_sees' => 'Je mehr Variationen das Modell sieht, desto besser kann es die wichtigsten Merkmale der Bilder lernen.',
 			'quality_depends_on_random' => 'Die Qualität des Ergebnisses hängt vom Zufall ab.',
 			'program_looks_at_data' => 'Der Lernprozess (das Training) läuft jetzt und der Computer probiert durch Versuch und Irrtum sehr viele verschiedene Filterkonfigurationen aus.',
-			'the_further_on_top_the_better' => "<hr class='cosmo_hr'>Insbesondere am Anfang des Trainings werden viele Bilder noch in die eine falsche Kategorie eingeordnet. Im weiteren Verlauf wird dann zunehmend jeweils die richtige Kategorie zugeordnet, wobei diese Zuordnung auch immer zuverlässiger ist. Diese kategoriale Zuordnung ist umso zuverlässiger, je weiter ein Bild nach oben in den blauen Bereich wandert.",
+			'the_further_on_top_the_better' => "<hr class='cosmo_hr'>Insbesondere am Anfang des Trainings werden viele Bilder noch in die falsche Kategorie eingeordnet. Im weiteren Verlauf wird dann zunehmend jeweils die richtige Kategorie zugeordnet, wobei diese Zuordnung auch immer zuverlässiger ist. Diese kategoriale Zuordnung ist umso zuverlässiger, je weiter ein Bild nach oben in den blauen Bereich wandert.",
 			'add_category' => 'Kategorie hinzufügen',
 			'settings' => 'Einstellungen',
 			'description' => 'Be&shy;schrei&shy;bung',
