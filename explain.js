@@ -3021,42 +3021,8 @@ log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_la
 log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
 
-function extractCategoryFromURL(_url) {
-	try {
-		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
-
-		if (categoryMatch) {
-			const category = categoryMatch[1];
-			return category;
-		} else {
-			console.warn('Category not found in the URL:', _url);
-			return null; // Or handle the error in your specific way
-		}
-	} catch (error) {
-		console.error('Error while extracting category:', error);
-		return null; // Or handle the error in your specific way
-	}
-}
-
-function findIndexByKey(array, key) {
-	try {
-		assert(Array.isArray(array), "Input is not an array");
-		assert(typeof key === "string", "Key is not a string");
-
-		for (let i = 0; i < array.length; i++) {
-			if (array[i] === key) {
-				return i; // Found the key, return its index
-			}
-		}
-
-		assert(false, `Key ${key} not found in the array: ${JSON.stringify(array)}`);
-	} catch (error) {
-		console.log("Error:", error);
-		// Handle the error intelligently, log and/or perform other actions as needed
-	}
-}
-
-function predict_all_imgs (photos) {
+function _accuracy_rate_from_photos () {
+	var photos = $("#photos").find("img");
 	if(!finished_loading) {
 		info("Cannot determine accuracy rate before the site is fully loaded");
 		$("#show_current_accuracy").hide();
@@ -3069,11 +3035,7 @@ function predict_all_imgs (photos) {
 		return;
 	}
 
-	var total_wrong = 0;
-	var total_correct = 0;
 
-	var category_overview = {};
-	var predictions_tensors = [];
 
 	tidy(() => {
 		for (var i = 0; i < photos.length; i++) {
@@ -3102,78 +3064,6 @@ function predict_all_imgs (photos) {
 		if(typeof(i) == "function") {
 			continue;
 		}
-		try {
-			var src = photos[i].src;
-			if(src) {
-				var correct_category = extractCategoryFromURL(src);
-
-				if(is_cosmo_mode) {
-					correct_category = language[lang][correct_category];
-				}
-
-				var correct_index = -1;
-
-				try {
-					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], correct_category) % labels.length;
-				} catch (e) {
-					wrn("" + e);
-					return;
-				}
-
-				var predicted_tensor = predictions_tensors[i];
-
-				console.log("predicted_tensor:", predicted_tensor);
-
-				if(predicted_tensor === null) {
-					wrn("Predicted tensor was null");
-					return;
-				}
-
-				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
-
-				if(!Object.keys(category_overview).includes(correct_category)) {
-					category_overview[correct_category] = {
-						wrong: 0,
-						correct: 0
-					}
-				}
-
-				log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
-
-				if(predicted_index == correct_index) {
-					total_correct++;
-
-					category_overview[correct_category]["correct"]++;
-				} else {
-					total_wrong++;
-
-					category_overview[correct_category]["wrong"]++;
-				}
-			}
-		} catch (e) {
-			console.log(e);
-		}
 	}
 
-	for (var i = 0; i < Object.keys(category_overview).length; i++) {
-		var category = Object.keys(category_overview)[i];
-		category_overview[category]["total"] = category_overview[category]["wrong"] + category_overview[category]["correct"];
-	}
-
-	return {
-		"total_wrong": total_wrong,
-		"total_correct": total_correct,
-		"total": total_wrong + total_correct,
-		"percent_correct": parseInt(total_correct / (total_wrong + total_correct) * 100),
-		"category_overview": category_overview,
-	};
-}
-
-function _accuracy_rate_from_photos () {
-	var photos = $("#photos").find("img");
-	var res = predict_all_imgs(photos);
-
-	console.log(res);
-
-	return res;
 }

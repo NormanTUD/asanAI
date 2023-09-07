@@ -1157,7 +1157,7 @@ async function reset_on_error () {
 	link.href = 'favicon.ico';
 }
 
-function draw_images_in_grid (images, categories, probabilities, numCategories, acc_rate=null) {
+function draw_images_in_grid (images, categories, probabilities, numCategories, category_overview) {
 	$("#canvas_grid_visualization").html("");
 	var categoryNames = is_cosmo_mode ? labels : labels.slice(0, numCategories);
 	var margin = 40;
@@ -1239,19 +1239,19 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 			var _text = label;
 			ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
-			if(acc_rate) {
+			if(category_overview) {
 				_text = "";
-				console.log(acc_rate);
+				console.log("category_overview", category_overview);
 				_text += 
-					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["correct"] + 
+					category_overview[language[lang][labels[canvasIndex]]]["correct"] + 
 					" " + 
 					language[lang]["of"] + 
 					" " + 
-					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["total"] + 
+					category_overview[language[lang][labels[canvasIndex]]]["total"] + 
 					" " + 
 					language[lang]["correct"]
 					" (" + 
-					acc_rate["category_overview"][language[lang][labels[canvasIndex]]]["percent_correct"] + 
+					category_overview[language[lang][labels[canvasIndex]]]["percent_correct"] + 
 					"%)"
 				;
 
@@ -1318,9 +1318,42 @@ function draw_images_in_grid (images, categories, probabilities, numCategories, 
 
 }
 
-async function visualize_train () {
-	seed_two = 2;
+function extractCategoryFromURL(_url) {
+	try {
+		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
 
+		if (categoryMatch) {
+			const category = categoryMatch[1];
+			return category;
+		} else {
+			console.warn('Category not found in the URL:', _url);
+			return null; // Or handle the error in your specific way
+		}
+	} catch (error) {
+		console.error('Error while extracting category:', error);
+		return null; // Or handle the error in your specific way
+	}
+}
+
+function findIndexByKey(array, key) {
+	try {
+		assert(Array.isArray(array), "Input is not an array");
+		assert(typeof key === "string", "Key is not a string");
+
+		for (let i = 0; i < array.length; i++) {
+			if (array[i] === key) {
+				return i; // Found the key, return its index
+			}
+		}
+
+		assert(false, `Key ${key} not found in the array: ${JSON.stringify(array)}`);
+	} catch (error) {
+		console.log("Error:", error);
+		// Handle the error intelligently, log and/or perform other actions as needed
+	}
+}
+
+async function visualize_train () {
 	if(!$("#visualize_images_in_grid").is(":checked")) {
 		$("#canvas_grid_visualization").html("");
 		return;
@@ -1343,6 +1376,7 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
+
 
 	if(get_last_layer_activation_function() != "softmax") {
 		log_once("Train visualization only works when the last layer is softmax.");
@@ -1371,70 +1405,145 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").css({"opacity": "0.5"});
 	}
 
-	if(labels.length) {
-		var image_elements = $("#photos").find("img,canvas");
-		if(!image_elements.length) {
-			err("could not find image_elements");
-			return;
+	if(!labels.length) {
+		$("#canvas_grid_visualization").html("");
+
+		await nextFrame();
+
+		if(is_cosmo_mode) {
+			await fit_to_window();
 		}
-		for (var i = 0; i < image_elements.length; i++) {
-			var x = image_elements[i];
-			if(i <= max) {
-				tf.engine().startScope();
-				imgs.push(x);
 
-				if(!x) {
-					tf.engine().endScope();
-					wrn("x not defined!", x);
-					continue;
-				}
+		return;
+	}
 
-				var img_tensor = tidy(() => {
-					try {
-						var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
-						res = divNoNan(res, parse_float($("#divide_by").val()));
-						return res;
-					} catch (e) {
-						err(e);
-						return null;
-					}
-				});
+	var image_elements = $("#photos").find("img,canvas");
+	if(!image_elements.length) {
+		err("could not find image_elements");
+		return;
+	}
 
-				if(img_tensor === null) {
-					wrn("Could not load image from pixels from this element:", x);
-					continue;
-				}
+	var total_wrong = 0;
+	var total_correct = 0;
 
-				var res = tidy(() => { return model.predict(img_tensor) });
+	var category_overview = {};
+	var predictions_tensors = [];
 
-				var res_array = res.arraySync()[0];
+	for (var i = 0; i < image_elements.length; i++) {
+		var x = image_elements[i];
+		if(i <= max) {
+			tf.engine().startScope();
+			imgs.push(x);
 
-				var probability = Math.max(...res_array);
-				var category = res_array.indexOf(probability);
-
-				categories.push(category);
-				probabilities.push(probability);
-
-				await dispose(res);
-				await dispose(img_tensor)
+			if(!x) {
 				tf.engine().endScope();
+				wrn("x not defined!", x);
+				continue;
 			}
+
+			var img_tensor = tidy(() => {
+				try {
+					var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
+					res = divNoNan(res, parse_float($("#divide_by").val()));
+					return res;
+				} catch (e) {
+					err(e);
+					return null;
+				}
+			});
+
+			if(img_tensor === null) {
+				wrn("Could not load image from pixels from this element:", x);
+				continue;
+			}
+
+			var res = tidy(() => { return model.predict(img_tensor) });
+			predictions_tensors.push(res.arraySync()[0]);
+
+			var res_array = res.arraySync()[0];
+
+			var probability = Math.max(...res_array);
+			var category = res_array.indexOf(probability);
+
+			categories.push(category);
+			probabilities.push(probability);
+
+			await dispose(res);
+			await dispose(img_tensor)
+			tf.engine().endScope();
 		}
 
-		if(imgs.length && categories.length && probabilities.length) {
-			var acc_rate = await _accuracy_rate_from_photos();
-			draw_images_in_grid(imgs, categories, probabilities, labels.length, acc_rate);
-		} else {
-			$("#canvas_grid_visualization").html("");
+		try {
+			var src = x.src;
+			if(src) {
+				var correct_category = extractCategoryFromURL(src);
+
+				if(is_cosmo_mode) {
+					correct_category = language[lang][correct_category];
+				}
+
+				var correct_index = -1;
+
+				try {
+					correct_index = findIndexByKey([...labels, ...cosmo_categories, ...original_labels], correct_category) % labels.length;
+				} catch (e) {
+					wrn("" + e);
+					return;
+				}
+
+				var predicted_tensor = predictions_tensors[i];
+
+				console.log("predicted_tensor:", predicted_tensor);
+
+				if(predicted_tensor === null) {
+					wrn("Predicted tensor was null");
+					return;
+				}
+
+				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
+
+				if(!Object.keys(category_overview).includes(correct_category)) {
+					category_overview[correct_category] = {
+						wrong: 0,
+						correct: 0
+					}
+				}
+
+				log("correct_category " + correct_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+
+				if(predicted_index == correct_index) {
+					total_correct++;
+
+					category_overview[correct_category]["correct"]++;
+				} else {
+					total_wrong++;
+
+					category_overview[correct_category]["wrong"]++;
+				}
+			}
+		} catch (e) {
+			console.log(e);
 		}
+
+	}
+
+	for (var i = 0; i < Object.keys(category_overview).length; i++) {
+		var category = Object.keys(category_overview)[i];
+		category_overview[category]["total"] = category_overview[category]["wrong"] + category_overview[category]["correct"];
+	}
+
+	if(imgs.length && categories.length && probabilities.length) {
+		draw_images_in_grid(imgs, categories, probabilities, labels.length, category_overview);
 	} else {
 		$("#canvas_grid_visualization").html("");
 	}
 
 	await nextFrame();
 
-
 	if(is_cosmo_mode) {
 		await fit_to_window();
 	}
+
+
+	await delay(1000);
 }
