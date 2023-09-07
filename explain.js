@@ -3169,7 +3169,7 @@ function predict_all_imgs (photos) {
 	};
 }
 
-async function _accuracy_rate_from_photos () {
+function _accuracy_rate_from_photos () {
 	var photos = $("#photos").find("img");
 	var res = predict_all_imgs(photos);
 
