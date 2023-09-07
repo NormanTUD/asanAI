@@ -30,7 +30,7 @@ async function get_label_data () {
 
 }
 
-var loadFile = (function(event) {
+var load_file = (function(event) {
 	var output = document.getElementById("output");
 	$("#output").removeAttr("src");
 
