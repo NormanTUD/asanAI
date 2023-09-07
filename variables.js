@@ -1425,7 +1425,7 @@ var finished_loading = false;
 
 var generating_images = false;
 
-async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _vs) {
+async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _vs, _bs) {
 	log(`_cosmo_set_environment (_ep = ${_ep}, _max_number_of_files_per_category = ${_max_number_of_files_per_category}, _vs = ${_vs})`);
 
 	await set_epochs(_ep);
@@ -1434,6 +1434,8 @@ async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _
 	$("#number_of_images_per_category").html(_max_number_of_files_per_category);
 
 	set_validation_split(_vs);
+
+	set_batch_size(_bs)
 }
 
 async function cosmo_stage_one () {
@@ -1442,7 +1444,8 @@ async function cosmo_stage_one () {
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category", 20));
 	var _vs = 0;
 
-	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
+
+	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 1);
 
 	current_cosmo_stage = 1;
 }
@@ -1461,7 +1464,7 @@ async function cosmo_stage_two () {
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 40)));
 	var _vs = 15;
 
-	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs);
+	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 10);
 	current_cosmo_stage = 2;
 }
 
