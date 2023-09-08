@@ -405,6 +405,10 @@ function get_fit_data () {
 				await repredict();
 			}
 		}
+
+		if(is_cosmo_mode) {
+			await visualize_train();
+		}
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
