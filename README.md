@@ -1,8 +1,8 @@
 # Dedication
 
-This software is dedicated to my mother, who died on the 31st of march 2022 after a long struggle against cancer.
+This software is dedicated to my mother, who died on the 31st of march 2022 after a long and brave fight against cancer.
 
-# TensorFlow.js Demonstrator
+# asanAI
 
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
 fully in your browser.
@@ -24,7 +24,7 @@ firefox localhost:$LOCAL_PORT/
 
 # Status
 
-This is a very early alpha.
+This is an alpha.
 
 # Screenshots
 
