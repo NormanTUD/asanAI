@@ -408,7 +408,9 @@ function get_fit_data () {
 
 		if(is_cosmo_mode) {
 			$("#cosmo_training_grid_stage_explanation").show();
-			await visualize_train();
+			if(current_cosmo_stage == 1) {
+				await visualize_train();
+			}
 		}
 	};
 
