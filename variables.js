@@ -1441,7 +1441,7 @@ async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _
 async function cosmo_stage_one () {
 	log("Cosmo stage 1");
 	var _ep  = parse_int(get_get("epochs", 5));
-	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category", 20));
+	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category", 15));
 	var _vs = 0;
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 10);
