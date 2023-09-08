@@ -1452,13 +1452,13 @@ async function cosmo_stage_one () {
 async function cosmo_stage_three () {
 	log("Cosmo stage 3");
 
-	var _ep  = parse_int(get_get("epochs_stage_2", get_get("epochs", 20)));
+	var _ep  = parse_int(get_get("epochs_stage_3", get_get("epochs", 20)));
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 50)));
 	var _vs = 15
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 20);
 
-	current_cosmo_stage = 3;
+	current_cosmo_stage = 2;
 }
 
 async function cosmo_stage_two () {
