@@ -305,8 +305,8 @@ text-align: end;
 			<span id='cosmo_mode_header_line' style="display: none" class="show_in_cosmo_mode">
 				<img id="scads_logo_cosmo_mode" src="gui/scads_logo.svg" />
 				<img src="gui/logo_small.png" id="asanai_logo_cosmo" />
-				<img style="display: none" id="set_german_language" onclick='set_lang("de")' src='lang/_de.svg' />
-				<img style="display: none" id="set_english_language" style="" onclick='set_lang("en")' src='lang/_en.svg' />
+				<img id="set_german_language" onclick='set_lang("de")' src='lang/_de.svg' />
+				<img id="set_english_language" onclick='set_lang("en")' src='lang/_en.svg' />
 				<a><img onclick='emergency_button()' id="emergency_button" src="lang/__de__notaus.png" /></a><br>
 			</span>
 			<div id="ribbon_shower" class="user_select_none">
