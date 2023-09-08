@@ -27,7 +27,11 @@ function logt(...msg) {
 
 function info (...args) {
 	args.forEach(arg => console.info(arg));
-	args.forEach(arg => l("[INFO] " + arg));
+	args.forEach((arg) => {
+		if(arg) {
+			l("[INFO] " + arg)
+		}
+	});
 
 	if(enable_log_trace) {
 		console.trace();
@@ -45,7 +49,11 @@ function info (...args) {
 
 function err (...args) {
 	args.forEach(arg => console.error(arg));
-	args.forEach(arg => l("[ERROR] " + arg));
+	args.forEach((arg) => {
+		if(arg) {
+			l("[ERROR] " + arg)
+		}
+	});
 
 	if(enable_log_trace) {
 		console.trace();
@@ -63,7 +71,11 @@ function err (...args) {
 
 function wrn (...args) {
 	args.forEach(arg => console.warn(arg));
-	args.forEach(arg => l("[WARN] " + arg));
+	args.forEach((arg) => {
+		if(arg) {
+			l("[WARN] " + arg)
+		}
+	});
 
 	if(enable_log_trace) {
 		console.trace();
@@ -116,7 +128,15 @@ function log_less (...args) {
 
 function log (...args) {
 	args.forEach(arg => console.log(arg));
-	args.forEach(arg => l(arg));
+	args.forEach((arg) => {
+		if(arg) {
+			if(typeof arg == "string") {
+				l(arg)
+			} else {
+				console.log(arg);
+			}	
+		}
+	});
 
 	if(enable_log_trace) {
 		console.trace();
