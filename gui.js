@@ -6036,7 +6036,7 @@ function load_msg(swal_msg_format) {
 	}
 
 	if(finished_loading) {
-		_overlay = show_overlay(swal_msg_format["html"] ?? "", swal_msg_format["title"] ?? "");
+		_overlay = show_overlay(swal_msg_format["html"] ? swal_msg_format["html"] : "", swal_msg_format["title"] ? swal_msg_format["title"] : "");
 	} else {
 		var html_msg = "";
 		if(Object.keys(swal_msg_format).includes("title")) {
