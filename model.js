@@ -1,32 +1,5 @@
 "use strict";
 
-function get_expected_input_shape_without_batch_as_string () {
-	if(!model) {
-		wrn("No model found");
-		return "";
-	}
-
-	if(!model.input) {
-		wrn("No model.input found");
-		return "";
-	}
-
-	if(!model.input.shape) {
-		wrn("No model.input.shape found");
-		return "";
-	}
-
-	var inputWithoutBatch = [];
-	model.input.shape.forEach((i, x) => {
-		if(i) {
-			inputWithoutBatch.push(i);
-		}
-	});
-
-	inputWithoutBatch = inputWithoutBatch.join(", ")
-	return inputWithoutBatch;
-}
-
 async function except (errname, e) {
 	$(".overlay").remove()
 
@@ -120,6 +93,7 @@ async function _create_model () {
 		add_layer_debuggers();
 	}
 
+	add_optimizer_debugger();
 }
 
 async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
@@ -1417,17 +1391,6 @@ async function get_weights_as_string (m) {
 
 
 	return res;
-}
-
-async function copy_weights_to_clipboard () {
-	copy_to_clipboard(await get_weights_as_string());
-
-	Swal.fire(
-		'Done!',
-		'Copied weights to clipboard',
-		'success'
-	);
-
 }
 
 function download(filename, text) {

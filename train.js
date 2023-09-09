@@ -665,21 +665,6 @@ function _set_apply_to_original_apply () {
 
 }
 
-async function _create_and_compile_model () {
-	try {
-		[model, global_model_data] = await create_model(model);
-	} catch (e) {
-		throw new Error("Creating model failed: " + e);
-	}
-
-	try {
-		await compile_model();
-	} catch (e) {
-		throw new Error("Compiling model failed: " + e);
-	}
-
-}
-
 async function _get_xs_and_ys (recursive=0) {
 	var xs_and_ys = false;
 	try {

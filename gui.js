@@ -85,19 +85,6 @@ function get_dimensionality_from_layer_name(layer_type) {
 	return null;
 }
 
-function get_full_shape_from_file(file) {
-	if (file === null) {
-		return null;
-	}
-	var input_shape_line = file.split("\n")[0];
-	var shape_match = /^#\s*shape \((.*)\)$/.exec(input_shape_line);
-	if (1 in shape_match) {
-		return shape_match[1];
-	}
-
-	return null;
-}
-
 async function md5 (content) {
 	var res = await hashwasm.md5(content);
 
@@ -558,16 +545,6 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 	}
 
 	//await updated_page();
-}
-
-async function get_number_of_training_items() {
-	let training_data = await _get_training_data();
-	var keys = Object.keys(training_data);
-	var number = 0;
-	for (var key in keys) {
-		number += Object.entries(training_data)[key][1].length;
-	}
-	return number;
 }
 
 async function get_json(url) {
@@ -2869,16 +2846,6 @@ async function change_metrics() {
 	await updated_page(1);
 }
 
-function get_activation_list() {
-	var array = [];
-	layer_names.forEach(function eachKey(key) {
-		if (layer_options[key]["category"] == "Activation") {
-			array.push(key);
-		}
-	})
-	return array;
-}
-
 function change_favicon(path) {
 	assert(typeof (path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof (path));
 
@@ -3556,16 +3523,6 @@ function enable_start_training_custom_tensors() {
 
 	current_status_hash = "";
 
-}
-
-function get_sum_of_items_childrens_width(item) {
-	var total_width = 0;
-
-	$(item).each(function (index) {
-		total_width += parse_int($(this).width(), 10);
-	});
-
-	return total_width;
 }
 
 function get_chosen_dataset() {
@@ -5571,16 +5528,6 @@ function get_last_layer_activation_function () {
 	return res;
 }
 
-function get_layer_nr_by_name (layer_name) {
-	for (var i = 0; i < model.layers.length; i++) {
-		if(model.layers[i].getConfig().name == layer_name) {
-			return i;
-		}
-	}
-
-	return -1;
-}
-
 function set_layer_background(nr, color) {
 	$($(".layer_setting")[nr]).css("background-color", color)
 }
@@ -5594,10 +5541,6 @@ function set_model_layer_warning(i, warning) {
 	} else {
 		$($(".warning_layer")[i]).html("").hide().parent().hide();
 	}
-}
-
-async function download_current_data_as_json () {
-	download("data.json", JSON.stringify(await get_x_y_as_array()))
 }
 
 async function download_model_for_training (m) {
@@ -5861,18 +5804,6 @@ async function create_zip_with_custom_images () {
 	}
 	var res = zipWriter.close();
 	return res;
-}
-
-function download_file(blob) {
-	var new_child = Object.assign(document.createElement("a"), {
-		className: "download_link",
-		download: "custom_images.zip",
-		href: URL.createObjectURL(blob),
-		textContent: "Download zip file",
-	});
-
-	$("#download_zip_file").html(new_child);
-
 }
 
 function save_file (name, type, data) {

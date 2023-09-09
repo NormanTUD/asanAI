@@ -1,12 +1,5 @@
 "use strict";
 
-function get_number_of_images_per_layer (layer) {
-	var res = $($(".image_grid")[layer]).children().length + $($(".input_image_grid")[layer]).children.length;
-
-
-	return res;
-}
-
 function normalize_to_rgb_min_max (x, min, max) {
 	var val = parse_int(255 * (x - min) / (max - min));
 	if(val > 255) {
@@ -1009,24 +1002,6 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 }
 
 /* This function gets an image from a URL. It uses the load_image function to load the image, and then uses fromPixels to convert it to a TensorFlow image. Next, it resizes the image using the nearest neighbor algorithm, and then expands the dimensions of the image. Finally, it returns the image. */
-
-async function get_image_from_url (url) {
-	var tf_img = (async () => {
-		let img = await load_image(url);
-		tf_img = fromPixels(img);
-		var resized_img = tf_img.
-			resizeNearestNeighbor([height, width]).
-			toFloat().
-			expandDims();
-		if($("#divide_by").val() != 1) {
-			resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
-		}
-		return resized_img;
-	})();
-
-
-	return tf_img;
-}
 
 function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
@@ -2964,50 +2939,3 @@ log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
 log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
 log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
-
-function _accuracy_rate_from_photos () {
-	var photos = $("#photos").find("img");
-	if(!finished_loading) {
-		info("Cannot determine accuracy rate before the site is fully loaded");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-	if(!is_classification) {
-		info("Cannot get accuracy rate if the network is not classification");
-		$("#show_current_accuracy").hide();
-		return;
-	}
-
-
-
-	tidy(() => {
-		for (var i = 0; i < photos.length; i++) {
-			if(typeof(i) == "function") {
-				continue;
-			}
-
-			var this_img_tensor = resizeBilinear(fromPixels(photos[i]), [model.input.shape[1], model.input.shape[2]]).expandDims();
-
-			try {
-				var _pred = model.predict(this_img_tensor).arraySync()[0];
-				predictions_tensors.push(_pred);
-			} catch (e) {
-				throw new Error(e);
-			}
-		}
-	});
-
-	if(!predictions_tensors) {
-		wrn("Could not get predictions tensor");
-		return;
-	}
-
-
-	for (var i in photos) {
-		if(typeof(i) == "function") {
-			continue;
-		}
-	}
-
-}

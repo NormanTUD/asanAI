@@ -294,24 +294,6 @@ function FCNN() {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-				  ///////    Focus    ///////
-	/////////////////////////////////////////////////////////////////////////////
-
-	/*
-	function set_focus(d) {
-		d3.event.stopPropagation();
-		node.style("opacity", function(o) { return (d == o || o.layer == d.layer - 1) ? 1 : 0.1; });
-		link.style("opacity", function(o) { return (o.target == d.id) ? 1 : 0.02; });
-	}
-
-	function remove_focus() {
-		d3.event.stopPropagation();
-		node.style("opacity", 1);
-		link.style("opacity", function () { return edgeOpacity; })
-	}
-	*/
-
-	/////////////////////////////////////////////////////////////////////////////
 				  ///////    Zoom & Resize   ///////
 	/////////////////////////////////////////////////////////////////////////////
 

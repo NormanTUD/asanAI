@@ -1642,3 +1642,7 @@ async function get_own_tensor_data (element) {
 	log([tensor_array, latex])
 	return [tensor_array, latex];
 }
+
+/*
+	TODO: await get_own_tensor_data()
+*/

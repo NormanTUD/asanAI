@@ -1,31 +1,3 @@
-function get_color_coded_neurons (number_of_layers) {
-	var colors = [
-		{ "number": 1000, "color": "red" },
-		{ "number": 100, "color": "yellow" },
-		{ "number": 10, "color": "blue" }
-	];
-
-	var left = number_of_layers;
-
-	var results = [];
-
-	for (var i = 0; i < colors.length; i++) {
-		var number = colors[i]["number"];
-		var color = colors[i]["color"];
-
-		while (left > number) {
-			results.push(color);
-			left = left - number;
-		}
-	}
-
-	for (var i = 0; i < left; i++) {
-		results.push("white");
-	}
-
-	return results;
-}
-
 var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function')
 var local_store = window.localStorage;
 local_store.clear();

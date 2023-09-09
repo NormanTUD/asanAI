@@ -149,10 +149,6 @@ function log (...args) {
 	_full_debug_log.push(struct);
 }
 
-function header_warning (msg) {
-	log("%c" + msg, "background: orange; color: black");
-}
-
 function header_error (msg) {
 	log("%c" + msg, "background: red; color: white");
 }
@@ -177,15 +173,6 @@ function headerdatadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
 		log("%c" + msg, "background: #222; color: #bada55");
 	}
-}
-function headerguidebug (msg) {
-	if (window.location.href.indexOf("guidebug") > -1) {
-		log("%c" + msg, "background: #222; color: #bada55");
-	}
-}
-
-function get_current_model_weights_identifier () {
-	tf.sum(model.layers[0].getWeights()[0]).print();
 }
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
