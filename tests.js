@@ -134,7 +134,7 @@ async function run_tests () {
 			test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array('[1,2,3]'), [1,2,3]);
 			test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array('[1,2,3,5]'), [1,2,3,5]);
 
-			dispose(test_tensor);
+			await dispose(test_tensor);
 
 			log_test("GUI functions");
 			var example_div = $("<div id='example_test_div' />").appendTo($("body"));
@@ -235,18 +235,18 @@ async function run_tests () {
 			test_equal('heuristic_layer_possibility_check(0, "flatten")', heuristic_layer_possibility_check(0, "flatten"), true);
 			test_equal('heuristic_layer_possibility_check(0, "dense")', heuristic_layer_possibility_check(0, "dense"), true);
 
-			var fit_data = get_fit_data();
+			var fit_data = await get_fit_data();
 
-			test_equal("keys get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\",\"yieldEvery\"]");
+			test_equal("keys await get_fit_data()", JSON.stringify(Object.keys(fit_data)), "[\"validationSplit\",\"batchSize\",\"epochs\",\"shuffle\",\"verbose\",\"callbacks\",\"yieldEvery\"]");
 
 			["batchSize", "epochs", "validationSplit"].forEach(function (item) {
-				test_equal("typeof(get_fit_data()['" + item + "']) == number", typeof(fit_data[item]), "number");
+				test_equal("typeof(await get_fit_data()['" + item + "']) == number", typeof(fit_data[item]), "number");
 			});
 
 			var callbacks_list = fit_data["callbacks"];
 
 			Object.keys(callbacks_list).forEach(function (item) {
-				test_equal("typeof(get_fit_data()['" + callbacks_list[item] + "']) == 'function')", typeof(callbacks_list[item]), "function");
+				test_equal("typeof(await get_fit_data()['" + callbacks_list[item] + "']) == 'function')", typeof(callbacks_list[item]), "function");
 			});
 
 			log_test("Test Training Logic");
@@ -401,7 +401,7 @@ async function run_tests () {
 			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
-			updated_page();
+			await updated_page();
 
 			$("[href='#predict_tab']").click()
 			await delay(5000);

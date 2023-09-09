@@ -14,7 +14,7 @@ async function gui_not_in_training (set_started_training=1) {
 		started_training = false;
 	}
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-	update_translations();
+	await update_translations();
 	favicon_default();
 
 	try {
@@ -156,7 +156,7 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			//show_tab_label("predict_tab", 1);
+			//await show_tab_label("predict_tab", 1);
 
 			//set_right_border_between_example_predictions();
 
@@ -175,7 +175,7 @@ async function train_neural_network () {
 
 			await fit_to_window();
 
-			chose_next_manicule_target();
+			await chose_next_manicule_target();
 
 			if(!already_moved_to_predict_for_cosmo && 0) {
 				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
@@ -188,7 +188,7 @@ async function train_neural_network () {
 			}
 			*/
 		} else {
-			show_tab_label("predict_tab", jump_to_interesting_tab());
+			await show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
 
 		await enable_everything();
@@ -210,7 +210,7 @@ async function train_neural_network () {
 	await save_current_status();
 
 	if(is_cosmo_mode) {
-		chose_next_manicule_target();
+		await chose_next_manicule_target();
 	}
 
 }
@@ -288,7 +288,7 @@ function delay(time) {
 	return new Promise(resolve => setTimeout(resolve, time));
 }
 
-function get_fit_data () {
+async function get_fit_data () {
 	var epochs = get_epochs();
 	var batchSize = get_batch_size();
 	var validationSplit = parse_int($("#validationSplit").val()) / 100;
@@ -300,7 +300,7 @@ function get_fit_data () {
 		this_training_start_time = Date.now()
 		$(".training_performance_tabs").show();
 
-		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		$("#network_has_seen_msg").hide();
 
@@ -323,7 +323,7 @@ function get_fit_data () {
 
 
 		if(is_cosmo_mode) {
-			show_tab_label("tfvis_tab_label", 1);
+			await show_tab_label("tfvis_tab_label", 1);
 		}
 	};
 
@@ -477,7 +477,7 @@ function get_fit_data () {
 				move_element_to_another_div(elem, to)
 
 				await repredict();
-				update_translations();
+				await update_translations();
 
 			*/
 			} else {
@@ -534,9 +534,9 @@ function get_fit_data () {
 		favicon_default();
 		await write_model_to_latex_to_page();
 		document.title = original_title;
-		restart_fcnn();
-		restart_lenet();
-		restart_alexnet();
+		await restart_fcnn();
+		await restart_lenet();
+		await restart_alexnet();
 
 		$("#tiny_graph").hide();
 
@@ -689,7 +689,7 @@ async function _get_xs_and_ys (recursive=0) {
 		await disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
-		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
 		if(("" + e).includes("n is undefined") && recursive == 0) {
@@ -715,7 +715,7 @@ async function _get_xs_and_ys (recursive=0) {
 		favicon_default();
 		await write_descriptions();
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-		update_translations();
+		await update_translations();
 		started_training = false;
 		return false;
 	}
@@ -773,11 +773,11 @@ async function _get_fit_data (xs_and_ys) {
 	try {
 		add_layer_debuggers();
 
-		fit_data = get_fit_data();
+		fit_data = await get_fit_data();
 
 		await _show_or_hide_simple_visualization(fit_data, xs_and_ys);
 
-		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 	} catch (e) {
 		await write_error_and_reset(e);
@@ -957,7 +957,7 @@ async function run_neural_network (recursive=0) {
 	}
 
 	$(".train_neural_network_button").html("<span class='TRANSLATEME_stop_training'></span>").removeClass("start_training").addClass("stop_training");
-	update_translations();
+	await update_translations();
 
 	_set_apply_to_original_apply();
 
@@ -988,7 +988,7 @@ async function run_neural_network (recursive=0) {
 
 		var fit_data = await _get_fit_data(xs_and_ys);
 
-		show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		try {
 			await compile_model();

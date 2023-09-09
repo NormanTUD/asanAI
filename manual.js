@@ -432,7 +432,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			var id = uuidv4()
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
 			draw_grid($("#" + id)[0], 1, _tensor.arraySync()[i], 1, 1, "", "");
-			toPixels(_tensor, canvas);
+			await toPixels(_tensor, canvas);
 		}
 	}
 

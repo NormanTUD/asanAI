@@ -1463,7 +1463,7 @@ async function cosmo_stage_three () {
 
 async function cosmo_stage_two () {
 	log("Cosmo stage 2");
-	set_retrain_button();
+	await set_retrain_button();
 
 	var _ep  = parse_int(get_get("epochs_stage_2", get_get("epochs", 20)));
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 15)));
@@ -1507,10 +1507,10 @@ function set_augment_for_cosmo () {
 	$("#augment_invert_images").attr("checked", 1).trigger("change");
 }
 
-function set_retrain_button () {
+async function set_retrain_button () {
 	var html = "<span class='TRANSLATEME_train_further'></span>";
 	$("#train_train_further").html(html);
-	update_translations();
+	await update_translations();
 }
 
 var cosmo_functions_at_milestones = {

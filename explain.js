@@ -570,8 +570,7 @@ async function write_descriptions (force=0) {
 		$(".descriptions_of_layers").show();
 	}
 
-	update_translations();
-
+	await update_translations();
 }
 
 function explain_error_msg (err) {
@@ -1092,7 +1091,7 @@ function _get_neurons_last_layer (layer, type) {
 
 async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	if(!is_cosmo_mode) {
-		show_tab_label("maximally_activated_label", 1);
+		await show_tab_label("maximally_activated_label", 1);
 		window.scrollTo(0,0);
 
 		await nextFrame();
@@ -1143,7 +1142,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 			continue;
 		}
 
-		_show_eta(times, i, neurons);
+		await show_eta(times, i, neurons);
 
 		var start = Date.now();
 
@@ -1233,7 +1232,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	return canvasses;
 }
 
-function _show_eta (times, i, neurons) {
+async function _show_eta (times, i, neurons) {
 	var eta = "";
 	if(times.length) {
 		eta = " (" + human_readable_time(parse_int((neurons - i) * median(times))) + " " + language[lang]["left"] + ")";
@@ -1263,10 +1262,9 @@ function _show_eta (times, i, neurons) {
 	$("#current_image").remove();
 
 	if(!is_cosmo_mode) {
-		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
-		show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		await show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+		await show_tab_label("maximally_activated_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	}
-
 }
 
 async function predict_maximally_activated (item, force_category) {
@@ -1312,7 +1310,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				var t_str = tensor_print_to_string(_tensor);
 				log("Maximally activated tensors:", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
-				show_tab_label("maximally_activated_label", 1)
+				await show_tab_label("maximally_activated_label", 1)
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
@@ -1333,7 +1331,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				if(res) {
 					if(!is_cosmo_mode) {
 						$("#maximally_activated_content").prepend(canvas);
-						show_tab_label("maximally_activated_label", 1)
+						await show_tab_label("maximally_activated_label", 1)
 					}
 				} else {
 					log("Res: ", res);
@@ -1342,8 +1340,8 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		}
 	} catch (e) {
 		await write_error(e);
-		show_tab_label("visualization_tab", 1);
-		show_tab_label("fcnn_tab_label", 1);
+		await show_tab_label("visualization_tab", 1);
+		await show_tab_label("fcnn_tab_label", 1);
 		return false;
 	}
 
@@ -2227,9 +2225,9 @@ function can_be_shown_in_latex () {
 async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 	if(!can_be_shown_in_latex()) {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab")[0])) {
-			show_tab_label("math_tab_label", 1);
+			await show_tab_label("math_tab_label", 1);
 		} else {
-			hide_tab_label("math_tab_label");
+			await hide_tab_label("math_tab_label");
 		}
 		return;
 	}
@@ -2248,7 +2246,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			show_tab_label("math_tab_label");
+			await show_tab_label("math_tab_label");
 
 			var math_tab_code_elem = $("#math_tab_code")[0];
 
@@ -2268,7 +2266,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 						throw new Error(e);
 					}
 				}
-				show_tab_label("math_tab_label");
+				await show_tab_label("math_tab_label");
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
@@ -2279,7 +2277,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 			}
 		}
 	} else {
-		hide_tab_label("math_tab_label");
+		await hide_tab_label("math_tab_label");
 	}
 }
 
@@ -2768,7 +2766,7 @@ function _create_table_cosmo (pgi, style="") {
 	return res;
 }
 
-function toggle_previous_current_generated_images () {
+async function toggle_previous_current_generated_images () {
 	if(!$("#current_images").is(":visible")) {
 		$("#previous_images_button").html("&#x2190; <span class='TRANSLATEME_previous_images'></span>");
 		$("#previous_images").hide();
@@ -2806,7 +2804,7 @@ function toggle_previous_current_generated_images () {
 		$("#previous_images").show();
 	}
 
-	update_translations();
+	await update_translations();
 
 	fit_to_window(); // await not possible
 }
@@ -2893,7 +2891,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	$("#previous_images_button").on("click", toggle_previous_current_generated_images);
 
-	update_translations();
+	await update_translations();
 	await fit_to_window();
 
 	var ep = get_epochs();
@@ -2905,7 +2903,7 @@ async function cosmo_maximally_activate_last_layer () {
 
 	if(current_cosmo_stage == 1) {
 		$(".h2_maximally_activated_layer_contents").before(`<span class='TRANSLATEME_the_training_was_only_with'></span> ${images_in_total} <span class='TRANSLATEME_images_and'></span> ${nr_epochs} <span class='TRANSLATEME_epochs_done'></span>.<br><span class='it_might_only_be_noise'></span><hr class="cosmo_hr">${str}`);
-		update_translations();
+		await update_translations();
 	} else {
 		$(".h2_maximally_activated_layer_contents").before(str);
 	}
@@ -2914,9 +2912,9 @@ async function cosmo_maximally_activate_last_layer () {
 
 	generating_images = false;
 
-	chose_next_manicule_target();
+	await chose_next_manicule_target();
 
-	update_translations();
+	await update_translations();
 
 	//$("#__tmp__prev_generated").remove();
 }

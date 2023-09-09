@@ -11,12 +11,12 @@ async function add_cosmo_point (name, show_manicule=1) {
 		cosmo_debugger();
 
 		if(show_manicule) {
-			chose_next_manicule_target();
+			await chose_next_manicule_target();
 		}
 
 		if(name == "eigene_webcam") {
 			/*
-			chose_next_manicule_target = function () {
+			await chose_next_manicule_target = function () {
 				log("Hack to get infinite loop...");
 			}
 			*/
@@ -420,7 +420,7 @@ function find_unclicked_items ($x, possible_items) {
 	return possible_items;
 }
 
-function chose_next_manicule_target () {
+async function chose_next_manicule_target () {
 	if(in_fireworks) {
 		log("Not chosing manicule because a firework is showing");
 		remove_manicule();
@@ -482,7 +482,7 @@ function chose_next_manicule_target () {
 		$(this).attr("data-clicked", 1)
 	});
 
-	set_text_for_elements_depending_on_cosmo_level();
+	await set_text_for_elements_depending_on_cosmo_level();
 
 	fit_to_window(); // no await possible
 }
@@ -651,7 +651,7 @@ async function cosmo_mode () {
 
 	$(".show_only_in_cosmo_mode").show();
 
-	run_presentation('cosmo_presentation');
+	await run_presentation('cosmo_presentation');
 
 	$(".glass_box").css("border", "none");
 	$(".glass_box").css("box-shadow", "none");
@@ -683,9 +683,9 @@ async function cosmo_mode () {
 
 	$("#emergency_button").css("display", "inline-block");
 
-	window.setInterval(function () {
+	window.setInterval(async function () {
 		if(!is_presenting && (manicule === null || manicule === undefined)) {
-			chose_next_manicule_target();
+			await chose_next_manicule_target();
 		}
 	}, 1000);
 
@@ -869,7 +869,7 @@ async function switch_predict_mode () {
 
 	await add_cosmo_point("toggled_webcam");
 
-	update_translations();
+	await update_translations();
 
 	return ret;
 }
@@ -925,8 +925,8 @@ function parse_text_for_item_cosmo_level (inputString) {
 	return result;
 }
 
-function set_text_for_elements_depending_on_cosmo_level () {
-	$(".cosmo_autoset_text").each((i, e) => {
+async function set_text_for_elements_depending_on_cosmo_level () {
+	$(".cosmo_autoset_text").each(async (i, e) => {
 		var cosmo_level_text = $(e).attr("data-cosmo_level_text");
 		if(cosmo_level_text) {
 			var parsed = parse_text_for_item_cosmo_level(cosmo_level_text);
@@ -940,7 +940,7 @@ function set_text_for_elements_depending_on_cosmo_level () {
 					if(Object.keys(current_skills).includes(element_skill_name)) {
 						if(parse_int(current_skills[element_skill_name]) == parse_int(element_skill_level)) {
 							$(e).html(parsed[element_skill_name][element_skill_level]);
-							update_translations();
+							await update_translations();
 						}
 					}
 				}

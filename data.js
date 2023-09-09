@@ -144,7 +144,7 @@ async function _get_urls_and_keys () {
 	return [urls, keys, data];
 }
 
-function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
+async function _get_set_percentage_text (percentage, i, urls_length, percentage_div, old_percentage, times) {
 	var percentage_text = percentage + "% (" + (i + 1) + "/" + urls_length + ")...";
 
 	var eta;
@@ -159,7 +159,7 @@ function _get_set_percentage_text (percentage, i, urls_length, percentage_div, o
 	}
 
 	percentage_div.html(percentage_text);
-	update_translations();
+	await update_translations();
 
 	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
 		var remaining_items = urls_length - i;
@@ -238,7 +238,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 				if(!skip_real_image_download) {
 					try {
-						old_percentage = _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
+						old_percentage = await _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf);
 						//log("tf_data:", tf_data);
@@ -461,14 +461,14 @@ async function get_xs_and_ys () {
 
 	if($("#jump_to_interesting_tab").is(":checked")) {
 		if(data_origin == "default") {
-			show_tab_label("training_data_tab_label", 1);
+			await show_tab_label("training_data_tab_label", 1);
 		} else if(data_origin == "csv") {
-			show_tab_label("own_csv_data_label", 0)
-			show_tab_label("tfvis_tab_label", 1);
+			await show_tab_label("own_csv_data_label", 0)
+			await show_tab_label("tfvis_tab_label", 1);
 		} else if (data_origin == "image") {
-			show_tab_label("own_image_data_label", 1);
+			await show_tab_label("own_image_data_label", 1);
 		} else if (data_origin == "tensordata") {
-			show_tab_label("own_tensor_data_label", 1);
+			await show_tab_label("own_tensor_data_label", 1);
 		} else {
 			log("Invalid option " + data_origin);
 		}
@@ -1374,7 +1374,7 @@ async function take_image_from_webcam_n_times (elem) {
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
 			l("Taking image " + (i + 1) + "/" + number);
-			update_translations();
+			await update_translations();
 			await take_image_from_webcam(elem, 1, i == 0);
 			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);

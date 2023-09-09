@@ -2602,11 +2602,11 @@ async function wait_for_updated_page (seconds) {
 async function init_dataset() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
-	hide_tab_label("maximally_activated_label");
-	show_tab_label("visualization_tab_label", 1)
+	await hide_tab_label("maximally_activated_label");
+	await show_tab_label("visualization_tab_label", 1)
 
-	show_tab_label("fcnn_tab_label", 1);
-	hide_tab_label("tfvis_tab_label");
+	await show_tab_label("fcnn_tab_label", 1);
+	await hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
 	init_epochs(1);
@@ -2616,7 +2616,7 @@ async function init_dataset() {
 	$(".training_performance_tabs").hide();
 
 	$("#data_origin").val("default").trigger("change");
-	show_tab_label("visualization_tab_label", 1);
+	await show_tab_label("visualization_tab_label", 1);
 
 	await save_current_status();
 	init_weight_file_list();
@@ -2644,11 +2644,11 @@ async function chose_dataset(no_set_config) {
 	$("#data_origin").val("default").trigger("change")
 
 	$("#maximally_activated_content").html("")
-	hide_tab_label("maximally_activated_label");
+	await hide_tab_label("maximally_activated_label");
 	if(!is_cosmo_mode) {
-		show_tab_label("visualization_tab_label", 1);
+		await show_tab_label("visualization_tab_label", 1);
 	}
-	show_tab_label("fcnn_tab_label", 1);
+	await show_tab_label("fcnn_tab_label", 1);
 
 	init_weight_file_list();
 	x_file = null;
@@ -2702,7 +2702,7 @@ function init_weight_file_list() {
 async function init_dataset_category() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
-	hide_tab_label("maximally_activated_label");
+	await hide_tab_label("maximally_activated_label");
 
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
@@ -2793,14 +2793,14 @@ async function init_dataset_category() {
 	state_stack = [];
 	future_state_stack = [];
 
-	hide_tab_label("tfvis_tab_label");
+	await hide_tab_label("tfvis_tab_label");
 
 	is_setting_config = original_is_settings_config;
 
 	$("#data_origin").val("default").trigger("change");
 
-	show_tab_label("visualization_tab_label", 1);
-	show_tab_label("fcnn_tab_label", 1);
+	await show_tab_label("visualization_tab_label", 1);
+	await show_tab_label("fcnn_tab_label", 1);
 
 	await updated_page();
 	init_download_link();
@@ -3515,7 +3515,7 @@ async function upload_weights(evt) {
 	if(is_cosmo_mode) {
 		await delay(200);
 		log("TRYING HERE!!!!!!!!");
-		chose_next_manicule_target();
+		await chose_next_manicule_target();
 	}
 }
 
@@ -3747,8 +3747,8 @@ async function change_data_origin() {
 		await set_default_input_shape();
 
 		if(!is_cosmo_mode) {
-			show_tab_label("visualization_tab_label", 1);
-			show_tab_label("fcnn_tab_label", 1);
+			await show_tab_label("visualization_tab_label", 1);
+			await show_tab_label("fcnn_tab_label", 1);
 		}
 
 		await update_python_code();
@@ -3803,18 +3803,18 @@ async function change_data_origin() {
 	}
 
 	/*
-	hide_tab_label("training_data_tab_label");
-	hide_tab_label("own_csv_data_label");
-	hide_tab_label("own_image_data_label");
-	hide_tab_label("own_tensor_data_label");
+	await hide_tab_label("training_data_tab_label");
+	await hide_tab_label("own_csv_data_label");
+	await hide_tab_label("own_image_data_label");
+	await hide_tab_label("own_tensor_data_label");
 	*/
 
 	if (show_own_image_data) {
-		show_tab_label("own_image_data_label", 1);
+		await show_tab_label("own_image_data_label", 1);
 
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_data_label");
-		hide_tab_label("own_tensor_data_label");
+		await hide_tab_label("training_data_tab_label");
+		await hide_tab_label("own_csv_data_label");
+		await hide_tab_label("own_tensor_data_label");
 
 		$("#own_images_container").html("");
 		await add_new_category();
@@ -3829,29 +3829,29 @@ async function change_data_origin() {
 		$("#metric").val("categoricalCrossentropy");
 		await rename_labels();
 	} else if (show_own_tensor_data) {
-		show_tab_label("own_tensor_data_label", 1);
+		await show_tab_label("own_tensor_data_label", 1);
 
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_data_label");
-		hide_tab_label("own_image_data_label");
+		await hide_tab_label("training_data_tab_label");
+		await hide_tab_label("own_csv_data_label");
+		await hide_tab_label("own_image_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
-		show_tab_label("own_csv_data_label", 1);
+		await show_tab_label("own_csv_data_label", 1);
 
-		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_image_data_label");
-		hide_tab_label("own_tensor_data_label");
+		await hide_tab_label("training_data_tab_label");
+		await hide_tab_label("own_image_data_label");
+		await hide_tab_label("own_tensor_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else {
-		show_tab_label("training_data_tab_label");
+		await show_tab_label("training_data_tab_label");
 
-		hide_tab_label("own_csv_data_label");
-		hide_tab_label("own_image_data_label");
-		hide_tab_label("own_tensor_data_label");
+		await hide_tab_label("own_csv_data_label");
+		await hide_tab_label("own_image_data_label");
+		await hide_tab_label("own_tensor_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
@@ -4102,7 +4102,7 @@ async function add_new_category() {
 
 	imgDiv = $(".own_images")[n];
 
-	init_own_image_files();
+	await init_own_image_files();
 
 	auto_adjust_number_of_neurons($(".own_image_label").length);
 
@@ -4486,7 +4486,7 @@ async function write_error(e, fn, hide_swal) {
 		}
 
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
-		update_translations();
+		await update_translations();
 		await write_descriptions();
 		wrn(e);
 		console.trace();
@@ -4981,7 +4981,7 @@ function rename_tmp_onchange() {
 
 }
 
-function hide_tab_label(label) {
+async function hide_tab_label(label) {
 	assert(typeof(label) == "string", "label is not a string");
 
 	$("#" + label).parent().hide();
@@ -5005,14 +5005,13 @@ function hide_tab_label(label) {
 	}
 
 	try {
-		update_translations();
+		await update_translations();
 	} catch (e) {
 		err(e);
 	}
-
 }
 
-function show_tab_label(label, click) {
+async function show_tab_label(label, click) {
 	assert(typeof(label) == "string", "label is not a string");
 
 	var $item = $("#" + label);
@@ -5039,8 +5038,7 @@ function show_tab_label(label, click) {
 		}
 	}
 
-	update_translations();
-
+	await update_translations();
 }
 
 function check_number_values() {
@@ -5462,7 +5460,7 @@ async function set_custom_webcam_training_data() {
 			await show_webcam();
 		}
 
-		show_tab_label("own_image_data_label", 1);
+		await show_tab_label("own_image_data_label", 1);
 	}
 
 	await add_cosmo_point("set_custom_images");
@@ -5693,7 +5691,7 @@ function scroll_down_div (classname) {
 async function download_model_for_training (m) {
 	var data = {
 		"model": JSON.parse(m.toJSON()),
-		"fit_data": get_fit_data(),
+		"fit_data": await get_fit_data(),
 		"model_data": await get_model_data(),
 		"weights": await get_weights_as_json(),
 		"data": await get_x_y_as_array()

@@ -34,7 +34,7 @@
 	}
 
 	function getUserId() {
-		return md5($_SERVER['HTTP_USER_AGENT'] ?? "" . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "") . rand());
+		return md5($_SERVER['HTTP_USER_AGENT'] ?? "" . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "") . rand()); // no await, not js
 	}
 
 	function isDocker() {

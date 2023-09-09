@@ -5,14 +5,14 @@ var divs = [];
 // Function to handle keydown events
 async function handle_keydown(event) {
 	if (event.key === "ArrowLeft" || event.key === "Left") {
-		show_previous_div();
+		await show_previous_div();
 	} else if (event.key === "ArrowRight" || event.key === "Right" || event.key === " ") {
 		await show_next_div();
 	}
 }
 
 // Function to display a div in full screen
-function show_fullscreen(divs, currentDivPresentationIndex) {
+async function show_fullscreen(divs, currentDivPresentationIndex) {
 	var div = divs[currentDivPresentationIndex];
 
 	$(div).show();
@@ -26,7 +26,7 @@ function show_fullscreen(divs, currentDivPresentationIndex) {
 	document.body.style.overflow = "hidden";
 
 	add_scroll_buttons(currentDivPresentationIndex, divs.length);
-	add_end_presentation_button();
+	await add_end_presentation_button();
 
 	$($(".slide")[currentDivPresentationIndex]).focus();
 
@@ -66,7 +66,7 @@ async function handle_scroll(event) {
 	if (delta > 0) {
 		await show_next_div();
 	} else if (delta < 0) {
-		show_previous_div();
+		await show_previous_div();
 	}
 }
 
@@ -82,7 +82,7 @@ function add_scroll_right_button () {
 	$("#body").append("<span onclick='show_next_div()' class='next_prev_buttons' id='scroll_right'>&#12297;</span>");
 }
 
-function add_end_presentation_button (force=0) {
+async function add_end_presentation_button (force=0) {
 	$("#skip_presentation_button").remove();
 	if((finished_loading && is_presenting) || force) {
 		var new_element = $(`
@@ -91,7 +91,7 @@ function add_end_presentation_button (force=0) {
 			</span>
 		`);
 		$("body").append(new_element)
-		update_translations();
+		await update_translations();
 	}
 }
 
@@ -122,27 +122,27 @@ async function show_next_div () {
 	if (currentDivPresentationIndex < divs.length - 1) {
 		remove_full_screen(divs, currentDivPresentationIndex);
 		currentDivPresentationIndex++;
-		show_fullscreen(divs, currentDivPresentationIndex);
+		await show_fullscreen(divs, currentDivPresentationIndex);
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	} else {
 		$("#skip_presentation_button").remove();
 		await end_presentation();
 	}
 
-	add_end_presentation_button();
+	await add_end_presentation_button();
 }
 
 // Function to show the previous div
-function show_previous_div() {
+async function show_previous_div() {
 	$(".remove_me_at_first_tip").remove();
 	if (currentDivPresentationIndex > 0) {
 		remove_full_screen(divs, currentDivPresentationIndex);
 		currentDivPresentationIndex--;
-		show_fullscreen(divs, currentDivPresentationIndex);
+		await show_fullscreen(divs, currentDivPresentationIndex);
 		divs[currentDivPresentationIndex].focus(); // Focus on the current slide
 	}
 
-	add_end_presentation_button();
+	await add_end_presentation_button();
 }
 
 // Function to handle touch events for swiping
@@ -152,7 +152,7 @@ async function handle_touch(event) {
 	var deltaX = x - startX;
 
 	if (deltaX > 0 && currentDivPresentationIndex > 0) {
-		show_previous_div();
+		await show_previous_div();
 	} else if (deltaX < 0 && currentDivPresentationIndex < divs.length - 1) {
 		await show_next_div();
 	}
@@ -205,7 +205,7 @@ async function end_presentation() {
 	$("#asanai_logo_cosmo").show();
 	$("#graphs_here").css("margin-top", "30px");
 
-	chose_next_manicule_target();
+	await chose_next_manicule_target();
 
 	$("#skip_presentation_button").remove();
 
@@ -243,7 +243,7 @@ function attach_listener_for_cosmo_outside_click () {
 }
 
 // Function to run the presentation
-function run_presentation(dn) {
+async function run_presentation(dn) {
 	divName = dn;
 	if (done_presenting) {
 		return;
@@ -264,7 +264,7 @@ function run_presentation(dn) {
 	document.addEventListener("keydown", handle_keydown);
 
 	// Start the presentation
-	show_fullscreen(divs, currentDivPresentationIndex);
+	await show_fullscreen(divs, currentDivPresentationIndex);
 
 	// Add event listener for click events
 	document.addEventListener("click", handle_click);

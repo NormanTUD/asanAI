@@ -355,20 +355,20 @@ async function restart_alexnet(dont_click) {
 
 	if(disable_alexnet) {
 		if(!is_cosmo_mode) {
-			hide_tab_label("alexnet_tab_label");
+			await hide_tab_label("alexnet_tab_label");
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
-					show_tab_label("fcnn_tab_label", click_on_graphs);
+					await show_tab_label("fcnn_tab_label", click_on_graphs);
 					clicked_on_tab = 1
 				}
 			}
 		}
 	} else {
 		if(!is_cosmo_mode) {
-			show_tab_label("alexnet_tab_label", 0);
+			await show_tab_label("alexnet_tab_label", 0);
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
-					show_tab_label('alexnet_tab_label', click_on_graphs);
+					await show_tab_label('alexnet_tab_label', click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
@@ -493,20 +493,20 @@ async function restart_lenet(dont_click) {
 
 	if(disable_lenet) {
 		if(!is_cosmo_mode) {
-			hide_tab_label("lenet_tab_label");
+			await hide_tab_label("lenet_tab_label");
 			if(clicked_on_tab == 0) {
 				if(!dont_click) {
-					show_tab_label("fcnn_tab_label", click_on_graphs);
+					await show_tab_label("fcnn_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
 		}
 	} else {
 		if(!is_cosmo_mode) {
-			show_tab_label("lenet_tab_label", 0);
+			await show_tab_label("lenet_tab_label", 0);
 			if(clicked_on_tab == 0) {
 				if(!dont_click) {
-					show_tab_label("lenet_tab_label", click_on_graphs);
+					await show_tab_label("lenet_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
@@ -526,24 +526,24 @@ function unset_alexnet_renderer () {
 	}
 }
 
-function set_specific_alexnet_renderer(var_type) {
+async function set_specific_alexnet_renderer(var_type) {
 	unset_alexnet_renderer();
 	var renderers = $("#alexnet_renderer > input[type=radio]");
 	for (var i = 0; i < renderers.length; i++) {
 		if($(renderers[i]).val() == var_type) {
 			$(renderers[i]).prop("checked", true);
-		}else {
+		} else {
 			$(renderers[i]).prop("checked", false);
 		}
 	}
-	restart_alexnet()
+	await restart_alexnet()
 }
 
-function download_visualization (layer_id) {
+async function download_visualization (layer_id) {
 	var old_alexnet_renderer = $("#alexnet_renderer > input[type=radio]:checked").val();
 	if(layer_id == "alexnet") {
-		set_specific_alexnet_renderer("svg");
-		restart_alexnet()
+		await set_specific_alexnet_renderer("svg");
+		await restart_alexnet()
 	}
 	var content = $('<div>').append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
 	if(layer_id == "alexnet") {
@@ -557,8 +557,8 @@ function download_visualization (layer_id) {
 	a.download = layer_id + ".svg";
 	a.click();
 	if(layer_id == "alexnet") {
-		set_specific_alexnet_renderer(old_alexnet_renderer);
-		restart_alexnet()
+		await set_specific_alexnet_renderer(old_alexnet_renderer);
+		await restart_alexnet()
 	}
 }
 
@@ -579,13 +579,14 @@ if(window.location.href.indexOf("function_debugger") > -1) {
 	add_function_debugger();
 }
 
-document.addEventListener("DOMContentLoaded", init_own_image_files, false);
 
-function init_own_image_files() {
+async function init_own_image_files() {
 	$(".own_image_files").unbind("change");
 	$(".own_image_files").change(handle_file_select);
-	rename_labels();
+	await rename_labels();
 }
+
+document.addEventListener("DOMContentLoaded", init_own_image_files, false);
 
 function get_nr_from_own_image_files (e) {
 	var currentTarget = e.currentTarget;
@@ -624,7 +625,7 @@ function handle_file_select(e) {
 }
 
 if(window.location.href.indexOf("run_tests") > -1) {
-	run_tests();
+	run_tests(); // await not possible
 }
 
 install_memory_debugger();

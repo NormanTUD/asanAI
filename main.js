@@ -572,7 +572,7 @@ $(document).ready(async function() {
 		$("#start_stop_training").css("visibility", "hidden");
 		$(".cosmo_next_button_span").show();
 		$("#photos").css("min-height", "");
-		show_tab_label("training_data_tab_label", 1);
+		await show_tab_label("training_data_tab_label", 1);
 	} else {
 		$("#status_bar").show();
 		await restart_fcnn(1);
@@ -592,7 +592,7 @@ $(document).ready(async function() {
 
 	if(is_cosmo_mode) {
 		add_scroll_right_button();
-		add_end_presentation_button(1);
+		await add_end_presentation_button(1);
 	} else {
 		model_is_ok_icon = $("#model_is_ok_icon");
 		label_debugger_icon = $("#label_debugger_icon");

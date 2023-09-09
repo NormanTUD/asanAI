@@ -43,10 +43,10 @@ function swap_image_src_language () {
 }
 
 // Function to set the language and update translations
-function set_lang(la) {
+async function set_lang(la) {
 	lang = la;
 	set_cookie('lang', l, 30); // Save the language in a cookie for 30 days
-	update_translations();
+	await update_translations();
 
 	swap_image_src_language();
 }
@@ -100,20 +100,20 @@ async function update_translations() {
 // Update translations when language selector links are clicked
 var languageSelectors = $(".language-selector").find("span");
 Array.from(languageSelectors).forEach((selector) => {
-	selector.addEventListener('click', function (event) {
+	selector.addEventListener('click', async function (event) {
 		event.preventDefault();
 		const newLang = this.dataset.lang;
 		if (newLang !== lang) {
-			set_lang(newLang);
+			await set_lang(newLang);
 		}
 	});
 });
 
 // Update translations when language is changed via URL parameter
-window.addEventListener('popstate', function () {
+window.addEventListener('popstate', async function () {
 	const newLang = urlParams.get('lang') || 'en';
 	if (newLang !== lang) {
-		set_lang(newLang);
+		await set_lang(newLang);
 	}
 });
 
@@ -134,4 +134,4 @@ function trm (name) {
 }
 
 // Update translations on initial page load
-update_translations();
+update_translations(); // await not possible
