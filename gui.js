@@ -1628,11 +1628,6 @@ function set_learning_rate(val) {
 	$("#learningRate_" + $("#optimizer").val()).val(val);
 }
 
-function byte_to_mb(varbyte) {
-	var mb = Math.round((varbyte / (1024 * 1024)) * 100) / 100;
-	return varbyte + " (" + mb + "MB)";
-}
-
 function write_model_summary_wait () {
 	try {
 		document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' src='gui/loading_icon.gif' /></center>";
@@ -3305,17 +3300,6 @@ async function close_losses() {
 	await close_popup("losses_popup");
 }
 
-function model_name_already_exists() {
-	var model_names = Object.keys(traindata_struct);
-	var network_name = document.getElementById("network_name").value;
-	for(var i = 0; i < model_names.length; i++) {
-		if(model_names[i] == network_name) {
-			return true;
-		}
-	}
-	return false;
-}
-
 function model_name_exists() {
 	$.ajax({
 		url: "get_model_names.php",
@@ -3323,15 +3307,6 @@ function model_name_exists() {
 			log(data)
 		}
 	});
-}
-
-function insert_test_users() {
-	var users = ["eins", "zwei", "drei", "vier", "fünf", "vier", "test"];
-	for(var i = 0; i < users.length; i++) {
-		$.ajax({
-			url: "register.php?email=" + users[i] + "@&username=" + users[i] + "&pw=" + users[i] + users[i]
-		});
-	}
 }
 
 async function manage_download() {
@@ -4952,12 +4927,6 @@ function delete_maximally_activated_predictions() {
 	$(".maximally_activated_predictions").remove();
 }
 
-async function predict_all_maximally_activated_neurons() {
-	await $(".layer_image").each(async function (i, x) {
-		await predict_maximally_activated(x, 'image');
-	});
-}
-
 async function get_layers_container_md5() {
 	await delay(1);
 	var layers_container_str = "";
@@ -5501,20 +5470,6 @@ async function switch_to_next_camera () {
 
 }
 
-function swalmsg (msg) {
-	l(msg);
-	log(msg);
-	var res = Swal.fire({
-		title: msg,
-		allowEscapeKey: false,
-		allowOutsideClick: false,
-		showConfirmButton: false
-	});
-
-
-	return res;
-}
-
 async function highlight_code () {
 	Prism.highlightAll();
 }
@@ -5643,14 +5598,6 @@ function set_model_layer_warning(i, warning) {
 
 async function download_current_data_as_json () {
 	download("data.json", JSON.stringify(await get_x_y_as_array()))
-}
-
-function scroll_down_div (classname) {
-	var items = $('.' + classname);
-	for (var i = 0; i < items.length; i++) {
-		items.scrollTop(items[i].scrollHeight - $(items[i]).height());
-	}
-
 }
 
 async function download_model_for_training (m) {

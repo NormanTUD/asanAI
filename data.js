@@ -1603,14 +1603,6 @@ async function adjust_number_of_neurons (layer) {
 	return adjusted_neurons_total;
 }
 
-async function optimize_all_layers_once () {
-	for(var i = 0; i < (get_number_of_layers() - 1); i++) {
-		if($($(".layer_options_internal")[i]).find(".filters,.units").length) {
-			await adjust_number_of_neurons(i);
-		}
-	}
-}
-
 async function get_own_tensor_data (element) {
 	assert(typeof(element) == "object", "element is not an object");
 

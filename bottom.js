@@ -131,33 +131,6 @@ function get_units_at_layer(i, use_max_layer_size) {
 	return units;
 }
 
-function scale_down (max_value, architecture) {
-	var relations = [];
-	var new_architecture = [];
-	for (var i = 0; i < architecture.length; i++) {
-		var item = architecture[i];
-		if(item <= max_value) {
-			relations.push(0);
-		} else {
-			relations.push(item / max_value);
-		}
-	}
-
-	for (var i = 0; i < architecture.length; i++) {
-		var item = architecture[i];
-		var relation = relations[i];
-
-		if(relation) {
-			new_architecture.push(max_value + Math.ceil(relation));
-		} else {
-			new_architecture.push(item);
-		}
-
-	}
-
-	return new_architecture;
-}
-
 var fcnn = FCNN();
 
 async function restart_fcnn(force) {

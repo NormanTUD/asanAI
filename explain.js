@@ -234,16 +234,6 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	return drew_something;
 }
 
-function draw_images_if_possible (layer, input_data, output_data, kernel_data) {
-	var drew_input = draw_image_if_possible(layer, 'input', input_data);
-
-	var drew_kernel = draw_image_if_possible(layer, 'kernel', kernel_data);
-
-	var drew_output = draw_image_if_possible(layer, 'output', output_data);
-
-	return drew_input || drew_kernel || drew_output;
-}
-
 function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
 	var canvas = null;
 
@@ -328,13 +318,6 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 	}
 
 	return false;
-}
-
-async function Sleep(milliseconds) {
-	var res = new Promise(resolve => setTimeout(resolve, milliseconds));
-
-
-	return res;
 }
 
 function get_layer_type_array () {
@@ -916,14 +899,6 @@ function draw_internal_states (layer, inputs, applied) {
 			}
 		}
 	}
-}
-
-function zoom_kernel_images (kernel_image_zoom) {
-	$(".kernel_layer_image").width($(".kernel_layer_image").width() * kernel_image_zoom);
-}
-
-function reset_zoom_kernel_images () {
-	$(".kernel_layer_image").width("auto");
 }
 
 /*
@@ -2500,17 +2475,6 @@ function least_square (x_array, y_array) {
 
 
 	return [m, b];
-}
-
-function least_square_equation (x_array, y_array) {
-	var r = least_square(x_array, y_array);
-	var m = r[0];
-	var b = r[1];
-
-	var equation = `y = ${m}x + ${b}`;
-
-
-	return equation;
 }
 
 function array_to_html(array) {
