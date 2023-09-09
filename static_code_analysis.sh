@@ -61,7 +61,7 @@ fi
 #done | sort -nr | tac
 
 if [[ "$ERROR" == "1" ]]; then
-	exit 4
+	exit 1
 else
 	exit 0
 fi
