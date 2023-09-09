@@ -1,24 +1,25 @@
 #!/bin/bash
 
-function get_parent_pid {
-	parent_pid=$(ps -o ppid= $1 | sed -e 's/\s//g')
-	parent_name=$(ps -p $parent_pid -o command | tr -d '\n' | sed -e 's/^COMMAND//' | sed -e "s/^/$parent_pid: /")
-	echo $parent_name >&2
-	echo $parent_pid
-}
-
-function process_callstack {
-	pid=$$
-	while [[ $pid -ne "1" ]]; do
-		pid=$(get_parent_pid $pid)
-	done
-}
-
 function calltracer () {
 	echo 'Last file/last line:'
 	caller
 }
 # trap 'calltracer' ERR
+
+if ! which egrep 2>&1 >/dev/null; then
+	echo "grep eneeds to be installed"
+	exit 2
+fi
+
+if ! which grep 2>&1 >/dev/null; then
+	echo "grep needs to be installed"
+	exit 2
+fi
+
+if ! which ack 2>&1 >/dev/null; then
+	echo "ack-grep needs to be installed"
+	exit 2
+fi
 
 ERROR=0
 
