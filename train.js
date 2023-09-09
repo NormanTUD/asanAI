@@ -851,7 +851,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 
 								var $last_layer = $(".add_layer")[get_last_layer()];
 
-								debug("Awaiting disable_invalid_layers_event()");
+								debug("Awaiting disable_invalid_layers_event()"); // await
 
 								enable_all_layer_types();
 
