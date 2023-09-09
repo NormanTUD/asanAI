@@ -1124,7 +1124,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 			continue;
 		}
 
-		await show_eta(times, i, neurons);
+		await _show_eta(times, i, neurons);
 
 		var start = Date.now();
 
