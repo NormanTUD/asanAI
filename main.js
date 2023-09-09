@@ -526,27 +526,6 @@ $(document).ready(async function() {
 
 	invert_elements_in_dark_mode();
 
-	/*
-	document.addEventListener('keydown', (event) => {
-		const currentTime = new Date().getTime();
-
-		if (event.key === 'Escape') {
-			if (currentTime - lastEscapeTime < 1000) {
-				escapeCount++;
-			} else {
-				escapeCount = 1;
-			}
-			lastEscapeTime = currentTime;
-
-			if (escapeCount === 3) {
-				escapeCount = 0;
-				lastEscapeTime = 0;
-				cosmo_mode(); // cannot be async
-			}
-		}
-	});
-	*/
-
 	click_on_graphs = 0;
 
 	allow_editable_labels();

@@ -1372,9 +1372,6 @@ var last_tensor_size_gpu = 0;
 
 var last_status_hash = "";
 
-var escapeCount = 0;
-var lastEscapeTime = 0;
-
 var manicule = null;
 
 var manicule_element_xpath = null;
@@ -1561,9 +1558,6 @@ var last_updated_page = null;
 var current_cosmo_stage = 1;
 
 var previously_generated_images = [];
-
-var __from;
-var __to;
 
 var privacy_is_tainted = false;
 
