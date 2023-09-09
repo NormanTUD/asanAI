@@ -14,15 +14,11 @@ function process_callstack {
 	done
 }
 
-set -e
-
 function calltracer () {
 	echo 'Last file/last line:'
 	caller
-
-	process_callstack
 }
-trap 'calltracer' ERR
+# trap 'calltracer' ERR
 
 ERROR=0
 
