@@ -41,8 +41,8 @@ if [[ ! -z $DOUBLE_DEFINED_FUNCS ]]; then
 	ERROR=1
 fi
 
-UNCALLED_FUNCS=$(for func_name in $(ack "^\s*(async)?\s*function\s*" *.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option); do
-	NUMLINES=$(egrep "$func_name" *.js *.php | wc -l);
+UNCALLED_FUNCS=$(for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option); do
+	NUMLINES=$(egrep "$func_name" *.js *.php visualizations/*.js | wc -l);
 	if [[ "$NUMLINES" == "1" ]]; then 
 		echo "1: $func_name"
 	fi
