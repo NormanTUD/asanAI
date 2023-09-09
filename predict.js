@@ -111,9 +111,8 @@ function set_item_natural_width (item) {
 }
 
 var predict_demo = async function (item, nr, tried_again = 0) {
-	await wait_for_updated_page(2);
-
 	if(has_zero_output_shape) {
+		dbg("has_zero_output_shape is true");
 		return;
 	}
 
@@ -577,6 +576,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 }
 
 async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab) {
+	await wait_for_updated_page(2);
+
 	if(skip_predictions) {
 		return;
 	}
