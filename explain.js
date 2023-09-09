@@ -950,24 +950,6 @@ function deprocess_image(x) {
 	return res;
 }
 
-/* This function normalizes a given tensor so that it's minimum value is 0 and it's maximum value is 1. This is done by subtracting the minimum value from the tensor, and then dividing by the difference between the maximum and minimum values. */
-
-function tensor_normalize_to_rgb_min_max (x) {
-	x = tidy(() => {
-		var max = x.max();
-		var min = x.min();
-
-		var x_minus_min = x.sub(min);
-
-		x = x_minus_min.div(max.sub(min));
-
-		return x;
-	});
-
-
-	return x;
-}
-
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
 async function input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion = 0) {

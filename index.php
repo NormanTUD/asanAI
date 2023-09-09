@@ -5,6 +5,9 @@
 # Find untested functions, listed by number of occurences
 #for i in $(ack "function [a-zA-Z_0-9]+" *.js | grep -v tests.js | sed -e 's#.*function\s*##' | sed -e 's#\s*(.*##' | sort); do grep $i tests.js 2>&1 >/dev/null || NUM_OCC=$(ack '(?:(?:^\s*)|=|\"|\()\s*(?:await)?\s*$i\s*\(' *.js | grep -v function | wc -l); echo "$NUM_OCC: $i is untested currently"; done | sort -nr | tac
 
+# find functions that are defined, yet never called:
+# for func_name in $(ack "^\s*(async)?\s*function\s*" *.js | sed -e 's#.*\s*function\s*##' | sed -e 's#\s*(.*##' | sort); do NUMLINES=$(egrep "$func_name" *.js *.php | wc -l); if [[ $NUMLINES -eq 1 ]]; then echo "1: $func_name"; fi; done | grep -v option
+
 # find double defined functions
 # ack "^\s*(async)?\s*function\s*" *.js | sed -e 's#.*\s*function\s*##' | sed -e 's#\s*(.*##' | sort | uniq -c | sort -nr | tac | egrep -v '^\s*[0-9]+\s*$' | egrep -v "^\s*1\s+.*$"
 

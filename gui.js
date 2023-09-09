@@ -5616,28 +5616,6 @@ function get_last_layer_activation_function () {
 	return res;
 }
 
-function drag_start(event) {
-	var style = window.getComputedStyle(event.target, null);
-	var str = (parse_int(style.getPropertyValue("left")) - event.clientX) + ',' + (parse_int(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
-	event.dataTransfer.setData("Text", str);
-}
-
-function drop(event) {
-	var offset = event.dataTransfer.getData("Text").split(',');
-	var dm = document.getElementById(offset[2]);
-	dm.style.left = (event.clientX + parse_int(offset[0], 10)) + 'px';
-	dm.style.top = (event.clientY + parse_int(offset[1], 10)) + 'px';
-	event.preventDefault();
-
-
-	return false;
-}
-
-function drag_over(event) {
-	event.preventDefault();
-	return false;
-}
-
 function get_layer_nr_by_name (layer_name) {
 	for (var i = 0; i < model.layers.length; i++) {
 		if(model.layers[i].getConfig().name == layer_name) {

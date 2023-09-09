@@ -518,6 +518,10 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	log("Ended training...");
 }
 
+/*
+await start_test_training(), TODO
+*/
+
 toc();
 
 add_html_for_layer_types("conv2d");
