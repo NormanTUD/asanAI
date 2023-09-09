@@ -5663,19 +5663,6 @@ function set_model_layer_warning(i, warning) {
 	}
 }
 
-function download(filename, text) {
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-	element.setAttribute('download', filename);
-
-	element.style.display = 'none';
-	document.body.appendChild(element);
-
-	element.click();
-
-	document.body.removeChild(element);
-}
-
 async function download_current_data_as_json () {
 	download("data.json", JSON.stringify(await get_x_y_as_array()))
 }

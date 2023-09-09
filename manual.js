@@ -2,10 +2,6 @@
 
 var current_model = null;
 
-function log (...args) {
-	console.log(args);
-}
-
 function toc () {
 	var toc = "";
 	var level = 0;
