@@ -192,85 +192,85 @@ function add_function_debugger () {
 	var current_functions = Object.keys(window);
 
 	for (var i in window) {
-	    if(
+		if(
 			i != "assert" &&							// Disable assert output
-		![
-			"delay",
-			"Swal",
-			"get_python_name",
-			"quote_python",
-			"add_function_debugger",
-			"write_model_summary",
-			"Atrament",
-			"check_number_values",
-			"atrament_data",
-			"get_model_config_hash",
-			"grad_class_activation_map",
-			"enable_train",
-			"is_numeric",
-			"colorize",
-			"md5",
-			"is_hidden_or_has_hidden_parent",
-			"get_cookie",
-			"decille",
-			"headerdatadebug",
-			"get_param_names",
-			"predict_webcam",
-			"memory_debugger",
-			"_allow_training",
-			"fix_viz_width",
-			"allow_training",
-			"allow_training",
-			"get_chosen_dataset",
-			"show_load_weights",
-			"get_current_chosen_object_default_weights_string",
-			"get_chosen_dataset",
-			"dispose",
-			"get_weights_shape",
-			"get_weights_as_string",
-		].includes(i) &&		// exclude these functions
-		typeof(window[i]) == "function" &&					// use only functions
-		i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
-		!current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions
-		window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
-		i != "$"								// Do not debug jquery
-	    ) {
-		    var param_names = get_param_names(window[i]);
+			![
+				"delay",
+				"Swal",
+				"get_python_name",
+				"quote_python",
+				"add_function_debugger",
+				"write_model_summary",
+				"Atrament",
+				"check_number_values",
+				"atrament_data",
+				"get_model_config_hash",
+				"grad_class_activation_map",
+				"enable_train",
+				"is_numeric",
+				"colorize",
+				"md5",
+				"is_hidden_or_has_hidden_parent",
+				"get_cookie",
+				"decille",
+				"headerdatadebug",
+				"get_param_names",
+				"predict_webcam",
+				"memory_debugger",
+				"_allow_training",
+				"fix_viz_width",
+				"allow_training",
+				"allow_training",
+				"get_chosen_dataset",
+				"show_load_weights",
+				"get_current_chosen_object_default_weights_string",
+				"get_chosen_dataset",
+				"dispose",
+				"get_weights_shape",
+				"get_weights_as_string",
+			].includes(i) &&		// exclude these functions
+			typeof(window[i]) == "function" &&					// use only functions
+			i.indexOf(ORIGINAL_FUNCTION_PREFIX) === -1 &&			// do not re-do functions
+			!current_functions.includes(ORIGINAL_FUNCTION_PREFIX + i) &&	// do not re-do functions
+			window[i].toString().indexOf("native code") === -1 &&		// Ignore native functions
+			i != "$"								// Do not debug jquery
+		) {
+			var param_names = get_param_names(window[i]);
 
-		    var args_string = param_names.join(", ");
+			var args_string = param_names.join(", ");
 
-		    var original_function = window[i];
+			var original_function = window[i];
 
-		    try {
-			    var execute_this = `
-			    window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
-			    window["${i}"] = function (${args_string}) {
-					call_depth = call_depth + 1;
-					log("    ".repeat(call_depth) + "${i}");
-					var _start_time = + new Date();
-					if(!Object.keys(function_times).includes("${i}")) {
-						function_times["${i}"] = {};
-						function_times["${i}"]["whole_time"] = 0;
-						function_times["${i}"]["call_count"] = 0;
+			try {
+				var execute_this = `
+					window["${ORIGINAL_FUNCTION_PREFIX}${i}"] = window[i];
+					window["${i}"] = function (${args_string}) {
+						call_depth = call_depth + 1;
+						log("    ".repeat(call_depth) + "${i}");
+						var _start_time = + new Date();
+						if(!Object.keys(function_times).includes("${i}")) {
+							function_times["${i}"] = {};
+							function_times["${i}"]["whole_time"] = 0;
+							function_times["${i}"]["call_count"] = 0;
+						}
+						var result = window["${ORIGINAL_FUNCTION_PREFIX}${i}"](${args_string});
+						var _end_time = + new Date();
+						function_times["${i}"]["whole_time"] = function_times["${i}"]["whole_time"] + (_end_time - _start_time);
+						function_times["${i}"]["call_count"] = function_times["${i}"]["call_count"] + 1;
+
+						call_depth = call_depth - 1;
+						return result;
 					}
-					var result = window["${ORIGINAL_FUNCTION_PREFIX}${i}"](${args_string});
-					var _end_time = + new Date();
-					function_times["${i}"]["whole_time"] = function_times["${i}"]["whole_time"] + (_end_time - _start_time);
-					function_times["${i}"]["call_count"] = function_times["${i}"]["call_count"] + 1;
+			`;
 
-					call_depth = call_depth - 1;
-					return result;
-			    }
-			    `;
-
-			    eval(execute_this);
-		    } catch (e) {
-			    wrn(e);
-			    log(i);
-			    log(param_names);
-			    window[i] = original_function;
-		    }
-	    }
+				eval(execute_this);
+			} catch (e) {
+				wrn(e);
+				log(i);
+				log(param_names);
+				window[i] = original_function;
+			}
+		}
 	}
 }
 

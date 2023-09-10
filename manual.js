@@ -465,8 +465,8 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	var t_y = [];
 
 	for (var i = start; i <= end ; i += step) {
-	    t_x.push([i]);
-	    t_y.push([fn(i)]);
+		t_x.push([i]);
+		t_y.push([fn(i)]);
 	}
 
 	if(contains_null(t_y)) {
