@@ -191,8 +191,8 @@ THREE.Projector = function () {
 			positionScreen.z *= invW;
 
 			vertex.visible = positionScreen.x >= - 1 && positionScreen.x <= 1 &&
-					 positionScreen.y >= - 1 && positionScreen.y <= 1 &&
-					 positionScreen.z >= - 1 && positionScreen.z <= 1;
+					positionScreen.y >= - 1 && positionScreen.y <= 1 &&
+					positionScreen.z >= - 1 && positionScreen.z <= 1;
 
 		}
 
@@ -238,9 +238,9 @@ THREE.Projector = function () {
 		function checkBackfaceCulling( v1, v2, v3 ) {
 
 			return ( ( v3.positionScreen.x - v1.positionScreen.x ) *
-				    ( v2.positionScreen.y - v1.positionScreen.y ) -
-				    ( v3.positionScreen.y - v1.positionScreen.y ) *
-				    ( v2.positionScreen.x - v1.positionScreen.x ) ) < 0;
+				( v2.positionScreen.y - v1.positionScreen.y ) -
+				( v3.positionScreen.y - v1.positionScreen.y ) *
+				( v2.positionScreen.x - v1.positionScreen.x ) ) < 0;
 
 		}
 
@@ -567,8 +567,8 @@ THREE.Projector = function () {
 						var face = faces[ f ];
 
 						material = isMultiMaterial === true
-							 ? object.material[ face.materialIndex ]
-							 : object.material;
+							? object.material[ face.materialIndex ]
+							: object.material;
 
 						if ( material === undefined ) continue;
 

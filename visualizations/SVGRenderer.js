@@ -180,7 +180,7 @@ THREE.SVGRenderer = function () {
 
 		calculateLights( _lights );
 
-		 // reset accumulated path
+		// reset accumulated path
 
 		_currentPath = "";
 		_currentStyle = "";
@@ -248,7 +248,7 @@ THREE.SVGRenderer = function () {
 
 		scene.traverseVisible( function ( object ) {
 
-			 if ( object instanceof THREE.SVGObject ) {
+			if ( object instanceof THREE.SVGObject ) {
 
 				_vector3.setFromMatrixPosition( object.matrixWorld );
 				_vector3.applyMatrix4( _viewProjectionMatrix );
