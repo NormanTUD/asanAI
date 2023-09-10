@@ -93,7 +93,7 @@ async function _create_model () {
 		add_layer_debuggers();
 	}
 
-	add_optimizer_debugger();
+	//add_optimizer_debugger();
 }
 
 async function _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
