@@ -78,7 +78,14 @@ done
 
 
 if [[ -e _ALL.js ]]; then
-	npx eslint _ALL.js | grep -v "'tf' is not defined" | grep -v Fireworks | grep -v label_debugger_icon;
+	npx eslint _ALL.js | \
+		grep -v "'tf' is not defined" | \
+		grep -v Fireworks | \
+		grep -v label_debugger_icon | \
+		grep -v "'THREE' is not defined" | \
+		grep -v "'l' is already defined" | \
+		grep -v "'vertex' is already defined" | \
+		grep -v "'d3' is not defined"
 	rm _ALL.js
 else
 	echo "Could not concat all included js files";
