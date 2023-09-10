@@ -95,7 +95,7 @@ async function md5 (content) {
 async function get_current_layer_container_status_hash() {
 	var html = $("#layers_container").html();
 
-	html = html.replaceAll(' disabled=""', "");
+	html = html.replaceAll(" disabled=\"\"", "");
 
 	var res = await md5(html);
 
@@ -107,10 +107,10 @@ async function get_current_status_hash(use_weights=1) {
 	var html_code = "";
 
 	var allitems = [];
-	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('input'));
-	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('checkbox'));
-	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('select'));
-	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('textarea'));
+	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("input"));
+	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("checkbox"));
+	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("select"));
+	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("textarea"));
 
 	allitems.forEach(function (x) {
 		var item = $(x);
@@ -216,7 +216,7 @@ function quote_python(item) {
 		} else if (item.startsWith("[")) {
 			return item;
 		} else {
-			return '"' + item + '"';
+			return "\"" + item + "\"";
 		}
 	}
 
@@ -277,7 +277,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 		str += "<select class='input_field input_data " + classname + "' _onchange='" + onchange_text + "'>";
 		for (const [key, value] of Object.entries(data)) {
-			str += '<option value="' + key + '">' + value + '</option>';
+			str += "<option value=\"" + key + "\">" + value + "</option>";
 		}
 		str += "</select>";
 	} else if (type == "text") {
@@ -297,7 +297,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			pre_text = " value='" + text + "' ";
 		}
 
-		str += '<input class="input_field input_data ' + classname + '" ' + pre_text + placeholder + ' type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />';
+		str += "<input class=\"input_field input_data " + classname + "\" " + pre_text + placeholder + " type=\"text\"  _onchange=\"updated_page()\" onkeyup=\"updated_page(null, null, this)\" />";
 	} else if (type == "number") {
 		str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -318,7 +318,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		}
 
 		str += " _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" />";
-			var original_no_update_math = no_update_math;
+		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
 		str += "<input type='checkbox' class='input_data " + classname + "' _onchange='updated_page(null, null, this);' ";
 		if ("status" in data && data["status"] == "checked") {
@@ -350,7 +350,7 @@ function add_seed_option (type, nr) {
 
 	var current_input_shape = get_input_shape();
 	if (current_input_shape.length != 3) {
-		style = ' style="display: none" ';
+		style = " style=\"display: none\" ";
 	}
 
 	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
@@ -872,7 +872,7 @@ async function update_python_code(dont_reget_labels) {
 
 		var wh = "";
 
-		var is = get_input_shape_with_batch_size(); is[0] = "None"; ;
+		var is = get_input_shape_with_batch_size(); is[0] = "None"; 
 
 		expert_code =
 			python_boilerplate(input_shape_is_image_val) +
@@ -888,7 +888,7 @@ async function update_python_code(dont_reget_labels) {
 			"\n\nmodel.summary()\n";
 	}
 
-	var python_code = create_python_code(input_shape_is_image_val)
+	var python_code = create_python_code(input_shape_is_image_val);
 
 	$("#python").text(python_code).show();
 	$("#python_expert").text(expert_code).show();
@@ -898,7 +898,7 @@ async function update_python_code(dont_reget_labels) {
 	return redo_graph;
 }
 
-function or_none (str, prepend = '"', append = '"') {
+function or_none (str, prepend = "\"", append = "\"") {
 	if(str) {
 		if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
 			return parse_float(str);
@@ -925,7 +925,7 @@ function model_add_python_structure (layer_type, data) {
 	data_format=None,
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? 'True' : 'False'},
+	use_bias=${data.use_bias ? "True" : "False"},
 	kernel_initializer=${or_none(data.kernel_initializer)},
 	bias_initializer=${or_none(data.bias_initializer)},
 	kernel_regularizer=${or_none(data.kernel_regularizer)},
@@ -939,7 +939,7 @@ function model_add_python_structure (layer_type, data) {
 		return `model.add(layers.Dense(
 	units=${data.units},
 	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? 'True' : 'False'},
+	use_bias=${data.use_bias ? "True" : "False"},
 	kernel_initializer=${or_none(data.kernel_initializer)},
 	bias_initializer=${or_none(data.bias_initializer)},
 	kernel_regularizer=${or_none(data.kernel_regularizer)},
@@ -1007,7 +1007,7 @@ function model_add_python_structure (layer_type, data) {
 	data_format=${or_none(data.data_format)},
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? 'True' : 'False'},
+	use_bias=${data.use_bias ? "True" : "False"},
 	kernel_initializer=${or_none(data.kernel_initializer)},
 	bias_initializer=${or_none(data.bias_initializer)},
 	kernel_regularizer=${or_none(data.kernel_regularizer)},
@@ -1118,7 +1118,7 @@ function model_add_python_structure (layer_type, data) {
 	data_format=${or_none(data.data_format)},
 	dilation_rate=${data.dilation_rate},
 	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? 'True' : 'False'},
+	use_bias=${data.use_bias ? "True" : "False"},
 	depthwise_initializer=${or_none(data.depthwise_initializer)},
 	bias_initializer=${or_none(data.bias_initializer)},
 	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
@@ -1136,7 +1136,7 @@ function model_add_python_structure (layer_type, data) {
 	data_format=${or_none(data.data_format)},
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? 'True' : 'False'},
+	use_bias=${data.use_bias ? "True" : "False"},
 	depthwise_initializer=${or_none(data.depthwise_initializer)},
 	bias_initializer=${or_none(data.bias_initializer)},
 	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
@@ -1146,9 +1146,9 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if(layer_type == "Flatten") {
-		return `model.add(layers.Flatten())\n`
+		return "model.add(layers.Flatten())\n";
 	} else if(layer_type == "DebugLayer") {
-		return `# Debug layer are custom to asanAI and are not available in TensorFlow\n`;
+		return "# Debug layer are custom to asanAI and are not available in TensorFlow\n";
 	} else {
 		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
 	}
@@ -1165,7 +1165,7 @@ function convert_to_python_string(obj) {
 		let value = obj[key];
 		if(!("" + value).startsWith("[")) {
 			if (typeof value == "boolean") {
-				value = value ? 'True' : 'False';
+				value = value ? "True" : "False";
 			} else if (!isNaN(value)) {
 				if (Number.isInteger(parse_float(value))) {
 					value = parse_int(value);
@@ -1173,7 +1173,7 @@ function convert_to_python_string(obj) {
 					value = parse_float(value);
 				}
 			} else {
-				value = '"' + value + '"';
+				value = "\"" + value + "\"";
 			}
 		}
 		pythonCode += `    ${key}: ${value},\n`;
@@ -1346,7 +1346,7 @@ async function hide_no_conv_stuff() {
 		$(".hide_when_no_image").show();
 		$(".hide_when_image").hide();
 	} else {
-		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
+		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("#auto_augment").prop("checked", false);
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
@@ -1431,7 +1431,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			log(e);
 			log("There was an error compiling the model: " + e);
 			throw new Error(e);
-		};
+		}
 
 
 		var redo_graph = await update_python_code();
@@ -1609,7 +1609,7 @@ function set_learning_rate(val) {
 
 function write_model_summary_wait () {
 	try {
-		document.getElementById('summary').innerHTML = "<center><img class='invert_in_dark_mode' src='gui/loading_icon.gif' /></center>";
+		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='gui/loading_icon.gif' /></center>";
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
@@ -1637,7 +1637,7 @@ function write_model_summary() {
 
 	model.summary(200);
 
-	document.getElementById('summary').innerHTML = summary_to_table(logMessages);
+	document.getElementById("summary").innerHTML = summary_to_table(logMessages);
 
 	console.log = logBackup;
 }
@@ -1827,11 +1827,11 @@ async function initializer_layer_options(thisitem) {
 	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
 	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
 		if (chosen_option == $(x).val()) {
-			$(x).attr('selected', 'selected');
+			$(x).attr("selected", "selected");
 		} else {
-			$(x).removeAttr('selected');
+			$(x).removeAttr("selected");
 		}
-	})
+	});
 
 	await updated_page(null, 1);
 }
@@ -1895,7 +1895,7 @@ async function disable_all_invalid_layers_from(start) {
 
 function enable_all_layer_types () {
 	for (var layer_nr = 0; layer_nr < model.layers.length; layer_nr++) {
-		var options = $($($('.layer_type')[layer_nr]).children().children());
+		var options = $($($(".layer_type")[layer_nr]).children().children());
 
 		for (var i = 0; i < options.length; i++) {
 			if (!$(options[i]).is(":selected")) {
@@ -1922,7 +1922,7 @@ async function enable_valid_layer_types(layer_nr) {
 
 	var valid_layer_types = await get_valid_layer_types(layer_nr);
 
-	var options = $($($('.layer_type')[layer_nr]).children().children());
+	var options = $($($(".layer_type")[layer_nr]).children().children());
 
 	for (var i = 0; i < options.length; i++) {
 		if (!$(options[i]).is(":selected")) {
@@ -1930,7 +1930,7 @@ async function enable_valid_layer_types(layer_nr) {
 			//$(options[i]).prop("hidden", false); // Disabled until hide_empty_groups works
 		}
 
-		if (valid_layer_types.includes($(options[i]).prop('value'))) {
+		if (valid_layer_types.includes($(options[i]).prop("value"))) {
 			$(options[i]).prop("disabled", false);
 		} else {
 			//$(options[i]).prop("hidden", true); // Disabled until hide_empty_groups works
@@ -1956,7 +1956,7 @@ function option_for_layer(nr) {
 			if (last_category != "") {
 				str += "</optgroup>";
 			}
-			str += '<optgroup label="' + this_category + '">';
+			str += "<optgroup label=\"" + this_category + "\">";
 			last_category = this_category;
 		}
 		str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + get_python_name(key) + "</option>";
@@ -1992,9 +1992,9 @@ async function remove_layer(item) {
 		await save_current_status();
 	} else {
 		Swal.fire({
-			icon: 'error',
-			title: 'Oops [2]...',
-			text: 'You cannot remove the last remaining layer of your model.',
+			icon: "error",
+			title: "Oops [2]...",
+			text: "You cannot remove the last remaining layer of your model.",
 		});
 	}
 
@@ -2012,11 +2012,11 @@ function get_element_xpath(element) {
 		? idx(sib.previousElementSibling, name || sib.localName) + (sib.localName == name)
 		: 1;
 	const segs = elm => !elm || elm.nodeType !== 1
-		? ['']
+		? [""]
 		: elm.id && document.getElementById(elm.id) === elm
-		? [`id("${elm.id}")`]
-		: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
-	return segs(element).join('/');
+			? [`id("${elm.id}")`]
+			: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
+	return segs(element).join("/");
 }
 
 async function add_layer(item) {
@@ -2070,13 +2070,13 @@ function sortable_layers_container(layers_container) {
 
 	layers_container.sortable({
 		cursor: "move",
-		handle: 'div',
-		helper: 'clone',
+		handle: "div",
+		helper: "clone",
 		forcePlaceholderSize: true,
-		placeholder: 'placeholder',
+		placeholder: "placeholder",
 		start: function (e, ui) {
 			ui.placeholder.height(ui.item.height());
-			ui.placeholder.css('visibility', 'visible');
+			ui.placeholder.css("visibility", "visible");
 			$(".descriptions_of_layers").hide();
 		},
 		update: async function (e, ui) {
@@ -2086,20 +2086,20 @@ function sortable_layers_container(layers_container) {
 				error_div.parent().hide();
 			} catch (e) {
 				if (mode == "beginner") {
-					$("#layers_container").sortable('cancel');
+					$("#layers_container").sortable("cancel");
 					alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
 					try {
 						await compile_model();
 					} catch (e) {
 						log(e);
-					};
+					}
 					error_div.html("");
 					error_div.parent().hide();
 				} else {
 					error_div.html(e);
 					error_div.parent().show();
 				}
-			};
+			}
 
 			$(".descriptions_of_layers").show();
 			await updated_page();
@@ -2159,7 +2159,7 @@ async function show_layers(number) {
 		layer_visualizations_tab_str +=
 			"<div class='layer_data'></div>" +
 		"<br>";
-		;
+		
 	}
 
 	layers_container[0].innerHTML = layers_container_str;
@@ -2333,9 +2333,9 @@ async function set_config(index) {
 				await send_bug_report();
 
 				Swal.fire({
-					icon: 'error',
-					title: 'Oops [1]...',
-					text: 'Error loading the model'
+					icon: "error",
+					title: "Oops [1]...",
+					text: "Error loading the model"
 				});
 				await write_descriptions();
 				log(config);
@@ -2360,22 +2360,22 @@ async function set_config(index) {
 		if (config["input_shape"]) {
 			await set_input_shape(config["input_shape"]);
 		} else {
-				var is = null;
-				if(Object.keys(config).includes("keras")) {
-					if(Object.keys(config.keras).includes("modelTopology")) {
-						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-					} else {
-						is = config.keras.config.layers[0].config.batch_input_shape;
-					}
-				}
-
-				if(is) {
-					is = remove_empty(is);
-					is = Object.values(is);
-					await set_input_shape("[" + is.join(", ") + "]");
+			var is = null;
+			if(Object.keys(config).includes("keras")) {
+				if(Object.keys(config.keras).includes("modelTopology")) {
+					is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
 				} else {
-					l("ERROR: keras not found in config");
+					is = config.keras.config.layers[0].config.batch_input_shape;
 				}
+			}
+
+			if(is) {
+				is = remove_empty(is);
+				is = Object.values(is);
+				await set_input_shape("[" + is.join(", ") + "]");
+			} else {
+				l("ERROR: keras not found in config");
+			}
 		}
 
 		if (!config["model_structure"]) {
@@ -2659,7 +2659,7 @@ async function chose_dataset(no_set_config) {
 }
 
 function init_weight_file_list() {
-	$('#model_dataset').find('option').remove();
+	$("#model_dataset").find("option").remove();
 
 	var chosen_dataset = $("#dataset").find(":selected").text();
 
@@ -2668,7 +2668,7 @@ function init_weight_file_list() {
 	var weight_files = Object.keys(this_struct);
 
 	for (var i = 0; i < weight_files.length; i++) {
-		var new_option = $('<option>', { value: weight_files[i], text: weight_files[i] });
+		var new_option = $("<option>", { value: weight_files[i], text: weight_files[i] });
 		$("#model_dataset").append(new_option);
 	}
 }
@@ -2707,7 +2707,7 @@ async function init_dataset_category() {
 		for (var i = 0; i < show_items["image"].length; i++) {
 			var item_name = show_items["image"][i];
 			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, '');
+				item_name = item_name.replace(/\.parent/, "");
 				$("#" + item_name).parent().show();
 			} else {
 				$("#" + item_name).show();
@@ -2717,7 +2717,7 @@ async function init_dataset_category() {
 		for (var i = 0; i < show_items["else"].length; i++) {
 			var item_name = show_items["else"][i];
 			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, '');
+				item_name = item_name.replace(/\.parent/, "");
 				$("#" + item_name).parent().hide();
 			} else {
 				$("#" + item_name).hide();
@@ -2727,7 +2727,7 @@ async function init_dataset_category() {
 		for (var i = 0; i < show_items["else"].length; i++) {
 			var item_name = show_items["else"][i];
 			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, '');
+				item_name = item_name.replace(/\.parent/, "");
 				$("#" + item_name).parent().show();
 			} else {
 				$("#" + item_name).show();
@@ -2737,7 +2737,7 @@ async function init_dataset_category() {
 		for (var i = 0; i < show_items["image"].length; i++) {
 			var item_name = show_items["image"][i];
 			if (item_name.endsWith(".parent")) {
-				item_name = item_name.replace(/\.parent/, '');
+				item_name = item_name.replace(/\.parent/, "");
 				$("#" + item_name).parent().hide();
 			} else {
 				$("#" + item_name).hide();
@@ -2754,8 +2754,8 @@ async function init_dataset_category() {
 	$("#upload_y").hide().parent().hide();
 	$("#reset_model").show();
 
-	$('#data_origin').change(function () {
-		$('#data_origin option[value="default"]').prop('disabled', false);
+	$("#data_origin").change(function () {
+		$("#data_origin option[value=\"default\"]").prop("disabled", false);
 	});
 
 	init_download_link();
@@ -2963,7 +2963,7 @@ function hide_empty_groups(layer_nr) {
 		} else {
 			$(group).hide();
 		}
-	})
+	});
 }
 
 async function set_all_kernel_initializers() {
@@ -3234,7 +3234,7 @@ async function login() {
 
 async function logout() {
 	user_id = null;
-	delete_cookie('session_id');
+	delete_cookie("session_id");
 	$("#logout").hide();
 	$("#register").show();
 	$("#register_email").val("");
@@ -3449,13 +3449,13 @@ async function upload_weights(evt) {
 
 	reader.readAsText(f);
 
-	var modelUpload = document.getElementById('upload_model');
-	var weightsUpload = document.getElementById('upload_weights');
+	var modelUpload = document.getElementById("upload_model");
+	var weightsUpload = document.getElementById("upload_weights");
 
 	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
-	$('a[href="#predict_tab"]').click();
+	$("a[href=\"#predict_tab\"]").click();
 	if(is_cosmo_mode) {
 		await delay(200);
 		log("TRYING HERE!!!!!!!!");
@@ -3469,24 +3469,24 @@ var handle_x_file = async function (evt) {
 
 	if (!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape())) {
 		Swal.fire({
-			title: 'X-Data and first layer have incompatible shape-requirements. Set to Dense for all layers?',
+			title: "X-Data and first layer have incompatible shape-requirements. Set to Dense for all layers?",
 			showDenyButton: true,
 			showCancelButton: false,
-			confirmButtonText: 'Yes',
-			denyButtonText: 'No',
+			confirmButtonText: "Yes",
+			denyButtonText: "No",
 		}).then((result) => {
 			if (result.isConfirmed) {
 				$(".layer_type").val("dense").trigger("change");
-				Swal.fire('Set all layers to dense', '', 'success');
+				Swal.fire("Set all layers to dense", "", "success");
 			} else if (result.isDenied) {
-				Swal.fire('The model may not work as expected', '', 'warning')
+				Swal.fire("The model may not work as expected", "", "warning");
 			}
 		});
 	}
 	await updated_page();
 
 	enable_start_training_custom_tensors();
-}
+};
 
 var handle_y_file = async function (evt) {
 	y_file = await evt.target.files[0].text();
@@ -3496,7 +3496,7 @@ var handle_y_file = async function (evt) {
 	await updated_page();
 
 	enable_start_training_custom_tensors();
-}
+};
 
 function enable_start_training_custom_tensors() {
 	if (!$("#data_origin").val() == "tensordata") {
@@ -3538,9 +3538,9 @@ function get_chosen_dataset() {
 function show_dtype_only_first_layer() {
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		if (i == 0) {
-			$($(".dtype")[i]).parent().parent().show()
+			$($(".dtype")[i]).parent().parent().show();
 		} else {
-			$($(".dtype")[i]).parent().parent().hide()
+			$($(".dtype")[i]).parent().parent().hide();
 		}
 	}
 }
@@ -3635,9 +3635,9 @@ function reset_view() {
 			var translate_left = parse_int(container_width / width);
 
 			if (parents_parent_id == "lenet") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)")
+				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
 			} else if (parents_parent_id == "fcnn") {
-				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)")
+				$($("g")[i]).attr("transform", "translate(-" + translate_left + ",0) scale(1)");
 			}
 		}
 	}
@@ -3673,7 +3673,7 @@ async function change_data_origin() {
 		await get_label_data();
 
 		if(!is_cosmo_mode) {
-			$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); })
+			$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
 		}
 
 		changed_data_source = false;
@@ -3699,17 +3699,17 @@ async function change_data_origin() {
 			await show_csv_file(1);
 			if(contains_convolution() && mode != "expert") {
 				await Swal.fire({
-					title: 'Are you sure?',
+					title: "Are you sure?",
 					text: "Using CSV in a network that contains convolutions is probably not what you want. Only continue if you really know what you are doing!",
-					icon: 'warning',
+					icon: "warning",
 					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					cancelButtonText: 'Yes, switch to expert mode and use CSV with this network!',
-					confirmButtonText: 'No, keep me safe from tons of errors!'
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					cancelButtonText: "Yes, switch to expert mode and use CSV with this network!",
+					confirmButtonText: "No, keep me safe from tons of errors!"
 				}).then((result) => {
 					if (!result.isConfirmed) {
-						$('#mode_chooser').children().attr("checked", "checked").trigger("change");
+						$("#mode_chooser").children().attr("checked", "checked").trigger("change");
 						show_own_csv_data = 1;
 					} else {
 						show_own_tensor_data = 1;
@@ -3723,7 +3723,7 @@ async function change_data_origin() {
 			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
 
-		$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); })
+		$(".hide_when_custom_data").show().each((i, e) => { $(e).hide(); });
 
 		changed_data_source = true;
 
@@ -3884,8 +3884,8 @@ function delete_custom_drawing_layer () {
 				if($("#" + this_canvas_id + "_layer").length) {
 					l("Deleting layer for custom image " + this_canvas_id);
 					$("#" + this_canvas_id + "_layer").remove();
-					$("#" + this_canvas_id + "_layer_colorpicker").remove()
-					$("#" + this_canvas_id + "_layer_slider").remove()
+					$("#" + this_canvas_id + "_layer_colorpicker").remove();
+					$("#" + this_canvas_id + "_layer_slider").remove();
 					delete(atrament_data[this_canvas_id]);
 				}
 			} catch (e) {
@@ -3919,7 +3919,7 @@ async function last_shape_layer_warning() {
 					var canvasses = $(all_current_custom_images[i]).find("img,canvas");
 
 					for (var j = 0; j < canvasses.length; j++) {
-						var this_canvas_id = canvasses[j].id
+						var this_canvas_id = canvasses[j].id;
 						if(!this_canvas_id.endsWith("_layer")) {
 							var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
 							var new_canvas_id = base_id + "_layer";
@@ -3950,12 +3950,12 @@ async function last_shape_layer_warning() {
 }
 
 function alter_text_webcam_series () {
-	var number = parse_int($("#number_of_series_images").val())
-	var delaybetween = parse_float($("#delay_between_images_in_series").val())
+	var number = parse_int($("#number_of_series_images").val());
+	var delaybetween = parse_float($("#delay_between_images_in_series").val());
 
 	var s = "&#128248; x " + number;
 	if(!is_cosmo_mode) {
-		s = s + " (" + (1 / delaybetween) + "/s)"
+		s = s + " (" + (1 / delaybetween) + "/s)";
 	}
 
 	$(".webcam_series_button").html(s);
@@ -3963,7 +3963,7 @@ function alter_text_webcam_series () {
 
 function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
-	var html = '<span class="own_image_span"><img height="90" src="' + img+ '" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>';
+	var html = "<span class=\"own_image_span\"><img height=\"90\" src=\"" + img+ "\" /><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>";
 	imgDiv.append(html);
 }
 
@@ -3978,7 +3978,7 @@ async function add_new_category() {
 
 	$(".own_image_label").each(function (i, x) {
 		current_labels.push($(x).val());
-	})
+	});
 
 	while (current_labels.includes("label " + label_nr)) {
 		label_nr++;
@@ -4001,9 +4001,9 @@ async function add_new_category() {
 		if([0, 1].includes(k)) {
 			var t = "";
 			if(k == 0) {
-				t = ``;
+				t = "";
 			} else {
-				t = `,took_images[1]`;
+				t = ",took_images[1]";
 			}
 
 			req = `data-required_skills="show_webcam[1]${t}"`;
@@ -4017,7 +4017,7 @@ async function add_new_category() {
 			`<button ${req} style="${webcam_button_style}" class="${c} large_button webcam_data_button webcam_series_button" data-dont_hide_after_show="1" onclick="take_image_from_webcam_n_times(this)">&#128248; x 10 (10/s)</button>` +
 			`<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>` +
 			`<button id='save_button_${uuid}' style='border: 0; box-shadow: none;' class='large_button' data-required_skills="set_custom_images[${k}],drew_custom_image[${k}]" onclick="add_image_to_category($('#${uuid}_sketcher')[0].toDataURL(), ${label_nr});event.preventDefault();clear_attrament('${uuid}_sketcher');add_cosmo_point('saved_custom_image')">&#128190;</button>` +
-		`</div>`;
+		"</div>";
 
 		$(s).appendTo("#own_images_container");
 
@@ -4027,9 +4027,9 @@ async function add_new_category() {
 			this_label = cosmo_categories[label_nr % cosmo_categories.length];
 		}
 
-		$('<form method="post" enctype="multipart/form-data"><input onkeyup="rename_labels(1)" class="own_image_label" value="' + this_label + '" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>').prependTo($(".own_image_upload_container")[n]);
+		$("<form method=\"post\" enctype=\"multipart/form-data\"><input onkeyup=\"rename_labels(1)\" class=\"own_image_label\" value=\"" + this_label + "\" /><input type=\"file\" class=\"own_image_files\" multiple accept=\"image/*\"><br/></form>").prependTo($(".own_image_upload_container")[n]);
 
-		$('<div class="own_images"></div>').appendTo($(".own_image_upload_container")[n]);
+		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 
 		get_drawing_board_on_page($(".own_image_upload_container")[n], uuid + "_sketcher", "");
 	}
@@ -4105,7 +4105,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	$(canvas).parent().append("<br>");
 	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
 	$(canvas).parent().append(color_picker_code);
-	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:'rgb'});
+	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:"rgb"});
 
 
 	$(canvas).parent().append("<br>Transparency:");
@@ -4140,7 +4140,7 @@ function get_shown_advanced() {
 	var shown = [];
 
 	for (var i = 0; i < layer_options_internal.length; i++) {
-		var display = $(layer_options_internal[i]).css("display")
+		var display = $(layer_options_internal[i]).css("display");
 		if (display == "none") {
 			shown[i] = 0;
 		} else {
@@ -4236,7 +4236,7 @@ async function show_csv_file(disabled_show_head_data) {
 			return;
 		}
 
-		var y_between_0_and_1 = parsed_data["y_between_0_and_1"]
+		var y_between_0_and_1 = parsed_data["y_between_0_and_1"];
 
 		if (!y_between_0_and_1) {
 			if ($("#auto_set_last_layer_activation").is(":checked")) {
@@ -4256,7 +4256,7 @@ async function show_csv_file(disabled_show_head_data) {
 
 		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
 
-		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val())
+		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
 		var shape_preview_color = "<div>";
 		csv_allow_training = true;
 		//shape_preview_color += "black";
@@ -4427,8 +4427,8 @@ async function write_error(e, fn, hide_swal) {
 
 		if(!hide_swal) {
 			Swal.fire({
-				icon: 'error',
-				title: 'Oops [5]...',
+				icon: "error",
+				title: "Oops [5]...",
 				html: msg
 			});
 		} else {
@@ -4663,8 +4663,8 @@ function fix_viz_width () {
 async function theme_choser () {
 	var theme = $("#theme_choser").val();
 
-	document.getElementById('css_mode').href = theme + '.css';
-	document.getElementById('css_ribbon').href = 'ribbon' + theme + '.css';
+	document.getElementById("css_mode").href = theme + ".css";
+	document.getElementById("css_ribbon").href = "ribbon" + theme + ".css";
 
 	set_cookie("theme", theme);
 
@@ -4696,7 +4696,7 @@ function move_element_to_another_div(element, new_element_id) {
 }
 
 async function repeat_while_demo() {
-	await show_prediction()
+	await show_prediction();
 
 	if (!(model.isTraining || started_training)) {
 		await train_neural_network();
@@ -4775,10 +4775,10 @@ async function change_model_dataset() {
 
 function allow_edit_input_shape() {
 	if ($("#auto_input_shape").is(":checked")) {
-		l(language[lang]["input_shape_is_read_only"])
+		l(language[lang]["input_shape_is_read_only"]);
 		$("#inputShape").attr("readonly", true);
 	} else {
-		l(language[lang]["input_shape_is_writable"])
+		l(language[lang]["input_shape_is_writable"]);
 		$("#inputShape").attr("readonly", false);
 	}
 }
@@ -4817,45 +4817,45 @@ function human_readable_time(seconds, start="", end="") {
 	}
 
 	var levels = [
-		[Math.floor(seconds / 31536000), language[lang]['years']],
-		[Math.floor((seconds % 31536000) / 86400), language[lang]['days']],
-		[Math.floor(((seconds % 31536000) % 86400) / 3600), language[lang]['hours']],
-		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), language[lang]['minutes']],
-		[(((seconds % 31536000) % 86400) % 3600) % 60, language[lang]['seconds']],
+		[Math.floor(seconds / 31536000), language[lang]["years"]],
+		[Math.floor((seconds % 31536000) / 86400), language[lang]["days"]],
+		[Math.floor(((seconds % 31536000) % 86400) / 3600), language[lang]["hours"]],
+		[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), language[lang]["minutes"]],
+		[(((seconds % 31536000) % 86400) % 3600) % 60, language[lang]["seconds"]],
 	];
 
 	var returntext = "";
 
 	if (levels[0][0] !== 0) {
-		returntext += levels[0][0] + ' ' + (levels[0][0] === 1 ? levels[0][1].substr(0, levels[0][1].length - 1) : levels[0][1]);
+		returntext += levels[0][0] + " " + (levels[0][0] === 1 ? levels[0][1].substr(0, levels[0][1].length - 1) : levels[0][1]);
 	}
 
 	if (levels[1][0] !== 0) {
 		if (returntext) {
 			returntext += ", ";
 		}
-		returntext += levels[1][0] + ' ' + (levels[1][0] === 1 ? levels[1][1].substr(0, levels[1][1].length - 1) : levels[1][1]);
+		returntext += levels[1][0] + " " + (levels[1][0] === 1 ? levels[1][1].substr(0, levels[1][1].length - 1) : levels[1][1]);
 	}
 
 	if (levels[2][0] !== 0) {
 		if (returntext) {
 			returntext += ", ";
 		}
-		returntext += levels[2][0] + ' ' + (levels[2][0] === 1 ? levels[2][1].substr(0, levels[2][1].length - 1) : levels[2][1]);
+		returntext += levels[2][0] + " " + (levels[2][0] === 1 ? levels[2][1].substr(0, levels[2][1].length - 1) : levels[2][1]);
 	}
 
 	if (levels[3][0] !== 0) {
 		if (returntext) {
 			returntext += ", ";
 		}
-		returntext += levels[3][0] + ' ' + (levels[3][0] === 1 ? levels[3][1].substr(0, levels[3][1].length - 1) : levels[3][1]);
+		returntext += levels[3][0] + " " + (levels[3][0] === 1 ? levels[3][1].substr(0, levels[3][1].length - 1) : levels[3][1]);
 	}
 
 	if (levels[4][0] !== 0) {
 		if (returntext) {
 			returntext += ", ";
 		}
-		returntext += levels[4][0] + ' ' + (levels[4][0] === 1 ? levels[4][1].substr(0, levels[4][1].length - 1) : levels[4][1]);
+		returntext += levels[4][0] + " " + (levels[4][0] === 1 ? levels[4][1].substr(0, levels[4][1].length - 1) : levels[4][1]);
 	}
 
 	return returntext;
@@ -4863,23 +4863,23 @@ function human_readable_time(seconds, start="", end="") {
 
 
 function delete_own_image(elem) {
-	$(elem).parent().next().remove()
+	$(elem).parent().next().remove();
 	$(elem).parent().remove();
 }
 
 function larger_maximally_activated_neurons() {
-	$(".layer_image").css({ height: '+=50px', width: '+=50px' })
+	$(".layer_image").css({ height: "+=50px", width: "+=50px" });
 }
 
 function smaller_maximally_activated_neurons() {
-	$(".layer_image").css({ height: '-=50px', width: '-=50px' })
+	$(".layer_image").css({ height: "-=50px", width: "-=50px" });
 	if ($(".layer_image").css("width") == "0px") {
-		$(".layer_image").css({ height: 'auto', width: 'auto' })
+		$(".layer_image").css({ height: "auto", width: "auto" });
 	}
 }
 
 function reset_maximally_activated_neurons() {
-	$(".layer_image").css({ height: 'auto', width: 'auto' })
+	$(".layer_image").css({ height: "auto", width: "auto" });
 }
 
 function delete_maximally_activated_predictions() {
@@ -4892,7 +4892,7 @@ async function get_layers_container_md5() {
 	$("#layers_container").find("select,input,checkbox").each(function (i, x) {
 		x = $(x);
 		layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
-	})
+	});
 
 	var res = await md5(layers_container_str);
 
@@ -4903,9 +4903,9 @@ async function get_layers_container_md5() {
 function rename_tmp_onchange() {
 	$("*[_onchange]").each(function (i, x) {
 		var elem = $(this);
-		elem.attr("onchange", elem.attr('_onchange'));
-		elem.removeAttr('_onchange');
-	})
+		elem.attr("onchange", elem.attr("_onchange"));
+		elem.removeAttr("_onchange");
+	});
 
 }
 
@@ -4929,7 +4929,7 @@ async function hide_tab_label(label) {
 	}
 
 	if (first_displayable && (is_cosmo_mode || is_hidden_or_has_hidden_parent(currently_selected))) {
-		$($(first_displayable).children()[0]).click()
+		$($(first_displayable).children()[0]).click();
 	}
 
 	try {
@@ -4970,7 +4970,7 @@ async function show_tab_label(label, click) {
 }
 
 function check_number_values() {
-	var all_fields = document.querySelectorAll('input[type="number"]');
+	var all_fields = document.querySelectorAll("input[type=\"number\"]");
 	var default_bg_color = $("input").css("background-color");
 
 	var missing_values = 0;
@@ -5004,7 +5004,7 @@ function check_number_values() {
 			}
 
 		}
-	};
+	}
 
 	if(missing_values) {
 		has_missing_values = true;
@@ -5058,7 +5058,7 @@ function summary_to_table(lines) {
 			d_or_h = "h";
 		}
 		if (typeof (new_array[i]) == "object") {
-			table += "<tr><t" + d_or_h + ">" + new_array[i].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n"
+			table += "<tr><t" + d_or_h + ">" + new_array[i].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n";
 		} else {
 			table += "<tr><td colspan=" + colspan_nr + ">" + new_array[i] + "</td></tr>\n";
 		}
@@ -5074,12 +5074,12 @@ function plotly_show_loss_graph() {
 	tidy(() => {
 		var y_true_table = [];
 		$(".data_table_y_true").each((i, x) => {
-			y_true_table[i] = [i, parse_float($(x).val())]
+			y_true_table[i] = [i, parse_float($(x).val())];
 		});
 
 		var y_pred_table = [];
 		$(".data_table_y_pred").each((i, x) => {
-			y_pred_table[i] = [i, parse_float($(x).val())]
+			y_pred_table[i] = [i, parse_float($(x).val())];
 		});
 
 		var y_true = tensor2d(y_true_table);
@@ -5088,16 +5088,16 @@ function plotly_show_loss_graph() {
 		var trace1 = {
 			x: y_true.arraySync().map(x => x[0]),
 			y: y_true.arraySync().map(x => x[1]),
-			mode: 'markers',
-			type: 'scatter',
+			mode: "markers",
+			type: "scatter",
 			name: "Ground Thruth"
 		};
 
 		var trace2 = {
 			x: y_pred.arraySync().map(x => x[0]),
 			y: y_pred.arraySync().map(x => x[1]),
-			mode: 'markers',
-			type: 'scatter',
+			mode: "markers",
+			type: "scatter",
 			name: "Prediction"
 		};
 
@@ -5118,21 +5118,21 @@ function plotly_show_loss_graph() {
 
 		for (var i = 0; i < data.length; i++) {
 			var fn = data[i]["fn"];
-			var name = data[i]["name"]
+			var name = data[i]["name"];
 
 			var loss = fn(y_true, y_pred);
 
 			plot_data.push({
 				x: y_pred.arraySync().map(x => x[0]),
 				y: loss.arraySync(),
-				mode: 'lines',
-				type: 'scatter',
+				mode: "lines",
+				type: "scatter",
 				name: name
 			});
 		}
 
 
-		Plotly.newPlot('explanation', plot_data);
+		Plotly.newPlot("explanation", plot_data);
 	});
 
 	write_descriptions(); // cannot be async
@@ -5140,7 +5140,7 @@ function plotly_show_loss_graph() {
 }
 
 function add_row_to_plotly_loss() {
-	$('#data_table tbody tr:last').clone().insertAfter('#data_table tbody tr:last');
+	$("#data_table tbody tr:last").clone().insertAfter("#data_table tbody tr:last");
 
 	plotly_show_loss_graph();
 
@@ -5166,27 +5166,27 @@ function remove_plotly_table_element(item) {
 }
 
 function create_plotly_table() {
-	var str = `<table id="data_table" border=1 style="border-collapse: collapse;">` +
-		`	<tr>` +
-		`		<th>Y true</th>` +
-		`		<th>Y pred</th>` +
-		`		<th>Delete</th>` +
-		`	</tr>` +
-		`	<tr>` +
-		`		<td colspan=3><button onclick="add_row_to_plotly_loss()">Add new data</button></td>` +
-		`	</tr>`;
+	var str = "<table id=\"data_table\" border=1 style=\"border-collapse: collapse;\">" +
+		"	<tr>" +
+		"		<th>Y true</th>" +
+		"		<th>Y pred</th>" +
+		"		<th>Delete</th>" +
+		"	</tr>" +
+		"	<tr>" +
+		"		<td colspan=3><button onclick=\"add_row_to_plotly_loss()\">Add new data</button></td>" +
+		"	</tr>";
 
 	for (var i = 0; i < example_plotly_data.length; i++) {
-		str += `	<tr>` +
+		str += "	<tr>" +
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[i][0]}" /></td>` +
 			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[i][1]}" /></td>` +
-			`		<td>` +
-			`			<button class='delete_row' onclick="remove_plotly_table_element(this)">&#10060;</button>` +
-			`		</td>` +
-			`	</tr>`;
+			"		<td>" +
+			"			<button class='delete_row' onclick=\"remove_plotly_table_element(this)\">&#10060;</button>" +
+			"		</td>" +
+			"	</tr>";
 	}
 
-	str += `</table>`;
+	str += "</table>";
 
 	$("#table_div").html(str);
 
@@ -5215,17 +5215,17 @@ function set_cookie(name, value, days = 365) {
 
 function get_cookie(name) {
 	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
+	var ca = document.cookie.split(";");
 	for(var i=0;i < ca.length;i++) {
 		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		while (c.charAt(0)==" ") c = c.substring(1,c.length);
 		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
 	}
 	return null;
 }
 
 function delete_cookie(name) {
-	document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	document.cookie = name +"=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 }
 
 function copy_options () {
@@ -5284,7 +5284,7 @@ function copy_values() {
 function real_width(obj) {
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
-	$('body').append(clone);
+	$("body").append(clone);
 	var w = clone.outerWidth();
 	clone.remove();
 	return w;
@@ -5293,7 +5293,7 @@ function real_width(obj) {
 function real_height(obj) {
 	var clone = obj.clone();
 	clone.css("visibility","hidden");
-	$('body').append(clone);
+	$("body").append(clone);
 	var h = clone.outerHeight();
 	clone.remove();
 	return h;
@@ -5301,11 +5301,11 @@ function real_height(obj) {
 
 async function get_training_data_as_json () {
 	force_download = 1;
-	var training_data = await get_xs_and_ys()
+	var training_data = await get_xs_and_ys();
 	force_download = 0;
 
-	training_data.x = await training_data.x.arraySync()
-	training_data.y = await training_data.y.arraySync()
+	training_data.x = await training_data.x.arraySync();
+	training_data.y = await training_data.y.arraySync();
 
 	await dispose(training_data["x"]);
 	await dispose(training_data["y"]);
@@ -5332,7 +5332,7 @@ function l(msg) {
 			var load_time = Date().toLocaleString();
 			load_time = load_time.replace(/ GMT.*/, "");
 			msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
-			$("#log").prepend(load_time + ": " + msg + "\n")
+			$("#log").prepend(load_time + ": " + msg + "\n");
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 				err(msg);
@@ -5375,7 +5375,7 @@ async function set_custom_webcam_training_data() {
 					await add_cosmo_point("show_webcam");
 				} catch (e) {
 					err(e);
-					console.trace()
+					console.trace();
 				}
 			}
 		});
@@ -5401,7 +5401,7 @@ async function toggle_layers() {
 
 	if(is_cosmo_mode && !$(".left_side").attr("data-clicked")) {
 		await add_cosmo_point("toggled_layers");
-		$(".left_side").attr("data-clicked", 1)
+		$(".left_side").attr("data-clicked", 1);
 	}
 }
 
@@ -5416,7 +5416,7 @@ async function get_available_cams () {
 				webcams.push(device.label);
 				ids.push(device.deviceId);
 			}
-		};
+		}
 	});
 
 	return [webcams, ids];
@@ -5444,7 +5444,7 @@ async function easter_egg_fireworks (force=0) {
 	if(force || fireworks_counter && fireworks_counter % 10 == 0) {
 		$(".fireworks-container").show();
 		in_fireworks = true;
-		var fw = new Fireworks(document.querySelector('.fireworks-container'))
+		var fw = new Fireworks(document.querySelector(".fireworks-container"));
 		fw.start();
 		await delay(10000);
 		fw.stop();
@@ -5488,7 +5488,7 @@ async function init_webcams () {
 		if(available_webcams.length > 1) {
 			$(".only_when_multiple_webcams").show();
 			for (var i = 0; i < available_webcams.length; i++) {
-				$('#which_webcam').append($('<option>', {
+				$("#which_webcam").append($("<option>", {
 					value: i,
 					text: available_webcams[i]
 				}));
@@ -5511,10 +5511,10 @@ function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
 		l("Showing Augmentation tab");
 		l(language[lang]["showing_augmentation"]);
-		$('a[href*="tf_ribbon_augmentation"]').show().parent().show();
+		$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
 	} else {
 		l(language[lang]["hiding_augmentation"]);
-		$('a[href*="tf_ribbon_augmentation"]').hide().parent().hide();
+		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
 }
 
@@ -5531,7 +5531,7 @@ function get_last_layer_activation_function () {
 }
 
 function set_layer_background(nr, color) {
-	$($(".layer_setting")[nr]).css("background-color", color)
+	$($(".layer_setting")[nr]).css("background-color", color);
 }
 
 function set_model_layer_warning(i, warning) {
@@ -5555,12 +5555,12 @@ async function download_model_for_training (m) {
 	};
 
 	$.ajax({
-		'type': 'POST',
-		'url': 'submit.php?zip=1',
-		'data': {
+		"type": "POST",
+		"url": "submit.php?zip=1",
+		"data": {
 			"data": JSON.stringify(data)
 		},
-		'success': async function(response) {
+		"success": async function(response) {
 			var a = document.createElement("a"); //Create <a>
 			a.href = "data:application/zip;base64," + response; //Image Base64 Goes here
 			a.download = "model.zip"; //File name Here
@@ -5583,12 +5583,12 @@ function clear_attrament (idname) {
 	*/
 
 	try {
-		atrament_data[idname]['atrament'].context.fillStyle = "#ffffff";
-		atrament_data[idname]['atrament'].context.fillRect(
+		atrament_data[idname]["atrament"].context.fillStyle = "#ffffff";
+		atrament_data[idname]["atrament"].context.fillRect(
 			0,
 			0,
-			atrament_data[idname]['atrament'].canvas.width,
-			atrament_data[idname]['atrament'].canvas.height
+			atrament_data[idname]["atrament"].canvas.width,
+			atrament_data[idname]["atrament"].canvas.height
 		);
 	} catch (e) {
 		err(e);
@@ -5610,7 +5610,7 @@ function invert_elements_in_dark_mode () {
 }
 
 function green_marker (element) {
-	$(element).parent().parent().find(".green_icon").removeClass("green_icon")
+	$(element).parent().parent().find(".green_icon").removeClass("green_icon");
 	$(element).addClass("green_icon");
 }
 
@@ -5635,7 +5635,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 		if(is_cosmo_mode) {
 			classes = " cosmo";
 		}
-		required_skills = ' data-required_skills="took_images[4]" ';
+		required_skills = " data-required_skills=\"took_images[4]\" ";
 	//} else {
 	//	log(`!!!!!!${idname}!!!!!!`)
 	}
@@ -5684,22 +5684,22 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	// a little helper tool for logging events
 	const eventsLog = [];
-	const logElement = document.getElementById('events');
+	const logElement = document.getElementById("events");
 
-	atrament_data[idname]["atrament"].addEventListener('clean', () => {
+	atrament_data[idname]["atrament"].addEventListener("clean", () => {
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
-	atrament_data[idname]["atrament"].addEventListener('fillstart', ({ x, y }) => {
+	atrament_data[idname]["atrament"].addEventListener("fillstart", ({ x, y }) => {
 		atrament_data[idname]["canvas"].style.cursor = "wait";
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
-	atrament_data[idname]["atrament"].addEventListener('fillend', () => {
+	atrament_data[idname]["atrament"].addEventListener("fillend", () => {
 		atrament_data[idname]["canvas"].style.cursor = "crosshair";
 		if(customfunc) {
 			eval(customfunc);
@@ -5723,17 +5723,17 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	atrament_data[idname]["atrament"].adaptiveStroke = true;
 
-	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:'rgb'});
+	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:"rgb"});
 
-	atrament_data[idname]['atrament'].weight = 20;
+	atrament_data[idname]["atrament"].weight = 20;
 }
 
 function chose_nearest_color_picker (e) {
 	var input = $(e).parent().find("input");
 
-	var id = $(input)[0].id.replace(/_colorpicker$/, "")
+	var id = $(input)[0].id.replace(/_colorpicker$/, "");
 
-	atrament_data[id].colorpicker.show()
+	atrament_data[id].colorpicker.show();
 }
 
 async function onclick_math_mode (t, e) {
@@ -5767,7 +5767,7 @@ function hide_empty_tabs (name) {
 
 	for (var i = 0; i < c.length; i++) {
 		if($(c[i]).css("display") != "none") {
-			$("[href='#" + name + "']").parent().show()
+			$("[href='#" + name + "']").parent().show();
 			return;
 		}
 	}
@@ -5776,15 +5776,15 @@ function hide_empty_tabs (name) {
 		$("[href='#home_ribbon']").click();
 	}
 
-	$("[href='#" + name + "']").parent().hide()
+	$("[href='#" + name + "']").parent().hide();
 }
 
 function get_canvas_blob(canvas) {
 	return new Promise(function(resolve, reject) {
 		canvas.toBlob(function(blob) {
-			resolve(blob)
-		})
-	})
+			resolve(blob);
+		});
+	});
 }
 
 
@@ -5800,7 +5800,7 @@ async function create_zip_with_custom_images () {
 
 		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
 
-		var filename = canvas.id
+		var filename = canvas.id;
 
 		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
 	}
@@ -5858,7 +5858,7 @@ async function change_last_responsible_layer_for_image_output () {
 	if(last_layer_nr) {
 		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
 			l("Setting the neurons/filter of layer " + last_layer_nr + " to 3");
-			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change")
+			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
 		}
 
 		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
@@ -5902,7 +5902,7 @@ async function update_label_by_nr (t, nr) {
 		}
 	});
 
-	$($(".own_image_label")[nr]).val(name)
+	$($(".own_image_label")[nr]).val(name);
 
 	await update_python_code(1);
 }
@@ -6019,9 +6019,9 @@ function hide_colorpicker_for_eraser (idname) {
 	var box = $(atrament_data[idname].canvas).parent();
 
 	if(atrament_data[idname]["atrament"].mode == "erase") {
-		box.find(".colorpicker_elements").css("visibility", "hidden")
+		box.find(".colorpicker_elements").css("visibility", "hidden");
 	} else {
-		box.find(".colorpicker_elements").css("visibility", "visible")
+		box.find(".colorpicker_elements").css("visibility", "visible");
 	}
 
 }
@@ -6044,7 +6044,7 @@ function load_msg(swal_msg_format) {
 		}
 
 		if(Object.keys(swal_msg_format).includes("html")) {
-			html_msg += swal_msg_format["html"]
+			html_msg += swal_msg_format["html"];
 		}
 
 		$("#load_msg").html(html_msg);
@@ -6102,7 +6102,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 					element.trigger("change");
 				}
 			} else {
-				err("ui_elements contains no elements. Selector: "  + item_selector)
+				err("ui_elements contains no elements. Selector: "  + item_selector);
 			}
 		} else {
 			err(`${val_key} is required but not properly defined`);
@@ -6162,7 +6162,7 @@ function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_init
 
 		if(!error_occured) {
 			try {
-				set_required_seeds(required, type, kernel_or_bias)
+				set_required_seeds(required, type, kernel_or_bias);
 			} catch (e) {
 				l("ERROR: " + e);
 			}
@@ -6247,7 +6247,7 @@ function model_is_ok () {
 
 	try {
 		var model_has_input = 1;
-		try { var x = model.input; } catch (e) { model_has_input = 0};
+		try { var x = model.input; } catch (e) { model_has_input = 0;}
 
 		if(!model) {
 			color = red;
@@ -6302,7 +6302,7 @@ function show_overlay(text, title="") {
 			text_color = "white";
 		}
 
-		const overlay = document.createElement('div');
+		const overlay = document.createElement("div");
 		overlay.style.position = "fixed";
 		overlay.style.top = "0";
 		overlay.style.left = "0";
@@ -6316,7 +6316,7 @@ function show_overlay(text, title="") {
 		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
 
-		const textElement = document.createElement('p');
+		const textElement = document.createElement("p");
 		textElement.innerHTML = text;
 		textElement.style.textAlign = "center";
 		textElement.style.fontFamily = "Arial, sans-serif";
@@ -6327,11 +6327,11 @@ function show_overlay(text, title="") {
 		overlay.appendChild(textElement);
 
 		if(title) {
-			const hElement = document.createElement('h1');
+			const hElement = document.createElement("h1");
 			hElement.innerHTML = title;
-			hElement.style.textAlign = 'center';
-			hElement.style.fontFamily = 'Arial, sans-serif';
-			hElement.style.fontSize = '24px';
+			hElement.style.textAlign = "center";
+			hElement.style.fontFamily = "Arial, sans-serif";
+			hElement.style.fontSize = "24px";
 			hElement.style.color = text_color;
 			hElement.style.padding = "20px";
 
@@ -6340,19 +6340,19 @@ function show_overlay(text, title="") {
 
 		document.body.appendChild(overlay);
 
-		assert(true, 'Overlay displayed successfully.');
+		assert(true, "Overlay displayed successfully.");
 
 		return overlay;
 	} catch (error) {
-		log('An error occurred:', error);
-		wrn('Failed to display overlay.');
+		log("An error occurred:", error);
+		wrn("Failed to display overlay.");
 	}
 }
 
 function clone_canvas(oldCanvas) {
 	//create a new canvas
-	var newCanvas = document.createElement('canvas');
-	var context = newCanvas.getContext('2d');
+	var newCanvas = document.createElement("canvas");
+	var context = newCanvas.getContext("2d");
 
 	//set dimensions
 	newCanvas.width = oldCanvas.width;
@@ -6392,10 +6392,10 @@ function set_get(paramName, paramValue) {
 	const newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
 
 	try {
-		history.replaceState(null, '', newUrl); // Update the URL without reloading the page
+		history.replaceState(null, "", newUrl); // Update the URL without reloading the page
 	} catch (error) {
 		// Handle error: Log and warn about the error
-		wrn('Error updating URL:', error);
+		wrn("Error updating URL:", error);
 		// You can add more intelligent handling here if needed
 	}
 }
