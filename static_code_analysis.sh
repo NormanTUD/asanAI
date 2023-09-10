@@ -6,8 +6,14 @@ function calltracer () {
 }
 # trap 'calltracer' ERR
 
+
+if ! which npx 2>&1 >/dev/null; then
+	echo "npx needs to be installed"
+	exit 2
+fi
+
 if ! which egrep 2>&1 >/dev/null; then
-	echo "grep eneeds to be installed"
+	echo "grep needs to be installed"
 	exit 2
 fi
 
@@ -39,7 +45,7 @@ DOUBLE_DEFINED_FUNCS=$(ack "^\s*(async)?\s*function\s*" *.js | sed -e "s#.*\s*fu
 if [[ ! -z $DOUBLE_DEFINED_FUNCS ]]; then
 	echo "find double defined functions"
 	echo $DOUBLE_DEFINED_FUNCS
-	ERROR=1
+	ERROR=2
 fi
 
 UNCALLED_FUNCS=$(for func_name in $(ack "^\s*(async)?\s*function\s*" *.js visualizations/*.js | sed -e "s#.*\s*function\s*##" | sed -e "s#\s*(.*##" | sort | grep -v _option); do
@@ -52,7 +58,7 @@ done)
 if [[ ! -z $UNCALLED_FUNCS ]]; then
 	echo "find functions that are defined, yet never called:"
 	echo "$UNCALLED_FUNCS"
-	ERROR=1
+	ERROR=3
 fi
 
 #echo "Find untested functions, listed by number of occurences"
@@ -61,8 +67,22 @@ fi
 #	echo "$NUM_OCC: $i is untested currently"; 
 #done | sort -nr | tac
 
-if [[ "$ERROR" == "1" ]]; then
-	exit 1
-else
-	exit 0
+
+if [[ -e _ALL.js ]]; then
+	rm _ALL.js
 fi
+
+for included_js in $(cat index.php | grep _js | sed -e 's#.*_js(.##' | grep "\.js" | sed -e 's#".*##' | grep -v libs); do 
+	cat $included_js >> _ALL.js
+done
+
+
+if [[ -e _ALL.js ]]; then
+	npx eslint _ALL.js | grep -v "'tf' is not defined" | grep -v Fireworks | grep -v label_debugger_icon;
+	rm _ALL.js
+else
+	echo "Could not concat all included js files";
+	ERROR=4
+fi
+
+exit $ERROR
