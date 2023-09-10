@@ -1544,7 +1544,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				dbg("This error may happen when the whole DOM is deleted: " + e);
 				return false;
 			} else {
-				throw new Error(e);
+				throw new Error("" + e);
 			}
 		}
 	}
