@@ -1,7 +1,7 @@
 "use strict";
 
 async function except (errname, e) {
-	$(".overlay").remove()
+	$(".overlay").remove();
 
 	await write_descriptions();
 	await enable_everything();
@@ -318,8 +318,8 @@ async function get_model_structure(is_fake_model = 0) {
 				wrn("Failed to add layer type ", type, ": ", e);
 				header("DATA:");
 				log(data);
-				$($(".warning_container")[i]).show()
-				$($(".warning_layer")[i]).html(e)
+				$($(".warning_container")[i]).show();
+				$($(".warning_layer")[i]).html(e);
 
 			}
 
@@ -465,13 +465,13 @@ async function get_html_from_model () {
 		html += "				$('#output').show();\n";
 		html += "			});\n";
 	} else {
-		html += "			async function predict() {\n"
+		html += "			async function predict() {\n";
 		html +=	"				await load_model();\n";
-		html += "				var input = $('#inputtensor').val()\n"
-		html += "				var tensor = tf.tensor(eval(input));\n"
+		html += "				var input = $('#inputtensor').val()\n";
+		html += "				var tensor = tf.tensor(eval(input));\n";
 		html += "				tensor = tf.divNoNan(tensor, divide_by);\n";
-		html += "				var prediction_tensor = await model.predict(tensor);\n"
-		html += "				var results = await prediction_tensor.dataSync();\n"
+		html += "				var prediction_tensor = await model.predict(tensor);\n";
+		html += "				var results = await prediction_tensor.dataSync();\n";
 		html += "				var html = '<pre>';\n";
 		html += "				for (var i = 0; i < results.length; i++) {\n";
 		html += "					var label = labels[i % labels.length];\n";
@@ -483,7 +483,7 @@ async function get_html_from_model () {
 		html += "				}\n";
 		html += "				html += '</pre>';\n";
 		html += "				$('#results').html(html);\n";
-		html += "			}\n"
+		html += "			}\n";
 	}
 	html += "			</script>\n";
 	if(input_shape_is_image_val) {
@@ -678,7 +678,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 
 			new_model.add(new_layer);
 
-			var added_layer = new_model.layers[new_model.layers.length - 1]
+			var added_layer = new_model.layers[new_model.layers.length - 1];
 
 			if(added_layer["bias"]) {
 				_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in _add_layer_to_model]"];
@@ -835,6 +835,7 @@ async function create_model (old_model, fake_model_structure, force) {
 					model.layers[i].input.shape;
 					ok = 0;
 				} catch (er) { // ignore delibaretly, when it fails, its ok
+					wrn("" + er);
 				}
 
 				if(!ok) {
@@ -905,7 +906,7 @@ async function dispose_old_model_tensors (model_uuid) {
 				disposable.push(_custom_tensors[i][1]);
 			}
 		}
-	})
+	});
 
 	for (var i in disposable) {
 		if(i != "last") {
@@ -938,7 +939,7 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		} catch (e) {
 			var msg = "" + e;
 			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
-			$($(".warning_container")[i]).html(msg).show()
+			$($(".warning_container")[i]).html(msg).show();
 			await write_descriptions();
 			throw new Error(e);
 		}
@@ -968,7 +969,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 
 		var js_option_name = undefined;
 		if (this_option in python_names_to_js_names) {
-			js_option_name = python_names_to_js_names[this_option]
+			js_option_name = python_names_to_js_names[this_option];
 		} else if (this_option.startsWith("strides")) {
 			js_option_name = "strides";
 		} else if (this_option.startsWith("kernel_size")) {
@@ -1208,7 +1209,7 @@ async function get_valid_layer_types (layer_nr) {
 				l(pb_string);
 				if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
 					//log("Testing " + layer_type);
-					var compiled_fake_model = await compile_fake_model(layer_nr, layer_type)
+					var compiled_fake_model = await compile_fake_model(layer_nr, layer_type);
 					if(compiled_fake_model) {
 						valid_layer_types.push(layer_type);
 					}
@@ -1585,7 +1586,7 @@ function layer_has_multiple_nodes () {
 				var zzz = model.layers[x].output;
 			} catch (e) {
 				if(("" + e).includes("multiple inbound nodes")) {
-					return true
+					return true;
 				} else {
 					throw new Error(e);
 				}
