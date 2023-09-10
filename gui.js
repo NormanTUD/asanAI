@@ -104,7 +104,7 @@ async function get_current_layer_container_status_hash() {
 }
 
 async function get_current_status_hash(use_weights=1) {
-	var html_code = '';
+	var html_code = "";
 
 	var allitems = [];
 	allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName('input'));
@@ -114,7 +114,7 @@ async function get_current_status_hash(use_weights=1) {
 
 	allitems.forEach(function (x) {
 		var item = $(x);
-		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked
+		html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked;
 	});
 
 	if(use_weights) {
@@ -147,7 +147,7 @@ function get_item_value(layer, classname) {
 		}
 	} else {
 		for (var this_classname in classname) {
-			var found = $($layer.find("." + this_classname)[0])
+			var found = $($layer.find("." + this_classname)[0]);
 			if (found.attr("type") == "checkbox") {
 				return found.is(":checked");
 			} else {
@@ -180,7 +180,7 @@ function set_item_value(layer, classname, value) {
 		}
 	} else {
 		if(classname == "rate") {
-			set_item_value(layer, "dropout_rate", value)
+			set_item_value(layer, "dropout_rate", value);
 		} else if(classname != "trainable") {
 			log("Unknown classname '" + classname + "' in layer " + layer);
 		}
@@ -350,7 +350,7 @@ function add_seed_option (type, nr) {
 
 	var current_input_shape = get_input_shape();
 	if (current_input_shape.length != 3) {
-		style = ' style="display: none" '
+		style = ' style="display: none" ';
 	}
 
 	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
@@ -373,7 +373,7 @@ function add_pool_size_option(type, nr) {
 
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
-	var letter_code = 'x'.charCodeAt();
+	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "pool_size")[i] }, nr);
@@ -388,7 +388,7 @@ function add_kernel_size_option(type, nr) {
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
-	var letter_code = 'x'.charCodeAt();
+	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_size'></span> " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
@@ -403,7 +403,7 @@ function add_strides_option(type, nr) {
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
-	var letter_code = 'x'.charCodeAt();
+	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
 		str += get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "strides")[i] }, nr);
@@ -459,7 +459,7 @@ async function insert_activation_options(layer_nr) {
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
-	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove()
+	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove();
 
 	var activation_item = $($(".layer_options_internal")[layer_nr]).find(".activation");
 
@@ -499,7 +499,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
-	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove()
+	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove();
 
 	var regularizer = $($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer");
 
@@ -522,7 +522,7 @@ async function insert_initializer_options(layer_nr, initializer_type) {
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
-	$($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr").remove()
+	$($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr").remove();
 
 	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
 
@@ -687,8 +687,8 @@ function change_output_and_example_image_size() {
 		return;
 	}
 
-	$("#output").width($("#width").val())
-	$("#output").height($("#height").val())
+	$("#output").width($("#width").val());
+	$("#output").height($("#height").val());
 	//$(".example_images").width($("#width").val())
 	//$(".example_images").height($("#height").val())
 }
@@ -731,7 +731,7 @@ async function change_width_or_height(name, inputshape_index) {
 		l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 		await set_input_shape(last_good, 1);
 
-		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index]
+		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index];
 
 		$("#" + name).val(new_size).trigger("change");
 	}
@@ -1156,7 +1156,7 @@ function model_add_python_structure (layer_type, data) {
 }
 
 function convert_to_python_string(obj) {
-	var pythonCode = '{';
+	var pythonCode = "{";
 	var i = 0;
 	for (var key in obj) {
 		if(i == 0) {
@@ -1164,7 +1164,7 @@ function convert_to_python_string(obj) {
 		}
 		let value = obj[key];
 		if(!("" + value).startsWith("[")) {
-			if (typeof value == 'boolean') {
+			if (typeof value == "boolean") {
 				value = value ? 'True' : 'False';
 			} else if (!isNaN(value)) {
 				if (Number.isInteger(parse_float(value))) {
@@ -1179,7 +1179,7 @@ function convert_to_python_string(obj) {
 		pythonCode += `    ${key}: ${value},\n`;
 		i++;
 	}
-	pythonCode += '}';
+	pythonCode += "}";
 	return pythonCode;
 }
 
@@ -1221,7 +1221,7 @@ function create_python_code (input_shape_is_image_val) {
 	python_code += "   custom_objects=None,\n";
 	python_code += "   compile=True\n";
 	python_code += ")\n\n";
-	python_code += "model.summary()\n"
+	python_code += "model.summary()\n";
 
 	if (input_shape_is_image_val) {
 		python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
@@ -1525,7 +1525,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
-			wrn("" + e)
+			wrn("" + e);
 		} else {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -1760,7 +1760,7 @@ function get_option_for_layer_by_type(nr) {
 
 	if (!type) {
 		layer_type.children().children().each(function () {
-			if ($(this).val() == 'dense') {
+			if ($(this).val() == "dense") {
 				$(this).prop("selected", true);
 			}
 		});
@@ -1824,7 +1824,7 @@ async function initializer_layer_options(thisitem) {
 
 	await set_option_for_layer_by_layer_nr(nr);
 
-	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val()
+	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
 	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
 		if (chosen_option == $(x).val()) {
 			$(x).attr('selected', 'selected');
@@ -1949,7 +1949,7 @@ function option_for_layer(nr) {
 	str += "</td>";
 	str += "<td>";
 	str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
-	var last_category = '';
+	var last_category = "";
 	for (var key of layer_names) {
 		var this_category = layer_options[key].category;
 		if (last_category != this_category) {
@@ -1976,7 +1976,7 @@ async function remove_layer(item) {
 	var number_of_layers_element = document.getElementById("number_of_layers");
 	var old_value = parse_int(number_of_layers_element.value);
 	if (old_value > 1) {
-		$($(item).parent()[0]).parent().remove()
+		$($(item).parent()[0]).parent().remove();
 
 		layer_structure_cache = null;
 		number_of_layers_element.value = old_value - 1;
@@ -2051,7 +2051,7 @@ async function add_layer(item) {
 
 	await write_descriptions();
 
-	$(".remove_layer").prop("disabled", false)
+	$(".remove_layer").prop("disabled", false);
 	$(".remove_layer").show();
 
 	await save_current_status();
@@ -2104,12 +2104,12 @@ function sortable_layers_container(layers_container) {
 			$(".descriptions_of_layers").show();
 			await updated_page();
 		},
-		axis: 'y',
+		axis: "y",
 		revert: true
 	});
 
 	layers_container.droppable({
-		tolerance: 'pointer'
+		tolerance: "pointer"
 	});
 
 }
@@ -2121,10 +2121,10 @@ function disable_all_non_selected_layer_types() {
 		var this_all_options = $(all_options[i]);
 		if (!this_all_options.is(":selected")) {
 			if (this_all_options.val() != "dense") {
-				this_all_options.prop("disabled", true)
+				this_all_options.prop("disabled", true);
 			}
 		} else {
-			this_all_options.prop("selected", true)
+			this_all_options.prop("selected", true);
 		}
 	}
 }
@@ -2187,9 +2187,9 @@ function set_xyz_values(j, name, values) {
 	assert(typeof (name) == "string", "name must be string, is: " + typeof (number));
 	assert(typeof (values) == "object", "name must be object, is: " + typeof (number));
 
-	var letter = 'x';
+	var letter = "x";
 	for (var i = 0; i < values.length; i++) {
-		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + i)
+		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + i);
 		set_item_value(j, this_name, values[i]);
 	}
 }
@@ -2345,7 +2345,7 @@ async function set_config(index) {
 			try {
 				number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
 			} catch (e) {
-				Swal.close()
+				Swal.close();
 				err(e);
 				l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
 				return;
@@ -2504,7 +2504,7 @@ async function set_config(index) {
 		if (config["weights"]) {
 			l("Setting weights from config-weights");
 			var weights_string = JSON.stringify(config["weights"]);
-			await set_weights_from_string(weights_string, 1, 1)
+			await set_weights_from_string(weights_string, 1, 1);
 		}
 	} catch (e) {
 		err(e);
@@ -2568,7 +2568,7 @@ async function wait_for_updated_page (seconds) {
 	var end_time = Date.now() / 1000;
 
 	var took = end_time - start_time;
-	
+
 	l("Done waiting for page update");
 	dbg(`${updated_page_wait_uuid}: Done waiting, took ${took}s`);
 }
@@ -2577,7 +2577,7 @@ async function init_dataset() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
 	await hide_tab_label("maximally_activated_label");
-	await show_tab_label("visualization_tab_label", 1)
+	await show_tab_label("visualization_tab_label", 1);
 
 	await show_tab_label("fcnn_tab_label", 1);
 	await hide_tab_label("tfvis_tab_label");
@@ -2615,9 +2615,9 @@ async function get_number_of_categories() {
 }
 
 async function chose_dataset(no_set_config) {
-	$("#data_origin").val("default").trigger("change")
+	$("#data_origin").val("default").trigger("change");
 
-	$("#maximally_activated_content").html("")
+	$("#maximally_activated_content").html("");
 	await hide_tab_label("maximally_activated_label");
 	if(!is_cosmo_mode) {
 		await show_tab_label("visualization_tab_label", 1);
@@ -2652,7 +2652,7 @@ async function chose_dataset(no_set_config) {
 	}
 
 	$("#prediction_non_image").hide();
-	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); })
+	$(".hide_when_custom_data").show().each((i, e) => { $(e).show(); });
 
 	model = await _create_model();
 	await compile_model();
@@ -2853,9 +2853,9 @@ function change_favicon(path) {
 
 	var link = document.querySelector("link[rel~='icon']");
 	if (!link) {
-		link = document.createElement('link');
-		link.rel = 'icon';
-		document.getElementsByTagName('head')[0].appendChild(link);
+		link = document.createElement("link");
+		link.rel = "icon";
+		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 	link.href = path;
 }
@@ -2936,9 +2936,9 @@ function show_or_hide_bias_initializer(number_of_layers) {
 		var use_bias_setting = this_layer.find(".use_bias");
 		if (use_bias_setting.length) {
 			if ($(use_bias_setting[0]).is(":checked")) {
-				this_layer.find(".bias_initializer").parent().parent().show()
+				this_layer.find(".bias_initializer").parent().parent().show();
 			} else {
-				this_layer.find(".bias_initializer").parent().parent().hide()
+				this_layer.find(".bias_initializer").parent().parent().hide();
 			}
 		}
 	}
@@ -3169,7 +3169,7 @@ async function register() {
 	var email = document.getElementById("register_email").value;
 	var username = document.getElementById("register_username").value;
 	var password = document.getElementById("register_password").value;
-	document.getElementById("register_error_msg").style.display = 'visible';
+	document.getElementById("register_error_msg").style.display = "visible";
 	if (email.includes("@")) {
 		document.getElementById("register_error_msg").innerHTML = "";
 		$.ajax({
@@ -3207,7 +3207,7 @@ async function register() {
 async function login() {
 	var username = document.getElementById("login_username").value;
 	var password = document.getElementById("login_password").value;
-	document.getElementById("login_error_msg").style.display = 'visible';
+	document.getElementById("login_error_msg").style.display = "visible";
 	$.ajax({
 		url: "login.php?username=" + username + "&pw=" + password + "&days=7",
 		success: async function (data) {
@@ -3273,7 +3273,7 @@ function model_name_exists() {
 	$.ajax({
 		url: "get_model_names.php",
 		success: function (data) {
-			log(data)
+			log(data);
 		}
 	});
 }
@@ -3295,7 +3295,7 @@ function has_network_name(elem) {
 		$.ajax({
 			url: "get_number_of_model_names.php?name=" + name,
 			success: function (data) {
-				log(data["number"])
+				log(data["number"]);
 				if(data["number"] == 0) {
 					$("#save_to_db").prop("disabled", false);
 					document.getElementById("save_model_msg").innerHTML = "";
@@ -3328,7 +3328,7 @@ function network_name_is_empty(name) {
 }
 
 function save_to_db(model_structure, model_weights, model_data, requests_public) {
-	document.getElementById("save_model_msg").style.display = 'visible';
+	document.getElementById("save_model_msg").style.display = "visible";
 	$.ajax({
 		url: "save_to_db.php",
 		data: {
@@ -3397,9 +3397,9 @@ async function open_popup(name) {
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
 
 	if ($(el).css("display") == "none") {
-		el.style.display = 'block';
+		el.style.display = "block";
 	} else {
-		el.style.display = 'none';
+		el.style.display = "none";
 	}
 	await write_descriptions();
 }
@@ -3408,7 +3408,7 @@ async function close_popup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
-	el.style.display = 'none';
+	el.style.display = "none";
 	await write_descriptions();
 }
 
@@ -3996,10 +3996,10 @@ async function add_new_category() {
 			webcam_button_style = "";
 		}
 
-		var req = '';
-		var c = '';
+		var req = "";
+		var c = "";
 		if([0, 1].includes(k)) {
-			var t = '';
+			var t = "";
 			if(k == 0) {
 				t = ``;
 			} else {
@@ -4008,7 +4008,7 @@ async function add_new_category() {
 
 			req = `data-required_skills="show_webcam[1]${t}"`;
 			if(is_cosmo_mode) {
-				c = 'cosmo';
+				c = "cosmo";
 			}
 		}
 
@@ -4021,7 +4021,7 @@ async function add_new_category() {
 
 		$(s).appendTo("#own_images_container");
 
-		var this_label = 'category ' + label_nr;
+		var this_label = "category " + label_nr;
 
 		if(is_cosmo_mode) {
 			this_label = cosmo_categories[label_nr % cosmo_categories.length];
@@ -4824,7 +4824,7 @@ function human_readable_time(seconds, start="", end="") {
 		[(((seconds % 31536000) % 86400) % 3600) % 60, language[lang]['seconds']],
 	];
 
-	var returntext = '';
+	var returntext = "";
 
 	if (levels[0][0] !== 0) {
 		returntext += levels[0][0] + ' ' + (levels[0][0] === 1 ? levels[0][1].substr(0, levels[0][1].length - 1) : levels[0][1]);
@@ -4832,28 +4832,28 @@ function human_readable_time(seconds, start="", end="") {
 
 	if (levels[1][0] !== 0) {
 		if (returntext) {
-			returntext += ', ';
+			returntext += ", ";
 		}
 		returntext += levels[1][0] + ' ' + (levels[1][0] === 1 ? levels[1][1].substr(0, levels[1][1].length - 1) : levels[1][1]);
 	}
 
 	if (levels[2][0] !== 0) {
 		if (returntext) {
-			returntext += ', ';
+			returntext += ", ";
 		}
 		returntext += levels[2][0] + ' ' + (levels[2][0] === 1 ? levels[2][1].substr(0, levels[2][1].length - 1) : levels[2][1]);
 	}
 
 	if (levels[3][0] !== 0) {
 		if (returntext) {
-			returntext += ', ';
+			returntext += ", ";
 		}
 		returntext += levels[3][0] + ' ' + (levels[3][0] === 1 ? levels[3][1].substr(0, levels[3][1].length - 1) : levels[3][1]);
 	}
 
 	if (levels[4][0] !== 0) {
 		if (returntext) {
-			returntext += ', ';
+			returntext += ", ";
 		}
 		returntext += levels[4][0] + ' ' + (levels[4][0] === 1 ? levels[4][1].substr(0, levels[4][1].length - 1) : levels[4][1]);
 	}
@@ -5412,7 +5412,7 @@ async function get_available_cams () {
 	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
 		for(var i = 0; i < devices.length; i++){
 			var device = devices[i];
-			if (device.kind === 'videoinput') {
+			if (device.kind === "videoinput") {
 				webcams.push(device.label);
 				ids.push(device.deviceId);
 			}
@@ -5597,7 +5597,7 @@ function clear_attrament (idname) {
 }
 
 function invert_elements_in_dark_mode () {
-	is_dark_mode = $("#theme_choser").val() == 'darkmode' ? true : false;
+	is_dark_mode = $("#theme_choser").val() == "darkmode" ? true : false;
 
 	var el = $(".invert_in_dark_mode");
 
@@ -5669,7 +5669,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	// Drawings code
 	// first, we need to set up the canvas
 	atrament_data[idname]["canvas"] = document.getElementById(idname);
-	atrament_data[idname]["canvas"] .style.cursor = 'crosshair';
+	atrament_data[idname]["canvas"] .style.cursor = "crosshair";
 	// instantiate Atrament
 	atrament_data[idname]["atrament"] = new Atrament(
 		atrament_data[idname]["canvas"], {
@@ -5693,20 +5693,20 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('fillstart', ({ x, y }) => {
-		atrament_data[idname]["canvas"].style.cursor = 'wait';
+		atrament_data[idname]["canvas"].style.cursor = "wait";
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener('fillend', () => {
-		atrament_data[idname]["canvas"].style.cursor = 'crosshair';
+		atrament_data[idname]["canvas"].style.cursor = "crosshair";
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
-	atrament_data[idname]["atrament"].addEventListener('strokeend', async () => {
+	atrament_data[idname]["atrament"].addEventListener("strokeend", async () => {
 		if(customfunc) {
 			try {
 				eval(customfunc);
@@ -6303,26 +6303,26 @@ function show_overlay(text, title="") {
 		}
 
 		const overlay = document.createElement('div');
-		overlay.style.position = 'fixed';
-		overlay.style.top = '0';
-		overlay.style.left = '0';
-		overlay.style.width = '100%';
-		overlay.style.height = '100%';
+		overlay.style.position = "fixed";
+		overlay.style.top = "0";
+		overlay.style.left = "0";
+		overlay.style.width = "100%";
+		overlay.style.height = "100%";
 		overlay.style.backgroundColor = bg_color;
-		overlay.style.opacity = '0.9';
-		overlay.style.display = 'flex';
-		overlay.style.alignItems = 'center';
-		overlay.style.justifyContent = 'center';
-		overlay.style.zIndex = '9999';
+		overlay.style.opacity = "0.9";
+		overlay.style.display = "flex";
+		overlay.style.alignItems = "center";
+		overlay.style.justifyContent = "center";
+		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
 
 		const textElement = document.createElement('p');
 		textElement.innerHTML = text;
-		textElement.style.textAlign = 'center';
-		textElement.style.fontFamily = 'Arial, sans-serif';
-		textElement.style.fontSize = '24px';
+		textElement.style.textAlign = "center";
+		textElement.style.fontFamily = "Arial, sans-serif";
+		textElement.style.fontSize = "24px";
 		textElement.style.color = text_color;
-		textElement.style.padding = '20px';
+		textElement.style.padding = "20px";
 
 		overlay.appendChild(textElement);
 
@@ -6333,7 +6333,7 @@ function show_overlay(text, title="") {
 			hElement.style.fontFamily = 'Arial, sans-serif';
 			hElement.style.fontSize = '24px';
 			hElement.style.color = text_color;
-			hElement.style.padding = '20px';
+			hElement.style.padding = "20px";
 
 			overlay.appendChild(hElement);
 		}
