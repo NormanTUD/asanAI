@@ -123,6 +123,8 @@ in creating this program:
 
 - [html2canvas](https://html2canvas.hertzen.com/)
 
+- [Colorpicker.svg](https://commons.wikimedia.org/wiki/File:Colorwheel.svg)
+
 - [Cosmo-Präsentation, Dr. Christoph Lehmann](https://tu-dresden.de/zih/die-einrichtung/struktur/dr-christoph-lehmann)
 
 [comment]: <> (EndSources)

@@ -5651,7 +5651,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>&#10060;</span><br>
 			<span class='colorpicker_elements'>
-				<img onclick='chose_nearest_color_picker(this)' src='gui/colorpicker.svg' width=32 />
+				<img onclick='chose_nearest_color_picker(this)' src='gui/Colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 			</span>
 			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off" />
