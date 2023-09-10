@@ -6,8 +6,7 @@ module.exports = {
 		"jquery": true
 	},
 	"extends": [
-		"eslint:recommended",
-		"plugin:@react-three/recommended"
+		"eslint:recommended"
 	],
 	"globals": {
 		"Atomics": "readonly",
