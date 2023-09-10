@@ -10,23 +10,23 @@ class DebugLayer extends tf.layers.Layer {
 	}
 
 	/**
-	 * build() is called when the custom layer object is connected to an
-	 * upstream layer for the first time.
-	 * This is where the weights (if any) are created.
-	 */
+	* build() is called when the custom layer object is connected to an
+	* upstream layer for the first time.
+	* This is where the weights (if any) are created.
+	*/
 	build(inputShape) {
 		//this.x = this.addWeight('x', [], 'float32', tf.initializers.ones());
 	}
 
 	/**
-	 * call() contains the actual numerical computation of the layer.
-	 *
-	 * It is "tensor-in-tensor-out". I.e., it receives one or more
-	 * tensors as the input and should produce one or more tensors as
-	 * the return value.
-	 *
-	 * Be sure to use tidy() to avoid WebGL memory leak.
-	 */
+	* call() contains the actual numerical computation of the layer.
+	*
+	* It is "tensor-in-tensor-out". I.e., it receives one or more
+	* tensors as the input and should produce one or more tensors as
+	* the return value.
+	*
+	* Be sure to use tidy() to avoid WebGL memory leak.
+	*/
 	call(input, ...kwargs) {
 		log(this);
 		return tidy(() => {
@@ -42,9 +42,9 @@ class DebugLayer extends tf.layers.Layer {
 	}
 
 	/**
-	 * getConfig() generates the JSON object that is used
-	 * when saving and loading the custom layer object.
-	 */
+	* getConfig() generates the JSON object that is used
+	* when saving and loading the custom layer object.
+	*/
 	getConfig() {
 		const config = super.getConfig();
 		//Object.assign(config, {alpha: this.alpha});
@@ -52,9 +52,9 @@ class DebugLayer extends tf.layers.Layer {
 	}
 
 	/**
-	 * The static className getter is required by the
-	 * registration step (see below).
-	 */
+	* The static className getter is required by the
+	* registration step (see below).
+	*/
 	static get className() {
 		return "DebugLayer";
 	}
