@@ -21,7 +21,7 @@ function get_input_shape_as_string () {
 			is = get_input_shape();
 		}
 		if(is.length) {
-			return "[" + is.join(", ") + "]"
+			return "[" + is.join(", ") + "]";
 		} else {
 			return "[]";
 		}
@@ -41,7 +41,7 @@ function get_last_good_input_shape_as_string () {
 }
 
 function get_plotly_type () { // start_tensors
-	return 'lines';
+	return "lines";
 }
 
 function get_scatter_type () { // start_tensors
@@ -746,10 +746,10 @@ var valid_layer_options = {
 };
 
 var dtypes = {
-	'float32': 'float32',
-	'int32': 'int32',
-	'bool': 'bool',
-	'complex64': 'complex64' //,
+	"float32": "float32",
+	"int32": "int32",
+	"bool": "bool",
+	"complex64": "complex64" //,
 	//'string': 'string'
 };
 
@@ -778,9 +778,9 @@ var distribution_modes = {
 };
 
 var mode_modes = {
-	'fanIn': 'fanIn',
-	'fanOut': 'fanOut',
-	'fanAvg': 'fanAvg'
+	"fanIn": "fanIn",
+	"fanOut": "fanOut",
+	"fanAvg": "fanAvg"
 };
 
 var initializer_options = {
@@ -1042,7 +1042,7 @@ var training_logs_batch = {
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'Loss'
+		"name": "Loss"
 	}
 };
 
@@ -1052,7 +1052,7 @@ var training_logs_epoch = {
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'Loss'
+		"name": "Loss"
 	}
 };
 
@@ -1062,7 +1062,7 @@ var time_per_batch = {
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'Time per batch (in seconds)'
+		"name": "Time per batch (in seconds)"
 	}
 };
 
@@ -1072,21 +1072,21 @@ var training_memory_history = {
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'RAM (MB)'
+		"name": "RAM (MB)"
 	},
 	numBytesInGPU: {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'GPU (MB)'
+		"name": "GPU (MB)"
 	},
 	numTensors: {
 		"x": [],
 		"y": [],
 		"type": get_scatter_type(),
 		"mode": get_plotly_type(),
-		"name": 'Number of Tensors'
+		"name": "Number of Tensors"
 	}
 };
 
@@ -1096,9 +1096,9 @@ function get_plotly_layout (name="") {
 		plot_bgcolor: "rgba(0, 0, 0, 0)",
 		gridcolor: "#7c7c7c",
 		font: {
-			family: 'Courier New, monospace',
+			family: "Courier New, monospace",
 			size: 18,
-			color: '#7f7f7f'
+			color: "#7f7f7f"
 		},
 		xaxis: {
 			dtick: 0,
@@ -1168,7 +1168,7 @@ var metric_shortnames = {
 	"mse": "meanSquaredError",
 	"mape": "meanAbsolutePercentageError",
 	"mae": "meanAbsoluteError"
-}
+};
 
 var current_status_hash = "";
 
@@ -1185,8 +1185,8 @@ var opt = {
 	"initializer": "'XXX_NAME_XXX Initializer', 'XXX_NAME_XXX_initializer', 'select', initializers, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_scale": "'Scale', 'XXX_NAME_XXX_initializer_scale', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_mode": "'Mode', 'XXX_NAME_XXX_initializer_mode', 'select', mode_modes, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_distribution": `'<span class="TRANSLATEME_distribution"></span>', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'`
-}
+	"initializer_distribution": "'<span class=\"TRANSLATEME_distribution\"></span>', 'XXX_NAME_XXX_initializer_distribution', 'select', distribution_modes, nr, 'XXX_NAME_XXX_initializer_tr'"
+};
 
 var keys_opt = Object.keys(opt);
 for (var i = 0; i < valid_initializer_types.length; i++) {
@@ -1217,74 +1217,74 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 
 
 var general_options = {
-	'theta': '"&theta;", "theta", "number", { "step": 1, "value": -1 }, nr',
-	'axis': '"Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": get_default_option(type, "axis") }, nr',
-	'max_value': '"Max-Value", "max_value", "number", { "step": 1, "value": get_default_option(type, "max_value") }, nr',
-	'size': '"Size", "size", "text", { "text": "3,3", "placeholder": "2 comma-seperated numbers" }, nr',
-	'target_shape': '"Target-Shape", "target_shape", "text", { "text": calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr',
-	'dilation_rate': '"Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr',
-	'padding': '"Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr',
-	'filters': `"<span class='TRANSLATEME_filters'></span>", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": get_default_option(type, "filters") }, nr`,
-	'alpha': '"&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": get_default_option(type, "alpha") }, nr',
-	'dropout_rate': '"Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": get_default_option(type, "dropout_rate") }, nr',
-	'center': '"Center?", "center", "checkbox", { "status": "checked" }, nr',
-	'trainable': `"<span class='TRANSLATEME_trainable'></span>", "trainable", "checkbox", { "status": "checked" }, nr`,
-	'scale': '"Scale?", "scale", "checkbox", { "status": "checked" }, nr',
-	'unroll': '"Unroll?", "unroll", "checkbox", { "status": "checked" }, nr',
-	'unit_forget_bias': '"Unit forget bias", "unit_forget_bias", "checkbox", { "status": "checked" }, nr',
-	'implementation': '"Implementation", "implementation", "select", implementation_modes, nr',
-	'dropout': '"Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr',
-	'epsilon': '"&epsilon; multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": get_default_option(type, "epsilon") }, nr',
-	'rate': '"Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "dropout") }, nr',
-	'recurrent_dropout': '"Recurrent dropout rate (0 to 1)", "recurrent_dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "recurrent_dropout") }, nr',
-	'max_features': '"Max features", "max_features", "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "max_features") }, nr',
-	'momentum': '"Momentum", "momentum", "number", { "min": 0, "max": 8192, "step": 0.01, "value": get_default_option(type, "momentum") }, nr',
-	'units': '"Units", "units", "number", { "min": 1, "max": 8192, "step": 1, "value": get_default_option(type, "units") }, nr',
-	'use_bias': `"<span class='TRANSLATEME_use_bias'></span>", "use_bias", "checkbox", { "status": "checked" }, nr`,
-	'dtype': '"DType", "dtype", "select", dtypes, nr, null, 1, 1',
-	'interpolation': '"Interpolation", "interpolation", "select", interpolation, nr',
-	'stddev': '"Standard-Deviation", "stddev", "number", { "min": 0, "value": get_default_option(type, "stddev") }, nr',
-	'stateful': '"Stateful?", "stateful", "checkbox", { "status": "" }, nr',
-	'return_state': '"Return state?", "return_state", "checkbox", { "status": "" }, nr',
-	'depth_multiplier': '"Depth multiplier", "depth_multiplier", "number", { "min": 0, "max": 1, "step": 0.1, "value": get_default_option(type, "depth_multiplier") }, nr',
-	'go_backwards': '"Go Backwards?", "go_backwards", "checkbox", { "status": "" }, nr',
-	'return_sequences': '"Return sequences?", "return_sequences", "checkbox", { "status": "checked" }, nr',
+	"theta": "\"&theta;\", \"theta\", \"number\", { \"step\": 1, \"value\": -1 }, nr",
+	"axis": "\"Axis\", \"axis\", \"number\", { \"min\": -1, \"max\": 1000, \"step\": 1, \"value\": get_default_option(type, \"axis\") }, nr",
+	"max_value": "\"Max-Value\", \"max_value\", \"number\", { \"step\": 1, \"value\": get_default_option(type, \"max_value\") }, nr",
+	"size": "\"Size\", \"size\", \"text\", { \"text\": \"3,3\", \"placeholder\": \"2 comma-seperated numbers\" }, nr",
+	"target_shape": "\"Target-Shape\", \"target_shape\", \"text\", { \"text\": calculate_default_target_shape(nr), \"placeholder\": \"Array-Shape\" }, nr",
+	"dilation_rate": "\"Dilation-Rate\", \"dilation_rate\", \"text\", { \"text\": \"\", \"placeholder\": \"1-3 numbers\" }, nr",
+	"padding": "\"Padding\", \"padding\", \"select\", { \"valid\": \"valid\", \"same\": \"same\" }, nr",
+	"filters": "\"<span class='TRANSLATEME_filters'></span>\", \"filters\", \"number\", { \"min\": 1, \"max\": 256, \"step\": 1, \"value\": get_default_option(type, \"filters\") }, nr",
+	"alpha": "\"&alpha;\", \"alpha\", \"number\", { \"max\": 100, \"step\": 0.01, \"value\": get_default_option(type, \"alpha\") }, nr",
+	"dropout_rate": "\"Dropout rate (0 to 1)\", \"dropout_rate\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.05, \"value\": get_default_option(type, \"dropout_rate\") }, nr",
+	"center": "\"Center?\", \"center\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"trainable": "\"<span class='TRANSLATEME_trainable'></span>\", \"trainable\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"scale": "\"Scale?\", \"scale\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"unroll": "\"Unroll?\", \"unroll\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"unit_forget_bias": "\"Unit forget bias\", \"unit_forget_bias\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"implementation": "\"Implementation\", \"implementation\", \"select\", implementation_modes, nr",
+	"dropout": "\"Dropout rate (0 to 1)\", \"dropout\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"dropout\") }, nr",
+	"epsilon": "\"&epsilon; multiplier\", \"epsilon\", \"number\", { \"min\": -1, \"max\": 1, \"step\": 0.0001, \"value\": get_default_option(type, \"epsilon\") }, nr",
+	"rate": "\"Dropout rate (0 to 1)\", \"dropout\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"dropout\") }, nr",
+	"recurrent_dropout": "\"Recurrent dropout rate (0 to 1)\", \"recurrent_dropout\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"recurrent_dropout\") }, nr",
+	"max_features": "\"Max features\", \"max_features\", \"number\", { \"min\": 1, \"max\": 4096, \"step\": 1, \"value\": get_default_option(type, \"max_features\") }, nr",
+	"momentum": "\"Momentum\", \"momentum\", \"number\", { \"min\": 0, \"max\": 8192, \"step\": 0.01, \"value\": get_default_option(type, \"momentum\") }, nr",
+	"units": "\"Units\", \"units\", \"number\", { \"min\": 1, \"max\": 8192, \"step\": 1, \"value\": get_default_option(type, \"units\") }, nr",
+	"use_bias": "\"<span class='TRANSLATEME_use_bias'></span>\", \"use_bias\", \"checkbox\", { \"status\": \"checked\" }, nr",
+	"dtype": "\"DType\", \"dtype\", \"select\", dtypes, nr, null, 1, 1",
+	"interpolation": "\"Interpolation\", \"interpolation\", \"select\", interpolation, nr",
+	"stddev": "\"Standard-Deviation\", \"stddev\", \"number\", { \"min\": 0, \"value\": get_default_option(type, \"stddev\") }, nr",
+	"stateful": "\"Stateful?\", \"stateful\", \"checkbox\", { \"status\": \"\" }, nr",
+	"return_state": "\"Return state?\", \"return_state\", \"checkbox\", { \"status\": \"\" }, nr",
+	"depth_multiplier": "\"Depth multiplier\", \"depth_multiplier\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"depth_multiplier\") }, nr",
+	"go_backwards": "\"Go Backwards?\", \"go_backwards\", \"checkbox\", { \"status\": \"\" }, nr",
+	"return_sequences": "\"Return sequences?\", \"return_sequences\", \"checkbox\", { \"status\": \"checked\" }, nr",
 
 	// initializer
-	'moving_mean_initializer': '"Moving mean Initializer", "moving_mean_initializer", "select", initializers, nr',
-	'recurrent_initializer': '"Recurrent Initializer", "recurrent_initializer", "select", initializers, nr',
-	'moving_variance_initializer': '"Moving variance Initializer", "moving_variance_initializer", "select", initializers, nr, "moving_variance_initializer_td"',
-	'beta_initializer': '"&beta; Initializer", "beta_initializer", "select", initializers, nr',
-	'pointwise_initializer': '"Pointwise Initializer", "pointwise_initializer", "select", initializers, nr',
-	'depthwise_initializer': '"Depthwise Initializer", "depthwise_initializer", "select", initializers, nr',
+	"moving_mean_initializer": "\"Moving mean Initializer\", \"moving_mean_initializer\", \"select\", initializers, nr",
+	"recurrent_initializer": "\"Recurrent Initializer\", \"recurrent_initializer\", \"select\", initializers, nr",
+	"moving_variance_initializer": "\"Moving variance Initializer\", \"moving_variance_initializer\", \"select\", initializers, nr, \"moving_variance_initializer_td\"",
+	"beta_initializer": "\"&beta; Initializer\", \"beta_initializer\", \"select\", initializers, nr",
+	"pointwise_initializer": "\"Pointwise Initializer\", \"pointwise_initializer\", \"select\", initializers, nr",
+	"depthwise_initializer": "\"Depthwise Initializer\", \"depthwise_initializer\", \"select\", initializers, nr",
 
 	// constraint
-	'recurrent_constraint': '"Recurrent Constraint", "recurrent_constraint", "select", constraints, nr',
-	'bias_constraint': '"Bias Constraint", "bias_constraint", "select", constraints, nr',
-	'gamma_constraint': '"&gamma; Constraint", "gamma_constraint", "select", constraints, nr',
-	'beta_constraint': '"&beta; Constraint", "beta_constraint", "select", constraints, nr',
-	'kernel_constraint': '"Kernel Constraint", "kernel_constraint", "select", constraints, nr',
-	'pointwise_constraint': '"Pointwise Constraint", "pointwise_constraint", "select", constraints, nr',
-	'depthwise_constraint': '"Depthwise Constraint", "depthwise_constraint", "select", constraints, nr',
+	"recurrent_constraint": "\"Recurrent Constraint\", \"recurrent_constraint\", \"select\", constraints, nr",
+	"bias_constraint": "\"Bias Constraint\", \"bias_constraint\", \"select\", constraints, nr",
+	"gamma_constraint": "\"&gamma; Constraint\", \"gamma_constraint\", \"select\", constraints, nr",
+	"beta_constraint": "\"&beta; Constraint\", \"beta_constraint\", \"select\", constraints, nr",
+	"kernel_constraint": "\"Kernel Constraint\", \"kernel_constraint\", \"select\", constraints, nr",
+	"pointwise_constraint": "\"Pointwise Constraint\", \"pointwise_constraint\", \"select\", constraints, nr",
+	"depthwise_constraint": "\"Depthwise Constraint\", \"depthwise_constraint\", \"select\", constraints, nr",
 
 	// activation
-	'activation_axis': '"Axis", "activation_axis", "number", { "value": -1 }, nr, "activation_tr"',
-	'activation_max_value': '"Max-Value", "activation_max_value", "number", { "value": 1 }, nr, "activation_tr"',
-	'activation_alpha': '"&alpha;", "activation_alpha", "number", { "value": 1 }, nr, "activation_tr"',
-	'activation_theta': '"&theta;", "activation_theta", "number", { "value": 0.01 }, nr, "activation_tr"',
-	'recurrent_activation': `"Recurrent Activation function", "recurrent_activation", "select", activations, nr`,
+	"activation_axis": "\"Axis\", \"activation_axis\", \"number\", { \"value\": -1 }, nr, \"activation_tr\"",
+	"activation_max_value": "\"Max-Value\", \"activation_max_value\", \"number\", { \"value\": 1 }, nr, \"activation_tr\"",
+	"activation_alpha": "\"&alpha;\", \"activation_alpha\", \"number\", { \"value\": 1 }, nr, \"activation_tr\"",
+	"activation_theta": "\"&theta;\", \"activation_theta\", \"number\", { \"value\": 0.01 }, nr, \"activation_tr\"",
+	"recurrent_activation": "\"Recurrent Activation function\", \"recurrent_activation\", \"select\", activations, nr",
 
 	// regularizer
-	'bias_regularizer': '"Bias-Regularizer", "bias_regularizer", "select", regularizer_select, nr, null, 0, 1',
-	'activity_regularizer': '"Activity-Regularizer", "activity_regularizer", "select", regularizer_select, nr, null, 0, 1',
-	'kernel_regularizer': '"Kernel Regularizer", "kernel_regularizer", "select", initializers, nr, null, 0, 1',
-	'activity_regularizer_l1': '"l1", "activity_regularizer_l1", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1',
-	'activity_regularizer_l2': '"l2", "activity_regularizer_l2", "number", { "value": 0.01 }, nr, "activity_regularizer_tr", null, 0, 1',
-	'kernel_regularizer': '"Kernel-Regularizer", "kernel_regularizer", "select", regularizer_select, nr, null, 0, 1',
-	'bias_regularizer_l1': '"l1", "bias_regularizer_l1", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1',
-	'bias_regularizer_l2': '"l2", "bias_regularizer_l2", "number", { "value": 0.01 }, nr, "bias_regularizer_tr", null, 0, 1',
-	'kernel_regularizer_l1': '"l1", "kernel_regularizer_l1", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr", null, 0, 1',
-	'kernel_regularizer_l2': '"l2", "kernel_regularizer_l2", "number", { "value": 0.01 }, nr, "kernel_regularizer_tr", null, 0, 1'
+	"bias_regularizer": "\"Bias-Regularizer\", \"bias_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"activity_regularizer": "\"Activity-Regularizer\", \"activity_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"kernel_regularizer": "\"Kernel Regularizer\", \"kernel_regularizer\", \"select\", initializers, nr, null, 0, 1",
+	"activity_regularizer_l1": "\"l1\", \"activity_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
+	"activity_regularizer_l2": "\"l2\", \"activity_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"activity_regularizer_tr\", null, 0, 1",
+	"kernel_regularizer": "\"Kernel-Regularizer\", \"kernel_regularizer\", \"select\", regularizer_select, nr, null, 0, 1",
+	"bias_regularizer_l1": "\"l1\", \"bias_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"bias_regularizer_tr\", null, 0, 1",
+	"bias_regularizer_l2": "\"l2\", \"bias_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"bias_regularizer_tr\", null, 0, 1",
+	"kernel_regularizer_l1": "\"l1\", \"kernel_regularizer_l1\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1",
+	"kernel_regularizer_l2": "\"l2\", \"kernel_regularizer_l2\", \"number\", { \"value\": 0.01 }, nr, \"kernel_regularizer_tr\", null, 0, 1"
 };
 
 var general_options_keys = Object.keys(general_options);
@@ -1301,7 +1301,7 @@ for (var i = 0; i < general_options_keys.length; i++) {
 var padding_options = {
 	"valid": "valid",
 	"same": "same"
-}
+};
 
 var cookie_theme = "lightmode";
 
@@ -1432,7 +1432,7 @@ async function _cosmo_set_environment (_ep, _max_number_of_files_per_category, _
 
 	set_validation_split(_vs);
 
-	set_batch_size(_bs)
+	set_batch_size(_bs);
 }
 
 async function cosmo_stage_one () {
@@ -1451,7 +1451,7 @@ async function cosmo_stage_three () {
 
 	var _ep  = parse_int(get_get("epochs_stage_3", get_get("epochs", 20)));
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 50)));
-	var _vs = 15
+	var _vs = 15;
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 20);
 
@@ -1464,7 +1464,7 @@ async function cosmo_stage_two () {
 
 	var _ep  = parse_int(get_get("epochs_stage_2", get_get("epochs", 20)));
 	var _max_number_of_files_per_category = parse_int(get_get("max_number_of_files_per_category_stage_2", get_get("max_number_of_files_per_category", 15)));
-	var _vs = 15
+	var _vs = 15;
 
 	await _cosmo_set_environment(_ep, _max_number_of_files_per_category, _vs, 20);
 	current_cosmo_stage = 2;
@@ -1480,7 +1480,7 @@ async function fireworks_and_reload (reload=1, waittime=10000) {
 	remove_manicule(1);
 
 	$(".fireworks-container").show();
-	var fw = new Fireworks(document.querySelector('.fireworks-container'))
+	var fw = new Fireworks(document.querySelector(".fireworks-container"));
 	fw.start();
 	await delay(waittime);
 	fw.stop();

@@ -1,9 +1,9 @@
 "use strict";
 
 let nWise = (n, array) => {
-    var iterators = Array(n).fill().map(() => array[Symbol.iterator]());
-    iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
-    return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
+	var iterators = Array(n).fill().map(() => array[Symbol.iterator]());
+	iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
+	return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
 };
 
 let pairWise = (array) => nWise(2, array);

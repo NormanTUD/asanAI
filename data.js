@@ -150,10 +150,10 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	var eta;
 
 	var data_progressbar_div = $("#data_progressbar>div");
-	data_progressbar_div.css("width", percentage + "%")
+	data_progressbar_div.css("width", percentage + "%");
 	if(is_cosmo_mode) {
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
-		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI"
+		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI";
 	} else {
 		document.title = language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI";
 	}
@@ -353,7 +353,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 function truncate_text (fullStr, strLen, separator) {
 	if (fullStr.length <= strLen) return fullStr;
 
-	separator = separator || '...';
+	separator = separator || "...";
 
 	var sepLen = separator.length,
 		charsToShow = strLen - sepLen,
@@ -365,7 +365,7 @@ function truncate_text (fullStr, strLen, separator) {
 		fullStr.substr(fullStr.length - backChars);
 
 	return res;
-};
+}
 
 async function sine_ripple (img) {
 	var uuid = uuidv4();
@@ -373,7 +373,7 @@ async function sine_ripple (img) {
 	await toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
 	var canvas = $("#" + uuid)[0];
 	var context = canvas.getContext("2d");
-	var data = context.getImageData(0,0,canvas.width, canvas.height)
+	var data = context.getImageData(0,0,canvas.width, canvas.height);
 	JSManipulate.sineripple.filter(data);
 	context.putImageData(data,0,0);
 	var rippled = await fromPixels(canvas);
@@ -463,7 +463,7 @@ async function get_xs_and_ys () {
 		if(data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
 		} else if(data_origin == "csv") {
-			await show_tab_label("own_csv_data_label", 0)
+			await show_tab_label("own_csv_data_label", 0);
 			await show_tab_label("tfvis_tab_label", 1);
 		} else if (data_origin == "image") {
 			await show_tab_label("own_image_data_label", 1);
@@ -720,7 +720,7 @@ async function get_xs_and_ys () {
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
-					l("Auto-Augmentation is currently not implemented for image segmentation");;;;
+					l("Auto-Augmentation is currently not implemented for image segmentation");
 				}
 
 				for (var label_nr = 0; label_nr < category_counter; label_nr++) {
@@ -754,7 +754,7 @@ async function get_xs_and_ys () {
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 									var this_map =
 										divNoNan(this_map_tensor, parse_float($("#divide_by").val())).arraySync();
-									maps.push(this_map)
+									maps.push(this_map);
 								} catch (e) {
 									err(e);
 									continue;
@@ -805,7 +805,7 @@ async function get_xs_and_ys () {
 	) {
 		try {
 			//log("C", xy_data.x.shape);
-			xy_data.y = tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]) });
+			xy_data.y = tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]); });
 			//log("D", xy_data.x.shape);
 		} catch (e) {
 			/*
@@ -819,7 +819,7 @@ async function get_xs_and_ys () {
 			} else {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					$("#loss").val("meanSquaredError").trigger("change");
-					$("#metric").val("meanSquaredError").trigger("change")
+					$("#metric").val("meanSquaredError").trigger("change");
 					log("Set Loss and Metric to MeanSquaredError, because we encountered the error '" + e.toString() + "'");
 				} : null, e.toString().includes("Error in oneHot: depth must be >=2"));
 			}
@@ -878,7 +878,7 @@ function _xs_xy_warning (xs_and_ys) {
 			error_string += "No Y-data [2]! Do you have custom images loaded? ";
 		}
 	} else {
-		error_string = "No xy_data. Maybe an error while augmenting data?"
+		error_string = "No xy_data. Maybe an error while augmenting data?";
 	}
 
 	return error_string;
@@ -990,7 +990,7 @@ async function reset_data () {
 		}
 	}
 
-	$('#reset_data').hide();
+	$("#reset_data").hide();
 }
 
 function parse_dtype (val) {
@@ -1033,7 +1033,7 @@ function parse_csv_file (csv_file) {
 
 	var seperator_at_end_re = new RegExp("/" + seperator + "+$/", "gm");
 
-	csv_file = csv_file.replace(seperator_at_end_re, "")
+	csv_file = csv_file.replace(seperator_at_end_re, "");
 
 	csv_file = csv_file
 		.split("\n")
@@ -1064,16 +1064,16 @@ function parse_csv_file (csv_file) {
 }
 
 function get_or_insert_label (item) {
-        for (var i = 0; i < labels.length; i++) {
-                if(labels[i] == item) {
-                        return i;
-                }
-        }
+	for (var i = 0; i < labels.length; i++) {
+		if(labels[i] == item) {
+			return i;
+		}
+	}
 
-        labels.push(item);
+	labels.push(item);
 
 
-        return labels.length - 1;
+	return labels.length - 1;
 }
 
 function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
@@ -1210,7 +1210,7 @@ async function get_x_y_from_csv () {
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync()});
+				y_data["data"] = tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
@@ -1221,7 +1221,7 @@ async function get_x_y_from_csv () {
 		} else {
 			if($("#auto_one_hot_y").is(":checked")) {
 				l("Currently, there is a bug that only allows Auto-One-Hot-Encoding with a one-column-vector only. Therefore, Auto-One-Hot-Encoding has been disabled");
-				$("#auto_one_hot_y").prop("checked", false)
+				$("#auto_one_hot_y").prop("checked", false);
 			}
 		}
 	}
@@ -1261,7 +1261,7 @@ async function get_x_y_from_csv () {
 async function get_x_y_as_array () {
 	while (started_training) {
 		l("Awaiting finishing of training");
-		await delay(1000)
+		await delay(1000);
 	}
 	force_download = 1;
 	var data = await get_xs_and_ys();
@@ -1303,7 +1303,7 @@ async function get_data_from_webcam (force_restart) {
 			var webcam = $("#webcam_data");
 			webcam.hide().html("");
 
-			var videoElement = document.createElement('video');
+			var videoElement = document.createElement("video");
 			videoElement.width = Math.max(120, width);
 			videoElement.height = Math.max(120, height);
 			videoElement.playsInline = true;
@@ -1350,26 +1350,26 @@ async function get_data_from_webcam (force_restart) {
 }
 
 async function take_image_from_webcam_n_times (elem) {
-	var number = parse_int($("#number_of_series_images").val())
-	var delaybetween = parse_int($("#delay_between_images_in_series").val())
+	var number = parse_int($("#number_of_series_images").val());
+	var delaybetween = parse_int($("#delay_between_images_in_series").val());
 
 	let timerInterval;
 	Swal.fire({
-		title: 'Soon a photo series will start!',
-		html: 'First photo will be taken in  <b></b> seconds.',
+		title: "Soon a photo series will start!",
+		html: "First photo will be taken in  <b></b> seconds.",
 		timer: 2000,
 		timerProgressBar: true,
 		didOpen: () => {
-			Swal.showLoading()
-			const b = Swal.getHtmlContainer().querySelector('b')
+			Swal.showLoading();
+			const b = Swal.getHtmlContainer().querySelector("b");
 			timerInterval = setInterval(() => {
 				var tl = Swal.getTimerLeft() / 1000;
 				tl = tl.toFixed(1);
 				b.textContent = tl;
-			}, 100)
+			}, 100);
 		},
 		willClose: () => {
-			clearInterval(timerInterval)
+			clearInterval(timerInterval);
 		}
 	}).then(async (result) => {
 		for (var i = 0; i < number; i++) {
@@ -1402,13 +1402,13 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
-	cam_image = cam_image.resizeNearestNeighbor([stream_height, stream_width]).toFloat().expandDims()
+	cam_image = cam_image.resizeNearestNeighbor([stream_height, stream_width]).toFloat().expandDims();
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
 
 	var i = 1;
-	var id = base_id + "_" + i;;
+	var id = base_id + "_" + i;
 
 	while ($("#" + id + "_canvas").length != 0) {
 		id = base_id + "_" + i;
@@ -1417,9 +1417,9 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	// TODO: Cannot easily changed to span because of image map generation. The image map generator drawing canvas is, when not in a single line, not properly aligned.
 	$(category).find(".own_images").append(
-		'<div class="own_image_span">' +
-			'<canvas id="' + id + '_canvas" width="' + stream_width + '" height="' + stream_height + '"></canvas><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span>' +
-		'</div><br>'
+		"<div class=\"own_image_span\">" +
+			"<canvas id=\"" + id + "_canvas\" width=\"" + stream_width + "\" height=\"" + stream_height + "\"></canvas><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span>" +
+		"</div><br>"
 	);
 
 	var c = document.getElementById(id + "_canvas");
@@ -1487,7 +1487,7 @@ function array_likelyhood_of_being_random (array) {
 
 function image_element_looks_random (imgelem) {
 	var t = reshape(fromPixels(imgelem), [-1]);
-	var res = array_likelyhood_of_being_random(t.arraySync())
+	var res = array_likelyhood_of_being_random(t.arraySync());
 
 
 	return res;
@@ -1542,7 +1542,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 	var layer_can_be_visualized = $($(".layer_setting")[layer]).find(".visualize_button");
 
 	if(layer_can_be_visualized) {
-		var current_model_config_hash = await get_model_config_hash()
+		var current_model_config_hash = await get_model_config_hash();
 		await draw_maximally_activated_layer(layer, get_layer_type_array()[layer]);
 
 		var activated_neurons = maximally_activated_neurons_randomness();
@@ -1620,7 +1620,7 @@ async function get_own_tensor_data (element) {
 	}
 
 	try {
-		latex = arbitrary_array_to_latex(tensor_array)
+		latex = arbitrary_array_to_latex(tensor_array);
 	} catch (e) {
 		msg += "" + e;
 	}
@@ -1639,7 +1639,7 @@ async function get_own_tensor_data (element) {
 		}
 	}
 
-	log([tensor_array, latex])
+	log([tensor_array, latex]);
 	return [tensor_array, latex];
 }
 

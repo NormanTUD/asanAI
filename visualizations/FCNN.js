@@ -20,7 +20,7 @@ function FCNN() {
 	var weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
 
 	var edgeOpacityProportional = false;
-	var edgeOpacity = 1.0
+	var edgeOpacity = 1.0;
 	var weightedEdgeOpacity = d3.scaleLinear().domain([0, 1]).range([0, 1]);
 
 	var edgeColorProportional = false;
@@ -46,15 +46,15 @@ function FCNN() {
 	var graph = {};
 	var layer_offsets = [];
 	var largest_layer_width = 0;
-	var nnDirection = 'right';
+	var nnDirection = "right";
 	var showBias = false;
 	var showLabels = true;
 	var layerTypes = [];
 	var showArrowheads = false;
 	var arrowheadStyle = "empty";
 
-	let sup_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
-	let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join('');
+	let sup_map = {"0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹"};
+	let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join("");
 
 	let textFn = (layer_index, layer_width, layer_name) => (
 		(layer_index === 0 ? "Input" :
@@ -82,7 +82,7 @@ function FCNN() {
 	var text = g.selectAll(".text");
 
 	/////////////////////////////////////////////////////////////////////////////
-			///////    Methods    ///////
+	///////    Methods    ///////
 	/////////////////////////////////////////////////////////////////////////////
 	
 	function redraw(
@@ -113,10 +113,10 @@ function FCNN() {
 			(layer_width, layer_index) => range(layer_width).map(
 				node_index => {
 					return {
-						'id':		layer_index + '_' + node_index, 
-						'layer':	layer_index, 
-						'node_index':	node_index
-					}
+						"id":		layer_index + "_" + node_index, 
+						"layer":	layer_index, 
+						"node_index":	node_index
+					};
 				}
 			)
 		);
@@ -124,24 +124,24 @@ function FCNN() {
 		graph.links = pairWise(graph.nodes).map(
 			(nodes) => nodes[0].map(left => nodes[1].map(right => {
 				return right.node_index >= 0 ? {
-					'id':		left.id + '-' + right.id,
-					'source':	left.id,
-					'target':	right.id, 
-					'weight':	randomWeight()
-				} : null }
+					"id":		left.id + "-" + right.id,
+					"source":	left.id,
+					"target":	right.id, 
+					"weight":	randomWeight()
+				} : null; }
 			)
 			)
 		);
 		graph.nodes = flatten(graph.nodes);
-		graph.links = flatten(graph.links).filter(l => (l && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
+		graph.links = flatten(graph.links).filter(l => (l && (showBias ? (parseInt(l["target"].split("_")[0]) !== architecture.length-1 ? (l["target"].split("_")[1] !== "0") : true) : true)));
 
 		var label = real_architecture.map((layer_width, layer_index) => {
 			var text = textFn(layer_index, layer_width, layerTypes[layer_index]);
 			return {
-				'id':		'layer_' + layer_index + '_label',
-				'layer':	layer_index,
-				'text':		text
-			}
+				"id":		"layer_" + layer_index + "_label",
+				"layer":	layer_index,
+				"text":		text
+			};
 		});
 
 		link = link.data(graph.links, d => d.id);
@@ -191,13 +191,13 @@ function FCNN() {
 		betweenLayers = betweenLayers_;
 		nnDirection = nnDirection_;
 
-		var layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
+		var layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i]);
 
 		var largest_layer_width = Math.max(...layer_widths);
 
 		var layer_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
 
-		let indices_from_id = (id) => id.split('_').map(x => parseInt(x));
+		let indices_from_id = (id) => id.split("_").map(x => parseInt(x));
 
 		let x = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + graph_width/2 - (betweenLayers * layer_offsets.length/3);
 		let y = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + h/2 - largest_layer_width/2;
@@ -205,22 +205,22 @@ function FCNN() {
 		let xt = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + graph_width/2  - largest_layer_width/2;
 		let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2 - (betweenLayers * layer_offsets.length/3);
 
-		if (nnDirection == 'up') { x = xt; y = yt; }
+		if (nnDirection == "up") { x = xt; y = yt; }
 
-		node.attr('cx', function(d) { return x(d.layer, d.node_index); })
-			.attr('cy', function(d) { return y(d.layer, d.node_index); });
+		node.attr("cx", function(d) { return x(d.layer, d.node_index); })
+			.attr("cy", function(d) { return y(d.layer, d.node_index); });
 
 		link.attr("d", (d) => "M" + x(...indices_from_id(d.source)) + "," +
 			y(...indices_from_id(d.source)) + ", " +
 			x(...indices_from_id(d.target)) + "," +
 			y(...indices_from_id(d.target)));
 
-		text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
-			.attr("y", function(d) { return (nnDirection === 'right' ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
+		text.attr("x", function(d) { return (nnDirection === "right" ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
+			.attr("y", function(d) { return (nnDirection === "right" ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
 
 
 
-		var rightmost = $($($("#fcnn").children()[0]).children()[0]).children().last().position().left
+		var rightmost = $($($("#fcnn").children()[0]).children()[0]).children().last().position().left;
 	}
 
 	function style(
@@ -281,12 +281,12 @@ function FCNN() {
 			if (edgeColorProportional) {
 				return weightedEdgeColor(d.weight);
 			} else { 
-				return '#808080'; //defaultEdgeColor;
+				return "#808080"; //defaultEdgeColor;
 			}
 		});
 
-		marker.attr('refX', (nodeDiameter * 1.4) + 12);
-		arrowhead.style("fill", arrowheadStyle === 'empty' ? "none" : defaultEdgeColor);
+		marker.attr("refX", (nodeDiameter * 1.4) + 12);
+		arrowhead.style("fill", arrowheadStyle === "empty" ? "none" : defaultEdgeColor);
 
 		node.attr("r", nodeDiameter / 2);
 		node.style("fill", nodeColor);
@@ -311,7 +311,7 @@ function FCNN() {
 		svg.attr("max-height", "500px");
 	}
 
-	$(window).on("resize", resize)
+	$(window).on("resize", resize);
 
 	resize();
 
@@ -320,10 +320,10 @@ function FCNN() {
 	/////////////////////////////////////////////////////////////////////////////
 
 	return {
-		'redraw'           : redraw,
-		'redistribute'     : redistribute,
-		'style'            : style,
-		'graph'            : graph,
-		'link'             : link
-	}
+		"redraw"           : redraw,
+		"redistribute"     : redistribute,
+		"style"            : style,
+		"graph"            : graph,
+		"link"             : link
+	};
 }

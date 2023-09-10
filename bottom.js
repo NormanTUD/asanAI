@@ -1,4 +1,4 @@
-var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function')
+var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function");
 var local_store = window.localStorage;
 local_store.clear();
 
@@ -35,7 +35,7 @@ function set_mode () {
 				$(l).attr("disabled", true);
 			}
 		});
-		$("#auto_input_shape").prop('checked', true);
+		$("#auto_input_shape").prop("checked", true);
 		$(".expert_mode_only").hide();
 		l(language[lang]["switched_to_beginner_mode"]);
 	} else {
@@ -154,14 +154,14 @@ async function restart_fcnn(force) {
 	}
 
 	var redraw_data = {
-		'architecture_': architecture,
-		'real_architecture_': real_architecture,
-		'layerTypes_': layer_types,
-		'colors_': []
+		"architecture_": architecture,
+		"real_architecture_": real_architecture,
+		"layerTypes_": layer_types,
+		"colors_": []
 	};
 
 	var redistribute_data = {
-		'betweenNodesInLayer_': betweenNodesInLayer
+		"betweenNodesInLayer_": betweenNodesInLayer
 	};
 	var new_hash = await md5(JSON.stringify(redraw_data) + JSON.stringify(redistribute_data));
 
@@ -191,7 +191,7 @@ async function restart_alexnet(dont_click) {
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		if(disable_alexnet) { continue; }
 		var layer_type = $($(".layer_type")[i]).val();
-		if(typeof(layer_type) === 'undefined') {
+		if(typeof(layer_type) === "undefined") {
 			return;
 		}
 		if(Object.keys(model.layers).includes("0")) {
@@ -276,7 +276,7 @@ async function restart_alexnet(dont_click) {
 						architecture.unshift(shown_input_layer);
 					}
 
-					var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2, "showDims": true};
+					var redraw_data = {"architecture_": architecture, "architecture2_": architecture2, "showDims": true};
 
 					var new_hash = await md5(JSON.stringify(redraw_data));
 
@@ -304,7 +304,7 @@ async function restart_alexnet(dont_click) {
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
 					await show_tab_label("fcnn_tab_label", click_on_graphs);
-					clicked_on_tab = 1
+					clicked_on_tab = 1;
 				}
 			}
 		}
@@ -313,7 +313,7 @@ async function restart_alexnet(dont_click) {
 			await show_tab_label("alexnet_tab_label", 0);
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
-					await show_tab_label('alexnet_tab_label', click_on_graphs);
+					await show_tab_label("alexnet_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
@@ -339,7 +339,7 @@ async function restart_lenet(dont_click) {
 
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		var layer_type = $($(".layer_type")[i]).val();
-		if(typeof(layer_type) === 'undefined') {
+		if(typeof(layer_type) === "undefined") {
 			return;
 		}
 
@@ -406,7 +406,7 @@ async function restart_lenet(dont_click) {
 	try {
 		if(architecture.length >= 1 && architecture2.length) {
 			if(show_input_layer) {
-				var shown_input_layer = {}
+				var shown_input_layer = {};
 				shown_input_layer["op"] = "Input Layer";
 				shown_input_layer["layer"] = 0;
 				shown_input_layer["filterWidth"] = get_input_shape()[0];
@@ -418,11 +418,11 @@ async function restart_lenet(dont_click) {
 			}
 
 			try {
-				var redraw_data = {'architecture_': architecture, 'architecture2_': architecture2, 'colors': colors};
+				var redraw_data = {"architecture_": architecture, "architecture2_": architecture2, "colors": colors};
 				var new_hash = await md5(JSON.stringify(redraw_data));
 				if(graph_hashes["lenet"] != new_hash) {
 					lenet.redraw(redraw_data);
-					lenet.redistribute({'betweenLayers_': []});
+					lenet.redistribute({"betweenLayers_": []});
 					graph_hashes["lenet"] = new_hash;
 				}
 			} catch (e) {
@@ -467,7 +467,7 @@ async function restart_lenet(dont_click) {
 function unset_alexnet_renderer () {
 	var renderers = $("#alexnet_renderer > input[type=radio]");
 	for (var i = 0; i < renderers.length; i++) {
-		$(renderers[i]).prop("checked", false)
+		$(renderers[i]).prop("checked", false);
 	}
 }
 
@@ -481,29 +481,29 @@ async function set_specific_alexnet_renderer(var_type) {
 			$(renderers[i]).prop("checked", false);
 		}
 	}
-	await restart_alexnet()
+	await restart_alexnet();
 }
 
 async function download_visualization (layer_id) {
 	var old_alexnet_renderer = $("#alexnet_renderer > input[type=radio]:checked").val();
 	if(layer_id == "alexnet") {
 		await set_specific_alexnet_renderer("svg");
-		await restart_alexnet()
+		await restart_alexnet();
 	}
-	var content = $('<div>').append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
+	var content = $("<div>").append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
 	if(layer_id == "alexnet") {
 		var canvas = $($("#alexnet")[0]).children()[0];
 		content = canvas.toDataURL();
 	}
 
-	var data_url = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(content)))
+	var data_url = "data:application/octet-stream;base64," + btoa(unescape(encodeURIComponent(content)));
 	var a = document.createElement("a");
 	a.href = data_url;
 	a.download = layer_id + ".svg";
 	a.click();
 	if(layer_id == "alexnet") {
 		await set_specific_alexnet_renderer(old_alexnet_renderer);
-		await restart_alexnet()
+		await restart_alexnet();
 	}
 }
 
@@ -539,7 +539,7 @@ function get_nr_from_own_image_files (e) {
 	var nr = null;
 
 	$(".own_image_files").each(function (x, y) {
-		if (get_element_xpath(y) == get_element_xpath(currentTarget)) { nr = x };
+		if (get_element_xpath(y) == get_element_xpath(currentTarget)) { nr = x; }
 	});
 
 	return nr;
@@ -559,10 +559,10 @@ function handle_file_select(e) {
 		}
 		var reader = new FileReader();
 		reader.onload = function (e) {
-			var html = '<span class="own_image_span"><img height="90" id="' + uuidv4() + '_image" src="' + e.target.result + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+			var html = "<span class=\"own_image_span\"><img height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
 			imgDiv.append(html);
 			disable_start_training_button_custom_images();
-		}
+		};
 		reader.readAsDataURL(f);
 	});
 

@@ -23,7 +23,7 @@ function show_idle_time () {
 
 async function on_resize () {
 	reset_view();
-	await show_cosmo_elements_depending_on_current_skills()
+	await show_cosmo_elements_depending_on_current_skills();
 	await write_descriptions(1);
 
 	if(!$("#ribbon").is(":visible")) {
@@ -70,16 +70,16 @@ async function has_front_back_camera() {
 		const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
 		let devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(device => {
-			if (device.kind === 'videoinput') {
+			if (device.kind === "videoinput") {
 				l("Found camera: " + device.label);
 				if (device.label && device.label.length > 0) {
 					if (
-						device.label.toLowerCase().indexOf('back') >= 0 ||
-						device.label.toLowerCase().indexOf('rück') >= 0
+						device.label.toLowerCase().indexOf("back") >= 0 ||
+						device.label.toLowerCase().indexOf("rück") >= 0
 					) {
 						result.hasBack = true;
 					} else if (
-						device.label.toLowerCase().indexOf('front') >= 0
+						device.label.toLowerCase().indexOf("front") >= 0
 					) {
 						result.hasFront = true;
 					} else {
@@ -153,61 +153,61 @@ function init_set_all_options () {
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
 
-	var set_all_bias_initializers = $('#set_all_bias_initializers')
-	var set_all_kernel_initializers = $('#set_all_kernel_initializers');
-	var set_all_activation_functions = $('#set_all_activation_functions');
-	var set_all_activation_functions_except_last_layer = $('#set_all_activation_functions_except_last_layer');
+	var set_all_bias_initializers = $("#set_all_bias_initializers");
+	var set_all_kernel_initializers = $("#set_all_kernel_initializers");
+	var set_all_activation_functions = $("#set_all_activation_functions");
+	var set_all_activation_functions_except_last_layer = $("#set_all_activation_functions_except_last_layer");
 
 	for (var i = 0; i < initializer_keys.length; i++) {
-		set_all_bias_initializers.append($('<option>', {
+		set_all_bias_initializers.append($("<option>", {
 			value: initializer_keys[i],
 			text: initializer_keys[i]
 		}));
 
-		set_all_kernel_initializers.append($('<option>', {
+		set_all_kernel_initializers.append($("<option>", {
 			value: initializer_keys[i],
 			text: initializer_keys[i]
 		}));
 	}
 
 	for (var i = 0; i < activation_functions.length; i++) {
-		set_all_activation_functions.append($('<option>', {
+		set_all_activation_functions.append($("<option>", {
 			value: activation_functions[i],
 			text: activation_functions[i]
 		}));
 
-		set_all_activation_functions_except_last_layer.append($('<option>', {
+		set_all_activation_functions_except_last_layer.append($("<option>", {
 			value: activation_functions[i],
 			text: activation_functions[i]
 		}));
 	}
 
-	document.addEventListener('keydown', function(event) {
-		if (event.ctrlKey && event.key === 'z') {
+	document.addEventListener("keydown", function(event) {
+		if (event.ctrlKey && event.key === "z") {
 			undo(); // cannot be async
-		} else if (event.ctrlKey && event.key === 'y') {
+		} else if (event.ctrlKey && event.key === "y") {
 			redo(); // cannot be async
-		} else if (event.ctrlKey && event.key === ';') {
+		} else if (event.ctrlKey && event.key === ";") {
 			$("#jump_to_interesting_tab").click();
 			train_neural_network(); // cannot be async
-		} else if (event.ctrlKey && event.key === ',') {
+		} else if (event.ctrlKey && event.key === ",") {
 			train_neural_network(); // cannot be async
-		} else if (event.ctrlKey && event.key === 'L') {
+		} else if (event.ctrlKey && event.key === "L") {
 			$("#jump_to_interesting_tab").click();
-		} else if (event.ctrlKey && event.altKey && event.key === 'h') {
+		} else if (event.ctrlKey && event.altKey && event.key === "h") {
 			$("[href='#home_ribbon']").click();
-		} else if (event.altKey && event.key === 't') {
+		} else if (event.altKey && event.key === "t") {
 			$("[href='#tf_ribbon']").click();
-		} else if (event.altKey && event.key === 'm') {
+		} else if (event.altKey && event.key === "m") {
 			$("#visualization_tab_label").click();
 			$("#math_tab_label").click();
-		} else if (event.ctrlKey && event.key === '#') {
+		} else if (event.ctrlKey && event.key === "#") {
 			if($("#demomode").css("display") == "none") {
 				start_demo_mode(); // cannot be async
 			} else {
 				end_demo_mode(); // cannot be async
 			}
-		} else if (event.altKey && event.key === 'v') {
+		} else if (event.altKey && event.key === "v") {
 			$("[href='#visualization_ribbon']").click();
 		}
 	});
@@ -229,14 +229,14 @@ async function init_page_contents (chosen_dataset) {
 
 	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
 	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
-	document.getElementById('upload_model').addEventListener('change', upload_model, false);
-	document.getElementById('upload_weights').addEventListener('change', upload_weights, false);
+	document.getElementById("upload_model").addEventListener("change", upload_model, false);
+	document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
 
 	await determine_input_shape();
 
 	$("#layers_container").sortable({
-		placeholder: 'sortable_placeholder',
-		axis: 'y',
+		placeholder: "sortable_placeholder",
+		axis: "y",
 		opacity: 0.6,
 		revert: true,
 		update: function( ) {
@@ -298,7 +298,7 @@ function init_categories () {
 		var dataset_name = dataset_names[j];
 		if(!dataset_already_there(dataset_name)) {
 			var dataset_value = traindata_struct[dataset_names[j]]["name"];
-			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val())
+			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val());
 
 			$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
 		}
@@ -331,7 +331,7 @@ async function restart_webcams () {
 function init_losses_and_metrics () {
 	l(language[lang]["initializing_losses"]);
 	for (var i = 0; i < losses.length; i++) {
-		$('#loss').append($('<option>', {
+		$("#loss").append($("<option>", {
 			value: losses[i],
 			text: losses[i]
 		}));
@@ -339,7 +339,7 @@ function init_losses_and_metrics () {
 
 	l(language[lang]["initializing_metrics"]);
 	for (var i = 0; i < metrics.length; i++) {
-		$('#metric').append($('<option>', {
+		$("#metric").append($("<option>", {
 			value: metrics[i],
 			text: metrics[i]
 		}));
@@ -364,7 +364,7 @@ async function set_backend() {
 
 $(document).ready(async function() {
 	if(!is_cosmo_mode) {
-		if(parse_int(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf('no_cosmo') === -1) {
+		if(parse_int(document.location.href.indexOf("start_cosmo")) != -1 && document.location.href.indexOf("no_cosmo") === -1) {
 			await cosmo_mode();
 		}
 	}
@@ -418,7 +418,7 @@ $(document).ready(async function() {
 		reader.onload = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
-				alert('Error while reading file');
+				alert("Error while reading file");
 				return;
 			}
 
@@ -482,7 +482,7 @@ $(document).ready(async function() {
 
 	if(urlParams.get("auto_augment")) {
 		$("#auto_augment").prop("checked", true).trigger("change");
-		$('a[href*="tf_ribbon_augmentation"]').show();
+		$("a[href*=\"tf_ribbon_augmentation\"]").show();
 	}
 
 	if(urlParams.get("valsplit")) {
@@ -505,13 +505,13 @@ $(document).ready(async function() {
 	cookie_theme = get_cookie("theme");
 	if(cookie_theme) {
 		l(language[lang]["has_cookie_for"] + " " + cookie_theme);
-		$("#theme_choser").val(cookie_theme).trigger("change")
+		$("#theme_choser").val(cookie_theme).trigger("change");
 		l(language[lang]["theme_set"]);
 	}
 
 	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
 
-	$('.optimizer_metadata_input'). change(function(event) {
+	$(".optimizer_metadata_input"). change(function(event) {
 		updated_page(); // cannot be async
 	});
 
@@ -586,6 +586,6 @@ $(document).ready(async function() {
 });
 
 
-window.addEventListener('error', async function(e) {
+window.addEventListener("error", async function(e) {
 	await write_error(e.message);
 });

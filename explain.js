@@ -17,14 +17,14 @@ function get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
 	var _uuid_str = "";
 	if (use_uuid) {
 		_uuid = uuidv4();
-		_uuid_str = " id='" + _uuid + "'"
+		_uuid_str = " id='" + _uuid + "'";
 	}
-	var new_canvas = $('<canvas' + _uuid_str + '/>', {class: "layer_image"}).prop({
+	var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image"}).prop({
 		width: 0,
 		height: 0
 	});
 	if(!dont_append) {
-		$($('.' + classname)[layer]).append(new_canvas);
+		$($("." + classname)[layer]).append(new_canvas);
 	}
 
 	return new_canvas[0];
@@ -85,7 +85,7 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	$(canvas).attr("width", width * pixel_size);
 	$(canvas).attr("height", height * pixel_size);
 
-	var ctx = $(canvas)[0].getContext('2d');
+	var ctx = $(canvas)[0].getContext("2d");
 	ctx.beginPath();
 
 	var min = 0;
@@ -113,7 +113,7 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 			var green = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 			var blue = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 
-			var color = 'rgb(' + red + ',' + green + ',' + blue + ')';
+			var color = "rgb(" + red + "," + green + "," + blue + ")";
 			var pixel = {
 				x: x,
 				y: y,
@@ -159,7 +159,7 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 		$(canvas).attr("onclick", onclick);
 	}
 
-	var ctx = $(canvas)[0].getContext('2d');
+	var ctx = $(canvas)[0].getContext("2d");
 	ctx.beginPath();
 
 	var min = 0;
@@ -207,7 +207,7 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 				blue = normalize_to_rgb_min_max(blue, min, max);
 			}
 
-			var color = 'rgb(' + red + ',' + green + ',' + blue + ')';
+			var color = "rgb(" + red + "," + green + "," + blue + ")";
 			var pixel = {
 				x: x,
 				y: y,
@@ -243,7 +243,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 			}
 
 			if(!get_canvas_object) {
-				$($(canvas)[0]).parent().parent().show()
+				$($(canvas)[0]).parent().parent().show();
 			}
 
 			ret = draw_grid(canvas, pixel_size, colors, 1);
@@ -262,7 +262,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					canvas = get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
 
 					if(!get_canvas_object) {
-						$($(canvas)[0]).parent().parent().show()
+						$($(canvas)[0]).parent().parent().show();
 					}
 
 					//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
@@ -290,7 +290,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 				}
 				if(!get_canvas_object) {
-					$($(canvas)[0]).parent().parent().show()
+					$($(canvas)[0]).parent().parent().show();
 				}
 
 				ret = draw_grid_grayscale(canvas, 5, colors, k);
@@ -324,10 +324,10 @@ function get_layer_type_array () {
 }
 
 function group_layers (layers) {
-        var str = layers.join(";");
+	var str = layers.join(";");
 
-        var char_to_group = new Array(str.length);
-        char_to_group.fill(null);
+	var char_to_group = new Array(str.length);
+	char_to_group.fill(null);
 
 	var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
 
@@ -344,7 +344,7 @@ function group_layers (layers) {
 
 	var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
 
-        var descs = [
+	var descs = [
 		{
 			"re": "((?:upSampling2d;?)+)",
 			"name": "Scaling up"
@@ -353,7 +353,7 @@ function group_layers (layers) {
 			"re": "((?:lstm;)+)",
 			"name": "LSTM"
 		},
-                {
+		{
 			"re": "((?:[^;]+Pooling[0-9]D;?)+;?)",
 			"name": "<span class='TRANSLATEME_dimensionality_reduction'></span>"
 		},
@@ -361,35 +361,35 @@ function group_layers (layers) {
 			"re": "((?:" + list_activation_layers.join("|") + ")+)",
 			"name": "<span class='TRANSLATEME_shy_activation_function'></span>"
 		},
-                {
+		{
 			"re": "((?:dropout;?)+)",
 			"name": "<span class='TRANSLATEME_shy_overfitting_prevention'></span>"
 		},
-                {
+		{
 			"re": batch_or_layer_normalization,
 			"name": "<span class='TRANSLATEME_rescale_and_recenter'></span>"
 		},
-                {
+		{
 			"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))",
 			"name": "<span class='TRANSLATEME_feature_extraction'></span>"
 		},
-                {
+		{
 			"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))",
 			"name": "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
 		},
-                {
+		{
 			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)",
 			"name": "<span class='TRANSLATEME_classification'></span>"
 		},
-                {
+		{
 			"re": "((?:flatten;?)+;?)",
 			"name": "<span class='TRANSLATEME_flatten'></span>"
 		},
-                {
+		{
 			"re": "((?:reshape;?)+;?)",
 			"name": "<span class='TRANSLATEME_change_shape'></span>"
 		},
-                {
+		{
 			"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)",
 			"name": "<span class='TRANSLATEME_simulate_real_data'></span>"
 		},
@@ -397,55 +397,55 @@ function group_layers (layers) {
 			"re": "(DebugLayer)+",
 			"name": "Debugger"
 		}
-        ];
+	];
 
-        for (var desc_i = 0; desc_i < descs.length; desc_i++) {
-                var this_re = RegExp(descs[desc_i]["re"], 'ig');
+	for (var desc_i = 0; desc_i < descs.length; desc_i++) {
+		var this_re = RegExp(descs[desc_i]["re"], "ig");
 		var current_match;
-                while ((current_match = this_re.exec(str)) !== null) {
-                        for (var new_index = current_match["index"]; new_index < (current_match["index"] + current_match[1].length); new_index++) {
-                                char_to_group[new_index] = descs[desc_i]["name"];
-                        }
-                }
-        }
+		while ((current_match = this_re.exec(str)) !== null) {
+			for (var new_index = current_match["index"]; new_index < (current_match["index"] + current_match[1].length); new_index++) {
+				char_to_group[new_index] = descs[desc_i]["name"];
+			}
+		}
+	}
 
-        var layer_to_char_start = [];
+	var layer_to_char_start = [];
 
-        var current_layer_nr = 0;
-        for (var i = 0; i < str.length; i++) {
-                if(str[i] == ";") {
-                        current_layer_nr++;
-                } else if(str[i - 1] == ";" || i == 0) {
-                        layer_to_char_start[current_layer_nr] = i;
-                }
-        }
+	var current_layer_nr = 0;
+	for (var i = 0; i < str.length; i++) {
+		if(str[i] == ";") {
+			current_layer_nr++;
+		} else if(str[i - 1] == ";" || i == 0) {
+			layer_to_char_start[current_layer_nr] = i;
+		}
+	}
 
-        var result = [];
+	var result = [];
 
-        var last_layer_type = char_to_group[0];
+	var last_layer_type = char_to_group[0];
 
-        var current_type_layers = [];
+	var current_type_layers = [];
 
-        for (var i = 0; i < layer_to_char_start.length; i++) {
-                var layer_type = char_to_group[layer_to_char_start[i]];
+	for (var i = 0; i < layer_to_char_start.length; i++) {
+		var layer_type = char_to_group[layer_to_char_start[i]];
 
-                if(last_layer_type != layer_type) {
-                        var this_item = {};
-                        this_item[last_layer_type] = current_type_layers;
-                        result.push(this_item);
+		if(last_layer_type != layer_type) {
+			var this_item = {};
+			this_item[last_layer_type] = current_type_layers;
+			result.push(this_item);
 
-                        current_type_layers = [];
-                        last_layer_type = layer_type;
-                }
+			current_type_layers = [];
+			last_layer_type = layer_type;
+		}
 
-                current_type_layers.push(i);
-        }
+		current_type_layers.push(i);
+	}
 
-        var this_item = {};
-        this_item[last_layer_type] = current_type_layers;
-        result.push(this_item);
+	var this_item = {};
+	this_item[last_layer_type] = current_type_layers;
+	result.push(this_item);
 
-        return result;
+	return result;
 }
 
 async function write_descriptions (force=0) {
@@ -455,7 +455,7 @@ async function write_descriptions (force=0) {
 	}
 
 	if(!force) {
-		var new_hash = await get_model_config_hash() + '_' + $(window).width();
+		var new_hash = await get_model_config_hash() + "_" + $(window).width();
 		if(last_drawn_descriptions == new_hash) {
 			//log("last_drawn_descriptions == new_hash");
 			$(".descriptions_of_layers").remove();
@@ -465,7 +465,7 @@ async function write_descriptions (force=0) {
 	}
 
 	if(is_hidden_or_has_hidden_parent($("#layers_container"))) {
-		$(".descriptions_of_layers").hide()
+		$(".descriptions_of_layers").hide();
 		return;
 	}
 
@@ -529,14 +529,14 @@ async function write_descriptions (force=0) {
 
 		if(keyname != "null") {
 			var height = last_layer_end - first_layer_start - 13;
-			var hidden = '';
+			var hidden = "";
 			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 				hidden = "display: none;";
 			}
 
 			var new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
 
-			$(new_div_html).appendTo('#maindiv');
+			$(new_div_html).appendTo("#maindiv");
 		}
 	}
 
@@ -598,7 +598,7 @@ function explain_error_msg (err) {
 			}
 		}
 	} else {
-		explanation = "No layers."
+		explanation = "No layers.";
 	}
 
 	if(explanation.length) {
@@ -751,7 +751,7 @@ function hide_layer_visualization_header_if_unused (layer) {
 	}
 
 	if(used == 0) {
-		$($(".layer_data")[layer]).hide()
+		$($(".layer_data")[layer]).hide();
 	}
 
 }
@@ -761,7 +761,7 @@ function hide_layer_visualization_header_if_unused (layer) {
 function add_layer_debuggers () {
 	$("#datalayers").html("");
 
-	$(".layer_data").html("")
+	$(".layer_data").html("");
 
 	if(!model) {
 		if(finished_loading) {
@@ -783,7 +783,7 @@ function add_layer_debuggers () {
 				model.layers[i].apply = model.layers[i].original_apply_real;
 			}
 
-			model.layers[i].original_apply_real = model.layers[i].apply
+			model.layers[i].original_apply_real = model.layers[i].apply;
 
 			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
@@ -820,7 +820,7 @@ function draw_internal_states (layer, inputs, applied) {
 		if(batchnr == 0) {
 			layer_div.append("<h1>Layer data flow</h1>");
 		}
-		layer_div.html('<h3 class="data_flow_visualization layer_header">Layer ' + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
+		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
 		layer_div.show();
 		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
@@ -837,21 +837,21 @@ function draw_internal_states (layer, inputs, applied) {
 
 		var kernel_data = [];
 
-		if(Object.keys(model.layers[layer]).includes('kernel')) {
+		if(Object.keys(model.layers[layer]).includes("kernel")) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
 				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
 			}
 		}
 
-		var canvas_input = draw_image_if_possible(layer, 'input', input_data, 1);
-		var canvas_kernel = draw_image_if_possible(layer, 'kernel', kernel_data, 1);
-		var canvas_output = draw_image_if_possible(layer, 'output', output_data, 1);
+		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
+		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
+		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
 		if(canvas_output.length && canvas_input.length) {
 			for (var j = 0; j < canvas_input.length; j++) {
 				for (var i = 0; i < canvas_output.length; i++) {
 					var img_output = canvas_output[i];
-					if(Object.keys(canvas_kernel).includes(i + '')) {
+					if(Object.keys(canvas_kernel).includes(i + "")) {
 						var img_kernel = canvas_kernel[i];
 						if(layer == 0) {
 							input.append(canvas_input[j]).show();
@@ -867,7 +867,7 @@ function draw_internal_states (layer, inputs, applied) {
 				if(layer == 0) {
 					input.append(canvas_input).show();
 				}
-				if(Object.keys(canvas_kernel).includes(i + '')) {
+				if(Object.keys(canvas_kernel).includes(i + "")) {
 					var img_kernel = canvas_kernel[i];
 					kernel.append(img_kernel).show();
 				}
@@ -885,7 +885,7 @@ function draw_internal_states (layer, inputs, applied) {
 			} else {
 				if($("#show_raw_data").is(":checked")) {
 					var h = array_to_html(output_data);
-					equations.append(h).show()
+					equations.append(h).show();
 				} else {
 					equations.html("Enable 'show raw data?' in the visualization tab to show").show();
 				}
@@ -901,18 +901,18 @@ function draw_internal_states (layer, inputs, applied) {
 /* The deprocess_image function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
 
 function deprocess_image(x) {
-        var res = tidy(() => {
-                const {mean, variance} = tf.moments(x);
-                x = x.sub(mean);
-                // Add a small positive number (EPSILON) to the denominator to prevent
-                // division-by-zero.
-                x = x.div(sqrt(variance).add(tf.backend().epsilon()));
-                // Clip to [0, 1].
-                x = x.add(0.5);
-                x = clipByValue(x, 0, 1);
-                x = x.mul(255);
-                return clipByValue(x, 0, 255).asType('int32');
-        });
+	var res = tidy(() => {
+		const {mean, variance} = tf.moments(x);
+		x = x.sub(mean);
+		// Add a small positive number (EPSILON) to the denominator to prevent
+		// division-by-zero.
+		x = x.div(sqrt(variance).add(tf.backend().epsilon()));
+		// Clip to [0, 1].
+		x = x.add(0.5);
+		x = clipByValue(x, 0, 1);
+		x = x.mul(255);
+		return clipByValue(x, 0, 255).asType("int32");
+	});
 
 
 	return res;
@@ -922,7 +922,7 @@ function deprocess_image(x) {
 
 async function input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion = 0) {
 	var worked = 0;
-        var full_data = {};
+	var full_data = {};
 
 	try {
 		var generated_data = tidy(() => {
@@ -978,7 +978,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			await compile_model();
 			if(recursion > 5) {
 				await delay(recursion * 1000);
-				return await input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1)
+				return await input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1);
 			} else {
 				throw new Error("Too many retries for input_gradient_ascent");
 			}
@@ -1028,7 +1028,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 		await nextFrame();
 
-		$('body').css('cursor', 'wait');
+		$("body").css("cursor", "wait");
 
 		await gui_in_training(0);
 	}
@@ -1138,7 +1138,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 		br = "<br>";
 	}
 
-	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`)
+	$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
 
 	l(language[lang]["done_generating_images"]);
 
@@ -1152,7 +1152,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	if(!is_cosmo_mode) {
 		window.scrollTo(0,0);
-		$('body').css('cursor', 'default');
+		$("body").css("cursor", "default");
 	}
 
 	currently_generating_images = false;
@@ -1184,7 +1184,7 @@ async function _show_eta (times, i, neurons) {
 		swal_msg += " " + eta;
 	}
 
-	l(swal_msg + ` `);
+	l(swal_msg + " ");
 
 	l(swal_msg);
 	document.title = swal_msg;
@@ -1242,7 +1242,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				var t_str = tensor_print_to_string(_tensor);
 				log("Maximally activated tensors:", t_str);
 				$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
-				await show_tab_label("maximally_activated_label", 1)
+				await show_tab_label("maximally_activated_label", 1);
 				await dispose(_tensor);
 			} else if (Object.keys(full_data).includes("image")) {
 				var data = full_data["image"][0];
@@ -1263,7 +1263,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 				if(res) {
 					if(!is_cosmo_mode) {
 						$("#maximally_activated_content").prepend(canvas);
-						await show_tab_label("maximally_activated_label", 1)
+						await show_tab_label("maximally_activated_label", 1);
 					}
 				} else {
 					log("Res: ", res);
@@ -1288,7 +1288,7 @@ function array_to_fixed (array, fixnr) {
 		return array;
 	}
 	var x = 0;
-	var len = array.length
+	var len = array.length;
 	while(x < len) {
 		if(looks_like_number(array[x])) {
 			array[x] = parse_float(parse_float(array[x]).toFixed(fixnr));
@@ -1301,7 +1301,7 @@ function array_to_fixed (array, fixnr) {
 
 function array_to_color (array, color) {
 	var x = 0;
-	var len = array.length
+	var len = array.length;
 	var new_array = [];
 	while(x < len) {
 		var this_color = "";
@@ -1398,7 +1398,7 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 	assert(typeof(layer) == "number", layer + " is not a number");
 	assert(typeof(index) == "number", index + " is not a number");
 
-	var original_name = model.layers[layer].weights[index].name
+	var original_name = model.layers[layer].weights[index].name;
 
 	var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
 	if(matches === null) {
@@ -1407,7 +1407,7 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 		return matches[1];
 	} else {
 		err("Could not determine name from " + original_name + ", matches: ");
-		log(matches)
+		log(matches);
 	}
 
 
@@ -1456,13 +1456,13 @@ function get_layer_data() {
 
 function array_size (ar) {
 	var row_count = ar.length;
-	var row_sizes = []
+	var row_sizes = [];
 
 	for(var i = 0; i < row_count; i++){
-		row_sizes.push(ar[i].length)
+		row_sizes.push(ar[i].length);
 	}
 
-	var res = [row_count, Math.min.apply(null, row_sizes)]
+	var res = [row_count, Math.min.apply(null, row_sizes)];
 
 
 	return res;
@@ -1473,8 +1473,8 @@ function get_layer_output_shape_as_string (i) {
 	assert(i < model.layers.length, i + " is larger than " + model.layers.length);
 	if(Object.keys(model).includes("layers")) {
 		try {
-			var str = model.layers[i].outputShape.toString()
-			str = str.replace(/^,|,$/g,'');
+			var str = model.layers[i].outputShape.toString();
+			str = str.replace(/^,|,$/g,"");
 			str = "[" + str + "]";
 			return str;
 		} catch (e) {
@@ -1494,37 +1494,37 @@ function _get_h (i) {
 }
 
 function array_to_latex_matrix (array, level=0, no_brackets) {
-        var base_tab = "";
-        for (var i = 0; i < level; i++) {
-                base_tab += "\t";
-        }
-        var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
-        if(typeof(array) == "object") {
-                for (var i = 0; i < array.length; i++) {
-                        if(typeof(array[i]) == "object") {
-                                for (var k = 0; k < array[i].length; k++) {
-                                        if(typeof(array[i][k]) == "object") {
-                                                str += array_to_latex_matrix(array[i][k], level + 1);
-                                        } else {
-                                                if(k == array[i].length - 1) {
-                                                        str += base_tab + "\t" + array[i][k] + "\\\\\n";
-                                                } else {
-                                                        str += base_tab + "\t" + array[i][k] + " & ";
-                                                }
-                                        }
-                                }
-                        } else {
-                                str += base_tab + "\t" + array[i] + "\\\\\n";
-                        }
-                }
-        } else {
-                str += base_tab + "\t" + array + "\n";
-        }
+	var base_tab = "";
+	for (var i = 0; i < level; i++) {
+		base_tab += "\t";
+	}
+	var str = base_tab + (!no_brackets ? "\\left(" : "") + "\\begin{matrix}\n";
+	if(typeof(array) == "object") {
+		for (var i = 0; i < array.length; i++) {
+			if(typeof(array[i]) == "object") {
+				for (var k = 0; k < array[i].length; k++) {
+					if(typeof(array[i][k]) == "object") {
+						str += array_to_latex_matrix(array[i][k], level + 1);
+					} else {
+						if(k == array[i].length - 1) {
+							str += base_tab + "\t" + array[i][k] + "\\\\\n";
+						} else {
+							str += base_tab + "\t" + array[i][k] + " & ";
+						}
+					}
+				}
+			} else {
+				str += base_tab + "\t" + array[i] + "\\\\\n";
+			}
+		}
+	} else {
+		str += base_tab + "\t" + array + "\n";
+	}
 
-        str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n"
+	str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n";
 
 
-        return str;
+	return str;
 }
 
 function model_to_latex () {
@@ -1996,11 +1996,11 @@ function model_to_latex () {
 			var dropout_rate = parse_int(parse_float($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
 			str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
 		} else if (this_layer_type == "DebugLayer") {
-			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}"
+			str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
 		} else if (this_layer_type == "gaussianNoise") {
-			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}"
+			str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
 		} else if (this_layer_type == "conv1d") {
-			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)"
+			str += _get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
 		} else if (this_layer_type == "conv1d") {
 			str += _get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + _get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
 		} else if (this_layer_type == "conv2d") {
@@ -2014,7 +2014,7 @@ function model_to_latex () {
 		} else if (this_layer_type == "maxPooling3D") {
 			str += _get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + _get_h(i) + "(x+i, y+j, z+l)";
 		} else {
-			str += "\\mathrm{(The equations for this layer are not yet defined)}"
+			str += "\\mathrm{(The equations for this layer are not yet defined)}";
 			log("Invalid layer type for layer " + i + ": " + this_layer_type);
 		}
 
@@ -2147,7 +2147,7 @@ function can_be_shown_in_latex () {
 		];
 		if(!(valid_layers.includes(this_layer_type))) {
 			l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
-			return false
+			return false;
 		}
 	}
 
@@ -2317,7 +2317,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 	var onBatchEnd = null;
 
 	onBatchEnd = function (epoch, logs) {
-		if(typeof(old_onEpochEnd) == 'function') {
+		if(typeof(old_onEpochEnd) == "function") {
 			old_onEpochEnd(epoch, logs);
 		}
 
@@ -2331,14 +2331,14 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 			var real_trace = {
 				x: [],
 				y: [],
-				type: 'scatter',
+				type: "scatter",
 				name: "Ground Truth"
 			};
 
 			var predicted_trace = {
 				x: [],
 				y: [],
-				type: 'scatter',
+				type: "scatter",
 				name: "Prediction"
 			};
 
@@ -2348,7 +2348,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 			//1) combine the arrays:
 			var list = [];
 			for (var j = 0; j < x_data.length; j++)
-				list.push({'x_data': parse_float(x_data[j][0]), 'y_data': parse_float(y_data[j][0])});
+				list.push({"x_data": parse_float(x_data[j][0]), "y_data": parse_float(y_data[j][0])});
 
 			//2) sort:
 			list.sort(function(a, b) {
@@ -2389,23 +2389,23 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				plot_bgcolor: "rgba(0, 0, 0, 0)",
 				gridcolor: "#7c7c7c",
 				font: {
-					family: 'Courier New, monospace',
+					family: "Courier New, monospace",
 					size: 18,
-					color: '#7f7f7f'
+					color: "#7f7f7f"
 				},
 				title: "Real function vs. predicted function",
-				yaxis: {title: 'predicted vs. real data'},
+				yaxis: {title: "predicted vs. real data"},
 				yaxis: {
-					title: 'y',
-					side: 'left',
+					title: "y",
+					side: "left",
 					showgrid: false
 				},
 				xaxis: {
-					title: 'x',
-					side: 'bottom',
+					title: "x",
+					side: "bottom",
 					showgrid: false
 				},
-				renderer: 'webgl'
+				renderer: "webgl"
 			};
 
 			var data = [real_trace, predicted_trace];
@@ -2414,7 +2414,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 		} catch (e) {
 			err(e);
 		}
-	}
+	};
 
 	return onBatchEnd;
 }
@@ -2453,7 +2453,7 @@ function least_square (x_array, y_array) {
 }
 
 function array_to_html(array) {
-	var m = '';
+	var m = "";
 	for (var i = 0; i < array.length; i++) {
 		if(typeof(array[i]) == "object") {
 			for (var j = 0; j < array[i].length; j++) {
@@ -2522,13 +2522,13 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 		// Try to locate the last conv layer of the model.
 		let layerIndex = model.layers.length - 1;
 		while (layerIndex >= 0) {
-			if (model.layers[layerIndex].getClassName().startsWith('Conv')) {
+			if (model.layers[layerIndex].getClassName().startsWith("Conv")) {
 				break;
 			}
 			layerIndex--;
 		}
 
-		assert(layerIndex >= 0, `Failed to find a convolutional layer in model`);
+		assert(layerIndex >= 0, "Failed to find a convolutional layer in model");
 
 		const lastConvLayer = model.layers[layerIndex];
 
@@ -2754,7 +2754,7 @@ async function cosmo_maximally_activate_last_layer () {
 	$("#maximally_activated_content").html("");
 
 	if(!already_moved_to_predict_for_cosmo) {
-		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
+		move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0]);
 		already_moved_to_predict_for_cosmo = true;
 	}
 
@@ -2774,7 +2774,7 @@ async function cosmo_maximally_activate_last_layer () {
 	var style_internal = `width: ${example_image_width + 65}px;`;
 	var style = ` class='cosmo_labels_above_generated_images' style='${style_internal}' `;
 
-	var table_and_uuids = _create_table_cosmo(canvasses, 'display:initial');
+	var table_and_uuids = _create_table_cosmo(canvasses, "display:initial");
 
 	var table = table_and_uuids[0];
 	var table_uuids = table_and_uuids[1];
@@ -2803,7 +2803,7 @@ async function cosmo_maximally_activate_last_layer () {
 			css("height", "170px").
 			css("image-rendering", "crisp-edges").
 			css("margin-right", "65px").
-			css("margin-left", "65px")
+			css("margin-left", "65px");
 	}
 
 	if(previously_generated_images.length) {
@@ -2844,7 +2844,7 @@ async function _temml () {
 	while ($("#temml_blocker").length) {
 		await delay(200);
 	}
-	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"))
+	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
 	$(".temml_me").each((i, e) => {
 		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
 			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
@@ -2861,12 +2861,12 @@ async function _temml () {
 			} );
 		}
 	});
-	$("#temml_blocker").remove()
+	$("#temml_blocker").remove();
 }
 
 function arbitrary_array_to_latex (arr) {
 	var latex = _arbitrary_array_to_latex(arr);
-	var res = "<span class='temml_me'>" + latex + "</span>"
+	var res = "<span class='temml_me'>" + latex + "</span>";
 	return res;
 }
 

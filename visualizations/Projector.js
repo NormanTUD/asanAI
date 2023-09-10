@@ -131,21 +131,21 @@ THREE.Projector = function () {
 
 	this.projectVector = function ( vector, camera ) {
 
-		console.warn( 'THREE.Projector: .projectVector() is now vector.project().' );
+		console.warn( "THREE.Projector: .projectVector() is now vector.project()." );
 		vector.project( camera );
 
 	};
 
 	this.unprojectVector = function ( vector, camera ) {
 
-		console.warn( 'THREE.Projector: .unprojectVector() is now vector.unproject().' );
+		console.warn( "THREE.Projector: .unprojectVector() is now vector.unproject()." );
 		vector.unproject( camera );
 
 	};
 
 	this.pickingRay = function () {
 
-		console.error( 'THREE.Projector: .pickingRay() is now raycaster.setFromCamera().' );
+		console.error( "THREE.Projector: .pickingRay() is now raycaster.setFromCamera()." );
 
 	};
 
@@ -959,8 +959,8 @@ THREE.Projector = function () {
 
 		var alpha1 = 0, alpha2 = 1,
 
-		// Calculate the boundary coordinate of each vertex for the near and far clip planes,
-		// Z = -1 and Z = +1, respectively.
+			// Calculate the boundary coordinate of each vertex for the near and far clip planes,
+			// Z = -1 and Z = +1, respectively.
 
 			bc1near = s1.z + s1.w,
 			bc2near = s2.z + s2.w,

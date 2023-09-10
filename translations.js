@@ -4,40 +4,40 @@
 var lang_cookie_name = "language_cookie";
 var lang = get_lang_cookie();
 
-var labels_lang = 'de';
+var labels_lang = "de";
 
 const urlParams = new URLSearchParams(window.location.search);
 
 // Check if the parameter "start_cosmo" exists
-if (urlParams.has('start_cosmo')) {
-	lang = 'de';
+if (urlParams.has("start_cosmo")) {
+	lang = "de";
 }
 
 function swap_image_src_language () {
 	// Get all image elements on the page
-	const images = document.getElementsByTagName('img');
+	const images = document.getElementsByTagName("img");
 
 	// Loop through each image element
 	for (var i = 0; i < images.length; i++) {
 		const img = images[i];
-		const currentSrc = img.getAttribute('src');
+		const currentSrc = img.getAttribute("src");
 
-		if (lang === 'en' && currentSrc.startsWith('lang/__de__')) {
+		if (lang === "en" && currentSrc.startsWith("lang/__de__")) {
 			// Replace 'de' with 'en'
-			const newSrc = currentSrc.replace(/__de__/, '__en__');
-			img.setAttribute('src', newSrc);
-		} else if (lang === 'de' && currentSrc.startsWith('lang/__en__')) {
+			const newSrc = currentSrc.replace(/__de__/, "__en__");
+			img.setAttribute("src", newSrc);
+		} else if (lang === "de" && currentSrc.startsWith("lang/__en__")) {
 			// Replace 'en' with 'de'
-			const newSrc = currentSrc.replace(/__en__/, '__de__');
-			img.setAttribute('src', newSrc);
-		} else if (lang === 'en' && currentSrc.startsWith('presentation/de/')) {
+			const newSrc = currentSrc.replace(/__en__/, "__de__");
+			img.setAttribute("src", newSrc);
+		} else if (lang === "en" && currentSrc.startsWith("presentation/de/")) {
 			// Replace 'de' with 'en'
-			const newSrc = currentSrc.replace(/\/de\//, '/en/');
-			img.setAttribute('src', newSrc);
-		} else if (lang === 'de' && currentSrc.startsWith('presentation/en/')) {
+			const newSrc = currentSrc.replace(/\/de\//, "/en/");
+			img.setAttribute("src", newSrc);
+		} else if (lang === "de" && currentSrc.startsWith("presentation/en/")) {
 			// Replace 'en' with 'de'
-			const newSrc = currentSrc.replace(/\/en\//, '/de/');
-			img.setAttribute('src', newSrc);
+			const newSrc = currentSrc.replace(/\/en\//, "/de/");
+			img.setAttribute("src", newSrc);
 		}
 	}
 }
@@ -45,7 +45,7 @@ function swap_image_src_language () {
 // Function to set the language and update translations
 async function set_lang(la) {
 	lang = la;
-	set_cookie('lang', l, 30); // Save the language in a cookie for 30 days
+	set_cookie("lang", l, 30); // Save the language in a cookie for 30 days
 	await update_translations();
 
 	swap_image_src_language();
@@ -53,27 +53,27 @@ async function set_lang(la) {
 
 // Function to retrieve a cookie value
 function get_lang_cookie() {
-	const cookies = document.cookie.split(';');
+	const cookies = document.cookie.split(";");
 	for (var i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
-		if (cookie.startsWith(lang_cookie_name + '=')) {
+		if (cookie.startsWith(lang_cookie_name + "=")) {
 			return cookie.substring(lang_cookie_name.length + 1);
 		}
 	}
-	return 'en';
+	return "en";
 }
 
 // Function to set a cookie value
 function set_lang_cookie(value, days) {
 	const expirationDate = new Date();
 	expirationDate.setDate(expirationDate.getDate() + days);
-	const cookieValue = encodeURIComponent(value) + '; expires=' + expirationDate.toUTCString() + '; path=/';
-	document.cookie = lang_cookie_name + '=' + cookieValue;
+	const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
+	document.cookie = lang_cookie_name + "=" + cookieValue;
 }
 
 // Function to update the translation of elements
 async function update_translations() {
-	var elements = document.querySelectorAll('[class^="TRANSLATEME_"]');
+	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
 		const translation = language[lang][translationKey];
@@ -81,7 +81,7 @@ async function update_translations() {
 			if($(element).attr("data-lang") != lang) {
 				element.innerHTML = translation;
 
-				$(element).attr("data-lang", lang)
+				$(element).attr("data-lang", lang);
 			}
 		} else {
 			alert("Could not translate " + translationKey + " to " + lang);
@@ -100,7 +100,7 @@ async function update_translations() {
 // Update translations when language selector links are clicked
 var languageSelectors = $(".language-selector").find("span");
 Array.from(languageSelectors).forEach((selector) => {
-	selector.addEventListener('click', async function (event) {
+	selector.addEventListener("click", async function (event) {
 		event.preventDefault();
 		const newLang = this.dataset.lang;
 		if (newLang !== lang) {
@@ -110,8 +110,8 @@ Array.from(languageSelectors).forEach((selector) => {
 });
 
 // Update translations when language is changed via URL parameter
-window.addEventListener('popstate', async function () {
-	const newLang = urlParams.get('lang') || 'en';
+window.addEventListener("popstate", async function () {
+	const newLang = urlParams.get("lang") || "en";
 	if (newLang !== lang) {
 		await set_lang(newLang);
 	}
@@ -125,7 +125,7 @@ async function update_lang(la) {
 
 function trm (name) {
 	if(Object.keys(language[lang]).includes(name)) {
-		return `<span class='TRANSLATEME_${name}'></span>`
+		return `<span class='TRANSLATEME_${name}'></span>`;
 	}
 
 	alert(`${name} NOT FOUND`);

@@ -2,7 +2,7 @@
 
 function assertation_failed (message) {
 	this.message = message;
-};
+}
 
 
 function assert(boolean_value, exception_message) {
@@ -18,11 +18,11 @@ function assert(boolean_value, exception_message) {
 
 		var link = document.querySelector("link[rel~='icon']");
 		if (!link) {
-			link = document.createElement('link');
-			link.rel = 'icon';
-			document.getElementsByTagName('head')[0].appendChild(link);
+			link = document.createElement("link");
+			link.rel = "icon";
+			document.getElementsByTagName("head")[0].appendChild(link);
 		}
-		link.href = 'favicon.ico';
+		link.href = "favicon.ico";
 
 		throw new assertation_failed(exception_message);
 	} else {

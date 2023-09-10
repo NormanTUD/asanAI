@@ -25,7 +25,7 @@ function info (...args) {
 	args.forEach(arg => console.info(arg));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[INFO] " + arg)
+			l("[INFO] " + arg);
 		}
 	});
 
@@ -34,10 +34,10 @@ function info (...args) {
 	}
 
 	var struct = {
-		'type': 'info',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "info",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -47,7 +47,7 @@ function err (...args) {
 	args.forEach(arg => console.error(arg));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[ERROR] " + arg)
+			l("[ERROR] " + arg);
 		}
 	});
 
@@ -56,10 +56,10 @@ function err (...args) {
 	}
 
 	var struct = {
-		'type': 'err',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "err",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -69,7 +69,7 @@ function wrn (...args) {
 	args.forEach(arg => console.warn(arg));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[WARN] " + arg)
+			l("[WARN] " + arg);
 		}
 	});
 
@@ -78,10 +78,10 @@ function wrn (...args) {
 	}
 
 	var struct = {
-		'type': 'warn',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "warn",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -95,10 +95,10 @@ function dbg (...args) {
 	}
 
 	var struct = {
-		'type': 'debug',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "debug",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -113,10 +113,10 @@ function log_less (...args) {
 
 
 	var struct = {
-		'type': 'log',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "log",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -127,7 +127,7 @@ function log (...args) {
 	args.forEach((arg) => {
 		if(arg) {
 			if(typeof arg == "string") {
-				l(arg)
+				l(arg);
 			} else {
 				console.log(arg);
 			}	
@@ -140,10 +140,10 @@ function log (...args) {
 
 
 	var struct = {
-		'type': 'log',
-		'stacktrace': get_stack_trace(),
-		'log': args,
-		'time': parse_int(Date.now() / 1000)
+		"type": "log",
+		"stacktrace": get_stack_trace(),
+		"log": args,
+		"time": parse_int(Date.now() / 1000)
 	};
 
 	_full_debug_log.push(struct);
@@ -178,8 +178,8 @@ function headerdatadebug (msg) {
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var ARGUMENT_NAMES = /([^\s,]+)/g;
 function get_param_names(func) {
-	var fnStr = func.toString().replace(STRIP_COMMENTS, '');
-	var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+	var fnStr = func.toString().replace(STRIP_COMMENTS, "");
+	var result = fnStr.slice(fnStr.indexOf("(")+1, fnStr.indexOf(")")).match(ARGUMENT_NAMES);
 	if(result === null)
 		result = [];
 	return result;
@@ -193,7 +193,7 @@ function add_function_debugger () {
 
 	for (var i in window) {
 	    if(
-		i != "assert" &&							// Disable assert output
+			i != "assert" &&							// Disable assert output
 		![
 			"delay",
 			"Swal",
@@ -327,14 +327,14 @@ function memory_debugger () {
 	var debug_string = `${language[lang]["tensors"]}: ` + colorize(num_tensors, tensor_color) + ", RAM: " + colorize(ram_mb, cpu_color) + "MB";
 
 	if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
-		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB"
+		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB";
 	}
 
 	if(Object.keys(_custom_tensors).length) {
 		debug_string += ", asanAI: " + Object.keys(_custom_tensors).length;
 	}
 
-	var memdeb = document.querySelector('#memory_debugger_div');
+	var memdeb = document.querySelector("#memory_debugger_div");
 
 	if(memdeb) {
 		if(memdeb.innerHTML != debug_string) {
@@ -362,13 +362,13 @@ function get_mem () {
 }
 
 function add_optimizer_debugger () {
-	tf.train.sgd = function (e) { log("SGD. Learning rate:", e); var res = original_sgd(e); log("Result:", res); return res; }
-	tf.train.rmsprop = function (e, t, n, r, a) { log("RMSProp. learningRate, decay, momentum, epsilon, centered:", e, t, n, r, a); var res = original_rmsprop(e, t, n, r, a); log("Result:", res); return res; }
-	tf.train.adamax = function (e, t, n, r, a) { log("adamax. learningRate, beta1, beta2, epsilon, decay:", e, t, n, r, a); var res = original_adamax(e, t, n, r, a); log("Result:", res); return res; }
-	tf.train.adam = function (e, t, n, r) { log("adam. learningRate, beta1, beta2, epsilon", e, t, n, r); var res = original_adam(e, t, n, r); log("Result:", res); return res; }
-	tf.train.adadelta = function (e, t, n) { log("adadelta. learningRate, rho, epsilon", e, t, n); var res = original_adadelta(e, t, n); log("Result:", res); return res; }
-	tf.train.adagrad = function (e, t) { log("adagrad. learningRate, rho, epsilon", e, t); var res = original_adagrad(e, t); log("Result:", res); return res; }
-	tf.train.momentum = function (e, t, n) { log("momentum. learningRate, momentum, useNesterov", e, t, n); var res = original_momentum(e, t, n); log("Result:", res); return res; }
+	tf.train.sgd = function (e) { log("SGD. Learning rate:", e); var res = original_sgd(e); log("Result:", res); return res; };
+	tf.train.rmsprop = function (e, t, n, r, a) { log("RMSProp. learningRate, decay, momentum, epsilon, centered:", e, t, n, r, a); var res = original_rmsprop(e, t, n, r, a); log("Result:", res); return res; };
+	tf.train.adamax = function (e, t, n, r, a) { log("adamax. learningRate, beta1, beta2, epsilon, decay:", e, t, n, r, a); var res = original_adamax(e, t, n, r, a); log("Result:", res); return res; };
+	tf.train.adam = function (e, t, n, r) { log("adam. learningRate, beta1, beta2, epsilon", e, t, n, r); var res = original_adam(e, t, n, r); log("Result:", res); return res; };
+	tf.train.adadelta = function (e, t, n) { log("adadelta. learningRate, rho, epsilon", e, t, n); var res = original_adadelta(e, t, n); log("Result:", res); return res; };
+	tf.train.adagrad = function (e, t) { log("adagrad. learningRate, rho, epsilon", e, t); var res = original_adagrad(e, t); log("Result:", res); return res; };
+	tf.train.momentum = function (e, t, n) { log("momentum. learningRate, momentum, useNesterov", e, t, n); var res = original_momentum(e, t, n); log("Result:", res); return res; };
 
 }
 
@@ -394,16 +394,16 @@ function data_debug (...data) {
 function highlight_element(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
-		element.style.backgroundColor = 'yellow';
-		element.style.margin = '20px';
+		element.style.backgroundColor = "yellow";
+		element.style.margin = "20px";
 	}
 }
 
 function unhighlight_element(xpath) {
 	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if (element) {
-		element.style.backgroundColor = '';
-		element.style.margin = '0px';
+		element.style.backgroundColor = "";
+		element.style.margin = "0px";
 	}
 }
 
@@ -421,7 +421,7 @@ function cosmo_debugger () {
 	var cosmo_wave_debug_str = "current_skills: [" + JSON.stringify(current_skills) + "]";
 	$("#cosmo_debugger").length ? $("#cosmo_debugger").html(cosmo_wave_debug_str) : $("body").append($(`<div id='cosmo_debugger' style='position: fixed; left: 700px; top: 10px; background-color: green; color: white; word-wrap: anywhere;'>Cosmo-Wave: ${cosmo_wave_debug_str}</div>`));
 
-	$(".manicule_debugger").remove()
+	$(".manicule_debugger").remove();
 
 	var dbgf = (i, x) => {
 		if(!is_hidden_or_has_hidden_parent(x)) {
@@ -475,11 +475,11 @@ function cosmo_debugger () {
 
 			var cosmo_debug_str = cosmo_debug_arr.join(", ");
 
-			$("body").append(`<div onmouseover='highlight_element("${xpath.replace(/"/g, '\\"')}")' onmouseout='unhighlight_element("${xpath.replace(/"/g, '\\"')}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
+			$("body").append(`<div onmouseover='highlight_element("${xpath.replace(/"/g, "\\\"")}")' onmouseout='unhighlight_element("${xpath.replace(/"/g, "\\\"")}")' style='position: absolute; top: ${t}px; left: ${left}px; background-color: rgba(255, 150, 150, 128); text-shadow: #fff 1px 1px 1px;' class='manicule_debugger'>${cosmo_debug_str}</div>`);
 		}
-	}
+	};
 
-	$(".cosmo").each(dbgf)
+	$(".cosmo").each(dbgf);
 }
 
 async function profile (func, ...args) {
@@ -507,34 +507,34 @@ function create_graphviz_function_call_graph () {
 	const dependencies = {};
 
 	for (const functionName in window) {
-		if (typeof window[functionName] === 'function' && functionName !== 'tf') {
+		if (typeof window[functionName] === "function" && functionName !== "tf") {
 			dependencies[functionName] = [];
 
 			// Extract function body and search for function calls within it
 			const fnBody = window[functionName].toString();
 			const fnCalls = fnBody.match(/\w+\(/g);
 
-				if (fnCalls) {
-					fnCalls.forEach(fnCall => {
-						const calledFunctionName = fnCall.replace('(', '');
+			if (fnCalls) {
+				fnCalls.forEach(fnCall => {
+					const calledFunctionName = fnCall.replace("(", "");
 
-						// Ensure it's not referring to itself
-						if (calledFunctionName !== functionName && window[calledFunctionName]) {
-							dependencies[functionName].push(calledFunctionName);
-						}
-					});
-				}
+					// Ensure it's not referring to itself
+					if (calledFunctionName !== functionName && window[calledFunctionName]) {
+						dependencies[functionName].push(calledFunctionName);
+					}
+				});
+			}
 		}
 	}
 
-	let dotFileContent = 'digraph FunctionCalls {\n';
+	let dotFileContent = "digraph FunctionCalls {\n";
 	for (const functionName in dependencies) {
 		const calledFunctions = dependencies[functionName];
 		calledFunctions.forEach(calledFunction => {
 			dotFileContent += `  "${functionName}" -> "${calledFunction}";\n`;
 		});
 	}
-	dotFileContent += '}\n';
+	dotFileContent += "}\n";
 
 	// You can log the dotFileContent or use other methods to save it as needed.
 	log(dotFileContent); // Example: Logging the content to the console
@@ -611,24 +611,24 @@ function create_html_table_from_json(data) {
 function send_post_request(url, htmlCode) {
 	try {
 		const xhr = new XMLHttpRequest();
-		xhr.open('POST', url, true);
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
-					log('Anonymized bug report was sent.');
+					log("Anonymized bug report was sent.");
 				} else {
 					// Request failed
-					wrn('Anonymized bug report could not be sent:', xhr.status);
+					wrn("Anonymized bug report could not be sent:", xhr.status);
 				}
 			}
 		};
-		const data = 'html_code=' + encodeURIComponent(htmlCode); // Encode the data
+		const data = "html_code=" + encodeURIComponent(htmlCode); // Encode the data
 		xhr.send(data);
 	} catch (error) {
 		// Handle any exceptions
-		err('An error occurred:', error);
+		err("An error occurred:", error);
 	}
 }
 
@@ -650,14 +650,14 @@ async function _take_screenshot () {
 }
 
 async function send_bug_report () {
-	var html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body>';
+	var html = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body>";
 
 	if(privacy_is_tainted) {
 		l("Privacy was tainted. Not taking a screenshot");
 	} else {
-		html += "<h1>Screenshot</h1>"
+		html += "<h1>Screenshot</h1>";
 
-		html += '<img src="' + await _take_screenshot() + '" />';
+		html += "<img src=\"" + await _take_screenshot() + "\" />";
 	}
 
 	html += "<h1>URL</h1>";
@@ -669,13 +669,13 @@ async function send_bug_report () {
 		html += _env_dump;
 	}
 
-	html += "<h1>Browser-Information</h1>"
+	html += "<h1>Browser-Information</h1>";
 	html += "User-Agent: " + navigator.userAgent;
 
-	html += "<h1>Model-Structure</h1>"
+	html += "<h1>Model-Structure</h1>";
 	html += "<pre>" + JSON.stringify(await get_model_structure(), null, 2) + "</pre>";
 
-	html += "<h1>Model-Data</h1>"
+	html += "<h1>Model-Data</h1>";
 	html += "<pre>" + JSON.stringify(await get_model_data(), null, 2) + "</pre>";
 
 	html += "<h1>Logs</h1>";
@@ -683,7 +683,7 @@ async function send_bug_report () {
 
 	html += "</table></html>";
 
-	send_post_request("save_error_log.php", html)
+	send_post_request("save_error_log.php", html);
 }
 
 function taint_privacy () {
@@ -712,7 +712,7 @@ function _dump_env_to_html () {
 	var _keys = Object.keys(all_vars);
 	for (var i = 0; i <= _keys.length; i++) {
 		if("" + _keys[i] !== "undefined") {
-			html += `<tr><td>${_keys[i]}</td><td><pre>${all_vars[_keys[i]]}</pre></td></tr>`
+			html += `<tr><td>${_keys[i]}</td><td><pre>${all_vars[_keys[i]]}</pre></td></tr>`;
 		}
 	}
 

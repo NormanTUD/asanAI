@@ -21,7 +21,7 @@ THREE.SVGRenderer = function () {
 	var _this = this,
 		_renderData, _elements, _lights,
 		_projector = new THREE.Projector(),
-		_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
+		_svg = document.createElementNS( "http://www.w3.org/2000/svg", "svg" ),
 		_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
 
 		_v1, _v2, _v3,
@@ -73,8 +73,8 @@ THREE.SVGRenderer = function () {
 
 		switch ( quality ) {
 
-			case "high": _quality = 1; break;
-			case "low": _quality = 0; break;
+		case "high": _quality = 1; break;
+		case "low": _quality = 0; break;
 
 		}
 
@@ -94,9 +94,9 @@ THREE.SVGRenderer = function () {
 		_svgWidth = width; _svgHeight = height;
 		_svgWidthHalf = _svgWidth / 2; _svgHeightHalf = _svgHeight / 2;
 
-		_svg.setAttribute( 'viewBox', ( - _svgWidthHalf ) + ' ' + ( - _svgHeightHalf ) + ' ' + _svgWidth + ' ' + _svgHeight );
-		_svg.setAttribute( 'width', _svgWidth );
-		_svg.setAttribute( 'height', _svgHeight );
+		_svg.setAttribute( "viewBox", ( - _svgWidthHalf ) + " " + ( - _svgHeightHalf ) + " " + _svgWidth + " " + _svgHeight );
+		_svg.setAttribute( "width", _svgWidth );
+		_svg.setAttribute( "height", _svgHeight );
 
 		_clipBox.min.set( - _svgWidthHalf, - _svgHeightHalf );
 		_clipBox.max.set( _svgWidthHalf, _svgHeightHalf );
@@ -123,11 +123,11 @@ THREE.SVGRenderer = function () {
 
 	function getSvgColor( color, opacity ) {
 
-		var arg = Math.floor( color.r * 255 ) + ',' + Math.floor( color.g * 255 ) + ',' + Math.floor( color.b * 255 );
+		var arg = Math.floor( color.r * 255 ) + "," + Math.floor( color.g * 255 ) + "," + Math.floor( color.b * 255 );
 
-		if ( opacity === undefined || opacity === 1 ) return 'rgb(' + arg + ')';
+		if ( opacity === undefined || opacity === 1 ) return "rgb(" + arg + ")";
 
-		return 'rgb(' + arg + '); fill-opacity: ' + opacity;
+		return "rgb(" + arg + "); fill-opacity: " + opacity;
 
 	}
 
@@ -148,7 +148,7 @@ THREE.SVGRenderer = function () {
 
 		if ( camera instanceof THREE.Camera === false ) {
 
-			console.error( 'THREE.SVGRenderer.render: camera is not an instance of THREE.Camera.' );
+			console.error( "THREE.SVGRenderer.render: camera is not an instance of THREE.Camera." );
 			return;
 
 		}
@@ -182,8 +182,8 @@ THREE.SVGRenderer = function () {
 
 		 // reset accumulated path
 
-		_currentPath = '';
-		_currentStyle = '';
+		_currentPath = "";
+		_currentStyle = "";
 
 		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
 
@@ -257,7 +257,7 @@ THREE.SVGRenderer = function () {
 				var y = - _vector3.y * _svgHeightHalf;
 
 				var node = object.node;
-				node.setAttribute( 'transform', 'translate(' + x + ',' + y + ')' );
+				node.setAttribute( "transform", "translate(" + x + "," + y + ")" );
 
 				_svg.appendChild( node );
 
@@ -359,12 +359,12 @@ THREE.SVGRenderer = function () {
 
 		}
 
-		var path = 'M' + convert( v1.x - scaleX * 0.5 ) + ',' + convert( v1.y - scaleY * 0.5 ) + 'h' + convert( scaleX ) + 'v' + convert( scaleY ) + 'h' + convert( - scaleX ) + 'z';
+		var path = "M" + convert( v1.x - scaleX * 0.5 ) + "," + convert( v1.y - scaleY * 0.5 ) + "h" + convert( scaleX ) + "v" + convert( scaleY ) + "h" + convert( - scaleX ) + "z";
 		var style = "";
 
 		if ( material.isSpriteMaterial || material.isPointsMaterial ) {
 
-			style = 'fill:' + getSvgColor( material.color, material.opacity );
+			style = "fill:" + getSvgColor( material.color, material.opacity );
 
 		}
 
@@ -374,15 +374,15 @@ THREE.SVGRenderer = function () {
 
 	function renderLine( v1, v2, element, material ) {
 
-		var path = 'M' + convert( v1.positionScreen.x ) + ',' + convert( v1.positionScreen.y ) + 'L' + convert( v2.positionScreen.x ) + ',' + convert( v2.positionScreen.y );
+		var path = "M" + convert( v1.positionScreen.x ) + "," + convert( v1.positionScreen.y ) + "L" + convert( v2.positionScreen.x ) + "," + convert( v2.positionScreen.y );
 
 		if ( material.isLineBasicMaterial ) {
 
-			var style = 'fill:none;stroke:' + getSvgColor( material.color, material.opacity ) + ';stroke-width:' + material.linewidth + ';stroke-linecap:' + material.linecap;
+			var style = "fill:none;stroke:" + getSvgColor( material.color, material.opacity ) + ";stroke-width:" + material.linewidth + ";stroke-linecap:" + material.linecap;
 
 			if ( material.isLineDashedMaterial ) {
 
-				style = style + ';stroke-dasharray:' + material.dashSize + "," + material.gapSize;
+				style = style + ";stroke-dasharray:" + material.dashSize + "," + material.gapSize;
 
 			}
 
@@ -397,8 +397,8 @@ THREE.SVGRenderer = function () {
 		_this.info.render.vertices += 3;
 		_this.info.render.faces ++;
 
-		var path = 'M' + convert( v1.positionScreen.x ) + ',' + convert( v1.positionScreen.y ) + 'L' + convert( v2.positionScreen.x ) + ',' + convert( v2.positionScreen.y ) + 'L' + convert( v3.positionScreen.x ) + ',' + convert( v3.positionScreen.y ) + 'z';
-		var style = '';
+		var path = "M" + convert( v1.positionScreen.x ) + "," + convert( v1.positionScreen.y ) + "L" + convert( v2.positionScreen.x ) + "," + convert( v2.positionScreen.y ) + "L" + convert( v3.positionScreen.x ) + "," + convert( v3.positionScreen.y ) + "z";
+		var style = "";
 
 		if ( material.isMeshBasicMaterial ) {
 
@@ -438,11 +438,11 @@ THREE.SVGRenderer = function () {
 
 		if ( material.wireframe ) {
 
-			style = 'fill:none;stroke:' + getSvgColor( _color, material.opacity ) + ';stroke-width:' + material.wireframeLinewidth + ';stroke-linecap:' + material.wireframeLinecap + ';stroke-linejoin:' + material.wireframeLinejoin;
+			style = "fill:none;stroke:" + getSvgColor( _color, material.opacity ) + ";stroke-width:" + material.wireframeLinewidth + ";stroke-linecap:" + material.wireframeLinecap + ";stroke-linejoin:" + material.wireframeLinejoin;
 
 		} else {
 
-			style = 'fill:' + getSvgColor( _color, material.opacity );
+			style = "fill:" + getSvgColor( _color, material.opacity );
 
 		}
 
@@ -472,14 +472,14 @@ THREE.SVGRenderer = function () {
 		if ( _currentPath ) {
 
 			_svgNode = getPathNode( _pathCount ++ );
-			_svgNode.setAttribute( 'd', _currentPath );
-			_svgNode.setAttribute( 'style', _currentStyle );
+			_svgNode.setAttribute( "d", _currentPath );
+			_svgNode.setAttribute( "style", _currentStyle );
 			_svg.appendChild( _svgNode );
 
 		}
 
-		_currentPath = '';
-		_currentStyle = '';
+		_currentPath = "";
+		_currentStyle = "";
 
 	}
 
@@ -487,11 +487,11 @@ THREE.SVGRenderer = function () {
 
 		if ( _svgPathPool[ id ] == null ) {
 
-			_svgPathPool[ id ] = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+			_svgPathPool[ id ] = document.createElementNS( "http://www.w3.org/2000/svg", "path" );
 
 			if ( _quality == 0 ) {
 
-				_svgPathPool[ id ].setAttribute( 'shape-rendering', 'crispEdges' ); //optimizeSpeed
+				_svgPathPool[ id ].setAttribute( "shape-rendering", "crispEdges" ); //optimizeSpeed
 
 			}
 

@@ -13,11 +13,11 @@ async function _set_seeds (nr) {
 }
 
 async function _set_initializers() {
-	$(".layer_options_button").click()
+	$(".layer_options_button").click();
 
 	l("Setting initializer");
-	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change")
-	$("#set_all_bias_initializers").val("glorotUniform").trigger("change")
+	$("#set_all_kernel_initializers").val("glorotUniform").trigger("change");
+	$("#set_all_bias_initializers").val("glorotUniform").trigger("change");
 	l("Done setting initializer");
 
 	await delay(2000);
@@ -26,7 +26,7 @@ async function _set_initializers() {
 }
 
 function get_current_timestamp () {
-	return Date.now()
+	return Date.now();
 }
 
 function test_not_equal (name, is, should_be) {
@@ -93,7 +93,7 @@ function log_test (name) {
 
 	mem_history.push(current_mem);
 
-	log("Test-name: " + name)
+	log("Test-name: " + name);
 	l("Test-name: " + name);
 }
 
@@ -107,7 +107,7 @@ async function run_tests () {
 	test_equal("looks_like_number(1)", looks_like_number(1), true);
 	test_equal("looks_like_number(100)", looks_like_number(100), true);
 	test_equal("looks_like_number(-100)", looks_like_number(-100), true);
-	test_not_equal("looks_like_number('aaa')", looks_like_number('aaa'), true);
+	test_not_equal("looks_like_number('aaa')", looks_like_number("aaa"), true);
 
 	tf.engine().startScope();
 
@@ -123,32 +123,32 @@ async function run_tests () {
 			log_test("Tensor functions");
 			var test_tensor = tensor([1,2,3]);
 
-			test_equal("tensor_print_to_string(tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]")
+			test_equal("tensor_print_to_string(tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]");
 
 			test_equal("is_numeric(1)", is_numeric(1), false);
-			test_equal("is_numeric('1')", is_numeric('1'), true);
-			test_equal("is_numeric('a')", is_numeric('a'), false);
+			test_equal("is_numeric('1')", is_numeric("1"), true);
+			test_equal("is_numeric('a')", is_numeric("a"), false);
 			test_equal("output_shape_is_same([1,2,3], [1,2,3])", output_shape_is_same([1,2,3], [1,2,3]), true);
 			test_not_equal("output_shape_is_same([1,2,3], [5,2,3])", output_shape_is_same([1,2,3], [5,2,3]), true);
 
-			test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array('[1,2,3]'), [1,2,3]);
-			test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array('[1,2,3,5]'), [1,2,3,5]);
+			test_equal("ensure_shape_array('[1,2,3]')", ensure_shape_array("[1,2,3]"), [1,2,3]);
+			test_equal("ensure_shape_array('[1,2,3,5]')", ensure_shape_array("[1,2,3,5]"), [1,2,3,5]);
 
 			await dispose(test_tensor);
 
 			log_test("GUI functions");
 			var example_div = $("<div id='example_test_div' />").appendTo($("body"));
 
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($('#example_test_div')), false);
+			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 			$("body").hide();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($('#example_test_div')), true);
+			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
 
 			$("body").show();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after showing body", is_hidden_or_has_hidden_parent($('#example_test_div')), false);
+			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after showing body", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 			$(example_div).hide();
-			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($('#example_test_div')), true);
+			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding div itself", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
 
 			example_div.remove();
 
@@ -156,19 +156,19 @@ async function run_tests () {
 
 			test_equal("add_bias_regularizer_l1_option('conv2d', 1)", add_bias_regularizer_l1_option("conv2d", 1), "<tr class='bias_regularizer_tr'><td>l1:</td><td><input class='input_field input_data bias_regularizer_l1' type='number'  value=0.01  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
-			test_equal('add_bias_initializer_distribution_option("conv2d", 1)', add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td><span class=\"TRANSLATEME_distribution\"></span>:</td><td><select class='input_field input_data bias_initializer_distribution' _onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
+			test_equal("add_bias_initializer_distribution_option(\"conv2d\", 1)", add_bias_initializer_distribution_option("conv2d", 1), "<tr class='bias_initializer_tr'><td><span class=\"TRANSLATEME_distribution\"></span>:</td><td><select class='input_field input_data bias_initializer_distribution' _onchange='updated_page(null, null, this);'><option value=\"normal\">normal</option><option value=\"uniform\">uniform</option><option value=\"truncatedNormal\">truncatedNormal</option></select></td>");
 
-			test_equal('add_kernel_initializer_value_option("conv2d", 1)', add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
+			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
-			test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option('dense', 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
+			test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option("dense", 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
-			test_equal('quote_python("abc")', quote_python("abc"), "\"abc\"");
+			test_equal("quote_python(\"abc\")", quote_python("abc"), "\"abc\"");
 
-			test_equal('quote_python("123")', quote_python("123"), "123");
+			test_equal("quote_python(\"123\")", quote_python("123"), "123");
 
-			test_equal('quote_python(123)', quote_python(123), "[123]");
+			test_equal("quote_python(123)", quote_python(123), "[123]");
 
-			test_equal('get_tr_str_for_description("hallo")', get_tr_str_for_description("hallo"), "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>hallo</span></td></tr>");
+			test_equal("get_tr_str_for_description(\"hallo\")", get_tr_str_for_description("hallo"), "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>hallo</span></td></tr>");
 
 			var not_random = [1,1,1,1,1,1,1,1];
 			var medium_random = [0,0.1,1,2,0.5,-1,1,1,1,1,2,0.5];
@@ -190,25 +190,25 @@ async function run_tests () {
 				color = "#353535";
 			}
 
-			test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[1]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"" + color + "\"]}]");
-			test_equal('color_compare_old_and_new_layer_data([[[1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"#cf1443\"]}]");
-			test_equal('color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])', JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"#2E8B57\"]}]");
+			test_equal("color_compare_old_and_new_layer_data([[[1]]], [[[1]]])", JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[1]]])), "[{\"0\":[\"" + color + "\"]}]");
+			test_equal("color_compare_old_and_new_layer_data([[[1]]], [[[0]]])", JSON.stringify(color_compare_old_and_new_layer_data([[[1]]], [[[0]]])), "[{\"0\":[\"#cf1443\"]}]");
+			test_equal("color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])", JSON.stringify(color_compare_old_and_new_layer_data([[[-1]]], [[[0]]])), "[{\"0\":[\"#2E8B57\"]}]");
 
-			test_equal('array_to_latex([[1],[2],[3]])', array_to_latex([[1],[2],[3]]), "\\underbrace{\\begin{pmatrix}\n1\\\\\n2\\\\\n3\n\\end{pmatrix}}_{\\mathrm{undefined}}\n");
+			test_equal("array_to_latex([[1],[2],[3]])", array_to_latex([[1],[2],[3]]), "\\underbrace{\\begin{pmatrix}\n1\\\\\n2\\\\\n3\n\\end{pmatrix}}_{\\mathrm{undefined}}\n");
 
 			test_equal("array_to_fixed([1.555,2.555,3.555], 2)", JSON.stringify(array_to_fixed([1.555,2.555,3.555], 2)), "[1.55,2.56,3.56]");
 
-			test_equal('group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])', JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"<span class='TRANSLATEME_feature_extraction'></span>\":[0,1,2,3]},{\"<span class='TRANSLATEME_flatten'></span>\":[4]},{\"Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention\":[5]},{\"<span class='TRANSLATEME_classification'></span>\":[6,7]}]");
+			test_equal("group_layers([ \"conv2d\", \"maxPooling2d\", \"conv2d\", \"maxPooling2d\", \"flatten\", \"dropout\", \"dense\", \"dense\" ])", JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])), "[{\"<span class='TRANSLATEME_feature_extraction'></span>\":[0,1,2,3]},{\"<span class='TRANSLATEME_flatten'></span>\":[4]},{\"Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention\":[5]},{\"<span class='TRANSLATEME_classification'></span>\":[6,7]}]");
 
-			test_equal('decille([1,2,3,4,5,6,7,8,9,10, 11], 1)', decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
+			test_equal("decille([1,2,3,4,5,6,7,8,9,10, 11], 1)", decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
 
-			test_equal('median([1,2,3,4,5])', median([1,2,3,4,5]), 3);
+			test_equal("median([1,2,3,4,5])", median([1,2,3,4,5]), 3);
 
-			test_equal('truncate_text("hallollolololololololllllolololo", 10)', truncate_text("hallollolololololololllllolololo", 10), "hall...olo");
+			test_equal("truncate_text(\"hallollolololololololllllolololo\", 10)", truncate_text("hallollolololololololllllolololo", 10), "hall...olo");
 
-			test_equal('is_number_array([1,2,3,4,5])', is_number_array([1,2,3,4,5]), true);
+			test_equal("is_number_array([1,2,3,4,5])", is_number_array([1,2,3,4,5]), true);
 
-			test_equal('is_number_array([1,2,"a",4,5])', is_number_array([1,2,"a",4,5]), false);
+			test_equal("is_number_array([1,2,\"a\",4,5])", is_number_array([1,2,"a",4,5]), false);
 
 			var keys_valid_layer_options = Object.keys(valid_layer_options);
 
@@ -232,8 +232,8 @@ async function run_tests () {
 			}
 
 			log_test("Layer checks");
-			test_equal('heuristic_layer_possibility_check(0, "flatten")', heuristic_layer_possibility_check(0, "flatten"), true);
-			test_equal('heuristic_layer_possibility_check(0, "dense")', heuristic_layer_possibility_check(0, "dense"), true);
+			test_equal("heuristic_layer_possibility_check(0, \"flatten\")", heuristic_layer_possibility_check(0, "flatten"), true);
+			test_equal("heuristic_layer_possibility_check(0, \"dense\")", heuristic_layer_possibility_check(0, "dense"), true);
 
 			var fit_data = await get_fit_data();
 
@@ -273,26 +273,26 @@ async function run_tests () {
 			await wait_for_updated_page(3);
 
 			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
-			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true)
+			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 0 and 0 results:" + result_and.toString());
 			}
 
 			result_and = await model.predict(tensor([[0, 1]])).arraySync()[0][0];
-			test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true)
+			test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 0 and 1 results:" + result_and.toString());
 			}
 
 			result_and = await model.predict(tensor([[1, 0]])).arraySync()[0][0];
-			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true)
+			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
 			if(!result_and.toString().startsWith("0.0")) {
 				log("trained nn: 1 and 0 results:" + result_and.toString());
 			}
 
 			result_and = await model.predict(tensor([[1, 1]])).arraySync()[0][0];
 			var r = result_and.toString();
-			test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true)
+			test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
 			if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
 				log("trained nn: 1 and 1 results:" + result_and.toString());
 			}
@@ -338,12 +338,12 @@ async function run_tests () {
 			await delay(2000);
 
 			expect_memory_leak = "a new layer was added";
-			log_test("Train on CSV")
+			log_test("Train on CSV");
 			expect_memory_leak = "";
 
 			set_epochs(100);
 
-			$("#data_origin").val("csv").trigger("change")
+			$("#data_origin").val("csv").trigger("change");
 			await delay(5000);
 
 
@@ -371,10 +371,10 @@ async function run_tests () {
 
 			try {
 				var res = await model.predict(tensor([[1, 1, 1]])).arraySync()[0][0];
-				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true)
+				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 
 				res = await model.predict(tensor([[3, 3, 3]])).arraySync()[0][0];
-				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true)
+				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
 			} catch (e) {
 				err("ERROR while predicting in test mode:", e);
 			}
@@ -403,7 +403,7 @@ async function run_tests () {
 			$("#show_bars_instead_of_numbers").prop("checked", false);
 			await updated_page();
 
-			$("[href='#predict_tab']").click()
+			$("[href='#predict_tab']").click();
 			await delay(5000);
 			await wait_for_updated_page(2);
 
@@ -469,11 +469,11 @@ async function run_tests () {
 			$("#dataset").val("signs").trigger("change");
 			set_epochs(1);
 			$("#max_number_of_files_per_category").val(1).trigger("change");
-			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change")
+			$("#shuffle_before_each_epoch").prop("checked", true).trigger("change");
 
 			var original_force_download = force_download;
 			force_download = true;
-			test_not_equal("get_image_data(0) is not empty", JSON.stringify(await get_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true)
+			test_not_equal("get_image_data(0) is not empty", JSON.stringify(await get_image_data(0)) == "[[],[],[],[],[],[],[],[],[],[]]", true);
 
 			var xy_data = await get_xs_and_ys();
 			force_download = false;
@@ -505,13 +505,13 @@ async function run_tests () {
 
 				var i = 1;
 
-				await delay(1000)
+				await delay(1000);
 
 				$("#height").val(wh).trigger("change");
 
 				i = 1;
 
-				await delay(1000)
+				await delay(1000);
 
 				var end_time = Date.now();
 
@@ -542,7 +542,7 @@ async function run_tests () {
 				} else {
 					ok = 0;
 				}
-			})
+			});
 
 			test_equal("descriptions of layers: top positions are below each other", ok, 1);
 

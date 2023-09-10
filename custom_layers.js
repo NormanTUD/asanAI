@@ -56,7 +56,7 @@ class DebugLayer extends tf.layers.Layer {
 	 * registration step (see below).
 	 */
 	static get className() {
-		return 'DebugLayer';
+		return "DebugLayer";
 	}
 }
 /**

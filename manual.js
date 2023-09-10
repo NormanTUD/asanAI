@@ -36,7 +36,7 @@ function toc () {
 	}
 
 	document.getElementById("toc").innerHTML += toc;
-};
+}
 
 async function get_network_type_result_by_array (layer_type, array, config, expand_dims=1, uuid) {
 	assert(typeof(layer_type) == "string", "Layer type must be string, is " + typeof(layer_type));
@@ -119,11 +119,11 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 
 function get_element (item) {
 	if($(item).is(":checkbox")) {
-		return $(item).is(":checked")
+		return $(item).is(":checked");
 	} else if ($(item).is("input")) {
 		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize") || $(item).hasClass("strides") || $(item).hasClass("size")) {
 			var str = $(item).val();
-			var values = str.split(/\s*,\s*/)
+			var values = str.split(/\s*,\s*/);
 			values = values.map(function (x) {
 				return parse_int(x);
 			});
@@ -171,31 +171,31 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option == "strides") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.strides.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.strides.join(",") + "' /></td></tr>");
 			} else if(layer_option == "pool_size") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.poolSize.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.poolSize.join(",") + "' /></td></tr>");
 			} else if(layer_option == "size") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.size.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='2,2' value='" + config.size.join(",") + "' /></td></tr>");
 			} else if(layer_option.endsWith("kernel_size")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='3,3' value='" + config.kernelSize.join(",") + "' /></td></tr>");
 			} else if(layer_option.endsWith("dilation_rate")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.dilationRate.join(",") + "' /></td></tr>");
 			} else if(layer_option.endsWith("strides")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(',') + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='text' placeholder='1,1' value='" + config.strides.join(",") + "' /></td></tr>");
 			} else if(layer_option == "dropout_rate") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + "rate" + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + "rate" + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>");
 			} else if(layer_option == "stddev") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.stddev + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.stddev + "' /></td></tr>");
 			} else if(layer_option == "rate") {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + layer_option + "' type='number' min=0 step='0.05' max=1 value='" + config.rate + "' /></td></tr>");
 			} else if(layer_option.endsWith("filters")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=1 step=1 value='" + config.filters + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=1 step=1 value='" + config.filters + "' /></td></tr>");
 			} else if(layer_option.endsWith("depth_multiplier")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step='0.05' max=1 value='" + config.depthMultiplier + "' /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='number' min=0 step='0.05' max=1 value='" + config.depthMultiplier + "' /></td></tr>");
 			} else if(layer_option.endsWith("use_bias")) {
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? 'checked' : '') + " /></td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td><input onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "' type='checkbox' " + (config.useBias ? "checked" : "") + " /></td></tr>");
 			} else if(layer_option.endsWith("interpolation")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var interpolation_keys = Object.keys(interpolation);
@@ -208,7 +208,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("activation")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var activation_keys = Object.keys(activations);
@@ -221,7 +221,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("constraint")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var constraints_keys = Object.keys(constraints);
@@ -236,7 +236,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("padding")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var padding_keys = Object.keys(padding_options);
@@ -251,7 +251,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>" + selecter + "</td></tr>");
 			} else if(layer_option.endsWith("initializer")) {
 				var selecter = "<select onchange='" + on_change + "' class='gui_option " + python_names_to_js_names[layer_option] + "'>";
 				var initializer_keys = Object.keys(initializer_options);
@@ -270,16 +270,16 @@ function add_table (layer_type, config, onchange, uuid) {
 				}
 				selecter += "</select>";
 
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
 			} else {
 				log(layer_option + " does not yet exist");
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>")
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>");
 			}
 		}
 	}
 
 	if(layer_type.includes("ropout") || layer_type.includes("oise")) {
-		$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>Is Training?</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>")
+		$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>Is Training?</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>");
 	}
 
 	eval_base64(onchange, uuid);
@@ -346,7 +346,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 	for (var i = 0; i < options.length; i++) {
 		var this_option = options[i];
-		var classes = this_option.className.split(/\s+/)
+		var classes = this_option.className.split(/\s+/);
 
 		var element = "";
 
@@ -371,7 +371,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			$("#" + uuid + "_error").html("");
 			$("#" + uuid + "_shapes").html(`\\( \\text{Input/Output-Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
 
-			await MathJax.typesetPromise()
+			await MathJax.typesetPromise();
 		} else {
 			log("RES has not enough (4) values: ", res);
 		}
@@ -411,7 +411,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 						for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
 							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
-								var id = uuidv4()
+								var id = uuidv4();
 								$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
 								draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
 
@@ -425,7 +425,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		}
 
 		for (var i = 0; i < _tensor.shape[0]; i++) {
-			var id = uuidv4()
+			var id = uuidv4();
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
 			draw_grid($("#" + id)[0], 1, _tensor.arraySync()[i], 1, 1, "", "");
 			await toPixels(_tensor, canvas);
@@ -439,7 +439,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 function contains_null (arr) {
 	for (i=0; i < arr.length; i++){
 		// check if array value is false or NaN
-		if (arr[i] === false || (arr[i] != undefined && typeof(arr[i]) == "number" && arr[i].toString() === 'NaN')) {
+		if (arr[i] === false || (arr[i] != undefined && typeof(arr[i]) == "number" && arr[i].toString() === "NaN")) {
 			return true;
 		}
 	}
@@ -514,7 +514,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 
 
 	log("Started training...");
-	await current_model.fit(x, y, {epochs: epochs, callbacks: callbacks, yieldEvery: 'batch'})
+	await current_model.fit(x, y, {epochs: epochs, callbacks: callbacks, yieldEvery: "batch"});
 	log("Ended training...");
 }
 
