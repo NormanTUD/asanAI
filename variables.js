@@ -1,5 +1,12 @@
 "use strict";
 
+var language;
+var enable_cosmo_debug;
+var has_webgl;
+var git_hash;
+var original_title;
+var traindata_struct;
+
 var last_known_good_input_shape = "[]";
 
 function get_input_shape_as_string () {

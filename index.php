@@ -22,10 +22,25 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
-		<script>
-			var language = <?php print json_encode($GLOBALS["translations"]); ?>;
 
-			var enable_cosmo_debug = false;
+		<!-- tensorflow.js -->
+		<?php _js("tf/tf.min.js"); ?>
+		<?php _js("base_wrappers.js"); ?>
+		<?php _js("libs/jstat.min.js"); ?>
+		<?php _js("custom_layers.js"); ?>
+		<?php _js("libs/jsmanipulate.js", 1, 1); ?>
+
+		<!-- jquery -->
+		<?php _js("libs/zip.js"); ?>
+		<?php _js("libs/md5.umd.min.js"); ?>
+		<?php _js("libs/jquery.js"); ?>
+		<?php _js("libs/jquery-ui.js"); ?>
+		<?php _js("debug.js"); ?>
+		<?php _js("variables.js"); ?>
+		<script>
+			language = <?php print json_encode($GLOBALS["translations"]); ?>;
+
+			enable_cosmo_debug = false;
 <?php
 			if(file_exists("/etc/cosmo_debug")) {
 ?>
@@ -60,17 +75,17 @@
 				return supported;
 			}
 
-			var has_webgl = hasWebGL();
+			has_webgl = hasWebGL();
 
-			var git_hash = "<?php print get_git_hash(); ?>";
+			git_hash = "<?php print get_git_hash(); ?>";
 
 			if(!git_hash) {
 				console.error("git_hash not defined");
 			}
 
-			var original_title = document.title;
+			original_title = document.title;
 
-			var traindata_struct =
+			traindata_struct =
 <?php
 				include("traindata.php");
 ?>
@@ -115,34 +130,19 @@
 		<!-- polyfill -->
 		<?php _js("libs/canvas-to-blob.min.js"); ?>
 
-		<!-- jquery -->
-		<?php _js("libs/zip.js"); ?>
-		<?php _js("libs/md5.umd.min.js"); ?>
-		<?php _js("libs/jquery.js"); ?>
-		<?php _js("libs/jquery-ui.js"); ?>
-
 		<!-- sweetalert -->
 		<?php _js("libs/sweetalert2.all.js"); ?>
-
-		<!-- tensorflow.js -->
-		<?php _js("tf/tf.min.js"); ?>
-		<?php _js("base_wrappers.js"); ?>
-		<?php _js("libs/jstat.min.js"); ?>
-		<?php _js("custom_layers.js"); ?>
-		<?php _js("libs/jsmanipulate.js", 1, 1); ?>
 
 		<!-- Easter Egg -->
 		<?php _js("libs/fireworks.js", 1, 1); ?>
 
 		<!-- my own js stuff -->
 		<?php _js("safety.js"); ?>
-		<?php _js("variables.js"); ?>
 		<?php _js("translations.js", 1, 1); ?>
 		<?php _js("tests.js"); ?>
 		<?php _js("model.js"); ?>
 		<?php _js("explain.js"); ?>
 		<?php _js("data.js"); ?>
-		<?php _js("debug.js"); ?>
 		<?php _js("gui.js"); ?>
 		<?php _js("present.js"); ?>
 		<?php _js("cosmo.js"); ?>
