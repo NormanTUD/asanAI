@@ -72,7 +72,7 @@ if [[ -e _ALL.js ]]; then
 	rm _ALL.js
 fi
 
-for included_js in $(cat index.php | grep _js | sed -e 's#.*_js(.##' | grep "\.js" | sed -e 's#".*##' | grep -v libs); do 
+for included_js in $(cat index.php | grep _js | sed -e 's#.*_js(.##' | grep "\.js" | sed -e 's#".*##' | grep -v libs | grep -v tf); do 
 	cat $included_js >> _ALL.js
 done
 
