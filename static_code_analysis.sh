@@ -85,7 +85,19 @@ if [[ -e _ALL.js ]]; then
 		grep -v "'THREE' is not defined" | \
 		grep -v "'l' is already defined" | \
 		grep -v "'vertex' is already defined" | \
-		grep -v "'d3' is not defined"
+		grep -v "'d3' is not defined" | \
+		grep -v "'language' is not defined" | \
+		grep -v "'language' is not defined" | \
+		grep -v "'Swal' is not defined" | \
+		grep -v Plotly | \
+		grep -v element_skill_text | \
+		grep -v total_correct | \
+		grep -v temml | \
+		grep -v "'architecture' is not defined" | \
+		grep -v "'architecture2' is not defined" | \
+		grep -v "'result' is not defined" | \
+		grep -v set_all | \
+		grep -v chardinJs
 	rm _ALL.js
 else
 	echo "Could not concat all included js files";

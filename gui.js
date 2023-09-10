@@ -3452,7 +3452,7 @@ async function upload_weights(evt) {
 	var modelUpload = document.getElementById("upload_model");
 	var weightsUpload = document.getElementById("upload_weights");
 
-	model = await tf.loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
+	model = await loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
 	$("a[href=\"#predict_tab\"]").click();
