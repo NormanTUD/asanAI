@@ -150,8 +150,8 @@
 		<?php _js("predict.js"); ?>
 		
 		<!-- visualizations -->
-		<?php _js("visualizations/d3.v5.min.js"); ?>
-		<?php _js("visualizations/three.min.js"); ?>
+		<?php _js("libs/d3.v5.min.js"); ?>
+		<?php _js("libs/three.min.js"); ?>
 		<?php _js("visualizations/OrbitControls.js"); ?>
 		<?php _js("visualizations/SVGRenderer.js"); ?>
 		<?php _js("visualizations/Projector.js"); ?>
