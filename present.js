@@ -90,7 +90,7 @@ async function add_end_presentation_button (force=0) {
 				SKIP
 			</span>
 		`);
-		$("body").append(new_element)
+		$("body").append(new_element);
 		await update_translations();
 	}
 }
@@ -227,7 +227,7 @@ function attach_listener_for_cosmo_outside_click () {
 		if (
 			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
 			!is_inside_color_picker(event.clientX, event.clientY, colorPickerContainer) &&
-			!is_mouse_over_element('no_autochoose_next_on_click') &&
+			!is_mouse_over_element("no_autochoose_next_on_click") &&
 			!is_mouse_over_element_variables(colorPickerElementsList) &&
 			done_presenting &&
 			!is_presenting &&

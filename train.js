@@ -31,7 +31,7 @@ async function gui_not_in_training (set_started_training=1) {
 }
 
 function reset_gui_before_training () {
-	prev_layer_data = []
+	prev_layer_data = [];
 	$(".reset_before_train_network").html("");
 	$("#percentage").html("");
 	$("#percentage").show();
@@ -77,10 +77,10 @@ async function train_neural_network () {
 
 		document.title = original_title;
 		await gui_not_in_training();
-		$(".overlay").remove()
+		$(".overlay").remove();
 		l("Stopped training");
 	} else {
-		l("Started training")
+		l("Started training");
 
 		if(is_cosmo_mode) {
 			$(".cosmo_next_button_span").css("visibility", "hidden");
@@ -98,7 +98,7 @@ async function train_neural_network () {
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'Loss'
+				"name": "Loss"
 			}
 		};
 
@@ -108,7 +108,7 @@ async function train_neural_network () {
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'Loss'
+				"name": "Loss"
 			}
 		};
 
@@ -120,9 +120,9 @@ async function train_neural_network () {
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'Time per batch (in seconds)'
+				"name": "Time per batch (in seconds)"
 			}
-		}
+		};
 
 		training_memory_history = {
 			numBytes: {
@@ -130,23 +130,23 @@ async function train_neural_network () {
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'RAM (MB)'
+				"name": "RAM (MB)"
 			},
 			numBytesInGPU: {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'GPU (MB)'
+				"name": "GPU (MB)"
 			},
 			numTensors: {
 				"x": [],
 				"y": [],
 				"type": get_scatter_type(),
 				"mode": get_plotly_type(),
-				"name": 'Number of Tensors'
+				"name": "Number of Tensors"
 			}
-		}
+		};
 
 		reset_gui_before_training();
 
@@ -178,7 +178,7 @@ async function train_neural_network () {
 			await chose_next_manicule_target();
 
 			if(!already_moved_to_predict_for_cosmo && 0) {
-				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0])
+				move_element_to_another_div($("#maximally_activated_content")[0], $("#cosmo_visualize_last_layer")[0]);
 				already_moved_to_predict_for_cosmo = true;
 			}
 
@@ -278,7 +278,7 @@ async function get_model_data (optimizer_name_only) {
 	};
 
 	if(!optimizer_name_only) {
-		global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]) });
+		global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[global_model_data["optimizer"]]); });
 	}
 
 	return global_model_data;
@@ -297,7 +297,7 @@ async function get_fit_data () {
 
 	callbacks["onTrainBegin"] = async function () {
 		current_epoch = 0;
-		this_training_start_time = Date.now()
+		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
 
 		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
@@ -346,15 +346,15 @@ async function get_fit_data () {
 				$("#current_epoch_cosmo_display").html(current_epoch);
 				$("#max_epoch_cosmo_display").html(max_number_epochs);
 				$("#time_estimate_cosmo").html(time_estimate);
-				$('#show_cosmo_epoch_status').show();
+				$("#show_cosmo_epoch_status").show();
 			} else {
-				$('#show_cosmo_epoch_status').hide();
+				$("#show_cosmo_epoch_status").hide();
 			}
 			idleTime = 0;
 		}
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
-		$("#training_progressbar>div").css("width", percentage + "%")
+		$("#training_progressbar>div").css("width", percentage + "%");
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -387,18 +387,18 @@ async function get_fit_data () {
 
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots")) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			if(batchNr == 1) {
-				Plotly.newPlot('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
-				Plotly.newPlot('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+				Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+				Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 			} else {
-				Plotly.update('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
-				Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+				Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+				Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 			}
 			last_batch_plot_time = Date.now();
 		}
 
 		if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
-			if($('#predict_own_data').val()) {
-				await predict($('#predict_own_data').val());
+			if($("#predict_own_data").val()) {
+				await predict($("#predict_own_data").val());
 			}
 			await show_prediction(0, 1);
 			if(await input_shape_is_image()) {
@@ -437,7 +437,7 @@ async function get_fit_data () {
 					"y": [],
 					"type": get_scatter_type(),
 					"mode": get_plotly_layout(),
-					"name": 'Loss'
+					"name": "Loss"
 				};
 			}
 
@@ -488,9 +488,9 @@ async function get_fit_data () {
 				$("#cosmo_training_plotly_explanation").show();
 
 				if(epochNr == 0 || epochNr == 1) {
-					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+					Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 				} else {
-					Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+					Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 				}
 
 				$("#plotly_epoch_history").show();
@@ -502,16 +502,16 @@ async function get_fit_data () {
 		} else {
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
-				Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			} else {
-				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
 			await visualize_train();
 		}
 
 		var this_plot_data = [training_logs_batch["loss"]];
-		Plotly.update('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"]));
-		Plotly.update('plotly_time_per_batch', [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+		Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+		Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
 		last_batch_plot_time = false;
 
 		if(is_cosmo_mode) {
@@ -528,7 +528,7 @@ async function get_fit_data () {
 			$("#tiny_graph").html("").hide();
 		}
 		$("#network_has_seen_msg").show();
-	}
+	};
 
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
@@ -545,7 +545,7 @@ async function get_fit_data () {
 				var elem = $("#example_predictions")[0];
 				var to = $("#example_predictions_parent")[0];
 				log("moving", elem, "to", to);
-				move_element_to_another_div(elem, to)
+				move_element_to_another_div(elem, to);
 			}
 		}
 
@@ -553,7 +553,7 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			$("#show_after_training").show();
 		}
-	}
+	};
 
 	if($("#enable_early_stopping").is(":checked")) {
 		callbacks["earlyStopping"] = tf.callbacks.earlyStopping({
@@ -570,7 +570,7 @@ async function get_fit_data () {
 		shuffle: $("#shuffle_before_each_epoch").is(":checked"),
 		verbose: 0,
 		callbacks: callbacks,
-		yieldEvery: 'batch'
+		yieldEvery: "batch"
 	};
 
 	traindebug("fit_data:");
@@ -590,10 +590,10 @@ function create_tiny_plot(x, y, y_val, w, h) {
 	}
 
 	// Create a canvas element
-	const canvas = document.createElement('canvas');
+	const canvas = document.createElement("canvas");
 	canvas.width = w;
 	canvas.height = h;
-	const ctx = canvas.getContext('2d');
+	const ctx = canvas.getContext("2d");
 
 	// Define plot parameters
 
@@ -609,7 +609,7 @@ function create_tiny_plot(x, y, y_val, w, h) {
 
 	// Plot the training loss (in blue)
 	ctx.beginPath();
-	ctx.strokeStyle = 'blue';
+	ctx.strokeStyle = "blue";
 	ctx.lineWidth = 2;
 
 	ctx.beginPath();
@@ -630,7 +630,7 @@ function create_tiny_plot(x, y, y_val, w, h) {
 
 	if(y_val.length) {
 		ctx.beginPath();
-		ctx.strokeStyle = 'orange';
+		ctx.strokeStyle = "orange";
 		for (let i = 0; i < y_val.length; i++) {
 			const xCoord = i * xScale;
 			const yCoord = h - (y_val[i] - minY) * yScale;
@@ -686,11 +686,11 @@ async function _get_xs_and_ys (recursive=0) {
 			} else {
 				explanation = "";
 			}
-			await send_bug_report()
+			await send_bug_report();
 			Swal.fire(
-				'Error while training',
+				"Error while training",
 				e.toString() + explanation,
-				'warning'
+				"warning"
 			);
 			header("ERROR");
 			log(e);
@@ -728,12 +728,12 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 				parse_int($("#epochs").val()),
 				JSON.stringify(xs_and_ys["x"].arraySync()),
 				JSON.stringify(xs_and_ys["y"].arraySync()
-			), false, "simplest_training_data_visualization");
+				), false, "simplest_training_data_visualization");
 			//log(new_on_batch_end_callback);
 			if(new_on_batch_end_callback) {
 				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
 				//log("tried installing new callbacks in fit_data:", fit_data);
-				$("#simplest_training_data_visualization").show()
+				$("#simplest_training_data_visualization").show();
 			} else {
 				log("Could not install new callback");
 			}
@@ -787,7 +787,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 			}
 			if(last_layer_output_shape[1] != num_categories) {
 				$($(".glass_box")[model.layers.length - 1]).find(".units").val(labels.length);
-				await updated_page()
+				await updated_page();
 
 				log("Not re-running run_neural_network");
 				return true;
@@ -856,7 +856,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 								enable_all_layer_types();
 
 								var start_layers = model.layers.length;
-								debug("Clicking on this item for layer duplication: ", $last_layer)
+								debug("Clicking on this item for layer duplication: ", $last_layer);
 								$last_layer.click();
 
 								while (model.layers.length - (start_layers) > 0) {
@@ -896,7 +896,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 							await change_layer_to(get_last_layer(), "flatten");
 
 							await duplicate_last_layer();
-							await change_layer_to(get_last_layer(), "dense")
+							await change_layer_to(get_last_layer(), "dense");
 
 							await set_dense_layer_units(get_last_layer(), ll);
 
@@ -933,7 +933,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 
 async function run_neural_network (recursive=0) {
 	if(is_cosmo_mode) {
-		$("#lenet_example_cosmo").parent().hide()
+		$("#lenet_example_cosmo").parent().hide();
 		await delay(200);
 	}
 	await clean_gui();
@@ -1066,7 +1066,7 @@ async function run_neural_network (recursive=0) {
 						denyButtonText: language[lang]["No"]
 					}).then((result) => {
 						r = result;
-					})
+					});
 
 					if (r.isConfirmed) {
 						try {
@@ -1075,7 +1075,7 @@ async function run_neural_network (recursive=0) {
 							throw new Error(ee);
 						}
 					} else if (r.isDenied) {
-						Swal.fire('Not doing Input shape repair', '', 'info')
+						Swal.fire("Not doing Input shape repair", "", "info");
 					} else {
 						log("Unknown swal r: ", r);
 					}
@@ -1083,7 +1083,7 @@ async function run_neural_network (recursive=0) {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
 						info("Model is null or undefined. Recompiling model...");
 						model = await create_model();
-						await compile_model()
+						await compile_model();
 						info("Model was null or undefined. Recompiling model done!");
 					} else if(("" + e).includes("but got array with shape")) {
 						wrn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
@@ -1102,8 +1102,8 @@ async function run_neural_network (recursive=0) {
 			Swal.fire(
 				language[lang]["output_shape_repaired"],
 				language[lang]["please_try_training_again"],
-				'success'
-			)
+				"success"
+			);
 		}
 
 		await enable_everything();
@@ -1157,11 +1157,11 @@ async function reset_on_error () {
 
 	var link = document.querySelector("link[rel~='icon']");
 	if (!link) {
-		link = document.createElement('link');
-		link.rel = 'icon';
-		document.getElementsByTagName('head')[0].appendChild(link);
+		link = document.createElement("link");
+		link.rel = "icon";
+		document.getElementsByTagName("head")[0].appendChild(link);
 	}
-	link.href = 'favicon.ico';
+	link.href = "favicon.ico";
 }
 
 function draw_images_in_grid (images, categories, probabilities, category_overview) {
@@ -1303,7 +1303,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			if(is_cosmo_mode) {
 				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%");
 			}
-			$('<span style="display:table-cell; border-left:1px solid #000;height:400px"></span>').appendTo($(containerId));
+			$("<span style=\"display:table-cell; border-left:1px solid #000;height:400px\"></span>").appendTo($(containerId));
 		} else {
 			wrn("Canvas could not be appended!");
 		}
@@ -1319,11 +1319,11 @@ function extractCategoryFromURL(_url) {
 			const category = categoryMatch[1];
 			return category;
 		} else {
-			console.warn('Category not found in the URL:', _url);
+			console.warn("Category not found in the URL:", _url);
 			return null; // Or handle the error in your specific way
 		}
 	} catch (error) {
-		console.error('Error while extracting category:', error);
+		console.error("Error while extracting category:", error);
 		return null; // Or handle the error in your specific way
 	}
 }
@@ -1440,7 +1440,7 @@ async function visualize_train () {
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = fromPixels(x).resizeBilinear([height, width]).expandDims()
+					var res = fromPixels(x).resizeBilinear([height, width]).expandDims();
 					res = divNoNan(res, parse_float($("#divide_by").val()));
 					return res;
 				} catch (e) {
@@ -1454,7 +1454,7 @@ async function visualize_train () {
 				continue;
 			}
 
-			var res = tidy(() => { return model.predict(img_tensor) });
+			var res = tidy(() => { return model.predict(img_tensor); });
 			predictions_tensors.push(res.arraySync()[0]);
 
 			var res_array = res.arraySync()[0];
@@ -1466,7 +1466,7 @@ async function visualize_train () {
 			probabilities.push(probability);
 
 			await dispose(res);
-			await dispose(img_tensor)
+			await dispose(img_tensor);
 			tf.engine().endScope();
 		}
 
@@ -1480,7 +1480,7 @@ async function visualize_train () {
 					return;
 				}
 
-				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor))
+				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 
 				var correct_category = extractCategoryFromURL(src);
 
@@ -1519,7 +1519,7 @@ async function visualize_train () {
 						wrong: 0,
 						correct: 0,
 						total: 0
-					}
+					};
 				}
 
 				//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);

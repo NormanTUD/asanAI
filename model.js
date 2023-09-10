@@ -78,8 +78,8 @@ async function _create_model () {
 				await except("ERROR1", e);
 				if(mode == "beginner") {
 					Swal.fire({
-						icon: 'error',
-						title: 'Oops [4]...',
+						icon: "error",
+						title: "Oops [4]...",
 						text: "" + e
 					});
 				} else {
@@ -327,7 +327,7 @@ async function get_model_structure(is_fake_model = 0) {
 		} else {
 			if(finished_loading) {
 				header("ACHTUNG!!! get_model_structure IS EMPTY!!!");
-				log('$($($(".layer_setting")[' + i + ']).find(".layer_type")[0]);');
+				log("$($($(\".layer_setting\")[" + i + "]).find(\".layer_type\")[0]);");
 				log($(layer_type).val());
 			}
 		}
@@ -364,10 +364,10 @@ function is_valid_parameter (keyname, value, layer) {
 		(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
 		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
-		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ['constant', 'glorotNormal', 'glorotUniform', 'heNormal', 'heUniform', 'identity', 'leCunNormal', 'leCunUniform', 'ones', 'orthogonal', 'randomNormal', 'randomUniform', 'truncatedNormal', 'varianceScaling', 'zeros', 'string', 'l1', 'l2', 'l1l2'].includes(value)) ||
-		(keyname == "dtype" && ['float32', 'int32', 'bool', 'complex64', 'string'].includes(value)) ||
-		(keyname == "padding" && ['valid', 'same', 'causal'].includes(value)) ||
-		(["activation", "recurrentActivation"].includes(keyname) && ['LeakyReLU', 'elu', 'hardSigmoid', 'linear', 'relu', 'relu6',  'selu', 'sigmoid', 'softmax', 'softplus', 'softsign', 'tanh', 'swish', 'mish'].includes(value)) ||
+		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ["constant", "glorotNormal", "glorotUniform", "heNormal", "heUniform", "identity", "leCunNormal", "leCunUniform", "ones", "orthogonal", "randomNormal", "randomUniform", "truncatedNormal", "varianceScaling", "zeros", "string", "l1", "l2", "l1l2"].includes(value)) ||
+		(keyname == "dtype" && ["float32", "int32", "bool", "complex64", "string"].includes(value)) ||
+		(keyname == "padding" && ["valid", "same", "causal"].includes(value)) ||
+		(["activation", "recurrentActivation"].includes(keyname) && ["LeakyReLU", "elu", "hardSigmoid", "linear", "relu", "relu6",  "selu", "sigmoid", "softmax", "softplus", "softsign", "tanh", "swish", "mish"].includes(value)) ||
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
@@ -419,9 +419,9 @@ function remove_empty(obj) {
 }
 
 async function get_html_from_model () {
-	var html = '';
+	var html = "";
 
-	html += '<html>' + "\n";
+	html += "<html>" + "\n";
 	html += "	<head>\n";
 	html += "		<meta charset='UTF-8'>\n";
 	html += "		<title>Example Network</title>\n";
@@ -507,7 +507,7 @@ async function get_html_from_model () {
 		html +=	"			</script>\n";
 	}
 	html += "        </body>\n";
-	html += '</html>' + "\n";
+	html += "</html>" + "\n";
 
 	return html;
 }
@@ -780,7 +780,7 @@ async function create_model (old_model, fake_model_structure, force) {
 		layers_container_md5 = new_layers_container_md5;
 	}
 
-	var new_current_status_hash = await get_current_status_hash(!!fake_model_structure ? 0 : 1);
+	var new_current_status_hash = await get_current_status_hash(fake_model_structure ? 0 : 1);
 
 	if(!force && disable_show_python_and_create_model) {
 		return [old_model, null];
@@ -958,7 +958,7 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 
 	var data = {};
 
-	var options = layer_options[layer_type]["options"]
+	var options = layer_options[layer_type]["options"];
 
 	if(layer_nr == 0) {
 		data["inputShape"] = get_input_shape();
@@ -1192,7 +1192,7 @@ async function get_valid_layer_types (layer_nr) {
 
 	var valid_layer_types = [];
 
-	$('body').css('cursor', 'wait');
+	$("body").css("cursor", "wait");
 
 	var checked_layers = false;
 
@@ -1225,7 +1225,7 @@ async function get_valid_layer_types (layer_nr) {
 		l("Checked possible layer types");
 	}
 
-	$('body').css('cursor', get_cursor_or_none("default"));
+	$("body").css("cursor", get_cursor_or_none("default"));
 
 	allowed_layer_cache[layer_nr] = valid_layer_types;
 
@@ -1276,8 +1276,8 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 	} catch (e) {
 		if(!no_error) {
 			Swal.fire({
-				icon: 'error',
-				title: 'Error loading weights',
+				icon: "error",
+				title: "Error loading weights",
 				text: e
 			});
 		}
@@ -1287,9 +1287,9 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 
 	if(!dont_show_weights) {
 		Swal.fire(
-			'Weights loaded successfully',
-			'',
-			'success'
+			"Weights loaded successfully",
+			"",
+			"success"
 		);
 	}
 
@@ -1395,11 +1395,11 @@ async function get_weights_as_string (m) {
 }
 
 function download(filename, text) {
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-	element.setAttribute('download', filename);
+	var element = document.createElement("a");
+	element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
+	element.setAttribute("download", filename);
 
-	element.style.display = 'none';
+	element.style.display = "none";
 	document.body.appendChild(element);
 
 	element.click();
@@ -1431,12 +1431,12 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 
 function save_model () {
 	try {
-		model.save('downloads://model');
+		model.save("downloads://model");
 	} catch (e) {
 		Swal.fire({
-			icon: 'error',
-			title: 'Saving model failed',
-			text: 'The model may be defective and cannot be saved. Sorry. The error is: ' + e
+			icon: "error",
+			title: "Saving model failed",
+			text: "The model may be defective and cannot be saved. Sorry. The error is: " + e
 		});
 	}
 }
@@ -1486,7 +1486,7 @@ async function get_weights_shape (weights_as_string, m) {
 }
 
 async function get_tfjs_model () {
-	await model.save('localstorage://demo/management/model1');
+	await model.save("localstorage://demo/management/model1");
 
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
 
@@ -1509,13 +1509,13 @@ async function force_reinit (no_msg) {
 
 	if(!no_msg) {
 		Swal.fire({
-			title: 'Are you sure?',
-			text: 'This loses your training progress, but you can undo it.',
-			icon: 'warning',
+			title: "Are you sure?",
+			text: "This loses your training progress, but you can undo it.",
+			icon: "warning",
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Yes, re-init!'
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, re-init!"
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				await _force_reinit();

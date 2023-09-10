@@ -104,9 +104,9 @@ function remove_manicule (remove=1) {
 
 let checkSubset = (parentArray, subsetArray) => {
 	return subsetArray.every((el) => {
-		return parentArray.includes(el)
-	})
-}
+		return parentArray.includes(el);
+	});
+};
 
 function each_skill_level_matches (c, s) {
 	var s_keys = Object.keys(s);
@@ -161,15 +161,15 @@ class ManiC {
 
 			//var bottom_y = $e[0].getBoundingClientRect().top + $e[0].getBoundingClientRect().height
 
-			this.image.style.position = 'absolute';
-			this.image.style.display = 'block'; // changed to block so that the image is shown by default
+			this.image.style.position = "absolute";
+			this.image.style.display = "block"; // changed to block so that the image is shown by default
 
 			this.image.style.zIndex = 100000;
 
 			this.hand_height = 50;
 			this.hand_width = 50;
 
-			var largest_element = find_largest_element_with_coordinates(this.element)
+			var largest_element = find_largest_element_with_coordinates(this.element);
 			var real_x = largest_element["x"];
 			var real_y = largest_element["y"];
 			var real_bottom = largest_element["bottom"];
@@ -190,8 +190,8 @@ class ManiC {
 
 			this.image.left = `${real_left}px`;
 
-			this.image.classList.add('manicule');
-			this.image.classList.add('invert_in_dark_mode');
+			this.image.classList.add("manicule");
+			this.image.classList.add("invert_in_dark_mode");
 
 			//document.body.appendChild(this.image);
 
@@ -216,7 +216,7 @@ class ManiC {
 	}
 
 	get_pos(el) {
-		assert(!!el, "el is empty")
+		assert(!!el, "el is empty");
 
 		//log(el);
 		if(el) {
@@ -224,14 +224,14 @@ class ManiC {
 			return rect;
 		} else {
 			log(el);
-			throw new Error('el was empty');
+			throw new Error("el was empty");
 		}
 	}
 
 	moveAroundLeftRight () {
 		var width = this.get_pos(this.element).width;
 
-		var largest_element = find_largest_element_with_coordinates(this.element)
+		var largest_element = find_largest_element_with_coordinates(this.element);
 		var real_x = largest_element["x"];
 		var real_y = largest_element["y"];
 		var real_bottom = largest_element["bottom"];
@@ -264,8 +264,8 @@ class ManiC {
 
 		// set up the animation
 		$(this.image).css("pointer-events", "none");
-		this.image.style.animation = 'moveAroundLeftRight 2s linear infinite';
-		this.image.style.animationName = 'moveAroundLeftRight';
+		this.image.style.animation = "moveAroundLeftRight 2s linear infinite";
+		this.image.style.animationName = "moveAroundLeftRight";
 		// define the keyframes for the animation
 
 		var keyframes = `
@@ -288,7 +288,7 @@ class ManiC {
 		`;
 
 		// add the keyframes to a style sheet
-		var styleSheet = document.getElementById('manicule_animation_css');
+		var styleSheet = document.getElementById("manicule_animation_css");
 		styleSheet.innerHTML = `
 			@keyframes moveAroundLeftRight {
 				${keyframes}
@@ -306,7 +306,7 @@ class ManiC {
 	}
 
 	hide() {
-		this.image.style.display = 'none';
+		this.image.style.display = "none";
 		cosmo_debugger();
 	}
 }
@@ -344,7 +344,7 @@ function find_largest_element_with_coordinates(element) {
 		}
 	}
 
-	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right, 'top': t, bottom: bottom };
+	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right, "top": t, bottom: bottom };
 }
 
 function find_unclicked_items ($x, possible_items) {
@@ -479,7 +479,7 @@ async function chose_next_manicule_target () {
 	var chosen_element = possible_elements[index_to_chose];
 	new ManiC(chosen_element);
 	$(possible_elements[0]).on("click", function () {
-		$(this).attr("data-clicked", 1)
+		$(this).attr("data-clicked", 1);
 	});
 
 	await set_text_for_elements_depending_on_cosmo_level();
@@ -642,7 +642,7 @@ async function cosmo_mode () {
 	});
 
 
-	document.addEventListener('mousemove', (event) => {
+	document.addEventListener("mousemove", (event) => {
 		mouseX = event.clientX;
 		mouseY = event.clientY;
 	});
@@ -651,7 +651,7 @@ async function cosmo_mode () {
 
 	$(".show_only_in_cosmo_mode").show();
 
-	await run_presentation('cosmo_presentation');
+	await run_presentation("cosmo_presentation");
 
 	$(".glass_box").css("border", "none");
 	$(".glass_box").css("box-shadow", "none");
@@ -660,18 +660,18 @@ async function cosmo_mode () {
 	const colorPickerContainer = document.querySelector("div[style*='width: 239px'][style*='height: 129px']");
 
 	// To make the entire document unselectable
-	document.documentElement.style.userSelect = 'none';
+	document.documentElement.style.userSelect = "none";
 
 	// To make a specific element with ID "body" unselectable
-	var bodyElement = document.getElementById('body');
-	bodyElement.style.userSelect = 'none';
+	var bodyElement = document.getElementById("body");
+	bodyElement.style.userSelect = "none";
 
 	add_background_gradient();
 
 	$(".graphs_here").css("margin-top", "100px");
 
 	$("#toggle_layers_button").hide();
-	$("#show_webcam_button").hide()
+	$("#show_webcam_button").hide();
 
 	$("#max_activation_iterations").val(30);
 
@@ -689,21 +689,21 @@ async function cosmo_mode () {
 		}
 	}, 1000);
 
-	window.addEventListener('resize', async function(event) { await fit_to_window(); }, true);
+	window.addEventListener("resize", async function(event) { await fit_to_window(); }, true);
 
 	$(".show_in_cosmo_mode").show();
 
 	$("#own_files").css("display", "flex").css("justify-content", "center");
 	$("#theme_choser").val("lightmode").trigger("change");
 
-	$('body').css('cursor', get_cursor_or_none("default"));
+	$("body").css("cursor", get_cursor_or_none("default"));
 
 	log("Setting validation split to 0");
 	set_validation_split(0);
 }
 
 function is_touch_device () {
-	var res = (('ontouchstart' in window) ||
+	var res = (("ontouchstart" in window) ||
 		(navigator.maxTouchPoints > 0) ||
 		(navigator.msMaxTouchPoints > 0));
 
@@ -755,7 +755,7 @@ function autochoose_next () {
 	//console.trace();
 	//log("clicked anywhere in cosmo mode!");
 	if(manicule) {
-		 $(manicule.element).click()
+		 $(manicule.element).click();
 	} else {
 		wrn("No manicule element found...");
 	}
@@ -774,10 +774,10 @@ function find_color_picker_elements(node, colorPickerElements) {
 	// Check if the current node resembles the structure of the color picker base div
 	if (
 		node.style &&
-		node.style.position === 'absolute' &&
-		node.style.width === '239px' &&
-		node.style.height === '129px' &&
-		node.style.zIndex === '1000'
+		node.style.position === "absolute" &&
+		node.style.width === "239px" &&
+		node.style.height === "129px" &&
+		node.style.zIndex === "1000"
 	) {
 		colorPickerElements.push(node);
 	}
@@ -801,7 +801,7 @@ log(colorPickerElementsList);
 */
 
 async function _predict_mode_examples() {
-	$("#handdrawn_img").hide()
+	$("#handdrawn_img").hide();
 
 	$("#webcam_in_cosmo").html("<span class='TRANSLATEME_camera_draw_self'></span> 📷").show();
 
@@ -817,7 +817,7 @@ async function _predict_mode_examples() {
 }
 
 async function _predict_mode_custom () {
-	$("#handdrawn_img").show().parent().show()
+	$("#handdrawn_img").show().parent().show();
 
 	$("#webcam_in_cosmo").html(`
 	    <span style='pointer-events: none'><span class='TRANSLATEME_example_images'></span>
@@ -885,7 +885,7 @@ function parse_required_skills(str) {
 		var match = pair.match(/^(\w+)\[(.*)\]$/);
 		if (match) {
 			var key = match[1];
-			var values = match[2].split(',').map(Number);
+			var values = match[2].split(",").map(Number);
 			res[key] = values;
 		}
 	});
@@ -909,7 +909,7 @@ function parse_text_for_item_cosmo_level (inputString) {
 
 	while ((match = regex.exec(inputString)) !== null) {
 		const varName = match[1];
-		const indices = match[2].split(',').map(Number);
+		const indices = match[2].split(",").map(Number);
 		const value = match[3];
 
 		// Create nested objects based on the indices and values
@@ -1025,7 +1025,7 @@ async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 async function click_next_button () {
 	remove_manicule(1);
 	await train_neural_network();
-	$('#next_button').attr('data-clicked', '1');
+	$("#next_button").attr("data-clicked", "1");
 	remove_manicule(1);
 }
 
