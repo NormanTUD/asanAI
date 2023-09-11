@@ -157,12 +157,6 @@ function header (msg) {
 	log("%c" + msg, "background: #222; color: #bada55");
 }
 
-function datadebug (msg) {
-	if (window.location.href.indexOf("datadebug") > -1) {
-		log(msg);
-	}
-}
-
 function traindebug (msg) {
 	if (window.location.href.indexOf("traindebug") > -1) {
 		log(msg);
