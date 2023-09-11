@@ -681,6 +681,18 @@ async function send_bug_report () {
 	html += "<h1>Logs</h1>";
 	html += create_html_table_from_json(_full_debug_log);
 
+
+	try {
+		var pfj = JSON.stringify(performance.toJSON(), null, 2)
+
+		if(x) {
+			html += "<h1>performance.toJSON</h1>";
+			html += pfj;
+		}
+	} catch (e) {
+		wrn("" + e);
+	}
+
 	html += "</table></html>";
 
 	send_post_request("save_error_log.php", html);
