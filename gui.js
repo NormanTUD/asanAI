@@ -1876,8 +1876,6 @@ async function disable_invalid_layers_event(e, thisitem) {
 	layer_nr = find_layer_number_by_element(thisitem);
 
 	await enable_valid_layer_types(layer_nr);
-
-	//hide_empty_groups(layer_nr);
 }
 
 async function disable_all_invalid_layers() {
@@ -1903,7 +1901,6 @@ function enable_all_layer_types () {
 		for (var i = 0; i < options.length; i++) {
 			if (!$(options[i]).is(":selected")) {
 				$(options[i]).prop("disabled", true);
-				//$(options[i]).prop("hidden", false); // Disabled until hide_empty_groups works
 			}
 
 			$(options[i]).prop("disabled", false);
@@ -1930,13 +1927,10 @@ async function enable_valid_layer_types(layer_nr) {
 	for (var i = 0; i < options.length; i++) {
 		if (!$(options[i]).is(":selected")) {
 			$(options[i]).prop("disabled", true);
-			//$(options[i]).prop("hidden", false); // Disabled until hide_empty_groups works
 		}
 
 		if (valid_layer_types.includes($(options[i]).prop("value"))) {
 			$(options[i]).prop("disabled", false);
-		} else {
-			//$(options[i]).prop("hidden", true); // Disabled until hide_empty_groups works
 		}
 	}
 }
@@ -2945,28 +2939,6 @@ function show_or_hide_bias_initializer(number_of_layers) {
 			}
 		}
 	}
-}
-
-/* Diese Funktion sollte eigentlich leere Gruppen verstecken, aber hat nie geklappt. Daher: TODO, aber ohne Eile! */
-function hide_empty_groups(layer_nr) {
-	assert(typeof (layer_nr) == "number", "hide_empty_groups(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
-
-	$($(".layer_type")[layer_nr]).children().each(function (i, group) {
-		var children = $(group).children();
-
-		var number_of_enabled_children = 0;
-		for (var j = 0; j < children.length; j++) {
-			if (!($(children[j]).is(":disabled") || $(children[j]).is(":selected"))) {
-				number_of_enabled_children += 1;
-			}
-		}
-
-		if (number_of_enabled_children) {
-			$(group).show();
-		} else {
-			$(group).hide();
-		}
-	});
 }
 
 async function set_all_kernel_initializers() {
