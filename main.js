@@ -582,10 +582,11 @@ $(document).ready(async function() {
 
 	setInterval(_clean_custom_tensors, 400);
 
+	await change_optimizer();
+
+	window.addEventListener("error", async function(e) {
+		await write_error(e.message);
+	});
+
 	finished_loading = true;
-});
-
-
-window.addEventListener("error", async function(e) {
-	await write_error(e.message);
 });
