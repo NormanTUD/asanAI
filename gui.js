@@ -5812,8 +5812,10 @@ async function create_zip_with_custom_images () {
 }
 
 function save_file (name, type, data) {
-	if (data !== null && navigator.msSaveBlob)
+	if (data !== null && navigator.msSaveBlob) {
 		return navigator.msSaveBlob(new Blob([data], { type: type }), name);
+	}
+
 	var a = $("<a style='display: none;'/>");
 	var url = window.URL.createObjectURL(new Blob([data], {type: type}));
 	a.attr("href", url);
