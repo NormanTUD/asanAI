@@ -561,6 +561,9 @@ async function get_cached_json(url) {
 		_cached_json[url] = data;
 		return data;
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
 		throw new Error("" + e);
 	}
 }
@@ -6402,4 +6405,37 @@ function set_get(paramName, paramValue) {
 
 function jump_to_interesting_tab () {
 	return $("#jump_to_interesting_tab").is(":checked") ? 1 : 0;
+}
+
+function can_reload_js (name) {
+	if(name.includes("visualization") ||
+		name.includes("libs") ||
+		name.includes("jquery") ||
+		name.includes("tf") || 
+		name.includes("main.js") ||
+		name.includes("debug.js") ||
+		name.includes("three") ||
+		name.includes("bottom.js") ||
+		name.includes("cosmo.js") ||
+		name.includes("custom")
+	) {
+		return false;
+	}
+	return true;
+}
+
+function reload_all_js () {
+	var entries = performance.getEntriesByType('resource');
+	entries.map(function(entry) {
+		if (entry.initiatorType === 'script') {
+			if(can_reload_js(entry.name)) {
+				reload_js(entry.name);
+			}
+		}
+	});
+}
+
+function reload_js(src) {
+	$('script[src="' + src + '"]').remove();
+	$('<script>').attr('src', src).appendTo('head');
 }

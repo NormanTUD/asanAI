@@ -6,7 +6,7 @@ var lang = get_lang_cookie();
 
 var labels_lang = "de";
 
-const urlParams = new URLSearchParams(window.location.search);
+var urlParams = new URLSearchParams(window.location.search);
 
 // Check if the parameter "start_cosmo" exists
 if (urlParams.has("start_cosmo")) {

@@ -1336,7 +1336,7 @@ var last_batch_plot_time = false;
 
 var enable_log_trace = false;
 
-const RGB_COLORMAP = [
+var RGB_COLORMAP = [
 	0.2422,   0.1504,  0.6603,   0.25039,   0.165,    0.70761,  0.25777,
 	0.18178,  0.75114, 0.26473,  0.19776,   0.79521,  0.27065,  0.21468,
 	0.83637,  0.27511, 0.23424,  0.87099,   0.2783,   0.25587,  0.89907,
@@ -1420,8 +1420,8 @@ var cosmo_categories = [
 	"Warnung"
 ];
 
-let mouseX = -1;
-let mouseY = -1;
+var mouseX = -1;
+var mouseY = -1;
 
 var sketcher_warning = 0;
 
