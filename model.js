@@ -74,6 +74,8 @@ async function _create_model () {
 				throw new Error("" + e);
 			} else if(("" + e).includes("model is undefined")) {
 				wrn("Currently, the model is undefined. This may be fatal, but may also not be");
+			} else if(("" + e).includes("model.layers[i] is undefined")) {
+				wrn("" + e);
 			} else {
 				await except("ERROR1", e);
 				if(mode == "beginner") {
