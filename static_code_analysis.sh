@@ -78,7 +78,6 @@ done
 
 
 if [[ -e _ALL.js ]]; then
-	rm _ALL.js
 	npx eslint _ALL.js | \
 		grep -v "'tf' is not defined" | \
 		grep -v Fireworks | \
