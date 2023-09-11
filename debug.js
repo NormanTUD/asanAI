@@ -677,7 +677,7 @@ async function send_bug_report () {
 
 
 	try {
-		var pfj = JSON.stringify(performance.toJSON(), null, 2)
+		var pfj = JSON.stringify(performance.toJSON(), null, 2);
 
 		if(x) {
 			html += "<h1>performance.toJSON</h1>";

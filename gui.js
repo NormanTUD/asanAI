@@ -6427,9 +6427,9 @@ function can_reload_js (name) {
 }
 
 async function reload_all_js () {
-	var entries = performance.getEntriesByType('resource');
+	var entries = performance.getEntriesByType("resource");
 	entries.map(function(entry) {
-		if (entry.initiatorType === 'script') {
+		if (entry.initiatorType === "script") {
 			if(can_reload_js(entry.name)) {
 				reload_js(entry.name);
 			}
@@ -6441,8 +6441,8 @@ async function reload_all_js () {
 }
 
 function reload_js(src) {
-	$('script[src="' + src + '"]').remove();
-	$('<script>').attr('src', src).appendTo('head');
+	$("script[src=\"" + src + "\"]").remove();
+	$("<script>").attr("src", src).appendTo("head");
 }
 
 // reload_all_js();
