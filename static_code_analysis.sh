@@ -78,6 +78,7 @@ done
 
 
 if [[ -e _ALL.js ]]; then
+	rm _ALL.js
 	npx eslint _ALL.js | \
 		grep -v "'tf' is not defined" | \
 		grep -v Fireworks | \
@@ -98,7 +99,7 @@ if [[ -e _ALL.js ]]; then
 		grep -v "'result' is not defined" | \
 		grep -v set_all | \
 		grep -v chardinJs
-	rm _ALL.js
+	#rm _ALL.js
 else
 	echo "Could not concat all included js files";
 	ERROR=4
