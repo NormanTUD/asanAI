@@ -6424,7 +6424,7 @@ function can_reload_js (name) {
 	return true;
 }
 
-function reload_all_js () {
+async function reload_all_js () {
 	var entries = performance.getEntriesByType('resource');
 	entries.map(function(entry) {
 		if (entry.initiatorType === 'script') {
@@ -6433,6 +6433,9 @@ function reload_all_js () {
 			}
 		}
 	});
+
+	await create_model();
+	await compile_model();
 }
 
 function reload_js(src) {
