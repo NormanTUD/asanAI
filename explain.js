@@ -937,19 +937,15 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			// output at the designated filter index.
 			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
 
-			/*
-			console.log("auxModel:", auxModel);
-			console.log("summary:");
-			auxModel.summary();
-			*/
-
 			// This returned function (`gradFunction`) calculates the gradient of the
 			// convolutional filter's output with respect to the input image.
 			const gradFunction = grad(lossFunction);
 
 			// Form a random image as the starting point of the gradient ascent.
 
-			var data = randomUniform([1, ...model.input.shape.filter(n=>n)], 0, 1);
+			var new_input_shape = get_input_shape_with_batch_size();
+			new_input_shape.shift();
+			var data = randomUniform([1, ...new_input_shape], 0, 1);
 			if(typeof(start_image) != "undefined") {
 				data = start_image;
 			}
