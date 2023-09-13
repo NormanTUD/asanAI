@@ -1351,9 +1351,10 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
-
-
+	str += "\n\\end{pmatrix}}";
+	if(desc) {
+		str += "_{\\mathrm{" + desc + "}}\n";
+	}
 
 	return str;
 }
@@ -1377,7 +1378,10 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{pmatrix}}";
+	if(desc) {
+		str += "_{\\mathrm{" + desc + "}}\n";
+	}
 
 
 	return str;
@@ -2186,11 +2190,9 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 				try {
 					await _temml();
 				} catch (e) {
-					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
+					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
-						err("TEMML: " + e);
-					} else if (("" + e).includes("s.body[0] is undefined")) {
 						err("TEMML: " + e);
 					} else {
 						throw new Error(e);
@@ -2843,50 +2845,27 @@ async function _temml () {
 		await delay(200);
 	}
 
-	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
-
-	$(".temml_me").each((i, e) => {
-		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
-			var cont = 1;
-
-			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
-
-			if(!tmp_element) {
-				wrn("Could not create tmp_equation");
-				console.log(e);
-				cont = 0;
-			}
-
-			$(tmp_element).appendTo($(body));
-
-			var original_latex = e.textContent;
-
-			if(!original_latex) {
-				wrn("Could not find original_latex");
-				console.log(e);
-				cont = 0;
-			}
-
-			if(cont) {
+	try {
+		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+		$(".temml_me").each((i, e) => {
+			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+				var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+				$(tmp_element).appendTo($(body));
+				var original_latex = e.textContent;
 				temml.render(original_latex, tmp_element[0]);
-				var rendered_html = tmp_element[0].innerHTML;
-				if(rendered_html) {
-					$(e)[0].innerHTML = rendered_html;
-					$(e).attr("data-rendered", 1);
-					$(e).attr("data-latex", original_latex);
-
-					$(e).on("contextmenu", function(ev) {
-						ev.preventDefault();
-						alert(original_latex);
-					});
-				} else {
-					wrn("Could not render " + original_latex);
-				}
+				$(e)[0].innerHTML = tmp_element[0].innerHTML;
+				$(e).attr("data-rendered", 1);
+				$(e).attr("data-latex", original_latex);
+				$("#tmp_equation").remove();
+				$(e).on( "contextmenu", function(ev) {
+					ev.preventDefault();
+					alert(original_latex);
+				} );
 			}
-
-			$("#tmp_equation").remove();
-		}
-	});
+		});
+	} catch (e) {
+		wrn("" + e);
+	}
 	$("#temml_blocker").remove();
 }
 
@@ -2965,3 +2944,72 @@ log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
 log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
 log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
+
+function array_to_ellipsis_latex (x, limit) {
+	var _shape = get_shape_from_array(x);
+
+	if(_shape.length == 1) {
+		return x[0];
+	} else if(_shape.length == 2) {
+		return array_to_latex(_array_to_ellipsis_latex(x, limit));
+	} else {
+		var sub_arrays = [];
+		for (var _item = 0; _item < _shape[0]; _item++) {
+			sub_arrays.push(array_to_ellipsis_latex(x[_item], limit));
+		}
+
+		var str = '\\begin{pmatrix}';
+		for (var k = 0; k < sub_arrays.length; k++) {
+			str += sub_arrays[k];
+		}
+
+		str += '\\end{pmatrix}';
+
+		return str;
+	}
+}
+
+function _array_to_ellipsis_latex (x, limit) {
+	var _new = [];
+
+	var last_line_was_ellipsis = 0;
+	for (var i = 0; i < x.length; i++) {
+		if(i < limit || i >= (x.length - limit)) {
+			_new.push(x[i]);
+			last_line_was_ellipsis = 0;
+		} else {
+			if(!last_line_was_ellipsis) {
+				var _item = [];
+				for (var j = 0; j < x[i].length; j++) {
+					_item.push("\\vdots");
+				}
+				_new.push(_item);
+				last_line_was_ellipsis = 1;
+			}
+		}
+	}
+
+	var new_two = [];
+
+	for (var i = 0; i < _new.length; i++) {
+		var new_element = [];
+		var last_element_was_ellipsis = 0;
+		for (var j = 0; j < _new[i].length; j++) {
+			if(j < limit || j >= (_new[i].length - limit)) {
+				new_element.push(_new[i][j]);
+				last_element_was_ellipsis = 0;
+			} else {
+				if(!last_element_was_ellipsis) {
+					new_element.push("\\cdots");
+					last_element_was_ellipsis = 1;
+				}
+			}
+		}
+
+		new_two.push(new_element);
+	}
+
+	log("new_two:", new_two);
+
+	return new_two;
+}
