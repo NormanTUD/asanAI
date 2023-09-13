@@ -2840,21 +2840,49 @@ async function _temml () {
 	while ($("#temml_blocker").length) {
 		await delay(200);
 	}
+
 	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+
 	$(".temml_me").each((i, e) => {
 		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+			var cont = 1;
+
 			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+
+			if(!tmp_element) {
+				wrn("Could not create tmp_equation");
+				console.log(e);
+				cont = 0;
+			}
+
 			$(tmp_element).appendTo($(body));
+
 			var original_latex = e.textContent;
-			temml.render(original_latex, tmp_element[0]);
-			$(e)[0].innerHTML = tmp_element[0].innerHTML;
-			$(e).attr("data-rendered", 1);
-			$(e).attr("data-latex", original_latex);
+
+			if(!original_latex) {
+				wrn("Could not find original_latex");
+				console.log(e);
+				cont = 0;
+			}
+
+			if(cont) {
+				temml.render(original_latex, tmp_element[0]);
+				var rendered_html = tmp_element[0].innerHTML;
+				if(rendered_html) {
+					$(e)[0].innerHTML = rendered_html;
+					$(e).attr("data-rendered", 1);
+					$(e).attr("data-latex", original_latex);
+
+					$(e).on("contextmenu", function(ev) {
+						ev.preventDefault();
+						alert(original_latex);
+					});
+				} else {
+					wrn("Could not render " + original_latex);
+				}
+			}
+
 			$("#tmp_equation").remove();
-			$(e).on( "contextmenu", function(ev) {
-				ev.preventDefault();
-				alert(original_latex);
-			} );
 		}
 	});
 	$("#temml_blocker").remove();
