@@ -1507,7 +1507,7 @@ async function visualize_train () {
 							"Mandatory", 
 							"Prohibition", 
 							"Rescue", 
-							"Warning"
+							"Warning",
 							"fire",
 							"mandatory",
 							"prohibition",
