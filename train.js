@@ -1508,6 +1508,11 @@ async function visualize_train () {
 							"Prohibition", 
 							"Rescue", 
 							"Warning"
+							"fire",
+							"mandatory",
+							"prohibition",
+							"rescue",
+							"warning"
 						], correct_category) % labels.length;
 				} catch (e) {
 					wrn("" + e);
