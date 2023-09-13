@@ -2186,7 +2186,7 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 				try {
 					await _temml();
 				} catch (e) {
-					if(!("" + e).includes("assign to property") && !("" + e).includes("s.body[0] is undefined")) {
+					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
 						err("TEMML: " + e);
@@ -2840,23 +2840,28 @@ async function _temml () {
 	while ($("#temml_blocker").length) {
 		await delay(200);
 	}
-	$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
-	$(".temml_me").each((i, e) => {
-		if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
-			var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
-			$(tmp_element).appendTo($(body));
-			var original_latex = e.textContent;
-			temml.render(original_latex, tmp_element[0]);
-			$(e)[0].innerHTML = tmp_element[0].innerHTML;
-			$(e).attr("data-rendered", 1);
-			$(e).attr("data-latex", original_latex);
-			$("#tmp_equation").remove();
-			$(e).on( "contextmenu", function(ev) {
-				ev.preventDefault();
-				alert(original_latex);
-			} );
-		}
-	});
+
+	try {
+		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+		$(".temml_me").each((i, e) => {
+			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+				var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+				$(tmp_element).appendTo($(body));
+				var original_latex = e.textContent;
+				temml.render(original_latex, tmp_element[0]);
+				$(e)[0].innerHTML = tmp_element[0].innerHTML;
+				$(e).attr("data-rendered", 1);
+				$(e).attr("data-latex", original_latex);
+				$("#tmp_equation").remove();
+				$(e).on( "contextmenu", function(ev) {
+					ev.preventDefault();
+					alert(original_latex);
+				} );
+			}
+		});
+	} catch (e) {
+		wrn("" + e);
+	}
 	$("#temml_blocker").remove();
 }
 
