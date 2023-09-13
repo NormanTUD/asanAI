@@ -1351,9 +1351,10 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
-
-
+	str += "\n\\end{pmatrix}}";
+	if(desc) {
+		str += "_{\\mathrm{" + desc + "}}\n";
+	}
 
 	return str;
 }
@@ -1377,7 +1378,10 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 
 	str += arr.join("\\\\\n");
 
-	str += "\n\\end{pmatrix}}_{\\mathrm{" + desc + "}}\n";
+	str += "\n\\end{pmatrix}}";
+	if(desc) {
+		str += "_{\\mathrm{" + desc + "}}\n";
+	}
 
 
 	return str;
