@@ -2190,6 +2190,8 @@ async function write_model_to_latex_to_page (reset_prev_layer_data, force) {
 						info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
 						err("TEMML: " + e);
+					} else if (("" + e).includes("s.body[0] is undefined")) {
+						err("TEMML: " + e);
 					} else {
 						throw new Error(e);
 					}
