@@ -2944,3 +2944,72 @@ log("[[1, 2], [3, 4]]", _arbitrary_array_to_latex([[1,2],[3,4]]));
 log("[[[1, 2], [3, 4], [5, 6], [1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[1,2],[3,4], [5,6],[1, 2], [3, 4], [5, 6]]]));
 log("[[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]]", _arbitrary_array_to_latex([[[[1,2],[3,4], [5,6]],[[1, 2], [3, 4], [5, 6]]]]));
 */
+
+function array_to_ellipsis_latex (x, limit) {
+	var _shape = get_shape_from_array(x);
+
+	if(_shape.length == 1) {
+		return x[0];
+	} else if(_shape.length == 2) {
+		return array_to_latex(_array_to_ellipsis_latex(x, limit));
+	} else {
+		var sub_arrays = [];
+		for (var _item = 0; _item < _shape[0]; _item++) {
+			sub_arrays.push(array_to_ellipsis_latex(x[_item], limit));
+		}
+
+		var str = '\\begin{pmatrix}';
+		for (var k = 0; k < sub_arrays.length; k++) {
+			str += sub_arrays[k];
+		}
+
+		str += '\\end{pmatrix}';
+
+		return str;
+	}
+}
+
+function _array_to_ellipsis_latex (x, limit) {
+	var _new = [];
+
+	var last_line_was_ellipsis = 0;
+	for (var i = 0; i < x.length; i++) {
+		if(i < limit || i >= (x.length - limit)) {
+			_new.push(x[i]);
+			last_line_was_ellipsis = 0;
+		} else {
+			if(!last_line_was_ellipsis) {
+				var _item = [];
+				for (var j = 0; j < x[i].length; j++) {
+					_item.push("\\vdots");
+				}
+				_new.push(_item);
+				last_line_was_ellipsis = 1;
+			}
+		}
+	}
+
+	var new_two = [];
+
+	for (var i = 0; i < _new.length; i++) {
+		var new_element = [];
+		var last_element_was_ellipsis = 0;
+		for (var j = 0; j < _new[i].length; j++) {
+			if(j < limit || j >= (_new[i].length - limit)) {
+				new_element.push(_new[i][j]);
+				last_element_was_ellipsis = 0;
+			} else {
+				if(!last_element_was_ellipsis) {
+					new_element.push("\\cdots");
+					last_element_was_ellipsis = 1;
+				}
+			}
+		}
+
+		new_two.push(new_element);
+	}
+
+	log("new_two:", new_two);
+
+	return new_two;
+}
