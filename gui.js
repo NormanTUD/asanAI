@@ -1528,6 +1528,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	try {
 		var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 			var last_good = get_last_good_input_shape_as_string();
 			l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
@@ -4395,7 +4399,7 @@ async function write_error(e, fn, hide_swal) {
 			msg = e.message;
 		}
 
-		var explanation = explain_error_msg("" + e);
+		var explanation = explain_error_msg("" + msg);
 
 		if (explanation) {
 			msg = msg + "\n<br><br>\n" + explanation;
@@ -4404,7 +4408,7 @@ async function write_error(e, fn, hide_swal) {
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
 		await update_translations();
 		await write_descriptions();
-		wrn(e);
+		wrn(msg);
 		console.trace();
 
 		if(!hide_swal) {

@@ -64,6 +64,10 @@ async function _create_model () {
 			$("#math_mode_settings").hide();
 		}
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
 			return;
@@ -77,7 +81,7 @@ async function _create_model () {
 			} else if(("" + e).includes("model.layers[i] is undefined")) {
 				wrn("" + e);
 			} else {
-				await except("ERROR1", e);
+				await except("ERROR1", "" + e);
 				if(mode == "beginner") {
 					Swal.fire({
 						icon: "error",
@@ -717,8 +721,10 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		}
 		set_layer_background(i, "");
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
 		if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
-			var msg = e;
 			if(
 				("" + e).includes("Negative dimension size caused by adding layer") ||
 				("" + e).includes("Has Multi-Output") ||
@@ -727,7 +733,6 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			) {
 				set_layer_background(i, "red");
 			} else {
-				log(i);
 				set_model_layer_warning(i, "" + e);
 				l("ERROR: " + e);
 				log(type);
