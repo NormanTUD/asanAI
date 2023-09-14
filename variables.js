@@ -754,7 +754,7 @@ var dtypes = {
 	"float32": "float32",
 	"int32": "int32",
 	"bool": "bool",
-	"complex64": "complex64" //,
+	//"complex64": "complex64" //,
 	//'string': 'string'
 };
 
