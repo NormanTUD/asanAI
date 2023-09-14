@@ -924,7 +924,6 @@ function model_add_python_structure (layer_type, data) {
 	(${data.kernel_size}),
 	strides=(${data.strides.join(", ")}),
 	padding=${or_none(data.padding)},
-	data_format=None,
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? "True" : "False"},
@@ -951,13 +950,15 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
-		str += `model.add(layers.UpSampling2D(size=${or_none(data.size, "(", ")")}, data_format=${or_none(data.data_format)}, interpolation=${or_none(data.interpolation)}))\n`;
+		str += `model.add(layers.UpSampling2D(
+	size=${or_none(data.size, "(", ")")},
+	interpolation=${or_none(data.interpolation)}
+))\n`;
 	} else if (layer_type == "SeparableConv1D") {
 		str += `model.add(layers.SeparableConv1D(filters=${data.filters},
 	kernel_size=${data.kernel_size},
 	strides=${or_none(data.strides)},
 	padding=${or_none(data.padding)},
-	data_format=${or_none(data.data_format)},
 	dilation_rate=${data.dilation_rate},
 	depth_multiplier=${data.depth_multiplier},
 	activation=${or_none(data.activation)},
@@ -1006,7 +1007,6 @@ function model_add_python_structure (layer_type, data) {
 	strides=(${data.strides.join(", ")}),
 	padding=${or_none(data.padding)},
 	output_padding=${or_none(data.output_padding)},
-	data_format=${or_none(data.data_format)},
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? "True" : "False"},
@@ -1019,7 +1019,10 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AlphaDropout") {
-		str += `model.add(layers.AlphaDropout(rate=${data.dropout_rate}, noise_shape=${or_none(data.noise_shape)}, seed=${or_none(data.seed)}))\n`;
+		str += `model.add(layers.AlphaDropout(
+	rate=${data.dropout_rate},
+	seed=${or_none(data.seed)}
+))\n`;
 	} else if (layer_type == "Dropout") {
 		log("DATA for dropout:", data);
 		str += `model.add(layers.Dropout(
@@ -1027,13 +1030,20 @@ function model_add_python_structure (layer_type, data) {
 	seed=${or_none(data.seed)}
 ))\n`;
 	} else if (layer_type == "GaussianDropout") {
-		str += `model.add(layers.GaussianDropout(rate=${data.rate}, seed=${or_none(data.seed)}))\n`;
+		str += `model.add(layers.GaussianDropout(
+	rate=${data.dropout_rate},
+	seed=${or_none(data.seed)}
+))\n`;
 	} else if (layer_type == "GaussianNoise") {
 		str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type.startsWith("GlobalAveragePooling")) {
-		str += `model.add(layers.${layer_type}(${or_none(data.data_format)}, keepdims=${or_none(data.keepdims)}))\n`;
+		str += `model.add(layers.${layer_type}(
+	keepdims=${or_none(data.keepdims)}
+))\n`;
 	} else if (layer_type.startsWith("GlobalMaxPooling")) {
-		str += `model.add(layers.${layer_type}(${or_none(data.data_format)}, keepdims=${or_none(data.keepdims)}))\n`;
+		str += `model.add(layers.${layer_type}(
+	keepdims=${or_none(data.keepdims)}
+))\n`;
 	} else if (layer_type == "LayerNormalization") {
 		str += `model.add(layers.LayerNormalization(
 	axis=${data.axis},
@@ -1055,28 +1065,24 @@ function model_add_python_structure (layer_type, data) {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
 	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}),
-	padding=${or_none(data.padding)},
-	data_format=${or_none(data.data_format)}
+	padding=${or_none(data.padding)}
 ))\n`;
 	} else if (layer_type == "MaxPooling2D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}, ${data.pool_size[1]}),
 	strides=(${data.strides[0]}, ${data.strides[1]}),
-	padding=${or_none(data.padding)},
-	data_format=${or_none(data.data_format)}
+	padding=${or_none(data.padding)}
 ))\n`;
 	} else if (layer_type == "MaxPooling1D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}),
 	strides=(${data.strides[0]}),
-	padding=${or_none(data.padding)},
-	data_format=${or_none(data.data_format)}
+	padding=${or_none(data.padding)}
 ))\n`;
 	} else if (layer_type == "AveragePooling1D") {
 		str += `model.add(layers.AveragePooling1D(pool_size=${data.pool_size},
 	strides=${data.strides[0]},
-	padding=${data.padding[0]},
-	data_format=${or_none(data.data_format)}
+	padding=${data.padding[0]}
 ))\n`;
 	} else if (layer_type == "SeparableConv2D") {
 		str += `model.add(layers.SeparableConv2D(
@@ -1084,7 +1090,6 @@ function model_add_python_structure (layer_type, data) {
 	kernel_size=${data.kernel_size},
 	strides=${or_none(data.strides)},
 	padding=${or_none(data.padding)},
-	data_format=${or_none(data.data_format)},
 	dilation_rate=${or_none(data.dilation_rate)},
 	depth_multiplier=${data.depth_multiplier},
 	activation=${or_none(data.activation)},
@@ -1101,16 +1106,15 @@ function model_add_python_structure (layer_type, data) {
 	bias_constraint=${or_none(data.bias_constraint)}
 ))\n`;
 	} else if (layer_type == "AveragePooling2D") {
-		str += `model.add(layers.AveragePooling2D(pool_size=(${data.pool_size.join(", ")}}),
+		str += `model.add(layers.AveragePooling2D(
+	pool_size=(${data.pool_size.join(", ")}}),
 	strides=(${data.strides.join(",")}),
-	padding=${data.padding},
-	data_format=${or_none(data.data_format)}
+	padding=${data.padding}
 ))\n`;
 	} else if (layer_type == "AveragePooling3D") {
 		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size.join(", ")}),
 	strides=(${data.strides.join(", ")}),
-	padding=${data.padding},
-	data_format=${or_none(data.data_format)}
+	padding=${data.padding}
 ))\n`;
 
 	} else if (layer_type == "LeakyReLU") {
@@ -1123,7 +1127,6 @@ function model_add_python_structure (layer_type, data) {
 	strides=${data.strides},
 	padding=${or_none(data.padding)},
 	depth_multiplier=${data.depth_multiplier},
-	data_format=${or_none(data.data_format)},
 	dilation_rate=${data.dilation_rate},
 	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? "True" : "False"},
@@ -1141,7 +1144,6 @@ function model_add_python_structure (layer_type, data) {
 	strides=(${data.strides.join(", ")}),
 	padding=${or_none(data.padding)},
 	depth_multiplier=${data.depth_multiplier},
-	data_format=${or_none(data.data_format)},
 	dilation_rate=(${data.dilation_rate.join(", ")}),
 	activation=${or_none(data.activation)},
 	use_bias=${data.use_bias ? "True" : "False"},

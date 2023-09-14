@@ -520,7 +520,7 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_alphaDropout_description\" \/>",
 		"options": [
 			"rate",
-			"visualize",
+			"seed",
 			"dtype"
 		],
 		"category": "Noise"
@@ -529,7 +529,6 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_gaussianDropout_description\" \/>",
 		"options": [
 			"rate",
-			"visualize",
 			"dtype"
 		],
 		"category": "Noise"
@@ -539,7 +538,6 @@ var layer_options = {
 		"options": [
 			"stddev",
 			"seed",
-			"visualize",
 			"dtype"
 		],
 		"category": "Noise"
