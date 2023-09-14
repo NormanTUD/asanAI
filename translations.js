@@ -133,5 +133,26 @@ function trm (name) {
 	return `${name} NOT FOUND`;
 }
 
+function _get_new_translations() {
+	var url = "translations.php?print=1";
+
+	function parse(data) {
+		try {
+			language = JSON.parse(data);
+
+			update_translations();
+		} catch (e) {
+			write_error(e);
+		}
+	}
+
+	$.ajax({
+		type: 'GET',
+		url: url,
+		dataType: 'html',
+		success: parse
+	});
+}
+
 // Update translations on initial page load
 update_translations(); // await not possible
