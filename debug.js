@@ -47,7 +47,7 @@ function err (...args) {
 	args.forEach(arg => console.error(arg));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[ERROR] " + arg);
+			l("[&#128721; ERROR] " + arg);
 		}
 	});
 
@@ -69,7 +69,7 @@ function wrn (...args) {
 	args.forEach(arg => console.warn(arg));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[WARN] " + arg);
+			l("[&#9888; WARN] " + arg);
 		}
 	});
 

@@ -1146,3 +1146,8 @@ hr {
 	top: 6px;
 	right: 10px;
 }
+
+.error_line {
+	background-color: red;
+	color: white;
+}
