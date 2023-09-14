@@ -538,6 +538,7 @@ var layer_options = {
 		"description": "<span class=\"TRANSLATEME_gaussianNoise_description\" \/>",
 		"options": [
 			"stddev",
+			"seed",
 			"visualize",
 			"dtype"
 		],
