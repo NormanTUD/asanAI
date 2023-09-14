@@ -353,8 +353,7 @@ function add_seed_option (type, nr) {
 		style = " style=\"display: none\" ";
 	}
 
-	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input type='text' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
-
+	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
 
 	return res;
 }
@@ -1022,7 +1021,11 @@ function model_add_python_structure (layer_type, data) {
 	} else if (layer_type == "AlphaDropout") {
 		str += `model.add(layers.AlphaDropout(rate=${data.dropout_rate}, noise_shape=${or_none(data.noise_shape)}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type == "Dropout") {
-		str += `model.add(layers.Dropout(rate=${data.rate}, noise_shape=${or_none(data.noise_shape)}, seed=${or_none(data.seed)}))\n`;
+		log("DATA for dropout:", data);
+		str += `model.add(layers.Dropout(
+	rate=${data.dropout_rate},
+	seed=${or_none(data.seed)}
+))\n`;
 	} else if (layer_type == "GaussianDropout") {
 		str += `model.add(layers.GaussianDropout(rate=${data.rate}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type == "GaussianNoise") {
@@ -1045,7 +1048,9 @@ function model_add_python_structure (layer_type, data) {
 	gamma_constraint=${or_none(data.gamma_constraint)}
 ))\n`;
 	} else if (layer_type == "Reshape") {
-		str += `model.add(layers.Reshape(target_shape=[${data.target_shape}]))\n`;
+		str += `model.add(layers.Reshape(
+	target_shape=[${data.target_shape}]
+))\n`;
 	} else if (layer_type == "MaxPooling3D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
