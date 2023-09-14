@@ -1575,3 +1575,5 @@ var last_predict_handdrawn_hash = "";
 var last_handdrawn_image_hash = "";
 
 var original_labels = [];
+
+var call_time = Date.now();

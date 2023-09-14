@@ -646,6 +646,8 @@ async function _take_screenshot () {
 async function send_bug_report () {
 	var html = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body>";
 
+	html += "Runtime: " + Math.abs(parse_float((call_time - Date.now()) / 1000)) + " seconds<br>";
+
 	if(privacy_is_tainted) {
 		l("Privacy was tainted. Not taking a screenshot");
 	} else {
