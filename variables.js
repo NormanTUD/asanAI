@@ -560,7 +560,6 @@ var model_data_structure = {
 };
 
 var activations = {
-	//"None": "none",
 	"relu": "ReLu",
 	"linear": "Linear",
 	"sigmoid": "Sigmoid",
@@ -571,7 +570,7 @@ var activations = {
 	"softsign": "SoftSign",
 	"softmax": "SoftMax",
 	"tanh": "tanh",
-	"LeakyReLU": "leakyReLU"
+	"LeakyReLU": "leakyReLU",
 	//"thresholdedrelu": "thresholdedReLU"
 };
 
