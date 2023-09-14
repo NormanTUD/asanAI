@@ -613,6 +613,10 @@
 	}
 
 	if(!checkSubElementsKeys($GLOBALS["translations"])) {
-	       	die("Sub-elements do not have the same keys");
+		die("Sub-elements do not have the same keys");
+	}
+
+	if(isset($_GET["print"])) {
+		print json_encode($translations);
 	}
 ?>
