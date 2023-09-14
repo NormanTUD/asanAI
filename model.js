@@ -679,7 +679,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			}
 			eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
 		} else {
-			//log("adding ", tf.layers[type], ", data: ", data);
+			//console.log("adding ", tf.layers[type], ", data: ", data);
 			var new_layer = tf.layers[type](data);
 
 			new_model.add(new_layer);
@@ -724,6 +724,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
+
 		if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
 			if(
 				("" + e).includes("Negative dimension size caused by adding layer") ||
@@ -735,6 +736,7 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			} else {
 				set_model_layer_warning(i, "" + e);
 				l("ERROR: " + e);
+				console.log("ORIGINAL e: ", e);
 				log(type);
 				log(data);
 			}
