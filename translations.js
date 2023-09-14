@@ -72,13 +72,13 @@ function set_lang_cookie(value, days) {
 }
 
 // Function to update the translation of elements
-async function update_translations() {
+async function update_translations(force=0) {
 	var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
 	elements.forEach((element) => {
 		const translationKey = element.classList[0].substring(12);
 		const translation = language[lang][translationKey];
 		if (translation) {
-			if($(element).attr("data-lang") != lang) {
+			if($(element).attr("data-lang") != lang || force) {
 				element.innerHTML = translation;
 
 				$(element).attr("data-lang", lang);
@@ -140,7 +140,7 @@ function _get_new_translations() {
 		try {
 			language = JSON.parse(data);
 
-			update_translations();
+			update_translations(1);
 		} catch (e) {
 			write_error(e);
 		}
