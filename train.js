@@ -1231,7 +1231,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		}
 
 		if(!Object.keys(category_overview).includes(__key)) {
-			dbg("category_overview did not contain key " + __key);
+			//dbg("category_overview did not contain key " + __key);
 			continue;
 		}
 
