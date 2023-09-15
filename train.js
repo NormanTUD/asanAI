@@ -1476,7 +1476,7 @@ async function visualize_train () {
 				var predicted_tensor = predictions_tensors[i];
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
-					wrn("Predicted tensor was null or undefined");
+					dbg("Predicted tensor was null or undefined");
 					return;
 				}
 
