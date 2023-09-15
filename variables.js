@@ -349,6 +349,7 @@ var layer_options = {
 			"bias_initializer",
 			"kernel_regularizer",
 			"bias_regularizer",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
@@ -390,6 +391,7 @@ var layer_options = {
 			"trainable",
 			"kernel_regularizer",
 			"bias_regularizer",
+			"visualize",
 			"dtype"
 		],
 		"category": "Convolutional"
