@@ -111,7 +111,7 @@ async function has_front_back_camera() {
 }
 
 function init_tabs () {
-	l("Initializing tabs");
+	l(language[lang]["initializing_tabs"]);
 
 	var tabs_settings = {
 		activate: function (event, ui) {
@@ -149,7 +149,7 @@ function init_tabs () {
 }
 
 function init_set_all_options () {
-	l("Initializing 'set options for all'");
+	l(language[lang]["initializing_set_options_for_all"]);
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
 
@@ -215,7 +215,7 @@ function init_set_all_options () {
 }
 
 async function init_page_contents (chosen_dataset) {
-	l("Initializing page contents");
+	l(language[lang]["initializing_page_contents"]);
 	skip_predictions = true;
 	disabling_saving_status = true;
 	global_disable_auto_enable_valid_layer_types = true;
@@ -290,7 +290,7 @@ async function get_traindata_and_init_categories () {
 }
 
 function init_categories () {
-	l("Initializing categories");
+	l(language[lang]["initializing_categories"]);
 	$("#dataset").html("");
 
 	var dataset_names = Object.keys(traindata_struct);

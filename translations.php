@@ -291,7 +291,11 @@
 			"images_are_being_detected_correctly" => "images are being detected correctly",
 			"category" => "Kategorie",
 			"percentage_correct" => "Percentage correct",
-			"training_done_text" => "The training phase is complete. If the accuracy is still insufficient, the network can be further trained to potentially achieve better results."
+			"training_done_text" => "The training phase is complete. If the accuracy is still insufficient, the network can be further trained to potentially achieve better results.",
+			"initializing_categories" => "Initializing categories",
+			"initializing_tabs" => "Initialisiere Tabs",
+			"initializing_page_contents" => "Initializing page contents",
+			"initializing_set_options_for_all" => "Initializing 'set options for all'"
 		),
 
 		'de' => array(
@@ -585,7 +589,11 @@
 			"images_are_being_detected_correctly" => "Bilder wurden richtig erkannt",
 			"category" => "Kategorie",
 			"percentage_correct" => "Prozent richtig",
-			"training_done_text" => "Diese Trainingsphase ist abgeschlossen. Sollte die Genauigkeit noch nicht ausreichend sein, kann das Netz weiter trainiert werden, um möglicherweise bessere Ergebnisse zu erzielen."
+			"training_done_text" => "Diese Trainingsphase ist abgeschlossen. Sollte die Genauigkeit noch nicht ausreichend sein, kann das Netz weiter trainiert werden, um möglicherweise bessere Ergebnisse zu erzielen.",
+			"initializing_categories" => "Kategorien werden initialisiert",
+			"initializing_tabs" => "Initialisiere Tabs",
+			"initializing_page_contents" => "Initialisiere Seiteninhalte",
+			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'"
 		)
 	);
 
