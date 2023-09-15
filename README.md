@@ -125,6 +125,8 @@ in creating this program:
 
 - [Colorpicker.svg](https://commons.wikimedia.org/wiki/File:Colorwheel.svg)
 
+- [confetti.js](https://www.kirilv.com/canvas-confetti/)
+
 - [Cosmo-Präsentation, Dr. Christoph Lehmann](https://tu-dresden.de/zih/die-einrichtung/struktur/dr-christoph-lehmann)
 
 [comment]: <> (EndSources)

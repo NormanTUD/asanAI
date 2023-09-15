@@ -78,6 +78,7 @@
 		<?php _js("libs/sweetalert2.all.js"); ?>
 
 		<?php _js("libs/fireworks.js", 1, 1); ?>
+		<?php _js("libs/confetti.browser.min.js", 1, 1); ?>
 
 		<?php _js("safety.js"); ?>
 		<?php _js("translations.js", 1, 1); ?>
