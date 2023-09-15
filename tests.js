@@ -35,7 +35,7 @@ function test_not_equal (name, is, should_be) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		log("%c" + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be), "background: red; color: white");
+		err(name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		return false;
 	}
@@ -48,8 +48,7 @@ function test_equal (name, is, should_be) {
 		return true;
 	} else {
 		var res_str = name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be);
-		console.log("%c" + res_str, "background: red; color: white");
-		dbg(res_str);
+		err(res_str);
 		num_tests_failed++;
 		return false;
 	}
