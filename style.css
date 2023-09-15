@@ -1155,3 +1155,7 @@ hr {
 #maximally_activated {
 	user-select: none;
 }
+
+.tab {
+	display: none;
+}

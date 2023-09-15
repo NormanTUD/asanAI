@@ -1169,7 +1169,7 @@
 							<div id="code_tab" class="tab">
 								<ul class="navi_list">
 									<li><a href="#python_tab" id="python_tab_label">Python</a></li>
-									<li><a href="#python_expert" id="python_expert_tab_label">Python (expert)</a></li>
+									<li><a href="#python_expert_tab" id="python_expert_tab_label">Python (expert)</a></li>
 									<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
 								</ul>
 
