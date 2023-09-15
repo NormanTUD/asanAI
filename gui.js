@@ -1502,9 +1502,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await predict_handdrawn();
 			} catch (e) {
 				if(("" + e).includes("but got array with shape")) {
-					var err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-					wrn(err);
-					l(err);
+					var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+					wrn(_err);
+					l(_err);
 				} else {
 					throw new Error(e);
 				}

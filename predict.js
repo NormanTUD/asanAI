@@ -1367,8 +1367,8 @@ async function predict_handdrawn () {
 		if(("" + e).includes("is already disposed")) {
 			dbg("weights are already disposed. Not predicting handdrawn");
 		} else if(("" + e).includes("but got array with shape")) {
-			var err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-			dbg(err);
+			var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+			dbg(_err);
 		} else if(("" + e).includes("n is undefined")) {
 			dbg("Model weights probably already disposed, this is usually not harmful");
 		} else if(("" + e).includes("Unsupported input rank by")) {
