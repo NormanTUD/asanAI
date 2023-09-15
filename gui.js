@@ -6274,7 +6274,7 @@ function model_is_ok () {
 
 	if(last_model_ok_status != _content) {
 		if(color == red) {
-			err(msg);
+			wrn(msg);
 		} else if (color == orange) {
 			dbg(msg);
 		}
