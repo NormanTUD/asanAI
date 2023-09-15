@@ -1151,3 +1151,7 @@ hr {
 	background-color: red;
 	color: white;
 }
+
+#maximally_activated {
+	user-select: none;
+}
