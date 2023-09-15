@@ -1085,6 +1085,8 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 			l(base_msg);
 			canvasses.push(await draw_maximally_activated_neuron(layer, neurons - i - 1));
 		} catch (e) {
+			currently_generating_images = false;
+
 			if(("" + e).includes("already disposed")) {
 				if(!is_recursive) {
 					while (tries_left) {
@@ -1109,7 +1111,6 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
 				}
 			} else {
-				currently_generating_images = false;
 				throw new Error(e);
 			}
 		}
