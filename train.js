@@ -52,7 +52,6 @@ async function train_neural_network () {
 	}
 
 	if(started_training) {
-		var overlay = null;
 		if(is_cosmo_mode) {
 			$(".auto_image_captions").remove();
 			$("#webcam_in_cosmo").show();
@@ -62,7 +61,7 @@ async function train_neural_network () {
 			remove_manicule(1);
 			*/
 		} else {
-			overlay = show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+			show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
 			if($("#show_grad_cam").is(":checked")) {
 				l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
@@ -789,7 +788,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		} else {
 			if(tries_classification_but_receives_other) {
 				var ll = labels.length;
-				overlay = show_overlay(language[lang]["fixing_output_shape"]);
+				show_overlay(language[lang]["fixing_output_shape"]);
 				if(labels && ll) {
 					is_repairing_output_shape = true;
 					var change_to_beginner = 0;
