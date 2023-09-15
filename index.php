@@ -23,14 +23,12 @@
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
 
-		<!-- tensorflow.js -->
 		<?php _js("tf/tf.min.js"); ?>
 		<?php _js("base_wrappers.js"); ?>
 		<?php _js("libs/jstat.min.js"); ?>
 		<?php _js("custom_layers.js"); ?>
 		<?php _js("libs/jsmanipulate.js", 1, 1); ?>
 
-		<!-- jquery -->
 		<?php _js("libs/zip.js"); ?>
 		<?php _js("libs/md5.umd.min.js"); ?>
 		<?php _js("libs/jquery.js"); ?>
@@ -127,16 +125,12 @@
 		<?php _css("prism/prism.min.css"); ?>
 		<?php _css("libs/sweetalert2.min.css"); ?>
 
-		<!-- polyfill -->
 		<?php _js("libs/canvas-to-blob.min.js"); ?>
 
-		<!-- sweetalert -->
 		<?php _js("libs/sweetalert2.all.js"); ?>
 
-		<!-- Easter Egg -->
 		<?php _js("libs/fireworks.js", 1, 1); ?>
 
-		<!-- my own js stuff -->
 		<?php _js("safety.js"); ?>
 		<?php _js("translations.js", 1, 1); ?>
 		<?php _js("tests.js"); ?>
@@ -149,7 +143,6 @@
 		<?php _js("train.js"); ?>
 		<?php _js("predict.js"); ?>
 		
-		<!-- visualizations -->
 		<?php _js("libs/d3.v5.min.js"); ?>
 		<?php _js("libs/three.min.js"); ?>
 		<?php _js("visualizations/OrbitControls.js"); ?>
@@ -160,7 +153,6 @@
 		<?php _js("visualizations/LeNet.js"); ?>
 		<?php _js("visualizations/FCNN.js"); ?>
 		
-		<!-- ChardinJS -->
 		<?php _js("libs/chardinjs.js"); ?>
 		
 		<?php _css("libs/chardinjs.css"); ?>
@@ -593,7 +585,6 @@ text-align: end;
 									<td>AlexNet-Renderer</td>
 									<td>
 										<fieldset style="border-width: 0px" id="alexnet_renderer"> 
-											<!--<legend>AlexNet-renderer:</legend> -->
 											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
 											<label for="webgl_renderer">WebGL</label>
 											<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
@@ -1082,7 +1073,6 @@ text-align: end;
 
 
 				<div id="help" style="display: none"></div>
-				<!--<div id="toggle_layers_button"  data-required_skills="finished_training[2],added_custom_category[2]" class="cosmo" data-dont_hide_after_show="1"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>-->
 				<div id="toggle_layers_button" ><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
 
 				<div class="side_by_side_container">
@@ -1300,14 +1290,12 @@ text-align: end;
 									<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
 									<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 									<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
-									<!--<li><a href="#conv_explanations" id="conv_explanations_label">Convolutional explanations</a></li>-->
 									<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 									<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 								</ul>
 
 								<div id="alexnet_tab" class="tab">
 									<div id="alexnet"></div>
-									<!-- <button id="download_alexnet" onclick="download_visualization('alexnet')">Download AlexNet SVG (but without dimension labels)</button> -->
 									<button class="vis_button" onclick="restart_alexnet(1)"><span class="TRANSLATEME_restart_alexnet"></span></button>
 								</div>
 
@@ -1383,10 +1371,6 @@ text-align: end;
 										<span id="cosmo_training_plotly_explanation" style="display:none">
 											<span class="TRANSLATEME_graph_explanation"></span><br>
 										</span>
-<!--
-										<hr class="cosmo_hr">
-										<span class="TRANSLATEME_quality_depends_on_random"></span>
--->
 									</div>
 									<div id='show_cosmo_epoch_status' class="show_only_in_cosmo_mode" style="display: none">
 										<hr class="cosmo_hr">
@@ -1562,7 +1546,6 @@ text-align: end;
 		<?php _js("prism/prism-python.min.js"); ?>
 		<?php _js("libs/jscolor.js", 1, 1); ?>
 		<?php _js("bottom.js"); ?>
-		<!-- screenshot tool -->
 		<?php _js("libs/html2canvas.min.js"); ?>
 	</body>
 </html>
