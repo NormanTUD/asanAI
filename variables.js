@@ -480,7 +480,6 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
-			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -491,7 +490,16 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
-			"visualize",
+			"dtype"
+		],
+		"category": "Pooling"
+	},
+	"averagePooling3d": {
+		"description": "<span class=\"TRANSLATEME_averagePooling3d_description\" \/>",
+		"options": [
+			"padding",
+			"pool_size",
+			"strides",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -502,7 +510,6 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
-			"visualize",
 			"dtype"
 		],
 		"category": "Pooling"
@@ -513,7 +520,16 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
-			"visualize",
+			"dtype"
+		],
+		"category": "Pooling"
+	},
+	"maxPooling3d": {
+		"description": "<span class=\"TRANSLATEME_maxPooling3d_description\" \/>",
+		"options": [
+			"pool_size",
+			"strides",
+			"padding",
 			"dtype"
 		],
 		"category": "Pooling"
