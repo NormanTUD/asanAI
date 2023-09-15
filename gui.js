@@ -1556,6 +1556,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			} else if (("" + e).includes("model.input is undefined")) {
 				dbg("model.input is undefined");
 				return false;
+			} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
+				dbg("" + e);
+				return false;
 			} else if (("" + e).includes("code is undefined")) {
 				dbg("This error may happen when the whole DOM is deleted: " + e);
 				return false;
