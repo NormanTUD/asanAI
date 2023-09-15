@@ -467,7 +467,7 @@ $(document).ready(async function() {
 
 	show_hide_augment_tab();
 
-	const urlParams = new URLSearchParams(window.location.search);
+	var urlParams = new URLSearchParams(window.location.search);
 	if(urlParams.get("epochs")) {
 		set_epochs(urlParams.get("epochs"));
 	}
@@ -587,6 +587,19 @@ $(document).ready(async function() {
 	window.addEventListener("error", async function(e) {
 		await write_error(e.message);
 	});
+
+	var today = new Date();
+
+	var forceSnowParam = urlParams.get('force_snow');
+
+	if (today.getMonth() === 11 && today.getDate() === 24 || forceSnowParam) {
+		try {
+			show_snow();
+		} catch (error) {
+			wrn(`Error executing show_snow(): ${error}`);
+		}
+	}
+
 
 	finished_loading = true;
 });
