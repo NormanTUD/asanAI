@@ -555,14 +555,6 @@ async function get_fit_data () {
 		}
 	};
 
-	if($("#enable_early_stopping").is(":checked")) {
-		callbacks["earlyStopping"] = tf.callbacks.earlyStopping({
-			monitor: $("#what_to_monitor_early_stopping").val(),
-			minDelta: parse_float($("#min_delta_early_stopping").val()),
-			patience: parse_int($("#patience_early_stopping").val()),
-		});
-	}
-
 	var fit_data = {
 		validationSplit: validationSplit,
 		batchSize: batchSize,
