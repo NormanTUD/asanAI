@@ -27,7 +27,7 @@
 			supported = false;
 		}
 
-		if (supported === false) {
+		if (!supported) {
 			l("WebGL is not supported");
 		}
 
