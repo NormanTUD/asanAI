@@ -164,22 +164,6 @@
 
 <?php
 		if(isset($_GET["start_cosmo"])) {
-?>
-			<style>
-				html {
-					font-size: 20px !important;
-				}
-
-				.layer_image {
-					width: 80px;
-				}
-
-				#own_files {
-					display: none;
-text-align: end;
-				}
-			</style>
-<?php
 			if(isset($_GET["epochs"]) && intval($_GET["epochs"])) {
 ?>
 				<script>
