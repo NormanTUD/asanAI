@@ -5112,14 +5112,16 @@ function plotly_show_loss_graph() {
 			var fn = data[i]["fn"];
 			var name = data[i]["name"];
 
-			var loss = fn(y_true, y_pred);
+			tidy(() => {
+				var loss = fn(y_true, y_pred);
 
-			plot_data.push({
-				x: y_pred.arraySync().map(x => x[0]),
-				y: loss.arraySync(),
-				mode: "lines",
-				type: "scatter",
-				name: name
+				plot_data.push({
+					x: y_pred.arraySync().map(x => x[0]),
+					y: loss.arraySync(),
+					mode: "lines",
+					type: "scatter",
+					name: name
+				});
 			});
 		}
 
