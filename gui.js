@@ -6260,6 +6260,9 @@ function model_is_ok () {
 		} else if(layer_has_multiple_nodes()) {
 			color = red;
 			msg = "Model has multiple output nodes.";
+		} else if($("#layers_container").find("li").length != model.layers.length ) {
+			color = red;
+			msg = `There is a different number of layers in the GUI than in the model (gui: ${$("#layers_container").find("li").length}, model: ${model.layers.length}).`;
 		}
 	} catch (e) {
 		color = red;
