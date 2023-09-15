@@ -1303,7 +1303,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			if(is_cosmo_mode) {
 				$(containerId).css("background", "#00429d").css("background", "linear-gradient(0deg, lightyellow 0%, #96ffea 70%, #00429d 100%");
 			}
-			$("<span style=\"display:table-cell; border-left:1px solid #000;height:400px\"></span>").appendTo($(containerId));
+			$(`<span style="display: table-cell; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
 		} else {
 			wrn("Canvas could not be appended!");
 		}
