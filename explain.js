@@ -1109,6 +1109,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 					log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
 				}
 			} else {
+				currently_generating_images = false;
 				throw new Error(e);
 			}
 		}
