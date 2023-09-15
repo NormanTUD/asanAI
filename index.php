@@ -510,11 +510,6 @@ text-align: end;
 										<input style="width: 50px;" value="1" type="number" id="divide_by" onchange="repredict()">
 									</td>
 								</tr>
-								<tr>
-									<td colspan=2>
-										<button class="TRANSLATEME_reinitialize_weights expert_mode_only" style="width:100%" onclick="force_reinit()"></button>
-									</td>
-								</tr>
 							</table>
 						</div>
 						<div class="ribbon-group-title"><span class="TRANSLATEME_training"></span></div>
