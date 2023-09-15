@@ -549,50 +549,50 @@ async function write_descriptions (force=0) {
 	await update_translations();
 }
 
-function explain_error_msg (err) {
-	if(!err) {
+function explain_error_msg (_err) {
+	if(!_err) {
 		return "";
 	}
 
-	if(typeof(err) == "object") {
-		err = err.toString();
+	if(typeof(_err) == "object") {
+		_err = _err.toString();
 	}
 
-	log(err);
+	log(_err);
 
 	var explanation = "";
 
 	if(model && model.layers && model.layers.length) {
 		var last_layer_name = model.layers[model.layers.length - 1].name;
-		if(err.includes(last_layer_name) && err.includes("Error when checking target") && err.includes("but got array with shape")) {
+		if(_err.includes(last_layer_name) && _err.includes("Error when checking target") && _err.includes("but got array with shape")) {
 			explanation = "This may mean that the number of neurons in the last layer do not conform with the data structure in the training-data-outputs.";
-		} else if(err.includes("does not match the shape of the rest")) {
+		} else if(_err.includes("does not match the shape of the rest")) {
 			explanation = "Have you repeatedly pressed 'Start training'? The second one may have started while the first one was not ready, and re-downloaded images. Please reload the page.";
-		} else if(err.includes("Failed to compile fragment shader")) {
+		} else if(_err.includes("Failed to compile fragment shader")) {
 			explanation = "This may mean that the batch-size and/or filter-size and/or image dimension resize-sizes are too large.";
-		} else if(err.includes("target expected a batch of elements where each example")) {
+		} else if(_err.includes("target expected a batch of elements where each example")) {
 			explanation = "The last number of neurons in the last layer may not match the number of categories.<br><br>It may also be possible that you chose a wrong Loss function. If the number of neurons match, try chosing other losses, like categoricalCrossentropy.<br><br>You may also have only one category, but you need at least two.";
-		} else if(err.includes("but got array with shape 0,")) {
+		} else if(_err.includes("but got array with shape 0,")) {
 			explanation = "Have you forgotten to add your own training data?";
-		} else if(err.includes("texShape is undefined")) {
+		} else if(_err.includes("texShape is undefined")) {
 			explanation = "Please check if any of the output-dimensions contain '0' and if so, try to minimize the dimensionality reduction so that all zeroes disappear.";
-		} else if(err.includes("info is undefined")) {
+		} else if(_err.includes("info is undefined")) {
 			explanation = "Have you enabled debug-mode and also stopped training early? Please try disabling debug mode and re-train.<br><br>This might also be caused by calling `tf.disposeVariables()` somewhere...";
-		} else if(err.includes("expects targets to be binary matrices")) {
+		} else if(_err.includes("expects targets to be binary matrices")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
-		} else if(err.includes("oneHot: depth must be")) {
+		} else if(_err.includes("oneHot: depth must be")) {
 			explanation = "Try choosing another loss and metric function, like Mean Squared Error (MSE) or Mean Absolute Error (MAE).";
-		} else if(err.includes("Cannot find a connection between any variable and the result of the loss function")) {
+		} else if(_err.includes("Cannot find a connection between any variable and the result of the loss function")) {
 			explanation = "This is probably a bug in asanAI. This may happen when the function run_neural_network is called, but the model is not compiled (e.g. the compile_model function throws an exception). You should never see this. Sorry.";
-		} else if(err.includes("numeric tensor, but got string tensor")) {
+		} else if(_err.includes("numeric tensor, but got string tensor")) {
 			if($("#data_origin").val() == "csv") {
 				explanation = "Please check your CSV-file input to remove unneeded extra characters. Neither input nor output tensors should contain any strings, but only integers and floats.";
 			} else {
 				explanation = "Are you sure your input data is numeric?";
 			}
-		} else if(err.includes("input expected a batch of elements where each example has shape")) {
+		} else if(_err.includes("input expected a batch of elements where each example has shape")) {
 			explanation = "Does the input-shape match the data?";
-		} else if (err.includes("Error when checking input") && err.includes("but got array with shape")) {
+		} else if (_err.includes("Error when checking input") && _err.includes("but got array with shape")) {
 			if($("#data_origin").val() == "csv") {
 				explanation = "Have you chosen an 'own'-data-source with CSV-files in a network with convolutional layers?";
 			}
