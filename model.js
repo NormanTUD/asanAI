@@ -733,7 +733,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				("" + e).includes("Has Multi-Output") ||
 				("" + e).includes("Input shape contains 0") ||
 				("" + e).includes("is incompatible with layer") ||
-				("" + e).includes("targetShape is undefined")
+				("" + e).includes("targetShape is undefined") ||
+				("" + e).includes("is not fully defined")
 			) {
 				set_layer_background(i, "red");
 			} else {
@@ -825,6 +826,9 @@ async function create_model (old_model, fake_model_structure, force) {
 			wrn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
 		} else if(("" + e).includes("Input shape contains 0")) {
 			wrn("" + e);
+		} else if(("" + e).includes("is not fully defined")) {
+			wrn("" + e);
+			return;
 		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
 			wrn("Model could not be created because of problems with the input layer.");
 			return;
