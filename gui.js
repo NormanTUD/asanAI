@@ -6437,3 +6437,59 @@ function reload_js(src) {
 }
 
 // reload_all_js();
+
+function create_centered_window_with_text(parameter) {
+	// Create a div for the window
+	const windowDiv = document.createElement('div');
+	windowDiv.style.position = 'fixed';
+	windowDiv.style.top = '50%'; // Center vertically
+	windowDiv.style.left = '50%'; // Center horizontally
+	windowDiv.style.transform = 'translate(-50%, -50%)'; // Center using transform
+	windowDiv.style.width = '300px';
+	windowDiv.style.backgroundColor = 'white';
+	windowDiv.style.border = '1px solid #ccc';
+	windowDiv.style.padding = '10px';
+	windowDiv.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.2)';
+
+	// Create the "x" button
+	const closeButton = document.createElement('button');
+	closeButton.textContent = 'x';
+	closeButton.style.position = 'absolute';
+	closeButton.style.top = '5px';
+	closeButton.style.right = '5px';
+	closeButton.style.border = 'none';
+	closeButton.style.backgroundColor = 'transparent';
+	closeButton.style.cursor = 'pointer';
+
+	// Create the readonly textarea
+	const textarea = document.createElement('textarea');
+	textarea.readOnly = true;
+	textarea.style.width = '100%';
+	textarea.style.height = '200px';
+	textarea.textContent = parameter;
+
+	// Create the "Copy to Clipboard" button
+	const copyButton = document.createElement('button');
+	copyButton.textContent = language[lang]['copy_to_clipboard'];
+	copyButton.style.width = '100%';
+	copyButton.style.marginTop = '10px';
+
+	// Add a click event listener to copy the textarea's content to the clipboard
+	copyButton.addEventListener('click', () => {
+		textarea.select();
+		document.execCommand('copy');
+	});
+
+	// Add the textarea, copy button, and close button to the window
+	windowDiv.appendChild(closeButton);
+	windowDiv.appendChild(textarea);
+	windowDiv.appendChild(copyButton);
+
+	// Add an event listener to close the window when the "x" button is clicked
+	closeButton.addEventListener('click', () => {
+		document.body.removeChild(windowDiv);
+	});
+
+	// Append the window to the body to display it
+	document.body.appendChild(windowDiv);
+}

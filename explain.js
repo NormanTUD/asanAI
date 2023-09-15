@@ -2857,10 +2857,10 @@ async function _temml () {
 				$(e).attr("data-rendered", 1);
 				$(e).attr("data-latex", original_latex);
 				$("#tmp_equation").remove();
-				$(e).on( "contextmenu", function(ev) {
+				$(e).on("contextmenu", function(ev) {
 					ev.preventDefault();
-					alert(original_latex);
-				} );
+					create_centered_window_with_text(original_latex);
+				});
 			}
 		});
 	} catch (e) {
