@@ -1542,29 +1542,26 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			err("" + e);
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
 			wrn("" + e);
-		} else {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			if(("" + e).includes("model.layers[i]")) {
+		} else if(("" + e).includes("model.layers[i]")) {
 				dbg("model.layers[i] (" + i + ") is undefined");
 				return false;
-			} else if (("" + e).includes("model is undefined")) {
-				dbg("model is undefined");
-				return false;
-			} else if (("" + e).includes("model.input is undefined")) {
-				dbg("model.input is undefined");
-				return false;
-			} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
-				dbg("" + e);
-				return false;
-			} else if (("" + e).includes("code is undefined")) {
-				dbg("This error may happen when the whole DOM is deleted: " + e);
-				return false;
-			} else {
-				throw new Error("" + e);
-			}
+		} else if (("" + e).includes("model is undefined")) {
+			dbg("model is undefined");
+			return false;
+		} else if (("" + e).includes("model.input is undefined")) {
+			dbg("model.input is undefined");
+			return false;
+		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
+			dbg("" + e);
+			return false;
+		} else if (("" + e).includes("targetShape is undefined")) {
+			dbg("" + e);
+			return false;
+		} else if (("" + e).includes("code is undefined")) {
+			dbg("This error may happen when the whole DOM is deleted: " + e);
+			return false;
+		} else {
+			throw new Error("" + e);
 		}
 	}
 

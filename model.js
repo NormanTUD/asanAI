@@ -71,28 +71,28 @@ async function _create_model () {
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
 			return;
+		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
+			throw new Error("" + e);
+		} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
+			throw new Error("" + e);
+		} else if(("" + e).includes("targetShape is undefined")) {
+			wrn("" + e);
+		} else if(("" + e).includes("model is undefined")) {
+			wrn("Currently, the model is undefined. This may be fatal, but may also not be");
+		} else if(("" + e).includes("model.layers[i] is undefined")) {
+			wrn("" + e);
+		} else if(("" + e).includes("Inputs to DepthwiseConv2D should have rank") || ("" + e).includes("Inputs to SeparableConv2D should have rank")) {
+			wrn("" + e);
 		} else {
-			if(("" + e).includes("Input 0 is incompatible with layer")) {
-				throw new Error("" + e);
-			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
-				throw new Error("" + e);
-			} else if(("" + e).includes("model is undefined")) {
-				wrn("Currently, the model is undefined. This may be fatal, but may also not be");
-			} else if(("" + e).includes("model.layers[i] is undefined")) {
-				wrn("" + e);
-			} else if(("" + e).includes("Inputs to DepthwiseConv2D should have rank") || ("" + e).includes("Inputs to SeparableConv2D should have rank")) {
-				wrn("" + e);
+			await except("ERROR1", "" + e);
+			if(mode == "beginner") {
+				Swal.fire({
+					icon: "error",
+					title: "Oops [4]...",
+					text: "" + e
+				});
 			} else {
-				await except("ERROR1", "" + e);
-				if(mode == "beginner") {
-					Swal.fire({
-						icon: "error",
-						title: "Oops [4]...",
-						text: "" + e
-					});
-				} else {
-					l("ERROR: " + e);
-				}
+				l("ERROR: " + e);
 			}
 		}
 	}
@@ -732,7 +732,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				("" + e).includes("Negative dimension size caused by adding layer") ||
 				("" + e).includes("Has Multi-Output") ||
 				("" + e).includes("Input shape contains 0") ||
-				("" + e).includes("is incompatible with layer")
+				("" + e).includes("is incompatible with layer") ||
+				("" + e).includes("targetShape is undefined")
 			) {
 				set_layer_background(i, "red");
 			} else {
@@ -744,8 +745,6 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			}
 
 			await dispose(new_model);
-
-
 
 			throw new Error(e);
 		}
