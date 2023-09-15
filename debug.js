@@ -150,11 +150,11 @@ function log (...args) {
 }
 
 function header_error (msg) {
-	log("%c" + msg, "background: red; color: white");
+	console.log("%c" + msg, "background: red; color: white");
 }
 
 function header (msg) {
-	log("%c" + msg, "background: #222; color: #bada55");
+	console.log("%c" + msg, "background: #222; color: #bada55");
 }
 
 function traindebug (msg) {
@@ -165,7 +165,7 @@ function traindebug (msg) {
 
 function headerdatadebug (msg) {
 	if (window.location.href.indexOf("datadebug") > -1) {
-		log("%c" + msg, "background: #222; color: #bada55");
+		console.log("%c" + msg, "background: #222; color: #bada55");
 	}
 }
 
