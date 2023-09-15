@@ -1063,12 +1063,11 @@ async function compile_fake_model(layer_nr, layer_type) {
 	var ret = false;
 
 	try {
-		var fake_model, after_create_model_tensors;
+		var fake_model;
 
 		try {
 			var tmp_model_data;
 			[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
-			after_create_model_tensors = tf.memory()["numTensors"];
 
 			ret = tidy(() => {
 				try {
@@ -1086,8 +1085,6 @@ async function compile_fake_model(layer_nr, layer_type) {
 
 			ret = false;
 		}
-
-		var after_compile_tensors = tf.memory()["numTensors"];
 
 		await dispose(fake_model);
 
