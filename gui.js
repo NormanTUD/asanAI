@@ -2558,6 +2558,10 @@ async function set_config(index) {
 }
 
 async function wait_for_updated_page (seconds) {
+	if(!finished_loading) {
+		return;
+	}
+
 	assert(typeof seconds == undefined || typeof seconds == null || typeof seconds == "number", "seconds must beither be undefined, null or a number, but is " + typeof(seconds));
 
 	var start_time = Date.now() / 1000;
