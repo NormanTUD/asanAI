@@ -13,4 +13,4 @@ fi
 
 source ~/.asanai_test_env/bin/activate
 
-vi _run_tests.py
+python3 _run_tests.py
