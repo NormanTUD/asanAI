@@ -82,7 +82,7 @@ service apache2 restart
 if [[ -d "/docker/" ]]; then
 	echo "Not using visitors log in docker, yet..."
 else
-	mkdir /var/log/
+	mkdir -p /var/log/
 	touch /var/log/asanai_visitors.log
 	chmod -R 0666 /var/log/asanai_visitors.log
 fi
