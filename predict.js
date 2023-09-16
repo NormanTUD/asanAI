@@ -699,6 +699,7 @@ async function _print_predictions_text(count, example_predict_data) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
+
 		err("" + e);
 		return;
 	}

@@ -564,6 +564,11 @@ async function get_cached_json(url) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
+
+		if(Object.keys(e).includes("statusText")) {
+			e = e.statusText;
+		}
+
 		throw new Error("" + e);
 	}
 }
