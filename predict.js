@@ -365,8 +365,6 @@ function _predict_table_row (label, w, max_i, probability, i) {
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
-	await enable_everything();
-
 	var pred_tab = "prediction";
 
 	$("#" + pred_tab).html("").show();
