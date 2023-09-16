@@ -154,5 +154,7 @@ function _get_new_translations() {
 	});
 }
 
+// _get_new_translations()
+
 // Update translations on initial page load
 update_translations(); // await not possible

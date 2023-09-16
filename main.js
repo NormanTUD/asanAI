@@ -201,12 +201,6 @@ function init_set_all_options () {
 		} else if (event.altKey && event.key === "m") {
 			$("#visualization_tab_label").click();
 			$("#math_tab_label").click();
-		} else if (event.ctrlKey && event.key === "#") {
-			if($("#demomode").css("display") == "none") {
-				start_demo_mode(); // cannot be async
-			} else {
-				end_demo_mode(); // cannot be async
-			}
 		} else if (event.altKey && event.key === "v") {
 			$("[href='#visualization_ribbon']").click();
 		}

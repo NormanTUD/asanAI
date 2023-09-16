@@ -4669,13 +4669,6 @@ async function theme_choser () {
 
 }
 
-function move_to_demo_mode(element) {
-	var old_parent = move_element_to_another_div(element, "#demomode");
-	var res = old_parent;
-
-	return res;
-}
-
 // Returns: old parent div
 function move_element_to_another_div(element, new_element_id) {
 	var old_parent = $(element).parent();
@@ -4684,81 +4677,6 @@ function move_element_to_another_div(element, new_element_id) {
 
 
 	return old_parent;
-}
-
-async function repeat_while_demo() {
-	await show_prediction();
-
-	if (!(model.isTraining || started_training)) {
-		await train_neural_network();
-	}
-
-}
-
-async function start_demo_mode() {
-	if (!(model.isTraining || started_training)) {
-		train_neural_network(); // cannot be in async
-	}
-
-	await delay(1000);
-
-	var potential_items_to_move = {
-		"fcnn_tab": "fcnn_tab",
-		"lenet_tab_label": "lenet",
-		"alexnet_tab_label": "alexnet",
-		"math_tab_label": "math_tab",
-		"training_data_tab_label": "training_data_tab",
-		"predictcontainer": "predictcontainer"
-	};
-
-	var potential_items_to_move_keys = Object.keys(potential_items_to_move);
-
-	var items_to_move = [];
-
-	for (var i = 0; i < potential_items_to_move_keys.length; i++) {
-		var aria_hidden = $("#" + potential_items_to_move_keys[i]).attr("aria-hidden");
-		var display_mode = $("#" + potential_items_to_move_keys[i]).css("display");
-		log(potential_items_to_move_keys[i] + ", aria-hidden: " + aria_hidden + ", css-display: " + display_mode);
-		if (display_mode != "none") {
-			items_to_move.push(potential_items_to_move[potential_items_to_move_keys[i]]);
-		}
-	}
-
-	log(items_to_move);
-
-	for (var i = 0; i < items_to_move.length; i++) {
-		demo_mode_data_origin[items_to_move[i]] = move_to_demo_mode("#" + items_to_move[i]);
-		demo_mode_data_original_css[items_to_move[i]] = $("#" + items_to_move[i]).css("display");
-		$("#" + items_to_move[i]).show();
-	}
-
-	$("#mainsite").hide();
-	$("#demomode").show();
-
-	await delay(5000);
-	demo_interval = window.setInterval(repeat_while_demo, 10000);
-
-}
-
-async function end_demo_mode() {
-	if (demo_interval) {
-		window.clearInterval(demo_interval);
-	}
-
-	if (!(model.isTraining || started_training)) {
-		train_neural_network(); // cannot be async
-	}
-	var demo_mode_keys = Object.keys(demo_mode_data_origin);
-	for (var i = 0; i < demo_mode_keys.length; i++) {
-		move_element_to_another_div("#" + demo_mode_keys[i], demo_mode_data_origin[demo_mode_keys[i]]);
-		$("#" + demo_mode_keys[i]).css("display", demo_mode_data_original_css[demo_mode_keys[i]]);
-	}
-
-	$("#mainsite").show();
-	$("#demomode").hide();
-
-	await write_descriptions();
-
 }
 
 async function change_model_dataset() {
