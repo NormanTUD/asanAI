@@ -1376,7 +1376,6 @@ async function take_image_from_webcam_n_times (elem) {
 			l("Taking image " + (i + 1) + "/" + number);
 			await update_translations();
 			await take_image_from_webcam(elem, 1, i == 0);
-			window.scrollTo(0, document.body.scrollHeight);
 			await delay(delaybetween*1000);
 		}
 		await add_cosmo_point("took_images");
@@ -1416,7 +1415,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	}
 
 	// TODO: Cannot easily changed to span because of image map generation. The image map generator drawing canvas is, when not in a single line, not properly aligned.
-	$(category).find(".own_images").append(
+	$(category).find(".own_images").prepend(
 		"<div class=\"own_image_span\">" +
 			"<canvas id=\"" + id + "_canvas\" width=\"" + stream_width + "\" height=\"" + stream_height + "\"></canvas><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span>" +
 		"</div><br>"

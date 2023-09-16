@@ -1150,7 +1150,6 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 	await allow_editable_labels();
 
 	if(!is_cosmo_mode) {
-		window.scrollTo(0,0);
 		$("body").css("cursor", "default");
 	}
 
