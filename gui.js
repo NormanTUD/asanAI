@@ -4655,8 +4655,8 @@ function fix_viz_width () {
 async function theme_choser () {
 	var theme = $("#theme_choser").val();
 
-	document.getElementById("css_mode").href = theme + ".css";
-	document.getElementById("css_ribbon").href = "ribbon" + theme + ".css";
+	document.getElementById("css_mode").href = "css/" + theme + ".css";
+	document.getElementById("css_ribbon").href = "css/" + "ribbon" + theme + ".css";
 
 	set_cookie("theme", theme);
 
@@ -4672,7 +4672,6 @@ async function theme_choser () {
 function move_to_demo_mode(element) {
 	var old_parent = move_element_to_another_div(element, "#demomode");
 	var res = old_parent;
-
 
 	return res;
 }

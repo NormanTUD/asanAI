@@ -23,19 +23,20 @@
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
 
-		<?php _js("tf/tf.min.js"); ?>
-		<?php _js("base_wrappers.js"); ?>
-		<?php _js("libs/jstat.min.js"); ?>
-		<?php _js("custom_layers.js"); ?>
-		<?php _js("libs/jsmanipulate.js", 1, 1); ?>
-
-		<?php _js("libs/zip.js"); ?>
-		<?php _js("libs/md5.umd.min.js"); ?>
-		<?php _js("libs/jquery.js"); ?>
-		<?php _js("libs/jquery-ui.js"); ?>
-		<?php _js("debug.js"); ?>
-		<?php _js("variables.js"); ?>
 <?php
+		_js("tf/tf.min.js");
+		_js("base_wrappers.js");
+		_js("libs/jstat.min.js");
+		_js("custom_layers.js");
+		_js("libs/jsmanipulate.js", 1, 1);
+
+		_js("libs/zip.js");
+		_js("libs/md5.umd.min.js");
+		_js("libs/jquery.js");
+		_js("libs/jquery-ui.js");
+		_js("debug.js");
+		_js("variables.js");
+
 		include("initializing.php");
 		$theme_base = "light";
 
@@ -53,62 +54,60 @@
 			$theme_base = "light";
 		}
 
-?>
-		<?php _css("libs/jquery-ui.css"); ?>
-		<?php _css("style.css"); ?>
-		<?php _css("ribbon.css"); ?>
-<?php
+		_css("libs/jquery-ui.css");
+		_css("css/style.css");
+		_css("css/ribbon.css");
+
 		if(!isset($_GET["start_cosmo"])) {
-?>
-			<?php _css("ribbon_media.css"); ?>
-<?php
+			_css("css/ribbon_media.css");
 		} else {
-?>
-			<?php _css("cosmo.css"); ?>
-<?php
+			_css("css/cosmo.css");
 		}
+		_css("css/".$theme_base."mode.css", "css_mode");
+		_css("css/ribbon".$theme_base."mode.css", "css_ribbon");
+		_css("libs/prism/prism.min.css");
+		_css("libs/sweetalert2.min.css");
+
+		_js("libs/canvas-to-blob.min.js");
+
+		_js("libs/sweetalert2.all.js");
+
+		_js("libs/fireworks.js", 1, 1);
+		_js("libs/confetti.browser.min.js", 1, 1);
+
+		_js("safety.js");
+		_js("translations.js", 1, 1);
+		_js("tests.js");
+		_js("model.js");
+		_js("explain.js");
+		_js("data.js");
+		_js("gui.js");
+		_js("present.js");
+		_js("cosmo.js");
+		_js("train.js");
+		_js("predict.js");
+
+		_js("libs/d3.v5.min.js");
+		_js("libs/three.min.js");
+		_js("visualizations/OrbitControls.js");
+		_js("visualizations/SVGRenderer.js");
+		_js("visualizations/Projector.js");
+		_js("visualizations/util.js");
+		_js("visualizations/AlexNet.js");
+		_js("visualizations/LeNet.js");
+		_js("visualizations/FCNN.js");
+
+		_js("libs/chardinjs.js");
+		
+		_css("libs/chardinjs.css");
+
+		_css("libs/classic.min.css");
+		_js("libs/atrament.js", 1, 1);
+		_js("main.js");
+
+
+		_js("libs/plotly-latest.min.js", 1, 1);
 ?>
-		<?php _css($theme_base."mode.css", "css_mode"); ?>
-		<?php _css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
-		<?php _css("libs/prism/prism.min.css"); ?>
-		<?php _css("libs/sweetalert2.min.css"); ?>
-
-		<?php _js("libs/canvas-to-blob.min.js"); ?>
-
-		<?php _js("libs/sweetalert2.all.js"); ?>
-
-		<?php _js("libs/fireworks.js", 1, 1); ?>
-		<?php _js("libs/confetti.browser.min.js", 1, 1); ?>
-
-		<?php _js("safety.js"); ?>
-		<?php _js("translations.js", 1, 1); ?>
-		<?php _js("tests.js"); ?>
-		<?php _js("model.js"); ?>
-		<?php _js("explain.js"); ?>
-		<?php _js("data.js"); ?>
-		<?php _js("gui.js"); ?>
-		<?php _js("present.js"); ?>
-		<?php _js("cosmo.js"); ?>
-		<?php _js("train.js"); ?>
-		<?php _js("predict.js"); ?>
-		
-		<?php _js("libs/d3.v5.min.js"); ?>
-		<?php _js("libs/three.min.js"); ?>
-		<?php _js("visualizations/OrbitControls.js"); ?>
-		<?php _js("visualizations/SVGRenderer.js"); ?>
-		<?php _js("visualizations/Projector.js"); ?>
-		<?php _js("visualizations/util.js"); ?>
-		<?php _js("visualizations/AlexNet.js"); ?>
-		<?php _js("visualizations/LeNet.js"); ?>
-		<?php _js("visualizations/FCNN.js"); ?>
-		
-		<?php _js("libs/chardinjs.js"); ?>
-		
-		<?php _css("libs/chardinjs.css"); ?>
-
-		<?php _css("classic.min.css"); ?>
-		<?php _js("libs/atrament.js", 1, 1); ?>
-		<?php _js("main.js"); ?>
 		
 		<script>
 
@@ -152,8 +151,6 @@
 
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
-
-		<?php _js("libs/plotly-latest.min.js", 1, 1); ?>
 
 		<link rel="stylesheet" href="./libs/temml/Temml-Local.css">
 		<script src="./libs/temml/temml.min.js"></script>
@@ -1475,10 +1472,12 @@
 			<br>
 			<div id="load_msg"></div>
 		</div>
-		<?php _js("libs/prism/prism.js"); ?>
-		<?php _js("libs/prism/prism-python.min.js"); ?>
-		<?php _js("libs/jscolor.js", 1, 1); ?>
-		<?php _js("bottom.js"); ?>
-		<?php _js("libs/html2canvas.min.js"); ?>
+<?php
+		_js("libs/prism/prism.js");
+		_js("libs/prism/prism-python.min.js");
+		_js("libs/jscolor.js", 1, 1);
+		_js("bottom.js");
+		_js("libs/html2canvas.min.js");
+?>
 	</body>
 </html>
