@@ -569,7 +569,7 @@ async function get_cached_json(url) {
 			e = e.statusText;
 		}
 
-		throw new Error("" + e);
+		throw new Error(url + ": " + e);
 	}
 }
 
