@@ -1009,12 +1009,6 @@ var current_epoch = 0;
 
 var this_training_start_time = null;
 
-var demo_mode_data_origin = {};
-
-var demo_mode_data_original_css = {};
-
-var demo_interval = undefined;
-
 var current_layer_status_hash = "";
 
 var weights_files = {};
@@ -1397,8 +1391,6 @@ var last_status_hash = "";
 
 var manicule = null;
 
-var manicule_element_xpath = null;
-
 var currently_running_change_data_origin = 0;
 
 var click_on_graphs = 1;
@@ -1548,8 +1540,6 @@ var cosmo_predict_mode = "examples";
 var currently_predicting_webcam = false;
 
 var global_model_data = undefined;
-
-var old_tensor_number = 0;
 
 var relationScale = 1;
 
