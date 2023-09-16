@@ -442,17 +442,21 @@ $(document).ready(async function() {
 	} catch (e) {
 		wrn("Function check_number_values not found: " + e);
 	}
+
 	try {
 		setInterval(write_model_summary_wait, 1000);
 	} catch (e) {
 		wrn("Function write_model_summary_wait not found: " + e);
 	}
+
+	/*
 	try {
 		//setInterval(write_descriptions, 1000);
 		setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
 	} catch (e) {
 		wrn("Function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode not found: " + e);
 	}
+	*/
 
 	allow_edit_input_shape();
 

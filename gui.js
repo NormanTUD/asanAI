@@ -1520,8 +1520,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		allow_editable_labels();
 
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
 		return true;
 	};
 
@@ -1582,6 +1580,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	} catch (e) {}
 
 	last_updated_page = Date.now();
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 }
 
 async function change_optimizer() {
