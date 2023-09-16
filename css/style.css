@@ -3,6 +3,7 @@ html, body{
 	text-rendering: optimizeLegibility;
 	font-kerning: normal;
 	font-synthesis: weight style small-caps;
+	font-optical-sizing: auto;
 }
 
 html {
@@ -1165,4 +1166,8 @@ hr {
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	font-variant-caps: petite-caps;
+}
+
+::placeholder {
+	color: rgb(127, 127, 127);
 }
