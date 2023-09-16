@@ -557,8 +557,15 @@ async function get_cached_json(url) {
 	}
 
 	try {
-		var data = await $.getJSON(url);
-		_cached_json[url] = data;
+		var worked = 1;
+		var data = await $.getJSON(url).fail(function() {
+			worked = 0;
+			wrn("Could not get " + url);
+		});
+		if(worked) {
+			_cached_json[url] = data;
+		}
+
 		return data;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -569,7 +576,11 @@ async function get_cached_json(url) {
 			e = e.statusText;
 		}
 
-		throw new Error(url + ": " + e);
+		if(e.endsWith("examples.json")) {
+			throw new Error(url + ": " + e);
+		} else {
+			wrn(url + ": " + e);
+		}
 	}
 }
 
@@ -610,7 +621,10 @@ async function _get_configuration(index) {
 			data = await get_cached_json(data_url);
 
 			if (uploaded_model == "") {
-				data["keras"] = await get_cached_json(keras_url);
+				var new_data = await get_cached_json(keras_url);
+				if(new_data) {
+					data["keras"] = new_data;
+				}
 			} else {
 				data["keras"] = JSON.parse(uploaded_model);
 				uploaded_model = "";
