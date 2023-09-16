@@ -696,7 +696,10 @@ async function _print_predictions_text(count, example_predict_data) {
 	try {
 		example_predict_data = await get_cached_json(example_url);
 	} catch (e) {
-		err(e);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+		err("" + e);
 		return;
 	}
 

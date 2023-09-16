@@ -611,7 +611,12 @@ async function _get_configuration(index) {
 				uploaded_model = "";
 			}
 		} catch (e) {
-			log(e);
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+			
+			err(e);
+
 			return null;
 		}
 	}
