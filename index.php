@@ -70,7 +70,7 @@
 ?>
 		<?php _css($theme_base."mode.css", "css_mode"); ?>
 		<?php _css("ribbon".$theme_base."mode.css", "css_ribbon"); ?>
-		<?php _css("prism/prism.min.css"); ?>
+		<?php _css("libs/prism/prism.min.css"); ?>
 		<?php _css("libs/sweetalert2.min.css"); ?>
 
 		<?php _js("libs/canvas-to-blob.min.js"); ?>
@@ -1475,8 +1475,8 @@
 			<br>
 			<div id="load_msg"></div>
 		</div>
-		<?php _js("prism/prism.js"); ?>
-		<?php _js("prism/prism-python.min.js"); ?>
+		<?php _js("libs/prism/prism.js"); ?>
+		<?php _js("libs/prism/prism-python.min.js"); ?>
 		<?php _js("libs/jscolor.js", 1, 1); ?>
 		<?php _js("bottom.js"); ?>
 		<?php _js("libs/html2canvas.min.js"); ?>
