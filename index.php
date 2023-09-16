@@ -158,7 +158,7 @@
 		<link rel="stylesheet" href="./libs/temml/Temml-Local.css">
 		<script src="./libs/temml/temml.min.js"></script>
 
-		<link rel="apple-touch-icon" href="gui/apple-touch-icon-180x180.png">
+		<link rel="apple-touch-icon" href="_gui/apple-touch-icon-180x180.png">
 		<meta name="theme-color" content="#7299d2">
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
@@ -222,8 +222,8 @@
 		<div class="fireworks-container"></div>
 		<div id="mainsite" style="display: none">
 			<span id='cosmo_mode_header_line' style="display: none" class="show_in_cosmo_mode">
-				<img id="scads_logo_cosmo_mode" src="gui/scads_logo.svg" />
-				<img src="gui/logo_small.png" id="asanai_logo_cosmo" />
+				<img id="scads_logo_cosmo_mode" src="_gui/scads_logo.svg" />
+				<img src="_gui/logo_small.png" id="asanai_logo_cosmo" />
 				<img id="set_german_language" onclick='set_lang("de")' src='lang/_de.svg' />
 				<img id="set_english_language" onclick='set_lang("en")' src='lang/_en.svg' />
 				<a><img onclick='emergency_button()' id="emergency_button" src="lang/__de__notaus.png" /></a><br>
@@ -279,7 +279,7 @@
 					<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:110px">
-								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="gui/logo_small.png">
+								<img width=110 height=110 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="_gui/logo_small.png">
 							</div>
 						</div>
 					</div>
@@ -1114,7 +1114,7 @@
 									<br>
 									<button class="only_when_webcam" id="webcam_start_stop" onclick="get_data_from_webcam()"><span class="TRANSLATEME_enable_webcam"></span></button>
 								</span>
-								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="gui/rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
+								<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera()"><img alt="Switch camera" src="_gui/rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
 								<div id="last_layer_shape_warning"></div>
 								<div class='webcam_data only_when_webcam hide_in_cosmo_mode'>
 								<span class="TRANSLATEME_number_of_images_in_series"></span>: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 40?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
@@ -1365,7 +1365,7 @@
 									<span id="own_files" class="no_autochoose_next_on_click">
 										<div id="generate_images_msg_wrapper" style="display:none">
 											<div id="generate_images_msg"></div>
-											<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;" />
+											<img src="_gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;" />
 										</div>
 										<div class="hide_when_image">
 											<div id="predict_own">
@@ -1378,7 +1378,7 @@
 
 										<span id='webcam_tab' class="hide_when_no_image custom_image_data" style="padding-right: 50px; border-right: thin double rgb(0, 0, 0);">
 											<button class="only_when_webcam hide_in_cosmo_mode large_button no_border_button" id="show_webcam_button" onclick="show_webcam();">&#128247;</button><br>
-											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="gui/rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
+											<button style="display: none" class="only_when_front_and_back_camera" onclick="switch_to_next_camera_predict()"><img alt="Switch camera" src="_gui/rotate_camera.svg" width=32 height=32><span class="TRANSLATEME_switch_to_other_cam"></span></button>
 											<span style='display: block' class="full_example_image_prediction display_contents">
 												<span id="webcam"></span>
 												<span id="webcam_prediction" style="overflow: scroll;"></span>
@@ -1469,9 +1469,9 @@
 		</div>
 
 		<div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; pointer-events: none; background-color: white; user-select: none;" id="loading_icon_wrapper">
-			<img src="gui/scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 8vw">
-			<img src="gui/logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 8vw">
-			<img src="gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;">
+			<img src="_gui/scads_logo.svg" alt="Loading..." style="position: absolute; left: 10px; top: 10px; height: 8vw">
+			<img src="_gui/logo.svg" alt="Loading..." style="position: absolute; right: 10px; top: 10px; height: 8vw">
+			<img src="_gui/loading_icon.gif" alt="Loading..." style="max-width: 20vw;">
 			<br>
 			<div id="load_msg"></div>
 		</div>

@@ -1625,7 +1625,7 @@ function set_learning_rate(val) {
 
 function write_model_summary_wait () {
 	try {
-		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='gui/loading_icon.gif' /></center>";
+		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='_gui/loading_icon.gif' /></center>";
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
@@ -2879,7 +2879,7 @@ function favicon_default() {
 }
 
 function favicon_spinner() {
-	change_favicon("gui/loading_favicon.gif");
+	change_favicon("_gui/loading_favicon.gif");
 }
 
 
@@ -5632,13 +5632,13 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	var code = `<form class='no_mark${classes}' ${required_skills} onkeydown="return event.key != 'Enter';">
 		<span class='atrament_settings'>
-			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='gui/pen.png'/></a></span>
-			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='gui/fill_icon.svg'></a></span>
-			<!--<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='gui/eraser_icon.svg'/></a></span>-->
+			<span class='invert_in_dark_mode'><a class='atrament_buttons green_icon' onclick="atrament_data['${idname}']['atrament'].mode = 'brush'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/pen.png'/></a></span>
+			<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'fill'; $(this).parent().find('.pen_size_slider').hide(); $(this).parent().find('.jscolor').show(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/fill_icon.svg'></a></span>
+			<!--<span class='invert_in_dark_mode'><a class='atrament_buttons' onclick="atrament_data['${idname}']['atrament'].mode = 'erase'; $(this).parent().find('.pen_size_slider').show(); $(this).parent().find('.jscolor').hide(); green_marker(this); hide_colorpicker_for_eraser('${idname}');"><img width=32 src='_gui/eraser_icon.svg'/></a></span>-->
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<span onclick="clear_attrament('${idname}');${customfunc}" class='atrament_buttons_small'>&#10060;</span><br>
 			<span class='colorpicker_elements'>
-				<img onclick='chose_nearest_color_picker(this)' src='gui/Colorwheel.svg' width=32 />
+				<img onclick='chose_nearest_color_picker(this)' src='_gui/Colorwheel.svg' width=32 />
 				<input type="text" name="value" id='${idname}_colorpicker' class="show_data jscolor" style='width: 50px' value="#000000" onchange="atrament_data['${idname}']['atrament'].color='#'+this.value;" />
 			</span>
 			<input class="show_data pen_size_slider" type="range" min="1" oninput="atrament_data['${idname}']['atrament'].weight = parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off" />

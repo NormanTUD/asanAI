@@ -126,7 +126,7 @@ function each_skill_level_matches (c, s) {
 }
 
 class ManiC {
-	constructor(e, imageUrl = "gui/next.svg") {
+	constructor(e, imageUrl = "_gui/next.svg") {
 		//logt("ManiC e:", e);
 
 		remove_manicule(0);
