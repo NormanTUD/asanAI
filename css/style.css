@@ -6,6 +6,7 @@ html, body{
 	font-optical-sizing: auto;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-stretch: ultra-condensed;
 }
 
 html {
