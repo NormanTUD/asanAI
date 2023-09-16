@@ -247,7 +247,7 @@
 ?>
 			<div id="ribbon" style="overflow: hidden;">
 				<ul id="tablist">
-					<li><span class="symbol_button" data-intro="Hide Ribbon" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
+					<li><span class="symbol_button" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 					<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="manage_download()">&#128190;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 					<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
@@ -262,7 +262,7 @@
 <?php
 				}
 ?>
-					<li><span class="symbol_button" data-intro="Shows the manual page." title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
+					<li><span class="symbol_button" title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();">&#128218;</span></li>
 					<li><span id="tiny_graph" style="display:none"></span></li>
 				</ul>
 
@@ -316,7 +316,7 @@
 
 					<div class="ribbon-group-sep expert_mode_only"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group expert_mode_only" data-intro="The loss specifies how the quality of the model should be evaluated while training. The metric is just for you, so you have a basic idea of how good the trained model is.">
+					<div class="ribbon-group expert_mode_only">
 						<div class="ribbon-toolbar" style="width: 210px">
 							<table>
 								<tr>
@@ -361,7 +361,7 @@
 						<div class="ribbon-group-title">Layers</div>
 					</div>
 
-					<div class="ribbon-group" data-intro="You can set basic hyperparameters here">
+					<div class="ribbon-group">
 						<div class="ribbon-toolbar" style="width: 135px">
 							<table>
 								<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
@@ -376,7 +376,7 @@
 
 
 					<div id="image_resize_dimensions" class="hide_when_no_image">
-						<div class="ribbon-group" data-intro="Special settings for image-networks. Allows resizing and limiting the number of images per category.">
+						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width:150px">
 								<table>
 									<tr>
@@ -403,12 +403,12 @@
 						<div class="ribbon-group-sep-hr"><hr></div>
 					</div>
 
-					<div class="ribbon-group" data-intro="Basic training settings are here. You can also start training here.">
+					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
 									<td colspan=2>
-										<button class="train_neural_network_button start_training" data-intro="Starts training. Shortcut: CTRL ," style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
+										<button class="train_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 									</td>
 								</tr>
 								<tr class="expert_mode_only">
@@ -436,7 +436,7 @@
 				<div id="tf_ribbon_settings" class="ribbon_tab_content" title="General">
 					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
-							<fieldset style="border-width: 0px" id="backend_chooser" data-intro="CPU is faster for small datasets while WebGL is faster for larger datasets if you have a GPU"> 
+							<fieldset style="border-width: 0px" id="backend_chooser"> 
 								<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
 								<label for="svg_renderer">CPU</label>
 
@@ -449,7 +449,7 @@
 				}
 				</script>
 							<hr>
-							<fieldset style="border-width: 0px" id="mode_chooser" data-intro="The beginner settings check model configuration for plausibility (only from a technical point of view, not for plausibility of the data analysis methods). If you chose 'expert', no checks on the model plausibility are made."> 
+							<fieldset style="border-width: 0px" id="mode_chooser"> 
 							<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
 				$checked = 1;
 				if(array_key_exists("mode", $_COOKIE) && $_COOKIE["mode"] == "expert") {
@@ -484,7 +484,7 @@
 					<div class="only_when_multiple_webcams" style="display: none">
 						<div class="ribbon-group-sep"></div>
 						<div class="ribbon-group-sep-hr"><hr></div>
-						<div class="ribbon-group" data-intro="Here you can set the webcam">
+						<div class="ribbon-group">
 							<div class="ribbon-toolbar">
 								<select id="which_webcam" onchange="restart_webcams()">
 								</select>
@@ -495,12 +495,12 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Set options regarding the weights here.">
+					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
-								       <td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
-								       <td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
+									<td><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</td>
+									<td><input type="checkbox" value=1 checked id="shuffle_before_each_epoch"></td>
 								</tr>
 								<tr>
 									<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
@@ -526,7 +526,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Here you can set specific options that are then applied to all layers.">
+					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
@@ -677,7 +677,7 @@
 
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="The optimizer tries to minimize the loss. Here you can set the optimizer's settings.">
+					<div class="ribbon-group">
 <?php
 						include("optimizer.php");
 ?>
@@ -688,7 +688,7 @@
 				<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="Augmentation" style="display: none">
 					<div class="ribbon-group-sep"></div>
 					<div class="ribbon-group-sep-hr"><hr></div>
-					<div class="ribbon-group" data-intro="Set options regarding automatic data augmentation here.">
+					<div class="ribbon-group">
 						<div class="ribbon-toolbar">
 							<table>
 								<tr>
@@ -729,7 +729,7 @@
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 									<table>
-										<tr data-intro="Number of iterations to create the maximally-activated-neuron-patterns">
+										<tr>
 											<td><span class="TRANSLATEME_iterations"></span></td>
 											<td><input type="number" min="1" value="2" id="max_activation_iterations" style="width: 80px;"></td>
 										</tr>
@@ -750,15 +750,15 @@
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
-									<tr data-intro="Max. Number of Neurons/Filters in FCNN">
+									<tr>
 										<td><span class="TRANSLATEME_max_neurons_fcnn"></span>?</td>
 										<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 									</tr>
-									<tr data-intro="Show the input layer in the visualizations?">
+									<tr>
 										<td><span class="TRANSLATEME_show_input_layer"></span>?</td>
 										<td><input class="show_data" type='checkbox' value="1" checked onclick="toggle_show_input_layer()" id="show_input_layer"></td>
 									</tr>
-									<tr data-intro="How many seconds before re-plotting the batch-graph?">
+									<tr>
 										<td><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</td>
 										<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 									</tr>
@@ -774,19 +774,19 @@
 						<div class="ribbon-group">
 							<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 								<table>
-									<tr data-intro="In the predict page, show visual bars instead of numbers">
+									<tr>
 										<td><span class="TRANSLATEME_show_bars_instead_of_numbers"></span>?</td>
 										<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
 									</tr>
-									<tr data-intro="Visualize images by grouping visually">
+									<tr>
 										<td><span class="TRANSLATEME_visualize_images_in_grid"></span>?</td>
 										<td><input class="show_data" type='checkbox' checked id="visualize_images_in_grid"></td>
 									</tr>
-									<tr data-intro="Visualize images by grouping visually">
+									<tr>
 										<td><span class="TRANSLATEME_number_of_grid_images"></span>?</td>
 										<td><input class="show_data" type='number' value='50' id="max_number_of_images_in_grid" min=0 max=1000 style='width: 50px;'></td>
 									</tr>
-									<tr data-intro="Allow math mode for all layers" class="expert_mode_only">
+									<tr class="expert_mode_only">
 										<td><span class="TRANSLATEME_allow_math_mode_for_all_layers"></span>? (ALPHA!)</td>
 										<td><input type='checkbox' onclick='write_model_to_latex_to_page();' id="allow_math_mode_for_all_layers"></td>
 									</tr>
@@ -803,7 +803,7 @@
 							<div class="ribbon-group">
 								<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 									<table>
-										<tr data-intro="Show raw data in layer data flow?">
+										<tr>
 											<td><span class="TRANSLATEME_show_raw_data"></span>?</td>
 											<td><input class="show_data" type='checkbox' id="show_raw_data"></td>
 										</tr>
@@ -1009,14 +1009,14 @@
 							<div id="navbar1" class="user_select_none" style="display: flex">
 								<ul class="navi_list">
 									<li><a id="training_data_tab_label" href="#training_data_tab"><span class='TRANSLATEME_data'></span></a></li>
-									<li><a href="#visualization_tab" id="visualization_tab_label" data-intro="Show different kind of visualizations to help you design the network you want."><span class='TRANSLATEME_model_visualization'></span></a></li>
-									<li><a href="#summary_tab" onclick="write_model_summary_wait()" data-intro="Shows the model.summary of the currently configured model"><span class="TRANSLATEME_summary"></span></a></li>
+									<li><a href="#visualization_tab" id="visualization_tab_label"><span class='TRANSLATEME_model_visualization'></span></a></li>
+									<li><a href="#summary_tab" onclick="write_model_summary_wait()"><span class="TRANSLATEME_summary"></span></a></li>
 									<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
 									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span></a></li>
-									<li><a id="tfvis_tab_label" href="#tfvis_tab" data-intro="Shows the training data (if possible) and the training progress."><span class="TRANSLATEME_training"></span></a></li>
-									<li id="predict_tab_label"><a href="#predict_tab" data-intro="Allows you to predict data from the trained model."><span class="TRANSLATEME_predict"></span></a></li>
-									<li><a id="code_tab_label" href="#code_tab" data-intro="Shows Python/NodeJS/TensorFlow.js-HTML-Code of the currently configured neural network."><span class="TRANSLATEME_code"></span></a></li>
+									<li><a id="tfvis_tab_label" href="#tfvis_tab"><span class="TRANSLATEME_training"></span></a></li>
+									<li id="predict_tab_label"><a href="#predict_tab"><span class="TRANSLATEME_predict"></span></a></li>
+									<li><a id="code_tab_label" href="#code_tab"><span class="TRANSLATEME_code"></span></a></li>
 								</ul>
 								<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()">&#128470;</span>
 							</div>
@@ -1262,7 +1262,7 @@
 								</div>
 
 								<div id="math_tab" class="tab" class="tab">
-									<table data-intro="Options for the math mode.">
+									<table>
 										<tr>
 											<td>Number of decimal points (0 = no limit)</td>
 											<td><input class="show_data" type="number" style="width: 50px" value="3" min="0" max="16" onchange="write_model_to_latex_to_page(1)" id="decimal_points_math_mode"></td>
@@ -1274,7 +1274,7 @@
 
 							<div id="tfvis_tab" class="tab" style="float: right; width: 100%">
 								<br>
-								<button class="train_neural_network_button hide_in_cosmo_mode" data-intro="Starts training. Shortcut: CTRL ," style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
+								<button class="train_neural_network_button hide_in_cosmo_mode" style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">
