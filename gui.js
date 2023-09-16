@@ -2064,13 +2064,14 @@ async function add_layer(item) {
 	$(".remove_layer").prop("disabled", false);
 	$(".remove_layer").show();
 
+	$($(".remove_layer")[real_nr + 1]).removeAttr("disabled")
+
 	await save_current_status();
 
 	await rename_labels();
 	await predict_handdrawn();
 
 	l("Added layer");
-
 }
 
 function sortable_layers_container(layers_container) {
@@ -2898,6 +2899,8 @@ async function enable_everything() {
 	$("#ribbon,select,input,checkbox,.add_remove_layer_button").prop("disabled", false);
 	await write_descriptions();
 	await highlight_code();
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 }
 
 function detect_kernel_initializer(original_kernel_initializer_data) {
