@@ -1,5 +1,6 @@
 html, body{
 	scroll-behavior: smooth;
+	text-rendering: optimizeLegibility;
 }
 
 html {
