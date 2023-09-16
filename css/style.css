@@ -4,6 +4,8 @@ html, body{
 	font-kerning: normal;
 	font-synthesis: weight style small-caps;
 	font-optical-sizing: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 html {
