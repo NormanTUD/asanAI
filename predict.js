@@ -380,9 +380,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	var estr = "";
 
-	try {
-		var predict_data = null;
+	var predict_data = null;
 
+	try {
 		var is_image_prediction = await input_shape_is_image();
 		var has_html = false;
 
@@ -459,6 +459,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		}
 
 		if(!tensor_shape_matches_model(predict_data)) {
+			await dispose(predict_data);
+
 			var expected = eval(JSON.stringify(model.layers[0].input.shape));
 			expected[0] = "null";
 			l("Error: Expected input shape: [" + eval(JSON.stringify(expected)).join(", ") + "], but got [" + predict_data.shape.join(", ") + "]");
@@ -472,17 +474,16 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			predict_data = tidy(() => { return divNoNan(predict_data, divide_by); });
 		}
 
-		//log(predict_data.arraySync());
-
 		var mi = model.input.shape;
 		mi[0] = 1;
 
 		var predictions_tensor = null;
-		dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 		$("#predict_error").html("").hide();
 		try {
 			predictions_tensor = await model.predict([predict_data], [1, 1]);
 		} catch (e) {
+			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
+
 			if(("" + e).includes("got array with shape")) {
 				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
 			} else {
@@ -545,6 +546,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		await dispose(predict_data);
 		await dispose(predictions_tensor);
 	} catch (e) {
+		await dispose(predict_data);
 		estr = "" + e;
 		if(!estr.includes("yped")) {
 			if(!estr.includes("Expected input shape")) {
@@ -560,7 +562,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	allow_editable_labels();
 
-
 	if(ok) {
 		l("Prediction done");
 	} else {
@@ -571,6 +572,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			l("ERROR: Prediction failed");
 		}
 	}
+
+	await dispose(predict_data);
 
 	return str;
 }
