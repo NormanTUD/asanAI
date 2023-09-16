@@ -1500,8 +1500,6 @@ async function fireworks_and_reload (reload=1, waittime=10000) {
 
 	in_fireworks = true;
 
-	remove_manicule(1);
-
 	$(".fireworks-container").show();
 	var fw = new Fireworks(document.querySelector(".fireworks-container"));
 	fw.start();
@@ -1509,8 +1507,6 @@ async function fireworks_and_reload (reload=1, waittime=10000) {
 	fw.stop();
 
 	in_fireworks = false;
-
-	remove_manicule(1);
 
 	if(reload) {
 		location.reload();

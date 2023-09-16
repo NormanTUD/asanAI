@@ -13,14 +13,6 @@ async function add_cosmo_point (name, show_manicule=1) {
 		if(show_manicule) {
 			await chose_next_manicule_target();
 		}
-
-		if(name == "eigene_webcam") {
-			/*
-			await chose_next_manicule_target = function () {
-				log("Hack to get infinite loop...");
-			}
-			*/
-		}
 	} else {
 		current_skills = {};
 	}
@@ -55,9 +47,7 @@ async function show_cosmo_elements_depending_on_current_skills () {
 				if(last_manually_removed_manicule_element && get_element_xpath(elements[i]) == get_element_xpath(last_manually_removed_manicule_element)) {
 					//log("Not reinserting recently manually removed element (xpath: " + get_element_xpath(last_manually_removed_manicule_element) + ")");
 				} else {
-					if(manicule === null) {
-						new ManiC(elements[i]);
-					} else {
+					if(!manicule === null) {
 						var last_queue_xpath = "EMPTY";
 						if(manicule_queue.length) {
 							last_queue_xpath = get_element_xpath(manicule_queue[manicule_queue.length - 1]);
@@ -87,21 +77,6 @@ async function show_cosmo_elements_depending_on_current_skills () {
 	}
 }
 
-function remove_manicule (remove=1) {
-	//log("Removing manicule");
-	if(typeof(manicule) == "object" && manicule !== null && remove && Object.keys(manicule).includes("element")) {
-		last_manually_removed_manicule_element = manicule.element;
-		if(!$(manicule.element).data("keep_cosmo")) {
-			$(manicule.element).removeClass("cosmo");
-		}
-	}
-	$(".manicule").remove();
-	manicule = null;
-}
-
-
-
-
 let checkSubset = (parentArray, subsetArray) => {
 	return subsetArray.every((el) => {
 		return parentArray.includes(el);
@@ -123,192 +98,6 @@ function each_skill_level_matches (c, s) {
 	}
 
 	return true;
-}
-
-class ManiC {
-	constructor(e, imageUrl = "_gui/next.svg") {
-		//logt("ManiC e:", e);
-
-		remove_manicule(0);
-
-		if(started_training) {
-			//log("Training started");
-			return;
-		}
-
-		if(e) {
-			var $e = $(e);
-
-			if($e.data("no_manicule") == "1") {
-				return;
-			}
-
-			if(is_hidden_or_has_hidden_parent($e)) {
-				return;
-			}
-
-			if(is_presenting) {
-				return;
-			}
-
-			manicule_element_xpath = get_element_xpath($e[0]);
-
-			this.element = e;
-			this.image = new Image();
-			this.image.src = imageUrl;
-
-			//log("Manicule Selector:", e);
-
-			//var bottom_y = $e[0].getBoundingClientRect().top + $e[0].getBoundingClientRect().height
-
-			this.image.style.position = "absolute";
-			this.image.style.display = "block"; // changed to block so that the image is shown by default
-
-			this.image.style.zIndex = 100000;
-
-			this.hand_height = 50;
-			this.hand_width = 50;
-
-			var largest_element = find_largest_element_with_coordinates(this.element);
-			var real_x = largest_element["x"];
-			var real_y = largest_element["y"];
-			var real_bottom = largest_element["bottom"];
-			var real_left = largest_element["left"];
-			var real_right = largest_element["right"];
-
-			var assertion_test = real_x !== undefined || real_y !== undefined || real_bottom !== undefined;
-			if(!assertion_test) {
-				err("ERROR. largest_element empty:", largest_element);
-			}
-			assert(assertion_test, "Could not get largest element, see Logs");
-
-			this.image.style.width = `${this.hand_height}px`;
-
-			if(real_y) {
-				this.image.top =`${real_y}px`;
-			}
-
-			this.image.left = `${real_left}px`;
-
-			this.image.classList.add("manicule");
-			this.image.classList.add("invert_in_dark_mode");
-
-			//document.body.appendChild(this.image);
-
-			this.moveAroundLeftRight();
-
-			manicule = this;
-
-			invert_elements_in_dark_mode();
-
-			var window_width = $(window).width();
-			var window_height = $(window).height();
-
-			var x_position_manicule_centered = $(this.image).offset()["left"] - (window_width / 2);
-			var y_position_manicule_centered = $(this.image).offset()["top"] - (window_height / 2);
-		} else {
-			//log("Empty e");
-		}
-
-		cosmo_debugger();
-
-		//console.trace();
-	}
-
-	get_pos(el) {
-		assert(!!el, "el is empty");
-
-		//log(el);
-		if(el) {
-			var rect = el.getBoundingClientRect();
-			return rect;
-		} else {
-			log(el);
-			throw new Error("el was empty");
-		}
-	}
-
-	moveAroundLeftRight () {
-		var width = this.get_pos(this.element).width;
-
-		var largest_element = find_largest_element_with_coordinates(this.element);
-		var real_x = largest_element["x"];
-		var real_y = largest_element["y"];
-		var real_bottom = largest_element["bottom"];
-		var real_top = largest_element["top"];
-		var real_left = largest_element["left"];
-		var real_right = largest_element["right"];
-		var real_width = largest_element["width"];
-
-		var position_switch = $(this.element).attr("data-position");
-		var correction_shift = 0;
-		var position;
-
-		if(position_switch == "fixed") {
-			position = "fixed";
-		} else {
-			position = "absolute";
-		}
-
-		if(real_width) {
-			correction_shift = -real_width / 2;
-		}
-
-		var element_left = parse_int(real_left + correction_shift);
-
-		assert(!isNaN(element_left), "element_left is not a number");
-		assert(!isNaN(real_x) || !isNaN(real_y) || !isNaN(real_width), "neither real_x nor real_y nor real_width is not a number");
-
-		// calculate the radius of the circle
-		var radius = 20;
-
-		// set up the animation
-		$(this.image).css("pointer-events", "none");
-		this.image.style.animation = "moveAroundLeftRight 2s linear infinite";
-		this.image.style.animationName = "moveAroundLeftRight";
-		// define the keyframes for the animation
-
-		var keyframes = `
-			0% {
-				position: ${position};
-				transform: translateX(0px);
-			}
-			25% {
-				position: ${position};
-				transform: translateX(${radius}px);
-			}
-			50 % {
-				position: ${position};
-				transform: translateX(-${radius}px);
-			}
-			100% {
-				position: ${position};
-				transform: translateX(0px);
-			}
-		`;
-
-		// add the keyframes to a style sheet
-		var styleSheet = document.getElementById("manicule_animation_css");
-		styleSheet.innerHTML = `
-			@keyframes moveAroundLeftRight {
-				${keyframes}
-			}
-		`;
-
-		$(".manicule").css("left", element_left);
-		if(real_y) {
-			$(".manicule").css("top", real_y);
-		} else if (real_top) {
-			$(".manicule").css("top", real_top);
-		} else if (real_bottom) {
-			$(".manicule").css("bottom", real_bottom);
-		}
-	}
-
-	hide() {
-		this.image.style.display = "none";
-		cosmo_debugger();
-	}
 }
 
 function find_largest_element_with_coordinates(element) {
@@ -347,140 +136,15 @@ function find_largest_element_with_coordinates(element) {
 	return { width: maxWidth, height: maxHeight, largestChild: largestElement, x: x, y: y, left: left, right: right, "top": t, bottom: bottom };
 }
 
-function find_unclicked_items ($x, possible_items) {
-	var req = $x.data("required_skills");
-
-	var req_full = {};
-
-	if(typeof(req) == "string") {
-		req_full = parse_required_skills(req);
-	}
-
-	var possible = true;
-	//log(">>>>>>>>>>>>>>> TESTING: ", $x);
-	for (var n = 0; n < Object.keys(req_full).length; n++) {
-		var current_skill = Object.keys(req_full)[n];
-		var current_element_skill_level = req_full[Object.keys(req_full)[n]];
-		var full_req_part_is_part_of_current_skills = Object.keys(current_skills).includes(current_skill);
-		var current_user_skill = current_skills[current_skill];
-		var required_nrs = req_full[current_skill];
-
-		var allows_zero = current_element_skill_level.includes(0);
-
-		if(!full_req_part_is_part_of_current_skills) {
-			// because it has the value 0:
-			var is_not_in_current_skill = !Object.keys(current_skills).includes(current_skill);
-			if(is_not_in_current_skill) {
-				current_user_skill = 0;
-			}
-			var is_possible = (current_element_skill_level == 0 || allows_zero) || current_element_skill_level.includes(current_user_skill);
-
-			if(!is_possible) {
-				//if(get_element_xpath($x[0]).includes("start_stop_training")) {
-
-				//log("!!!! FALSE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-				//}
-				possible = false;
-			}
-		} else {
-			var current_element_skill_level_matches_required_skill_number = required_nrs.every(val => current_element_skill_level.includes(val));
-
-			if(!current_element_skill_level_matches_required_skill_number) {
-				log("XXX");
-				possible = false;
-			}
-		}
-
-		/*
-		log("===================================")
-		log("Element with index", i);
-		log("req_full:", req_full);
-		log("show_again_full:", show_again_full);
-		log("current_skills:", current_skills);
-		log("current_skill:", current_skill);
-		log("current_element_skill_level:", current_element_skill_level);
-		log("current_user_skill:", current_user_skill);
-		log("required_nrs:", required_nrs);
-		log("allows_zero:", allows_zero);
-		log("is_possible:", is_possible);
-		log("possible:", possible);
-		if(!possible) {
-			log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		}
-		log("===================================")
-		*/
-	}
-
-	if(possible) {
-		possible_items.push({"item": $x, "length": Object.keys(req_full).length});
-
-		//log("!!!! TRUE: ", "$x:", $x, "full_req_part_is_part_of_current_skills:", full_req_part_is_part_of_current_skills, "current_user_skill:", current_user_skill, "allows_zero:", allows_zero, "current_element_skill_level:", current_element_skill_level, "is_possible:", is_possible, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-	}
-
-	return possible_items;
-}
-
 async function chose_next_manicule_target () {
 	if(in_fireworks) {
 		log("Not chosing manicule because a firework is showing");
-		remove_manicule();
 		return;
 	}
 
 	if(generating_images) {
-		//log("Not chosing manicule because it is generating images");
-		remove_manicule();
 		return;
 	}
-	var possible_items = [];
-
-	var cosmo = $(".cosmo");
-
-	cosmo.each((i, x) => {
-		var $x = $(x);
-		if((!manicule || !manicule.element || get_element_xpath($x[0]) != get_element_xpath(manicule.element))) {
-			if(!$x.data("clicked")) {
-				possible_items = find_unclicked_items($x, possible_items);
-				//log("unclicked items:", possible_items);
-			} else {
-				possible_items = show_again_when_new_skill_acquired($x, possible_items);
-				//log("unclicked + show again items:", possible_items);
-			}
-		}
-	});
-
-	//log("Possible indices:", possible_items);
-
-	if(!possible_items.length) {
-		//log("POSSIBLE ITEMS WERE EMPTY", possible_items, possible_items.length);
-		remove_manicule(0);
-		//log("No possible indices found for Manicule!");
-		return;
-	}
-
-	var possible_elements = [];
-	for (var i = 0; i < possible_items.length; i++) {
-		var _i = possible_items[i]["item"];
-		var _l = possible_items[i]["length"];
-		if(_i) {
-			$(_i).show();
-			if(!$(_i).data("no_manicule")) {
-				possible_elements.push(_i[0]);
-			}
-		}
-	}
-
-	//log(possible_elements);
-
-	var index_to_chose = possible_elements.length - 1;
-	$(possible_elements[index_to_chose]).show();
-	//log("Chosing ", possible_elements[index_to_chose]);
-	remove_manicule(0);
-	var chosen_element = possible_elements[index_to_chose];
-	new ManiC(chosen_element);
-	$(possible_elements[0]).on("click", function () {
-		$(this).attr("data-clicked", 1);
-	});
 
 	await set_text_for_elements_depending_on_cosmo_level();
 
@@ -1023,10 +687,8 @@ async function fit_to_window (_parent = window, _child = $("#maindiv")) {
 }
 
 async function click_next_button () {
-	remove_manicule(1);
 	await train_neural_network();
 	$("#next_button").attr("data-clicked", "1");
-	remove_manicule(1);
 }
 
 function do_images_overlap (imageId1, imageId2) {

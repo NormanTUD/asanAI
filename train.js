@@ -56,10 +56,6 @@ async function train_neural_network () {
 			$(".auto_image_captions").remove();
 			$("#webcam_in_cosmo").show();
 			return;
-			/*
-			await add_cosmo_point("started_training", 0);
-			remove_manicule(1);
-			*/
 		} else {
 			show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
 
