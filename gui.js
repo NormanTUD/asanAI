@@ -555,6 +555,7 @@ async function get_cached_json(url) {
 	if (Object.keys(_cached_json).includes(url)) {
 		return _cached_json[url];
 	}
+
 	try {
 		var data = await $.getJSON(url);
 		_cached_json[url] = data;
