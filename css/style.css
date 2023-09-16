@@ -1,6 +1,8 @@
 html, body{
 	scroll-behavior: smooth;
 	text-rendering: optimizeLegibility;
+	font-kerning: normal;
+	font-synthesis: weight style small-caps;
 }
 
 html {
