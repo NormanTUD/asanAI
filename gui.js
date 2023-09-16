@@ -3562,36 +3562,6 @@ function is_hidden_or_has_hidden_parent(element) {
 	return false;
 }
 
-function start_chardin_tour() {
-	disable_hidden_chardin_entries();
-	chardinJs = $("body").chardinJs($("body"));
-	chardinJs.start();
-}
-
-function disable_hidden_chardin_entries() {
-	var items = $("[data-intro],[data-introdisabled]");
-
-	for (var i = 0; i < items.length; i++) {
-		var target = $(items[i]);
-		if (is_hidden_or_has_hidden_parent(target)) {
-			attr_change_name(target, "data-intro", "data-introdisabled");
-		} else {
-			attr_change_name(target, "data-introdisabled", "data-intro");
-		}
-	}
-
-	chardinJs = $("body").chardinJs($("body"));
-
-	var activated_items = $("[data-intro]");
-
-	if (activated_items.length > 0) {
-		$("#chardinjs_help_icon").removeClass("disabled_symbol").css("cursor", "help").click(start_chardin_tour);
-	} else {
-		$("#chardinjs_help_icon").addClass("disabled_symbol").css("cursor", "not-allowed").attr("onclick", "").unbind("click");
-	}
-
-}
-
 async function update_input_shape() {
 	await set_input_shape("[" + get_input_shape().join() + "]");
 	layer_structure_cache = null;

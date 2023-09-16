@@ -98,10 +98,6 @@
 		_js("visualizations/LeNet.js");
 		_js("visualizations/FCNN.js");
 
-		_js("libs/chardinjs.js");
-		
-		_css("libs/chardinjs.css");
-
 		_css("libs/classic.min.css");
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
@@ -146,7 +142,6 @@
 					print " null";
 				}
 			?>;
-			var chardinJs = $("body").chardinJs($("body"));
 
 			var load_time = "";
 
@@ -211,7 +206,7 @@
 		}
 ?>
 	</head>
-	<body id='body' data-chardin-sequenced="true">
+	<body id='body'>
 		<span style="display: none"><input value="dieses leere feld ist dafür da, damit der erste wert immer als referenzwert für die check_number_values gilt, damit es einen default-wert gibt, von dem aus die farbe aus dem theme gewählt werden kann. ziemlich hacky..."></input></span>
 		<noscript>
 			<span style="font-size: 50px; color: red">You must enable JavaScript for this site to work. Please add an exception to NoScript if you have it installed.</span>
@@ -259,7 +254,6 @@
 					<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 					<li><span id="custom_webcam_training_data_small" style="display: none" class="only_when_webcam hide_in_cosmo_mode input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>
 					<li><span id="custom_image_training_data_small" style="display: none" class="only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_image_training()">&#128444;</span></li>
-					<li><span class="symbol_button disabled_symbol" data-intro="Shows help. Click anywhere on the page to go to the next help, or press escape to exit help mode." title="Help" style="cursor: help" id="chardinjs_help_icon" onclick="start_chardin_tour()">&#10067;</span></li>
 <?php
 				if($GLOBALS["use_db"]) {
 ?>

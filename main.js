@@ -114,18 +114,14 @@ function init_tabs () {
 	l(language[lang]["initializing_tabs"]);
 
 	var tabs_settings = {
-		activate: function (event, ui) {
-			disable_hidden_chardin_entries();
-		},
+		activate: function (event, ui) {},
 		hide: { effect: "fade", duration: 0 },
 		show: { effect: "fade", duration: 0 }
 	};
 
 	if(is_cosmo_mode) {
 		tabs_settings = {
-			activate: function (event, ui) {
-				disable_hidden_chardin_entries();
-			},
+			activate: function (event, ui) {},
 			hide: { effect: "fade", duration: 0 },
 			show: { effect: "fade", duration: 0 }
 		};

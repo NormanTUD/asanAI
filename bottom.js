@@ -514,16 +514,9 @@ favicon_default();
 enable_disable_kernel_images();
 enable_disable_grad_cam();
 
-$(document).keyup(function(e) {
-	if (e.key === "Escape") { // escape key maps to keycode `27`
-		chardinJs.stop();
-	}
-});
-
 if(window.location.href.indexOf("function_debugger") > -1) {
 	add_function_debugger();
 }
-
 
 async function init_own_image_files() {
 	$(".own_image_files").unbind("change");
