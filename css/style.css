@@ -1160,3 +1160,7 @@ hr {
 .tab {
 	display: none;
 }
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	font-variant-caps: petite-caps;
+}
