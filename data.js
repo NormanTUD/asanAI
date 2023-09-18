@@ -1671,7 +1671,6 @@ async function confusion_matrix(classes) {
 	var table_data = {};
 	
 	for (var i = 0; i < imgs.length; i++) {
-		log("A");
 		var x = imgs[i];
 
 		var img_tensor = tidy(() => {
@@ -1685,7 +1684,6 @@ async function confusion_matrix(classes) {
 			}
 		});
 
-		log("B");
 		if(img_tensor === null) {
 			wrn("Could not load image from pixels from this element:", x);
 			await dispose(img_tensor);
@@ -1693,7 +1691,6 @@ async function confusion_matrix(classes) {
 		}
 
 
-		log("C");
 		var res;
 		try {
 			res = tidy(() => {
@@ -1710,13 +1707,11 @@ async function confusion_matrix(classes) {
 			continue;
 		}
 
-		log("D");
 		if(!res) {
 			dbg("res is empty");
 			continue;
 		}
 
-		console.log("E, res:", res);
 		var predicted_tensor = res;
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {
@@ -1724,11 +1719,9 @@ async function confusion_matrix(classes) {
 			continue;
 		}
 
-		log("F");
 		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 		var predicted_category = labels[predicted_index];
 
-		log("G");
 		var src = x.src;
 		var correct_category = extractCategoryFromURL(src);
 
@@ -1742,12 +1735,9 @@ async function confusion_matrix(classes) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
-		log("H");
 		await dispose(img_tensor);
 		await dispose(predicted_tensor);
 	}
-
-	console.log(table_data);
 
 	var str = `<table>` ;
 	for (var i = 0; i <= classes.length; i++) {
@@ -1769,9 +1759,17 @@ async function confusion_matrix(classes) {
 						text = table_data[classes[i - 1]][classes[j - 1]];
 					}
 					if(classes[i - 1] == classes[j - 1]) {
-						str += `<td style='background-color: #83F511'>${text}</td>`;
+						if(text == `0`) {
+							str += `<td>${text}</td>`;
+						} else {
+							str += `<td style='background-color: #83F511'>${text}</td>`;
+						}
 					} else {
-						str += `<td style='background-color: #F51137'>${text}</td>`;
+						if(text == `0`) {
+							str += `<td>${text}</td>`;
+						} else {
+							str += `<td style='background-color: #F51137'>${text}</td>`;
+						}
 					}
 				}
 			}
