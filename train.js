@@ -548,6 +548,8 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			$("#show_after_training").show();
 		}
+
+		await confusion_matrix_to_page();
 	};
 
 	var fit_data = {
