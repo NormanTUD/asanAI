@@ -1670,6 +1670,8 @@ async function confusion_matrix(classes) {
 	
 	var table_data = {};
 	
+	var num_items = 0;
+
 	for (var i = 0; i < imgs.length; i++) {
 		var x = imgs[i];
 
@@ -1737,6 +1739,13 @@ async function confusion_matrix(classes) {
 
 		await dispose(img_tensor);
 		await dispose(predicted_tensor);
+
+		num_items++;
+	}
+
+	if(!num_items) {
+		wrn("confusion_matrix: Could not get any items!");
+		return "";
 	}
 
 	var str = `<table>` ;
