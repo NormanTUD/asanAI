@@ -1792,6 +1792,10 @@ async function confusion_matrix(classes) {
 }
 
 async function confusion_matrix_to_page () {
+	if(!labels) {
+		return;
+	}
+
 	var confusion_matrix_html = await confusion_matrix(labels);
 
 	if(confusion_matrix_html) {
