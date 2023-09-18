@@ -1015,7 +1015,7 @@
 									<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
 									<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span></a></li>
 									<li><a id="tfvis_tab_label" href="#tfvis_tab"><span class="TRANSLATEME_training"></span></a></li>
-									<li id="predict_tab_label"><a href="#predict_tab"><span class="TRANSLATEME_predict"></span></a></li>
+									<li><a id="predict_tab_label" href="#predict_tab"><span class="TRANSLATEME_predict"></span></a></li>
 									<li><a id="code_tab_label" href="#code_tab"><span class="TRANSLATEME_code"></span></a></li>
 								</ul>
 								<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()">&#128470;</span>
@@ -1406,6 +1406,8 @@
 										</div>
 									</div>
 								</div>
+
+								<div id="confusion_matrix"></div>
 
 								<div id="layer_visualizations_tab" style="display: none" class="tab">
 								</div>

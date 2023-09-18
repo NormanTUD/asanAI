@@ -1790,3 +1790,13 @@ async function confusion_matrix(classes) {
 	return str;
 
 }
+
+async function confusion_matrix_to_page () {
+	var confusion_matrix_html = await confusion_matrix(labels);
+
+	if(confusion_matrix_html) {
+		$("#confusion_matrix").html("<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html);
+	} else {
+		$("#confusion_matrix").html("");
+	}
+}
