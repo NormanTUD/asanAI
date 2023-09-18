@@ -6221,6 +6221,7 @@ function show_overlay(text, title="") {
 		overlay.style.display = "flex";
 		overlay.style.alignItems = "center";
 		overlay.style.justifyContent = "center";
+		overlay.style.userSelect = "none";
 		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
 
