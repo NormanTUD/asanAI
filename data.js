@@ -1792,7 +1792,7 @@ async function confusion_matrix(classes) {
 }
 
 async function confusion_matrix_to_page () {
-	if(!labels) {
+	if(!labels && labels.length != 0) {
 		return;
 	}
 
