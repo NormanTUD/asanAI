@@ -1748,7 +1748,7 @@ async function confusion_matrix(classes) {
 		return "";
 	}
 
-	var str = `<table>` ;
+	var str = `<table style="confusion_matrix_table">` ;
 	for (var i = 0; i <= classes.length; i++) {
 		if(i == 0) {
 			str += `<tr>`;

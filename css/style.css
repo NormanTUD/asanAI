@@ -1178,3 +1178,7 @@ hr {
 .confusion_matrix_tx {
 	border: 1px rgb(127, 127, 127) solid;
 }
+
+.confusion_matrix_table {
+	border-collapse: collapse;
+}
