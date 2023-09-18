@@ -1275,6 +1275,7 @@
 							<div id="tfvis_tab" class="tab" style="float: right; width: 100%">
 								<br>
 								<button class="train_neural_network_button hide_in_cosmo_mode" style="width: 150px;" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
+								<div id="confusion_matrix_training"></div>
 								<br>
 								<div class="overlay_each_other">
 									<div class="show_only_in_cosmo_mode" style="display: none">

@@ -1795,8 +1795,11 @@ async function confusion_matrix_to_page () {
 	var confusion_matrix_html = await confusion_matrix(labels);
 
 	if(confusion_matrix_html) {
-		$("#confusion_matrix").html("<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html);
+		var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
+		$("#confusion_matrix").html(str);
+		$("#confusion_matrix_training").html(str);
 	} else {
 		$("#confusion_matrix").html("");
+		$("#confusion_matrix_training").html("");
 	}
 }
