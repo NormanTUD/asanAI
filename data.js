@@ -1752,16 +1752,16 @@ async function confusion_matrix(classes) {
 	for (var i = 0; i <= classes.length; i++) {
 		if(i == 0) {
 			str += `<tr>`;
-			str += `<th><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+			str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
 			for (var j =  0; j < classes.length; j++) {
-				str += `<th>${classes[j]}</th>`;
+				str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
 			}
 			str += `</tr>`;
 		} else {
 			str += `<tr>`;
 			for (var j =  0; j <= classes.length; j++) {
 				if(j == 0) {
-					str += `<th>${classes[i - 1]}</th>`;
+					str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
 				} else {
 					var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
 					if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
@@ -1769,15 +1769,15 @@ async function confusion_matrix(classes) {
 					}
 					if(classes[i - 1] == classes[j - 1]) {
 						if(text == `0`) {
-							str += `<td>${text}</td>`;
+							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
-							str += `<td style='background-color: #83F511'>${text}</td>`;
+							str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
 						}
 					} else {
 						if(text == `0`) {
-							str += `<td>${text}</td>`;
+							str += `<td class="confusion_matrix_tx">${text}</td>`;
 						} else {
-							str += `<td style='background-color: #F51137'>${text}</td>`;
+							str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
 						}
 					}
 				}

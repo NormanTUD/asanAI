@@ -1174,3 +1174,7 @@ hr {
 ::placeholder {
 	color: rgb(127, 127, 127);
 }
+
+.confusion_matrix_tx {
+	border: 1px rgb(127, 127, 127) solid;
+}
