@@ -524,7 +524,7 @@ async function get_fit_data () {
 		}
 		$("#network_has_seen_msg").show();
 
-		await confusion_matrix_to_page();
+		confusion_matrix_to_page(); // async not possible
 	};
 
 	callbacks["onTrainEnd"] = async function () {
@@ -550,6 +550,8 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			$("#show_after_training").show();
 		}
+
+		confusion_matrix_to_page(); // async not possible
 	};
 
 	var fit_data = {
