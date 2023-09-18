@@ -1752,7 +1752,7 @@ async function confusion_matrix(classes) {
 	for (var i = 0; i <= classes.length; i++) {
 		if(i == 0) {
 			str += `<tr>`;
-			str += `<th><i>Classes</i></th>`;
+			str += `<th><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
 			for (var j =  0; j < classes.length; j++) {
 				str += `<th>${classes[j]}</th>`;
 			}
