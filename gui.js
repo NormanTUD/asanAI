@@ -953,8 +953,7 @@ function model_add_python_structure (layer_type, data) {
 	${data.filters},
 	(${data.kernel_size}),
 ${python_data_to_string(data, ["filters", "kernel_size"])}
-)
-`;
+))\n`;
 	} else if(layer_type == "Dense") {
 		return `model.add(layers.Dense(
 ${python_data_to_string(data)}
