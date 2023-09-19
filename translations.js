@@ -140,9 +140,9 @@ function _get_new_translations() {
 		try {
 			language = JSON.parse(data);
 
-			update_translations(1);
+			update_translations(1); // await not possible
 		} catch (e) {
-			write_error(e);
+			write_error(e); // await not possible
 		}
 	}
 
