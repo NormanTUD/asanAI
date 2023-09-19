@@ -1199,10 +1199,11 @@ function python_data_to_string (data) {
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
 
-		if(key == "strides") {
-			strings.push(`\tstrides=(${data.strides.join(", ")})`);
+		if(key == "strides" || key == "dilation_rate") {
+			assert(typeof(data[key]) == "object", "data[key] for " + key + " is not an object!");
+			strings.push(`\t${key}=(${data[key].join(", ")})`);
 		} else if(key == "use_bias") {
-			strings.push(`use_bias=${data.use_bias ? "True" : "False"}`);
+			strings.push(`\tuse_bias=${data.use_bias ? "True" : "False"}`);
 		} else {
 			strings.push(`\t${key}=${or_none(data[key])}`);
 		}
