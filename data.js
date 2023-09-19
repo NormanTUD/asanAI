@@ -1800,6 +1800,10 @@ async function confusion_matrix_to_page () {
 		return;
 	}
 
+	if(is_cosmo_mode) {
+		return;
+	}
+
 	var confusion_matrix_html = await confusion_matrix(labels);
 
 	if(confusion_matrix_html) {
