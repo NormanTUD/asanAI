@@ -1190,6 +1190,27 @@ function model_add_python_structure (layer_type, data) {
 	return str;
 }
 
+function python_data_to_string (data) {
+	var strings = [];
+	var string = "";
+
+	var keys = Object.keys(data);
+
+	for (var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+
+		if(key == "strides") {
+			strings.push(`\tstrides=(${data.strides.join(", ")})`);
+		} else if(key == "use_bias") {
+			strings.push(`use_bias=${data.use_bias ? "True" : "False"}`);
+		} else {
+			strings.push(`\t${key}=${or_none(data[key])}`);
+		}
+	}
+
+	string = strings.join(",\n");
+}
+
 function convert_to_python_string(obj) {
 	var pythonCode = "{";
 	var i = 0;
