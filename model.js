@@ -77,6 +77,8 @@ async function _create_model () {
 			throw new Error("" + e);
 		} else if(("" + e).includes("targetShape is undefined")) {
 			wrn("" + e);
+		} else if(("" + e).includes("ReferenceError")) {
+			wrn("" + e);
 		} else if(("" + e).includes("model is undefined")) {
 			wrn("Currently, the model is undefined. This may be fatal, but may also not be");
 		} else if(("" + e).includes("model.layers[i] is undefined")) {
@@ -182,7 +184,21 @@ async function compile_model () {
 		model_config_hash = new_model_config_hash;
 		model.compile(global_model_data);
 	} catch (e) {
-		await except("ERROR2", e);
+		if(("" + e).includes("model is empty")) {
+			set_model_layer_warning(0, "" + e);
+
+			for (var i = 0; i < $("#layer_setting").length; i++) {
+				set_layer_background(i, "red")
+			}
+		} else {
+			await except("ERROR2", e);
+
+			return;
+		}
+	}
+
+	for (var i = 0; i < $("#layer_setting").length; i++) {
+		set_layer_background(i, "")
 	}
 
 	try {
