@@ -197,7 +197,7 @@ function is_numeric(str) {
 	return !isNaN(str) && !isNaN(parse_float(str));
 }
 
-function quote_python(item) {
+function quote_python(item, nobrackets=0) {
 	if (item === undefined) {
 		return "";
 	}
@@ -207,13 +207,13 @@ function quote_python(item) {
 	} else {
 		if (is_numeric(item)) {
 			return item;
-		} else if (/^\d+(,\d+)*$/.test(item)) {
+		} else if (!nobrackets && /^\d+(,\d+)*$/.test(item)) {
 			return "[" + item + "]";
 		} else if (item == "True" || item == "False") {
 			return item;
-		} else if (item.includes("get_shape")) {
+		} else if (!nobrackets && item.includes("get_shape")) {
 			return item;
-		} else if (item.startsWith("[")) {
+		} else if (!nobrackets && item.startsWith("[")) {
 			return item;
 		} else {
 			return "\"" + item + "\"";
@@ -1190,26 +1190,37 @@ function model_add_python_structure (layer_type, data) {
 	return str;
 }
 
-function python_data_to_string (data) {
+function python_data_to_string (_data, _except=[]) {
+	assert(typeof(_data) == "object", "_data is not an object for python_data_to_string");
+	assert(typeof(_except) == "object", "_except is not an object for python_data_to_string");
+
 	var strings = [];
 	var string = "";
 
-	var keys = Object.keys(data);
+	var keys = Object.keys(_data);
 
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
 
-		if(key == "strides" || key == "dilation_rate") {
-			assert(typeof(data[key]) == "object", "data[key] for " + key + " is not an object!");
-			strings.push(`\t${key}=(${data[key].join(", ")})`);
-		} else if(key == "use_bias") {
-			strings.push(`\tuse_bias=${data.use_bias ? "True" : "False"}`);
-		} else {
-			strings.push(`\t${key}=${or_none(data[key])}`);
+		if(!_except.includes(key)) {
+			if(key == "strides" || key == "dilation_rate" || key == "pool_size") {
+				assert(typeof(_data[key]) == "object", "_data[key] for " + key + " is not an object!");
+				strings.push(`\t${key}=(${_data[key].join(", ")})`);
+			} else if(key == "use_bias") {
+				strings.push(`\tuse_bias=${_data.use_bias ? "True" : "False"}`);
+			} else {
+				if(typeof(_data[key]) == "string") {
+					strings.push(`\t${key}=${quote_python(or_none(_data[key]), 1)}`);
+				} else {
+					strings.push(`\t${key}=${or_none(_data[key])}`);
+				}
+			}
 		}
 	}
 
 	string = strings.join(",\n");
+
+	return string + "\n";
 }
 
 function convert_to_python_string(obj) {
