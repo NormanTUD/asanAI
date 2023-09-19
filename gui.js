@@ -947,32 +947,12 @@ function model_add_python_structure (layer_type, data) {
 		return `model.add(layers.Conv2D(
 	${data.filters},
 	(${data.kernel_size}),
-	strides=(${data.strides.join(", ")}),
-	padding=${or_none(data.padding)},
-	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)})
+${python_data_to_string(data, ["filters", "kernel_size"])}
 )
 `;
 	} else if(layer_type == "Dense") {
 		return `model.add(layers.Dense(
-	units=${data.units},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
 		str += `model.add(layers.UpSampling2D(
@@ -1143,42 +1123,19 @@ function model_add_python_structure (layer_type, data) {
 ))\n`;
 
 	} else if (layer_type == "LeakyReLU") {
-		str += `model.add(layers.LeakyReLU(alpha=${data.alpha}))\n`;
+		str += `model.add(layers.LeakyReLU(
+${python_data_to_string(data)}
+))\n`;
 	} else if (layer_type == "ELU") {
 		str += `model.add(layers.ELU(alpha=${data.alpha}))\n`;
 	} else if (layer_type == "DepthwiseConv1D") {
 		str += `model.add(layers.DepthwiseConv1D(
-	kernel_size=${data.kernel_size},
-	strides=${data.strides},
-	padding=${or_none(data.padding)},
-	depth_multiplier=${data.depth_multiplier},
-	dilation_rate=${data.dilation_rate},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "DepthwiseConv2D") {
 		str += `model.add(layers.DepthwiseConv2D(
 	(${data.kernel_size}),
-	strides=(${data.strides.join(", ")}),
-	padding=${or_none(data.padding)},
-	depth_multiplier=${data.depth_multiplier},
-	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data, ['kernel_size'])}
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return "model.add(layers.Flatten())\n";
@@ -1199,6 +1156,8 @@ function python_data_to_string (_data, _except=[]) {
 
 	var keys = Object.keys(_data);
 
+	_except.push("input_shape");
+
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
 
@@ -1206,11 +1165,15 @@ function python_data_to_string (_data, _except=[]) {
 			if(key == "strides" || key == "dilation_rate" || key == "pool_size") {
 				assert(typeof(_data[key]) == "object", "_data[key] for " + key + " is not an object!");
 				strings.push(`\t${key}=(${_data[key].join(", ")})`);
-			} else if(key == "use_bias") {
-				strings.push(`\tuse_bias=${_data.use_bias ? "True" : "False"}`);
+			} else if(key == "use_bias" || key == "trainable") {
+				var true_or_false = 0;
+				if(_data[key] == "True" || _data[key] == "true" || _data[key] == "1" || _data[key] == 1) {
+					true_or_false = 1;
+				}
+				strings.push(`\tuse_bias=${true_or_false ? "True" : "False"}`);
 			} else {
 				if(typeof(_data[key]) == "string") {
-					strings.push(`\t${key}=${quote_python(or_none(_data[key]), 1)}`);
+					strings.push(`\t${key}=${or_none(_data[key])}`);
 				} else {
 					strings.push(`\t${key}=${or_none(_data[key])}`);
 				}
@@ -1220,7 +1183,7 @@ function python_data_to_string (_data, _except=[]) {
 
 	string = strings.join(",\n");
 
-	return string + "\n";
+	return string;
 }
 
 function convert_to_python_string(obj) {
