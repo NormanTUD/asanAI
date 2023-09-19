@@ -734,20 +734,21 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				("" + e).includes("Input shape contains 0") ||
 				("" + e).includes("is incompatible with layer") ||
 				("" + e).includes("targetShape is undefined") ||
-				("" + e).includes("is not fully defined")
+				("" + e).includes("is not fully defined") ||
+				("" + e).includes("The dilationRate argument must be an integer")
 			) {
 				set_layer_background(i, "red");
+				set_model_layer_warning(i, "" + e);
 			} else {
 				set_model_layer_warning(i, "" + e);
 				l("ERROR: " + e);
 				console.log("ORIGINAL e: ", e);
 				log(type);
 				log(data);
+				throw new Error(e);
 			}
 
 			await dispose(new_model);
-
-			throw new Error(e);
 		}
 
 		return false;
