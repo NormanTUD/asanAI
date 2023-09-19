@@ -735,7 +735,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				("" + e).includes("is incompatible with layer") ||
 				("" + e).includes("targetShape is undefined") ||
 				("" + e).includes("is not fully defined") ||
-				("" + e).includes("The dilationRate argument must be an integer")
+				("" + e).includes("The dilationRate argument must be an integer") ||
+				("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
 			) {
 				set_layer_background(i, "red");
 				set_model_layer_warning(i, "" + e);
