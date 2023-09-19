@@ -394,6 +394,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["activation", "recurrentActivation"].includes(keyname) && ["LeakyReLU", "elu", "hardSigmoid", "linear", "relu", "relu6",  "selu", "sigmoid", "softmax", "softplus", "softsign", "tanh", "swish", "mish"].includes(value)) ||
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
+		(keyname == "biasConstraint" && ["maxNorm", "minNorm"].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
 		(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
 		(keyname == "targetShape" && is_number_array(value)) ||
