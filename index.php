@@ -443,11 +443,6 @@
 								<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
 								<label for="webgl_renderer">WebGL</label>
 							</fieldset>
-				<script>
-				if(force_cpu_backend) {
-					$($("input[name='backend_chooser']")[0]).click().trigger("change")
-				}
-				</script>
 							<hr>
 							<fieldset style="border-width: 0px" id="mode_chooser"> 
 							<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php

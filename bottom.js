@@ -571,5 +571,9 @@ install_memory_debugger();
 load_time = Date().toLocaleString();
 
 $(document).ready(function() {
+	if(force_cpu_backend) {
+		$($("input[name='backend_chooser']")[0]).click().trigger("change")
+	}
+
 	set_mode();
 });
