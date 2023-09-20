@@ -2546,35 +2546,9 @@ async function set_config(index) {
 }
 
 async function wait_for_updated_page (seconds) {
-	if(!finished_loading) {
-		return;
+	while (waiting_updated_page_uuids.length) {
+		await delay(10);
 	}
-
-	assert(
-		typeof seconds == undefined ||
-		typeof seconds == null ||
-		typeof seconds == "number"
-	, "seconds must beither be undefined, null or a number, but is " + typeof(seconds));
-
-	var start_time = Date.now() / 1000;
-	var updated_page_wait_uuid = uuidv4();
-	var i = 0;
-	l(`Waiting for the last page update to be ${seconds} seconds in the past...`);
-
-	while (Date.now() - last_updated_page < (seconds * 1000)) {
-		if(i && i % 10 == 0) {
-			dbg(`${updated_page_wait_uuid}: Waiting for the page update to be ${seconds} seconds in the past...`);
-		}
-		await delay(200);
-		i++;
-	}
-
-	var end_time = Date.now() / 1000;
-
-	var took = end_time - start_time;
-
-	l("Done waiting for page update");
-	dbg(`${updated_page_wait_uuid}: Done waiting, took ${took}s`);
 }
 
 async function init_dataset() {

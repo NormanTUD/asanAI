@@ -180,10 +180,18 @@ async function compile_model () {
 		return;
 	}
 
+	while (!model) {
+		await delay(10);
+	}
+
 	try {
 		model_config_hash = new_model_config_hash;
 		model.compile(global_model_data);
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("model is empty")) {
 			set_model_layer_warning(0, "" + e);
 
@@ -191,7 +199,11 @@ async function compile_model () {
 				set_layer_background(i, "red")
 			}
 		} else {
-			await except("ERROR2", e);
+			if(e) {
+				await except("ERROR2", "" + e);
+			} else {
+				await except("ERROR2", "Unknown error");
+			}
 
 			return;
 		}

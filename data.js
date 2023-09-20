@@ -1648,7 +1648,9 @@ async function get_own_tensor_data (element) {
 
 async function confusion_matrix(classes) {
 	if(!classes.length) {
-		wrn("confusion_matrix: No classes found");
+		if(current_epoch < 2) {
+			wrn("confusion_matrix: No classes found");
+		}
 		return "";
 	}
 
