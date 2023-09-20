@@ -1484,6 +1484,10 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 		waiting_updated_page_uuids.push(updated_page_uuid);
 
+		/*
+		console.log("updated_page trace:");
+		console.trace();
+		*/
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
@@ -5961,7 +5965,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 			//log("item_selector", item_selector);
 			var ui_elements = $(item_selector);
 			if(ui_elements.length >= 1) {
-				var element = ui_elements.val(val).trigger("change");
+				var element = ui_elements.val(val);
 				if(trigger) {
 					element.trigger("change");
 				}
