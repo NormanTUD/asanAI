@@ -1478,21 +1478,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	const functionName = "updated_page"; // Specify the function name
 
-	// Declare intention to enter the critical section
-	functionStates[functionName] = 1;
-
-	// Attempt to enter the door_in
-	await tryEnterDoorIn(functionName, updated_page_uuid);
-
-	// Enter the waiting room (State 3)
-	functionStates[functionName] = 3;
-	waitingRoomQueues[functionName].push(updated_page_uuid);
-
-	// Wait for other processes to get through door_in
-	await waitForDoorIn(functionName, updated_page_uuid);
-
-	// Enter the critical section (State 4)
-	functionStates[functionName] = 4;
+	await waitForAccessToCriticalSection(functionName, updated_page_uuid);
 
 	try {
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);

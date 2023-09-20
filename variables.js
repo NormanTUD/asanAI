@@ -1643,3 +1643,21 @@ async function exitCriticalSection (functionName, this_run_uuid) {
 	// Exit the waiting room
 	exitWaitingRoom(functionName, this_run_uuid);
 }
+
+async function waitForAccessToCriticalSection (functionName, _uuid) {
+	// Declare intention to enter the critical section
+	functionStates[functionName] = 1;
+
+	// Attempt to enter the door_in
+	await tryEnterDoorIn(functionName, _uuid);
+
+	// Enter the waiting room (State 3)
+	functionStates[functionName] = 3;
+	waitingRoomQueues[functionName].push(_uuid);
+
+	// Wait for other processes to get through door_in
+	await waitForDoorIn(functionName, _uuid);
+
+	// Enter the critical section (State 4)
+	functionStates[functionName] = 4;
+}
