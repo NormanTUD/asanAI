@@ -1478,11 +1478,11 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	const functionName = "updated_page"; // Specify the function name
 
 	try {
-		while (waiting_updated_page_uuids.length) {
+		waiting_updated_page_uuids.push(updated_page_uuid);
+
+		while (waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
 			await delay(10);
 		}
-
-		waiting_updated_page_uuids.push(updated_page_uuid);
 
 		/*
 		console.log("updated_page trace:");

@@ -198,9 +198,12 @@ async function compile_model () {
 			for (var i = 0; i < $("#layer_setting").length; i++) {
 				set_layer_background(i, "red")
 			}
+		} else if (("" + e).includes("model is empty")) {
+			err("" + e)
+			return;
 		} else {
 			if(e) {
-				await except("ERROR2", "" + e);
+				err(e);
 			} else {
 				await except("ERROR2", "Unknown error");
 			}

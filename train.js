@@ -923,6 +923,8 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 }
 
 async function run_neural_network (recursive=0) {
+	await wait_for_updated_page(2);
+
 	if(is_cosmo_mode) {
 		$("#lenet_example_cosmo").parent().hide();
 		await delay(200);
