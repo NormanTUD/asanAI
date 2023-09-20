@@ -1482,10 +1482,12 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		await waitForAccessToCriticalSection(functionName, updated_page_uuid);
 
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
-		log("updated_page_internal done! now exiting critical section");
+		err("updated_page_internal done! now exiting critical section");
 
 		await exitCriticalSection(functionName, updated_page_uuid);
 	} catch (e) {
+		await exitCriticalSection(functionName, updated_page_uuid);
+
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
@@ -1502,35 +1504,26 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			wrn("" + e);
 		} else if(("" + e).includes("model.layers[i]")) {
 			dbg("model.layers[i] (" + i + ") is undefined");
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("model is undefined")) {
 			dbg("model is undefined");
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("model.input is undefined")) {
 			dbg("model.input is undefined");
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
 			dbg("" + e);
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("targetShape is undefined")) {
 			dbg("" + e);
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("code is undefined")) {
 			dbg("This error may happen when the whole DOM is deleted: " + e);
-			await exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else {
-			await exitCriticalSection(functionName, updated_page_uuid);
 			throw new Error("" + e);
 		}
 	}
-
-	await exitCriticalSection(functionName, updated_page_uuid);
 
 	if(!ret) {
 		if(finished_loading) {
