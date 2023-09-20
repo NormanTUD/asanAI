@@ -13,24 +13,38 @@ function initializeSzymanskiFunction(functionName) {
 }
 
 async function attemptEnterCriticalSection(functionName, processUUID) {
-	assert(typeof functionName === "string", "functionName should be a string");
-	assert(typeof processUUID === "string", "processUUID should be a string");
+    assert(typeof functionName === "string", "functionName should be a string");
+    assert(typeof processUUID === "string", "processUUID should be a string");
 
-	// Check if no one is currently in the door_in or in the critical section
-	if (functionStates[functionName] === 0) {
-		functionStates[functionName] = 4; // Enter the critical section directly
-	} else {
-		doorInQueues[functionName].push(processUUID);
-		while (functionStates[functionName] !== 0 && doorInQueues[functionName][0] !== processUUID) {
-			if (doorInQueues[functionName].length === 0) {
-				return;
-			}
-			console.error(`while (${functionStates[functionName]} !== 0 && ${doorInQueues[functionName][0]} !== ${processUUID}) {`);
-			//log(`attemptEnterCriticalSection(${functionName}, ${processUUID})`);
-			// Wait until it's your turn to enter the door_in
-			await new Promise(resolve => setTimeout(resolve, 10));
-		}
-	}
+    // Check if no one is currently in the door_in or in the critical section
+    if (functionStates[functionName] === 0) {
+        // Use a try-catch block to ensure atomic state transition
+        try {
+            functionStates[functionName] = 4; // Enter the critical section directly
+        } catch (e) {
+            // Handle any exceptions here if necessary
+        }
+    } else {
+        // Use a try-catch block to ensure atomic queue operation
+        try {
+            doorInQueues[functionName].push(processUUID);
+        } catch (e) {
+            // Handle any exceptions here if necessary
+        }
+        try {
+            while (functionStates[functionName] !== 0 && doorInQueues[functionName][0] !== processUUID) {
+                if (doorInQueues[functionName].length === 0) {
+                    return;
+                }
+                console.error(`while (${functionStates[functionName]} !== 0 && ${doorInQueues[functionName][0]} !== ${processUUID}) {`);
+                //log(`attemptEnterCriticalSection(${functionName}, ${processUUID})`);
+                // Wait until it's your turn to enter the door_in
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+        } catch (e) {
+            // Handle any exceptions here if necessary
+        }
+    }
 }
 
 async function waitForDoorInAccess(functionName, processUUID) {
@@ -55,21 +69,24 @@ async function signalExitCriticalSection(functionName, processUUID) {
 	assert(typeof functionName === "string", "functionName should be a string");
 	assert(typeof processUUID === "string", "processUUID should be a string");
 
-	// Signal that you've crossed door_out
-	const index = doorInQueues[functionName].indexOf(processUUID);
-	if (index !== -1) {
-		console.error(`signalExitCriticalSection(${functionName}, ${processUUID}) -> index: ${index}`);
-		console.error("doorInQueues length before exitCriticalSection: " + doorInQueues[functionName].length);
+	try {
+		// Signal that you've crossed door_out
+		const index = doorInQueues[functionName].indexOf(processUUID);
+		if (index !== -1) {
+			console.error(`signalExitCriticalSection(${functionName}, ${processUUID}) -> index: ${index}`);
+			console.error("doorInQueues length before exitCriticalSection: " + doorInQueues[functionName].length);
 
-		// Exit the critical section
-		functionStates[functionName] = 0;
+			// Exit the critical section
+			functionStates[functionName] = 0;
 
-		doorInQueues[functionName].splice(index, 1); // Remove yourself from the waiting room
+			doorInQueues[functionName].splice(index, 1); // Remove yourself from the waiting room
 
-		console.error("doorInQueues length after exitCriticalSection: " + doorInQueues[functionName].length);
+			console.error("doorInQueues length after exitCriticalSection: " + doorInQueues[functionName].length);
+		}
+	} catch (e) {
+		console.error(`Error in signalExitCriticalSection(${functionName}, ${processUUID}): ${e.message}`);
 	}
 }
-
 
 function leaveWaitingRoom(functionName, processUUID) {
 	assert(typeof functionName === "string", "functionName should be a string");
