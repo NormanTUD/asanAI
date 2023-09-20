@@ -569,4 +569,7 @@ if(window.location.href.indexOf("run_tests") > -1) {
 install_memory_debugger();
 
 load_time = Date().toLocaleString();
-set_mode();
+
+$(document).ready(function() {
+	set_mode();
+}
