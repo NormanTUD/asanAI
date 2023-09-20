@@ -1408,7 +1408,9 @@ try {
 		log("Enabling cosmo debugger /etc/cosmo_debug existed");
 		enable_cosmo_debugger = true;
 	}
-} catch (e) {}
+} catch (e) {
+	wrn(e);
+}
 
 var idleTime = 0;
 

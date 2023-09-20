@@ -1531,7 +1531,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 
 	try {
 		await _temml();
-	} catch (e) {}
+	} catch (e) {
+		wrn(e);
+	}
 
 	last_updated_page = Date.now();
 

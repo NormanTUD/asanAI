@@ -1411,7 +1411,9 @@ async function predict_handdrawn () {
 
 	try {
 		await _temml();
-	} catch (e) {}
+	} catch (e) {
+		wrn(e);
+	}
 
 	await dispose(predictions_tensor);
 	await dispose(predict_data);
