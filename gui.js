@@ -6143,7 +6143,7 @@ function model_is_ok () {
 	}
 
 	if(waiting_updated_page_uuids.length) {
-		_content += `[&#9201;${waiting_updated_page_uuids.length}]`;
+		_content += `&#9201;`;
 	}
 
 	if(model_is_trained && color == green ) {
