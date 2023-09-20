@@ -363,8 +363,6 @@ $(document).ready(async function() {
 		$(".show_in_cosmo_mode").hide();
 	}
 
-	initializeSzymanskiFunction("updated_page");
-
 	l(language[lang]["trying_to_set_backend"]);
 	await set_backend();
 	l(language[lang]["backend_set"]);

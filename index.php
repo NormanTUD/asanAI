@@ -77,7 +77,6 @@
 		_js("libs/confetti.browser.min.js", 1, 1);
 
 		_js("safety.js");
-		_js("szymanski.js");
 		_js("translations.js", 1, 1);
 		_js("tests.js");
 		_js("model.js");

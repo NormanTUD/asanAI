@@ -1376,11 +1376,14 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		return false;
 	}
 
+	console.warn("Block 1");
 	rename_tmp_onchange();
 
+	console.warn("Block 2");
 	var number_of_layers = get_number_of_layers();
 	show_or_hide_bias_initializer(number_of_layers);
 
+	console.warn("Block 3");
 	try {
 		await compile_model();
 	} catch (e) {
@@ -1393,58 +1396,74 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		throw new Error(e);
 	}
 
-
+	console.warn("Block 4");
 	var redo_graph = await update_python_code();
 
+	console.warn("Block 5");
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
 		await restart_lenet(1);
 		await restart_alexnet(1);
 	}
 
+	console.warn("Block 6");
 	prev_layer_data = [];
 
+	console.warn("Block 7");
 	try {
 		await identify_layers(number_of_layers);
 	} catch (e) {
 		throw new Error(e);
 	}
 
+	console.warn("Block 8");
 	layer_structure_cache = null;
 
+	console.warn("Block 9");
 	await save_current_status();
 
+	console.warn("Block 10");
 	show_dtype_only_first_layer();
 
+	console.warn("Block 11");
 	enable_start_training_custom_tensors();
 
+	console.warn("Block 12");
 	var wait_for_latex_model = Promise.resolve(1);
 
+	console.warn("Block 13");
 	if (!no_update_math) {
 		wait_for_latex_model = await write_model_to_latex_to_page();
 	}
 
+	console.warn("Block 14");
 	await last_shape_layer_warning();
 
+	console.warn("Block 15");
 	await hide_no_conv_stuff();
 
+	console.warn("Block 16");
 	var current_input_shape = get_input_shape();
 	if (cam) {
 		stop_webcam();
 	}
 
+	console.warn("Block 17");
 	try {
 		await write_descriptions();
 	} catch (e) {
 		wrn(e);
 	}
 
+	console.warn("Block 18");
 	allow_training();
 
+	console.warn("Block 19");
 	if (!no_prediction) {
-		await show_prediction(1, 1);
+		show_prediction(1, 1); // await not desired here
 	}
 
+	console.warn("Block 20");
 	await wait_for_latex_model;
 	//await wait_for_show_hide_load_weights;
 	if(atrament_data.sketcher && await input_shape_is_image()) {
@@ -1461,6 +1480,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		}
 	}
 
+	console.warn("Block 21");
 	if(mode == "beginner") {
 		$(".expert_mode_only").hide();
 	} else {
@@ -1468,8 +1488,10 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	}
 
 
+	console.warn("Block 22");
 	allow_editable_labels();
 
+	console.warn("Block 23");
 	return true;
 }
 
@@ -1479,15 +1501,34 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	const functionName = "updated_page"; // Specify the function name
 
 	try {
-		await waitForDoorInAccess(functionName, updated_page_uuid);
-		await requestCriticalSectionAccess(functionName, updated_page_uuid);
+		while (waiting_updated_page_uuids.length) {
+			await delay(10);
+		}
+
+		waiting_updated_page_uuids.push(updated_page_uuid);
+		console.warn("===============================");
+		console.warn("updated_page_internal starting! id: " + updated_page_uuid);
 
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
-		err("updated_page_internal done! now exiting critical section");
+		console.warn("updated_page_internal done! exiting critical section, id: " + updated_page_uuid);
 
-		await exitCriticalSectionAndWaitingRoom(functionName, updated_page_uuid);
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			console.warn("Could not find index of " + updated_page_uuid);
+		}
 	} catch (e) {
-		await exitCriticalSectionAndWaitingRoom(functionName, updated_page_uuid);
+		console.error("An error occurred: " + e.message);
+
+		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+		if (index !== -1) {
+			waiting_updated_page_uuids.splice(index, 1);
+		} else {
+			console.error("Could not find index of " + updated_page_uuid);
+		}
 
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -2533,7 +2574,11 @@ async function wait_for_updated_page (seconds) {
 		return;
 	}
 
-	assert(typeof seconds == undefined || typeof seconds == null || typeof seconds == "number", "seconds must beither be undefined, null or a number, but is " + typeof(seconds));
+	assert(
+		typeof seconds == undefined ||
+		typeof seconds == null ||
+		typeof seconds == "number"
+	, "seconds must beither be undefined, null or a number, but is " + typeof(seconds));
 
 	var start_time = Date.now() / 1000;
 	var updated_page_wait_uuid = uuidv4();
@@ -6123,6 +6168,10 @@ function model_is_ok () {
 
 	if(started_training) {
 		_content += "&#129302;&#128214;";
+	}
+
+	if(waiting_updated_page_uuids.length) {
+		_content += `[&#9201;${waiting_updated_page_uuids.length}]`;
 	}
 
 	if(model_is_trained && color == green ) {

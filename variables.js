@@ -1581,3 +1581,5 @@ var last_handdrawn_image_hash = "";
 var original_labels = [];
 
 var call_time = Date.now();
+
+var waiting_updated_page_uuids = [];
