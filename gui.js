@@ -1479,14 +1479,15 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	const functionName = "updated_page"; // Specify the function name
 
 	try {
-		await waitForAccessToCriticalSection(functionName, updated_page_uuid);
+		await waitForDoorInAccess(functionName, updated_page_uuid);
+		await requestCriticalSectionAccess(functionName, updated_page_uuid);
 
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 		err("updated_page_internal done! now exiting critical section");
 
-		await exitCriticalSection(functionName, updated_page_uuid);
+		await exitCriticalSectionAndWaitingRoom(functionName, updated_page_uuid);
 	} catch (e) {
-		await exitCriticalSection(functionName, updated_page_uuid);
+		await exitCriticalSectionAndWaitingRoom(functionName, updated_page_uuid);
 
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -1504,6 +1505,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			wrn("" + e);
 		} else if(("" + e).includes("model.layers[i]")) {
 			dbg("model.layers[i] (" + i + ") is undefined");
+			return false;
+		} else if (("" + e).includes("model.layers is undefined")) {
+			dbg("model.layers is undefined");
 			return false;
 		} else if (("" + e).includes("model is undefined")) {
 			dbg("model is undefined");
