@@ -657,7 +657,7 @@ var layer_options_defaults = {
 	"max_features": 3,
 	"momentum": 0.99,
 	"axis": -1,
-	"filters": 32,
+	"filters": 4,
 	"dropout": 0.20,
 	"recurrent_dropout": 0,
 	"epsilon": 0.0001,
@@ -1602,6 +1602,7 @@ async function tryEnterDoorIn(functionName, processUUID) {
 	} else {
 		doorInQueues[functionName].push(processUUID);
 		while (functionStates[functionName] !== 0 && doorInQueues[functionName][0] !== processUUID) {
+			//log(`tryEnterDoorIn(${functionName}, ${processUUID})`);
 			// Wait until it's your turn to enter the door_in
 			await new Promise(resolve => setTimeout(resolve, 10));
 		}
@@ -1610,15 +1611,27 @@ async function tryEnterDoorIn(functionName, processUUID) {
 
 async function waitForDoorIn(functionName, processUUID) {
 	// Wait for other processes to get through door_in
+	if(doorInQueues[functionName].length == 0) {
+		return;
+	}
+
 	while (doorInQueues[functionName][0] !== processUUID) {
+		if(doorInQueues[functionName].length == 0) {
+			return;
+		}
+		//log(`waitForDoorIn(${functionName}, ${processUUID})`);
 		await new Promise(resolve => setTimeout(resolve, 10));
 	}
 }
 
 async function signalDoorOut(functionName, processUUID) {
 	// Signal that you've crossed door_out
+	const index = doorInQueues[functionName].indexOf(processUUID);
 	if (doorInQueues[functionName].length > 0) {
-		doorInQueues[functionName].shift(); // Remove yourself from the door_in queue
+		log(`signalDoorOut(${functionName}, ${processUUID}) -> index: ${index}`);
+		log("doorInQueues length before doorOut: " + doorInQueues[functionName].length);
+		doorInQueues[functionName].splice(index, 1); // Remove yourself from the waiting room
+		log("doorInQueues length after doorOut: " + doorInQueues[functionName].length);
 	}
 }
 
@@ -1626,6 +1639,7 @@ function exitWaitingRoom(functionName, processUUID) {
 	// Exit the waiting room
 	const index = waitingRoomQueues[functionName].indexOf(processUUID);
 	if (index !== -1) {
+		//log(`exitWaitingRoom(${functionName}, ${processUUID})`);
 		waitingRoomQueues[functionName].splice(index, 1); // Remove yourself from the waiting room
 	}
 }
@@ -1633,15 +1647,16 @@ function exitWaitingRoom(functionName, processUUID) {
 // Initialize the state and queues for the "updated_page" function
 initializeFunction("updated_page");
 
-async function exitCriticalSection (functionName, this_run_uuid) {
+async function exitCriticalSection (functionName, processUUID) {
+	//log(`exitCriticalSection(${functionName}, ${processUUID})`);
 	// Exit the critical section
 	functionStates[functionName] = 0;
 
 	// Signal that you've crossed door_out (if needed)
-	await signalDoorOut(functionName, this_run_uuid);
+	await signalDoorOut(functionName, processUUID);
 
 	// Exit the waiting room
-	exitWaitingRoom(functionName, this_run_uuid);
+	exitWaitingRoom(functionName, processUUID);
 }
 
 async function waitForAccessToCriticalSection (functionName, _uuid) {
