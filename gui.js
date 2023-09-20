@@ -1443,113 +1443,114 @@ function _has_any_warning () {
 	return false;
 }
 
+var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) => {
+	if(_has_any_warning()) {
+		return false;
+	}
+
+	rename_tmp_onchange();
+
+	var number_of_layers = get_number_of_layers();
+	show_or_hide_bias_initializer(number_of_layers);
+
+	try {
+		await compile_model();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		log(e);
+		log("There was an error compiling the model: " + e);
+		throw new Error(e);
+	}
+
+
+	var redo_graph = await update_python_code();
+
+	if (model && redo_graph && !no_graph_restart) {
+		await restart_fcnn(1);
+		await restart_lenet(1);
+		await restart_alexnet(1);
+	}
+
+	prev_layer_data = [];
+
+	try {
+		await identify_layers(number_of_layers);
+	} catch (e) {
+		throw new Error(e);
+	}
+
+	layer_structure_cache = null;
+
+	await save_current_status();
+
+	show_dtype_only_first_layer();
+
+	enable_start_training_custom_tensors();
+
+	var wait_for_latex_model = Promise.resolve(1);
+
+	if (!no_update_math) {
+		wait_for_latex_model = await write_model_to_latex_to_page();
+	}
+
+	await last_shape_layer_warning();
+
+	await hide_no_conv_stuff();
+
+	var current_input_shape = get_input_shape();
+	if (cam) {
+		stop_webcam();
+	}
+
+	try {
+		await write_descriptions();
+	} catch (e) {
+		wrn(e);
+	}
+
+	allow_training();
+
+	if (!no_prediction) {
+		await show_prediction(1, 1);
+	}
+
+	await wait_for_latex_model;
+	//await wait_for_show_hide_load_weights;
+	if(atrament_data.sketcher && await input_shape_is_image()) {
+		try {
+			await predict_handdrawn();
+		} catch (e) {
+			if(("" + e).includes("but got array with shape")) {
+				var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+				wrn(_err);
+				l(_err);
+			} else {
+				throw new Error(e);
+			}
+		}
+	}
+
+	if(mode == "beginner") {
+		$(".expert_mode_only").hide();
+	} else {
+		$(".expert_mode_only").show();
+	}
+
+
+	allow_editable_labels();
+
+	return true;
+}
+
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	var updated_page_uuid = uuidv4();
 
-	var fref = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) => {
-		if(_has_any_warning()) {
-			return false;
-		}
-
-		rename_tmp_onchange();
-
-		var number_of_layers = get_number_of_layers();
-		show_or_hide_bias_initializer(number_of_layers);
-
-		try {
-			await compile_model();
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			log(e);
-			log("There was an error compiling the model: " + e);
-			throw new Error(e);
-		}
-
-
-		var redo_graph = await update_python_code();
-
-		if (model && redo_graph && !no_graph_restart) {
-			await restart_fcnn(1);
-			await restart_lenet(1);
-			await restart_alexnet(1);
-		}
-
-		prev_layer_data = [];
-
-		try {
-			await identify_layers(number_of_layers);
-		} catch (e) {
-			throw new Error(e);
-		}
-
-		layer_structure_cache = null;
-
-		await save_current_status();
-
-		show_dtype_only_first_layer();
-
-		enable_start_training_custom_tensors();
-
-		var wait_for_latex_model = Promise.resolve(1);
-
-		if (!no_update_math) {
-			wait_for_latex_model = await write_model_to_latex_to_page();
-		}
-
-		await last_shape_layer_warning();
-
-		await hide_no_conv_stuff();
-
-		var current_input_shape = get_input_shape();
-		if (cam) {
-			stop_webcam();
-		}
-
-		try {
-			await write_descriptions();
-		} catch (e) {
-			wrn(e);
-		}
-
-		allow_training();
-
-		if (!no_prediction) {
-			await show_prediction(1, 1);
-		}
-
-		await wait_for_latex_model;
-		//await wait_for_show_hide_load_weights;
-		if(atrament_data.sketcher && await input_shape_is_image()) {
-			try {
-				await predict_handdrawn();
-			} catch (e) {
-				if(("" + e).includes("but got array with shape")) {
-					var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-					wrn(_err);
-					l(_err);
-				} else {
-					throw new Error(e);
-				}
-			}
-		}
-
-		if(mode == "beginner") {
-			$(".expert_mode_only").hide();
-		} else {
-			$(".expert_mode_only").show();
-		}
-
-
-		allow_editable_labels();
-
-		return true;
-	};
 
 	try {
-		var ret = await fref(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
+		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -1566,8 +1567,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
 			wrn("" + e);
 		} else if(("" + e).includes("model.layers[i]")) {
-				dbg("model.layers[i] (" + i + ") is undefined");
-				return false;
+			dbg("model.layers[i] (" + i + ") is undefined");
+			return false;
 		} else if (("" + e).includes("model is undefined")) {
 			dbg("model is undefined");
 			return false;
