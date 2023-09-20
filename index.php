@@ -24,10 +24,6 @@
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
 		<style id="manicule_animation_css"></style>
-
-		<script>
-			var lang;
-		</script>
 <?php
 		_js("tf/tf.min.js");
 		_js("base_wrappers.js");
