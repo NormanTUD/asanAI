@@ -282,6 +282,13 @@ async function run_tests () {
 			await train_neural_network();
 			await wait_for_updated_page(3);
 
+			while (waiting_updated_page_uuids.length) {
+				await delay(500);
+			}
+
+			await delay(5000);
+			await wait_for_updated_page(3);
+
 			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
 			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 			if(!result_and.toString().startsWith("0.0")) {

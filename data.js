@@ -457,20 +457,20 @@ async function get_xs_and_ys () {
 	$("#xy_display_data").html("").hide();
 	//$("#photos").html("").hide();
 
-	var data_origin = $("#data_origin").val();
+	var _data_origin = $("#data_origin").val();
 
 	if($("#jump_to_interesting_tab").is(":checked")) {
-		if(data_origin == "default") {
+		if(_data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
-		} else if(data_origin == "csv") {
+		} else if(_data_origin == "csv") {
 			await show_tab_label("own_csv_data_label", 0);
 			await show_tab_label("tfvis_tab_label", 1);
-		} else if (data_origin == "image") {
+		} else if (_data_origin == "image") {
 			await show_tab_label("own_image_data_label", 1);
-		} else if (data_origin == "tensordata") {
+		} else if (_data_origin == "tensordata") {
 			await show_tab_label("own_tensor_data_label", 1);
 		} else {
-			log("Invalid option " + data_origin);
+			log("Invalid option " + _data_origin);
 		}
 	}
 
@@ -486,8 +486,18 @@ async function get_xs_and_ys () {
 	var xy_data = null;
 
 	if(Object.keys(traindata_struct[$("#dataset option:selected").text()]).includes("has_custom_data")) {
-		var model_id = traindata_struct[$( "#dataset option:selected" ).text()]["id"];
+		var model_id = traindata_struct[$("#dataset option:selected").text()]["id"];
 		xy_data = await get_json("get_training_data.php?id=" + model_id);
+
+		if(!Object.keys(xy_data).includes("x")) {
+			err("xy_data does not contain x");
+			return;
+		}
+
+		if(!Object.keys(xy_data).includes("y")) {
+			err("xy_data does not contain y");
+			return;
+		}
 
 		var x = JSON.parse(JSON.stringify(xy_data.x));
 
@@ -511,7 +521,7 @@ async function get_xs_and_ys () {
 
 		}
 	} else {
-		if(data_origin == "default") {
+		if(_data_origin == "default") {
 			var keys = [];
 			var x = null;
 			var y;
@@ -624,7 +634,7 @@ async function get_xs_and_ys () {
 			}
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
-		} else if(data_origin == "image") {
+		} else if(_data_origin == "image") {
 			l("Generating data from images");
 
 			var category_counter = $(".own_image_label").length;
@@ -780,18 +790,18 @@ async function get_xs_and_ys () {
 			//log("B", x.shape);
 
 			xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
-		} else if (data_origin == "tensordata") {
+		} else if (_data_origin == "tensordata") {
 			x = numpy_str_to_tf_tensor(x_file, max_number_values);
 			y = numpy_str_to_tf_tensor(y_file, max_number_values);
 
 			xy_data = {"x": x, "y": y};
-		} else if (data_origin == "csv") {
+		} else if (_data_origin == "csv") {
 			xy_data = await get_x_y_from_csv();
 
 			//log("got xy_data");
 			//log(xy_data);
 		} else {
-			alert("Unknown data type: " + data_origin);
+			alert("Unknown data type: " + _data_origin);
 		}
 
 		$("#reset_data").hide();

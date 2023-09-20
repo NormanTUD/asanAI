@@ -1614,6 +1614,10 @@ function write_model_summary_wait () {
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("getElementById(...) is null")) {
 			wrn("Did you remove the summary tab manually?");
 		} else {
@@ -5939,7 +5943,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 			//log("item_selector", item_selector);
 			var ui_elements = $(item_selector);
 			if(ui_elements.length >= 1) {
-				var element = ui_elements.val(val);
+				var element = ui_elements.val(val).trigger("change");
 				if(trigger) {
 					element.trigger("change");
 				}
