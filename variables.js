@@ -1581,3 +1581,65 @@ var last_handdrawn_image_hash = "";
 var original_labels = [];
 
 var call_time = Date.now();
+
+// Szymanskis Algorithm
+// Define a global object to track states and queues for different functions
+var functionStates = {}; // Stores current state for each function
+var doorInQueues = {}; // Stores the door_in queue for each function
+var waitingRoomQueues = {}; // Stores the waiting room queue for each function
+
+// Function to initialize state and queues for a specific function
+function initializeFunction(functionName) {
+	functionStates[functionName] = 0; // Initial state: noncritical section
+	doorInQueues[functionName] = [];
+	waitingRoomQueues[functionName] = [];
+}
+
+async function tryEnterDoorIn(functionName, processUUID) {
+	// Check if no one is currently in the door_in or in the critical section
+	if (functionStates[functionName] === 0) {
+		functionStates[functionName] = 4; // Enter the critical section directly
+	} else {
+		doorInQueues[functionName].push(processUUID);
+		while (functionStates[functionName] !== 0 && doorInQueues[functionName][0] !== processUUID) {
+			// Wait until it's your turn to enter the door_in
+			await new Promise(resolve => setTimeout(resolve, 10));
+		}
+	}
+}
+
+async function waitForDoorIn(functionName, processUUID) {
+	// Wait for other processes to get through door_in
+	while (doorInQueues[functionName][0] !== processUUID) {
+		await new Promise(resolve => setTimeout(resolve, 10));
+	}
+}
+
+async function signalDoorOut(functionName, processUUID) {
+	// Signal that you've crossed door_out
+	if (doorInQueues[functionName].length > 0) {
+		doorInQueues[functionName].shift(); // Remove yourself from the door_in queue
+	}
+}
+
+function exitWaitingRoom(functionName, processUUID) {
+	// Exit the waiting room
+	const index = waitingRoomQueues[functionName].indexOf(processUUID);
+	if (index !== -1) {
+		waitingRoomQueues[functionName].splice(index, 1); // Remove yourself from the waiting room
+	}
+}
+
+// Initialize the state and queues for the "updated_page" function
+initializeFunction("updated_page");
+
+async function exitCriticalSection (functionName, this_run_uuid) {
+	// Exit the critical section
+	functionStates[functionName] = 0;
+
+	// Signal that you've crossed door_out (if needed)
+	await signalDoorOut(functionName, this_run_uuid);
+
+	// Exit the waiting room
+	exitWaitingRoom(functionName, this_run_uuid);
+}

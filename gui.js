@@ -1476,6 +1476,23 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
 	var updated_page_uuid = uuidv4();
 
+	const functionName = "updated_page"; // Specify the function name
+
+	// Declare intention to enter the critical section
+	functionStates[functionName] = 1;
+
+	// Attempt to enter the door_in
+	await tryEnterDoorIn(functionName, updated_page_uuid);
+
+	// Enter the waiting room (State 3)
+	functionStates[functionName] = 3;
+	waitingRoomQueues[functionName].push(updated_page_uuid);
+
+	// Wait for other processes to get through door_in
+	await waitForDoorIn(functionName, updated_page_uuid);
+
+	// Enter the critical section (State 4)
+	functionStates[functionName] = 4;
 
 	try {
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
@@ -1496,23 +1513,30 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			wrn("" + e);
 		} else if(("" + e).includes("model.layers[i]")) {
 			dbg("model.layers[i] (" + i + ") is undefined");
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("model is undefined")) {
 			dbg("model is undefined");
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("model.input is undefined")) {
 			dbg("model.input is undefined");
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
 			dbg("" + e);
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("targetShape is undefined")) {
 			dbg("" + e);
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else if (("" + e).includes("code is undefined")) {
 			dbg("This error may happen when the whole DOM is deleted: " + e);
+			exitCriticalSection(functionName, updated_page_uuid);
 			return false;
 		} else {
+			exitCriticalSection(functionName, updated_page_uuid);
 			throw new Error("" + e);
 		}
 	}
@@ -1534,6 +1558,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 	} catch (e) {
 		wrn(e);
 	}
+
+	exitCriticalSection(functionName, updated_page_uuid);
 
 	last_updated_page = Date.now();
 
