@@ -572,4 +572,4 @@ load_time = Date().toLocaleString();
 
 $(document).ready(function() {
 	set_mode();
-}
+});
