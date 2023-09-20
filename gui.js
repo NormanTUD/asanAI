@@ -1483,11 +1483,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		}
 
 		waiting_updated_page_uuids.push(updated_page_uuid);
-		console.warn("===============================");
-		console.warn("updated_page_internal starting! id: " + updated_page_uuid);
 
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
-		console.warn("updated_page_internal done! exiting critical section, id: " + updated_page_uuid);
 
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
@@ -1497,8 +1494,6 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.warn("Could not find index of " + updated_page_uuid);
 		}
 	} catch (e) {
-		console.error("An error occurred: " + e.message);
-
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
 		if (index !== -1) {
