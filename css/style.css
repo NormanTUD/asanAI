@@ -6,7 +6,7 @@ html, body{
 	font-optical-sizing: auto;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-stretch: ultra-condensed;
+	font-stretch: expanded;
 }
 
 html {
@@ -1173,4 +1173,12 @@ hr {
 
 ::placeholder {
 	color: rgb(127, 127, 127);
+}
+
+.confusion_matrix_tx {
+	border: 1px rgb(127, 127, 127) solid;
+}
+
+.confusion_matrix_table {
+	border-collapse: collapse;
 }

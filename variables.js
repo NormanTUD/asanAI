@@ -1263,7 +1263,7 @@ var general_options = {
 	"stddev": "\"Standard-Deviation\", \"stddev\", \"number\", { \"min\": 0, \"value\": get_default_option(type, \"stddev\") }, nr",
 	"stateful": "\"Stateful?\", \"stateful\", \"checkbox\", { \"status\": \"\" }, nr",
 	"return_state": "\"Return state?\", \"return_state\", \"checkbox\", { \"status\": \"\" }, nr",
-	"depth_multiplier": "\"Depth multiplier\", \"depth_multiplier\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"depth_multiplier\") }, nr",
+	"depth_multiplier": "\"Depth multiplier\", \"depth_multiplier\", \"number\", { \"min\": 0, \"step\": 1, \"value\": get_default_option(type, \"depth_multiplier\") }, nr",
 	"go_backwards": "\"Go Backwards?\", \"go_backwards\", \"checkbox\", { \"status\": \"\" }, nr",
 	"return_sequences": "\"Return sequences?\", \"return_sequences\", \"checkbox\", { \"status\": \"checked\" }, nr",
 

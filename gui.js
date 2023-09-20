@@ -197,7 +197,7 @@ function is_numeric(str) {
 	return !isNaN(str) && !isNaN(parse_float(str));
 }
 
-function quote_python(item) {
+function quote_python(item, nobrackets=0) {
 	if (item === undefined) {
 		return "";
 	}
@@ -207,13 +207,13 @@ function quote_python(item) {
 	} else {
 		if (is_numeric(item)) {
 			return item;
-		} else if (/^\d+(,\d+)*$/.test(item)) {
+		} else if (!nobrackets && /^\d+(,\d+)*$/.test(item)) {
 			return "[" + item + "]";
 		} else if (item == "True" || item == "False") {
 			return item;
-		} else if (item.includes("get_shape")) {
+		} else if (!nobrackets && item.includes("get_shape")) {
 			return item;
-		} else if (item.startsWith("[")) {
+		} else if (!nobrackets && item.startsWith("[")) {
 			return item;
 		} else {
 			return "\"" + item + "\"";
@@ -942,243 +942,130 @@ function model_add_python_structure (layer_type, data) {
 	assert(layer_type, "layer_type is not defined");
 	assert(data, "data is not defined");
 
+	if(Object.keys(data).includes("dropout_rate")) {
+		data["rate"] = data["dropout_rate"];
+		delete data["dropout_rate"]
+	}
+
 	var str = "";
 	if(layer_type == "Conv2D") {
 		return `model.add(layers.Conv2D(
 	${data.filters},
 	(${data.kernel_size}),
-	strides=(${data.strides.join(", ")}),
-	padding=${or_none(data.padding)},
-	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)})
-)
-`;
+${python_data_to_string(data, ["filters", "kernel_size"])}
+))\n`;
 	} else if(layer_type == "Dense") {
 		return `model.add(layers.Dense(
-	units=${data.units},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "UpSampling2D") {
 		str += `model.add(layers.UpSampling2D(
-	size=${or_none(data.size, "(", ")")},
-	interpolation=${or_none(data.interpolation)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "SeparableConv1D") {
-		str += `model.add(layers.SeparableConv1D(filters=${data.filters},
-	kernel_size=${data.kernel_size},
-	strides=${or_none(data.strides)},
-	padding=${or_none(data.padding)},
-	dilation_rate=${data.dilation_rate},
-	depth_multiplier=${data.depth_multiplier},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	pointwise_initializer=${or_none(data.pointwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	pointwise_regularizer=${or_none(data.pointwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	pointwise_constraint=${or_none(data.pointwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+		str += `model.add(layers.SeparableConv1D(
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "BatchNormalization") {
-		str += `model.add(layers.BatchNormalization(axis=${data.axis},
-	momentum=${or_none(data.momentum)},
-	epsilon=${data.epsilon},
-	center=${data.center},
-	scale=${data.scale},
-	beta_initializer=${or_none(data.beta_initializer)},
-	gamma_initializer=${or_none(data.gamma_initializer)},
-	moving_mean_initializer=${or_none(data.moving_mean_initializer)},
-	moving_variance_initializer=${or_none(data.moving_variance_initializer)},
-	beta_regularizer=${or_none(data.beta_regularizer)},
-	gamma_regularizer=${or_none(data.gamma_regularizer)},
-	beta_constraint=${or_none(data.beta_constraint)},
-	gamma_constraint=${or_none(data.gamma_constraint)},
-	synchronized=${or_none(data.synchronized)}
+		str += `model.add(layers.BatchNormalization(
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "ThresholdedReLU") {
-		str += `model.add(layers.ThresholdedReLU(theta=${data.theta}))\n`;
+		str += `model.add(layers.ThresholdedReLU(
+${python_data_to_string(data)}
+))\n`;
 	} else if (layer_type == "Softmax") {
-		str += `model.add(layers.Softmax(axis=${data.axis}))\n`;
+		str += `model.add(layers.Softmax(
+${python_data_to_string(data)}
+))\n`;
 	} else if (layer_type == "ReLU") {
 		str += `model.add(layers.ReLU(
-	max_value=${or_none(data.max_value)},
-	negative_slope=${or_none(data.negative_slope)},
-	threshold=${or_none(data.threshold)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "Conv2DTranspose") {
 		str += `model.add(layers.Conv2DTranspose(
 	${data.filters},
 	(${data.kernel_size}),
-	strides=(${data.strides.join(", ")}),
-	padding=${or_none(data.padding)},
-	output_padding=${or_none(data.output_padding)},
-	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	kernel_initializer=${or_none(data.kernel_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	kernel_regularizer=${or_none(data.kernel_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	kernel_constraint=${or_none(data.kernel_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data, ["kernel_size", "filters"])}
 ))\n`;
 	} else if (layer_type == "AlphaDropout") {
 		str += `model.add(layers.AlphaDropout(
-	rate=${data.dropout_rate},
-	seed=${or_none(data.seed)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "Dropout") {
 		log("DATA for dropout:", data);
 		str += `model.add(layers.Dropout(
-	rate=${data.dropout_rate},
-	seed=${or_none(data.seed)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "GaussianDropout") {
 		str += `model.add(layers.GaussianDropout(
-	rate=${data.dropout_rate},
-	seed=${or_none(data.seed)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "GaussianNoise") {
 		str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${or_none(data.seed)}))\n`;
 	} else if (layer_type.startsWith("GlobalAveragePooling")) {
 		str += `model.add(layers.${layer_type}(
-	keepdims=${or_none(data.keepdims)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type.startsWith("GlobalMaxPooling")) {
 		str += `model.add(layers.${layer_type}(
-	keepdims=${or_none(data.keepdims)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "LayerNormalization") {
 		str += `model.add(layers.LayerNormalization(
-	axis=${data.axis},
-	epsilon=${data.epsilon},
-	center=${data.center},
-	scale=${data.scale},
-	beta_initializer=${or_none(data.beta_initializer)},
-	gamma_initializer=${or_none(data.gamma_initializer)},
-	beta_regularizer=${or_none(data.beta_regularizer)},
-	gamma_regularizer=${or_none(data.gamma_regularizer)},
-	beta_constraint=${or_none(data.beta_constraint)},
-	gamma_constraint=${or_none(data.gamma_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "Reshape") {
 		str += `model.add(layers.Reshape(
 	target_shape=[${data.target_shape}]
 ))\n`;
 	} else if (layer_type == "MaxPooling3D") {
-		str += `model.add(layers.${layer_type}(
+		str += `model.add(layers.MaxPooling3D(
 	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
-	strides=(${data.strides[0]}, ${data.strides[1]}, ${data.strides[2]}),
-	padding=${or_none(data.padding)}
+${python_data_to_string(data, ["pool_size"])}
 ))\n`;
 	} else if (layer_type == "MaxPooling2D") {
-		str += `model.add(layers.${layer_type}(
-	(${data.pool_size[0]}, ${data.pool_size[1]}),
-	strides=(${data.strides[0]}, ${data.strides[1]}),
-	padding=${or_none(data.padding)}
+		str += `model.add(layers.MaxPooling2D(
+${python_data_to_string(data, ["pool_size"])}
 ))\n`;
 	} else if (layer_type == "MaxPooling1D") {
 		str += `model.add(layers.${layer_type}(
 	(${data.pool_size[0]}),
-	strides=(${data.strides[0]}),
-	padding=${or_none(data.padding)}
+${python_data_to_string(data, ["pool_size"])}
 ))\n`;
 	} else if (layer_type == "AveragePooling1D") {
-		str += `model.add(layers.AveragePooling1D(pool_size=${data.pool_size},
-	strides=${data.strides[0]},
-	padding=${data.padding[0]}
+		str += `model.add(layers.AveragePooling1D(
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "SeparableConv2D") {
 		str += `model.add(layers.SeparableConv2D(
-	filters=${data.filters},
-	kernel_size=${data.kernel_size},
-	strides=${or_none(data.strides)},
-	padding=${or_none(data.padding)},
-	dilation_rate=${or_none(data.dilation_rate)},
-	depth_multiplier=${data.depth_multiplier},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	pointwise_initializer=${or_none(data.pointwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	pointwise_regularizer=${or_none(data.pointwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	pointwise_constraint=${or_none(data.pointwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "AveragePooling2D") {
 		str += `model.add(layers.AveragePooling2D(
-	pool_size=(${data.pool_size.join(", ")}}),
-	strides=(${data.strides.join(",")}),
-	padding=${data.padding}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "AveragePooling3D") {
-		str += `model.add(layers.AveragePooling3D(pool_size=(${data.pool_size.join(", ")}),
-	strides=(${data.strides.join(", ")}),
-	padding=${data.padding}
+		str += `model.add(layers.AveragePooling3D(
+${python_data_to_string(data)}
 ))\n`;
 
 	} else if (layer_type == "LeakyReLU") {
-		str += `model.add(layers.LeakyReLU(alpha=${data.alpha}))\n`;
+		str += `model.add(layers.LeakyReLU(
+${python_data_to_string(data)}
+))\n`;
 	} else if (layer_type == "ELU") {
-		str += `model.add(layers.ELU(alpha=${data.alpha}))\n`;
+		str += `model.add(layers.ELU(
+${python_data_to_string(data)}
+))\n`;
 	} else if (layer_type == "DepthwiseConv1D") {
 		str += `model.add(layers.DepthwiseConv1D(
-	kernel_size=${data.kernel_size},
-	strides=${data.strides},
-	padding=${or_none(data.padding)},
-	depth_multiplier=${data.depth_multiplier},
-	dilation_rate=${data.dilation_rate},
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "DepthwiseConv2D") {
 		str += `model.add(layers.DepthwiseConv2D(
 	(${data.kernel_size}),
-	strides=(${data.strides.join(", ")}),
-	padding=${or_none(data.padding)},
-	depth_multiplier=${data.depth_multiplier},
-	dilation_rate=(${data.dilation_rate.join(", ")}),
-	activation=${or_none(data.activation)},
-	use_bias=${data.use_bias ? "True" : "False"},
-	depthwise_initializer=${or_none(data.depthwise_initializer)},
-	bias_initializer=${or_none(data.bias_initializer)},
-	depthwise_regularizer=${or_none(data.depthwise_regularizer)},
-	bias_regularizer=${or_none(data.bias_regularizer)},
-	activity_regularizer=${or_none(data.activity_regularizer)},
-	depthwise_constraint=${or_none(data.depthwise_constraint)},
-	bias_constraint=${or_none(data.bias_constraint)}
+${python_data_to_string(data, ['kernel_size'])}
 ))\n`;
 	} else if(layer_type == "Flatten") {
 		return "model.add(layers.Flatten())\n";
@@ -1188,6 +1075,47 @@ function model_add_python_structure (layer_type, data) {
 		return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
 	}
 	return str;
+}
+
+function python_data_to_string (_data, _except=[]) {
+	assert(typeof(_data) == "object", "_data is not an object for python_data_to_string");
+	assert(typeof(_except) == "object", "_except is not an object for python_data_to_string");
+
+	var strings = [];
+	var string = "";
+
+	var keys = Object.keys(_data);
+
+	_except.push("input_shape");
+
+	for (var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+
+		if(!_except.includes(key)) {
+			if(key == "strides" || key == "dilation_rate" || key == "pool_size") {
+				assert(typeof(_data[key]) == "object", "_data[key] for " + key + " is not an object!");
+				strings.push(`\t${key}=(${_data[key].join(", ")})`);
+			} else if(key == "use_bias" || key == "trainable") {
+				var true_or_false = 0;
+				if(_data[key] == "True" || _data[key] == "true" || _data[key] == "1" || _data[key] == 1) {
+					true_or_false = 1;
+				}
+				strings.push(`\t${key}=${true_or_false ? "True" : "False"}`);
+			} else if(key == "size") {
+				strings.push(`\tsize=${or_none(data.size, "(", ")")}`);
+			} else {
+				if(typeof(_data[key]) == "string") {
+					strings.push(`\t${key}=${or_none(_data[key])}`);
+				} else {
+					strings.push(`\t${key}=${or_none(_data[key])}`);
+				}
+			}
+		}
+	}
+
+	string = strings.join(",\n");
+
+	return string;
 }
 
 function convert_to_python_string(obj) {
@@ -6222,6 +6150,7 @@ function show_overlay(text, title="") {
 		overlay.style.display = "flex";
 		overlay.style.alignItems = "center";
 		overlay.style.justifyContent = "center";
+		overlay.style.userSelect = "none";
 		overlay.style.zIndex = "9999";
 		$(overlay).addClass("overlay");
 

@@ -140,6 +140,17 @@ async function run_tests () {
 
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
+			var old_labels = labels;
+			reset_labels();
+			test_equal("labels.length = 0 after reset_labels", labels.length, 0);
+			labels = old_labels;
+
+			disable_train();
+			test_equal(`$(".train_neural_network_button").prop("disabled") == true after disable_train`, $(".train_neural_network_button").prop("disabled"), true);
+
+			enable_train();
+			test_equal(`$(".train_neural_network_button").prop("disabled") == false after enable_train`, $(".train_neural_network_button").prop("disabled"), false);
+
 			$("body").hide();
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div')) after hiding body", is_hidden_or_has_hidden_parent($("#example_test_div")), true);
 
@@ -159,7 +170,7 @@ async function run_tests () {
 
 			test_equal("add_kernel_initializer_value_option(\"conv2d\", 1)", add_kernel_initializer_value_option("conv2d", 1), "<tr class='kernel_initializer_tr'><td>Value:</td><td><input class='input_field input_data kernel_initializer_value' type='number'  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
-			test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option("dense", 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  max=1  step=0.1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
+			test_equal("add_depth_multiplier_option('dense', 3)", add_depth_multiplier_option("dense", 3), "<tr><td>Depth multiplier:</td><td><input class='input_field input_data depth_multiplier' type='number'  min=0  step=1  value=1  _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" /></td>"); // await not possible
 
 			test_equal("quote_python(\"abc\")", quote_python("abc"), "\"abc\"");
 

@@ -1645,3 +1645,173 @@ async function get_own_tensor_data (element) {
 /*
 	TODO: await get_own_tensor_data()
 */
+
+async function confusion_matrix(classes) {
+	if(!classes.length) {
+		wrn("confusion_matrix: No classes found");
+		return "";
+	}
+
+	if(!is_classification) {
+		wrn("confusion_matrix: Only works with classification");
+		return "";
+	}
+
+	if(!model) {
+		wrn("confusion_matrix: model not defined. Cannot continue");
+	}
+	
+	var imgs = $("#photos").find("img,canvas");
+
+	if(!imgs.length) {
+		wrn("confusion_matrix: No images found");
+		return "";
+	}
+	
+	var table_data = {};
+	
+	var num_items = 0;
+
+	for (var i = 0; i < imgs.length; i++) {
+		var x = imgs[i];
+
+		var img_tensor = tidy(() => {
+			try {
+				var res = fromPixels(x).resizeBilinear([height, width]).expandDims();
+				res = divNoNan(res, parse_float($("#divide_by").val()));
+				return res;
+			} catch (e) {
+				err(e);
+				return null;
+			}
+		});
+
+		if(img_tensor === null) {
+			wrn("Could not load image from pixels from this element:", x);
+			await dispose(img_tensor);
+			continue;
+		}
+
+
+		var res;
+		try {
+			res = tidy(() => {
+				return model.predict(img_tensor);
+			});
+
+			res = res.arraySync()[0];
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			dbg("Cannot predict image: " + e);
+			continue;
+		}
+
+		if(!res) {
+			dbg("res is empty");
+			continue;
+		}
+
+		var predicted_tensor = res;
+
+		if(predicted_tensor === null || predicted_tensor === undefined) {
+			dbg("Predicted tensor was null or undefined");
+			continue;
+		}
+
+		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
+		var predicted_category = labels[predicted_index];
+
+		var src = x.src;
+		var correct_category = extractCategoryFromURL(src);
+
+		if(!Object.keys(table_data).includes(correct_category)) {
+			table_data[correct_category] = {};
+		}
+
+		if(Object.keys(table_data[correct_category]).includes(predicted_category)) {
+			table_data[correct_category][predicted_category]++;
+		} else {
+			table_data[correct_category][predicted_category] = 1;
+		}
+
+		await dispose(img_tensor);
+		await dispose(predicted_tensor);
+
+		num_items++;
+	}
+
+	if(!num_items) {
+		wrn("confusion_matrix: Could not get any items!");
+		return "";
+	}
+
+	var str = `<table class="confusion_matrix_table">` ;
+	for (var i = 0; i <= classes.length; i++) {
+		if(i == 0) {
+			str += `<tr>`;
+			str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+			for (var j =  0; j < classes.length; j++) {
+				str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
+			}
+			str += `</tr>`;
+		} else {
+			str += `<tr>`;
+			for (var j =  0; j <= classes.length; j++) {
+				if(j == 0) {
+					str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
+				} else {
+					var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
+					if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
+						text = table_data[classes[i - 1]][classes[j - 1]];
+					}
+					if(classes[i - 1] == classes[j - 1]) {
+						if(text == `0`) {
+							str += `<td class="confusion_matrix_tx">${text}</td>`;
+						} else {
+							str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
+						}
+					} else {
+						if(text == `0`) {
+							str += `<td class="confusion_matrix_tx">${text}</td>`;
+						} else {
+							str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
+						}
+					}
+				}
+			}
+			str += `</tr>`;
+		}
+	}
+	str += `</table>`;
+
+	return str;
+
+}
+
+async function confusion_matrix_to_page () {
+	if(!labels && labels.length != 0) {
+		return;
+	}
+
+	if(!is_classification) {
+		return;
+	}
+
+	if(is_cosmo_mode) {
+		return;
+	}
+
+	var confusion_matrix_html = await confusion_matrix(labels);
+
+	if(confusion_matrix_html) {
+		var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
+		$("#confusion_matrix").html(str);
+		$("#confusion_matrix_training").html(str);
+	} else {
+		$("#confusion_matrix").html("");
+		$("#confusion_matrix_training").html("");
+	}
+}

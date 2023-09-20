@@ -77,6 +77,8 @@ async function _create_model () {
 			throw new Error("" + e);
 		} else if(("" + e).includes("targetShape is undefined")) {
 			wrn("" + e);
+		} else if(("" + e).includes("ReferenceError")) {
+			wrn("" + e);
 		} else if(("" + e).includes("model is undefined")) {
 			wrn("Currently, the model is undefined. This may be fatal, but may also not be");
 		} else if(("" + e).includes("model.layers[i] is undefined")) {
@@ -182,7 +184,21 @@ async function compile_model () {
 		model_config_hash = new_model_config_hash;
 		model.compile(global_model_data);
 	} catch (e) {
-		await except("ERROR2", e);
+		if(("" + e).includes("model is empty")) {
+			set_model_layer_warning(0, "" + e);
+
+			for (var i = 0; i < $("#layer_setting").length; i++) {
+				set_layer_background(i, "red")
+			}
+		} else {
+			await except("ERROR2", e);
+
+			return;
+		}
+	}
+
+	for (var i = 0; i < $("#layer_setting").length; i++) {
+		set_layer_background(i, "")
 	}
 
 	try {
@@ -378,6 +394,7 @@ function is_valid_parameter (keyname, value, layer) {
 		(["activation", "recurrentActivation"].includes(keyname) && ["LeakyReLU", "elu", "hardSigmoid", "linear", "relu", "relu6",  "selu", "sigmoid", "softmax", "softplus", "softsign", "tanh", "swish", "mish"].includes(value)) ||
 		(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
 		(keyname == "implementation" && [1, 2].includes(value)) ||
+		(keyname == "biasConstraint" && ["maxNorm", "minNorm"].includes(value)) ||
 		(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
 		(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
 		(keyname == "targetShape" && is_number_array(value)) ||
@@ -734,20 +751,22 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 				("" + e).includes("Input shape contains 0") ||
 				("" + e).includes("is incompatible with layer") ||
 				("" + e).includes("targetShape is undefined") ||
-				("" + e).includes("is not fully defined")
+				("" + e).includes("is not fully defined") ||
+				("" + e).includes("The dilationRate argument must be an integer") ||
+				("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
 			) {
 				set_layer_background(i, "red");
+				set_model_layer_warning(i, "" + e);
 			} else {
 				set_model_layer_warning(i, "" + e);
 				l("ERROR: " + e);
 				console.log("ORIGINAL e: ", e);
 				log(type);
 				log(data);
+				throw new Error(e);
 			}
 
 			await dispose(new_model);
-
-			throw new Error(e);
 		}
 
 		return false;
