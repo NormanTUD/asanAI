@@ -865,7 +865,28 @@ async function update_python_code(dont_reget_labels) {
 				} else if (option_name == "strides") {
 					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "strides_x")), parse_int(get_item_value(i, "strides_y"))];
 				} else if (option_name == "kernel_size") {
-					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "kernel_size_x")), parse_int(get_item_value(i, "kernel_size_y"))];
+					var kernel_size_x = get_item_value(i, "kernel_size_x");
+					var kernel_size_y = get_item_value(i, "kernel_size_y");
+					var kernel_size_z = get_item_value(i, "kernel_size_z");
+
+					if(kernel_size_x && kernel_size_y && kernel_size_z) {
+						data[get_python_name(option_name)] = [
+							parse_int(kernel_size_x),
+							parse_int(kernel_size_y),
+							parse_int(kernel_size_z)
+						];
+					} else if (kernel_size_x && kernel_size_y) {
+						data[get_python_name(option_name)] = [
+							parse_int(kernel_size_x),
+							parse_int(kernel_size_y)
+						];
+					} else if (kernel_size_x) {
+						data[get_python_name(option_name)] = [
+							parse_int(kernel_size_x)
+						];
+					} else {
+						write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+					}
 				} else if (option_name == "size") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 				} else if (option_name == "dilation_rate") {
