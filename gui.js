@@ -6201,6 +6201,14 @@ function model_is_ok () {
 		_content += "&#128461;";
 	}
 
+	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
+	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
+
+	if(last_description_end_y != last_layer_setting_end_y) {
+		_content += "&updownarrow;";
+		log_once(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
+	}
+
 	if(last_model_ok_status != _content) {
 		if(color == red) {
 			wrn(msg);
@@ -6420,4 +6428,20 @@ function create_centered_window_with_text(parameter) {
 
 	// Append the window to the body to display it
 	document.body.appendChild(windowDiv);
+}
+
+function get_last_element_of_class_end_y(name) {
+	assert(typeof(name) == "string", "get_last_element_of_class_end_y(" + name + ") parameter is not a string");
+	var descs = $("." + name);
+	var _res = $(descs[descs.length - 1]).offset().top + real_height($(descs[descs.length - 1]));
+
+	return _res;
+}
+
+function get_last_layer_setting_end_y () {
+	return get_last_element_of_class_end_y("layer_setting");
+}
+
+function get_last_description_of_layers_end_y () {
+	return get_last_element_of_class_end_y("descriptions_of_layers");
 }
