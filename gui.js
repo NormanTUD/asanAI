@@ -869,7 +869,9 @@ async function update_python_code(dont_reget_labels) {
 				} else if (option_name == "target_shape") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
 				} else if (option_name == "activation") {
-					data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
+					if(option_name) {
+						data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
+					}
 				} else {
 					data[get_python_name(option_name)] = get_item_value(i, option_name);
 				}
