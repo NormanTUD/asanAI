@@ -1468,7 +1468,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	prev_layer_data = [];
 
 	try {
-		await identify_layers(number_of_layers);
+		await identify_layers();
 	} catch (e) {
 		throw new Error(e);
 	}
@@ -2691,7 +2691,7 @@ async function chose_dataset(no_set_config) {
 	$("#predict_error").html("");
 	$("#prediction").html("");
 
-	await identify_layers(get_number_of_layers());
+	await identify_layers();
 	init_download_link();
 
 	if(!is_cosmo_mode) {
@@ -4576,7 +4576,7 @@ async function set_default_input_shape() {
 
 			await compile_model();
 
-			await identify_layers(get_number_of_layers());
+			await identify_layers();
 
 			await write_descriptions();
 		} catch (e) {

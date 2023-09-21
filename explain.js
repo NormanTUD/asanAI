@@ -609,6 +609,17 @@ function explain_error_msg (_err) {
 	return "";
 }
 
+function layer_is_red (layer_nr) {
+	assert(typeof(layer_nr) == "number", "layer_nr is not a number but " + layer_nr + "(" + typeof(layer_nr) + ")");
+	var color = $($("div.container.layer")[layer_nr]).css("background-color")
+
+	if(color == "rgb(255, 0, 0)") {
+		return true;
+	}
+
+	return false;
+}
+
 /* This function will write the given text to the layer identification of the given number. If the text is empty, it will clear the layer identification. */
 
 function write_layer_identification (nr, text) {
@@ -653,10 +664,13 @@ function get_layer_identification (i) {
 	return "";
 }
 
-async function identify_layers (number_of_layers) {
+async function identify_layers () {
+	var number_of_layers = $("div.container.layer").length;
+
 	//console.trace();
 	has_zero_output_shape = false;
 
+	var failed = 0;
 	for (var i = 0; i < number_of_layers; i++) {
 		$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
 		var new_str = get_layer_identification(i);
@@ -718,7 +732,12 @@ async function identify_layers (number_of_layers) {
 			throw new Error(e);
 		}
 
-		write_layer_identification(i, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+		if(layer_is_red(i)) {
+			failed++;
+			write_layer_identification(i, "<span class='layer_identifier_activation'></span>");
+		} else {
+			write_layer_identification(i + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+		}
 	}
 
 	if(!has_zero_output_shape) {
