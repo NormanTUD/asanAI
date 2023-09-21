@@ -76,11 +76,12 @@ function get_shape_from_file(file) {
 }
 
 function get_dimensionality_from_layer_name(layer_type) {
-	var match = layer_type.match(/(\d+)[dD]$/);
+	var match = layer_type.match(/(\d+)[dD]/);
 
 	if (match) {
-		return match[1];
+		return parse_int(match[1]);
 	}
+
 	return null;
 }
 
@@ -402,6 +403,8 @@ function add_pool_size_option(type, nr) {
 
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
+	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+
 	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
@@ -416,6 +419,8 @@ function add_kernel_size_option(type, nr) {
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
 
+	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+
 	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
 		var letter = String.fromCharCode(letter_code);
@@ -429,6 +434,8 @@ function add_kernel_size_option(type, nr) {
 function add_strides_option(type, nr) {
 	var str = "";
 	var dimensionality = get_dimensionality_from_layer_name(type);
+
+	assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
 
 	var letter_code = "x".charCodeAt();
 	for (var i = 0; i < dimensionality; i++) {
