@@ -300,7 +300,6 @@ function get_data_for_layer (type, i, first_layer) {
 				var initializer_config_string = JSON.stringify(initializer_config);
 				data[get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
 			}
-
 		} else if (valid_initializer_types.includes(get_key_name_camel_case(get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
 			var weight_type = get_weight_type_name_from_option_name(option_name);
 			var regularizer_name = get_item_value(i, weight_type + "_regularizer");
@@ -375,7 +374,6 @@ async function get_model_structure(is_fake_model = 0) {
 	await write_descriptions();
 
 	layer_structure_cache = JSON.stringify(structure);
-
 
 	return structure;
 }

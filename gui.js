@@ -4439,7 +4439,11 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 }
 
 function get_layer_initializer_config(layer_nr, initializer_type) {
-	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(
+		valid_initializer_types.includes(initializer_type),
+		"insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)"
+	);
+
 	assert(typeof (layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
 
 	var starts_with_string = initializer_type + "_initializer_";
