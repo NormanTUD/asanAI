@@ -1555,7 +1555,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else if(("" + e).includes("out of memory")) {
-			err("" + e);
+			write_error("" + e);
+			return;
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
 			wrn("" + e);
 		} else if(("" + e).includes("model.layers[i]")) {
