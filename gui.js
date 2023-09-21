@@ -6207,6 +6207,7 @@ function model_is_ok () {
 	if(last_description_end_y != last_layer_setting_end_y) {
 		_content += "&updownarrow;";
 		log_once(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
+		write_descriptions(); // await not possible
 	}
 
 	if(last_model_ok_status != _content) {
