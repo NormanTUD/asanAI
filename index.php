@@ -83,6 +83,7 @@
 		_js("explain.js");
 		_js("data.js");
 		_js("gui.js");
+		_js("easter_eggs.js");
 		_js("present.js");
 		_js("cosmo.js");
 		_js("train.js");
