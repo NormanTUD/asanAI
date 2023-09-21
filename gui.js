@@ -2559,9 +2559,8 @@ async function init_dataset() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
-	show_tab_label("visualization_tab_label", 1);
 
-	show_tab_label("fcnn_tab_label", 1);
+	show_tab_label("fcnn_tab_label");
 	hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
@@ -2572,7 +2571,8 @@ async function init_dataset() {
 	$(".training_performance_tabs").hide();
 
 	$("#data_origin").val("default").trigger("change");
-	show_tab_label("visualization_tab_label", 1);
+	show_tab_label("visualization_tab_label");
+	show_tab_label("training_data_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 	await save_current_status();
 	init_weight_file_list();
@@ -2602,9 +2602,9 @@ async function chose_dataset(no_set_config) {
 	$("#maximally_activated_content").html("");
 	hide_tab_label("maximally_activated_label");
 	if(!is_cosmo_mode) {
-		show_tab_label("visualization_tab_label", 1);
+		show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 	}
-	show_tab_label("fcnn_tab_label", 1);
+	show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 	init_weight_file_list();
 	x_file = null;
@@ -2755,8 +2755,8 @@ async function init_dataset_category() {
 
 	$("#data_origin").val("default").trigger("change");
 
-	show_tab_label("visualization_tab_label", 1);
-	show_tab_label("fcnn_tab_label", 1);
+	show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+	show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 
 	await updated_page();
 	init_download_link();
@@ -3613,8 +3613,8 @@ async function change_data_origin() {
 		await set_default_input_shape();
 
 		if(!is_cosmo_mode) {
-			show_tab_label("visualization_tab_label", 1);
-			show_tab_label("fcnn_tab_label", 1);
+			show_tab_label("visualization_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
+			show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		}
 
 		await update_python_code();
