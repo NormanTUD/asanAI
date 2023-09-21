@@ -219,21 +219,53 @@ function quote_python(item, nobrackets=0) {
 	return item;
 }
 
-function get_js_name(name) {
-	if (name in python_names_to_js_names) {
-		return python_names_to_js_names[name];
+function get_js_name(_name) {
+	if(typeof(_name) == "boolean") {
+		if(_name) {
+			return "true";
+		}
+		return "false";
 	}
-	return name;
+
+	if(Array.isArray(_name)) {
+		return _name;
+	}
+	assert(typeof(_name) == "string", "_name is not a string: " + _name);
+
+	if (_name in python_names_to_js_names) {
+		return python_names_to_js_names[_name];
+	}
+	return _name;
 }
 
-function get_python_name(name) {
-	if (name in js_names_to_python_names) {
-		return js_names_to_python_names[name];
+function get_python_name(_name) {
+	if(typeof(_name) == "boolean") {
+		if(_name) {
+			return "True";
+		}
+		return "False";
 	}
-	return name;
+
+	if(Array.isArray(_name)) {
+		return _name;
+	}
+
+	assert(typeof(_name) == "string", "_name is not a string: " + _name);
+
+	if (_name in js_names_to_python_names) {
+		return js_names_to_python_names[_name];
+	}
+	return _name;
 }
 
 function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
+	assert(typeof(classname) == "string", "classname is not a string");
+	assert(typeof(data) == "object", "data is not an object");
+	assert(typeof(nr) == "number", "nr is not a number");
+	assert(typeof(tr_class) == "string" ||tr_class === undefined || tr_class === null, "tr_class is not a string");
+
+	assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only for get_tr_str_for_layer_table must be either 0 or 1, but is " + expert_mode_only);
+
 	var str = "<tr";
 	if(expert_mode_only) {
 		if(tr_class) {
@@ -816,6 +848,7 @@ async function update_python_code(dont_reget_labels) {
 		if (type in layer_options) {
 			for (var j = 0; j < layer_options[type]["options"].length; j++) {
 				var option_name = layer_options[type]["options"][j];
+
 				if (option_name == "pool_size") {
 					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "pool_size_x")), parse_int(get_item_value(i, "pool_size_y"))];
 				} else if (option_name == "strides") {
@@ -853,7 +886,7 @@ async function update_python_code(dont_reget_labels) {
 		var params = [];
 		for (const [key, value] of Object.entries(data)) {
 			if (key == "dtype" && i == 0 || key != "dtype") {
-				if (typeof (value) != "undefined") {
+				if (typeof (value) != "undefined" && typeof(key) != "boolean") {
 					params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
 				}
 			}
