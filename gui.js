@@ -133,6 +133,7 @@ function get_item_value(layer, classname) {
 
 	var layer_settings = $(".layer_setting");
 	var layer = $(layer_settings[layer]);
+
 	if (typeof(classname) == "string") {
 		var found = $(layer.find("." + classname)[0]);
 		if (found.attr("type") == "checkbox") {
@@ -386,6 +387,9 @@ function add_seed_option (type, nr) {
 }
 
 function add_visualize_option(type, nr) {
+	assert(typeof(type) == "string", "type is not a number");
+	assert(typeof(nr) == "number", "nr is not a number");
+
 	var style = "";
 
 	var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
@@ -394,6 +398,9 @@ function add_visualize_option(type, nr) {
 }
 
 function add_pool_size_option(type, nr) {
+	assert(typeof(type) == "string", "type is not a number");
+	assert(typeof(nr) == "number", "nr is not a number");
+
 	var str = "";
 
 	var dimensionality = get_dimensionality_from_layer_name(type);

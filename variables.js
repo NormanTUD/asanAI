@@ -1215,6 +1215,8 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		var func_header = "var " + func_name + " = function (type, nr) {\n";
 
 		var func = func_header;
+		func += `\tassert(typeof(type) == "string", "type is not a number ${func_name}");`;
+		func += `\tassert(typeof(nr) == "number", "nr is not a number for ${func_name}");`;
 		func += "\treturn get_tr_str_for_layer_table(" + params + ");\n";
 		func += "}\n";
 
