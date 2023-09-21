@@ -707,6 +707,10 @@ var layer_options_defaults = {
 	"pool_size": "[]",
 	"kernel_size": "[]",
 
+	"kernel_size_x": "1",
+	"kernel_size_y": "1",
+	"kernel_size_z": "1",
+
 	"target_shape": calculate_default_target_shape
 };
 
