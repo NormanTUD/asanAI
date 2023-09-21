@@ -57,7 +57,6 @@ function get_full_shape_without_batch(file) {
 
 	res[0] = null;
 
-
 	return res;
 }
 
@@ -88,7 +87,6 @@ function get_dimensionality_from_layer_name(layer_type) {
 async function md5 (content) {
 	var res = await hashwasm.md5(content);
 
-
 	return res;
 }
 
@@ -98,7 +96,6 @@ async function get_current_layer_container_status_hash() {
 	html = html.replaceAll(" disabled=\"\"", "");
 
 	var res = await md5(html);
-
 
 	return res;
 }
@@ -124,7 +121,6 @@ async function get_current_status_hash(use_weights=1) {
 	var new_status_hash = await md5(html_code);
 
 	last_status_hash = new_status_hash;
-
 
 	return new_status_hash;
 }
@@ -341,7 +337,6 @@ function add_cell_option() {
 function add_number_lstm_cells_option(type, nr) {
 	var res = get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", { "min": 0, "step": 1, "value": 1 }, nr);
 
-
 	return res;
 }
 
@@ -363,7 +358,6 @@ function add_visualize_option(type, nr) {
 
 	var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
 
-
 	return res;
 }
 
@@ -379,7 +373,6 @@ function add_pool_size_option(type, nr) {
 		letter_code++;
 	}
 
-
 	return str;
 }
 
@@ -393,7 +386,6 @@ function add_kernel_size_option(type, nr) {
 		str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_size'></span> " + letter, "kernel_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": get_default_option(type, "kernel_size")[i] }, nr);
 		letter_code++;
 	}
-
 
 	return str;
 }
@@ -5213,7 +5205,6 @@ async function set_custom_webcam_training_data() {
 
 	await init_webcams();
 
-
 	if($("#data_origin").val() != "image") {
 		$.when($("#data_origin").val("image").trigger("change")).done(async function(){
 			if(!cam) {
@@ -5370,7 +5361,6 @@ function get_last_layer_activation_function () {
 
 	var res = last_layer.find(".activation").val();
 
-
 	return res;
 }
 
@@ -5472,8 +5462,6 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 
 	var classes = "";
 	var required_skills = "";
-
-
 
 	if(idname != "sketcher") {
 		if(is_cosmo_mode) {
@@ -5631,7 +5619,6 @@ function get_canvas_blob(canvas) {
 	});
 }
 
-
 async function create_zip_with_custom_images () {
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
@@ -5673,7 +5660,6 @@ function save_custom_images_file (blob) {
 
 async function create_and_download_zip () {
 	var res = await create_zip_with_custom_images().then(save_custom_images_file);
-
 
 	return res;
 }
@@ -5772,7 +5758,6 @@ function allow_editable_labels () {
 				wrn("tmp_label undefined");
 				return;
 			}
-
 
 			if(label_index === undefined) {
 				var tmp_label = $(x).text();
@@ -5914,7 +5899,6 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 
 	assert(typeof(type) == "string", "type is not string");
 	assert(typeof(values) == "object", "values is not an object");
-
 
 	for (var i = 0; i < required.length; i++) {
 		var val_key = required[i];
