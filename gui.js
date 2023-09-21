@@ -231,7 +231,6 @@ function get_js_name(_name) {
 	if(Array.isArray(_name)) {
 		return _name;
 	}
-	assert(typeof(_name) == "string", "_name is not a string: " + _name);
 
 	if (_name in python_names_to_js_names) {
 		return python_names_to_js_names[_name];
@@ -250,8 +249,6 @@ function get_python_name(_name) {
 	if(Array.isArray(_name)) {
 		return _name;
 	}
-
-	assert(typeof(_name) == "string", "_name is not a string: " + _name);
 
 	if (_name in js_names_to_python_names) {
 		return js_names_to_python_names[_name];
