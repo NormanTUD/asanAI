@@ -1873,6 +1873,8 @@ function get_option_for_layer_by_type(nr) {
 		}
 	}
 
+	assert(typeof(str) == "string", "str is not a string in get_option_for_layer_by_type, but " + str + ", " + typeof(str));
+
 	return str;
 }
 
