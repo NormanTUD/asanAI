@@ -1057,7 +1057,7 @@ function get_default_option (layer_type, option_name) {
 	assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
 	assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
 
-	var match = layer_type.match(/(\d+)[dD]$/);
+	var match = layer_type.match(/(\d+)[dD]/);
 
 	if(match) {
 		if(typeof(layer_options_defaults[option_name]) == "string" && layer_options_defaults[option_name] == "[]") {
