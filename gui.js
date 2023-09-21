@@ -2558,11 +2558,11 @@ async function wait_for_updated_page (seconds) {
 async function init_dataset() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
-	await hide_tab_label("maximally_activated_label");
+	hide_tab_label("maximally_activated_label");
 	await show_tab_label("visualization_tab_label", 1);
 
 	await show_tab_label("fcnn_tab_label", 1);
-	await hide_tab_label("tfvis_tab_label");
+	hide_tab_label("tfvis_tab_label");
 
 	clicked_on_tab = 0;
 	init_epochs(1);
@@ -2600,7 +2600,7 @@ async function chose_dataset(no_set_config) {
 	$("#data_origin").val("default").trigger("change");
 
 	$("#maximally_activated_content").html("");
-	await hide_tab_label("maximally_activated_label");
+	hide_tab_label("maximally_activated_label");
 	if(!is_cosmo_mode) {
 		await show_tab_label("visualization_tab_label", 1);
 	}
@@ -2658,7 +2658,7 @@ function init_weight_file_list() {
 async function init_dataset_category() {
 	$("#photos").html("").hide();
 	$("#maximally_activated_content").html("");
-	await hide_tab_label("maximally_activated_label");
+	hide_tab_label("maximally_activated_label");
 
 	var original_is_settings_config = is_setting_config;
 	is_setting_config = true;
@@ -2749,7 +2749,7 @@ async function init_dataset_category() {
 	state_stack = [];
 	future_state_stack = [];
 
-	await hide_tab_label("tfvis_tab_label");
+	hide_tab_label("tfvis_tab_label");
 
 	is_setting_config = original_is_settings_config;
 
@@ -3669,18 +3669,18 @@ async function change_data_origin() {
 	}
 
 	/*
-	await hide_tab_label("training_data_tab_label");
-	await hide_tab_label("own_csv_data_label");
-	await hide_tab_label("own_image_data_label");
-	await hide_tab_label("own_tensor_data_label");
+	hide_tab_label("training_data_tab_label");
+	hide_tab_label("own_csv_data_label");
+	hide_tab_label("own_image_data_label");
+	hide_tab_label("own_tensor_data_label");
 	*/
 
 	if (show_own_image_data) {
 		await show_tab_label("own_image_data_label", 1);
 
-		await hide_tab_label("training_data_tab_label");
-		await hide_tab_label("own_csv_data_label");
-		await hide_tab_label("own_tensor_data_label");
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_tensor_data_label");
 
 		$("#own_images_container").html("");
 		await add_new_category();
@@ -3697,27 +3697,27 @@ async function change_data_origin() {
 	} else if (show_own_tensor_data) {
 		await show_tab_label("own_tensor_data_label", 1);
 
-		await hide_tab_label("training_data_tab_label");
-		await hide_tab_label("own_csv_data_label");
-		await hide_tab_label("own_image_data_label");
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_image_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv_data) {
 		await show_tab_label("own_csv_data_label", 1);
 
-		await hide_tab_label("training_data_tab_label");
-		await hide_tab_label("own_image_data_label");
-		await hide_tab_label("own_tensor_data_label");
+		hide_tab_label("training_data_tab_label");
+		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_tensor_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else {
 		await show_tab_label("training_data_tab_label");
 
-		await hide_tab_label("own_csv_data_label");
-		await hide_tab_label("own_image_data_label");
-		await hide_tab_label("own_tensor_data_label");
+		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_tensor_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
@@ -4758,7 +4758,7 @@ function rename_tmp_onchange() {
 
 }
 
-async function hide_tab_label(label) {
+function hide_tab_label(label) {
 	assert(typeof(label) == "string", "label is not a string");
 
 	$("#" + label).parent().hide();
@@ -4782,7 +4782,7 @@ async function hide_tab_label(label) {
 	}
 
 	try {
-		await update_translations();
+		update_translations(); // await not possible
 	} catch (e) {
 		err(e);
 	}

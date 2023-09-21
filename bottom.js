@@ -300,7 +300,7 @@ async function restart_alexnet(dont_click) {
 
 	if(disable_alexnet) {
 		if(!is_cosmo_mode) {
-			await hide_tab_label("alexnet_tab_label");
+			hide_tab_label("alexnet_tab_label");
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
 					await show_tab_label("fcnn_tab_label", click_on_graphs);
@@ -438,7 +438,7 @@ async function restart_lenet(dont_click) {
 
 	if(disable_lenet) {
 		if(!is_cosmo_mode) {
-			await hide_tab_label("lenet_tab_label");
+			hide_tab_label("lenet_tab_label");
 			if(clicked_on_tab == 0) {
 				if(!dont_click) {
 					await show_tab_label("fcnn_tab_label", click_on_graphs);
