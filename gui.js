@@ -6181,6 +6181,18 @@ function model_is_ok () {
 		_content += "&#9989;";
 	}
 
+	var number_of_visible_tabs = 0;
+	$("#right_side").find(">.tab").each((i,e) => {
+		if($(e).is(":visible")) {
+			number_of_visible_tabs++;
+		}
+	}); 
+
+	if(number_of_visible_tabs > 1) {
+		log_once(`${number_of_visible_tabs} visible tabs`);
+		_content += "&#128461;";
+	}
+
 	if(last_model_ok_status != _content) {
 		if(color == red) {
 			wrn(msg);
