@@ -303,17 +303,17 @@ async function restart_alexnet(dont_click) {
 			hide_tab_label("alexnet_tab_label");
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
-					await show_tab_label("fcnn_tab_label", click_on_graphs);
+					show_tab_label("fcnn_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
 		}
 	} else {
 		if(!is_cosmo_mode) {
-			await show_tab_label("alexnet_tab_label", 0);
+			show_tab_label("alexnet_tab_label", 0);
 			if(!dont_click) {
 				if(clicked_on_tab == 0) {
-					await show_tab_label("alexnet_tab_label", click_on_graphs);
+					show_tab_label("alexnet_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
@@ -441,17 +441,17 @@ async function restart_lenet(dont_click) {
 			hide_tab_label("lenet_tab_label");
 			if(clicked_on_tab == 0) {
 				if(!dont_click) {
-					await show_tab_label("fcnn_tab_label", click_on_graphs);
+					show_tab_label("fcnn_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
 		}
 	} else {
 		if(!is_cosmo_mode) {
-			await show_tab_label("lenet_tab_label", 0);
+			show_tab_label("lenet_tab_label", 0);
 			if(clicked_on_tab == 0) {
 				if(!dont_click) {
-					await show_tab_label("lenet_tab_label", click_on_graphs);
+					show_tab_label("lenet_tab_label", click_on_graphs);
 					clicked_on_tab = 1;
 				}
 			}
