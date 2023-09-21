@@ -281,9 +281,17 @@ async function restart_alexnet(dont_click) {
 					var new_hash = await md5(JSON.stringify(redraw_data));
 
 					if(graph_hashes["alexnet"] != new_hash) {
-						alexnet.restartRenderer(1);
-						alexnet.redraw(redraw_data);
-						graph_hashes["alexnet"] = new_hash;
+						try {
+							alexnet.restartRenderer(1);
+							alexnet.redraw(redraw_data);
+							graph_hashes["alexnet"] = new_hash;
+						} catch (e) {
+							if(Object.keys(e).includes("message")) {
+								e = e.message;
+							}
+
+							wrn(e);
+						}
 					}
 				} catch (e) {
 					wrn(e);

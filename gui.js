@@ -2241,7 +2241,15 @@ async function show_layers(number) {
 
 	$(".train_neural_network_button").show();
 
-	lenet.resize();
+	try {
+		lenet.resize();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		wrn("" + e);
+	}
 }
 
 function reset_photo_gallery() {
