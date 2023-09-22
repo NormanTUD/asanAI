@@ -840,6 +840,7 @@ async function debug_unusual_function_inputs () {
 			"info",
 			"log_less",
 			"fetch",
+			"Document.evaluate",
 			"tf_sequential"
 		].includes(i)) {
 			continue;
@@ -851,7 +852,7 @@ async function debug_unusual_function_inputs () {
 			//await delay(3000);
 
 			try {
-				window[i](...params);
+				await window[i](...params);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
