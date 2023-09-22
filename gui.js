@@ -6206,7 +6206,7 @@ function model_is_ok () {
 	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
 	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
 
-	if(last_description_end_y != last_layer_setting_end_y) {
+	if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
 		_content += "&updownarrow;";
 		log_once(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
 		write_descriptions(); // await not possible
