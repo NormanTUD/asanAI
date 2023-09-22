@@ -81,9 +81,19 @@ async function dispose (item) { // start_tensors
 }
 
 function tf_model (...args) {
-	var res = tf.model(...args);
+	try {
+		var res = tf.model(...args);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tidy (...args) {
