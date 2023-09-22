@@ -878,12 +878,19 @@ async function debug_unusual_function_inputs () {
 			"fetch",
 			"Document.evaluate",
 			"tf_sequential",
+			"original_rmsprop",
+			"add_kernel_initializer_value_option",
+			"original_momentum",
 			"add_function_debugger"
 		].includes(i)) {
 			continue;
 		}
 
 		if(typeof(window[i]) == "function") {
+			if(i.includes("reload")) {
+				continue;
+			}
+
 			var params = generateRandomArray(0, 10);
 			console.log(`${i}(...${params.join(", ")})`);
 			//await delay(3000);
