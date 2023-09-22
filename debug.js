@@ -880,6 +880,7 @@ async function debug_unusual_function_inputs () {
 			"tf_sequential",
 			"original_rmsprop",
 			"add_kernel_initializer_value_option",
+			"add_kernel_initializer_seed_option",
 			"original_momentum",
 			"add_function_debugger"
 		].includes(i)) {
@@ -887,7 +888,7 @@ async function debug_unusual_function_inputs () {
 		}
 
 		if(typeof(window[i]) == "function") {
-			if(i.includes("reload")) {
+			if(i.includes("reload") || (i.startsWith("add_") && i.endsWith("_option"))) {
 				continue;
 			}
 
