@@ -830,7 +830,7 @@ async function debug_unusual_function_inputs () {
 			"onresize",
 			"get_stack_trace",
 			"log_once",
-			"add_function_debugger"
+			"add_function_debugger",
 			"jStat",
 			"$",
 			"jQuery",
