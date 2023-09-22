@@ -319,43 +319,56 @@ function get_show_green () {
 }
 
 async function _predict_table(predictions_tensor, desc) {
-	var predictions = tidy(() => { return predictions_tensor.dataSync(); });
+	if(!predictions_tensor) {
+		wrn("predictions_tensor was empty");
+		return;
+	}
 
-	if(predictions.length) {
-		var max_i = 0;
-		var max_probability = -9999999;
+	try {
+		var predictions = tidy(() => { return predictions_tensor.dataSync(); });
 
-		for (let i = 0; i < predictions.length; i++) {
-			var probability = predictions[i];
-			if(probability > max_probability) {
-				max_probability = probability;
-				max_i = i;
+		if(predictions.length) {
+			var max_i = 0;
+			var max_probability = -9999999;
+
+			for (let i = 0; i < predictions.length; i++) {
+				var probability = predictions[i];
+				if(probability > max_probability) {
+					max_probability = probability;
+					max_i = i;
+				}
+			}
+
+			var fullstr = "";
+
+			fullstr += "<table class='predict_table'>";
+
+			for (let i = 0; i < predictions.length; i++) {
+				var label = labels[i % labels.length];
+				var probability = predictions[i];
+				var w = Math.floor(probability * 50);
+
+				fullstr += _predict_table_row(label, w, max_i, probability, i);
+			}
+
+			fullstr += "</table>";
+			if(desc) {
+				desc.html(fullstr);
 			}
 		}
 
-		var fullstr = "";
+		$("#predict_error").hide();
+		$("#predict_error").html("");
 
-		fullstr += "<table class='predict_table'>";
 
-		for (let i = 0; i < predictions.length; i++) {
-			var label = labels[i % labels.length];
-			var probability = predictions[i];
-			var w = Math.floor(probability * 50);
-
-			fullstr += _predict_table_row(label, w, max_i, probability, i);
+		return fullstr;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
 		}
 
-		fullstr += "</table>";
-		if(desc) {
-			desc.html(fullstr);
-		}
+		wrn("" + e);
 	}
-
-	$("#predict_error").hide();
-	$("#predict_error").html("");
-
-
-	return fullstr;
 }
 
 function _predict_table_row (label, w, max_i, probability, i) {
