@@ -6436,9 +6436,19 @@ function create_centered_window_with_text(parameter) {
 function get_last_element_of_class_end_y(name) {
 	assert(typeof(name) == "string", "get_last_element_of_class_end_y(" + name + ") parameter is not a string");
 	var descs = $("." + name);
-	var _res = $(descs[descs.length - 1]).offset().top + real_height($(descs[descs.length - 1]));
+	try {
+		var _res = $(descs[descs.length - 1]).offset().top + real_height($(descs[descs.length - 1]));
 
-	return _res;
+		return _res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		wrn("" + e);
+	}
+
+	return 0;
 }
 
 function get_last_layer_setting_end_y () {
