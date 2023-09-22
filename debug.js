@@ -889,6 +889,7 @@ async function debug_unusual_function_inputs () {
 			"Swal",
 			"sweetAlert",
 			"run_tests",
+			"write_error",
 			"Sweetalert2"
 		].includes(i)) {
 			continue;
@@ -911,10 +912,12 @@ async function debug_unusual_function_inputs () {
 				}
 
 				err("Unhandled exception: " + e);
-				return;
+				return 1;
 			}
 		}
 	}
+
+	return 0;
 }
 
 //debug_unusual_function_inputs();
