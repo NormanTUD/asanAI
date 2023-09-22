@@ -828,7 +828,9 @@ async function debug_unusual_function_inputs () {
 			"clearImmediate",
 			"setImmediate",
 			"onresize",
-			"get_stack_trace"
+			"get_stack_trace",
+			"log_once",
+			"add_function_debugger"
 		].includes(i)) {
 			continue;
 		}

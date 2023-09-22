@@ -59,25 +59,35 @@ function shuffleCombo (...args) {
 }
 
 async function dispose (item) { // start_tensors
-	//console.trace();
-	//log(item);
-	if(item) {
-		var tensor_id = item.id;
-		tf.dispose(item);
+	try {
+		//console.trace();
+		//log(item);
+		if(item) {
+			var tensor_id = item.id;
+			tf.dispose(item);
 
-		if(_custom_tensors[tensor_id]) {
-			delete _custom_tensors[tensor_id];
+			if(_custom_tensors[tensor_id]) {
+				delete _custom_tensors[tensor_id];
+			}
+
+			await nextFrame();
+		} else {
+			/*
+			wrn("item was empty in dispose():"); // not a real async
+			console.trace();
+			*/
 		}
 
-		await nextFrame();
-	} else {
-		/*
-		wrn("item was empty in dispose():"); // not a real async
-		console.trace();
-		*/
-	}
+		_clean_custom_tensors();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
 
-	_clean_custom_tensors();
+		err(e);
+
+		return null;
+	}
 }
 
 function tf_model (...args) {
@@ -155,247 +165,497 @@ function tf_sequential(model_uuid) {
 }
 
 function buffer(...args) {
-	var res = tf.buffer(...args);
+	try {
+		var res = tf.buffer(...args);
 
-	//_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		//_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function fromPixels (...args) {
-	var res = tf.browser.fromPixels(...args);
+	try {
+		var res = tf.browser.fromPixels(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function input(...args) {
-	var res = tf.input(...args);
+	try {
+		var res = tf.input(...args);
 
-	_custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"];
+		_custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function ones(...args) {
-	var res = tf.ones(...args);
+	try {
+		var res = tf.ones(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function reshape(...args) {
-	var res = tf.reshape(...args);
+	try {
+		var res = tf.reshape(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function min(...args) {
-	var res = tf.min(...args);
+	try {
+		var res = tf.min(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function max(...args) {
-	var res = tf.max(...args);
+	try {
+		var res = tf.max(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function add(...args) {
-	var res = tf.add(...args);
+	try {
+		var res = tf.add(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function abs(...args) {
-	var res = tf.abs(...args);
+	try {
+		var res = tf.abs(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 async function tf_data_webcam (...args) {
-	var res = await tf.data.webcam(...args);
+	try {
+		var res = await tf.data.webcam(...args);
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function resizeNearestNeighbor(...args) {
-	var res = tf.image.resizeNearestNeighbor(...args);
+	try {
+		var res = tf.image.resizeNearestNeighbor(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function resizeBilinear(...args) {
-	var res = tf.image.resizeBilinear(...args);
+	try {
+		var res = tf.image.resizeBilinear(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function rotateWithOffset (...args) {
-	var res = tf.image.rotateWithOffset(...args);
+	try {
+		var res = tf.image.rotateWithOffset(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function flipLeftRight (...args) {
-	var res = tf.image.flipLeftRight(...args);
+	try {
+		var res = tf.image.flipLeftRight(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function clipByValue (...args) {
-	var res = tf.clipByValue(...args);
+	try {
+		var res = tf.clipByValue(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function randomUniform (...args) {
-	var res = tf.randomUniform(...args);
+	try {
+		var res = tf.randomUniform(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tf_square (...args) {
-	var res = tf.square(...args);
+	try {
+		var res = tf.square(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res; 
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tf_mean (...args) {
-	var res = tf.mean(...args);
+	try {
+		var res = tf.mean(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function sqrt (...args) {
-	var res = tf.sqrt(...args);
+	try {
+		var res = tf.sqrt(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tensor1d (...args) {
-	var res = tf.tensor1d(...args);
+	try {
+		var res = tf.tensor1d(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tensor2d (...args) {
-	var res = tf.tensor2d(...args);
+	try {
+		var res = tf.tensor2d(...args);
 
-	_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tensor (...args) {
-	var res = tf.tensor(...args);
+	try {
+		var res = tf.tensor(...args);
 
-	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function grad (...args) {
-	var res = tf.grad(...args);
+	try {
+		var res = tf.grad(...args);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function divNoNan (...args) {
-	var res = tf.divNoNan(...args);
+	try {
+		var res = tf.divNoNan(...args);
 
-	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function oneHot (...args) {
-	var res = tf.oneHot(...args);
+	try {
+		var res = tf.oneHot(...args);
 
-	_custom_tensors[res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		_custom_tensors[res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function _clean_custom_tensors () {
@@ -436,13 +696,33 @@ function parse_float (...args) {
 }
 
 async function loadLayersModel (...args) {
-	var res = await tf.loadLayersModel(...args);
+	try {
+		var res = await tf.loadLayersModel(...args);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 async function toPixels (...args) {
-	var res = await tf.browser.toPixels(...args);
+	try {
+		var res = await tf.browser.toPixels(...args);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }

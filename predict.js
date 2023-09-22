@@ -245,6 +245,8 @@ async function _run_predict_and_show (tensor_img, nr) {
 			dbg("Prediction got wrong tensor shape. This may be harmless when you just switched models, otherwise, it indicates a bug.");
 		} else if(("" + e).includes("code is undefined")) {
 			err(e + ". This may mean that the whole document was deleted!!!");
+		} else if(("" + e).includes("predictions is null")) {
+			err("" + e);
 		} else if(("" + e).includes("Either strides or dilations must be 1")) {
 			for (var i = 0; i < $("#layers_container").length; i++) {
 				set_layer_background(i, "red");
