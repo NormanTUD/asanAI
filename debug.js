@@ -838,8 +838,7 @@ async function debug_unusual_function_inputs () {
 			"info",
 			"log_less",
 			"fetch",
-			"tf_sequential",
-
+			"tf_sequential"
 		].includes(i)) {
 			continue;
 		}
