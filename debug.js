@@ -211,6 +211,9 @@ function add_function_debugger () {
 				"get_param_names",
 				"predict_webcam",
 				"memory_debugger",
+				"data_debug",
+				"debug_unusual_function_inputs",
+				"loadLayersModel",
 				"_allow_training",
 				"fix_viz_width",
 				"allow_training",
@@ -386,18 +389,36 @@ function data_debug (...data) {
 }
 
 function highlight_element(xpath) {
-	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-	if (element) {
-		element.style.backgroundColor = "yellow";
-		element.style.margin = "20px";
+	try {
+		const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		if (element) {
+			element.style.backgroundColor = "yellow";
+			element.style.margin = "20px";
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("Unhandled exception: " + e);
+		return;
 	}
 }
 
 function unhighlight_element(xpath) {
-	const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-	if (element) {
-		element.style.backgroundColor = "";
-		element.style.margin = "0px";
+	try {
+		const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		if (element) {
+			element.style.backgroundColor = "";
+			element.style.margin = "0px";
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("Unhandled exception: " + e);
+		return;
 	}
 }
 
@@ -785,6 +806,8 @@ function generateRandomArray(minElements, maxElements) {
 async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if([
+			"debug_unusual_function_inputs",
+			"loadLayersModel",
 			"getComputedStyle",
 			"postMessage",
 			"close",
@@ -848,12 +871,14 @@ async function debug_unusual_function_inputs () {
 			"_take_screenshot",
 			"send_bug_report",
 			"_cosmo_set_environment",
+			"get_param_names",
 			"logt",
 			"info",
 			"log_less",
 			"fetch",
 			"Document.evaluate",
-			"tf_sequential"
+			"tf_sequential",
+			"add_function_debugger"
 		].includes(i)) {
 			continue;
 		}
