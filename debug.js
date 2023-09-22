@@ -831,6 +831,15 @@ async function debug_unusual_function_inputs () {
 			"get_stack_trace",
 			"log_once",
 			"add_function_debugger"
+			"jStat",
+			"$",
+			"jQuery",
+			"logt",
+			"info",
+			"log_less",
+			"fetch",
+			"tf_sequential",
+
 		].includes(i)) {
 			continue;
 		}
@@ -843,6 +852,10 @@ async function debug_unusual_function_inputs () {
 			try {
 				window[i](...params);
 			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
 				err("Unhandled exception: " + e);
 				return;
 			}
