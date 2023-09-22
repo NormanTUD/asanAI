@@ -537,12 +537,21 @@ function create_graphviz_function_call_graph () {
 // Execute the analysis
 // create_graphviz_function_call_graph();
 function detect_and_color_stacktrace(input_string) {
-	var pattern = /([\w$]+)@((?:https?|ftp):\/\/[^\s/$.?#].[^\s]*)/g;
-	var coloredString = input_string.replace(pattern, function(match, funcName, url) {
-		return "<span style='color: #af0f0f;'>" + funcName + "</span>@<span style='color: #0f0faf;'>" + url + "</span>";
-	});
+	try {
+		var pattern = /([\w$]+)@((?:https?|ftp):\/\/[^\s/$.?#].[^\s]*)/g;
+		var coloredString = input_string.replace(pattern, function(match, funcName, url) {
+			return "<span style='color: #af0f0f;'>" + funcName + "</span>@<span style='color: #0f0faf;'>" + url + "</span>";
+		});
 
-	return coloredString;
+		return coloredString;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("Unhandled exception: " + e);
+		return;
+	}
 }
 
 function create_html_table_from_json(data) {
@@ -836,6 +845,9 @@ async function debug_unusual_function_inputs () {
 			"jStat",
 			"$",
 			"jQuery",
+			"_take_screenshot",
+			"send_bug_report",
+			"_cosmo_set_environment",
 			"logt",
 			"info",
 			"log_less",

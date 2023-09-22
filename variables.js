@@ -70,24 +70,44 @@ function uuidv4() {
 }
 
 function calculate_default_target_shape (nr) {
-	var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
+	try {
+		var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
-	var output = [];
+		var output = [];
 
-	for (var i = 0; i < input_shape.length; i++) {
-		if(Number.isInteger(input_shape[i])) {
-			output.push(input_shape[i]);
+		for (var i = 0; i < input_shape.length; i++) {
+			if(Number.isInteger(input_shape[i])) {
+				output.push(input_shape[i]);
+			}
 		}
-	}
 
-	return output;
+		return output;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+
+		return null;
+	}
 }
 
 function lowercase_first_letter (string) {
-	var res = string.charAt(0).toLowerCase() + string.slice(1);
+	try {
+		var res = string.charAt(0).toLowerCase() + string.slice(1);
 
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+
+		return null;
+	}
 }
 
 var state_stack = [];
@@ -608,10 +628,18 @@ var initializers = {
 };
 
 function get_name_case_independent (name, from_hash) {
-	for (var key of Object.keys(from_hash)) {
-		if(key.toLowerCase() == name.toLowerCase() || from_hash[key].toLowerCase() == name.toLowerCase()) {
-			return from_hash[key];
+	try {
+		for (var key of Object.keys(from_hash)) {
+			if(key.toLowerCase() == name.toLowerCase() || from_hash[key].toLowerCase() == name.toLowerCase()) {
+				return from_hash[key];
+			}
 		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
 	}
 	return null;
 }
