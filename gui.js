@@ -1685,6 +1685,8 @@ function write_model_summary_wait () {
 
 		if(("" + e).includes("getElementById(...) is null")) {
 			wrn("Did you remove the summary tab manually?");
+		} else if(("" + e).includes("model is empty. Add some layers first")) {
+			err("" + e);
 		} else {
 			throw new Error(e);
 		}
