@@ -882,7 +882,14 @@ async function debug_unusual_function_inputs () {
 			"add_kernel_initializer_value_option",
 			"add_kernel_initializer_seed_option",
 			"original_momentum",
-			"add_function_debugger"
+			"add_function_debugger",
+			"dataURLtoBlob",
+			"swal",
+			"SweetAlert",
+			"Swal",
+			"sweetAlert",
+			"run_tests",
+			"Sweetalert2"
 		].includes(i)) {
 			continue;
 		}
