@@ -1021,6 +1021,16 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 function _get_neurons_last_layer (layer, type) {
 	var neurons = 1;
 
+	if(!Object.keys(model).includes("layers")) {
+		wrn("Cannot get model.layers");
+		return false;
+	}
+
+	if(!Object.keys(model.layers).includes(layer)) {
+		wrn(`Cannot get model.layers[${layer}]`);
+		return false;
+	}
+
 	if(type == "conv2d") {
 		neurons = model.layers[layer].filters;
 	} else if (type == "dense") {
