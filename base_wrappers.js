@@ -116,9 +116,7 @@ function tidy (...args) {
 			e = e.message;
 		}
 
-		err(e);
-
-		return null;
+		throw new Error(e);
 	}
 }
 
