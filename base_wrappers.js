@@ -97,9 +97,19 @@ function tf_model (...args) {
 }
 
 function tidy (...args) {
-	var res = tf.tidy(...args);
+	try {
+		var res = tf.tidy(...args);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
+
+		return null;
+	}
 }
 
 function tf_sequential(model_uuid) {
