@@ -815,6 +815,7 @@ async function debug_unusual_function_inputs () {
 			"confirm",
 			"prompt",
 			"print",
+			"add_optimizer_debugger",
 			"l",
 			"wrn",
 			"err",
