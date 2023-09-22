@@ -730,3 +730,122 @@ function _dump_env_to_html () {
 
 	return html;
 }
+
+function generateRandomArray(minElements, maxElements) {
+	// Generate a random number of elements within the specified range
+	const numElements = Math.floor(Math.random() * (maxElements - minElements + 1)) + minElements;
+
+	// Initialize the result array
+	const randomArray = [];
+
+	// Define the possible data types
+	const dataTypes = ["string", "boolean", "number"];
+
+	for (let i = 0; i < numElements; i++) {
+		// Randomly select a data type
+		const randomType = dataTypes[Math.floor(Math.random() * dataTypes.length)];
+
+		// Generate a random value based on the selected data type
+		let randomValue;
+
+		if (randomType === "string") {
+			// Generate a random string of random length
+			const stringLength = Math.floor(Math.random() * 10) + 1; // Max length of 10
+			const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			let randomString = "";
+			for (let j = 0; j < stringLength; j++) {
+				randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+			}
+			randomValue = randomString;
+		} else if (randomType === "boolean") {
+			// Generate a random boolean value
+			randomValue = Math.random() < 0.5;
+		} else {
+			// Generate a random number (integer or float)
+			randomValue = Math.random() * 100; // Adjust the range as needed
+		}
+
+		// Push the generated value to the array
+		randomArray.push(randomValue);
+	}
+
+	return randomArray;
+}
+
+
+async function debug_unusual_function_inputs () {
+	for (var i in window) {
+		if([
+			"getComputedStyle",
+			"postMessage",
+			"close",
+			"alert",
+			"confirm",
+			"prompt",
+			"print",
+			"l",
+			"wrn",
+			"err",
+			"log",
+			"dbg",
+			"focus",
+			"blur",
+			"open",
+			"stop",
+			"captureEvents",
+			"releaseEvents",
+			"getSelection",
+			"matchMedia",
+			"moveTo",
+			"moveBy",
+			"resizeTo",
+			"scroll",
+			"scrollTo",
+			"getDefaultComputedStyle",
+			"resizeBy",
+			"scrollBy",
+			"scrollByLines",
+			"scrollByPages",
+			"updateCommands",
+			"sizeToContent",
+			"find",
+			"dump",
+			"setResizable",
+			"requestIdleCallback",
+			"cancelIdleCallback",
+			"requestAnimationFrame",
+			"cancelAnimationFrame",
+			"reportError",
+			"clearInterval",
+			"queueMicrotask",
+			"btoa",
+			"atob",
+			"setTimeout",
+			"clearTimeout",
+			"setInterval",
+			"createImageBitmap",
+			"structuredClone",
+			"clearImmediate",
+			"setImmediate",
+			"onresize",
+			"get_stack_trace"
+		].includes(i)) {
+			continue;
+		}
+
+		if(typeof(window[i]) == "function") {
+			var params = generateRandomArray(0, 10);
+			console.log(`${i}(...${params.join(", ")})`);
+			//await delay(3000);
+
+			try {
+				window[i](...params);
+			} catch (e) {
+				err("Unhandled exception: " + e);
+				return;
+			}
+		}
+	}
+}
+
+//debug_unusual_function_inputs();

@@ -1,19 +1,29 @@
 var _custom_tensors = {};
 
 function removeTimestampAndLines(inputString) {
-	// Remove the "t=\d" pattern
-	const cleanedString = inputString.replace(/\?t=\d+/g, "");
+	try {
+		// Remove the "t=\d" pattern
+		const cleanedString = inputString.replace(/\?t=\d+/g, "");
 
-	// Split the string into lines
-	const lines = cleanedString.split("\n");
+		// Split the string into lines
+		const lines = cleanedString.split("\n");
 
-	// Remove the first two lines
-	lines.splice(0, 2);
+		// Remove the first two lines
+		lines.splice(0, 2);
 
-	// Join the remaining lines back into a single string
-	const resultString = lines.join("\n");
+		// Join the remaining lines back into a single string
+		const resultString = lines.join("\n");
 
-	return resultString;
+		return resultString;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+
+		return "";
+	}
 }
 
 var get_stack_trace = function() {
@@ -36,7 +46,16 @@ async function nextFrame(...args) {
 }
 
 function shuffleCombo (...args) {
-	return tf.util.shuffleCombo(...args);
+	try {
+		return tf.util.shuffleCombo(...args);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+		return args;
+	}
 }
 
 async function dispose (item) { // start_tensors
