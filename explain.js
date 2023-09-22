@@ -816,7 +816,19 @@ function add_layer_debuggers () {
 				return applied;
 			}`;
 
-			eval(code);
+			try {
+				eval(code);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("already disposed")) {
+					wrn("" + e);
+				} else {
+					throw new Error("" + e);
+				}
+			}
 		}
 	} catch (e) {
 		err(e);
