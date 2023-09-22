@@ -1352,19 +1352,21 @@ async function predict_handdrawn () {
 		return;
 	}
 
-	var new_predict_handdrawn_hash = await get_current_status_hash();
+	if(waiting_updated_page_uuids.length < 1) {
+		var new_predict_handdrawn_hash = await get_current_status_hash();
 
-	if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
-		var as = predict_data.arraySync();
-		var stringified = JSON.stringify(as);
-		var new_handdrawn_image_hash = await md5(stringified);
+		if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
+			var as = predict_data.arraySync();
+			var stringified = JSON.stringify(as);
+			var new_handdrawn_image_hash = await md5(stringified);
 
-		if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
-			info("Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
+				info("Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
 
-			await dispose(predict_data);
+				await dispose(predict_data);
 
-			return;
+				return;
+			}
 		}
 	}
 	
