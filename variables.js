@@ -584,7 +584,7 @@ var layer_options = {
 		"options": [],
 		"category": "Debug",
 		"custom": 1
-	},
+	}
 };
 
 var model_data_structure = {
