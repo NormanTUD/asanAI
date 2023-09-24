@@ -1,9 +1,9 @@
 <div id="navbar1" class="user_select_none" style="display: flex">
 	<ul class="navi_list">
 		<li><a id="training_data_tab_label" href="#training_data_tab"><span class='TRANSLATEME_data'></span></a></li>
-		<li><a id="visualization_tab_label" href="#visualization_tab" ><span class='TRANSLATEME_model_visualization'></span></a></li>
 <?php
 			$tabs = [
+				"visualization",
 				"summary",
 				"own_images",
 				"own_tensor",
