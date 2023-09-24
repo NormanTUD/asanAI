@@ -2633,7 +2633,7 @@ async function init_dataset() {
 	hide_tab_label("maximally_activated_label");
 
 	show_tab_label("fcnn_tab_label");
-	hide_tab_label("tfvis_tab_label");
+	hide_tab_label("training_tab_label");
 
 	clicked_on_tab = 0;
 	init_epochs(1);
@@ -2819,7 +2819,7 @@ async function init_dataset_category() {
 	state_stack = [];
 	future_state_stack = [];
 
-	hide_tab_label("tfvis_tab_label");
+	hide_tab_label("training_tab_label");
 
 	is_setting_config = original_is_settings_config;
 

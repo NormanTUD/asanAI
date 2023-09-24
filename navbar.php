@@ -6,7 +6,7 @@
 		<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
 		<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
 		<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span></a></li>
-		<li><a id="tfvis_tab_label" href="#tfvis_tab"><span class="TRANSLATEME_training"></span></a></li>
+		<li><a id="training_tab_label" href="#training_tab"><span class="TRANSLATEME_training"></span></a></li>
 <?php
 			$tabs = [
 				"predict",

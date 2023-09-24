@@ -137,7 +137,7 @@ function init_tabs () {
 	$("#ribbon").tabs(tabs_settings);
 	$("#right_side").tabs(tabs_settings);
 	$("#visualization_tab").tabs(tabs_settings);
-	$("#tfvis_tab").tabs(tabs_settings);
+	$("#training_tab").tabs(tabs_settings);
 	$("#code_tab").tabs(tabs_settings);
 
 }
