@@ -174,161 +174,6 @@ async function restart_fcnn(force) {
 	reset_view();
 }
 
-var disable_alexnet = 0;
-
-var alexnet = AlexNet();
-async function restart_alexnet(dont_click) {
-	seed = 1;
-	var architecture = [];
-	var architecture2 = [];
-	var colors = [];
-
-	disable_alexnet = 0;
-
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		if(disable_alexnet) { continue; }
-		var layer_type = $($(".layer_type")[i]).val();
-		if(typeof(layer_type) === "undefined") {
-			return;
-		}
-		if(Object.keys(model.layers).includes("0")) {
-			if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
-				var category = layer_options[layer_type].category;
-
-				if(category == "Convolutional") {
-					var this_layer_arch = {};
-					try {
-						var input_layer_shape = model.layers[i].getOutputAt(0).shape;
-
-						var push = 0;
-
-						try {
-							this_layer_arch["height"] = input_layer_shape[1];
-							this_layer_arch["width"] = input_layer_shape[2];
-							if(input_layer_shape.length >= 2) {
-								this_layer_arch["depth"] = input_layer_shape[3];
-							} else {
-								disable_alexnet = 1;
-							}
-							this_layer_arch["filterWidth"] = parse_int(get_item_value(i, "kernel_size_x"));
-							this_layer_arch["filterHeight"] = parse_int(get_item_value(i, "kernel_size_y"));
-							this_layer_arch["rel_x"] = random(0, 0.1);
-							this_layer_arch["rel_y"] = random(0, 0.1);
-
-							if(this_layer_arch["filterWidth"] && this_layer_arch["filterHeight"] && this_layer_arch["depth"]) {
-								push = 1;
-							}
-						} catch (e) {
-							wrn("ERROR: ", e);
-						}
-					} catch (e) {
-						wrn(e);
-						return;
-					}
-
-					if(push) {
-						architecture.push(this_layer_arch);
-					}
-				} else if (category == "Basic") {
-					try {
-						var units_at_layer = get_units_at_layer(i, 0);
-						if(units_at_layer) {
-							architecture2.push(units_at_layer);
-						}
-					} catch (e) {
-						log(e);
-						return;
-					}
-				}
-			} else {
-				log("Cannot get category of layer type of layer " + i);
-				return;
-			}
-		} else {
-			if(finished_loading) {
-				wrn("Model has no first layer. Skipping restart_alexnet");
-			}
-		}
-	}
-
-	if(!disable_alexnet) {
-		try {
-			if(architecture.length && architecture2.length) {
-				try {
-					if(show_input_layer) {
-						var shown_input_layer = {};
-						var input_shape = get_input_shape();
-						shown_input_layer["height"] = input_shape[0];
-						shown_input_layer["width"] = input_shape[1];
-						if(input_shape.length >= 3) {
-							shown_input_layer["depth"] = input_shape[2];
-						} else {
-							disable_alexnet = 1;
-						}
-						shown_input_layer["filterWidth"] = 1;
-						shown_input_layer["filterHeight"] = 1;
-						shown_input_layer["rel_x"] = random(-0.1,0.1);
-						shown_input_layer["rel_y"] = random(-0.1,0.1);
-
-						architecture.unshift(shown_input_layer);
-					}
-
-					var redraw_data = {"architecture_": architecture, "architecture2_": architecture2, "showDims": true};
-
-					var new_hash = await md5(JSON.stringify(redraw_data));
-
-					if(graph_hashes["alexnet"] != new_hash) {
-						try {
-							alexnet.restartRenderer(1);
-							alexnet.redraw(redraw_data);
-							graph_hashes["alexnet"] = new_hash;
-						} catch (e) {
-							if(Object.keys(e).includes("message")) {
-								e = e.message;
-							}
-
-							wrn(e);
-						}
-					}
-				} catch (e) {
-					wrn(e);
-					disable_alexnet = 1;
-				}
-			} else {
-				disable_alexnet = 1;
-			}
-		} catch (e) {
-			wrn(e);
-			disable_alexnet = 1;
-		}
-	}
-
-	if(disable_alexnet) {
-		if(!is_cosmo_mode) {
-			hide_tab_label("alexnet_tab_label");
-			if(!dont_click) {
-				if(clicked_on_tab == 0) {
-					show_tab_label("fcnn_tab_label", click_on_graphs);
-					clicked_on_tab = 1;
-				}
-			}
-		}
-	} else {
-		if(!is_cosmo_mode) {
-			show_tab_label("alexnet_tab_label", 0);
-			if(!dont_click) {
-				if(clicked_on_tab == 0) {
-					show_tab_label("alexnet_tab_label", click_on_graphs);
-					clicked_on_tab = 1;
-				}
-			}
-		}
-	}
-	reset_view();
-
-	conv_visualizations["alexnet"] = !disable_alexnet;
-}
-
 var lenet = LeNet();
 
 async function restart_lenet(dont_click) {
@@ -467,47 +312,13 @@ async function restart_lenet(dont_click) {
 	conv_visualizations["lenet"] = !disable_lenet;
 }
 
-function unset_alexnet_renderer () {
-	var renderers = $("#alexnet_renderer > input[type=radio]");
-	for (var i = 0; i < renderers.length; i++) {
-		$(renderers[i]).prop("checked", false);
-	}
-}
-
-async function set_specific_alexnet_renderer(var_type) {
-	unset_alexnet_renderer();
-	var renderers = $("#alexnet_renderer > input[type=radio]");
-	for (var i = 0; i < renderers.length; i++) {
-		if($(renderers[i]).val() == var_type) {
-			$(renderers[i]).prop("checked", true);
-		} else {
-			$(renderers[i]).prop("checked", false);
-		}
-	}
-	await restart_alexnet();
-}
-
 async function download_visualization (layer_id) {
-	var old_alexnet_renderer = $("#alexnet_renderer > input[type=radio]:checked").val();
-	if(layer_id == "alexnet") {
-		await set_specific_alexnet_renderer("svg");
-		await restart_alexnet();
-	}
 	var content = $("<div>").append($($("#" + layer_id).html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html();
-	if(layer_id == "alexnet") {
-		var canvas = $($("#alexnet")[0]).children()[0];
-		content = canvas.toDataURL();
-	}
-
 	var data_url = "data:application/octet-stream;base64," + btoa(unescape(encodeURIComponent(content)));
 	var a = document.createElement("a");
 	a.href = data_url;
 	a.download = layer_id + ".svg";
 	a.click();
-	if(layer_id == "alexnet") {
-		await set_specific_alexnet_renderer(old_alexnet_renderer);
-		await restart_alexnet();
-	}
 }
 
 $(".show_after_training").hide();

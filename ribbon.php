@@ -254,18 +254,6 @@
 						<td><span class="TRANSLATEME_enable_tf_debug"></span></td>
 						<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 					</tr>
-					<tr class="hide_when_no_alexnet">
-						<td>AlexNet-Renderer</td>
-						<td>
-							<fieldset style="border-width: 0px" id="alexnet_renderer"> 
-								<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="webgl" id="webgl_renderer">
-								<label for="webgl_renderer">WebGL</label>
-								<input type="radio" onchange="restart_alexnet()" name="alexnet_renderer" value="svg" id="svg_renderer" checked>
-								<label for="svg_renderer">SVG</label>
-							</fieldset>
-						</td>
-					</tr>
-
 				</table>
 
 			</div>

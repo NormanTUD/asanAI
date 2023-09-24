@@ -1377,12 +1377,6 @@ async function hide_no_conv_stuff() {
 		$(".hide_when_image").show();
 	}
 
-	if (conv_visualizations["alexnet"]) {
-		$(".hide_when_no_alexnet").show();
-	} else {
-		$(".hide_when_no_alexnet").hide();
-	}
-
 	hide_empty_tabs("visualization_ribbon");
 }
 
@@ -1460,7 +1454,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
 		await restart_lenet(1);
-		await restart_alexnet(1);
 	}
 
 	prev_layer_data = [];
@@ -3615,7 +3608,6 @@ async function toggle_show_input_layer() {
 
 	await restart_fcnn(1);
 	await restart_lenet(1);
-	await restart_alexnet(1);
 }
 
 function reset_view() {
@@ -4667,7 +4659,6 @@ async function theme_choser () {
 	await write_descriptions();
 	await write_model_to_latex_to_page();
 	await restart_fcnn();
-	await restart_alexnet();
 
 	invert_elements_in_dark_mode();
 

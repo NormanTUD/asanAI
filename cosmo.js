@@ -267,9 +267,6 @@ async function cosmo_mode () {
 	$("#upload_file").hide();
 	$("#repredict_examples_button").hide();
 	$("#download_data").hide();
-	if(!disable_alexnet) {
-		$("#alexnet_tab_label").click();
-	}
 	//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 	is_cosmo_mode = true;
 

@@ -2,16 +2,10 @@
 	<ul class="navi_list">
 		<li><a id="fcnn_tab_label" href="#fcnn_tab">FCNN</a></li>
 		<li><a href="#lenet_tab" id="lenet_tab_label" style="display: none">LeNet</a></li>
-		<li><a href="#alexnet_tab" id="alexnet_tab_label">AlexNet</a></li>
 		<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Maximally activated</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
 	</ul>
-
-	<div id="alexnet_tab" class="tab">
-		<div id="alexnet"></div>
-		<button class="vis_button" onclick="restart_alexnet(1)"><span class="TRANSLATEME_restart_alexnet"></span></button>
-	</div>
 
 	<div id="lenet_tab" class="tab">
 		<div id="lenet"></div>

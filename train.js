@@ -530,7 +530,6 @@ async function get_fit_data () {
 		document.title = original_title;
 		await restart_fcnn();
 		await restart_lenet();
-		await restart_alexnet();
 
 		$("#tiny_graph").hide();
 
