@@ -1596,6 +1596,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else if (("" + e).includes("code is undefined")) {
 			dbg("This error may happen when the whole DOM is deleted: " + e);
 			return false;
+		} else if (("" + e).includes("fcnn is undefined")) {
+			dbg("This error may happen when you did not include d3 or three.js: " + e);
+			return false;
 		} else {
 			throw new Error("" + e);
 		}

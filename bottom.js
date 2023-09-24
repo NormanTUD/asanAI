@@ -100,7 +100,17 @@ function get_units_at_layer(i, use_max_layer_size) {
 	return units;
 }
 
-var fcnn = FCNN();
+var fcnn;
+
+try {
+	fcnn = FCNN();
+} catch (e) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	err("" + e);
+}
 
 async function restart_fcnn(force) {
 	if(!model) {
@@ -164,9 +174,17 @@ async function restart_fcnn(force) {
 
 	if(graph_hashes["fcnn"] != new_hash) {
 		if(architecture.length + real_architecture.length) {
-			fcnn.redraw(redraw_data);
-			fcnn.redistribute(redistribute_data);
-			graph_hashes["fcnn"] = new_hash;
+			try {
+				fcnn.redraw(redraw_data);
+				fcnn.redistribute(redistribute_data);
+				graph_hashes["fcnn"] = new_hash;
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
+			}
 		} else {
 			log("invalid architecture lengths");
 		}
@@ -174,7 +192,16 @@ async function restart_fcnn(force) {
 	reset_view();
 }
 
-var lenet = LeNet();
+var lenet;
+try {
+	lenet = LeNet();
+} catch (e) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	err("" + e);
+}
 
 async function restart_lenet(dont_click) {
 	var layer_to_lenet_arch = {};
