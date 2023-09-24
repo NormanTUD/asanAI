@@ -814,7 +814,7 @@
 			</div>
 		</div>
 <?php
-		include("cosmo_next_button_span.php");
+		include("cosmo_next_button.php");
 		include("status_bar.php");
 		include("load_msg.php");
 		_js("libs/prism/prism.js");
