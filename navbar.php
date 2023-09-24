@@ -7,8 +7,18 @@
 		<li><a id="own_tensor_data_label" href="#own_tensor_data"><span class="TRANSLATEME_own_tensors"></span></a></li>
 		<li><a id="own_csv_data_label" href="#own_csv_data"><span class="TRANSLATEME_own_csv"></span></a></li>
 		<li><a id="tfvis_tab_label" href="#tfvis_tab"><span class="TRANSLATEME_training"></span></a></li>
-		<li><a id="predict_tab_label" href="#predict_tab"><span class="TRANSLATEME_predict"></span></a></li>
-		<li><a id="code_tab_label" href="#code_tab"><span class="TRANSLATEME_code"></span></a></li>
+<?php
+			$tabs = [
+				"predict",
+				"code"
+			];
+
+			foreach ($tabs as $name) {
+?>
+				<li><a id="<?php print $name; ?>_tab_label" href="#<?php print $name; ?>_tab"><span class="TRANSLATEME_<?php print $name; ?>"></span></a></li>
+<?php
+			}
+?>
 	</ul>
 	<span id="toggle_layer_view_button" style="" onclick="toggle_layer_view()">&#128470;</span>
 </div>
