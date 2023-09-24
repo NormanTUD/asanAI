@@ -578,6 +578,7 @@ $(document).ready(async function() {
 		show_tab_label("summary_tab_label");
 		show_tab_label("predict_tab_label");
 		show_tab_label("code_tab_label");
+		show_tab_label("training_data_tab_label", 1);
 	}
 
 	setInterval(_clean_custom_tensors, 400);
