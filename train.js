@@ -213,7 +213,6 @@ async function train_neural_network () {
 function get_key_by_value(object, value) {
 	var res = Object.keys(object).find(key => object[key] === value);
 
-
 	return res;
 }
 
@@ -261,7 +260,6 @@ async function get_model_data (optimizer_name_only) {
 	for (var i = 0; i < optimizer_data_names.length; i++) {
 		global_model_data[optimizer_data_names[i]] = parse_float($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
 	}
-
 
 	var optimizer_constructors = {
 		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
@@ -315,7 +313,6 @@ async function get_fit_data () {
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			await write_model_to_latex_to_page();
 		}
-
 
 		if(is_cosmo_mode) {
 			await show_tab_label("tfvis_tab_label", 1);
@@ -696,7 +693,6 @@ async function _get_xs_and_ys (recursive=0) {
 		return false;
 	}
 
-
 	return xs_and_ys;
 }
 
@@ -728,7 +724,6 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 			} else {
 				log("Could not install new callback");
 			}
-
 
 		}
 	} else {
@@ -1024,7 +1019,6 @@ async function run_neural_network (recursive=0) {
 							throw new Error(e);
 						}
 
-
 						if(!recursive) {
 							await run_neural_network(1);
 						}
@@ -1104,7 +1098,6 @@ async function run_neural_network (recursive=0) {
 
 		await dispose(fit_data);
 	}
-
 
 	try {
 		await dispose(xs_and_ys["x"]);
@@ -1247,7 +1240,6 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
 
-
 	// draw x-axis labels and images
 	for (let i = 0; i < images.length; i++) {
 		var image = images[i];
@@ -1362,7 +1354,6 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
-
 
 	if(get_last_layer_activation_function() != "softmax") {
 		log_once("Train visualization only works when the last layer is softmax.");

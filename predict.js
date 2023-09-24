@@ -71,7 +71,6 @@ function _divide_img_tensor (tensor_img) {
 		_predict_error(e);
 	}
 
-
 	return tensor_img;
 }
 
@@ -90,7 +89,6 @@ async function _get_tensor_img(item) {
 		_predict_error(e);
 		return null;
 	}
-
 
 	return tensor_img;
 }
@@ -319,7 +317,6 @@ function get_show_green () {
 	var last_layer_activation = get_last_layer_activation_function();
 	var show_green = last_layer_activation == "softmax" ? 1 : 0;
 
-
 	return show_green;
 }
 
@@ -365,7 +362,6 @@ async function _predict_table(predictions_tensor, desc) {
 		$("#predict_error").hide();
 		$("#predict_error").html("");
 
-
 		return fullstr;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -405,7 +401,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 	var ok = 1;
 
-
 	var estr = "";
 
 	var predict_data = null;
@@ -431,7 +426,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				data = numpy_str_to_tf_tensor(item, 0).arraySync();
 			} else {
 				var original_item = item;
-
 
 				if(item.match(/^\s*$/)) {
 					dbg("Not trying to predict empty custom item");
@@ -629,7 +623,6 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		$(".show_after_training").show();
 	}
 
-
 	if(!$("#data_origin").val() == "default") {
 		show_or_hide_predictions(0);
 
@@ -779,7 +772,6 @@ async function _print_predictions_text(count, example_predict_data) {
 				}
 			}
 
-
 		} else {
 			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 		}
@@ -791,7 +783,6 @@ async function _print_predictions_text(count, example_predict_data) {
 	if(html_contents) {
 		example_predictions.html(html_contents);
 	}
-
 
 	show_or_hide_predictions(count);
 
@@ -835,7 +826,6 @@ async function _print_example_predictions (count) {
 	if(count == 0) {
 		example_predictions.html("");
 	}
-
 
 	show_or_hide_predictions(count);
 
@@ -892,7 +882,6 @@ function get_index_of_highest_category (predictions_tensor) {
 			}
 		}
 
-
 		return highest_index;
 	} catch (e) {
 		if(("" + e).includes("disposed")) {
@@ -900,7 +889,6 @@ function get_index_of_highest_category (predictions_tensor) {
 		} else {
 			err(e);
 		}
-
 
 		return null;
 	}
@@ -997,7 +985,6 @@ async function predict_webcam () {
 
 	await dispose(cam_img);
 
-
 	var predictions_tensor = null;
 	try {
 		predictions_tensor = tidy(() => {
@@ -1065,7 +1052,6 @@ async function predict_webcam () {
 	await dispose(predict_data);
 
 	await nextFrame();
-
 
 	currently_predicting_webcam = false;
 }
@@ -1232,7 +1218,6 @@ async function show_webcam (force_restart) {
 		err(e);
 	}
 
-
 	return cam;
 }
 
@@ -1263,7 +1248,6 @@ function tensor_shape_matches_model (_tensor, m = model) {
 			return false;
 		}
 	}
-
 
 	return true;
 }
@@ -1458,7 +1442,6 @@ async function _predict_handdrawn(predictions_tensor) {
 		ret = latex_output;
 	}
 
-
 	handdrawn_predictions.html(ret);
 
 	return ret;
@@ -1476,7 +1459,6 @@ async function _image_output_handdrawn(predictions_tensor) {
 	while ((pxsz * largest) < max_height_width) {
 		pxsz += 1;
 	}
-
 
 	for (var i = 0; i < predictions.length; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({

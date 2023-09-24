@@ -137,7 +137,6 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 		}
 	}
 
-
 	return tensorList;
 }
 
@@ -329,7 +328,6 @@ function get_data_for_layer (type, i, first_layer) {
 
 	delete data["visualize"];
 
-
 	return data;
 }
 
@@ -451,7 +449,6 @@ function get_key_name_camel_case(keyname) {
 
 function remove_empty(obj) {
 	var res = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
-
 
 	return res;
 }
@@ -931,7 +928,6 @@ async function create_model (old_model, fake_model_structure, force) {
 
 	var model_data = await get_model_data();
 
-
 	if(!fake_model_structure) {
 		last_known_good_input_shape = get_input_shape_as_string();
 	}
@@ -962,7 +958,6 @@ async function dispose_old_model_tensors (model_uuid) {
 
 	_clean_custom_tensors();
 }
-
 
 async function _add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
 	var new_model = tf_sequential(model_uuid);
@@ -1049,7 +1044,6 @@ async function get_fake_data_for_layertype (layer_nr, layer_type) {
 		}
 	}
 
-
 	return data;
 }
 
@@ -1086,7 +1080,6 @@ async function create_fake_model_structure (layer_nr, layer_type) {
 
 	fake_model_structure[layer_nr]["type"] = layer_type;
 	fake_model_structure[layer_nr]["data"] = await get_fake_data_for_layertype(layer_nr, layer_type);
-
 
 	return fake_model_structure;
 }
@@ -1130,10 +1123,8 @@ async function compile_fake_model(layer_nr, layer_type) {
 		ret = false;
 	}
 
-
 	return ret;
 }
-
 
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
@@ -1178,14 +1169,11 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
 		return false;
 	}
 
-
 	return true;
 }
 
 function layer_type_always_works (layer_type) {
 	var res = !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(layer_options[layer_type].category));
-
-
 
 	return res;
 }
@@ -1205,7 +1193,6 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 	}
 
 	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape);
-
 
 	return res;
 }
@@ -1336,7 +1323,6 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 		);
 	}
 
-
 	return true;
 }
 
@@ -1344,7 +1330,6 @@ async function set_weights_from_string (string, no_warning, no_error, m) {
 	var json = JSON.parse(string);
 
 	var res = await set_weights_from_json_object(json, no_warning, no_error, m);
-
 
 	return res;
 }
@@ -1378,7 +1363,6 @@ async function get_weights_as_json (m) {
 		return false;
 	}
 }
-
 
 async function get_weights_as_string (m) {
 
@@ -1433,7 +1417,6 @@ async function get_weights_as_string (m) {
 		res = false;
 	}
 
-
 	return res;
 }
 
@@ -1467,10 +1450,8 @@ async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
 		}
 	}
 
-
 	return output_size;
 }
-
 
 function save_model () {
 	try {
@@ -1505,7 +1486,6 @@ function get_current_chosen_object_default_weights_string () {
 		weights_files[weights_file] = JSON.stringify(response);
 	}
 
-
 	return weights_files[weights_file];
 }
 
@@ -1524,7 +1504,6 @@ async function get_weights_shape (weights_as_string, m) {
 
 	await dispose(test_tensor);
 
-
 	return shape;
 }
 
@@ -1532,7 +1511,6 @@ async function get_tfjs_model () {
 	await model.save("localstorage://demo/management/model1");
 
 	var str = localStorage["tensorflowjs_models/demo/management/model1/model_topology"];
-
 
 	return str;
 }
@@ -1602,7 +1580,6 @@ async function input_shape_is_image (is_from_webcam=0) {
 
 function model_output_shape_looks_like_classification () {
 	var res = model.outputShape.length == 2;
-
 
 	return res;
 }

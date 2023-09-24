@@ -25,7 +25,6 @@ function get_mode() {
 	return mode;
 }
 
-
 function set_mode () {
 	mode = get_mode();
 	set_cookie("mode", mode);
@@ -56,8 +55,6 @@ function random_two(min, max) { // Seeded PRNG
 	result = ((max - min) * result) + min;
 	return result;
 }
-
-
 
 var seed = 1;
 function random(min, max) { // Seeded PRNG
@@ -469,8 +466,6 @@ async function restart_lenet(dont_click) {
 	reset_view();
 	conv_visualizations["lenet"] = !disable_lenet;
 }
-
-
 
 function unset_alexnet_renderer () {
 	var renderers = $("#alexnet_renderer > input[type=radio]");

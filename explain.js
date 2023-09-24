@@ -8,7 +8,6 @@ function normalize_to_rgb_min_max (x, min, max) {
 		val = 0;
 	}
 
-
 	return val;
 }
 
@@ -57,14 +56,12 @@ function shape_looks_like_image_data (shape) {
 		}
 	}
 
-
 	return "unknown";
 }
 
 function looks_like_image_data (data) {
 	var shape = get_dim(data);
 	var res = shape_looks_like_image_data(shape);
-
 
 	return res;
 }
@@ -605,7 +602,6 @@ function explain_error_msg (_err) {
 		return explanation;
 	}
 
-
 	return "";
 }
 
@@ -659,7 +655,6 @@ function get_layer_identification (i) {
 
 		return new_str;
 	}
-
 
 	return "";
 }
@@ -945,7 +940,6 @@ function deprocess_image(x) {
 		return clipByValue(x, 0, 255).asType("int32");
 	});
 
-
 	return res;
 }
 
@@ -1024,7 +1018,6 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 	full_data["worked"] = worked;
 
-
 	return full_data;
 }
 
@@ -1054,7 +1047,6 @@ function _get_neurons_last_layer (layer, type) {
 		return false;
 	}
 
-
 	return neurons;
 }
 
@@ -1069,7 +1061,6 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 		await gui_in_training(0);
 	}
-
 
 	if(currently_generating_images) {
 		l("Cannot predict 2 layers at the same time. Waiting until done...");
@@ -1316,7 +1307,6 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 		return false;
 	}
 
-
 	await nextFrame();
 
 	return canvasses;
@@ -1357,7 +1347,6 @@ function array_to_color (array, color) {
 
 		x++;
 	}
-
 
 	return new_array;
 }
@@ -1402,7 +1391,6 @@ function array_to_latex_color (original_array, desc, color=null, newline_instead
 	return str;
 }
 
-
 function array_to_latex (array, desc, newline_instead_of_ampersand) {
 	var str = "";
 	str = "\\underbrace{\\begin{pmatrix}\n";
@@ -1426,13 +1414,11 @@ function array_to_latex (array, desc, newline_instead_of_ampersand) {
 		str += "_{\\mathrm{" + desc + "}}\n";
 	}
 
-
 	return str;
 }
 
 function a_times_b (a, b) {
 	var res = a + " \\times " + b;
-
 
 	return res;
 }
@@ -1453,7 +1439,6 @@ function get_weight_name_by_layer_and_weight_index (layer, index) {
 		log(matches);
 	}
 
-
 	return null;
 }
 
@@ -1464,7 +1449,6 @@ function get_layer_data() {
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var this_layer_weights = {};
-
 
 		for (var n = 0; n < possible_weight_names.length; n++) {
 			this_layer_weights[possible_weight_names[n]] = [];
@@ -1493,7 +1477,6 @@ function get_layer_data() {
 		layer_data.push(this_layer_weights);
 	}
 
-
 	return layer_data;
 }
 
@@ -1506,7 +1489,6 @@ function array_size (ar) {
 	}
 
 	var res = [row_count, Math.min.apply(null, row_sizes)];
-
 
 	return res;
 }
@@ -1531,7 +1513,6 @@ function get_layer_output_shape_as_string (i) {
 
 function _get_h (i) {
 	var res = "h_{\\text{Shape: }" + get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
-
 
 	return res;
 }
@@ -1565,7 +1546,6 @@ function array_to_latex_matrix (array, level=0, no_brackets) {
 	}
 
 	str += base_tab + "\\end{matrix}" + (!no_brackets ? "\\right)" : "") + "\n";
-
 
 	return str;
 }
@@ -1833,7 +1813,6 @@ function model_to_latex () {
 		input_layer.push(["x_{" + i + "}"]);
 	}
 
-
 	var shown_activation_equations = [];
 
 	for (var i = 0; i < model.layers.length; i++) {
@@ -1902,7 +1881,6 @@ function model_to_latex () {
 					str += a_times_b(_get_h(i - 1), array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
 				}
 			}
-
 
 			try {
 				if("bias" in layer_data[i] && layer_data[i].bias.length) {
@@ -2093,7 +2071,6 @@ function model_to_latex () {
 
 				var origin = this_optimizer.variables[thisvarname]["origin"];
 
-
 				str += "<div class='temml_me'> \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
 				if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
 					str += " = " + this_optimizer.variables[thisvarname]["value"];
@@ -2122,9 +2099,6 @@ function model_to_latex () {
 	} else {
 		log("<h2>Unknown optimizer: " + optimizer + "</h2>");
 	}
-
-
-
 
 	prev_layer_data = layer_data;
 
@@ -2338,8 +2312,6 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 
 	}
 
-
-
 	return color_diff;
 }
 
@@ -2491,7 +2463,6 @@ function least_square (x_array, y_array) {
 
 	var b = Y - (m * X);
 
-
 	return [m, b];
 }
 
@@ -2507,7 +2478,6 @@ function array_to_html(array) {
 		}
 		m += "<br>";
 	}
-
 
 	return m;
 }
@@ -2540,7 +2510,6 @@ function apply_color_map (x) {
 		}
 		return _buffer.toTensor();
 	});
-
 
 	return res;
 }
@@ -2762,7 +2731,6 @@ async function toggle_previous_current_generated_images () {
 			$("#" + uuids[i]).find("canvas").css("width", "170px").css("height", "170px").css("image-rendering", "crisp-edges");
 		}
 
-
 		$("#previous_images_button").html("<span class='TRANSLATEME_current_images'></span> &#x2192;");
 		$("#current_images").hide();
 		$("#previous_images").show();
@@ -2965,7 +2933,6 @@ function _arbitrary_array_to_latex (arr) {
 
 				str += str_array.join(line_end_marker);
 			}
-
 
 			str += "\\end{pmatrix}\n";
 		} else {

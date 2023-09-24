@@ -449,7 +449,6 @@ function add_strides_option(type, nr) {
 		letter_code++;
 	}
 
-
 	return str;
 }
 
@@ -909,7 +908,6 @@ async function update_python_code(dont_reget_labels) {
 
 			redo_graph++;
 		}
-
 
 		["bias", "kernel", "activity"].forEach((type) => {
 			["regularizer"].forEach((func) => {
@@ -1530,7 +1528,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		$(".expert_mode_only").show();
 	}
 
-
 	allow_editable_labels();
 
 	return true;
@@ -1718,7 +1715,6 @@ function reset_summary() {
 	$("#summarycontainer").hide();
 	$("#summary").html("");
 }
-
 
 function set_optimizer(val, trigger_change = 1) {
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
@@ -2498,7 +2494,6 @@ async function set_config(index) {
 							value = get_initializer_name(value["class_name"]);
 						}
 
-
 						if (!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
 							set_item_value(i, item_name, value);
 						}
@@ -2758,8 +2753,6 @@ async function init_dataset_category() {
 		"else": ["max_values", "max_values.parent"]
 	};
 
-
-
 	var item_names = Object.keys(show_items);
 
 	if(await input_shape_is_image()) {
@@ -2869,7 +2862,6 @@ async function set_input_shape(val, force=0) {
 
 	var res = get_input_shape();
 
-
 	return res;
 }
 
@@ -2926,7 +2918,6 @@ function favicon_default() {
 function favicon_spinner() {
 	change_favicon("_gui/loading_favicon.gif");
 }
-
 
 async function disable_everything() {
 	document.body.style.cursor = "wait";
@@ -3046,7 +3037,6 @@ async function set_all_activation_functions_except_last_layer() {
 
 	await updated_page();
 }
-
 
 async function set_all_activation_functions() {
 	var chosen_value = $("#set_all_activation_functions").val();
@@ -3178,7 +3168,6 @@ function show_hide_undo_buttons() {
 	if (future_state_stack.length) {
 		enable_symbol("redo_button");
 	}
-
 
 	//debug_undo_redo_stack();
 }
@@ -4116,14 +4105,12 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	$(canvas).parent().append(color_picker_code);
 	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:"rgb"});
 
-
 	$(canvas).parent().append("<br>Transparency:");
 	$(canvas).parent().append(transparency_slider);
 
 	$(canvas).parent().append("<br>Pen size:");
 	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
 }
-
 
 async function rename_labels() {
 	reset_labels();
@@ -4157,7 +4144,6 @@ function get_shown_advanced() {
 		}
 	}
 
-
 	return shown;
 }
 
@@ -4178,7 +4164,6 @@ function show_head_data(head) {
 	$("#csv_header_overview").html("");
 
 	var html = "<h2>Header-to-Training-data</h2><table>";
-
 
 	for (var i = 0; i < head.length; i++) {
 		var x_selected = "";
@@ -4330,7 +4315,6 @@ function get_generated_encoding(nr, max) {
 	}
 
 	var res = "[" + array.join(", ") + "]";
-
 
 	return res;
 }
@@ -4486,7 +4470,6 @@ function find_layer_number_by_element(element) {
 			nr = counter;
 		}
 	});
-
 
 	return nr;
 }
@@ -4696,7 +4679,6 @@ function move_element_to_another_div(element, new_element_id) {
 
 	$(element).detach().appendTo(new_element_id);
 
-
 	return old_parent;
 }
 
@@ -4791,7 +4773,6 @@ function human_readable_time(seconds, start="", end="") {
 	return returntext;
 }
 
-
 function delete_own_image(elem) {
 	$(elem).parent().next().remove();
 	$(elem).parent().remove();
@@ -4825,7 +4806,6 @@ async function get_layers_container_md5() {
 	});
 
 	var res = await md5(layers_container_str);
-
 
 	return res;
 }
@@ -4996,7 +4976,6 @@ function summary_to_table(lines) {
 
 	table += "</table>\n";
 
-
 	return "<center>" + table + "</center>";
 }
 
@@ -5062,7 +5041,6 @@ function plotly_show_loss_graph() {
 				});
 			});
 		}
-
 
 		Plotly.newPlot("explanation", plot_data);
 	});
@@ -5285,7 +5263,6 @@ async function set_custom_image_training () {
 		$("#data_origin").val("image").trigger("change");
 	}
 }
-
 
 async function set_custom_webcam_training_data() {
 	if(!is_hidden_or_has_hidden_parent($("#own_image_data"))) {

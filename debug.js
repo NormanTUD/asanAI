@@ -111,7 +111,6 @@ function log_less (...args) {
 		console.trace();
 	}
 
-
 	var struct = {
 		"type": "log",
 		"stacktrace": get_stack_trace(),
@@ -137,7 +136,6 @@ function log (...args) {
 	if(enable_log_trace) {
 		console.trace();
 	}
-
 
 	var struct = {
 		"type": "log",
@@ -178,8 +176,6 @@ function get_param_names(func) {
 		result = [];
 	return result;
 }
-
-
 
 function add_function_debugger () {
 	var ORIGINAL_FUNCTION_PREFIX = "___original___";
@@ -707,7 +703,6 @@ async function send_bug_report () {
 	html += "<h1>Logs</h1>";
 	html += create_html_table_from_json(_full_debug_log);
 
-
 	try {
 		var pfj = JSON.stringify(performance.toJSON(), null, 2);
 
@@ -801,7 +796,6 @@ function generateRandomArray(minElements, maxElements) {
 
 	return randomArray;
 }
-
 
 async function debug_unusual_function_inputs () {
 	for (var i in window) {
