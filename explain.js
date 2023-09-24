@@ -1038,7 +1038,7 @@ function _get_neurons_last_layer (layer, type) {
 		return false;
 	}
 
-	if(!Object.keys(model.layers).includes(layer)) {
+	if(!Object.keys(model.layers).includes("" + layer)) {
 		wrn(`Cannot get model.layers[${layer}]`);
 		return false;
 	}
