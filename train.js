@@ -151,7 +151,7 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			//await show_tab_label("predict_tab", 1);
+			//await show_tab_label("predict_tab_label", 1);
 
 			//set_right_border_between_example_predictions();
 
@@ -183,7 +183,7 @@ async function train_neural_network () {
 			}
 			*/
 		} else {
-			await show_tab_label("predict_tab", jump_to_interesting_tab());
+			await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 		}
 
 		await enable_everything();

@@ -2,10 +2,10 @@
 	<ul class="navi_list">
 		<li><a id="training_data_tab_label" href="#training_data_tab"><span class='TRANSLATEME_data'></span></a></li>
 		<li><a id="visualization_tab_label" href="#visualization_tab" ><span class='TRANSLATEME_model_visualization'></span></a></li>
-		<li><a id="summary_tab_label" href="#summary_tab" onclick="write_model_summary_wait()"><span class="TRANSLATEME_summary"></span></a></li>
-		<li><a id="own_images_label" href="#own_images"><span class="TRANSLATEME_own_images"></span></a></li>
 <?php
 			$tabs = [
+				"summary",
+				"own_images",
 				"own_tensor",
 				"own_csv",
 				"training",
@@ -13,9 +13,18 @@
 				"code"
 			];
 
+			$onclicks = array(
+				"summary" => "write_model_summary_wait()"
+			);
+
 			foreach ($tabs as $name) {
+				$onclick = "";
+
+				if(isset($onclicks[$name])) {
+					$onclick = ' onclick="'.$onclicks[$name].'"';
+				}
 ?>
-				<li><a id="<?php print $name; ?>_tab_label" href="#<?php print $name; ?>_tab"><span class="TRANSLATEME_<?php print $name; ?>"></span></a></li>
+				<li style='display: none;'><a id="<?php print $name; ?>_tab_label" href="#<?php print $name; ?>_tab"<?php print $onclick; ?> ><span class="TRANSLATEME_<?php print $name; ?>"></span></a></li>
 <?php
 			}
 ?>

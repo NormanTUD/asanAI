@@ -574,6 +574,10 @@ $(document).ready(async function() {
 		setInterval(model_is_ok, 300);
 		setInterval(label_debugger_icon_ok, 300);
 		setInterval(_temml, 500);
+
+		show_tab_label("summary_tab_label");
+		show_tab_label("predict_tab_label");
+		show_tab_label("code_tab_label");
 	}
 
 	setInterval(_clean_custom_tensors, 400);
