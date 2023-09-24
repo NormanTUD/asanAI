@@ -889,7 +889,7 @@ async function update_python_code(dont_reget_labels) {
 							parse_int(kernel_size_x)
 						];
 					} else {
-						write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+						await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
 					}
 				} else if (option_name == "size") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
@@ -1578,7 +1578,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else if(("" + e).includes("out of memory")) {
-			write_error("" + e);
+			await write_error("" + e);
 			return;
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
 			wrn("" + e);
