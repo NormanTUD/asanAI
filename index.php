@@ -103,12 +103,9 @@
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
 
-
 		_js("libs/plotly-latest.min.js", 1, 1);
 ?>
-		
 		<script>
-
 			var tf_exists = 1;
 			
 			try {
