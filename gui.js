@@ -86,9 +86,17 @@ function get_dimensionality_from_layer_name(layer_type) {
 }
 
 async function md5 (content) {
-	var res = await hashwasm.md5(content);
+	try {
+		var res = await hashwasm.md5(content);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
 }
 
 async function get_current_layer_container_status_hash() {
