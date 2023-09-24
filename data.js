@@ -458,7 +458,7 @@ async function get_xs_and_ys () {
 			await show_tab_label("own_csv_label", 0);
 			await show_tab_label("training_tab_label", 1);
 		} else if (_data_origin == "image") {
-			await show_tab_label("own_image_data_label", 1);
+			await show_tab_label("own_images_label", 1);
 		} else if (_data_origin == "tensordata") {
 			await show_tab_label("own_tensor_label", 1);
 		} else {

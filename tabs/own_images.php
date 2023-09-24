@@ -1,4 +1,4 @@
-<div id="own_image_data" class="tab">
+<div id="own_images" class="tab">
 	<span class="hide_in_cosmo_mode">
 		<button onclick="create_and_download_zip()"><span class="TRANSLATEME_download_custom_zip_file"></span></button>
 		<br>

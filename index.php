@@ -268,7 +268,7 @@
 							include("navbar.php");
 							include("tabs/own_csv.php");
 							include("tabs/own_tensor.php");
-							include("tabs/own_image_data.php");
+							include("tabs/own_images.php");
 							include("tabs/data.php");
 							include("tabs/code.php");
 							include("tabs/visualizations.php");

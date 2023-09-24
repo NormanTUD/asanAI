@@ -3658,7 +3658,7 @@ async function change_data_origin() {
 
 	var show_images_per_category = 0;
 
-	var show_own_image_data = 0;
+	var show_own_images = 0;
 	var show_own_tensor = 0;
 	var show_own_csv = 0;
 
@@ -3688,7 +3688,7 @@ async function change_data_origin() {
 		disable_train();
 
 		if ($("#data_origin").val() == "image") {
-			show_own_image_data = 1;
+			show_own_images = 1;
 			show_images_per_category = 1;
 			await set_input_shape("[" + height + ", " + width + ", 3]");
 		} else if ($("#data_origin").val() == "tensordata") {
@@ -3737,12 +3737,12 @@ async function change_data_origin() {
 	/*
 	hide_tab_label("training_data_tab_label");
 	hide_tab_label("own_csv_label");
-	hide_tab_label("own_image_data_label");
+	hide_tab_label("own_images_label");
 	hide_tab_label("own_tensor_label");
 	*/
 
-	if (show_own_image_data) {
-		show_tab_label("own_image_data_label", 1);
+	if (show_own_images) {
+		show_tab_label("own_images_label", 1);
 
 		hide_tab_label("training_data_tab_label");
 		hide_tab_label("own_csv_label");
@@ -3765,7 +3765,7 @@ async function change_data_origin() {
 
 		hide_tab_label("training_data_tab_label");
 		hide_tab_label("own_csv_label");
-		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_images_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
@@ -3773,7 +3773,7 @@ async function change_data_origin() {
 		show_tab_label("own_csv_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_images_label");
 		hide_tab_label("own_tensor_label");
 
 		var config = await _get_configuration();
@@ -3782,7 +3782,7 @@ async function change_data_origin() {
 		show_tab_label("training_data_tab_label");
 
 		hide_tab_label("own_csv_label");
-		hide_tab_label("own_image_data_label");
+		hide_tab_label("own_images_label");
 		hide_tab_label("own_tensor_label");
 
 		var config = await _get_configuration();
@@ -5265,7 +5265,7 @@ async function set_custom_image_training () {
 }
 
 async function set_custom_webcam_training_data() {
-	if(!is_hidden_or_has_hidden_parent($("#own_image_data"))) {
+	if(!is_hidden_or_has_hidden_parent($("#own_images"))) {
 		return;
 	}
 
@@ -5296,7 +5296,7 @@ async function set_custom_webcam_training_data() {
 			await show_webcam();
 		}
 
-		show_tab_label("own_image_data_label", 1);
+		show_tab_label("own_images_label", 1);
 	}
 
 	await add_cosmo_point("set_custom_images");
