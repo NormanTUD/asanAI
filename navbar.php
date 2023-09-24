@@ -4,10 +4,10 @@
 		<li><a id="visualization_tab_label" href="#visualization_tab" ><span class='TRANSLATEME_model_visualization'></span></a></li>
 		<li><a id="summary_tab_label" href="#summary_tab" onclick="write_model_summary_wait()"><span class="TRANSLATEME_summary"></span></a></li>
 		<li><a id="own_image_data_label" href="#own_image_data"><span class="TRANSLATEME_own_images"></span></a></li>
-		<li><a id="own_tensor_label" href="#own_tensor"><span class="TRANSLATEME_own_tensors"></span></a></li>
-		<li><a id="own_csv_label" href="#own_csv"><span class="TRANSLATEME_own_csv"></span></a></li>
 <?php
 			$tabs = [
+				"own_tensor",
+				"own_csv",
 				"training",
 				"predict",
 				"code"
