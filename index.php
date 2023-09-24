@@ -266,8 +266,8 @@
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 <?php
 							include("navbar.php");
-							include("tabs/own_csv_data.php");
-							include("tabs/own_tensor_data.php");
+							include("tabs/own_csv.php");
+							include("tabs/own_tensor.php");
 							include("tabs/own_image_data.php");
 							include("tabs/data.php");
 							include("tabs/code.php");

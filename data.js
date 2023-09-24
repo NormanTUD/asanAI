@@ -455,12 +455,12 @@ async function get_xs_and_ys () {
 		if(_data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
 		} else if(_data_origin == "csv") {
-			await show_tab_label("own_csv_data_label", 0);
+			await show_tab_label("own_csv_label", 0);
 			await show_tab_label("training_tab_label", 1);
 		} else if (_data_origin == "image") {
 			await show_tab_label("own_image_data_label", 1);
 		} else if (_data_origin == "tensordata") {
-			await show_tab_label("own_tensor_data_label", 1);
+			await show_tab_label("own_tensor_label", 1);
 		} else {
 			log("Invalid option " + _data_origin);
 		}
@@ -1585,7 +1585,7 @@ async function adjust_number_of_neurons (layer) {
 	return adjusted_neurons_total;
 }
 
-async function get_own_tensor_data (element) {
+async function get_own_tensor (element) {
 	assert(typeof(element) == "object", "element is not an object");
 
 	var text = $(element).val();
@@ -1626,7 +1626,7 @@ async function get_own_tensor_data (element) {
 }
 
 /*
-	TODO: await get_own_tensor_data()
+	TODO: await get_own_tensor()
 */
 
 async function confusion_matrix(classes) {

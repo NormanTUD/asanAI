@@ -1,4 +1,4 @@
-<div id="own_tensor_data" class="tab">
+<div id="own_tensor" class="tab">
 		<div id="prepare_data">
 			<span class="TRANSLATEME_pretext_prepare_data"></span><br>
 			<pre><code class="language-python" id="convert_data_python">def write_file_for_tfjs (name, data):

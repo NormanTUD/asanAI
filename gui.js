@@ -3659,8 +3659,8 @@ async function change_data_origin() {
 	var show_images_per_category = 0;
 
 	var show_own_image_data = 0;
-	var show_own_tensor_data = 0;
-	var show_own_csv_data = 0;
+	var show_own_tensor = 0;
+	var show_own_csv = 0;
 
 	if (new_origin == "default") {
 		if (await input_shape_is_image()) {
@@ -3692,7 +3692,7 @@ async function change_data_origin() {
 			show_images_per_category = 1;
 			await set_input_shape("[" + height + ", " + width + ", 3]");
 		} else if ($("#data_origin").val() == "tensordata") {
-			show_own_tensor_data = 1;
+			show_own_tensor = 1;
 		} else if ($("#data_origin").val() == "csv") {
 			await show_csv_file(1);
 			if(contains_convolution() && mode != "expert") {
@@ -3708,14 +3708,14 @@ async function change_data_origin() {
 				}).then((result) => {
 					if (!result.isConfirmed) {
 						$("#mode_chooser").children().attr("checked", "checked").trigger("change");
-						show_own_csv_data = 1;
+						show_own_csv = 1;
 					} else {
-						show_own_tensor_data = 1;
+						show_own_tensor = 1;
 						$("#data_origin").val("tensordata").trigger("change");
 					}
 				});
 			} else {
-				show_own_csv_data = 1;
+				show_own_csv = 1;
 			}
 		} else {
 			alert("Unknown data_origin: " + $("#data_origin").val());
@@ -3736,17 +3736,17 @@ async function change_data_origin() {
 
 	/*
 	hide_tab_label("training_data_tab_label");
-	hide_tab_label("own_csv_data_label");
+	hide_tab_label("own_csv_label");
 	hide_tab_label("own_image_data_label");
-	hide_tab_label("own_tensor_data_label");
+	hide_tab_label("own_tensor_label");
 	*/
 
 	if (show_own_image_data) {
 		show_tab_label("own_image_data_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_data_label");
-		hide_tab_label("own_tensor_data_label");
+		hide_tab_label("own_csv_label");
+		hide_tab_label("own_tensor_label");
 
 		$("#own_images_container").html("");
 		await add_new_category();
@@ -3760,30 +3760,30 @@ async function change_data_origin() {
 		$("#loss").val("categoricalCrossentropy");
 		$("#metric").val("categoricalCrossentropy");
 		await rename_labels();
-	} else if (show_own_tensor_data) {
-		show_tab_label("own_tensor_data_label", 1);
+	} else if (show_own_tensor) {
+		show_tab_label("own_tensor_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_csv_label");
 		hide_tab_label("own_image_data_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
-	} else if (show_own_csv_data) {
-		show_tab_label("own_csv_data_label", 1);
+	} else if (show_own_csv) {
+		show_tab_label("own_csv_label", 1);
 
 		hide_tab_label("training_data_tab_label");
 		hide_tab_label("own_image_data_label");
-		hide_tab_label("own_tensor_data_label");
+		hide_tab_label("own_tensor_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else {
 		show_tab_label("training_data_tab_label");
 
-		hide_tab_label("own_csv_data_label");
+		hide_tab_label("own_csv_label");
 		hide_tab_label("own_image_data_label");
-		hide_tab_label("own_tensor_data_label");
+		hide_tab_label("own_tensor_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);

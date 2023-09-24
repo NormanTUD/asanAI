@@ -55,7 +55,7 @@
 						<td>
 							<select id="data_origin" onchange="change_data_origin(1)" style="width: 155px;">
 								<option class="TRANSLATEME_no_default_data" value="default"></option>
-								<option value="tensordata" class="TRANSLATEME_yes_own_tensor_data"></option>
+								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 								<option class="TRANSLATEME_yes_own_images" value="image"></option>
 								<option value="csv" class="TRANSLATEME_yes_own_csv"></option>
 							</select>
