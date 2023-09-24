@@ -813,51 +813,9 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="cosmo_next_button_span" style="display: none; position: absolute; right: 10em; font-size: 1em; width: 150px;">
-			<span 
-				class="green_bg cosmo_button" 
-				id="next_button_span"
-				data-keep_cosmo="1"
-				data-required_skills="loaded_page[1],watched_presentation[1],toggled_webcam[0,1]"
-				data-show_again_when_new_skill_acquired="finished_training[1],eigene_webcam[1]"
-				data-position="fixed"
-				data-dont_hide_after_show="1"
-				data-no_scroll="1" 
-				style="min-height: 50px; width: 200px;"
-				onclick="click_next_button()" 
-			>
-				<span id="train_train_further"><span class="TRANSLATEME_train_the_neural_network"></span>
-			</span>
-		</div>
-
-		<div id="demomode" class="glass_box" style="display: none"></div>
-
-		<div id="status_bar" style="display: none">
-			<span id="model_is_ok_icon"></span>
-			<span id="label_debugger_icon" style="display:none"></span>
-			<span id="status_bar_log"></span>
-
-			<span id="data_loading_progress_bar" style="display: none">
-				| Loading data:
-				<span id="data_progressbar">
-					<div></div>
-				</span>
-			</span>
-
-			<span id="training_progress_bar" style="display: none">
-				| Training:
-				<span id="training_progressbar">
-					<div></div>
-				</span>
-			</span>
-
-			<span style="left: 50%; right: 50%; position: absolute;">
-				<a style="color: inherit; text-decoration: underline;" target="_blank" href="https://scads.ai/imprint/"><span class="TRANSLATEME_imprint"></span></a>
-			</span>
-			<span id="memory_debugger_div"></span>
-		</div>
 <?php
+		include("cosmo_next_button_span.php");
+		include("status_bar.php");
 		include("load_msg.php");
 		_js("libs/prism/prism.js");
 		_js("libs/prism/prism-python.min.js");
