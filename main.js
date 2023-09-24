@@ -217,10 +217,18 @@ async function init_page_contents (chosen_dataset) {
 	await init_dataset_category();
 	global_disable_auto_enable_valid_layer_types = true;
 
-	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
-	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
-	document.getElementById("upload_model").addEventListener("change", upload_model, false);
-	document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
+	try {
+		document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
+		document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
+		document.getElementById("upload_model").addEventListener("change", upload_model, false);
+		document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
 
 	await determine_input_shape();
 
