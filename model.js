@@ -360,7 +360,11 @@ async function get_model_structure(is_fake_model = 0) {
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 
-	for (var i = 0; i < get_number_of_layers(); i++) {
+	var num_of_layers = get_number_of_layers();
+
+	assert(num_of_layers >= 1, "number of layers must be at least 1 or more");
+
+	for (var i = 0; i < num_of_layers; i++) {
 		var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
 		var type = $(layer_type).val();
 		if(typeof(type) !== "undefined" && type) {
