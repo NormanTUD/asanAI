@@ -85,6 +85,9 @@ async function _create_model () {
 			wrn("" + e);
 		} else if(("" + e).includes("Inputs to DepthwiseConv2D should have rank") || ("" + e).includes("Inputs to SeparableConv2D should have rank")) {
 			wrn("" + e);
+		} else if(("" + e).includes("Cannot read properties of undefined (reading 'layers')")) {
+			wrn("" + e);
+			return;
 		} else {
 			await except("ERROR1", "" + e);
 			if(mode == "beginner") {
