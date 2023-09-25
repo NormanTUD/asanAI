@@ -531,7 +531,10 @@ async function write_descriptions (force=0) {
 				hidden = "display: none;";
 			}
 
-			var new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
+			var new_div_html = "";
+			if(keyname) {
+				new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
+			}
 
 			$(new_div_html).appendTo("#maindiv");
 		}
