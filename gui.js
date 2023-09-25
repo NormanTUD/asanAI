@@ -3577,6 +3577,7 @@ function get_chosen_dataset() {
 }
 
 function show_dtype_only_first_layer() {
+	return;
 	for (var i = 0; i < get_number_of_layers(); i++) {
 		if (i == 0) {
 			$($(".dtype")[i]).parent().parent().show();
