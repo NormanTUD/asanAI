@@ -524,7 +524,7 @@ async function write_descriptions (force=0) {
 		assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
 		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
 
-		if(keyname != "null") {
+		if(keyname != "null" && keyname && keyname != "undefined") {
 			var height = last_layer_end - first_layer_start - 13;
 			var hidden = "";
 			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
@@ -532,9 +532,7 @@ async function write_descriptions (force=0) {
 			}
 
 			var new_div_html = "";
-			if(keyname) {
-				new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
-			}
+			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
 
 			$(new_div_html).appendTo("#maindiv");
 		}

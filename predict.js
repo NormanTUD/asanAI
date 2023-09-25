@@ -1404,7 +1404,6 @@ async function predict_handdrawn () {
 		} else {
 			l("Predict data shape:", predict_data.shape);
 			err(e);
-			await dispose(predictions_tensor);
 			l("Error (443): " + e);
 		}
 
