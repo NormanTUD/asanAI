@@ -88,6 +88,9 @@ async function _create_model () {
 		} else if(("" + e).includes("Cannot read properties of undefined (reading 'layers')")) {
 			wrn("" + e);
 			return;
+		} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
+			wrn("" + e);
+			return;
 		} else {
 			await except("ERROR1", "" + e);
 			if(mode == "beginner") {
@@ -278,7 +281,19 @@ function get_data_for_layer (type, i, first_layer) {
 				alert("Unknown layer type: " + type);
 			}
 		} else if(["trainable", "use_bias"].includes(option_name) ) {
-			data[get_js_name(option_name)] = get_item_value(i, option_name);
+			try {
+				data[get_js_name(option_name)] = get_item_value(i, option_name);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("identifier starts immediately after numeric literal")) {
+					err("" + e);
+				} else {
+					throw new Error(e);
+				}
+			}
 
 		} else if(["size", "dilation_rate"].includes(option_name)) {
 			data[get_js_name(option_name)] = eval("[" + get_item_value(i, option_name) + "]");
