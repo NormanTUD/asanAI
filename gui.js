@@ -4392,7 +4392,7 @@ function tensor_print_to_string(_tensor) {
 
 function contains_convolution() {
 	var number_of_layers = get_number_of_layers();
-	for (var j = 0; j < get_number_of_layers(); j++) {
+	for (var j = 0; j < number_of_layers; j++) {
 		var layer_type = $($(".layer_type")[j]).val();
 
 		if (layer_type.includes("conv")) {
