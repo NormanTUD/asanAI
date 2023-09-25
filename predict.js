@@ -1383,11 +1383,17 @@ async function predict_handdrawn () {
 				return model.predict([predict_data]);
 			});
 		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
 			throw new Error(e);
 		}
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
 			dbg("weights are already disposed. Not predicting handdrawn");
+		} else if (("" + e).includes("float32 tensor, but got")) {
+			err("" + e);
 		} else if(("" + e).includes("but got array with shape")) {
 			var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
 			dbg(_err);

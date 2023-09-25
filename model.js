@@ -298,7 +298,6 @@ function get_data_for_layer (type, i, first_layer) {
 		} else if(["size", "dilation_rate"].includes(option_name)) {
 			var code_str = "[" + get_item_value(i, option_name) + "]";
 
-			dbg("code_str: ", code_str);
 			data[get_js_name(option_name)] = eval(code_str);
 
 		} else if(option_name == "rate") {
