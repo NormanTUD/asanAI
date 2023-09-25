@@ -296,7 +296,11 @@ function get_data_for_layer (type, i, first_layer) {
 			}
 
 		} else if(["size", "dilation_rate"].includes(option_name)) {
-			var code_str = "[" + get_item_value(i, option_name) + "]";
+			var dil_rate = get_item_value(i, option_name);
+
+			dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+
+			var code_str = "[" + dil_rate + "]";
 
 			data[get_js_name(option_name)] = eval(code_str);
 

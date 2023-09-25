@@ -902,7 +902,14 @@ async function update_python_code(dont_reget_labels) {
 				} else if (option_name == "size") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 				} else if (option_name == "dilation_rate") {
-					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "dilation_rate") + "]");
+					var dil_rate = get_item_value(i, option_name);
+
+					dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+
+					var code_str = "[" + dil_rate + "]";
+
+					data[get_python_name(option_name)] = eval("[" + code_str + "]");
+
 				} else if (option_name == "target_shape") {
 					data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
 				} else if (option_name == "activation") {
