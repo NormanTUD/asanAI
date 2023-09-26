@@ -3749,17 +3749,17 @@ async function change_data_origin() {
 
 	/*
 	hide_tab_label("training_data_tab_label");
-	hide_tab_label("own_csv_label");
-	hide_tab_label("own_images_label");
-	hide_tab_label("own_tensor_label");
+	hide_tab_label("own_csv_tab_label");
+	hide_tab_label("own_images_tab_label");
+	hide_tab_label("own_tensor_tab_label");
 	*/
 
 	if (show_own_images) {
-		show_tab_label("own_images_label", 1);
+		show_tab_label("own_images_tab_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_label");
-		hide_tab_label("own_tensor_label");
+		hide_tab_label("own_csv_tab_label");
+		hide_tab_label("own_tensor_tab_label");
 
 		$("#own_images_container").html("");
 		await add_new_category();
@@ -3777,26 +3777,26 @@ async function change_data_origin() {
 		show_tab_label("own_tensor_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_csv_label");
-		hide_tab_label("own_images_label");
+		hide_tab_label("own_csv_tab_label");
+		hide_tab_label("own_images_tab_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else if (show_own_csv) {
-		show_tab_label("own_csv_label", 1);
+		show_tab_label("own_csv_tab_label", 1);
 
 		hide_tab_label("training_data_tab_label");
-		hide_tab_label("own_images_label");
-		hide_tab_label("own_tensor_label");
+		hide_tab_label("own_images_tab_label");
+		hide_tab_label("own_tensor_tab_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
 	} else {
 		show_tab_label("training_data_tab_label");
 
-		hide_tab_label("own_csv_label");
-		hide_tab_label("own_images_label");
-		hide_tab_label("own_tensor_label");
+		hide_tab_label("own_csv_tab_label");
+		hide_tab_label("own_images_tab_label");
+		hide_tab_label("own_tensor_tab_label");
 
 		var config = await _get_configuration();
 		$("#loss").val(config["loss"]);
@@ -5308,7 +5308,7 @@ async function set_custom_webcam_training_data() {
 			await show_webcam();
 		}
 
-		show_tab_label("own_images_label", 1);
+		show_tab_label("own_images_tab_label", 1);
 	}
 
 	await add_cosmo_point("set_custom_images");
