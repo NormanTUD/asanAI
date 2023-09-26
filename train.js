@@ -151,7 +151,7 @@ async function train_neural_network () {
 		await run_neural_network();
 
 		if(is_cosmo_mode) {
-			//await show_tab_label("predict_tab_label", 1);
+			//await show_tab_label("predict_tab", 1);
 
 			//set_right_border_between_example_predictions();
 
@@ -183,7 +183,7 @@ async function train_neural_network () {
 			}
 			*/
 		} else {
-			await show_tab_label("predict_tab_label", jump_to_interesting_tab());
+			await show_tab_label("predict_tab", jump_to_interesting_tab());
 		}
 
 		await enable_everything();
@@ -212,6 +212,7 @@ async function train_neural_network () {
 
 function get_key_by_value(object, value) {
 	var res = Object.keys(object).find(key => object[key] === value);
+
 
 	return res;
 }
@@ -261,6 +262,7 @@ async function get_model_data (optimizer_name_only) {
 		global_model_data[optimizer_data_names[i]] = parse_float($("#" + optimizer_data_names[i] + "_" + optimizer_type).val());
 	}
 
+
 	var optimizer_constructors = {
 		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
 		"adagrad": "adagrad(global_model_data['learningRate'], global_model_data['initialAccumulatorValue'])",
@@ -293,7 +295,7 @@ async function get_fit_data () {
 		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
 
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		$("#network_has_seen_msg").hide();
 
@@ -314,8 +316,9 @@ async function get_fit_data () {
 			await write_model_to_latex_to_page();
 		}
 
+
 		if(is_cosmo_mode) {
-			await show_tab_label("training_tab_label", 1);
+			await show_tab_label("tfvis_tab_label", 1);
 		}
 	};
 
@@ -465,7 +468,7 @@ async function get_fit_data () {
 				$("#plotly_epoch_history").hide();
 
 				var elem = $("#example_predictions")[0];
-				var to = $("#training_tab")[0];
+				var to = $("#tfvis_tab")[0];
 				move_element_to_another_div(elem, to)
 
 				await repredict();
@@ -530,6 +533,7 @@ async function get_fit_data () {
 		document.title = original_title;
 		await restart_fcnn();
 		await restart_lenet();
+		await restart_alexnet();
 
 		$("#tiny_graph").hide();
 
@@ -661,7 +665,7 @@ async function _get_xs_and_ys (recursive=0) {
 		await disable_everything();
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
 		if(("" + e).includes("n is undefined") && recursive == 0) {
@@ -691,6 +695,7 @@ async function _get_xs_and_ys (recursive=0) {
 		started_training = false;
 		return false;
 	}
+
 
 	return xs_and_ys;
 }
@@ -724,6 +729,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 				log("Could not install new callback");
 			}
 
+
 		}
 	} else {
 		old_onEpochEnd = undefined;
@@ -747,7 +753,7 @@ async function _get_fit_data (xs_and_ys) {
 
 		await _show_or_hide_simple_visualization(fit_data, xs_and_ys);
 
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 	} catch (e) {
 		await write_error_and_reset(e);
@@ -948,7 +954,7 @@ async function run_neural_network (recursive=0) {
 		var inputShape = await set_input_shape("[" + xs_and_ys["x"].shape.slice(1).join(", ") + "]");
 
 		if(!is_cosmo_mode) {
-			$("#training_content").clone().appendTo("#training_tab");
+			$("#training_content").clone().appendTo("#tfvis_tab");
 		}
 
 		_clear_plotly_epoch_history();
@@ -960,7 +966,7 @@ async function run_neural_network (recursive=0) {
 
 		var fit_data = await _get_fit_data(xs_and_ys);
 
-		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		await show_tab_label("tfvis_tab_label", jump_to_interesting_tab());
 
 		try {
 			await compile_model();
@@ -1017,6 +1023,7 @@ async function run_neural_network (recursive=0) {
 						} catch (ee) {
 							throw new Error(e);
 						}
+
 
 						if(!recursive) {
 							await run_neural_network(1);
@@ -1098,6 +1105,7 @@ async function run_neural_network (recursive=0) {
 		await dispose(fit_data);
 	}
 
+
 	try {
 		await dispose(xs_and_ys["x"]);
 		await dispose(xs_and_ys["y"]);
@@ -1158,7 +1166,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	// create a canvas for each category
 	for (let i = 0; i < numCategories; i++) {
 		var canvas = document.createElement("canvas");
-		var pw = parse_int($("#training_tab").width() * relationScale);
+		var pw = parse_int($("#tfvis_tab").width() * relationScale);
 		var w = parse_int(pw / (numCategories + 2));
 
 		if(is_cosmo_mode) {
@@ -1238,6 +1246,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		//log("TEXT:", _text);
 		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
 	}
+
 
 	// draw x-axis labels and images
 	for (let i = 0; i < images.length; i++) {
@@ -1353,6 +1362,7 @@ async function visualize_train () {
 		$("#canvas_grid_visualization").html("");
 		return;
 	}
+
 
 	if(get_last_layer_activation_function() != "softmax") {
 		log_once("Train visualization only works when the last layer is softmax.");

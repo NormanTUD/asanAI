@@ -58,6 +58,8 @@ function layer_types_that_dont_have_default_options () {
 	return no_options;
 }
 
+
+
 async function has_front_back_camera() {
 	let result = {
 		hasBack: false,
@@ -137,7 +139,7 @@ function init_tabs () {
 	$("#ribbon").tabs(tabs_settings);
 	$("#right_side").tabs(tabs_settings);
 	$("#visualization_tab").tabs(tabs_settings);
-	$("#training_tab").tabs(tabs_settings);
+	$("#tfvis_tab").tabs(tabs_settings);
 	$("#code_tab").tabs(tabs_settings);
 
 }
@@ -215,18 +217,10 @@ async function init_page_contents (chosen_dataset) {
 	await init_dataset_category();
 	global_disable_auto_enable_valid_layer_types = true;
 
-	try {
-		document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
-		document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
-		document.getElementById("upload_model").addEventListener("change", upload_model, false);
-		document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err("" + e);
-	}
+	document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
+	document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
+	document.getElementById("upload_model").addEventListener("change", upload_model, false);
+	document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
 
 	await determine_input_shape();
 
@@ -343,6 +337,7 @@ function init_losses_and_metrics () {
 
 }
 
+
 async function set_backend() {
 	l(language[lang]["setting_backend"]);
 	var backend = get_backend();
@@ -394,6 +389,7 @@ $(document).ready(async function() {
 		$("#logout").show();
 		$(".show_when_logged_in").show();
 	}
+
 
 	init_tabs();
 	init_set_all_options();
@@ -499,6 +495,7 @@ $(document).ready(async function() {
 		$("#data_origin").val(urlParams.get("data_source")).trigger("change");
 	}
 
+
 	cookie_theme = get_cookie("theme");
 	if(cookie_theme) {
 		l(language[lang]["has_cookie_for"] + " " + cookie_theme);
@@ -532,6 +529,7 @@ $(document).ready(async function() {
 	if(atrament_data.sketcher && await input_shape_is_image()) {
 		await predict_handdrawn();
 	}
+
 
 	change_all_initializers();
 
@@ -574,11 +572,6 @@ $(document).ready(async function() {
 		setInterval(model_is_ok, 300);
 		setInterval(label_debugger_icon_ok, 300);
 		setInterval(_temml, 500);
-
-		show_tab_label("summary_tab_label");
-		show_tab_label("predict_tab_label");
-		show_tab_label("code_tab_label");
-		show_tab_label("training_data_tab_label", 1);
 	}
 
 	setInterval(_clean_custom_tensors, 400);
@@ -600,6 +593,7 @@ $(document).ready(async function() {
 			wrn(`Error executing show_snow(): ${error}`);
 		}
 	}
+
 
 	finished_loading = true;
 });

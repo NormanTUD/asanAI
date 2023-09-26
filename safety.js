@@ -4,6 +4,7 @@ function assertation_failed (message) {
 	this.message = message;
 }
 
+
 function assert(boolean_value, exception_message) {
 	if(!boolean_value) {
 		console.trace();

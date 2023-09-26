@@ -88,6 +88,7 @@ function shuffle (array) {
 	return array;
 }
 
+
 function load_image(url) {
 	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
 
@@ -185,6 +186,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 	if((started_training || force_download) && !force_no_download) {
 		$("#photos").html("");
 	}
+
 
 	headerdatadebug("get_image_data()");
 	if(!skip_real_image_download) {
@@ -284,6 +286,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 		percentage_div.hide();
 	}
 
+
 	return data;
 }
 
@@ -301,6 +304,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 				var this_tensor = tensor(_tensor.arraySync()[i]);
 				await add_tensor_as_image_to_photos(this_tensor);
 			}
+
 
 			return;
 		}
@@ -320,6 +324,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	if(min_in_tensor < min_value) {
 		min_value = min_in_tensor;
 	}
+
 
 	if(min_value < 0) {
 		_tensor = _tensor.sub(min_value);
@@ -343,6 +348,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 }
+
 
 function truncate_text (fullStr, strLen, separator) {
 	if (fullStr.length <= strLen) return fullStr;
@@ -372,6 +378,7 @@ async function sine_ripple (img) {
 	context.putImageData(data,0,0);
 	var rippled = await fromPixels(canvas);
 	$(canvas).remove();
+
 
 	return rippled;
 }
@@ -441,6 +448,7 @@ async function augment_sine_ripple(item, label_nr, x, classes) {
 	return [classes, x];
 }
 
+
 async function get_xs_and_ys () {
 	await reset_data();
 
@@ -455,12 +463,12 @@ async function get_xs_and_ys () {
 		if(_data_origin == "default") {
 			await show_tab_label("training_data_tab_label", 1);
 		} else if(_data_origin == "csv") {
-			await show_tab_label("own_csv_tab_label", 0);
-			await show_tab_label("training_tab_label", 1);
+			await show_tab_label("own_csv_data_label", 0);
+			await show_tab_label("tfvis_tab_label", 1);
 		} else if (_data_origin == "image") {
-			await show_tab_label("own_images_tab_label", 1);
+			await show_tab_label("own_image_data_label", 1);
 		} else if (_data_origin == "tensordata") {
-			await show_tab_label("own_tensor_label", 1);
+			await show_tab_label("own_tensor_data_label", 1);
 		} else {
 			log("Invalid option " + _data_origin);
 		}
@@ -509,6 +517,7 @@ async function get_xs_and_ys () {
 			var y_print_string = arbitrary_array_to_latex(xy_data.y.arraySync());
 
 			$("#xy_display_data").html("<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
+
 
 		}
 	} else {
@@ -760,6 +769,8 @@ async function get_xs_and_ys () {
 									err(e);
 									continue;
 								}
+
+
 							}
 						}
 					}
@@ -950,6 +961,7 @@ async function _get_training_data() {
 
 	var res = await get_cached_json(url);
 
+
 	return res;
 }
 
@@ -973,6 +985,7 @@ function decille (arr, percentage) {
 	arr.sort();
 	var len = arr.length;
 	var per =  Math.floor(len*percentage) - 1;
+
 
 	return per;
 }
@@ -1021,6 +1034,7 @@ function parse_line (line, seperator) {
 
 	items.push(parse_dtype(current_item));
 
+
 	return items;
 }
 
@@ -1054,6 +1068,8 @@ function parse_csv_file (csv_file) {
 		}
 	}
 
+
+
 	return {"head": head, "data": data};
 }
 
@@ -1065,6 +1081,7 @@ function get_or_insert_label (item) {
 	}
 
 	labels.push(item);
+
 
 	return labels.length - 1;
 }
@@ -1142,6 +1159,7 @@ function get_headers (headers) {
 		}
 	}
 
+
 	return {"x": x_headers, "y": y_headers};
 }
 
@@ -1151,6 +1169,7 @@ function get_csv_seperator () {
 	if(seperator == "\\t") {
 		return "\t";
 	}
+
 
 	return seperator;
 }
@@ -1234,6 +1253,7 @@ async function get_x_y_from_csv () {
 		set_loss_and_metric(labels.length == 2 ? "binaryCrossentropy" : "categoricalCrossentropy");
 	}
 
+
 	return {
 		"x": x,
 		"y": y,
@@ -1261,6 +1281,7 @@ async function get_x_y_as_array () {
 
 	await dispose(data["x"]);
 	await dispose(data["y"]);
+
 
 	return ret;
 }
@@ -1428,6 +1449,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 		l("Took photo from webcam");
 	}
 
+
 	await last_shape_layer_warning();
 }
 
@@ -1459,6 +1481,7 @@ function chi_squared_test(arr) {
 	const degreesOfFreedom = Object.keys(histogram).length - 1;
 	const probability = jStat.chisquare.cdf(chiSquared, degreesOfFreedom);
 
+
 	return probability;
 }
 
@@ -1467,12 +1490,14 @@ function array_likelyhood_of_being_random (array) {
 
 	var res = 1 - chi;
 
+
 	return res;
 }
 
 function image_element_looks_random (imgelem) {
 	var t = reshape(fromPixels(imgelem), [-1]);
 	var res = array_likelyhood_of_being_random(t.arraySync());
+
 
 	return res;
 }
@@ -1555,6 +1580,7 @@ async function get_new_number_of_neurons_according_to_visualization_randomness (
 	}
 }
 
+
 async function adjust_number_of_neurons (layer) {
 	var original_epochs = parse_int($("#epochs").val());
 
@@ -1581,11 +1607,12 @@ async function adjust_number_of_neurons (layer) {
 		await delay(1000);
 	}
 
+
 	set_epochs(original_epochs);
 	return adjusted_neurons_total;
 }
 
-async function get_own_tensor (element) {
+async function get_own_tensor_data (element) {
 	assert(typeof(element) == "object", "element is not an object");
 
 	var text = $(element).val();
@@ -1626,7 +1653,7 @@ async function get_own_tensor (element) {
 }
 
 /*
-	TODO: await get_own_tensor()
+	TODO: await get_own_tensor_data()
 */
 
 async function confusion_matrix(classes) {
@@ -1676,6 +1703,7 @@ async function confusion_matrix(classes) {
 			await dispose(img_tensor);
 			continue;
 		}
+
 
 		var res;
 		try {
