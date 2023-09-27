@@ -1363,11 +1363,13 @@ if len(sys.argv) == 1:
 async function hide_no_conv_stuff() {
 	var any_conv_visualizations = 0;
 
-	var keys = Object.keys(conv_visualizations);
-
-	for (var i = 0; i < keys.length; i++) {
-		if (conv_visualizations[keys[i]]) {
-			any_conv_visualizations++;
+	if(model) {
+		if(Object.keys(model).includes("layers")) {
+			for (var i = 0; i < model.layers.length; i++) {
+				if (model.layers[i].name.startsWith("conv")) {
+					any_conv_visualizations++;
+				}
+			}
 		}
 	}
 
@@ -1393,6 +1395,8 @@ async function hide_no_conv_stuff() {
 	}
 
 	hide_empty_tabs("visualization_ribbon");
+
+	return any_conv_visualizations;
 }
 
 function get_shape_from_array(a) {
