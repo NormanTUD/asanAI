@@ -10,17 +10,17 @@ var traindata_struct;
 var last_known_good_input_shape = "[]";
 
 function get_input_shape_as_string () {
-	var is = "";
+	var is = [];
 	try {
 		if(model) {
 			try {
 				var is_full = model.input.shape;
 
-				is = [];
-
-				for (var i = 0; i < is_full.length; i++) {
-					if(i != 0) {
-						is.push(is_full[i]);
+				if(is_full) {
+					for (var i = 0; i < is_full.length; i++) {
+						if(i != 0) {
+							is.push(is_full[i]);
+						}
 					}
 				}
 			} catch (e) {
