@@ -96,6 +96,11 @@ function calculate_default_target_shape (nr) {
 }
 
 function lowercase_first_letter (string) {
+	if(typeof(string) != "string") {
+		wrn(`lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
+		string = "" + string;
+	}
+
 	try {
 		var res = string.charAt(0).toLowerCase() + string.slice(1);
 
