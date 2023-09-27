@@ -1761,7 +1761,7 @@ function set_loss(val, trigger_change = 1) {
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
 	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
 
-	if($("#metric").val() != val) {
+	if($("#loss").val() != val) {
 		$("#loss").val(val);
 		if(trigger_change) {
 			$("#loss").trigger("change");
