@@ -3709,8 +3709,8 @@ async function change_data_origin() {
 		} else if ($("#data_origin").val() == "csv") {
 			await show_csv_file(1);
 			show_own_csv = 1;
-			$("#loss").val("meanSquaredError");
-			$("#metric").val("meanSquaredError");
+			set_loss("meanSquaredError", 1);
+			set_metric("meanSquaredError", 1);
 		} else {
 			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
@@ -3926,11 +3926,11 @@ async function last_shape_layer_warning() {
 				is_classification = false;
 
 				if($("#loss").val() != "meanSquaredError") {
-					l("Setting loss to meanSquaredError");
-					$("#loss").val("meanSquaredError").trigger("change");
+					set_loss("meanSquaredError", 1);
 				}
+
 				if($("#metric").val() != "meanSquaredError") {
-					$("#metric").val("meanSquaredError").trigger("change");
+					set_metric("meanSquaredError", 1);
 				}
 
 				await change_last_responsible_layer_for_image_output();

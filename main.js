@@ -1,5 +1,32 @@
 "use strict";
 
+function check_all_tabs () {
+	function removeLeftOfHash(inputString) {
+		const hashIndex = inputString.indexOf('#');
+		if (hashIndex !== -1) {
+			return inputString.slice(hashIndex + 1);
+		} else {
+			return inputString;
+		}
+	}
+
+	var _tab_labels = $("[id$='_tab_label']");
+
+
+	for (var i = 0; i < _tab_labels.length; i++) {
+		var _l = _tab_labels[i];
+
+		var tab_link = "" + _l;
+		var tab_name = removeLeftOfHash(tab_link);
+
+		var _item = $("#" + tab_name);
+
+		if(_item.length != 1) {
+			alert(tab_name + " does not have exactly 1 element!");
+		}
+	}
+}
+
 function show_idle_time () {
 	if(!is_cosmo_mode) {
 		$("#cosmo_reload_debugger").remove();
@@ -367,6 +394,8 @@ $(document).ready(async function() {
 	if(!is_cosmo_mode) {
 		$(".show_in_cosmo_mode").hide();
 	}
+	
+	check_all_tabs();
 
 	l(language[lang]["trying_to_set_backend"]);
 	await set_backend();
