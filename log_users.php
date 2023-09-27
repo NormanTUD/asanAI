@@ -69,7 +69,7 @@
 
 	try {
 		writeVisitorToLog();
-		logReferrer(); // Log the referrer without requiring user ID
+		@logReferrer(); // Log the referrer without requiring user ID
 	} catch (Exception $e) {
 		// Ignore exception
 	}
