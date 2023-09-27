@@ -814,6 +814,7 @@ async function debug_unusual_function_inputs () {
 			"get_key_name_camel_case",
 			"create_model",
 			"highlight_element",
+			"_add_layers_to_model",
 			"_set_layer_gui",
 			"_add_layer_to_model",
 			"tidy",
