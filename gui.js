@@ -6430,9 +6430,16 @@ function get_last_element_of_class_end_y(name) {
 			return 0;
 		}
 
-		var _res = $(last_desc).offset().top + real_height($(last_desc));
+		var real_height_last_desc = real_height($(last_desc));
+		var last_desc_offset = $(last_desc).offset();
 
-		return _res;
+		if(last_desc_offset && Object.keys(last_desc_offset).includes("top")) {
+			var _res = last_desc_offset.top + real_height_last_desc;
+
+			return _res;
+		} else {
+			return 0;
+		}
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
