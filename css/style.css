@@ -905,7 +905,6 @@ button {
 }
 
 #own_files {
-	display: flex;
 	width: 100%;
 }
 
@@ -1181,4 +1180,8 @@ hr {
 
 .confusion_matrix_table {
 	border-collapse: collapse;
+}
+
+#predictcontainer {
+	overflow: scroll;
 }
