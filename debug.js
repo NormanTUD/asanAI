@@ -807,6 +807,8 @@ async function debug_unusual_function_inputs () {
 			"is_equal",
 			"assert",
 			"write_error",
+			"except",
+			"get_data_for_layer",
 			"tidy",
 			"debug_unusual_function_inputs",
 			"loadLayersModel",

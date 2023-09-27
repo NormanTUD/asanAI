@@ -236,6 +236,11 @@ async function compile_model () {
 }
 
 function get_weight_type_name_from_option_name (on) {
+	if(typeof(on) != "string") {
+		wrn(`get_weight_type_name_from_option_name(on = ${on}), typeof(on) = ${typeof(on)}`);
+		return;
+	}
+
 	if(on.match(/_/)) {
 		for (var i = 0; i < valid_initializer_types.length; i++) {
 			var v = valid_initializer_types[i];
