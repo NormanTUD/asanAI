@@ -800,6 +800,7 @@ function generateRandomArray(minElements, maxElements) {
 async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if([
+			"tidy",
 			"debug_unusual_function_inputs",
 			"loadLayersModel",
 			"getComputedStyle",
