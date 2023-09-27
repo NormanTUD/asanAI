@@ -6416,8 +6416,19 @@ function create_centered_window_with_text(parameter) {
 function get_last_element_of_class_end_y(name) {
 	assert(typeof(name) == "string", "get_last_element_of_class_end_y(" + name + ") parameter is not a string");
 	var descs = $("." + name);
+
+	if (!descs) {
+		wrn("descs not defined");
+		return 0;
+	}
+
 	try {
-		var _res = $(descs[descs.length - 1]).offset().top + real_height($(descs[descs.length - 1]));
+		var last_desc = descs[descs.length - 1];
+		if(!last_desc) {
+			return;
+		}
+
+		var _res = $(last_desc).offset().top + real_height($(last_desc));
 
 		return _res;
 	} catch (e) {
