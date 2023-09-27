@@ -97,7 +97,6 @@ function lowercase_first_letter (string) {
 	try {
 		var res = string.charAt(0).toLowerCase() + string.slice(1);
 
-
 		return res;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -670,7 +669,6 @@ var implementation_modes = {
 	"2": "2"
 };
 
-
 var interpolation = {
 	"nearest": "nearest",
 	"bilinear": "bilinear"
@@ -722,7 +720,6 @@ var layer_options_defaults = {
 	"return_sequences": true,
 	"return_state": false,
 	"unit_forget_bias": true,
-
 
 	"activation": null,
 	"recurrent_activation": null,
@@ -1264,7 +1261,6 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		}
 	}
 }
-
 
 var general_options = {
 	"theta": "\"&theta;\", \"theta\", \"number\", { \"step\": 1, \"value\": -1 }, nr",

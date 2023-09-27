@@ -114,7 +114,6 @@ function find_largest_element_with_coordinates(element) {
 
 	let largestElement = element;
 
-
 	// Traverse through all child elements recursively
 	for (const childElement of element.children) {
 		const { width, height, largestChild } = find_largest_element_with_coordinates(childElement);
@@ -242,7 +241,6 @@ function is_mouse_over_element_variables (elements) {
 	return false;
 }
 
-
 async function cosmo_mode () {
 	$("#status_bar").hide();
 	//console.trace();
@@ -269,9 +267,6 @@ async function cosmo_mode () {
 	$("#upload_file").hide();
 	$("#repredict_examples_button").hide();
 	$("#download_data").hide();
-	if(!disable_alexnet) {
-		$("#alexnet_tab_label").click();
-	}
 	//move_element_to_another_div($("#layer_visualizations_tab")[0], $("#show_visualization_here_in_cosmo")[0]);
 	is_cosmo_mode = true;
 
@@ -304,7 +299,6 @@ async function cosmo_mode () {
 			idleTime = 0;
 		});
 	});
-
 
 	document.addEventListener("mousemove", (event) => {
 		mouseX = event.clientX;
@@ -398,7 +392,6 @@ function is_inside_color_picker(x, y, colorPickerContainer) {
 	const rect = colorPickerContainer.getBoundingClientRect();
 	return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
-
 
 function has_special_cosmo_classes (x) {
 	var s = false;
@@ -697,7 +690,6 @@ function do_images_overlap (imageId1, imageId2) {
 
 	const rect1 = image1.getBoundingClientRect();
 	const rect2 = image2.getBoundingClientRect();
-
 
 	if(!rect1 || !rect2) {
 		wrn("do_images_overlap has rect1 or rect2 empty! Did you manually remove the #ribbon_shower?");

@@ -67,7 +67,6 @@ function is_equal (a, b) {
 function test_summary () {
 	var tests_ok = num_tests - num_tests_failed;
 
-
 	var tests_results_str = `${num_tests} tests, ok: ${tests_ok}, failed: ${num_tests_failed}`;
 	if(num_tests_failed) {
 		console.log("%c" + tests_results_str, "background: red; color: white");
@@ -364,7 +363,6 @@ async function run_tests () {
 			$("#data_origin").val("csv").trigger("change");
 			await delay(5000);
 
-
 			$("#csv_file").
 				click().
 				val("x1,x2,x3,y\n1,1,1,3\n2,2,2,6\n3,3,3,9\n1,2,3,6\n2,1,3,6\n").
@@ -481,7 +479,6 @@ async function run_tests () {
 					}
 				}
 			}
-
 
 			// testing shuffling
 			$("#dataset").val("signs").trigger("change");
