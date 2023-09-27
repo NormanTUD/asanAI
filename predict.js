@@ -156,6 +156,11 @@ var predict_demo = async function (item, nr, tried_again = 0) {
 		return;
 	}
 
+	if(!model) {
+		wrn("Model is undefined");
+		return;
+	}
+
 	if(!Object.keys(model.layers).includes("0")) {
 		wrn("Does not include first layer");
 		return;

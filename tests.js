@@ -342,10 +342,12 @@ async function run_tests () {
 			log_test("Add layer");
 
 			var old_number_of_layers = $(".layer_setting").length;
-			$($(".add_layer")[0]).click();
-			$($(".add_layer")[1]).click();
 
-			await wait_for_updated_page(10);
+			$($(".add_layer")[0]).click();
+			await wait_for_updated_page(5);
+
+			$($(".add_layer")[0]).click();
+			await wait_for_updated_page(5);
 
 			var new_number_of_layers = $(".layer_setting").length;
 
