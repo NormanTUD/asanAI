@@ -458,6 +458,8 @@ function is_valid_parameter (keyname, value, layer) {
 }
 
 function get_key_name_camel_case(keyname) {
+	assert(typeof(keyname) == "string", `keyname "${keyname}" is not a string, but ${typeof(keyname)}`);
+
 	var letters = keyname.split("");
 	var results = [];
 
@@ -817,6 +819,9 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 }
 
 function _set_layer_gui (data, fake_model_structure, i) {
+	assert(typeof(data) == "object", "data is not an object");
+	assert(typeof(i) == "number", "i is not a number");
+
 	var data_keys = Object.keys(data);
 	for (var k = 0; k < data_keys.length; k++) {
 		var this_key = data_keys[k];
