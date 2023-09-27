@@ -18,7 +18,15 @@ function get_input_shape_as_string () {
 					return "[]";
 				}
 
-				is = model.input.shape.filter(n => n);
+				var is_full = model.input.shape;
+
+				is = [];
+
+				for (var i = 0; i < is_full.length; i++) {
+					if(i != 0) {
+						is.push(is_full[i]);
+					}
+				}
 			} catch (e) {
 				if(("" + e).includes("model.input is undefined")) {
 					is = get_input_shape();
@@ -31,6 +39,7 @@ function get_input_shape_as_string () {
 		} else {
 			is = get_input_shape();
 		}
+
 		if(is.length) {
 			return "[" + is.join(", ") + "]";
 		} else {
