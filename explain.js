@@ -910,12 +910,8 @@ function draw_internal_states (layer, inputs, applied) {
 					output.append(img_output).show();
 				}
 			} else {
-				if($("#show_raw_data").is(":checked")) {
-					var h = array_to_html(output_data);
-					equations.append(h).show();
-				} else {
-					equations.html("Enable 'show raw data?' in the visualization tab to show").show();
-				}
+				var h = array_to_html(output_data);
+				equations.append(h).show();
 			}
 		}
 	}
