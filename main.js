@@ -615,7 +615,11 @@ $(document).ready(async function() {
 	await change_optimizer();
 
 	window.addEventListener("error", async function(e) {
-		await write_error(e.message);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		await write_error(e);
 	});
 
 	var today = new Date();
