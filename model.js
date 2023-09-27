@@ -88,6 +88,9 @@ async function _create_model () {
 		} else if(("" + e).includes("Cannot read properties of undefined (reading 'layers')")) {
 			wrn("" + e);
 			return;
+		} else if(("" + e).includes("Cannot read properties of undefined")) {
+			wrn("" + e);
+			return;
 		} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
 			wrn("" + e);
 			return;
