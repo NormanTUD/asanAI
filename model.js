@@ -1124,7 +1124,17 @@ async function compile_fake_model(layer_nr, layer_type) {
 	assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
 	assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
 
-	var fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
+	var fake_model_structure;
+	try {
+		fake_model_structure = await create_fake_model_structure(layer_nr, layer_type);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		wrn(e);
+		return false;
+	}
 
 	var ret = false;
 
