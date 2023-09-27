@@ -813,6 +813,7 @@ async function debug_unusual_function_inputs () {
 			"check_initializers",
 			"get_key_name_camel_case",
 			"create_model",
+			"highlight_element",
 			"_set_layer_gui",
 			"_add_layer_to_model",
 			"tidy",
