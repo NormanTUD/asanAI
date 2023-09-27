@@ -6427,7 +6427,7 @@ function get_last_element_of_class_end_y(name) {
 	try {
 		var last_desc = descs[descs.length - 1];
 		if(!last_desc) {
-			return;
+			return 0;
 		}
 
 		var _res = $(last_desc).offset().top + real_height($(last_desc));
