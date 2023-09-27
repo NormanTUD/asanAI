@@ -731,6 +731,11 @@ async function _print_predictions_text(count, example_predict_data) {
 		err("example_predict_data is not an object or empty");
 	}
 
+	if(!example_predict_data || example_predict_data.length == 0) {
+		wrn("No example predict data found");
+		return;
+	}
+
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var _tensor = tensor(example_predict_data[i]);
 		var res;

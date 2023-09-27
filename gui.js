@@ -3708,28 +3708,9 @@ async function change_data_origin() {
 			show_own_tensor = 1;
 		} else if ($("#data_origin").val() == "csv") {
 			await show_csv_file(1);
-			if(contains_convolution() && mode != "expert") {
-				await Swal.fire({
-					title: "Are you sure?",
-					text: "Using CSV in a network that contains convolutions is probably not what you want. Only continue if you really know what you are doing!",
-					icon: "warning",
-					showCancelButton: true,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					cancelButtonText: "Yes, switch to expert mode and use CSV with this network!",
-					confirmButtonText: "No, keep me safe from tons of errors!"
-				}).then((result) => {
-					if (!result.isConfirmed) {
-						$("#mode_chooser").children().attr("checked", "checked").trigger("change");
-						show_own_csv = 1;
-					} else {
-						show_own_tensor = 1;
-						$("#data_origin").val("tensordata").trigger("change");
-					}
-				});
-			} else {
-				show_own_csv = 1;
-			}
+			show_own_csv = 1;
+			$("#loss").val("meanSquaredError");
+			$("#metric").val("meanSquaredError");
 		} else {
 			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
