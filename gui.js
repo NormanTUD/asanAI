@@ -3709,8 +3709,6 @@ async function change_data_origin() {
 		} else if ($("#data_origin").val() == "csv") {
 			await show_csv_file(1);
 			show_own_csv = 1;
-			set_loss("meanSquaredError", 1);
-			set_metric("meanSquaredError", 1);
 		} else {
 			alert("Unknown data_origin: " + $("#data_origin").val());
 		}
@@ -3770,8 +3768,8 @@ async function change_data_origin() {
 		hide_tab_label("own_images_tab_label");
 		hide_tab_label("own_tensor_tab_label");
 
-		var config = await _get_configuration();
-		$("#loss").val(config["loss"]);
+		set_loss("meanSquaredError", 1);
+		set_metric("meanSquaredError", 1);
 	} else {
 		show_tab_label("training_data_tab_label");
 
