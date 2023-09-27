@@ -14,6 +14,10 @@ function get_input_shape_as_string () {
 	try {
 		if(model) {
 			try {
+				if(!model || !Object.keys(model).includes("input") || !Object.keys(model.input).includes("shape")) {
+					return "[]";
+				}
+
 				is = model.input.shape.filter(n => n);
 			} catch (e) {
 				if(("" + e).includes("model.input is undefined")) {
