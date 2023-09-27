@@ -800,6 +800,9 @@ function generateRandomArray(minElements, maxElements) {
 async function debug_unusual_function_inputs () {
 	for (var i in window) {
 		if([
+			"detect_and_color_stacktrace",
+			"start_gremlins",
+			"calculate_default_target_shape",
 			"assert",
 			"tidy",
 			"debug_unusual_function_inputs",

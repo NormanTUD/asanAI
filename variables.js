@@ -70,6 +70,8 @@ function uuidv4() {
 }
 
 function calculate_default_target_shape (nr) {
+	assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
+
 	try {
 		var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
@@ -628,6 +630,11 @@ var initializers = {
 
 function get_name_case_independent (name, from_hash) {
 	try {
+		if(typeof(name) != "string") {
+			wrn(`"${name}" is not a string, it will be converted silently from ${typeof(name)} to string`);
+			name = "" + name;
+		}
+
 		for (var key of Object.keys(from_hash)) {
 			if(key.toLowerCase() == name.toLowerCase() || from_hash[key].toLowerCase() == name.toLowerCase()) {
 				return from_hash[key];
