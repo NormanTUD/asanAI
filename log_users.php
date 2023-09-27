@@ -42,11 +42,35 @@
 		return (strpos($contents, '/docker/') !== false);
 	}
 
+
+	function logReferrer() {
+		$referrerLogFilePath = '/var/log/asanai_referrers.log';
+		if (!file_exists($referrerLogFilePath)) {
+			file_put_contents($referrerLogFilePath, ''); // Create the file if it doesn't exist
+		}
+
+		$referrer = $_SERVER['HTTP_REFERER'] ?? "No Referrer"; // Get the HTTP referrer or set a default value
+
+		$referrerLines = array_map('trim', file($referrerLogFilePath));
+
+		// Check if the referrer is already logged
+		$referrerFound = false;
+		foreach ($referrerLines as $line) {
+			if ($line === $referrer) {
+				$referrerFound = true;
+				break;
+			}
+		}
+
+		if (!$referrerFound) {
+			file_put_contents($referrerLogFilePath, $referrer . "\n", FILE_APPEND); // Log the referrer if not found
+		}
+	}
+
 	try {
 		writeVisitorToLog();
+		logReferrer(); // Log the referrer without requiring user ID
 	} catch (Exception $e) {
 		// Ignore exception
 	}
-
-
 ?>

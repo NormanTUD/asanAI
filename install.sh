@@ -47,17 +47,17 @@ function install_apache {
 
 function install_php {
 	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add - && \
-	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-	apt-get update && \
-	apt-get install php8.1 php8.1-cli php8.1-common php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php-bcmath -y
-}
+		echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+			apt-get update && \
+				apt-get install php8.1 php8.1-cli php8.1-common php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php-bcmath -y
+			}
 
-function install_mariadb {
-	apt install mariadb-server mariadb-client -y
-}
+		function install_mariadb {
+			apt install mariadb-server mariadb-client -y
+		}
 
-function setup_mariadb {
-	mysql -u root <<-EOF
+	function setup_mariadb {
+		mysql -u root <<-EOF
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$PASSWORD');
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 DELETE FROM mysql.user WHERE User='';
@@ -83,8 +83,8 @@ if [[ -d "/docker/" ]]; then
 	echo "Not using visitors log in docker, yet..."
 else
 	mkdir -p /var/log/
-	touch /var/log/asanai_visitors.log
-	chmod -R 0666 /var/log/asanai_visitors.log
+	touch /var/log/asanai_visitors.log /var/log/asanai_referrers.log
+	chmod -R 0666 /var/log/asanai_visitors.log /var/log/asanai_referrers.log
 fi
 
 cp debuglogs/.htpasswd /etc/apache2/.htpasswd
