@@ -350,13 +350,13 @@
 		$file = $file . "?t=$t";
 
 		if($async && $defer) {
-			print "<script async defer src='$file'></script>";
+			print "<script async defer crossorigin src='$file'></script>";
 		} else if($async && !$defer) {
-			print "<script async src='$file'></script>";
+			print "<script async crossorigin src='$file'></script>";
 		} else if(!$async && $defer) {
-			print "<script defer defer src='$file'></script>";
+			print "<script defer defer crossorigin src='$file'></script>";
 		} else {
-			print "<script src='$file'></script>";
+			print "<script src='$file' crossorigin></script>";
 		}
 
 		print "\n";
