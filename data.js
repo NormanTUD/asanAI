@@ -1382,6 +1382,10 @@ async function take_image_from_webcam_n_times (elem) {
 }
 
 async function take_image_from_webcam (elem, nol, increment_counter=true) {
+	if(!inited_webcams) {
+		await get_data_from_webcam();
+	}
+
 	if(!nol) {
 		l("Taking photo from webcam...");
 	}
