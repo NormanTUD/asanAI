@@ -208,7 +208,7 @@ function LeNet() {
 		var layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([parseInt(offsets.last() + layer_width) + (betweenLayers[i] || betweenLayersDefault) ]), [0]);
 		var layer_y_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
 
-		var screen_center_x = (graph_width / 1) + (architecture.length * (largest_layer_width / 1));
+		var screen_center_x = (graph_width / 1) + (architecture.length * (largest_layer_width / 2));
 		var screen_center_y = (h / 2) - (largest_layer_width / 2);
 
 		let x = (layer, node_index) => layer_x_offsets[layer] + (node_index * betweenSquares) + screen_center_x;
