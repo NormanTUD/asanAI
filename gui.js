@@ -2931,7 +2931,7 @@ function favicon_default() {
 }
 
 function favicon_spinner() {
-	change_favicon("_gui/loading_favicon.gif");
+	change_favicon("_gui/loading_icon.gif");
 }
 
 async function disable_everything() {
