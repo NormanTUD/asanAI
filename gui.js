@@ -1487,8 +1487,6 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	await save_current_status();
 
-	show_dtype_only_first_layer();
-
 	enable_start_training_custom_tensors();
 
 	var wait_for_latex_model = Promise.resolve(1);
@@ -3578,17 +3576,6 @@ function get_chosen_dataset() {
 		val = $("#dataset").val();
 	}
 	return val;
-}
-
-function show_dtype_only_first_layer() {
-	return;
-	for (var i = 0; i < get_number_of_layers(); i++) {
-		if (i == 0) {
-			$($(".dtype")[i]).parent().parent().show();
-		} else {
-			$($(".dtype")[i]).parent().parent().hide();
-		}
-	}
 }
 
 function attr_change_name(elem, attr, new_attr) {

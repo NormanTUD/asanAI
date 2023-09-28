@@ -102,21 +102,10 @@
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
 
-		_js("libs/plotly-latest.min.js", 1, 1);
+		_js("libs/plotly-latest.min.js");
+		_js("selftests.js", 1, 1);
 ?>
 		<script>
-			var tf_exists = 1;
-			
-			try {
-				tf;
-			} catch (e) {
-				tf_exists = 0
-			}
-
-			if(!tf_exists) {
-				alert("The tensorflow library could not be loaded. This is a serious bug. The site will not work without. Try reloading with CTRL F5.");
-			}
-
 			var force_cpu_backend = 0;
 
 			function get_backend() {
