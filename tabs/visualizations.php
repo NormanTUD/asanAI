@@ -11,14 +11,12 @@
 		<div id="lenet"></div>
 		<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
 		<button class="vis_button" id="download_lenet" onclick="download_visualization('lenet')">Download LeNet SVG</button>
-		<button class="vis_button" onclick="restart_lenet(1)"><span class="TRANSLATEME_restart_lenet"></span></button>
 	</div>
 
 	<div id="fcnn_tab" class="tab">
 		<div id="fcnn"></div>
 		<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
 		<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
-		<button class="vis_button" onclick="restart_fcnn(1)"><span class="TRANSLATEME_restart_fcnn"></span></button>
 	</div>
 
 	<div id="activation_plot_tab" class="tab">
