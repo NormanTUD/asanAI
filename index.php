@@ -5,11 +5,11 @@
 # for i in $(ack "^var " variables.js | sed -e 's#^var\s*##' | sed -e 's#;\s*$##' | sed -e 's#\s*=\s*.*##' | sort | uniq); do RESULT=$(ack "$i" *.js | grep -v variables.js | wc -l); if [[ $RESULT -eq 0 ]]; then echo "$i was found 0 times outside of variables.js"; fi; done
 	include("functions.php");
 
-	include("translations.php");
+	_include("translations.php");
 	
 	show_admin_register();
 
-	include("log_users.php");
+	_include("log_users.php");
 	
 	$cookie_data = [
 		'secure' => true,
@@ -38,7 +38,7 @@
 		_js("debug.js");
 		_js("variables.js");
 
-		include("initializing.php");
+		_include("initializing.php");
 		$theme_base = "light";
 
 		if(isset($_COOKIE["theme"])) {
@@ -142,7 +142,7 @@
 		<meta name="description" content="A tool for creating Neural Networks with TensorFlow.JS without writing a single line of code.">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <?php
-		include("cosmo_header.php");
+		_include("cosmo_header.php");
 ?>
 	</head>
 	<body id='body'>
@@ -184,17 +184,17 @@
 <?php
 			}
 
-			include("ribbon.php");
+			_include("ribbon.php");
 ?>
 
 			<div id="maindiv">
 <?php
-				include("divs/losses_popup.php");
-				include("divs/sources_popup.php");
-				include("divs/save_dialog.php");
-				include("divs/register_dialog.php");
-				include("divs/save_model_dialog.php");
-				include("divs/errorcontainer.php");
+				_include("divs/losses_popup.php");
+				_include("divs/sources_popup.php");
+				_include("divs/save_dialog.php");
+				_include("divs/register_dialog.php");
+				_include("divs/save_model_dialog.php");
+				_include("divs/errorcontainer.php");
 ?>
 				<div id="help" style="display: none"></div>
 				<div id="toggle_layers_button" ><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="large_button">&#9881;&#129302;</span></button></div>
@@ -206,16 +206,16 @@
 					<div class="right_side" id="graphs_here">
 						<div id="right_side" class="glass_box" style="float: right; width: 99%; overflow-y: hidden; padding: 2px;">
 <?php
-							include("navbar.php");
-							include("tabs/own_csv.php");
-							include("tabs/own_tensor.php");
-							include("tabs/own_images.php");
-							include("tabs/data.php");
-							include("tabs/code.php");
-							include("tabs/visualizations.php");
-							include("tabs/training.php");
-							include("tabs/summary.php");
-							include("tabs/predict.php");
+							_include("navbar.php");
+							_include("tabs/own_csv.php");
+							_include("tabs/own_tensor.php");
+							_include("tabs/own_images.php");
+							_include("tabs/data.php");
+							_include("tabs/code.php");
+							_include("tabs/visualizations.php");
+							_include("tabs/training.php");
+							_include("tabs/summary.php");
+							_include("tabs/predict.php");
 ?>
 						</div>
 					</div>
@@ -223,9 +223,9 @@
 			</div>
 		</div>
 <?php
-		include("cosmo_next_button.php");
-		include("status_bar.php");
-		include("load_msg.php");
+		_include("cosmo_next_button.php");
+		_include("status_bar.php");
+		_include("load_msg.php");
 		_js("libs/prism/prism.js");
 		_js("libs/prism/prism-python.min.js");
 		_js("libs/jscolor.js", 1, 1);

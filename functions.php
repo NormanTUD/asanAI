@@ -506,4 +506,14 @@
 			return $rev;
 		}
 	}
+
+	function _include ($fn) {
+		if(file_exists($fn)) {
+			include($fn);
+		} else {
+?>
+			<script>alert("<?php print $fn; ?> not found");</script>
+<?php
+		}
+	}
 ?>
