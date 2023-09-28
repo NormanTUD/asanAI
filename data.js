@@ -1655,7 +1655,9 @@ async function confusion_matrix(classes) {
 	var imgs = $("#photos").find("img,canvas");
 
 	if(!imgs.length) {
-		wrn("confusion_matrix: No images found");
+		if(current_epoch == 1) {
+			wrn("confusion_matrix: No images found");
+		}
 		return "";
 	}
 	
