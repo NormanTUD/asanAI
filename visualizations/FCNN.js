@@ -131,29 +131,46 @@ function FCNN() {
 	}
 	
 	function autofit () {
+		var transform_string = $(g).attr("transform");
+		if(!transform_string) {
+			transform_string = "scale(1)"
+		}
+
+		var current_scale = transform_string.match(/scale\(([^)]*)\)/);
+		if(!current_scale) {
+			wrn("Could not get current scale");
+			return;
+		}
+
+		current_scale = current_scale[1];
+
 		var width_and_height = get_real_element_size();
 		var _w = width_and_height.width;
 		var _h = width_and_height.height;
 
-		var current_scale = 1;
-		try {
-			current_scale = $(g).attr("transform").match(/scale\(([^)]*)\)/)[1];
-		} catch (e) {
-			// do nothing when it fails
-		}
 		var graph_width = get_graph_width();
-		var graph_height = get_graph_height();
+		var graph_height = 600;
 
 		var new_scale = current_scale;
 
 		if(_w > graph_width || _h > graph_height) {
-			new_scale = Math.max(
-				graph_width / _w,
-				graph_height / _h
+			new_scale = Math.min(
+				_w / graph_width,
+				_h / graph_height
 			);
 		}
 
-		console.log("new scale:", new_scale);
+		var original_move_left_top = transform_string.match(/translate\(([^,)]*?),\s*([^,)]*?)\)/);
+
+		var new_transform = transform_string.replace(/scale\(([^)]*)\)/, `scale(${new_scale})`);
+
+		var move_top = parse_int(original_move_left_top[1]);
+		var move_left = parse_int(original_move_left_top[2]);
+
+		var new_transform = transform_string.replace(/translate\(([^)]*?)\)/, `translate(${move_left, move_top})`);
+
+		console.log("new_transform:", new_transform);
+		$(g).attr("transform", new_transform)
 	}
 	
 	function redraw(
@@ -249,6 +266,8 @@ function FCNN() {
 		var height = parseInt($("#graphs_here").css("height"));
 
 		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
+
+		//autofit();
 	}
 
 	function redistribute(
