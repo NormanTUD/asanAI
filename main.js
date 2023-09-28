@@ -128,7 +128,7 @@ async function has_front_back_camera() {
 		if(("" + e).includes("NotAllowedError")) {
 			info("Webcam access was denied");
 		} else {
-			l("ERROR: " + e);
+			err("ERROR: " + e);
 		}
 		return result;
 	}
@@ -136,7 +136,7 @@ async function has_front_back_camera() {
 }
 
 function init_tabs () {
-	l(language[lang]["initializing_tabs"]);
+	dbg(language[lang]["initializing_tabs"]);
 
 	var tabs_settings = {
 		activate: function (event, ui) {},
@@ -170,7 +170,7 @@ function init_tabs () {
 }
 
 function init_set_all_options () {
-	l(language[lang]["initializing_set_options_for_all"]);
+	dbg(language[lang]["initializing_set_options_for_all"]);
 	var initializer_keys = Object.keys(initializers);
 	var activation_functions = Object.keys(activations);
 
@@ -230,7 +230,7 @@ function init_set_all_options () {
 }
 
 async function init_page_contents (chosen_dataset) {
-	l(language[lang]["initializing_page_contents"]);
+	dbg(language[lang]["initializing_page_contents"]);
 	skip_predictions = true;
 	disabling_saving_status = true;
 	global_disable_auto_enable_valid_layer_types = true;
@@ -313,7 +313,7 @@ async function get_traindata_and_init_categories () {
 }
 
 function init_categories () {
-	l(language[lang]["initializing_categories"]);
+	dbg(language[lang]["initializing_categories"]);
 	$("#dataset").html("");
 
 	var dataset_names = Object.keys(traindata_struct);
@@ -352,7 +352,7 @@ async function restart_webcams () {
 }
 
 function init_losses_and_metrics () {
-	l(language[lang]["initializing_losses"]);
+	dbg(language[lang]["initializing_losses"]);
 	for (var i = 0; i < losses.length; i++) {
 		$("#loss").append($("<option>", {
 			value: losses[i],
@@ -360,7 +360,7 @@ function init_losses_and_metrics () {
 		}));
 	}
 
-	l(language[lang]["initializing_metrics"]);
+	dbg(language[lang]["initializing_metrics"]);
 	for (var i = 0; i < metrics.length; i++) {
 		$("#metric").append($("<option>", {
 			value: metrics[i],
@@ -371,7 +371,7 @@ function init_losses_and_metrics () {
 }
 
 async function set_backend() {
-	l(language[lang]["setting_backend"]);
+	dbg(language[lang]["setting_backend"]);
 	var backend = get_backend();
 
 	if(!has_webgl) {
@@ -397,9 +397,9 @@ $(document).ready(async function() {
 	
 	check_all_tabs();
 
-	l(language[lang]["trying_to_set_backend"]);
+	dbg(language[lang]["trying_to_set_backend"]);
 	await set_backend();
-	l(language[lang]["backend_set"]);
+	dbg(language[lang]["backend_set"]);
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
@@ -530,9 +530,9 @@ $(document).ready(async function() {
 
 	cookie_theme = get_cookie("theme");
 	if(cookie_theme) {
-		l(language[lang]["has_cookie_for"] + " " + cookie_theme);
+		dbg(language[lang]["has_cookie_for"] + " " + cookie_theme);
 		$("#theme_choser").val(cookie_theme).trigger("change");
-		l(language[lang]["theme_set"]);
+		dbg(language[lang]["theme_set"]);
 	}
 
 	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
@@ -544,9 +544,7 @@ $(document).ready(async function() {
 	alter_text_webcam_series();
 	$("#webgl_backend").prop("checked", true).trigger("change");
 
-	l("Git-Hash: " + git_hash);
-
-	l("TFJS-Version: " + tf.version["tfjs-core"]);
+	l("Git-Hash: " + git_hash + ", TFJS-Version: " + tf.version["tfjs-core"]);
 
 	await toggle_show_input_layer();
 
@@ -592,7 +590,7 @@ $(document).ready(async function() {
 		}
 	}
 
-	l(language[lang]["site_is_ready"]);
+	dbg(language[lang]["site_is_ready"]);
 
 	if(is_cosmo_mode) {
 		add_scroll_right_button();

@@ -939,7 +939,7 @@ async function create_model (old_model, fake_model_structure, force) {
 	current_layer_status_hash = await get_current_layer_container_status_hash();
 
 	if(!fake_model_structure) {
-		l(language[lang]["model_compiled_successfully"]);
+		dbg(language[lang]["model_compiled_successfully"]);
 	}
 
 	if(old_model) {

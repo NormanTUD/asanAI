@@ -712,7 +712,7 @@ function enable_disable_grad_cam() {
 	}
 
 	if($("#show_layer_data").is(":checked")) {
-		l("You can either use grad CAM or the internal layer states, but not both. Disabling internal layer states.");
+		wrn("You can either use grad CAM or the internal layer states, but not both. Disabling internal layer states.");
 		$("#show_layer_data").prop("checked", false).trigger("change");
 	}
 
@@ -731,7 +731,7 @@ function enable_disable_kernel_images() {
 	}
 
 	if($("#show_grad_cam").is(":checked")) {
-		l("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+		wrn("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
 		$("#show_grad_cam").prop("checked", false).trigger("change");
 	}
 
@@ -1792,7 +1792,7 @@ function set_batch_size(val) {
 function set_epochs(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
 	val = parse_int(val);
-	l("Setting epochs to " + val);
+	dbg("Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
 
@@ -2320,7 +2320,7 @@ async function set_config(index) {
 			var trigger_height_change = 0;
 
 			if (config["width"]) {
-				l("Setting width");
+				dbg("Setting width");
 				$("#width").val(config["width"]);
 				trigger_height_change++;
 				width = config["width"];
@@ -2328,7 +2328,7 @@ async function set_config(index) {
 			}
 
 			if (config["height"]) {
-				l("Setting height");
+				dbg("Setting height");
 				$("#height").val(config["height"]);
 				trigger_height_change++;
 				height = config["height"];
@@ -2343,7 +2343,7 @@ async function set_config(index) {
 
 			if (config["max_number_of_files_per_category"]) {
 				assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-				l("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
+				dbg("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
 				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 			} else {
 				dbg("No max_number_of_files_per_category found in config");
@@ -2351,10 +2351,10 @@ async function set_config(index) {
 
 			if (config["divide_by"]) {
 				assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-				l("Setting divide_by to " + config["divide_by"]);
+				dbg("Setting divide_by to " + config["divide_by"]);
 				$("#divide_by").val(config["divide_by"]);
 			} else {
-				l("Setting divide_by to 1");
+				dbg("Setting divide_by to 1");
 				$("#divide_by").val(1);
 			}
 
@@ -2474,7 +2474,7 @@ async function set_config(index) {
 			var layer_settings = $(".layer_setting");
 			for (var i = 0; i < keras_layers.length; i++) {
 				var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
-				l(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+				dbg(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
 				layer_type.trigger("change");
 				layer_type.trigger("slide");
@@ -2498,7 +2498,7 @@ async function set_config(index) {
 					"rate"
 				];
 
-				l(language[lang]["setting_options_for_layer"] + " " + i);
+				dbg(language[lang]["setting_options_for_layer"] + " " + i);
 
 				datapoints.forEach(function (item_name) {
 					if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
@@ -2542,7 +2542,7 @@ async function set_config(index) {
 			}
 		} else {
 			for (var i = 0; i < config["model_structure"].length; i++) {
-				l(language[lang]["setting_options_for_layer"] + " " + i);
+				dbg(language[lang]["setting_options_for_layer"] + " " + i);
 				var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
 				layer_type.val(config["model_structure"][i]["type"]);
 				layer_type.trigger("change");
@@ -2603,11 +2603,11 @@ async function set_config(index) {
 	disable_all_non_selected_layer_types();
 
 	if (!index) {
-		l("Saving current status");
+		dbg("Saving current status");
 		await save_current_status();
 	}
 
-	l(language[lang]["getting_labels"]);
+	dbg(language[lang]["getting_labels"]);
 	await get_label_data();
 
 	is_setting_config = false;
@@ -2621,7 +2621,7 @@ async function set_config(index) {
 
 	await write_descriptions();
 
-	l(language[lang]["updating_predictions"]);
+	dbg(language[lang]["updating_predictions"]);
 	await show_prediction(1, 1);
 
 	$(".kernel_initializer").trigger("change");
@@ -3647,7 +3647,7 @@ function reset_view() {
 
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
-	l(language[lang]["changed_data_source"]);
+	dbg(language[lang]["changed_data_source"]);
 	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 	//	force_reinit(1);
 	//}
@@ -4669,10 +4669,10 @@ async function change_model_dataset() {
 
 function allow_edit_input_shape() {
 	if ($("#auto_input_shape").is(":checked")) {
-		l(language[lang]["input_shape_is_read_only"]);
+		dbg(language[lang]["input_shape_is_read_only"]);
 		$("#inputShape").attr("readonly", true);
 	} else {
-		l(language[lang]["input_shape_is_writable"]);
+		dbg(language[lang]["input_shape_is_writable"]);
 		$("#inputShape").attr("readonly", false);
 	}
 }
@@ -5341,11 +5341,11 @@ async function init_webcams () {
 	available_webcams = available_webcam_data[0];
 	available_webcams_ids = available_webcam_data[1];
 
-	l("Number of available cams: " + available_webcams.length);
+	dbg("Number of available cams: " + available_webcams.length);
 
 	if(available_webcams.length) {
-		l("Webcam(s) were found. Enabling webcam related features.");
-		l("List of found webcams: " + available_webcams.join(", "));
+		dbg("Webcam(s) were found. Enabling webcam related features.");
+		dbg("List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
 
 		if(await hasBothFrontAndBack()) {
@@ -5366,7 +5366,7 @@ async function init_webcams () {
 			$(".only_when_multiple_webcams").hide();
 		}
 	} else {
-		l("No webcams were found. Disabling webcam related features.");
+		wrn("No webcams were found. Disabling webcam related features.");
 		$(".only_when_webcam").hide();
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
@@ -5378,11 +5378,10 @@ async function init_webcams () {
 
 function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
-		l("Showing Augmentation tab");
-		l(language[lang]["showing_augmentation"]);
+		dbg(language[lang]["showing_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
 	} else {
-		l(language[lang]["hiding_augmentation"]);
+		dbg(language[lang]["hiding_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
 }
