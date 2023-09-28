@@ -23,21 +23,7 @@
 		<title>asanAI</title>
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
-		<style id="manicule_animation_css"></style>
 <?php
-		_js("tf/tf.min.js");
-		_js("base_wrappers.js");
-		_js("libs/jstat.min.js");
-		_js("custom_layers.js");
-		_js("libs/jsmanipulate.js", 1, 1);
-
-		_js("libs/zip.js");
-		_js("libs/md5.umd.min.js");
-		_js("libs/jquery.js");
-		_js("libs/jquery-ui.js");
-		_js("debug.js");
-		_js("variables.js");
-
 		_include("initializing.php");
 		$theme_base = "light";
 
@@ -55,6 +41,7 @@
 			$theme_base = "light";
 		}
 
+		_css("libs/classic.min.css");
 		_css("libs/jquery-ui.css");
 		_css("css/style.css");
 		_css("css/ribbon.css");
@@ -68,6 +55,19 @@
 		_css("css/ribbon".$theme_base."mode.css", "css_ribbon");
 		_css("libs/prism/prism.min.css");
 		_css("libs/sweetalert2.min.css");
+
+		_js("tf/tf.min.js");
+		_js("base_wrappers.js");
+		_js("libs/jstat.min.js");
+		_js("custom_layers.js");
+		_js("libs/jsmanipulate.js", 1, 1);
+
+		_js("libs/zip.js");
+		_js("libs/md5.umd.min.js");
+		_js("libs/jquery.js");
+		_js("libs/jquery-ui.js");
+		_js("debug.js");
+		_js("variables.js");
 
 		_js("libs/canvas-to-blob.min.js");
 
@@ -98,7 +98,6 @@
 		_js("visualizations/LeNet.js");
 		_js("visualizations/FCNN.js");
 
-		_css("libs/classic.min.css");
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
 
