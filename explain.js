@@ -1174,7 +1174,7 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	favicon_default();
 
-	document.title = original_title;
+	set_document_title(original_title);
 
 	await allow_editable_labels();
 
@@ -1214,7 +1214,7 @@ async function _show_eta (times, i, neurons) {
 	l(swal_msg + " ");
 
 	l(swal_msg);
-	document.title = swal_msg;
+	set_document_title(swal_msg);
 
 	$("#show_cosmo_epoch_status").hide();
 

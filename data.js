@@ -152,9 +152,9 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 	data_progressbar_div.css("width", percentage + "%");
 	if(is_cosmo_mode) {
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
-		document.title = language[lang]["load_images"] + ": " + percentage + "% - asanAI";
+		set_document_title(language[lang]["load_images"] + ": " + percentage + "% - asanAI");
 	} else {
-		document.title = language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI";
+		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 	}
 
 	percentage_div.html(percentage_text);
@@ -277,7 +277,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 	stop_downloading_data = false;
 	$("#stop_downloading").hide();
 
-	document.title = original_title;
+	set_document_title(original_title);
 
 	if(!skip_real_image_download) {
 		percentage_div.html("");

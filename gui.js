@@ -6454,3 +6454,9 @@ function get_last_layer_setting_end_y () {
 function get_last_description_of_layers_end_y () {
 	return get_last_element_of_class_end_y("descriptions_of_layers");
 }
+
+function set_document_title (t) {
+	if(t != document.title) {
+		document.title = t;
+	}
+}

@@ -70,7 +70,7 @@ async function train_neural_network () {
 			model.stopTraining = true;
 		}
 
-		document.title = original_title;
+		set_document_title(original_title);
 		await gui_not_in_training();
 		$(".overlay").remove();
 		l("Stopped training");
@@ -330,7 +330,7 @@ async function get_fit_data () {
 
 		$("#training_progress_bar").show();
 
-		document.title = "[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI";
+		set_document_title("[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI");
 
 		if(is_cosmo_mode) {
 			time_estimate = human_readable_time(parse_int(seconds_left * 2.5));
@@ -527,7 +527,7 @@ async function get_fit_data () {
 	callbacks["onTrainEnd"] = async function () {
 		favicon_default();
 		await write_model_to_latex_to_page();
-		document.title = original_title;
+		set_document_title(original_title);
 		await restart_fcnn();
 		await restart_lenet();
 
