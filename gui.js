@@ -1687,7 +1687,7 @@ function set_learning_rate(val) {
 
 function write_model_summary_wait () {
 	try {
-		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='_gui/loading_icon.gif' /></center>";
+		document.getElementById("summary").innerHTML = "<center><img class='invert_in_dark_mode' src='_gui/loading_favicon.gif' /></center>";
 		invert_elements_in_dark_mode();
 		write_model_summary();
 	} catch (e) {
@@ -2931,7 +2931,7 @@ function favicon_default() {
 }
 
 function favicon_spinner() {
-	change_favicon("_gui/loading_icon.gif");
+	change_favicon("_gui/loading_favicon.gif");
 }
 
 async function disable_everything() {
