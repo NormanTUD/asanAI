@@ -84,6 +84,77 @@ function FCNN() {
 	/////////////////////////////////////////////////////////////////////////////
 	///////    Methods    ///////
 	/////////////////////////////////////////////////////////////////////////////
+	function get_real_element_size () {
+		var min_left = 9999999999;
+		var max_right = -9999999999;
+		var min_y = 9999999999;
+		var max_y = -9999999999;
+
+		$(g).children().each((i, e) => {
+			var _offset = $(e).offset();
+			var _top = _offset.top;
+			var _left = _offset.left;
+
+			var width = $(e).width();
+
+			var _right = width + _left;
+
+			if(_left < min_left) {
+				min_left = _left;
+			}
+
+			if(_right > max_right) {
+				max_right = _right;
+			}
+
+			var _top = _offset.top;
+			var _height = $(e).height();
+
+			var _bottom = _top + _height;
+
+			if(_top < min_y) {
+				min_y = _top;
+			}
+
+			if(_bottom > max_y) {
+				max_y = _bottom;
+			}
+		});
+
+		var element_width = parse_int(Math.abs(max_right - min_left));
+		var element_height = parse_int(Math.abs(max_y - min_y));
+
+		return {
+			width: element_width,
+			height: element_height
+		};
+	}
+	
+	function autofit () {
+		var width_and_height = get_real_element_size();
+		var _w = width_and_height.width;
+		var _h = width_and_height.height;
+
+		var current_scale = 1;
+		try {
+			current_scale = $(g).attr("transform").match(/scale\(([^)]*)\)/)[1];
+		} catch (e) {
+			// do nothing when it fails
+		}
+		var graph_width = get_graph_width();
+		var graph_height = get_graph_height();
+
+		var new_scale = current_scale;
+
+		if(_w > graph_width || _h > graph_height) {
+			new_scale = Math.max(
+				graph_width / _w,
+				graph_height / _h
+			);
+		}
+
+		console.log("new scale:", new_scale);
+	}
 	
 	function redraw(
 		{
