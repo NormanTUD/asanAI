@@ -664,7 +664,12 @@ async function _get_xs_and_ys (recursive=0) {
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 		l(language[lang]["got_data"]);
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("n is undefined") && recursive == 0) {
+			wrn("Error '" + e + "'. Trying to get xs and ys again...");
 			return await _get_xs_and_ys(recursive + 1);
 		} else {
 			var explanation = explain_error_msg("" + e);

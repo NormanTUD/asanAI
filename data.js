@@ -803,18 +803,11 @@ async function get_xs_and_ys () {
 		classes.length > 1
 	) {
 		try {
-			//log("C", xy_data.x.shape);
 			xy_data.y = tidy(() => { return oneHot(tensor1d(classes, "int32"), xy_data["number_of_categories"]); });
-			//log("D", xy_data.x.shape);
 		} catch (e) {
-			/*
-			log(e);
-			log(typeof(e));
-			log(Object.keys(e));
-			log(e.__proto__);
-			*/
-			if(("" + e).includes("Error in oneHot: depth must be >=2, but it is 1")) {
-				wrn("For whatever reason, it was tries to do oneHot, but only has one vector. Loss:", loss);
+			if(("" + e).includes("depth must be >=2, but it is 1")) {
+				alert("You need at least 2 or more categories to start training with categoricalCrossentropy or binaryCrossentropy");
+				return null;
 			} else {
 				write_error(e, e.toString().includes("Error in oneHot: depth must be >=2") ? function () { // cannot be async
 					$("#loss").val("meanSquaredError").trigger("change");
