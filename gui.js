@@ -6407,6 +6407,11 @@ function create_centered_window_with_text(parameter) {
 }
 
 function get_last_element_of_class_end_y(name) {
+	if(document.body === null) {
+		wrn("document.body is null!");
+		return;
+	}
+
 	assert(typeof(name) == "string", "get_last_element_of_class_end_y(" + name + ") parameter is not a string");
 	var descs = $("." + name);
 

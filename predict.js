@@ -94,6 +94,11 @@ async function _get_tensor_img(item) {
 }
 
 function set_item_natural_width (item) {
+	if(document.body === null) {
+		wrn("document.body is null!");
+		return;
+	}
+
 	try {
 		var $item = $(item);
 		assert($item.length > 0, "$item is empty");
