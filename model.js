@@ -516,7 +516,7 @@ async function get_html_from_model () {
 		html += "				output.src = URL.createObjectURL(event.target.files[0]);\n";
 		html += "				output.onload = async function() {\n";
 		html += "					await load_model();\n";
-		html += "				URL.revokeObjectURL(output.src);\n";
+		html += "					URL.revokeObjectURL(output.src);\n";
 		html += "					var img = $('#output')[0];\n";
 		html += "					img.height = model.layers[0].input.shape[1];\n";
 		html += "					img.width = model.layers[0].input.shape[2];\n";
