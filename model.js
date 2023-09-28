@@ -79,6 +79,8 @@ async function _create_model () {
 			wrn("" + e);
 		} else if(("" + e).includes("ReferenceError")) {
 			wrn("" + e);
+		} else if(("" + e).includes("The channel dimension of the input should be defined")) {
+			wrn("" + e);
 		} else if(("" + e).includes("model is undefined")) {
 			wrn("Currently, the model is undefined. This may be fatal, but may also not be");
 		} else if(("" + e).includes("model.layers[i] is undefined")) {
