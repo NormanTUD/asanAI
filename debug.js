@@ -948,9 +948,21 @@ function start_gremlins () {
 		javascript: (function() {
 			function callback() {
 				gremlins.createHorde({
-					species: [gremlins.species.clicker(),gremlins.species.toucher(),gremlins.species.formFiller(),gremlins.species.scroller(),gremlins.species.typer()],
-					mogwais: [gremlins.mogwais.alert(),gremlins.mogwais.fps(),gremlins.mogwais.gizmo()],
-					strategies: [gremlins.strategies.distribution()]
+					species: [
+						gremlins.species.clicker(),
+						gremlins.species.toucher(),
+						gremlins.species.formFiller(),
+						gremlins.species.scroller(),
+						gremlins.species.typer()
+					],
+					mogwais: [
+						gremlins.mogwais.alert(),
+						gremlins.mogwais.fps(),
+						gremlins.mogwais.gizmo()
+					],
+					strategies: [
+						gremlins.strategies.distribution()
+					]
 				}).unleash();
 			}
 			var s = document.createElement("script");
