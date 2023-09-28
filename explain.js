@@ -2857,14 +2857,21 @@ async function _temml () {
 		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
 		$(".temml_me").each((i, e) => {
 			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+				var original_latex = e.textContent;
+
+				$(e)[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+
 				var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
 				$(tmp_element).appendTo($(body));
-				var original_latex = e.textContent;
+
 				temml.render(original_latex, tmp_element[0]);
+
 				$(e)[0].innerHTML = tmp_element[0].innerHTML;
 				$(e).attr("data-rendered", 1);
 				$(e).attr("data-latex", original_latex);
+
 				$("#tmp_equation").remove();
+
 				$(e).on("contextmenu", function(ev) {
 					ev.preventDefault();
 					create_centered_window_with_text(original_latex);
