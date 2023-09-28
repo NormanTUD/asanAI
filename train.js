@@ -1164,14 +1164,14 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	for (let i = 0; i < numCategories; i++) {
 		var canvas = document.createElement("canvas");
 		var pw = parse_int($("#training_tab").width() * relationScale);
-		var w = parse_int(pw / (numCategories + 2));
+		var w = parse_int(pw / (numCategories + 1));
 
 		if(is_cosmo_mode) {
 			w = 200;
 		}
 
 		canvas.width = w;
-		canvas.height = 400;
+		canvas.height = 460;
 
 		var ctx = canvas.getContext("2d");
 
