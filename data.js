@@ -1281,7 +1281,8 @@ async function get_data_from_webcam (force_restart) {
 		$("#show_webcam_button_data").html("Stop webcam");
 		if(cam) {
 			l("Stopping webcam");
-			$("#webcam_start_stop").html("Enable webcam");
+			$("#webcam_start_stop").html(trm("enable_webcam"));
+			await update_translations();
 
 			$(".webcam_data_button").hide();
 			$("#webcam_data").hide().html("");
@@ -1292,7 +1293,9 @@ async function get_data_from_webcam (force_restart) {
 			stopped = 1;
 		} else {
 			l("Starting webcam");
-			$("#webcam_start_stop").html("Disable webcam");
+			$("#webcam_start_stop").html(trm("disable_webcam"));
+			await update_translations();
+
 			var webcam = $("#webcam_data");
 			webcam.hide().html("");
 
