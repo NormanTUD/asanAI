@@ -1266,6 +1266,10 @@ async function get_x_y_as_array () {
 }
 
 async function get_data_from_webcam (force_restart) {
+	if(!inited_webcams) {
+		await init_webcams();
+	}
+
 	if(!available_webcams.length) {
 		alert("No webcams found");
 		return;
@@ -1335,7 +1339,6 @@ async function get_data_from_webcam (force_restart) {
 	if(force_restart && stopped) {
 		await get_data_from_webcam();
 	}
-
 }
 
 async function take_image_from_webcam_n_times (elem) {
