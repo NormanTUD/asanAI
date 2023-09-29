@@ -2732,6 +2732,8 @@ async function chose_dataset(no_set_config) {
 
 	model = await _create_model();
 	await compile_model();
+
+	await show_prediction();
 }
 
 function init_weight_file_list() {
