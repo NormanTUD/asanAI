@@ -55,8 +55,11 @@ function _predict_error (e) {
 
 	err(e);
 	console.trace();
-	$("#prediction").hide();
-	$("#predict_error").html("" + e).show();
+
+	if(e) {
+		$("#prediction").hide();
+		$("#predict_error").html("" + e).show();
+	}
 }
 
 function _divide_img_tensor (tensor_img) {
@@ -390,9 +393,6 @@ async function _predict_table(predictions_tensor, desc) {
 			}
 		}
 
-		$("#predict_error").hide();
-		$("#predict_error").html("");
-
 		return fullstr;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
@@ -485,19 +485,18 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					var data_input_shape = await get_shape_from_array(data);
 
 					var input_shape = model.layers[0].input.shape;
-					var input_without_null = model.layers[0].input.shape.filter(n => n);
 
-					if(input_shape.length != input_without_null.length) {
+					if(input_shape[0] === null) {
 						data = [data];
-						data_input_shape = await get_shape_from_array(data);
+						data_input_shape.unshift(1);
 					}
 
 					if(data_input_shape.length != input_shape.length) {
 						throw new Error(`The input shape does not match. The data input shape is: ${data_input_shape.join(", ")}, the but model expects ${input_shape.join(", ")}. Not predicting.`);
 					}
 
-					if(data_input_shape.length == 1 && input_without_null.length == 1) {
-						var val_diff = data_input_shape[0] - input_without_null[0];
+					if(data_input_shape.length == 1 && input_shape.length == 1) {
+						var val_diff = data_input_shape[0] - input_shape[0];
 						if(val_diff != 0) {
 							if(val_diff > 0) {
 								throw new Error(`${Math.abs(val_diff)} ${language[lang]["too_many_values"]}`);
@@ -551,7 +550,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		mi[0] = 1;
 
 		var predictions_tensor = null;
-		$("#predict_error").html("").hide();
+
 		try {
 			predictions_tensor = await model.predict([predict_data], [1, 1]);
 		} catch (e) {
@@ -613,8 +612,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			$("#" + pred_tab).append(latex).show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}
-
-		$("#predict_error").html("").hide();
 
 		await dispose(predict_data);
 		await dispose(predictions_tensor);
@@ -684,10 +681,21 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 		return;
 	}
 
-	if(await input_shape_is_image()) {
-		await _print_example_predictions();
-	} else {
-		await _print_predictions_text();
+	try {
+		if(await input_shape_is_image()) {
+			await _print_example_predictions();
+		} else {
+			await _print_predictions_text();
+		}
+
+		$("#predict_error").hide();
+		$("#predict_error").html("");
+	} catch (ee) {
+		if(Object.keys(ee).includes("message")) {
+			ee = ee.message;
+		}
+
+		_predict_error("" + ee);
 	}
 
 	if(!dont_go_to_tab) {
