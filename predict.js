@@ -492,7 +492,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						data_input_shape = await get_shape_from_array(data);
 					}
 
-					if(data_input_shape.length != input_without_null.length) {
+					if(data_input_shape.length != input_shape.length) {
 						throw new Error(`The input shape does not match. The data input shape is: ${data_input_shape.join(", ")}, the but model expects ${input_shape.join(", ")}. Not predicting.`);
 					}
 
@@ -506,11 +506,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 							}
 						}
 					} else {
-						for (var ii = 0; ii < data_input_shape.length; ii++) {
-							if(input_shape[ii] === null) {
-								continue;
-							}
-
+						for (var ii = 1; ii < data_input_shape.length; ii++) {
 							if(data_input_shape[ii] != input_shape[ii]) {
 								throw new Error(`Input shape dimension ${ii}: The model expects ${input_shape[ii]}, but the data is ${data_input_shape[ii]}`);
 							}
