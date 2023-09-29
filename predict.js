@@ -68,6 +68,10 @@ function _divide_img_tensor (tensor_img) {
 			return divNoNan(tensor_img, divide_by);
 		});
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		_predict_error(e);
 	}
 
@@ -86,6 +90,11 @@ async function _get_tensor_img(item) {
 		});
 	} catch (e) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
+
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		_predict_error(e);
 		return null;
 	}
@@ -106,7 +115,10 @@ function set_item_natural_width (item) {
 		$item.prop("width", element_vanilla_js.naturalWidth);
 		$item.prop("height", element_vanilla_js.naturalHeight);
 	} catch (e) {
-		_predict_error(e);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+		_predict_error("" + e);
 		return false;
 	}
 
@@ -133,7 +145,10 @@ async function predict_demo (item, nr, tried_again = 0) {
 			await get_label_data();
 		}
 	} catch (e) {
-		_predict_error(e);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+		_predict_error("" + e);
 
 		return;
 	}
@@ -204,9 +219,13 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await dispose(tensor_img);
 
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		l("Error (101): " + e);
 		log("================================= tensor_img:", tensor_img);
-		_predict_error(e);
+		_predict_error("" + e);
 		if(tried_again) {
 			return;
 		}
@@ -578,11 +597,15 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		await dispose(predict_data);
 		await dispose(predictions_tensor);
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		await dispose(predict_data);
 		estr = "" + e;
 		if(!estr.includes("yped")) {
 			if(!estr.includes("Expected input shape")) {
-				_predict_error(e);
+				_predict_error("" + e);
 			} else {
 				$("#prediction_non_image").html(estr);
 			}
@@ -772,6 +795,10 @@ async function _print_predictions_text(count, example_predict_data) {
 				count++;
 				$("#predict_error").html("");
 			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
 				if(("" + e).includes("already disposed")) {
 					dbg("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
