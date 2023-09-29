@@ -5236,8 +5236,6 @@ function l(msg) {
 	} catch (e) {
 		err("Some thing went wrong with the `l` function: " + e);
 	}
-
-	log_less(msg);
 }
 
 async function set_custom_image_training () {
