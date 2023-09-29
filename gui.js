@@ -2736,6 +2736,9 @@ async function chose_dataset(no_set_config) {
 	await show_prediction(1, 1);
 
 	l("OK");
+
+	await delay(500);
+	await show_prediction(1, 1);
 }
 
 function init_weight_file_list() {
