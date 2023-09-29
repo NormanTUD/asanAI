@@ -489,10 +489,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 					if(input_shape.length != input_without_null.length) {
 						data = [data];
+						data_input_shape = await get_shape_from_array(data);
 					}
 
 					if(data_input_shape.length != input_without_null.length) {
-						throw new Error("The input shape does not match. Not predicting.");
+						throw new Error(`The input shape does not match. The data input shape is: ${data_input_shape.join(", ")}, the but model expects ${input_shape.join(", ")}. Not predicting.`);
 					}
 
 					if(data_input_shape.length == 1 && input_without_null.length == 1) {
@@ -502,6 +503,16 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 								throw new Error(`${Math.abs(val_diff)} ${language[lang]["too_many_values"]}`);
 							} else {
 								throw new Error(`${Math.abs(val_diff)} ${language[lang]["too_few_values"]}`);
+							}
+						}
+					} else {
+						for (var ii = 0; ii < data_input_shape.length; ii++) {
+							if(input_shape[ii] === null) {
+								continue;
+							}
+
+							if(data_input_shape[ii] != input_shape[ii]) {
+								throw new Error(`Input shape dimension ${ii}: The model expects ${input_shape[ii]}, but the data is ${data_input_shape[ii]}`);
 							}
 						}
 					}
