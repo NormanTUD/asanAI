@@ -49,12 +49,14 @@ var load_file = (function(event) {
 });
 
 function _predict_error (e) {
+	assert(typeof(e) == "string", "e is not string in _predict_error");
+
+	e = e.replace(/(Error:\s*)*Error:?/, "Error:");
+
 	err(e);
 	console.trace();
 	$("#prediction").hide();
 	$("#predict_error").html("" + e).show();
-	$("#example_predictions").html("");
-	$(".show_when_has_examples").hide();
 }
 
 function _divide_img_tensor (tensor_img) {
@@ -483,11 +485,24 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					var data_input_shape = await get_shape_from_array(data);
 
 					var input_shape = model.layers[0].input.shape;
-					if(input_shape[0] === null) {
-						var original_input_shape = input_shape;
-						input_shape = remove_empty(input_shape);
-						if(input_shape.length != data_input_shape.length) {
-							data = [data];
+					var input_without_null = model.layers[0].input.shape.filter(n => n);
+
+					if(input_shape.length != input_without_null.length) {
+						data = [data];
+					}
+
+					if(data_input_shape.length != input_without_null.length) {
+						throw new Error("The input shape does not match. Not predicting.");
+					}
+
+					if(data_input_shape.length == 1 && input_without_null.length == 1) {
+						var val_diff = data_input_shape[0] - input_without_null[0];
+						if(val_diff != 0) {
+							if(val_diff > 0) {
+								throw new Error(`${Math.abs(val_diff)} ${language[lang]["too_many_values"]}`);
+							} else {
+								throw new Error(`${Math.abs(val_diff)} ${language[lang]["too_few_values"]}`);
+							}
 						}
 					}
 				}

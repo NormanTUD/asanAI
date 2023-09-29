@@ -298,7 +298,9 @@
 			"initializing_categories" => "Initializing categories",
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initializing page contents",
-			"initializing_set_options_for_all" => "Initializing 'set options for all'"
+			"initializing_set_options_for_all" => "Initializing 'set options for all'",
+			"too_few_values" => "too few value(s)",
+			"too_many_values" => "too few value(s)"
 		),
 
 		'de' => array(
@@ -599,7 +601,9 @@
 			"initializing_categories" => "Kategorien werden initialisiert",
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initialisiere Seiteninhalte",
-			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'"
+			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'",
+			"too_few_values" => "Wert(e) zu wenig",
+			"too_many_values" => "Wert(e) zu viel"
 		)
 	);
 
