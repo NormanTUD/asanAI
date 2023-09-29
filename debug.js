@@ -951,7 +951,7 @@ function start_gremlins () {
 					species: [
 						gremlins.species.clicker(),
 						gremlins.species.toucher(),
-						gremlins.species.formFiller(),
+						//gremlins.species.formFiller(),
 						gremlins.species.scroller(),
 						gremlins.species.typer()
 					],
