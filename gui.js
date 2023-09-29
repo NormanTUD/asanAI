@@ -2449,20 +2449,32 @@ async function set_config(index) {
 			await set_input_shape(config["input_shape"]);
 		} else {
 			var is = null;
-			if(Object.keys(config).includes("keras")) {
-				if(Object.keys(config.keras).includes("modelTopology")) {
-					is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-				} else {
-					is = config.keras.config.layers[0].config.batch_input_shape;
+			try {
+				if(Object.keys(config).includes("keras")) {
+					if(Object.keys(config.keras).includes("modelTopology")) {
+						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+					} else {
+						is = config.keras.config.layers[0].config.batch_input_shape;
+					}
 				}
-			}
 
-			if(is) {
-				is = remove_empty(is);
-				is = Object.values(is);
-				await set_input_shape("[" + is.join(", ") + "]");
-			} else {
-				l("ERROR: keras not found in config");
+				if(is) {
+					is = remove_empty(is);
+					is = Object.values(is);
+					await set_input_shape("[" + is.join(", ") + "]");
+				} else {
+					l("ERROR: keras not found in config");
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if (("" + e).includes("keras")) {
+					err("" + e);
+				} else {
+					throw new Error(e);
+				}
 			}
 		}
 
