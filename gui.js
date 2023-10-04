@@ -5901,6 +5901,7 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 			$($(".layer_setting")[$(".layer_setting").length - 1]).find("button").prop("disabled", true);
 			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".show_data").prop("disabled", false);
 			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".visualize_layer_button").prop("disabled", false);
+			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".add_layer").prop("disabled", false);
 
 			disable_flatten_layer();
 
