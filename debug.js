@@ -744,7 +744,7 @@ function _dump_env_to_html () {
 	var html = "";
 	var _keys = Object.keys(all_vars);
 	for (var i = 0; i <= _keys.length; i++) {
-		if("" + _keys[i] !== "undefined" && ["last_weights_as_string", "layer_structure_cache"].includes(_keys[i])) {
+		if("" + _keys[i] !== "undefined" && !["last_weights_as_string", "layer_structure_cache"].includes(_keys[i])) {
 			html += `<tr><td>${_keys[i]}</td><td><pre>${all_vars[_keys[i]]}</pre></td></tr>`;
 		}
 	}
