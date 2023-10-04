@@ -2098,8 +2098,6 @@ async function add_layer(item) {
 
 	layer_structure_cache = null;
 
-	$(item).parent().parent().clone().insertAfter($(item).parent().parent());
-
 	var real_nr = null;
 
 	var item_xpath = get_element_xpath(item);
@@ -2112,6 +2110,29 @@ async function add_layer(item) {
 		}
 	}
 
+	assert(real_nr !== null, "real_nr is null!");
+
+	var nr_of_layer = (get_number_of_layers() - 1);
+
+	var item_parent_parent = $(item).parent().parent();
+
+	var plus_or_minus_one = 1;
+
+	try {
+		if(real_nr == nr_of_layer) {
+			item_parent_parent.clone().insertBefore(item_parent_parent);
+			plus_or_minus_one = 0;
+		} else {
+			item_parent_parent.clone().insertAfter(item_parent_parent);
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
+
 	$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
 
 	var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
@@ -2119,7 +2140,7 @@ async function add_layer(item) {
 	if (new_layer_type == "flatten") {
 		new_layer_type = "dense";
 	}
-	$($($($(".layer_setting")[real_nr + 1])).find(".layer_type")[0]).val(new_layer_type).trigger("change");
+	$($($($(".layer_setting")[real_nr + plus_or_minus_one])).find(".layer_type")[0]).val(new_layer_type).trigger("change");
 
 	await updated_page();
 
@@ -2128,7 +2149,7 @@ async function add_layer(item) {
 	$(".remove_layer").prop("disabled", false);
 	$(".remove_layer").show();
 
-	$($(".remove_layer")[real_nr + 1]).removeAttr("disabled")
+	$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled")
 
 	await save_current_status();
 
