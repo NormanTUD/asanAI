@@ -2076,6 +2076,8 @@ async function remove_layer(item) {
 	//rename_labels();
 	await predict_handdrawn();
 
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
 	l("Removed layer");
 }
 
@@ -2155,6 +2157,8 @@ async function add_layer(item) {
 
 	await rename_labels();
 	await predict_handdrawn();
+
+	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 	l("Added layer");
 }
