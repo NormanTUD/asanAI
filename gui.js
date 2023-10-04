@@ -2234,7 +2234,7 @@ async function show_layers(number) {
 	var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
 	var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
-	var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
+	var add = "<button class='add_remove_layer_button add_layer show_data' onclick='add_layer(this)'>+</button>&nbsp;";
 
 	for (var i = 0; i < number; i++) {
 		layers_container_str +=
@@ -5897,18 +5897,26 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 		}
 
 		if(mode == "beginner") {
+			var last_element_nr = $(".layer_setting").length - 1;
+			var last_layer_setting = $($(".layer_setting")[last_element_nr]);
+
 			$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
-			$($(".layer_setting")[$(".layer_setting").length - 1]).find("button").prop("disabled", true);
-			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".show_data").prop("disabled", false);
-			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".visualize_layer_button").prop("disabled", false);
-			$($(".layer_setting")[$(".layer_setting").length - 1]).find(".add_layer").prop("disabled", false);
+
+			last_layer_setting.find("button").prop("disabled", true);
+			last_layer_setting.find(".show_data").prop("disabled", false);
+			last_layer_setting.find(".visualize_layer_button").prop("disabled", false);
+			last_layer_setting.find(".remove_layer").prop("disabled", true);
 
 			disable_flatten_layer();
 
 			//l("Disabling last layer in beginner mode");
 		}
 	} catch (e) {
-		err(e);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
 	}
 
 }
