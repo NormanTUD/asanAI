@@ -2782,6 +2782,8 @@ function init_weight_file_list() {
 		var new_option = $("<option>", { value: weight_files[i], text: weight_files[i] });
 		$("#model_dataset").append(new_option);
 	}
+
+	hide_dataset_when_only_one();
 }
 
 async function init_dataset_category() {
