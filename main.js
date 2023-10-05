@@ -287,6 +287,7 @@ async function init_page_contents (chosen_dataset) {
 	disabling_saving_status = false;
 	skip_predictions = false;
 
+	hide_dataset_when_only_one();
 }
 
 function dataset_already_there (dataset_name) {

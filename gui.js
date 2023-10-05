@@ -2760,10 +2760,13 @@ async function chose_dataset(no_set_config) {
 
 	await show_prediction(1, 1);
 
-	l("OK");
 
 	await delay(500);
 	await show_prediction(1, 1);
+
+	hide_dataset_when_only_one();
+
+	l("OK: chosen dataset");
 }
 
 function init_weight_file_list() {
@@ -4703,9 +4706,6 @@ function move_element_to_another_div(element, new_element_id) {
 	return old_parent;
 }
 
-async function change_model_dataset() {
-}
-
 function allow_edit_input_shape() {
 	if ($("#auto_input_shape").is(":checked")) {
 		dbg(language[lang]["input_shape_is_read_only"]);
@@ -6505,5 +6505,15 @@ function get_last_description_of_layers_end_y () {
 function set_document_title (t) {
 	if(t != document.title) {
 		document.title = t;
+	}
+}
+
+function hide_dataset_when_only_one () {
+	var num_datasets = $("#model_dataset").children().length;
+
+	if(num_datasets > 1) {
+		$("#model_dataset").parent().parent().show();
+	} else {
+		$("#model_dataset").parent().parent().hide();
 	}
 }
