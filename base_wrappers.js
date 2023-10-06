@@ -686,11 +686,25 @@ function _clean_custom_tensors () {
 }
 
 function parse_int (...args) {
-	return parseInt(...args);
+	var res = parseInt(...args);
+
+	if(isNaN(res)) {
+		wrn("NaN detected in parse_int, args: " + JSON.stringify(args));
+		console.trace();
+	}
+
+	return res;
 }
 
 function parse_float (...args) {
-	return parseFloat(...args);
+	var res = parseFloat(...args);
+
+	if(isNaN(res)) {
+		wrn("NaN detected in parse_int, args: " + JSON.stringify(args));
+		console.trace();
+	}
+
+	return res;
 }
 
 async function loadLayersModel (...args) {
