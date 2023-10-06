@@ -4921,21 +4921,27 @@ function check_number_values() {
 			val = parse_float(val);
 			item.css("background-color", default_bg_color);
 
-			var max = parse_float(item.attr("max"));
-			var min = parse_float(item.attr("min"));
+			var max_attr = item.attr("max");
+			var min_attr = item.attr("min");
+			//console.log("max_attr:", max_attr, "max_attr type:", typeof(max_attr));
 
-			if (max) {
-				if (val > max) {
-					item.val(max).trigger("change");
+			if(max_attr !== null && typeof(max_attr) != "undefined") {
+				var max = parse_float(max_attr);
+				if (typeof(max) === "number") {
+					if (val > max) {
+						item.val(max).trigger("change");
+					}
 				}
 			}
 
-			if (min) {
-				if (val < min) {
-					item.val(min).trigger("change");
+			if(min_attr !== null && typeof(min_attr) != "undefined") {
+				var min = parse_float(min_attr);
+				if (typeof(min) === "number") {
+					if (val < min) {
+						item.val(min).trigger("change");
+					}
 				}
 			}
-
 		}
 	}
 
