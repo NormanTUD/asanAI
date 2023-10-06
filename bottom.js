@@ -151,7 +151,6 @@ async function restart_fcnn(force) {
 		var layer_type = $($(".layer_type")[i]).val();
 
 		assert(typeof(number_of_units) == "number", "number of units is not a number");
-		assert(number_of_units > 0, "number of units is 0 or smaller");
 
 		if(parse_int(number_of_units) > 0) {
 			real_architecture.push(number_of_units);
