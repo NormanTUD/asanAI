@@ -2121,7 +2121,7 @@ async function add_layer(item) {
 	var plus_or_minus_one = 1;
 
 	try {
-		if(real_nr == nr_of_layer) {
+		if(real_nr == nr_of_layer) { // insert before last layer
 			item_parent_parent.clone().insertBefore(item_parent_parent);
 			plus_or_minus_one = 0;
 		} else {

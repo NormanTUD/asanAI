@@ -1633,3 +1633,5 @@ var original_labels = [];
 var call_time = Date.now();
 
 var waiting_updated_page_uuids = [];
+
+var shift_pressed = false;

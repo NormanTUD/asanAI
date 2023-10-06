@@ -203,7 +203,17 @@ function init_set_all_options () {
 		}));
 	}
 
+	document.addEventListener("keyup", function(event) {
+		if(shift_pressed && event.key == "Shift") {
+			shift_pressed = false;
+		}
+	});
+
 	document.addEventListener("keydown", function(event) {
+		if(event.key == "Shift") {
+			shift_pressed = true;
+		}
+
 		if (event.ctrlKey && event.key === "z") {
 			undo(); // cannot be async
 		} else if (event.ctrlKey && event.key === "y") {
