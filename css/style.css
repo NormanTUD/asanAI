@@ -367,6 +367,7 @@ ul {
 	z-index: 2;
 	border-bottom: 1px solid gray;
 	backdrop-filter: blur(3px);
+	text-transform: capitalize;
 }
 
 body {
