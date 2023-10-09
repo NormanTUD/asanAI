@@ -322,7 +322,7 @@ async function _predict_image (predictions_tensor, desc) {
 
 	var pxsz = 1;
 
-	var largest = Math.max(predictions[1], predictions[2]);
+	var largest = Math.max(...predictions[1], ...predictions[2]);
 	assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
 	var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
@@ -341,6 +341,7 @@ async function _predict_image (predictions_tensor, desc) {
 		desc.append(canvas);
 
 		//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+		log("predictions[i]:", predictions[i]);
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
