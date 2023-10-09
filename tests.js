@@ -271,13 +271,14 @@ async function run_tests () {
 			await wait_for_updated_page(3);
 
 			await _set_initializers();
-			await wait_for_updated_page(3);
-
 			$("#learningRate_adam").val("0.01").trigger("change");
+			await set_epochs(200);
+
 			await wait_for_updated_page(3);
 
-			await set_epochs(200);
-			await wait_for_updated_page(3);
+			log_test("Waiting for 10 seconds");
+			await delay(10000);
+			log_test("Waiting for 10 seconds done");
 
 			await train_neural_network();
 			await wait_for_updated_page(3);
