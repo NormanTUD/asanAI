@@ -1299,6 +1299,7 @@ async function draw_maximally_activated_neuron (layer, neuron) {
 					model_hash: await get_model_config_hash()
 				};
 
+				scaleNestedArray(data);
 				var res = draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
 				if(res) {
