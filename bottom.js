@@ -160,8 +160,6 @@ async function restart_fcnn(force) {
 			architecture.push(number_of_units);
 			betweenNodesInLayer.push(10);
 			layer_types.push(layer_type);
-		} else {
-			return;
 		}
 	}
 
