@@ -638,6 +638,11 @@ function check_initializers (data, has_keys) {
 }
 
 function _check_data (data, type) {
+	if(!data) {
+		err("Data is undefined");
+		return;
+	}
+
 	var has_keys = Object.keys(data);
 
 	try {
@@ -1383,11 +1388,19 @@ async function set_weights_from_json_object (json, dont_show_weights, no_error, 
 }
 
 async function set_weights_from_string (string, no_warning, no_error, m) {
-	var json = JSON.parse(string);
+	try {
+		var json = JSON.parse(string);
 
-	var res = await set_weights_from_json_object(json, no_warning, no_error, m);
+		var res = await set_weights_from_json_object(json, no_warning, no_error, m);
 
-	return res;
+		return res;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
 }
 
 async function get_weights_as_json (m) {
@@ -1396,6 +1409,17 @@ async function get_weights_as_json (m) {
 	}
 
 	if(!m) {
+		err("Cannot find model, using global one");
+		return false;
+	}
+
+	if(!Object.keys(m).includes("_callHook")) {
+		err("model does not include _callHook");
+		return false;
+	}
+
+	if(!typeof(m.getWeights) == "function") {
+		err("model.getWeights is not a function");
 		return false;
 	}
 
