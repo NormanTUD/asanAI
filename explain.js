@@ -1238,9 +1238,6 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
-
-	//await predict($('#predict_own_data').val())
-
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {
