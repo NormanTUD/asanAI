@@ -692,7 +692,7 @@ function _check_data (data, type) {
 	}
 
 	try {
-		if("units" in data && typeof(data["units"]) == "undefined") {
+		if(typeof(data) == "object" && "units" in data && typeof(data["units"]) == "undefined") {
 			if(finished_loading) {
 				wrn("units was not defined. Using 2 as default");
 			}
