@@ -322,10 +322,10 @@ async function _predict_image (predictions_tensor, desc) {
 
 	var pxsz = 1;
 
-	var largest = Math.max(...predictions[1], ...predictions[2]);
+	var largest = Math.max(predictions_tensor_transposed.shape[1], predictions_tensor_transposed.shape[2]);
 	assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
-	var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+	var max_height_width = Math.min(100, Math.floor(window.innerWidth / 5));
 	assert(typeof(max_height_width) == "number", "_predict_image: max_height_width is not a number");
 
 	while ((pxsz * largest) < max_height_width) {
