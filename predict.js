@@ -1017,6 +1017,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 				pxsz += 1;
 			}
 
+			scaleNestedArray(img);
 			var res = draw_grid(canvas, pxsz, img, 1, 0);
 			$("#grad_cam_heatmap").show();
 		}
@@ -1558,6 +1559,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 		$("#handdrawn_predictions").append(canvas);
 
+		scaleNestedArray(predictions[i]);
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
