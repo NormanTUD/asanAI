@@ -628,7 +628,7 @@ $(document).ready(async function() {
 			e = e.message;
 		}
 
-		await write_error(e);
+		await send_bug_report();
 	});
 
 	var today = new Date();
