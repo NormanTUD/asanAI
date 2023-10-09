@@ -571,11 +571,11 @@
 	</div>
 
 
-	<div id="imprint_ribbon" class="ribbon_tab_content" title="Contact">
+	<div id="imprint_ribbon" class="ribbon_tab_content" title="Code&Contact">
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
-				<button onclick='window.open("https://scads.ai/imprint", "_blank");' style="width: 200px"><span class="TRANSLATEME_imprint"></span></button><br><br>
 				<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
+				<button onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");' style="width: 200px">Code</button><br><br>
 				<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
 			</div>
 			<div class="ribbon-group-title"><span class="TRANSLATEME_imprint"></span></div>
