@@ -40,6 +40,8 @@ html {
 }
 
 body {
+	margin: 0px;
+	cursor: default;
 	height: fit-content;
 	min-height: 100%;
 }
@@ -368,11 +370,6 @@ ul {
 	border-bottom: 1px solid gray;
 	backdrop-filter: blur(3px);
 	text-transform: capitalize;
-}
-
-body {
-	margin: 0px;
-	cursor: default;
 }
 
 #maindiv {
