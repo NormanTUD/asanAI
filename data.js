@@ -1080,7 +1080,12 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 	for (var line_nr = 0; line_nr < parsed.data.length; line_nr++) {
 		var line = [];
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
-			var header_multiply = parse_float($($(".header_divide_by")[col_nr + skip_nr]).val());
+			var skip_col_nr = col_nr + skip_nr;
+			var element = $($(".header_divide_by")[skip_col_nr]).val();
+			if(element === null) {
+				continue;
+			}
+			var header_multiply = parse_float(element);
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
 			var to_push = undefined;
 			if((!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) || csv_element === undefined) {

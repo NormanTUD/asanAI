@@ -45,7 +45,7 @@
 							<span class="TRANSLATEME_dataset"></span>
 						</td>
 						<td>
-							<select id="model_dataset" onchange="xy_data=null;change_model_dataset();" style="width: 155px">
+							<select id="model_dataset" onchange="xy_data=null;change_data_origin();" style="width: 155px">
 							</select>
 						</td>
 					</tr>
