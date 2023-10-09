@@ -341,11 +341,48 @@ async function _predict_image (predictions_tensor, desc) {
 		desc.append(canvas);
 
 		//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
-		log("predictions[i]:", predictions[i]);
+		//log("predictions[i]:", predictions[i]);
+		scaleNestedArray(predictions[i]);
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
 	await dispose(predictions_tensor_transposed);
+}
+
+function scaleNestedArray(arr) {
+	// Find the minimum and maximum values in the nested array
+	let min = Number.MAX_VALUE;
+	let max = Number.MIN_VALUE;
+
+	function findMinMax(arr) {
+		for (let item of arr) {
+			if (Array.isArray(item)) {
+				findMinMax(item);
+			} else {
+				if (item < min) min = item;
+				if (item > max) max = item;
+			}
+		}
+	}
+
+	findMinMax(arr);
+
+	// Scale the values
+	function scaleValue(value) {
+		return (value - min) * (255 / (max - min));
+	}
+
+	function scaleNested(arr) {
+		for (let i = 0; i < arr.length; i++) {
+			if (Array.isArray(arr[i])) {
+				scaleNested(arr[i]);
+			} else {
+				arr[i] = scaleValue(arr[i]);
+			}
+		}
+	}
+
+	scaleNested(arr);
 }
 
 function get_show_green () {
