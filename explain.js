@@ -1,7 +1,23 @@
 "use strict";
 
 function normalize_to_rgb_min_max (x, min, max) {
-	var val = parse_int(255 * (x - min) / (max - min));
+	assert(typeof(x) == "number", "x is not a number");
+	if(typeof(max) != "number" || typeof(min) != "number") {
+		return x;
+	}
+
+	var multiplicator = x - min;
+	var divisor = max - min;
+
+	if(divisor == 0) {
+		return val;
+	}
+
+	var to_be_parsed_as_int = 255 * multiplicator / divisor;
+
+
+	var val = parse_int(to_be_parsed_as_int);
+
 	if(val > 255) {
 		val = 255;
 	} else if (val < 0) {
@@ -872,6 +888,7 @@ function draw_internal_states (layer, inputs, applied) {
 
 		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
 		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
+		//console.log("output_data:", output_data);
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
 		if(canvas_output.length && canvas_input.length) {

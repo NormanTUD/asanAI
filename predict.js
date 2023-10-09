@@ -269,6 +269,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 		predictions_tensor = tidy(() => { return model.predict(tensor_img); });
 
 		await _predict_result(predictions_tensor, nr);
+
 		await draw_heatmap(predictions_tensor, tensor_img);
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
@@ -317,17 +318,20 @@ async function _predict_result(predictions_tensor, nr) {
 
 async function _predict_image (predictions_tensor, desc) {
 	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+	var predictions = predictions_tensor_transposed.arraySync();
 
 	var pxsz = 1;
 
-	var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
+	var largest = Math.max(predictions[1], predictions[2]);
+	assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
 	var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
+	assert(typeof(max_height_width) == "number", "_predict_image: max_height_width is not a number");
+
 	while ((pxsz * largest) < max_height_width) {
 		pxsz += 1;
 	}
 
-	var predictions = predictions_tensor_transposed.arraySync();
 	for (var i = 0; i < predictions.length; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 			width: pxsz * predictions_tensor.shape[2],
@@ -336,6 +340,7 @@ async function _predict_image (predictions_tensor, desc) {
 
 		desc.append(canvas);
 
+		//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
