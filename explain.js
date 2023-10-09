@@ -1,5 +1,40 @@
 "use strict";
 
+function visualizeNumbersOnCanvas(
+  numberArray,
+  blockWidth = 1,
+  blockHeight = 25
+) {
+	// Create or retrieve the canvas element
+	var canvas = document.createElement("canvas");
+	canvas.id = "neurons_canvas_" + uuidv4();
+
+	// Calculate the canvas width based on the number of elements
+	var canvasWidth = numberArray.length * blockWidth;
+	var canvasHeight = blockHeight;
+
+	// Set the canvas dimensions
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+
+	var ctx = canvas.getContext("2d");
+	var blocksPerRow = Math.floor(canvas.width / blockWidth);
+
+	for (var i = 0; i < numberArray.length; i++) {
+		var value = numberArray[i];
+		var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
+		var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
+
+		var x = (i % blocksPerRow) * blockWidth;
+		var y = Math.floor(i / blocksPerRow) * blockHeight;
+
+		ctx.fillStyle = color;
+		ctx.fillRect(x, y, blockWidth, blockHeight);
+	}
+
+	return canvas;
+}
+
 function normalize_to_rgb_min_max (x, min, max) {
 	assert(typeof(x) == "number", "x is not a number");
 	if(typeof(max) != "number" || typeof(min) != "number") {
@@ -927,8 +962,13 @@ function draw_internal_states (layer, inputs, applied) {
 					output.append(img_output).show();
 				}
 			} else {
-				var h = array_to_html(output_data);
-				equations.append(h).show();
+				if(get_shape_from_array(output_data).length == 1) {
+					var h = visualizeNumbersOnCanvas(output_data)
+					equations.append(h).show();
+				} else {
+					var h = array_to_html(output_data);
+					equations.append(h).show();
+				}
 			}
 		}
 	}
