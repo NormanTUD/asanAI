@@ -332,6 +332,8 @@ async function _predict_image (predictions_tensor, desc) {
 		pxsz += 1;
 	}
 
+	scaleNestedArray(predictions);
+
 	for (var i = 0; i < predictions.length; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 			width: pxsz * predictions_tensor.shape[2],
@@ -342,7 +344,6 @@ async function _predict_image (predictions_tensor, desc) {
 
 		//draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
 		//log("predictions[i]:", predictions[i]);
-		scaleNestedArray(predictions[i]);
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
@@ -1551,6 +1552,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 		pxsz += 1;
 	}
 
+	scaleNestedArray(predictions);
 	for (var i = 0; i < predictions.length; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 			width: pxsz * predictions_tensor.shape[2],
@@ -1559,7 +1561,6 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 		$("#handdrawn_predictions").append(canvas);
 
-		scaleNestedArray(predictions[i]);
 		var res = draw_grid(canvas, pxsz, predictions[i], 1, 1);
 	}
 
