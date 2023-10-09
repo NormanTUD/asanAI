@@ -851,6 +851,8 @@ function add_layer_debuggers () {
 
 			model.layers[i].original_apply_real = model.layers[i].apply;
 
+			log(i);
+
 			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
@@ -904,7 +906,7 @@ function draw_internal_states (layer, inputs, applied) {
 		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
 		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
 		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'><h4>Raw Data:</h4></div>");
+		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
 
 		var input = $("#layer_" + layer + "_input");
 		var kernel = $("#layer_" + layer + "_kernel");
