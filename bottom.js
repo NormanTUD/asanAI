@@ -161,8 +161,6 @@ async function restart_fcnn(force) {
 			betweenNodesInLayer.push(10);
 			layer_types.push(layer_type);
 		} else {
-			dbg("Cannot render FCNN");
-			send_bug_report();
 			return;
 		}
 	}
