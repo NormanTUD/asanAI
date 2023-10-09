@@ -851,8 +851,6 @@ function add_layer_debuggers () {
 
 			model.layers[i].original_apply_real = model.layers[i].apply;
 
-			log(i);
-
 			var code = `model.layers[${i}].apply = function (inputs, kwargs) {
 				var applied = model.layers[${i}].original_apply_real(inputs, kwargs);
 
