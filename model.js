@@ -657,7 +657,7 @@ function _check_data (data, type) {
 	}
 
 	try {
-		if(["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
+		if(typeof(data) == "object" && ["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
 			var tmp = data["rate"];
 			delete data["rate"];
 			data["dropout"] = tmp;
@@ -668,7 +668,7 @@ function _check_data (data, type) {
 	}
 
 	try {
-		if("targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
+		if(typeof(data) == "object" && "targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
 			data["targetShape"] = eval("[" + data["targetShape"] + "]");
 		}
 	} catch (e) {
@@ -676,7 +676,7 @@ function _check_data (data, type) {
 	}
 
 	try {
-		if("size" in data && typeof(data["size"]) == "string") {
+		if(typeof(data) == "object" && "size" in data && typeof(data["size"]) == "string") {
 			data["size"] = eval("[" + data["size"] + "]");
 		}
 	} catch (e) {
@@ -684,7 +684,7 @@ function _check_data (data, type) {
 	}
 
 	try {
-		if("dilationRate" in data && data["dilationRate"].length == 0) {
+		if(typeof(data) == "object" && "dilationRate" in data && data["dilationRate"].length == 0) {
 			data["dilationRate"] = null;
 		}
 	} catch (e) {
@@ -705,7 +705,7 @@ function _check_data (data, type) {
 	try {
 
 		["strides", "kernelSize"].forEach(function (correction_name) {
-			if(correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
+			if(typeof(data) == "object" && correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
 				data[correction_name] = [];
 				for (var k = 0; k < data[correction_name].length; k++) {
 					data[correction_name][k] = 1;
@@ -1324,6 +1324,10 @@ async function get_valid_layer_types (layer_nr) {
 }
 
 async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+	if(!json) {
+		err("set_weights_from_json_object: json is empty");
+		return false;
+	}
 
 	if(!m) {
 		//wrn("Model not given. Using model singleton.");
@@ -1573,18 +1577,28 @@ async function get_weights_shape (weights_as_string, m) {
 	if(!m) {
 		m = model;
 	}
+
 	if(weights_as_string === undefined) {
 		weights_as_string = await get_weights_as_string(m);
 	}
-	var weights_array = eval(weights_as_string);
 
-	var test_tensor = tensor(weights_array);
+	try {
+		var weights_array = JSON.parse(weights_as_string);
 
-	var shape = test_tensor.shape;
+		var test_tensor = tensor(weights_array);
 
-	await dispose(test_tensor);
+		var shape = test_tensor.shape;
 
-	return shape;
+		await dispose(test_tensor);
+
+		return shape;
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("Parsing error in get_weights_shape: " + e);
+	}
 }
 
 async function get_tfjs_model () {
