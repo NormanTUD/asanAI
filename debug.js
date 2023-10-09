@@ -925,7 +925,20 @@ async function debug_unusual_function_inputs () {
 			}
 
 			var params = generateRandomArray(0, 10);
-			console.log(`${i}(...${params.join(", ")})`);
+
+			var params_quoted = [];
+
+			for (var j = 0; j < params.length; j++) {
+				if(typeof(params[j]) == "boolean" || typeof(params[j]) == "number") {
+					params_quoted.push(params[j]);
+				} else {
+					params_quoted.push('"' + params[j].replace(/"/g, '\\"') + '"');
+				}
+			}
+
+			var params_str = params_quoted.join(", ");
+
+			console.log(`${i}(${params_str})`);
 			//await delay(3000);
 
 			try {
