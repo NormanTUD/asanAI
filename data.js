@@ -1082,21 +1082,26 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 		for (var col_nr = 0; col_nr < header.length; col_nr++) {
 			var skip_col_nr = col_nr + skip_nr;
 			var element = $($(".header_divide_by")[skip_col_nr]).val();
-			if(element === null) {
-				continue;
+			if("" + element == "null" || "" + element == "undefined") {
+				element = 1;
 			}
+
 			var header_multiply = parse_float(element);
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
 			var to_push = undefined;
 			if((!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) || csv_element === undefined) {
-				var ln = parse_float(csv_element);
-				if(header_multiply) {
-					ln = ln / header_multiply;
-				}
-				to_push = ln;
-				if(y_between_0_and_1) {
-					if(ln < 0 || ln > 1) {
-						y_between_0_and_1 = false;
+				if(csv_element === undefined || csv_element == null || csv_element == "") {
+					dbg("Ignore empty csv elements");
+				} else {
+					var ln = parse_float(csv_element);
+					if(header_multiply) {
+						ln = ln / header_multiply;
+					}
+					to_push = ln;
+					if(y_between_0_and_1) {
+						if(ln < 0 || ln > 1) {
+							y_between_0_and_1 = false;
+						}
 					}
 				}
 			} else {
