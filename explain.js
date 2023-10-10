@@ -962,7 +962,7 @@ function draw_internal_states (layer, inputs, applied) {
 					output.append(img_output).show();
 				}
 			} else {
-				if(get_shape_from_array(output_data).length == 1) {
+				if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
 					var h = visualizeNumbersOnCanvas(output_data)
 					equations.append(h).show();
 				} else {
