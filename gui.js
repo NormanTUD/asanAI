@@ -4922,7 +4922,7 @@ function check_number_values() {
 		var item = $(all_fields[i]);
 		var val = item.val();
 
-		if (!is_numeric(val)) {
+		if (val != "" && !is_numeric(val)) {
 			if(!$(all_fields[i]).hasClass("no_red_on_error")) {
 				item.css("background-color", "red");
 			}
