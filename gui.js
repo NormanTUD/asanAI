@@ -824,10 +824,6 @@ async function change_width_or_height(name, inputshape_index) {
 }
 
 async function update_python_code(dont_reget_labels) {
-	while (create_model_queue.length) {
-		await delay(50);
-	}
-
 	var redo_graph = 0;
 
 	var input_shape = [height, width, number_channels];
@@ -959,10 +955,6 @@ async function update_python_code(dont_reget_labels) {
 			*/
 			//expert_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
 			try {
-				while (create_model_queue.length) {
-					await delay(50);
-				}
-
 				var classname = "";
 
 				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
