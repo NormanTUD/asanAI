@@ -117,7 +117,7 @@ function looks_like_image_data (data) {
 	return res;
 }
 
-function draw_rect(ctx, rect){
+function draw_rect(ctx, rect) {
 	ctx.fillStyle=rect.fill;
 	ctx.strokeStyle=rect.stroke;
 	ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
