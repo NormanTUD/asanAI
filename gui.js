@@ -824,6 +824,10 @@ async function change_width_or_height(name, inputshape_index) {
 }
 
 async function update_python_code(dont_reget_labels) {
+	while (create_model_queue.length) {
+		await delay(50);
+	}
+
 	var redo_graph = 0;
 
 	var input_shape = [height, width, number_channels];
@@ -955,7 +959,21 @@ async function update_python_code(dont_reget_labels) {
 			*/
 			//expert_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
 			try {
-				expert_code += model_add_python_structure(model.layers[i].getClassName(), data);
+				while (create_model_queue.length) {
+					await delay(50);
+				}
+
+				var classname = "";
+
+				if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
+					classname = model.layers[i].getClassName();
+				}
+
+				if(classname) {
+					expert_code += model_add_python_structure(classname, data);
+				} else {
+					expert_code += "# Problem getting the code for this layer";
+				}
 			} catch (e) {
 				if(("" + e).includes("model.layers[i] is undefined")) {
 					wrn("model.layers was undefined. This MAY be harmless.");
