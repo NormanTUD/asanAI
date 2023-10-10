@@ -191,10 +191,10 @@
 			<div class="ribbon-toolbar">
 				<fieldset style="border-width: 0px" id="backend_chooser"> 
 					<input type="radio" onchange="set_backend()" name="backend_chooser" value="cpu" id="cpu_backend" checked>
-					<label for="svg_renderer">CPU</label>
+					<label for="cpu_backend">CPU</label>
 
 					<input type="radio" onchange="set_backend()" name="backend_chooser" value="webgl" id="webgl_backend">
-					<label for="webgl_renderer">WebGL</label>
+					<label for="webgl_backend">WebGL</label>
 				</fieldset>
 				<hr>
 				<fieldset style="border-width: 0px" id="mode_chooser"> 
