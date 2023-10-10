@@ -34,6 +34,14 @@ async function get_model_config_hash () {
 }
 
 async function _create_model () {
+	while (create_model_queue.length) {
+		await delay(50);
+	}
+
+	var _create_model_uuid = uuidv4();
+
+	create_model_queue.push(_create_model_uuid);
+
 	if(has_missing_values) {
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
 		return model;
@@ -67,6 +75,8 @@ async function _create_model () {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
+
+		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid })
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -109,6 +119,8 @@ async function _create_model () {
 			}
 		}
 	}
+
+	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid })
 
 	if(!disable_layer_debuggers && model) {
 		add_layer_debuggers();
