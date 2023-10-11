@@ -53,12 +53,8 @@ else
 	git config --global user.email "kochnorman@rocketmail.com"
 	git config pull.rebase false
 fi
+
 cd -
-
-
-function apt_get_upgrade {
-	apt-get upgrade -y
-}
 
 function install_apache {
 	apt-get install curl unzip ca-certificates apt-transport-https lsb-release gnupg apache2 -y
