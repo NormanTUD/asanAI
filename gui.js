@@ -6672,7 +6672,11 @@ function draw_new_fcnn(layers, labels) {
 	for (var i = 0; i < layers.length; i++) {
 		if (labels && labels[i]) {
 			ctx.font = "24px Arial";
-			ctx.fillStyle = "black";
+			if(is_dark_mode) {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "black";
+			}
 			ctx.textAlign = "center";
 			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24));
 		}
