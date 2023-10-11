@@ -6671,10 +6671,10 @@ function draw_new_fcnn(layers, labels) {
 	// Draw labels
 	for (var i = 0; i < layers.length; i++) {
 		if (labels && labels[i]) {
-			ctx.font = "14px Arial";
+			ctx.font = "24px Arial";
 			ctx.fillStyle = "black";
 			ctx.textAlign = "center";
-			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - 14);
+			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24));
 		}
 	}
 }
@@ -6687,12 +6687,13 @@ function restart_fcnn () {
 		var _unit = get_units_at_layer(i);
 
 		if(_unit) {
+			var class_name = model.layers[i].getClassName();
 			if(i == 0) {
-				names.push("Input Layer");
+				names.push(`Input Layer`);
 			} else if (i == model.layers.length - 1) {
-				names.push("Output Layer");
+				names.push(`Output Layer`);
 			} else {
-				names.push("Hidden Layer " + i);
+				names.push(`${class_name} ${i}`);
 			}
 			units.push(_unit);
 		}
