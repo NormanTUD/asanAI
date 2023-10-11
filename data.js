@@ -1093,7 +1093,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			var header_multiply = parse_float(element);
 			var csv_element = parsed.data[line_nr][indices[header[col_nr]]];
 			var to_push = undefined;
-			if((!col_contains_string.includes(col_nr) && looks_like_number(csv_element)) || csv_element === undefined) {
+			if((!col_contains_string.includes(col_nr) && csv_element) || csv_element === undefined) {
 				if(csv_element === undefined || csv_element == null || csv_element == "") {
 					dbg("Ignore empty csv elements");
 				} else {
@@ -1122,8 +1122,9 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 			}
 
 			if(Number.isNaN(to_push) || to_push === undefined || (typeof(to_push) == "string" && to_push == "")) {
-				return { "is_incomplete": true };
+				//return { "is_incomplete": true };
 			}
+
 			line.push(to_push);
 
 		}
