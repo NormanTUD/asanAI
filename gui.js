@@ -4927,7 +4927,7 @@ function check_number_values() {
 				item.css("background-color", "red");
 			}
 			missing_values++;
-		} else {
+		} else if (val != "") {
 			val = parse_float(val);
 			item.css("background-color", default_bg_color);
 
