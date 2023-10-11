@@ -6673,7 +6673,8 @@ function draw_new_fcnn(layers, labels) {
 	// Draw labels
 	for (var i = 0; i < layers.length; i++) {
 		if (labels && labels[i]) {
-			ctx.font = "24px Arial";
+			var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
+			ctx.font = font_size + "px Arial";
 			if(is_dark_mode) {
 				ctx.fillStyle = "white";
 			} else {
