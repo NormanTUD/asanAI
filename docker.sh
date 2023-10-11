@@ -6,61 +6,89 @@ LOCAL_PORT=""
 
 # Help message
 help_message() {
-    echo "Usage: display_mongodb_gui.sh [OPTIONS]"
-    echo "Options:"
-    echo "  --local-port       Local port to bind for the GUI"
-    echo "  --run_tests        Run tests before starting"
-    echo "  --help             Show this help message"
+	echo "Usage: display_mongodb_gui.sh [OPTIONS]"
+	echo "Options:"
+	echo "  --local-port       Local port to bind for the GUI"
+	echo "  --run_tests        Run tests before starting"
+	echo "  --help             Show this help message"
 }
 
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --run_tests)
-		run_tests=1
-            shift
-            ;;
-        --local-port)
-            LOCAL_PORT="$2"
-            shift
-            ;;
-        --help)
-            help_message
-            exit 0
-            ;;
-        *)
-            echo "Error: Unknown option '$1'. Use --help for usage."
-            exit 1
-            ;;
-    esac
-    shift
+	case $1 in
+		--run_tests)
+			run_tests=1
+			shift
+			;;
+		--local-port)
+			LOCAL_PORT="$2"
+			shift
+			;;
+		--help)
+			help_message
+			exit 0
+			;;
+		*)
+			echo "Error: Unknown option '$1'. Use --help for usage."
+			exit 1
+			;;
+	esac
+	shift
 done
 
 # Check for required parameters
 if [[ -z $LOCAL_PORT ]]; then
-    echo "Error: Missing required parameter --local-port. Use --help for usage."
-    exit 1
+	echo "Error: Missing required parameter --local-port. Use --help for usage."
+	exit 1
 fi
 
 
 is_package_installed() {
-  dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -c "ok installed"
+	dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -c "ok installed"
 }
+
+UPDATED_PACKAGES=0
 
 # Check if Docker is installed
 if ! command -v docker &>/dev/null; then
-  echo "Docker not found. Installing Docker..."
-  # Enable non-free repository
-  sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list
+	echo "Docker not found. Installing Docker..."
+	# Enable non-free repository
+	sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list
 
-  # Update package lists
-  sudo apt update
+	# Update package lists
+	if [[ $UPDATED_PACKAGES == 0 ]]; then
+		sudo apt update || {
+			echo "apt-get update failed. Are you online?"
+			exit 2
+		}
 
-  # Install Docker
-  sudo apt install -y docker.io
+		UPDATED_PACKAGES=1
+	fi
+
+
+	# Install Docker
+	sudo apt install -y docker.io || {
+		echo "sudo apt install -y docker.io failed"
+		exit 3
+	}
 fi
 
-sudo apt-get install wget
+if ! command -v wget &>/dev/null; then
+	# Update package lists
+	if [[ $UPDATED_PACKAGES == 0 ]]; then
+		sudo apt update || {
+			echo "apt-get update failed. Are you online?"
+			exit 3
+		}
+
+		UPDATED_PACKAGES=1
+	fi
+
+	sudo apt-get install -y wget || {
+		echo "sudo apt install -y wget failed"
+		exit 3
+	}
+fi
 
 export LOCAL_PORT
 
