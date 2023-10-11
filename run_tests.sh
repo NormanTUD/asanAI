@@ -10,6 +10,7 @@ if [[ ! -d ~/.asanai_test_env ]]; then
 	source ~/.asanai_test_env/bin/activate
 	pip3 install pyppeteer || {
 		echo "pip3 install pyppeteer failed. Are you online?"
+		rm -rf ~/.asanai_test_env
 		exit 1
 	}
 fi
