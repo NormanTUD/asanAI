@@ -3721,6 +3721,12 @@ async function change_data_origin() {
 	var show_own_csv = 0;
 
 	if (new_origin == "default") {
+		var _config = await _get_configuration()
+
+		if(Object.keys(_config).includes("input_shape")) {
+			await set_input_shape(_config.input_shape);
+		}
+
 		if (await input_shape_is_image()) {
 			show_images_per_category = 1;
 		}
