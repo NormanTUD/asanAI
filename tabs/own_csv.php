@@ -29,6 +29,9 @@
 						<td>Separator</td>
 						<td><input onkeyup="show_csv_file()" type="text" value="," style="width: 30px" id="seperator"></td>
 					</tr>
+					<tr>
+						<td colspan="2"><button onclick='load_shoe_example()'><span class="TRANSLATEME_example_csv_shoe_size"></span></button></td>
+					</tr>
 				</table>
 
 				<br>
