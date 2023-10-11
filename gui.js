@@ -176,7 +176,14 @@ function set_item_value(layer, classname, value) {
 	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
 	assert(["string", "number", "boolean"].includes(typeof (value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof (value));
 
-	var layer_setting = $(".layer_setting")[layer];
+	var layer_settings = $(".layer_setting");
+	if(layer >= layer_settings.length) {
+		wrn(`Layer ${layer} was too high. Max number is ${layer_settings.length - 1}`);
+
+		return;
+	}
+
+	var layer_setting = layer_settings[layer];
 	var found_setting = $($(layer_setting).find("." + classname)[0]);
 	if (found_setting.length) {
 		if (found_setting.attr("type") == "checkbox") {
@@ -188,7 +195,7 @@ function set_item_value(layer, classname, value) {
 		if(classname == "rate") {
 			set_item_value(layer, "dropout_rate", value);
 		} else if(classname != "trainable") {
-			log("Unknown classname '" + classname + "' in layer " + layer);
+			err("Unknown classname '" + classname + "' in layer " + layer);
 		}
 	}
 }
