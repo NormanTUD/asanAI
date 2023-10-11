@@ -6617,15 +6617,23 @@ function draw_new_fcnn(layers, labels) {
 	var maxNeurons = Math.max(...layers);
 	var maxRadius = Math.min(20, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
+	// Adjust spacing based on the number of neurons in each layer
 	var layerSpacing = canvasWidth / (layers.length + 1);
+	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
 
 	// Draw neurons
 	for (var i = 0; i < layers.length; i++) {
 		var layerX = (i + 1) * layerSpacing;
 		var layerY = canvasHeight / 2;
+		var numNeurons = layers[i];
+		var verticalSpacing = maxSpacing;
 
-		for (var j = 0; j < layers[i]; j++) {
-			var neuronY = (j - (layers[i] - 1) / 2) * maxRadius * 3 + layerY;
+		if (numNeurons * verticalSpacing > canvasHeight) {
+			verticalSpacing = canvasHeight / numNeurons;
+		}
+
+		for (var j = 0; j < numNeurons; j++) {
+			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 			ctx.beginPath();
 			ctx.arc(layerX, neuronY, maxRadius, 0, 2 * Math.PI);
 			ctx.fillStyle = "white";
@@ -6640,12 +6648,17 @@ function draw_new_fcnn(layers, labels) {
 	for (var i = 0; i < layers.length - 1; i++) {
 		var currentLayerX = (i + 1) * layerSpacing;
 		var nextLayerX = (i + 2) * layerSpacing;
+		var currentLayerNeurons = layers[i];
+		var nextLayerNeurons = layers[i + 1];
 
-		for (var j = 0; j < layers[i]; j++) {
-			var currentNeuronY = (j - (layers[i] - 1) / 2) * maxRadius * 3 + layerY;
+		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
+		var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
-			for (var k = 0; k < layers[i + 1]; k++) {
-				var nextNeuronY = (k - (layers[i + 1] - 1) / 2) * maxRadius * 3 + layerY;
+		for (var j = 0; j < currentLayerNeurons; j++) {
+			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
+
+			for (var k = 0; k < nextLayerNeurons; k++) {
+				var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
 				ctx.beginPath();
 				ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
 				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
