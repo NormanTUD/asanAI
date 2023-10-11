@@ -3,33 +3,52 @@
 
 if [ "$EUID" -ne 0 ]; then
 	echo "Please run as root"
-	exit
+	exit 1
 fi
 
 if ! command -v apt 2>&1 > /dev/null; then
 	echo "Installer can only be run on Debian based system"
-	exit
+	exit 2
 fi
 
 PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
-apt-get update
-apt-get install --reinstall grub -y
-apt-get autoremove -y
-apt-get install xterm curl git etckeeper ntpdate wget apt-utils -y
+apt-get update || {
+	echo "apt-get update failed"
+	exit 3
+}
+apt-get install --reinstall grub -y || {
+	echo "apt-get install --reinstall grub -y failed"
+	exit 4
+}
+
+apt-get autoremove -y || {
+	echo "apt-get autoremove -y failed"
+	exit 5
+}
+
+apt-get install xterm curl git etckeeper ntpdate wget apt-utils -y || {
+	echo "apt-get install xterm curl git etckeeper ntpdate wget apt-utils -y failed"
+	exit 6
+}
 
 git config --global credential.helper store
 
-eval `resize`
-
-mkdir -p $INSTALL_PATH
+mkdir -p $INSTALL_PATH || {
+	echo "mkdir -p $INSTALL_PATH failed"
+	exit 7
+}
 
 cd $INSTALL_PATH
+
 if [ -d "$INSTALL_PATH/../.git" ]; then
 	git pull
 else
-	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git .
+	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git . || {
+		echo "git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git . failed"
+		exit 8
+	}
 	git config --global user.name "$(hostname)"
 	git config --global user.email "kochnorman@rocketmail.com"
 	git config pull.rebase false
@@ -47,16 +66,27 @@ function install_apache {
 
 function install_php {
 	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add - && \
-		echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-			apt-get update && \
-				apt-get install php8.1 php8.1-cli php8.1-common php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php-bcmath -y
-			}
+	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+	apt-get update || {
+		echo "apt-get update failed"
+		exit 8
+	}
 
-		function install_mariadb {
-			apt install mariadb-server mariadb-client -y
-		}
+	apt-get install php8.1 php8.1-cli php8.1-common php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring \
+	php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php-bcmath -y || {
+		echo "apt-get install for php failed"
+		exit 9
+	}
+}
 
-	function setup_mariadb {
+function install_mariadb {
+	apt install mariadb-server mariadb-client -y || {
+		echo "apt install mariadb-server mariadb-client -y failed"
+		exit 10
+	}
+}
+
+function setup_mariadb {
 		mysql -u root <<-EOF
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$PASSWORD');
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
@@ -68,7 +98,6 @@ EOF
 
 echo "$PASSWORD" > /etc/vvzdbpw
 
-apt_get_upgrade
 install_apache
 install_php
 install_mariadb
