@@ -290,29 +290,61 @@ async function run_tests () {
 			await delay(5000);
 			await wait_for_updated_page(3);
 
-			var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
-			test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
-			if(!result_and.toString().startsWith("0.0")) {
-				log("trained nn: 0 and 0 results:" + result_and.toString());
+			try {
+				var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
+				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
+				if(!result_and.toString().startsWith("0.0")) {
+					log("trained nn: 0 and 0 results:" + result_and.toString());
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
 			}
 
-			result_and = await model.predict(tensor([[0, 1]])).arraySync()[0][0];
-			test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
-			if(!result_and.toString().startsWith("0.0")) {
-				log("trained nn: 0 and 1 results:" + result_and.toString());
+			try {
+				result_and = await model.predict(tensor([[0, 1]])).arraySync()[0][0];
+				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
+				if(!result_and.toString().startsWith("0.0")) {
+					log("trained nn: 0 and 1 results:" + result_and.toString());
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
 			}
 
-			result_and = await model.predict(tensor([[1, 0]])).arraySync()[0][0];
-			test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
-			if(!result_and.toString().startsWith("0.0")) {
-				log("trained nn: 1 and 0 results:" + result_and.toString());
+			try {
+				result_and = await model.predict(tensor([[1, 0]])).arraySync()[0][0];
+				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
+				if(!result_and.toString().startsWith("0.0")) {
+					log("trained nn: 1 and 0 results:" + result_and.toString());
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
 			}
 
-			result_and = await model.predict(tensor([[1, 1]])).arraySync()[0][0];
-			var r = result_and.toString();
-			test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
-			if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
-				log("trained nn: 1 and 1 results:" + result_and.toString());
+			try {
+				result_and = await model.predict(tensor([[1, 1]])).arraySync()[0][0];
+				var r = result_and.toString();
+				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
+				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
+					log("trained nn: 1 and 1 results:" + result_and.toString());
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
 			}
 
 			log_test("Testing initializer");
