@@ -6594,3 +6594,48 @@ function get_custom_elements_from_webcam_page () {
 
 	return imgs;
 }
+
+function draw_new_fcnn (layers) {
+	var canvas = $("#new_fcnn_div").find("canvas");
+	if(canvas.length == 0) {
+		canvas = document.createElement("canvas");
+		$("#new_fcnn_div").append(canvas);
+	} else {
+		canvas = canvas[0];
+	}
+	var ctx = canvas.getContext("2d");
+
+	// Set canvas dimensions and background
+	canvas.width = 1200;
+	canvas.height = 800;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	var neuronRadius = 20;
+	var layerSpacing = canvas.width / (layers.length + 1);
+
+	for (var i = 0; i < layers.length; i++) {
+		var layerX = (i + 1) * layerSpacing;
+		var layerY = canvas.height / 2;
+
+		for (var j = 0; j < layers[i]; j++) {
+			var neuronY = (j - (layers[i] - 1) / 2) * 60 + layerY;
+			ctx.beginPath();
+			ctx.arc(layerX, neuronY, neuronRadius, 0, 2 * Math.PI);
+			ctx.fillStyle = "blue"; // Change the color if desired
+			ctx.fill();
+
+			// Connect to neurons in the next layer with gray lines
+			if (i < layers.length - 1) {
+				var nextLayerX = (i + 2) * layerSpacing;
+				for (var k = 0; k < layers[i + 1]; k++) {
+					var nextNeuronY = (k - (layers[i + 1] - 1) / 2) * 60 + layerY;
+					ctx.beginPath();
+					ctx.moveTo(layerX + neuronRadius, neuronY);
+					ctx.lineTo(nextLayerX - neuronRadius, nextNeuronY);
+					ctx.strokeStyle = "gray"; // Change line color if desired
+					ctx.stroke();
+				}
+			}
+		}
+	}
+}
