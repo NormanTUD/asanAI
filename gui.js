@@ -5337,10 +5337,6 @@ async function set_custom_image_training () {
 }
 
 async function set_custom_webcam_training_data() {
-	if(!is_hidden_or_has_hidden_parent($("#own_images"))) {
-		return;
-	}
-
 	await init_webcams();
 
 	if($("#data_origin").val() != "image") {
