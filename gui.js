@@ -6567,3 +6567,21 @@ function hide_dataset_when_only_one () {
 		$("#model_dataset").parent().parent().hide();
 	}
 }
+
+function get_custom_elements_from_webcam_page () {
+	var imgs = [];
+
+	$("#own_images_container").find("img").each((i, e) => {
+		if($(e).prop("src").match(/data:image\/png;base64,/)) {
+			imgs.push(e);
+		}
+	});
+
+	$("#own_images_container").find("canvas").each((i, e) => {
+		if($(e).attr("id").match(/_canvas$/)) {
+			imgs.push(e);
+		}
+	});
+
+	return imgs;
+}
