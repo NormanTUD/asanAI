@@ -520,7 +520,11 @@ async function get_xs_and_ys () {
 
 			if(await input_shape_is_image()) {
 				$("#photos").html("");
-				let imageData = await get_image_data(0);
+
+				var old_force_download = force_download;
+				force_download = 1;
+				var imageData = await get_image_data(0);
+				force_download = old_force_download;
 
 				reset_labels();
 
