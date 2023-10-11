@@ -3724,7 +3724,27 @@ async function change_data_origin() {
 		var _config = await _get_configuration()
 
 		if(Object.keys(_config).includes("input_shape")) {
+			dbg("Setting input shape to: " + _config.input_shape);
+
 			await set_input_shape(_config.input_shape);
+		}
+
+		if(Object.keys(_config).includes("output_shape")) {
+			dbg("Output shape detect as: " + _config.output_shape);
+
+			var output_shape = JSON.parse(_config.output_shape)
+
+			var units = output_shape[output_shape.length - 1];
+
+			var layer_types = $(".layer_type");
+			var last_layer_nr = layer_types.length - 1;
+			var last_layer_type = $(layer_types[last_layer_nr]).val();
+
+			if(last_layer_type == "dense") {
+				set_item_value(last_layer_nr, "units", units);
+			} else {
+				wrn(`Last layer type is ${last_layer_type}, not dense, cannot set Units.`);
+			}
 		}
 
 		if (await input_shape_is_image()) {
