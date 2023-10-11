@@ -4990,6 +4990,16 @@ function check_number_values() {
 		}
 	}
 
+	if($("#data_origin").val() == "image") {
+		if(model && Object.keys(model).includes("_callHook") && model.input.shape.length == 4 && model.input.shape[3] == 3) {
+			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
+
+			if(currently_existing_custom_images.length == 0) {
+				has_missing_values++;
+			}
+		}
+	}
+
 	if(missing_values) {
 		has_missing_values = true;
 		disable_train();
@@ -4999,7 +5009,6 @@ function check_number_values() {
 			enable_train();
 		}
 	}
-
 }
 
 function summary_to_table(lines) {
