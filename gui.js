@@ -4995,7 +4995,7 @@ function check_number_values() {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
 
 			if(currently_existing_custom_images.length == 0) {
-				has_missing_values++;
+				missing_values++;
 			}
 		}
 	}
