@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [ "$EUID" -ne 0 ]; then
 	echo "Please run as root"
 	exit 1
@@ -45,10 +44,7 @@ cd $INSTALL_PATH
 if [ -d "$INSTALL_PATH/../.git" ]; then
 	git pull
 else
-	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git . || {
-		echo "git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git . failed"
-		exit 8
-	}
+	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git .
 	git config --global user.name "$(hostname)"
 	git config --global user.email "kochnorman@rocketmail.com"
 	git config pull.rebase false
@@ -61,18 +57,12 @@ function install_apache {
 }
 
 function install_php {
-	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add - && \
+	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-	apt-get update || {
-		echo "apt-get update failed"
-		exit 8
-	}
+	apt-get update
 
 	apt-get install php8.1 php8.1-cli php8.1-common php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring \
-	php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php-bcmath -y || {
-		echo "apt-get install for php failed"
-		exit 9
-	}
+	php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-xsl php8.1-zip php8.1-bz2 libapache2-mod-php8.1 php8.1-bcmath -y
 }
 
 function install_mariadb {
