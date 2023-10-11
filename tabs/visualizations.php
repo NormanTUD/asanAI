@@ -14,9 +14,7 @@
 	</div>
 
 	<div id="fcnn_tab" class="tab">
-		<div id="fcnn"></div>
-		<button class="vis_button" onclick='reset_view()'><span class="TRANSLATEME_reset_view"></span></button>
-		<button class="vis_button" id="download_fcnn" onclick="download_visualization('fcnn')">Download FCNN SVG</button>
+		<div id="fcnn"><canvas style='width: 100%' id="new_fcnn_canvas" /></div>
 	</div>
 
 	<div id="activation_plot_tab" class="tab">

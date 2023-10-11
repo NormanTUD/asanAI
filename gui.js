@@ -6615,7 +6615,7 @@ function draw_new_fcnn(layers, labels) {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	var maxNeurons = Math.max(...layers);
-	var maxRadius = Math.min(20, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 	// Adjust spacing based on the number of neurons in each layer
 	var layerSpacing = canvasWidth / (layers.length + 1);
@@ -6675,7 +6675,28 @@ function draw_new_fcnn(layers, labels) {
 			ctx.fillStyle = "black";
 			ctx.textAlign = "center";
 			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - 14);
-			console.log("Text Label Added: " + labels[i]);
 		}
 	}
+}
+
+function restart_fcnn () {
+	var names = [];
+	var units = [];
+
+	for (var i = 0; i < model.layers.length; i++) {
+		var _unit = get_units_at_layer(i);
+
+		if(_unit) {
+			if(i == 0) {
+				names.push("Input Layer");
+			} else if (i == model.layers.length - 1) {
+				names.push("Output Layer");
+			} else {
+				names.push("Hidden Layer " + i);
+			}
+			units.push(_unit);
+		}
+	}
+
+	draw_new_fcnn(units, names);
 }

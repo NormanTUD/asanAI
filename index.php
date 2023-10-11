@@ -96,7 +96,6 @@
 		_js("visualizations/Projector.js");
 		_js("visualizations/util.js");
 		_js("visualizations/LeNet.js");
-		_js("visualizations/FCNN.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
