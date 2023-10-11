@@ -1306,7 +1306,7 @@ var general_options = {
 	"recurrent_dropout": "\"Recurrent dropout rate (0 to 1)\", \"recurrent_dropout\", \"number\", { \"min\": 0, \"max\": 1, \"step\": 0.1, \"value\": get_default_option(type, \"recurrent_dropout\") }, nr",
 	"max_features": "\"Max features\", \"max_features\", \"number\", { \"min\": 1, \"max\": 4096, \"step\": 1, \"value\": get_default_option(type, \"max_features\") }, nr",
 	"momentum": "\"Momentum\", \"momentum\", \"number\", { \"min\": 0, \"max\": 8192, \"step\": 0.01, \"value\": get_default_option(type, \"momentum\") }, nr",
-	"units": "\"Units\", \"units\", \"number\", { \"min\": 1, \"max\": 256, \"step\": 1, \"value\": get_default_option(type, \"units\") }, nr",
+	"units": "\"Units\", \"units\", \"number\", { \"min\": 1, \"max\": 8192, \"step\": 1, \"value\": get_default_option(type, \"units\") }, nr",
 	"use_bias": "\"<span class='TRANSLATEME_use_bias'></span>\", \"use_bias\", \"checkbox\", { \"status\": \"checked\" }, nr",
 	"dtype": "\"DType\", \"dtype\", \"select\", dtypes, nr, null, 1, 1",
 	"interpolation": "\"Interpolation\", \"interpolation\", \"select\", interpolation, nr",

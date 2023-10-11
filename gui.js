@@ -1664,7 +1664,7 @@ async function change_optimizer() {
 
 	$("#" + type + "_metadata").show();
 
-	await compile_model();
+	await updated_page();
 }
 
 function set_momentum(val) {
@@ -4995,7 +4995,7 @@ function check_number_values() {
 			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
 
 			if(currently_existing_custom_images.length == 0) {
-				missing_values++;
+				has_missing_values++;
 			}
 		}
 	}
