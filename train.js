@@ -232,10 +232,34 @@ async function get_model_data (optimizer_name_only) {
 		metric_type = get_key_by_value(metric_shortnames, metric_type);
 	}
 
-	var epochs = parse_int($("#epochs").val());
-	var batchSize = parse_int($("#batchSize").val());
-	var validationSplit = parse_int($("#validationSplit").val());
-	var divide_by = parse_float($("#divide_by").val());
+	var epochs = $("#epochs").val();
+	var batchSize = $("#batchSize").val();
+	var validationSplit = $("#validationSplit").val();
+	var divide_by = $("#divide_by").val();
+
+	if(looks_like_number(epochs)) {
+		epochs = parse_int(epochs);
+	} else {
+		finished_loading && wrn("#epochs doesnt look like a number");
+	}
+
+	if(looks_like_number(batchSize)) {
+		batchSize = parse_int(batchSize);
+	} else {
+		finished_loading && wrn("#batchSize doesnt look like a number");
+	}
+
+	if(looks_like_number(validationSplit)) {
+		validationSplit = parse_int(validationSplit);
+	} else {
+		finished_loading && wrn("#validation_split doesnt look like a number");
+	}
+
+	if(looks_like_number(divide_by)) {
+		divide_by = parse_float(divide_by);
+	} else {
+		finished_loading && wrn("#divide_by doesnt look like a number");
+	}
 
 	global_model_data = {
 		loss: loss,

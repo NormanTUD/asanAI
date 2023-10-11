@@ -4952,6 +4952,8 @@ function check_number_values() {
 					}
 				}
 			}
+		} else if (val == "") {
+			item.css("background-color", "red");
 		}
 	}
 
