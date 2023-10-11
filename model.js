@@ -202,15 +202,15 @@ async function compile_model () {
 		return;
 	}
 
-	while (!model) {
-		await delay(10);
-	}
-
 	while (create_model_queue.length) {
 		await delay(10);
 	}
 
 	try {
+		while (!model) {
+			await delay(10);
+		}
+
 		model_config_hash = new_model_config_hash;
 		model.compile(global_model_data);
 	} catch (e) {
