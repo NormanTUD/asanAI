@@ -34,11 +34,11 @@ async function get_model_config_hash () {
 }
 
 async function _create_model () {
+	var _create_model_uuid = uuidv4();
+
 	while (create_model_queue.length) {
 		await delay(50);
 	}
-
-	var _create_model_uuid = uuidv4();
 
 	create_model_queue.push(_create_model_uuid);
 
