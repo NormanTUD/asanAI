@@ -1663,8 +1663,6 @@ async function change_optimizer() {
 	$(".optimizer_metadata").hide();
 
 	$("#" + type + "_metadata").show();
-
-	await updated_page();
 }
 
 function set_momentum(val) {
