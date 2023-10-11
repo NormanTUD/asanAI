@@ -135,6 +135,9 @@ async function run_tests () {
 
 			await dispose(test_tensor);
 
+			$("#dataset").val("signs").trigger("change");
+			await delay(5000);
+
 			log_test("GUI functions");
 			var example_div = $("<div id='example_test_div' />").appendTo($("body"));
 
