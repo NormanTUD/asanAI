@@ -4736,10 +4736,10 @@ async function theme_choser () {
 
 	await write_descriptions();
 	await write_model_to_latex_to_page();
-	await restart_fcnn();
 
 	invert_elements_in_dark_mode();
 
+	await restart_fcnn();
 }
 
 // Returns: old parent div
