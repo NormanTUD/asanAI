@@ -1,4 +1,4 @@
-geschlecht(m=0;w=1),height,shoe_size
+sex(m=0;w=1),height,shoe_size
 1,160,40
 1,171,39
 1,174,39
