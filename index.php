@@ -91,7 +91,6 @@
 
 		_js("libs/d3.v5.min.js");
 		_js("libs/three.min.js");
-		_js("visualizations/SVGRenderer.js");
 		_js("visualizations/Projector.js");
 		_js("visualizations/util.js");
 		_js("visualizations/LeNet.js");
