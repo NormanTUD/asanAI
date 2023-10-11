@@ -6614,7 +6614,9 @@ function draw_new_fcnn(layers, labels) {
 	canvas.height = canvasHeight;
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	var neuronRadius = 20;
+	var maxNeurons = Math.max(...layers);
+	var maxRadius = Math.min(20, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+
 	var layerSpacing = canvasWidth / (layers.length + 1);
 
 	// Draw neurons
@@ -6623,9 +6625,9 @@ function draw_new_fcnn(layers, labels) {
 		var layerY = canvasHeight / 2;
 
 		for (var j = 0; j < layers[i]; j++) {
-			var neuronY = (j - (layers[i] - 1) / 2) * 60 + layerY;
+			var neuronY = (j - (layers[i] - 1) / 2) * maxRadius * 3 + layerY;
 			ctx.beginPath();
-			ctx.arc(layerX, neuronY, neuronRadius, 0, 2 * Math.PI);
+			ctx.arc(layerX, neuronY, maxRadius, 0, 2 * Math.PI);
 			ctx.fillStyle = "white";
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = 2;
@@ -6640,13 +6642,13 @@ function draw_new_fcnn(layers, labels) {
 		var nextLayerX = (i + 2) * layerSpacing;
 
 		for (var j = 0; j < layers[i]; j++) {
-			var currentNeuronY = (j - (layers[i] - 1) / 2) * 60 + layerY;
+			var currentNeuronY = (j - (layers[i] - 1) / 2) * maxRadius * 3 + layerY;
 
 			for (var k = 0; k < layers[i + 1]; k++) {
-				var nextNeuronY = (k - (layers[i + 1] - 1) / 2) * 60 + layerY;
+				var nextNeuronY = (k - (layers[i + 1] - 1) / 2) * maxRadius * 3 + layerY;
 				ctx.beginPath();
-				ctx.moveTo(currentLayerX + neuronRadius, currentNeuronY);
-				ctx.lineTo(nextLayerX - neuronRadius, nextNeuronY);
+				ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
+				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
 				ctx.strokeStyle = "gray";
 				ctx.stroke();
 			}
