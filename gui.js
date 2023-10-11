@@ -4719,6 +4719,8 @@ async function toggle_layer_view() {
 	}
 
 	await write_descriptions();
+
+	restart_fcnn();
 }
 
 function fix_viz_width () {
@@ -6607,7 +6609,7 @@ function draw_new_fcnn(layers, labels) {
 	var ctx = canvas.getContext("2d");
 
 	// Set canvas dimensions and background
-	var canvasWidth = 1200;
+	var canvasWidth = $("#right_side").width();
 	var canvasHeight = 800;
 
 	canvas.width = canvasWidth;

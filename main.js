@@ -56,6 +56,8 @@ async function on_resize () {
 	if(!$("#ribbon").is(":visible")) {
 		$("#ribbon_shower").show();
 	}
+
+	restart_fcnn();
 }
 
 function layer_types_that_dont_have_default_options () {
