@@ -1238,7 +1238,7 @@ var metric_shortnames = {
 
 var current_status_hash = "";
 
-var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean"];
+var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean", "alpha", "beta"];
 
 var opt = {
 	"initializer_value": "'Value', 'XXX_NAME_XXX_initializer_value', 'number', { 'value': 1 }, nr, 'XXX_NAME_XXX_initializer_tr'",

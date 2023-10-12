@@ -1118,7 +1118,6 @@ ${python_data_to_string(data, ["kernel_size", "filters"])}
 ${python_data_to_string(data)}
 ))\n`;
 	} else if (layer_type == "Dropout") {
-		log("DATA for dropout:", data);
 		str += `model.add(layers.Dropout(
 ${python_data_to_string(data)}
 ))\n`;
