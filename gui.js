@@ -880,9 +880,19 @@ async function update_python_code(dont_reget_labels) {
 				var option_name = layer_options[type]["options"][j];
 
 				if (option_name == "pool_size") {
-					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "pool_size_x")), parse_int(get_item_value(i, "pool_size_y"))];
+					var _pool_size_x = get_item_value(i, "pool_size_x");
+					var _pool_size_y = get_item_value(i, "pool_size_y");
+
+					if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
+						data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
+					}
 				} else if (option_name == "strides") {
-					data[get_python_name(option_name)] = [parse_int(get_item_value(i, "strides_x")), parse_int(get_item_value(i, "strides_y"))];
+					var _strides_x = get_item_value(i, "strides_x");
+					var _strides_y = get_item_value(i, "strides_y");
+
+					if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
+						data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
+					}
 				} else if (option_name == "kernel_size") {
 					var kernel_size_x = get_item_value(i, "kernel_size_x");
 					var kernel_size_y = get_item_value(i, "kernel_size_y");
