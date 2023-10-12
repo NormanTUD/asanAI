@@ -6798,8 +6798,7 @@ async function draw_new_fcnn(...args) {
 				ctx.beginPath();
 				var rectSize = maxShapeSize * 2;
 
-
-				var _height = Math.min(600, meta_info["output_shape"][1]);
+				var _height = Math.min(650, meta_info["output_shape"][1]);
 
 				var layerY = canvasHeight / 2;
 
@@ -6861,12 +6860,15 @@ async function draw_new_fcnn(...args) {
 			last_layer_output_shape = last_meta_info["output_shape"];
 		}
 
+		var force_min_y = null;
+		var force_max_y = null;
+
 		if(layer_type == "Flatten") {
 			currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
 		}
 
 		if(next_layer_type == "Flatten") {
-			nextLayerNeurons = next_layer_input_shape[next_layer_input_shape.length - 1];
+			nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
 		}
 
 		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
