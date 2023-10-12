@@ -6795,11 +6795,15 @@ async function draw_new_fcnn(...args) {
 			if(meta_info["output_shape"]) {
 				var rectSize = maxShapeSize * 2;
 
+
 				var _height = Math.min(600, meta_info["output_shape"][1]);
+
+				var layerY = canvasHeight / 2;
+
 				var _width = rectSize;
 
 				var _x = layerX - _width / 2;
-				var _y = neuronY - _height / 2;
+				var _y = layerY - _height / 2;
 
 				ctx.rect(_x, _y, _width, _height);
 				ctx.fillStyle = "lightgray";
