@@ -6874,11 +6874,42 @@ async function draw_new_fcnn(...args) {
 		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 		var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
+		/*
 		for (var j = 0; j < currentLayerNeurons; j++) {
 			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 			for (var k = 0; k < nextLayerNeurons; k++) {
 				var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
+				ctx.beginPath();
+				ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
+				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
+				ctx.strokeStyle = "gray";
+				ctx.stroke();
+			}
+		}
+		*/
+
+		for (var j = 0; j < currentLayerNeurons; j++) {
+			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
+
+			// Check if the current layer is a Flatten layer
+			if (layer_type.toLowerCase().includes("flatten")) {
+				// Adjust the y-positions of connections to fit with the "flatten square"
+				var flattenSquareTopY = layerY - (_height / 2);
+				var flattenSquareBottomY = layerY + (_height / 2);
+				currentNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, currentNeuronY));
+			}
+
+			for (var k = 0; k < nextLayerNeurons; k++) {
+				var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
+
+				// Adjust the y-positions of connections to fit with the "flatten square"
+				if (next_layer_type.toLowerCase().includes("flatten")) {
+					var flattenSquareTopY = layerY - (_height / 2);
+					var flattenSquareBottomY = layerY + (_height / 2);
+					nextNeuronY = Math.min(flattenSquareBottomY, Math.max(flattenSquareTopY, nextNeuronY));
+				}
+
 				ctx.beginPath();
 				ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
 				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
