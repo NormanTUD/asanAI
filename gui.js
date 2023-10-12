@@ -635,7 +635,7 @@ async function get_cached_json(url) {
 		var worked = 1;
 		var data = await $.getJSON(url).fail(function() {
 			worked = 0;
-			wrn("Could not get " + url);
+			log_once("Could not get " + url);
 		});
 		if(worked) {
 			_cached_json[url] = data;
@@ -652,7 +652,7 @@ async function get_cached_json(url) {
 		}
 
 		if(e.endsWith("examples.json")) {
-			throw new Error(url + ": " + e);
+			log_once("Probably harmless error getting url: " + url + ": " + e);
 		} else {
 			wrn(url + ": " + e);
 		}
