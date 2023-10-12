@@ -6746,6 +6746,71 @@ function load_shoe_example () {
 	$("#csv_file").text(example_shoe_str).trigger("change");
 }
 
+/*
+function get_kernel_images (layer_nr, all=0) {
+    var _k = model.layers[layer_nr].kernel.val.shape;
+    var transposed_kernel = model.layers[layer_nr].kernel.val.transpose([3, 0, 1, 2]).arraySync()
+
+    var kernel_size_x = _k[0];
+    var kernel_size_y = _k[1];
+    var channels_per_filter = _k[2];
+    var filters = _k[3];
+
+    if(all) {
+	return transposed_kernel;
+    }
+
+    return transposed_kernel[0];
+}
+
+function normalizeAndDrawImage(canvas, x, y, imageData) {
+    assert(canvas instanceof HTMLCanvasElement, "Canvas must be an HTMLCanvasElement.");
+    assert(typeof x === 'number', "X position must be a number.");
+    assert(typeof y === 'number', "Y position must be a number");
+    assert(Array.isArray(imageData), "Image data must be an array.");
+
+// Erstellen Sie ein temporäres Canvas-Element, aber setzen Sie es nicht ins Dokument.
+    var tempCanvas = document.createElement('canvas');
+    var tempCtx = tempCanvas.getContext('2d');
+
+// Setzen Sie die Breite und Höhe des temporären Canvas-Elements.
+    tempCanvas.width = imageData[0].length;
+    tempCanvas.height = imageData[0][0].length;
+
+    var imageDataCopy = imageData.slice(); // Create a copy of the input array.
+
+		// Normalize the image data to the range [0, 255].
+    var min = Math.min(...imageDataCopy.flat().flat().flat().flat());
+    var max = Math.max(...imageDataCopy.flat().flat().flat().flat());
+
+    for (let i = 0; i < imageDataCopy.length; i++) {
+	for (let x = 0; x < imageDataCopy[i].length; x++) {
+	    for (let y = 0; y < imageDataCopy[i][x].length; y++) {
+		imageDataCopy[i][x][y] = parseInt((imageDataCopy[i][x][y] - min) / (max - min) * 255);
+	    }
+	}
+    }
+
+		// Erstellen Sie ImageData auf dem temporären Canvas.
+    var normalizedImageData = tempCtx.createImageData(tempCanvas.width, tempCanvas.height);
+    normalizedImageData.data.set(new Uint8ClampedArray(imageDataCopy));
+
+		// Übertragen Sie das temporäre Canvas auf das endgültige Canvas.
+    var ctx = canvas.getContext('2d');
+    assert(ctx, "2D context not available for the canvas.");
+    ctx.putImageData(normalizedImageData, x, y);
+    log(normalizedImageData);
+}
+
+
+// Example usage:
+var canvas = document.getElementById('new_fcnn_canvas');
+var xPosition = 100;
+var yPosition = 100;
+normalizeAndDrawImage(canvas, xPosition, yPosition, get_kernel_images(0));
+
+*/
+
 async function draw_new_fcnn(...args) {
 	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
 
