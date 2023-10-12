@@ -599,9 +599,6 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 	}
 
 	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
-	if(layer_nr == 0) {
-		console.log(`initializer_type: ${initializer_type}, initializer:` ,initializer);
-	}
 
 	if (initializer.length) {
 		var initializer_name = initializer.val();
