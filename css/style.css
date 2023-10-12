@@ -1183,3 +1183,7 @@ hr {
 #predictcontainer {
 	overflow: scroll;
 }
+
+.neurons_canvas_class {
+	max-width: 100%;
+}

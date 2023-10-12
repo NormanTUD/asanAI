@@ -8,6 +8,7 @@ function visualizeNumbersOnCanvas(
 	// Create or retrieve the canvas element
 	var canvas = document.createElement("canvas");
 	canvas.id = "neurons_canvas_" + uuidv4();
+	canvas.classList.add("neurons_canvas_class");
 
 	// Calculate the canvas width based on the number of elements
 	var canvasWidth = numberArray.length * blockWidth;
