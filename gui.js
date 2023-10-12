@@ -6735,6 +6735,7 @@ function draw_new_fcnn(layers, labels) {
 	// Adjust spacing based on the number of neurons in each layer
 	var layerSpacing = canvasWidth / (layers.length + 1);
 	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
 	// Draw neurons
 	for (var i = 0; i < layers.length; i++) {
@@ -6742,16 +6743,31 @@ function draw_new_fcnn(layers, labels) {
 		var layerY = canvasHeight / 2;
 		var numNeurons = layers[i];
 		var verticalSpacing = maxSpacing;
+		var shapeType = "circle"; // Default shape is circle
 
 		if (numNeurons * verticalSpacing > canvasHeight) {
 			verticalSpacing = canvasHeight / numNeurons;
 		}
 
+		// Check if the layer type is "conv2d"
+		if (labels && labels[i] && labels[i].toLowerCase().includes("conv2d")) {
+			shapeType = "rectangle";
+		}
+
 		for (var j = 0; j < numNeurons; j++) {
 			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 			ctx.beginPath();
-			ctx.arc(layerX, neuronY, maxRadius, 0, 2 * Math.PI);
-			ctx.fillStyle = "white";
+
+			if (shapeType === "circle") {
+				ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+				ctx.fillStyle = "white";
+			} else if (shapeType === "rectangle") {
+				// Draw rectangles for "conv2d" layers
+				var rectSize = maxShapeSize * 2;
+				ctx.rect(layerX - rectSize / 2, neuronY - rectSize / 2, rectSize, rectSize);
+				ctx.fillStyle = "lightblue"; // Change the color for rectangles
+			}
+
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = 2;
 			ctx.fill();
@@ -6824,7 +6840,7 @@ function restart_fcnn () {
 		if(_unit) {
 			var class_name = model.layers[i].getClassName();
 			if(i == 0) {
-				names.push(`Input Layer`);
+				names.push(`Input Layer ${class_name}`);
 			} else if (i == model.layers.length - 1) {
 				names.push(`Output Layer`);
 			} else {
