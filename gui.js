@@ -1443,6 +1443,10 @@ async function hide_no_conv_stuff() {
 }
 
 function get_shape_from_array(a) {
+	if(!a) {
+		err("array not defined in get_shape_from_array");
+		return "[]";
+	}
 	var dim = [];
 	for (;;) {
 		dim.push(a.length);
@@ -6746,85 +6750,80 @@ function load_shoe_example () {
 	$("#csv_file").text(example_shoe_str).trigger("change");
 }
 
-/*
-function get_kernel_images (layer_nr, all=0) {
-    var _k = model.layers[layer_nr].kernel.val.shape;
-    var transposed_kernel = model.layers[layer_nr].kernel.val.transpose([3, 0, 1, 2]).arraySync()
-
-    var kernel_size_x = _k[0];
-    var kernel_size_y = _k[1];
-    var channels_per_filter = _k[2];
-    var filters = _k[3];
-
-    if(all) {
-	return transposed_kernel;
-    }
-
-    return transposed_kernel[0];
-}
-
-function normalizeAndDrawImage(canvas, x, y, imageData) {
-    assert(canvas instanceof HTMLCanvasElement, "Canvas must be an HTMLCanvasElement.");
-    assert(typeof x === 'number', "X position must be a number.");
-    assert(typeof y === 'number', "Y position must be a number");
-    assert(Array.isArray(imageData), "Image data must be an array.");
-
-// Erstellen Sie ein temporäres Canvas-Element, aber setzen Sie es nicht ins Dokument.
-    var tempCanvas = document.createElement('canvas');
-    var tempCtx = tempCanvas.getContext('2d');
-
-// Setzen Sie die Breite und Höhe des temporären Canvas-Elements.
-    tempCanvas.width = imageData[0].length;
-    tempCanvas.height = imageData[0][0].length;
-
-    var imageDataCopy = imageData.slice(); // Create a copy of the input array.
-
-		// Normalize the image data to the range [0, 255].
-    var min = Math.min(...imageDataCopy.flat().flat().flat().flat());
-    var max = Math.max(...imageDataCopy.flat().flat().flat().flat());
-
-    for (let i = 0; i < imageDataCopy.length; i++) {
-	for (let x = 0; x < imageDataCopy[i].length; x++) {
-	    for (let y = 0; y < imageDataCopy[i][x].length; y++) {
-		imageDataCopy[i][x][y] = parseInt((imageDataCopy[i][x][y] - min) / (max - min) * 255);
-	    }
-	}
-    }
-
-		// Erstellen Sie ImageData auf dem temporären Canvas.
-    var normalizedImageData = tempCtx.createImageData(tempCanvas.width, tempCanvas.height);
-    normalizedImageData.data.set(new Uint8ClampedArray(imageDataCopy));
-
-		// Übertragen Sie das temporäre Canvas auf das endgültige Canvas.
-    var ctx = canvas.getContext('2d');
-    assert(ctx, "2D context not available for the canvas.");
-    ctx.putImageData(normalizedImageData, x, y);
-    log(normalizedImageData);
-}
-
-
-// Example usage:
-var canvas = document.getElementById('new_fcnn_canvas');
-var xPosition = 100;
-var yPosition = 100;
-normalizeAndDrawImage(canvas, xPosition, yPosition, get_kernel_images(0));
-
-*/
-
-async function draw_new_fcnn(...args) {
-	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
-
-	var args_hash = await md5(JSON.stringify(args));
-
-	if(last_fcnn_hash == args_hash) {
+function get_kernel_images (layer_nr, class_name, resize_factor=1) {
+	if(class_name != "Conv2D") {
 		return;
 	}
 
-	args_hash = last_fcnn_hash;
+	if(!model) {
+		return;
+	}
+
+	if(!model.layers) {
+		return;
+	}
+
+	if(!Object.keys(model.layers).includes("" + layer_nr)) {
+		return;
+	}
+
+	var kernel_size_x_index = 0
+	var kernel_size_y_index = 1;
+	var channels_per_filter_index = 2;
+	var filters_index = 3;
+
+	try {
+		var _k = model.layers[layer_nr].kernel.val.shape;
+		var transposed_kernel = tidy(() => {
+			var new_arrangement = [filters_index, kernel_size_x_index, kernel_size_y_index, channels_per_filter_index];
+
+			var kernel_img = model.layers[layer_nr].kernel.val;
+			var transposed_tensor = kernel_img.transpose(new_arrangement);
+
+			if(resize_factor != 1 && resize_factor != 0) {
+				var kernel_img_shape = transposed_tensor.shape;
+
+				var new_width = kernel_img_shape[new_arrangement[1]] * resize_factor;
+				var new_height = kernel_img_shape[new_arrangement[2]] * resize_factor;
+
+				transposed_tensor = transposed_tensor.resizeNearestNeighbor([new_height, new_width]);
+			}
+
+			var transposed = transposed_tensor.arraySync();
+
+			scaleNestedArray(transposed);
+
+			return transposed;
+		});
+	} catch (e) {
+		return;
+	}
+
+	/*
+	var kernel_size_x = _k[0];
+	var kernel_size_y = _k[1];
+	var channels_per_filter = _k[2];
+	var filters = _k[3];
+	*/
+
+	return transposed_kernel;
+}
+
+async function draw_new_fcnn(...args) {
+	assert(args.length == 3 || args.length == 4, "draw_new_fcnn must have 3 or 4 (layers, labels, meta_infos, force?) arguments");
 
 	var layers = args[0];
 	var labels = args[1];
 	var meta_infos = args[2];
+	var force = args[3];
+
+	var args_hash = await md5(JSON.stringify(args));
+
+	if(last_fcnn_hash == args_hash && !force) {
+		return;
+	}
+
+	args_hash = last_fcnn_hash;
 
 	var canvas = document.getElementById("new_fcnn_canvas");
 
@@ -6874,14 +6873,21 @@ async function draw_new_fcnn(...args) {
 		}
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
+			var kernel_images = meta_info["kernel_images"];
+
 			for (var j = 0; j < numNeurons; j++) {
-				ctx.beginPath();
 				var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-				ctx.beginPath();
 
 				if (shapeType === "circle") {
+					ctx.beginPath();
 					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
 					ctx.fillStyle = "white";
+
+					ctx.strokeStyle = "black";
+					ctx.lineWidth = 2;
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();
 				} else if (shapeType === "rectangle_conv2d") {
 					var _ww = meta_info["kernel_size_x"] * 3;
 					var _hh = meta_info["kernel_size_y"] * 3;
@@ -6889,15 +6895,43 @@ async function draw_new_fcnn(...args) {
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
 
+					/*
 					ctx.rect(_x, _y, _ww, _hh);
 					ctx.fillStyle = "lightblue";
-				}
 
-				ctx.strokeStyle = "black";
-				ctx.lineWidth = 2;
-				ctx.fill();
-				ctx.stroke();
-				ctx.closePath();
+					ctx.strokeStyle = "black";
+					ctx.lineWidth = 2;
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();
+					*/
+
+					if(Array.isArray(kernel_images) && kernel_images.length && kernel_images.length >= j) {
+						var this_kernel_image = kernel_images[j];
+
+						if(this_kernel_image !== undefined) {
+							var max_x = this_kernel_image.length;
+							var max_y = this_kernel_image[0].length;
+							//log("max x/y:", max_x, max_y);
+							for (var inner_x = 0; inner_x < max_x; inner_x++) {
+								for (var inner_y = 0; inner_y < max_y; inner_y++) {
+									var red = parse_int(this_kernel_image[inner_x][inner_y][0]);
+									var green = parse_int(this_kernel_image[inner_x][inner_y][1]);
+									var blue = parse_int(this_kernel_image[inner_x][inner_y][2]);
+
+									var size = 1;
+
+									ctx.beginPath();
+									ctx.rect(_x + inner_x + size, _y + inner_y + size, size, size);
+									ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+									//log(`Filling rgb(${red}, ${green}, ${blue}) (${ctx.fillStyle})`);
+									ctx.fill();
+									ctx.closePath();
+								}
+							}
+						}
+					}
+				}
 			}
 		} else if (shapeType == "rectangle_flatten") {
 			if(meta_info["output_shape"]) {
@@ -7046,7 +7080,7 @@ async function draw_new_fcnn(...args) {
 	}
 }
 
-async function restart_fcnn () {
+async function restart_fcnn (force=0) {
 	var names = [];
 	var units = [];
 	var meta_infos = [];
@@ -7100,15 +7134,21 @@ async function restart_fcnn () {
 
 		}
 
+		var kernel_images = null;
+		if(class_name == "Conv2D") {
+			kernel_images = get_kernel_images(i, class_name, 5);
+		}
+
 		meta_infos.push({
 			layer_type: class_name,
 			nr: i,
 			input_shape: input_shape_of_layer,
 			output_shape: output_shape_of_layer,
 			kernel_size_x: kernel_size_x,
-			kernel_size_y: kernel_size_y
+			kernel_size_y: kernel_size_y,
+			kernel_images: kernel_images
 		});
 	}
 
-	await draw_new_fcnn(units, names, meta_infos);
+	await draw_new_fcnn(units, names, meta_infos, force);
 }
