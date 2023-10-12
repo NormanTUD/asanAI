@@ -651,11 +651,7 @@ async function get_cached_json(url) {
 			e = e.statusText;
 		}
 
-		if(e.endsWith("examples.json")) {
-			log_once("Probably harmless error getting url: " + url + ": " + e);
-		} else {
-			wrn(url + ": " + e);
-		}
+		log_once("Probably harmless error getting url: " + url + ": " + e);
 	}
 }
 
