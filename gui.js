@@ -6879,21 +6879,6 @@ async function draw_new_fcnn(...args) {
 		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 		var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
-		/*
-		for (var j = 0; j < currentLayerNeurons; j++) {
-			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
-
-			for (var k = 0; k < nextLayerNeurons; k++) {
-				var nextNeuronY = (k - (nextLayerNeurons - 1) / 2) * nextSpacing + layerY;
-				ctx.beginPath();
-				ctx.moveTo(currentLayerX + maxRadius, currentNeuronY);
-				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
-				ctx.strokeStyle = "gray";
-				ctx.stroke();
-			}
-		}
-		*/
-
 		for (var j = 0; j < currentLayerNeurons; j++) {
 			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
@@ -6935,7 +6920,27 @@ async function draw_new_fcnn(...args) {
 				ctx.fillStyle = "black";
 			}
 			ctx.textAlign = "center";
-			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24));
+			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24) - 5);
+		}
+	}
+
+	for (var i = 0; i < layers.length; i++) {
+		if (meta_infos && meta_infos[i]) {
+			var _meta_info = meta_infos[i];
+
+			var _is = _meta_info.input_shape;
+			var _os = _meta_info.output_shape;
+
+			var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
+			ctx.font = font_size + "px Arial";
+			if(is_dark_mode) {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "black";
+			}
+			ctx.textAlign = "center";
+			ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - (24) - 5);
+			ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - 5);
 		}
 	}
 }
