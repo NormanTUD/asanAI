@@ -1637,3 +1637,5 @@ var waiting_updated_page_uuids = [];
 var shift_pressed = false;
 
 var create_model_queue = [];
+
+var last_fcnn_hash = "";

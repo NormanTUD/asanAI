@@ -6710,7 +6710,21 @@ function load_shoe_example () {
 	$("#csv_file").text(example_shoe_str).trigger("change");
 }
 
-function draw_new_fcnn(layers, labels) {
+async function draw_new_fcnn(...args) {
+	assert(args.length == 3, "draw_new_fcnn must have 3 arguments");
+
+	var args_hash = await md5(JSON.stringify(args));
+
+	if(last_fcnn_hash == args_hash) {
+		return;
+	}
+
+	args_hash = last_fcnn_hash;
+
+	var layers = args[0];
+	var labels = args[1];
+	var meta_infos = args[2];
+
 	var canvas = document.getElementById("new_fcnn_canvas");
 
 	if (!canvas) {
@@ -6739,6 +6753,8 @@ function draw_new_fcnn(layers, labels) {
 
 	// Draw neurons
 	for (var i = 0; i < layers.length; i++) {
+		var meta_info = meta_infos[i];
+		var layer_type = meta_info["layer_type"];
 		var layerX = (i + 1) * layerSpacing;
 		var layerY = canvasHeight / 2;
 		var numNeurons = layers[i];
@@ -6750,37 +6766,100 @@ function draw_new_fcnn(layers, labels) {
 		}
 
 		// Check if the layer type is "conv2d"
-		if (labels && labels[i] && labels[i].toLowerCase().includes("conv2d")) {
-			shapeType = "rectangle";
+		if (layer_type.toLowerCase().includes("conv2d")) {
+			shapeType = "rectangle_conv2d";
+		} else if (layer_type.toLowerCase().includes("flatten")) {
+			shapeType = "rectangle_flatten";
 		}
 
-		for (var j = 0; j < numNeurons; j++) {
-			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-			ctx.beginPath();
+		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
+			for (var j = 0; j < numNeurons; j++) {
+				var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+				ctx.beginPath();
 
-			if (shapeType === "circle") {
-				ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
-				ctx.fillStyle = "white";
-			} else if (shapeType === "rectangle") {
-				// Draw rectangles for "conv2d" layers
-				var rectSize = maxShapeSize * 2;
-				ctx.rect(layerX - rectSize / 2, neuronY - rectSize / 2, rectSize, rectSize);
-				ctx.fillStyle = "lightblue"; // Change the color for rectangles
+				if (shapeType === "circle") {
+					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
+					ctx.fillStyle = "white";
+				} else if (shapeType === "rectangle_conv2d") {
+					var rectSize = maxShapeSize * 2;
+					ctx.rect(layerX - rectSize / 2, neuronY - rectSize / 2, rectSize, rectSize);
+					ctx.fillStyle = "lightblue";
+				}
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 2;
+				ctx.fill();
+				ctx.stroke();
 			}
+		} else if (shapeType == "rectangle_flatten") {
+			if(meta_info["output_shape"]) {
+				var rectSize = maxShapeSize * 2;
 
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 2;
-			ctx.fill();
-			ctx.stroke();
+				var _height = Math.min(600, meta_info["output_shape"][1]);
+				var _width = rectSize;
+
+				var _x = layerX - _width / 2;
+				var _y = neuronY - _height / 2;
+
+				ctx.rect(_x, _y, _width, _height);
+				ctx.fillStyle = "lightgray";
+
+				ctx.strokeStyle = "black";
+				ctx.lineWidth = 2;
+				ctx.fill();
+				ctx.stroke();
+			} else {
+				alert("Has no output shape");
+			}
+		} else {
+			alert("Unknown shape Type: " + shapeType);
 		}
 	}
 
 	// Draw connections
 	for (var i = 0; i < layers.length - 1; i++) {
+		var _meta_info = meta_infos[i];
+
+		var layer_type = _meta_info["layer_type"];
+		var layer_input_shape = _meta_info["input_shape"];
+		var layer_output_shape = _meta_info["output_shape"];
+
 		var currentLayerX = (i + 1) * layerSpacing;
 		var nextLayerX = (i + 2) * layerSpacing;
 		var currentLayerNeurons = layers[i];
 		var nextLayerNeurons = layers[i + 1];
+
+		var next_layer_type = null;
+		var next_layer_input_shape = null;
+		var next_layer_input_shape = null;
+		var next_layer_output_shape = null;
+
+		var last_layer_type = null;
+		var last_layer_input_shape = null;
+		var last_layer_input_shape = null;
+		var last_layer_output_shape = null;
+
+		if((i + 1) in meta_infos) {
+			var next_meta_info = meta_infos[i + 1];
+			next_layer_type = next_meta_info["layer_type"];
+			next_layer_input_shape = next_meta_info["input_shape"];
+			next_layer_output_shape = next_meta_info["output_shape"];
+		}
+
+		if(i > 0) {
+			var last_meta_info = meta_infos[i - 1];
+			last_layer_type = last_meta_info["layer_type"];
+			last_layer_input_shape = last_meta_info["input_shape"];
+			last_layer_output_shape = last_meta_info["output_shape"];
+		}
+
+		if(layer_type == "Flatten") {
+			currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
+		}
+
+		if(next_layer_type == "Flatten") {
+			nextLayerNeurons = next_layer_input_shape[next_layer_input_shape.length - 1];
+		}
 
 		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 		var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
@@ -6815,9 +6894,10 @@ function draw_new_fcnn(layers, labels) {
 	}
 }
 
-function restart_fcnn () {
+async function restart_fcnn () {
 	var names = [];
 	var units = [];
+	var meta_infos = [];
 
 	if(!model) {
 		wrn("Model not found for restart_fcnn");
@@ -6837,18 +6917,38 @@ function restart_fcnn () {
 	for (var i = 0; i < model.layers.length; i++) {
 		var _unit = get_units_at_layer(i);
 
-		if(_unit) {
-			var class_name = model.layers[i].getClassName();
-			if(i == 0) {
-				names.push(`Input Layer ${class_name}`);
-			} else if (i == model.layers.length - 1) {
-				names.push(`Output Layer`);
-			} else {
-				names.push(`${class_name} ${i}`);
-			}
-			units.push(_unit);
+		var class_name = model.layers[i].getClassName();
+		if(i == 0) {
+			names.push(`Input Layer ${class_name}`);
+		} else if (i == model.layers.length - 1) {
+			names.push(`Output Layer`);
+		} else {
+			names.push(`${class_name} ${i}`);
 		}
+
+		units.push(_unit);
+
+		var output_shape_of_layer = "";
+		try { 
+			output_shape_of_layer = model.layers[i].outputShape;
+		} catch (e) {
+
+		}
+		
+		var input_shape_of_layer = "";
+		try {
+			input_shape_of_layer = model.layers[i].input.shape;
+		} catch(e) {
+
+		}
+
+		meta_infos.push({
+			layer_type: class_name,
+			nr: i,
+			input_shape: input_shape_of_layer,
+			output_shape: output_shape_of_layer
+		});
 	}
 
-	draw_new_fcnn(units, names);
+	await draw_new_fcnn(units, names, meta_infos);
 }
