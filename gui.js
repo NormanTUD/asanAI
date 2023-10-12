@@ -1989,6 +1989,11 @@ async function disable_all_invalid_layers_from(start) {
 }
 
 function enable_all_layer_types () {
+	if(!model || !Object.keys(model).includes("layers") || !model.layers.length) {
+		err("model not found, or does not include layers or layers are empty");
+		return;
+	}
+
 	for (var layer_nr = 0; layer_nr < model.layers.length; layer_nr++) {
 		var options = $($($(".layer_type")[layer_nr]).children().children());
 
@@ -5930,7 +5935,7 @@ function disable_flatten_layer () {
 		return;
 	}
 
-	if(!model.layers) {
+	if(Object.keys(model).includes("layers") || !model.layers) {
 		if(finished_loading) {
 			wrn("No layers found");
 		}
@@ -6689,6 +6694,21 @@ function draw_new_fcnn(layers, labels) {
 function restart_fcnn () {
 	var names = [];
 	var units = [];
+
+	if(!model) {
+		wrn("Model not found for restart_fcnn");
+		return;
+	}
+
+	if(!Object.keys(model).includes("layers")) {
+		wrn("model.layers not found for restart_fcnn");
+		return;
+	}
+
+	if(model.layers.length == 0) {
+		wrn("model.layers.length is 0");
+		return;
+	}
 
 	for (var i = 0; i < model.layers.length; i++) {
 		var _unit = get_units_at_layer(i);
