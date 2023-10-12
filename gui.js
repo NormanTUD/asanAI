@@ -6868,11 +6868,11 @@ async function draw_new_fcnn(...args) {
 		var force_min_y = null;
 		var force_max_y = null;
 
-		if(layer_type == "Flatten") {
+		if(layer_type == "Flatten" || layer_type == "MaxPooling2D") {
 			currentLayerNeurons = layer_input_shape[layer_input_shape.length - 1];
 		}
 
-		if(next_layer_type == "Flatten") {
+		if(next_layer_type == "Flatten" || layer_type == "MaxPooling2D") {
 			nextLayerNeurons = Math.min(64, next_layer_output_shape[next_layer_output_shape.length - 1]);
 		}
 
