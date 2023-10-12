@@ -6782,8 +6782,13 @@ async function draw_new_fcnn(...args) {
 					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
 					ctx.fillStyle = "white";
 				} else if (shapeType === "rectangle_conv2d") {
-					var rectSize = maxShapeSize * 2;
-					ctx.rect(layerX - rectSize / 2, neuronY - rectSize / 2, rectSize, rectSize);
+					var _ww = meta_info["kernel_size_x"];
+					var _hh = meta_info["kernel_size_y"];
+
+					var _x = layerX - _ww / 2;
+					var _y = neuronY - _hh / 2;
+
+					ctx.rect(_x, _y, _ww, _hh);
 					ctx.fillStyle = "lightblue";
 				}
 
@@ -6975,6 +6980,9 @@ async function restart_fcnn () {
 		} catch (e) {
 
 		}
+
+		var kernel_size_x = $($(".configtable")[i]).find(".kernel_size_x").val()
+		var kernel_size_y = $($(".configtable")[i]).find(".kernel_size_y").val()
 		
 		var input_shape_of_layer = "";
 		try {
@@ -6987,7 +6995,9 @@ async function restart_fcnn () {
 			layer_type: class_name,
 			nr: i,
 			input_shape: input_shape_of_layer,
-			output_shape: output_shape_of_layer
+			output_shape: output_shape_of_layer,
+			kernel_size_x: kernel_size_x,
+			kernel_size_y: kernel_size_y
 		});
 	}
 
