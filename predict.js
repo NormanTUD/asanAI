@@ -603,7 +603,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predictions_tensor = null;
 		$("#predict_error").html("").hide();
 		try {
-			predictions_tensor = __predict([predict_data], [1, 1]);
+			predictions_tensor = __predict([predict_data]);
 		} catch (e) {
 			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 
