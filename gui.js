@@ -6782,8 +6782,8 @@ async function draw_new_fcnn(...args) {
 					ctx.arc(layerX, neuronY, maxShapeSize, 0, 2 * Math.PI);
 					ctx.fillStyle = "white";
 				} else if (shapeType === "rectangle_conv2d") {
-					var _ww = meta_info["kernel_size_x"];
-					var _hh = meta_info["kernel_size_y"];
+					var _ww = meta_info["kernel_size_x"] * 3;
+					var _hh = meta_info["kernel_size_y"]* 3;
 
 					var _x = layerX - _ww / 2;
 					var _y = neuronY - _hh / 2;
