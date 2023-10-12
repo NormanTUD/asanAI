@@ -108,6 +108,8 @@ async function _create_model () {
 			return;
 		} else if(
 			("" + e).includes("Convolution layer expected config.filters to be a 'number' > 0 but got undefined") ||
+			("" + e).includes("The kernelSize argument must be an integer or tuple of 2 integers") ||
+			("" + e).includes("The strides argument must be an integer or tuple of 2 integers") ||
 			("" + e).includes("Expected units to be a positive integer, but got undefined")
 		) {
 			wrn("" + e);
