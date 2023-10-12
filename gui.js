@@ -6966,9 +6966,12 @@ async function restart_fcnn () {
 	}
 
 	for (var i = 0; i < model.layers.length; i++) {
-		var _unit = get_units_at_layer(i);
-
 		var class_name = model.layers[i].getClassName();
+		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
+			continue;
+		}
+
+		var _unit = get_units_at_layer(i);
 		if(i == 0) {
 			names.push(`Input Layer`);
 		} else if (i == model.layers.length - 1) {

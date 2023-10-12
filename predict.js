@@ -1474,7 +1474,12 @@ async function predict_handdrawn () {
 				e = e.message;
 			}
 
-			throw new Error(e);
+			if(("" + e).includes("Sequential model cannot be built: model is empty")) {
+				err("" + e);
+				return;
+			} else {
+				throw new Error(e);
+			}
 		}
 	} catch (e) {
 		if(("" + e).includes("is already disposed")) {
