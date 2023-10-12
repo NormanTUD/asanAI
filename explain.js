@@ -282,6 +282,11 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 	// pixels is a 3D array [n, m, a] where n is the height, m is the width, and a is the number of channels
 
 	scaleNestedArray(pixels);
+	console.log(pixels);
+
+	if(get_shape_from_array(pixels).length == 3) {
+		pixels = [pixels];
+	}
 
 	var context = canvasElement.getContext('2d'); // Get the 2D rendering context
 
@@ -315,15 +320,15 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 }
 
 
-function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
+function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object=1) {
 	var canvas = null;
+
+	console.log(`draw_image_if_possible(${layer}, ${canvas_type}, colors), colors-shape: `, get_shape_from_array(colors));
 
 	try {
 		var ret = false;
 
-		var data_type = looks_like_image_data(colors);
-
-		if(data_type == "simple") {
+		if(canvas_type == "input" || canvas_type == "output") {
 			if(canvas_type == "input") {
 				canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 			} else {
@@ -334,62 +339,30 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 				$($(canvas)[0]).parent().parent().show();
 			}
 
-			ret = draw_grid(canvas, pixel_size, colors, 1);
+			ret = draw_kernel(canvas, pixel_size, colors, 1);
 			if(get_canvas_object) {
 				return canvas;
 			}
 
 			return ret;
-		} else if((data_type == "kernel" || canvas_type == "kernel")) {
+		} else if(canvas_type == "kernel") {
 			var shape = get_dim(colors);
 
 			var canvasses = [];
 
 			for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
-				for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-					canvas = get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
+				canvas = get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
 
-					if(!get_canvas_object) {
-						$($(canvas)[0]).parent().parent().show();
-					}
-
-					//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-					ret = draw_kernel(canvas, kernel_pixel_size, colors[filter_id]);
-
-					if(get_canvas_object) {
-						canvasses.push(canvas);
-					}
-				}
-			}
-
-			if(get_canvas_object) {
-				return canvasses;
-			}
-			return ret;
-		} else if(data_type == "filter") {
-			var shape = get_dim(colors);
-
-			var canvasses = [];
-
-			for (var k = 0; k < shape[2]; k++) {
-				if(canvas_type == "input") {
-					canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
-				} else {
-					canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
-				}
 				if(!get_canvas_object) {
 					$($(canvas)[0]).parent().parent().show();
 				}
 
-				ret = draw_grid_grayscale(canvas, 5, colors, k);
+				//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
+				ret = draw_kernel(canvas, kernel_pixel_size, colors[filter_id]);
 
 				if(get_canvas_object) {
 					canvasses.push(canvas);
 				}
-			}
-
-			if(get_canvas_object) {
-				return canvasses;
 			}
 
 			return ret;
@@ -932,93 +905,87 @@ function draw_internal_states (layer, inputs, applied) {
 	//log("layer: " + layer);
 	//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
-	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
-		//log("batchnr: " + batchnr);
+	var input_data = inputs[0].arraySync();
+	var output_data = applied.arraySync();
 
-		var input_data = inputs[0].arraySync()[batchnr];
-		var output_data = applied.arraySync()[batchnr];
+	var layer_div = $($(".layer_data")[layer]);
+	layer_div.append("<h1>Layer data flow</h1>");
+	layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
 
-		var layer_div = $($(".layer_data")[layer]);
-		if(batchnr == 0) {
-			layer_div.append("<h1>Layer data flow</h1>");
+	layer_div.show();
+	layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+	layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
+	layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+	layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+
+	var input = $("#layer_" + layer + "_input");
+	var kernel = $("#layer_" + layer + "_kernel");
+	var output = $("#layer_" + layer + "_output");
+	var equations = $("#layer_" + layer + "_equations");
+
+	$("#layer_visualizations_tab").show();
+
+	var kernel_data = [];
+
+	if(Object.keys(model.layers[layer]).includes("kernel")) {
+		if(model.layers[layer].kernel.val.shape.length == 4) {
+			var ks_x = 0;
+			var ks_y = 1;
+			var number_filters = 2;
+			var filters = 3;
+
+			kernel_data = model.layers[layer].kernel.val.transpose([filters, ks_x, ks_y, number_filters]).arraySync();
+			//kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
 		}
-		layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
+	}
 
-		layer_div.show();
-		layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-		layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+	var canvas_input = draw_image_if_possible(layer, "input", input_data[0]);
+	var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data[0]);
+	//console.log("output_data:", output_data);
+	var canvas_output = draw_image_if_possible(layer, "output", output_data[0]);
 
-		var input = $("#layer_" + layer + "_input");
-		var kernel = $("#layer_" + layer + "_kernel");
-		var output = $("#layer_" + layer + "_output");
-		var equations = $("#layer_" + layer + "_equations");
-
-		$("#layer_visualizations_tab").show();
-
-		var kernel_data = [];
-
-		if(Object.keys(model.layers[layer]).includes("kernel")) {
-			if(model.layers[layer].kernel.val.shape.length == 4) {
-				var ks_x = 0;
-				var ks_y = 1;
-				var number_filters = 2;
-				var filters = 3;
-
-				kernel_data = model.layers[layer].kernel.val.transpose([filters, ks_x, ks_y, number_filters]).arraySync();
-				//kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
-			}
-		}
-
-		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
-		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
-		//console.log("output_data:", output_data);
-		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
-
-		if(canvas_output.length && canvas_input.length) {
-			for (var j = 0; j < canvas_input.length; j++) {
-				for (var i = 0; i < canvas_output.length; i++) {
-					var img_output = canvas_output[i];
-					if(Object.keys(canvas_kernel).includes(i + "")) {
-						var img_kernel = canvas_kernel[i];
-						if(layer == 0) {
-							input.append(canvas_input[j]).show();
-						}
-						kernel.append(img_kernel).show();
-					}
-					output.append(img_output).show();
-				}
-			}
-		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+	if(canvas_output.length && canvas_input.length) {
+		for (var j = 0; j < canvas_input.length; j++) {
 			for (var i = 0; i < canvas_output.length; i++) {
 				var img_output = canvas_output[i];
-				if(layer == 0) {
-					input.append(canvas_input).show();
-				}
 				if(Object.keys(canvas_kernel).includes(i + "")) {
 					var img_kernel = canvas_kernel[i];
+					if(layer == 0) {
+						input.append(canvas_input[j]).show();
+					}
 					kernel.append(img_kernel).show();
 				}
 				output.append(img_output).show();
 			}
+		}
+	} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+		for (var i = 0; i < canvas_output.length; i++) {
+			var img_output = canvas_output[i];
+			if(layer == 0) {
+				input.append(canvas_input).show();
+			}
+			if(Object.keys(canvas_kernel).includes(i + "")) {
+				var img_kernel = canvas_kernel[i];
+				kernel.append(img_kernel).show();
+			}
+			output.append(img_output).show();
+		}
+	} else {
+		if(canvas_input.nodeName == "CANVAS") {
+			if(layer == 0) {
+				input.append(canvas_input).show();
+			}
+			if(canvas_output.nodeName == "CANVAS") {
+				var img_output = canvas_output;
+				output.append(img_output).show();
+			}
 		} else {
-			if(canvas_input.nodeName == "CANVAS") {
-				if(layer == 0) {
-					input.append(canvas_input).show();
-				}
-				if(canvas_output.nodeName == "CANVAS") {
-					var img_output = canvas_output;
-					output.append(img_output).show();
-				}
+			if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
+				var h = visualizeNumbersOnCanvas(output_data)
+				equations.append(h).show();
 			} else {
-				if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
-					var h = visualizeNumbersOnCanvas(output_data)
-					equations.append(h).show();
-				} else {
-					var h = array_to_html(output_data);
-					equations.append(h).show();
-				}
+				var h = array_to_html(output_data);
+				equations.append(h).show();
 			}
 		}
 	}
