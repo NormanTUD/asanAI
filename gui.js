@@ -308,8 +308,14 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 		for (var tk = 0; tk < valid_initializer_types.length; tk++) {
 			for (var tir = 0; tir < types_init_or_reg.length; tir++) {
-				if (classname == valid_initializer_types[tk] + "_" + types_init_or_reg[tir]) {
-					onchange_text = `insert_${types_init_or_reg[tir]}_options(find_layer_number_by_element($(this)), "${valid_initializer_types[tk]}");updated_page(null, null, this)`;
+				var new_name = valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
+				if (classname == new_name) {
+					var _get_layer_str = `find_layer_number_by_element($(this))`;
+					var _init_type = `"${valid_initializer_types[tk]}"`;
+					var _updated_page_str = `updated_page(null, null, this)`;
+					var _func_name = `insert_${types_init_or_reg[tir]}_options`;
+
+					onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
 				}
 			}
 		}
@@ -499,10 +505,20 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 
 function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
-	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale"].includes(option_type), "invalid option type " + option_type);
+	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...valid_initializer_types].includes(option_type), "invalid option type " + option_type);
 	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
 
-	var eval_string = `$(add_${initializer_type}_initializer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${initializer_type}_initializer").parent().parent())`;
+	var function_name = `add_${initializer_type}_initializer_${option_type}_option`;
+
+	var eval_string = `$(${function_name}($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).
+		insertAfter($($(".layer_setting")[${layer_nr}]).
+			find(".${initializer_type}_initializer").
+			parent().
+			parent()
+		)
+	`;
+
+	//console.log(eval_string);
 
 	eval(eval_string);
 
@@ -571,14 +587,21 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	await updated_page();
 }
 
-async function insert_initializer_options(layer_nr, initializer_type) {
+async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
-	$($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr").remove();
+	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
+
+	for (var i = 1; i < existing_init_elements.length; i++) {
+		$(existing_init_elements[i]).remove();
+	}
 
 	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+	if(layer_nr == 0) {
+		console.log(`initializer_type: ${initializer_type}, initializer:` ,initializer);
+	}
 
 	if (initializer.length) {
 		var initializer_name = initializer.val();
@@ -942,8 +965,8 @@ async function update_python_code(dont_reget_labels) {
 			redo_graph++;
 		}
 
-		["bias", "kernel", "activity"].forEach((type) => {
-			["regularizer"].forEach((func) => {
+		valid_initializer_types.forEach((type) => {
+			["regularizer", "initializer"].forEach((func) => {
 				var item_name = type + "_" + func;
 				if (Object.keys(data).includes(item_name)) {
 					if (data[item_name] == "none") {
@@ -1949,6 +1972,8 @@ async function set_option_for_layer_by_layer_nr(nr) {
 
 	var layer = $(".layer_options_internal")[nr];
 	layer.innerHTML = get_option_for_layer_by_type(nr);
+
+	$($(".layer_options_internal")[nr]).find("select").trigger("change");
 
 	var valid_subtypes = ["initializer", "regularizer"];
 	for (var i = 0; i < valid_initializer_types.length; i++) {

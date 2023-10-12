@@ -783,7 +783,8 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			} else {
 				delete data["inputShape"];
 			}
-			eval(`new_model.add(new ${type}(${JSON.stringify(data)}))`);
+			var model_add_code = `new_model.add(new ${type}(${JSON.stringify(data)}))`;
+			eval(model_add_code);
 		} else {
 			//console.log("adding ", tf.layers[type], ", data: ", data);
 			var new_layer = tf.layers[type](data);
