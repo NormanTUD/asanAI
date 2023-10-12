@@ -1,5 +1,33 @@
 "use strict";
 
+function __predict (data, __model) {
+	if(!data) {
+		err("data undefined");
+		return;
+	}
+
+	if(!__model) {
+		__model = model;
+	}
+
+	if(!__model) {
+		err("Cannot predict without a model");
+		return;
+	}
+
+	var res = __model.predict(data);
+
+	var res_sync = res.arraySync().flat();
+
+	for (var k = 0; k < res_sync.length; k++) {
+		if(isNaN(res_sync[k])) {
+			err("Output contains NaN");
+		}
+	}
+
+	return res;
+}
+
 async function switch_to_next_camera_predict () {
 	webcam_id++;
 	webcam_id = webcam_id % (webcam_modes.length);
@@ -266,7 +294,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	var predictions_tensor;
 
 	try {
-		predictions_tensor = tidy(() => { return model.predict(tensor_img); });
+		predictions_tensor = tidy(() => { return __predict(tensor_img); });
 
 		await _predict_result(predictions_tensor, nr);
 
@@ -575,7 +603,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predictions_tensor = null;
 		$("#predict_error").html("").hide();
 		try {
-			predictions_tensor = await model.predict([predict_data], [1, 1]);
+			predictions_tensor = __predict([predict_data], [1, 1]);
 		} catch (e) {
 			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 
@@ -827,7 +855,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 		if(tensor_shape_matches_model(_tensor)) {
 			try {
-				res = await model.predict([_tensor]);
+				res = __predict([_tensor]);
 
 				var res_array = res.arraySync();
 
@@ -1075,7 +1103,7 @@ async function predict_webcam () {
 	var predictions_tensor = null;
 	try {
 		predictions_tensor = tidy(() => {
-			return model.predict([predict_data]);
+			return __predict([predict_data]);
 		});
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
@@ -1467,7 +1495,7 @@ async function predict_handdrawn () {
 	try {
 		try {
 			predictions_tensor = tidy(() => {
-				return model.predict([predict_data]);
+				return __predict([predict_data]);
 			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
