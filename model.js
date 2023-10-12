@@ -110,7 +110,8 @@ async function _create_model () {
 			("" + e).includes("Convolution layer expected config.filters to be a 'number' > 0 but got undefined") ||
 			("" + e).includes("The kernelSize argument must be an integer or tuple of 2 integers") ||
 			("" + e).includes("The strides argument must be an integer or tuple of 2 integers") ||
-			("" + e).includes("Expected units to be a positive integer, but got undefined")
+			("" + e).includes("Expected units to be a positive integer, but got undefined") ||
+			("" + e).includes("have a defined dimension but the layer received an input with shape")
 		) {
 			wrn("" + e);
 			return;
@@ -171,7 +172,12 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 	return tensorList;
 }
 
-async function compile_model () {
+async function compile_model (recursion_level=0) {
+	if(recursion_level > 3) {
+		err("recursion level for compile_model too high");
+		return;
+	}
+
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
 	var new_model_config_hash = await get_model_config_hash();
@@ -235,6 +241,10 @@ async function compile_model () {
 		} else if (("" + e).includes("model is empty")) {
 			err("" + e)
 			return;
+		} else if (("" + e).includes("e is null")) {
+			err("" + e)
+			await delay(1000);
+			return await compile_model(recursion_level + 1);
 		} else {
 			if(e) {
 				err(e);

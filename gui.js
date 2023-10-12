@@ -207,6 +207,7 @@ function get_tr_str_for_description(desc) {
 
 function is_numeric(str) {
 	if (typeof str != "string") return false;
+	if (str == "") return false;
 	return !isNaN(str) && !isNaN(parse_float(str));
 }
 
@@ -2351,351 +2352,359 @@ async function set_config(index) {
 		swal_msg = language[lang]["undoing_redoing"];
 	}
 
-	l(swal_msg);
+	try {
+		l(swal_msg);
 
-	var overlay = load_msg({"title": swal_msg + "..."});
+		var overlay = load_msg({"title": swal_msg + "..."});
 
-	var original_disabling_saving_status = disabling_saving_status;
-	disabling_saving_status = true;
+		var original_disabling_saving_status = disabling_saving_status;
+		disabling_saving_status = true;
 
-	prev_layer_data = [];
+		prev_layer_data = [];
 
-	is_setting_config = true;
+		is_setting_config = true;
 
-	var config = await _get_configuration(index);
+		var config = await _get_configuration(index);
 
-	disable_show_python_and_create_model = true;
+		disable_show_python_and_create_model = true;
 
-	if (config) {
-		if (!index) {
+		if (config) {
+			if (!index) {
 
-			var trigger_height_change = 0;
+				var trigger_height_change = 0;
 
-			if (config["width"]) {
-				dbg("Setting width");
-				$("#width").val(config["width"]);
-				trigger_height_change++;
-				width = config["width"];
-				assert(typeof(width) == "number", "width is not a number");
-			}
-
-			if (config["height"]) {
-				dbg("Setting height");
-				$("#height").val(config["height"]);
-				trigger_height_change++;
-				height = config["height"];
-				assert(typeof(height) == "number", "height is not a number");
-			}
-
-			if (config["labels"]) {
-				l("Setting labels from config");
-				labels = config["labels"];
-				assert(labels.length > 0, "could not get labels even though they are specified");
-			}
-
-			if (config["max_number_of_files_per_category"]) {
-				assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-				dbg("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
-				$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
-			} else {
-				dbg("No max_number_of_files_per_category found in config");
-			}
-
-			if (config["divide_by"]) {
-				assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-				dbg("Setting divide_by to " + config["divide_by"]);
-				$("#divide_by").val(config["divide_by"]);
-			} else {
-				dbg("Setting divide_by to 1");
-				$("#divide_by").val(1);
-			}
-
-			assert(typeof(config["epochs"]) == "number", "epochs is not a number");
-			assert(typeof(config["loss"]) == "string", "loss is not a string");
-
-			if(finished_loading) {
-				set_epochs(config["epochs"]);
-				set_batch_size(config["batchSize"]);
-				set_validation_split(config["validationSplit"]);
-			} else {
-				if(is_cosmo_mode) {
-					set_epochs(get_get("epochs", config["epochs"]));
-					set_batch_size(get_get("batch_size", config["batchSize"]));
-					set_validation_split(get_get("validation_split", config["validationSplit"]));
+				if (config["width"]) {
+					dbg("Setting width");
+					$("#width").val(config["width"]);
+					trigger_height_change++;
+					width = config["width"];
+					assert(typeof(width) == "number", "width is not a number");
 				}
-			}
-			set_loss(config["loss"], 0);
 
-			set_metric(config["metric"], 0);
-			set_optimizer(config["optimizer"], 0);
-
-			$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
-
-			if (config["optimizer"] == "rmsprop") {
-				l("Setting optimizer to rmsprop");
-				set_rho(config["rho"]);
-				set_decay(config["decay"]);
-				set_epsilon(config["epsilon"]);
-			}
-
-			if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-				set_learning_rate(config["learningRate"]);
-			}
-
-			if (["monentum", "rmsprop"].includes(config["optimizer"])) {
-				set_momentum(config["momentum"]);
-			}
-		}
-
-		var number_of_layers = 0;
-
-		var keras_layers;
-		if (!config["model_structure"]) {
-			var paths = [
-				["keras", "config", "layers"],
-				["keras", "modelTopology", "config", "layers"],
-				["keras", "modelTopology", "model_config", "layers"],
-				["keras", "modelTopology", "model_config", "config", "layers"],
-				["keras", "keras", "modelTopology", "config", "layers"],
-				["keras", "keras", "modelTopology", "model_config", "layers"],
-				["keras", "keras", "modelTopology", "model_config", "config", "layers"],
-				["layers"],
-				["keras"]
-			];
-
-			for (var i = 0; i < paths.length; i++) {
-				if (!keras_layers) {
-					keras_layers = get_key_from_path(config, paths[i]);
+				if (config["height"]) {
+					dbg("Setting height");
+					$("#height").val(config["height"]);
+					trigger_height_change++;
+					height = config["height"];
+					assert(typeof(height) == "number", "height is not a number");
 				}
-			}
 
-			if (keras_layers === undefined) {
-				await send_bug_report();
+				if (config["labels"]) {
+					l("Setting labels from config");
+					labels = config["labels"];
+					assert(labels.length > 0, "could not get labels even though they are specified");
+				}
 
-				Swal.fire({
-					icon: "error",
-					title: "Oops [1]...",
-					text: "Error loading the model"
-				});
-				await write_descriptions();
-				log(config);
-				return;
-			}
+				if (config["max_number_of_files_per_category"]) {
+					assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
+					dbg("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
+					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
+				} else {
+					dbg("No max_number_of_files_per_category found in config");
+				}
 
-			try {
-				number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
-			} catch (e) {
-				Swal.close();
-				err(e);
-				l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
-				return;
-			}
-		} else {
-			number_of_layers = config["model_structure"].length;
-		}
+				if (config["divide_by"]) {
+					assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
+					dbg("Setting divide_by to " + config["divide_by"]);
+					$("#divide_by").val(config["divide_by"]);
+				} else {
+					dbg("Setting divide_by to 1");
+					$("#divide_by").val(1);
+				}
 
-		//log("number_of_layers: " + number_of_layers);
-		await init_number_of_layers(number_of_layers);
+				assert(typeof(config["epochs"]) == "number", "epochs is not a number");
+				assert(typeof(config["loss"]) == "string", "loss is not a string");
 
-		if (config["input_shape"]) {
-			await set_input_shape(config["input_shape"]);
-		} else {
-			var is = null;
-			try {
-				if(Object.keys(config).includes("keras")) {
-					if(Object.keys(config.keras).includes("modelTopology")) {
-						is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
-					} else {
-						is = config.keras.config.layers[0].config.batch_input_shape;
+				if(finished_loading) {
+					set_epochs(config["epochs"]);
+					set_batch_size(config["batchSize"]);
+					set_validation_split(config["validationSplit"]);
+				} else {
+					if(is_cosmo_mode) {
+						set_epochs(get_get("epochs", config["epochs"]));
+						set_batch_size(get_get("batch_size", config["batchSize"]));
+						set_validation_split(get_get("validation_split", config["validationSplit"]));
 					}
 				}
+				set_loss(config["loss"], 0);
 
-				if(is) {
-					is = remove_empty(is);
-					is = Object.values(is);
-					await set_input_shape("[" + is.join(", ") + "]");
-				} else {
-					l("ERROR: keras not found in config");
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
+				set_metric(config["metric"], 0);
+				set_optimizer(config["optimizer"], 0);
+
+				$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
+
+				if (config["optimizer"] == "rmsprop") {
+					l("Setting optimizer to rmsprop");
+					set_rho(config["rho"]);
+					set_decay(config["decay"]);
+					set_epsilon(config["epsilon"]);
 				}
 
-				if (("" + e).includes("keras")) {
-					err("" + e);
-				} else {
-					throw new Error(e);
+				if (["sgd", "rmsprop"].includes(config["optimizer"])) {
+					set_learning_rate(config["learningRate"]);
+				}
+
+				if (["monentum", "rmsprop"].includes(config["optimizer"])) {
+					set_momentum(config["momentum"]);
 				}
 			}
-		}
 
-		if (!config["model_structure"]) {
-			if (keras_layers[0]["class_name"] == "InputLayer") {
-				keras_layers.shift();
-			}
+			var number_of_layers = 0;
 
-			var layer_settings = $(".layer_setting");
-			for (var i = 0; i < keras_layers.length; i++) {
-				var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
-				dbg(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
-				layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
-				layer_type.trigger("change");
-				layer_type.trigger("slide");
-			}
-
-			for (var i = 0; i < keras_layers.length; i++) {
-				var datapoints = [
-					"kernel_initializer",
-					"bias_initializer",
-					"activation",
-					"pool_size",
-					"padding",
-					"strides",
-					"filters",
-					"kernel_size",
-					"dropout_rate",
-					"max_features",
-					"trainable",
-					"use_bias",
-					"stddev",
-					"rate"
+			var keras_layers;
+			if (!config["model_structure"]) {
+				var paths = [
+					["keras", "config", "layers"],
+					["keras", "modelTopology", "config", "layers"],
+					["keras", "modelTopology", "model_config", "layers"],
+					["keras", "modelTopology", "model_config", "config", "layers"],
+					["keras", "keras", "modelTopology", "config", "layers"],
+					["keras", "keras", "modelTopology", "model_config", "layers"],
+					["keras", "keras", "modelTopology", "model_config", "config", "layers"],
+					["layers"],
+					["keras"]
 				];
 
-				dbg(language[lang]["setting_options_for_layer"] + " " + i);
-
-				datapoints.forEach(function (item_name) {
-					if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
-						var value = keras_layers[i]["config"][item_name];
-						if (item_name == "kernel_initializer") {
-							value = detect_kernel_initializer(value);
-						} else if (item_name == "bias_initializer") {
-							value = get_initializer_name(value["class_name"]);
-						}
-
-						if (!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
-							set_item_value(i, item_name, value);
-						}
-					} else {
-						if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
-							var values = keras_layers[i]["config"][item_name];
-							set_xyz_values(i, item_name, values);
-						} else if (item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
-							set_item_value(i, "dropout_rate", keras_layers[i]["config"]["rate"]);
-						} else {
-							//wrn("Item not found in keras: " + item_name);
-						}
-					}
-				});
-
-				var units = keras_layers[i]["config"]["units"];
-				if (units == "number_of_categories") {
-					var number_of_categories = await get_number_of_categories();
-					set_item_value(i, "units", number_of_categories);
-				} else {
-					if (Object.keys(keras_layers[i]["config"]).includes("units")) {
-						set_item_value(i, "units", units);
+				for (var i = 0; i < paths.length; i++) {
+					if (!keras_layers) {
+						keras_layers = get_key_from_path(config, paths[i]);
 					}
 				}
 
-				if ("dilation_rate" in keras_layers[i]["config"]) {
-					var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
-					var dilation_rate_str = dilation_rate.join(",");
-					set_item_value(i, "dilation_rate", dilation_rate_str);
+				if (keras_layers === undefined) {
+					await send_bug_report();
+
+					Swal.fire({
+						icon: "error",
+						title: "Oops [1]...",
+						text: "Error loading the model"
+					});
+					await write_descriptions();
+					log(config);
+					return;
+				}
+
+				try {
+					number_of_layers = keras_layers.length - (keras_layers[0]["class_name"] == "InputLayer" ? 1 : 0);
+				} catch (e) {
+					Swal.close();
+					err(e);
+					l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
+					return;
+				}
+			} else {
+				number_of_layers = config["model_structure"].length;
+			}
+
+			//log("number_of_layers: " + number_of_layers);
+			await init_number_of_layers(number_of_layers);
+
+			if (config["input_shape"]) {
+				await set_input_shape(config["input_shape"]);
+			} else {
+				var is = null;
+				try {
+					if(Object.keys(config).includes("keras")) {
+						if(Object.keys(config.keras).includes("modelTopology")) {
+							is = config.keras.modelTopology.config.layers[0].config.batch_input_shape;
+						} else {
+							is = config.keras.config.layers[0].config.batch_input_shape;
+						}
+					}
+
+					if(is) {
+						is = remove_empty(is);
+						is = Object.values(is);
+						await set_input_shape("[" + is.join(", ") + "]");
+					} else {
+						l("ERROR: keras not found in config");
+					}
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					if (("" + e).includes("keras")) {
+						err("" + e);
+					} else {
+						throw new Error(e);
+					}
 				}
 			}
-		} else {
-			for (var i = 0; i < config["model_structure"].length; i++) {
-				dbg(language[lang]["setting_options_for_layer"] + " " + i);
-				var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
-				layer_type.val(config["model_structure"][i]["type"]);
-				layer_type.trigger("change");
-				layer_type.trigger("slide");
 
-				var keys = Object.keys(config["model_structure"][i]["data"]);
-				for (var j = 0; j < keys.length; j++) {
-					if (!["inputShape"].includes(keys[j])) {
-						var value = config["model_structure"][i]["data"][keys[j]];
+			if (!config["model_structure"]) {
+				if (keras_layers[0]["class_name"] == "InputLayer") {
+					keras_layers.shift();
+				}
 
-						if (["kernelSize", "strides"].includes(keys[j])) {
-							set_xyz_values(i, get_python_name(keys[j]), value);
-						} else if (["dilationRate"].includes(keys[j])) {
-							set_item_value(i, get_python_name(keys[j]), value.join(","));
-						} else {
-							if ((typeof (value)).includes("object")) {
-								if (Object.keys(value).includes("name")) {
-									value = value["name"];
-								}
+				var layer_settings = $(".layer_setting");
+				for (var i = 0; i < keras_layers.length; i++) {
+					var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
+					dbg(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+					layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
+					layer_type.trigger("change");
+					layer_type.trigger("slide");
+				}
+
+				for (var i = 0; i < keras_layers.length; i++) {
+					var datapoints = [
+						"kernel_initializer",
+						"bias_initializer",
+						"activation",
+						"pool_size",
+						"padding",
+						"strides",
+						"filters",
+						"kernel_size",
+						"dropout_rate",
+						"max_features",
+						"trainable",
+						"use_bias",
+						"stddev",
+						"rate"
+					];
+
+					dbg(language[lang]["setting_options_for_layer"] + " " + i);
+
+					datapoints.forEach(function (item_name) {
+						if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
+							var value = keras_layers[i]["config"][item_name];
+							if (item_name == "kernel_initializer") {
+								value = detect_kernel_initializer(value);
+							} else if (item_name == "bias_initializer") {
+								value = get_initializer_name(value["class_name"]);
 							}
 
-							//log("set " + keys[j] + " to " + value);
-							set_item_value(i, get_python_name(keys[j]), value);
+							if (!(keras_layers[i]["class_name"] == "Flatten" && item_name == "trainable")) {
+								set_item_value(i, item_name, value);
+							}
+						} else {
+							if (["kernel_size", "strides", "pool_size"].includes(item_name) && item_name in keras_layers[i]["config"]) {
+								var values = keras_layers[i]["config"][item_name];
+								set_xyz_values(i, item_name, values);
+							} else if (item_name == "dropout_rate" && keras_layers[i]["class_name"] == "Dropout") {
+								set_item_value(i, "dropout_rate", keras_layers[i]["config"]["rate"]);
+							} else {
+								//wrn("Item not found in keras: " + item_name);
+							}
+						}
+					});
+
+					var units = keras_layers[i]["config"]["units"];
+					if (units == "number_of_categories") {
+						var number_of_categories = await get_number_of_categories();
+						set_item_value(i, "units", number_of_categories);
+					} else {
+						if (Object.keys(keras_layers[i]["config"]).includes("units")) {
+							set_item_value(i, "units", units);
+						}
+					}
+
+					if ("dilation_rate" in keras_layers[i]["config"]) {
+						var dilation_rate = keras_layers[i]["config"]["dilation_rate"];
+						var dilation_rate_str = dilation_rate.join(",");
+						set_item_value(i, "dilation_rate", dilation_rate_str);
+					}
+				}
+			} else {
+				for (var i = 0; i < config["model_structure"].length; i++) {
+					dbg(language[lang]["setting_options_for_layer"] + " " + i);
+					var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
+					layer_type.val(config["model_structure"][i]["type"]);
+					layer_type.trigger("change");
+					layer_type.trigger("slide");
+
+					var keys = Object.keys(config["model_structure"][i]["data"]);
+					for (var j = 0; j < keys.length; j++) {
+						if (!["inputShape"].includes(keys[j])) {
+							var value = config["model_structure"][i]["data"][keys[j]];
+
+							if (["kernelSize", "strides"].includes(keys[j])) {
+								set_xyz_values(i, get_python_name(keys[j]), value);
+							} else if (["dilationRate"].includes(keys[j])) {
+								set_item_value(i, get_python_name(keys[j]), value.join(","));
+							} else {
+								if ((typeof (value)).includes("object")) {
+									if (Object.keys(value).includes("name")) {
+										value = value["name"];
+									}
+								}
+
+								//log("set " + keys[j] + " to " + value);
+								set_item_value(i, get_python_name(keys[j]), value);
+							}
 						}
 					}
 				}
 			}
 		}
-	}
 
-	disabling_saving_status = original_disabling_saving_status;
-	disable_show_python_and_create_model = false;
+		disabling_saving_status = original_disabling_saving_status;
+		disable_show_python_and_create_model = false;
 
-	l(language[lang]["creating_model"]);
+		l(language[lang]["creating_model"]);
 
-	if(global_model_data) {
-		await dispose(global_model_data);
-	}
-
-	[model, global_model_data] = await create_model(model);
-
-	l(language[lang]["compiling_model"]);
-	await compile_model();
-
-	try {
-		if (config["weights"]) {
-			l("Setting weights from config-weights");
-			var weights_string = JSON.stringify(config["weights"]);
-			await set_weights_from_string(weights_string, 1, 1);
+		if(global_model_data) {
+			await dispose(global_model_data);
 		}
+
+		[model, global_model_data] = await create_model(model);
+
+		l(language[lang]["compiling_model"]);
+		await compile_model();
+
+		try {
+			if (config["weights"]) {
+				l("Setting weights from config-weights");
+				var weights_string = JSON.stringify(config["weights"]);
+				await set_weights_from_string(weights_string, 1, 1);
+			}
+		} catch (e) {
+			err(e);
+			l("ERROR: Failed to load. Failed to load model and/or weights");
+			$(".overlay").remove();
+			return;
+		}
+
+		disable_all_non_selected_layer_types();
+
+		if (!index) {
+			dbg("Saving current status");
+			await save_current_status();
+		}
+
+		dbg(language[lang]["getting_labels"]);
+		await get_label_data();
+
+		is_setting_config = false;
+
+		l(language[lang]["updating_page"]);
+		var start_t = Date.now();
+		await updated_page(null, null, null, 1);
+		var end_t = Date.now();
+		var runtime = (end_t - start_t) / 1000;
+		l(language[lang]["page_update_took"] + " " + human_readable_time(runtime));
+
+		await write_descriptions();
+
+		dbg(language[lang]["updating_predictions"]);
+		await show_prediction(1, 1);
+
+		$(".kernel_initializer").trigger("change");
+		$(".bias_initializer").trigger("change");
+
+		if(finished_loading) {
+			await wait_for_updated_page(2);
+		}
+
+		l(language[lang]["loaded_configuration"]);
 	} catch (e) {
-		err(e);
-		l("ERROR: Failed to load. Failed to load model and/or weights");
-		$(".overlay").remove();
-		return;
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
 	}
-
-	disable_all_non_selected_layer_types();
-
-	if (!index) {
-		dbg("Saving current status");
-		await save_current_status();
-	}
-
-	dbg(language[lang]["getting_labels"]);
-	await get_label_data();
-
-	is_setting_config = false;
-
-	l(language[lang]["updating_page"]);
-	var start_t = Date.now();
-	await updated_page(null, null, null, 1);
-	var end_t = Date.now();
-	var runtime = (end_t - start_t) / 1000;
-	l(language[lang]["page_update_took"] + " " + human_readable_time(runtime));
-
-	await write_descriptions();
-
-	dbg(language[lang]["updating_predictions"]);
-	await show_prediction(1, 1);
-
-	$(".kernel_initializer").trigger("change");
-	$(".bias_initializer").trigger("change");
-
-	if(finished_loading) {
-		await wait_for_updated_page(2);
-	}
-
-	l(language[lang]["loaded_configuration"]);
 
 	$(".overlay").remove();
 }
