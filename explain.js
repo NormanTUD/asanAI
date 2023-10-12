@@ -276,6 +276,45 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	return drew_something;
 }
 
+function draw_kernel(canvasElement, rescaleFactor, pixels) {
+	// canvasElement is the HTML canvas element where you want to draw the image
+	// rescaleFactor is the factor by which the image should be resized, e.g., 2 for twice the size
+	// pixels is a 3D array [n, m, a] where n is the height, m is the width, and a is the number of channels
+
+	scaleNestedArray(pixels);
+
+	var context = canvasElement.getContext('2d'); // Get the 2D rendering context
+
+	var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+
+	if (a === 3) {
+		// Draw a color image on the canvas and resize it accordingly
+		canvasElement.width = m * rescaleFactor;
+		canvasElement.height = n * rescaleFactor;
+
+		for (let i = 0; i < n; i++) {
+			for (let j = 0; j < m; j++) {
+				var [r, g, b] = pixels[i][j]; // Assuming channels are [red, green, blue]
+				context.fillStyle = `rgb(${r}, ${g}, ${b}`;
+				context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
+			}
+		}
+	} else {
+		// Draw only the first channel
+		canvasElement.width = m * rescaleFactor;
+		canvasElement.height = n * rescaleFactor;
+
+		for (let i = 0; i < n; i++) {
+			for (let j = 0; j < m; j++) {
+				const grayscaleValue = pixels[i][j][0]; // Assuming the first channel is grayscale
+				context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue}`;
+				context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
+			}
+		}
+	}
+}
+
+
 function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
 	var canvas = null;
 
@@ -315,7 +354,7 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 					}
 
 					//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-					ret = draw_grid(canvas, kernel_pixel_size, colors[filter_id][channel_id], 1, 1);
+					ret = draw_kernel(canvas, kernel_pixel_size, colors[filter_id]);
 
 					if(get_canvas_object) {
 						canvasses.push(canvas);
@@ -922,7 +961,13 @@ function draw_internal_states (layer, inputs, applied) {
 
 		if(Object.keys(model.layers[layer]).includes("kernel")) {
 			if(model.layers[layer].kernel.val.shape.length == 4) {
-				kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
+				var ks_x = 0;
+				var ks_y = 1;
+				var number_filters = 2;
+				var filters = 3;
+
+				kernel_data = model.layers[layer].kernel.val.transpose([filters, ks_x, ks_y, number_filters]).arraySync();
+				//kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
 			}
 		}
 
