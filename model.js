@@ -106,7 +106,10 @@ async function _create_model () {
 		} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
 			wrn("" + e);
 			return;
-		} else if(("" + e).includes("Expected units to be a positive integer, but got undefined")) {
+		} else if(
+			("" + e).includes("Convolution layer expected config.filters to be a 'number' > 0 but got undefined") ||
+			("" + e).includes("Expected units to be a positive integer, but got undefined")
+		) {
 			wrn("" + e);
 			return;
 		} else {
