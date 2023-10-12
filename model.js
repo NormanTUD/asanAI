@@ -48,20 +48,28 @@ async function _create_model () {
 	}
 
 	try {
-		if(global_model_data) {
-			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-			for (var i = 0; i < model_data_tensors.length; i++) {
-				await dispose(model_data_tensors[i]);
-			}
-		}
-
-		if(model && Object.keys(model).includes("layers") && model.layers.length) {
-			for (var i = 0; i < model.layers.length; i++) {
-				await dispose(model.layers[i].bias);
-				await dispose(model.layers[i].kernel);
+		try {
+			if(global_model_data) {
+				var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
+				for (var i = 0; i < model_data_tensors.length; i++) {
+					await dispose(model_data_tensors[i]);
+				}
 			}
 
-			await dispose(model);
+			if(model && Object.keys(model).includes("layers") && model.layers.length) {
+				for (var i = 0; i < model.layers.length; i++) {
+					await dispose(model.layers[i].bias);
+					await dispose(model.layers[i].kernel);
+				}
+
+				await dispose(model);
+			}
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err(e);
 		}
 
 		[model, global_model_data] = await create_model(model);
