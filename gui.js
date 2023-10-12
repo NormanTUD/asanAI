@@ -6970,7 +6970,7 @@ async function restart_fcnn () {
 
 		var class_name = model.layers[i].getClassName();
 		if(i == 0) {
-			names.push(`Input Layer ${class_name}`);
+			names.push(`Input Layer`);
 		} else if (i == model.layers.length - 1) {
 			names.push(`Output Layer`);
 		} else {
