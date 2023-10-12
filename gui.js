@@ -7046,7 +7046,7 @@ async function draw_new_fcnn(...args) {
 	}
 }
 
-async function restart_fcnn () {
+function get_fcnn_data () {
 	var names = [];
 	var units = [];
 	var meta_infos = [];
@@ -7109,6 +7109,13 @@ async function restart_fcnn () {
 			kernel_size_y: kernel_size_y
 		});
 	}
+
+	return [names, units, meta_infos];
+}
+
+async function restart_fcnn () {
+
+	var [names, units, meta_infos] = get_fcnn_data();
 
 	await draw_new_fcnn(units, names, meta_infos);
 }
