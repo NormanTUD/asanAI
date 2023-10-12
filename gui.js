@@ -6774,6 +6774,7 @@ async function draw_new_fcnn(...args) {
 
 		if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
 			for (var j = 0; j < numNeurons; j++) {
+				ctx.beginPath();
 				var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 				ctx.beginPath();
 
@@ -6790,9 +6791,11 @@ async function draw_new_fcnn(...args) {
 				ctx.lineWidth = 2;
 				ctx.fill();
 				ctx.stroke();
+				ctx.closePath();
 			}
 		} else if (shapeType == "rectangle_flatten") {
 			if(meta_info["output_shape"]) {
+				ctx.beginPath();
 				var rectSize = maxShapeSize * 2;
 
 
@@ -6812,6 +6815,7 @@ async function draw_new_fcnn(...args) {
 				ctx.lineWidth = 2;
 				ctx.fill();
 				ctx.stroke();
+				ctx.closePath();
 			} else {
 				alert("Has no output shape");
 			}
