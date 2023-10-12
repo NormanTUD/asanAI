@@ -106,6 +106,9 @@ async function _create_model () {
 		} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
 			wrn("" + e);
 			return;
+		} else if(("" + e).includes("Expected units to be a positive integer, but got undefined")) {
+			wrn("" + e);
+			return;
 		} else {
 			await except("ERROR1", "" + e);
 			if(mode == "beginner") {
