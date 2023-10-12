@@ -2414,8 +2414,14 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 			//1) combine the arrays:
 			var list = [];
-			for (var j = 0; j < x_data.length; j++)
-				list.push({"x_data": parse_float(x_data[j][0]), "y_data": parse_float(y_data[j][0])});
+			for (var j = 0; j < x_data.length; j++) {
+				var x_pure = x_data[j][0];
+				var y_pure = y_data[j][0];
+
+				if(looks_like_number(x_pure) && looks_like_number(y_pure)) {
+					list.push({"x_data": parse_float(x_pure), "y_data": parse_float(y_pure)});
+				}
+			}
 
 			//2) sort:
 			list.sort(function(a, b) {
