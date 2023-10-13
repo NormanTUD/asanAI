@@ -523,9 +523,13 @@ function _prepare_data(item, original_item) {
 
 function number_of_elements_in_tensor_shape (shape) {
 	var required_elements = 1;
-	for (var i = 0; i < model.input.shape.length; i++) {
-		required_elements *= model.input.shape[i]
+	for (var i = 0; i < shape.length; i++) {
+		if(shape[i] !== null) {
+			required_elements *= shape[i]
+		}
 	}
+
+	return required_elements;
 }
 
 async function predict (item, force_category, dont_write_to_predict_tab) {
@@ -580,23 +584,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(!predict_data) {
 			await dispose(predict_data);
 			return;
-		} else {
-			if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
-				await dispose(predict_data);
-
-				l("Empty predict data. Not predicting.");
-
-				return;
-			}
-		}
-
-		if(!tensor_shape_matches_model(predict_data)) {
+		} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 			await dispose(predict_data);
 
-			var expected = eval(JSON.stringify(model.layers[0].input.shape));
-			expected[0] = "null";
-			l("Error: Expected input shape: [" + eval(JSON.stringify(expected)).join(", ") + "], but got [" + predict_data.shape.join(", ") + "]");
-			throw new Error("Expected input shape: [" + eval(JSON.stringify(expected)).join(", ") + "], but got [" + predict_data.shape.join(", ") + "]");
+			l("Empty predict data. Not predicting.");
+
 			return;
 		}
 
@@ -612,59 +604,51 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predictions_tensor = null;
 		$("#predict_error").html("").hide();
 		try {
+			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
+			var prod_mod_shape = number_of_elements_in_tensor_shape(model.input);
 
+			log(`prod_pred_shape: ${prod_pred_shape}, prod_mod_shape: ${prod_mod_shape}`);
 
+			if(prod_pred_shape == prod_mod_shape) {
+				var model_shape_one = model.input.shape;
+				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
 
+				if(predict_data.shape.join(",") != model_shape_one) {
+					predict_data = tidy(() => {
+						var old_tensor = predict_data;
+						console.log("A: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+						var new_data = old_tensor.reshape(model_shape_one);
 
+						console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
-
-			if(predict_data) {
-				var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
-				var prod_mod_shape = number_of_elements_in_tensor_shape(model.input);
-
-				if(prod_pred_shape == prod_mod_shape) {
-					var model_shape_one = model.input.shape;
-					if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
-
-					if(predict_data.shape.join(",") != model_shape_one) {
-						predict_data = tidy(() => {
-							var old_tensor = predict_data;
-							console.log("A: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-							var new_data = old_tensor.reshape(model_shape_one);
-
-							console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
-
-							return new_data;
-						});
-					}
-				} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
-					var _max = Math.max(prod_pred_shape, prod_mod_shape);
-					var _min = Math.min(prod_pred_shape, prod_mod_shape);
-
-					var elements = (max - (_max % _min)) / _min;
-
-					var model_shape_one = model.input.shape;
-					if(model_shape_one[0] === null) { model_shape_one[0] = elements; }
-
-					if(predict_data.shape.join(",") != model_shape_one) {
-						predict_data = tidy(() => {
-							var old_tensor = predict_data;
-							console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-							var new_data = old_tensor.reshape(model_shape_one);
-
-							console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
-
-							return new_data;
-						});
-					}
-				} else {
-					err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
+						return new_data;
+					});
 				}
+			} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
+				var _max = Math.max(prod_pred_shape, prod_mod_shape);
+				var _min = Math.min(prod_pred_shape, prod_mod_shape);
+
+				var elements = (max - (_max % _min)) / _min;
+
+				var model_shape_one = model.input.shape;
+				if(model_shape_one[0] === null) { model_shape_one[0] = elements; }
+
+				if(predict_data.shape.join(",") != model_shape_one) {
+					predict_data = tidy(() => {
+						var old_tensor = predict_data;
+						console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+						var new_data = old_tensor.reshape(model_shape_one);
+
+						console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
+
+						return new_data;
+					});
+				}
+			} else {
+				err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
+				await dispose(predict_data);
+				return;
 			}
-
-
-
-
 
 			predictions_tensor = __predict(predict_data);
 		} catch (e) {
