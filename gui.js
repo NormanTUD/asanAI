@@ -1959,7 +1959,7 @@ async function initializer_layer_options(thisitem) {
 	await updated_page(null, 1);
 }
 
-// sets options for layer by layer nr
+// sets options for layer by layer nr++++
 async function set_option_for_layer_by_layer_nr(nr) {
 	assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
