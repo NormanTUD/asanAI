@@ -888,6 +888,10 @@ function add_layer_debuggers () {
 			return;
 		}
 
+		if(!model.layers) {
+			return;
+		}
+
 		for (var i = 0; i < model.layers.length; i++) {
 			if(get_methods(model.layers[i]).includes("original_apply_real")) {
 				model.layers[i].apply = model.layers[i].original_apply_real;

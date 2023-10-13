@@ -941,7 +941,15 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 			}
 		}
 	} catch (e) {
-		throw new Error(e);
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		if(("" + e).includes("model.layers is undefined")) {
+			wrn("model.layers is undefined");
+		} else {
+			throw new Error(e);
+		}
 	}
 
 	return false;
