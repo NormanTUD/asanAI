@@ -6938,13 +6938,19 @@ async function draw_new_fcnn(...args) {
 		}
 	}
 
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+}
+
+function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
 	// Draw connections
 	for (var i = 0; i < layers.length - 1; i++) {
-		var _meta_info = meta_infos[i];
+		var meta_info = meta_infos[i];
 
-		var layer_type = _meta_info["layer_type"];
-		var layer_input_shape = _meta_info["input_shape"];
-		var layer_output_shape = _meta_info["output_shape"];
+		var layer_type = meta_info["layer_type"];
+		var layer_input_shape = meta_info["input_shape"];
+		var layer_output_shape = meta_info["output_shape"];
 
 		var currentLayerX = (i + 1) * layerSpacing;
 		var nextLayerX = (i + 2) * layerSpacing;
@@ -7018,8 +7024,6 @@ async function draw_new_fcnn(...args) {
 			}
 		}
 	}
-
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
@@ -7040,10 +7044,10 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 
 		if (meta_infos && meta_infos[i]) {
 			ctx.beginPath();
-			var _meta_info = meta_infos[i];
+			var meta_info = meta_infos[i];
 
-			var _is = _meta_info.input_shape;
-			var _os = _meta_info.output_shape;
+			var _is = meta_info.input_shape;
+			var _os = meta_info.output_shape;
 
 			var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 			ctx.font = font_size + "px Arial";
