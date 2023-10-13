@@ -491,6 +491,67 @@ function _predict_table_row (label, w, max_i, probability, i) {
 	return str;
 }
 
+function _prepare_data(item, original_item) {
+	var data = "";
+
+	var regex_space_start = /^\s+/ig;
+	var regex_space_end = /\s+$/ig;
+	var regex_comma = /,?\s+/ig;
+
+	item = item.replaceAll(regex_space_start, "");
+	item = item.replaceAll(regex_space_end, "");
+	item = item.replaceAll(regex_comma, ", ");
+
+	item = item.replaceAll(/\btrue\b/ig, "1");
+	item = item.replaceAll(/\bfalse\b/ig, "0");
+
+	if(!item.startsWith("[")) {
+		item = "[" + item + "]";
+	}
+
+	data = eval(item);
+
+	if(!original_item.startsWith("[[")) {
+		var data_input_shape = get_shape_from_array(data);
+
+		var input_shape = model.layers[0].input.shape;
+		if(input_shape[0] === null) {
+			var original_input_shape = input_shape;
+			input_shape = remove_empty(input_shape);
+			if(input_shape.length != data_input_shape.length) {
+				data = [data];
+			}
+		}
+	}
+
+	if(number_of_elements_in_tensor_shape(get_shape_from_array(data)) == number_of_elements_in_tensor_shape(model.input)) {
+		var model_shape_one = model.input.shape;
+		model_shape_one[0] = 1;
+		if(get_shape_from_array([data]).join(",") != model_shape_one) {
+			var new_data = tidy(() => {
+				var old_tensor = tf.tensor([data]);
+				console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+				var new_data = old_tensor.reshape(model_shape_one).arraySync();
+
+				return new_data;
+			});
+		} else {
+			console.warn(`A: >${get_shape_from_array([data]).join(",")}< = >${model_shape_one}<`);
+		}
+	} else {
+		console.warn(`B: ${number_of_elements_in_tensor_shape(get_shape_from_array(data))} == ${number_of_elements_in_tensor_shape(model.input)}`);
+	}
+
+	return data;
+}
+
+function number_of_elements_in_tensor_shape (shape) {
+	var required_elements = 1;
+	for (var i = 0; i < model.input.shape.length; i++) {
+		required_elements *= model.input.shape[i]
+	}
+}
+
 async function predict (item, force_category, dont_write_to_predict_tab) {
 	var pred_tab = "prediction";
 
@@ -524,7 +585,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
-				data = numpy_str_to_tf_tensor(item, 0).arraySync();
+				data = [numpy_str_to_tf_tensor(item, 0).arraySync()];
 			} else {
 				var original_item = item;
 
@@ -534,38 +595,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					return;
 				}
 
-				var regex_space_start = /^\s+/ig;
-				var regex_space_end = /\s+$/ig;
-				var regex_comma = /,?\s+/ig;
-
-				item = item.replaceAll(regex_space_start, "");
-				item = item.replaceAll(regex_space_end, "");
-				item = item.replaceAll(regex_comma, ", ");
-
-				item = item.replaceAll(/\btrue\b/ig, "1");
-				item = item.replaceAll(/\bfalse\b/ig, "0");
-
-				if(!item.startsWith("[")) {
-					item = "[" + item + "]";
-				}
-
-				data = eval(item);
-
-				if(!original_item.startsWith("[[")) {
-					var data_input_shape = await get_shape_from_array(data);
-
-					var input_shape = model.layers[0].input.shape;
-					if(input_shape[0] === null) {
-						var original_input_shape = input_shape;
-						input_shape = remove_empty(input_shape);
-						if(input_shape.length != data_input_shape.length) {
-							data = [data];
-						}
-					}
-				}
+				data = _prepare_data(item, original_item);
 			}
 
-			predict_data = tensor([data]);
+			predict_data = tensor(data);
+			console.debug("Predict data input shape: " + predict_data.shape.join(","));
 		}
 
 		if(!predict_data) {
@@ -1031,7 +1065,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 
-		var shape = await get_shape_from_array(img);
+		var shape = get_shape_from_array(img);
 		if(shape.length != 3) {
 			$("#grad_cam_heatmap").hide();
 		} else {
