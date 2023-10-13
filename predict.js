@@ -619,14 +619,37 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 
 			if(predict_data) {
-				if(number_of_elements_in_tensor_shape(predict_data.shape) == number_of_elements_in_tensor_shape(model.input)) {
+				var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
+				var prod_mod_shape = number_of_elements_in_tensor_shape(model.input);
+
+				if(prod_pred_shape == prod_mod_shape) {
 					var model_shape_one = model.input.shape;
 					if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
 
 					if(predict_data.shape.join(",") != model_shape_one) {
 						predict_data = tidy(() => {
 							var old_tensor = predict_data;
-							console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+							console.log("A: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+							var new_data = old_tensor.reshape(model_shape_one);
+
+							console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
+
+							return new_data;
+						});
+					}
+				} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
+					var _max = Math.max(prod_pred_shape, prod_mod_shape);
+					var _min = Math.min(prod_pred_shape, prod_mod_shape);
+
+					var elements = (max - (_max % _min)) / _min;
+
+					var model_shape_one = model.input.shape;
+					if(model_shape_one[0] === null) { model_shape_one[0] = elements; }
+
+					if(predict_data.shape.join(",") != model_shape_one) {
+						predict_data = tidy(() => {
+							var old_tensor = predict_data;
+							console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
 							var new_data = old_tensor.reshape(model_shape_one);
 
 							console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
