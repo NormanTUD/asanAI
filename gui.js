@@ -7019,9 +7019,13 @@ async function draw_new_fcnn(...args) {
 		}
 	}
 
-	// Draw labels
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+}
+
+function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
 	for (var i = 0; i < layers.length; i++) {
 		if (labels && labels[i]) {
+			ctx.beginPath();
 			var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 			ctx.font = font_size + "px Arial";
 			if(is_dark_mode) {
@@ -7031,11 +7035,11 @@ async function draw_new_fcnn(...args) {
 			}
 			ctx.textAlign = "center";
 			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24) - 5);
+			ctx.closePath();
 		}
-	}
 
-	for (var i = 0; i < layers.length; i++) {
 		if (meta_infos && meta_infos[i]) {
+			ctx.beginPath();
 			var _meta_info = meta_infos[i];
 
 			var _is = _meta_info.input_shape;
@@ -7051,6 +7055,7 @@ async function draw_new_fcnn(...args) {
 			ctx.textAlign = "center";
 			ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - (24) - 5);
 			ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - 5);
+			ctx.closePath();
 		}
 	}
 }
