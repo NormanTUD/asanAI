@@ -4958,8 +4958,50 @@ function hide_tab_label(label) {
 	}
 }
 
+function tab_already_open (to_open) {
+	var is_already_open = 0;
+
+	$(".ui-state-active").each((i, e) => {
+		if(is_already_open) {
+			return;
+		}
+		var href = $(e).is(":visible") && $($(e).children()[0]).prop("href").replace(/.*#/, "");
+		var id = $(e).is(":visible") && $($(e).children()[0]).prop("id");
+
+		if(href == to_open || id == to_open) {
+			is_already_open = 1;
+		}
+
+		if(!$("#" + href).is(":visible")) {
+			is_already_open = 0;
+		}
+	})
+
+	return is_already_open;
+}
+
+function show_specific_tab_content (label) {
+	$("#right_side").find(".ui-tab").each((i, e) => {
+		var href = $(e).find("a").attr("href").replace(/.*#/, "");
+		var id = $(e).find("a").attr("id").replace(/.*#/, "");
+		if(href == label || id == label) {
+			$("#" + href).show()
+		} else {
+			$("#" + href).hide()
+		}
+	});
+}
+
+function hide_all_tab_contents () {
+	$("#right_side").find(".ui-tab").each((i, e) => {
+		$("#" + ($(e).find("a").attr("href").replace(/.*#/, ""))).hide()
+	});
+}
+
 function show_tab_label(label, click) {
 	assert(typeof(label) == "string", "label is not a string");
+
+	var auto_skip_click = label == "math_tab_label" && tab_already_open(label);
 
 	var $item = $("#" + label);
 	assert($item.length == 1, "Invalid or double $item for label " + label);
@@ -4980,9 +5022,12 @@ function show_tab_label(label, click) {
 	} else {
 		$item.show().parent().show();
 
-		if(click) {
+		if(click && !auto_skip_click) {
 			$item.trigger("click");
 		}
+
+		//hide_all_tab_contents();
+		//show_specific_tab_content(label);
 	}
 
 	update_translations(); // await not possible
