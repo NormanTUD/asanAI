@@ -6347,6 +6347,9 @@ function model_is_ok () {
 
 		last_model_ok_status = _content;
 	}
+
+	// nasty hack to prevent both, ribbon icons and ribbon at the same time
+	$("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible") && show_ribbon();
 }
 
 function show_overlay(text, title="") {
