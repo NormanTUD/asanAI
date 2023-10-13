@@ -214,14 +214,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	if(!tensor_shape_matches_model(tensor_img)) {
-		await dispose(tensor_img);
-		if(new_tensor_img) {
-			await dispose(new_tensor_img);
-		}
-		return;
-	}
-
 	while (!tf.backend()) {
 		await delay(100);
 	}
@@ -233,6 +225,10 @@ async function predict_demo (item, nr, tried_again = 0) {
 		await dispose(tensor_img);
 		return;
 	}
+
+
+
+	console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
 	if(!tensor_shape_matches_model(tensor_img)) {
 		dbg("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
@@ -524,24 +520,6 @@ function _prepare_data(item, original_item) {
 		}
 	}
 
-	if(number_of_elements_in_tensor_shape(get_shape_from_array(data)) == number_of_elements_in_tensor_shape(model.input)) {
-		var model_shape_one = model.input.shape;
-		model_shape_one[0] = 1;
-		if(get_shape_from_array([data]).join(",") != model_shape_one) {
-			var new_data = tidy(() => {
-				var old_tensor = tf.tensor([data]);
-				console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-				var new_data = old_tensor.reshape(model_shape_one).arraySync();
-
-				return new_data;
-			});
-		} else {
-			console.warn(`A: >${get_shape_from_array([data]).join(",")}< = >${model_shape_one}<`);
-		}
-	} else {
-		console.warn(`B: ${number_of_elements_in_tensor_shape(get_shape_from_array(data))} == ${number_of_elements_in_tensor_shape(model.input)}`);
-	}
-
 	return data;
 }
 
@@ -599,14 +577,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			}
 
 			predict_data = tensor(data);
-			console.debug("Predict data input shape: " + predict_data.shape.join(","));
 		}
 
 		if(!predict_data) {
 			await dispose(predict_data);
 			return;
 		} else {
-			if(predict_data.shape.includes(0)) {
+			if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 				await dispose(predict_data);
 
 				l("Empty predict data. Not predicting.");
@@ -637,11 +614,39 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predictions_tensor = null;
 		$("#predict_error").html("").hide();
 		try {
-			predictions_tensor = __predict([predict_data]);
+
+
+
+
+
+
+			if(number_of_elements_in_tensor_shape(predict_data.shape) == number_of_elements_in_tensor_shape(model.input)) {
+				var model_shape_one = model.input.shape;
+				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
+
+				if(predict_data.shape.join(",") != model_shape_one) {
+					predict_data = tidy(() => {
+						var old_tensor = predict_data;
+						console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+						var new_data = old_tensor.reshape(model_shape_one);
+
+						return new_data;
+					});
+				}
+			} else {
+				err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
+			}
+
+
+
+
+
+			predictions_tensor = __predict(predict_data);
 		} catch (e) {
 			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 
 			if(("" + e).includes("got array with shape")) {
+				err("" + e);
 				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
 			} else {
 				l("Predict data shape:" + predict_data.shape);
