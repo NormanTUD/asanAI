@@ -6905,7 +6905,6 @@ async function draw_new_fcnn(...args) {
 	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
 	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-	
 	_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
@@ -6942,6 +6941,7 @@ function _draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, c
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
+
 		_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 	}
 }
