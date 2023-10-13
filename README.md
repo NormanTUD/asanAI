@@ -139,3 +139,7 @@ In php.ini, set
 upload_max_filesize = 100M;
 post_max_size = 100M;
 ```
+
+# Sponsored by
+
+![Sponsors](_gui/sponsored_by.png "Sponsored by")
