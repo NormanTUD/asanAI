@@ -228,8 +228,6 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 
 
-	console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
-
 	if(!tensor_shape_matches_model(tensor_img)) {
 		dbg("Model input shape: ", model.input.shape, "Tensor-Img-shape:", tensor_img.shape);
 		await dispose(tensor_img);
@@ -620,21 +618,25 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 
 
-			if(number_of_elements_in_tensor_shape(predict_data.shape) == number_of_elements_in_tensor_shape(model.input)) {
-				var model_shape_one = model.input.shape;
-				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
+			if(predict_data) {
+				if(number_of_elements_in_tensor_shape(predict_data.shape) == number_of_elements_in_tensor_shape(model.input)) {
+					var model_shape_one = model.input.shape;
+					if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
 
-				if(predict_data.shape.join(",") != model_shape_one) {
-					predict_data = tidy(() => {
-						var old_tensor = predict_data;
-						console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-						var new_data = old_tensor.reshape(model_shape_one);
+					if(predict_data.shape.join(",") != model_shape_one) {
+						predict_data = tidy(() => {
+							var old_tensor = predict_data;
+							console.log("changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
+							var new_data = old_tensor.reshape(model_shape_one);
 
-						return new_data;
-					});
+							console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
+
+							return new_data;
+						});
+					}
+				} else {
+					err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
 				}
-			} else {
-				err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
 			}
 
 
