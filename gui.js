@@ -7039,10 +7039,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 		var currentSpacing = Math.min(maxSpacing, (canvasHeight / currentLayerNeurons) * 0.8);
 		var nextSpacing = Math.min(maxSpacing, (canvasHeight / nextLayerNeurons) * 0.8);
 
-		var stop_after_one = 0;
-
 		for (var j = 0; j < currentLayerNeurons; j++) {
-
 			var currentNeuronY = (j - (currentLayerNeurons - 1) / 2) * currentSpacing + layerY;
 
 			// Check if the current layer is a Flatten layer
@@ -7070,7 +7067,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				if(conv_connections.length && Object.keys(conv_connections).includes("" + j) && Object.keys(conv_connections).includes("1") && Object.keys(conv_connections).includes("2")) {
 					start_x = conv_connections[j][0];
 					start_y = conv_connections[j][1];
-					stop_after_one = 1;
 				}
 
 				ctx.beginPath();
@@ -7078,10 +7074,7 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 				ctx.lineTo(nextLayerX - maxRadius, nextNeuronY);
 				ctx.strokeStyle = "gray";
 				ctx.stroke();
-				
-				if(stop_after_one) {
-					return;
-				}
+
 			}
 		}
 	}
