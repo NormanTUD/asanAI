@@ -4234,6 +4234,7 @@ async function rename_labels() {
 
 }
 
+// shows or hides category delete
 function show_or_hide_hide_delete_category() {
 	if ($(".own_image_label").length > 1) {
 		$(".delete_category_button").show();
