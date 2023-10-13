@@ -338,6 +338,7 @@ var layer_options = {
 		],
 		"category": "Activation"
 	},
+	/*
 	"batchNormalization": {
 		"description": "<span class=\"TRANSLATEME_batchNormalization_description\" \/>",
 		"options": [
@@ -356,6 +357,7 @@ var layer_options = {
 		],
 		"category": "Normalization"
 	},
+	*/
 	"layerNormalization": {
 		"description": "<span class=\"TRANSLATEME_layerNormalization_description\" \/>",
 		"options": [
