@@ -628,7 +628,9 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				var _max = Math.max(prod_pred_shape, prod_mod_shape);
 				var _min = Math.min(prod_pred_shape, prod_mod_shape);
 
-				var elements = (_max - (_max % _min)) / _min;
+				var _modulo = _max % _min;
+
+				var elements = (_max - _modulo) / _min;
 
 				var model_shape_one = model.input.shape;
 				model_shape_one[0] = elements;
@@ -647,8 +649,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					});
 				}
 			} else {
-				err(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
 				await dispose(predict_data);
+				throw(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
 				return;
 			}
 
@@ -659,6 +661,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			if(("" + e).includes("got array with shape")) {
 				err("" + e);
 				$("#predict_error").html(("" + e).replace(/^(?:Error:\s*)*/, "Error:")).show();
+			} else if(("" + e).includes("Could not reshape")) {
+				throw new Error("" + e);
 			} else {
 				l("Predict data shape:" + predict_data.shape);
 				err(e);
