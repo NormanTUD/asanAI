@@ -253,6 +253,9 @@ async function compile_model (recursion_level=0) {
 			err("" + e)
 			await delay(1000);
 			return await compile_model(recursion_level + 1);
+		} else if (("" + e).includes("model.compile is not a function")) {
+			err("" + e);
+			return;
 		} else {
 			if(e) {
 				err(e);
