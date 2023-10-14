@@ -6877,7 +6877,7 @@ function _draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, laye
 		ctx.fillStyle = "lightgray";
 
 		ctx.strokeStyle = "black";
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 1;
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
