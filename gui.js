@@ -6907,7 +6907,7 @@ function _draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shap
 		}
 
 		ctx.strokeStyle = "black";
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 1;
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
