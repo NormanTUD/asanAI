@@ -132,9 +132,6 @@ function tf_div (...args) {
 function tf_moments (...args) {
 	var res = tf.moments(...args);
 
-	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
-	_clean_custom_tensors();
-
 	return res;
 }
 
