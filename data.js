@@ -1733,6 +1733,7 @@ async function confusion_matrix(classes) {
 			dbg("Cannot predict image: " + e);
 
 			await dispose(img_tensor);
+			await dispose(res);
 
 			continue;
 		}
@@ -1741,6 +1742,7 @@ async function confusion_matrix(classes) {
 			dbg("res is empty");
 
 			await dispose(img_tensor);
+			await dispose(res);
 
 			continue;
 		}
@@ -1769,6 +1771,7 @@ async function confusion_matrix(classes) {
 		}
 
 		await dispose(img_tensor);
+		await dispose(res);
 		await dispose(predicted_tensor);
 
 		num_items++;
