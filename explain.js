@@ -1143,7 +1143,17 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
-		full_data["image"] = array_sync(tidy(() => { return deprocess_image(generated_data); }));
+		try {
+			full_data["image"] = array_sync(tidy(() => { return deprocess_image(generated_data); }));
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("" + e);
+
+			full_data["worked"] = 0;
+		}
 	} else {
 		full_data["data"] = array_sync(generated_data);
 	}
