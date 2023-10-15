@@ -557,7 +557,7 @@ async function get_xs_and_ys () {
 
 				//log(imgs_shape);
 
-				x = expand_dims(ones(imgs_shape));
+				x = tidy(() => { return expand_dims(ones(imgs_shape)); });
 
 				//log("this_data:", this_data);
 				//log("this_data.length", this_data.length);
@@ -565,7 +565,17 @@ async function get_xs_and_ys () {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
 
-					x = tf_concat(x, item);
+					var await_outside = [];
+
+					x = tidy(() => {
+						var concatted = tf_concat(x, item);
+						await_outside.push(dispose(item), dispose(x));
+						return concatted;
+					});
+
+					await await_outside[0];
+					await await_outside[1];
+
 					classes.push(this_category_counter);
 
 					if ($("#auto_augment").is(":checked")) {
@@ -590,9 +600,14 @@ async function get_xs_and_ys () {
 							[classes, x] = await augment_sine_ripple(item, label_nr, x, classes);
 						}
 					}
+
+					await dispose(item);
 				}
 
 				var x_arr = await x.arraySync();
+
+				await dispose(x);
+
 				x = tidy(() => {
 					x_arr.shift();
 					x = tensor(x_arr);
