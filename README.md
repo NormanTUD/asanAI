@@ -5,7 +5,7 @@ This software is dedicated to my mother, who died on the 31st of march 2022 afte
 # asanAI
 
 This is a more or less complete GUI for TensorFlow.js. With it, you can create and train models
-fully in your browser.
+fully in your browser. A live demo is available at https://asanai.scads.ai
 
 # Run in docker
 
