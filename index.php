@@ -169,7 +169,10 @@
 					$files = scandir('presentation/de/');
 					$i = 0;
 					foreach($files as $file) {
-						if((preg_match("/\.png$/i", $file) || preg_match("/\.svg$/i", $file)) && (!isset($_GET["max_presentation"]) || $i <= $_GET["max_presentation"])) {
+						if(
+							(preg_match("/\.png$/i", $file) || preg_match("/\.svg$/i", $file)) && 
+							(!isset($_GET["max_presentation"]) || $i <= $_GET["max_presentation"])
+						) {
 							$path = "presentation/de/$file";
 							print "<div class='slide'><img style='margin-left: auto; margin-right: auto; display: block; max-width: 95%; max-height: 95%; height: 90%; object-fit: contain;' alt='Presentation, page filename: $file' src='$path?t=".get_file_state_identifier($path)."'></div>";
 							$i++;
