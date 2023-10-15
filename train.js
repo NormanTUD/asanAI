@@ -1345,6 +1345,10 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 }
 
 function extractCategoryFromURL(_url) {
+	if(!_url) {
+		dbg(`extractCategoryFromURL(${_url})`);
+		return null;
+	}
 	try {
 		const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
 
@@ -1504,7 +1508,7 @@ async function visualize_train () {
 
 		try {
 			var src = x.src;
-			if(src) {
+			if(src && x.tagName == "IMG") {
 				var predicted_tensor = predictions_tensors[i];
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
@@ -1515,6 +1519,9 @@ async function visualize_train () {
 				var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 
 				var correct_category = extractCategoryFromURL(src);
+				if(correct_category === undefined || correct_category === null) {
+					continue;				
+				}
 
 				var predicted_category = labels[predicted_index];
 
