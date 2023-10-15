@@ -970,8 +970,9 @@ function draw_internal_states (layer, inputs, applied) {
 				var number_filters = 2;
 				var filters = 3;
 
-				kernel_data = model.layers[layer].kernel.val.transpose([filters, ks_x, ks_y, number_filters]).arraySync();
-				//kernel_data = model.layers[layer].kernel.val.transpose([3, 2, 1, 0]).arraySync();
+				kernel_data = tidy(() => {
+					return tf_transpose(model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]).arraySync();
+				});
 			}
 		}
 

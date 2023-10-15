@@ -1,5 +1,15 @@
 var _custom_tensors = {};
 
+function tf_transpose (...args) {
+	var res = tf.transpose(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
+}
+
+
 function tf_sub (...args) {
 	var res = tf.sub(...args);
 

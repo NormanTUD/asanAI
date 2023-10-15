@@ -6799,7 +6799,7 @@ function load_shoe_example () {
 /*
 function get_kernel_images (layer_nr, all=0) {
     var _k = model.layers[layer_nr].kernel.val.shape;
-    var transposed_kernel = model.layers[layer_nr].kernel.val.transpose([3, 0, 1, 2]).arraySync()
+    var transposed_kernel = tidy(() => { return tf_transpose(model.layers[layer_nr].kernel.val, [3, 0, 1, 2]).arraySync(); });
 
     var kernel_size_x = _k[0];
     var kernel_size_y = _k[1];

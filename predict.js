@@ -339,7 +339,7 @@ async function _predict_result(predictions_tensor, nr) {
 }
 
 async function _predict_image (predictions_tensor, desc) {
-	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+	var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
 	var predictions = predictions_tensor_transposed.arraySync();
 
 	var pxsz = 1;
@@ -1226,7 +1226,7 @@ async function predict_webcam () {
 }
 
 function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
-	var transposed = predictions_tensor.transpose([3, 1, 2, 0]).arraySync();
+	var transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]).arraySync();
 
 	for (var i = 0; i < predictions_tensor.shape[3]; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
@@ -1627,7 +1627,7 @@ async function _predict_handdrawn(predictions_tensor) {
 }
 
 async function _image_output_handdrawn(predictions_tensor) {
-	var predictions_tensor_transposed = predictions_tensor.transpose([3, 1, 2, 0]);
+	var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
 	var predictions = predictions_tensor_transposed.arraySync();
 
 	var pxsz = 1;
