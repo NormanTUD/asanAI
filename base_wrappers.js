@@ -76,7 +76,8 @@ function tf_reshape (...args) {
 function tf_unique (...args) {
 	var res = tf.unique(...args);
 
-	_custom_tensors["" + res.id] = [get_stack_trace(), res, "[tf_unique]"];
+	_custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)];
+	_custom_tensors["" + res.indices.id] = [get_stack_trace(), res.indices, tensor_print_to_string(res.indices)];
 	_clean_custom_tensors();
 
 	return res;
