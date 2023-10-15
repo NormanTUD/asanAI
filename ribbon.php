@@ -430,26 +430,18 @@
 					<tr>
 						<td><span class="TRANSLATEME_auto_rotate_images"></span>?</td>
 						<td><input type="checkbox" value=1 id="augment_rotate_images"></td>
-						<td><span class="TRANSLATEME_sine_ripple"></span>?</td>
-						<td><input type="checkbox" value=1 id="augment_sine_ripple"></td>
 					</tr>
 					<tr>
 						<td><span class="TRANSLATEME_number_of_rotations"></span>?</td>
 						<td><input type="number" min=1 value=4 id="number_of_rotations"></td>
-						<td></td>
-						<td></td>
 					</tr>
 					<tr>
 						<td><span class="TRANSLATEME_invert_images"></span>?</td>
 						<td><input type="checkbox" value=1 id="augment_invert_images"></td>
-						<td></td>
-						<td></td>
 					</tr>
 					<tr>
 						<td>Flip left/right?</td>
 						<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
-						<td></td>
-						<td></td>
 					</tr>
 				</table>
 			</div>

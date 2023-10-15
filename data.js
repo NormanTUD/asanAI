@@ -366,21 +366,6 @@ function truncate_text (fullStr, strLen, separator) {
 	return res;
 }
 
-function sine_ripple (img) {
-	var uuid = uuidv4();
-	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-	toPixels(tensor(array_sync(img)[0]), $("#" + uuid)[0]);
-	var canvas = $("#" + uuid)[0];
-	var context = canvas.getContext("2d");
-	var data = context.getImageData(0,0,canvas.width, canvas.height);
-	JSManipulate.sineripple.filter(data);
-	context.putImageData(data,0,0);
-	var rippled = fromPixels(canvas);
-	$(canvas).remove();
-
-	return rippled;
-}
-
 // Funktion zum Rotieren eines Bildes
 function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
 	l("Rotating image: " + degree + "°");
@@ -406,13 +391,6 @@ function augment_rotate_images_function(item, degree, this_category_counter, x, 
 		classes.push(label_nr);
 	}
 
-	if ($("#augment_sine_ripple").is(":checked")) {
-		var rippled = sine_ripple(augmented_img);
-		x = tf_concat(x, resizeNearestNeighbor(expand_dims(rippled), [height, width]));
-		add_tensor_as_image_to_photos(rippled);
-		classes.push(label_nr);
-	}
-
 	return [classes, x];
 }
 
@@ -434,15 +412,6 @@ function augment_flip_left_right(item, this_category_counter, x, classes) {
 	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
 	classes.push(this_category_counter);
-	return [classes, x];
-}
-
-// Funktion zur Anwendung einer Sinuswelle auf ein Bild
-function augment_sine_ripple(item, label_nr, x, classes) {
-	var rippled = sine_ripple(item);
-	x = tf_concat(x, resizeNearestNeighbor(expand_dims(rippled), [height, width]));
-	add_tensor_as_image_to_photos(rippled);
-	classes.push(label_nr);
 	return [classes, x];
 }
 
@@ -596,10 +565,6 @@ async function get_xs_and_ys () {
 						if ($("#augment_flip_left_right").is(":checked")) {
 							[classes, x] = augment_flip_left_right(item, this_category_counter, x, classes);
 						}
-
-						if ($("#augment_sine_ripple").is(":checked")) {
-							[classes, x] = augment_sine_ripple(item, label_nr, x, classes);
-						}
 					}
 
 					await dispose(item);
@@ -715,26 +680,6 @@ async function get_xs_and_ys () {
 									var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
 									x.push(flipped);
 									classes.push(label_nr);
-								}
-
-								if($("#augment_sine_ripple").is(":checked")) {
-									l("Rippling is not yet supported for custom data!");
-									/*
-									var uuid = uuidv4();
-									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-									toPixels(tf_img, $("#" + uuid)[0]);
-									var canvas = $("#" + uuid)[0];
-									var context = canvas.getContext("2d");
-									var data = context.getImageData(0,0,canvas.width, canvas.height)
-									JSManipulate.sineripple.filter(data);
-									context.putImageData(data,0,0);
-									var rippled = await fromPixels(canvas);
-									$(canvas).remove();
-									log(rippled);
-									add_tensor_as_image_to_photos(rippled);
-									x.push(rippled[0]);
-									classes.push(label_nr);
-									*/
 								}
 							}
 						}
