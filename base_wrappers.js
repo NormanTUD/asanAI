@@ -102,7 +102,13 @@ function tf_max (...args) {
 }
 
 function tf_add (...args) {
-	var res = tf.add(...args);
+	var first_tensor = args[0];
+	var second_arg = args[1];
+	if(!Object.keys(second_arg).includes("isDisposedInternal")) {
+		err("Error: second argument to tf_add is wrong. See stacktrace.");
+		return;
+	}
+	var res = first_tensor.add(second_arg, ...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 

@@ -1043,18 +1043,24 @@ function draw_internal_states (layer, inputs, applied) {
 
 /* The deprocess_image function takes an image tensor and deprocesses it so that it's ready to be shown to the user. This includes normalizing the image, adding a small positive number to the denominator to prevent division-by-zero, clipping the image to [0, 1], and then multiplying by 255 and casting to an int32. */
 
+function tf_constant_shape (val, x) {
+	return tf.ones(x.shape).mul(val);
+}
+
 function deprocess_image(x) {
+	assert(Object.keys("isDisposedInternal"), "x for deprocess image is not a tensor but " + typeof(x));
+
 	var res = tidy(() => {
 		const {mean, variance} = tf_moments(x);
 		x = tf_sub(x, mean);
 		// Add a small positive number (EPSILON) to the denominator to prevent
 		// division-by-zero.
-		x = tf_add(tf_div(x, sqrt(variance), tf.backend().epsilon()));
+		x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(tf.backend().epsilon(), x)));
 		// Clip to [0, 1].
-		x = tf_add(x, 0.5);
+		x = tf_add(x, tf_constant_shape(0.5, x));
 		x = clipByValue(x, 0, 1);
-		x = tf_mul(x, 255);
-		return clipByValue(x, 0, 255).asType("int32");
+		x = tf_mul(x, tf_constant_shape(255, x));
+		return tidy(() => { return clipByValue(x, 0, 255).asType("int32"); });
 	});
 
 	return res;
@@ -1098,17 +1104,28 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 				}
 
 				const scaledGrads = tidy(() => {
-					const grads = gradFunction(data);
-					const norm = tf_add(sqrt(tf_mean(tf_square(grads))), (tf.backend().epsilon()));
-					// Important trick: scale the gradient with the magnitude (norm)
-					// of the gradient.
-					return tf_div(grads, norm);
+					try {
+						const grads = gradFunction(data);
+
+						const _is = sqrt(tf_mean(tf_square(grads)));
+
+						const norm = tf_add(_is, tf_constant_shape(tf.backend().epsilon(), _is));
+						// Important trick: scale the gradient with the magnitude (norm)
+						// of the gradient.
+						return tf_div(grads, norm);
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						err("Inside scaledGrads creation error:" + e);
+					}
 				});
 
 				data = tf_add(data, scaledGrads);
+				worked = 1;
 			}
 
-			worked = 1;
 			return data;
 		});
 	} catch (e) {
@@ -1121,14 +1138,14 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 				throw new Error("Too many retries for input_gradient_ascent");
 			}
 		} else {
-			throw new Error(e);
+			throw new Error("Error 12: " + e);
 		}
 	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
-		full_data["image"] = tidy(() => { return array_sync(deprocess_image(generated_data)); });
+		full_data["image"] = array_sync(tidy(() => { return deprocess_image(generated_data); }));
 	} else {
-		full_data["data"] = tidy(() => { return array_sync(generated_data); });
+		full_data["data"] = array_sync(generated_data);
 	}
 
 	await dispose(generated_data);
