@@ -15,7 +15,6 @@ class DebugLayer extends tf.layers.Layer {
 	* This is where the weights (if any) are created.
 	*/
 	build(inputShape) {
-		//this.x = this.addWeight('x', [], 'float32', tf.initializers.ones());
 	}
 
 	/**
