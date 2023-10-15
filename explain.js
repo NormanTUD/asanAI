@@ -1037,7 +1037,7 @@ function draw_internal_states (layer, inputs, applied) {
 function deprocess_image(x) {
 	var res = tidy(() => {
 		const {mean, variance} = tf_moments(x);
-		x = x.sub(mean);
+		x = tf_sub(x, mean);
 		// Add a small positive number (EPSILON) to the denominator to prevent
 		// division-by-zero.
 		x = tf_add(tf_div(x, sqrt(variance), tf.backend().epsilon()));
