@@ -381,7 +381,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 	l("Rotating image: " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
 	await add_tensor_as_image_to_photos(augmented_img);
-	x = x.concat(augmented_img);
+	x = tf_concat(x, augmented_img);
 	classes.push(this_category_counter);
 
 	if ($("#augment_invert_images").is(":checked")) {
@@ -389,7 +389,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 		var add_value = (-255 / parse_float($("#divide_by").val()));
 		var inverted = abs(add(augmented_img, add_value));
 		await add_tensor_as_image_to_photos(inverted);
-		x = x.concat(inverted);
+		x = tf_concat(x, inverted);
 		classes.push(this_category_counter);
 	}
 
@@ -397,13 +397,13 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 		l("Flip left/right image that has been turned " + degree + "°");
 		var flipped = flipLeftRight(augmented_img);
 		await add_tensor_as_image_to_photos(flipped);
-		x = x.concat(flipped);
+		x = tf_concat(x, flipped);
 		classes.push(label_nr);
 	}
 
 	if ($("#augment_sine_ripple").is(":checked")) {
 		var rippled = await sine_ripple(augmented_img);
-		x = x.concat(expand_dims(rippled));
+		x = tf_concat(x, expand_dims(rippled));
 		await add_tensor_as_image_to_photos(rippled);
 		classes.push(label_nr);
 	}
@@ -417,7 +417,7 @@ async function augment_invert_images(item, this_category_counter, x, classes) {
 	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
 	await add_tensor_as_image_to_photos(inverted);
-	x = x.concat(inverted);
+	x = tf_concat(x, inverted);
 	classes.push(this_category_counter);
 	return [classes, x];
 }
@@ -427,7 +427,7 @@ async function augment_flip_left_right(item, this_category_counter, x, classes) 
 	l("Flip left/right");
 	var flipped = flipLeftRight(item);
 	await add_tensor_as_image_to_photos(flipped);
-	x = x.concat(flipped);
+	x = tf_concat(x, flipped);
 	classes.push(this_category_counter);
 	return [classes, x];
 }
@@ -435,7 +435,7 @@ async function augment_flip_left_right(item, this_category_counter, x, classes) 
 // Funktion zur Anwendung einer Sinuswelle auf ein Bild
 async function augment_sine_ripple(item, label_nr, x, classes) {
 	var rippled = await sine_ripple(item);
-	x = x.concat(expand_dims(rippled));
+	x = tf_concat(x, expand_dims(rippled));
 	await add_tensor_as_image_to_photos(rippled);
 	classes.push(label_nr);
 	return [classes, x];
@@ -560,7 +560,7 @@ async function get_xs_and_ys () {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
 
-					x = x.concat(item, 0);
+					x = tf_concat(x, item, 0);
 					classes.push(this_category_counter);
 
 					if ($("#auto_augment").is(":checked")) {
