@@ -1051,16 +1051,28 @@ function deprocess_image(x) {
 	assert(Object.keys("isDisposedInternal"), "x for deprocess image is not a tensor but " + typeof(x));
 
 	var res = tidy(() => {
-		const {mean, variance} = tf_moments(x);
-		x = tf_sub(x, mean);
-		// Add a small positive number (EPSILON) to the denominator to prevent
-		// division-by-zero.
-		x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(tf.backend().epsilon(), x)));
-		// Clip to [0, 1].
-		x = tf_add(x, tf_constant_shape(0.5, x));
-		x = clipByValue(x, 0, 1);
-		x = tf_mul(x, tf_constant_shape(255, x));
-		return tidy(() => { return clipByValue(x, 0, 255).asType("int32"); });
+		try {
+			const {mean, variance} = tf_moments(x);
+			x = tf_sub(x, mean);
+			// Add a small positive number (EPSILON) to the denominator to prevent
+			// division-by-zero.
+			x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(tf.backend().epsilon(), x)));
+			// Clip to [0, 1].
+			x = tf_add(x, tf_constant_shape(0.5, x));
+			x = clipByValue(x, 0, 1);
+			x = tf_mul(x, tf_constant_shape(255, x));
+			return tidy(() => {
+				return clipByValue(x, 0, 255).asType("int32");
+			});
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("" + e);
+
+			return null;
+		}
 	});
 
 	return res;
@@ -1144,11 +1156,22 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
 		try {
-			full_data["image"] = array_sync(tidy(() => { return deprocess_image(generated_data); }));
+			full_data["image"] = array_sync(tidy(() => {
+				var dp = deprocess_image(generated_data);
+
+				if(!dp) {
+					err("deprocess image returned empty");
+					full_data["worked"] = 0;
+				}
+
+				return dp;
+			}));
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
+
+			console.log("generated_data: ", generated_data);
 
 			err("" + e);
 
