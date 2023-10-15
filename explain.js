@@ -1036,15 +1036,15 @@ function draw_internal_states (layer, inputs, applied) {
 
 function deprocess_image(x) {
 	var res = tidy(() => {
-		const {mean, variance} = tf.moments(x);
+		const {mean, variance} = tf_moments(x);
 		x = x.sub(mean);
 		// Add a small positive number (EPSILON) to the denominator to prevent
 		// division-by-zero.
-		x = x.div(sqrt(variance).add(tf.backend().epsilon()));
+		x = tf_add(tf_div(x, sqrt(variance), tf.backend().epsilon()));
 		// Clip to [0, 1].
-		x = x.add(0.5);
+		x = tf_add(x, 0.5);
 		x = clipByValue(x, 0, 1);
-		x = x.mul(255);
+		x = tf_mul(x, 255);
 		return clipByValue(x, 0, 255).asType("int32");
 	});
 
@@ -1090,13 +1090,13 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 				const scaledGrads = tidy(() => {
 					const grads = gradFunction(data);
-					const norm = sqrt(tf_mean(tf_square(grads))).add(tf.backend().epsilon());
+					const norm = tf_add(sqrt(tf_mean(tf_square(grads))), (tf.backend().epsilon()));
 					// Important trick: scale the gradient with the magnitude (norm)
 					// of the gradient.
 					return grads.div(norm);
 				});
 
-				data = data.add(scaledGrads);
+				data = tf_add(data, scaledGrads);
 			}
 
 			worked = 1;
@@ -2602,8 +2602,8 @@ function apply_color_map (x) {
 	var res = tidy(() => {
 		// Get normalized x.
 		const EPSILON = 1e-5;
-		const xRange = x.max().sub(x.min());
-		const xNorm = x.sub(x.min()).div(xRange.add(EPSILON));
+		const xRange = tf_sub(tf_max(x), tf_min(x));
+		const xNorm = tf_div(tf_sub(x, tf_min(x)), tf_add(xRange, EPSILON));
 		const xNormData = xNorm.dataSync();
 
 		const h = x.shape[1];
@@ -2701,7 +2701,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			// Discard negative values from the heat map and normalize it to the [0, 1]
 			// interval.
 			heatMap = heatMap.relu();
-			heatMap = heatMap.div(heatMap.max()).expandDims(-1);
+			heatMap = tf_div(heatMap, tf_max(heatMap)).expandDims(-1);
 
 			// Up-sample the heat map to the size of the input image.
 			heatMap = resizeBilinear(heatMap, [x.shape[1], x.shape[2]]);
@@ -2712,8 +2712,8 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			heatMap = apply_color_map(heatMap);
 
 			// To form the final output, overlay the color heat map on the input image.
-			heatMap = heatMap.mul(overlayFactor).add(x.div(255));
-			return heatMap.div(heatMap.max()).mul(255);
+			heatMap = tf_add(tf_mul(heatMap, overlayFactor), tf_div(x, 255));
+			return tf_div(heatMap, tf_mul(tf_max(heatMap), 255));
 		});
 
 		return retval;

@@ -617,7 +617,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					predict_data = tidy(() => {
 						var old_tensor = predict_data;
 						//console.log("A: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-						var new_data = old_tensor.reshape(model_shape_one);
+						var new_data = tf_reshape(old_tensor, model_shape_one);
 
 						//console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
@@ -641,7 +641,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 					predict_data = tidy(() => {
 						var old_tensor = predict_data;
 						//console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-						var new_data = old_tensor.reshape(model_shape_one);
+						var new_data = tf_reshape(old_tensor, model_shape_one);
 
 						//console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
@@ -1493,7 +1493,7 @@ async function predict_handdrawn () {
 			).expandDims();
 		});
 
-		var unique_values = tidy(() => { return tf.unique(tf.reshape(predict_data, [-1])).values.arraySync(); });
+		var unique_values = tidy(() => { return tf_unique(tf_reshape(predict_data, [-1])).values.arraySync(); });
 
 		if(unique_values.length > 1) {
 			taint_privacy();

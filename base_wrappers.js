@@ -1,5 +1,55 @@
 var _custom_tensors = {};
 
+function tf_sub (...args) {
+	var res = tf.sub(...args);
+
+	return res;
+}
+
+function tf_min (...args) {
+	var res = tf.min(...args);
+
+	return res;
+}
+
+function tf_max (...args) {
+	var res = tf.max(...args);
+
+	return res;
+}
+
+function tf_add (...args) {
+	var res = tf.add(...args);
+
+	return res;
+}
+
+function tf_mul (...args) {
+	var res = tf.mul(...args);
+
+	return res;
+}
+
+function tf_div (...args) {
+	var res = tf.div(...args);
+
+	return res;
+}
+
+function tf_moments (...args) {
+	var res = tf.moments(...args);
+
+	return res;
+}
+
+function tf_reshape (...args) {
+	return tf.reshape(...args);
+}
+
+function tf_unique (...args) {
+	return tf.unique(...args);
+}
+
 function removeTimestampAndLines(inputString) {
 	try {
 		// Remove the "t=\d" pattern
