@@ -1731,11 +1731,17 @@ async function confusion_matrix(classes) {
 			}
 
 			dbg("Cannot predict image: " + e);
+
+			await dispose(img_tensor);
+
 			continue;
 		}
 
 		if(!res) {
 			dbg("res is empty");
+
+			await dispose(img_tensor);
+
 			continue;
 		}
 
