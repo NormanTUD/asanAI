@@ -111,10 +111,9 @@ async function _get_tensor_img(item) {
 
 	try {
 		tensor_img = await tidy(() => {
-			return expand_dims(
+			return tf_to_float(expand_dims(
 				resizeNearestNeighbor(_divide_img_tensor(fromPixels(item)), [height, width])
-				.toFloat()
-			);
+			));
 		});
 	} catch (e) {
 		log("item:", item, "width:", width, "height:", height, "error:", e);
@@ -553,7 +552,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		if(is_image_prediction) {
 			try {
-				predict_data = resizeNearestNeighbor(expand_dims(fromPixels(item), [height, width]).toFloat());
+				predict_data = tf_to_float(resizeNearestNeighbor(expand_dims(fromPixels(item), [height, width])));
 			} catch (e) {
 				if(("" + e).includes("Expected input shape")) {
 					dbg("" + e);
@@ -1115,7 +1114,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 function _get_resized_webcam (predict_data, h, w) {
 	var res = tidy(() => {
 		var divide_by = parse_float($("#divide_by").val());
-		var r = expand_dims(resizeNearestNeighbor(predict_data, [h, w]).toFloat());
+		var r = tf_to_float(expand_dims(resizeNearestNeighbor(predict_data, [h, w])));
 
 		if(divide_by != 1) {
 			r = tidy(() => { return divNoNan(r, divide_by); });

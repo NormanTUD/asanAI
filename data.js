@@ -669,9 +669,9 @@ async function get_xs_and_ys () {
 							var img_elem = img_elems[j];
 
 							var tf_img = fromPixels(img_elem);
-							var resized_img = tf_img.
-								resizeNearestNeighbor([height, width]).
-								toFloat();
+							var resized_img = tf_to_float(tf_img.
+								resizeNearestNeighbor([height, width])
+							);
 
 							if($("#divide_by").val() != 1) {
 								resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
@@ -762,9 +762,9 @@ async function get_xs_and_ys () {
 
 							if(!id.endsWith("_layer")) {
 								var tf_img = fromPixels(img_elem);
-								var resized_img = tf_img.
-									resizeNearestNeighbor([height, width]).
-									toFloat();
+								var resized_img = tf_to_float(tf_img.
+									resizeNearestNeighbor([height, width])
+								);
 
 								if($("#divide_by").val() != 1) {
 									resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
@@ -929,10 +929,9 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			if(!dont_load_into_tf) {
 				resized_img = tidy(() => {
 					var res = fromPixels(img);
-					resized_img = expand_dims(res.
-						resizeNearestNeighbor([height, width]).
-						toFloat()
-					);
+					resized_img = tf_to_float(expand_dims(res.
+						resizeNearestNeighbor([height, width])
+					));
 
 					if($("#divide_by").val() != 1) {
 						resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
@@ -1430,7 +1429,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
-	cam_image = expand_dims(resizeNearestNeighbor(cam_image, [stream_height, stream_width]).toFloat());
+	cam_image = tf_to_float(expand_dims(resizeNearestNeighbor(cam_image, [stream_height, stream_width])));
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
