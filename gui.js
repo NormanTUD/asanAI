@@ -844,7 +844,10 @@ async function change_width_or_height(name, inputshape_index) {
 	var used_time = ((t_end - t_start) / 1000).toFixed(5);
 
 	model_is_trained = false;
-	l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + human_readable_time(used_time) + " (" + used_time + ")");
+	var hrt = human_readable_time(used_time);
+	if(hrt) {
+		l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + hrt + " (" + used_time + ")");
+	}
 }
 
 async function update_python_code(dont_reget_labels) {
@@ -2701,7 +2704,10 @@ async function set_config(index) {
 		await updated_page(null, null, null, 1);
 		var end_t = Date.now();
 		var runtime = (end_t - start_t) / 1000;
-		l(language[lang]["page_update_took"] + " " + human_readable_time(runtime));
+		var hrt = human_readable_time(runtime);
+		if(hrt) {
+			l(language[lang]["page_update_took"] + " " + hrt);
+		}
 
 		await write_descriptions();
 
@@ -4837,6 +4843,8 @@ function human_readable_time(seconds, start="", end="") {
 
 		wrn("Seconds is very large:", seconds, "Please check the source of that", params);
 		console.trace();
+
+		return null;
 	}
 
 	var levels = [
@@ -7137,8 +7145,14 @@ function get_fcnn_data () {
 }
 
 async function restart_fcnn () {
+	var fcnn_data = get_fcnn_data();
 
-	var [names, units, meta_infos] = get_fcnn_data();
+	if(!fcnn_data) {
+		err("Could not get FCNN data");
+		return;
+	}
+
+	var [names, units, meta_infos] = fcnn_data;
 
 	await draw_new_fcnn(units, names, meta_infos);
 }

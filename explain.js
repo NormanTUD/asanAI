@@ -801,7 +801,15 @@ async function identify_layers () {
 				enable_train();
 			}
 		} catch (e) {
-			throw new Error(e);
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(e.includes("model is null")) {
+				err("" + e);
+			} else {
+				throw new Error(e);
+			}
 
 			return;
 		}
