@@ -565,7 +565,6 @@ async function get_xs_and_ys () {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
 
-					console.log("x:", x, "item:", item);
 					x = tf_concat(x, item);
 					classes.push(this_category_counter);
 
