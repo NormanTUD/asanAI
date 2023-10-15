@@ -89,7 +89,7 @@ function shuffle (array) {
 }
 
 function load_image(url) {
-	assert(typeof(url) == "string", "url_to_tf accepts only strings as url parameter, got: " + typeof(url));
+	assert(typeof(url) == "string", "load_image accepts only strings as url parameter, got: " + typeof(url));
 
 	var res = new Promise((resolve, reject) => {
 		const img = new Image();
@@ -903,7 +903,9 @@ function url_to_tf (url, dont_load_into_tf=0) {
 
 		var tf_img = (async () => {
 			let img = await load_image(url);
+
 			var resized_img = [];
+
 			if(!dont_load_into_tf) {
 				resized_img = tidy(() => {
 					var res = fromPixels(img);
@@ -924,6 +926,9 @@ function url_to_tf (url, dont_load_into_tf=0) {
 
 			return resized_img;
 		})();
+
+		_custom_tensors["" + tf_img.id] = [get_stack_trace(), tf_img, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
+		_clean_custom_tensors();
 
 		return tf_img;
 	} catch (e) {
