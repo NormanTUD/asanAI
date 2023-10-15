@@ -2621,7 +2621,7 @@ function apply_color_map (x) {
 				_buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
 			}
 		}
-		return _buffer.toTensor();
+		return tf_to_tensor(_buffer);
 	});
 
 	return res;

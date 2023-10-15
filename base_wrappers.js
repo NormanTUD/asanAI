@@ -1,5 +1,15 @@
 var _custom_tensors = {};
 
+function tf_to_tensor (...args) {
+	var first_tensor = args.shift();
+	var res = first_tensor.toTensor(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function tf_mean (...args) {
 	var res = tf.mean(...args);
 
