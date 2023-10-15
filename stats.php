@@ -30,6 +30,9 @@ function createDistribution($filename)
         }
     }
 
+    // Sort the distribution array in descending order by value
+    arsort($distribution);
+
     return $distribution;
 }
 
@@ -74,7 +77,6 @@ $chart = [
     'data' => [$data],
     'layout' => $layout,
 ];
-
 ?>
 <!DOCTYPE html>
 <html>
