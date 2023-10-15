@@ -1,5 +1,23 @@
 var _custom_tensors = {};
 
+function tf_mean (...args) {
+	var res = tf.mean(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
+}
+
+function tf_relu (...args) {
+	var res = tf.concat(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function tf_concat (...args) {
 	var res = tf.concat(...args);
 

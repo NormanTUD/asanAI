@@ -2696,11 +2696,11 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
 
 			// Create heat map by averaging and collapsing over all filters.
-			let heatMap = scaledConvOutputValues.mean(-1);
+			let heatMap = tf_mean(scaledConvOutputValues, -1);
 
 			// Discard negative values from the heat map and normalize it to the [0, 1]
 			// interval.
-			heatMap = heatMap.relu();
+			heatMap = tf_relu(heatMap);
 			heatMap = expand_dims(tf_div(heatMap, tf_max(heatMap)), -1);
 
 			// Up-sample the heat map to the size of the input image.
