@@ -294,7 +294,7 @@ async function run_tests () {
 			await wait_for_updated_page(3);
 
 			try {
-				var result_and = await model.predict(array_sync(tensor([[0, 0]])))[0][0];
+				var result_and = model.predict(array_sync(tensor([[0, 0]])))[0][0];
 				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 0 and 0 results: " + result_and.toString());
@@ -308,7 +308,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(array_sync(tensor([[0, 1]])))[0][0];
+				result_and = model.predict(array_sync(tensor([[0, 1]])))[0][0];
 				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 0 and 1 results:" + result_and.toString());
@@ -322,7 +322,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(array_sync(tensor([[1, 0]])))[0][0];
+				result_and = model.predict(array_sync(tensor([[1, 0]])))[0][0];
 				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 1 and 0 results:" + result_and.toString());
@@ -336,7 +336,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(array_sync(tensor([[1, 1]])))[0][0];
+				result_and = model.predict(array_sync(tensor([[1, 1]])))[0][0];
 				var r = result_and.toString();
 				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
 				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
