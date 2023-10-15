@@ -292,7 +292,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 	return data;
 }
 
-async function add_tensor_as_image_to_photos (_tensor) {
+function add_tensor_as_image_to_photos (_tensor) {
 	// TODO
 	assert(typeof(_tensor) == "object", "_tensor must be an object");
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
@@ -300,11 +300,11 @@ async function add_tensor_as_image_to_photos (_tensor) {
 
 	if(_tensor.shape.length == 4) {
 		if(_tensor.shape[0] == 1) {
-			_tensor = tensor(_tensor.arraySync()[0]);
+			_tensor = tensor(array_sync(_tensor)[0]);
 		} else {
 			for (var i = 0; i < _tensor.shape[0]; i++) {
-				var this_tensor = tensor(_tensor.arraySync()[i]);
-				await add_tensor_as_image_to_photos(this_tensor);
+				var this_tensor = tensor(array_sync(_tensor)[i]);
+				add_tensor_as_image_to_photos(this_tensor);
 			}
 
 			return;
@@ -320,7 +320,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	var min_value = 0;
 	var max_value = 0;
 
-	var min_in_tensor = min(_tensor).arraySync();
+	var min_in_tensor = array_sync(min(_tensor));
 
 	if(min_in_tensor < min_value) {
 		min_value = min_in_tensor;
@@ -330,7 +330,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 		_tensor = _tf_sub(tensor, min_value);
 	}
 
-	var max_in_tensor = max(_tensor).arraySync();
+	var max_in_tensor = array_sync(max(_tensor));
 
 	if(max_in_tensor > max_value) {
 		max_value = max_in_tensor;
@@ -341,7 +341,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 	try {
-		await toPixels(_tensor, $("#" + id)[0]);
+		toPixels(_tensor, $("#" + id)[0]);
 	} catch (e) {
 		log("Shape:", _tensor.shape);
 		_tensor.print();
@@ -366,26 +366,26 @@ function truncate_text (fullStr, strLen, separator) {
 	return res;
 }
 
-async function sine_ripple (img) {
+function sine_ripple (img) {
 	var uuid = uuidv4();
 	$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-	await toPixels(tensor(img.arraySync()[0]), $("#" + uuid)[0]);
+	toPixels(tensor(array_sync(img)[0]), $("#" + uuid)[0]);
 	var canvas = $("#" + uuid)[0];
 	var context = canvas.getContext("2d");
 	var data = context.getImageData(0,0,canvas.width, canvas.height);
 	JSManipulate.sineripple.filter(data);
 	context.putImageData(data,0,0);
-	var rippled = await fromPixels(canvas);
+	var rippled = fromPixels(canvas);
 	$(canvas).remove();
 
 	return rippled;
 }
 
 // Funktion zum Rotieren eines Bildes
-async function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
+function augment_rotate_images_function(item, degree, this_category_counter, x, classes, label_nr) {
 	l("Rotating image: " + degree + "°");
 	var augmented_img = rotateWithOffset(item, degrees_to_radians(degree));
-	await add_tensor_as_image_to_photos(augmented_img);
+	add_tensor_as_image_to_photos(augmented_img);
 	x = tf_concat(x, augmented_img);
 	classes.push(this_category_counter);
 
@@ -393,7 +393,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 		l("Inverted image that has been turned " + degree + "°");
 		var add_value = (-255 / parse_float($("#divide_by").val()));
 		var inverted = abs(add(augmented_img, add_value));
-		await add_tensor_as_image_to_photos(inverted);
+		add_tensor_as_image_to_photos(inverted);
 		x = tf_concat(x, inverted);
 		classes.push(this_category_counter);
 	}
@@ -401,15 +401,15 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 	if ($("#augment_flip_left_right").is(":checked")) {
 		l("Flip left/right image that has been turned " + degree + "°");
 		var flipped = flipLeftRight(augmented_img);
-		await add_tensor_as_image_to_photos(flipped);
+		add_tensor_as_image_to_photos(flipped);
 		x = tf_concat(x, flipped);
 		classes.push(label_nr);
 	}
 
 	if ($("#augment_sine_ripple").is(":checked")) {
-		var rippled = await sine_ripple(augmented_img);
+		var rippled = sine_ripple(augmented_img);
 		x = tf_concat(x, expand_dims(rippled));
-		await add_tensor_as_image_to_photos(rippled);
+		add_tensor_as_image_to_photos(rippled);
 		classes.push(label_nr);
 	}
 
@@ -417,31 +417,31 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 }
 
 // Funktion zum Invertieren eines Bildes
-async function augment_invert_images(item, this_category_counter, x, classes) {
+function augment_invert_images(item, this_category_counter, x, classes) {
 	l("Inverted image");
 	var add_value = (-255 / parse_float($("#divide_by").val()));
 	var inverted = abs(add(item, add_value));
-	await add_tensor_as_image_to_photos(inverted);
+	add_tensor_as_image_to_photos(inverted);
 	x = tf_concat(x, inverted);
 	classes.push(this_category_counter);
 	return [classes, x];
 }
 
 // Funktion zum Spiegeln eines Bildes
-async function augment_flip_left_right(item, this_category_counter, x, classes) {
+function augment_flip_left_right(item, this_category_counter, x, classes) {
 	l("Flip left/right");
 	var flipped = flipLeftRight(item);
-	await add_tensor_as_image_to_photos(flipped);
+	add_tensor_as_image_to_photos(flipped);
 	x = tf_concat(x, flipped);
 	classes.push(this_category_counter);
 	return [classes, x];
 }
 
 // Funktion zur Anwendung einer Sinuswelle auf ein Bild
-async function augment_sine_ripple(item, label_nr, x, classes) {
-	var rippled = await sine_ripple(item);
+function augment_sine_ripple(item, label_nr, x, classes) {
+	var rippled = sine_ripple(item);
 	x = tf_concat(x, expand_dims(rippled));
-	await add_tensor_as_image_to_photos(rippled);
+	add_tensor_as_image_to_photos(rippled);
 	classes.push(label_nr);
 	return [classes, x];
 }
@@ -510,8 +510,8 @@ async function get_xs_and_ys () {
 				draw_grid($("#custom_training_data_img_" + i)[0], 1, x[i], null, null, null, parse_float($("#divide_by").val()));
 			}
 		} else {
-			var x_print_string = arbitrary_array_to_latex(xy_data.x.arraySync());
-			var y_print_string = arbitrary_array_to_latex(xy_data.y.arraySync());
+			var x_print_string = arbitrary_array_to_latex(array_sync(xy_data.x));
+			var y_print_string = arbitrary_array_to_latex(array_sync(xy_data.y));
 
 			$("#xy_display_data").html("<table border=1><tr><th>X=</th><th>Y=</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 
@@ -583,28 +583,28 @@ async function get_xs_and_ys () {
 						if ($("#augment_rotate_images").is(":checked")) {
 							for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 								if (degree !== 0) {
-									[classes, x] = await augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
+									[classes, x] = augment_rotate_images_function(item, degree, this_category_counter, x, classes, this_category_counter);
 								}
 							}
 						}
 
 						if ($("#augment_invert_images").is(":checked")) {
-							[classes, x] = await augment_invert_images(item, this_category_counter, x, classes);
+							[classes, x] = augment_invert_images(item, this_category_counter, x, classes);
 						}
 
 						if ($("#augment_flip_left_right").is(":checked")) {
-							[classes, x] = await augment_flip_left_right(item, this_category_counter, x, classes);
+							[classes, x] = augment_flip_left_right(item, this_category_counter, x, classes);
 						}
 
 						if ($("#augment_sine_ripple").is(":checked")) {
-							[classes, x] = await augment_sine_ripple(item, label_nr, x, classes);
+							[classes, x] = augment_sine_ripple(item, label_nr, x, classes);
 						}
 					}
 
 					await dispose(item);
 				}
 
-				var x_arr = await x.arraySync();
+				var x_arr = array_sync(x);
 
 				await dispose(x);
 
@@ -677,7 +677,7 @@ async function get_xs_and_ys () {
 								resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 							}
 
-							var this_img = await resized_img.arraySync();
+							var this_img = array_sync(resized_img);
 							x.push(this_img);
 							classes.push(label_nr);
 
@@ -686,18 +686,18 @@ async function get_xs_and_ys () {
 								if($("#augment_rotate_images").is(":checked")) {
 									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
 										var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
-										x.push(await augmented_img.arraySync());
+										x.push(array_sync(augmented_img));
 										classes.push(label_nr);
 
 										if($("#augment_invert_images").is(":checked")) {
 											l("Inverted image that has been turned " + degree + "°");
-											x.push(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val())))).arraySync());
+											x.push(array_sync(abs(add(augmented_img, (-255 / parse_float($("#divide_by").val()))))));
 											classes.push(label_nr);
 										}
 
 										if($("#augment_flip_left_right").is(":checked")) {
 											l("Flip left/right image that has been turned " + degree + "°");
-											x.push(await flipLeftRight(augmented_img).arraySync()[0]);
+											x.push(array_sync(flipLeftRight(augmented_img))[0]);
 											classes.push(label_nr);
 										}
 									}
@@ -705,13 +705,13 @@ async function get_xs_and_ys () {
 
 								if($("#augment_invert_images").is(":checked")) {
 									l("Inverted image");
-									x.push(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val())))).arraySync());
+									x.push(array_sync(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val()))))));
 									classes.push(label_nr);
 								}
 
 								if($("#augment_flip_left_right").is(":checked")) {
 									l("Flip left/right");
-									var flipped = await flipLeftRight(expand_dims(resized_img)).arraySync()[0];
+									var flipped = flipLeftRight(array_sync(expand_dims(resized_img)))[0];
 									x.push(flipped);
 									classes.push(label_nr);
 								}
@@ -721,7 +721,7 @@ async function get_xs_and_ys () {
 									/*
 									var uuid = uuidv4();
 									$("<canvas style='display: none' id='" + uuid + "'></canvas>").appendTo($("body"));
-									await toPixels(tf_img, $("#" + uuid)[0]);
+									toPixels(tf_img, $("#" + uuid)[0]);
 									var canvas = $("#" + uuid)[0];
 									var context = canvas.getContext("2d");
 									var data = context.getImageData(0,0,canvas.width, canvas.height)
@@ -730,7 +730,7 @@ async function get_xs_and_ys () {
 									var rippled = await fromPixels(canvas);
 									$(canvas).remove();
 									log(rippled);
-									await add_tensor_as_image_to_photos(rippled);
+									add_tensor_as_image_to_photos(rippled);
 									x.push(rippled[0]);
 									classes.push(label_nr);
 									*/
@@ -770,7 +770,7 @@ async function get_xs_and_ys () {
 									resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
 								}
 
-								var this_img = await resized_img.arraySync();
+								var this_img = array_sync(resized_img);
 								x.push(this_img);
 								classes.push(label_nr);
 
@@ -778,7 +778,7 @@ async function get_xs_and_ys () {
 									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
 										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
 									var this_map =
-										divNoNan(this_map_tensor, parse_float($("#divide_by").val())).arraySync();
+										array_sync(divNoNan(this_map_tensor, parse_float($("#divide_by").val())));
 									maps.push(this_map);
 								} catch (e) {
 									err(e);
@@ -1230,7 +1230,7 @@ async function get_x_y_from_csv () {
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(y_headers.length == 1) {
 			if(labels.length > 1) {
-				y_data["data"] = tidy(() => { return oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length).arraySync();});
+				y_data["data"] = tidy(() => { return array_sync(oneHot(tensor1d(y_data["data"].flat(), "int32"), labels.length));});
 				auto_adjust_number_of_neurons(labels.length);
 				set_last_layer_activation_function("softmax");
 				is_one_hot_encoded = true;
@@ -1286,7 +1286,7 @@ async function get_x_y_as_array () {
 	var data = await get_xs_and_ys();
 	force_download = 0;
 
-	var ret = JSON.stringify({ x: data.x.arraySync(), y: data.y.arraySync() });
+	var ret = JSON.stringify({ x: array_sync(data.x), y: array_sync(data.y) });
 
 	await dispose(data["x"]);
 	await dispose(data["y"]);
@@ -1430,7 +1430,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
 	cam_image = tf_to_float(expand_dims(resizeNearestNeighbor(cam_image, [stream_height, stream_width])));
-	cam_image = await cam_image.arraySync()[0];
+	cam_image = array_sync(cam_image)[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
 
@@ -1511,7 +1511,7 @@ function array_likelyhood_of_being_random (array) {
 
 function image_element_looks_random (imgelem) {
 	var t = reshape(fromPixels(imgelem), [-1]);
-	var res = array_likelyhood_of_being_random(t.arraySync());
+	var res = array_likelyhood_of_being_random(array_sync(t));
 
 	return res;
 }
@@ -1724,7 +1724,7 @@ async function confusion_matrix(classes) {
 				return model.predict(img_tensor);
 			});
 
-			res = res.arraySync()[0];
+			res = array_sync(res)[0];
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;

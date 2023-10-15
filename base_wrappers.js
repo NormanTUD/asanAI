@@ -1,5 +1,12 @@
 var _custom_tensors = {};
 
+function array_sync (...args) {
+	var first_tensor = args.shift();
+	var res = first_tensor.arraySync();
+
+	return res;
+}
+
 function tf_to_float (...args) {
 	var first_tensor = args.shift();
 	var res = first_tensor.toFloat();
@@ -873,9 +880,9 @@ async function loadLayersModel (...args) {
 	}
 }
 
-async function toPixels (...args) {
+function toPixels (...args) {
 	try {
-		var res = await tf.browser.toPixels(...args);
+		var res = tf.browser.toPixels(...args);
 
 		return res;
 	} catch (e) {
