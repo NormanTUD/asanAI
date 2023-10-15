@@ -19,7 +19,8 @@ function tf_relu (...args) {
 }
 
 function tf_concat (...args) {
-	var res = tf.concat(...args);
+	var first_tensor = args.shift();
+	var res = first_tensor.concat(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 	_clean_custom_tensors();

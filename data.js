@@ -239,6 +239,11 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 						old_percentage = await _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf);
+
+
+						_custom_tensors["" + tf_data.id] = [get_stack_trace(), tf_data, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
+						_clean_custom_tensors();
+
 						//log("tf_data:", tf_data);
 						if(!tf_data && !dont_load_into_tf) {
 							wrn("tf_data is empty, though it shouldn't be");
@@ -560,7 +565,8 @@ async function get_xs_and_ys () {
 					var item = this_data[i]["item"];
 					var this_category_counter = this_data[i]["category_counter"];
 
-					x = tf_concat(x, item, 0);
+					console.log("x:", x, "item:", item);
+					x = tf_concat(x, item);
 					classes.push(this_category_counter);
 
 					if ($("#auto_augment").is(":checked")) {
@@ -926,9 +932,6 @@ function url_to_tf (url, dont_load_into_tf=0) {
 
 			return resized_img;
 		})();
-
-		_custom_tensors["" + tf_img.id] = [get_stack_trace(), tf_img, `[url_to_tf("${url}", ${dont_load_into_tf})]`];
-		_clean_custom_tensors();
 
 		return tf_img;
 	} catch (e) {
