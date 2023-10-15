@@ -10,7 +10,7 @@ function tf_mean (...args) {
 }
 
 function tf_relu (...args) {
-	var res = tf.concat(...args);
+	var res = tf.relu(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
 	_clean_custom_tensors();
