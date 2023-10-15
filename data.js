@@ -322,7 +322,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 	if(min_value < 0) {
-		_tensor = _tensor.sub(min_value);
+		_tensor = _tf_sub(tensor, min_value);
 	}
 
 	var max_in_tensor = max(_tensor).arraySync();
