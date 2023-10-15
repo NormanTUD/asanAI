@@ -1093,7 +1093,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 					const norm = tf_add(sqrt(tf_mean(tf_square(grads))), (tf.backend().epsilon()));
 					// Important trick: scale the gradient with the magnitude (norm)
 					// of the gradient.
-					return grads.div(norm);
+					return tf_div(grads, norm);
 				});
 
 				data = tf_add(data, scaledGrads);
@@ -2692,8 +2692,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			const pooledGradValues = tf_mean(gradValues, [0, 1, 2]);
 			// Scale the convlutional layer's output by the pooled gradients, using
 			// broadcasting.
-			const scaledConvOutputValues =
-				lastConvLayerOutputValues.mul(pooledGradValues);
+			const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
 
 			// Create heat map by averaging and collapsing over all filters.
 			let heatMap = scaledConvOutputValues.mean(-1);

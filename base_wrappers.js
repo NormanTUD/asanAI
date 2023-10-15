@@ -3,11 +3,17 @@ var _custom_tensors = {};
 function tf_sub (...args) {
 	var res = tf.sub(...args);
 
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
 	return res;
 }
 
 function tf_min (...args) {
 	var res = tf.min(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
 
 	return res;
 }
@@ -15,11 +21,18 @@ function tf_min (...args) {
 function tf_max (...args) {
 	var res = tf.max(...args);
 
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
 	return res;
 }
 
 function tf_add (...args) {
 	var res = tf.add(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+
+	_clean_custom_tensors();
 
 	return res;
 }
@@ -27,11 +40,17 @@ function tf_add (...args) {
 function tf_mul (...args) {
 	var res = tf.mul(...args);
 
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
 	return res;
 }
 
 function tf_div (...args) {
 	var res = tf.div(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
 
 	return res;
 }
@@ -39,15 +58,28 @@ function tf_div (...args) {
 function tf_moments (...args) {
 	var res = tf.moments(...args);
 
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
 	return res;
 }
 
 function tf_reshape (...args) {
-	return tf.reshape(...args);
+	var res = tf.reshape(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
 }
 
 function tf_unique (...args) {
-	return tf.unique(...args);
+	var res = tf.unique(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, "[tf_unique]"];
+	_clean_custom_tensors();
+
+	return res;
 }
 
 function removeTimestampAndLines(inputString) {

@@ -332,7 +332,7 @@ async function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 	if(max_value != 0) {
-		_tensor = _tensor.div(max_value);
+		_tensor = tidy(() => { return tf_div(_tensor, max_value); });
 	}
 
 	try {
