@@ -1472,7 +1472,7 @@ async function visualize_train () {
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = fromPixels(x).resizeBilinear([height, width]).expandDims();
+					var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
 					res = divNoNan(res, parse_float($("#divide_by").val()));
 					return res;
 				} catch (e) {

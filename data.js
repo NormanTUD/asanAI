@@ -403,7 +403,7 @@ async function augment_rotate_images_function(item, degree, this_category_counte
 
 	if ($("#augment_sine_ripple").is(":checked")) {
 		var rippled = await sine_ripple(augmented_img);
-		x = x.concat(rippled.expandDims());
+		x = x.concat(expand_dims(rippled));
 		await add_tensor_as_image_to_photos(rippled);
 		classes.push(label_nr);
 	}
@@ -435,7 +435,7 @@ async function augment_flip_left_right(item, this_category_counter, x, classes) 
 // Funktion zur Anwendung einer Sinuswelle auf ein Bild
 async function augment_sine_ripple(item, label_nr, x, classes) {
 	var rippled = await sine_ripple(item);
-	x = x.concat(rippled.expandDims());
+	x = x.concat(expand_dims(rippled));
 	await add_tensor_as_image_to_photos(rippled);
 	classes.push(label_nr);
 	return [classes, x];
@@ -552,7 +552,7 @@ async function get_xs_and_ys () {
 
 				//log(imgs_shape);
 
-				x = ones(imgs_shape).expandDims();
+				x = expand_dims(ones(imgs_shape));
 
 				//log("this_data:", this_data);
 				//log("this_data.length", this_data.length);
@@ -665,7 +665,7 @@ async function get_xs_and_ys () {
 								l("Auto augmenting images");
 								if($("#augment_rotate_images").is(":checked")) {
 									for (var degree = 0; degree < 360; degree += (360 / $("#number_of_rotations").val())) {
-										var augmented_img = rotateWithOffset(resized_img.expandDims(), degrees_to_radians(degree));
+										var augmented_img = rotateWithOffset(expand_dims(resized_img), degrees_to_radians(degree));
 										x.push(await augmented_img.arraySync());
 										classes.push(label_nr);
 
@@ -685,13 +685,13 @@ async function get_xs_and_ys () {
 
 								if($("#augment_invert_images").is(":checked")) {
 									l("Inverted image");
-									x.push(abs(add(resized_img.expandDims(), (-255 / parse_float($("#divide_by").val())))).arraySync());
+									x.push(abs(add(expand_dims(resized_img), (-255 / parse_float($("#divide_by").val())))).arraySync());
 									classes.push(label_nr);
 								}
 
 								if($("#augment_flip_left_right").is(":checked")) {
 									l("Flip left/right");
-									var flipped = await flipLeftRight(resized_img.expandDims()).arraySync()[0];
+									var flipped = await flipLeftRight(expand_dims(resized_img)).arraySync()[0];
 									x.push(flipped);
 									classes.push(label_nr);
 								}
@@ -721,7 +721,7 @@ async function get_xs_and_ys () {
 				}
 
 				x = tensor(x);
-				y = tensor(classes).expandDims();
+				y = expand_dims(tensor(classes));
 			} else {
 				var maps = [];
 				if($("#auto_augment").is(":checked")) {
@@ -909,10 +909,10 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			if(!dont_load_into_tf) {
 				resized_img = tidy(() => {
 					var res = fromPixels(img);
-					resized_img = res.
+					resized_img = expand_dims(res.
 						resizeNearestNeighbor([height, width]).
-						toFloat().
-						expandDims();
+						toFloat()
+					);
 
 					if($("#divide_by").val() != 1) {
 						resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
@@ -1413,7 +1413,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
-	cam_image = cam_image.resizeNearestNeighbor([stream_height, stream_width]).toFloat().expandDims();
+	cam_image = expand_dims(resizeNearestNeighbor(cam_image, [stream_height, stream_width]).toFloat());
 	cam_image = await cam_image.arraySync()[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
@@ -1687,7 +1687,7 @@ async function confusion_matrix(classes) {
 
 		var img_tensor = tidy(() => {
 			try {
-				var res = fromPixels(x).resizeBilinear([height, width]).expandDims();
+				var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
 				res = divNoNan(res, parse_float($("#divide_by").val()));
 				return res;
 			} catch (e) {

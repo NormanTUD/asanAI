@@ -1,5 +1,14 @@
 var _custom_tensors = {};
 
+function expand_dims (...args) {
+	var res = tf.expandDims(...args);
+
+	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+	_clean_custom_tensors();
+
+	return res;
+}
+
 function tf_transpose (...args) {
 	var res = tf.transpose(...args);
 
