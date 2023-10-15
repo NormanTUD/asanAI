@@ -1481,7 +1481,7 @@ async function get_weights_as_json (m) {
 		for (var i = 0; i < weights.length; i++) {
 			if(!weights[i].isDisposed) {
 				try {
-					weights_array[i] = weights[i].arraySync();
+					weights_array[i] = array_sync(weights[i]);
 				} catch (e) {
 					wrn("" + e);
 				}
@@ -1518,7 +1518,7 @@ async function get_weights_as_string (m) {
 			for (var i = 0; i < weights.length; i++) {
 				if(!weights[i].isDisposed) {
 					try {
-						weights_array[i] = weights[i].arraySync();
+						weights_array[i] = array_sync(weights[i]);
 					} catch (e) {
 						err(e);
 					}

@@ -740,12 +740,12 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		) {
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
-			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
+			var new_on_batch_end_callback = await get_live_tracking_on_batch_end((
 				"model",
 				parse_int($("#epochs").val()),
-				JSON.stringify(xs_and_ys["x"].arraySync()),
-				JSON.stringify(xs_and_ys["y"].arraySync()
-				), false, "simplest_training_data_visualization");
+				JSON.stringify(array_sync(xs_and_ys["x"])),
+				JSON.stringify(array_sync(xs_and_ys["y"]))
+			), false, "simplest_training_data_visualization");
 			//log(new_on_batch_end_callback);
 			if(new_on_batch_end_callback) {
 				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
@@ -1487,9 +1487,9 @@ async function visualize_train () {
 			}
 
 			var res = tidy(() => { return model.predict(img_tensor); });
-			predictions_tensors.push(res.arraySync()[0]);
+			predictions_tensors.push(array_sync(res)[0]);
 
-			var res_array = res.arraySync()[0];
+			var res_array = array_sync(res)[0];
 
 			var probability = Math.max(...res_array);
 			var category = res_array.indexOf(probability);

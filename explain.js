@@ -939,8 +939,8 @@ function draw_internal_states (layer, inputs, applied) {
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		//log("batchnr: " + batchnr);
 
-		var input_data = inputs[0].arraySync()[batchnr];
-		var output_data = applied.arraySync()[batchnr];
+		var input_data = array_sync(inputs[0])[batchnr];
+		var output_data = array_sync(applied)[batchnr];
 
 		var layer_div = $($(".layer_data")[layer]);
 		if(batchnr == 0) {
@@ -971,7 +971,7 @@ function draw_internal_states (layer, inputs, applied) {
 				var filters = 3;
 
 				kernel_data = tidy(() => {
-					return tf_transpose(model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]).arraySync();
+					return array_sync(tf_transpose(model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
 				});
 			}
 		}
@@ -1118,9 +1118,9 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 	}
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
-		full_data["image"] = tidy(() => { return deprocess_image(generated_data).arraySync(); });
+		full_data["image"] = tidy(() => { return array_sync(deprocess_image(generated_data)); });
 	} else {
-		full_data["data"] = tidy(() => { return generated_data.arraySync(); });
+		full_data["data"] = tidy(() => { return array_sync(generated_data); });
 	}
 
 	await dispose(generated_data);
@@ -1566,7 +1566,7 @@ function get_layer_data() {
 				for (var k = 0; k < model.layers[i].weights.length; k++) {
 					var wname = get_weight_name_by_layer_and_weight_index(i, k);
 					if(possible_weight_names.includes(wname)) {
-						this_layer_weights[wname] = Array.from(model.layers[i].weights[k].val.arraySync());
+						this_layer_weights[wname] = Array.from(array_sync(model.layers[i].weights[k].val));
 					} else {
 						err("Invalid wname: " + wname);
 						log(model.layers[i].weights[k]);
@@ -2500,7 +2500,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 					var predict_me = tensor(x_data[i]);
 					var predicted_tensor = eval(global_model_name).predict(predict_me);
-					var predicted = predicted_tensor.arraySync()[0][0];
+					var predicted = array_sync(predicted_tensor)[0][0];
 
 					predicted_trace.y.push(predicted);
 

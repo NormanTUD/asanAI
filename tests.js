@@ -294,7 +294,7 @@ async function run_tests () {
 			await wait_for_updated_page(3);
 
 			try {
-				var result_and = await model.predict(tensor([[0, 0]])).arraySync()[0][0];
+				var result_and = await model.predict(array_sync(tensor([[0, 0]])))[0][0];
 				test_equal("trained nn: 0 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 0 and 0 results: " + result_and.toString());
@@ -308,7 +308,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(tensor([[0, 1]])).arraySync()[0][0];
+				result_and = await model.predict(array_sync(tensor([[0, 1]])))[0][0];
 				test_equal("trained nn: 0 and 1", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 0 and 1 results:" + result_and.toString());
@@ -322,7 +322,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(tensor([[1, 0]])).arraySync()[0][0];
+				result_and = await model.predict(array_sync(tensor([[1, 0]])))[0][0];
 				test_equal("trained nn: 1 and 0", result_and.toString().startsWith("0.0"), true);
 				if(!result_and.toString().startsWith("0.0")) {
 					log("trained nn: 1 and 0 results:" + result_and.toString());
@@ -336,7 +336,7 @@ async function run_tests () {
 			}
 
 			try {
-				result_and = await model.predict(tensor([[1, 1]])).arraySync()[0][0];
+				result_and = await model.predict(array_sync(tensor([[1, 1]])))[0][0];
 				var r = result_and.toString();
 				test_equal("trained nn: 1 and 1", r.startsWith("0.9") || r.startsWith("0.8"), true);
 				if(!(r.startsWith("0.9") || r.startsWith("0.8"))) {
@@ -365,7 +365,7 @@ async function run_tests () {
 			await wait_for_updated_page(5);
 
 			try {
-				var kernel_initializer_correctly_set = model.layers[0].weights[0].val.arraySync()[0][0] == initializer_val;
+				var kernel_initializer_correctly_set = array_sync(model.layers[0].weights[0].val)[0][0] == initializer_val;
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 			} catch (e) {
@@ -424,10 +424,10 @@ async function run_tests () {
 			await delay(5000);
 
 			try {
-				var res = await model.predict(tensor([[1, 1, 1]])).arraySync()[0][0];
+				var res = await model.predict(array_sync(tensor([[1, 1, 1]])))[0][0];
 				test_equal("trained nn: x1+x2+x3=y (1,1,1 = 3, got " + res + ")", Math.abs(res - 3) > 0, true);
 
-				res = await model.predict(tensor([[3, 3, 3]])).arraySync()[0][0];
+				res = await model.predict(array_sync(tensor([[3, 3, 3]])))[0][0];
 				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
 			} catch (e) {
 				err("ERROR while predicting in test mode:", e);
@@ -531,7 +531,7 @@ async function run_tests () {
 			var xy_data = await get_xs_and_ys();
 			force_download = false;
 
-			var y_test = await xy_data.y.arraySync();
+			var y_test = array_sync(xy_data.y);
 
 			await dispose(xy_data["x"]);
 			await dispose(xy_data["y"]);

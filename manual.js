@@ -101,7 +101,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 			log(layer_type, config, _tensor, kwargs);
 			input_shape = _tensor.shape;
 			var tensor_res = await layer.apply(_tensor, kwargs);
-			res = tensor_res.arraySync();
+			res = array_sync(tensor_res);
 			output_shape = tensor_res.shape;
 			$("#" + uuid + "_error").html("");
 		} catch (e) {
@@ -361,7 +361,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 	var result, layer, input_shape, output_shape;
 	try {
-		var res = await get_network_type_result_by_array(layer_type, img.arraySync(), config, 1, uuid);
+		var res = await get_network_type_result_by_array(layer_type, array_sync(img), config, 1, uuid);
 
 		if(res.length >= 4) {
 			result = res[0];
@@ -407,7 +407,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 					if(Object.keys(layer.kernel).includes("val")) {
 						var layer_kernel_tensor = layer.kernel.val;
 						layer_kernel_tensor = layer_kernel_tensor.transpose([3, 2, 1, 0]);
-						var layer_kernel = layer_kernel_tensor.arraySync();
+						var layer_kernel = array_sync(layer_kernel_tensor);
 
 						for (var filter_id = 0; filter_id < layer_kernel_tensor.shape[0]; filter_id++) {
 							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
@@ -427,7 +427,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		for (var i = 0; i < _tensor.shape[0]; i++) {
 			var id = uuidv4();
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
-			draw_grid($("#" + id)[0], 1, _tensor.arraySync()[i], 1, 1, "", "");
+			draw_grid($("#" + id)[0], 1, array_sync(_tensor)[i], 1, 1, "", "");
 			await toPixels(_tensor, canvas);
 		}
 	}

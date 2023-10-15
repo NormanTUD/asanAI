@@ -5168,16 +5168,16 @@ function plotly_show_loss_graph() {
 		var y_pred = tensor2d(y_pred_table);
 
 		var trace1 = {
-			x: y_true.arraySync().map(x => x[0]),
-			y: y_true.arraySync().map(x => x[1]),
+			x: array_sync(y_true).map(x => x[0]),
+			y: array_sync(y_true).map(x => x[1]),
 			mode: "markers",
 			type: "scatter",
 			name: "Ground Thruth"
 		};
 
 		var trace2 = {
-			x: y_pred.arraySync().map(x => x[0]),
-			y: y_pred.arraySync().map(x => x[1]),
+			x: array_sync(y_pred).map(x => x[0]),
+			y: array_sync(y_pred).map(x => x[1]),
 			mode: "markers",
 			type: "scatter",
 			name: "Prediction"
@@ -5206,8 +5206,8 @@ function plotly_show_loss_graph() {
 				var loss = fn(y_true, y_pred);
 
 				plot_data.push({
-					x: y_pred.arraySync().map(x => x[0]),
-					y: loss.arraySync(),
+					x: array_sync(y_pred).map(x => x[0]),
+					y: array_sync(loss),
 					mode: "lines",
 					type: "scatter",
 					name: name
@@ -5387,8 +5387,8 @@ async function get_training_data_as_json () {
 	var training_data = await get_xs_and_ys();
 	force_download = 0;
 
-	training_data.x = await training_data.x.arraySync();
-	training_data.y = await training_data.y.arraySync();
+	training_data.x = array_sync(training_data.x);
+	training_data.y = array_sync(training_data.y);
 
 	await dispose(training_data["x"]);
 	await dispose(training_data["y"]);
@@ -6799,7 +6799,7 @@ function load_shoe_example () {
 // get_kernel_images not yet used
 function get_kernel_images (layer_nr, all=0) {
 	var _k = model.layers[layer_nr].kernel.val.shape;
-	var transposed_kernel = tidy(() => { return tf_transpose(model.layers[layer_nr].kernel.val, [3, 0, 1, 2]).arraySync(); });
+	var transposed_kernel = tidy(() => { return array_sync(tf_transpose(model.layers[layer_nr].kernel.val, [3, 0, 1, 2])); });
 
 	var kernel_size_x = _k[0];
 	var kernel_size_y = _k[1];

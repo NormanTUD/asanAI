@@ -17,7 +17,7 @@ function __predict (data, __model) {
 
 	var res = __model.predict(data);
 
-	var res_sync = res.arraySync().flat();
+	var res_sync = array_sync(res).flat();
 
 	for (var k = 0; k < res_sync.length; k++) {
 		if(isNaN(res_sync[k])) {
@@ -329,7 +329,7 @@ async function _predict_result(predictions_tensor, nr) {
 	} else if(model.outputShape.length == 2) {
 		await _predict_table(predictions_tensor, desc);
 	} else {
-		var latex = arbitrary_array_to_latex(predictions_tensor.arraySync());
+		var latex = arbitrary_array_to_latex(array_sync(predictions_tensor));
 		desc.html(latex);
 	}
 
@@ -339,7 +339,7 @@ async function _predict_result(predictions_tensor, nr) {
 
 async function _predict_image (predictions_tensor, desc) {
 	var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
-	var predictions = predictions_tensor_transposed.arraySync();
+	var predictions = array_sync(predictions_tensor_transposed);
 
 	var pxsz = 1;
 
@@ -564,7 +564,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		} else {
 			var data = "";
 			if(item.startsWith("# shape:")) {
-				data = [numpy_str_to_tf_tensor(item, 0).arraySync()];
+				data = [array_sync(numpy_str_to_tf_tensor(item, 0))];
 			} else {
 				var original_item = item;
 
@@ -712,7 +712,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(is_image_prediction || labels.length) {
 			$("#" + pred_tab).append(str).show();
 		} else {
-			var latex = arbitrary_array_to_latex(predictions_tensor.arraySync());
+			var latex = arbitrary_array_to_latex(array_sync(predictions_tensor));
 			$("#" + pred_tab).append(latex).show();
 			temml.render($("#prediction_non_image").text(), $("#prediction_non_image")[0]);
 		}
@@ -910,7 +910,7 @@ async function _print_predictions_text(count, example_predict_data) {
 			try {
 				res = __predict([_tensor]);
 
-				var res_array = res.arraySync();
+				var res_array = array_sync(res);
 
 				var network_name =  create_network_name();
 				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
@@ -1080,7 +1080,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 	if(heatmap) {
 		var canvas = $("#grad_cam_heatmap")[0];
-		var img = await heatmap.arraySync()[0];
+		var img = await array_sync(heatmap)[0];
 
 		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
 
@@ -1182,7 +1182,7 @@ async function predict_webcam () {
 
 	await draw_heatmap(predictions_tensor, predict_data, 1);
 
-	var predictions = predictions_tensor.arraySync();
+	var predictions = array_sync(predictions_tensor);
 
 	var webcam_prediction = $("#webcam_prediction");
 	webcam_prediction.html("").show();
@@ -1225,7 +1225,7 @@ async function predict_webcam () {
 }
 
 function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
-	var transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]).arraySync();
+	var transposed = array_sync(tf_transpose(predictions_tensor, [3, 1, 2, 0]));
 
 	for (var i = 0; i < predictions_tensor.shape[3]; i++) {
 		var canvas = $("<canvas/>", {class: "layer_image"}).prop({
@@ -1492,7 +1492,7 @@ async function predict_handdrawn () {
 			));
 		});
 
-		var unique_values = tidy(() => { return tf_unique(tf_reshape(predict_data, [-1])).values.arraySync(); });
+		var unique_values = tidy(() => { return array_sync(tf_unique(tf_reshape(predict_data, [-1])).values); });
 
 		if(unique_values.length > 1) {
 			taint_privacy();
@@ -1513,7 +1513,7 @@ async function predict_handdrawn () {
 		var new_predict_handdrawn_hash = await get_current_status_hash();
 
 		if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
-			var as = predict_data.arraySync();
+			var as = array_sync(predict_data);
 			var stringified = JSON.stringify(as);
 			var new_handdrawn_image_hash = await md5(stringified);
 
@@ -1616,7 +1616,7 @@ async function _predict_handdrawn(predictions_tensor) {
 	} else if(model.outputShape.length == 4) {
 		ret = await _image_output_handdrawn(predictions_tensor);
 	} else {
-		var latex_output = arbitrary_array_to_latex(predictions_tensor.arraySync());
+		var latex_output = arbitrary_array_to_latex(array_sync(predictions_tensor));
 		ret = latex_output;
 	}
 
@@ -1627,7 +1627,7 @@ async function _predict_handdrawn(predictions_tensor) {
 
 async function _image_output_handdrawn(predictions_tensor) {
 	var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
-	var predictions = predictions_tensor_transposed.arraySync();
+	var predictions = array_sync(predictions_tensor_transposed);
 
 	var pxsz = 1;
 
@@ -1655,7 +1655,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
 
-	var predictions = predictions_tensor.arraySync();
+	var predictions = array_sync(predictions_tensor);
 
 	var max = 0;
 
