@@ -3647,12 +3647,7 @@ async function upload_weights(evt) {
 	model = await loadLayersModel(tf.io.browserFiles([modelUpload.files[0], weightsUpload.files[0]]));
 
 	$("#predictcontainer").show();
-	$("a[href=\"#predict_tab\"]").click();
-	if(is_cosmo_mode) {
-		await delay(200);
-		log("TRYING HERE!!!!!!!!");
-		await chose_next_manicule_target();
-	}
+	$('a[href="#predict_tab"]').click();
 }
 
 var handle_x_file = async function (evt) {
