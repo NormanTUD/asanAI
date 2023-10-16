@@ -6605,8 +6605,10 @@ function reload_js(src) {
 // reload_all_js();
 
 function create_centered_window_with_text(parameter) {
+	$(".math_copier").remove();
+
 	// Create a div for the window
-	const windowDiv = document.createElement('div');
+	var windowDiv = document.createElement('div');
 	windowDiv.style.position = 'fixed';
 	windowDiv.style.top = '50%'; // Center vertically
 	windowDiv.style.left = '50%'; // Center horizontally
@@ -6616,9 +6618,10 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.style.border = '1px solid #ccc';
 	windowDiv.style.padding = '10px';
 	windowDiv.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.2)';
+	windowDiv.classList.add("math_copier");
 
 	// Create the "x" button
-	const closeButton = document.createElement('button');
+	var closeButton = document.createElement('button');
 	closeButton.textContent = 'x';
 	closeButton.style.position = 'absolute';
 	closeButton.style.top = '5px';
