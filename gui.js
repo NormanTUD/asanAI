@@ -5784,12 +5784,16 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	const logElement = document.getElementById("events");
 
 	atrament_data[idname]["atrament"].addEventListener("clean", () => {
+		taint_privacy();
+
 		if(customfunc) {
 			eval(customfunc);
 		}
 	});
 
 	atrament_data[idname]["atrament"].addEventListener("fillstart", ({ x, y }) => {
+		taint_privacy();
+
 		atrament_data[idname]["canvas"].style.cursor = "wait";
 		if(customfunc) {
 			eval(customfunc);
@@ -5797,6 +5801,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	});
 
 	atrament_data[idname]["atrament"].addEventListener("fillend", () => {
+		taint_privacy();
+
 		atrament_data[idname]["canvas"].style.cursor = "crosshair";
 		if(customfunc) {
 			eval(customfunc);
@@ -5804,6 +5810,8 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 	});
 
 	atrament_data[idname]["atrament"].addEventListener("strokeend", async () => {
+		taint_privacy();
+
 		if(customfunc) {
 			try {
 				eval(customfunc);

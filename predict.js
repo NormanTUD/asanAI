@@ -1510,12 +1510,6 @@ async function predict_handdrawn () {
 				[height, width]
 			));
 		});
-
-		var unique_values = tidy(() => { return array_sync(tf_unique(tf_reshape(predict_data, [-1])).values); });
-
-		if(unique_values.length > 1) {
-			taint_privacy();
-		}
 	} catch (e) {
 		await write_error("" + e);
 		await dispose(predict_data);
