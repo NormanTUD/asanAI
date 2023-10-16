@@ -1718,7 +1718,11 @@ async function confusion_matrix(classes) {
 				return model.predict(img_tensor);
 			});
 
-			res = array_sync(res)[0];
+			res = tidy(() => {
+				var _res = array_sync(res)[0];
+				dispose(res); // await not possible
+				return _res;
+			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
