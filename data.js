@@ -887,7 +887,12 @@ function url_to_tf (url, dont_load_into_tf=0) {
 					));
 
 					if($("#divide_by").val() != 1) {
-						resized_img = tf.tidy(() => { return divNoNan(resized_img, parse_float($("#divide_by").val())); })
+						resized_img = tf.tidy(() => {
+							var div_by = parse_float($("#divide_by").val());
+							var res = divNoNan(resized_img, div_by);
+							dispose(resized_img); // await not possible
+							return res;
+						})
 					}
 
 					return resized_img;
