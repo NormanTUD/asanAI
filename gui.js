@@ -3548,6 +3548,8 @@ async function open_popup(name) {
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
 
+	$(".popup_body").each((i, e) => { $(e).is(":visible") && $(e).find(".close_button").click() })
+
 	if ($(el).css("display") == "none") {
 		el.style.display = "block";
 	} else {
