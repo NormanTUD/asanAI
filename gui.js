@@ -3606,7 +3606,6 @@ async function upload_model(evt) {
 		return async function (e) {
 			uploaded_model = e.target.result;
 
-			console.log("AAA");
 			try {
 				await set_config();
 			} catch (e) {
@@ -3616,12 +3615,9 @@ async function upload_model(evt) {
 
 				err("" + e);
 			}
-			console.log("BBB");
 			is_setting_config = false;
 
-			console.log("CCC");
 			$(".overlay").remove();
-			console.log("DDD");
 		};
 	})(f);
 
