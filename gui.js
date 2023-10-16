@@ -124,7 +124,7 @@ async function get_current_status_hash(use_weights=1) {
 	});
 
 	if(use_weights) {
-		html_code += await get_weights_as_string();
+		html_code += get_weights_as_string();
 	}
 
 	var new_status_hash = await md5(html_code);
@@ -3212,7 +3212,7 @@ async function save_current_status() {
 
 		status_saves[index] = {
 			"model_structure": await get_model_structure(),
-			"weights": await get_weights_as_string()
+			"weights": get_weights_as_string()
 		};
 
 		future_state_stack = [];
@@ -3540,7 +3540,7 @@ function save_to_db(model_structure, model_weights, model_data, requests_public)
 
 async function save_to_db_wrapper () {
 	if(!model_name_exists()) {
-		save_to_db(await get_tfjs_model(), await get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
+		save_to_db(await get_tfjs_model(), get_weights_as_string(), JSON.stringify(await get_model_data(1)), document.getElementById("is_public").checked);
 		$("#save_to_db").prop("disabled", true);
 	} else {
 		color_msg_red("save_model_msg");

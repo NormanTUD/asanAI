@@ -1495,7 +1495,7 @@ async function get_weights_as_json (m) {
 	}
 }
 
-async function get_weights_as_string (m) {
+function get_weights_as_string (m) {
 
 	if(!m) {
 		m = model;
@@ -1520,15 +1520,12 @@ async function get_weights_as_string (m) {
 				for (var i = 0; i < weights.length; i++) {
 					if(!weights[i].isDisposed) {
 						try {
-							weights_array[i] = tidy(() => {
-								var _r = array_sync(weights[i]);
-								return _r;
-							});
+							weights_array[i] = array_sync(weights[i]);
 						} catch (e) {
 							err(e);
 						}
 					} else {
-						wrn("weights is disposed");
+						wrn(`weights[${i}] is disposed`);
 					}
 				}
 
@@ -1570,8 +1567,8 @@ function download(filename, text) {
 
 }
 
-async function download_weights_json () {
-	download("weights.json", await get_weights_as_string());
+function download_weights_json () {
+	download("weights.json", get_weights_as_string());
 }
 
 async function output_size_at_layer (input_size_of_first_layer, layer_nr) {
@@ -1631,7 +1628,7 @@ async function get_weights_shape (weights_as_string, m) {
 	}
 
 	if(weights_as_string === undefined) {
-		weights_as_string = await get_weights_as_string(m);
+		weights_as_string = get_weights_as_string(m);
 	}
 
 	try {

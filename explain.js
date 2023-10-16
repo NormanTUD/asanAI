@@ -1156,16 +1156,18 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 	if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
 		try {
-			full_data["image"] = array_sync(tidy(() => {
-				var dp = deprocess_image(generated_data);
+			full_data["image"] = tidy(() => {
+				return array_sync(tidy(() => {
+					var dp = deprocess_image(generated_data);
 
-				if(!dp) {
-					err("deprocess image returned empty");
-					full_data["worked"] = 0;
-				}
+					if(!dp) {
+						err("deprocess image returned empty");
+						full_data["worked"] = 0;
+					}
 
-				return dp;
-			}));
+					return dp;
+				}));
+			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
