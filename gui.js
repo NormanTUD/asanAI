@@ -2359,6 +2359,8 @@ function set_xyz_values(j, name, values) {
 async function set_config(index) {
 	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
+	console.log("block 1");
+
 	last_known_good_input_shape = "[]";
 
 	$(".only_show_when_predicting_image_file").hide();
@@ -2373,8 +2375,10 @@ async function set_config(index) {
 		swal_msg = language[lang]["undoing_redoing"];
 	}
 
+	//console.log("block 2");
 	try {
 		l(swal_msg);
+		//console.log("block 2.1");
 
 		var overlay = load_msg({"title": swal_msg + "..."});
 
@@ -2388,10 +2392,10 @@ async function set_config(index) {
 		var config = await _get_configuration(index);
 
 		disable_show_python_and_create_model = true;
+		//console.log("block 2.2");
 
 		if (config) {
 			if (!index) {
-
 				var trigger_height_change = 0;
 
 				if (config["width"]) {
@@ -2511,6 +2515,7 @@ async function set_config(index) {
 					Swal.close();
 					err(e);
 					l("ERROR: Cannot load this model file. Is it a JSON file from asanAI? Is it maybe a graph model?");
+					$(".overlay").remove();
 					return;
 				}
 			} else {
@@ -2544,6 +2549,8 @@ async function set_config(index) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
 					}
+
+					$(".overlay").remove();
 
 					if (("" + e).includes("keras")) {
 						err("" + e);
@@ -2660,6 +2667,8 @@ async function set_config(index) {
 			}
 		}
 
+		//console.log("block 2.3");
+
 		disabling_saving_status = original_disabling_saving_status;
 		disable_show_python_and_create_model = false;
 
@@ -2669,11 +2678,13 @@ async function set_config(index) {
 			await dispose(global_model_data);
 		}
 
+		//console.log("block 2.4");
 		[model, global_model_data] = await create_model(model);
 
 		l(language[lang]["compiling_model"]);
 		await compile_model();
 
+		//console.log("block 2.5");
 		try {
 			if (config["weights"]) {
 				l("Setting weights from config-weights");
@@ -2683,6 +2694,8 @@ async function set_config(index) {
 		} catch (e) {
 			err(e);
 			l("ERROR: Failed to load. Failed to load model and/or weights");
+			$(".overlay").remove();
+
 			$(".overlay").remove();
 			return;
 		}
@@ -2709,11 +2722,13 @@ async function set_config(index) {
 			l(language[lang]["page_update_took"] + " " + hrt);
 		}
 
+		//console.log("block 2.6");
 		await write_descriptions();
 
-		dbg(language[lang]["updating_predictions"]);
-		await show_prediction(1, 1);
+		//dbg(language[lang]["updating_predictions"]);
+		//await show_prediction(1, 1);
 
+		//console.log("block 2.7");
 		$(".kernel_initializer").trigger("change");
 		$(".bias_initializer").trigger("change");
 
@@ -2721,7 +2736,8 @@ async function set_config(index) {
 			await wait_for_updated_page(2);
 		}
 
-		l(language[lang]["loaded_configuration"]);
+		//console.log("block 2.8");
+		//l(language[lang]["loaded_configuration"]);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -2729,6 +2745,8 @@ async function set_config(index) {
 
 		err("" + e);
 	}
+
+	//console.log("block 3");
 
 	$(".overlay").remove();
 }
@@ -3588,8 +3606,22 @@ async function upload_model(evt) {
 		return async function (e) {
 			uploaded_model = e.target.result;
 
-			await set_config();
+			console.log("AAA");
+			try {
+				await set_config();
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
+			}
+			console.log("BBB");
 			is_setting_config = false;
+
+			console.log("CCC");
+			$(".overlay").remove();
+			console.log("DDD");
 		};
 	})(f);
 
