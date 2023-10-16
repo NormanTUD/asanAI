@@ -3406,19 +3406,19 @@ async function logout() {
 	await get_traindata_and_init_categories();
 }
 
-async function sources_popup() {
-	await open_popup("sources_popup");
+function sources_popup() {
+	open_popup("sources_popup");
 }
 
-async function losses_popup() {
+function losses_popup() {
 	if ($("#explanation").children().length == 0) {
 		add_loss_functions_to_plotly_visualizer();
 	}
-	await open_popup("losses_popup");
+	open_popup("losses_popup");
 }
 
-async function close_losses() {
-	await close_popup("losses_popup");
+function close_losses() {
+	close_popup("losses_popup");
 }
 
 function model_name_exists() {
@@ -3430,11 +3430,11 @@ function model_name_exists() {
 	});
 }
 
-async function manage_download() {
+function manage_download() {
 	if(!get_cookie("session_id") === null) {
 		save_model();
 	} else {
-		await open_save_model_dialog();
+		open_save_model_dialog();
 	}
 }
 
@@ -3531,29 +3531,32 @@ async function save_to_db_wrapper () {
 	}
 }
 
-async function open_save_model_dialog() {
-	await open_popup("save_model_dialog");
+function open_save_model_dialog() {
+	open_popup("save_model_dialog");
 }
 
-async function open_register_dialog() {
-	await open_popup("register_dialog");
+function open_register_dialog() {
+	open_popup("register_dialog");
 }
 
-async function open_save_dialog() {
-	await open_popup("save_dialog");
+function open_save_dialog() {
+	open_popup("save_dialog");
 }
 
-async function open_popup(name) {
+function close_all_popups() {
+	$(".popup_body").each((i, e) => {
+		$(e).is(":visible") && $(e).find(".close_button").click();
+	});
+}
+
+function open_popup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
 
 	var visible = $($(".popup_body:visible")[0]).parent().attr("id");
 
-	$(".popup_body").each((i, e) => {
-		$(e).is(":visible") && $(e).find(".close_button").click();
-	});
-
+	close_all_popups();
 
 	if(visible != name) {
 		if ($(el).css("display") == "none") {
@@ -3566,12 +3569,11 @@ async function open_popup(name) {
 	}
 }
 
-async function close_popup(name) {
+function close_popup(name) {
 	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = "none";
-	await write_descriptions();
 }
 
 async function upload_model(evt) {
