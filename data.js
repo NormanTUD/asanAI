@@ -236,7 +236,14 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 				if(!skip_real_image_download) {
 					try {
-						old_percentage = await _get_set_percentage_text(percentage, i, urls.length, percentage_div, old_percentage, times);
+						old_percentage = await _get_set_percentage_text(
+							percentage, 
+							i, 
+							urls.length, 
+							percentage_div, 
+							old_percentage, 
+							times
+						);
 
 						tf_data = await url_to_tf(url, dont_load_into_tf);
 
@@ -880,7 +887,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 					));
 
 					if($("#divide_by").val() != 1) {
-						resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
+						resized_img = tf.tidy(() => { return divNoNan(resized_img, parse_float($("#divide_by").val())); })
 					}
 
 					return resized_img;
