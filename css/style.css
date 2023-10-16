@@ -266,7 +266,7 @@ ul {
 	left: 0;
 	border: 1px solid #ddd;
 	overflow: hidden;
-	padding: 10px;
+	margin: 10px;
 }
 
 .layer_setting {
