@@ -4834,6 +4834,8 @@ function hide_ribbon() {
 	$("#ribbon").hide();
 	$("#ribbon_shower").show();
 	$("#status_bar").hide();
+
+	close_all_popups();
 }
 
 function human_readable_time(seconds, start="", end="") {
