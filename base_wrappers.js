@@ -1,6 +1,32 @@
 var _custom_tensors = {};
 
+function is_tf_tensor (arg) {
+	if(typeof(arg) != "object") {
+		return false;
+	}
+
+	if(!Object.keys(arg).includes("isDisposedInternal")) {
+		return false;
+	}
+
+	if(!Object.keys(arg).includes("kep")) {
+		return false;
+	}
+
+	return true;
+}
+
+function _register_tensors (...args) {
+	for (var i = 0; i < args.length; i++) {
+		if(is_tf_tensor(args[i])) {
+			_custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])];
+			_clean_custom_tensors();
+		}
+	}
+}
+
 function array_sync (...args) {
+	_register_tensors(...args);
 	var first_tensor = args.shift();
 	var res = first_tensor.arraySync();
 
@@ -8,6 +34,7 @@ function array_sync (...args) {
 }
 
 function tf_to_float (...args) {
+	_register_tensors(...args);
 	var first_tensor = args.shift();
 	var res = first_tensor.toFloat();
 
@@ -18,6 +45,7 @@ function tf_to_float (...args) {
 }
 
 function tf_to_tensor (...args) {
+	_register_tensors(...args);
 	var first_tensor = args.shift();
 	var res = first_tensor.toTensor(...args);
 
@@ -28,6 +56,7 @@ function tf_to_tensor (...args) {
 }
 
 function tf_mean (...args) {
+	_register_tensors(...args);
 	var res = tf.mean(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -37,6 +66,7 @@ function tf_mean (...args) {
 }
 
 function tf_relu (...args) {
+	_register_tensors(...args);
 	var res = tf.relu(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -46,6 +76,7 @@ function tf_relu (...args) {
 }
 
 function tf_concat (...args) {
+	_register_tensors(...args);
 	var first_tensor = args.shift();
 	var res = first_tensor.concat(...args);
 
@@ -56,6 +87,7 @@ function tf_concat (...args) {
 }
 
 function expand_dims (...args) {
+	_register_tensors(...args);
 	var res = tf.expandDims(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -65,6 +97,7 @@ function expand_dims (...args) {
 }
 
 function tf_transpose (...args) {
+	_register_tensors(...args);
 	var res = tf.transpose(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -75,6 +108,7 @@ function tf_transpose (...args) {
 
 
 function tf_sub (...args) {
+	_register_tensors(...args);
 	var res = tf.sub(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -84,6 +118,7 @@ function tf_sub (...args) {
 }
 
 function tf_min (...args) {
+	_register_tensors(...args);
 	var res = tf.min(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -93,6 +128,7 @@ function tf_min (...args) {
 }
 
 function tf_max (...args) {
+	_register_tensors(...args);
 	var res = tf.max(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -102,6 +138,7 @@ function tf_max (...args) {
 }
 
 function tf_add (...args) {
+	_register_tensors(...args);
 	var first_tensor = args[0];
 	var second_arg = args[1];
 	if(!Object.keys(second_arg).includes("isDisposedInternal")) {
@@ -118,6 +155,7 @@ function tf_add (...args) {
 }
 
 function tf_mul (...args) {
+	_register_tensors(...args);
 	var res = tf.mul(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -127,6 +165,7 @@ function tf_mul (...args) {
 }
 
 function tf_div (...args) {
+	_register_tensors(...args);
 	var res = tf.div(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -136,12 +175,14 @@ function tf_div (...args) {
 }
 
 function tf_moments (...args) {
+	_register_tensors(...args);
 	var res = tf.moments(...args);
 
 	return res;
 }
 
 function tf_reshape (...args) {
+	_register_tensors(...args);
 	var res = tf.reshape(...args);
 
 	_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -151,6 +192,7 @@ function tf_reshape (...args) {
 }
 
 function tf_unique (...args) {
+	_register_tensors(...args);
 	var res = tf.unique(...args);
 
 	_custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)];
@@ -202,10 +244,12 @@ var get_stack_trace = function() {
 
 
 async function nextFrame(...args) {
+	_register_tensors(...args);
 	await tf.nextFrame(...args);
 }
 
 function shuffleCombo (...args) {
+	_register_tensors(...args);
 	try {
 		return tf.util.shuffleCombo(...args);
 	} catch (e) {
@@ -251,6 +295,7 @@ async function dispose (item) { // start_tensors
 }
 
 function tf_model (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.model(...args);
 
@@ -323,6 +368,7 @@ function tf_sequential(model_uuid) {
 }
 
 function buffer(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.buffer(...args);
 
@@ -343,6 +389,7 @@ function buffer(...args) {
 }
 
 function fromPixels (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.browser.fromPixels(...args);
 
@@ -363,6 +410,7 @@ function fromPixels (...args) {
 }
 
 function input(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.input(...args);
 
@@ -383,6 +431,7 @@ function input(...args) {
 }
 
 function ones(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.ones(...args);
 
@@ -403,6 +452,7 @@ function ones(...args) {
 }
 
 function reshape(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.reshape(...args);
 
@@ -423,6 +473,7 @@ function reshape(...args) {
 }
 
 function min(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.min(...args);
 
@@ -443,6 +494,7 @@ function min(...args) {
 }
 
 function max(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.max(...args);
 
@@ -463,6 +515,7 @@ function max(...args) {
 }
 
 function add(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.add(...args);
 
@@ -483,6 +536,7 @@ function add(...args) {
 }
 
 function abs(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.abs(...args);
 
@@ -503,6 +557,7 @@ function abs(...args) {
 }
 
 async function tf_data_webcam (...args) {
+	_register_tensors(...args);
 	try {
 		var res = await tf.data.webcam(...args);
 
@@ -521,6 +576,7 @@ async function tf_data_webcam (...args) {
 }
 
 function resizeNearestNeighbor(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.image.resizeNearestNeighbor(...args);
 
@@ -541,6 +597,7 @@ function resizeNearestNeighbor(...args) {
 }
 
 function resizeBilinear(...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.image.resizeBilinear(...args);
 
@@ -561,6 +618,7 @@ function resizeBilinear(...args) {
 }
 
 function rotateWithOffset (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.image.rotateWithOffset(...args);
 
@@ -581,6 +639,7 @@ function rotateWithOffset (...args) {
 }
 
 function flipLeftRight (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.image.flipLeftRight(...args);
 
@@ -601,6 +660,7 @@ function flipLeftRight (...args) {
 }
 
 function clipByValue (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.clipByValue(...args);
 
@@ -621,6 +681,7 @@ function clipByValue (...args) {
 }
 
 function randomUniform (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.randomUniform(...args);
 
@@ -641,6 +702,7 @@ function randomUniform (...args) {
 }
 
 function tf_square (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.square(...args);
 
@@ -661,6 +723,7 @@ function tf_square (...args) {
 }
 
 function tf_mean (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.mean(...args);
 
@@ -681,6 +744,7 @@ function tf_mean (...args) {
 }
 
 function sqrt (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.sqrt(...args);
 
@@ -701,6 +765,7 @@ function sqrt (...args) {
 }
 
 function tensor1d (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.tensor1d(...args);
 
@@ -721,6 +786,7 @@ function tensor1d (...args) {
 }
 
 function tensor2d (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.tensor2d(...args);
 
@@ -741,6 +807,7 @@ function tensor2d (...args) {
 }
 
 function tensor (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.tensor(...args);
 
@@ -761,6 +828,7 @@ function tensor (...args) {
 }
 
 function grad (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.grad(...args);
 
@@ -777,6 +845,7 @@ function grad (...args) {
 }
 
 function divNoNan (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.divNoNan(...args);
 
@@ -797,6 +866,7 @@ function divNoNan (...args) {
 }
 
 function oneHot (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.oneHot(...args);
 
@@ -868,6 +938,7 @@ function parse_float (...args) {
 }
 
 async function loadLayersModel (...args) {
+	_register_tensors(...args);
 	try {
 		var res = await tf.loadLayersModel(...args);
 
@@ -884,6 +955,7 @@ async function loadLayersModel (...args) {
 }
 
 function toPixels (...args) {
+	_register_tensors(...args);
 	try {
 		var res = tf.browser.toPixels(...args);
 
