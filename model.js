@@ -1474,19 +1474,20 @@ async function get_weights_as_json (m) {
 	}
 
 	if(m) {
-		var weights = await m.getWeights();
-
 		var weights_array = [];
+		tidy(() => {
+			var weights = m.getWeights();
 
-		for (var i = 0; i < weights.length; i++) {
-			if(!weights[i].isDisposed) {
-				try {
-					weights_array[i] = array_sync(weights[i]);
-				} catch (e) {
-					wrn("" + e);
+			for (var i = 0; i < weights.length; i++) {
+				if(!weights[i].isDisposed) {
+					try {
+						weights_array[i] = array_sync(weights[i]);
+					} catch (e) {
+						wrn("" + e);
+					}
 				}
 			}
-		}
+		});
 
 		return weights_array;
 	} else {
@@ -1510,42 +1511,44 @@ async function get_weights_as_string (m) {
 	var res;
 
 	if(m) {
-		try {
-			var weights = await m.getWeights();
+		tidy(() => {
+			try {
+				var weights = m.getWeights();
 
-			var weights_array = [];
+				var weights_array = [];
 
-			for (var i = 0; i < weights.length; i++) {
-				if(!weights[i].isDisposed) {
-					try {
-						weights_array[i] = tidy(() => {
-							var _r = array_sync(weights[i]);
-							return _r;
-						});
-					} catch (e) {
-						err(e);
+				for (var i = 0; i < weights.length; i++) {
+					if(!weights[i].isDisposed) {
+						try {
+							weights_array[i] = tidy(() => {
+								var _r = array_sync(weights[i]);
+								return _r;
+							});
+						} catch (e) {
+							err(e);
+						}
+					} else {
+						wrn("weights is disposed");
 					}
-				} else {
-					wrn("weights is disposed");
 				}
-			}
 
-			last_weights_as_string = JSON.stringify(weights_array);
-			res = last_weights_as_string;
-		} catch (e) {
-			if((""+e).includes("already disposed")) {
-				if(finished_loading) {
-					//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+				last_weights_as_string = JSON.stringify(weights_array);
+				res = last_weights_as_string;
+			} catch (e) {
+				if((""+e).includes("already disposed")) {
+					if(finished_loading) {
+						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					}
+				} else if((""+e).includes("e is undefined")) {
+					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+				} else if((""+e).includes("getWeights is not a function")) {
+					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+				} else {
+					err(e);
+					console.trace();
 				}
-			} else if((""+e).includes("e is undefined")) {
-				wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
-			} else if((""+e).includes("getWeights is not a function")) {
-				wrn("getWeights is not a function. The model may have been undefined while attempting this.");
-			} else {
-				err(e);
-				console.trace();
 			}
-		}
+		});
 	} else {
 		res = false;
 	}
