@@ -1476,15 +1476,26 @@ async function get_weights_as_json (m) {
 	if(m) {
 		var weights_array = [];
 		tidy(() => {
-			var weights = m.getWeights();
+			try {
+				var weights = m.getWeights();
 
-			for (var i = 0; i < weights.length; i++) {
-				if(!weights[i].isDisposed) {
-					try {
+				for (var i = 0; i < weights.length; i++) {
+					if(!weights[i].isDisposed) {
 						weights_array[i] = array_sync(weights[i]);
-					} catch (e) {
-						wrn("" + e);
 					}
+				}
+			} catch (e) {
+				if(("" + e).includes("already disposed")) {
+					if(finished_loading) {
+						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					}
+				} else if(("" + e).includes("e is undefined")) {
+					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+				} else if(("" + e).includes("getWeights is not a function")) {
+					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+				} else {
+					err(e);
+					console.trace();
 				}
 			}
 		});
@@ -1496,7 +1507,6 @@ async function get_weights_as_json (m) {
 }
 
 function get_weights_as_string (m) {
-
 	if(!m) {
 		m = model;
 	}
@@ -1505,6 +1515,16 @@ function get_weights_as_string (m) {
 		if(finished_loading) {
 			wrn("Could not get model...");
 		}
+		return false;
+	}
+
+	if(!Object.keys(m).includes("_callHook")) {
+		err("model does not include _callHook");
+		return false;
+	}
+
+	if(!typeof(m.getWeights) == "function") {
+		err("model.getWeights is not a function");
 		return false;
 	}
 
@@ -1519,11 +1539,7 @@ function get_weights_as_string (m) {
 
 				for (var i = 0; i < weights.length; i++) {
 					if(!weights[i].isDisposed) {
-						try {
-							weights_array[i] = array_sync(weights[i]);
-						} catch (e) {
-							err(e);
-						}
+						weights_array[i] = array_sync(weights[i]);
 					} else {
 						wrn(`weights[${i}] is disposed`);
 					}
@@ -1532,13 +1548,13 @@ function get_weights_as_string (m) {
 				last_weights_as_string = JSON.stringify(weights_array);
 				res = last_weights_as_string;
 			} catch (e) {
-				if((""+e).includes("already disposed")) {
+				if(("" + e).includes("already disposed")) {
 					if(finished_loading) {
 						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 					}
-				} else if((""+e).includes("e is undefined")) {
+				} else if(("" + e).includes("e is undefined")) {
 					wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
-				} else if((""+e).includes("getWeights is not a function")) {
+				} else if(("" + e).includes("getWeights is not a function")) {
 					wrn("getWeights is not a function. The model may have been undefined while attempting this.");
 				} else {
 					err(e);
