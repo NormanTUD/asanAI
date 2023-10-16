@@ -715,12 +715,14 @@ async function get_xs_and_ys () {
 
 							if(!id.endsWith("_layer")) {
 								var tf_img = fromPixels(img_elem);
-								var resized_img = tf_to_float(tf_img.
-									resizeNearestNeighbor([height, width])
-								);
+								var resized_img = tf.tidy(() => { return tf_to_float(resizeNearestNeighbor(tf_img, [height, width])); });
 
 								if($("#divide_by").val() != 1) {
-									resized_img = divNoNan(resized_img, parse_float($("#divide_by").val()));
+									resized_img = tidy(() => {
+										var res = divNoNan(resized_img, parse_float($("#divide_by").val()));
+										dispose(resized_img); // await not possible
+										return res;
+									});
 								}
 
 								var this_img = array_sync(resized_img);
@@ -728,10 +730,16 @@ async function get_xs_and_ys () {
 								classes.push(label_nr);
 
 								try {
-									var this_map_tensor = await fromPixels($("#" + id + "_layer")[0]).
-										resizeNearestNeighbor([model.outputShape[1], model.outputShape[2]]);
-									var this_map =
-										array_sync(divNoNan(this_map_tensor, parse_float($("#divide_by").val())));
+									var this_map_tensor = tidy(() => {
+										var res = resizeNearestNeighbor(fromPixels($("#" + id + "_layer")[0]), [model.outputShape[1], model.outputShape[2]]);
+										return res;
+									});
+
+									var this_map = tf.tidy(() => {
+										var res = array_sync(divNoNan(this_map_tensor, parse_float($("#divide_by").val())));
+										dispose(this_map_tensor); // await not possible
+										return res;
+									});
 									maps.push(this_map);
 								} catch (e) {
 									err(e);
@@ -887,11 +895,13 @@ function url_to_tf (url, dont_load_into_tf=0) {
 					_clean_custom_tensors();
 
 					resized_img = tidy(() => {
-						var _res = tf_to_float(
-							expand_dims(
-								resizeNearestNeighbor(res, [height, width])
-							)
-						);
+						var _res = tidy(() => {
+							return tf_to_float(
+								expand_dims(
+									resizeNearestNeighbor(res, [height, width])
+								)
+							);
+						});
 
 
 						_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
@@ -923,6 +933,9 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			} else {
 				return false;
 			}
+
+			_custom_tensors["" + resized_img.id] = [get_stack_trace(), resized_img, tensor_print_to_string(resized_img)];
+			_clean_custom_tensors();
 
 			return resized_img;
 		})();
