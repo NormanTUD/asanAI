@@ -552,7 +552,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		if(is_image_prediction) {
 			try {
-				predict_data = tf_to_float(resizeNearestNeighbor(expand_dims(fromPixels(item), [height, width])));
+				predict_data = tf_to_float(expand_dims(resizeNearestNeighbor(fromPixels(item), [height, width])));
 			} catch (e) {
 				if(("" + e).includes("Expected input shape")) {
 					dbg("" + e);
@@ -588,8 +588,6 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			l(str);
 
 			return str;
-
-			return "";
 		} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 			await dispose(predict_data);
 
