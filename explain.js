@@ -1238,6 +1238,8 @@ async function draw_maximally_activated_layer (layer, type, is_recursive = 0) {
 
 	}
 
+	await wait_for_updated_page(3);
+
 	var canvasses = [];
 
 	currently_generating_images = true;
@@ -1403,6 +1405,7 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	var results = await predict(item, force_category, 1);
+
 	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
 		$(item).next().remove();
 	}

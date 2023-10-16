@@ -582,13 +582,22 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		if(!predict_data) {
 			await dispose(predict_data);
-			return;
+
+			var str = "Empty predict data, not predicting";
+
+			l(str);
+
+			return str;
+
+			return "";
 		} else if(predict_data.shape.includes("0") || predict_data.shape.includes(0)) {
 			await dispose(predict_data);
 
-			l("Empty predict data. Not predicting.");
+			var str = "Dredict data tensor shape contains 0, not predicting";
 
-			return;
+			l(str);
+
+			return str;
 		}
 
 		var divide_by = parse_float($("#divide_by").val());
