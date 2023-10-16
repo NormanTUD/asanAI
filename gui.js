@@ -3604,6 +3604,8 @@ async function upload_model(evt) {
 	// Closure to capture the file information.
 	reader.onload = (function (theFile) {
 		return async function (e) {
+			await wait_for_updated_page(3);
+
 			uploaded_model = e.target.result;
 
 			try {
