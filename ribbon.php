@@ -1,7 +1,7 @@
 <div id="ribbon" style="overflow: hidden;">
 	<ul id="tablist">
 		<li><span class="symbol_button" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
-		<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="manage_download()">&#128190;</span></li>
+		<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="download_model_and_weights()">&#128190;</span></li>
 		<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
 		<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 		<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>

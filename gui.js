@@ -2357,9 +2357,9 @@ function set_xyz_values(j, name, values) {
 }
 
 async function set_config(index) {
-	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
+	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
 
-	console.log("block 1");
+	//console.log("block 1");
 
 	last_known_good_input_shape = "[]";
 
@@ -7194,4 +7194,10 @@ async function restart_fcnn () {
 	var [names, units, meta_infos] = fcnn_data;
 
 	await draw_new_fcnn(units, names, meta_infos);
+}
+
+async function download_model_and_weights () {
+	await wait_for_updated_page(3);
+	save_model();
+	await download_weights_json();
 }

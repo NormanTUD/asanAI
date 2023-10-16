@@ -1,7 +1,6 @@
 <div id="save_model_dialog" class="popup" style="display: none">
 	<div class="popup_body less_transparent_glass_box">
 		<div id="save_model_content"> 
-			<h1><span class="TRANSLATEME_download"></span></h1>
 			<button class="save_button" onclick="save_model();download_weights_json();"><span class="TRANSLATEME_download"></span></button>
 
 			<div style="display: none" class="show_when_logged_in">
