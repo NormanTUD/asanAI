@@ -3548,14 +3548,22 @@ async function open_popup(name) {
 	var el = document.getElementById(name);
 	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
 
-	$(".popup_body").each((i, e) => { $(e).is(":visible") && $(e).find(".close_button").click() })
+	var visible = $($(".popup_body:visible")[0]).parent().attr("id");
 
-	if ($(el).css("display") == "none") {
-		el.style.display = "block";
+	$(".popup_body").each((i, e) => {
+		$(e).is(":visible") && $(e).find(".close_button").click();
+	});
+
+
+	if(visible != name) {
+		if ($(el).css("display") == "none") {
+			el.style.display = "block";
+		} else {
+			el.style.display = "none";
+		}
 	} else {
 		el.style.display = "none";
 	}
-	await write_descriptions();
 }
 
 async function close_popup(name) {
