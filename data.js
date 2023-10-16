@@ -882,12 +882,20 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			if(!dont_load_into_tf) {
 				resized_img = tidy(() => {
 					var res = fromPixels(img);
-					resized_img = tf.tidy(() => {
+
+					_custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+					_clean_custom_tensors();
+
+					resized_img = tidy(() => {
 						var _res = tf_to_float(
 							expand_dims(
 								resizeNearestNeighbor(res, [height, width])
 							)
 						);
+
+
+						_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
+						_clean_custom_tensors();
 
 						dispose(res); // await not possible
 
@@ -895,13 +903,20 @@ function url_to_tf (url, dont_load_into_tf=0) {
 					});
 
 					if($("#divide_by").val() != 1) {
-						resized_img = tf.tidy(() => {
+						resized_img = tidy(() => {
 							var div_by = parse_float($("#divide_by").val());
-							var res = divNoNan(resized_img, div_by);
+							var _res = divNoNan(resized_img, div_by);
 							dispose(resized_img); // await not possible
-							return res;
-						})
+
+							_custom_tensors["" + _res.id] = [get_stack_trace(), _res, tensor_print_to_string(_res)];
+							_clean_custom_tensors();
+
+							return _res;
+						});
 					}
+
+					_custom_tensors["" + resized_img.id] = [get_stack_trace(), resized_img, tensor_print_to_string(resized_img)];
+					_clean_custom_tensors();
 
 					return resized_img;
 				});
