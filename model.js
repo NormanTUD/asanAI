@@ -1518,7 +1518,10 @@ async function get_weights_as_string (m) {
 			for (var i = 0; i < weights.length; i++) {
 				if(!weights[i].isDisposed) {
 					try {
-						weights_array[i] = array_sync(weights[i]);
+						weights_array[i] = tidy(() => {
+							var _r = array_sync(weights[i]);
+							return _r;
+						});
 					} catch (e) {
 						err(e);
 					}
