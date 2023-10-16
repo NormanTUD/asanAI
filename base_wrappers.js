@@ -9,7 +9,7 @@ function is_tf_tensor (arg) {
 		return false;
 	}
 
-	if(!Object.keys(arg).includes("kep")) {
+	if(!Object.keys(arg).includes("kept")) {
 		return false;
 	}
 
