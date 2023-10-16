@@ -882,9 +882,17 @@ function url_to_tf (url, dont_load_into_tf=0) {
 			if(!dont_load_into_tf) {
 				resized_img = tidy(() => {
 					var res = fromPixels(img);
-					resized_img = tf_to_float(expand_dims(res.
-						resizeNearestNeighbor([height, width])
-					));
+					resized_img = tf.tidy(() => {
+						var _res = tf_to_float(
+							expand_dims(
+								resizeNearestNeighbor(res, [height, width])
+							)
+						);
+
+						dispose(res); // await not possible
+
+						return _res;
+					});
 
 					if($("#divide_by").val() != 1) {
 						resized_img = tf.tidy(() => {
