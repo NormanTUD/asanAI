@@ -554,6 +554,12 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			try {
 				predict_data = tf.tidy(() => { return tf_to_float(expand_dims(resizeNearestNeighbor(fromPixels(item), [height, width]))); });
 			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				await dispose(predict_data);
+
 				if(("" + e).includes("Expected input shape")) {
 					dbg("" + e);
 				} else {
@@ -601,7 +607,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var divide_by = parse_float($("#divide_by").val());
 
 		if(divide_by != 1) {
-			predict_data = tidy(() => { return divNoNan(predict_data, divide_by); });
+			predict_data = tidy(() => {
+				var res = divNoNan(predict_data, divide_by);
+				dispose(res); // await not possible
+				return res;
+			});
 		}
 
 		var mi = model.input.shape;
@@ -661,6 +671,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			}
 
 			predictions_tensor = __predict(predict_data);
+
+			await dispose(predict_data);
 		} catch (e) {
 			dbg(`[PREDICT] Model input shape [${mi.join(", ")}], tensor shape [${predict_data.shape.join(", ")}], tensor_shape_matches_model() = ${tensor_shape_matches_model(predict_data)}`);
 
