@@ -14,6 +14,9 @@ class asanAI {
 		this.is_dark_mode = false;
 		this.max_neurons_fcnn = 32;
 
+		this.started_webcam = false;
+		this.camera = null
+
 		this.model = null;
 
 		if(args.length == 1) {
@@ -493,8 +496,8 @@ class asanAI {
 
 	_register_tensors (...args) {
 		for (var i = 0; i < args.length; i++) {
-			if(is_tf_tensor(args[i])) {
-				this.custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])];
+			if(this.is_tf_tensor(args[i])) {
+				this.custom_tensors["" + args[i].id] = [this.get_stack_trace(), args[i], this.tensor_print_to_string(args[i])];
 				this.clean_custom_tensors();
 			}
 		}
@@ -513,7 +516,7 @@ class asanAI {
 		var first_tensor = args.shift();
 		var res = first_tensor.toFloat();
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -524,7 +527,7 @@ class asanAI {
 		var first_tensor = args.shift();
 		var res = first_tensor.toTensor(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -534,7 +537,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.mean(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -544,7 +547,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.relu(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -555,7 +558,7 @@ class asanAI {
 		var first_tensor = args.shift();
 		var res = first_tensor.concat(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -565,7 +568,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.expandDims(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -575,7 +578,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.transpose(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -586,7 +589,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.sub(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -596,7 +599,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.min(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -606,7 +609,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.max(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -622,7 +625,7 @@ class asanAI {
 		}
 		var res = first_tensor.add(second_arg, ...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 		this.clean_custom_tensors();
 
@@ -633,7 +636,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.mul(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -643,7 +646,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.div(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -660,7 +663,7 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.reshape(...args);
 
-		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 		this.clean_custom_tensors();
 
 		return res;
@@ -670,11 +673,36 @@ class asanAI {
 		this._register_tensors(...args);
 		var res = tf.unique(...args);
 
-		this.custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)];
-		this.custom_tensors["" + res.indices.id] = [get_stack_trace(), res.indices, tensor_print_to_string(res.indices)];
+		this.custom_tensors["" + res.values.id] = [this.get_stack_trace(), res.values, this.tensor_print_to_string(res.values)];
+		this.custom_tensors["" + res.indices.id] = [this.get_stack_trace(), res.indices, this.tensor_print_to_string(res.indices)];
 		this.clean_custom_tensors();
 
 		return res;
+	}
+
+	tensor_print_to_string(_tensor) {
+		try {
+			var logBackup = console.log;
+			var logMessages = [];
+
+			console.log = function () {
+				logMessages.push.apply(logMessages, arguments);
+			};
+
+			_tensor.print(1);
+
+			console.log = logBackup;
+
+			return logMessages.join("\n");
+		} catch (e) {
+			if(("" + e).includes("Error: Tensor is disposed")) {
+				wrn("tensor to be printed was already disposed");
+			} else {
+				err("tensor_print_to_string failed:", e);
+
+			}
+			return "<span class='error_msg'>Error getting tensor as string</span>";
+		}
 	}
 
 	 removeTimestampAndLines(inputString) {
@@ -712,7 +740,7 @@ class asanAI {
 			s = "" + ex.stack;
 		}
 
-		s = removeTimestampAndLines(s);
+		s = this.removeTimestampAndLines(s);
 
 		return s;
 	};
@@ -749,7 +777,7 @@ class asanAI {
 					delete this.custom_tensors[tensor_id];
 				}
 
-				await nextFrame();
+				await this.nextFrame();
 			} else {
 				/*
 				this.wrn("item was empty in dispose():"); // not a real async
@@ -847,7 +875,7 @@ class asanAI {
 		try {
 			var res = tf.buffer(...args);
 
-			//this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			//this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -868,7 +896,7 @@ class asanAI {
 		try {
 			var res = tf.browser.fromPixels(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -889,7 +917,7 @@ class asanAI {
 		try {
 			var res = tf.input(...args);
 
-			this.custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"];
+			this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, "[input]"];
 
 			this.clean_custom_tensors();
 
@@ -910,7 +938,7 @@ class asanAI {
 		try {
 			var res = tf.ones(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -931,7 +959,7 @@ class asanAI {
 		try {
 			var res = tf.reshape(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -952,7 +980,7 @@ class asanAI {
 		try {
 			var res = tf.min(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -973,7 +1001,7 @@ class asanAI {
 		try {
 			var res = tf.max(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -994,7 +1022,7 @@ class asanAI {
 		try {
 			var res = tf.add(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1015,7 +1043,7 @@ class asanAI {
 		try {
 			var res = tf.abs(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1055,7 +1083,7 @@ class asanAI {
 		try {
 			var res = tf.image.resizeNearestNeighbor(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, "[resizeNearestNeighbor]"];
 
 			this.clean_custom_tensors();
 
@@ -1076,7 +1104,7 @@ class asanAI {
 		try {
 			var res = tf.image.resizeBilinear(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, "[resizeBilinear]"];
 
 			this.clean_custom_tensors();
 
@@ -1097,7 +1125,7 @@ class asanAI {
 		try {
 			var res = tf.image.rotateWithOffset(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1118,7 +1146,7 @@ class asanAI {
 		try {
 			var res = tf.image.flipLeftRight(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1139,7 +1167,7 @@ class asanAI {
 		try {
 			var res = tf.clipByValue(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1160,7 +1188,7 @@ class asanAI {
 		try {
 			var res = tf.randomUniform(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1181,7 +1209,7 @@ class asanAI {
 		try {
 			var res = tf.square(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1202,7 +1230,7 @@ class asanAI {
 		try {
 			var res = tf.mean(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1223,7 +1251,7 @@ class asanAI {
 		try {
 			var res = tf.sqrt(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1244,7 +1272,7 @@ class asanAI {
 		try {
 			var res = tf.tensor1d(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1265,7 +1293,7 @@ class asanAI {
 		try {
 			var res = tf.tensor2d(...args);
 
-			this.custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.dataId.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1286,7 +1314,7 @@ class asanAI {
 		try {
 			var res = tf.tensor(...args);
 
-			this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1324,7 +1352,7 @@ class asanAI {
 		try {
 			var res = tf.divNoNan(...args);
 
-			this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1345,7 +1373,7 @@ class asanAI {
 		try {
 			var res = tf.oneHot(...args);
 
-			this.custom_tensors[res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
+			this.custom_tensors[res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
 
 			this.clean_custom_tensors();
 
@@ -1490,6 +1518,70 @@ class asanAI {
 
 		return msg;
 	}
-}
 
-//var a = new asanai();
+	get_model () {
+		return this.model;
+	}
+
+	set_model (_m) {
+		if(!this.is_model(_m)) {
+			this.err("Given item is not a valid model");
+			return;
+		}
+
+		this.model = _m;
+
+		return this_model;
+	}
+
+	stop_webcam () {
+		if(this.camera) {
+			this.started_webcam = false;
+			this.camera.stop()
+			this.camera = null;
+		} else {
+			this.err("Cannot stop a camera that has not been started");
+		}
+	}
+
+	async show_and_predict_webcam_in_div(divname, _w, _h) {
+		var $divname = $("#" + divname);
+		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
+
+		if(!_w) {
+			_w = 300;
+		}
+
+		if(!_h) {
+			_h = 300;
+		}
+
+		var $video_element = $divname.find("#webcam_element");
+		if($video_element.length) {
+			$video_element = $video_element[0];
+		} else {
+			$video_element = $(`<video id="${divname}" width=${_w} height=${_h}></video>`)
+
+			$divname.append($video_element);
+
+			$video_element = $video_element[0];
+		}
+
+		this.started_webcam = true;
+		this.camera = await tf.data.webcam($video_element);
+
+		while (this.started_webcam) {
+			var image = await this.camera.capture();
+			var prediction = this.tidy(() => {
+				var resized = this.expand_dims(this.resizeNearestNeighbor(image, [50, 50]));
+				var res = this.model.predict(resized)
+
+				return this.array_sync(res);
+			});
+
+			this.log(prediction);
+
+			await this.dispose(image);
+		}
+	}
+}

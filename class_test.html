@@ -12,14 +12,17 @@
 
 		<pre id="asanai_debug"></pre>
 		
+		<div id="webcam_prediction"></div>
+
 		<div id="fcnn_div"></div>
+
 		<script>
 			var model = tf.sequential({  
 				layers: [
 					tf.layers.conv2d({filters: 4, kernelSize: [3,3], inputShape: [50, 50, 3]}),
 					tf.layers.flatten(),
 					tf.layers.dense({units:32}),
-					tf.layers.dense({units:4})
+					tf.layers.dense({units:4, activation: 'softmax'})
 				]
 			}); 
 
@@ -27,7 +30,9 @@
 
 			$("#asanai_debug").html(JSON.stringify(asanai));
 
-			asanai.draw_fcnn("fcnn_div");
+			asanai.show_and_predict_webcam_in_div("webcam_prediction");
+
+			asanai.draw_fcnn("divname");
 		</script>
 	</body>
 </html>
