@@ -13,6 +13,8 @@
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 
 		<pre id="asanai_debug"></pre>
+
+		<pre id="summary_pre"></pre>
 		
 		<div id="webcam_prediction"></div>
 
@@ -42,6 +44,8 @@
 			asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
 			asanai.draw_fcnn("divname");
+
+			asanai.write_model_summary("summary_pre")
 		</script>
 	</body>
 </html>
