@@ -1,4 +1,4 @@
-class asanai {
+class asanAI {
 	constructor () {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
