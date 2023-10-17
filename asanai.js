@@ -2286,7 +2286,8 @@ class asanAI {
 			return;
 		}
 
-		this.assert(typeof(model) == "object", "model is not an object");
+		this.assert(typeof(this.model) == "object", "model is not an object");
+
 		var logBackup = console.log;
 		var logMessages = [];
 
@@ -2294,12 +2295,15 @@ class asanAI {
 			logMessages.push.apply(logMessages, arguments);
 		};
 
-		model.summary(200);
+		this.model.summary(200);
 
 		$div.html(this.summary_to_table(logMessages));
 
 		console.log = logBackup;
+
+		this.model_summary_div = divname;
 	}
+
 
 	summary_to_table(lines) {
 		var new_array = [];
