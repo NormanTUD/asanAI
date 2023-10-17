@@ -10,6 +10,8 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
+		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
+
 		<pre id="asanai_debug"></pre>
 		
 		<div id="webcam_prediction"></div>
@@ -35,6 +37,7 @@
 			$("#asanai_debug").html(JSON.stringify(asanai));
 
 			asanai.show_internals("internal_states");
+			//asanai.hide_internals();
 
 			asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
