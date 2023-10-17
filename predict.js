@@ -552,7 +552,10 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 		if(is_image_prediction) {
 			try {
-				predict_data = tf.tidy(() => { return tf_to_float(expand_dims(resizeNearestNeighbor(fromPixels(item), [height, width]))); });
+				predict_data = tf.tidy(() => {
+					var res = tf_to_float(expand_dims(resizeNearestNeighbor(fromPixels(item), [height, width])));
+					return res;
+				});
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -666,7 +669,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				}
 			} else {
 				await dispose(predict_data);
-				throw(`Could not reshape data for model (predict_data.shape/model.input.shape: [${number_of_elements_in_tensor_shape(predict_data.shape)}], [${number_of_elements_in_tensor_shape(model.input)}]`);
+
+				var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
+				var is_nr = number_of_elements_in_tensor_shape(model.input.shape);
+
+				throw(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
 				return;
 			}
 

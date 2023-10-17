@@ -1401,6 +1401,8 @@ async function _show_eta (times, i, neurons) {
 }
 
 async function predict_maximally_activated (item, force_category) {
+	assert(typeof(item) == "object", "item is not an object");
+
 	if(is_cosmo_mode) {
 		$(".maximally_activated_predictions").show();
 		return;
