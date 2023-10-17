@@ -1556,8 +1556,14 @@ class asanAI {
 			_h = 300;
 		}
 
-		var $video_element = $divname.find("#webcam_element");
-		if($video_element.length) {
+		var $video_element = $divname.find(".webcam_element");
+		var $desc = $divname.find(".desc");
+
+
+		if($video_element.length > 1) {
+			this.wrn(`More than one video element found #${divname}. Using the first one`);
+			$video_element = $video_element[0];
+		} else if ($video_element.length) {
 			$video_element = $video_element[0];
 		} else {
 			$video_element = $(`<video id="${divname}" width=${_w} height=${_h}></video>`)
@@ -1566,6 +1572,20 @@ class asanAI {
 
 			$video_element = $video_element[0];
 		}
+
+		if($desc.length > 1) {
+			this.wrn(`More than one description element found #${divname}. Using the first one`);
+			$desc = $desc[0];
+		} else if ($desc.length) {
+			$desc = $desc[0];
+		} else {
+			$desc = $(`<span class='desc'></span>`)
+
+			$divname.append($desc);
+
+			$desc = $desc[0];
+		}
+
 
 		this.started_webcam = true;
 		this.camera = await tf.data.webcam($video_element);
@@ -1579,7 +1599,7 @@ class asanAI {
 				return this.array_sync(res);
 			});
 
-			this.log(prediction);
+			$($desc).html(JSON.stringify(prediction));
 
 			await this.dispose(image);
 			await this.delay(100);
