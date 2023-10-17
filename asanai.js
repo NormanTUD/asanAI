@@ -133,8 +133,12 @@ class asanAI {
 
 			}
 
-			var kernel_size_x = $($(".configtable")[i]).find(".kernel_size_x").val()
-			var kernel_size_y = $($(".configtable")[i]).find(".kernel_size_y").val()
+			var kernel_size_x, kernel_size_y;
+
+			try {
+				kernel_size_x = model.layers[i].kernelSize[0]
+				kernel_size_y = model.layers[i].kernelSize[1];
+			} catch (e) {}
 			
 			var input_shape_of_layer = "";
 			try {
