@@ -59,6 +59,8 @@ class asanAI {
 			return this.model.layers[layer].units;
 		} else if(classname == "Conv2D") {
 			return this.model.layers[layer].filters;
+		} else if(classname == "Flatten") {
+			return 0;
 		} else {
 			this.err(`Layer type ${classname} not yet supported`);
 		}
@@ -308,6 +310,31 @@ class asanAI {
 			}
 
 			this._draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+		}
+	}
+
+	_draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+		if(meta_info["output_shape"]) {
+			ctx.beginPath();
+			var rectSize = maxShapeSize * 2;
+
+			var layerY = canvasHeight / 2;
+
+			var _width = rectSize;
+
+			var _x = layerX - _width / 2;
+			var _y = layerY - _height / 2;
+
+			ctx.rect(_x, _y, _width, _height);
+			ctx.fillStyle = "lightgray";
+
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 1;
+			ctx.fill();
+			ctx.stroke();
+			ctx.closePath();
+		} else {
+			alert("Has no output shape");
 		}
 	}
 
