@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440px" height="78px" viewBox="0 0 1440 78" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Welle oben</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="1440" height="78"></rect>
+        <radialGradient cx="50.0000171%" cy="49.9999749%" fx="50.0000171%" fy="49.9999749%" r="488.166437%" gradientTransform="translate(0.500000,0.500000),scale(0.094456,1.000000),translate(-0.500000,-0.500000)" id="radialGradient-3">
+            <stop stop-color="#005075" offset="0%"></stop>
+            <stop stop-color="#024463" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50.0000171%" cy="49.9999749%" fx="50.0000171%" fy="49.9999749%" r="476.181787%" gradientTransform="translate(0.500000,0.500000),scale(0.096833,1.000000),translate(-0.500000,-0.500000)" id="radialGradient-4">
+            <stop stop-color="#005075" offset="0%"></stop>
+            <stop stop-color="#024463" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50.0000171%" cy="49.9999749%" fx="50.0000171%" fy="49.9999749%" r="411.344459%" gradientTransform="translate(0.500000,0.500000),scale(0.112096,1.000000),translate(-0.500000,-0.500000)" id="radialGradient-5">
+            <stop stop-color="#005075" offset="0%"></stop>
+            <stop stop-color="#024463" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="Welle-oben" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <g id="Mask"></g>
+        <g id="Group-3" opacity="0.60456032" style="mix-blend-mode: multiply;" mask="url(#mask-2)">
+            <g transform="translate(687.041667, 79.883333) rotate(181.000000) translate(-687.041667, -79.883333) translate(-201.733333, -4.066667)" id="Fill-1">
+                <path d="M1773.37885,0 L0,91.4508741 L3.94050484,167.9 C12.7422223,167.596944 23.5642786,167.07956 37.0974339,166.62284 C164.766745,162.314223 819.114643,104.579016 1777.55,117.772666 L1773.37885,0 Z" fill="url(#radialGradient-3)"></path>
+                <path d="M1.66257565,103.750499 L2.56565393,139.370494 C109.591444,169.145232 397.217147,169.610147 606.343486,163.702311 C1083.61175,150.219445 1535.06795,102.193973 1776.77924,103.60516 L1774.97309,52.3127753 L1.66257565,103.750499 Z" fill="#0074AC" opacity="0.750658612"></path>
+            </g>
+        </g>
+        <g id="Group-3" opacity="0.647915153" style="mix-blend-mode: multiply;" mask="url(#mask-2)">
+            <g transform="translate(711.638760, 87.445776) rotate(181.000000) translate(-711.638760, -87.445776) translate(-217.617773, -20.274010)" id="Fill-1">
+                <path d="M10.9778768,120.657211 L11.9075708,156.277206 C122.08765,186.051944 418.190328,186.516858 633.480089,180.609023 C1124.81452,167.126157 1589.57614,119.100684 1838.41121,120.511871 L1836.55182,69.219487 L10.9778768,120.657211 Z" fill="#0074AC" opacity="0.750658612" transform="translate(924.694543, 126.402820) rotate(-2.000000) translate(-924.694543, -126.402820) "></path>
+                <path d="M1857.08637,16.1791797 L1.42669281,107.630054 L5.55002831,184.07918 C14.7601259,183.776123 28.7952022,196.313066 42.9562658,195.856346 C174.582845,191.611146 561.060523,155.301952 1833.86519,101.998786 C1844.24811,101.563965 1851.98851,72.9574294 1857.08637,16.1791797 Z" fill="url(#radialGradient-4)" transform="translate(929.256534, 106.023855) rotate(1.000000) translate(-929.256534, -106.023855) "></path>
+            </g>
+        </g>
+        <g id="Group-3" opacity="0.644190589" style="mix-blend-mode: multiply;" mask="url(#mask-2)" fill="url(#radialGradient-5)">
+            <g transform="translate(634.807884, 101.206376) rotate(184.000000) translate(-634.807884, -101.206376) translate(-327.483340, -23.216279)" id="Fill-1">
+                <path d="M1916.12928,16.747655 L1.73289018,189.489949 C235.548387,227.140627 566.458131,256.36855 1044.99934,202.75288 C1364.02682,167.0091 1656.64355,114.988322 1922.84956,46.6905452 L1916.12928,16.747655 Z" transform="translate(962.291224, 124.422655) rotate(-1.000000) translate(-962.291224, -124.422655) "></path>
+            </g>
+        </g>
+        <path d="M-192,42.3329506 C53.7666667,82.4438019 471.083333,80.0128412 648.716667,59.3496754 C788.687544,43.0675881 1372.63333,22.8852652 1560,78.7973609 L1560,450.734345 C684,520.421885 100,520.421885 -192,450.734345 L-192,42.3329506 Z" id="Rectangle" fill="#004B6F" mask="url(#mask-2)"></path>
+    </g>
+</svg>

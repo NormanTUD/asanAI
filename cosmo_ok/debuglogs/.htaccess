@@ -1,0 +1,5 @@
+php_flag engine off
+AuthName "Debuglogs"
+AuthType Basic
+AuthUserFile .htpasswd
+Require valid-user

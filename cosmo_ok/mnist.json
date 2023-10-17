@@ -1,0 +1,20 @@
+{
+	"name": "Digit classifier",
+	"loss": "categoricalCrossentropy",
+	"metric": "categoricalCrossentropy",
+	"optimizer": "adam",
+	"epochs": 200,
+	"batchSize": 20,
+	"validationSplit": 10,
+	"max_number_of_files_per_category": 30,
+
+	"width": 28,
+	"height": 28,
+
+	"learningRate": 0.001,
+	"rho": 0.89,
+	"decay": 0,
+	"epsilon": 0.00001,
+
+	"divide_by": 255
+}

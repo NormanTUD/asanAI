@@ -1,0 +1,12 @@
+.ribbon-group-title{
+	color:#acacac;
+}
+
+.ribbon-group-sep{
+	border-left: 1px solid #585858;
+	border-right: 1px solid #585858;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	color: white;
+}
