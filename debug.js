@@ -282,7 +282,23 @@ function colorize (text, color) {
 }
 
 function memory_debugger () {
-	var memory = tf.memory();
+	var memory;
+	try {
+		memory = tf.memory();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		if(("" + e).includes("tf is null")) {
+			err("tf is null");
+		} else {
+			throw new Error(e);
+		}
+
+		return;
+	}
+
 
 	var bytes = memory["numBytes"];
 	var gpu_bytes = memory["numBytesInGPU"];
