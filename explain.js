@@ -1406,14 +1406,9 @@ async function predict_maximally_activated (item, force_category) {
 		return;
 	}
 
+	var results;
 	try {
-		var results = await predict(item, force_category, 1);
-
-		if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
-			$(item).next().remove();
-		}
-
-		$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+		results = await predict(item, force_category, 1);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
@@ -1421,6 +1416,20 @@ async function predict_maximally_activated (item, force_category) {
 
 		err(e);
 	}
+
+	if(!results) {
+		err("results is empty in predict_maximally_activated");
+		return;
+	}
+
+	var $item = $(item);
+	var next_item = $item.next();
+
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "PRE") {
+		next_item.remove();
+	}
+
+	$item.after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {
