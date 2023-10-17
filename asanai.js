@@ -1859,8 +1859,6 @@ class asanAI {
 
 			var canvas_input = this.draw_image_if_possible(layer, "input", input_data);
 			var canvas_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
-			//console.log("output_data:", output_data);
-			//console.log("output_data.shape:", this.get_dim(output_data));
 			var canvas_output = this.draw_image_if_possible(layer, "output", output_data);
 
 			if(canvas_output.length && canvas_input.length) {
@@ -2091,7 +2089,6 @@ class asanAI {
 			colors = colors[0];
 
 			colors_shape = this.get_dim(colors);
-			console.log("colors_shape.length:", colors_shape.length);
 
 			if(canvas_type == "output" || canvas_type == "input") {
 				if(canvas_type == "input") {
