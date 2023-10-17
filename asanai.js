@@ -544,7 +544,7 @@ class asanAI {
 		return res;
 	}
 
-	 tf_to_tensor (...args) {
+	tf_to_tensor (...args) {
 		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.toTensor(...args);
@@ -1581,6 +1581,21 @@ class asanAI {
 		}
 	}
 
+	predict_manually(_tensor) {
+		if(!this.model) {
+			this.err("Cannot predict without a model");
+			return;
+		}
+
+		var output = this.tf_to_float(_tensor);
+
+		for (var i = 0; i < this.model.layers.length; i++) {
+			output = this.model.layers[i].apply(output)
+		}
+
+		return output;
+	}
+
 	async show_and_predict_webcam_in_div(divname, _w, _h) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
@@ -1642,7 +1657,7 @@ class asanAI {
 
 			var res;
 			try {
-				res = this.model.predict(resized)
+				res = this.predict_manually(resized)
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
