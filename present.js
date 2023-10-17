@@ -199,7 +199,6 @@ async function end_presentation() {
 	$("#" + divName).remove();
 	$(".next_prev_buttons").remove();
 	$("#presentation_site_nr").remove();
-	attach_listener_for_cosmo_outside_click();
 
 	$("#scads_logo_cosmo_mode").show();
 	$("#asanai_logo_cosmo").show();
@@ -211,35 +210,6 @@ async function end_presentation() {
 
 	$("#set_german_language").show();
 	$("#set_english_language").show();
-}
-
-function attach_listener_for_cosmo_outside_click () {
-	// Attach event listener to the document or a specific parent element
-	document.addEventListener("click", function (event) {
-		// Get the color picker element based on its unique structure and properties
-		const colorPickerContainer = find_color_picker_container(event.target);
-
-		var colorPickerElementsList = get_color_picker_elements();
-
-		//log("EVENT:", event);
-
-		// Check if the clicked element does not have its own event handler
-		if (
-			!event.target.closest("[onclick], a, button, input[type='button'], input[type='submit'], input, [input], [canvas], canvas") &&
-			!is_inside_color_picker(event.clientX, event.clientY, colorPickerContainer) &&
-			!is_mouse_over_element("no_autochoose_next_on_click") &&
-			!is_mouse_over_element_variables(colorPickerElementsList) &&
-			done_presenting &&
-			!is_presenting &&
-			is_hidden_or_has_hidden_parent($("#sketcher")) &&
-			is_hidden_or_has_hidden_parent($(".example_images")[0])
-		) {
-			autochoose_next();
-		} else {
-			//log("Do not autochose");
-		}
-	});
-
 }
 
 // Function to run the presentation

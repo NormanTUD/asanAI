@@ -7197,6 +7197,10 @@ function get_fcnn_data () {
 }
 
 async function restart_fcnn () {
+	if(is_cosmo_mode) {
+		return;
+	}
+
 	var fcnn_data = get_fcnn_data();
 
 	if(!fcnn_data) {

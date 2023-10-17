@@ -407,17 +407,6 @@ function has_special_cosmo_classes (x) {
 	return s;
 }
 
-// Function to be executed
-function autochoose_next () {
-	//console.trace();
-	//log("clicked anywhere in cosmo mode!");
-	if(manicule) {
-		$(manicule.element).click();
-	} else {
-		wrn("No manicule element found...");
-	}
-}
-
 function add_background_gradient () {
 	var body = document.querySelector("body");
 	var from = "d3e4f3";
