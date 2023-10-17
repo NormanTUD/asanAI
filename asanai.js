@@ -2,32 +2,28 @@ class asanai {
 	constructor () {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
+		var last_tested_plotly_version = "2.14.0";
 
-		var tf_version;
-		var jquery_version;
+		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
+		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
+		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+	}
 
+	get_version (code, last_tested, name) {
+		code = "try { " + code + "} catch (e) { if(Object.keys(e).includes('message')) { e = e.message }; err(e) }";
 		try {
-			tf_version = tf.version["tfjs-core"];
+			var res = eval(code);
+			if(res != last_tested) {
+				this.wrn(`Your ${name}-version is ${res}, but the last tested one was ${last_tested}. Keep that in mind. It may result in errors.`);
+			}
+			return res;
 		} catch (e) {
-			return this.err(e);	
-		}
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
 
-		try {
-			jquery_version = jQuery().jquery;
-		} catch (e) {
-			return this.err(e);	
+			throw new Error(e);
 		}
-
-		if(tf_version != last_tested_tf_version) {
-			this.wrn(`Your tensorflow-version is ${tf_version}. The last tested one was ${last_tested_tf_version}`);
-		}
-
-		if(jquery_version != last_tested_jquery_version) {
-			this.wrn(`Your jQuery-version is ${jquery_version}. The last tested one was ${last_tested_jquery_version}`);
-		}
-
-		this.tf_version = tf_version;
-		this.jquery_version = jquery_version;
 	}
 
 	wrn (...msgs) {
