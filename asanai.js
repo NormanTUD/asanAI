@@ -487,7 +487,7 @@ class asanAI {
 		return true;
 	}
 
-	 _register_tensors (...args) {
+	_register_tensors (...args) {
 		for (var i = 0; i < args.length; i++) {
 			if(is_tf_tensor(args[i])) {
 				this.custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])];
@@ -497,7 +497,7 @@ class asanAI {
 	}
 
 	 array_sync (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.arraySync();
 
@@ -505,7 +505,7 @@ class asanAI {
 	}
 
 	 tf_to_float (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.toFloat();
 
@@ -516,7 +516,7 @@ class asanAI {
 	}
 
 	 tf_to_tensor (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.toTensor(...args);
 
@@ -527,7 +527,7 @@ class asanAI {
 	}
 
 	 tf_mean (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.mean(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -537,7 +537,7 @@ class asanAI {
 	}
 
 	 tf_relu (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.relu(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -547,7 +547,7 @@ class asanAI {
 	}
 
 	 tf_concat (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.concat(...args);
 
@@ -558,7 +558,7 @@ class asanAI {
 	}
 
 	 expand_dims (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.expandDims(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -568,7 +568,7 @@ class asanAI {
 	}
 
 	 tf_transpose (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.transpose(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -579,7 +579,7 @@ class asanAI {
 
 
 	 tf_sub (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.sub(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -589,7 +589,7 @@ class asanAI {
 	}
 
 	 tf_min (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.min(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -599,7 +599,7 @@ class asanAI {
 	}
 
 	 tf_max (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.max(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -609,7 +609,7 @@ class asanAI {
 	}
 
 	 tf_add (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var first_tensor = args[0];
 		var second_arg = args[1];
 		if(!Object.keys(second_arg).includes("isDisposedInternal")) {
@@ -626,7 +626,7 @@ class asanAI {
 	}
 
 	 tf_mul (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.mul(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -636,7 +636,7 @@ class asanAI {
 	}
 
 	 tf_div (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.div(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -646,14 +646,14 @@ class asanAI {
 	}
 
 	 tf_moments (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.moments(...args);
 
 		return res;
 	}
 
 	 tf_reshape (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.reshape(...args);
 
 		this.custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)];
@@ -663,7 +663,7 @@ class asanAI {
 	}
 
 	 tf_unique (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		var res = tf.unique(...args);
 
 		this.custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)];
@@ -715,12 +715,12 @@ class asanAI {
 
 
 	async nextFrame(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		await tf.nextFrame(...args);
 	}
 
 	 shuffleCombo (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			return tf.util.shuffleCombo(...args);
 		} catch (e) {
@@ -766,7 +766,7 @@ class asanAI {
 	}
 
 	 tf_model (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.model(...args);
 
@@ -839,7 +839,7 @@ class asanAI {
 	}
 
 	 buffer(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.buffer(...args);
 
@@ -860,7 +860,7 @@ class asanAI {
 	}
 
 	 fromPixels (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.browser.fromPixels(...args);
 
@@ -881,7 +881,7 @@ class asanAI {
 	}
 
 	 input(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.input(...args);
 
@@ -902,7 +902,7 @@ class asanAI {
 	}
 
 	 ones(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.ones(...args);
 
@@ -923,7 +923,7 @@ class asanAI {
 	}
 
 	 reshape(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.reshape(...args);
 
@@ -944,7 +944,7 @@ class asanAI {
 	}
 
 	 min(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.min(...args);
 
@@ -965,7 +965,7 @@ class asanAI {
 	}
 
 	 max(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.max(...args);
 
@@ -986,7 +986,7 @@ class asanAI {
 	}
 
 	 add(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.add(...args);
 
@@ -1007,7 +1007,7 @@ class asanAI {
 	}
 
 	 abs(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.abs(...args);
 
@@ -1028,7 +1028,7 @@ class asanAI {
 	}
 
 	async tf_data_webcam (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = await tf.data.webcam(...args);
 
@@ -1047,7 +1047,7 @@ class asanAI {
 	}
 
 	 resizeNearestNeighbor(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.image.resizeNearestNeighbor(...args);
 
@@ -1068,7 +1068,7 @@ class asanAI {
 	}
 
 	 resizeBilinear(...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.image.resizeBilinear(...args);
 
@@ -1089,7 +1089,7 @@ class asanAI {
 	}
 
 	 rotateWithOffset (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.image.rotateWithOffset(...args);
 
@@ -1110,7 +1110,7 @@ class asanAI {
 	}
 
 	 flipLeftRight (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.image.flipLeftRight(...args);
 
@@ -1131,7 +1131,7 @@ class asanAI {
 	}
 
 	 clipByValue (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.clipByValue(...args);
 
@@ -1152,7 +1152,7 @@ class asanAI {
 	}
 
 	 randomUniform (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.randomUniform(...args);
 
@@ -1173,7 +1173,7 @@ class asanAI {
 	}
 
 	 tf_square (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.square(...args);
 
@@ -1194,7 +1194,7 @@ class asanAI {
 	}
 
 	 tf_mean (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.mean(...args);
 
@@ -1215,7 +1215,7 @@ class asanAI {
 	}
 
 	 sqrt (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.sqrt(...args);
 
@@ -1236,7 +1236,7 @@ class asanAI {
 	}
 
 	 tensor1d (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.tensor1d(...args);
 
@@ -1257,7 +1257,7 @@ class asanAI {
 	}
 
 	 tensor2d (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.tensor2d(...args);
 
@@ -1278,7 +1278,7 @@ class asanAI {
 	}
 
 	 tensor (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.tensor(...args);
 
@@ -1299,7 +1299,7 @@ class asanAI {
 	}
 
 	 grad (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.grad(...args);
 
@@ -1316,7 +1316,7 @@ class asanAI {
 	}
 
 	 divNoNan (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.divNoNan(...args);
 
@@ -1337,7 +1337,7 @@ class asanAI {
 	}
 
 	 oneHot (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.oneHot(...args);
 
@@ -1409,7 +1409,7 @@ class asanAI {
 	}
 
 	async loadLayersModel (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = await tf.loadLayersModel(...args);
 
@@ -1426,7 +1426,7 @@ class asanAI {
 	}
 
 	 toPixels (...args) {
-		_register_tensors(...args);
+		this._register_tensors(...args);
 		try {
 			var res = tf.browser.toPixels(...args);
 
