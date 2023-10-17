@@ -11,8 +11,11 @@ class asanAI {
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+
 		this.is_dark_mode = false;
 		this.max_neurons_fcnn = 32;
+		this.draw_internal_states = true;
+		this.draw_internal_states_div = "";
 
 		this.started_webcam = false;
 		this.camera = null
@@ -36,11 +39,19 @@ class asanAI {
 				}
 			}
 
-			if(Object.keys(args[0]).includes("is_dark_mode")) {
-				if(typeof(args[0].is_dark_mode) == "boolean") {
-					this.is_dark_mode = args[0].is_dark_mode;
+			if(Object.keys(args[0]).includes("draw_internal_states_div")) {
+				if(typeof(args[0].draw_internal_states_div) == "string") {
+					this.draw_internal_states_div = args[0].draw_internal_states_div;
 				} else {
-					throw new Error("is_dark_mode is not a boolean");
+					throw new Error("draw_internal_states_div is not a string");
+				}
+			}
+
+			if(Object.keys(args[0]).includes("draw_internal_states")) {
+				if(typeof(args[0].draw_internal_states) == "boolean") {
+					this.draw_internal_states = args[0].draw_internal_states;
+				} else {
+					throw new Error("draw_internal_states is not a boolean");
 				}
 			}
 		} else if (args.length > 1) {
@@ -544,7 +555,7 @@ class asanAI {
 		return res;
 	}
 
-	 tf_to_tensor (...args) {
+	tf_to_tensor (...args) {
 		this._register_tensors(...args);
 		var first_tensor = args.shift();
 		var res = first_tensor.toTensor(...args);
@@ -1581,6 +1592,31 @@ class asanAI {
 		}
 	}
 
+	predict_manually(_tensor) {
+		if(!this.model) {
+			this.err("Cannot predict without a model");
+			return;
+		}
+
+		var output = this.tf_to_float(_tensor);
+
+		for (var i = 0; i < this.model.layers.length; i++) {
+			var input = output;
+			output = this.model.layers[i].apply(input)
+
+			if(this.draw_internal_states) {
+				try {
+					this._draw_internal_states(i, input, output);
+				} catch (e) {
+					this.err(e);
+				}
+
+			}
+		}
+
+		return output;
+	}
+
 	async show_and_predict_webcam_in_div(divname, _w, _h) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
@@ -1642,7 +1678,7 @@ class asanAI {
 
 			var res;
 			try {
-				res = this.model.predict(resized)
+				res = this.predict_manually(resized)
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -1727,7 +1763,7 @@ class asanAI {
 		return Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function")
 	}
 
-	draw_internal_states (divname) {
+	show_internals (divname="") {
 		if(!this.model) {
 			this.dbg("No model found");
 
@@ -1738,56 +1774,20 @@ class asanAI {
 			this.dbg("No layer found");
 		}
 
-		var $div = $("#" + divname);
-
-		if($div.length != 1) {
-			this.err(`Could not find div #${divname}`);
-			return;
-		}
-
-		try {
-			for (var layerIndex = 0; layerIndex < this.model.layers.length - 1; layerIndex++) {
-				var self = this;  // Hier speichern Sie das äußere Objekt in einer Variablen.
-
-				this.model.layers[layerIndex].apply = function (inputs, kwargs) {
-					var hasOriginalApply = self.get_methods(self.model.layers[layerIndex]).includes("original_apply_real");
-
-					if (!hasOriginalApply) {
-						self.model.layers[layerIndex].original_apply_real = self.model.layers[layerIndex].apply;
-					}
-
-					var outerSelf = self;  // Hier weisen Sie die äußere Variable einer inneren Variable zu.
-
-					try {
-						if (typeof outerSelf.model.layers[layerIndex].original_apply_real === 'function') {
-							var applied = outerSelf.model.layers[layerIndex].original_apply_real(inputs, kwargs);
-							outerSelf._draw_internal_states(layerIndex, inputs, applied);
-							return applied;
-						} else {
-							throw new Error("original_apply_real is not a function");
-						}
-					} catch (error) {
-						outerSelf.wrn("Error in apply function:", error);
-						// Handle the error gracefully or rethrow if needed
-					}
-				}
-			}
-
+		this.draw_internal_states = true;
+		if(divname) {
 			this.internal_states_div = divname;
-		} catch (e) {
-			this.err(e);
 		}
 	}
 
 	_draw_internal_states (layer, inputs, applied) {
-		var number_of_items_in_this_batch = inputs[0].shape[0];
-		console.log("layer: " + layer);
+		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 			//log("batchnr: " + batchnr);
 
-			var input_data = this.array_sync(inputs[0])[batchnr];
+			var input_data = this.array_sync(inputs)[batchnr];
 			var output_data = this.array_sync(applied)[batchnr];
 
 			var __parent = $("#" + this.internal_states_div);
@@ -1822,8 +1822,8 @@ class asanAI {
 					var number_filters = 2;
 					var filters = 3;
 
-					kernel_data = tidy(() => {
-						return array_sync(tf_transpose(this.model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
+					kernel_data = this.tidy(() => {
+						return this.array_sync(this.tf_transpose(this.model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
 					});
 				}
 			}
@@ -1966,9 +1966,9 @@ class asanAI {
 
 			if(data_type == "simple") {
 				if(canvas_type == "input") {
-					canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
+					canvas = this.get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 				} else {
-					canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
+					canvas = this.get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 				}
 
 				if(!get_canvas_object) {
@@ -1988,14 +1988,14 @@ class asanAI {
 
 				for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-						canvas = get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
+						canvas = this.get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
 
 						if(!get_canvas_object) {
 							$($(canvas)[0]).parent().parent().show();
 						}
 
 						//    draw_grid(canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-						ret = draw_kernel(canvas, kernel_pixel_size, colors[filter_id]);
+						ret = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
 
 						if(get_canvas_object) {
 							canvasses.push(canvas);
@@ -2014,9 +2014,9 @@ class asanAI {
 
 				for (var k = 0; k < shape[2]; k++) {
 					if(canvas_type == "input") {
-						canvas = get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
+						canvas = this.get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
 					} else {
-						canvas = get_canvas_in_class(layer, "image_grid", !get_canvas_object);
+						canvas = this.get_canvas_in_class(layer, "image_grid", !get_canvas_object);
 					}
 					if(!get_canvas_object) {
 						$($(canvas)[0]).parent().parent().show();
@@ -2056,5 +2056,97 @@ class asanAI {
 		}
 
 		return m;
+	}
+
+	get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
+		var _uuid = "";
+		var _uuid_str = "";
+		if (use_uuid) {
+			_uuid = uuidv4();
+			_uuid_str = " id='" + _uuid + "'";
+		}
+		var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image"}).prop({
+			width: 0,
+			height: 0
+		});
+		if(!dont_append) {
+			$($("." + classname)[layer]).append(new_canvas);
+		}
+
+		return new_canvas[0];
+	}
+
+	scaleNestedArray(arr) {
+		// Find the minimum and maximum values in the nested array
+		let min = Number.MAX_VALUE;
+		let max = Number.MIN_VALUE;
+
+		function findMinMax(arr) {
+			for (let item of arr) {
+				if (Array.isArray(item)) {
+					findMinMax(item);
+				} else {
+					if (item < min) min = item;
+					if (item > max) max = item;
+				}
+			}
+		}
+
+		findMinMax(arr);
+
+		// Scale the values
+		function scaleValue(value) {
+			return (value - min) * (255 / (max - min));
+		}
+
+		function scaleNested(arr) {
+			for (let i = 0; i < arr.length; i++) {
+				if (Array.isArray(arr[i])) {
+					scaleNested(arr[i]);
+				} else {
+					arr[i] = scaleValue(arr[i]);
+				}
+			}
+		}
+
+		scaleNested(arr);
+	}
+
+	draw_kernel(canvasElement, rescaleFactor, pixels) {
+		// canvasElement is the HTML canvas element where you want to draw the image
+		// rescaleFactor is the factor by which the image should be resized, e.g., 2 for twice the size
+		// pixels is a 3D array [n, m, a] where n is the height, m is the width, and a is the number of channels
+
+		this.scaleNestedArray(pixels);
+
+		var context = canvasElement.getContext('2d'); // Get the 2D rendering context
+
+		var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+
+		if (a === 3) {
+			// Draw a color image on the canvas and resize it accordingly
+			canvasElement.width = m * rescaleFactor;
+			canvasElement.height = n * rescaleFactor;
+
+			for (let i = 0; i < n; i++) {
+				for (let j = 0; j < m; j++) {
+					var [r, g, b] = pixels[i][j]; // Assuming channels are [red, green, blue]
+					context.fillStyle = `rgb(${r}, ${g}, ${b}`;
+					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
+				}
+			}
+		} else {
+			// Draw only the first channel
+			canvasElement.width = m * rescaleFactor;
+			canvasElement.height = n * rescaleFactor;
+
+			for (let i = 0; i < n; i++) {
+				for (let j = 0; j < m; j++) {
+					const grayscaleValue = pixels[i][j][0]; // Assuming the first channel is grayscale
+					context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue}`;
+					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
+				}
+			}
+		}
 	}
 }
