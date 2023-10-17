@@ -21,12 +21,12 @@
 		<script>
 			var model = tf.sequential({  
 				layers: [
-					tf.layers.conv2d({filters: 4, kernelSize: [3,3], inputShape: [50, 50, 3]}),
+					tf.layers.conv2d({filters: 4, kernelSize: [3, 3], inputShape: [30, 30, 3]}),
 					tf.layers.flatten(),
-					tf.layers.dense({units:32}),
-					tf.layers.dense({units:4, activation: 'softmax'})
+					tf.layers.dense({units: 5}),
+					tf.layers.dense({units: 4, activation: "softmax"})
 				]
-			}); 
+			});
 
 			model.compile({ optimizer: "adam", loss: "categoricalCrossentropy" });
 
