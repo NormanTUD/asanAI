@@ -34,6 +34,12 @@ class asanai {
 		}
 	}
 
+	assert(condition, msg) {
+		if(!condition) {
+			throw new Error(msg);
+		}
+	}
+
 	wrn (...msgs) {
 		var msg = "";
 		for (var i = 0; i < msgs.length; i++) {
@@ -42,8 +48,9 @@ class asanai {
 			}
 
 			console.warn(msgs[i]);
-			msg = msg + "\n" + msgs[i];
 		}
+
+		msg = msgs.join("\n");
 
 		return msg;
 	}
@@ -56,8 +63,9 @@ class asanai {
 			}
 
 			console.error(msgs[i]);
-			msg = msg + "\n" + msgs[i];
 		}
+
+		msg = msgs.join("\n");
 
 		return msg;
 	}
