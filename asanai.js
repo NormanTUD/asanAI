@@ -1,3 +1,5 @@
+"use strict";
+
 class asanAI {
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
