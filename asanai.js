@@ -1782,7 +1782,6 @@ class asanAI {
 
 	_draw_internal_states (layer, inputs, applied) {
 		var number_of_items_in_this_batch = inputs.shape[0];
-		console.log("layer: " + layer);
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
