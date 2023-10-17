@@ -1582,6 +1582,11 @@ class asanAI {
 			this.log(prediction);
 
 			await this.dispose(image);
+			await this.delay(100);
 		}
+	}
+
+	delay(time) {
+		return new Promise(resolve => setTimeout(resolve, time));
 	}
 }
