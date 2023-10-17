@@ -168,7 +168,7 @@ class asanAI {
 	}
 
 	draw_new_fcnn(...args) {
-		this.assert(args.length == 4, "draw_new_fcnn must have 3 arguments");
+		this.assert(args.length == 4, "draw_new_fcnn must have 4 arguments");
 
 		var divname = args[0];
 		var layers = args[1];
@@ -188,7 +188,7 @@ class asanAI {
 		var ctx = canvas.getContext("2d");
 
 		// Set canvas dimensions and background
-		var canvasWidth = $("#right_side").width();
+		var canvasWidth = 800;
 		var canvasHeight = 800;
 
 		canvas.width = canvasWidth;
@@ -1423,6 +1423,21 @@ class asanAI {
 			}
 
 			console.warn(msgs[i]);
+		}
+
+		msg = msgs.join("\n");
+
+		return msg;
+	}
+
+	log (...msgs) {
+		var msg = "";
+		for (var i = 0; i < msgs.length; i++) {
+			if(Object.keys(msgs[i]).includes("message")) {
+				msgs[i] = msgs[i].message;
+			}
+
+			console.log(msgs[i]);
 		}
 
 		msg = msgs.join("\n");
