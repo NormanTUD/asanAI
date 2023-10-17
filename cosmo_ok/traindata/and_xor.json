@@ -1,0 +1,13 @@
+{
+	"name": "AND/XOR",
+	"loss": "meanSquaredError",
+	"metric": "mse",
+	"optimizer": "adam",
+	"learningRate": 0.0001,
+	"momentum": 0.9,
+	"epochs": 500,
+	"batchSize": 4,
+	"validationSplit": 0,
+	"input_shape": "[2]",
+	"trainable_data": ["and", "xor"]
+}

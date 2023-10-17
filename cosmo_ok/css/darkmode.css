@@ -1,0 +1,145 @@
+html {
+	color: #ffffff;
+	background: #262626;
+}
+
+.less_transparent_glass_box {
+	background: #363636;
+	border: solid #626567 1px;
+}
+
+.glass_box {
+	background: #363636;
+	border: solid #626567 1px;
+}
+
+#ribbon {
+	background: rgba(100, 100, 100, 1);
+	color: #fafafa;
+}
+
+.ui-widget-content a {
+	color: #ffffff;
+}
+
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+	color: white;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	background: #646464;
+	color: #b5b5b5;
+}
+
+button, select, input, #predict_own_data {
+	background: #444444;
+	color: white;
+}
+
+.descriptions_of_layers {
+	background: #363636;
+	border: solid #626567 1px;
+}
+
+.ui-widget-header a {
+	color: white;
+}
+
+select, button {
+	background-color: #444444;
+	color: white;
+}
+
+button:hover select:hover, input:hover, .input_field:hover {
+	background-color: #7091b9;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+	background: #232323;
+	border: 1px solid #585858;
+	color: whitesmoke;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus,
+.ui-button:hover,
+.ui-button:focus {
+	background: #646464;
+	border: 1px solid #585858;
+	color: #0070a3;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	color: black;
+	background-color: black;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	color: white;
+	background-color: #8C92AC;
+}
+
+.footer>a:visited, .footer>a, .footer>a:link {
+	color: white;
+}
+
+.sources_popup_link {
+	filter: invert(1);
+}
+
+.fcnn_desc_text {
+	color: white;
+}
+
+#explanation {
+	filter: invert(0.79);
+}
+
+#tablist {
+	background: #000000; 
+}
+
+#math_tab {
+	background-color: #363636;
+	color: #fff;
+}
+
+#status_bar {
+	background-color: #262626;
+}
+
+#log {
+	background-color: gray;
+	color: white;
+}
+
+hr {
+	border-top: 1px solid #585858;
+	border-bottom: 1px solid #585858;
+}
+
+#loading_icon_wrapper {
+	filter: invert(100%);
+}
+
+#load_msg {
+	color: black;
+}

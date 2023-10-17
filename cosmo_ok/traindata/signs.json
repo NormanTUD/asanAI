@@ -1,0 +1,20 @@
+{
+	"name": "Sign classifier",
+	"loss": "categoricalCrossentropy",
+	"metric": "categoricalCrossentropy",
+	"optimizer": "adam",
+	"epochs": 30,
+	"batchSize": 10,
+	"validationSplit": 20,
+
+	"width": 40,
+	"height": 40,
+	"max_number_of_files_per_category": 40,
+
+	"learningRate": 0.00001,
+	"rho": 0.8999999761581421,
+	"decay": 0,
+	"epsilon": 0.0000001,
+
+	"divide_by": 255
+}

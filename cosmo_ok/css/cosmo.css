@@ -1,0 +1,133 @@
+html {
+	font-size: 20px !important;
+}
+
+.layer_image {
+	width: 80px;
+}
+
+#own_files {
+	display: none;
+	text-align: end;
+}
+
+.container {
+	width: unset !important;
+}
+
+#webcam_tab {
+	display: contents;
+}
+
+.cosmo_display_contents {
+	display: contents;
+}
+
+#handdrawn_img {
+	display: contents;
+}
+#predict_handdrawn_canvas {
+	display: contents;
+}
+
+.no_mark {
+	margin-left: 200px;
+}
+
+#ribbon_shower {
+	font-size: 0px !important;
+}
+
+#presentation_site_nr {
+	font-size: 2vw;
+}
+
+#set_german_language {
+	height: 2vw;
+	top: 1vw; 
+	left: 25%; 
+	position: absolute; 
+	z-index: 9999999999999999999999999999999999999999999999;
+}
+
+#set_english_language {
+	height: 2vw;
+	top: 1vw; 
+	left: 75%; 
+	position: absolute; 
+	z-index: 9999999999999999999999999999999999999999999999;
+}
+
+.next_prev_buttons {
+	user-select: none;
+	z-index: 99999;
+	position: absolute;
+	font-size: 2vw;
+	color: black;
+	cursor: pointer;
+	top: 50%;
+}
+
+#scroll_right {
+	right: 0px;
+}
+
+#scroll_left {
+	font-size: 1.5vw;
+	left: 0px;
+}
+
+.side_by_side_container {
+	padding: 0vw;
+}
+
+#cosmo_mode_header_line {
+	height: 6vw;
+	display: block;
+}
+
+#example_predictions {
+	display: block ruby;
+}
+
+#maindiv {
+	display: table;
+}
+
+.atrament_buttons {
+}
+
+.atrament_settings {
+	display: grid;
+}
+
+.h2_maximally_activated_layer_contents {
+	pointer-events: none;
+}
+
+#plotly_epoch_history {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#plotly_epoch_history_div {
+	width: 800px;
+	display: inline-table;
+}
+
+#previous_images_button {
+	position: absolute;
+	left: 50px;
+	width: 150px;
+	color: white;
+	top: 5vw;
+	pointer-events: all;
+}
+
+#previous_images {
+	display: grid;
+}
+
+.cosmo_next_button_span {
+	bottom: 10px;
+}

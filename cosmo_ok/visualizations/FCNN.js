@@ -1,0 +1,419 @@
+"use strict";
+
+function FCNN() {
+	let randomWeight = () => Math.random() * 2 - 1;
+
+	var graph_width = get_graph_width();
+
+	function get_graph_width () {
+		return 0.99 * document.getElementById("graphs_here").scrollWidth;
+	}
+
+	var h = window.innerHeight;
+
+	var svg = d3.select("#fcnn").append("svg").attr("xmlns", "http://www.w3.org/2000/svg");
+	var g = svg.append("g");
+	svg.style("cursor", "move");
+
+	var edgeWidthProportional = false;
+	var edgeWidth = 0.5;
+	var weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+
+	var edgeOpacityProportional = false;
+	var edgeOpacity = 1.0;
+	var weightedEdgeOpacity = d3.scaleLinear().domain([0, 1]).range([0, 1]);
+
+	var edgeColorProportional = false;
+	var defaultEdgeColor = "#000000";
+
+	var cookie_theme = get_cookie("theme");
+	if(cookie_theme == "darkmode") {
+		defaultEdgeColor = "#ffffff";
+	}
+	var negativeEdgeColor = "#0000ff";
+	var positiveEdgeColor = "#ff0000";
+	var weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+
+	var nodeDiameter = 20;
+	var nodeColor = "#ffffff";
+	var nodeBorderColor = "#333333";
+
+	var betweenLayers = 200;
+
+	var architecture = [];
+	var real_architecture = [];
+	var betweenNodesInLayer = [];
+	var graph = {};
+	var layer_offsets = [];
+	var largest_layer_width = 0;
+	var nnDirection = "right";
+	var showBias = false;
+	var showLabels = true;
+	var layerTypes = [];
+	var showArrowheads = false;
+	var arrowheadStyle = "empty";
+
+	let sup_map = {"0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹"};
+	let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join("");
+
+	let textFn = (layer_index, layer_width, layer_name) => (
+		(layer_index === 0 ? "Input" :
+			(
+				layer_index === (architecture.length - 1) ? "Output" : "Hidden"
+			)
+		) + " Layer ∈ ℝ" + sup(layer_width.toString()) + "\n(" + layerTypes[layer_index] + ")"
+	);
+	var nominal_text_size = 12;
+	var textWidth = 70;
+
+	var marker = svg.append("svg:defs").append("svg:marker")
+		.attr("id", "arrow")
+		.attr("viewBox", "0 -5 10 10")
+		.attr("markerWidth", 7)
+		.attr("markerHeight", 7)
+		.attr("orient", "auto");
+
+	var arrowhead = marker.append("svg:path")
+		.attr("d", "M0,-5L10,0L0,5")
+		.style("stroke", defaultEdgeColor);
+
+	var link = g.selectAll(".link");
+	var node = g.selectAll(".node");
+	var text = g.selectAll(".text");
+
+	/////////////////////////////////////////////////////////////////////////////
+	///////    Methods    ///////
+	/////////////////////////////////////////////////////////////////////////////
+	function get_real_element_size () {
+		var min_left = 9999999999;
+		var max_right = -9999999999;
+		var min_y = 9999999999;
+		var max_y = -9999999999;
+
+		$(g).children().each((i, e) => {
+			var _offset = $(e).offset();
+			var _top = _offset.top;
+			var _left = _offset.left;
+
+			var width = $(e).width();
+
+			var _right = width + _left;
+
+			if(_left < min_left) {
+				min_left = _left;
+			}
+
+			if(_right > max_right) {
+				max_right = _right;
+			}
+
+			var _top = _offset.top;
+			var _height = $(e).height();
+
+			var _bottom = _top + _height;
+
+			if(_top < min_y) {
+				min_y = _top;
+			}
+
+			if(_bottom > max_y) {
+				max_y = _bottom;
+			}
+		});
+
+		var element_width = parse_int(Math.abs(max_right - min_left));
+		var element_height = parse_int(Math.abs(max_y - min_y));
+
+		return {
+			width: element_width,
+			height: element_height
+		};
+	}
+	
+	function autofit () {
+		var transform_string = $(g).attr("transform");
+		if(!transform_string) {
+			transform_string = "scale(1)"
+		}
+
+		var current_scale = transform_string.match(/scale\(([^)]*)\)/);
+		if(!current_scale) {
+			wrn("Could not get current scale");
+			return;
+		}
+
+		current_scale = current_scale[1];
+
+		var width_and_height = get_real_element_size();
+		var _w = width_and_height.width;
+		var _h = width_and_height.height;
+
+		var graph_width = get_graph_width();
+		var graph_height = 600;
+
+		var new_scale = current_scale;
+
+		if(_w > graph_width || _h > graph_height) {
+			new_scale = Math.min(
+				_w / graph_width,
+				_h / graph_height
+			);
+		}
+
+		var original_move_left_top = transform_string.match(/translate\(([^,)]*?),\s*([^,)]*?)\)/);
+
+		var new_transform = transform_string.replace(/scale\(([^)]*)\)/, `scale(${new_scale})`);
+
+		var move_top = parse_int(original_move_left_top[1]);
+		var move_left = parse_int(original_move_left_top[2]);
+
+		var new_transform = transform_string.replace(/translate\(([^)]*?)\)/, `translate(${move_left, move_top})`);
+
+		console.log("new_transform:", new_transform);
+		$(g).attr("transform", new_transform)
+	}
+	
+	function redraw(
+		{
+			architecture_=architecture,
+			real_architecture_=real_architecture,
+			showBias_=showBias,
+			showLabels_=showLabels={},
+			layerTypes_=layerTypes,
+			colors_=colors
+		}) {
+
+		cookie_theme = get_cookie("theme");
+		if(cookie_theme == "darkmode") {
+			defaultEdgeColor = "#ffffff";
+		} else {
+			defaultEdgeColor = "#000000";
+		}
+
+		architecture = architecture_;
+		real_architecture = real_architecture_;
+		showBias = showBias_;
+		showLabels = showLabels_;
+
+		layerTypes = layerTypes_;
+
+		graph.nodes = architecture.map(
+			(layer_width, layer_index) => range(layer_width).map(
+				node_index => {
+					return {
+						"id":		layer_index + "_" + node_index, 
+						"layer":	layer_index, 
+						"node_index":	node_index
+					};
+				}
+			)
+		);
+
+		graph.links = pairWise(graph.nodes).map(
+			(nodes) => nodes[0].map(left => nodes[1].map(right => {
+				return right.node_index >= 0 ? {
+					"id":		left.id + "-" + right.id,
+					"source":	left.id,
+					"target":	right.id, 
+					"weight":	randomWeight()
+				} : null; }
+			)
+			)
+		);
+		graph.nodes = flatten(graph.nodes);
+		graph.links = flatten(graph.links).filter(l => (l && (showBias ? (parseInt(l["target"].split("_")[0]) !== architecture.length-1 ? (l["target"].split("_")[1] !== "0") : true) : true)));
+
+		var label = real_architecture.map((layer_width, layer_index) => {
+			var text = textFn(layer_index, layer_width, layerTypes[layer_index]);
+			return {
+				"id":		"layer_" + layer_index + "_label",
+				"layer":	layer_index,
+				"text":		text
+			};
+		});
+
+		link = link.data(graph.links, d => d.id);
+		link.exit().remove();
+		link = link.enter()
+			.insert("path", ".node")
+			.attr("class", "link")
+			.merge(link);
+
+		node = node.data(graph.nodes, d => d.id);
+		node.exit().remove();
+		node = node.enter()
+			.append("circle")
+			.attr("r", nodeDiameter/2)
+			.attr("class", "node")
+			.attr("id", function(d) {
+				return "fcnn_" + d.id; 
+			})
+			.merge(node);
+
+		text = text.data(label, d => d.id);
+		text.exit().remove();
+		text = text.enter()
+			.append("text")
+			.attr("class", "text fcnn_desc_text")
+			.attr("dy", ".35em")
+			.style("font-size", nominal_text_size+"px")
+			.merge(text)
+			.text(function(d) { return (showLabels ? d.text : ""); });
+
+		style();
+
+		var width = parseInt($("#graphs_here").css("width"));
+		var height = parseInt($("#graphs_here").css("height"));
+
+		svg.attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio", "xMidYMid meet");
+
+		//autofit();
+	}
+
+	function redistribute(
+		{
+			betweenNodesInLayer_=betweenNodesInLayer,
+			betweenLayers_=betweenLayers,
+			nnDirection_=nnDirection
+		}={}
+	) {
+		betweenNodesInLayer = betweenNodesInLayer_;
+		betweenLayers = betweenLayers_;
+		nnDirection = nnDirection_;
+
+		var layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i]);
+
+		var largest_layer_width = Math.max(...layer_widths);
+
+		var layer_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
+
+		let indices_from_id = (id) => id.split("_").map(x => parseInt(x));
+
+		let x = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + graph_width/2 - (betweenLayers * layer_offsets.length/3);
+		let y = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + h/2 - largest_layer_width/2;
+
+		let xt = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + graph_width/2  - largest_layer_width/2;
+		let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2 - (betweenLayers * layer_offsets.length/3);
+
+		if (nnDirection == "up") { x = xt; y = yt; }
+
+		node.attr("cx", function(d) { return x(d.layer, d.node_index); })
+			.attr("cy", function(d) { return y(d.layer, d.node_index); });
+
+		link.attr("d", (d) => "M" + x(...indices_from_id(d.source)) + "," +
+			y(...indices_from_id(d.source)) + ", " +
+			x(...indices_from_id(d.target)) + "," +
+			y(...indices_from_id(d.target)));
+
+		text.attr("x", function(d) { return (nnDirection === "right" ? x(d.layer, d.node_index) - (textWidth / 2)   : (graph_width / 2) + (largest_layer_width / 2) + 20 ); })
+			.attr("y", function(d) { return (nnDirection === "right" ? (h / 2) + (largest_layer_width / 2) + 20 : y(d.layer, d.node_index) ); });
+
+
+
+		var rightmost = $($($("#fcnn").children()[0]).children()[0]).children().last().position().left;
+	}
+
+	function style(
+		{
+			edgeWidthProportional_=edgeWidthProportional,
+			edgeWidth_=edgeWidth,
+			edgeOpacityProportional_=edgeOpacityProportional,
+			edgeOpacity_=edgeOpacity,
+			negativeEdgeColor_=negativeEdgeColor,
+			positiveEdgeColor_=positiveEdgeColor,
+			edgeColorProportional_=edgeColorProportional,
+			defaultEdgeColor_=defaultEdgeColor,
+			nodeDiameter_=nodeDiameter,
+			nodeColor_=nodeColor,
+			nodeBorderColor_=nodeBorderColor,
+			showArrowheads_=showArrowheads,
+			arrowheadStyle_=arrowheadStyle
+		}={}
+	) {
+		// Edge Width
+		edgeWidthProportional   = edgeWidthProportional_;
+		edgeWidth               = edgeWidth_;
+		weightedEdgeWidth       = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+		// Edge Opacity
+		edgeOpacityProportional = edgeOpacityProportional_;
+		edgeOpacity             = edgeOpacity_;
+		// Edge Color
+		defaultEdgeColor        = defaultEdgeColor_;
+		edgeColorProportional   = edgeColorProportional_;
+		negativeEdgeColor       = negativeEdgeColor_;
+		positiveEdgeColor       = positiveEdgeColor_;
+		weightedEdgeColor       = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+		// Node Styles
+		nodeDiameter            = nodeDiameter_;
+		nodeColor               = nodeColor_;
+		nodeBorderColor         = nodeBorderColor_;
+		// Arrowheads
+		showArrowheads          = showArrowheads_;
+		arrowheadStyle          = arrowheadStyle_;
+
+		link.style("stroke-width", function(d) {
+			if (edgeWidthProportional) { 
+				return weightedEdgeWidth(Math.abs(d.weight)); 
+			} else {
+				return edgeWidth; 
+			}
+		});
+
+		link.style("stroke-opacity", function(d) {
+			if (edgeOpacityProportional) {
+				return weightedEdgeOpacity(Math.abs(d.weight)); 
+			} else {
+				return edgeOpacity;
+			}
+		});
+
+		link.style("stroke", function(d) {
+			if (edgeColorProportional) {
+				return weightedEdgeColor(d.weight);
+			} else { 
+				return "#808080"; //defaultEdgeColor;
+			}
+		});
+
+		marker.attr("refX", (nodeDiameter * 1.4) + 12);
+		arrowhead.style("fill", arrowheadStyle === "empty" ? "none" : defaultEdgeColor);
+
+		node.attr("r", nodeDiameter / 2);
+		node.style("fill", nodeColor);
+		node.style("stroke", nodeBorderColor);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+				///////    Zoom & Resize   ///////
+	/////////////////////////////////////////////////////////////////////////////
+
+	svg.call(d3.zoom().on("zoom", zoomed));
+
+	function zoomed() {
+		g.attr("transform", d3.event.transform);
+	}
+
+	function resize() {
+		h = 600;
+		graph_width = get_graph_width();
+		svg.attr("width", graph_width);
+		svg.attr("height", h);
+		svg.attr("max-height", "500px");
+	}
+
+	$(window).on("resize", resize);
+
+	resize();
+
+	/////////////////////////////////////////////////////////////////////////////
+				///////    Return    ///////
+	/////////////////////////////////////////////////////////////////////////////
+
+	return {
+		"redraw"           : redraw,
+		"redistribute"     : redistribute,
+		"style"            : style,
+		"graph"            : graph,
+		"link"             : link
+	};
+}

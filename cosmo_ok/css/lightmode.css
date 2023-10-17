@@ -1,0 +1,136 @@
+html {
+	color: #000000;
+	background: #f0ffff;
+}
+
+.less_transparent_glass_box {
+	background: white;
+	border: solid #a3a8ac 1px;
+}
+
+.glass_box {
+	background: white;
+	border: solid #a3a8ac 1px;
+}
+
+#ribbon {
+	background: rgba(243, 243, 243, 1);
+	color: #362b36;
+}
+
+.ui-widget-content a {
+	color: #362b36;
+}
+
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+	color: #19439c;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	background: #f5f3f3;
+	color: #ffffff;
+}
+
+button, select, input, #predict_own_data {
+	background-color: #ffffff;
+	color: black;
+}
+
+.descriptions_of_layers {
+	background: #ffffff;
+	border: solid #a3a8ac 1px;
+}
+
+.ui-widget-header a {
+	color: #222222;
+}
+
+select, button {
+	background-color: #ffffff;
+	color: black;
+}
+
+select:hover, input:hover, button:hover, .input_field:hover {
+	background-color: #b7c8dc;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+	background: #f5f3f3;
+	border: 1px solid #bababa;
+	color: #2779aa;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus,
+.ui-button:hover,
+.ui-button:focus {
+	background: #fff;
+	border: 1px solid #bababa;
+	font-weight: bold;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	color: darkgray;
+	background-color: #f5f3f3;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+	color: black;
+}
+
+.footer>a:visited, .footer>a, .footer>a:link {
+	color: black;
+}
+
+.sources_popup_link {
+	filter: invert(0);
+}
+
+.fcnn_desc_text {
+	color: black;
+}
+
+#explanation {
+	filter: invert(0);
+}
+
+#tablist {
+	background: #8cc0da; 
+}
+
+#math_tab {
+	background-color: #fff;
+	color: #000;
+}
+
+#status_bar {
+	background-color: #e5e5e5;
+}
+
+#log {
+	background-color: white;
+	color: black;
+}
+
+hr {
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #ffffff;
+}

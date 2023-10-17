@@ -1,0 +1,158 @@
+@media only screen and (max-width: 1100px) {
+	.add_layer {
+		font-size: calc(10px + 1.3vw);
+	}
+
+	body {
+		font-size: calc(10px + 1.3vw);
+	}
+	
+	.close_button {
+		width: 100%;
+		font-size: 30px;
+	}
+
+	div {
+		font-size: calc(10px + 1.3vw);
+	}
+	
+	html {
+		min-width: auto;
+	}
+
+	input {
+		font-size: calc(10px + 1.3vw);
+		height: 28px;
+	}
+
+	input[type=checkbox] {
+		height: 30px;
+		width: 30px;
+	}
+
+	input[type=radio] {
+		height: 30px;
+		width: 30px;
+	}
+
+	.left_side {
+		float: inherit;
+	}
+
+	.layer_type {
+		width: auto;
+		font-size: calc(10px + 1.3vw);
+	}
+
+	.layer_setting {
+		min-width: 266px;
+		width: calc(100% - 78px);
+		margin-left: 11px;
+	}
+
+	#layers_container {
+		margin-left: -2px;
+	}
+
+	.left_side {
+		min-width: auto;
+	}
+
+	.layer_identifier_activation {
+		display: none;
+	}
+
+	#ribbon {
+		height: 100%;
+		display: none;
+		width: 100%;
+	}
+
+	#ribbon_shower {
+		display: block;
+	}
+
+	.ribbon-group {
+		float: inherit;
+		font-size: 20px;
+	}
+
+	.ribbon-group-sep {
+		display: none;
+	}
+
+	.ribbon-group-sep-hr {
+		display: block;
+	}
+
+	.ribbon-group-title {
+		display: none;
+	}
+
+	.remove_layer {
+		font-size: calc(10px + 1.3vw);
+	}
+
+	.save_button {
+		font-size: calc(10px + 1.3vw);
+	}
+
+	.show_data {
+		font-size: calc(10px + 1.3vw);
+	}
+	
+	.symbol_button {
+		font-size: 40px;
+	}
+	
+	#tablist {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.ui-tabs-nav {
+		font-size: 30px;
+	}
+
+	.left_side {
+		display: none;
+	}
+
+	#toggle_layers_button {
+		display: block;
+	}
+
+	#fcnn {
+		pointer-events: none;
+	}
+
+	#memory_debugger_div {
+		display: none;
+	}
+}
+
+@media only screen and (min-width: 1101px) {
+	#toggle_layers_button {
+		display: none;
+	}
+
+
+	#ribbon_shower {
+		display: none;
+	}
+
+	#ribbon {
+		display: block;
+	}
+
+	.layer_identifier_activation {
+		display: content;
+	}
+
+	.left_side {
+		display: block;
+	}
+}
+
+
