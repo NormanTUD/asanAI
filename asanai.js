@@ -17,6 +17,7 @@ class asanAI {
 		this.draw_internal_states = true;
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
+		this.divide_by = 255;
 
 		this.started_webcam = false;
 		this.camera = null
@@ -36,11 +37,19 @@ class asanAI {
 				}
 			}
 
+			if(Object.keys(args[0]).includes("divide_by")) {
+				if(typeof(args[0].divide_by) == "number") {
+					this.divide_by= args[0].divide_by;
+				} else {
+					throw new Error("divide_by is not a number");
+				}
+			}
+
 			if(Object.keys(args[0]).includes("max_neurons_fcnn")) {
 				if(typeof(args[0].max_neurons_fcnn) == "number") {
 					this.max_neurons_fcnn = args[0].max_neurons_fcnn;
 				} else {
-					throw new Error("max_neurons_fcnn is not a boolean");
+					throw new Error("max_neurons_fcnn is not a number");
 				}
 			}
 
@@ -867,8 +876,8 @@ class asanAI {
 	}
 
 	 tf_sequential(model_uuid) {
-		assert(model_uuid, "model_uuid is not defined");
-		assert(typeof(model_uuid) == "string", "model_uuid must be a string");
+		this.assert(model_uuid, "model_uuid is not defined");
+		this.assert(typeof(model_uuid) == "string", "model_uuid must be a string");
 
 		var res = tf.sequential();
 
@@ -1699,6 +1708,7 @@ class asanAI {
 
 			var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
 			var resized = this.expand_dims(_data);
+			resized = this.tf_div(resized, this.divide_by);
 
 			var res;
 			try {
@@ -1747,11 +1757,7 @@ class asanAI {
 	}
 
 
-	visualizeNumbersOnCanvas(
-	  numberArray,
-	  blockWidth = 1,
-	  blockHeight = 25
-	) {
+	visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25) {
 		// Create or retrieve the canvas element
 		var canvas = document.createElement("canvas");
 		canvas.id = "neurons_canvas_" + this.uuidv4();
@@ -1821,7 +1827,9 @@ class asanAI {
 				__parent.append(layer_div);
 			}
 
-			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + this.get_layer_identification(layer) + "</h3>").hide();
+			var layer_name = this.model.layers[layer].getClassName();
+
+			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.get_layer_identification(layer) + "</h3>").hide();
 
 			layer_div.show();
 			layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
@@ -1849,11 +1857,11 @@ class asanAI {
 				}
 			}
 
-			var canvas_input = this.draw_image_if_possible(layer, "input", input_data, 1);
-			var canvas_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data, 1);
+			var canvas_input = this.draw_image_if_possible(layer, "input", input_data);
+			var canvas_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
 			//console.log("output_data:", output_data);
-			console.log("output_data.shape:", this.get_dim(output_data));
-			var canvas_output = this.draw_image_if_possible(layer, "output", output_data, 1);
+			//console.log("output_data.shape:", this.get_dim(output_data));
+			var canvas_output = this.draw_image_if_possible(layer, "output", output_data);
 
 			if(canvas_output.length && canvas_input.length) {
 				for (var j = 0; j < canvas_input.length; j++) {
@@ -1891,11 +1899,11 @@ class asanAI {
 						output.append(img_output).show();
 					}
 				} else {
-					if(this.get_shape_from_array(output_data).length == 1) {
-						var h = this.visualizeNumbersOnCanvas(output_data)
+					if(this.get_shape_from_array(output_data[0]).length == 1) {
+						var h = this.visualizeNumbersOnCanvas(output_data[0])
 						equations.append(h).show();
 					} else {
-						var h = this.array_to_html(output_data);
+						var h = this.array_to_html(output_data[0]);
 						equations.append(h).show();
 					}
 				}
@@ -1937,7 +1945,7 @@ class asanAI {
 		var max = 0;
 
 		if(denormalize) {
-			for (var x = 0, i = 0; i < this.width; x += this.pixel_size, i++) {
+			for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
 				for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
 					var red, green, blue;
 
@@ -1960,7 +1968,7 @@ class asanAI {
 			}
 		}
 
-		for (var x = 0, i = 0; i < this.width; x += this.pixel_size, i++) {
+		for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
 			for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
 				var red, green, blue;
 
@@ -1973,9 +1981,9 @@ class asanAI {
 				}
 
 				if(denormalize) {
-					red = normalize_to_rgb_min_max(red, min, max);
-					green = normalize_to_rgb_min_max(green, min, max);
-					blue = normalize_to_rgb_min_max(blue, min, max);
+					red = this.normalize_to_rgb_min_max(red, min, max);
+					green = this.normalize_to_rgb_min_max(green, min, max);
+					blue = this.normalize_to_rgb_min_max(blue, min, max);
 				}
 
 				var color = "rgb(" + red + "," + green + "," + blue + ")";
@@ -1987,15 +1995,15 @@ class asanAI {
 					fill: color,
 					stroke: color
 				};
-				draw_rect(ctx, pixel);
-				drew_something = true;
+
+				this.draw_rect(ctx, pixel);
 			}
 		}
 
 		ctx.fill();
 		ctx.closePath();
 
-		return drew_something;
+		return canvas;
 	}
 
 	get_shape_from_array(a) {
@@ -2057,34 +2065,42 @@ class asanAI {
 		return dim;
 	}
 
-	draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) {
+	get_pixel_size () {
+		return this.pixel_size;
+	}
+
+	set_pixel_size (_new) {
+		if(this.looks_like_number(_new)) {
+			this.pixel_size = this.parse_int(_new);
+		}
+	}
+
+	draw_image_if_possible (layer, canvas_type, colors) {
 		var canvas = null;
 
 		try {
-			var ret = false;
+			var ret = [];
 
-			if(!this.get_dim(colors).length == 4) {
-				this.log("colors had no length of 3 but [" + this.get_dim(colors).join(", ") + "]");
+			var colors_shape = this.get_dim(colors);
+
+			if(colors_shape.length != 4) {
+				//this.log("colors had no length of 3 but [" + this.get_dim(colors).join(", ") + "]");
 				return false;
 			}
 
+			colors = colors[0];
+
+			colors_shape = this.get_dim(colors);
+			console.log("colors_shape.length:", colors_shape.length);
+
 			if(canvas_type == "output" || canvas_type == "input") {
 				if(canvas_type == "input") {
-					canvas = this.get_canvas_in_class(layer, "input_image_grid", !get_canvas_object);
+					canvas = this.get_canvas_in_class(layer, "input_image_grid");
 				} else {
-					canvas = this.get_canvas_in_class(layer, "image_grid", !get_canvas_object);
+					canvas = this.get_canvas_in_class(layer, "image_grid");
 				}
 
-				if(!get_canvas_object) {
-					$($(canvas)[0]).parent().parent().show();
-				}
-
-				ret = this.draw_grid(canvas, this.pixel_size, colors, 1);
-				if(get_canvas_object) {
-					return canvas;
-				}
-
-				return ret;
+				ret.push(this.draw_grid(canvas, this.pixel_size, colors, 1, 0, "", this.divide_by, ""));
 			} else if(canvas_type == "kernel") {
 				var shape = this.get_dim(colors);
 
@@ -2092,31 +2108,17 @@ class asanAI {
 
 				for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-						canvas = this.get_canvas_in_class(layer, "filter_image_grid", !get_canvas_object);
+						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
 
-						if(!get_canvas_object) {
-							$($(canvas)[0]).parent().parent().show();
-						}
-
-						//    this.draw_grid(canvas, this.pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash) {
-						ret = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
-
-						if(get_canvas_object) {
-							canvasses.push(canvas);
-						}
+						ret.push(this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]));
 					}
 				}
-
-				if(get_canvas_object) {
-					return canvasses;
-				}
-				return ret;
 			}
 		} catch (e) {
 			this.err(e);
 		}
 
-		return false;
+		return ret;
 	}
 
 	array_to_html(array) {
@@ -2225,5 +2227,39 @@ class asanAI {
 				}
 			}
 		}
+	}
+
+	normalize_to_rgb_min_max (x, min, max) {
+		this.assert(typeof(x) == "number", "x is not a number");
+		if(typeof(max) != "number" || typeof(min) != "number") {
+			return x;
+		}
+
+		var multiplicator = x - min;
+		var divisor = max - min;
+
+		if(divisor == 0) {
+			return val;
+		}
+
+		var to_be_parsed_as_int = 255 * multiplicator / divisor;
+
+
+		var val = this.parse_int(to_be_parsed_as_int);
+
+		if(val > 255) {
+			val = 255;
+		} else if (val < 0) {
+			val = 0;
+		}
+
+		return val;
+	}
+
+	draw_rect(ctx, rect) {
+		ctx.fillStyle = rect.fill;
+		ctx.strokeStyle = rect.stroke;
+		ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+		ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 	}
 }
