@@ -18,6 +18,7 @@ class asanAI {
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
 		this.divide_by = 255;
+		this.model_summary_div = null;
 
 		this.started_webcam = false;
 		this.camera = null
@@ -205,7 +206,7 @@ class asanAI {
 		return [names, units, meta_infos];
 	}
 
-	restart_fcnn (divname) {
+	restart_fcnn (divname=this.fcnn_div_name) {
 		var fcnn_data = this.get_fcnn_data();
 
 		if(!fcnn_data) {
@@ -470,9 +471,11 @@ class asanAI {
 		}
 	}
 
-	draw_fcnn (divname, max_neurons=32) {
+	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
+		
+		this.fcnn_div = divname;
 
 		this.restart_fcnn(divname);
 	}
@@ -1708,7 +1711,7 @@ class asanAI {
 
 			var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
 			var resized = this.expand_dims(_data);
-			resized = this.tf_div(resized, this.divide_by);
+			resized = this.tidy(() => { return this.tf_div(resized, this.divide_by); });
 
 			var res;
 			try {
@@ -2264,5 +2267,92 @@ class asanAI {
 		ctx.strokeStyle = rect.stroke;
 		ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
 		ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+	}
+
+	write_model_summary(divname=this.model_summary_div) {
+		if(!divname) {
+			this.err("Cannot call write_model_summary without a divname (at least once)");
+			return;
+		}
+
+		var $div = $("#" + divname)
+
+		if(!$div.length) {
+			this.err(`#${divname} could not be found`);
+			return;
+		}
+
+		if(!$div.is(":visible")) {
+			return;
+		}
+
+		this.assert(typeof(this.model) == "object", "model is not an object");
+
+		var logBackup = console.log;
+		var logMessages = [];
+
+		console.log = function () {
+			logMessages.push.apply(logMessages, arguments);
+		};
+
+		this.model.summary(200);
+
+		$div.html(this.summary_to_table(logMessages));
+
+		console.log = logBackup;
+
+		this.model_summary_div = divname;
+	}
+
+
+	summary_to_table(lines) {
+		var new_array = [];
+
+		var colspan_nr = 0;
+
+		for (var i = 0; i < lines.length; i++) {
+			var line = lines[i];
+
+			if (line.match(/^=+$/)) {
+			} else if (line.match(/\s{2,}/)) {
+				var regex = new RegExp(/\s*(.*?)\s*(\[.*\])\s*(\[.*\])\s*(\d+)\s*/, "g");
+				var result = regex.exec(line);
+				var splitted = [];
+				if(result) {
+					splitted = [result[1], "<pre>" + result[2] + "</pre>", "<pre>" + result[3] + "</pre>", result[4]];
+				} else {
+					var splitted = line.split(/\s{2,}/).filter(n => n);
+					for (var j = 0; j < splitted.length; j++) {
+						if (splitted[j].startsWith("[")) {
+							splitted[j] = "<pre>" + splitted[j] + "</pre>";
+						}
+					}
+				}
+
+				new_array.push(splitted);
+				if (splitted.length > colspan_nr) {
+					colspan_nr = splitted.length;
+				}
+			} else if (!line.match(/^_+$/) && line) {
+				new_array.push(line);
+			}
+		}
+
+		var table = "<table border=1 style='border-collapse: collapse;'>\n";
+		for (var i = 0; i < new_array.length; i++) {
+			var d_or_h = "d";
+			if (i == 0) {
+				d_or_h = "h";
+			}
+			if (typeof (new_array[i]) == "object") {
+				table += "<tr><t" + d_or_h + ">" + new_array[i].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n";
+			} else {
+				table += "<tr><td colspan=" + colspan_nr + ">" + new_array[i] + "</td></tr>\n";
+			}
+		}
+
+		table += "</table>\n";
+
+		return "<center>" + table + "</center>";
 	}
 }
