@@ -205,7 +205,7 @@ class asanAI {
 		return [names, units, meta_infos];
 	}
 
-	restart_fcnn (divname) {
+	restart_fcnn (divname=this.fcnn_div_name) {
 		var fcnn_data = this.get_fcnn_data();
 
 		if(!fcnn_data) {
@@ -470,9 +470,11 @@ class asanAI {
 		}
 	}
 
-	draw_fcnn (divname, max_neurons=32) {
+	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
+		
+		this.fcnn_div = divname;
 
 		this.restart_fcnn(divname);
 	}
