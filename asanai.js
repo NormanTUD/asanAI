@@ -1619,6 +1619,10 @@ class asanAI {
 		this.camera = await tf.data.webcam($video_element);
 
 		while (this.started_webcam) {
+			if(this.internal_states_div) {
+				$("#" + this.internal_states_div).html("");			
+			}
+
 			var image = await this.camera.capture();
 
 			var model_height = this.model.input.shape[1];
@@ -1627,7 +1631,19 @@ class asanAI {
 			var _data = this.resizeNearestNeighbor(image, [model_height, model_width]);
 			var resized = this.expand_dims(_data);
 
-			var res = this.model.predict(resized)
+			var res;
+			try {
+				res = this.model.predict(resized)
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				this.err("" + e);
+				this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+
+				return;
+			}
 
 			var prediction = this.array_sync(res);
 
@@ -1702,7 +1718,7 @@ class asanAI {
 		return Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function")
 	}
 
-	draw_internal_states () {
+	draw_internal_states (divname) {
 		if(!this.model) {
 			this.dbg("No model found");
 
@@ -1713,24 +1729,42 @@ class asanAI {
 			this.dbg("No layer found");
 		}
 
+		var $div = $("#" + divname);
+
+		if($div.length != 1) {
+			this.err(`Could not find div #${divname}`);
+			return;
+		}
+
 		try {
-			for (var i = 0; i < this.model.layers.length; i++) {
-				if(this.get_methods(this.model.layers[i]).includes("original_apply_real")) {
-					this.model.layers[i].apply = this.model.layers[i].original_apply_real;
-				}
+			for (var layerIndex = 0; layerIndex < this.model.layers.length - 1; layerIndex++) {
+				var self = this;  // Hier speichern Sie das äußere Objekt in einer Variablen.
 
-				this.model.layers[i].original_apply_real = this.model.layers[i].apply;
-				
-				var _this = this;
+				this.model.layers[layerIndex].apply = function (inputs, kwargs) {
+					var hasOriginalApply = self.get_methods(self.model.layers[layerIndex]).includes("original_apply_real");
 
-				this.model.layers[i].apply = function (inputs, kwargs) {
-					var applied = this.original_apply_real(inputs, kwargs);
+					if (!hasOriginalApply) {
+						self.model.layers[layerIndex].original_apply_real = self.model.layers[layerIndex].apply;
+					}
 
-					_this._draw_internal_states(i, inputs, applied);
+					var outerSelf = self;  // Hier weisen Sie die äußere Variable einer inneren Variable zu.
 
-					return applied;
+					try {
+						if (typeof outerSelf.model.layers[layerIndex].original_apply_real === 'function') {
+							var applied = outerSelf.model.layers[layerIndex].original_apply_real(inputs, kwargs);
+							outerSelf._draw_internal_states(layerIndex, inputs, applied);
+							return applied;
+						} else {
+							throw new Error("original_apply_real is not a function");
+						}
+					} catch (error) {
+						outerSelf.wrn("Error in apply function:", error);
+						// Handle the error gracefully or rethrow if needed
+					}
 				}
 			}
+
+			this.internal_states_div = divname;
 		} catch (e) {
 			this.err(e);
 		}
@@ -1738,7 +1772,7 @@ class asanAI {
 
 	_draw_internal_states (layer, inputs, applied) {
 		var number_of_items_in_this_batch = inputs[0].shape[0];
-		//log("layer: " + layer);
+		console.log("layer: " + layer);
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
@@ -1747,10 +1781,14 @@ class asanAI {
 			var input_data = this.array_sync(inputs[0])[batchnr];
 			var output_data = this.array_sync(applied)[batchnr];
 
-			var layer_div = $($(".layer_data")[layer]);
-			if(batchnr == 0) {
-				layer_div.append("<h1>Layer data flow</h1>");
+			var __parent = $("#" + this.internal_states_div);
+
+			var layer_div = __parent.find($($(".layer_data")[layer]));
+			if(layer_div.length == 0) {
+				layer_div = $("<div class='layer_data'></div>");
+				__parent.append(layer_div);
 			}
+
 			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + this.get_layer_identification(layer) + "</h3>").hide();
 
 			layer_div.show();
@@ -1822,7 +1860,7 @@ class asanAI {
 						output.append(img_output).show();
 					}
 				} else {
-					if(this.get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
+					if(this.get_shape_from_array(output_data).length == 1) {
 						var h = this.visualizeNumbersOnCanvas(output_data)
 						equations.append(h).show();
 					} else {
