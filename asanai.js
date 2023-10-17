@@ -1,5 +1,5 @@
 class asanAI {
-	constructor () {
+	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
 		var last_tested_plotly_version = "2.14.0";
@@ -7,6 +7,30 @@ class asanAI {
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+
+		this.model = null;
+
+		if(args.length == 1 && Object.keys(args[0]).includes("model")) {
+			if(this.is_model(args[0].model)) {
+				this.model = args[0].model;
+			} else {
+				throw new Error("model is not a valid model");
+			}
+		} else if (args.length > 1) {
+			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
+		}
+	}
+
+	is_model (_m) {
+		if(!_m) {
+			return false;
+		}
+
+		if(!Object.keys(_m).includes("_callHook")) {
+			return false;
+		}
+
+		return true;
 	}
 
 	get_version (code, last_tested, name) {

@@ -12,7 +12,9 @@
 		<pre id="asanai_debug"></pre
 	</body>
 	<script>
-		var asanai = new asanAI();
+		var model = tf.sequential();
+
+		var asanai = new asanAI({model: model});
 
 		$("#asanai_debug").html(JSON.stringify(asanai));
 	</script>
