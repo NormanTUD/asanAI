@@ -10,19 +10,27 @@ class asanai {
 	}
 
 	get_version (code, last_tested, name) {
-		code = "try { " + code + "} catch (e) { if(Object.keys(e).includes('message')) { e = e.message }; err(e) }";
+		code = "try { " + code + "} catch (e) { }";
 		try {
 			var res = eval(code);
-			if(res != last_tested) {
+
+			if(("" + res).includes("undefined")) {
+				throw new Error("is null");
+			} else if(res != last_tested) {
 				this.wrn(`Your ${name}-version is ${res}, but the last tested one was ${last_tested}. Keep that in mind. It may result in errors.`);
 			}
+
 			return res;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
-			throw new Error(e);
+			if(("" + e).includes("is null") || ("" + e).includes("is not defined")) {
+				throw new Error(`${name} is not installed or not included properly. Install ${name}, version ${last_tested}`)
+			} else {
+				throw new Error(e);
+			}
 		}
 	}
 
