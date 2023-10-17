@@ -1710,7 +1710,7 @@ class asanAI {
 
 			var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
 			var resized = this.expand_dims(_data);
-			resized = this.tf_div(resized, this.divide_by);
+			resized = this.tidy(() => { return this.tf_div(resized, this.divide_by); });
 
 			var res;
 			try {
