@@ -1,6 +1,6 @@
 "use strict";
 
-function __predict (data, __model) {
+function __predict (data, __model, _recursion=0) {
 	if(!data) {
 		err("data undefined");
 		return;
@@ -15,7 +15,38 @@ function __predict (data, __model) {
 		return;
 	}
 
-	var res = __model.predict(data);
+	if(!data.isDisposedInternal) {
+		err("Cannot predict data since its already disposed");
+		return;
+	}
+
+	var json = tidy(() => {
+		var res = array_sync(data);
+
+		return res;
+	});
+
+	var res;
+
+	try {
+		res = tf.tidy(() => { __model.predict(tensor(data)); });
+	} catch (e) {
+		if(_recursion < 10) {
+			if(_recursion == 0) {
+				console.log("__predict data before first recursive try (data, __model): ", data, __model);
+			}
+			return __predict(data, __model, _recursion + 1);
+		} else {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			console.log(__model);
+			err(`Recursion level of ${_recursion} reached. Stopping trying to predict. Error: ${e}`);
+
+			return;
+		}
+	}
 
 	var res_sync = array_sync(res).flat();
 
@@ -668,9 +699,8 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 				if(predict_data.shape.join(",") != model_shape_one) {
 					predict_data = tidy(() => {
-						var old_tensor = predict_data;
 						//console.log("B: changing old_tensor shape [" + old_tensor.shape.join(", ") + "] to [" + model_shape_one.join(", ") + "]");
-						var new_data = tf_reshape(old_tensor, model_shape_one);
+						var new_data = tf_reshape(predict_data, model_shape_one);
 
 						//console.debug("Predict data input shape: [" + predict_data.shape.join(",") + "]");
 
