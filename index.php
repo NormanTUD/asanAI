@@ -229,6 +229,7 @@
 		_js("libs/prism/prism-python.min.js");
 		_js("libs/jscolor.js", 1, 1);
 		_js("bottom.js");
+		_js("asanai.js");
 		_js("libs/html2canvas.min.js");
 ?>
 	</body>
