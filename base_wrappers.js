@@ -17,6 +17,9 @@ function is_tf_tensor (arg) {
 }
 
 function _register_tensors (...args) {
+	if(is_cosmo_mode) {
+		return;
+	}
 	for (var i = 0; i < args.length; i++) {
 		if(is_tf_tensor(args[i])) {
 			_custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])];
