@@ -51,7 +51,7 @@ class asanAI {
 		var classname = this.model.layers[layer].getClassName();
 
 		if(!classname) {
-			err("cannot get class name for layer " + i) ;
+			this.err("cannot get class name for layer " + i) ;
 			return;
 		}
 
@@ -82,7 +82,7 @@ class asanAI {
 		var max_neurons_fcnn = this.max_neurons_fcnn;
 
 		if(units > max_neurons_fcnn && use_max_layer_size) {
-			l("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
+			this.log("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
 			units = max_neurons_fcnn;
 		}
 
