@@ -553,9 +553,19 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(is_image_prediction) {
 			try {
 				predict_data = tf.tidy(() => {
-					var res = tf_to_float(expand_dims(resizeNearestNeighbor(fromPixels(item), [height, width])));
+					var res = tf_to_float(
+						expand_dims(
+							resizeNearestNeighbor(
+								fromPixels(item),
+								[height, width]
+							)
+						)
+					);
+
 					return res;
 				});
+
+				console.log(predict_data);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -1114,10 +1124,10 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		if(shape.length != 3) {
 			$("#grad_cam_heatmap").hide();
 		} else {
-			var height = shape[0];
-			var width = shape[1];
+			var _height = shape[0];
+			var _width = shape[1];
 
-			var largest = Math.max(height, width);
+			var largest = Math.max(_height, _width);
 
 			var pxsz = 1;
 

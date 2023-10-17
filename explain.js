@@ -128,11 +128,11 @@ function draw_rect(ctx, rect) {
 function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	var drew_something = false;
 
-	var width = colors[0].length;
-	var height = colors.length;
+	var _width = colors[0].length;
+	var _height = colors.length;
 
-	$(canvas).attr("width", width * pixel_size);
-	$(canvas).attr("height", height * pixel_size);
+	$(canvas).attr("width", _width * pixel_size);
+	$(canvas).attr("height", _height * pixel_size);
 
 	var ctx = $(canvas)[0].getContext("2d");
 	ctx.beginPath();
@@ -140,8 +140,8 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 	var min = 0;
 	var max = 0;
 
-	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
 			var red = colors[j][i][pos];
 			var green = colors[j][i][pos];
 			var blue = colors[j][i][pos];
@@ -156,8 +156,8 @@ function draw_grid_grayscale (canvas, pixel_size, colors, pos) {
 		}
 	}
 
-	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+	for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
 			var red = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 			var green = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
 			var blue = normalize_to_rgb_min_max(colors[j][i][pos], min, max);
@@ -189,11 +189,11 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 
 	var drew_something = false;
 
-	var height = colors.length;
-	var width = colors[0].length;
+	var _height = colors.length;
+	var _width = colors[0].length;
 
-	$(canvas).attr("width", width * pixel_size);
-	$(canvas).attr("height", height * pixel_size);
+	$(canvas).attr("width", _width * pixel_size);
+	$(canvas).attr("height", _height * pixel_size);
 	if(_class) {
 		$(canvas).attr("class", _class);
 	}
@@ -216,7 +216,7 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 
 	if(denormalize) {
 		for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
-			for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+			for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
 				var red, green, blue;
 
 				if(black_and_white) {
@@ -239,7 +239,7 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	}
 
 	for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
-		for (var y = 0, j = 0; j < height; y += pixel_size, j++) {
+		for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
 			var red, green, blue;
 
 			if(black_and_white) {
@@ -616,14 +616,14 @@ async function write_descriptions (force=0) {
 		assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
 
 		if(keyname != "null" && keyname && keyname != "undefined") {
-			var height = last_layer_end - first_layer_start - 13;
+			var _height = last_layer_end - first_layer_start - 13;
 			var hidden = "";
 			if(is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
 				hidden = "display: none;";
 			}
 
 			var new_div_html = "";
-			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${height}px; ${hidden}'">${keyname}</div>`;
+			new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${_height}px; ${hidden}'">${keyname}</div>`;
 
 			$(new_div_html).appendTo("#maindiv");
 		}
