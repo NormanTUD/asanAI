@@ -4649,9 +4649,11 @@ function get_layer_regularizer_config(layer_nr, regularizer_type) {
 				var option_name = classList[j];
 				option_name = option_name.replace(starts_with_string, "");
 				var value = get_item_value(layer_nr, classList[j]);
+
 				if (looks_like_number(value)) {
 					value = parse_float(value);
 				}
+
 				if (value != "") {
 					option_hash[option_name] = value;
 				}

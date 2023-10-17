@@ -15,7 +15,10 @@
 		<div id="fcnn_div"></div>
 	</body>
 	<script>
-		var model = tf.sequential();
+		var model = tf.sequential({  
+			layers: [tf.layers.dense({units:1,inputShape:[3]}), 
+			tf.layers.dense({units:4})]  
+		}); 
 
 		var asanai = new asanAI({model: model});
 
