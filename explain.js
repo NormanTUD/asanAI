@@ -1406,13 +1406,21 @@ async function predict_maximally_activated (item, force_category) {
 		return;
 	}
 
-	var results = await predict(item, force_category, 1);
+	try {
+		var results = await predict(item, force_category, 1);
 
-	if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
-		$(item).next().remove();
+		if($(item).next().length && $(item).next()[0].tagName.toLowerCase() == "pre") {
+			$(item).next().remove();
+		}
+
+		$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err(e);
 	}
-
-	$(item).after("<pre class='maximally_activated_predictions'>" + results + "</pre>");
 }
 
 async function draw_maximally_activated_neuron (layer, neuron) {
