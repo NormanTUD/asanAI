@@ -444,6 +444,11 @@ class asanAI {
 			return false;
 		}
 
+		if(!Object.keys(_m).includes("metricsNames")) {
+			this.err("The given model is a valid model, but it has not been compiled yet");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -696,9 +701,9 @@ class asanAI {
 			return logMessages.join("\n");
 		} catch (e) {
 			if(("" + e).includes("Error: Tensor is disposed")) {
-				wrn("tensor to be printed was already disposed");
+				this.wrn("tensor to be printed was already disposed");
 			} else {
-				err("tensor_print_to_string failed:", e);
+				this.err("tensor_print_to_string failed:", e);
 
 			}
 			return "<span class='error_msg'>Error getting tensor as string</span>";
@@ -1504,6 +1509,21 @@ class asanAI {
 		return msg;
 	}
 
+	dbg (...msgs) {
+		var msg = "";
+		for (var i = 0; i < msgs.length; i++) {
+			if(Object.keys(msgs[i]).includes("message")) {
+				msgs[i] = msgs[i].message;
+			}
+
+			console.debug(msgs[i]);
+		}
+
+		msg = msgs.join("\n");
+
+		return msg;
+	}
+
 	err (...msgs) {
 		var msg = "";
 		for (var i = 0; i < msgs.length; i++) {
@@ -1592,21 +1612,234 @@ class asanAI {
 
 		while (this.started_webcam) {
 			var image = await this.camera.capture();
-			var prediction = this.tidy(() => {
-				var resized = this.expand_dims(this.resizeNearestNeighbor(image, [50, 50]));
-				var res = this.model.predict(resized)
 
-				return this.array_sync(res);
-			});
+			var model_height = this.model.input.shape[1];
+			var model_width = this.model.input.shape[1];
+
+			var _data = this.resizeNearestNeighbor(image, [model_height, model_width]);
+			var resized = this.expand_dims(_data);
+			var res = this.model.predict(resized)
+
+			var prediction = this.array_sync(res);
 
 			$($desc).html(JSON.stringify(prediction));
 
+			await this.dispose(res);
+			await this.dispose(_data);
+			await this.dispose(resized);
 			await this.dispose(image);
-			await this.delay(100);
+			await this.delay(50);
 		}
 	}
 
 	delay(time) {
 		return new Promise(resolve => setTimeout(resolve, time));
+	}
+
+	array_to_html(array) {
+		var m = "";
+		for (var i = 0; i < array.length; i++) {
+			if(typeof(array[i]) == "object") {
+				for (var j = 0; j < array[i].length; j++) {
+					m += array[i][j] + " ";
+				}
+			} else {
+				m += array[i];
+			}
+			m += "<br>";
+		}
+
+		return m;
+	}
+
+
+	visualizeNumbersOnCanvas(
+	  numberArray,
+	  blockWidth = 1,
+	  blockHeight = 25
+	) {
+		// Create or retrieve the canvas element
+		var canvas = document.createElement("canvas");
+		canvas.id = "neurons_canvas_" + uuidv4();
+		canvas.classList.add("neurons_canvas_class");
+
+		// Calculate the canvas width based on the number of elements
+		var canvasWidth = numberArray.length * blockWidth;
+		var canvasHeight = blockHeight;
+
+		// Set the canvas dimensions
+		canvas.width = canvasWidth;
+		canvas.height = canvasHeight;
+
+		var ctx = canvas.getContext("2d");
+		var blocksPerRow = Math.floor(canvas.width / blockWidth);
+
+		for (var i = 0; i < numberArray.length; i++) {
+			var value = numberArray[i];
+			var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
+			var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
+
+			var x = (i % blocksPerRow) * blockWidth;
+			var y = Math.floor(i / blocksPerRow) * blockHeight;
+
+			ctx.fillStyle = color;
+			ctx.fillRect(x, y, blockWidth, blockHeight);
+		}
+
+		return canvas;
+	}
+
+	get_methods (obj) {
+		return Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function")
+	}
+
+	draw_internal_states () {
+		if(!this.model) {
+			this.dbg("No model found");
+
+			return;
+		}
+
+		if(!this.model.layers) {
+			this.dbg("No layer found");
+		}
+
+		try {
+			for (var i = 0; i < this.model.layers.length; i++) {
+				if(this.get_methods(this.model.layers[i]).includes("original_apply_real")) {
+					this.model.layers[i].apply = this.model.layers[i].original_apply_real;
+				}
+
+				this.model.layers[i].original_apply_real = this.model.layers[i].apply;
+
+				var code = `
+					this.model.layers[${i}].apply = function (inputs, kwargs) {
+						var applied = this.model.layers[${i}].original_apply_real(inputs, kwargs);
+
+						if(!disable_layer_debuggers) {
+							if($("#show_layer_data").is(":checked")) {
+								_draw_internal_states(${i}, inputs, applied);
+							}
+						}
+
+						return applied;
+					}
+				`;
+
+				try {
+					eval(code);
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					if(("" + e).includes("already disposed")) {
+						this.wrn("" + e);
+					} else {
+						throw new Error("" + e);
+					}
+				}
+			}
+		} catch (e) {
+			this.err(e);
+		}
+	}
+
+	_draw_internal_states (layer, inputs, applied) {
+		var number_of_items_in_this_batch = inputs[0].shape[0];
+		//log("layer: " + layer);
+		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
+
+		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
+			//log("batchnr: " + batchnr);
+
+			var input_data = array_sync(inputs[0])[batchnr];
+			var output_data = array_sync(applied)[batchnr];
+
+			var layer_div = $($(".layer_data")[layer]);
+			if(batchnr == 0) {
+				layer_div.append("<h1>Layer data flow</h1>");
+			}
+			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + $($(".layer_type")[layer]).val() + " " + get_layer_identification(layer) + "</h3>").hide();
+
+			layer_div.show();
+			layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
+			layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
+			layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
+			layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+
+			var input = $("#layer_" + layer + "_input");
+			var kernel = $("#layer_" + layer + "_kernel");
+			var output = $("#layer_" + layer + "_output");
+			var equations = $("#layer_" + layer + "_equations");
+
+			$("#layer_visualizations_tab").show();
+
+			var kernel_data = [];
+
+			if(Object.keys(this.model.layers[layer]).includes("kernel")) {
+				if(this.model.layers[layer].kernel.val.shape.length == 4) {
+					var ks_x = 0;
+					var ks_y = 1;
+					var number_filters = 2;
+					var filters = 3;
+
+					kernel_data = tidy(() => {
+						return array_sync(tf_transpose(this.model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
+					});
+				}
+			}
+
+			var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
+			var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
+			//console.log("output_data:", output_data);
+			var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
+
+			if(canvas_output.length && canvas_input.length) {
+				for (var j = 0; j < canvas_input.length; j++) {
+					for (var i = 0; i < canvas_output.length; i++) {
+						var img_output = canvas_output[i];
+						if(Object.keys(canvas_kernel).includes(i + "")) {
+							var img_kernel = canvas_kernel[i];
+							if(layer == 0) {
+								input.append(canvas_input[j]).show();
+							}
+							kernel.append(img_kernel).show();
+						}
+						output.append(img_output).show();
+					}
+				}
+			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+				for (var i = 0; i < canvas_output.length; i++) {
+					var img_output = canvas_output[i];
+					if(layer == 0) {
+						input.append(canvas_input).show();
+					}
+					if(Object.keys(canvas_kernel).includes(i + "")) {
+						var img_kernel = canvas_kernel[i];
+						kernel.append(img_kernel).show();
+					}
+					output.append(img_output).show();
+				}
+			} else {
+				if(canvas_input.nodeName == "CANVAS") {
+					if(layer == 0) {
+						input.append(canvas_input).show();
+					}
+					if(canvas_output.nodeName == "CANVAS") {
+						var img_output = canvas_output;
+						output.append(img_output).show();
+					}
+				} else {
+					if(get_shape_from_array(output_data).length == 1 && !$("#show_raw_data").is(":checked")) {
+						var h = visualizeNumbersOnCanvas(output_data)
+						equations.append(h).show();
+					} else {
+						var h = array_to_html(output_data);
+						equations.append(h).show();
+					}
+				}
+			}
+		}
 	}
 }

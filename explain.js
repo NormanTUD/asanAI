@@ -936,7 +936,6 @@ function add_layer_debuggers () {
 	} catch (e) {
 		err(e);
 	}
-
 }
 
 function draw_internal_states (layer, inputs, applied) {

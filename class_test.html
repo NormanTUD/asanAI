@@ -14,6 +14,8 @@
 		
 		<div id="webcam_prediction"></div>
 
+		<div id="internal_states"></div>
+
 		<div id="fcnn_div"></div>
 
 		<script>
@@ -26,9 +28,13 @@
 				]
 			}); 
 
+			model.compile({ optimizer: "adam", loss: "categoricalCrossentropy" });
+
 			var asanai = new asanAI({model: model});
 
 			$("#asanai_debug").html(JSON.stringify(asanai));
+
+			asanai.draw_internal_states("internal_states");
 
 			asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
