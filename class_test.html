@@ -10,12 +10,16 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
-		<pre id="asanai_debug"></pre
+		<pre id="asanai_debug"></pre>
+		
+		<div id="fcnn_div"></div>
 	</body>
 	<script>
 		var model = tf.sequential();
 
 		var asanai = new asanAI({model: model});
+
+		asanai.draw_fcnn("fcnn_div");
 
 		$("#asanai_debug").html(JSON.stringify(asanai));
 	</script>
