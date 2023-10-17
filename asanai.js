@@ -1793,6 +1793,12 @@ class asanAI {
 		return Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function")
 	}
 
+	hide_internals () {
+		this.draw_internal_states = false;
+		$("#" + this.internal_states_div).html("");
+		this.internal_states_div = "";
+	}
+
 	show_internals (divname="") {
 		if(!this.model) {
 			this.dbg("No model found");
