@@ -10,6 +10,7 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
+		<pre id="memory"></pre>
 
 		<!--<pre id="asanai_debug"></pre>-->
 
@@ -48,6 +49,8 @@
 			asanai.draw_fcnn("divname");
 
 			asanai.write_model_summary("summary_pre")
+
+			asanai.write_tensors_info("memory");
 		</script>
 	</body>
 </html>
