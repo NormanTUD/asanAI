@@ -868,6 +868,8 @@ class asanAI {
 		try {
 			var res = tf.tidy(...args);
 
+			this.clean_custom_tensors();
+
 			return res;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
@@ -1613,7 +1615,6 @@ class asanAI {
 			}
 		} else {
 			this.started_webcam = true;
-			this.err("Cannot stop a camera that has not been started");
 			if(this.webcam_prediction_div_name) {
 				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
 			}
@@ -1626,22 +1627,84 @@ class asanAI {
 
 	}
 
+	tensor_shape_fits_input_shape (tensor_shape, model_shape) {
+		this.assert(Array.isArray(tensor_shape), "tensor_shape is not an array");
+		this.assert(Array.isArray(model_shape), "model_shape is not an array");
+
+		if(tensor_shape.length != model_shape.length) {
+			this.wrn(`tensor_shape_fits_input_shape failed. Different number of values: tensor_shape: [${tensor_shape.join(", ")}], model_shape: [${model_shape.join(", ")}]`);
+			return false;
+		}
+
+
+		var mismatch = 0;
+
+		for (var i = 0; i < tensor_shape.length; i++) {
+			if (!(tensor_shape[i] == model_shape[i] || model_shape[i] === null || model_shape[i] === undefined)) {
+				mismatch++;
+			}
+		}
+
+		if(mismatch) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	predict_manually(_tensor) {
 		if(!this.model) {
 			this.err("Cannot predict without a model");
 			return;
 		}
 
-		var output = this.tf_to_float(_tensor);
+		if(!this.model.input) {
+			this.err("Cannot predict without a model.input");
+			return;		
+		}
+
+		if(!this.model.input.shape) {
+			this.err("Cannot predict without a model.input.shape");
+			return;		
+		}
+
+		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
+			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
+		}
+
+		var output;
+		try {
+			output = this.tf_to_float(_tensor);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err("" + e);
+			return;
+		}
 
 		for (var i = 0; i < this.model.layers.length; i++) {
 			var input = output;
-			output = this.model.layers[i].apply(input)
+			try {
+				output = this.model.layers[i].apply(input)
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				this.err("" + e);
+				return;
+			}
 
 			if(this.draw_internal_states) {
 				try {
 					this._draw_internal_states(i, input, output);
 				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
 					this.err(e);
 				}
 
@@ -1667,7 +1730,7 @@ class asanAI {
 			this.webcam_height = _h;
 		}
 
-		var $video_element = $divname.find(".webcam_element");
+		var $video_element = $divname.find("#" + divname + "_webcam_element");
 		var $desc = $divname.find(".desc");
 
 		if($video_element.length > 1) {
@@ -1676,7 +1739,7 @@ class asanAI {
 		} else if ($video_element.length) {
 			$video_element = $video_element[0];
 		} else {
-			$video_element = $(`<video id="${divname}" width=${_w} height=${_h}></video>`)
+			$video_element = $(`<video id="${divname}_webcam_element" width=${_w} height=${_h}></video>`)
 
 			$divname.append($video_element);
 
@@ -1698,7 +1761,6 @@ class asanAI {
 			$desc = $desc[0];
 		}
 
-
 		this.started_webcam = true;
 		this.camera = await tf.data.webcam($video_element);
 
@@ -1709,32 +1771,33 @@ class asanAI {
 
 			var image = await this.camera.capture();
 
-			var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
-			var resized = this.expand_dims(_data);
-			resized = this.tidy(() => { return this.tf_div(resized, this.divide_by); });
+			this.tidy(() => {
+				var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
+				var resized = this.expand_dims(_data);
+				resized = this.tf_div(resized, this.divide_by);
 
-			var res;
-			try {
-				res = this.predict_manually(resized)
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
+				var res;
+
+				try {
+					res = this.predict_manually(resized)
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					this.err("" + e);
+					this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+
+					return;
 				}
 
-				this.err("" + e);
-				this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+				var prediction = this.array_sync(res);
 
-				return;
-			}
+				$($desc).html(JSON.stringify(prediction));
+			});
 
-			var prediction = this.array_sync(res);
-
-			$($desc).html(JSON.stringify(prediction));
-
-			await this.dispose(res);
-			await this.dispose(_data);
-			await this.dispose(resized);
 			await this.dispose(image);
+
 			await this.delay(50);
 		}
 	}
