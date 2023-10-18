@@ -2355,4 +2355,51 @@ class asanAI {
 
 		return "<center>" + table + "</center>";
 	}
+
+	write_tensors_info(divname=this.write_tensors_info_div, time=200) {
+		var $div = $("#" + divname);
+
+		if(!$div.length) {
+			this.err("Cannot find #" + divname);
+			return;
+		}
+
+		this.write_tensors_info_div = divname;
+
+		if(!this.looks_like_number(time)) {
+			console.err("write_tensors_info: second parameter must be a number. Time will be set to 200 ms");
+			time = 200;
+		}
+		var _tensor_debugger = function () {
+			var _tensors = tf.memory().numTensors;
+			var _text = _tensors + " Tensors";
+
+			$("#" + divname).html(_text);
+		}
+
+		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
+	}
+
+	hide_tensors_info () {
+		if(self.write_tensor_interval) {
+			clearInterval(self.write_tensor_interval)
+			$("#" + self.write_tensors_info_div).html("");
+
+			self.write_tensor_interval = null;
+		} else {
+			this.err("Cannot delete tensor info without tensor info being installed first via write_tensors_info(divname, time_in_ms)");
+		}
+	}
+
+	looks_like_number(item) {
+		if(typeof(item) == "number") {
+			return true;
+		}
+
+		if (/^[+-]?(?:(?:\d+(?:\.\d+)?))$/.test(item)) {
+			return true;
+		}
+
+		return false;
+	}
 }
