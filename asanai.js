@@ -2380,9 +2380,12 @@ class asanAI {
 		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
 	}
 
-	delete_write_tensors_info () {
+	hide_tensors_info () {
 		if(self.write_tensor_interval) {
 			clearInterval(self.write_tensor_interval)
+			$("#" + self.write_tensors_info_div).html("");
+
+			self.write_tensor_interval = null;
 		} else {
 			this.err("Cannot delete tensor info without tensor info being installed first via write_tensors_info(divname, time_in_ms)");
 		}
