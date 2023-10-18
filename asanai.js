@@ -868,6 +868,8 @@ class asanAI {
 		try {
 			var res = tf.tidy(...args);
 
+			this.clean_custom_tensors();
+
 			return res;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
@@ -1698,7 +1700,6 @@ class asanAI {
 			$desc = $desc[0];
 		}
 
-
 		this.started_webcam = true;
 		this.camera = await tf.data.webcam($video_element);
 
@@ -1709,32 +1710,33 @@ class asanAI {
 
 			var image = await this.camera.capture();
 
-			var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
-			var resized = this.expand_dims(_data);
-			resized = this.tidy(() => { return this.tf_div(resized, this.divide_by); });
+			this.tidy(() => {
+				var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
+				var resized = this.expand_dims(_data);
+				resized = this.tf_div(resized, this.divide_by);
 
-			var res;
-			try {
-				res = this.predict_manually(resized)
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
+				var res;
+
+				try {
+					res = this.predict_manually(resized)
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					this.err("" + e);
+					this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+
+					return;
 				}
 
-				this.err("" + e);
-				this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+				var prediction = this.array_sync(res);
 
-				return;
-			}
+				$($desc).html(JSON.stringify(prediction));
+			});
 
-			var prediction = this.array_sync(res);
-
-			$($desc).html(JSON.stringify(prediction));
-
-			await this.dispose(res);
-			await this.dispose(_data);
-			await this.dispose(resized);
 			await this.dispose(image);
+
 			await this.delay(50);
 		}
 	}
