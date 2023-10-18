@@ -1628,10 +1628,49 @@ class asanAI {
 
 	}
 
+	tensor_shape_fits_input_shape (tensor_shape, model_shape) {
+		this.assert(Array.isArray(tensor_shape), "tensor_shape is not an array");
+		this.assert(Array.isArray(model_shape), "model_shape is not an array");
+
+		if(tensor_shape.length != model_shape.length) {
+			this.wrn(`tensor_shape_fits_input_shape failed. Different number of values: tensor_shape: [${tensor_shape.join(", ")}], model_shape: [${model_shape.join(", ")}]`);
+			return false;
+		}
+
+
+		var mismatch = 0;
+
+		for (var i = 0; i < tensor_shape.length; i++) {
+			if (!(tensor_shape[i] == model_shape[i] || model_shape[i] === null || model_shape[i] === undefined)) {
+				mismatch++;
+			}
+		}
+
+		if(mismatch) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	predict_manually(_tensor) {
 		if(!this.model) {
 			this.err("Cannot predict without a model");
 			return;
+		}
+
+		if(!this.model.input) {
+			this.err("Cannot predict without a model.input");
+			return;		
+		}
+
+		if(!this.model.input.shape) {
+			this.err("Cannot predict without a model.input.shape");
+			return;		
+		}
+
+		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
+			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
 		}
 
 		var output;
