@@ -1615,7 +1615,6 @@ class asanAI {
 			}
 		} else {
 			this.started_webcam = true;
-			this.err("Cannot stop a camera that has not been started");
 			if(this.webcam_prediction_div_name) {
 				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
 			}
@@ -1731,7 +1730,7 @@ class asanAI {
 			this.webcam_height = _h;
 		}
 
-		var $video_element = $divname.find(".webcam_element");
+		var $video_element = $divname.find("#" + divname + "_webcam_element");
 		var $desc = $divname.find(".desc");
 
 		if($video_element.length > 1) {
@@ -1740,7 +1739,7 @@ class asanAI {
 		} else if ($video_element.length) {
 			$video_element = $video_element[0];
 		} else {
-			$video_element = $(`<video id="${divname}" width=${_w} height=${_h}></video>`)
+			$video_element = $(`<video id="${divname}_webcam_element" width=${_w} height=${_h}></video>`)
 
 			$divname.append($video_element);
 
