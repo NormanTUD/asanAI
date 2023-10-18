@@ -1634,16 +1634,39 @@ class asanAI {
 			return;
 		}
 
-		var output = this.tf_to_float(_tensor);
+		var output;
+		try {
+			output = this.tf_to_float(_tensor);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err("" + e);
+			return;
+		}
 
 		for (var i = 0; i < this.model.layers.length; i++) {
 			var input = output;
-			output = this.model.layers[i].apply(input)
+			try {
+				output = this.model.layers[i].apply(input)
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				this.err("" + e);
+				return;
+			}
 
 			if(this.draw_internal_states) {
 				try {
 					this._draw_internal_states(i, input, output);
 				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
 					this.err(e);
 				}
 
