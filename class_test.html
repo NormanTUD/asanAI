@@ -10,12 +10,13 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
-		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 
-		<pre id="asanai_debug"></pre>
+		<!--<pre id="asanai_debug"></pre>-->
 
 		<pre id="summary_pre"></pre>
 		
+		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
+
 		<div id="webcam_prediction"></div>
 
 		<div id="internal_states"></div>
@@ -26,6 +27,7 @@
 			var model = tf.sequential({  
 				layers: [
 					tf.layers.conv2d({filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3]}),
+					tf.layers.conv2d({filters: 4, kernelSize: [3, 3]}),
 					tf.layers.flatten(),
 					tf.layers.dense({units: 5}),
 					tf.layers.dense({units: 4, activation: "softmax"})
@@ -36,7 +38,7 @@
 
 			var asanai = new asanAI({model: model});
 
-			$("#asanai_debug").html(JSON.stringify(asanai));
+			//$("#asanai_debug").html(JSON.stringify(asanai));
 
 			asanai.show_internals("internal_states");
 			//asanai.hide_internals();
