@@ -227,13 +227,20 @@ class asanAI {
 		var labels = args[2];
 		var meta_infos = args[3];
 
-		var canvas = $(document.getElementById(divname)).find("canvas");
+		var $div = $("#" + divname);
+		if(!$div.length) {
+			this.err(`draw_new_fcnn cannot use non-existant div. I cannot find #${divname}`);
+			return;
+		}
+
+		var canvas = $("#__fcnn_canvas");
 
 		if (!canvas.length) {
-			canvas = document.createElement("canvas");
-			canvas.id = "new_fcnn_canvas";
-			document.body.appendChild(canvas);
+			var $canvas = $(`<canvas id='__fcnn_canvas'></canvas>`);
+			canvas = $canvas[0];
+			$("#" + divname).append(canvas);
 		} else {
+			this.log("B");
 			canvas = canvas[0];
 		}
 
