@@ -1816,8 +1816,8 @@ class asanAI {
 
 		var model_input_shape = this.model.input.shape;
 
-		if(model_input_shape.length != 4) {
-			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${input_shape.join(", ")}]`);
+		if(this.model.input.shape.length != 4) {
+			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${this.model.input.shape.join(", ")}]`);
 			return;
 		}
 
@@ -1865,6 +1865,7 @@ class asanAI {
 
 		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
 			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
+			return;
 		}
 
 		if(this.looks_like_number("" + this.divide_by)) {
