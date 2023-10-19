@@ -1950,8 +1950,6 @@ class asanAI {
 
 			var _r = this.array_sync(scaled_tensor);
 
-			this.log(_r);
-
 			return _r;
 		//});
 
