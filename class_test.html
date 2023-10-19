@@ -27,10 +27,10 @@
 		<script>
 			var model = tf.sequential({  
 				layers: [
-					tf.layers.conv2d({filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3]}),
-					tf.layers.conv2d({filters: 4, kernelSize: [3, 3]}),
+					tf.layers.conv2d({filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}),
+					tf.layers.conv2d({filters: 4, kernelSize: [3, 3], activation: "relu"}),
 					tf.layers.flatten(),
-					tf.layers.dense({units: 5}),
+					tf.layers.dense({units: 5, activation: "relu"}),
 					tf.layers.dense({units: 4, activation: "softmax"})
 				]
 			});
@@ -38,6 +38,8 @@
 			model.compile({ optimizer: "adam", loss: "categoricalCrossentropy" });
 
 			var asanai = new asanAI({model: model});
+
+			asanai.set_divide_by(255);
 
 			//$("#asanai_debug").html(JSON.stringify(asanai));
 

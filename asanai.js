@@ -17,7 +17,7 @@ class asanAI {
 		this.draw_internal_states = true;
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
-		this.divide_by = 255;
+		this.divide_by = 1;
 		this.model_summary_div = null;
 
 		this.started_webcam = false;
@@ -39,8 +39,8 @@ class asanAI {
 			}
 
 			if(Object.keys(args[0]).includes("divide_by")) {
-				if(typeof(args[0].divide_by) == "number") {
-					this.divide_by= args[0].divide_by;
+				if(typeof(args[0].divide_by) == "number" || looks_like_number(args[0].divide_by)) {
+					this.divide_by= this.parse_float(args[0].divide_by);
 				} else {
 					throw new Error("divide_by is not a number");
 				}
@@ -1659,7 +1659,7 @@ class asanAI {
 		}
 	}
 
-	predict_manually(_tensor) {
+	predict_manually (_tensor) {
 		if(!this.model) {
 			this.err("Cannot predict without a model");
 			return;
@@ -1677,6 +1677,13 @@ class asanAI {
 
 		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
 			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
+		}
+
+		if(this.looks_like_number("" + this.divide_by)) {
+			_tensor = tf.tidy(() => {
+				var new_tensor = tf.div(_tensor, this.divide_by);
+				return new_tensor;
+			});
 		}
 
 		var output;
@@ -1781,7 +1788,7 @@ class asanAI {
 			this.tidy(() => {
 				var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
 				var resized = this.expand_dims(_data);
-				resized = this.tf_div(resized, this.divide_by);
+				//resized = this.tf_div(resized, this.divide_by);
 
 				var res;
 
@@ -2471,5 +2478,18 @@ class asanAI {
 		}
 
 		return false;
+	}
+
+	get_divide_by () {
+		return this.divide_by;
+	}
+
+	set_divide_by (number) {
+		if(this.looks_like_number(number)) {
+			this.divide_by = this.parse_float(number);
+			return this.divide_by;
+		}
+
+		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
 	}
 }
