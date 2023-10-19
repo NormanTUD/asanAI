@@ -32,15 +32,7 @@ class asanAI {
 
 		if(args.length == 1) {
 			if(Object.keys(args[0]).includes("labels")) {
-				if(Array.isArray(args[0].labels)) {
-					if(get_dim(args[0].labels) == 1) {
-						this.labels = args[0].labels;
-					} else {
-						throw new Error("labels cannot be a multdimensional array");
-					}
-				} else {
-					throw new Error("labels must be an array");
-				}
+				this.set_labels(args[0].labels);
 			}
 
 			if(Object.keys(args[0]).includes("model")) {
@@ -2772,7 +2764,7 @@ class asanAI {
 
 	set_labels (_l) {
 		if(Array.isArray(_l)) {
-			if(get_dim(_l) == 1) {
+			if(this.get_dim(_l).length == 1) {
 				this.labels = _l;
 			} else {
 				throw new Error("labels cannot be a multdimensional array");
