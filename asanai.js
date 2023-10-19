@@ -880,7 +880,7 @@ class asanAI {
 	};
 
 
-	async nextFrame(...args) {
+	async #next_frame(...args) {
 		this.#_register_tensors(...args);
 		await tf.nextFrame(...args);
 	}
@@ -911,7 +911,7 @@ class asanAI {
 					delete this.#custom_tensors[tensor_id];
 				}
 
-				await this.nextFrame();
+				await this.#next_frame();
 			} else {
 				/*
 				this.wrn("item was empty in dispose():"); // not a real async
@@ -1740,7 +1740,7 @@ class asanAI {
 	start_camera (item) {
 		this.#started_webcam = true;
 		if(this.webcam_prediction_div_name) {
-			this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
+			this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
 		}
 
 		$(this.#last_video_element).show();
@@ -1952,12 +1952,12 @@ class asanAI {
 
 		if(!_w) {
 			_w = 300;
-			this.webcam_width = _w;
+			this.#webcam_width = _w;
 		}
 
 		if(!_h) {
 			_h = 300;
-			this.webcam_height = _h;
+			this.#webcam_height = _h;
 		}
 
 		var $video_element = $divname.find("#" + divname + "_webcam_element");
