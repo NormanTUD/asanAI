@@ -2008,7 +2008,7 @@ class asanAI {
 				return;
 			}
 
-			this.tidy(() => {
+			var worked = this.tidy(() => {
 				try {
 					var _data = asanai_this.resizeNearestNeighbor(image, [asanai_this.model_height, asanai_this.model_width]);
 					var resized = asanai_this.expand_dims(_data);
@@ -2040,12 +2040,20 @@ class asanAI {
 					}
 
 					if(("" + e).includes("model is not defined")) {
-						return;
+						return false;
+					} else if(("" + e).includes("first_tensor is undefined")) {
+						return false;
 					} else {
 						throw new Error(e);
 					}
+
+					return false;
 				}
 			});
+
+			if(!worked) {
+				this.err(`[show_and_predict_webcam_in_div] Resizing image data failed.`);
+			}
 
 			await this.dispose(image);
 
