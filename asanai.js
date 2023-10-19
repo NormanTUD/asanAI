@@ -40,14 +40,7 @@ class asanAI {
 			}
 
 			if(Object.keys(args[0]).includes("model")) {
-				if(this.is_model(args[0].model)) {
-					this.model = args[0].model;
-
-					this.model_height = this.model.input.shape[1];
-					this.model_width = this.model.input.shape[1];
-				} else {
-					throw new Error("model is not a valid this.model");
-				}
+				this.set_model(args[0].model);
 			}
 
 			if(Object.keys(args[0]).includes("model_data")) {
@@ -55,13 +48,6 @@ class asanAI {
 					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
 				}
 				this.model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
-
-				if(this.model) {
-					this.model_height = this.model.input.shape[1];
-					this.model_width = this.model.input.shape[1];
-				} else {
-					throw new Error(`Could not load model properly. Check the logs.`);
-				}
 			}
 
 			if(Object.keys(args[0]).includes("divide_by")) {
@@ -143,6 +129,15 @@ class asanAI {
 		__model.compile(optimizer_config);
 
 		this.model = __model;
+
+		if(this.model) {
+			if(this.model.input.shape.length == 4) {
+				this.model_height = this.model.input.shape[1];
+				this.model_width = this.model.input.shape[1];
+			}
+		} else {
+			throw new Error(`Could not load model properly. Check the logs.`);
+		}
 
 		return __model;
 	}
@@ -1685,14 +1680,16 @@ class asanAI {
 
 	set_model (_m) {
 		if(!this.is_model(_m)) {
-			this.err("Given item is not a valid model");
+			throw new Error("Given item is not a valid model");
 			return;
 		}
 
 		this.model = _m;
 
-		this.model_height = this.model.input.shape[1];
-		this.model_width = this.model.input.shape[1];
+		if(this.model.input.shape.length == 4) {
+			this.model_height = this.model.input.shape[1];
+			this.model_width = this.model.input.shape[1];
+		}
 
 		return this_model;
 	}
