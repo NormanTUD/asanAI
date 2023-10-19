@@ -17,6 +17,7 @@ function is_tf_tensor (arg) {
 }
 
 function _register_tensors (...args) {
+	/*
 	if(is_cosmo_mode) {
 		return;
 	}
@@ -26,6 +27,9 @@ function _register_tensors (...args) {
 			_clean_custom_tensors();
 		}
 	}
+	*/
+
+	_clean_custom_tensors();
 }
 
 function array_sync (...args) {
