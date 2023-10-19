@@ -1,7 +1,7 @@
 "use strict";
 
 class asanAI {
-	is_dark_mode = false;
+	#is_dark_mode = false;
 	show_bars_instead_of_numbers = true;
 	max_neurons_fcnn = 32;
 	draw_internal_states = false;
@@ -352,7 +352,7 @@ class asanAI {
 
 				var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 				ctx.font = font_size + "px Arial";
-				if(this.is_dark_mode) {
+				if(this.#is_dark_mode) {
 					ctx.fillStyle = "white";
 				} else {
 					ctx.fillStyle = "black";
@@ -1870,7 +1870,7 @@ class asanAI {
 			return;		
 		}
 
-		if(!this.num_channels != 3) {
+		if(this.num_channels != 3) {
 			this.num_channels = 3;
 			this.wrn(`[predict_image] Setting num_channels to 3, because webcam data does not have transparency.`);
 		}
