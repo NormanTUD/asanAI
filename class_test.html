@@ -60,6 +60,13 @@
 
 				asanai.write_tensors_info("memory");
 			});
+
+			function test_model_switch () {
+				fl = tf.layers.dense({units: 3, activation: "softmax", inputShape: [20, 20, 3]}); 
+				xxx = tf.sequential({layers: [fl]}); 
+				xxx.compile({ optimizer: "adam", loss: "categoricalCrossentropy" }); 
+				asanai.set_model(xxx)
+			}
 		</script>
 	</body>
 </html>
