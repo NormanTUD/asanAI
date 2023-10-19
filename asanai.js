@@ -2376,12 +2376,28 @@ class asanAI {
 						}
 
 						var inputTensor = this.tensor(colors);
-						ret.push(this.tidy(() => {
+						this.log("slice_start");
+						var slice = this.tidy(() => {
 							var _h = inputTensor.shape[1];
 							var _w = inputTensor.shape[2];
-							var _slice = this.array_sync(inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]));
-							return this.draw_grid(canvas, this.pixel_size, _slice[0], 1, "", this.divide_by, "");
-						}));
+							var _slice = inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]);
+
+							return _slice;
+						});
+						this.log("slice_end");
+
+						this.log("sync slice_start");
+						var _slice_array = this.tidy(() => {
+							return this.array_sync(slice);
+						});
+						this.log("sync slice_end");
+
+						this.log("canvas_start");
+						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", this.divide_by, "");
+						this.log("canvas_end");
+
+
+						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
 					}
 				}
