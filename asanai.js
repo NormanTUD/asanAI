@@ -2261,7 +2261,7 @@ class asanAI {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
 						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
 
-						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
+						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, [colors[filter_id]]);
 
 						ret.push(drawn);
 					}
@@ -2353,15 +2353,19 @@ class asanAI {
 
 		var context = canvasElement.getContext('2d'); // Get the 2D rendering context
 
-		var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+		var kernel_shape = this.get_dim(pixels);
 
-		if (a === 3) {
+		this.assert(kernel_shape.length == 3, `kernel is not an image, it has shape [${kernel_shape.join(", ")}]`);
+
+		var [_height, _width, channels] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+
+		if (channels === 3) {
 			// Draw a color image on the canvas and resize it accordingly
-			canvasElement.width = m * rescaleFactor;
-			canvasElement.height = n * rescaleFactor;
+			canvasElement.width = _width * rescaleFactor;
+			canvasElement.height = _height * rescaleFactor;
 
-			for (let i = 0; i < n; i++) {
-				for (let j = 0; j < m; j++) {
+			for (let i = 0; i < _height; i++) {
+				for (let j = 0; j < _width; j++) {
 					var [r, g, b] = pixels[i][j]; // Assuming channels are [red, green, blue]
 					context.fillStyle = `rgb(${r}, ${g}, ${b}`;
 					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
@@ -2369,11 +2373,11 @@ class asanAI {
 			}
 		} else {
 			// Draw only the first channel
-			canvasElement.width = m * rescaleFactor;
-			canvasElement.height = n * rescaleFactor;
+			canvasElement.width = _width * rescaleFactor;
+			canvasElement.height = _height * rescaleFactor;
 
-			for (let i = 0; i < n; i++) {
-				for (let j = 0; j < m; j++) {
+			for (let i = 0; i < _height; i++) {
+				for (let j = 0; j < _width; j++) {
 					const grayscaleValue = pixels[i][j][0]; // Assuming the first channel is grayscale
 					context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue}`;
 					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
