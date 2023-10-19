@@ -13,6 +13,7 @@ class asanAI {
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
 
 		this.is_dark_mode = false;
+		this.show_bars_instead_of_numbers = true;
 		this.max_neurons_fcnn = 32;
 		this.draw_internal_states = true;
 		this.draw_internal_states_div = "";
@@ -1752,7 +1753,7 @@ class asanAI {
 				}
 			} else if(!write_to_div instanceof HTMLElement) {
 				this.err(`[predict_image] write_to_div is not a HTMLElement`);
-				reteurn;
+				return;
 			}
 		}
 
@@ -2662,5 +2663,88 @@ class asanAI {
 		}
 
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
+	}
+
+	_predict_table (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_predict_table] Predictions tensor is (first parameter) is not a tensor");
+			return;
+		}
+
+		if(write_to_div) {
+			if(typeof(write_to_div) == "string") {
+				var $write_to_div = $("#" + write_to_div);
+				if($write_to_div.length == 1) {
+					write_to_div = $write_to_div[0];
+				} else {
+					this.err(`[predict_image] Could not find div to write to by id ${write_to_div}`);
+					return;
+				}
+			} else if(!write_to_div instanceof HTMLElement) {
+				this.err(`[predict_image] write_to_div is not a HTMLElement`);
+				return;
+			}
+		}
+
+		var predictions = array_sync(predictions_tensor);
+
+		var max = 0;
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			if(max < predictions[0][i]) {
+				max = predictions[0][i];
+			}
+		}
+
+		var html = "<table class='predict_table'>";
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			html += draw_bars_or_numbers(i, predictions, max);
+		}
+
+		html += "</table>";
+
+		$(write_to_div).html(html);
+	}
+
+
+	draw_bars_or_numbers (i, predictions, max) {
+		var label = labels[i % labels.length];
+		var val = predictions[0][i];
+		var w = Math.floor(val * 50);
+
+		var html = "";
+
+		if(this.show_bars_instead_of_numbers) {
+			if(label) {
+				if(val == max) {
+					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
+				} else {
+					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
+				}
+			} else {
+				if(val == max) {
+					html = "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+				} else {
+					html = "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+				}
+			}
+		} else {
+			if(label) {
+				if(val == max) {
+					html = "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
+				} else {
+					html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
+				}
+			} else {
+				if(val == max) {
+					html = "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
+				} else {
+					html = "<tr><td>" + predictions[0][i] + "</td></tr>";
+				}
+			}
+		}
+
+		return html;
 	}
 }
