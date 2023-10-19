@@ -1850,7 +1850,6 @@ class asanAI {
 
 
 	visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25) {
-		// Create or retrieve the canvas element
 		var canvas = document.createElement("canvas");
 		canvas.id = "neurons_canvas_" + this.uuidv4();
 		canvas.classList.add("neurons_canvas_class");
@@ -1866,10 +1865,11 @@ class asanAI {
 		var ctx = canvas.getContext("2d");
 		var blocksPerRow = Math.floor(canvas.width / blockWidth);
 
+		this.scaleNestedArray(numberArray);
+
 		for (var i = 0; i < numberArray.length; i++) {
 			var value = numberArray[i];
-			var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
-			var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
+			var color = "rgb(" + value + "," + value + "," + value + ")";
 
 			var x = (i % blocksPerRow) * blockWidth;
 			var y = Math.floor(i / blocksPerRow) * blockHeight;
@@ -1909,7 +1909,7 @@ class asanAI {
 	}
 
 	normalize_to_image_data(input_data) {
-		//var res = this.tidy(() => {
+		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
 			if(this.is_tf_tensor(flattened_input)) {
@@ -1951,7 +1951,7 @@ class asanAI {
 			var _r = this.array_sync(scaled_tensor);
 
 			return _r;
-		//});
+		});
 
 		return res;
 	}
@@ -2031,57 +2031,35 @@ class asanAI {
 				}
 			}
 
-			for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
-				output.append(img_output).show();
-				var img_output = canvasses_output[canvasses_output_idx];
-			}
+			if(this.get_shape_from_array(output_data[0]).length == 1) {
+				var h = this.visualizeNumbersOnCanvas(output_data[0])
+				equations.append(h).show();
+			} else {
+				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
+					output.append(img_output).show();
+					var img_output = canvasses_output[canvasses_output_idx];
+				}
 
-			for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
-				if(kernel_canvas_idx in canvasses_kernel) {
-					var this_kernel = canvasses_kernel[kernel_canvas_idx];
-					if(this_kernel) {
-						kernel.append(this_kernel).show();
+				for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
+					if(kernel_canvas_idx in canvasses_kernel) {
+						var this_kernel = canvasses_kernel[kernel_canvas_idx];
+						if(this_kernel) {
+							kernel.append(this_kernel).show();
+						} else {
+							this.log(canvasses_kernel);
+							this.err(`Kernel ${kernel_canvas_idx} for layer ${layer} is false or undefined`)
+						}
 					} else {
 						this.log(canvasses_kernel);
-						this.err(`Kernel ${kernel_canvas_idx} for layer ${layer} is false or undefined`)
+						this.err(`${kernel_canvas_idx} not in canvasses_kernel for layer ${layer}`);
 					}
-				} else {
-					this.log(canvasses_kernel);
-					this.err(`${kernel_canvas_idx} not in canvasses_kernel for layer ${layer}`);
 				}
 			}
 
 			/*
-			} else if (canvasses_output.length && canvasses_input.nodeName == "CANVAS") {
-				for (var i = 0; i < canvasses_output.length; i++) {
-					var img_output = canvasses_output[i];
-					if(layer == 0) {
-						input.append(canvasses_input).show();
-					}
-					if(Object.keys(canvasses_kernel).includes(i + "")) {
-						var img_kernel = canvasses_kernel[i];
-						kernel.append(img_kernel).show();
-					}
-					output.append(img_output).show();
-				}
-			} else {
-				if(canvasses_input[0].nodeName == "CANVAS") {
-					if(layer == 0) {
-						input.append(canvasses_input).show();
-					}
-					if(canvasses_output[0].nodeName == "CANVAS") {
-						var img_output = canvasses_output;
-						output.append(img_output).show();
-					}
-				} else {
-					if(this.get_shape_from_array(output_data[0]).length == 1) {
-						var h = this.visualizeNumbersOnCanvas(output_data[0])
-						equations.append(h).show();
-					} else {
-						var h = this.array_to_html(output_data[0]);
-						equations.append(h).show();
-					}
-				}
+			 else {
+				var h = this.array_to_html(output_data[0]);
+				equations.append(h).show();
 			}
 			*/
 		}
@@ -2232,7 +2210,7 @@ class asanAI {
 			var colors_shape = this.get_dim(colors);
 
 			if(colors_shape.length != 4) {
-				this.log("colors had no length of 4 but [" + this.get_dim(colors).join(", ") + "]");
+				//this.log("colors had no length of 4 but [" + this.get_dim(colors).join(", ") + "]");
 				return false;
 			}
 
