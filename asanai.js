@@ -13,12 +13,18 @@ class asanAI {
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
 
 		this.is_dark_mode = false;
+		this.show_bars_instead_of_numbers = true;
 		this.max_neurons_fcnn = 32;
 		this.draw_internal_states = true;
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
 		this.divide_by = 1;
 		this.model_summary_div = null;
+		this.labels = [];
+		this.bar_width = 100;
+
+		this.default_bar_color = "orange";
+		this.max_bar_color = "green";
 
 		this.kernel_pixel_size = 3;
 
@@ -29,6 +35,10 @@ class asanAI {
 		this.model = null;
 
 		if(args.length == 1) {
+			if(Object.keys(args[0]).includes("labels")) {
+				this.set_labels(args[0].labels);
+			}
+
 			if(Object.keys(args[0]).includes("model")) {
 				if(this.is_model(args[0].model)) {
 					this.model = args[0].model;
@@ -1752,7 +1762,7 @@ class asanAI {
 				}
 			} else if(!write_to_div instanceof HTMLElement) {
 				this.err(`[predict_image] write_to_div is not a HTMLElement`);
-				reteurn;
+				return;
 			}
 		}
 
@@ -1788,13 +1798,14 @@ class asanAI {
 			return image_tensor;
 		});
 
-		var result = this.tidy(() => { return this.array_sync(this.predict_manually(data)) });
-
-		this.dispose(data);
+		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			$(write_to_div).html(JSON.stringify(result));
+			this._predict_table(result, write_to_div);
 		}
+
+		var result_array  = this.tidy(() => { return this.array_sync(result) });
+		this.dispose(data);
 
 		return result;
 	}
@@ -1946,7 +1957,7 @@ class asanAI {
 
 				var prediction = this.array_sync(res);
 
-				$($desc).html(JSON.stringify(prediction));
+				this._predict_table(res, $desc);
 			});
 
 			await this.dispose(image);
@@ -2662,5 +2673,125 @@ class asanAI {
 		}
 
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
+	}
+
+	_predict_table (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_predict_table] Predictions tensor is (first parameter) is not a tensor");
+			return;
+		}
+
+		if(write_to_div) {
+			if(typeof(write_to_div) == "string") {
+				var $write_to_div = $("#" + write_to_div);
+				if($write_to_div.length == 1) {
+					write_to_div = $write_to_div[0];
+				} else {
+					this.err(`[_predict_table] Could not find div to write to by id ${write_to_div}`);
+					return;
+				}
+			} else if(!write_to_div instanceof HTMLElement) {
+				this.err(`[_predict_table] write_to_div is not a HTMLElement`);
+				return;
+			}
+		}
+
+		var asanai_this = this;
+		var predictions = tf.tidy(() => { return asanai_this.array_sync(predictions_tensor); });
+
+		var max = 0;
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			if(max < predictions[0][i]) {
+				max = predictions[0][i];
+			}
+		}
+
+		var html = "<table class='predict_table'>";
+
+		for (var i = 0; i < predictions[0].length; i++) {
+			html += this._draw_bars_or_numbers(i, predictions[0], max);
+		}
+
+		html += "</table>";
+
+		$(write_to_div).html(html);
+	}
+
+	_draw_bars_or_numbers (i, predictions, max) {
+		var label = this.labels[i % this.labels.length];
+		var val = predictions[i];
+		var w = Math.floor(val * this.bar_width);
+
+		var html = "";
+
+		var bar_style = ` style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: ${this.bar_width}px;' `;
+
+		var highest_bar_css = "background-color: #0FFF50 !important;";
+
+		var label_element_css = "width: 100%; text-align: left; height: 40px;";
+
+		var best_result_css = `background-color: green; color: white;`;
+
+		var label_element = ` class='label_element' style='${label_element_css}' `;
+		var label_element_best_result = ` class='label_element best_result' style='${best_result_css} ${label_element_css}' `;
+
+		if(this.show_bars_instead_of_numbers) {
+			if(label) {
+				if(val == max) {
+					html =`<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.max_bar_color}; margin-wtop: 2px; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
+				} else {
+					html = `<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='margin-top: 2px; background-color: ${this.default_bar_color}; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
+				}
+			} else {
+				if(val == max) {
+					html = `<tr><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.max_bar_color};width:${w}px; display: block; height: 4px'></span></span></td></tr>`;
+				} else {
+					html = `<tr><td><span ${bar_style}><span style='width: background-color: ${this.default_bar_color};${w}px; display: block; height: 4px'></span></span></td></tr>`;
+				}
+			}
+		} else {
+			if(label) {
+				if(val == max) {
+					html = `<tr><td><b ${label_element_best_result}>${label}</td><td>${val}</b></td></tr>\n`;
+				} else {
+					html = `<tr><td class='label_element'>${label}</td><td>${predictions[0][i]}</td></tr>\n`;
+				}
+			} else {
+				if(val == max) {
+					html = `<tr><td><b ${label_element_best_result}>${predictions[0][i]}</b></td></tr>\n`;
+				} else {
+					html = `<tr><td>${predictions[0][i]}</td></tr>`;
+				}
+			}
+		}
+
+		return html;
+	}
+
+	get_labels () {
+		return this.labels;
+	}
+
+	set_labels (_l) {
+		if(Array.isArray(_l)) {
+			if(this.get_dim(_l).length == 1) {
+				this.labels = _l;
+
+				if(this.model) {
+					if(this.model.output.shape.length == 2) {
+						var num_labels = this.model.output.shape[1];
+
+						if(this.labels.length != num_labels) {
+							this.wrn(`Your model expects ${num_labels}, but you have set ${this.labels.length} labels.`);
+						}
+					}
+				}
+			} else {
+				throw new Error("labels cannot be a multdimensional array");
+			}
+		} else {
+			throw new Error("labels must be an array");
+		}
 	}
 }
