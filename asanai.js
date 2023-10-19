@@ -1,6 +1,28 @@
 "use strict";
 
 class asanAI {
+	is_dark_mode = false;
+	show_bars_instead_of_numbers = true;
+	max_neurons_fcnn = 32;
+	draw_internal_states = false;
+	draw_internal_states_div = "";
+	pixel_size = 3;
+	divide_by = 1;
+	model_summary_div = null;
+	labels = [];
+	bar_width = 100;
+	show_and_predict_webcam_in_div_div = null;
+	currently_switching_models = false;
+	num_channels = 3;
+	default_bar_color = "orange";
+	max_bar_color = "green";
+	kernel_pixel_size = 3;
+	model = null;
+
+	started_webcam = false;
+	camera = null
+	last_video_element = null;
+
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
@@ -13,31 +35,6 @@ class asanAI {
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
-
-		this.is_dark_mode = false;
-		this.show_bars_instead_of_numbers = true;
-		this.max_neurons_fcnn = 32;
-		this.draw_internal_states = false;
-		this.draw_internal_states_div = "";
-		this.pixel_size = 3;
-		this.divide_by = 1;
-		this.model_summary_div = null;
-		this.labels = [];
-		this.bar_width = 100;
-		this.show_and_predict_webcam_in_div_div = null;
-		this.currently_switching_models = false;
-		this.num_channels = 4;
-
-		this.default_bar_color = "orange";
-		this.max_bar_color = "green";
-
-		this.kernel_pixel_size = 3;
-
-		this.started_webcam = false;
-		this.camera = null
-		this.last_video_element = null;
-
-		this.model = null;
 
 		if(args.length == 1) {
 			if(Object.keys(args[0]).includes("labels")) {
