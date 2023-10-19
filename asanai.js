@@ -1917,7 +1917,19 @@ class asanAI {
 
 	async show_and_predict_webcam_in_div(divname=this.show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
-		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
+		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
+
+		if(!this.model) {
+			this.started_webcam = false;
+			this.err("[show_and_predict_webcam_in_div] Cannot predict without a loaded model");
+			return;
+		}
+
+		if(!this.model.input.shape.length == 4) {
+			this.started_webcam = false;
+			this.err(`[show_and_predict_webcam_in_div] Model input shape but be image like [b, h, w, c], but is: ${this.model.input.shape.join(", ")}`);
+			return;
+		}
 
 		this.show_and_predict_webcam_in_div_div = divname;
 
