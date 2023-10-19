@@ -1899,6 +1899,19 @@ class asanAI {
 		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
+		var layer_name;
+		try {
+			layer_name = this.model.layers[layer].getClassName();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err("" + e);
+
+			return;
+		}
+
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 			var asanai_this = this;
 			var input_data = this.tidy(() => { return asanai_this.array_sync(inputs); });
@@ -1911,8 +1924,6 @@ class asanAI {
 				layer_div = $("<div class='layer_data'></div>");
 				__parent.append(layer_div);
 			}
-
-			var layer_name = this.model.layers[layer].getClassName();
 
 			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.get_layer_identification(layer) + "</h3>").hide();
 
