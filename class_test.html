@@ -21,19 +21,17 @@
 
 		<script>
 			$( document ).ready(function() {
-				var model = tf.sequential({  
-					layers: [
-						tf.layers.conv2d({filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}),
-						tf.layers.conv2d({filters: 4, kernelSize: [3, 3], activation: "relu"}),
-						tf.layers.flatten(),
-						tf.layers.dense({units: 5, activation: "relu"}),
-						tf.layers.dense({units: 4, activation: "softmax"})
-					]
-				});
+				var model_data = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 5, activation: "relu"}},
+					{dense: {units: 4, activation: "softmax"}}
+				];
 
-				model.compile({ optimizer: "adam", loss: "categoricalCrossentropy" });
+				var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 
-				var asanai = new asanAI({model: model});
+				var asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
 				asanai.set_divide_by(255);
 

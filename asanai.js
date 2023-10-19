@@ -40,6 +40,20 @@ class asanAI {
 				}
 			}
 
+			if(Object.keys(args[0]).includes("model_data")) {
+				if(!Object.keys(args[0]).includes("optimizer_config")) {
+					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
+				}
+				this.model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
+
+				if(this.model) {
+					this.model_height = this.model.input.shape[1];
+					this.model_width = this.model.input.shape[1];
+				} else {
+					throw new Error(`Could not load model properly. Check the logs.`);
+				}
+			}
+
 			if(Object.keys(args[0]).includes("divide_by")) {
 				if(typeof(args[0].divide_by) == "number" || looks_like_number(args[0].divide_by)) {
 					this.divide_by= this.parse_float(args[0].divide_by);
@@ -74,6 +88,53 @@ class asanAI {
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
 		}
+	}
+
+	create_model_from_model_data (model_data, optimizer_config) {
+		this.assert(Array.isArray(model_data), "[create_model_from_model_data] model data is not an array");
+
+		if(!optimizer_config) {
+			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the model.");
+			return;
+		}
+
+		if(!typeof(optimizer_config) == "object") {
+			this.err("[create_model_from_model_data] optimizer_config must be a associative array.");
+			return;
+		}
+
+		if(model_data.length == 0) {
+			this.err(`[create_model_from_model_data] model_data has no layers`);
+			return;
+		}
+
+		var model_uuid = this.uuidv4();
+		var __model = this.tf_sequential(model_uuid);
+
+		for (var layer_idx = 0; layer_idx < model_data.length; layer_idx++) {
+			var layer = model_data[layer_idx];
+
+			var keys = Object.keys(layer);
+			this.assert(keys.length == 1, `layer ${layer_idx} has ${keys.length} values instead of 1`)
+
+			var layer_name = keys[0];
+			var layer_config = layer[layer_name];
+
+			var code = `__model.add(tf.layers.${layer_name}(layer_config))`;
+
+			eval(code);
+		}
+
+		if(!__model.layers.length) {
+			this.err("[create_model_from_model_data] Could not add any layers.");
+			return;
+		}
+
+		__model.compile(optimizer_config);
+
+		this.model = __model;
+
+		return __model;
 	}
 
 	summary () {
@@ -908,41 +969,43 @@ class asanAI {
 
 		res.originalAdd = res.add;
 
+		var asanai_this = this;
+
 		res.add = function (...args) {
 			var r = res.originalAdd(...args);
 
 			try {
 				var k = res.layers[res.layers.length - 1].kernel;
 				if(k) {
-					this.custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
+					asanai_this.custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
 				}
 			} catch (e) {
-				this.wrn(e);
+				asanai_this.wrn(e);
 			}
 
 			try {
 				var b = res.layers[res.layers.length - 1].bias;
 
 				if(b) {
-					this.custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
+					asanai_this.custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
 				}
 			} catch (e) {
-				this.wrn(e);
+				asanai_this.wrn(e);
 			}
 
-			this.clean_custom_tensors();
+			asanai_this.clean_custom_tensors();
 
 			return r;
 		};
 
-		this.custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
+		asanai_this.custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
 
-		this.clean_custom_tensors();
+		asanai_this.clean_custom_tensors();
 
 		return res;
 	}
 
-	 buffer(...args) {
+	buffer(...args) {
 		this._register_tensors(...args);
 		try {
 			var res = tf.buffer(...args);
