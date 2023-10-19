@@ -7,6 +7,8 @@ class asanAI {
 		var last_tested_plotly_version = "2.14.0";
 
 		this.custom_tensors = {};
+		this.images_to_repredict = [];
+		this.images_to_repredict_divs = [];
 
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
@@ -1717,6 +1719,14 @@ class asanAI {
 			this.toggle_webcam();
 		}
 
+		if(this.images_to_repredict) {
+			for (var i = 0; i < this.images_to_repredict.length; i++) {
+				var this_img_element = this.images_to_repredict[i];
+				var this_div_element = this.images_to_repredict_divs[i];
+				this.predict_image(this_img_element, this_div_element);
+			}
+		}
+
 		this.currently_switching_models = false;
 		return this.model;
 	}
@@ -1830,6 +1840,9 @@ class asanAI {
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
 		this.dispose(data);
+
+		this.images_to_repredict.push(img_element_or_div);
+		this.images_to_repredict_divs.push(write_to_div);
 
 		return result;
 	}
@@ -1967,7 +1980,8 @@ class asanAI {
 					e = e.message;
 				}
 
-				if(("" + e).includes("camera is null") && this.currently_switching_models) {
+				if(("" + e).includes("camera is null")) {
+					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
 					return;
 				} else {
 					throw new Error(e);
@@ -2763,7 +2777,7 @@ class asanAI {
 		if(this.model.output.shape.length == 2) {
 			this._predict_table(predictions_tensor, write_to_div);
 		} else {
-			this.err(`Unimplemented output shape: [${model.output.shape.join(", ")}]`);
+			this.err(`Unimplemented output shape: [${this.model.output.shape.join(", ")}]`);
 		}
 	}
 
