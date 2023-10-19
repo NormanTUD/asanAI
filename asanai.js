@@ -1957,7 +1957,14 @@ class asanAI {
 
 				var prediction = this.array_sync(res);
 
-				$($desc).html(JSON.stringify(prediction));
+				this.log("res:", res, "$desc:", $desc);
+				var predicted_table = this._predict_table(res, $desc);
+
+				if(predicted_table) {
+					$($desc).html(predicted_table)
+				} else {
+					this.err(`[show_and_predict_webcam_in_div] predicted_table is empty`);
+				}
 			});
 
 			await this.dispose(image);
