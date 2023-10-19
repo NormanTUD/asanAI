@@ -1723,7 +1723,7 @@ class asanAI {
 			for (var i = 0; i < this.images_to_repredict.length; i++) {
 				var this_img_element = this.images_to_repredict[i];
 				var this_div_element = this.images_to_repredict_divs[i];
-				this.predict_image(this_img_element, this_div_element);
+				this.predict_image(this_img_element, this_div_element, 0);
 			}
 		}
 
@@ -1779,7 +1779,7 @@ class asanAI {
 		}
 	}
 
-	predict_image (img_element_or_div, write_to_div="") {
+	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
 		if(!this.model) {
 			this.err(`[predict_image] Cannot predict image without a loaded model`);
 			return;
@@ -1841,8 +1841,10 @@ class asanAI {
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
 		this.dispose(data);
 
-		this.images_to_repredict.push(img_element_or_div);
-		this.images_to_repredict_divs.push(write_to_div);
+		if(_add_to_repredict) {
+			this.images_to_repredict.push(img_element_or_div);
+			this.images_to_repredict_divs.push(write_to_div);
+		}
 
 		return result;
 	}
@@ -2760,7 +2762,42 @@ class asanAI {
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
 	}
 
+	_show_images_in_output (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_show_images_in_output] predctions tensor (first parameter) is not a tensor");
+			return;
+		}
+
+		if(typeof(write_to_div) == "string") {
+			var $write_to_div = $("#" + write_to_div);
+			if($write_to_div.length == 1) {
+				write_to_div = $write_to_div[0];
+			} else {
+				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				return;
+			}
+		} else if(!write_to_div instanceof HTMLElement) {
+			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			return;
+		}
+
+		var asanai_this = this;
+
+		var synched = this.tidy(() => {
+			var res = asanai_this.array_sync(predictions_tensor);
+			return res;
+		});
+
+		console.log("synched:", synched);
+		console.trace();
+	}
+
 	_show_output (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_show_output] predctions tensor (first parameter) is not a tensor");
+			return;
+		}
+
 		if(typeof(write_to_div) == "string") {
 			var $write_to_div = $("#" + write_to_div);
 			if($write_to_div.length == 1) {
@@ -2776,6 +2813,8 @@ class asanAI {
 
 		if(this.model.output.shape.length == 2) {
 			this._predict_table(predictions_tensor, write_to_div);
+		} else if(this.model.output.shape.length == 4) {
+			this._show_images_in_output(predictions_tensor, write_to_div)
 		} else {
 			this.err(`Unimplemented output shape: [${this.model.output.shape.join(", ")}]`);
 		}
