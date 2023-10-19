@@ -2792,16 +2792,14 @@ class asanAI {
 			return res;
 		});
 
-		console.log("synched:", synched);
-		console.trace();
-
 		var _dim = this.get_dim(synched);
 
 		var canvas = $(`<canvas height=${_dim[0]} width=${_dim[1]} />`)[0];
 
 		$(write_to_div).html("");
 
-		for (var image_idx = 0; image_idx < _dim[0]; image_idx; image_idx) {
+		for (var image_idx = 0; image_idx < _dim[0]; image_idx++) {
+			this.scaleNestedArray(synched[0]);
 			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, synched[0], 1, "", this.divide_by, "");
 			$(write_to_div).append(_grid_canvas);
 		}
