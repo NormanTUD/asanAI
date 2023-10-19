@@ -549,7 +549,7 @@ class asanAI {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
 		
-		this.fcnn_div = divname;
+		this.fcnn_div_name = divname;
 
 		this.restart_fcnn(divname);
 	}
