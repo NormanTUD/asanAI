@@ -2278,8 +2278,8 @@ class asanAI {
 				equations.append(h).show();
 			} else {
 				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
-					output.append(img_output).show();
 					var img_output = canvasses_output[canvasses_output_idx];
+					output.append(img_output).show();
 				}
 
 				for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
