@@ -570,6 +570,17 @@ class asanAI {
 		return res;
 	}
 
+	tf_to_int (...args) {
+		this._register_tensors(...args);
+		var first_tensor = args.shift();
+		var res = first_tensor.toInt();
+
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
+		this.clean_custom_tensors();
+
+		return res;
+	}
+
 	tf_to_float (...args) {
 		this._register_tensors(...args);
 		var first_tensor = args.shift();
@@ -1898,7 +1909,7 @@ class asanAI {
 	}
 
 	normalize_to_image_data(input_data) {
-		var res = this.tidy(() => {
+		//var res = this.tidy(() => {
 			var flattened_input = input_data;
 
 			if(this.is_tf_tensor(flattened_input)) {
@@ -1920,12 +1931,29 @@ class asanAI {
 				input_data = this.tensor(input_data);
 			}
 
-			var normalized_tensor = tf.div(tf.sub(input_data, min), range);
+			//
+			var divisor = max - min;
 
-			var scaled_tensor = tf.mul(normalized_tensor, 255);
+			var multiplicator = tf.sub(input_data, min);
 
-			return this.array_sync(scaled_tensor);
-		});
+			if(divisor == 0) {
+				return this.array_sync(input_data);
+			}
+
+			var twofiftyfive = tf.ones(input_data.shape);
+			twofiftyfive = tf.mul(twofiftyfive, 1);
+
+			var divisor_tensor = tf.ones(input_data.shape);
+			divisor_tensor = tf.mul(divisor_tensor, divisor);
+
+			var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
+
+			var _r = this.array_sync(scaled_tensor);
+
+			this.log(_r);
+
+			return _r;
+		//});
 
 		return res;
 	}
@@ -2133,9 +2161,6 @@ class asanAI {
 				}
 
 				if(denormalize) {
-					red = this.normalize_to_rgb_min_max(red, min, max);
-					green = this.normalize_to_rgb_min_max(green, min, max);
-					blue = this.normalize_to_rgb_min_max(blue, min, max);
 				}
 
 				var color = "rgb(" + red + "," + green + "," + blue + ")";
@@ -2386,33 +2411,6 @@ class asanAI {
 		}
 
 		return canvasElement;
-	}
-
-	normalize_to_rgb_min_max (x, min, max) {
-		this.assert(typeof(x) == "number", "x is not a number");
-		if(typeof(max) != "number" || typeof(min) != "number") {
-			return x;
-		}
-
-		var multiplicator = x - min;
-		var divisor = max - min;
-
-		if(divisor == 0) {
-			return val;
-		}
-
-		var to_be_parsed_as_int = 255 * multiplicator / divisor;
-
-
-		var val = this.parse_int(to_be_parsed_as_int);
-
-		if(val > 255) {
-			val = 255;
-		} else if (val < 0) {
-			val = 0;
-		}
-
-		return val;
 	}
 
 	draw_rect(ctx, rect) {
