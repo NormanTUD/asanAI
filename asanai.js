@@ -1039,8 +1039,10 @@ class asanAI {
 		}
 	}
 
-	 fromPixels (...args) {
+	fromPixels (...args) {
 		this._register_tensors(...args);
+
+
 		try {
 			var res = tf.browser.fromPixels(...args);
 
@@ -2283,8 +2285,7 @@ class asanAI {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
 		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
 
-		console.log(colors);
-		console.trace();
+		this.scaleNestedArray(colors);
 
 		var drew_something = false;
 
@@ -2318,14 +2319,15 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
-					red = green = blue = colors[j][i];
+					red = green = blue = this.parse_int(colors[j][i]);
 				} else {
-					red = colors[j][i][0];
-					green = colors[j][i][1];
-					blue = colors[j][i][2];
+					red = this.parse_int(colors[j][i][0]);
+					green = this.parse_int(colors[j][i][1]);
+					blue = this.parse_int(colors[j][i][2]);
 				}
 
-				var color = "rgb(" + red + "," + green + "," + blue + ")";
+				var color = `rgb(${red}, ${green}, ${blue})`;
+
 				var pixel = {
 					x: x,
 					y: y,
