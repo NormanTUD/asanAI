@@ -21,7 +21,10 @@ class asanAI {
 		this.divide_by = 1;
 		this.model_summary_div = null;
 		this.labels = [];
-		this.bar_width = 50;
+		this.bar_width = 100;
+
+		this.default_bar_color = "orange";
+		this.max_bar_color = "green";
 
 		this.kernel_pixel_size = 3;
 
@@ -2736,15 +2739,15 @@ class asanAI {
 		if(this.show_bars_instead_of_numbers) {
 			if(label) {
 				if(val == max) {
-					html =`"<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} margin-top: 2px; width: ${w}px'></span></span></td></tr>`;
+					html =`<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.max_bar_color}; margin-wtop: 2px; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				} else {
-					html = `<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='margin-top: 2px; width: ${w}px'></span></span></td></tr>`;
+					html = `<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='margin-top: 2px; background-color: ${this.default_bar_color}; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				}
 			} else {
 				if(val == max) {
-					html = `<tr><td><span ${bar_style}><span style='${highest_bar_css} width:${w}px'></span></span></td></tr>`;
+					html = `<tr><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.max_bar_color};width:${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				} else {
-					html = `<tr><td><span ${bar_style}><span style='width: ${w}px'></span></span></td></tr>`;
+					html = `<tr><td><span ${bar_style}><span style='width: background-color: ${this.default_bar_color};${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				}
 			}
 		} else {
