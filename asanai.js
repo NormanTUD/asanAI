@@ -7,6 +7,8 @@ class asanAI {
 		var last_tested_plotly_version = "2.14.0";
 
 		this.custom_tensors = {};
+		this.images_to_repredict = [];
+		this.images_to_repredict_divs = [];
 
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
@@ -15,13 +17,15 @@ class asanAI {
 		this.is_dark_mode = false;
 		this.show_bars_instead_of_numbers = true;
 		this.max_neurons_fcnn = 32;
-		this.draw_internal_states = true;
+		this.draw_internal_states = false;
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
 		this.divide_by = 1;
 		this.model_summary_div = null;
 		this.labels = [];
 		this.bar_width = 100;
+		this.show_and_predict_webcam_in_div_div = null;
+		this.currently_switching_models = false;
 
 		this.default_bar_color = "orange";
 		this.max_bar_color = "green";
@@ -40,14 +44,7 @@ class asanAI {
 			}
 
 			if(Object.keys(args[0]).includes("model")) {
-				if(this.is_model(args[0].model)) {
-					this.model = args[0].model;
-
-					this.model_height = this.model.input.shape[1];
-					this.model_width = this.model.input.shape[1];
-				} else {
-					throw new Error("model is not a valid this.model");
-				}
+				this.set_model(args[0].model);
 			}
 
 			if(Object.keys(args[0]).includes("model_data")) {
@@ -55,13 +52,6 @@ class asanAI {
 					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
 				}
 				this.model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
-
-				if(this.model) {
-					this.model_height = this.model.input.shape[1];
-					this.model_width = this.model.input.shape[1];
-				} else {
-					throw new Error(`Could not load model properly. Check the logs.`);
-				}
 			}
 
 			if(Object.keys(args[0]).includes("divide_by")) {
@@ -142,7 +132,7 @@ class asanAI {
 
 		__model.compile(optimizer_config);
 
-		this.model = __model;
+		this.set_model(__model);
 
 		return __model;
 	}
@@ -551,7 +541,11 @@ class asanAI {
 		}
 	}
 
-	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) {
+	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) { // TODO: max neurons
+		if(!divname) {
+			this.err("[draw_fcnn] Cannot continue draw_fcnn without a divname");
+			return;
+		}
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
 		
@@ -1036,8 +1030,10 @@ class asanAI {
 		}
 	}
 
-	 fromPixels (...args) {
+	fromPixels (...args) {
 		this._register_tensors(...args);
+
+
 		try {
 			var res = tf.browser.fromPixels(...args);
 
@@ -1685,16 +1681,47 @@ class asanAI {
 
 	set_model (_m) {
 		if(!this.is_model(_m)) {
-			this.err("Given item is not a valid model");
+			throw new Error("Given item is not a valid model");
 			return;
+		}
+
+		this.currently_switching_models = true;
+
+		var _restart_webcam = 0;
+		if(this.started_webcam) {
+			this.toggle_webcam();
+			_restart_webcam = 1;
 		}
 
 		this.model = _m;
 
-		this.model_height = this.model.input.shape[1];
-		this.model_width = this.model.input.shape[1];
+		if(this.model.input.shape.length == 4) {
+			this.model_height = this.model.input.shape[1];
+			this.model_width = this.model.input.shape[1];
+		}
 
-		return this_model;
+		if(this.fcnn_div_name) {
+			this.restart_fcnn();
+		}
+
+		if(this.model_summary_div) {
+			this.write_model_summary();
+		}
+
+		if(_restart_webcam) {
+			this.toggle_webcam();
+		}
+
+		if(this.images_to_repredict) {
+			for (var i = 0; i < this.images_to_repredict.length; i++) {
+				var this_img_element = this.images_to_repredict[i];
+				var this_div_element = this.images_to_repredict_divs[i];
+				this.predict_image(this_img_element, this_div_element, 0);
+			}
+		}
+
+		this.currently_switching_models = false;
+		return this.model;
 	}
 
 	async toggle_webcam (item=null) {
@@ -1702,6 +1729,9 @@ class asanAI {
 			this.started_webcam = false;
 			this.camera.stop()
 			this.camera = null;
+
+			$(this.last_video_element).hide();
+			$("#" + this.show_and_predict_webcam_in_div_div).hide();
 
 			if(item) {
 				$(item).text("Start webcam");
@@ -1711,6 +1741,9 @@ class asanAI {
 			if(this.webcam_prediction_div_name) {
 				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
 			}
+
+			$(this.last_video_element).show();
+			$("#" + this.show_and_predict_webcam_in_div_div).show();
 
 			if(item) {
 				$(item).text("Stop webcam");
@@ -1745,7 +1778,7 @@ class asanAI {
 		}
 	}
 
-	predict_image (img_element_or_div, write_to_div="") {
+	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
 		if(!this.model) {
 			this.err(`[predict_image] Cannot predict image without a loaded model`);
 			return;
@@ -1801,11 +1834,16 @@ class asanAI {
 		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			this._predict_table(result, write_to_div);
+			this._show_output(result, write_to_div);
 		}
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
 		this.dispose(data);
+
+		if(_add_to_repredict) {
+			this.images_to_repredict.push(img_element_or_div);
+			this.images_to_repredict_divs.push(write_to_div);
+		}
 
 		return result;
 	}
@@ -1878,9 +1916,11 @@ class asanAI {
 		return output;
 	}
 
-	async show_and_predict_webcam_in_div(divname, _w, _h) {
+	async show_and_predict_webcam_in_div(divname=this.show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
+
+		this.show_and_predict_webcam_in_div_div = divname;
 
 		this.webcam_prediction_div_name = divname;
 
@@ -1933,31 +1973,66 @@ class asanAI {
 				$("#" + this.internal_states_div).html("");			
 			}
 
-			var image = await this.camera.capture();
+			var image;
+			try {
+				image = await this.camera.capture();
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("camera is null")) {
+					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
+					return;
+				} else {
+					throw new Error(e);
+				}
+			}
+
+			var asanai_this = this;
+
+			if(!this.model) {
+				this.err(`[show_and_predict_webcam_in_div] model not defined`);
+				return;
+			}
 
 			this.tidy(() => {
-				var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
-				var resized = this.expand_dims(_data);
-				//resized = this.tf_div(resized, this.divide_by);
-
-				var res;
-
 				try {
-					res = this.predict_manually(resized)
+					var _data = asanai_this.resizeNearestNeighbor(image, [asanai_this.model_height, asanai_this.model_width]);
+					var resized = asanai_this.expand_dims(_data);
+					//resized = asanai_this.tf_div(resized, asanai_this.divide_by);
+
+					var res;
+
+					try {
+						res = asanai_this.predict_manually(resized)
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						asanai_this.err("" + e);
+						asanai_this.err(`Input shape of the model: [${asanai_this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+
+						return;
+					}
+
+					var prediction = asanai_this.array_sync(res);
+
+					asanai_this._show_output(res, $desc);
+
+					return true;
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
 					}
 
-					this.err("" + e);
-					this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
-
-					return;
+					if(("" + e).includes("model is not defined")) {
+						return;
+					} else {
+						throw new Error(e);
+					}
 				}
-
-				var prediction = this.array_sync(res);
-
-				this._predict_table(res, $desc);
 			});
 
 			await this.dispose(image);
@@ -2051,7 +2126,7 @@ class asanAI {
 			var flattened_input = input_data;
 
 			if(this.is_tf_tensor(flattened_input)) {
-				flattened_input = this.array_sync(flattened_input);
+				flattened_input = this.tidy(() => { return this.array_sync(flattened_input); });
 			}
 
 			while (this.get_shape_from_array(flattened_input).length > 1) {
@@ -2203,13 +2278,11 @@ class asanAI {
 		}
 	}
 
-	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, multiply_by, data_hash, _class="") {
+	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
 		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
 
-		if(!multiply_by) {
-			multiply_by = 1;
-		}
+		this.scaleNestedArray(colors);
 
 		var drew_something = false;
 
@@ -2243,14 +2316,16 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
-					red = green = blue = colors[j][i] * multiply_by;
+					//red = green = blue = this.parse_int(colors[j][i]); // TODO
+					red = green = blue = parseInt(colors[j][i]);
 				} else {
-					red = colors[j][i][0] * multiply_by;
-					green = colors[j][i][1] * multiply_by;
-					blue = colors[j][i][2] * multiply_by;
+					red = this.parse_int(colors[j][i][0]);
+					green = this.parse_int(colors[j][i][1]);
+					blue = this.parse_int(colors[j][i][2]);
 				}
 
-				var color = "rgb(" + red + "," + green + "," + blue + ")";
+				var color = `rgb(${red}, ${green}, ${blue})`;
+
 				var pixel = {
 					x: x,
 					y: y,
@@ -2366,7 +2441,7 @@ class asanAI {
 						canvas = this.get_canvas_in_class(layer, "image_grid");
 					}
 
-					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", this.divide_by, ""));
+					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
 				} else {
 					for (var i = 0; i < num_channels; i++) {
 						if(canvas_type == "input") {
@@ -2376,12 +2451,22 @@ class asanAI {
 						}
 
 						var inputTensor = this.tensor(colors);
-						ret.push(this.tidy(() => {
+
+						var slice = this.tidy(() => {
 							var _h = inputTensor.shape[1];
 							var _w = inputTensor.shape[2];
-							var _slice = this.array_sync(inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]));
-							return this.draw_grid(canvas, this.pixel_size, _slice[0], 1, "", this.divide_by, "");
-						}));
+							var _slice = inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]);
+
+							return _slice;
+						});
+
+						var _slice_array = this.tidy(() => {
+							return this.array_sync(slice);
+						});
+
+						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", "");
+
+						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
 					}
 				}
@@ -2675,6 +2760,86 @@ class asanAI {
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
 	}
 
+	_show_images_in_output (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_show_images_in_output] predctions tensor (first parameter) is not a tensor");
+			return;
+		}
+
+		if(typeof(write_to_div) == "string") {
+			var $write_to_div = $("#" + write_to_div);
+			if($write_to_div.length == 1) {
+				write_to_div = $write_to_div[0];
+			} else {
+				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				return;
+			}
+		} else if(!write_to_div instanceof HTMLElement) {
+			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			return;
+		}
+
+		if(!predictions_tensor.shape.length == 4) {
+			this.err(`[_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.join(", ")}]`);
+			return;
+		}
+
+		var asanai_this = this;
+
+		var normalized = this.tidy(() => {
+			var _n = asanai_this.tensor(asanai_this.normalize_to_image_data(asanai_this.array_sync(predictions_tensor)));
+
+			return _n;
+		});
+
+		var synched = this.tidy(() => {
+			var res = asanai_this.array_sync(normalized);
+			return res;
+		});
+
+		var _dim = this.get_dim(synched);
+
+		var canvas = $(`<canvas height=${_dim[0]} width=${_dim[1]} />`)[0];
+
+		$(write_to_div).html("");
+
+		for (var image_idx = 0; image_idx < _dim[0]; image_idx++) {
+			var this_synched = synched[0];
+			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, this_synched, 1, "", "");
+			$(write_to_div).append(_grid_canvas);
+		}
+	}
+
+	_show_output (predictions_tensor, write_to_div) {
+		if(!this.is_tf_tensor(predictions_tensor)) {
+			this.err("[_show_output] predctions tensor (first parameter) is not a tensor");
+			return;
+		}
+
+		if(typeof(write_to_div) == "string") {
+			var $write_to_div = $("#" + write_to_div);
+			if($write_to_div.length == 1) {
+				write_to_div = $write_to_div[0];
+			} else {
+				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				return;
+			}
+		} else if(!write_to_div instanceof HTMLElement) {
+			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			return;
+		}
+
+		if(this.model.output.shape.length == 2) {
+			this._predict_table(predictions_tensor, write_to_div);
+		} else if(this.model.output.shape.length == 4) {
+			this._show_images_in_output(predictions_tensor, write_to_div)
+		} else {
+			var error = `Unimplemented output shape: [${this.model.output.shape.join(", ")}]`;
+			this.err(error);
+			$(write_to_div).html(error);
+		}
+	}
+
 	_predict_table (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
 			this.err("[_predict_table] Predictions tensor is (first parameter) is not a tensor");
@@ -2716,6 +2881,11 @@ class asanAI {
 		html += "</table>";
 
 		$(write_to_div).html(html);
+	}
+
+	last_layer_is_softmax () {
+		// TODO
+		var last_layer_is_softmax = this.model.layers[this.model.layers.length - 1].activation 
 	}
 
 	_draw_bars_or_numbers (i, predictions, max) {

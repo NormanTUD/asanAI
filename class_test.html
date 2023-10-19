@@ -10,7 +10,7 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
-		<img id="test_image" src="_gui/logo.png" />
+		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
 		<pre id="test_image_prediction"></pre>
 		<pre id="memory"></pre>
 		<pre id="summary_pre"></pre>
@@ -20,6 +20,7 @@
 		<div id="fcnn_div"></div>
 
 		<script>
+			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 			var asanai;
 
 			$(document).ready(function() {
@@ -31,7 +32,6 @@
 					{dense: {units: 4, activation: "softmax"}}
 				];
 
-				var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 
 				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
@@ -52,6 +52,29 @@
 
 				asanai.write_tensors_info("memory");
 			});
+
+			function test_model_switch () {
+				var fl = tf.layers.dense({units: 3, activation: "softmax", inputShape: [20, 20, 3]}); 
+				var xxx = tf.sequential({layers: [fl]}); 
+				xxx.compile(optimizer_config); 
+				asanai.set_model(xxx)
+			}
+
+			function test_model_switch_two () {
+				var new_model_struct = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 5, activation: "relu"}},
+					{dense: {units: 4, activation: "softmax"}}
+				];
+
+				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+			}
 		</script>
 	</body>
 </html>
