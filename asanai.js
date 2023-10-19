@@ -26,6 +26,7 @@ class asanAI {
 		this.bar_width = 100;
 		this.show_and_predict_webcam_in_div_div = null;
 		this.currently_switching_models = false;
+		this.num_channels = 4;
 
 		this.default_bar_color = "orange";
 		this.max_bar_color = "green";
@@ -1696,7 +1697,8 @@ class asanAI {
 
 		if(this.model.input.shape.length == 4) {
 			this.model_height = this.model.input.shape[1];
-			this.model_width = this.model.input.shape[1];
+			this.model_width = this.model.input.shape[2];
+			this.num_channels = this.model.input.shape[3];
 		}
 
 		if(this.fcnn_div_name) {
@@ -1833,7 +1835,7 @@ class asanAI {
 		var _width = model_input_shape[2];
 
 		var data = this.tidy(() => {
-			var image_tensor = this.expand_dims(this.fromPixels(img_element_or_div));
+			var image_tensor = this.expand_dims(this.fromPixels(img_element_or_div, this.num_channels));
 			image_tensor = this.resizeNearestNeighbor(image_tensor, [_height, _width]);
 			return image_tensor;
 		});
@@ -1857,22 +1859,27 @@ class asanAI {
 
 	predict_manually (_tensor) {
 		if(!this.model) {
-			this.err("Cannot predict without a model");
+			this.err("[predict_image] Cannot predict without a model");
 			return;
 		}
 
 		if(!this.model.input) {
-			this.err("Cannot predict without a model.input");
+			this.err("[predict_image] Cannot predict without a model.input");
 			return;		
 		}
 
 		if(!this.model.input.shape) {
-			this.err("Cannot predict without a model.input.shape");
+			this.err("[predict_image] Cannot predict without a model.input.shape");
 			return;		
 		}
 
+		if(!this.num_channels != 3) {
+			this.num_channels = 3;
+			this.wrn(`[predict_image] Setting num_channels to 3, because webcam data does not have transparency.`);
+		}
+
 		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
-			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
+			this.err(`[predict_image] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
 			return;
 		}
 
@@ -2250,12 +2257,14 @@ class asanAI {
 					var filters = 3;
 
 					kernel_data = this.tidy(() => {
-						return this.array_sync(
+						var res = this.array_sync(
 							this.tf_transpose(
 								this.model.layers[layer].kernel.val,
 								[filters, ks_x, ks_y, number_filters]
 							)
 						);
+
+						return res;
 					});
 				}
 
@@ -2461,9 +2470,9 @@ class asanAI {
 			if(canvas_type == "output" || canvas_type == "input") {
 				//this.log("pixels.shape: [" + this.get_dim(colors).join(", ") + "]");
 
-				var num_channels = colors_shape[colors_shape.length - 1];
+				var _num_channels = colors_shape[colors_shape.length - 1];
 
-				if(num_channels == 3) {
+				if(_num_channels == 3) {
 					if(canvas_type == "input") {
 						canvas = this.get_canvas_in_class(layer, "input_image_grid");
 					} else {
@@ -2472,7 +2481,7 @@ class asanAI {
 
 					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
 				} else {
-					for (var i = 0; i < num_channels; i++) {
+					for (var i = 0; i < _num_channels; i++) {
 						if(canvas_type == "input") {
 							canvas = this.get_canvas_in_class(layer, "input_image_grid");
 						} else {
