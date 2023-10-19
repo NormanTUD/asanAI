@@ -1703,7 +1703,7 @@ class asanAI {
 			this.write_model_summary();
 		}
 
-		return this_model;
+		return this.model;
 	}
 
 	async toggle_webcam (item=null) {
@@ -1810,7 +1810,7 @@ class asanAI {
 		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			this._predict_table(result, write_to_div);
+			this._show_output(result, write_to_div);
 		}
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
@@ -1966,7 +1966,7 @@ class asanAI {
 
 				var prediction = this.array_sync(res);
 
-				this._predict_table(res, $desc);
+				this._show_output(res, $desc);
 			});
 
 			await this.dispose(image);
@@ -2695,6 +2695,27 @@ class asanAI {
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
 	}
 
+	_show_output (predictions_tensor, write_to_div) {
+		if(typeof(write_to_div) == "string") {
+			var $write_to_div = $("#" + write_to_div);
+			if($write_to_div.length == 1) {
+				write_to_div = $write_to_div[0];
+			} else {
+				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				return;
+			}
+		} else if(!write_to_div instanceof HTMLElement) {
+			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			return;
+		}
+
+		if(this.model.output.shape.length == 2) {
+			this._predict_table(predictions_tensor, write_to_div);
+		} else {
+			this.err(`Unimplemented output shape: [${model.output.shape.join(", ")}]`);
+		}
+	}
+
 	_predict_table (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
 			this.err("[_predict_table] Predictions tensor is (first parameter) is not a tensor");
@@ -2736,6 +2757,11 @@ class asanAI {
 		html += "</table>";
 
 		$(write_to_div).html(html);
+	}
+
+	last_layer_is_softmax () {
+		// TODO
+		var last_layer_is_softmax = this.model.layers[this.model.layers.length - 1].activation 
 	}
 
 	_draw_bars_or_numbers (i, predictions, max) {
