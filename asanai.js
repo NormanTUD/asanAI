@@ -20,6 +20,8 @@ class asanAI {
 		this.divide_by = 1;
 		this.model_summary_div = null;
 
+		this.kernel_pixel_size = 3;
+
 		this.started_webcam = false;
 		this.camera = null
 		this.last_video_element = null;
@@ -1895,7 +1897,42 @@ class asanAI {
 		}
 	}
 
+	normalize_to_image_data(input_data) {
+		var res = this.tidy(() => {
+			var flattened_input = input_data;
+
+			if(this.is_tf_tensor(flattened_input)) {
+				flattened_input = this.array_sync(flattened_input);
+			}
+
+			while (this.get_shape_from_array(flattened_input).length > 1) {
+				flattened_input = flattened_input.flat();
+			}
+
+			var max = Math.max(...flattened_input);
+			var min = Math.min(...flattened_input);
+
+			//this.log("max: " + max + ", min: " + min);
+
+			var range = tf.sub(max, min);
+
+			if(!this.is_tf_tensor(input_data)) {
+				input_data = this.tensor(input_data);
+			}
+
+			var normalized_tensor = tf.div(tf.sub(input_data, min), range);
+
+			var scaled_tensor = tf.mul(normalized_tensor, 255);
+
+			return this.array_sync(scaled_tensor);
+		});
+
+		return res;
+	}
+
 	_draw_internal_states (layer, inputs, applied) {
+		if(layer > 0) { return; }
+
 		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
@@ -1907,38 +1944,14 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("" + e);
+			this.err("Cannot get layer-name: " + e);
 
 			return;
 		}
 
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
-			var asanai_this = this;
-			var input_data = this.tidy(() => {
-				return asanai_this.array_sync(inputs);
-			});
-
-			input_data = this.tidy(() => {
-				var flattened_input = input_data;
-				while (this.get_shape_from_array(flattened_input).length > 1) {
-					flattened_input = flattened_input.flat();
-				}
-
-				var max = Math.max(...flattened_input);
-				var min = Math.min(...flattened_input);
-
-				//this.log("max: " + max + ", min: " + min);
-
-				var range = tf.sub(max, min);
-
-				var normalized_tensor = tf.div(tf.sub(this.tensor(input_data), min), range);
-
-				var scaled_tensor = tf.mul(normalized_tensor, 255);
-
-				return this.array_sync(scaled_tensor);
-			});
-
-			var output_data = this.tidy(() => { return asanai_this.array_sync(applied) });
+			var input_data = this.normalize_to_image_data(inputs);
+			var output_data = this.normalize_to_image_data(applied);
 
 			var __parent = $("#" + this.internal_states_div);
 
@@ -1971,48 +1984,69 @@ class asanAI {
 					var filters = 3;
 
 					kernel_data = this.tidy(() => {
-						return this.array_sync(this.tf_transpose(this.model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
+						return this.array_sync(
+							this.tf_transpose(
+								this.model.layers[layer].kernel.val,
+								[filters, ks_x, ks_y, number_filters]
+							)
+						);
 					});
+				}
+
+
+				kernel_data = this.normalize_to_image_data(kernel_data);
+			}
+
+			var canvasses_input = this.draw_image_if_possible(layer, "input", input_data);
+			var canvasses_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
+			var canvasses_output = this.draw_image_if_possible(layer, "output", output_data);
+
+			if(layer == 0) {
+				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
+					input.append(canvasses_input[input_canvas_idx]).show();
 				}
 			}
 
-			var canvas_input = this.draw_image_if_possible(layer, "input", input_data);
-			var canvas_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
-			var canvas_output = this.draw_image_if_possible(layer, "output", output_data);
+			for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
+				output.append(img_output).show();
+				var img_output = canvasses_output[canvasses_output_idx];
+			}
 
-			if(canvas_output.length && canvas_input.length) {
-				for (var j = 0; j < canvas_input.length; j++) {
-					for (var i = 0; i < canvas_output.length; i++) {
-						var img_output = canvas_output[i];
-						if(Object.keys(canvas_kernel).includes(i + "")) {
-							var img_kernel = canvas_kernel[i];
-							if(layer == 0) {
-								input.append(canvas_input[j]).show();
-							}
-							kernel.append(img_kernel).show();
-						}
-						output.append(img_output).show();
+			for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
+				if(kernel_canvas_idx in canvasses_kernel) {
+					var this_kernel = canvasses_kernel[kernel_canvas_idx];
+					if(this_kernel) {
+						kernel.append(this_kernel).show();
+					} else {
+						this.log(canvasses_kernel);
+						this.err(`Kernel ${kernel_canvas_idx} for layer ${layer} is false or undefined`)
 					}
+				} else {
+					this.log(canvasses_kernel);
+					this.err(`${kernel_canvas_idx} not in canvasses_kernel for layer ${layer}`);
 				}
-			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-				for (var i = 0; i < canvas_output.length; i++) {
-					var img_output = canvas_output[i];
+			}
+
+			/*
+			} else if (canvasses_output.length && canvasses_input.nodeName == "CANVAS") {
+				for (var i = 0; i < canvasses_output.length; i++) {
+					var img_output = canvasses_output[i];
 					if(layer == 0) {
-						input.append(canvas_input).show();
+						input.append(canvasses_input).show();
 					}
-					if(Object.keys(canvas_kernel).includes(i + "")) {
-						var img_kernel = canvas_kernel[i];
+					if(Object.keys(canvasses_kernel).includes(i + "")) {
+						var img_kernel = canvasses_kernel[i];
 						kernel.append(img_kernel).show();
 					}
 					output.append(img_output).show();
 				}
 			} else {
-				if(canvas_input.nodeName == "CANVAS") {
+				if(canvasses_input[0].nodeName == "CANVAS") {
 					if(layer == 0) {
-						input.append(canvas_input).show();
+						input.append(canvasses_input).show();
 					}
-					if(canvas_output.nodeName == "CANVAS") {
-						var img_output = canvas_output;
+					if(canvasses_output[0].nodeName == "CANVAS") {
+						var img_output = canvasses_output;
 						output.append(img_output).show();
 					}
 				} else {
@@ -2025,6 +2059,7 @@ class asanAI {
 					}
 				}
 			}
+			*/
 		}
 	}
 
@@ -2226,7 +2261,9 @@ class asanAI {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
 						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
 
-						ret.push(this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]));
+						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
+
+						ret.push(drawn);
 					}
 				}
 			}
@@ -2343,6 +2380,8 @@ class asanAI {
 				}
 			}
 		}
+
+		return canvasElement;
 	}
 
 	normalize_to_rgb_min_max (x, min, max) {
