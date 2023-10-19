@@ -1723,30 +1723,38 @@ class asanAI {
 		return this.model;
 	}
 
+	stop_camera (item) {
+		this.started_webcam = false;
+		this.camera.stop()
+		this.camera = null;
+
+		$(this.last_video_element).hide();
+		$("#" + this.show_and_predict_webcam_in_div_div).hide();
+
+		if(item) {
+			$(item).text("Start webcam");
+		}
+	}
+
+	start_camera (item) {
+		this.started_webcam = true;
+		if(this.webcam_prediction_div_name) {
+			this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
+		}
+
+		$(this.last_video_element).show();
+		$("#" + this.show_and_predict_webcam_in_div_div).show();
+
+		if(item) {
+			$(item).text("Stop webcam");
+		}
+	}
+
 	async toggle_webcam (item=null) {
 		if(this.camera) {
-			this.started_webcam = false;
-			this.camera.stop()
-			this.camera = null;
-
-			$(this.last_video_element).hide();
-			$("#" + this.show_and_predict_webcam_in_div_div).hide();
-
-			if(item) {
-				$(item).text("Start webcam");
-			}
+			this.stop_camera(item);
 		} else {
-			this.started_webcam = true;
-			if(this.webcam_prediction_div_name) {
-				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
-			}
-
-			$(this.last_video_element).show();
-			$("#" + this.show_and_predict_webcam_in_div_div).show();
-
-			if(item) {
-				$(item).text("Stop webcam");
-			}
+			this.start_camera(item);
 		}
 
 
@@ -1816,8 +1824,8 @@ class asanAI {
 
 		var model_input_shape = this.model.input.shape;
 
-		if(model_input_shape.length != 4) {
-			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${input_shape.join(", ")}]`);
+		if(this.model.input.shape.length != 4) {
+			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${this.model.input.shape.join(", ")}]`);
 			return;
 		}
 
@@ -1865,6 +1873,7 @@ class asanAI {
 
 		if(!this.tensor_shape_fits_input_shape(_tensor.shape, this.model.input.shape)) {
 			this.err(`Tensor does not fit model shape. Not predicting. Tensor_shape: [${_tensor.shape.join(", ")}], model_shape: [${this.model.input.shape.join(", ")}].`)
+			return;
 		}
 
 		if(this.looks_like_number("" + this.divide_by)) {
@@ -1917,7 +1926,19 @@ class asanAI {
 
 	async show_and_predict_webcam_in_div(divname=this.show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
-		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
+		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
+
+		if(!this.model) {
+			this.started_webcam = false;
+			this.err("[show_and_predict_webcam_in_div] Cannot predict without a loaded model");
+			return;
+		}
+
+		if(!this.model.input.shape.length == 4) {
+			this.started_webcam = false;
+			this.err(`[show_and_predict_webcam_in_div] Model input shape but be image like [b, h, w, c], but is: ${this.model.input.shape.join(", ")}`);
+			return;
+		}
 
 		this.show_and_predict_webcam_in_div_div = divname;
 
@@ -1995,7 +2016,7 @@ class asanAI {
 				return;
 			}
 
-			this.tidy(() => {
+			var worked = this.tidy(() => {
 				try {
 					var _data = asanai_this.resizeNearestNeighbor(image, [asanai_this.model_height, asanai_this.model_width]);
 					var resized = asanai_this.expand_dims(_data);
@@ -2027,12 +2048,21 @@ class asanAI {
 					}
 
 					if(("" + e).includes("model is not defined")) {
-						return;
+						return false;
+					} else if(("" + e).includes("first_tensor is undefined")) {
+						return false;
 					} else {
 						throw new Error(e);
 					}
+
+					return false;
 				}
 			});
+
+			if(!worked) {
+				this.err(`[show_and_predict_webcam_in_div] Resizing image data failed. Stopping camera.`);
+				this.stop_camera();
+			}
 
 			await this.dispose(image);
 

@@ -73,6 +73,15 @@
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
 			}
+
+			function test_model_switch_three () {
+				var new_model_struct = [
+					{dense: {units: 5, activation: "relu", inputShape: [5]}},
+					{dense: {units: 4, activation: "softmax"}}
+				];
+
+				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+			}
 		</script>
 	</body>
 </html>
