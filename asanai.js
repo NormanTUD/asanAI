@@ -2723,34 +2723,43 @@ class asanAI {
 
 		var html = "";
 
-		var bar_style = " style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: 50px;' "
+		var bar_style = " style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: 50px;' ";
+
+		var highest_bar_css = "background-color: #0FFF50 !important;";
+
+		var label_element_css = "width: 100%; text-align: left; height: 40px;";
+
+		var best_result_css = `background-color: green; color: white;`;
+
+		var label_element = ` class='label_element' style='${label_element_css}' `;
+		var label_element_best_result = ` class='label_element best_result' style='${best_result_css} ${label_element_css}' `;
 
 		if(this.show_bars_instead_of_numbers) {
 			if(label) {
 				if(val == max) {
-					html = "<tr><td class='label_element'>" + label + `</td><td><span ${bar_style}><span class='highest_bar' style='margin-top: 2px; width: ` + w + "px'></span></span></td></tr>";
+					html =`"<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} margin-top: 2px; width: ${w}px'></span></span></td></tr>`;
 				} else {
-					html = "<tr><td class='label_element'>" + label + `</td><td><span ${bar_style}><span style='margin-top: 2px; width: ` + w + "px'></span></span></td></tr>";
+					html = `<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='margin-top: 2px; width: ${w}px'></span></span></td></tr>`;
 				}
 			} else {
 				if(val == max) {
-					html = `<tr><td><span ${bar_style}><span class='highest_bar' style='width: ` + w + "px'></span></span></td></tr>";
+					html = `<tr><td><span ${bar_style}><span style='${highest_bar_css} width:${w}px'></span></span></td></tr>`;
 				} else {
-					html = `<tr><td><span ${bar_style}><span style='width: ` + w + "px'></span></span></td></tr>";
+					html = `<tr><td><span ${bar_style}><span style='width: ${w}px'></span></span></td></tr>`;
 				}
 			}
 		} else {
 			if(label) {
 				if(val == max) {
-					html = "<tr><td><b class='best_result label_element'>" + label + "</td><td>" + val + "</b></td></tr>\n";
+					html = `<tr><td><b ${label_element_best_result}>${label}</td><td>${val}</b></td></tr>\n`;
 				} else {
-					html = "<tr><td class='label_element'>" + label + "</td><td>" + predictions[0][i] + "</td></tr>\n";
+					html = `<tr><td class='label_element'>${label}</td><td>${predictions[0][i]}</td></tr>\n`;
 				}
 			} else {
 				if(val == max) {
-					html = "<tr><td><b class='best_result label_element'>" + predictions[0][i] + "</b></td></tr>\n";
+					html = `<tr><td><b ${label_element_best_result}>${predictions[0][i]}</b></td></tr>\n`;
 				} else {
-					html = "<tr><td>" + predictions[0][i] + "</td></tr>";
+					html = `<tr><td>${predictions[0][i]}</td></tr>`;
 				}
 			}
 		}
