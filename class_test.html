@@ -20,6 +20,7 @@
 		<div id="fcnn_div"></div>
 
 		<script>
+			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 			var asanai;
 
 			$(document).ready(function() {
@@ -31,15 +32,6 @@
 					{dense: {units: 4, activation: "softmax"}}
 				];
 
-				var model_data = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
-					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
-					{flatten: {}},
-					{dense: {units: 5, activation: "relu"}},
-					{dense: {units: 4, activation: "softmax"}}
-				];
-
-				var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 
 				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
@@ -50,7 +42,7 @@
 				asanai.show_internals("internal_states");
 				//asanai.hide_internals();
 
-				//asanai.show_and_predict_webcam_in_div("webcam_prediction");
+				asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
 				asanai.predict_image("test_image", "test_image_prediction");
 
@@ -64,8 +56,24 @@
 			function test_model_switch () {
 				var fl = tf.layers.dense({units: 3, activation: "softmax", inputShape: [20, 20, 3]}); 
 				var xxx = tf.sequential({layers: [fl]}); 
-				xxx.compile({ optimizer: "adam", loss: "categoricalCrossentropy" }); 
+				xxx.compile(optimizer_config); 
 				asanai.set_model(xxx)
+			}
+
+			function test_model_switch_two () {
+				var new_model_struct = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 5, activation: "relu"}},
+					{dense: {units: 4, activation: "softmax"}}
+				];
+
+				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
 			}
 		</script>
 	</body>

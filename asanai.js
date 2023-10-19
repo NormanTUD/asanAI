@@ -132,16 +132,7 @@ class asanAI {
 
 		__model.compile(optimizer_config);
 
-		this.model = __model;
-
-		if(this.model) {
-			if(this.model.input.shape.length == 4) {
-				this.model_height = this.model.input.shape[1];
-				this.model_width = this.model.input.shape[1];
-			}
-		} else {
-			throw new Error(`Could not load model properly. Check the logs.`);
-		}
+		this.set_model(__model);
 
 		return __model;
 	}
@@ -2319,8 +2310,8 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
-					console.log(colors[j][i]);
-					red = green = blue = this.parse_int(colors[j][i]);
+					//red = green = blue = this.parse_int(colors[j][i]); // TODO
+					red = green = blue = parseInt(colors[j][i]);
 				} else {
 					red = this.parse_int(colors[j][i][0]);
 					green = this.parse_int(colors[j][i][1]);
