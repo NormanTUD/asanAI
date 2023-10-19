@@ -2091,7 +2091,7 @@ class asanAI {
 		}
 	}
 
-	draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, multiply_by, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
 		if(!multiply_by) {
 			multiply_by = 1;
@@ -2124,30 +2124,6 @@ class asanAI {
 		var min = 0;
 		var max = 0;
 
-		if(denormalize) {
-			for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
-				for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
-					var red, green, blue;
-
-					if(black_and_white) {
-						red = green = blue = colors[j][i];
-					} else {
-						red = colors[j][i][0];
-						green = colors[j][i][1];
-						blue = colors[j][i][2];
-					}
-
-					if(red > max) { max = red; }
-					if(green > max) { max = green; }
-					if(blue > max) { max = blue; }
-
-					if(red < min) { min = red; }
-					if(green < min) { min = green; }
-					if(blue < min) { min = blue; }
-				}
-			}
-		}
-
 		for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
 			for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
 				var red, green, blue;
@@ -2158,9 +2134,6 @@ class asanAI {
 					red = colors[j][i][0] * multiply_by;
 					green = colors[j][i][1] * multiply_by;
 					blue = colors[j][i][2] * multiply_by;
-				}
-
-				if(denormalize) {
 				}
 
 				var color = "rgb(" + red + "," + green + "," + blue + ")";
@@ -2276,7 +2249,7 @@ class asanAI {
 					canvas = this.get_canvas_in_class(layer, "image_grid");
 				}
 
-				ret.push(this.draw_grid(canvas, this.pixel_size, colors, 0, 0, "", this.divide_by, ""));
+				ret.push(this.draw_grid(canvas, this.pixel_size, colors, 0, "", this.divide_by, ""));
 			} else if(canvas_type == "kernel") {
 				var shape = this.get_dim(colors);
 
