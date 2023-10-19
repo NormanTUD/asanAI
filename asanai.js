@@ -1957,8 +1957,6 @@ class asanAI {
 	}
 
 	_draw_internal_states (layer, inputs, applied) {
-		if(layer > 0) { return; }
-
 		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
@@ -2091,6 +2089,8 @@ class asanAI {
 
 	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, multiply_by, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
+		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
+
 		if(!multiply_by) {
 			multiply_by = 1;
 		}
@@ -2232,22 +2232,43 @@ class asanAI {
 			var colors_shape = this.get_dim(colors);
 
 			if(colors_shape.length != 4) {
-				//this.log("colors had no length of 3 but [" + this.get_dim(colors).join(", ") + "]");
+				this.log("colors had no length of 4 but [" + this.get_dim(colors).join(", ") + "]");
 				return false;
 			}
-
-			colors = colors[0];
 
 			colors_shape = this.get_dim(colors);
 
 			if(canvas_type == "output" || canvas_type == "input") {
-				if(canvas_type == "input") {
-					canvas = this.get_canvas_in_class(layer, "input_image_grid");
-				} else {
-					canvas = this.get_canvas_in_class(layer, "image_grid");
-				}
+				//this.log("pixels.shape: [" + this.get_dim(colors).join(", ") + "]");
 
-				ret.push(this.draw_grid(canvas, this.pixel_size, colors, 0, "", this.divide_by, ""));
+				var num_channels = colors_shape[colors_shape.length - 1];
+
+				if(num_channels == 3) {
+					if(canvas_type == "input") {
+						canvas = this.get_canvas_in_class(layer, "input_image_grid");
+					} else {
+						canvas = this.get_canvas_in_class(layer, "image_grid");
+					}
+
+					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", this.divide_by, ""));
+				} else {
+					for (var i = 0; i < num_channels; i++) {
+						if(canvas_type == "input") {
+							canvas = this.get_canvas_in_class(layer, "input_image_grid");
+						} else {
+							canvas = this.get_canvas_in_class(layer, "image_grid");
+						}
+
+						var inputTensor = this.tensor(colors);
+						ret.push(this.tidy(() => {
+							var _h = inputTensor.shape[1];
+							var _w = inputTensor.shape[2];
+							var _slice = this.array_sync(inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]));
+							return this.draw_grid(canvas, this.pixel_size, _slice[0], 1, "", this.divide_by, "");
+						}));
+						this.dispose(inputTensor);
+					}
+				}
 			} else if(canvas_type == "kernel") {
 				var shape = this.get_dim(colors);
 
@@ -2257,7 +2278,7 @@ class asanAI {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
 						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
 
-						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, [colors[filter_id]]);
+						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
 
 						ret.push(drawn);
 					}
