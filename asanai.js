@@ -2717,7 +2717,11 @@ class asanAI {
 			var _tensors = tf.memory().numTensors;
 			var _text = _tensors + " Tensors";
 
-			$("#" + divname).html(_text);
+			var $div = $("#" + divname);
+
+			if($div.html() != _text) {
+				$div.html(_text);
+			}
 		}
 
 		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
