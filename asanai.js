@@ -21,6 +21,7 @@ class asanAI {
 		this.divide_by = 1;
 		this.model_summary_div = null;
 		this.labels = [];
+		this.bar_width = 50;
 
 		this.kernel_pixel_size = 3;
 
@@ -2697,7 +2698,6 @@ class asanAI {
 
 		var max = 0;
 
-		this.log(predictions);
 		for (var i = 0; i < predictions[0].length; i++) {
 			if(max < predictions[0][i]) {
 				max = predictions[0][i];
@@ -2712,18 +2712,17 @@ class asanAI {
 
 		html += "</table>";
 
-		this.log(html);
 		$(write_to_div).html(html);
 	}
 
 	_draw_bars_or_numbers (i, predictions, max) {
 		var label = this.labels[i % this.labels.length];
-		var val = predictions[0][i];
-		var w = Math.floor(val * 50);
+		var val = predictions[i];
+		var w = Math.floor(val * this.bar_width);
 
 		var html = "";
 
-		var bar_style = " style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: 50px;' ";
+		var bar_style = ` style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: ${this.bar_width}px;' `;
 
 		var highest_bar_css = "background-color: #0FFF50 !important;";
 
