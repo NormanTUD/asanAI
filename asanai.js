@@ -1721,7 +1721,6 @@ class asanAI {
 
 					this.err(e);
 				}
-
 			}
 		}
 
