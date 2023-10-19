@@ -1801,7 +1801,7 @@ class asanAI {
 		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			$(write_to_div).html(this._predict_table(result, write_to_div));
+			this._predict_table(result, write_to_div);
 		}
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
@@ -1957,14 +1957,7 @@ class asanAI {
 
 				var prediction = this.array_sync(res);
 
-				this.log("res:", res, "$desc:", $desc);
-				var predicted_table = this._predict_table(res, $desc);
-
-				if(predicted_table) {
-					$($desc).html(predicted_table)
-				} else {
-					this.err(`[show_and_predict_webcam_in_div] predicted_table is empty`);
-				}
+				this._predict_table(res, $desc);
 			});
 
 			await this.dispose(image);
