@@ -22,6 +22,8 @@ class asanAI {
 		this.model_summary_div = null;
 		this.labels = [];
 		this.bar_width = 100;
+		this.show_and_predict_webcam_in_div_div = null;
+		this.currently_switching_models = false;
 
 		this.default_bar_color = "orange";
 		this.max_bar_color = "green";
@@ -1688,6 +1690,14 @@ class asanAI {
 			return;
 		}
 
+		this.currently_switching_models = true;
+
+		var _restart_webcam = 0;
+		if(this.started_webcam) {
+			this.toggle_webcam();
+			_restart_webcam = 1;
+		}
+
 		this.model = _m;
 
 		if(this.model.input.shape.length == 4) {
@@ -1703,6 +1713,11 @@ class asanAI {
 			this.write_model_summary();
 		}
 
+		if(_restart_webcam) {
+			this.toggle_webcam();
+		}
+
+		this.currently_switching_models = false;
 		return this.model;
 	}
 
@@ -1887,9 +1902,11 @@ class asanAI {
 		return output;
 	}
 
-	async show_and_predict_webcam_in_div(divname, _w, _h) {
+	async show_and_predict_webcam_in_div(divname=this.show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);	
+
+		this.show_and_predict_webcam_in_div_div = divname;
 
 		this.webcam_prediction_div_name = divname;
 
@@ -1942,31 +1959,65 @@ class asanAI {
 				$("#" + this.internal_states_div).html("");			
 			}
 
-			var image = await this.camera.capture();
+			var image;
+			try {
+				image = await this.camera.capture();
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("camera is null") && this.currently_switching_models) {
+					return;
+				} else {
+					throw new Error(e);
+				}
+			}
+
+			var asanai_this = this;
+
+			if(!this.model) {
+				this.err(`[show_and_predict_webcam_in_div] model not defined`);
+				return;
+			}
 
 			this.tidy(() => {
-				var _data = this.resizeNearestNeighbor(image, [this.model_height, this.model_width]);
-				var resized = this.expand_dims(_data);
-				//resized = this.tf_div(resized, this.divide_by);
-
-				var res;
-
 				try {
-					res = this.predict_manually(resized)
+					var _data = asanai_this.resizeNearestNeighbor(image, [asanai_this.model_height, asanai_this.model_width]);
+					var resized = asanai_this.expand_dims(_data);
+					//resized = asanai_this.tf_div(resized, asanai_this.divide_by);
+
+					var res;
+
+					try {
+						res = asanai_this.predict_manually(resized)
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						asanai_this.err("" + e);
+						asanai_this.err(`Input shape of the model: [${asanai_this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+
+						return;
+					}
+
+					var prediction = asanai_this.array_sync(res);
+
+					asanai_this._show_output(res, $desc);
+
+					return true;
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
 					}
 
-					this.err("" + e);
-					this.err(`Input shape of the model: [${this.model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
-
-					return;
+					if(("" + e).includes("model is not defined")) {
+						return;
+					} else {
+						throw new Error(e);
+					}
 				}
-
-				var prediction = this.array_sync(res);
-
-				this._show_output(res, $desc);
 			});
 
 			await this.dispose(image);
