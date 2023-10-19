@@ -2467,7 +2467,6 @@ class asanAI {
 
 						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", this.divide_by, "");
 
-
 						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
 					}
@@ -2781,6 +2780,11 @@ class asanAI {
 			return;
 		}
 
+		if(!predictions_tensor.shape.length == 4) {
+			this.err(`[_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.join(", ")}]`);
+			return;
+		}
+
 		var asanai_this = this;
 
 		var synched = this.tidy(() => {
@@ -2790,6 +2794,17 @@ class asanAI {
 
 		console.log("synched:", synched);
 		console.trace();
+
+		var _dim = this.get_dim(synched);
+
+		var canvas = $(`<canvas height=${_dim[0]} width=${_dim[1]} />`)[0];
+
+		$(write_to_div).html("");
+
+		for (var image_idx = 0; image_idx < _dim[0]; image_idx; image_idx) {
+			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, synched[0], 1, "", this.divide_by, "");
+			$(write_to_div).append(_grid_canvas);
+		}
 	}
 
 	_show_output (predictions_tensor, write_to_div) {
@@ -2816,7 +2831,9 @@ class asanAI {
 		} else if(this.model.output.shape.length == 4) {
 			this._show_images_in_output(predictions_tensor, write_to_div)
 		} else {
-			this.err(`Unimplemented output shape: [${this.model.output.shape.join(", ")}]`);
+			var error = `Unimplemented output shape: [${this.model.output.shape.join(", ")}]`;
+			this.err(error);
+			$(write_to_div).html(error);
 		}
 	}
 
