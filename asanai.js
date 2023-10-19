@@ -17,7 +17,7 @@ class asanAI {
 		this.is_dark_mode = false;
 		this.show_bars_instead_of_numbers = true;
 		this.max_neurons_fcnn = 32;
-		this.draw_internal_states = true;
+		this.draw_internal_states = false;
 		this.draw_internal_states_div = "";
 		this.pixel_size = 3;
 		this.divide_by = 1;
@@ -2127,7 +2127,7 @@ class asanAI {
 			var flattened_input = input_data;
 
 			if(this.is_tf_tensor(flattened_input)) {
-				flattened_input = this.array_sync(flattened_input);
+				flattened_input = this.tidy(() => { return this.array_sync(flattened_input); });
 			}
 
 			while (this.get_shape_from_array(flattened_input).length > 1) {
@@ -2279,13 +2279,12 @@ class asanAI {
 		}
 	}
 
-	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, multiply_by, data_hash, _class="") {
+	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
 		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
 
-		if(!multiply_by) {
-			multiply_by = 1;
-		}
+		console.log(colors);
+		console.trace();
 
 		var drew_something = false;
 
@@ -2319,11 +2318,11 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
-					red = green = blue = colors[j][i] * multiply_by;
+					red = green = blue = colors[j][i];
 				} else {
-					red = colors[j][i][0] * multiply_by;
-					green = colors[j][i][1] * multiply_by;
-					blue = colors[j][i][2] * multiply_by;
+					red = colors[j][i][0];
+					green = colors[j][i][1];
+					blue = colors[j][i][2];
 				}
 
 				var color = "rgb(" + red + "," + green + "," + blue + ")";
@@ -2442,7 +2441,7 @@ class asanAI {
 						canvas = this.get_canvas_in_class(layer, "image_grid");
 					}
 
-					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", this.divide_by, ""));
+					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
 				} else {
 					for (var i = 0; i < num_channels; i++) {
 						if(canvas_type == "input") {
@@ -2465,7 +2464,7 @@ class asanAI {
 							return this.array_sync(slice);
 						});
 
-						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", this.divide_by, "");
+						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", "");
 
 						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
@@ -2787,8 +2786,14 @@ class asanAI {
 
 		var asanai_this = this;
 
+		var normalized = this.tidy(() => {
+			var _n = asanai_this.tensor(asanai_this.normalize_to_image_data(asanai_this.array_sync(predictions_tensor)));
+
+			return _n;
+		});
+
 		var synched = this.tidy(() => {
-			var res = asanai_this.array_sync(predictions_tensor);
+			var res = asanai_this.array_sync(normalized);
 			return res;
 		});
 
@@ -2799,8 +2804,8 @@ class asanAI {
 		$(write_to_div).html("");
 
 		for (var image_idx = 0; image_idx < _dim[0]; image_idx++) {
-			this.scaleNestedArray(synched[0]);
-			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, synched[0], 1, "", this.divide_by, "");
+			var this_synched = synched[0];
+			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, this_synched, 1, "", "");
 			$(write_to_div).append(_grid_canvas);
 		}
 	}
