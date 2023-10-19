@@ -2766,6 +2766,16 @@ class asanAI {
 		if(Array.isArray(_l)) {
 			if(this.get_dim(_l).length == 1) {
 				this.labels = _l;
+
+				if(this.model) {
+					if(this.model.output.shape.length == 2) {
+						var num_labels = this.model.output.shape[1];
+
+						if(this.labels.length != num_labels) {
+							this.wrn(`Your model expects ${num_labels}, but you have set ${this.labels.length} labels.`);
+						}
+					}
+				}
 			} else {
 				throw new Error("labels cannot be a multdimensional array");
 			}

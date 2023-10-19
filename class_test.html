@@ -20,7 +20,9 @@
 		<div id="fcnn_div"></div>
 
 		<script>
-			$( document ).ready(function() {
+			var asanai;
+
+			$(document).ready(function() {
 				var model_data = [
 					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
@@ -31,7 +33,7 @@
 
 				var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 
-				var asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
+				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
 				asanai.set_divide_by(255);
 
