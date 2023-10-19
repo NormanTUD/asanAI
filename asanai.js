@@ -1730,6 +1730,9 @@ class asanAI {
 			this.camera.stop()
 			this.camera = null;
 
+			$(this.last_video_element).hide();
+			$("#" + this.show_and_predict_webcam_in_div_div).hide();
+
 			if(item) {
 				$(item).text("Start webcam");
 			}
@@ -1738,6 +1741,9 @@ class asanAI {
 			if(this.webcam_prediction_div_name) {
 				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.webcam_height, this.webcam_width);
 			}
+
+			$(this.last_video_element).show();
+			$("#" + this.show_and_predict_webcam_in_div_div).show();
 
 			if(item) {
 				$(item).text("Stop webcam");
