@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	#fcnn_div_name = null;
 	#is_dark_mode = false;
 	#show_bars_instead_of_numbers = true;
 	#max_neurons_fcnn = 32;
@@ -196,7 +197,7 @@ class asanAI {
 		return units;
 	}
 
-	get_fcnn_data () {
+	#get_fcnn_data () {
 		var names = [];
 		var units = [];
 		var meta_infos = [];
@@ -267,8 +268,8 @@ class asanAI {
 		return [names, units, meta_infos];
 	}
 
-	restart_fcnn (divname=this.fcnn_div_name) {
-		var fcnn_data = this.get_fcnn_data();
+	restart_fcnn (divname=this.#fcnn_div_name) {
+		var fcnn_data = this.#get_fcnn_data();
 
 		if(!fcnn_data) {
 			this.err("Could not get FCNN data");
@@ -322,12 +323,12 @@ class asanAI {
 		var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
 		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-		this._draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
+		this.#_draw_neurons_and_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius);
 
-		this._draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
+		this.#_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing);
 	}
 
-	_draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
+	#_draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
 		for (var i = 0; i < layers.length; i++) {
 			if (labels && labels[i]) {
 				ctx.beginPath();
@@ -365,7 +366,7 @@ class asanAI {
 		}
 	}
 
-	_draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
+	#_draw_neurons_or_conv2d (numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info) {
 		for (var j = 0; j < numNeurons; j++) {
 			ctx.beginPath();
 			var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
@@ -394,7 +395,7 @@ class asanAI {
 	}
 
 
-	_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
+	#_draw_neurons_and_connections (ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius) {
 		var _height = null;
 		// Draw neurons
 		for (var i = 0; i < layers.length; i++) {
@@ -418,19 +419,19 @@ class asanAI {
 			}
 
 			if(shapeType == "circle" || shapeType == "rectangle_conv2d") {
-				this._draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
+				this.#_draw_neurons_or_conv2d(numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info);
 			} else if (shapeType == "rectangle_flatten") {
 				_height = Math.min(650, meta_info["output_shape"][1]);
-				this._draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+				this.#_draw_flatten(ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 			} else {
 				alert("Unknown shape Type: " + shapeType);
 			}
 
-			this._draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
+			this.#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height);
 		}
 	}
 
-	_draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+	#_draw_flatten (ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 		if(meta_info["output_shape"]) {
 			ctx.beginPath();
 			var rectSize = maxShapeSize * 2;
@@ -455,7 +456,7 @@ class asanAI {
 		}
 	}
 
-	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
+	#_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height) {
 		// Draw connections
 		for (var i = 0; i < layers.length - 1; i++) {
 			var meta_info = meta_infos[i];
@@ -538,7 +539,7 @@ class asanAI {
 		}
 	}
 
-	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) { // TODO: max neurons
+	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32) { // TODO: max neurons
 		if(!divname) {
 			this.err("[draw_fcnn] Cannot continue draw_fcnn without a divname");
 			return;
@@ -546,7 +547,7 @@ class asanAI {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
 		
-		this.fcnn_div_name = divname;
+		this.#fcnn_div_name = divname;
 
 		this.restart_fcnn(divname);
 	}
@@ -1698,7 +1699,7 @@ class asanAI {
 			this.num_channels = this.model.input.shape[3];
 		}
 
-		if(this.fcnn_div_name) {
+		if(this.#fcnn_div_name) {
 			this.restart_fcnn();
 		}
 
