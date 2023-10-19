@@ -2,6 +2,8 @@
 
 class asanAI {
 	#fcnn_div_name = null;
+	#webcam_height = null;
+	#webcam_width = null;
 	#is_dark_mode = false;
 	#show_bars_instead_of_numbers = true;
 	#max_neurons_fcnn = 32;
