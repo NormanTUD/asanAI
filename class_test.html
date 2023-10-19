@@ -25,7 +25,7 @@
 
 			$(document).ready(function() {
 				var model_data = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu", kernelInitializer: "ones"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
 					{dense: {units: 5, activation: "relu"}},
