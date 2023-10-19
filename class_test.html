@@ -31,6 +31,14 @@
 					{dense: {units: 4, activation: "softmax"}}
 				];
 
+				var model_data = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 5, activation: "relu"}},
+					{dense: {units: 4, activation: "softmax"}}
+				];
+
 				var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 
 				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
