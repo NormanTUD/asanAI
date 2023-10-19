@@ -4,8 +4,8 @@ class asanAI {
 	#is_dark_mode = false;
 	show_bars_instead_of_numbers = true;
 	max_neurons_fcnn = 32;
-	draw_internal_states = false;
-	draw_internal_states_div = "";
+	#draw_internal_states = false;
+	#draw_internal_states_div = "";
 	pixel_size = 3;
 	divide_by = 1;
 	model_summary_div = null;
@@ -53,7 +53,7 @@ class asanAI {
 			}
 
 			if(Object.keys(args[0]).includes("divide_by")) {
-				if(typeof(args[0].divide_by) == "number" || looks_like_number(args[0].divide_by)) {
+				if(typeof(args[0].divide_by) == "number" || this.#looks_like_number(args[0].divide_by)) {
 					this.divide_by= this.parse_float(args[0].divide_by);
 				} else {
 					throw new Error("divide_by is not a number");
@@ -70,7 +70,7 @@ class asanAI {
 
 			if(Object.keys(args[0]).includes("draw_internal_states_div")) {
 				if(typeof(args[0].draw_internal_states_div) == "string") {
-					this.draw_internal_states_div = args[0].draw_internal_states_div;
+					this.#draw_internal_states_div = args[0].draw_internal_states_div;
 				} else {
 					throw new Error("draw_internal_states_div is not a string");
 				}
@@ -78,7 +78,7 @@ class asanAI {
 
 			if(Object.keys(args[0]).includes("draw_internal_states")) {
 				if(typeof(args[0].draw_internal_states) == "boolean") {
-					this.draw_internal_states = args[0].draw_internal_states;
+					this.#draw_internal_states = args[0].draw_internal_states;
 				} else {
 					throw new Error("draw_internal_states is not a boolean");
 				}
@@ -277,11 +277,11 @@ class asanAI {
 
 		var [names, units, meta_infos] = fcnn_data;
 
-		this.draw_new_fcnn(divname, units, names, meta_infos);
+		this.#draw_new_fcnn(divname, units, names, meta_infos);
 	}
 
-	draw_new_fcnn(...args) {
-		this.assert(args.length == 4, "draw_new_fcnn must have 4 arguments");
+	#draw_new_fcnn(...args) {
+		this.assert(args.length == 4, "#draw_new_fcnn must have 4 arguments");
 
 		var divname = args[0];
 		var layers = args[1];
@@ -290,7 +290,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`draw_new_fcnn cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`#draw_new_fcnn cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
@@ -1840,7 +1840,7 @@ class asanAI {
 		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			this._show_output(result, write_to_div);
+			this.#_show_output(result, write_to_div);
 		}
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
@@ -1880,7 +1880,7 @@ class asanAI {
 			return;
 		}
 
-		if(this.looks_like_number("" + this.divide_by)) {
+		if(this.#looks_like_number("" + this.divide_by)) {
 			_tensor = tf.tidy(() => {
 				var new_tensor = tf.div(_tensor, this.divide_by);
 				return new_tensor;
@@ -1912,9 +1912,9 @@ class asanAI {
 				return;
 			}
 
-			if(this.draw_internal_states) {
+			if(this.#draw_internal_states) {
 				try {
-					this._draw_internal_states(i, input, output);
+					this.#_draw_internal_states(i, input, output);
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
@@ -2043,7 +2043,7 @@ class asanAI {
 
 					var prediction = asanai_this.array_sync(res);
 
-					asanai_this._show_output(res, $desc);
+					asanai_this.#_show_output(res, $desc);
 
 					return true;
 				} catch (e) {
@@ -2078,24 +2078,7 @@ class asanAI {
 		return new Promise(resolve => setTimeout(resolve, time));
 	}
 
-	array_to_html(array) {
-		var m = "";
-		for (var i = 0; i < array.length; i++) {
-			if(typeof(array[i]) == "object") {
-				for (var j = 0; j < array[i].length; j++) {
-					m += array[i][j] + " ";
-				}
-			} else {
-				m += array[i];
-			}
-			m += "<br>";
-		}
-
-		return m;
-	}
-
-
-	visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25) {
+	#visualize_numbers_on_canvas (numberArray, blockWidth = 1, blockHeight = 25) {
 		var canvas = document.createElement("canvas");
 		canvas.id = "neurons_canvas_" + this.uuidv4();
 		canvas.classList.add("neurons_canvas_class");
@@ -2111,7 +2094,7 @@ class asanAI {
 		var ctx = canvas.getContext("2d");
 		var blocksPerRow = Math.floor(canvas.width / blockWidth);
 
-		this.scaleNestedArray(numberArray);
+		this.#scaleNestedArray(numberArray);
 
 		for (var i = 0; i < numberArray.length; i++) {
 			var value = numberArray[i];
@@ -2132,7 +2115,7 @@ class asanAI {
 	}
 
 	hide_internals () {
-		this.draw_internal_states = false;
+		this.#draw_internal_states = false;
 		$("#" + this.internal_states_div).html("");
 		this.internal_states_div = "";
 	}
@@ -2148,7 +2131,7 @@ class asanAI {
 			this.dbg("No layer found");
 		}
 
-		this.draw_internal_states = true;
+		this.#draw_internal_states = true;
 		if(divname) {
 			this.internal_states_div = divname;
 		}
@@ -2202,7 +2185,7 @@ class asanAI {
 		return res;
 	}
 
-	_draw_internal_states (layer, inputs, applied) {
+	#_draw_internal_states (layer, inputs, applied) {
 		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
 
@@ -2269,9 +2252,9 @@ class asanAI {
 				kernel_data = this.normalize_to_image_data(kernel_data);
 			}
 
-			var canvasses_input = this.draw_image_if_possible(layer, "input", input_data);
-			var canvasses_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
-			var canvasses_output = this.draw_image_if_possible(layer, "output", output_data);
+			var canvasses_input = this.#draw_image_if_possible(layer, "input", input_data);
+			var canvasses_kernel = this.#draw_image_if_possible(layer, "kernel", kernel_data);
+			var canvasses_output = this.#draw_image_if_possible(layer, "output", output_data);
 
 			if(layer == 0) {
 				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
@@ -2280,7 +2263,7 @@ class asanAI {
 			}
 
 			if(this.get_shape_from_array(output_data[0]).length == 1) {
-				var h = this.visualizeNumbersOnCanvas(output_data[0])
+				var h = this.#visualize_numbers_on_canvas(output_data[0])
 				equations.append(h).show();
 			} else {
 				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
@@ -2306,18 +2289,18 @@ class asanAI {
 
 			/*
 			 else {
-				var h = this.array_to_html(output_data[0]);
+				var h = this.#array_to_html(output_data[0]);
 				equations.append(h).show();
 			}
 			*/
 		}
 	}
 
-	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, data_hash, _class="") {
+	#draw_grid (canvas, pixel_size, colors, black_and_white, onclick, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
-		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
+		this.assert(this.#get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.#get_dim(colors).join(", ") +"]");
 
-		this.scaleNestedArray(colors);
+		this.#scaleNestedArray(colors);
 
 		var drew_something = false;
 
@@ -2370,7 +2353,7 @@ class asanAI {
 					stroke: color
 				};
 
-				this.draw_rect(ctx, pixel);
+				this.#draw_rect(ctx, pixel);
 			}
 		}
 
@@ -2425,7 +2408,7 @@ class asanAI {
 		return "";
 	}
 
-	get_dim(a) {
+	#get_dim(a) {
 		var dim = [];
 		for (;;) {
 			dim.push(a.length);
@@ -2444,45 +2427,45 @@ class asanAI {
 	}
 
 	set_pixel_size (_new) {
-		if(this.looks_like_number(_new)) {
+		if(this.#looks_like_number(_new)) {
 			this.pixel_size = this.parse_int(_new);
 		}
 	}
 
-	draw_image_if_possible (layer, canvas_type, colors) {
+	#draw_image_if_possible (layer, canvas_type, colors) {
 		var canvas = null;
 
 		try {
 			var ret = [];
 
-			var colors_shape = this.get_dim(colors);
+			var colors_shape = this.#get_dim(colors);
 
 			if(colors_shape.length != 4) {
-				//this.log("colors had no length of 4 but [" + this.get_dim(colors).join(", ") + "]");
+				//this.log("colors had no length of 4 but [" + this.#get_dim(colors).join(", ") + "]");
 				return false;
 			}
 
-			colors_shape = this.get_dim(colors);
+			colors_shape = this.#get_dim(colors);
 
 			if(canvas_type == "output" || canvas_type == "input") {
-				//this.log("pixels.shape: [" + this.get_dim(colors).join(", ") + "]");
+				//this.log("pixels.shape: [" + this.#get_dim(colors).join(", ") + "]");
 
 				var _num_channels = colors_shape[colors_shape.length - 1];
 
 				if(_num_channels == 3) {
 					if(canvas_type == "input") {
-						canvas = this.get_canvas_in_class(layer, "input_image_grid");
+						canvas = this.#get_canvas_in_class(layer, "input_image_grid");
 					} else {
-						canvas = this.get_canvas_in_class(layer, "image_grid");
+						canvas = this.#get_canvas_in_class(layer, "image_grid");
 					}
 
-					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
+					ret.push(this.#draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
 				} else {
 					for (var i = 0; i < _num_channels; i++) {
 						if(canvas_type == "input") {
-							canvas = this.get_canvas_in_class(layer, "input_image_grid");
+							canvas = this.#get_canvas_in_class(layer, "input_image_grid");
 						} else {
-							canvas = this.get_canvas_in_class(layer, "image_grid");
+							canvas = this.#get_canvas_in_class(layer, "image_grid");
 						}
 
 						var inputTensor = this.tensor(colors);
@@ -2499,22 +2482,22 @@ class asanAI {
 							return this.array_sync(slice);
 						});
 
-						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", "");
+						var _grid_canvas = this.#draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", "");
 
 						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
 					}
 				}
 			} else if(canvas_type == "kernel") {
-				var shape = this.get_dim(colors);
+				var shape = this.#get_dim(colors);
 
 				var canvasses = [];
 
 				for (var filter_id = 0; filter_id < shape[0]; filter_id++) {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
-						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
+						canvas = this.#get_canvas_in_class(layer, "filter_image_grid");
 
-						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
+						var drawn = this.#draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
 
 						ret.push(drawn);
 					}
@@ -2527,7 +2510,7 @@ class asanAI {
 		return ret;
 	}
 
-	array_to_html(array) {
+	#array_to_html(array) {
 		var m = "";
 		for (var i = 0; i < array.length; i++) {
 			if(typeof(array[i]) == "object") {
@@ -2543,7 +2526,7 @@ class asanAI {
 		return m;
 	}
 
-	get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
+	#get_canvas_in_class (layer, classname, dont_append, use_uuid=0) {
 		var _uuid = "";
 		var _uuid_str = "";
 		if (use_uuid) {
@@ -2561,7 +2544,7 @@ class asanAI {
 		return new_canvas[0];
 	}
 
-	scaleNestedArray(arr) {
+	#scaleNestedArray(arr) {
 		// Find the minimum and maximum values in the nested array
 		let min = Number.MAX_VALUE;
 		let max = Number.MIN_VALUE;
@@ -2597,16 +2580,16 @@ class asanAI {
 		scaleNested(arr);
 	}
 
-	draw_kernel(canvasElement, rescaleFactor, pixels) {
+	#draw_kernel(canvasElement, rescaleFactor, pixels) {
 		// canvasElement is the HTML canvas element where you want to draw the image
 		// rescaleFactor is the factor by which the image should be resized, e.g., 2 for twice the size
 		// pixels is a 3D array [n, m, a] where n is the height, m is the width, and a is the number of channels
 
-		this.scaleNestedArray(pixels);
+		this.#scaleNestedArray(pixels);
 
 		var context = canvasElement.getContext('2d'); // Get the 2D rendering context
 
-		var kernel_shape = this.get_dim(pixels);
+		var kernel_shape = this.#get_dim(pixels);
 
 		this.assert(kernel_shape.length == 3, `kernel is not an image, it has shape [${kernel_shape.join(", ")}]`);
 
@@ -2641,7 +2624,7 @@ class asanAI {
 		return canvasElement;
 	}
 
-	draw_rect(ctx, rect) {
+	#draw_rect(ctx, rect) {
 		ctx.fillStyle = rect.fill;
 		ctx.strokeStyle = rect.stroke;
 		ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
@@ -2682,7 +2665,6 @@ class asanAI {
 
 		this.model_summary_div = divname;
 	}
-
 
 	summary_to_table(lines) {
 		var new_array = [];
@@ -2745,7 +2727,7 @@ class asanAI {
 
 		this.write_tensors_info_div = divname;
 
-		if(!this.looks_like_number(time)) {
+		if(!this.#looks_like_number(time)) {
 			console.err("write_tensors_info: second parameter must be a number. Time will be set to 200 ms");
 			time = 200;
 		}
@@ -2774,7 +2756,7 @@ class asanAI {
 		}
 	}
 
-	looks_like_number(item) {
+	#looks_like_number(item) {
 		if(typeof(item) == "number") {
 			return true;
 		}
@@ -2791,7 +2773,7 @@ class asanAI {
 	}
 
 	set_divide_by (number) {
-		if(this.looks_like_number(number)) {
+		if(this.#looks_like_number(number)) {
 			this.divide_by = this.parse_float(number);
 			return this.divide_by;
 		}
@@ -2799,9 +2781,9 @@ class asanAI {
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
 	}
 
-	_show_images_in_output (predictions_tensor, write_to_div) {
+	#_show_images_in_output (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
-			this.err("[_show_images_in_output] predctions tensor (first parameter) is not a tensor");
+			this.err("[#_show_images_in_output] predctions tensor (first parameter) is not a tensor");
 			return;
 		}
 
@@ -2810,16 +2792,16 @@ class asanAI {
 			if($write_to_div.length == 1) {
 				write_to_div = $write_to_div[0];
 			} else {
-				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				this.err(`[#_show_images_in_output] Could not find div to write to by id ${write_to_div}`);
 				return;
 			}
 		} else if(!write_to_div instanceof HTMLElement) {
-			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			this.err(`[#_show_images_in_output] write_to_div is not a HTMLElement`);
 			return;
 		}
 
 		if(!predictions_tensor.shape.length == 4) {
-			this.err(`[_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.join(", ")}]`);
+			this.err(`[#_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.join(", ")}]`);
 			return;
 		}
 
@@ -2836,7 +2818,7 @@ class asanAI {
 			return res;
 		});
 
-		var _dim = this.get_dim(synched);
+		var _dim = this.#get_dim(synched);
 
 		var canvas = $(`<canvas height=${_dim[0]} width=${_dim[1]} />`)[0];
 
@@ -2844,14 +2826,14 @@ class asanAI {
 
 		for (var image_idx = 0; image_idx < _dim[0]; image_idx++) {
 			var this_synched = synched[0];
-			var _grid_canvas = this.draw_grid(canvas, this.pixel_size, this_synched, 1, "", "");
+			var _grid_canvas = this.#draw_grid(canvas, this.pixel_size, this_synched, 1, "", "");
 			$(write_to_div).append(_grid_canvas);
 		}
 	}
 
-	_show_output (predictions_tensor, write_to_div) {
+	#_show_output (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
-			this.err("[_show_output] predctions tensor (first parameter) is not a tensor");
+			this.err("[#_show_output] predctions tensor (first parameter) is not a tensor");
 			return;
 		}
 
@@ -2860,18 +2842,18 @@ class asanAI {
 			if($write_to_div.length == 1) {
 				write_to_div = $write_to_div[0];
 			} else {
-				this.err(`[_show_output] Could not find div to write to by id ${write_to_div}`);
+				this.err(`[#_show_output] Could not find div to write to by id ${write_to_div}`);
 				return;
 			}
 		} else if(!write_to_div instanceof HTMLElement) {
-			this.err(`[_show_output] write_to_div is not a HTMLElement`);
+			this.err(`[#_show_output] write_to_div is not a HTMLElement`);
 			return;
 		}
 
 		if(this.model.output.shape.length == 2) {
-			this._predict_table(predictions_tensor, write_to_div);
+			this.#_predict_table(predictions_tensor, write_to_div);
 		} else if(this.model.output.shape.length == 4) {
-			this._show_images_in_output(predictions_tensor, write_to_div)
+			this.#_show_images_in_output(predictions_tensor, write_to_div)
 		} else {
 			var error = `Unimplemented output shape: [${this.model.output.shape.join(", ")}]`;
 			this.err(error);
@@ -2879,9 +2861,9 @@ class asanAI {
 		}
 	}
 
-	_predict_table (predictions_tensor, write_to_div) {
+	#_predict_table (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
-			this.err("[_predict_table] Predictions tensor is (first parameter) is not a tensor");
+			this.err("[#_predict_table] Predictions tensor is (first parameter) is not a tensor");
 			return;
 		}
 
@@ -2891,11 +2873,11 @@ class asanAI {
 				if($write_to_div.length == 1) {
 					write_to_div = $write_to_div[0];
 				} else {
-					this.err(`[_predict_table] Could not find div to write to by id ${write_to_div}`);
+					this.err(`[#_predict_table] Could not find div to write to by id ${write_to_div}`);
 					return;
 				}
 			} else if(!write_to_div instanceof HTMLElement) {
-				this.err(`[_predict_table] write_to_div is not a HTMLElement`);
+				this.err(`[#_predict_table] write_to_div is not a HTMLElement`);
 				return;
 			}
 		}
@@ -2914,7 +2896,7 @@ class asanAI {
 		var html = "<table class='predict_table'>";
 
 		for (var i = 0; i < predictions[0].length; i++) {
-			html += this._draw_bars_or_numbers(i, predictions[0], max);
+			html += this.#_draw_bars_or_numbers(i, predictions[0], max);
 		}
 
 		html += "</table>";
@@ -2922,12 +2904,12 @@ class asanAI {
 		$(write_to_div).html(html);
 	}
 
-	last_layer_is_softmax () {
+	#last_layer_is_softmax () {
 		// TODO
-		var last_layer_is_softmax = this.model.layers[this.model.layers.length - 1].activation 
+		var _last_layer_is_softmax = this.model.layers[this.model.layers.length - 1].activation 
 	}
 
-	_draw_bars_or_numbers (i, predictions, max) {
+	#_draw_bars_or_numbers (i, predictions, max) {
 		var label = this.labels[i % this.labels.length];
 		var val = predictions[i];
 		var w = Math.floor(val * this.bar_width);
@@ -2984,7 +2966,7 @@ class asanAI {
 
 	set_labels (_l) {
 		if(Array.isArray(_l)) {
-			if(this.get_dim(_l).length == 1) {
+			if(this.#get_dim(_l).length == 1) {
 				this.labels = _l;
 
 				if(this.model) {
