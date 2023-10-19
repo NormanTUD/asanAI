@@ -1927,7 +1927,7 @@ class asanAI {
 				var max = Math.max(...flattened_input);
 				var min = Math.min(...flattened_input);
 
-				this.log("max: " + max + ", min: " + min);
+				//this.log("max: " + max + ", min: " + min);
 
 				var range = tf.sub(max, min);
 
