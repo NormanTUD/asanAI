@@ -2,12 +2,12 @@
 
 class asanAI {
 	#is_dark_mode = false;
-	show_bars_instead_of_numbers = true;
-	max_neurons_fcnn = 32;
+	#show_bars_instead_of_numbers = true;
+	#max_neurons_fcnn = 32;
 	#draw_internal_states = false;
 	#draw_internal_states_div = "";
-	pixel_size = 3;
-	divide_by = 1;
+	#pixel_size = 3;
+	#divide_by = 1;
 	model_summary_div = null;
 	labels = [];
 	bar_width = 100;
@@ -54,7 +54,7 @@ class asanAI {
 
 			if(Object.keys(args[0]).includes("divide_by")) {
 				if(typeof(args[0].divide_by) == "number" || this.#looks_like_number(args[0].divide_by)) {
-					this.divide_by= this.parse_float(args[0].divide_by);
+					this.#divide_by= this.parse_float(args[0].divide_by);
 				} else {
 					throw new Error("divide_by is not a number");
 				}
@@ -62,7 +62,7 @@ class asanAI {
 
 			if(Object.keys(args[0]).includes("max_neurons_fcnn")) {
 				if(typeof(args[0].max_neurons_fcnn) == "number") {
-					this.max_neurons_fcnn = args[0].max_neurons_fcnn;
+					this.#max_neurons_fcnn = args[0].max_neurons_fcnn;
 				} else {
 					throw new Error("max_neurons_fcnn is not a number");
 				}
@@ -186,7 +186,7 @@ class asanAI {
 			console.log(e);
 		}
 
-		var max_neurons_fcnn = this.max_neurons_fcnn;
+		var max_neurons_fcnn = this.#max_neurons_fcnn;
 
 		if(units > max_neurons_fcnn && use_max_layer_size) {
 			this.log("FCNN-Visualization: Units is " + units + ", which is bigger than " + max_neurons_fcnn + ". " + max_neurons_fcnn + " is the maximum, it will get set to this for layer " + i);
@@ -1880,9 +1880,9 @@ class asanAI {
 			return;
 		}
 
-		if(this.#looks_like_number("" + this.divide_by)) {
+		if(this.#looks_like_number("" + this.#divide_by)) {
 			_tensor = tf.tidy(() => {
-				var new_tensor = tf.div(_tensor, this.divide_by);
+				var new_tensor = tf.div(_tensor, this.#divide_by);
 				return new_tensor;
 			});
 		}
@@ -2024,7 +2024,7 @@ class asanAI {
 				try {
 					var _data = asanai_this.resizeNearestNeighbor(image, [asanai_this.model_height, asanai_this.model_width]);
 					var resized = asanai_this.expand_dims(_data);
-					//resized = asanai_this.tf_div(resized, asanai_this.divide_by);
+					//resized = asanai_this.tf_div(resized, asanai_this.#divide_by);
 
 					var res;
 
@@ -2297,7 +2297,7 @@ class asanAI {
 	}
 
 	#draw_grid (canvas, pixel_size, colors, black_and_white, onclick, data_hash, _class="") {
-		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
+		this.assert(typeof(this.#pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.#pixel_size));
 		this.assert(this.#get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.#get_dim(colors).join(", ") +"]");
 
 		this.#scaleNestedArray(colors);
@@ -2307,8 +2307,8 @@ class asanAI {
 		var _height = colors.length;
 		var _width = colors[0].length;
 
-		$(canvas).attr("width", _width * this.pixel_size);
-		$(canvas).attr("height", _height * this.pixel_size);
+		$(canvas).attr("width", _width * this.#pixel_size);
+		$(canvas).attr("height", _height * this.#pixel_size);
 		if(_class) {
 			$(canvas).attr("class", _class);
 		}
@@ -2329,8 +2329,8 @@ class asanAI {
 		var min = 0;
 		var max = 0;
 
-		for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
-			for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
+		for (var x = 0, i = 0; i < _width; x += this.#pixel_size, i++) {
+			for (var y = 0, j = 0; j < _height; y += this.#pixel_size, j++) {
 				var red, green, blue;
 
 				if(black_and_white) {
@@ -2347,8 +2347,8 @@ class asanAI {
 				var pixel = {
 					x: x,
 					y: y,
-					w: this.pixel_size,
-					h: this.pixel_size,
+					w: this.#pixel_size,
+					h: this.#pixel_size,
 					fill: color,
 					stroke: color
 				};
@@ -2423,12 +2423,12 @@ class asanAI {
 	}
 
 	get_pixel_size () {
-		return this.pixel_size;
+		return this.#pixel_size;
 	}
 
 	set_pixel_size (_new) {
 		if(this.#looks_like_number(_new)) {
-			this.pixel_size = this.parse_int(_new);
+			this.#pixel_size = this.parse_int(_new);
 		}
 	}
 
@@ -2459,7 +2459,7 @@ class asanAI {
 						canvas = this.#get_canvas_in_class(layer, "image_grid");
 					}
 
-					ret.push(this.#draw_grid(canvas, this.pixel_size, colors[0], 0, "", ""));
+					ret.push(this.#draw_grid(canvas, this.#pixel_size, colors[0], 0, "", ""));
 				} else {
 					for (var i = 0; i < _num_channels; i++) {
 						if(canvas_type == "input") {
@@ -2482,7 +2482,7 @@ class asanAI {
 							return this.array_sync(slice);
 						});
 
-						var _grid_canvas = this.#draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", "");
+						var _grid_canvas = this.#draw_grid(canvas, this.#pixel_size, _slice_array[0], 1, "", "");
 
 						ret.push(_grid_canvas);
 						this.dispose(inputTensor);
@@ -2769,13 +2769,13 @@ class asanAI {
 	}
 
 	get_divide_by () {
-		return this.divide_by;
+		return this.#divide_by;
 	}
 
 	set_divide_by (number) {
 		if(this.#looks_like_number(number)) {
-			this.divide_by = this.parse_float(number);
-			return this.divide_by;
+			this.#divide_by = this.parse_float(number);
+			return this.#divide_by;
 		}
 
 		this.err(`"${number}" does not seem to be a number. Cannot set it.`);
@@ -2826,7 +2826,7 @@ class asanAI {
 
 		for (var image_idx = 0; image_idx < _dim[0]; image_idx++) {
 			var this_synched = synched[0];
-			var _grid_canvas = this.#draw_grid(canvas, this.pixel_size, this_synched, 1, "", "");
+			var _grid_canvas = this.#draw_grid(canvas, this.#pixel_size, this_synched, 1, "", "");
 			$(write_to_div).append(_grid_canvas);
 		}
 	}
@@ -2927,7 +2927,7 @@ class asanAI {
 		var label_element = ` class='label_element' style='${label_element_css}' `;
 		var label_element_best_result = ` class='label_element best_result' style='${best_result_css} ${label_element_css}' `;
 
-		if(this.show_bars_instead_of_numbers) {
+		if(this.#show_bars_instead_of_numbers) {
 			if(label) {
 				if(val == max) {
 					html =`<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.max_bar_color}; margin-wtop: 2px; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
