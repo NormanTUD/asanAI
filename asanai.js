@@ -2292,7 +2292,7 @@ class asanAI {
 			_uuid = uuidv4();
 			_uuid_str = " id='" + _uuid + "'";
 		}
-		var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image"}).prop({
+		var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image", style: 'margin: 5px'}).prop({
 			width: 0,
 			height: 0
 		});
