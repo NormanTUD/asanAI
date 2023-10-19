@@ -2319,6 +2319,7 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
+					console.log(colors[j][i]);
 					red = green = blue = this.parse_int(colors[j][i]);
 				} else {
 					red = this.parse_int(colors[j][i][0]);

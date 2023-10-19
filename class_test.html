@@ -10,7 +10,7 @@
 	<body>
 		<h1>asanAI.js test</h1>
 
-		<img id="test_image" src="_gui/logo.png" />
+		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
 		<pre id="test_image_prediction"></pre>
 		<pre id="memory"></pre>
 		<pre id="summary_pre"></pre>
@@ -47,14 +47,14 @@
 
 				asanai.set_labels(["a", "b", "c", "d"]);
 
-				//asanai.show_internals("internal_states");
+				asanai.show_internals("internal_states");
 				//asanai.hide_internals();
 
 				//asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
 				asanai.predict_image("test_image", "test_image_prediction");
 
-				//asanai.draw_fcnn("fcnn_div");
+				asanai.draw_fcnn("fcnn_div");
 
 				asanai.write_model_summary("summary_pre")
 
