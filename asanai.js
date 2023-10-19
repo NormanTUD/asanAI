@@ -147,7 +147,7 @@ class asanAI {
 			return;
 		}
 
-		if(!Object.keys(model).includes("layers")) {
+		if(!Object.keys(this.model).includes("layers")) {
 			this.wrn("this.model.layers not found for restart_fcnn");
 			return;
 		}
@@ -1670,6 +1670,70 @@ class asanAI {
 		} else {
 			return true;
 		}
+	}
+
+	predict_image (img_element_or_div, write_to_div="") {
+		if(!this.model) {
+			this.err(`[predict_image] Cannot predict image without a loaded model`);
+			return;
+		}
+
+		if(write_to_div) {
+			if(typeof(write_to_div) == "string") {
+				var $write_to_div = $("#" + write_to_div);
+				if($write_to_div.length == 1) {
+					write_to_div = $write_to_div[0];
+				} else {
+					this.err(`[predict_image] Could not find div to write to by id ${write_to_div}`);
+					return;
+				}
+			} else if(!write_to_div instanceof HTMLElement) {
+				this.err(`[predict_image] write_to_div is not a HTMLElement`);
+				reteurn;
+			}
+		}
+
+		if(typeof(img_element_or_div) == "string") {
+			var $img_element_or_div = $("#" + img_element_or_div);
+			if($img_element_or_div.length == 1) {
+				img_element_or_div = $img_element_or_div[0];
+			} else {
+				this.err(`[predict_image] Cannot find exactly one element titled ${img_element_or_div}`);
+				return;
+			}
+		}
+
+		var valid_tags = ["CANVAS", "IMG"];
+		if(!valid_tags.includes(img_element_or_div.tagName)) {
+			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_element_or_div.tagName}, but should be in [${valid_tags.join(", ")}]`);
+			return;
+		}
+
+		var model_input_shape = this.model.input.shape;
+
+		if(model_input_shape.length != 4) {
+			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${input_shape.join(", ")}]`);
+			return;
+		}
+
+		var _height = model_input_shape[1];
+		var _width = model_input_shape[2];
+
+		var data = this.tidy(() => {
+			var image_tensor = this.expand_dims(this.fromPixels(img_element_or_div));
+			image_tensor = this.resizeNearestNeighbor(image_tensor, [_height, _width]);
+			return image_tensor;
+		});
+
+		var result = this.tidy(() => { return this.array_sync(this.predict_manually(data)) });
+
+		this.dispose(data);
+
+		if(write_to_div) {
+			$(write_to_div).html(JSON.stringify(result));
+		}
+
+		return result;
 	}
 
 	predict_manually (_tensor) {
