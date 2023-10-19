@@ -2376,7 +2376,7 @@ class asanAI {
 						}
 
 						var inputTensor = this.tensor(colors);
-						this.log("slice_start");
+
 						var slice = this.tidy(() => {
 							var _h = inputTensor.shape[1];
 							var _w = inputTensor.shape[2];
@@ -2384,17 +2384,12 @@ class asanAI {
 
 							return _slice;
 						});
-						this.log("slice_end");
 
-						this.log("sync slice_start");
 						var _slice_array = this.tidy(() => {
 							return this.array_sync(slice);
 						});
-						this.log("sync slice_end");
 
-						this.log("canvas_start");
 						var _grid_canvas = this.draw_grid(canvas, this.pixel_size, _slice_array[0], 1, "", this.divide_by, "");
-						this.log("canvas_end");
 
 
 						ret.push(_grid_canvas);
