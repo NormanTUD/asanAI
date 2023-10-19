@@ -303,7 +303,6 @@ class asanAI {
 			canvas = $canvas[0];
 			$("#" + divname).append(canvas);
 		} else {
-			this.log("B");
 			canvas = canvas[0];
 		}
 
