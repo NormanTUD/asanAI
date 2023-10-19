@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>asanai.js-test</title>
+		<title>asanai.js</title>
 		<script src='asanai.js' crossorigin></script>
 		<script src='tf/tf.min.js' crossorigin></script>
 		<script src='libs/jquery.js' crossorigin></script>
 		<script src='libs/plotly-latest.min.js' crossorigin></script>
 	</head>
 	<body>
-		<h1>asanAI.js test</h1>
-
+		<pre id="memory"></pre>
 		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
 		<pre id="test_image_prediction"></pre>
-		<pre id="memory"></pre>
 		<pre id="summary_pre"></pre>
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 		<div id="webcam_prediction"></div>
@@ -25,8 +23,8 @@
 
 			$(document).ready(function() {
 				var model_data = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu", kernelInitializer: "ones"}},
-					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu", kernelInitializer: "glorotUniform"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu", biasInitializer: "ones"}},
 					{flatten: {}},
 					{dense: {units: 5, activation: "relu"}},
 					{dense: {units: 4, activation: "softmax"}}
