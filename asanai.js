@@ -20,6 +20,7 @@ class asanAI {
 		this.pixel_size = 3;
 		this.divide_by = 1;
 		this.model_summary_div = null;
+		this.labels = [];
 
 		this.kernel_pixel_size = 3;
 
@@ -30,6 +31,18 @@ class asanAI {
 		this.model = null;
 
 		if(args.length == 1) {
+			if(Object.keys(args[0]).includes("labels")) {
+				if(Array.isArray(args[0].labels)) {
+					if(get_dim(args[0].labels) == 1) {
+						this.labels = args[0].labels;
+					} else {
+						throw new Error("labels cannot be a multdimensional array");
+					}
+				} else {
+					throw new Error("labels must be an array");
+				}
+			}
+
 			if(Object.keys(args[0]).includes("model")) {
 				if(this.is_model(args[0].model)) {
 					this.model = args[0].model;
@@ -1789,13 +1802,14 @@ class asanAI {
 			return image_tensor;
 		});
 
-		var result = this.tidy(() => { return this.array_sync(this.predict_manually(data)) });
-
-		this.dispose(data);
+		var result = this.predict_manually(data);
 
 		if(write_to_div) {
-			$(write_to_div).html(JSON.stringify(result));
+			$(write_to_div).html(this._predict_table(result, write_to_div));
 		}
+
+		var result_array  = this.tidy(() => { return this.array_sync(result) });
+		this.dispose(data);
 
 		return result;
 	}
@@ -2677,19 +2691,21 @@ class asanAI {
 				if($write_to_div.length == 1) {
 					write_to_div = $write_to_div[0];
 				} else {
-					this.err(`[predict_image] Could not find div to write to by id ${write_to_div}`);
+					this.err(`[_predict_table] Could not find div to write to by id ${write_to_div}`);
 					return;
 				}
 			} else if(!write_to_div instanceof HTMLElement) {
-				this.err(`[predict_image] write_to_div is not a HTMLElement`);
+				this.err(`[_predict_table] write_to_div is not a HTMLElement`);
 				return;
 			}
 		}
 
-		var predictions = array_sync(predictions_tensor);
+		var asanai_this = this;
+		var predictions = tf.tidy(() => { return asanai_this.array_sync(predictions_tensor); });
 
 		var max = 0;
 
+		this.log(predictions);
 		for (var i = 0; i < predictions[0].length; i++) {
 			if(max < predictions[0][i]) {
 				max = predictions[0][i];
@@ -2699,34 +2715,36 @@ class asanAI {
 		var html = "<table class='predict_table'>";
 
 		for (var i = 0; i < predictions[0].length; i++) {
-			html += draw_bars_or_numbers(i, predictions, max);
+			html += this._draw_bars_or_numbers(i, predictions[0], max);
 		}
 
 		html += "</table>";
 
+		this.log(html);
 		$(write_to_div).html(html);
 	}
 
-
-	draw_bars_or_numbers (i, predictions, max) {
-		var label = labels[i % labels.length];
+	_draw_bars_or_numbers (i, predictions, max) {
+		var label = this.labels[i % this.labels.length];
 		var val = predictions[0][i];
 		var w = Math.floor(val * 50);
 
 		var html = "";
 
+		var bar_style = " style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: 50px;' "
+
 		if(this.show_bars_instead_of_numbers) {
 			if(label) {
 				if(val == max) {
-					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span class='highest_bar' style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
+					html = "<tr><td class='label_element'>" + label + `</td><td><span ${bar_style}><span class='highest_bar' style='margin-top: 2px; width: ` + w + "px'></span></span></td></tr>";
 				} else {
-					html = "<tr><td class='label_element'>" + label + "</td><td><span class='bar'><span style='margin-top: 2px; width: " + w + "px'></span></span></td></tr>";
+					html = "<tr><td class='label_element'>" + label + `</td><td><span ${bar_style}><span style='margin-top: 2px; width: ` + w + "px'></span></span></td></tr>";
 				}
 			} else {
 				if(val == max) {
-					html = "<tr><td><span class='bar'><span class='highest_bar' style='width: " + w + "px'></span></span></td></tr>";
+					html = `<tr><td><span ${bar_style}><span class='highest_bar' style='width: ` + w + "px'></span></span></td></tr>";
 				} else {
-					html = "<tr><td><span class='bar'><span style='width: " + w + "px'></span></span></td></tr>";
+					html = `<tr><td><span ${bar_style}><span style='width: ` + w + "px'></span></span></td></tr>";
 				}
 			}
 		} else {
@@ -2746,5 +2764,21 @@ class asanAI {
 		}
 
 		return html;
+	}
+
+	get_labels () {
+		return this.labels;
+	}
+
+	set_labels (_l) {
+		if(Array.isArray(_l)) {
+			if(get_dim(_l) == 1) {
+				this.labels = _l;
+			} else {
+				throw new Error("labels cannot be a multdimensional array");
+			}
+		} else {
+			throw new Error("labels must be an array");
+		}
 	}
 }
