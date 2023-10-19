@@ -20,6 +20,8 @@ class asanAI {
 		this.divide_by = 1;
 		this.model_summary_div = null;
 
+		this.kernel_pixel_size = 3;
+
 		this.started_webcam = false;
 		this.camera = null
 		this.last_video_element = null;
@@ -35,6 +37,20 @@ class asanAI {
 					this.model_width = this.model.input.shape[1];
 				} else {
 					throw new Error("model is not a valid this.model");
+				}
+			}
+
+			if(Object.keys(args[0]).includes("model_data")) {
+				if(!Object.keys(args[0]).includes("optimizer_config")) {
+					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
+				}
+				this.model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
+
+				if(this.model) {
+					this.model_height = this.model.input.shape[1];
+					this.model_width = this.model.input.shape[1];
+				} else {
+					throw new Error(`Could not load model properly. Check the logs.`);
 				}
 			}
 
@@ -72,6 +88,53 @@ class asanAI {
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
 		}
+	}
+
+	create_model_from_model_data (model_data, optimizer_config) {
+		this.assert(Array.isArray(model_data), "[create_model_from_model_data] model data is not an array");
+
+		if(!optimizer_config) {
+			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the model.");
+			return;
+		}
+
+		if(!typeof(optimizer_config) == "object") {
+			this.err("[create_model_from_model_data] optimizer_config must be a associative array.");
+			return;
+		}
+
+		if(model_data.length == 0) {
+			this.err(`[create_model_from_model_data] model_data has no layers`);
+			return;
+		}
+
+		var model_uuid = this.uuidv4();
+		var __model = this.tf_sequential(model_uuid);
+
+		for (var layer_idx = 0; layer_idx < model_data.length; layer_idx++) {
+			var layer = model_data[layer_idx];
+
+			var keys = Object.keys(layer);
+			this.assert(keys.length == 1, `layer ${layer_idx} has ${keys.length} values instead of 1`)
+
+			var layer_name = keys[0];
+			var layer_config = layer[layer_name];
+
+			var code = `__model.add(tf.layers.${layer_name}(layer_config))`;
+
+			eval(code);
+		}
+
+		if(!__model.layers.length) {
+			this.err("[create_model_from_model_data] Could not add any layers.");
+			return;
+		}
+
+		__model.compile(optimizer_config);
+
+		this.model = __model;
+
+		return __model;
 	}
 
 	summary () {
@@ -145,7 +208,7 @@ class asanAI {
 			return;
 		}
 
-		if(!Object.keys(model).includes("layers")) {
+		if(!Object.keys(this.model).includes("layers")) {
 			this.wrn("this.model.layers not found for restart_fcnn");
 			return;
 		}
@@ -568,6 +631,17 @@ class asanAI {
 		return res;
 	}
 
+	tf_to_int (...args) {
+		this._register_tensors(...args);
+		var first_tensor = args.shift();
+		var res = first_tensor.toInt();
+
+		this.custom_tensors["" + res.id] = [this.get_stack_trace(), res, this.tensor_print_to_string(res)];
+		this.clean_custom_tensors();
+
+		return res;
+	}
+
 	tf_to_float (...args) {
 		this._register_tensors(...args);
 		var first_tensor = args.shift();
@@ -895,41 +969,43 @@ class asanAI {
 
 		res.originalAdd = res.add;
 
+		var asanai_this = this;
+
 		res.add = function (...args) {
 			var r = res.originalAdd(...args);
 
 			try {
 				var k = res.layers[res.layers.length - 1].kernel;
 				if(k) {
-					this.custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
+					asanai_this.custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"];
 				}
 			} catch (e) {
-				this.wrn(e);
+				asanai_this.wrn(e);
 			}
 
 			try {
 				var b = res.layers[res.layers.length - 1].bias;
 
 				if(b) {
-					this.custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
+					asanai_this.custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"];
 				}
 			} catch (e) {
-				this.wrn(e);
+				asanai_this.wrn(e);
 			}
 
-			this.clean_custom_tensors();
+			asanai_this.clean_custom_tensors();
 
 			return r;
 		};
 
-		this.custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
+		asanai_this.custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
 
-		this.clean_custom_tensors();
+		asanai_this.clean_custom_tensors();
 
 		return res;
 	}
 
-	 buffer(...args) {
+	buffer(...args) {
 		this._register_tensors(...args);
 		try {
 			var res = tf.buffer(...args);
@@ -1659,6 +1735,70 @@ class asanAI {
 		}
 	}
 
+	predict_image (img_element_or_div, write_to_div="") {
+		if(!this.model) {
+			this.err(`[predict_image] Cannot predict image without a loaded model`);
+			return;
+		}
+
+		if(write_to_div) {
+			if(typeof(write_to_div) == "string") {
+				var $write_to_div = $("#" + write_to_div);
+				if($write_to_div.length == 1) {
+					write_to_div = $write_to_div[0];
+				} else {
+					this.err(`[predict_image] Could not find div to write to by id ${write_to_div}`);
+					return;
+				}
+			} else if(!write_to_div instanceof HTMLElement) {
+				this.err(`[predict_image] write_to_div is not a HTMLElement`);
+				reteurn;
+			}
+		}
+
+		if(typeof(img_element_or_div) == "string") {
+			var $img_element_or_div = $("#" + img_element_or_div);
+			if($img_element_or_div.length == 1) {
+				img_element_or_div = $img_element_or_div[0];
+			} else {
+				this.err(`[predict_image] Cannot find exactly one element titled ${img_element_or_div}`);
+				return;
+			}
+		}
+
+		var valid_tags = ["CANVAS", "IMG"];
+		if(!valid_tags.includes(img_element_or_div.tagName)) {
+			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_element_or_div.tagName}, but should be in [${valid_tags.join(", ")}]`);
+			return;
+		}
+
+		var model_input_shape = this.model.input.shape;
+
+		if(model_input_shape.length != 4) {
+			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${input_shape.join(", ")}]`);
+			return;
+		}
+
+		var _height = model_input_shape[1];
+		var _width = model_input_shape[2];
+
+		var data = this.tidy(() => {
+			var image_tensor = this.expand_dims(this.fromPixels(img_element_or_div));
+			image_tensor = this.resizeNearestNeighbor(image_tensor, [_height, _width]);
+			return image_tensor;
+		});
+
+		var result = this.tidy(() => { return this.array_sync(this.predict_manually(data)) });
+
+		this.dispose(data);
+
+		if(write_to_div) {
+			$(write_to_div).html(JSON.stringify(result));
+		}
+
+		return result;
+	}
+
 	predict_manually (_tensor) {
 		if(!this.model) {
 			this.err("Cannot predict without a model");
@@ -1837,7 +1977,6 @@ class asanAI {
 
 
 	visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25) {
-		// Create or retrieve the canvas element
 		var canvas = document.createElement("canvas");
 		canvas.id = "neurons_canvas_" + this.uuidv4();
 		canvas.classList.add("neurons_canvas_class");
@@ -1853,10 +1992,11 @@ class asanAI {
 		var ctx = canvas.getContext("2d");
 		var blocksPerRow = Math.floor(canvas.width / blockWidth);
 
+		this.scaleNestedArray(numberArray);
+
 		for (var i = 0; i < numberArray.length; i++) {
 			var value = numberArray[i];
-			var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
-			var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
+			var color = "rgb(" + value + "," + value + "," + value + ")";
 
 			var x = (i % blocksPerRow) * blockWidth;
 			var y = Math.floor(i / blocksPerRow) * blockHeight;
@@ -1895,6 +2035,54 @@ class asanAI {
 		}
 	}
 
+	normalize_to_image_data(input_data) {
+		var res = this.tidy(() => {
+			var flattened_input = input_data;
+
+			if(this.is_tf_tensor(flattened_input)) {
+				flattened_input = this.array_sync(flattened_input);
+			}
+
+			while (this.get_shape_from_array(flattened_input).length > 1) {
+				flattened_input = flattened_input.flat();
+			}
+
+			var max = Math.max(...flattened_input);
+			var min = Math.min(...flattened_input);
+
+			//this.log("max: " + max + ", min: " + min);
+
+			var range = tf.sub(max, min);
+
+			if(!this.is_tf_tensor(input_data)) {
+				input_data = this.tensor(input_data);
+			}
+
+			//
+			var divisor = max - min;
+
+			var multiplicator = tf.sub(input_data, min);
+
+			if(divisor == 0) {
+				return this.array_sync(input_data);
+			}
+
+			var twofiftyfive = tf.ones(input_data.shape);
+			twofiftyfive = tf.mul(twofiftyfive, 1);
+
+			var divisor_tensor = tf.ones(input_data.shape);
+			divisor_tensor = tf.mul(divisor_tensor, divisor);
+
+			var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
+
+			var _r = this.array_sync(scaled_tensor);
+
+			return _r;
+		});
+
+		return res;
+	}
+
 	_draw_internal_states (layer, inputs, applied) {
 		var number_of_items_in_this_batch = inputs.shape[0];
 		//log("number_of_items_in_this_batch: " + number_of_items_in_this_batch);
@@ -1907,38 +2095,14 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("" + e);
+			this.err("Cannot get layer-name: " + e);
 
 			return;
 		}
 
 		for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
-			var asanai_this = this;
-			var input_data = this.tidy(() => {
-				return asanai_this.array_sync(inputs);
-			});
-
-			input_data = this.tidy(() => {
-				var flattened_input = input_data;
-				while (this.get_shape_from_array(flattened_input).length > 1) {
-					flattened_input = flattened_input.flat();
-				}
-
-				var max = Math.max(...flattened_input);
-				var min = Math.min(...flattened_input);
-
-				//this.log("max: " + max + ", min: " + min);
-
-				var range = tf.sub(max, min);
-
-				var normalized_tensor = tf.div(tf.sub(this.tensor(input_data), min), range);
-
-				var scaled_tensor = tf.mul(normalized_tensor, 255);
-
-				return this.array_sync(scaled_tensor);
-			});
-
-			var output_data = this.tidy(() => { return asanai_this.array_sync(applied) });
+			var input_data = this.normalize_to_image_data(inputs);
+			var output_data = this.normalize_to_image_data(applied);
 
 			var __parent = $("#" + this.internal_states_div);
 
@@ -1971,65 +2135,67 @@ class asanAI {
 					var filters = 3;
 
 					kernel_data = this.tidy(() => {
-						return this.array_sync(this.tf_transpose(this.model.layers[layer].kernel.val, [filters, ks_x, ks_y, number_filters]));
+						return this.array_sync(
+							this.tf_transpose(
+								this.model.layers[layer].kernel.val,
+								[filters, ks_x, ks_y, number_filters]
+							)
+						);
 					});
 				}
+
+
+				kernel_data = this.normalize_to_image_data(kernel_data);
 			}
 
-			var canvas_input = this.draw_image_if_possible(layer, "input", input_data);
-			var canvas_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
-			var canvas_output = this.draw_image_if_possible(layer, "output", output_data);
+			var canvasses_input = this.draw_image_if_possible(layer, "input", input_data);
+			var canvasses_kernel = this.draw_image_if_possible(layer, "kernel", kernel_data);
+			var canvasses_output = this.draw_image_if_possible(layer, "output", output_data);
 
-			if(canvas_output.length && canvas_input.length) {
-				for (var j = 0; j < canvas_input.length; j++) {
-					for (var i = 0; i < canvas_output.length; i++) {
-						var img_output = canvas_output[i];
-						if(Object.keys(canvas_kernel).includes(i + "")) {
-							var img_kernel = canvas_kernel[i];
-							if(layer == 0) {
-								input.append(canvas_input[j]).show();
-							}
-							kernel.append(img_kernel).show();
-						}
-						output.append(img_output).show();
-					}
+			if(layer == 0) {
+				for (var input_canvas_idx = 0; input_canvas_idx < canvasses_input.length; input_canvas_idx++) {
+					input.append(canvasses_input[input_canvas_idx]).show();
 				}
-			} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-				for (var i = 0; i < canvas_output.length; i++) {
-					var img_output = canvas_output[i];
-					if(layer == 0) {
-						input.append(canvas_input).show();
-					}
-					if(Object.keys(canvas_kernel).includes(i + "")) {
-						var img_kernel = canvas_kernel[i];
-						kernel.append(img_kernel).show();
-					}
-					output.append(img_output).show();
-				}
+			}
+
+			if(this.get_shape_from_array(output_data[0]).length == 1) {
+				var h = this.visualizeNumbersOnCanvas(output_data[0])
+				equations.append(h).show();
 			} else {
-				if(canvas_input.nodeName == "CANVAS") {
-					if(layer == 0) {
-						input.append(canvas_input).show();
-					}
-					if(canvas_output.nodeName == "CANVAS") {
-						var img_output = canvas_output;
-						output.append(img_output).show();
-					}
-				} else {
-					if(this.get_shape_from_array(output_data[0]).length == 1) {
-						var h = this.visualizeNumbersOnCanvas(output_data[0])
-						equations.append(h).show();
+				for (var canvasses_output_idx = 0; canvasses_output_idx < canvasses_output.length; canvasses_output_idx++) {
+					output.append(img_output).show();
+					var img_output = canvasses_output[canvasses_output_idx];
+				}
+
+				for (var kernel_canvas_idx = 0; kernel_canvas_idx < canvasses_kernel.length; kernel_canvas_idx++) {
+					if(kernel_canvas_idx in canvasses_kernel) {
+						var this_kernel = canvasses_kernel[kernel_canvas_idx];
+						if(this_kernel) {
+							kernel.append(this_kernel).show();
+						} else {
+							this.log(canvasses_kernel);
+							this.err(`Kernel ${kernel_canvas_idx} for layer ${layer} is false or undefined`)
+						}
 					} else {
-						var h = this.array_to_html(output_data[0]);
-						equations.append(h).show();
+						this.log(canvasses_kernel);
+						this.err(`${kernel_canvas_idx} not in canvasses_kernel for layer ${layer}`);
 					}
 				}
 			}
+
+			/*
+			 else {
+				var h = this.array_to_html(output_data[0]);
+				equations.append(h).show();
+			}
+			*/
 		}
 	}
 
-	draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, onclick, multiply_by, data_hash, _class="") {
+	draw_grid (canvas, pixel_size, colors, black_and_white, onclick, multiply_by, data_hash, _class="") {
 		this.assert(typeof(this.pixel_size) == "number", "pixel_size must be of type number, is " + typeof(this.pixel_size));
+		this.assert(this.get_dim(colors).length == 3, "color input shape is not of length of 3, but: [" + this.get_dim(colors).join(", ") +"]");
+
 		if(!multiply_by) {
 			multiply_by = 1;
 		}
@@ -2061,30 +2227,6 @@ class asanAI {
 		var min = 0;
 		var max = 0;
 
-		if(denormalize) {
-			for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
-				for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
-					var red, green, blue;
-
-					if(black_and_white) {
-						red = green = blue = colors[j][i];
-					} else {
-						red = colors[j][i][0];
-						green = colors[j][i][1];
-						blue = colors[j][i][2];
-					}
-
-					if(red > max) { max = red; }
-					if(green > max) { max = green; }
-					if(blue > max) { max = blue; }
-
-					if(red < min) { min = red; }
-					if(green < min) { min = green; }
-					if(blue < min) { min = blue; }
-				}
-			}
-		}
-
 		for (var x = 0, i = 0; i < _width; x += this.pixel_size, i++) {
 			for (var y = 0, j = 0; j < _height; y += this.pixel_size, j++) {
 				var red, green, blue;
@@ -2095,12 +2237,6 @@ class asanAI {
 					red = colors[j][i][0] * multiply_by;
 					green = colors[j][i][1] * multiply_by;
 					blue = colors[j][i][2] * multiply_by;
-				}
-
-				if(denormalize) {
-					red = this.normalize_to_rgb_min_max(red, min, max);
-					green = this.normalize_to_rgb_min_max(green, min, max);
-					blue = this.normalize_to_rgb_min_max(blue, min, max);
 				}
 
 				var color = "rgb(" + red + "," + green + "," + blue + ")";
@@ -2201,22 +2337,43 @@ class asanAI {
 			var colors_shape = this.get_dim(colors);
 
 			if(colors_shape.length != 4) {
-				//this.log("colors had no length of 3 but [" + this.get_dim(colors).join(", ") + "]");
+				//this.log("colors had no length of 4 but [" + this.get_dim(colors).join(", ") + "]");
 				return false;
 			}
-
-			colors = colors[0];
 
 			colors_shape = this.get_dim(colors);
 
 			if(canvas_type == "output" || canvas_type == "input") {
-				if(canvas_type == "input") {
-					canvas = this.get_canvas_in_class(layer, "input_image_grid");
-				} else {
-					canvas = this.get_canvas_in_class(layer, "image_grid");
-				}
+				//this.log("pixels.shape: [" + this.get_dim(colors).join(", ") + "]");
 
-				ret.push(this.draw_grid(canvas, this.pixel_size, colors, 0, 0, "", this.divide_by, ""));
+				var num_channels = colors_shape[colors_shape.length - 1];
+
+				if(num_channels == 3) {
+					if(canvas_type == "input") {
+						canvas = this.get_canvas_in_class(layer, "input_image_grid");
+					} else {
+						canvas = this.get_canvas_in_class(layer, "image_grid");
+					}
+
+					ret.push(this.draw_grid(canvas, this.pixel_size, colors[0], 0, "", this.divide_by, ""));
+				} else {
+					for (var i = 0; i < num_channels; i++) {
+						if(canvas_type == "input") {
+							canvas = this.get_canvas_in_class(layer, "input_image_grid");
+						} else {
+							canvas = this.get_canvas_in_class(layer, "image_grid");
+						}
+
+						var inputTensor = this.tensor(colors);
+						ret.push(this.tidy(() => {
+							var _h = inputTensor.shape[1];
+							var _w = inputTensor.shape[2];
+							var _slice = this.array_sync(inputTensor.slice([0, 0, 0, i], [1, _h, _w, 1]));
+							return this.draw_grid(canvas, this.pixel_size, _slice[0], 1, "", this.divide_by, "");
+						}));
+						this.dispose(inputTensor);
+					}
+				}
 			} else if(canvas_type == "kernel") {
 				var shape = this.get_dim(colors);
 
@@ -2226,7 +2383,9 @@ class asanAI {
 					for (var channel_id = 0; channel_id < shape[1]; channel_id++) {
 						canvas = this.get_canvas_in_class(layer, "filter_image_grid");
 
-						ret.push(this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]));
+						var drawn = this.draw_kernel(canvas, this.kernel_pixel_size, colors[filter_id]);
+
+						ret.push(drawn);
 					}
 				}
 			}
@@ -2260,7 +2419,7 @@ class asanAI {
 			_uuid = uuidv4();
 			_uuid_str = " id='" + _uuid + "'";
 		}
-		var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image"}).prop({
+		var new_canvas = $("<canvas" + _uuid_str + "/>", {class: "layer_image", style: 'margin: 5px'}).prop({
 			width: 0,
 			height: 0
 		});
@@ -2316,15 +2475,19 @@ class asanAI {
 
 		var context = canvasElement.getContext('2d'); // Get the 2D rendering context
 
-		var [n, m, a] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+		var kernel_shape = this.get_dim(pixels);
 
-		if (a === 3) {
+		this.assert(kernel_shape.length == 3, `kernel is not an image, it has shape [${kernel_shape.join(", ")}]`);
+
+		var [_height, _width, channels] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
+
+		if (channels === 3) {
 			// Draw a color image on the canvas and resize it accordingly
-			canvasElement.width = m * rescaleFactor;
-			canvasElement.height = n * rescaleFactor;
+			canvasElement.width = _width * rescaleFactor;
+			canvasElement.height = _height * rescaleFactor;
 
-			for (let i = 0; i < n; i++) {
-				for (let j = 0; j < m; j++) {
+			for (let i = 0; i < _height; i++) {
+				for (let j = 0; j < _width; j++) {
 					var [r, g, b] = pixels[i][j]; // Assuming channels are [red, green, blue]
 					context.fillStyle = `rgb(${r}, ${g}, ${b}`;
 					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
@@ -2332,44 +2495,19 @@ class asanAI {
 			}
 		} else {
 			// Draw only the first channel
-			canvasElement.width = m * rescaleFactor;
-			canvasElement.height = n * rescaleFactor;
+			canvasElement.width = _width * rescaleFactor;
+			canvasElement.height = _height * rescaleFactor;
 
-			for (let i = 0; i < n; i++) {
-				for (let j = 0; j < m; j++) {
+			for (let i = 0; i < _height; i++) {
+				for (let j = 0; j < _width; j++) {
 					const grayscaleValue = pixels[i][j][0]; // Assuming the first channel is grayscale
 					context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue}`;
 					context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
 				}
 			}
 		}
-	}
 
-	normalize_to_rgb_min_max (x, min, max) {
-		this.assert(typeof(x) == "number", "x is not a number");
-		if(typeof(max) != "number" || typeof(min) != "number") {
-			return x;
-		}
-
-		var multiplicator = x - min;
-		var divisor = max - min;
-
-		if(divisor == 0) {
-			return val;
-		}
-
-		var to_be_parsed_as_int = 255 * multiplicator / divisor;
-
-
-		var val = this.parse_int(to_be_parsed_as_int);
-
-		if(val > 255) {
-			val = 255;
-		} else if (val < 0) {
-			val = 0;
-		}
-
-		return val;
+		return canvasElement;
 	}
 
 	draw_rect(ctx, rect) {
