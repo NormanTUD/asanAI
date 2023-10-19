@@ -546,7 +546,7 @@ class asanAI {
 		}
 	}
 
-	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) {
+	draw_fcnn (divname=this.fcnn_div_name, max_neurons=32) { // TODO: max neurons
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `div by id ${divname} could not be found`);
 		
@@ -1689,6 +1689,10 @@ class asanAI {
 		if(this.model.input.shape.length == 4) {
 			this.model_height = this.model.input.shape[1];
 			this.model_width = this.model.input.shape[1];
+		}
+
+		if(this.fcnn_div_name) {
+			this.restart_fcnn();
 		}
 
 		return this_model;
