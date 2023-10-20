@@ -2279,12 +2279,15 @@ class asanAI {
 
 					kernel_data = this.tidy(() => {
 						var res = this.tidy(() => { 
-							var __res = this.array_sync(
-								this.tf_transpose(
-									this.#model.layers[layer].kernel.val,
-									[filters, ks_x, ks_y, number_filters]
-								)
-							);
+
+							var transposed = this.tf_transpose(
+								this.#model.layers[layer].kernel.val,
+								[filters, ks_x, ks_y, number_filters]
+							)
+
+							var __res = this.array_sync(transposed);
+
+							this.dispose(transposed);
 
 							return __res;
 						});
