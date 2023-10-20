@@ -2309,7 +2309,6 @@ class asanAI {
 					});
 				}
 
-
 				kernel_data = tf.tidy(() => { return this.#normalize_to_image_data(kernel_data); });
 			}
 
@@ -2486,6 +2485,18 @@ class asanAI {
 		return dim;
 	}
 
+	get_kernel_pixel_size () {
+		return this.#kernel_pixel_size;
+	}
+
+	set_kernel_pixel_size (_new) {
+		if(this.#looks_like_number(_new)) {
+			this.#kernel_pixel_size = this.#parse_int(_new);
+		} else {
+			throw new Error(`[set_kernel_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
+		}
+	}
+
 	get_pixel_size () {
 		return this.#pixel_size;
 	}
@@ -2493,6 +2504,8 @@ class asanAI {
 	set_pixel_size (_new) {
 		if(this.#looks_like_number(_new)) {
 			this.#pixel_size = this.#parse_int(_new);
+		} else {
+			throw new Error(`[set_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
 		}
 	}
 
