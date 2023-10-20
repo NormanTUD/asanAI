@@ -2298,11 +2298,11 @@ class asanAI {
 								[filters, ks_x, ks_y, number_filters]
 							)
 
-							var __res = this.array_sync(transposed);
+							var _res = this.array_sync(transposed);
 
 							this.dispose(transposed);
 
-							return __res;
+							return _res;
 						});
 
 						return res;
