@@ -3153,9 +3153,9 @@ class asanAI {
 		this.set_labels(unique_categories);
 
 		return {
-			images: imgs,
-			images_tensor: image_tensors_array,
-			category_tensor: category_tensor
+			html_image_elements: imgs,
+			x: image_tensors_array,
+			y: category_tensor
 		};
 	}
 

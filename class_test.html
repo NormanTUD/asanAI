@@ -9,7 +9,9 @@
 	</head>
 	<body>
 		<pre id="memory"></pre>
+		<pre>====</pre>
 		<div id="test_images"></div>
+		<pre>====</pre>
 		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
 		<pre id="test_image_prediction"></pre>
 		<pre id="summary_pre"></pre>
@@ -82,6 +84,18 @@
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+			}
+
+			function load_test_images () {
+				var xxx = asanai.load_image_urls_to_div_and_tensor("test_images", [
+					["traindata/signs/example/a_fire.png", "fire"]
+					["traindata/signs/example/b_mandatory.png", "fire"]
+					["traindata/signs/example/c_prohibition.png", "fire"]
+					["traindata/signs/example/d_rescue.png", "fire"]
+					["traindata/signs/example/e_warning.png", "fire"]
+				], 1);
+
+				console.log(xxx);
 			}
 		</script>
 	</body>
