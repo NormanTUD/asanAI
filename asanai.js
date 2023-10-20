@@ -294,7 +294,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`#draw_new_fcnn cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`[#draw_new_fcnn] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
@@ -2988,5 +2988,53 @@ class asanAI {
 		} else {
 			throw new Error("labels must be an array");
 		}
+	}
+
+	load_image_urls_into_div (divname, ...urls) {
+		var $div = $("#" + divname);
+		if(!$div.length) {
+			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			return;
+		}
+
+		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
+
+		while (this.get_shape_from_array(urls).length > 1) {
+			urls = urls.flat();
+		}
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] urls-array is empty");
+			return;
+		}
+
+		var imgs = [];
+
+		for (var i = 0; i < urls.length; i++) {
+			var url = urls[i];
+
+			this.assert(typeof(url) == "string", `${urls[i]} is not a string but ${typeof(urls[i])}`);
+
+			var height = 50;
+			var width = 50;
+
+			if(this.model_height) {
+				height = this.model_height;
+			}
+
+			if(this.model_width) {
+				height = this.model_width;
+			}
+
+			var _uuid = this.#uuidv4();
+
+			var img = $(`<img id='load_images_into_div_image_${_uuid}' width=${width} height=${height} src='${url}' />`);
+
+			imgs.push(img);
+
+			$div.append(img);
+		}
+
+		return imgs;
 	}
 }
