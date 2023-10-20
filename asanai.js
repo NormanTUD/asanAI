@@ -9,7 +9,7 @@ class asanAI {
 	#max_neurons_fcnn = 32;
 	#draw_internal_states = false;
 	#internal_states_div = "";
-	#pixel_size = 1;
+	#pixel_size = 3;
 	#divide_by = 1;
 	#labels = [];
 	#bar_width = 100;

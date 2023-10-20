@@ -21,6 +21,10 @@
 		<pre id="summary_pre"></pre>
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 		<div id="webcam_prediction"></div>
+
+		Pixel-Size: <input type="range" min="1" max="10" value="3" id="pixel_size" onchange="asanai.set_pixel_size($(this).val())">
+		Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" id="kernel_pixel_size" onchange="asanai.set_kernel_pixel_size($(this).val())">
+
 		<div id="internal_states"></div>
 		<div id="fcnn_div"></div>
 
