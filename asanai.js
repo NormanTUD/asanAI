@@ -1849,6 +1849,7 @@ class asanAI {
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
 		this.dispose(data);
+		this.dispose(result);
 
 		if(_add_to_repredict) {
 			this.#images_to_repredict.push(img_element_or_div);
@@ -2003,13 +2004,17 @@ class asanAI {
 
 			var image;
 			try {
-				image = await this.#camera.capture();
+				if(this.#camera) {
+					image = await this.#camera.capture();
+				} else {
+					throw new Error("camera is null");
+				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				if(("" + e).includes("camera is null")) {
+				if(("" + e).includes("is null") || ("" + e).includes("thrown converting video to pixels")) {
 					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
 					return;
 				} else {
@@ -2141,12 +2146,16 @@ class asanAI {
 		}
 	}
 
-	#normalize_to_image_data(input_data) {
+	#normalize_to_image_data (input_data) {
 		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
 			if(this.is_tf_tensor(flattened_input)) {
-				flattened_input = this.tidy(() => { return this.array_sync(flattened_input); });
+				flattened_input = this.tidy(() => {
+					var res = this.array_sync(flattened_input);
+
+					return res;
+				});
 			}
 
 			while (this.get_shape_from_array(flattened_input).length > 1) {
@@ -3241,6 +3250,12 @@ class asanAI {
 
 		var history = this.#model.fit(_x, _y, args);
 
+		this.set_model(this.#model);
+
 		return history;
+	}
+
+	get_custom_tensors () {
+		return this.#custom_tensors;
 	}
 }
