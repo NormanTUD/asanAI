@@ -142,7 +142,11 @@
 			
 				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 5, shuffle: true});
 
-				console.log("history:", history);
+				if(history) {
+					console.log("history:", history);
+				} else {
+					console.error("training failed");
+				}
 			}
 		</script>
 	</body>
