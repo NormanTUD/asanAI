@@ -1995,7 +1995,20 @@ class asanAI {
 		}
 
 		this.#started_webcam = true;
-		this.#camera = await tf.data.webcam($video_element);
+		try {
+			this.#camera = await tf.data.webcam($video_element);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+
+			}
+
+			if(("" + e).includes("The fetching process for the media resource was aborted by the user agent at the user's request")) {
+				this.err("[show_and_predict_webcam_in_div] " + e)
+				return;
+			} else {
+				throw new Error(e);
+			}
+		}
 
 		while (this.#started_webcam) {
 			if(this.#internal_states_div) {
@@ -3001,7 +3014,7 @@ class asanAI {
 		}
 	}
 
-	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1) {
+	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
 		if(!this.#model) {
 			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
 			return;
@@ -3052,6 +3065,10 @@ class asanAI {
 		var categories = [];
 
 		var unique_categories = [];
+
+		if(shuffle) {
+			urls_and_categories = urls_and_categories.sort((a, b) => 0.5 - Math.random());
+		}
 
 		for (var i = 0; i < urls_and_categories.length; i++) {
 			var _this = urls_and_categories[i];
