@@ -3072,7 +3072,7 @@ class asanAI {
 		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
 		this.assert(Array.isArray(categories), `categories is not an array but ${typeof(categories)}`);
 		this.assert(Array.isArray(unique_categories), `categories is not an array but ${typeof(unique_categories)}`);
-		this.assert(unique_categories.length < categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
+		this.assert(unique_categories.length =< categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
 
 		if(!urls.length) {
 			this.err("[load_image_urls_into_div] urls-array is empty");
@@ -3086,7 +3086,9 @@ class asanAI {
 
 		var imgs = [];
 
-		var image_tensors = this.tidy(() => { return this.tensor(this.ones(this.#model.input.shape)); });
+		var __is = this.#model.input.shape;
+
+		var image_tensors_array = [];
 
 		var category_output = [];
 
@@ -3118,17 +3120,19 @@ class asanAI {
 
 			var asanai_this = this;
 
-			var img_tensor = this.tidy(() => {
-				var _t = asanai_this.expand_dims(asanai_this.fromPixels(img, asanai_this.num_channels));
+			var img_array = this.tidy(() => {
+				var _t = asanai_this.array_sync(asanai_this.fromPixels(img[0], asanai_this.num_channels));
 
 				return _t;
 			});
 
-			image_tensors = this.tidy(() => { this.tf_concat(image_tensors, img_tensor); });
+			image_tensor.push(img_array)
 			category_output.push(unique_categories.indexOf(categories[i]));
 		}
 
 		var category_tensor = this.tensor(category_output);
+
+		var image_tensors = this.tensor(image_tensors);
 
 		this.set_labels(unique_categories);
 
