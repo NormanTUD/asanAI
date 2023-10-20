@@ -1894,7 +1894,11 @@ class asanAI {
 
 		var output;
 		try {
-			output = this.tf_to_float(_tensor);
+			var asanai_this = this;
+
+			output = asanai_this.tidy(() => {
+				return this.tf_to_float(_tensor);
+			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -1919,16 +1923,23 @@ class asanAI {
 
 			if(this.#draw_internal_states) {
 				try {
-					this.#_draw_internal_states(i, input, output);
+					var asanai_this = this;
+					this.tidy(() => {
+						asanai_this.#_draw_internal_states(i, input, output);
+					});
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
 					}
 
-					this.err(e);
+					this.err("" + e);
 				}
 			}
+
+			this.dispose(input);
 		}
+
+		this.dispose(_tensor);
 
 		return output;
 	}
@@ -2165,8 +2176,10 @@ class asanAI {
 		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
+			var tmp;
+
 			if(asanai_this.is_tf_tensor(flattened_input)) {
-				var tmp = asanai_this.array_sync(flattened_input);
+				tmp = asanai_this.array_sync(flattened_input);
 				flattened_input = tmp;
 			}
 
@@ -2204,6 +2217,8 @@ class asanAI {
 
 
 			var _r = asanai_this.array_sync(scaled_tensor);
+
+			asanai_this.dispose(tmp);
 
 			return _r;
 		});
@@ -2279,7 +2294,7 @@ class asanAI {
 				}
 
 
-				kernel_data = this.#normalize_to_image_data(kernel_data);
+				kernel_data = tf.tidy(() => { return this.#normalize_to_image_data(kernel_data); });
 			}
 
 			var canvasses_input = this.#draw_image_if_possible(layer, "input", input_data);
@@ -2316,6 +2331,9 @@ class asanAI {
 					}
 				}
 			}
+
+
+			this.dispose(kernel_data)
 
 			/*
 			 else {
