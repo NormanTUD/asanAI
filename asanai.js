@@ -3196,11 +3196,13 @@ class asanAI {
 			var asanai_this = this;
 
 			category_tensor = this.tidy(() => {
+				var __tensor = category_tensor.toInt();
+
 				var _unique_categories_length = unique_categories.length;
 
-				var _res = asanai_this.oneHot(category_tensor, _unique_categories_length);
+				var _res = asanai_this.oneHot(__tensor, _unique_categories_length);
 
-				asanai_this.dispose(category_tensor);
+				_res.print();
 
 				return _res;
 			});
@@ -3292,8 +3294,23 @@ class asanAI {
 			return;
 		}
 
+		try {
+			var history = this.#model.fit(_x, _y, args);
 
-		var history = this.#model.fit(_x, _y, args);
+			this.set_model(this.#model);
+
+			return history;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("e is null")) {
+				return false;
+			} else {
+				throw new Error(e);
+			}
+		}
 
 		this.set_model(this.#model);
 
