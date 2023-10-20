@@ -2167,7 +2167,7 @@ class asanAI {
 
 			if(this.is_tf_tensor(flattened_input)) {
 				flattened_input = this.tidy(() => {
-					var res = this.array_sync(flattened_input);
+					var res = asanai_this.array_sync(flattened_input);
 
 					return res;
 				});
@@ -2506,8 +2506,14 @@ class asanAI {
 							return _slice;
 						});
 
+						var asanai_this = this;
+
 						var _slice_array = this.tidy(() => {
-							return this.array_sync(slice);
+							var res = asanai_this.array_sync(slice);
+
+							asanai_this.dispose(slice);
+
+							return res;
 						});
 
 						var _grid_canvas = this.#draw_grid(canvas, this.#pixel_size, _slice_array[0], 1, "", "");
