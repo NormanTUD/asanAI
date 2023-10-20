@@ -87,7 +87,7 @@
 			}
 
 			function load_test_images () {
-				var xxx = asanai.load_image_urls_to_div_and_tensor("test_images", [
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
 					["traindata/signs/example/a_fire.png", "fire"],
 					["traindata/signs/example/b_mandatory.png", "mandatory"],
 					["traindata/signs/example/c_prohibition.png", "prohibition"],
@@ -95,19 +95,22 @@
 					["traindata/signs/example/e_warning.png", "warning"]
 				], 1);
 
-				console.log(xxx);
+				console.log(loaded_data);
 			}
 
-			function load_test_images_and_train () {
-				var xxx = asanai.load_image_urls_to_div_and_tensor("test_images", [
+			async function load_test_images_and_train () {
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
 					["traindata/signs/example/a_fire.png", "fire"],
 					["traindata/signs/example/b_mandatory.png", "mandatory"],
 					["traindata/signs/example/c_prohibition.png", "prohibition"],
 					["traindata/signs/example/d_rescue.png", "rescue"],
-					["traindata/signs/example/e_warning.png", "warning"]
+					//["traindata/signs/example/e_warning.png", "warning"]
 				], 1);
+				console.log(loaded_data);
+			
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 10, batchSize: 5});
 
-				console.log(xxx);
+				console.log("history:", history);
 			}
 		</script>
 	</body>
