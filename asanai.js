@@ -3072,7 +3072,7 @@ class asanAI {
 		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
 		this.assert(Array.isArray(categories), `categories is not an array but ${typeof(categories)}`);
 		this.assert(Array.isArray(unique_categories), `categories is not an array but ${typeof(unique_categories)}`);
-		this.assert(unique_categories.length =< categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
+		this.assert(unique_categories.length <= categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
 
 		if(!urls.length) {
 			this.err("[load_image_urls_into_div] urls-array is empty");
@@ -3105,7 +3105,7 @@ class asanAI {
 			}
 
 			if(this.#model_width) {
-				height = this.#model_width;
+				width = this.#model_width;
 			}
 
 			var _uuid = this.#uuidv4();
@@ -3126,19 +3126,19 @@ class asanAI {
 				return _t;
 			});
 
-			image_tensor.push(img_array)
+			image_tensors_array.push(img_array)
 			category_output.push(unique_categories.indexOf(categories[i]));
 		}
 
 		var category_tensor = this.tensor(category_output);
 
-		var image_tensors = this.tensor(image_tensors);
+		image_tensors_array = this.tensor(image_tensors_array);
 
 		this.set_labels(unique_categories);
 
 		return {
 			images: imgs,
-			images_tensor: image_tensors,
+			images_tensor: image_tensors_array,
 			category_tensor: category_tensor
 		};
 	}
