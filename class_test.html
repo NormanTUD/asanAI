@@ -12,8 +12,12 @@
 		<pre>====</pre>
 		<div id="test_images"></div>
 		<pre>====</pre>
-		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
+		<img id="test_image" src="traindata/signs/example/e_warning.png" width=50 height=50 />
 		<pre id="test_image_prediction"></pre>
+
+		<img id="test_image_two" src="traindata/signs/example/c_prohibition.png" width=50 height=50 />
+		<pre id="test_image_two_prediction"></pre>
+
 		<pre id="summary_pre"></pre>
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 		<div id="webcam_prediction"></div>
@@ -46,6 +50,7 @@
 				asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
 				asanai.predict_image("test_image", "test_image_prediction");
+				asanai.predict_image("test_image_two", "test_image_two_prediction");
 
 				asanai.draw_fcnn("fcnn_div");
 
@@ -132,7 +137,7 @@
 
 				console.log(loaded_data);
 			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 5});
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 5, shuffle: true});
 
 				console.log("history:", history);
 

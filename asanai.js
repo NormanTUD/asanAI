@@ -2150,6 +2150,8 @@ class asanAI {
 		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
+			var asanai_this = this;
+
 			if(this.is_tf_tensor(flattened_input)) {
 				flattened_input = this.tidy(() => {
 					var res = this.array_sync(flattened_input);
