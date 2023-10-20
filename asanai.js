@@ -9,7 +9,7 @@ class asanAI {
 	#max_neurons_fcnn = 32;
 	#draw_internal_states = false;
 	#internal_states_div = "";
-	#pixel_size = 3;
+	#pixel_size = 1;
 	#divide_by = 1;
 	#labels = [];
 	#bar_width = 100;
@@ -18,7 +18,7 @@ class asanAI {
 	#num_channels = 3;
 	#default_bar_color = "orange";
 	#max_bar_color = "green";
-	#kernel_pixel_size = 3;
+	#kernel_pixel_size = 5;
 	#model_summary_div = null;
 	#started_webcam = false;
 	#camera = null
@@ -1220,6 +1220,10 @@ class asanAI {
 		}
 	}
 
+	#resizeImage (...args) {
+		return this.#resizeBilinear(...args);
+	}
+
 	#resizeNearestNeighbor(...args) {
 		this.#_register_tensors(...args);
 		try {
@@ -1841,7 +1845,7 @@ class asanAI {
 
 		var data = this.tidy(() => {
 			var image_tensor = this.#expand_dims(this.fromPixels(img_element_or_div, this.#num_channels));
-			image_tensor = this.#resizeNearestNeighbor(image_tensor, [_height, _width]);
+			image_tensor = this.#resizeImage(image_tensor, [_height, _width]);
 			return image_tensor;
 		});
 
@@ -2060,7 +2064,7 @@ class asanAI {
 
 			var worked = this.tidy(() => {
 				try {
-					var _data = asanai_this.#resizeNearestNeighbor(image, [asanai_this.#model_height, asanai_this.#model_width]);
+					var _data = asanai_this.#resizeImage(image, [asanai_this.#model_height, asanai_this.#model_width]);
 					var resized = asanai_this.#expand_dims(_data);
 					//resized = asanai_this.tf_div(resized, asanai_this.#divide_by);
 
@@ -2263,10 +2267,14 @@ class asanAI {
 			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.get_layer_identification(layer) + "</h3>").hide();
 
 			layer_div.show();
-			layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+
+			var style_none = " style='display: none' ";
+			var start = "<div class='data_flow_visualization ";
+
+			layer_div.append(`${start} input_layer_header' ${style_none} id='layer_${layer}_input'><h4>Input:</h4></div>`);
+			layer_div.append(`${start} weight_matrix_header' ${style_none} id='layer_${layer}_kernel'><h4>Weight Matrix:</h4></div>`);
+			layer_div.append(`${start} output_header' ${style_none} id='layer_${layer}_output'><h4>Output:</h4></div>`);
+			layer_div.append(`${start} equations_header' ${style_none} id='layer_${layer}_equations'></div>`);
 
 			var input = $("#layer_" + layer + "_input");
 			var kernel = $("#layer_" + layer + "_kernel");
