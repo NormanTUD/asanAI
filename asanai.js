@@ -3225,27 +3225,27 @@ class asanAI {
 
 	async fit (_x, _y, args={}) {
 		if(!Object.keys(args).length) {
-			this.err(`[] fit: third argument, args, seems to be empty. Must at least contain epochs and batchSize`);
+			this.err(`[fit]: third argument, args, seems to be empty. Must at least contain epochs and batchSize`);
 			return;
 		}
 
 		if(!Object.keys(args).includes("epochs")) {
-			this.err(`[] fit: third argument, args, seems not to cotnain epochs. Must at least contain epochs and batchSize`);
+			this.err(`[fit]: third argument, args, seems not to cotnain epochs. Must at least contain epochs and batchSize`);
 			return;
 		}
 
 		if(!Object.keys(args).includes("batchSize")) {
-			this.err(`[] fit: third argument, args, seems not to cotnain batchSize. Must at least contain epochs and batchSize`);
+			this.err(`[fit]: third argument, args, seems not to cotnain batchSize. Must at least contain epochs and batchSize`);
 			return;
 		}
 
 		if(!this.#model) {
-			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
+			this.err(`[fit] Cannot continue without a loaded model`);
 			return;
 		}
 
 		if(!this.#model.layers) {
-			this.err(`[load_image_urls_into_div] Cannot continue with a model without layers`);
+			this.err(`[fit] Cannot continue with a model without layers`);
 			return;
 		}
 
