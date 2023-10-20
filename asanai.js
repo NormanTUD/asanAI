@@ -2990,7 +2990,7 @@ class asanAI {
 		}
 	}
 
-	load_image_urls_to_div_and_tensor (divname, urls_and_categories) {
+	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1) {
 		if(!this.#model) {
 			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
 			return;
@@ -3133,6 +3133,22 @@ class asanAI {
 		var category_tensor = this.tensor(category_output);
 
 		image_tensors_array = this.tensor(image_tensors_array);
+
+		if(one_hot) {
+			var asanai_this = this;
+
+			category_tensor = this.tidy(() => {
+				var __tensor = category_tensor.toInt();
+
+				var _unique_categories_length = unique_categories.length;
+
+				var _res = asanai_this.oneHot(__tensor, _unique_categories_length);
+
+				_res.print();
+
+				return _res;
+			});
+		}
 
 		this.set_labels(unique_categories);
 
