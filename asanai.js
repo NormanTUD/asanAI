@@ -1728,7 +1728,11 @@ class asanAI {
 
 	stop_camera (item) {
 		this.#started_webcam = false;
-		this.#camera.stop()
+		if(this.#camera) {
+			this.#camera.stop()
+		} else {
+			this.err("this.#camera was not found.");
+		}
 		this.#camera = null;
 
 		$(this.#last_video_element).hide();
@@ -2040,6 +2044,7 @@ class asanAI {
 
 				if(("" + e).includes("is null") || ("" + e).includes("thrown converting video to pixels")) {
 					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
+					this.stop_camera();
 					return;
 				} else {
 					throw new Error(e);
@@ -3205,7 +3210,7 @@ class asanAI {
 
 				var _res = asanai_this.oneHot(__tensor, _unique_categories_length);
 
-				_res.print();
+				this.dispose(__tensor)
 
 				return _res;
 			});
