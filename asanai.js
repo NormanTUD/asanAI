@@ -3196,13 +3196,11 @@ class asanAI {
 			var asanai_this = this;
 
 			category_tensor = this.tidy(() => {
-				var __tensor = category_tensor.toInt();
-
 				var _unique_categories_length = unique_categories.length;
 
-				var _res = asanai_this.oneHot(__tensor, _unique_categories_length);
+				var _res = asanai_this.oneHot(category_tensor, _unique_categories_length);
 
-				_res.print();
+				asanai_this.dispose(category_tensor);
 
 				return _res;
 			});
@@ -3210,12 +3208,14 @@ class asanAI {
 
 		this.set_labels(unique_categories);
 
-		return {
+		var res = {
 			html_image_elements: imgs,
 			labels: unique_categories,
 			x: image_tensors_array,
 			y: category_tensor
 		};
+
+		return res;
 	}
 
 	load_image_urls_into_div (divname, ...urls) {
