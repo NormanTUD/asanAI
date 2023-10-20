@@ -3154,6 +3154,7 @@ class asanAI {
 
 		return {
 			html_image_elements: imgs,
+			labels: unique_categories,
 			x: image_tensors_array,
 			y: category_tensor
 		};
