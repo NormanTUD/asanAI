@@ -2990,6 +2990,155 @@ class asanAI {
 		}
 	}
 
+	load_image_urls_to_div_and_tensor (divname, urls_and_categories) {
+		if(!this.#model) {
+			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
+			return;
+		}
+
+		if(!this.#model.layers) {
+			this.err(`[load_image_urls_into_div] Cannot continue with a model without layers`);
+			return;
+		}
+
+		if(!Array.isArray(this.#model.input.shape)) {
+			this.err(`[load_image_urls_into_div] this.#model.input.shape is not an array`);
+			return;
+		}
+
+		if(this.#model.input.shape.length != 4) {
+			this.err(`[load_image_urls_into_div] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.join(", ")}]`);
+			return;
+		}
+
+		if(!this.#model_height) {
+			this.err(`[load_image_urls_into_div] this.#model_height has no value`);
+			return;
+		}
+
+		if(!this.#model_width) {
+			this.err(`[load_image_urls_into_div] this.#model_width has no value`);
+			return;
+		}
+
+		var $div = $("#" + divname);
+		if(!$div.length) {
+			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			return;
+		}
+
+		if(!Array.isArray(urls_and_categories)) {
+			this.err(`[load_image_urls_into_div] urls_and_categories is not an array`);
+			return;
+		}
+
+		if(!urls_and_categories.length) {
+			this.err(`[load_image_urls_into_div] urls_and_categories is empty`);
+			return;
+		}
+
+		var urls = [];
+		var categories = [];
+
+		var unique_categories = [];
+
+		for (var i = 0; i < urls_and_categories.length; i++) {
+			var _this = urls_and_categories[i];
+			var url;
+			var cat;
+
+			if(0 in _this) {
+				url = _this[0];
+			} else {
+				this.err(`No url for url for urls_and_categories[${i}] found`);
+				return;
+			}
+
+			if(1 in _this) {
+				cat = _this[1];
+			} else {
+				this.err(`No url for url for urls_and_categories[${i}] found`);
+				return;
+			}
+
+			urls.push(url);
+			categories.push(cat);
+
+			if(!unique_categories.includes(cat)) {
+				unique_categories.push(cat);
+			}
+		}
+
+		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
+		this.assert(Array.isArray(categories), `categories is not an array but ${typeof(categories)}`);
+		this.assert(Array.isArray(unique_categories), `categories is not an array but ${typeof(unique_categories)}`);
+		this.assert(unique_categories.length < categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] urls-array is empty");
+			return;
+		}
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] categories-array is empty");
+			return;
+		}
+
+		var imgs = [];
+
+		var image_tensors = this.tidy(() => { return this.tensor(this.ones(this.#model.input.shape)); });
+
+		var category_output = [];
+
+		for (var i = 0; i < urls.length; i++) {
+			var url = urls[i];
+
+			this.assert(typeof(url) == "string", `${urls[i]} is not a string but ${typeof(urls[i])}`);
+
+			var height = 50;
+			var width = 50;
+
+			if(this.#model_height) {
+				height = this.#model_height;
+			}
+
+			if(this.#model_width) {
+				height = this.#model_width;
+			}
+
+			var _uuid = this.#uuidv4();
+
+			var img_id = `load_images_into_div_image_${_uuid}`;
+
+			var img = $(`<img id='${img_id}' width=${width} height=${height} src='${url}' />`);
+
+			imgs.push(img);
+
+			$div.append(img);
+
+			var asanai_this = this;
+
+			var img_tensor = this.tidy(() => {
+				var _t = asanai_this.expand_dims(asanai_this.fromPixels(img, asanai_this.num_channels));
+
+				return _t;
+			});
+
+			image_tensors = this.tidy(() => { this.tf_concat(image_tensors, img_tensor); });
+			category_output.push(unique_categories.indexOf(categories[i]));
+		}
+
+		var category_tensor = this.tensor(category_output);
+
+		this.set_labels(unique_categories);
+
+		return {
+			images: imgs,
+			images_tensor: image_tensors,
+			category_tensor: category_tensor
+		};
+	}
+
 	load_image_urls_into_div (divname, ...urls) {
 		var $div = $("#" + divname);
 		if(!$div.length) {
@@ -3018,12 +3167,12 @@ class asanAI {
 			var height = 50;
 			var width = 50;
 
-			if(this.model_height) {
-				height = this.model_height;
+			if(this.#model_height) {
+				height = this.#model_height;
 			}
 
-			if(this.model_width) {
-				height = this.model_width;
+			if(this.#model_width) {
+				height = this.#model_width;
 			}
 
 			var _uuid = this.#uuidv4();
