@@ -97,6 +97,18 @@
 
 				console.log(xxx);
 			}
+
+			function load_test_images_and_train () {
+				var xxx = asanai.load_image_urls_to_div_and_tensor("test_images", [
+					["traindata/signs/example/a_fire.png", "fire"],
+					["traindata/signs/example/b_mandatory.png", "mandatory"],
+					["traindata/signs/example/c_prohibition.png", "prohibition"],
+					["traindata/signs/example/d_rescue.png", "rescue"],
+					["traindata/signs/example/e_warning.png", "warning"]
+				], 1);
+
+				console.log(xxx);
+			}
 		</script>
 	</body>
 </html>

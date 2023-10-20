@@ -3093,6 +3093,10 @@ class asanAI {
 		var category_output = [];
 
 		for (var i = 0; i < urls.length; i++) {
+			if(i == 0) {
+				$div.html("");
+			}
+
 			var url = urls[i];
 
 			this.assert(typeof(url) == "string", `${urls[i]} is not a string but ${typeof(urls[i])}`);
