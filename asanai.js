@@ -3172,7 +3172,7 @@ class asanAI {
 
 			var img = $(`<img id='${img_id}' width=${width} height=${height} src='${url}' />`);
 
-			imgs.push(img);
+			imgs.push(img[0]);
 
 			$div.append(img);
 
