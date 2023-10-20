@@ -2160,32 +2160,29 @@ class asanAI {
 	}
 
 	#normalize_to_image_data (input_data) {
+		var asanai_this = this;
+
 		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
-			var asanai_this = this;
-
-			if(this.is_tf_tensor(flattened_input)) {
-				flattened_input = this.tidy(() => {
-					var res = asanai_this.array_sync(flattened_input);
-
-					return res;
-				});
+			if(asanai_this.is_tf_tensor(flattened_input)) {
+				var tmp = asanai_this.array_sync(flattened_input);
+				flattened_input = tmp;
 			}
 
-			while (this.get_shape_from_array(flattened_input).length > 1) {
+			while (asanai_this.get_shape_from_array(flattened_input).length > 1) {
 				flattened_input = flattened_input.flat();
 			}
 
 			var max = Math.max(...flattened_input);
 			var min = Math.min(...flattened_input);
 
-			//this.log("max: " + max + ", min: " + min);
+			//asanai_this.log("max: " + max + ", min: " + min);
 
 			var range = tf.sub(max, min);
 
-			if(!this.is_tf_tensor(input_data)) {
-				input_data = this.tensor(input_data);
+			if(!asanai_this.is_tf_tensor(input_data)) {
+				input_data = asanai_this.tensor(input_data);
 			}
 
 			//
@@ -2194,7 +2191,7 @@ class asanAI {
 			var multiplicator = tf.sub(input_data, min);
 
 			if(divisor == 0) {
-				return this.array_sync(input_data);
+				return asanai_this.array_sync(input_data);
 			}
 
 			var twofiftyfive = tf.ones(input_data.shape);
@@ -2205,7 +2202,8 @@ class asanAI {
 
 			var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
 
-			var _r = this.array_sync(scaled_tensor);
+
+			var _r = asanai_this.array_sync(scaled_tensor);
 
 			return _r;
 		});
