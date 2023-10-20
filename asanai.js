@@ -1731,7 +1731,7 @@ class asanAI {
 		if(this.#camera) {
 			this.#camera.stop()
 		} else {
-			this.err("this.#camera was not found.");
+			this.err("[stop_camera] this.#camera was not found.");
 		}
 		this.#camera = null;
 
