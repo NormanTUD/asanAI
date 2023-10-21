@@ -5,7 +5,7 @@ class asanAI {
 	#last_tensor_size_cpu = 0;
 	#last_num_global_tensors = 0;
 	#last_tensor_size_gpu = 0;
-	asanai_name = "asanai";
+	#asanai_name = null;
 	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
 	#kernel_pixel_size_max = 10;
@@ -1999,7 +1999,12 @@ class asanAI {
 			} else {
 				var write_to_div_id = $(write_to_div).attr("id");
 				if(write_to_div_id) {
-					$(img_element_or_div).attr("onclick", `${this.asanai_name}.predict_image(this, ${write_to_div_id})`);
+					if(!this.#asanai_name) {
+						this.err(`[predict_image] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+						return;
+					} else {
+						$(img_element_or_div).attr("onclick", `${this.#asanai_name}.predict_image(this, ${write_to_div_id})`);
+					}
 				} else {
 					this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
 				}
@@ -2327,9 +2332,14 @@ class asanAI {
 	}
 
 	#show_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
+		if(!this.#asanai_name) {
+			this.err(`[#show_internals_slider] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+			return;
+		}
+
 		var html = `<div class='show_internals_slider'>`
-		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.asanai_name}.set_pixel_size($(this).val())">`;
-		html += `Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" onchange="${this.asanai_name}.set_kernel_pixel_size($(this).val())">`;
+		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_name}.set_pixel_size($(this).val())">`;
+		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_name}.set_kernel_pixel_size($(this).val())">`;
 		html += `</div>`;
 
 		return html;
@@ -3834,5 +3844,13 @@ class asanAI {
 
 	get_images_to_repredict () {
 		return this.#images_to_repredict;
+	}
+
+	get_asanai_name () {
+		return this.#asanai_name;
+	}
+
+	set_asanai_name (name) {
+		this.#asanai_name = name;
 	}
 }
