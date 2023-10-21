@@ -3617,7 +3617,6 @@ class asanAI {
 			for (var k = 1; k < xs.length; k++) {
 				if(mis[k] != xs[k]) {
 					matches = false;
-					this.err(`[fit] Input shape element ${k} does not match: ${mis[k]} / ${xs[k]}`)
 				}
 			}
 
@@ -3639,7 +3638,6 @@ class asanAI {
 			for (var k = 1; k < ys.length; k++) {
 				if(mos[k] != ys[k]) {
 					matches = false;
-					this.err(`[fit] Input shape element ${k} does not match: ${mos[k]} / ${ys[k]}`)
 				}
 			}
 
