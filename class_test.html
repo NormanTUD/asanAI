@@ -6,24 +6,44 @@
 		<script src='tf/tf.min.js' crossorigin></script>
 		<script src='libs/jquery.js' crossorigin></script>
 		<script src='libs/plotly-latest.min.js' crossorigin></script>
+		<style>
+			/* This style is optional */
+			.float-container {
+				border: 3px solid #fff;
+				margin: 10px;
+			}
+
+			.float-child {
+				float: left;
+				padding: 20px;
+				border: 2px solid red;
+			}  
+		</style>
 	</head>
 	<body>
 		<pre id="memory"></pre>
 		<pre>====</pre>
 		<div id="test_images"></div>
 		<pre>====</pre>
-		<img id="test_image" src="traindata/signs/example/e_warning.png" width=50 height=50 />
-		<pre id="test_image_prediction"></pre>
 
-		<img id="test_image_two" src="traindata/signs/example/c_prohibition.png" width=50 height=50 />
-		<pre id="test_image_two_prediction"></pre>
+		<div class="float-container">
+			<div class="float-child">
+				<img id="test_image" src="traindata/signs/example/e_warning.png" width=50 height=50 />
+				<pre id="test_image_prediction"></pre>
+			</div>
+			<div class="float-child">
+				<img id="test_image_two" src="traindata/signs/example/c_prohibition.png" width=50 height=50 />
+				<pre id="test_image_two_prediction"></pre>
+			</div>
+		</div>
+
+		<br>
 
 		<pre id="summary_pre"></pre>
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 		<div id="webcam_prediction"></div>
 
 		<br>
-
 
 		<div id="internal_states"></div>
 		<div id="fcnn_div"></div>
@@ -50,7 +70,7 @@
 
 				asanai.set_divide_by(255);
 
-				asanai.set_labels(["a", "b", "c", "d"]);
+				asanai.set_labels(["erste kategorie", "zweite kategorie", "dritte kategorie", "vierte kategorie"]);
 
 				asanai.show_internals("internal_states", 1);
 				//asanai.hide_internals();
