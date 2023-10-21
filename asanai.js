@@ -3606,7 +3606,7 @@ class asanAI {
 		}
 
 		if(this.#model.input.shape.length != _x.shape.length) {
-			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}]`);
 			return;
 		} else {
 			var mos = this.#model.input.shape;
@@ -3621,7 +3621,7 @@ class asanAI {
 			}
 
 			if(!matches) {
-				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}]`);
 				return;
 			}
 		}
