@@ -2109,19 +2109,27 @@ class asanAI {
 		}
 
 		this.#started_webcam = true;
+		this.log("A");
 		try {
+			this.log("B");
 			this.#camera = await tf.data.webcam($video_element);
+			this.log("C");
 		} catch (e) {
+			this.log("D");
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
+			this.log("E");
 			if(("" + e).includes("The fetching process for the")) {
+				this.log("F");
 				this.err("[show_and_predict_webcam_in_div] " + e)
 				return;
 			} else {
+				this.log("G");
 				throw new Error(e);
 			}
+		this.log("H");
 		}
 
 		while (this.#started_webcam) {
@@ -2209,6 +2217,8 @@ class asanAI {
 
 			await this.delay(50);
 		}
+
+		this.dbg("[show_and_predict_webcam_in_div] this.#started_webcam is false, while loop has ended.")
 	}
 
 	delay(time) {
@@ -5832,10 +5842,24 @@ class asanAI {
 		return false;
 	}
 
+	get_max_bar_color () {
+		return this.#max_bar_color;
+	}
+
+	get_default_bar_color () {
+		return this.#default_bar_color;
+	}
+
 	set_max_bar_color(color) {
 		if(this.is_valid_web_color(color)) {
-			this.#max_bar_color = color;
-			this.set_model(this.#model);
+			if(this.get_max_bar_color() != color) {
+				this.#max_bar_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+			} else {
+				this.wrn(`[set_max_bar_color] Color stayed the same. Not changing.`);
+			}
 		} else {
 			this.err(`[set_max_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
 		}
@@ -5843,8 +5867,14 @@ class asanAI {
 
 	set_default_bar_color(color) {
 		if(this.is_valid_web_color(color)) {
-			this.#default_bar_color = color;
-			this.set_model(this.#model);
+			if(this.get_default_bar_color() != color) {
+				this.#default_bar_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+			} else {
+				this.wrn(`[set_default_bar_color] Color stayed the same. Not changing.`);
+			}
 		} else {
 			this.err(`[set_default_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
 		}
