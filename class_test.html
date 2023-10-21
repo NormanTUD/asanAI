@@ -151,6 +151,9 @@
 				} else {
 					console.error("training failed");
 				}
+
+				await asanai.dispose(loaded_data.x);
+				await asanai.dispose(loaded_data.y);
 			}
 		</script>
 	</body>
