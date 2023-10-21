@@ -611,8 +611,8 @@ async function get_xs_and_ys () {
 					x = numpy_str_to_tf_tensor(x_string, max_number_values);
 					y = numpy_str_to_tf_tensor(y_string, max_number_values);
 
-					var x_print_string = tensor_print_to_string(x);
-					var y_print_string = tensor_print_to_string(y);
+					var x_print_string = _tensor_print_to_string(x);
+					var y_print_string = _tensor_print_to_string(y);
 
 					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 				} catch (e) {

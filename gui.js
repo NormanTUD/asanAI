@@ -4423,13 +4423,13 @@ async function show_csv_file(disabled_show_head_data) {
 
 		shape_preview = shape_preview_color + shape_preview + "</div>";
 
-		shape_preview += "<br>X: <pre>" + tensor_print_to_string(parsed_data.x) + "</pre>";
+		shape_preview += "<br>X: <pre>" + _tensor_print_to_string(parsed_data.x) + "</pre>";
 
 		if (parsed_data.x.dtype == "string") {
 			csv_allow_training = false;
 		}
 
-		shape_preview += "<br>Y: <pre>" + tensor_print_to_string(parsed_data.y) + "</pre>";
+		shape_preview += "<br>Y: <pre>" + _tensor_print_to_string(parsed_data.y) + "</pre>";
 		if (parsed_data.y.dtype == "string") {
 			csv_allow_training = false;
 		}
@@ -4509,6 +4509,14 @@ function output_shape_is_same(output_shape_data, output_shape_network) {
 }
 
 function tensor_print_to_string(_tensor) {
+	if(!debug) {
+		return "Set variable debug to true to enable tensor printing";
+	}
+
+	return _tensor_print_to_string(_tensor);
+}
+
+function _tensor_print_to_string (_tensor) {
 	try {
 		var logBackup = console.log;
 		var logMessages = [];
@@ -4526,7 +4534,7 @@ function tensor_print_to_string(_tensor) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
 			wrn("tensor to be printed was already disposed");
 		} else {
-			err("tensor_print_to_string failed:", e);
+			err("_tensor_print_to_string failed:", e);
 
 		}
 		return "<span class='error_msg'>Error getting tensor as string</span>";
