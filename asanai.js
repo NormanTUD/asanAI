@@ -3855,10 +3855,10 @@ class asanAI {
 			if(window[name].constructor.name == "asanAI") {
 				this.#asanai_name = name;
 			} else {
-				this.err(`Variable ${name} could be found but is not an asanAI class.`);
+				this.err(`[set_asanai_name] Variable ${name} could be found but is not an asanAI class.`);
 			}
 		} else {
-			this.err(`Could not find global variable ${name}. Cannot use it as asanAI name.`);
+			this.err(`[set_asanai_name] Could not find global variable ${name}. Cannot use it as asanAI name.`);
 		}
 	}
 }
