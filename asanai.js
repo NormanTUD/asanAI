@@ -5878,4 +5878,23 @@ class asanAI {
 			this.err(`[set_default_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
 		}
 	}
+
+	get_bar_background_color () {
+		return this.#bar_background_color;
+	}
+
+	set_bar_background_color (color) {
+		if(this.is_valid_web_color(color)) {
+			if(this.get_bar_background_color() != color) {
+				this.#bar_background_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+			} else {
+				this.wrn(`[set_bar_background_color] Color stayed the same. Not changing.`);
+			}
+		} else {
+			this.err(`[set_bar_background_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
+		}
+	}
 }
