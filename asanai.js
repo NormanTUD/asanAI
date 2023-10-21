@@ -1,6 +1,9 @@
 "use strict";
 
 class asanAI {
+	#last_tensor_size_cpu = 0;
+	#last_num_global_tensors = 0;
+	#last_tensor_size_gpu = 0;
 	asanai_name = "asanai";
 	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
@@ -2943,18 +2946,101 @@ class asanAI {
 			console.err("write_tensors_info: second parameter must be a number. Time will be set to 200 ms");
 			time = 200;
 		}
+
+		var asanai_this = this;
+
 		var _tensor_debugger = function () {
-			var _tensors = tf.memory().numTensors;
-			var _text = _tensors + " Tensors";
+
+
+
+			var memory;
+			try {
+				memory = tf.memory();
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("tf is null")) {
+					err("tf is null");
+				} else {
+					throw new Error(e);
+				}
+
+				return;
+			}
+
+
+			var bytes = memory["numBytes"];
+			var gpu_bytes = memory["numBytesInGPU"];
+
+			var num_tensors =  memory["numTensors"]; // Object.keys(tensors).length;
+			var ram_mb = bytes / 1024 / 1024;
+			ram_mb = ram_mb.toFixed(2);
+			var gpu_mb = gpu_bytes / 1024 / 1024;
+			if(gpu_mb) {
+				gpu_mb = gpu_mb.toFixed(2);
+			}
+
+			var tensor_color = "";
+			var gpu_color = "";
+			var cpu_color = "";
+
+			if(asanai_this.#last_num_global_tensors > num_tensors) {
+				tensor_color = "#00ff00";
+			} else if (asanai_this.#last_num_global_tensors < num_tensors) {
+				tensor_color = "#ff0000";
+			}
+
+			if(asanai_this.#last_tensor_size_cpu > ram_mb) {
+				cpu_color = "#00ff00";
+			} else if (asanai_this.#last_tensor_size_cpu < ram_mb) {
+				cpu_color = "#ff0000";
+			}
+
+			if(asanai_this.#last_tensor_size_gpu > gpu_mb) {
+				gpu_color = "#00ff00";
+			} else if (asanai_this.#last_tensor_size_gpu < gpu_mb) {
+				gpu_color = "#ff0000";
+			}
+
+			var debug_string = `Tensors: ` + asanai_this.colorize(num_tensors, tensor_color) + ", RAM: " + asanai_this.colorize(ram_mb, cpu_color) + "MB";
+
+			if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
+				debug_string = debug_string + ", GPU: " + asanai_this.colorize(gpu_mb, gpu_color) + "MB";
+			}
+
+			if(Object.keys(asanai_this.#custom_tensors).length) {
+				debug_string += ", asanAI: " + Object.keys(asanai_this.#custom_tensors).length;
+			}
 
 			var $div = $("#" + divname);
+			var memdeb = $div[0];
 
-			if($div.html() != _text) {
-				$div.html(_text);
+			if(memdeb) {
+				if(memdeb.innerHTML != debug_string) {
+
+					if($div.html() != debug_string) {
+						$div.html(debug_string);
+					}
+				}
+			} else {
+				asanai_this.wrn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
 			}
+
+			asanai_this.#last_num_global_tensors = num_tensors;
+			asanai_this.#last_tensor_size_cpu = ram_mb;
+			asanai_this.#last_tensor_size_gpu = gpu_mb;
 		}
 
 		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
+	}
+
+	colorize (text, color) {
+		if(color) {
+			return "<span style='color: " + color + "'>" + text + "</span>";
+		}
+		return text;
 	}
 
 	hide_tensors_info () {
