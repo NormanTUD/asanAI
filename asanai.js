@@ -2,6 +2,9 @@
 
 class asanAI {
 	#fcnn_div_name = null;
+	#kernel_pixel_size_max = 10;
+	#pixel_size_max = 10;
+	#show_sliders = false;
 	#webcam_height = null;
 	#webcam_width = null;
 	#is_dark_mode = false;
@@ -1930,6 +1933,21 @@ class asanAI {
 			}
 
 			if(this.#draw_internal_states) {
+				if(i == 0 && this.#show_sliders) {
+					var __parent = $("#" + this.#internal_states_div);
+					if(__parent.length && $("#" + this.#internal_states_div).find(".show_internals_slider").length == 0) {
+						var _html = this.#show_internals_slider(
+							this.#pixel_size,
+							this.#pixel_size_max,
+							this.#kernel_pixel_size,
+							this.#kernel_pixel_size_max
+						);
+
+						__parent.append($(_html));
+					} else {
+						this.wrn(`[predict_manually] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
+					}
+				}
 				try {
 					var asanai_this = this;
 					this.tidy(() => {
@@ -2162,10 +2180,38 @@ class asanAI {
 		this.#internal_states_div = "";
 	}
 
-	show_internals (divname="") {
+	#show_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
+		var html = `<div class='show_internals_slider'>`
+		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="asanai.set_pixel_size($(this).val())">`;
+		html += `Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" onchange="asanai.set_kernel_pixel_size($(this).val())">`;
+		html += `</div>`;
+
+		return html;
+	}
+
+	show_internals (divname="", show_sliders=false) {
 		if(!this.#model) {
 			this.dbg("No model found");
 
+			return;
+		}
+
+		if(!typeof(show_sliders) == "boolean") {
+			this.err("[show_internals] second parameter, show_sliders, must either be true or false)");
+			return;
+		}
+
+		this.#show_sliders = show_sliders;
+
+		if(!divname) {
+			this.err("[show_internals] Cannot call show_internals without a divname (at least once)");
+			return;
+		}
+
+		var $div = $("#" + divname)
+
+		if(!$div.length) {
+			this.err(`[show_internals] #${divname} could not be found`);
 			return;
 		}
 
@@ -2174,9 +2220,7 @@ class asanAI {
 		}
 
 		this.#draw_internal_states = true;
-		if(divname) {
-			this.#internal_states_div = divname;
-		}
+		this.#internal_states_div = divname;
 	}
 
 	#normalize_to_image_data (input_data) {
@@ -2247,7 +2291,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("Cannot get layer-name: " + e);
+			this.err("[_draw_internal_states] Cannot get layer-name: " + e);
 
 			return;
 		}

@@ -23,8 +23,7 @@
 		<div id="webcam_prediction"></div>
 
 		<br>
-		Pixel-Size: <input type="range" min="1" max="10" value="3" id="pixel_size" onchange="asanai.set_pixel_size($(this).val())">
-		Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" id="kernel_pixel_size" onchange="asanai.set_kernel_pixel_size($(this).val())">
+
 
 		<div id="internal_states"></div>
 		<div id="fcnn_div"></div>
@@ -49,7 +48,7 @@
 
 				asanai.set_labels(["a", "b", "c", "d"]);
 
-				asanai.show_internals("internal_states");
+				asanai.show_internals("internal_states", 1);
 				//asanai.hide_internals();
 
 				asanai.show_and_predict_webcam_in_div("webcam_prediction");
