@@ -1938,14 +1938,12 @@ class asanAI {
 			if($(img_element_or_div).attr("onclick")) {
 				this.dbg(`[predict_image] Element already has onclick. Not adding a new one.`);
 			} else {
-				console.log("write_to_div:", write_to_div);
-			}
-
-			var write_to_div_id = $(write_to_div).attr("id");
-			if(write_to_div_id) {
-				$(img_element_or_div).attr("onclick", `${this.asanai_name}.predict_image(this, ${write_to_div_id})`);
-			} else {
-				this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
+				var write_to_div_id = $(write_to_div).attr("id");
+				if(write_to_div_id) {
+					$(img_element_or_div).attr("onclick", `${this.asanai_name}.predict_image(this, ${write_to_div_id})`);
+				} else {
+					this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
+				}
 			}
 		}
 
