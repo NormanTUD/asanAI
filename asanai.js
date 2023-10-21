@@ -1054,7 +1054,7 @@ class asanAI {
 		}
 	}
 
-	fromPixels (...args) {
+	from_pixels (...args) {
 		this.#_register_tensors(...args);
 
 
@@ -1537,7 +1537,7 @@ class asanAI {
 		}
 	}
 
-	oneHot (...args) {
+	one_hot (...args) {
 		this.#_register_tensors(...args);
 		try {
 			var res = tf.oneHot(...args);
@@ -1873,7 +1873,7 @@ class asanAI {
 		var elements = [];
 		for (var i = 0; i < this.#images_to_repredict.length; i++) {
 			var _xpath = this.#images_to_repredict[i];
-			var _elements = this.getElementByXpath(_xpath);
+			var _elements = this.get_element_by_xpath(_xpath);
 			var this_div_element = this.#images_to_repredict_divs[i];
 			elements.push(_elements, this_div_element)
 		}
@@ -1883,7 +1883,7 @@ class asanAI {
 		}
 	}
 
-	getElementByXpath(path) {
+	get_element_by_xpath (path) {
 		return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	}
 
@@ -1891,7 +1891,7 @@ class asanAI {
 		var elements = [];
 		for (var i = 0; i < this.#images_to_repredict.length; i++) {
 			var _xpath = this.#images_to_repredict[i];
-			var _elements = this.getElementByXpath(_xpath);
+			var _elements = this.get_element_by_xpath(_xpath);
 			var this_div_element = this.#images_to_repredict_divs[i];
 			elements.push(_elements, this_div_element)
 		}
@@ -1970,12 +1970,12 @@ class asanAI {
 		var _width = model_input_shape[2];
 
 		var data = this.tidy(() => {
-			var image_tensor = this.#expand_dims(this.fromPixels(img_element_or_div, this.#num_channels));
+			var image_tensor = this.#expand_dims(this.from_pixels(img_element_or_div, this.#num_channels));
 			image_tensor = this.#resizeImage(image_tensor, [_height, _width]);
 			return image_tensor;
 		});
 
-		var result = this.#predict_manually(data);
+		var result = this.predict(data);
 
 		if(write_to_div) {
 			this.#_show_output(result, write_to_div);
@@ -2009,29 +2009,29 @@ class asanAI {
 		return result;
 	}
 
-	#predict_manually (_tensor) {
+	predict (_tensor) {
 		if(!this.#model) {
-			this.err("[#predict_manually] Cannot predict without a model");
+			this.err("[predict] Cannot predict without a model");
 			return;
 		}
 
 		if(!this.#model.input) {
-			this.err("[#predict_manually] Cannot predict without a model.input");
+			this.err("[predict] Cannot predict without a model.input");
 			return;		
 		}
 
 		if(!this.#model.input.shape) {
-			this.err("[#predict_manually] Cannot predict without a model.input.shape");
+			this.err("[predict] Cannot predict without a model.input.shape");
 			return;		
 		}
 
 		if(this.#num_channels != 3) {
 			this.#num_channels = 3;
-			this.wrn(`[#predict_manually] Setting num_channels to 3, because webcam data does not have transparency.`);
+			this.wrn(`[predict] Setting num_channels to 3, because webcam data does not have transparency.`);
 		}
 
 		if(!this.#tensor_shape_fits_input_shape(_tensor.shape, this.#model.input.shape)) {
-			this.err(`[#predict_manually] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.#model.input.shape.join(", ")}].`)
+			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.#model.input.shape.join(", ")}].`)
 			return;
 		}
 
@@ -2084,7 +2084,7 @@ class asanAI {
 
 						__parent.append($(_html));
 					} else {
-						this.dbg(`[predict_manually] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
+						this.dbg(`[predict] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
 					}
 				}
 				try {
@@ -2233,7 +2233,7 @@ class asanAI {
 					var res;
 
 					try {
-						res = asanai_this.#predict_manually(resized)
+						res = asanai_this.predict(resized)
 					} catch (e) {
 						if(Object.keys(e).includes("message")) {
 							e = e.message;
@@ -3484,7 +3484,7 @@ class asanAI {
 			var asanai_this = this;
 
 			var img_array = this.tidy(() => {
-				var _t = asanai_this.array_sync(asanai_this.fromPixels(img[0], asanai_this.num_channels));
+				var _t = asanai_this.array_sync(asanai_this.from_pixels(img[0], asanai_this.num_channels));
 
 				return _t;
 			});
@@ -3505,7 +3505,7 @@ class asanAI {
 
 				var _unique_categories_length = unique_categories.length;
 
-				var _res = asanai_this.oneHot(__tensor, _unique_categories_length);
+				var _res = asanai_this.one_hot(__tensor, _unique_categories_length);
 
 				this.dispose(__tensor)
 
