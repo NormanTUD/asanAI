@@ -8,8 +8,8 @@ class asanAI {
 	#asanai_name = null;
 	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
-	#kernel_pixel_size_max = 10;
-	#pixel_size_max = 10;
+	#kernel_pixel_size_max = 50;
+	#pixel_size_max = 50;
 	#show_sliders = false;
 	#webcam_height = null;
 	#webcam_width = null;
