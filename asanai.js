@@ -3586,12 +3586,12 @@ class asanAI {
 		}
 
 		if(!Object.keys(args).includes("epochs")) {
-			this.err(`[fit]: third argument, args, seems not to cotnain epochs. Must at least contain epochs and batchSize`);
+			this.err(`[fit]: third argument, args, seems not to contain epochs. Must at least contain epochs and batchSize`);
 			return;
 		}
 
 		if(!Object.keys(args).includes("batchSize")) {
-			this.err(`[fit]: third argument, args, seems not to cotnain batchSize. Must at least contain epochs and batchSize`);
+			this.err(`[fit]: third argument, args, seems not to contain batchSize. Must at least contain epochs and batchSize`);
 			return;
 		}
 
@@ -3603,6 +3603,10 @@ class asanAI {
 		if(!this.#model.layers) {
 			this.err(`[fit] Cannot continue with a model without layers`);
 			return;
+		}
+
+		if(this.#model.output.shape.length != _y.shape.length) {
+			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differents from _y.shape [${_y.shape.join(", ")}]`);
 		}
 
 		try {
