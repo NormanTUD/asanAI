@@ -104,6 +104,12 @@ class asanAI {
 	create_model_from_model_data (model_data, optimizer_config) {
 		this.assert(Array.isArray(model_data), "[create_model_from_model_data] model data is not an array");
 
+		var restart_camera = false;
+		if(this.#camera) {
+			restart_camera = true;
+			this.stop_camera();
+		}
+
 		if(!optimizer_config) {
 			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the model.");
 			return;
@@ -144,6 +150,10 @@ class asanAI {
 		__model.compile(optimizer_config);
 
 		this.set_model(__model);
+
+		if(restart_camera) {
+			this.start_camera();
+		}
 
 		return __model;
 	}
