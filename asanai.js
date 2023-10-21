@@ -3606,28 +3606,29 @@ class asanAI {
 		}
 
 		if(this.#model.input.shape.length != _x.shape.length) {
-			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}]`);
+			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}] in length`);
 			return;
 		} else {
-			var mos = this.#model.input.shape;
-			var ys = _y.shape;
+			var mis = this.#model.input.shape;
+			var xs = _x.shape;
 
 			var matches = true;
 
-			for (var k = 0; k < ys.length; k++) {
-				if(!(mos[k] === null || mos[k] == ys[k])) {
+			for (var k = 1; k < xs.length; k++) {
+				if(mis[k] != xs[k]) {
 					matches = false;
+					this.err(`[fit] Input shape element ${k} does not match: ${mis[k]} / ${xs[k]}`)
 				}
 			}
 
 			if(!matches) {
-				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}]`);
+				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_x.shape.join(", ")}]`);
 				return;
 			}
 		}
 
 		if(this.#model.output.shape.length != _y.shape.length) {
-			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}] in length`);
 			return;
 		} else {
 			var mos = this.#model.output.shape;
@@ -3635,9 +3636,10 @@ class asanAI {
 
 			var matches = true;
 
-			for (var k = 0; k < ys.length; k++) {
-				if(!(mos[k] === null || mos[k] == ys[k])) {
+			for (var k = 1; k < ys.length; k++) {
+				if(mos[k] != ys[k]) {
 					matches = false;
+					this.err(`[fit] Input shape element ${k} does not match: ${mos[k]} / ${ys[k]}`)
 				}
 			}
 
