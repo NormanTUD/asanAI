@@ -1698,7 +1698,7 @@ class asanAI {
 
 		var _restart_webcam = 0;
 		if(this.#started_webcam) {
-			this.toggle_webcam();
+			this.stop_camera();
 			_restart_webcam = 1;
 		}
 
@@ -1719,7 +1719,7 @@ class asanAI {
 		}
 
 		if(_restart_webcam) {
-			this.toggle_webcam();
+			this.start_camera();
 		}
 
 		if(this.#images_to_repredict) {
@@ -1759,10 +1759,7 @@ class asanAI {
 		this.#started_webcam = false;
 		if(this.#camera) {
 			this.#camera.stop()
-		} else {
-			this.err("[stop_camera] this.#camera was not found.");
 		}
-		this.#camera = null;
 
 		$(this.#last_video_element).hide();
 		$("#" + this.show_and_predict_webcam_in_div_div).hide();

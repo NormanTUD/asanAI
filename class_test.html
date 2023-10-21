@@ -117,7 +117,7 @@
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
 					{dense: {units: 10, activation: "relu"}},
-					{dense: {units: 5, activation: "relu"}}
+					{dense: {units: 5, activation: "softmax"}}
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
