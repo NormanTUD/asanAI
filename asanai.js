@@ -3030,6 +3030,8 @@ class asanAI {
 			return res;
 		});
 
+		this.dispose(normalized);
+
 		var _dim = this.#get_dim(synched);
 
 		var canvas = $(`<canvas height=${_dim[0]} width=${_dim[1]} />`)[0];
