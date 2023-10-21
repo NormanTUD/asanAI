@@ -1882,8 +1882,16 @@ class asanAI {
 		this.assert(img_element_or_div, "img_element_or_div is empty");
 
 		var valid_tags = ["CANVAS", "IMG"];
-		var img_tag_name = img_element_or_div.tagName;
+		var img_tag_name;
+
+		if (img_element_or_div instanceof jQuery || Array.isArray(img_element_or_div)){
+			img_element_or_div = img_element_or_div[0];
+		}
+
+		img_tag_name = img_element_or_div.tagName;
+
 		this.assert(img_tag_name, "img_tag_name is empty!");
+
 		if(!valid_tags.includes(img_tag_name)) {
 			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_tag_name}, but should be in [${valid_tags.join(", ")}]`);
 			return;
