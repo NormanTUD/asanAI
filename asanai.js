@@ -52,51 +52,76 @@ class asanAI {
 		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
 
 		if(args.length == 1) {
-			if(Object.keys(args[0]).includes("labels")) {
-				this.set_labels(args[0].labels);
+			args = args[0];
+			if(Object.keys(args).includes("labels")) {
+				this.set_labels(args.labels);
+
+				delete args["labels"];
 			}
 
-			if(Object.keys(args[0]).includes("model")) {
-				this.set_model(args[0].model);
+			if(Object.keys(args).includes("model")) {
+				this.set_model(args.model);
+
+				delete args["model"];
 			}
 
-			if(Object.keys(args[0]).includes("model_data")) {
-				if(!Object.keys(args[0]).includes("optimizer_config")) {
+			if(Object.keys(args).includes("model_data")) {
+				if(!Object.keys(args).includes("optimizer_config")) {
 					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
 				}
-				this.#model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
+				this.#model = this.create_model_from_model_data(args["model_data"], args["optimizer_config"]);
+
+				delete args["model_data"];
+				delete args["optimizer_config"];
 			}
 
-			if(Object.keys(args[0]).includes("divide_by")) {
-				if(typeof(args[0].divide_by) == "number" || this.#looks_like_number(args[0].divide_by)) {
-					this.#divide_by= this.#parse_float(args[0].divide_by);
+			if(Object.keys(args).includes("divide_by")) {
+				if(typeof(args.divide_by) == "number" || this.#looks_like_number(args.divide_by)) {
+					this.#divide_by= this.#parse_float(args.divide_by);
+
+					delete args["divide_by"];
 				} else {
 					throw new Error("divide_by is not a number");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("max_neurons_fcnn")) {
-				if(typeof(args[0].max_neurons_fcnn) == "number") {
-					this.#max_neurons_fcnn = args[0].max_neurons_fcnn;
+			if(Object.keys(args).includes("max_neurons_fcnn")) {
+				if(typeof(args.max_neurons_fcnn) == "number") {
+					this.#max_neurons_fcnn = args.max_neurons_fcnn;
+
+					delete args["max_neurons_fcnn"];
 				} else {
 					throw new Error("max_neurons_fcnn is not a number");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("internal_states_div")) {
-				if(typeof(args[0].internal_states_div) == "string") {
-					this.#internal_states_div = args[0].internal_states_div;
+			if(Object.keys(args).includes("internal_states_div")) {
+				if(typeof(args.internal_states_div) == "string") {
+					this.#internal_states_div = args.internal_states_div;
+
+					delete args["internal_states_div"];
 				} else {
 					throw new Error("internal_states_div is not a string");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("draw_internal_states")) {
-				if(typeof(args[0].draw_internal_states) == "boolean") {
-					this.#draw_internal_states = args[0].draw_internal_states;
+			if(Object.keys(args).includes("draw_internal_states")) {
+				if(typeof(args.draw_internal_states) == "boolean") {
+					this.#draw_internal_states = args.draw_internal_states;
+
+					delete args["draw_internal_states"];
 				} else {
 					throw new Error("draw_internal_states is not a boolean");
 				}
+			}
+
+
+			var ignored_keys = Object.keys(args);
+
+			if(ignored_keys.length) {
+				var keys_str = `[constructor] The following keys were invalid as parameters to asanAI: ${ignored_keys.join(", ")}. Cannot initialize with wrong parameters (it's for your own safety!)`;
+
+				throw new Error(keys_str);
 			}
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
