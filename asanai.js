@@ -5856,6 +5856,10 @@ class asanAI {
 				if(this.#model) {
 					this.set_model(this.#model);
 				}
+
+				if(this.get_bar_background_color() == color) {
+					this.wrn(`[set_default_bar_color] New max bar color is the same as the background. You will not be able to see max bars.`);
+				}
 			} else {
 				this.wrn(`[set_max_bar_color] Color stayed the same. Not changing.`);
 			}
@@ -5870,6 +5874,10 @@ class asanAI {
 				this.#default_bar_color = color;
 				if(this.#model) {
 					this.set_model(this.#model);
+				}
+
+				if(this.get_bar_background_color() == color) {
+					this.wrn(`[set_default_bar_color] New default bar color is the same as the background. You will not be able to see default bars.`);
 				}
 			} else {
 				this.wrn(`[set_default_bar_color] Color stayed the same. Not changing.`);
@@ -5889,6 +5897,14 @@ class asanAI {
 				this.#bar_background_color = color;
 				if(this.#model) {
 					this.set_model(this.#model);
+				}
+
+				if(color == this.get_max_bar_color()) {
+					this.wrn(`[set_bar_background_color] Max-bar color is the same as background-color. Max bars will not be visible`);
+				}
+
+				if(color == this.get_default_bar_color()) {
+					this.wrn(`[set_bar_background_color] Default-bar color is the same as background-color. Default bars will not be visible`);
 				}
 			} else {
 				this.wrn(`[set_bar_background_color] Color stayed the same. Not changing.`);
