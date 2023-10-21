@@ -2,6 +2,7 @@
 
 class asanAI {
 	asanai_name = "asanai";
+	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
 	#kernel_pixel_size_max = 10;
 	#pixel_size_max = 10;
@@ -2109,27 +2110,19 @@ class asanAI {
 		}
 
 		this.#started_webcam = true;
-		this.log("A");
 		try {
-			this.log("B");
 			this.#camera = await tf.data.webcam($video_element);
-			this.log("C");
 		} catch (e) {
-			this.log("D");
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
-			this.log("E");
 			if(("" + e).includes("The fetching process for the")) {
-				this.log("F");
 				this.err("[show_and_predict_webcam_in_div] " + e)
 				return;
 			} else {
-				this.log("G");
 				throw new Error(e);
 			}
-		this.log("H");
 		}
 
 		while (this.#started_webcam) {
@@ -3135,13 +3128,14 @@ class asanAI {
 
 		var html = "";
 
-		var bar_style = ` style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: ${this.#bar_width}px;' `;
+		var bar_style = ` style='margin-top: 4px; display: inline-block;`;
+		bar_style += `height: 3px; background-color: ${this.#bar_background_color}; padding: 5px; width: ${this.#bar_width}px;' `;
 
-		var highest_bar_css = "background-color: #0FFF50 !important;";
+		var highest_bar_css = `background-color: #${this.#max_bar_color} !important;`;
 
 		var label_element_css = "width: 100%; text-align: left; height: 40px;";
 
-		var best_result_css = `background-color: green; color: white;`;
+		var best_result_css = `background-color: ${this.#max_bar_color}; color: white;`;
 
 		var label_element = ` class='label_element' style='${label_element_css}' `;
 		var label_element_best_result = ` class='label_element best_result' style='${best_result_css} ${label_element_css}' `;
