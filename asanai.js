@@ -1869,6 +1869,34 @@ class asanAI {
 		return segs(element).join("/");
 	}
 
+	#show_images_to_be_predicted () {
+		var elements = [];
+		for (var i = 0; i < this.#images_to_repredict; i++) {
+			var _xpath = this.#images_to_repredict[i];
+			var elements = this.#get_elements_by_xpath(_xpath);
+			var this_div_element = this.#images_to_repredict_divs[i];
+			elements.push(...elements, ...this_div_element)
+		}
+
+		for (var i = 0; i < elements.length; i++) {
+			$(elements[i]).show();
+		}
+	}
+
+	#hide_images_to_be_predicted () {
+		var elements = [];
+		for (var i = 0; i < this.#images_to_repredict; i++) {
+			var _xpath = this.#images_to_repredict[i];
+			var elements = this.#get_elements_by_xpath(_xpath);
+			var this_div_element = this.#images_to_repredict_divs[i];
+			elements.push(...elements, ...this_div_element)
+		}
+
+		for (var i = 0; i < elements.length; i++) {
+			$(elements[i]).hide();
+		}
+	}
+
 	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
 		this.assert(typeof(_add_to_repredict) == "boolean", "_add_to_repredict is not a boolean");
 		this.assert(typeof(_add_on_click_repredict) == "boolean", "_add_on_click_repredict is not a boolean");
@@ -1926,8 +1954,13 @@ class asanAI {
 
 		if(this.#model.input.shape.length != 4) {
 			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${this.#model.input.shape.join(", ")}]`);
+
+			this.#hide_images_to_be_predicted()
+
 			return;
 		}
+
+		this.#show_images_to_be_predicted()
 
 		var _height = model_input_shape[1];
 		var _width = model_input_shape[2];
