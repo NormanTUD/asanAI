@@ -1689,7 +1689,7 @@ class asanAI {
 
 	set_model (_m) {
 		if(!this.is_model(_m)) {
-			throw new Error("Given item is not a valid model");
+			throw new Error("[set_model] Given item is not a valid model");
 			return;
 		}
 
@@ -1721,16 +1721,37 @@ class asanAI {
 			this.toggle_webcam();
 		}
 
-		if(this.images_to_repredict) {
-			for (var i = 0; i < this.images_to_repredict.length; i++) {
-				var this_img_element = this.images_to_repredict[i];
-				var this_div_element = this.#images_to_repredict_divs[i];
-				this.predict_image(this_img_element, this_div_element, 0);
+		if(this.#images_to_repredict) {
+			for (var i = 0; i < this.#images_to_repredict.length; i++) {
+				var this_img_element_xpath = this.#images_to_repredict[i];
+				var this_img_element = this.#get_elements_by_xpath(this_img_element_xpath);
+				if($(this_img_element).length) {
+					var this_div_element = this.#images_to_repredict_divs[i];
+
+					this.predict_image(this_img_element, this_div_element, 0);
+				} else {
+					this.err(`[set_model] Cannot find element by xpath for reprediction: ${this_img_element_xpath}`);
+				}
 			}
+		} else {
+			this.dbg(`[set_model] No images to repredict`);
 		}
 
 		this.#currently_switching_models = false;
 		return this.#model;
+	}
+
+	#get_elements_by_xpath (STR_XPATH) {
+		this.assert(typeof(STR_XPATH) == "string", "[get_element_xpath] Parameter is not string, but " + typeof(STR_XPATH));
+
+		var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
+		var xnodes = [];
+		var xres;
+		while (xres = xresult.iterateNext()) {
+			xnodes.push(xres);
+		}
+
+		return xnodes;
 	}
 
 	stop_camera (item) {
@@ -1753,7 +1774,19 @@ class asanAI {
 	start_camera (item) {
 		this.#started_webcam = true;
 		if(this.webcam_prediction_div_name) {
-			this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
+			try {
+				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("The fetching process for the")) {
+					this.err("[start_camera] This error may happen when switching models: " + e);
+				} else {
+					throw new Error("" + e);
+				}
+			}
 		}
 
 		$(this.#last_video_element).show();
@@ -1797,6 +1830,20 @@ class asanAI {
 		} else {
 			return true;
 		}
+	}
+
+	#get_element_xpath(element) {
+		this.assert(typeof (element) == "object", "item is not an object but " + typeof (element));
+
+		const idx = (sib, name) => sib
+			? idx(sib.previousElementSibling, name || sib.localName) + (sib.localName == name)
+			: 1;
+		const segs = elm => !elm || elm.nodeType !== 1
+			? [""]
+			: elm.id && document.getElementById(elm.id) === elm
+				? [`id("${elm.id}")`]
+				: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
+		return segs(element).join("/");
 	}
 
 	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
@@ -1863,8 +1910,11 @@ class asanAI {
 		this.dispose(result);
 
 		if(_add_to_repredict) {
-			this.#images_to_repredict.push(img_element_or_div);
-			this.#images_to_repredict_divs.push(write_to_div);
+			var _xpath = this.#get_element_xpath(img_element_or_div);
+			if(!this.#images_to_repredict.includes(img_element_or_div)) {
+				this.#images_to_repredict.push(_xpath);
+				this.#images_to_repredict_divs.push(write_to_div);
+			}
 		}
 
 		return result;
@@ -2036,10 +2086,10 @@ class asanAI {
 			this.#camera = await tf.data.webcam($video_element);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
-
+				e = e.message;
 			}
 
-			if(("" + e).includes("The fetching process for the media resource was aborted by the user agent at the user's request")) {
+			if(("" + e).includes("The fetching process for the")) {
 				this.err("[show_and_predict_webcam_in_div] " + e)
 				return;
 			} else {

@@ -144,7 +144,7 @@
 
 				console.log(loaded_data);
 			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 100, batchSize: 5, shuffle: true});
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 10, shuffle: true});
 
 				if(history) {
 					console.log("history:", history);
