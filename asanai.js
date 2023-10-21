@@ -2165,6 +2165,11 @@ class asanAI {
 				return;
 			}
 
+			if(!image) {
+				this.err(`[show_and_predict_webcam_in_div] image is empty. Cannot continue.`);
+				return;
+			}
+
 			var worked = this.tidy(() => {
 				try {
 					var _data = asanai_this.#resizeImage(image, [asanai_this.#model_height, asanai_this.#model_width]);
