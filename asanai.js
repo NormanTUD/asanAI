@@ -1847,6 +1847,8 @@ class asanAI {
 	}
 
 	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
+		this.assert(img_element_or_div, "img_element_or_div is empty");
+
 		if(!this.#model) {
 			this.err(`[predict_image] Cannot predict image without a loaded model`);
 			return;
@@ -1877,9 +1879,13 @@ class asanAI {
 			}
 		}
 
+		this.assert(img_element_or_div, "img_element_or_div is empty");
+
 		var valid_tags = ["CANVAS", "IMG"];
-		if(!valid_tags.includes(img_element_or_div.tagName)) {
-			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_element_or_div.tagName}, but should be in [${valid_tags.join(", ")}]`);
+		var img_tag_name = img_element_or_div.tagName;
+		this.assert(img_tag_name, "img_tag_name is empty!");
+		if(!valid_tags.includes(img_tag_name)) {
+			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_tag_name}, but should be in [${valid_tags.join(", ")}]`);
 			return;
 		}
 
