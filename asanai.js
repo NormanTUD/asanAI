@@ -43,11 +43,13 @@ class asanAI {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
 		var last_tested_plotly_version = "2.14.0";
+		var last_tested_temml_version = "0.10.14";
 
 
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
 
 		if(args.length == 1) {
 			if(Object.keys(args[0]).includes("labels")) {
