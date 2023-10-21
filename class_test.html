@@ -136,7 +136,7 @@
 
 			async function load_test_images_and_train () {
 				var new_model_struct = [
-					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [50, 50, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
@@ -171,7 +171,7 @@
 
 				console.log(loaded_data);
 			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 10, shuffle: true});
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 1000, shuffle: true});
 
 				if(history) {
 					console.log("history:", history);

@@ -1734,22 +1734,7 @@ class asanAI {
 		return this.#model;
 	}
 
-	set_model (_m) {
-		if(!this.is_model(_m)) {
-			throw new Error("[set_model] Given item is not a valid model");
-			return;
-		}
-
-		this.#currently_switching_models = true;
-
-		var _restart_webcam = 0;
-		if(this.#started_webcam) {
-			this.stop_camera();
-			_restart_webcam = 1;
-		}
-
-		this.#model = _m;
-
+	#redo_what_has_to_be_redone (_restart_webcam) {
 		if(this.#model.input.shape.length == 4) {
 			this.#model_height = this.#model.input.shape[1];
 			this.#model_width = this.#model.input.shape[2];
@@ -1783,6 +1768,25 @@ class asanAI {
 		} else {
 			this.dbg(`[set_model] No images to repredict`);
 		}
+	}
+
+	set_model (_m) {
+		if(!this.is_model(_m)) {
+			throw new Error("[set_model] Given item is not a valid model");
+			return;
+		}
+
+		this.#currently_switching_models = true;
+
+		var _restart_webcam = 0;
+		if(this.#started_webcam) {
+			this.stop_camera();
+			_restart_webcam = 1;
+		}
+
+		this.#model = _m;
+
+		this.#redo_what_has_to_be_redone(_restart_webcam);
 
 		this.#currently_switching_models = false;
 		return this.#model;
@@ -3687,7 +3691,7 @@ class asanAI {
 		try {
 			var history = this.#model.fit(_x, _y, args);
 
-			this.set_model(this.#model);
+			this.#redo_what_has_to_be_redone(false);
 
 			return history;
 		} catch (e) {
