@@ -1770,6 +1770,8 @@ class asanAI {
 			this.#camera.stop()
 		}
 
+		this.#camera = null;
+
 		$(this.#last_video_element).hide();
 		$("#" + this.show_and_predict_webcam_in_div_div).hide();
 
@@ -1802,6 +1804,10 @@ class asanAI {
 		if(item) {
 			$(item).text("Stop webcam");
 		}
+	}
+
+	get_webcam () {
+		return this.#camera;
 	}
 
 	async toggle_webcam (item=null) {
