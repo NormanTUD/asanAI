@@ -3605,6 +3605,27 @@ class asanAI {
 			return;
 		}
 
+		if(this.#model.input.shape.length != _x.shape.length) {
+			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+			return;
+		} else {
+			var mos = this.#model.input.shape;
+			var ys = _y.shape;
+
+			var matches = true;
+
+			for (var k = 0; k < ys.length; k++) {
+				if(!(mos[k] === null || mos[k] == ys[k])) {
+					matches = false;
+				}
+			}
+
+			if(!matches) {
+				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+				return;
+			}
+		}
+
 		if(this.#model.output.shape.length != _y.shape.length) {
 			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
 			return;
