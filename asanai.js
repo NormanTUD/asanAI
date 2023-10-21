@@ -3457,4 +3457,8 @@ class asanAI {
 	get_custom_tensors () {
 		return this.#custom_tensors;
 	}
+
+	tensor_debugger () {
+		console.table(this.#custom_tensors);
+	}
 }
