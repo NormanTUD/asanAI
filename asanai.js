@@ -1744,7 +1744,7 @@ class asanAI {
 		if(this.#images_to_repredict) {
 			for (var i = 0; i < this.#images_to_repredict.length; i++) {
 				var this_img_element_xpath = this.#images_to_repredict[i];
-				var this_img_element = this.#get_elements_by_xpath(this_img_element_xpath);
+				var this_img_element = this.get_elements_by_xpath(this_img_element_xpath);
 				if($(this_img_element).length) {
 					var this_div_element = this.#images_to_repredict_divs[i];
 
@@ -1761,7 +1761,7 @@ class asanAI {
 		return this.#model;
 	}
 
-	#get_elements_by_xpath (STR_XPATH) {
+	get_elements_by_xpath (STR_XPATH) {
 		this.assert(typeof(STR_XPATH) == "string", "[get_element_xpath] Parameter is not string, but " + typeof(STR_XPATH));
 
 		var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
@@ -1871,11 +1871,11 @@ class asanAI {
 
 	#show_images_to_be_predicted () {
 		var elements = [];
-		for (var i = 0; i < this.#images_to_repredict; i++) {
+		for (var i = 0; i < this.#images_to_repredict.length; i++) {
 			var _xpath = this.#images_to_repredict[i];
-			var elements = this.#get_elements_by_xpath(_xpath);
+			var _elements = this.getElementByXpath(_xpath);
 			var this_div_element = this.#images_to_repredict_divs[i];
-			elements.push(...elements, ...this_div_element)
+			elements.push(_elements, this_div_element)
 		}
 
 		for (var i = 0; i < elements.length; i++) {
@@ -1883,13 +1883,17 @@ class asanAI {
 		}
 	}
 
+	getElementByXpath(path) {
+		return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	}
+
 	#hide_images_to_be_predicted () {
 		var elements = [];
-		for (var i = 0; i < this.#images_to_repredict; i++) {
+		for (var i = 0; i < this.#images_to_repredict.length; i++) {
 			var _xpath = this.#images_to_repredict[i];
-			var elements = this.#get_elements_by_xpath(_xpath);
+			var _elements = this.getElementByXpath(_xpath);
 			var this_div_element = this.#images_to_repredict_divs[i];
-			elements.push(...elements, ...this_div_element)
+			elements.push(_elements, this_div_element)
 		}
 
 		for (var i = 0; i < elements.length; i++) {
@@ -6062,5 +6066,9 @@ class asanAI {
 
 	disable_debug () {
 		this.#_enable_debug = false;
+	}
+
+	get_images_to_repredict () {
+		return this.#images_to_repredict;
 	}
 }
