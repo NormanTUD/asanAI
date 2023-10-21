@@ -53,8 +53,8 @@
 
 				asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
-				asanai.predict_image("test_image", "test_image_prediction");
-				asanai.predict_image("test_image_two", "test_image_two_prediction");
+				asanai.predict_image("test_image", "test_image_prediction", true, true);
+				asanai.predict_image("test_image_two", "test_image_two_prediction", true, true);
 
 				asanai.draw_fcnn("fcnn_div");
 
@@ -114,7 +114,7 @@
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
 					{flatten: {}},
 					{dense: {units: 10, activation: "relu"}},
-					{dense: {units: 5, activation: "softmax"}}
+					{dense: {units: 5, activation: "relu"}}
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);

@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	asanai_name = "asanai";
 	#fcnn_div_name = null;
 	#kernel_pixel_size_max = 10;
 	#pixel_size_max = 10;
@@ -1728,7 +1729,7 @@ class asanAI {
 				if($(this_img_element).length) {
 					var this_div_element = this.#images_to_repredict_divs[i];
 
-					this.predict_image(this_img_element, this_div_element, 0);
+					this.predict_image(this_img_element, this_div_element, false, false);
 				} else {
 					this.err(`[set_model] Cannot find element by xpath for reprediction: ${this_img_element_xpath}`);
 				}
@@ -1846,7 +1847,9 @@ class asanAI {
 		return segs(element).join("/");
 	}
 
-	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
+	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
+		this.assert(typeof(_add_to_repredict) == "boolean", "_add_to_repredict is not a boolean");
+		this.assert(typeof(_add_on_click_repredict) == "boolean", "_add_on_click_repredict is not a boolean");
 		this.assert(img_element_or_div, "img_element_or_div is empty");
 
 		if(!this.#model) {
@@ -1931,6 +1934,21 @@ class asanAI {
 			}
 		}
 
+		if(_add_on_click_repredict) {
+			if($(img_element_or_div).attr("onclick")) {
+				this.dbg(`[predict_image] Element already has onclick. Not adding a new one.`);
+			} else {
+				console.log("write_to_div:", write_to_div);
+			}
+
+			var write_to_div_id = $(write_to_div).attr("id");
+			if(write_to_div_id) {
+				$(img_element_or_div).attr("onclick", `${this.asanai_name}.predict_image(this, ${write_to_div_id})`);
+			} else {
+				this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
+			}
+		}
+
 		return result;
 	}
 
@@ -2009,7 +2027,7 @@ class asanAI {
 
 						__parent.append($(_html));
 					} else {
-						this.wrn(`[predict_manually] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
+						this.dbg(`[predict_manually] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
 					}
 				}
 				try {
@@ -2246,8 +2264,8 @@ class asanAI {
 
 	#show_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
 		var html = `<div class='show_internals_slider'>`
-		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="asanai.set_pixel_size($(this).val())">`;
-		html += `Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" onchange="asanai.set_kernel_pixel_size($(this).val())">`;
+		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.asanai_name}.set_pixel_size($(this).val())">`;
+		html += `Kernel-Pixel-Size: <input type="range" min="1" max="10" value="5" onchange="${this.asanai_name}.set_kernel_pixel_size($(this).val())">`;
 		html += `</div>`;
 
 		return html;
