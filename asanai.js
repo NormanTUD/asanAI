@@ -3851,6 +3851,10 @@ class asanAI {
 	}
 
 	set_asanai_name (name) {
-		this.#asanai_name = name;
+		if(eval(`window.${name}`)) {
+			this.#asanai_name = name;
+		} else {
+			this.err(`Could not find global variable ${name}. Cannot use it as asanai name.`);
+		}
 	}
 }
