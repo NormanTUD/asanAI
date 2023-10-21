@@ -61,6 +61,9 @@
 				asanai.write_model_summary("summary_pre")
 
 				asanai.write_tensors_info("memory");
+
+				asanai.set_default_bar_color("yellow")
+				asanai.set_max_bar_color("lightgreen")
 			});
 
 			function test_model_switch () {

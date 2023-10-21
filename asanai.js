@@ -5835,6 +5835,15 @@ class asanAI {
 		return false;
 	}
 
+	set_max_bar_color(color) {
+		if(this.is_valid_web_color(color)) {
+			this.#max_bar_color = color;
+			this.set_model(this.#model);
+		} else {
+			this.err(`[set_max_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
+		}
+	}
+
 	set_default_bar_color(color) {
 		if(this.is_valid_web_color(color)) {
 			this.#default_bar_color = color;
