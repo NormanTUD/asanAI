@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	#_enable_debug = false;
 	#last_tensor_size_cpu = 0;
 	#last_num_global_tensors = 0;
 	#last_tensor_size_gpu = 0;
@@ -825,6 +826,10 @@ class asanAI {
 	}
 
 	#tensor_print_to_string(_tensor) {
+		if(!this.#_enable_debug) {
+			return "Run asanai.enable_debug() to enable tensor printing.";
+		}
+
 		try {
 			var logBackup = console.log;
 			var logMessages = [];
@@ -6000,5 +6005,13 @@ class asanAI {
 		} else {
 			this.err(`[set_bar_background_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
 		}
+	}
+
+	enable_debug () {
+		this.#_enable_debug = true;
+	}
+
+	disable_debug () {
+		this.#_enable_debug = false;
 	}
 }
