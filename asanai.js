@@ -4089,10 +4089,8 @@ class asanAI {
 	}
 
 	generate_ribbon_from_ribbon_data (jsonData) {
-		return `
-		<div id="ribbon">
-			<span class="ribbon-window-title"></span>
-
+		var tabs = [
+			`
 			<div class="ribbon-tab file" id="file-tab">
 				<span class="ribbon-title">File</span>
 				<div class="ribbon-backstage">
@@ -4108,8 +4106,8 @@ class asanAI {
 					</div>
 				</div>
 			</div>
-
-
+			`,
+			`
 			<div class="ribbon-tab" id="format-tab">
 				<span class="ribbon-title" id='home_tab'>Home</span>
 				<div class="ribbon-section">
@@ -4191,6 +4189,10 @@ class asanAI {
 				</div>
 
 			</div>
+
+			`,
+
+			`
 			<div class="ribbon-tab" id="next-tab">
 				<span class="ribbon-title">Options</span>
 				<div class="ribbon-section">
@@ -4207,6 +4209,14 @@ class asanAI {
 					</div>
 				</div>
 			</div>
+			`
+		];
+
+		return `
+		<div id="ribbon">
+			<span class="ribbon-window-title"></span>
+
+			${tabs.join("\n")}
 		</div>`;
 	}
 
