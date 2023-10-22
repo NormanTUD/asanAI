@@ -42,6 +42,152 @@ class asanAI {
 	#images_to_repredict_divs = [];
 	#custom_tensors = {};
 
+	ribbon_data = {
+		"ribbon": {
+			"tabs": [
+				{
+					"id": "file-tab",
+					"title": "File",
+					"backstage": {
+						"content": "This is the Backstage.",
+						"buttons": [
+							{
+								"label": "Open",
+								"description": "Open a document from your computer"
+							},
+							{
+								"label": "Save",
+								"description": "Save your document to your computer"
+							}
+						]
+					}
+				},
+				{
+					"id": "format-tab",
+					"title": "Home",
+					"sections": [
+						{
+							"title": "Tables",
+							"buttons": [
+								{
+									"id": "add-table-btn",
+									"title": "Add Table",
+									"help": "This button will add a table to your document",
+									"icons": {
+										"normal": "icons/normal/new-table.png",
+										"hot": "icons/hot/new-table.png",
+										"disabled": "icons/disabled/new-table.png"
+									}
+								},
+								{
+									"id": "open-table-btn",
+									"title": "Open Table",
+									"help": "This button will open a table and add it to your document",
+									"icons": {
+										"normal": "icons/normal/open-table.png",
+										"hot": "icons/hot/open-table.png",
+										"disabled": "icons/disabled/open-table.png"
+									}
+								},
+								{
+									"id": "del-table-btn",
+									"title": "Remove Table",
+									"help": "This button will remove the selected table from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-table.png",
+										"hot": "icons/hot/delete-table.png",
+										"disabled": "icons/disabled/delete-table.png"
+									}
+								}
+							]
+						},
+						{
+							"title": "Pages",
+							"buttons": [
+								{
+									"id": "add-page-btn",
+									"title": "Add Page",
+									"help": "This button will add a page to your document",
+									"icons": {
+										"normal": "icons/normal/new-page.png",
+										"hot": "icons/hot/new-page.png",
+										"disabled": "icons/disabled/new-page.png"
+									}
+								},
+								{
+									"id": "open-page-btn",
+									"title": "Open Page",
+									"help": "This button will open a page and add it to your document",
+									"icons": {
+										"normal": "icons/normal/open-page.png",
+										"hot": "icons/hot/open-page.png",
+										"disabled": "icons/disabled/open-page.png"
+									}
+								},
+								{
+									"id": "del-page-btn",
+									"title": "Remove Page",
+									"help": "This button will remove the selected page from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-page.png",
+										"hot": "icons/hot/delete-page.png",
+										"disabled": "icons/disabled/delete-page.png"
+									}
+								}
+							]
+						},
+						{
+							"title": "Actions",
+							"buttons": [
+								{
+									"id": "run-btn",
+									"title": "Run",
+									"help": "This button will run the program",
+									"style": "background-color: lightgreen",
+									"icons": {
+										"normal": "icons/normal/run.png",
+										"hot": "icons/hot/run.png",
+										"disabled": "icons/disabled/run.png"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "next-tab",
+					"title": "Options",
+					"sections": [
+						{
+							"title": "More Stuff",
+							"buttons": [
+								{
+									"title": "Other Feature",
+									"help": "This button will do something else",
+									"icons": {
+										"normal": "icons/normal/bullet-orange.png"
+									}
+								},
+								{
+									"id": "other-btn-2",
+									"title": "Remove Table",
+									"help": "This button will remove the selected table from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-table.png"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+
+
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
@@ -3940,5 +4086,101 @@ class asanAI {
 		this.write_tensors_info("__status__bar__memory_debuger");
 
 		return $element;
+	}
+
+	generate_ribbon_from_ribbon_data (jsonData) {
+		const ribbonElement = document.createElement('div');
+		ribbonElement.id = 'ribbon';
+
+		for (const tab of jsonData.ribbon.tabs) {
+			const tabElement = document.createElement('div');
+			tabElement.className = 'ribbon-tab';
+			tabElement.id = tab.id;
+
+			const titleElement = document.createElement('span');
+			titleElement.className = 'ribbon-title';
+			titleElement.textContent = tab.title;
+			tabElement.appendChild(titleElement);
+
+			if (tab.backstage) {
+				const backstageElement = document.createElement('div');
+				backstageElement.className = 'ribbon-backstage';
+				backstageElement.textContent = tab.backstage.content;
+
+				for (const button of tab.backstage.buttons) {
+					const buttonElement = document.createElement('div');
+					buttonElement.className = 'button big';
+
+					const labelElement = document.createElement('span');
+					labelElement.className = 'label';
+					labelElement.textContent = button.label;
+					buttonElement.appendChild(labelElement);
+
+					const descElement = document.createElement('span');
+					descElement.className = 'desc';
+					descElement.textContent = button.description;
+					buttonElement.appendChild(descElement);
+
+					backstageElement.appendChild(buttonElement);
+				}
+
+				tabElement.appendChild(backstageElement);
+			} else if (tab.sections) {
+				for (const section of tab.sections) {
+					const sectionElement = document.createElement('div');
+					sectionElement.className = 'ribbon-section';
+
+					const sectionTitleElement = document.createElement('span');
+					sectionTitleElement.className = 'section-title';
+					sectionTitleElement.textContent = section.title;
+					sectionElement.appendChild(sectionTitleElement);
+
+					for (const button of section.buttons) {
+						const buttonElement = document.createElement('div');
+						buttonElement.className = 'ribbon-button';
+						buttonElement.id = button.id || ''; // Optional
+
+						const buttonTitleElement = document.createElement('span');
+						buttonTitleElement.className = 'button-title';
+						buttonTitleElement.textContent = button.title;
+						buttonElement.appendChild(buttonTitleElement);
+
+						const buttonHelpElement = document.createElement('span');
+						buttonHelpElement.className = 'button-help';
+						buttonHelpElement.textContent = button.help;
+						buttonElement.appendChild(buttonHelpElement);
+
+						if (button.style) {
+							buttonElement.style.cssText = button.style;
+						}
+
+						for (const iconType of Object.keys(button.icons)) {
+							const iconElement = document.createElement('img');
+							iconElement.className = `ribbon-icon ribbon-${iconType}`;
+							iconElement.src = button.icons[iconType];
+							buttonElement.appendChild(iconElement);
+						}
+
+						if (button.disabled) {
+							buttonElement.classList.add('disabled');
+						}
+
+						sectionElement.appendChild(buttonElement);
+					}
+
+					tabElement.appendChild(sectionElement);
+				}
+			}
+
+			ribbonElement.appendChild(tabElement);
+		}
+
+		return $(ribbonElement).html();
+	}
+
+	show_ribbon () {
+		var ribbon_element = this.generate_ribbon_from_ribbon_data(this.ribbon_data);
+		$("#ribbon_content").html($(ribbon_element));
+		$('#ribbon').ribbon();
 	}
 }
