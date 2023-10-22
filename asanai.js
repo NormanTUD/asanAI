@@ -2,6 +2,9 @@
 
 class asanAI {
 	#_enable_debug = false;
+	#write_tensors_info_div = "";
+	#status_bar_background_color = "#262626";
+	#status_bar_text_color = "#fff";
 	#last_tensor_size_cpu = 0;
 	#last_num_global_tensors = 0;
 	#last_tensor_size_gpu = 0;
@@ -1682,6 +1685,8 @@ class asanAI {
 
 		msg = msgs.join("\n");
 
+		$("#__status__bar__log").html("[WARN] " + msg);
+
 		return msg;
 	}
 
@@ -1696,6 +1701,8 @@ class asanAI {
 		}
 
 		msg = msgs.join("\n");
+
+		$("#__status__bar__log").html(msg);
 
 		return msg;
 	}
@@ -1712,6 +1719,8 @@ class asanAI {
 
 		msg = msgs.join("\n");
 
+		//$("#__status__bar__log").html("[DEBUG] " + msg);
+
 		return msg;
 	}
 
@@ -1726,6 +1735,8 @@ class asanAI {
 		}
 
 		msg = msgs.join("\n");
+
+		$("#__status__bar__log").html("[ERROR] " + msg);
 
 		return msg;
 	}
@@ -3031,7 +3042,12 @@ class asanAI {
 		return "<center>" + table + "</center>";
 	}
 
-	write_tensors_info(divname=this.write_tensors_info_div, time=200) {
+	write_tensors_info(divname=this.#write_tensors_info_div, time=200) {
+		if($("#__status__bar__").length == 1) {
+			this.err("[write_tensors_info] Cannot use status bar and write_tensors_info at the same time. Chose one.");
+			return;
+		}
+
 		var $div = $("#" + divname);
 
 		if(!$div.length) {
@@ -3039,7 +3055,7 @@ class asanAI {
 			return;
 		}
 
-		this.write_tensors_info_div = divname;
+		this.#write_tensors_info_div = divname;
 
 		if(!this.#looks_like_number(time)) {
 			console.err("write_tensors_info: second parameter must be a number. Time will be set to 200 ms");
@@ -3145,7 +3161,7 @@ class asanAI {
 	hide_tensors_info () {
 		if(self.write_tensor_interval) {
 			clearInterval(self.write_tensor_interval)
-			$("#" + self.write_tensors_info_div).html("");
+			$("#" + self.#write_tensors_info_div).html("");
 
 			self.write_tensor_interval = null;
 		} else {
@@ -3891,5 +3907,36 @@ class asanAI {
 		} else {
 			this.err(`[set_asanai_name] Could not find global variable ${name}. Cannot use it as asanAI name.`);
 		}
+	}
+
+	show_status_bar () {
+		if($("#__status__bar__").length == 1) {
+			this.err("[show_status_bar] Status bar element already exists. Not re-initializing it.");
+			return;
+		}
+
+		if(this.#write_tensors_info_div) {
+			this.err("[show_status_bar] Cannot use write_tensors_info and status_bar at the same time. Chose one.");
+			return;
+		}
+
+		var css = `background-color: ${this.#status_bar_background_color}; `;
+		css += `color: ${this.#status_bar_text_color}; `;
+		css += `user-select: none; `;
+		css += `height: 1.5em; `;
+		css += `width: 100%; `;
+		css += `position: fixed; `;
+		css += `bottom: 0px; `;
+		css += `margin: 0px; `;
+		css += `border: 1px groove #626262; `;
+		css += `padding-bottom: 5px; `;
+
+		var $element = $(`<div style='${css}'><span id='__status__bar__log'></span><span style='right: 0px; position: fixed;' id='__status__bar__memory_debuger'></span></div>`);
+
+		$($element).appendTo($("body"));;
+
+		this.write_tensors_info("__status__bar__memory_debuger");
+
+		return $element;
 	}
 }

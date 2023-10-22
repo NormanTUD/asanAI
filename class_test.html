@@ -191,6 +191,7 @@
 
 				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
+				asanai.show_status_bar();
 				asanai.set_asanai_name("asanai");
 
 				asanai.set_default_bar_color("yellow")
@@ -213,7 +214,7 @@
 
 				asanai.write_model_summary("summary_pre")
 
-				asanai.write_tensors_info("memory");
+				//asanai.write_tensors_info("memory");
 			});
 
 			function test_model_switch () {
