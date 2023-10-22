@@ -108,13 +108,14 @@
 
 				<div class="ribbon-section">
 					<span class="section-title">Actions</span>
-					<div class="ribbon-button ribbon-button-small" id="run-btn">
+					<div class="ribbon-button ribbon-button-small" id="run-btn" style='background-color: lightgreen' >
 						<span onclick='load_test_images_and_train()' class="button-title">Run</span>
 						<span class="button-help">This button will run the program.</span>
 						<img class="ribbon-icon ribbon-normal" src="icons/normal/run.png" />
 						<img class="ribbon-icon ribbon-hot" src="icons/hot/run.png" />
 						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/run.png" />
 					</div>
+					<!--
 					<div class="ribbon-button ribbon-button-small" id="repeat-btn">
 						<span class="button-title">Repeat</span>
 						<span class="button-help">This button will repeat something.</span>
@@ -129,6 +130,7 @@
 						<img class="ribbon-icon ribbon-hot" src="icons/hot/save.png" />
 						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/save.png" />
 					</div>
+					-->
 				</div>
 
 			</div>
@@ -334,14 +336,6 @@
 					$('#disable-btn').hide();
 					$('#enable-btn').show();
 				});
-
-				$('.ribbon-button').click(function() {
-					if (this.isEnabled()) {
-						asanai.log($(this).attr('id') + ' clicked');
-					}
-				});
-
-				$("#home_tab").click(); // quickfix
 			});
 		</script>
 	</body>
