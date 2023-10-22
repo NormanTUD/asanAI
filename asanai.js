@@ -4221,6 +4221,16 @@ class asanAI {
 	}
 
 	show_ribbon () {
+		try {
+			if(!typeof(jQuery().ribbon) == "function") {
+				this.err(`[show_ribbon] jQuery().ribbon is not included. Cannot show ribbon without.`);
+				return;
+			}
+		} catch (e) {
+			this.err(`[show_ribbon] jQuery().ribbon is not included. Cannot show ribbon without.`);
+			return;
+		}
+
 		var ribbon_element = this.generate_ribbon_from_ribbon_data(this.ribbon_data);
 		$("#ribbon_content").html(ribbon_element);
 		$('#ribbon').ribbon();
