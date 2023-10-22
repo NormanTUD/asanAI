@@ -1703,6 +1703,7 @@ class asanAI {
 		msg = msgs.join("\n");
 
 		$("#__status__bar__log").html(msg);
+		$("#__loading_screen__text").html(msg);
 
 		return msg;
 	}
@@ -1737,6 +1738,7 @@ class asanAI {
 		msg = msgs.join("\n");
 
 		$("#__status__bar__log").html("[ERROR] " + msg);
+		$("#__loading_screen__text").html("[ERROR] " + msg);
 
 		return msg;
 	}

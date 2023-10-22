@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<title>asanai.js</title>
+		<script src='libs/jquery.js' crossorigin></script>
 		<script src='asanai.js' crossorigin></script>
 		<script src='tf/tf.min.js' crossorigin></script>
-		<script src='libs/jquery.js' crossorigin></script>
 		<script src='libs/jquery-ui.js' crossorigin></script>
 		<script src='libs/plotly-latest.min.js' crossorigin></script>
 		<script src='libs/temml/temml.js' crossorigin></script>
@@ -34,6 +34,8 @@
 	<body>
 
 		<div id="ribbon">
+			<span class="ribbon-window-title"></span>
+
 			<div class="ribbon-tab file" id="file-tab">
 				<span class="ribbon-title">File</span>
 				<div class="ribbon-backstage">
@@ -216,6 +218,29 @@
 				asanai.write_model_summary("summary_pre")
 
 				//asanai.write_tensors_info("memory");
+
+
+				$('#ribbon').ribbon();
+
+				$('#enable-btn').click(function() {
+					$('#del-table-btn').enable();
+					$('#del-page-btn').enable();
+					$('#save-btn').enable();
+					$('#other-btn-2').enable();
+
+					$('#enable-btn').hide();
+					$('#disable-btn').show();
+				});
+
+				$('#disable-btn').click(function() {
+					$('#del-table-btn').disable();
+					$('#del-page-btn').disable();
+					$('#save-btn').disable();
+					$('#other-btn-2').disable();
+
+					$('#disable-btn').hide();
+					$('#enable-btn').show();
+				});
 			});
 
 			function test_model_switch () {
@@ -310,31 +335,6 @@
 				await asanai.dispose(loaded_data.x);
 				await asanai.dispose(loaded_data.y);
 			}
-
-
-			$(document).ready(function () {
-				$('#ribbon').ribbon();
-
-				$('#enable-btn').click(function() {
-					$('#del-table-btn').enable();
-					$('#del-page-btn').enable();
-					$('#save-btn').enable();
-					$('#other-btn-2').enable();
-
-					$('#enable-btn').hide();
-					$('#disable-btn').show();
-				});
-
-				$('#disable-btn').click(function() {
-					$('#del-table-btn').disable();
-					$('#del-page-btn').disable();
-					$('#save-btn').disable();
-					$('#other-btn-2').disable();
-
-					$('#disable-btn').hide();
-					$('#enable-btn').show();
-				});
-			});
 		</script>
 	</body>
 </html>
