@@ -4089,98 +4089,130 @@ class asanAI {
 	}
 
 	generate_ribbon_from_ribbon_data (jsonData) {
-		const ribbonElement = document.createElement('div');
-		ribbonElement.id = 'ribbon';
+		return `
+		<div id="ribbon">
+			<span class="ribbon-window-title"></span>
 
-		for (const tab of jsonData.ribbon.tabs) {
-			const tabElement = document.createElement('div');
-			tabElement.className = 'ribbon-tab';
-			tabElement.id = tab.id;
+			<div class="ribbon-tab file" id="file-tab">
+				<span class="ribbon-title">File</span>
+				<div class="ribbon-backstage">
+					This is the Backstage.<br/><br/>
 
-			const titleElement = document.createElement('span');
-			titleElement.className = 'ribbon-title';
-			titleElement.textContent = tab.title;
-			tabElement.appendChild(titleElement);
+					<div class="button big">
+						<span class="label">Open</span>
+						<span class="desc">Open a document from your computer</span>
+					</div><br/>
+					<div class="button big">
+						<span class="label">Save</span>
+						<span class="desc">Save your document to your computer</span>
+					</div>
+				</div>
+			</div>
 
-			if (tab.backstage) {
-				const backstageElement = document.createElement('div');
-				backstageElement.className = 'ribbon-backstage';
-				backstageElement.textContent = tab.backstage.content;
 
-				for (const button of tab.backstage.buttons) {
-					const buttonElement = document.createElement('div');
-					buttonElement.className = 'button big';
+			<div class="ribbon-tab" id="format-tab">
+				<span class="ribbon-title" id='home_tab'>Home</span>
+				<div class="ribbon-section">
+					<span class="section-title">Tables</span>
+					<div class="ribbon-button ribbon-button-large" id="add-table-btn">
+						<span class="button-title">Add<br/>Table</span>
+						<span class="button-help">This button will add a table to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/new-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/new-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/new-table.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large" id="open-table-btn">
+						<span class="button-title">Open<br/>Table</span>
+						<span class="button-help">This button will open a table and add it to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/open-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/open-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/open-table.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="del-table-btn">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/delete-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/delete-table.png" />
+					</div>
+				</div>
 
-					const labelElement = document.createElement('span');
-					labelElement.className = 'label';
-					labelElement.textContent = button.label;
-					buttonElement.appendChild(labelElement);
+				<div class="ribbon-section">
+					<span class="section-title">Pages</span>
+					<div class="ribbon-button ribbon-button-large" id="add-page-btn">
+						<span class="button-title">Add<br/>Page</span>
+						<span class="button-help">This button will add a page to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/new-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/new-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/new-page.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large" id="open-page-btn">
+						<span class="button-title">Open<br/>Page</span>
+						<span class="button-help">This button will open a page and add it to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/open-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/open-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/open-page.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="del-page-btn">
+						<span class="button-title">Remove<br/>Page</span>
+						<span class="button-help">This button will remove the selected page from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/delete-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/delete-page.png" />
+					</div>
+				</div>
 
-					const descElement = document.createElement('span');
-					descElement.className = 'desc';
-					descElement.textContent = button.description;
-					buttonElement.appendChild(descElement);
 
-					backstageElement.appendChild(buttonElement);
-				}
+				<div class="ribbon-section">
+					<span class="section-title">Actions</span>
+					<div class="ribbon-button ribbon-button-small" id="run-btn" style='background-color: lightgreen' >
+						<span onclick='load_test_images_and_train()' class="button-title">Run</span>
+						<span class="button-help">This button will run the program.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/run.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/run.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/run.png" />
+					</div>
+					<!--
+					<div class="ribbon-button ribbon-button-small" id="repeat-btn">
+						<span class="button-title">Repeat</span>
+						<span class="button-help">This button will repeat something.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/repeat.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/repeat.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/repeat.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-small disabled" id="save-btn">
+						<span class="button-title">Save</span>
+						<span class="button-help">This button will save your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/save.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/save.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/save.png" />
+					</div>
+					-->
+				</div>
 
-				tabElement.appendChild(backstageElement);
-			} else if (tab.sections) {
-				for (const section of tab.sections) {
-					const sectionElement = document.createElement('div');
-					sectionElement.className = 'ribbon-section';
-
-					const sectionTitleElement = document.createElement('span');
-					sectionTitleElement.className = 'section-title';
-					sectionTitleElement.textContent = section.title;
-					sectionElement.appendChild(sectionTitleElement);
-
-					for (const button of section.buttons) {
-						const buttonElement = document.createElement('div');
-						buttonElement.className = 'ribbon-button';
-						buttonElement.id = button.id || ''; // Optional
-
-						const buttonTitleElement = document.createElement('span');
-						buttonTitleElement.className = 'button-title';
-						buttonTitleElement.textContent = button.title;
-						buttonElement.appendChild(buttonTitleElement);
-
-						const buttonHelpElement = document.createElement('span');
-						buttonHelpElement.className = 'button-help';
-						buttonHelpElement.textContent = button.help;
-						buttonElement.appendChild(buttonHelpElement);
-
-						if (button.style) {
-							buttonElement.style.cssText = button.style;
-						}
-
-						for (const iconType of Object.keys(button.icons)) {
-							const iconElement = document.createElement('img');
-							iconElement.className = `ribbon-icon ribbon-${iconType}`;
-							iconElement.src = button.icons[iconType];
-							buttonElement.appendChild(iconElement);
-						}
-
-						if (button.disabled) {
-							buttonElement.classList.add('disabled');
-						}
-
-						sectionElement.appendChild(buttonElement);
-					}
-
-					tabElement.appendChild(sectionElement);
-				}
-			}
-
-			ribbonElement.appendChild(tabElement);
-		}
-
-		return $(ribbonElement).html();
+			</div>
+			<div class="ribbon-tab" id="next-tab">
+				<span class="ribbon-title">Options</span>
+				<div class="ribbon-section">
+					<span class="section-title">More Stuff</span>
+					<div class="ribbon-button ribbon-button-large">
+						<span class="button-title">Other<br/>Feature</span>
+						<span class="button-help">This button will do something else.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/bullet-orange.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="other-btn-2">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+					</div>
+				</div>
+			</div>
+		</div>`;
 	}
 
 	show_ribbon () {
 		var ribbon_element = this.generate_ribbon_from_ribbon_data(this.ribbon_data);
-		$("#ribbon_content").html($(ribbon_element));
+		$("#ribbon_content").html(ribbon_element);
 		$('#ribbon').ribbon();
 	}
 }
