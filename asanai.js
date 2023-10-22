@@ -4191,7 +4191,24 @@ class asanAI {
 			</div>
 
 			`,
-
+			`
+			<div class="ribbon-tab" id="next-tab">
+				<span class="ribbon-title">Options</span>
+				<div class="ribbon-section">
+					<span class="section-title">More Stuff</span>
+					<div class="ribbon-button ribbon-button-large">
+						<span class="button-title">Other<br/>Feature</span>
+						<span class="button-help">This button will do something else.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/bullet-orange.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="other-btn-2">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+					</div>
+				</div>
+			</div>
+			`,
 			`
 			<div class="ribbon-tab" id="next-tab">
 				<span class="ribbon-title">Options</span>
