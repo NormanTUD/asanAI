@@ -321,6 +321,7 @@ async function get_fit_data () {
 
 		$("#network_has_seen_msg").hide();
 
+		confusion_matrix_and_grid_cache = {};
 		await visualize_train();
 
 		if(is_cosmo_mode) {
@@ -425,7 +426,10 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			$("#cosmo_training_grid_stage_explanation").show();
 			if(current_cosmo_stage == 1) {
+				confusion_matrix_and_grid_cache = {};
 				await visualize_train();
+
+				confusion_matrix_and_grid_cache = {};
 			}
 		}
 	};
@@ -475,6 +479,7 @@ async function get_fit_data () {
 
 				$("#plotly_epoch_history").hide();
 
+				confusion_matrix_and_grid_cache = {};
 				await visualize_train();
 
 				$("#visualize_images_in_grid").show();
@@ -522,6 +527,7 @@ async function get_fit_data () {
 			} else {
 				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
+			confusion_matrix_and_grid_cache = {};
 			await visualize_train();
 		}
 
@@ -1463,20 +1469,20 @@ async function visualize_train () {
 	var predictions_tensors = [];
 
 	for (var i = 0; i < image_elements.length; i++) {
-		var x = image_elements[i];
+		var img_elem = image_elements[i];
 		if(i <= max) {
 			tf.engine().startScope();
-			imgs.push(x);
+			imgs.push(img_elem);
 
-			if(!x) {
+			if(!img_elem) {
 				tf.engine().endScope();
-				wrn("x not defined!", x);
+				wrn("img_elem not defined!", img_elem);
 				continue;
 			}
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
+					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
 					res = divNoNan(res, parse_float($("#divide_by").val()));
 					return res;
 				} catch (e) {
@@ -1486,7 +1492,7 @@ async function visualize_train () {
 			});
 
 			if(img_tensor === null) {
-				wrn("Could not load image from pixels from this element:", x);
+				wrn("Could not load image from pixels from this element:", img_elem);
 				continue;
 			}
 
@@ -1507,8 +1513,8 @@ async function visualize_train () {
 		}
 
 		try {
-			var src = x.src;
-			if(src && x.tagName == "IMG") {
+			var src = img_elem.src;
+			if(src && img_elem.tagName == "IMG") {
 				var predicted_tensor = predictions_tensors[i];
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {

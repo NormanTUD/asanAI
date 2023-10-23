@@ -6247,7 +6247,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 						throw new Error(e);
 					}
 				}
-			} else {
+			} else if(finished_loading) {
 				err("ui_elements contains no elements. Selector: "  + item_selector);
 			}
 		} else {

@@ -1643,3 +1643,5 @@ var create_model_queue = [];
 var last_fcnn_hash = "";
 
 var debug = false;
+
+var confusion_matrix_and_grid_cache = {};
