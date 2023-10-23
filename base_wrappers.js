@@ -17,19 +17,19 @@ function is_tf_tensor (arg) {
 }
 
 function _register_tensors (...args) {
-	/*
 	if(is_cosmo_mode) {
 		return;
 	}
-	for (var i = 0; i < args.length; i++) {
-		if(is_tf_tensor(args[i])) {
-			!is_cosmo_mode && (() => { _custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])] })();
-			_clean_custom_tensors();
+	if(debug) {
+		for (var i = 0; i < args.length; i++) {
+			if(is_tf_tensor(args[i])) {
+				!is_cosmo_mode && (() => { _custom_tensors["" + args[i].id] = [get_stack_trace(), args[i], tensor_print_to_string(args[i])] })();
+				_clean_custom_tensors();
+			}
 		}
-	}
-	*/
 
-	_clean_custom_tensors();
+		_clean_custom_tensors();
+	}
 }
 
 function array_sync (...args) {
@@ -897,6 +897,11 @@ function _clean_custom_tensors () {
 	if(is_cosmo_mode) {
 		return;
 	}
+
+	if(!debug) {
+		return;
+	}
+
 	var keys = Object.keys(_custom_tensors);
 
 	if(!keys.length) {
