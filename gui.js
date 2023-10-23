@@ -1281,12 +1281,16 @@ function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	}
 
 	python_code += "\n";
+	python_code += "import sys\n";
 
 	if(_expert_mode) {
 		python_code += "import os\n";
 		python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
 		python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
 		python_code += "# Save this file as python-script and run it like this:\n";
+		python_code += "if not os.path.exists('keras_model'):\n"
+		python_code += "    print('keras_model cannot be found')\n"
+		python_code += "    sys.exit(1)\n"
 	} else {
 		if (input_shape_is_image_val) {
 			python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
@@ -1316,7 +1320,6 @@ function create_python_code (input_shape_is_image_val) {
 		python_code += "from PIL import Image\n";
 		python_code += "import numpy as np\n";
 		python_code += "from skimage import transform\n";
-		python_code += "import sys\n";
 
 		python_code += "labels = ['" + labels.join("', '") + "']\n";
 		python_code += "height = " + height + "\n";
