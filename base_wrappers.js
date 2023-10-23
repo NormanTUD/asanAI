@@ -210,6 +210,9 @@ function tf_unique (...args) {
 }
 
 function removeTimestampAndLines(inputString) {
+	if(!debug) {
+		return inputString;
+	}
 	try {
 		// Remove the "t=\d" pattern
 		const cleanedString = inputString.replace(/\?t=\d+/g, "");
@@ -237,6 +240,10 @@ function removeTimestampAndLines(inputString) {
 
 var get_stack_trace = function() {
 	var s = "";
+	if(!debug) {
+		return "Use debug to enable tensor debugging.";
+	}
+
 	try {
 		var a = {}; 
 		a.debug();
