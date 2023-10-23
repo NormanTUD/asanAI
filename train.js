@@ -1476,7 +1476,6 @@ async function visualize_train () {
 		var img_elem_xpath = get_element_xpath(img_elem);
 
 		if(i <= max) {
-			tf.engine().startScope();
 			var res_array;
 			if(img_elem_xpath in confusion_matrix_and_grid_cache) {
 				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
@@ -1510,6 +1509,8 @@ async function visualize_train () {
 				var res = tidy(() => { return model.predict(img_tensor); });
 
 				res_array = array_sync(res)[0];
+				await dispose(img_tensor);
+				await dispose(res);
 
 			}
 
@@ -1524,10 +1525,6 @@ async function visualize_train () {
 
 			categories.push(category);
 			probabilities.push(probability);
-
-			await dispose(res);
-			await dispose(img_tensor);
-			tf.engine().endScope();
 		}
 
 		try {
