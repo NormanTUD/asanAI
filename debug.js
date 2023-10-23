@@ -291,7 +291,7 @@ function memory_debugger () {
 		}
 
 		if(("" + e).includes("tf is null")) {
-			err("tf is null");
+			err("[memory_debugger] tf is null");
 		} else {
 			throw new Error(e);
 		}
@@ -350,7 +350,7 @@ function memory_debugger () {
 			memdeb.innerHTML = debug_string;
 		}
 	} else {
-		wrn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
+		wrn("[memory_debugger] memory_debugger_div not found. Did you, by any chance, manually remove it?");
 	}
 
 	last_num_global_tensors = num_tensors;
@@ -385,11 +385,11 @@ function data_debug (...data) {
 	log(">>>>>>>>>>>>>>>>>>");
 	for (var i = 0; i < data.length; i++) {
 		if(typeof(data[i]) == "object" && Object.keys(data[i]).includes("isDisposedInternal")) {
-			log("Tensor", data[i]);
+			log("[data_debug] Tensor", data[i]);
 			try {
 				data[i].print();
 			} catch (e) {
-				log("Error while printing: ", e);
+				log("[data_debug] Error while printing: ", e);
 			}
 		} else {
 			log(typeof(data[i]), data[i]);
@@ -412,7 +412,7 @@ function highlight_element(xpath) {
 			e = e.message;
 		}
 
-		err("Unhandled exception: " + e);
+		err("[highlight_element] Unhandled exception: " + e);
 		return;
 	}
 }
@@ -429,7 +429,7 @@ function unhighlight_element(xpath) {
 			e = e.message;
 		}
 
-		err("Unhandled exception: " + e);
+		err("[unhighlight_element] Unhandled exception: " + e);
 		return;
 	}
 }
@@ -582,7 +582,7 @@ function detect_and_color_stacktrace(input_string) {
 			e = e.message;
 		}
 
-		err("Unhandled exception: " + e);
+		err("[detect_and_color_stacktrace] Unhandled exception: " + e);
 		return;
 	}
 }
@@ -636,11 +636,11 @@ function create_html_table_from_json(data) {
 			return table.outerHTML;
 		} else {
 			// Handle the case when data is empty
-			wrn("Data is empty or not in the expected format.");
+			wrn("[create_html_table_from_json] Data is empty or not in the expected format.");
 		}
 	} catch (error) {
 		// Log and handle any errors
-		err("An error occurred:", error);
+		err("[create_html_table_from_json] An error occurred:", error);
 	}
 }
 
@@ -653,10 +653,10 @@ function send_post_request(url, htmlCode) {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					// Request was successful
-					log("Anonymized bug report was sent.");
+					log("[send_post_request] Anonymized bug report was sent.");
 				} else {
 					// Request failed
-					wrn("Anonymized bug report could not be sent:", xhr.status);
+					wrn("[send_post_request] Anonymized bug report could not be sent:", xhr.status);
 				}
 			}
 		};
@@ -664,7 +664,7 @@ function send_post_request(url, htmlCode) {
 		xhr.send(data);
 	} catch (error) {
 		// Handle any exceptions
-		err("An error occurred:", error);
+		err("[send_post_request] An error occurred:", error);
 	}
 }
 
@@ -815,123 +815,132 @@ function generateRandomArray(minElements, maxElements) {
 
 async function debug_unusual_function_inputs () {
 	for (var i in window) {
-		if([
-			"detect_and_color_stacktrace",
-			"start_gremlins",
-			"calculate_default_target_shape",
-			"test_summary",
-			"test_equal",
-			"test_not_equal",
-			"log_test",
-			"is_equal",
-			"assert",
-			"write_error",
-			"except",
-			"get_data_for_layer",
-			"is_valid_parameter",
-			"check_initializers",
-			"get_key_name_camel_case",
-			"create_model",
-			"highlight_element",
-			"_add_layers_to_model",
-			"remove_empty",
-			"_set_layer_gui",
-			"get_fake_data_for_layertype",
-			"get_default_option",
-			"create_fake_model_structure",
-			"layer_type_always_works",
-			"heuristic_layer_possibility_check",
-			"get_valid_layer_types",
-			"compile_fake_model",
-			"_add_layer_to_model",
-			"tidy",
-			"debug_unusual_function_inputs",
-			"loadLayersModel",
-			"getComputedStyle",
-			"postMessage",
-			"close",
-			"alert",
-			"confirm",
-			"prompt",
-			"print",
-			"add_optimizer_debugger",
-			"l",
-			"wrn",
-			"err",
-			"log",
-			"dbg",
-			"focus",
-			"blur",
-			"open",
-			"stop",
-			"captureEvents",
-			"releaseEvents",
-			"getSelection",
-			"matchMedia",
-			"moveTo",
-			"moveBy",
-			"resizeTo",
-			"scroll",
-			"scrollTo",
-			"getDefaultComputedStyle",
-			"resizeBy",
-			"scrollBy",
-			"scrollByLines",
-			"scrollByPages",
-			"updateCommands",
-			"sizeToContent",
-			"find",
-			"dump",
-			"setResizable",
-			"requestIdleCallback",
-			"cancelIdleCallback",
-			"requestAnimationFrame",
-			"cancelAnimationFrame",
-			"reportError",
-			"clearInterval",
-			"queueMicrotask",
-			"btoa",
-			"atob",
-			"setTimeout",
-			"clearTimeout",
-			"setInterval",
-			"createImageBitmap",
-			"structuredClone",
-			"clearImmediate",
-			"setImmediate",
-			"onresize",
-			"get_stack_trace",
-			"log_once",
-			"add_function_debugger",
-			"create_graphviz_function_call_graph",
-			"profile",
-			"jStat",
-			"$",
-			"jQuery",
-			"_take_screenshot",
-			"send_bug_report",
-			"_cosmo_set_environment",
-			"get_param_names",
-			"logt",
-			"info",
-			"log_less",
-			"fetch",
-			"Document.evaluate",
-			"tf_sequential",
-			"original_rmsprop",
-			"add_kernel_initializer_value_option",
-			"add_kernel_initializer_seed_option",
-			"original_momentum",
-			"add_function_debugger",
-			"dataURLtoBlob",
-			"swal",
-			"SweetAlert",
-			"Swal",
-			"sweetAlert",
-			"run_tests",
-			"write_error",
-			"Sweetalert2"
-		].includes(i)) {
+		if(
+			[
+				"detect_and_color_stacktrace",
+				"start_gremlins",
+				"array_sync",
+				"calculate_default_target_shape",
+				"test_summary",
+				"test_equal",
+				"test_not_equal",
+				"log_test",
+				"is_equal",
+				"assert",
+				"write_error",
+				"except",
+				"get_data_for_layer",
+				"is_valid_parameter",
+				"check_initializers",
+				"get_key_name_camel_case",
+				"create_model",
+				"highlight_element",
+				"_add_layers_to_model",
+				"remove_empty",
+				"_set_layer_gui",
+				"get_fake_data_for_layertype",
+				"get_default_option",
+				"create_fake_model_structure",
+				"layer_type_always_works",
+				"heuristic_layer_possibility_check",
+				"get_valid_layer_types",
+				"compile_fake_model",
+				"_add_layer_to_model",
+				"tidy",
+				"debug_unusual_function_inputs",
+				"loadLayersModel",
+				"getComputedStyle",
+				"postMessage",
+				"close",
+				"alert",
+				"confirm",
+				"prompt",
+				"print",
+				"add_optimizer_debugger",
+				"l",
+				"wrn",
+				"err",
+				"log",
+				"dbg",
+				"focus",
+				"blur",
+				"open",
+				"stop",
+				"captureEvents",
+				"releaseEvents",
+				"getSelection",
+				"matchMedia",
+				"moveTo",
+				"moveBy",
+				"resizeTo",
+				"scroll",
+				"scrollTo",
+				"getDefaultComputedStyle",
+				"resizeBy",
+				"scrollBy",
+				"scrollByLines",
+				"scrollByPages",
+				"updateCommands",
+				"sizeToContent",
+				"find",
+				"dump",
+				"setResizable",
+				"requestIdleCallback",
+				"cancelIdleCallback",
+				"requestAnimationFrame",
+				"cancelAnimationFrame",
+				"reportError",
+				"clearInterval",
+				"queueMicrotask",
+				"btoa",
+				"atob",
+				"setTimeout",
+				"clearTimeout",
+				"setInterval",
+				"createImageBitmap",
+				"structuredClone",
+				"clearImmediate",
+				"setImmediate",
+				"onresize",
+				"get_stack_trace",
+				"log_once",
+				"add_function_debugger",
+				"create_graphviz_function_call_graph",
+				"profile",
+				"jStat",
+				"$",
+				"jQuery",
+				"_take_screenshot",
+				"send_bug_report",
+				"_cosmo_set_environment",
+				"get_param_names",
+				"logt",
+				"info",
+				"log_less",
+				"fetch",
+				"Document.evaluate",
+				"tf_sequential",
+				"original_rmsprop",
+				"add_kernel_initializer_value_option",
+				"add_kernel_initializer_seed_option",
+				"original_momentum",
+				"add_function_debugger",
+				"dataURLtoBlob",
+				"swal",
+				"SweetAlert",
+				"Swal",
+				"sweetAlert",
+				"run_tests",
+				"write_error",
+				"Sweetalert2",
+				"fromPixels",
+				"toPixels",
+				"get_tfjs_model",
+				"get_weights_shape",
+				"expand_dims"
+			].includes(i) || 
+			i.startsWith("tf_")
+		) {
 			continue;
 		}
 
@@ -964,7 +973,7 @@ async function debug_unusual_function_inputs () {
 					e = e.message;
 				}
 
-				err("Unhandled exception: " + e);
+				err("[debug_unusual_function_inputs] Unhandled exception: " + e);
 				return 1;
 			}
 		}
@@ -1011,7 +1020,7 @@ function start_gremlins () {
 			e = e.message;
 		}
 
-		err("Unhandled exception: " + e);
+		err("[start_gremlins] Unhandled exception: " + e);
 		return 1;	
 	}
 }

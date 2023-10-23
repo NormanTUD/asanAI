@@ -98,7 +98,7 @@ function calculate_default_target_shape (nr) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[calculate_default_target_shape] " + e);
 
 		return null;
 	}
@@ -106,7 +106,7 @@ function calculate_default_target_shape (nr) {
 
 function lowercase_first_letter (string) {
 	if(typeof(string) != "string") {
-		wrn(`lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
+		wrn(`[lowercase_first_letter] lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
 		string = "" + string;
 	}
 
@@ -119,7 +119,7 @@ function lowercase_first_letter (string) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[lowercase_first_letter] " + e);
 
 		return null;
 	}
@@ -645,9 +645,13 @@ var initializers = {
 };
 
 function get_name_case_independent (name, from_hash) {
+	if(!name) {
+		wrn("[get_name_case_independent] name not defined");
+		return "";
+	}
 	try {
 		if(typeof(name) != "string") {
-			wrn(`"${name}" is not a string, it will be converted silently from ${typeof(name)} to string`);
+			wrn(`[get_name_case_independent] "${name}" is not a string, it will be converted silently from ${typeof(name)} to string`);
 			name = "" + name;
 		}
 
@@ -670,7 +674,7 @@ function get_initializer_name (name) {
 	var res = get_name_case_independent(name, initializers);
 
 	if(!name) {
-		wrn("Cannot determine the kernel initializer name of " + name);
+		wrn("[get_initializer_name] Cannot determine the kernel initializer name of " + name);
 		return null;
 	} else {
 		return res;

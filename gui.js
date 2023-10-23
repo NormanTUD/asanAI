@@ -95,7 +95,7 @@ async function md5 (content) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[md5] " + e);
 	}
 }
 
@@ -485,7 +485,7 @@ function insert_activation_option_trs(layer_nr, option_type) {
 
 		eval(eval_string);
 	} else {
-		log("option_type is '" + option_type + "'");
+		log("[insert_activation_option] option_type is '" + option_type + "'");
 	}
 }
 
@@ -499,7 +499,7 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 
 		eval(eval_string);
 	} else {
-		log("option_type is '" + option_type + "'");
+		log("[insert_regularizer_option_trs] option_type is '" + option_type + "'");
 	}
 }
 
@@ -547,11 +547,10 @@ async function insert_activation_options(layer_nr) {
 			}
 		}
 	} else {
-		log("Layer " + layer_nr + " does not seem to have a activation setting");
+		log("[insert_activation_options] Layer " + layer_nr + " does not seem to have a activation setting");
 	}
 
 	await updated_page();
-
 }
 
 function set_last_layer_activation_function (activation_function) {
@@ -582,7 +581,7 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 			insert_regularizer_option_trs(layer_nr, regularizer_type, options[i]);
 		}
 	} else {
-		log("Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
+		log("[insert_regularizer_options] Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
 	}
 	await updated_page();
 }
@@ -610,12 +609,12 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 				insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
 			}
 		} else {
-			log("ERROR: Initializer is empty!");
-			log("initializer:", initializer);
-			log("initializer_name:", initializer_name);
+			log("[insert_initializer_options] ERROR: Initializer is empty!");
+			log("[insert_initializer_options] initializer:", initializer);
+			log("[insert_initializer_options] initializer_name:", initializer_name);
 		}
 	} else {
-		log("Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
+		log("[insert_initializer_options] Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
 	}
 
 	//await updated_page();
@@ -668,7 +667,7 @@ async function _get_configuration(index) {
 			data["model_structure"] = status_saves[index]["model_structure"];
 			data["weights"] = status_saves[index]["weights"];
 		} else {
-			log("Index " + index + " could not be found");
+			log("[_get_configuration] Index " + index + " could not be found");
 		}
 	}
 
@@ -736,7 +735,7 @@ function enable_disable_grad_cam() {
 	}
 
 	if($("#show_layer_data").is(":checked")) {
-		wrn("You can either use grad CAM or the internal layer states, but not both. Disabling internal layer states.");
+		wrn("[enable_disable_grad_cam] You can either use grad CAM or the internal layer states, but not both. Disabling internal layer states.");
 		$("#show_layer_data").prop("checked", false).trigger("change");
 	}
 
@@ -755,7 +754,7 @@ function enable_disable_kernel_images() {
 	}
 
 	if($("#show_grad_cam").is(":checked")) {
-		wrn("You can either use grad CAM or the internal layer states, but not both. GradCAM.");
+		wrn("[enable_disable_kernel_images] You can either use grad CAM or the internal layer states, but not both. GradCAM.");
 		$("#show_grad_cam").prop("checked", false).trigger("change");
 	}
 
@@ -804,7 +803,7 @@ async function change_width_or_height(name, inputshape_index) {
 	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
 
 	if(!value) {
-		err("value is not defined");
+		err("[change_width_or_height] value is not defined");
 		return;
 	}
 
@@ -1005,11 +1004,11 @@ async function update_python_code(dont_reget_labels) {
 				}
 			} catch (e) {
 				if(("" + e).includes("model.layers[i] is undefined")) {
-					wrn("model.layers was undefined. This MAY be harmless.");
+					wrn("[update_python_code] model.layers was undefined. This MAY be harmless.");
 				} else {
 					expert_code += "# ERROR while creating code: " + e;
-					log("ERROR in python expert code: " + e);
-					console.log("data:", data);
+					log("[update_python_code] ERROR in python expert code: " + e);
+					console.log("[update_python_code] data:", data);
 				}
 			}
 		}
@@ -1470,12 +1469,12 @@ function stop_webcam() {
 
 function _has_any_warning () {
 	if($("#width").val() == "" || $("#height").val() == "") {
-		//wrn("Width or height is empty string, returning from updated_page");
+		//wrn("[_has_any_warning] Width or height is empty string, returning from updated_page");
 		return true;
 	}
 
 	if (disable_show_python_and_create_model) {
-		//info("disable_show_python_and_create_model, returning from updated_page");
+		//info("[_has_any_warning] disable_show_python_and_create_model, returning from updated_page");
 		return true;
 	}
 
@@ -1658,9 +1657,9 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else if (("" + e).includes("model.input is undefined")) {
 			dbg("model.input is undefined");
 		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
-			dbg("" + e);
+			dbg("[updated_page] " + e);
 		} else if (("" + e).includes("targetShape is undefined")) {
-			dbg("" + e);
+			dbg("[updated_page] " + e);
 		} else if (("" + e).includes("code is undefined")) {
 			dbg("This error may happen when the whole DOM is deleted: " + e);
 		} else if (("" + e).includes("fcnn is undefined")) {
@@ -1747,9 +1746,9 @@ function write_model_summary_wait () {
 		}
 
 		if(("" + e).includes("getElementById(...) is null")) {
-			wrn("Did you remove the summary tab manually?");
+			wrn("[write_model_summary_wait] Did you remove the summary tab manually?");
 		} else if(("" + e).includes("model is empty. Add some layers first")) {
-			err("" + e);
+			err("[write_model_summary_wait] " + e);
 		} else {
 			throw new Error(e);
 		}
@@ -2197,7 +2196,7 @@ async function add_layer(item) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[add_layer] " + e);
 	}
 
 	$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
@@ -2564,7 +2563,7 @@ async function set_config(index) {
 					$(".overlay").remove();
 
 					if (("" + e).includes("keras")) {
-						err("" + e);
+						err("[set_config] " + e);
 					} else {
 						throw new Error(e);
 					}
@@ -2754,7 +2753,7 @@ async function set_config(index) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[set_config] " + e);
 	}
 
 	//console.log("block 3");
@@ -3626,7 +3625,7 @@ async function upload_model(evt) {
 					e = e.message;
 				}
 
-				err("" + e);
+				err("[upload_model] " + e);
 			}
 			is_setting_config = false;
 
@@ -3635,7 +3634,6 @@ async function upload_model(evt) {
 	})(f);
 
 	reader.readAsText(f);
-
 }
 
 async function upload_weights(evt) {
@@ -6145,7 +6143,7 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode] " + e);
 	}
 
 }
@@ -6242,7 +6240,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 					}
 
 					if(("" + e).includes("SyntaxError: illegal character")) {
-						err("" + e);
+						err("[set_required_seeds] " + e);
 					} else {
 						throw new Error(e);
 					}
@@ -6251,7 +6249,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 				err("ui_elements contains no elements. Selector: "  + item_selector);
 			}
 		} else {
-			err(`${val_key} is required but not properly defined`);
+			err(`[set_required_seeds] ${val_key} is required but not properly defined`);
 		}
 	}
 }
