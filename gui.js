@@ -594,7 +594,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
 
-	for (var i = 1; i < existing_init_elements.length; i++) {
+	for (var i = 0; i < existing_init_elements.length; i++) {
 		$(existing_init_elements[i]).remove();
 	}
 
