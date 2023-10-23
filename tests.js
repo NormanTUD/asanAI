@@ -121,7 +121,7 @@ async function run_tests () {
 			log_test("Tensor functions");
 			var test_tensor = tensor([1,2,3]);
 
-			test_equal("tensor_print_to_string(tensor([1,2,3]))", tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]");
+			test_equal("_tensor_print_to_string(tensor([1,2,3]))", _tensor_print_to_string(test_tensor), "Tensor\n  dtype: float32\n  rank: 1\n  shape: [3]\n  values:\n    [1, 2, 3]");
 
 			//test_equal("await debug_unusual_function_inputs() == 0", await debug_unusual_function_inputs(), 0);
 			test_equal("is_numeric(1)", is_numeric(1), false);

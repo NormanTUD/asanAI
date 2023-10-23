@@ -1,7 +1,19 @@
 "use strict";
 
 class asanAI {
+	#_enable_debug = false;
+	#write_tensors_info_div = "";
+	#status_bar_background_color = "#262626";
+	#status_bar_text_color = "#fff";
+	#last_tensor_size_cpu = 0;
+	#last_num_global_tensors = 0;
+	#last_tensor_size_gpu = 0;
+	#asanai_name = null;
+	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
+	#kernel_pixel_size_max = 50;
+	#pixel_size_max = 50;
+	#show_sliders = false;
 	#webcam_height = null;
 	#webcam_width = null;
 	#is_dark_mode = false;
@@ -18,7 +30,7 @@ class asanAI {
 	#num_channels = 3;
 	#default_bar_color = "orange";
 	#max_bar_color = "green";
-	#kernel_pixel_size = 3;
+	#kernel_pixel_size = 5;
 	#model_summary_div = null;
 	#started_webcam = false;
 	#camera = null
@@ -30,62 +42,235 @@ class asanAI {
 	#images_to_repredict_divs = [];
 	#custom_tensors = {};
 
+	ribbon_data = {
+		"ribbon": {
+			"tabs": [
+				{
+					"id": "file-tab",
+					"title": "File",
+					"backstage": {
+						"content": "This is the Backstage.",
+						"buttons": [
+							{
+								"label": "Open",
+								"description": "Open a document from your computer"
+							},
+							{
+								"label": "Save",
+								"description": "Save your document to your computer"
+							}
+						]
+					}
+				},
+				{
+					"id": "format-tab",
+					"title": "Home",
+					"sections": [
+						{
+							"title": "Tables",
+							"buttons": [
+								{
+									"id": "add-table-btn",
+									"title": "Add Table",
+									"help": "This button will add a table to your document",
+									"icons": {
+										"normal": "icons/normal/new-table.png",
+										"hot": "icons/hot/new-table.png",
+										"disabled": "icons/disabled/new-table.png"
+									}
+								},
+								{
+									"id": "open-table-btn",
+									"title": "Open Table",
+									"help": "This button will open a table and add it to your document",
+									"icons": {
+										"normal": "icons/normal/open-table.png",
+										"hot": "icons/hot/open-table.png",
+										"disabled": "icons/disabled/open-table.png"
+									}
+								},
+								{
+									"id": "del-table-btn",
+									"title": "Remove Table",
+									"help": "This button will remove the selected table from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-table.png",
+										"hot": "icons/hot/delete-table.png",
+										"disabled": "icons/disabled/delete-table.png"
+									}
+								}
+							]
+						},
+						{
+							"title": "Pages",
+							"buttons": [
+								{
+									"id": "add-page-btn",
+									"title": "Add Page",
+									"help": "This button will add a page to your document",
+									"icons": {
+										"normal": "icons/normal/new-page.png",
+										"hot": "icons/hot/new-page.png",
+										"disabled": "icons/disabled/new-page.png"
+									}
+								},
+								{
+									"id": "open-page-btn",
+									"title": "Open Page",
+									"help": "This button will open a page and add it to your document",
+									"icons": {
+										"normal": "icons/normal/open-page.png",
+										"hot": "icons/hot/open-page.png",
+										"disabled": "icons/disabled/open-page.png"
+									}
+								},
+								{
+									"id": "del-page-btn",
+									"title": "Remove Page",
+									"help": "This button will remove the selected page from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-page.png",
+										"hot": "icons/hot/delete-page.png",
+										"disabled": "icons/disabled/delete-page.png"
+									}
+								}
+							]
+						},
+						{
+							"title": "Actions",
+							"buttons": [
+								{
+									"id": "run-btn",
+									"title": "Run",
+									"help": "This button will run the program",
+									"style": "background-color: lightgreen",
+									"icons": {
+										"normal": "icons/normal/run.png",
+										"hot": "icons/hot/run.png",
+										"disabled": "icons/disabled/run.png"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "next-tab",
+					"title": "Options",
+					"sections": [
+						{
+							"title": "More Stuff",
+							"buttons": [
+								{
+									"title": "Other Feature",
+									"help": "This button will do something else",
+									"icons": {
+										"normal": "icons/normal/bullet-orange.png"
+									}
+								},
+								{
+									"id": "other-btn-2",
+									"title": "Remove Table",
+									"help": "This button will remove the selected table from your document",
+									"disabled": true,
+									"icons": {
+										"normal": "icons/normal/delete-table.png"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+
+
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
 		var last_tested_plotly_version = "2.14.0";
+		var last_tested_temml_version = "0.10.14";
 
 
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
 
 		if(args.length == 1) {
-			if(Object.keys(args[0]).includes("labels")) {
-				this.set_labels(args[0].labels);
+			args = args[0];
+			if(Object.keys(args).includes("labels")) {
+				this.set_labels(args.labels);
+
+				delete args["labels"];
 			}
 
-			if(Object.keys(args[0]).includes("model")) {
-				this.set_model(args[0].model);
+			if(Object.keys(args).includes("model")) {
+				this.set_model(args.model);
+
+				delete args["model"];
 			}
 
-			if(Object.keys(args[0]).includes("model_data")) {
-				if(!Object.keys(args[0]).includes("optimizer_config")) {
+			if(Object.keys(args).includes("model_data")) {
+				if(!Object.keys(args).includes("optimizer_config")) {
 					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
 				}
-				this.#model = this.create_model_from_model_data(args[0]["model_data"], args[0]["optimizer_config"]);
+				this.#model = this.create_model_from_model_data(args["model_data"], args["optimizer_config"]);
+
+				delete args["model_data"];
+				delete args["optimizer_config"];
 			}
 
-			if(Object.keys(args[0]).includes("divide_by")) {
-				if(typeof(args[0].divide_by) == "number" || this.#looks_like_number(args[0].divide_by)) {
-					this.#divide_by= this.#parse_float(args[0].divide_by);
+			if(Object.keys(args).includes("divide_by")) {
+				if(typeof(args.divide_by) == "number" || this.#looks_like_number(args.divide_by)) {
+					this.#divide_by= this.#parse_float(args.divide_by);
+
+					delete args["divide_by"];
 				} else {
 					throw new Error("divide_by is not a number");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("max_neurons_fcnn")) {
-				if(typeof(args[0].max_neurons_fcnn) == "number") {
-					this.#max_neurons_fcnn = args[0].max_neurons_fcnn;
+			if(Object.keys(args).includes("max_neurons_fcnn")) {
+				if(typeof(args.max_neurons_fcnn) == "number") {
+					this.#max_neurons_fcnn = args.max_neurons_fcnn;
+
+					delete args["max_neurons_fcnn"];
 				} else {
 					throw new Error("max_neurons_fcnn is not a number");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("internal_states_div")) {
-				if(typeof(args[0].internal_states_div) == "string") {
-					this.#internal_states_div = args[0].internal_states_div;
+			if(Object.keys(args).includes("internal_states_div")) {
+				if(typeof(args.internal_states_div) == "string") {
+					this.#internal_states_div = args.internal_states_div;
+
+					delete args["internal_states_div"];
 				} else {
 					throw new Error("internal_states_div is not a string");
 				}
 			}
 
-			if(Object.keys(args[0]).includes("draw_internal_states")) {
-				if(typeof(args[0].draw_internal_states) == "boolean") {
-					this.#draw_internal_states = args[0].draw_internal_states;
+			if(Object.keys(args).includes("draw_internal_states")) {
+				if(typeof(args.draw_internal_states) == "boolean") {
+					this.#draw_internal_states = args.draw_internal_states;
+
+					delete args["draw_internal_states"];
 				} else {
 					throw new Error("draw_internal_states is not a boolean");
 				}
+			}
+
+
+			var ignored_keys = Object.keys(args);
+
+			if(ignored_keys.length) {
+				var keys_str = `[constructor] The following keys were invalid as parameters to asanAI: ${ignored_keys.join(", ")}. Cannot initialize with wrong parameters (it's for your own safety!)`;
+
+				throw new Error(keys_str);
 			}
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
@@ -94,6 +279,12 @@ class asanAI {
 
 	create_model_from_model_data (model_data, optimizer_config) {
 		this.assert(Array.isArray(model_data), "[create_model_from_model_data] model data is not an array");
+
+		var restart_camera = false;
+		if(this.#camera) {
+			restart_camera = true;
+			this.stop_camera();
+		}
 
 		if(!optimizer_config) {
 			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the model.");
@@ -135,6 +326,10 @@ class asanAI {
 		__model.compile(optimizer_config);
 
 		this.set_model(__model);
+
+		if(restart_camera) {
+			this.start_camera();
+		}
 
 		return __model;
 	}
@@ -294,7 +489,7 @@ class asanAI {
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`#draw_new_fcnn cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`[#draw_new_fcnn] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
@@ -817,6 +1012,10 @@ class asanAI {
 	}
 
 	#tensor_print_to_string(_tensor) {
+		if(!this.#_enable_debug) {
+			return "Run asanai.enable_debug() to enable tensor printing.";
+		}
+
 		try {
 			var logBackup = console.log;
 			var logMessages = [];
@@ -1031,7 +1230,7 @@ class asanAI {
 		}
 	}
 
-	fromPixels (...args) {
+	from_pixels (...args) {
 		this.#_register_tensors(...args);
 
 
@@ -1218,6 +1417,10 @@ class asanAI {
 
 			return null;
 		}
+	}
+
+	#resizeImage (...args) {
+		return this.#resizeBilinear(...args);
 	}
 
 	#resizeNearestNeighbor(...args) {
@@ -1510,7 +1713,7 @@ class asanAI {
 		}
 	}
 
-	oneHot (...args) {
+	one_hot (...args) {
 		this.#_register_tensors(...args);
 		try {
 			var res = tf.oneHot(...args);
@@ -1628,6 +1831,8 @@ class asanAI {
 
 		msg = msgs.join("\n");
 
+		$("#__status__bar__log").html("[WARN] " + msg);
+
 		return msg;
 	}
 
@@ -1642,6 +1847,9 @@ class asanAI {
 		}
 
 		msg = msgs.join("\n");
+
+		$("#__status__bar__log").html(msg);
+		$("#__loading_screen__text").html(msg);
 
 		return msg;
 	}
@@ -1658,6 +1866,8 @@ class asanAI {
 
 		msg = msgs.join("\n");
 
+		//$("#__status__bar__log").html("[DEBUG] " + msg);
+
 		return msg;
 	}
 
@@ -1673,6 +1883,9 @@ class asanAI {
 
 		msg = msgs.join("\n");
 
+		$("#__status__bar__log").html("[ERROR] " + msg);
+		$("#__loading_screen__text").html("[ERROR] " + msg);
+
 		return msg;
 	}
 
@@ -1680,22 +1893,7 @@ class asanAI {
 		return this.#model;
 	}
 
-	set_model (_m) {
-		if(!this.is_model(_m)) {
-			throw new Error("Given item is not a valid model");
-			return;
-		}
-
-		this.#currently_switching_models = true;
-
-		var _restart_webcam = 0;
-		if(this.#started_webcam) {
-			this.toggle_webcam();
-			_restart_webcam = 1;
-		}
-
-		this.#model = _m;
-
+	#redo_what_has_to_be_redone (_restart_webcam) {
 		if(this.#model.input.shape.length == 4) {
 			this.#model_height = this.#model.input.shape[1];
 			this.#model_width = this.#model.input.shape[2];
@@ -1711,24 +1909,67 @@ class asanAI {
 		}
 
 		if(_restart_webcam) {
-			this.toggle_webcam();
+			this.start_camera();
 		}
 
-		if(this.images_to_repredict) {
-			for (var i = 0; i < this.images_to_repredict.length; i++) {
-				var this_img_element = this.images_to_repredict[i];
-				var this_div_element = this.#images_to_repredict_divs[i];
-				this.predict_image(this_img_element, this_div_element, 0);
+		if(this.#images_to_repredict) {
+			for (var i = 0; i < this.#images_to_repredict.length; i++) {
+				var this_img_element_xpath = this.#images_to_repredict[i];
+				var this_img_element = this.get_elements_by_xpath(this_img_element_xpath);
+				if($(this_img_element).length) {
+					var this_div_element = this.#images_to_repredict_divs[i];
+
+					this.predict_image(this_img_element, this_div_element, false, false);
+				} else {
+					this.err(`[set_model] Cannot find element by xpath for reprediction: ${this_img_element_xpath}`);
+				}
 			}
+		} else {
+			this.dbg(`[set_model] No images to repredict`);
 		}
+	}
+
+	set_model (_m) {
+		if(!this.is_model(_m)) {
+			throw new Error("[set_model] Given item is not a valid model");
+			return;
+		}
+
+		this.#currently_switching_models = true;
+
+		var _restart_webcam = 0;
+		if(this.#started_webcam) {
+			this.stop_camera();
+			_restart_webcam = 1;
+		}
+
+		this.#model = _m;
+
+		this.#redo_what_has_to_be_redone(_restart_webcam);
 
 		this.#currently_switching_models = false;
 		return this.#model;
 	}
 
+	get_elements_by_xpath (STR_XPATH) {
+		this.assert(typeof(STR_XPATH) == "string", "[get_element_xpath] Parameter is not string, but " + typeof(STR_XPATH));
+
+		var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
+		var xnodes = [];
+		var xres;
+		while (xres = xresult.iterateNext()) {
+			xnodes.push(xres);
+		}
+
+		return xnodes;
+	}
+
 	stop_camera (item) {
 		this.#started_webcam = false;
-		this.#camera.stop()
+		if(this.#camera) {
+			this.#camera.stop()
+		}
+
 		this.#camera = null;
 
 		$(this.#last_video_element).hide();
@@ -1742,7 +1983,19 @@ class asanAI {
 	start_camera (item) {
 		this.#started_webcam = true;
 		if(this.webcam_prediction_div_name) {
-			this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
+			try {
+				this.show_and_predict_webcam_in_div(this.webcam_prediction_div_name, this.#webcam_height, this.#webcam_width);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("The fetching process for the")) {
+					this.err("[start_camera] This error may happen when switching models: " + e);
+				} else {
+					throw new Error("" + e);
+				}
+			}
 		}
 
 		$(this.#last_video_element).show();
@@ -1751,6 +2004,10 @@ class asanAI {
 		if(item) {
 			$(item).text("Stop webcam");
 		}
+	}
+
+	get_webcam () {
+		return this.#camera;
 	}
 
 	async toggle_webcam (item=null) {
@@ -1788,7 +2045,57 @@ class asanAI {
 		}
 	}
 
-	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=1) {
+	#get_element_xpath(element) {
+		this.assert(typeof (element) == "object", "item is not an object but " + typeof (element));
+
+		const idx = (sib, name) => sib
+			? idx(sib.previousElementSibling, name || sib.localName) + (sib.localName == name)
+			: 1;
+		const segs = elm => !elm || elm.nodeType !== 1
+			? [""]
+			: elm.id && document.getElementById(elm.id) === elm
+				? [`id("${elm.id}")`]
+				: [...segs(elm.parentNode), `${elm.localName.toLowerCase()}[${idx(elm)}]`];
+		return segs(element).join("/");
+	}
+
+	#show_images_to_be_predicted () {
+		var elements = [];
+		for (var i = 0; i < this.#images_to_repredict.length; i++) {
+			var _xpath = this.#images_to_repredict[i];
+			var _elements = this.get_element_by_xpath(_xpath);
+			var this_div_element = this.#images_to_repredict_divs[i];
+			elements.push(_elements, this_div_element)
+		}
+
+		for (var i = 0; i < elements.length; i++) {
+			$(elements[i]).show();
+		}
+	}
+
+	get_element_by_xpath (path) {
+		return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	}
+
+	#hide_images_to_be_predicted () {
+		var elements = [];
+		for (var i = 0; i < this.#images_to_repredict.length; i++) {
+			var _xpath = this.#images_to_repredict[i];
+			var _elements = this.get_element_by_xpath(_xpath);
+			var this_div_element = this.#images_to_repredict_divs[i];
+			elements.push(_elements, this_div_element)
+		}
+
+		for (var i = 0; i < elements.length; i++) {
+			$(elements[i]).hide();
+		}
+	}
+
+	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
+		this.assert(typeof(_add_to_repredict) == "boolean", "_add_to_repredict is not a boolean");
+		this.assert(typeof(_add_on_click_repredict) == "boolean", "_add_on_click_repredict is not a boolean");
+		this.assert(img_element_or_div, "img_element_or_div is empty");
+
 		if(!this.#model) {
 			this.err(`[predict_image] Cannot predict image without a loaded model`);
 			return;
@@ -1819,9 +2126,21 @@ class asanAI {
 			}
 		}
 
+		this.assert(img_element_or_div, "img_element_or_div is empty");
+
 		var valid_tags = ["CANVAS", "IMG"];
-		if(!valid_tags.includes(img_element_or_div.tagName)) {
-			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_element_or_div.tagName}, but should be in [${valid_tags.join(", ")}]`);
+		var img_tag_name;
+
+		if (img_element_or_div instanceof jQuery || Array.isArray(img_element_or_div)){
+			img_element_or_div = img_element_or_div[0];
+		}
+
+		img_tag_name = img_element_or_div.tagName;
+
+		this.assert(img_tag_name, "img_tag_name is empty!");
+
+		if(!valid_tags.includes(img_tag_name)) {
+			this.err(`[predict_image] Element found, but is not valid tag. Is: ${img_tag_name}, but should be in [${valid_tags.join(", ")}]`);
 			return;
 		}
 
@@ -1829,19 +2148,24 @@ class asanAI {
 
 		if(this.#model.input.shape.length != 4) {
 			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${this.#model.input.shape.join(", ")}]`);
+
+			this.#hide_images_to_be_predicted()
+
 			return;
 		}
+
+		this.#show_images_to_be_predicted()
 
 		var _height = model_input_shape[1];
 		var _width = model_input_shape[2];
 
 		var data = this.tidy(() => {
-			var image_tensor = this.#expand_dims(this.fromPixels(img_element_or_div, this.#num_channels));
-			image_tensor = this.#resizeNearestNeighbor(image_tensor, [_height, _width]);
+			var image_tensor = this.#expand_dims(this.from_pixels(img_element_or_div, this.#num_channels));
+			image_tensor = this.#resizeImage(image_tensor, [_height, _width]);
 			return image_tensor;
 		});
 
-		var result = this.#predict_manually(data);
+		var result = this.predict(data);
 
 		if(write_to_div) {
 			this.#_show_output(result, write_to_div);
@@ -1849,38 +2173,60 @@ class asanAI {
 
 		var result_array  = this.tidy(() => { return this.array_sync(result) });
 		this.dispose(data);
+		this.dispose(result);
 
 		if(_add_to_repredict) {
-			this.#images_to_repredict.push(img_element_or_div);
-			this.#images_to_repredict_divs.push(write_to_div);
+			var _xpath = this.#get_element_xpath(img_element_or_div);
+			if(!this.#images_to_repredict.includes(img_element_or_div)) {
+				this.#images_to_repredict.push(_xpath);
+				this.#images_to_repredict_divs.push(write_to_div);
+			}
+		}
+
+		if(_add_on_click_repredict) {
+			if($(img_element_or_div).attr("onclick")) {
+				this.dbg(`[predict_image] Element already has onclick. Not adding a new one.`);
+			} else {
+				var write_to_div_id = $(write_to_div).attr("id");
+				if(write_to_div_id) {
+					if(!this.#asanai_name) {
+						this.err(`[predict_image] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+						return;
+					} else {
+						$(img_element_or_div).attr("onclick", `${this.#asanai_name}.predict_image(this, ${write_to_div_id})`);
+					}
+				} else {
+					this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
+				}
+			}
 		}
 
 		return result;
 	}
 
-	#predict_manually (_tensor) {
+	predict (_tensor) {
 		if(!this.#model) {
-			this.err("[#predict_manually] Cannot predict without a model");
+			this.err("[predict] Cannot predict without a model");
 			return;
 		}
 
 		if(!this.#model.input) {
-			this.err("[#predict_manually] Cannot predict without a model.input");
+			this.err("[predict] Cannot predict without a model.input");
 			return;		
 		}
 
 		if(!this.#model.input.shape) {
-			this.err("[#predict_manually] Cannot predict without a model.input.shape");
+			this.err("[predict] Cannot predict without a model.input.shape");
 			return;		
 		}
 
 		if(this.#num_channels != 3) {
 			this.#num_channels = 3;
-			this.wrn(`[#predict_manually] Setting num_channels to 3, because webcam data does not have transparency.`);
+			this.wrn(`[predict] Setting num_channels to 3, because webcam data does not have transparency.`);
 		}
 
 		if(!this.#tensor_shape_fits_input_shape(_tensor.shape, this.#model.input.shape)) {
-			this.err(`[#predict_manually] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.#model.input.shape.join(", ")}].`)
+			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.#model.input.shape.join(", ")}].`)
 			return;
 		}
 
@@ -1893,7 +2239,11 @@ class asanAI {
 
 		var output;
 		try {
-			output = this.tf_to_float(_tensor);
+			var asanai_this = this;
+
+			output = asanai_this.tidy(() => {
+				return this.tf_to_float(_tensor);
+			});
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -1917,17 +2267,39 @@ class asanAI {
 			}
 
 			if(this.#draw_internal_states) {
+				if(i == 0 && this.#show_sliders) {
+					var __parent = $("#" + this.#internal_states_div);
+					if(__parent.length && $("#" + this.#internal_states_div).find(".show_internals_slider").length == 0) {
+						var _html = this.#show_internals_slider(
+							this.#pixel_size,
+							this.#pixel_size_max,
+							this.#kernel_pixel_size,
+							this.#kernel_pixel_size_max
+						);
+
+						__parent.append($(_html));
+					} else {
+						this.dbg(`[predict] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
+					}
+				}
 				try {
-					this.#_draw_internal_states(i, input, output);
+					var asanai_this = this;
+					this.tidy(() => {
+						asanai_this.#_draw_internal_states(i, input, output);
+					});
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
 					}
 
-					this.err(e);
+					this.err("" + e);
 				}
 			}
+
+			this.dispose(input);
 		}
+
+		this.dispose(_tensor);
 
 		return output;
 	}
@@ -1994,7 +2366,20 @@ class asanAI {
 		}
 
 		this.#started_webcam = true;
-		this.#camera = await tf.data.webcam($video_element);
+		try {
+			this.#camera = await tf.data.webcam($video_element);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("The fetching process for the")) {
+				this.err("[show_and_predict_webcam_in_div] " + e)
+				return;
+			} else {
+				throw new Error(e);
+			}
+		}
 
 		while (this.#started_webcam) {
 			if(this.#internal_states_div) {
@@ -2003,14 +2388,19 @@ class asanAI {
 
 			var image;
 			try {
-				image = await this.#camera.capture();
+				if(this.#camera) {
+					image = await this.#camera.capture();
+				} else {
+					throw new Error("camera is null");
+				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				if(("" + e).includes("camera is null")) {
+				if(("" + e).includes("is null") || ("" + e).includes("thrown converting video to pixels")) {
 					this.err(`[show_and_predict_webcam_in_div] camera is null. Stopping webcam.`);
+					this.stop_camera();
 					return;
 				} else {
 					throw new Error(e);
@@ -2024,16 +2414,21 @@ class asanAI {
 				return;
 			}
 
+			if(!image) {
+				this.err(`[show_and_predict_webcam_in_div] image is empty. Cannot continue.`);
+				return;
+			}
+
 			var worked = this.tidy(() => {
 				try {
-					var _data = asanai_this.#resizeNearestNeighbor(image, [asanai_this.#model_height, asanai_this.#model_width]);
+					var _data = asanai_this.#resizeImage(image, [asanai_this.#model_height, asanai_this.#model_width]);
 					var resized = asanai_this.#expand_dims(_data);
 					//resized = asanai_this.tf_div(resized, asanai_this.#divide_by);
 
 					var res;
 
 					try {
-						res = asanai_this.#predict_manually(resized)
+						res = asanai_this.predict(resized)
 					} catch (e) {
 						if(Object.keys(e).includes("message")) {
 							e = e.message;
@@ -2076,6 +2471,8 @@ class asanAI {
 
 			await this.delay(50);
 		}
+
+		this.dbg("[show_and_predict_webcam_in_div] this.#started_webcam is false, while loop has ended.")
 	}
 
 	delay(time) {
@@ -2124,10 +2521,43 @@ class asanAI {
 		this.#internal_states_div = "";
 	}
 
-	show_internals (divname="") {
+	#show_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
+		if(!this.#asanai_name) {
+			this.err(`[#show_internals_slider] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+			return;
+		}
+
+		var html = `<div class='show_internals_slider'>`
+		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_name}.set_pixel_size($(this).val())">`;
+		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_name}.set_kernel_pixel_size($(this).val())">`;
+		html += `</div>`;
+
+		return html;
+	}
+
+	show_internals (divname="", show_sliders=false) {
 		if(!this.#model) {
 			this.dbg("No model found");
 
+			return;
+		}
+
+		if(!typeof(show_sliders) == "boolean") {
+			this.err("[show_internals] second parameter, show_sliders, must either be true or false)");
+			return;
+		}
+
+		this.#show_sliders = show_sliders;
+
+		if(!divname) {
+			this.err("[show_internals] Cannot call show_internals without a divname (at least once)");
+			return;
+		}
+
+		var $div = $("#" + divname)
+
+		if(!$div.length) {
+			this.err(`[show_internals] #${divname} could not be found`);
 			return;
 		}
 
@@ -2136,32 +2566,35 @@ class asanAI {
 		}
 
 		this.#draw_internal_states = true;
-		if(divname) {
-			this.#internal_states_div = divname;
-		}
+		this.#internal_states_div = divname;
 	}
 
-	#normalize_to_image_data(input_data) {
+	#normalize_to_image_data (input_data) {
+		var asanai_this = this;
+
 		var res = this.tidy(() => {
 			var flattened_input = input_data;
 
-			if(this.is_tf_tensor(flattened_input)) {
-				flattened_input = this.tidy(() => { return this.array_sync(flattened_input); });
+			var tmp;
+
+			if(asanai_this.is_tf_tensor(flattened_input)) {
+				tmp = asanai_this.array_sync(flattened_input);
+				flattened_input = tmp;
 			}
 
-			while (this.get_shape_from_array(flattened_input).length > 1) {
+			while (asanai_this.get_shape_from_array(flattened_input).length > 1) {
 				flattened_input = flattened_input.flat();
 			}
 
 			var max = Math.max(...flattened_input);
 			var min = Math.min(...flattened_input);
 
-			//this.log("max: " + max + ", min: " + min);
+			//asanai_this.log("max: " + max + ", min: " + min);
 
 			var range = tf.sub(max, min);
 
-			if(!this.is_tf_tensor(input_data)) {
-				input_data = this.tensor(input_data);
+			if(!asanai_this.is_tf_tensor(input_data)) {
+				input_data = asanai_this.tensor(input_data);
 			}
 
 			//
@@ -2170,7 +2603,7 @@ class asanAI {
 			var multiplicator = tf.sub(input_data, min);
 
 			if(divisor == 0) {
-				return this.array_sync(input_data);
+				return asanai_this.array_sync(input_data);
 			}
 
 			var twofiftyfive = tf.ones(input_data.shape);
@@ -2181,7 +2614,10 @@ class asanAI {
 
 			var scaled_tensor = tf.div(tf.mul(input_data, twofiftyfive), divisor_tensor);
 
-			var _r = this.array_sync(scaled_tensor);
+
+			var _r = asanai_this.array_sync(scaled_tensor);
+
+			asanai_this.dispose(tmp);
 
 			return _r;
 		});
@@ -2201,7 +2637,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("Cannot get layer-name: " + e);
+			this.err("[_draw_internal_states] Cannot get layer-name: " + e);
 
 			return;
 		}
@@ -2221,10 +2657,14 @@ class asanAI {
 			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.get_layer_identification(layer) + "</h3>").hide();
 
 			layer_div.show();
-			layer_div.append("<div class='data_flow_visualization input_layer_header' style='display: none' id='layer_" + layer + "_input'><h4>Input:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization weight_matrix_header' style='display: none' id='layer_" + layer + "_kernel'><h4>Weight Matrix:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization output_header' style='display: none' id='layer_" + layer + "_output'><h4>Output:</h4></div>");
-			layer_div.append("<div class='data_flow_visualization equations_header' style='display: none' id='layer_" + layer + "_equations'></div>");
+
+			var style_none = " style='display: none' ";
+			var start = "<div class='data_flow_visualization ";
+
+			layer_div.append(`${start} input_layer_header' ${style_none} id='layer_${layer}_input'><h4>Input:</h4></div>`);
+			layer_div.append(`${start} weight_matrix_header' ${style_none} id='layer_${layer}_kernel'><h4>Weight Matrix:</h4></div>`);
+			layer_div.append(`${start} output_header' ${style_none} id='layer_${layer}_output'><h4>Output:</h4></div>`);
+			layer_div.append(`${start} equations_header' ${style_none} id='layer_${layer}_equations'></div>`);
 
 			var input = $("#layer_" + layer + "_input");
 			var kernel = $("#layer_" + layer + "_kernel");
@@ -2241,19 +2681,25 @@ class asanAI {
 					var filters = 3;
 
 					kernel_data = this.tidy(() => {
-						var res = this.array_sync(
-							this.tf_transpose(
+						var res = this.tidy(() => { 
+
+							var transposed = this.tf_transpose(
 								this.#model.layers[layer].kernel.val,
 								[filters, ks_x, ks_y, number_filters]
 							)
-						);
+
+							var _res = this.array_sync(transposed);
+
+							this.dispose(transposed);
+
+							return _res;
+						});
 
 						return res;
 					});
 				}
 
-
-				kernel_data = this.#normalize_to_image_data(kernel_data);
+				kernel_data = tf.tidy(() => { return this.#normalize_to_image_data(kernel_data); });
 			}
 
 			var canvasses_input = this.#draw_image_if_possible(layer, "input", input_data);
@@ -2290,6 +2736,9 @@ class asanAI {
 					}
 				}
 			}
+
+
+			this.dispose(kernel_data)
 
 			/*
 			 else {
@@ -2426,6 +2875,18 @@ class asanAI {
 		return dim;
 	}
 
+	get_kernel_pixel_size () {
+		return this.#kernel_pixel_size;
+	}
+
+	set_kernel_pixel_size (_new) {
+		if(this.#looks_like_number(_new)) {
+			this.#kernel_pixel_size = this.#parse_int(_new);
+		} else {
+			throw new Error(`[set_kernel_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
+		}
+	}
+
 	get_pixel_size () {
 		return this.#pixel_size;
 	}
@@ -2433,6 +2894,8 @@ class asanAI {
 	set_pixel_size (_new) {
 		if(this.#looks_like_number(_new)) {
 			this.#pixel_size = this.#parse_int(_new);
+		} else {
+			throw new Error(`[set_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
 		}
 	}
 
@@ -2482,8 +2945,14 @@ class asanAI {
 							return _slice;
 						});
 
+						var asanai_this = this;
+
 						var _slice_array = this.tidy(() => {
-							return this.array_sync(slice);
+							var res = asanai_this.array_sync(slice);
+
+							asanai_this.dispose(slice);
+
+							return res;
 						});
 
 						var _grid_canvas = this.#draw_grid(canvas, this.#pixel_size, _slice_array[0], 1, "", "");
@@ -2721,7 +3190,12 @@ class asanAI {
 		return "<center>" + table + "</center>";
 	}
 
-	write_tensors_info(divname=this.write_tensors_info_div, time=200) {
+	write_tensors_info(divname=this.#write_tensors_info_div, time=200) {
+		if($("#__status__bar__").length == 1) {
+			this.err("[write_tensors_info] Cannot use status bar and write_tensors_info at the same time. Chose one.");
+			return;
+		}
+
 		var $div = $("#" + divname);
 
 		if(!$div.length) {
@@ -2729,30 +3203,113 @@ class asanAI {
 			return;
 		}
 
-		this.write_tensors_info_div = divname;
+		this.#write_tensors_info_div = divname;
 
 		if(!this.#looks_like_number(time)) {
 			console.err("write_tensors_info: second parameter must be a number. Time will be set to 200 ms");
 			time = 200;
 		}
+
+		var asanai_this = this;
+
 		var _tensor_debugger = function () {
-			var _tensors = tf.memory().numTensors;
-			var _text = _tensors + " Tensors";
+
+
+
+			var memory;
+			try {
+				memory = tf.memory();
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("tf is null")) {
+					err("tf is null");
+				} else {
+					throw new Error(e);
+				}
+
+				return;
+			}
+
+
+			var bytes = memory["numBytes"];
+			var gpu_bytes = memory["numBytesInGPU"];
+
+			var num_tensors =  memory["numTensors"]; // Object.keys(tensors).length;
+			var ram_mb = bytes / 1024 / 1024;
+			ram_mb = ram_mb.toFixed(2);
+			var gpu_mb = gpu_bytes / 1024 / 1024;
+			if(gpu_mb) {
+				gpu_mb = gpu_mb.toFixed(2);
+			}
+
+			var tensor_color = "";
+			var gpu_color = "";
+			var cpu_color = "";
+
+			if(asanai_this.#last_num_global_tensors > num_tensors) {
+				tensor_color = "#00ff00";
+			} else if (asanai_this.#last_num_global_tensors < num_tensors) {
+				tensor_color = "#ff0000";
+			}
+
+			if(asanai_this.#last_tensor_size_cpu > ram_mb) {
+				cpu_color = "#00ff00";
+			} else if (asanai_this.#last_tensor_size_cpu < ram_mb) {
+				cpu_color = "#ff0000";
+			}
+
+			if(asanai_this.#last_tensor_size_gpu > gpu_mb) {
+				gpu_color = "#00ff00";
+			} else if (asanai_this.#last_tensor_size_gpu < gpu_mb) {
+				gpu_color = "#ff0000";
+			}
+
+			var debug_string = `Tensors: ` + asanai_this.colorize(num_tensors, tensor_color) + ", RAM: " + asanai_this.colorize(ram_mb, cpu_color) + "MB";
+
+			if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
+				debug_string = debug_string + ", GPU: " + asanai_this.colorize(gpu_mb, gpu_color) + "MB";
+			}
+
+			if(Object.keys(asanai_this.#custom_tensors).length) {
+				debug_string += ", asanAI: " + Object.keys(asanai_this.#custom_tensors).length;
+			}
 
 			var $div = $("#" + divname);
+			var memdeb = $div[0];
 
-			if($div.html() != _text) {
-				$div.html(_text);
+			if(memdeb) {
+				if(memdeb.innerHTML != debug_string) {
+
+					if($div.html() != debug_string) {
+						$div.html(debug_string);
+					}
+				}
+			} else {
+				asanai_this.wrn("memory_debugger_div not found. Did you, by any chance, manually remove it?");
 			}
+
+			asanai_this.#last_num_global_tensors = num_tensors;
+			asanai_this.#last_tensor_size_cpu = ram_mb;
+			asanai_this.#last_tensor_size_gpu = gpu_mb;
 		}
 
 		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
 	}
 
+	colorize (text, color) {
+		if(color) {
+			return "<span style='color: " + color + "'>" + text + "</span>";
+		}
+		return text;
+	}
+
 	hide_tensors_info () {
 		if(self.write_tensor_interval) {
 			clearInterval(self.write_tensor_interval)
-			$("#" + self.write_tensors_info_div).html("");
+			$("#" + self.#write_tensors_info_div).html("");
 
 			self.write_tensor_interval = null;
 		} else {
@@ -2821,6 +3378,8 @@ class asanAI {
 			var res = asanai_this.array_sync(normalized);
 			return res;
 		});
+
+		this.dispose(normalized);
 
 		var _dim = this.#get_dim(synched);
 
@@ -2920,13 +3479,14 @@ class asanAI {
 
 		var html = "";
 
-		var bar_style = ` style='margin-top: 4px; display: inline-block; height: 3px; background-color: #909090; padding: 5px; width: ${this.#bar_width}px;' `;
+		var bar_style = ` style='margin-top: 4px; display: inline-block;`;
+		bar_style += `height: 3px; background-color: ${this.#bar_background_color}; padding: 5px; width: ${this.#bar_width}px;' `;
 
-		var highest_bar_css = "background-color: #0FFF50 !important;";
+		var highest_bar_css = `background-color: #${this.#max_bar_color} !important;`;
 
 		var label_element_css = "width: 100%; text-align: left; height: 40px;";
 
-		var best_result_css = `background-color: green; color: white;`;
+		var best_result_css = `background-color: ${this.#max_bar_color}; color: white;`;
 
 		var label_element = ` class='label_element' style='${label_element_css}' `;
 		var label_element_best_result = ` class='label_element best_result' style='${best_result_css} ${label_element_css}' `;
@@ -2988,5 +3548,708 @@ class asanAI {
 		} else {
 			throw new Error("labels must be an array");
 		}
+	}
+
+	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
+		if(!this.#model) {
+			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
+			return;
+		}
+
+		if(!this.#model.layers) {
+			this.err(`[load_image_urls_into_div] Cannot continue with a model without layers`);
+			return;
+		}
+
+		if(!Array.isArray(this.#model.input.shape)) {
+			this.err(`[load_image_urls_into_div] this.#model.input.shape is not an array`);
+			return;
+		}
+
+		if(this.#model.input.shape.length != 4) {
+			this.err(`[load_image_urls_into_div] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.join(", ")}]`);
+			return;
+		}
+
+		if(!this.#model_height) {
+			this.err(`[load_image_urls_into_div] this.#model_height has no value`);
+			return;
+		}
+
+		if(!this.#model_width) {
+			this.err(`[load_image_urls_into_div] this.#model_width has no value`);
+			return;
+		}
+
+		var $div = $("#" + divname);
+		if(!$div.length) {
+			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			return;
+		}
+
+		if(!Array.isArray(urls_and_categories)) {
+			this.err(`[load_image_urls_into_div] urls_and_categories is not an array`);
+			return;
+		}
+
+		if(!urls_and_categories.length) {
+			this.err(`[load_image_urls_into_div] urls_and_categories is empty`);
+			return;
+		}
+
+		var urls = [];
+		var categories = [];
+
+		var unique_categories = [];
+
+		if(shuffle) {
+			urls_and_categories = urls_and_categories.sort((a, b) => 0.5 - Math.random());
+		}
+
+		for (var i = 0; i < urls_and_categories.length; i++) {
+			var _this = urls_and_categories[i];
+			var url;
+			var cat;
+
+			if(0 in _this) {
+				url = _this[0];
+			} else {
+				this.err(`No url for url for urls_and_categories[${i}] found`);
+				return;
+			}
+
+			if(1 in _this) {
+				cat = _this[1];
+			} else {
+				this.err(`No url for url for urls_and_categories[${i}] found`);
+				return;
+			}
+
+			urls.push(url);
+			categories.push(cat);
+
+			if(!unique_categories.includes(cat)) {
+				unique_categories.push(cat);
+			}
+		}
+
+		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
+		this.assert(Array.isArray(categories), `categories is not an array but ${typeof(categories)}`);
+		this.assert(Array.isArray(unique_categories), `categories is not an array but ${typeof(unique_categories)}`);
+		this.assert(unique_categories.length <= categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] urls-array is empty");
+			return;
+		}
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] categories-array is empty");
+			return;
+		}
+
+		var imgs = [];
+
+		var __is = this.#model.input.shape;
+
+		var image_tensors_array = [];
+
+		var category_output = [];
+
+		for (var i = 0; i < urls.length; i++) {
+			if(i == 0) {
+				$div.html("");
+			}
+
+			var url = urls[i];
+
+			this.assert(typeof(url) == "string", `${urls[i]} is not a string but ${typeof(urls[i])}`);
+
+			var height = 50;
+			var width = 50;
+
+			if(this.#model_height) {
+				height = this.#model_height;
+			}
+
+			if(this.#model_width) {
+				width = this.#model_width;
+			}
+
+			var _uuid = this.#uuidv4();
+
+			var img_id = `load_images_into_div_image_${_uuid}`;
+
+			var img = $(`<img id='${img_id}' width=${width} height=${height} src='${url}' />`);
+
+			imgs.push(img[0]);
+
+			$div.append(img);
+
+			var asanai_this = this;
+
+			var img_array = this.tidy(() => {
+				var _t = asanai_this.array_sync(asanai_this.from_pixels(img[0], asanai_this.num_channels));
+
+				return _t;
+			});
+
+			image_tensors_array.push(img_array)
+			category_output.push(unique_categories.indexOf(categories[i]));
+		}
+
+		var category_tensor = this.tensor(category_output);
+
+		image_tensors_array = this.tensor(image_tensors_array);
+
+		if(one_hot) {
+			var asanai_this = this;
+
+			category_tensor = this.tidy(() => {
+				var __tensor = category_tensor.toInt();
+
+				var _unique_categories_length = unique_categories.length;
+
+				var _res = asanai_this.one_hot(__tensor, _unique_categories_length);
+
+				this.dispose(__tensor)
+
+				return _res;
+			});
+
+			var last_layer_activation = this.#model.layers[this.#model.layers.length - 1].getConfig().activation;
+			
+			if(last_layer_activation != "") {
+				this.wrn("[load_image_urls_to_div_and_tensor] The last layer is not softmax, but you chose one hot encoding. Though this is possible, usually, it is not what you want. Set the last layer's activation function to softmax.");
+			}
+		}
+
+		this.set_labels(unique_categories);
+
+		var res = {
+			html_image_elements: imgs,
+			labels: unique_categories,
+			x: image_tensors_array,
+			y: category_tensor
+		};
+
+		return res;
+	}
+
+	load_image_urls_into_div (divname, ...urls) {
+		var $div = $("#" + divname);
+		if(!$div.length) {
+			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			return;
+		}
+
+		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
+
+		while (this.get_shape_from_array(urls).length > 1) {
+			urls = urls.flat();
+		}
+
+		if(!urls.length) {
+			this.err("[load_image_urls_into_div] urls-array is empty");
+			return;
+		}
+
+		var imgs = [];
+
+		for (var i = 0; i < urls.length; i++) {
+			var url = urls[i];
+
+			this.assert(typeof(url) == "string", `${urls[i]} is not a string but ${typeof(urls[i])}`);
+
+			var height = 50;
+			var width = 50;
+
+			if(this.#model_height) {
+				height = this.#model_height;
+			}
+
+			if(this.#model_width) {
+				height = this.#model_width;
+			}
+
+			var _uuid = this.#uuidv4();
+
+			var img = $(`<img id='load_images_into_div_image_${_uuid}' width=${width} height=${height} src='${url}' />`);
+
+			imgs.push(img);
+
+			$div.append(img);
+		}
+
+		return imgs;
+	}
+
+	async fit (_x, _y, args={}) {
+		if(!Object.keys(args).length) {
+			this.err(`[fit]: third argument, args, seems to be empty. Must at least contain epochs and batchSize`);
+			return;
+		}
+
+		if(!Object.keys(args).includes("epochs")) {
+			this.err(`[fit]: third argument, args, seems not to contain epochs. Must at least contain epochs and batchSize`);
+			return;
+		}
+
+		if(!Object.keys(args).includes("batchSize")) {
+			this.err(`[fit]: third argument, args, seems not to contain batchSize. Must at least contain epochs and batchSize`);
+			return;
+		}
+
+		if(!this.#model) {
+			this.err(`[fit] Cannot continue without a loaded model`);
+			return;
+		}
+
+		if(!this.#model.layers) {
+			this.err(`[fit] Cannot continue with a model without layers`);
+			return;
+		}
+
+		if(this.#model.input.shape.length != _x.shape.length) {
+			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}] in length`);
+			return;
+		} else {
+			var mis = this.#model.input.shape;
+			var xs = _x.shape;
+
+			var matches = true;
+
+			for (var k = 1; k < xs.length; k++) {
+				if(mis[k] != xs[k]) {
+					matches = false;
+				}
+			}
+
+			if(!matches) {
+				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_x.shape.join(", ")}]`);
+				return;
+			}
+		}
+
+		if(this.#model.output.shape.length != _y.shape.length) {
+			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}] in length`);
+			return;
+		} else {
+			var mos = this.#model.output.shape;
+			var ys = _y.shape;
+
+			var matches = true;
+
+			for (var k = 1; k < ys.length; k++) {
+				if(mos[k] != ys[k]) {
+					matches = false;
+				}
+			}
+
+			if(!matches) {
+				this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+				return;
+			}
+		}
+
+		try {
+			var history = this.#model.fit(_x, _y, args);
+
+			this.#redo_what_has_to_be_redone(false);
+
+			return history;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("e is null")) {
+				return false;
+			} else {
+				throw new Error(e);
+			}
+		}
+
+		this.set_model(this.#model);
+
+		return history;
+	}
+
+	get_custom_tensors () {
+		return this.#custom_tensors;
+	}
+
+	tensor_debugger () {
+		console.table(this.#custom_tensors);
+	}
+
+	is_valid_web_color (color) {
+		const webColors = [
+			"aquamarine",
+			"azure", 
+			"beige",
+			"bisque",
+			"black",
+			"blue", 
+			"brown", 
+			"burlywood",
+			"chartreuse",
+			"chocolate",
+			"coral", 
+			"cornsilk",
+			"crimson",
+			"cyan", 
+			"firebrick",
+			"fuchsia", 
+			"gainsboro",
+			"goldenrod",
+			"gray", 
+			"green", 
+			"honeydew",
+			"indigo",
+			"ivory",
+			"khaki",
+			"lavender",
+			"lime",
+			"linen",
+			"magenta",
+			"maroon",
+			"moccasin",
+			"navy",
+			"olive",
+			"orange", 
+			"orchid",
+			"peru",
+			"pink",
+			"plum",
+			"purple", 
+			"red", 
+			"salmon",
+			"seashell",
+			"sienna",
+			"silver", 
+			"snow",
+			"tan",
+			"teal",
+			"thistle", 
+			"tomato",
+			"turquoise",
+			"violet",
+			"wheat",
+			"white", 
+			"yellow", 
+		];
+
+		// Convert the color input to lowercase for case-insensitivity
+		const lowerCaseColor = color.toLowerCase();
+
+		if (webColors.includes(lowerCaseColor)) {
+			return true;
+		}
+
+		const colorRegex = /^(#([0-9a-fA-F]{3}){1,2}|(rgb|hsl)a?\(\s*((\d{1,3}\s*,\s*){2}\d{1,3}|(\d+(\.\d+)?%\s*,\s*){2}\d+(\.\d+)?%\s*,\s*\d+(\.\d+)?|(\d+(\.\d+)?%\s*,\s*\d+(\.\d+)?%\s*,\s*\d{1,3}))\s*\))$/;
+
+		if (color.match(colorRegex)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	get_max_bar_color () {
+		return this.#max_bar_color;
+	}
+
+	get_default_bar_color () {
+		return this.#default_bar_color;
+	}
+
+	set_max_bar_color(color) {
+		if(this.is_valid_web_color(color)) {
+			if(this.get_max_bar_color() != color) {
+				this.#max_bar_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+
+				if(this.get_bar_background_color() == color) {
+					this.wrn(`[set_default_bar_color] New max bar color is the same as the background. You will not be able to see max bars.`);
+				}
+			} else {
+				this.wrn(`[set_max_bar_color] Color stayed the same. Not changing.`);
+			}
+		} else {
+			this.err(`[set_max_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
+		}
+	}
+
+	set_default_bar_color(color) {
+		if(this.is_valid_web_color(color)) {
+			if(this.get_default_bar_color() != color) {
+				this.#default_bar_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+
+				if(this.get_bar_background_color() == color) {
+					this.wrn(`[set_default_bar_color] New default bar color is the same as the background. You will not be able to see default bars.`);
+				}
+			} else {
+				this.wrn(`[set_default_bar_color] Color stayed the same. Not changing.`);
+			}
+		} else {
+			this.err(`[set_default_bar_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
+		}
+	}
+
+	get_bar_background_color () {
+		return this.#bar_background_color;
+	}
+
+	set_bar_background_color (color) {
+		if(this.is_valid_web_color(color)) {
+			if(this.get_bar_background_color() != color) {
+				this.#bar_background_color = color;
+				if(this.#model) {
+					this.set_model(this.#model);
+				}
+
+				if(color == this.get_max_bar_color()) {
+					this.wrn(`[set_bar_background_color] Max-bar color is the same as background-color. Max bars will not be visible`);
+				}
+
+				if(color == this.get_default_bar_color()) {
+					this.wrn(`[set_bar_background_color] Default-bar color is the same as background-color. Default bars will not be visible`);
+				}
+			} else {
+				this.wrn(`[set_bar_background_color] Color stayed the same. Not changing.`);
+			}
+		} else {
+			this.err(`[set_bar_background_color] Color "${color}" does not seem to be a valid web color. Valid are names like 'red' or 'green', strings like 'rgb(255, 0, 3)' or hex colors like '#ff0011'`);
+		}
+	}
+
+	enable_debug () {
+		this.#_enable_debug = true;
+	}
+
+	disable_debug () {
+		this.#_enable_debug = false;
+	}
+
+	get_images_to_repredict () {
+		return this.#images_to_repredict;
+	}
+
+	get_asanai_name () {
+		return this.#asanai_name;
+	}
+
+	set_asanai_name (name) {
+		if(eval(`window.${name}`)) {
+			if(window[name].constructor.name == "asanAI") {
+				this.#asanai_name = name;
+			} else {
+				this.err(`[set_asanai_name] Variable ${name} could be found but is not an asanAI class.`);
+			}
+		} else {
+			this.err(`[set_asanai_name] Could not find global variable ${name}. Cannot use it as asanAI name.`);
+		}
+	}
+
+	show_status_bar () {
+		if($("#__status__bar__").length == 1) {
+			this.err("[show_status_bar] Status bar element already exists. Not re-initializing it.");
+			return;
+		}
+
+		if(this.#write_tensors_info_div) {
+			this.err("[show_status_bar] Cannot use write_tensors_info and status_bar at the same time. Chose one.");
+			return;
+		}
+
+		var css = `background-color: ${this.#status_bar_background_color}; `;
+		css += `color: ${this.#status_bar_text_color}; `;
+		css += `user-select: none; `;
+		css += `height: 1.5em; `;
+		css += `width: 100%; `;
+		css += `position: fixed; `;
+		css += `bottom: 0px; `;
+		css += `margin: 0px; `;
+		css += `border: 1px groove #626262; `;
+		css += `padding-bottom: 5px; `;
+
+		var $element = $(`<div style='${css}'><span id='__status__bar__log'></span><span style='right: 0px; position: fixed;' id='__status__bar__memory_debuger'></span></div>`);
+
+		$($element).appendTo($("body"));;
+
+		this.write_tensors_info("__status__bar__memory_debuger");
+
+		return $element;
+	}
+
+	generate_ribbon_from_ribbon_data (jsonData) {
+		var tabs = [
+			`
+			<div class="ribbon-tab file" id="file-tab">
+				<span class="ribbon-title">File</span>
+				<div class="ribbon-backstage">
+					This is the Backstage.<br/><br/>
+
+					<div class="button big">
+						<span class="label">Open</span>
+						<span class="desc">Open a document from your computer</span>
+					</div><br/>
+					<div class="button big">
+						<span class="label">Save</span>
+						<span class="desc">Save your document to your computer</span>
+					</div>
+				</div>
+			</div>
+			`,
+			`
+			<div class="ribbon-tab" id="format-tab">
+				<span class="ribbon-title" id='home_tab'>Home</span>
+				<div class="ribbon-section">
+					<span class="section-title">Tables</span>
+					<div class="ribbon-button ribbon-button-large" id="add-table-btn">
+						<span class="button-title">Add<br/>Table</span>
+						<span class="button-help">This button will add a table to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/new-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/new-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/new-table.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large" id="open-table-btn">
+						<span class="button-title">Open<br/>Table</span>
+						<span class="button-help">This button will open a table and add it to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/open-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/open-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/open-table.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="del-table-btn">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/delete-table.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/delete-table.png" />
+					</div>
+				</div>
+
+				<div class="ribbon-section">
+					<span class="section-title">Pages</span>
+					<div class="ribbon-button ribbon-button-large" id="add-page-btn">
+						<span class="button-title">Add<br/>Page</span>
+						<span class="button-help">This button will add a page to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/new-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/new-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/new-page.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large" id="open-page-btn">
+						<span class="button-title">Open<br/>Page</span>
+						<span class="button-help">This button will open a page and add it to your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/open-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/open-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/open-page.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="del-page-btn">
+						<span class="button-title">Remove<br/>Page</span>
+						<span class="button-help">This button will remove the selected page from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-page.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/delete-page.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/delete-page.png" />
+					</div>
+				</div>
+
+
+				<div class="ribbon-section">
+					<span class="section-title">Actions</span>
+					<div class="ribbon-button ribbon-button-small" id="run-btn" style='background-color: lightgreen' >
+						<span onclick='load_test_images_and_train()' class="button-title">Run</span>
+						<span class="button-help">This button will run the program.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/run.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/run.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/run.png" />
+					</div>
+					<!--
+					<div class="ribbon-button ribbon-button-small" id="repeat-btn">
+						<span class="button-title">Repeat</span>
+						<span class="button-help">This button will repeat something.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/repeat.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/repeat.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/repeat.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-small disabled" id="save-btn">
+						<span class="button-title">Save</span>
+						<span class="button-help">This button will save your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/save.png" />
+						<img class="ribbon-icon ribbon-hot" src="icons/hot/save.png" />
+						<img class="ribbon-icon ribbon-disabled" src="icons/disabled/save.png" />
+					</div>
+					-->
+				</div>
+
+			</div>
+
+			`,
+			`
+			<div class="ribbon-tab" id="next-tab">
+				<span class="ribbon-title">Options</span>
+				<div class="ribbon-section">
+					<span class="section-title">More Stuff</span>
+					<div class="ribbon-button ribbon-button-large">
+						<span class="button-title">Other<br/>Feature</span>
+						<span class="button-help">This button will do something else.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/bullet-orange.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="other-btn-2">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+					</div>
+				</div>
+			</div>
+			`,
+			`
+			<div class="ribbon-tab" id="next-tab">
+				<span class="ribbon-title">Options</span>
+				<div class="ribbon-section">
+					<span class="section-title">More Stuff</span>
+					<div class="ribbon-button ribbon-button-large">
+						<span class="button-title">Other<br/>Feature</span>
+						<span class="button-help">This button will do something else.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/bullet-orange.png" />
+					</div>
+					<div class="ribbon-button ribbon-button-large disabled" id="other-btn-2">
+						<span class="button-title">Remove<br/>Table</span>
+						<span class="button-help">This button will remove the selected table from your document.</span>
+						<img class="ribbon-icon ribbon-normal" src="icons/normal/delete-table.png" />
+					</div>
+				</div>
+			</div>
+			`
+		];
+
+		return `
+		<div id="ribbon">
+			<span class="ribbon-window-title"></span>
+
+			${tabs.join("\n")}
+		</div>`;
+	}
+
+	show_ribbon () {
+		try {
+			if(!typeof(jQuery().ribbon) == "function") {
+				this.err(`[show_ribbon] jQuery().ribbon is not included. Cannot show ribbon without.`);
+				return;
+			}
+		} catch (e) {
+			this.err(`[show_ribbon] jQuery().ribbon is not included. Cannot show ribbon without.`);
+			return;
+		}
+
+		var ribbon_element = this.generate_ribbon_from_ribbon_data(this.ribbon_data);
+		$("#ribbon_content").html(ribbon_element);
+		$('#ribbon').ribbon();
 	}
 }

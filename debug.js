@@ -339,7 +339,7 @@ function memory_debugger () {
 		debug_string = debug_string + ", GPU: " + colorize(gpu_mb, gpu_color) + "MB";
 	}
 
-	if(Object.keys(_custom_tensors).length) {
+	if(Object.keys(_custom_tensors).length && debug) {
 		debug_string += ", asanAI: " + Object.keys(_custom_tensors).length;
 	}
 

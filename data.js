@@ -152,6 +152,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
+
 	if(is_cosmo_mode) {
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
 		set_document_title(language[lang]["load_images"] + ": " + percentage + "% - asanAI");
@@ -159,22 +160,22 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 	}
 
-	percentage_div.html(percentage_text);
-	await update_translations();
-
-	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+	if(percentage > 20) {
 		var remaining_items = urls_length - i;
 		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000);
+		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
 		old_percentage = percentage;
 
 		if(is_cosmo_mode) {
-			percentage_div.html(percentage_div.html() + ", ca. " + human_readable_time(eta) + " " + trm("left"));
+			percentage_text += ", ca. " + human_readable_time(eta) + " " + trm("left");
 		} else {
-			percentage_div.html(percentage_div.html() + " ca. " + human_readable_time(eta) + " " + trm("left"));
+			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
 		}
 	}
+
+	percentage_div.html(percentage_text);
+	await update_translations();
 
 	return old_percentage;
 }
@@ -238,7 +239,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 				if(!skip_real_image_download) {
 					try {
-						old_percentage = await _get_set_percentage_text(
+						await _get_set_percentage_text(
 							percentage, 
 							i, 
 							urls.length, 
@@ -611,8 +612,8 @@ async function get_xs_and_ys () {
 					x = numpy_str_to_tf_tensor(x_string, max_number_values);
 					y = numpy_str_to_tf_tensor(y_string, max_number_values);
 
-					var x_print_string = tensor_print_to_string(x);
-					var y_print_string = tensor_print_to_string(y);
+					var x_print_string = _tensor_print_to_string(x);
+					var y_print_string = _tensor_print_to_string(y);
 
 					$("#xy_display_data").html("<table border=1><tr><th>X</th><th>Y</th></tr><tr><td><pre>" + x_print_string + "</pre></td><td><pre>" + y_print_string + "</pre></td></tr></table>").show();
 				} catch (e) {
@@ -782,6 +783,8 @@ async function get_xs_and_ys () {
 
 		$("#reset_data").hide();
 	}
+
+	log(language[lang]["got_data_creating_tensors"]);
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
@@ -1695,59 +1698,73 @@ async function confusion_matrix(classes) {
 	var num_items = 0;
 
 	for (var i = 0; i < imgs.length; i++) {
-		var x = imgs[i];
+		var img_elem = imgs[i];
+		var img_elem_xpath = get_element_xpath(img_elem);
 
-		var img_tensor = tidy(() => {
+		var predicted_tensor = confusion_matrix_and_grid_cache[img_elem_xpath];
+
+		if(!predicted_tensor) {
+			var img_tensor = tidy(() => {
+				try {
+					var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
+					return predicted_tensor;
+				} catch (e) {
+					err(e);
+					return null;
+				}
+			});
+
+			if(img_tensor === null) {
+				wrn("Could not load image from pixels from this element:", img_elem);
+				await dispose(img_tensor);
+				continue;
+			}
+
 			try {
-				var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
-				res = divNoNan(res, parse_float($("#divide_by").val()));
-				return res;
+				predicted_tensor = tidy(() => {
+					return model.predict(img_tensor);
+				});
+
+				predicted_tensor = tidy(() => {
+					var _res = array_sync(predicted_tensor)[0];
+					dispose(predicted_tensor); // await not possible
+					return _res;
+				});
+
+				confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
 			} catch (e) {
-				err(e);
-				return null;
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				dbg("Cannot predict image: " + e);
+
+				await dispose(img_tensor);
+				await dispose(predicted_tensor);
+
+				continue;
 			}
-		});
+		}
 
-		if(img_tensor === null) {
-			wrn("Could not load image from pixels from this element:", x);
-			await dispose(img_tensor);
+		//console.log("cached: ", predicted_tensor);
+
+		if(!predicted_tensor) {
+			err(`[confusion_matrix] Could not get predicted_tensor`);
 			continue;
 		}
 
-		var res;
-		try {
-			res = tidy(() => {
-				return model.predict(img_tensor);
-			});
-
-			res = tidy(() => {
-				var _res = array_sync(res)[0];
-				dispose(res); // await not possible
-				return _res;
-			});
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			dbg("Cannot predict image: " + e);
+		if(!predicted_tensor) {
+			dbg("predicted_tensor is empty");
 
 			await dispose(img_tensor);
-			await dispose(res);
+			await dispose(predicted_tensor);
 
 			continue;
 		}
 
-		if(!res) {
-			dbg("res is empty");
 
-			await dispose(img_tensor);
-			await dispose(res);
-
-			continue;
-		}
-
-		var predicted_tensor = res;
+		assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {
 			dbg("Predicted tensor was null or undefined");
@@ -1757,7 +1774,7 @@ async function confusion_matrix(classes) {
 		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 		var predicted_category = labels[predicted_index];
 
-		var src = x.src;
+		var src = img_elem.src;
 		var correct_category = extractCategoryFromURL(src);
 
 		if(!Object.keys(table_data).includes(correct_category)) {
@@ -1770,8 +1787,9 @@ async function confusion_matrix(classes) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
+		//console.log("xpath:", img_elem_xpath, "predicted_index:", predicted_index, "category", predicted_category);
+
 		await dispose(img_tensor);
-		await dispose(res);
 		await dispose(predicted_tensor);
 
 		num_items++;

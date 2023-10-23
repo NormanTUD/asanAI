@@ -251,7 +251,7 @@
 			"loaded_configuration" => "Loaded configuration",
 			"model_is_not_defined" => "Model is not defined",
 			"model_is_ok" => "Model is OK",
-			"got_data" => "Got data",
+			"got_data" => "Got data, tensors created",
 			"site_is_ready" => "Site is ready",
 			"trying_to_set_backend" => "Trying to set backend",
 			"backend_set" => "Backend set",
@@ -299,7 +299,8 @@
 			"initializing_categories" => "Initializing categories",
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initializing page contents",
-			"initializing_set_options_for_all" => "Initializing 'set options for all'"
+			"initializing_set_options_for_all" => "Initializing 'set options for all'",
+			"got_data_creating_tensors" => "Got data, creating tensors..."
 		),
 
 		'de' => array(
@@ -555,7 +556,7 @@
 			"loaded_configuration" => "Konfiguration geladen",
 			"model_is_not_defined" => "Modell ist nicht definiert",
 			"model_is_ok" => "Modell ist OK",
-			"got_data" => "Daten geholt",
+			"got_data" => "Daten geholt, Tensoren erstellt",
 			"site_is_ready" => "Seite fertig geladen",
 			"trying_to_set_backend" => "Versuche, das Backend zu setzen",
 			"backend_set" => "Backend gesetzt",
@@ -601,7 +602,8 @@
 			"initializing_categories" => "Kategorien werden initialisiert",
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initialisiere Seiteninhalte",
-			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'"
+			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'",
+			"got_data_creating_tensors" => "Daten geholt, erstelle Tensoren..."
 		)
 	);
 

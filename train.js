@@ -313,6 +313,7 @@ async function get_fit_data () {
 	var callbacks = {};
 
 	callbacks["onTrainBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		current_epoch = 0;
 		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
@@ -322,14 +323,17 @@ async function get_fit_data () {
 		$("#network_has_seen_msg").hide();
 
 		await visualize_train();
+		await confusion_matrix_to_page(); // async not possible
 
 		if(is_cosmo_mode) {
 			$("#program_looks_at_data_span").show();
 			$("#show_after_training").hide();
 		}
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onBatchBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		if(!started_training) {
 			model.stopTraining = true;
 		}
@@ -341,9 +345,11 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			await show_tab_label("training_tab_label", 1);
 		}
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onEpochBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		current_epoch++;
 		var max_number_epochs = get_epochs();
 		var current_time = Date.now();
@@ -371,9 +377,11 @@ async function get_fit_data () {
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%");
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
+		confusion_matrix_and_grid_cache = {};
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -428,9 +436,12 @@ async function get_fit_data () {
 				await visualize_train();
 			}
 		}
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
+		confusion_matrix_and_grid_cache = {};
 		delete logs["epoch"];
 		delete logs["size"];
 
@@ -522,6 +533,7 @@ async function get_fit_data () {
 			} else {
 				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
+
 			await visualize_train();
 		}
 
@@ -546,9 +558,12 @@ async function get_fit_data () {
 		$("#network_has_seen_msg").show();
 
 		confusion_matrix_to_page(); // async not possible
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onTrainEnd"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		favicon_default();
 		await write_model_to_latex_to_page();
 		set_document_title(original_title);
@@ -574,6 +589,8 @@ async function get_fit_data () {
 		confusion_matrix_to_page(); // async not possible
 
 		await reset_data();
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	var fit_data = {
@@ -1460,23 +1477,47 @@ async function visualize_train () {
 	var total_correct = 0;
 
 	var category_overview = {};
-	var predictions_tensors = [];
 
 	for (var i = 0; i < image_elements.length; i++) {
-		var x = image_elements[i];
-		if(i <= max) {
-			tf.engine().startScope();
-			imgs.push(x);
+		var img_elem = image_elements[i];
 
-			if(!x) {
+		var img_elem_xpath = get_element_xpath(img_elem);
+		
+		var this_predicted_array = [];
+
+
+		var src;
+		try {
+			src = img_elem.src;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = message;
+			}
+
+			e = "" + e;
+
+			throw new Error(e);
+
+			continue;
+		}
+
+		if(!src) {
+			err("[visualize_train] Cannot use images without src tags");
+			continue;
+		}
+
+		if(i <= max) {
+			var res_array;
+
+			if(!img_elem) {
 				tf.engine().endScope();
-				wrn("x not defined!", x);
+				wrn("img_elem not defined!", img_elem);
 				continue;
 			}
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
+					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
 					res = divNoNan(res, parse_float($("#divide_by").val()));
 					return res;
 				} catch (e) {
@@ -1486,30 +1527,40 @@ async function visualize_train () {
 			});
 
 			if(img_tensor === null) {
-				wrn("Could not load image from pixels from this element:", x);
+				wrn("Could not load image from pixels from this element:", img_elem);
 				continue;
 			}
 
 			var res = tidy(() => { return model.predict(img_tensor); });
-			predictions_tensors.push(array_sync(res)[0]);
 
-			var res_array = array_sync(res)[0];
-
-			var probability = Math.max(...res_array);
-			var category = res_array.indexOf(probability);
-
-			categories.push(category);
-			probabilities.push(probability);
-
-			await dispose(res);
+			res_array = array_sync(res)[0];
 			await dispose(img_tensor);
-			tf.engine().endScope();
+			await dispose(res);
+
+			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
+
+			this_predicted_array = res_array;
+
+			if(this_predicted_array) {
+				confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
+
+				var max_probability = Math.max(...this_predicted_array);
+				var category = this_predicted_array.indexOf(max_probability);
+
+				//console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
+
+				categories.push(category);
+				probabilities.push(max_probability);
+				imgs.push(img_elem);
+			} else {
+				err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
+			}
 		}
 
 		try {
-			var src = x.src;
-			if(src && x.tagName == "IMG") {
-				var predicted_tensor = predictions_tensors[i];
+			var tag_name = img_elem.tagName;
+			if(src && tag_name == "IMG") {
+				var predicted_tensor = this_predicted_array;
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
 					dbg("Predicted tensor was null or undefined");
@@ -1578,6 +1629,8 @@ async function visualize_train () {
 					category_overview[predicted_category]["wrong"]++;
 				}
 				category_overview[predicted_category]["total"]++;
+			} else {
+				err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
 			}
 		} catch (e) {
 			console.log(e);

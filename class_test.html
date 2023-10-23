@@ -2,18 +2,62 @@
 <html>
 	<head>
 		<title>asanai.js</title>
+		<script src='libs/jquery.js' crossorigin></script>
 		<script src='asanai.js' crossorigin></script>
 		<script src='tf/tf.min.js' crossorigin></script>
-		<script src='libs/jquery.js' crossorigin></script>
+		<script src='libs/jquery-ui.js' crossorigin></script>
 		<script src='libs/plotly-latest.min.js' crossorigin></script>
+		<script src='libs/temml/temml.js' crossorigin></script>
+
+		<!-- Required for Ribbon -->
+
+		<link href="css/new_ribbon.css" rel="stylesheet" type="text/css" />
+		<link href="css/soft_button.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="libs/ribbon.js"></script>
+		<link href="css/ribbon-dark.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="libs/jquery.tooltip.min.js"></script>
+
+		<style>
+			/* This style is optional */
+			.float-container {
+				border: 3px solid #fff;
+				margin: 10px;
+			}
+
+			.float-child {
+				float: left;
+				padding: 20px;
+				border: 2px solid red;
+			}  
+		</style>
 	</head>
 	<body>
-		<pre id="memory"></pre>
-		<img id="test_image" src="_gui/logo.png" width=50 height=50 />
-		<pre id="test_image_prediction"></pre>
+
+		<div id="ribbon_content"></div>
+
+		<pre>====</pre>
+		<div id="test_images"></div>
+		<pre>====</pre>
+
+		<div class="float-container">
+			<div class="float-child">
+				<img id="test_image" src="traindata/signs/example/e_warning.png" width=50 height=50 />
+				<pre id="test_image_prediction"></pre>
+			</div>
+			<div class="float-child">
+				<img id="test_image_two" src="traindata/signs/example/c_prohibition.png" width=50 height=50 />
+				<pre id="test_image_two_prediction"></pre>
+			</div>
+		</div>
+
+		<br>
+
 		<pre id="summary_pre"></pre>
 		<button onclick="asanai.toggle_webcam(this)">Stop webcam</button>
 		<div id="webcam_prediction"></div>
+
+		<br>
+
 		<div id="internal_states"></div>
 		<div id="fcnn_div"></div>
 
@@ -33,22 +77,51 @@
 
 				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
 
+				asanai.show_status_bar();
+				asanai.show_ribbon();
+				asanai.set_asanai_name("asanai");
+
+				asanai.set_default_bar_color("yellow")
+				asanai.set_max_bar_color("#ff00aa")
+				asanai.set_bar_background_color("orange")
+
 				asanai.set_divide_by(255);
 
-				asanai.set_labels(["a", "b", "c", "d"]);
+				asanai.set_labels(["erste kategorie", "zweite kategorie", "dritte kategorie", "vierte kategorie"]);
 
-				asanai.show_internals("internal_states");
+				asanai.show_internals("internal_states", 1);
 				//asanai.hide_internals();
 
 				asanai.show_and_predict_webcam_in_div("webcam_prediction");
 
-				asanai.predict_image("test_image", "test_image_prediction");
+				asanai.predict_image("test_image", "test_image_prediction", true, true);
+				asanai.predict_image("test_image_two", "test_image_two_prediction", true, true);
 
 				asanai.draw_fcnn("fcnn_div");
 
 				asanai.write_model_summary("summary_pre")
 
-				asanai.write_tensors_info("memory");
+				//asanai.write_tensors_info("memory");
+
+				$('#enable-btn').click(function() {
+					$('#del-table-btn').enable();
+					$('#del-page-btn').enable();
+					$('#save-btn').enable();
+					$('#other-btn-2').enable();
+
+					$('#enable-btn').hide();
+					$('#disable-btn').show();
+				});
+
+				$('#disable-btn').click(function() {
+					$('#del-table-btn').disable();
+					$('#del-page-btn').disable();
+					$('#save-btn').disable();
+					$('#other-btn-2').disable();
+
+					$('#disable-btn').hide();
+					$('#enable-btn').show();
+				});
 			});
 
 			function test_model_switch () {
@@ -81,6 +154,67 @@
 				];
 
 				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+			}
+
+			function load_test_images () {
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+					["traindata/signs/example/a_fire.png", "fire"],
+					["traindata/signs/example/b_mandatory.png", "mandatory"],
+					["traindata/signs/example/c_prohibition.png", "prohibition"],
+					["traindata/signs/example/d_rescue.png", "rescue"],
+					["traindata/signs/example/e_warning.png", "warning"]
+				], 1);
+
+				console.log(loaded_data);
+			}
+
+			async function load_test_images_and_train () {
+				var new_model_struct = [
+					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [50, 50, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
+					{flatten: {}},
+					{dense: {units: 10, activation: "relu"}},
+					{dense: {units: 5, activation: "softmax"}}
+				];
+
+				asanai.create_model_from_model_data(new_model_struct, optimizer_config);
+
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+					["traindata/signs/example/a_fire.png", "fire"],
+					["traindata/signs/example/b_mandatory.png", "mandatory"],
+					["traindata/signs/example/c_prohibition.png", "prohibition"],
+					["traindata/signs/example/d_rescue.png", "rescue"],
+					["traindata/signs/example/e_warning.png", "warning"],
+
+					["traindata/signs/warning/120px-D-W028_Warnung_vor_Rutschgefahr.svg.png", "warning"],
+					["traindata/signs/warning/120px-Laser-symbol-text-bn.svg.png", "warning"],
+
+					["traindata/signs/prohibition/120px-DIN_4844-2_D-P022.svg.png", "prohibition"],
+					["traindata/signs/prohibition/120px-DIN_4844-2_D-P006.svg.png", "prohibition"],
+
+					["traindata/signs/fire/116px-Fire_Class_B.svg.png", "fire"],
+					["traindata/signs/fire/120px-F001.svg.png", "fire"],
+
+					["traindata/signs/rescue/120px-E003.svg.png", "rescue"],
+					["traindata/signs/rescue/120px-E004.svg.png", "rescue"],
+
+					["traindata/signs/mandatory/120px-DIN_4844-2_D-M003.svg.png", "mandatory"],
+					["traindata/signs/mandatory/120px-DIN_4844-2_D-M009.svg.png", "mandatory"]
+				]);
+
+				console.log(loaded_data);
+			
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 1000, shuffle: true});
+
+				if(history) {
+					console.log("history:", history);
+				} else {
+					console.error("training failed");
+				}
+
+				await asanai.dispose(loaded_data.x);
+				await asanai.dispose(loaded_data.y);
 			}
 		</script>
 	</body>

@@ -594,7 +594,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
 
-	for (var i = 1; i < existing_init_elements.length; i++) {
+	for (var i = 0; i < existing_init_elements.length; i++) {
 		$(existing_init_elements[i]).remove();
 	}
 
@@ -1586,10 +1586,20 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
+	for (var i = 0; i < model.layers.length; i++) {
+		insert_initializer_options(i, "kernel");
+		insert_initializer_options(i, "bias");
+
+		update_translations();
+	}
+
 	return true;
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+	if(!finished_loading) {
+		return;
+	}
 	var updated_page_uuid = uuidv4();
 
 	const functionName = "updated_page"; // Specify the function name
@@ -1918,7 +1928,8 @@ function get_option_for_layer_by_type(nr) {
 					} else if (item == "bias_initializer") {
 						str += bias_initializer_string;
 					} else {
-						eval("str += add_" + item + "_option(type, nr);");
+						var _code = "str += add_" + item + "_option(type, nr);";
+						eval(_code);
 					}
 				}
 			} else {
@@ -4423,13 +4434,13 @@ async function show_csv_file(disabled_show_head_data) {
 
 		shape_preview = shape_preview_color + shape_preview + "</div>";
 
-		shape_preview += "<br>X: <pre>" + tensor_print_to_string(parsed_data.x) + "</pre>";
+		shape_preview += "<br>X: <pre>" + _tensor_print_to_string(parsed_data.x) + "</pre>";
 
 		if (parsed_data.x.dtype == "string") {
 			csv_allow_training = false;
 		}
 
-		shape_preview += "<br>Y: <pre>" + tensor_print_to_string(parsed_data.y) + "</pre>";
+		shape_preview += "<br>Y: <pre>" + _tensor_print_to_string(parsed_data.y) + "</pre>";
 		if (parsed_data.y.dtype == "string") {
 			csv_allow_training = false;
 		}
@@ -4509,6 +4520,14 @@ function output_shape_is_same(output_shape_data, output_shape_network) {
 }
 
 function tensor_print_to_string(_tensor) {
+	if(!debug) {
+		return "Set variable debug to true to enable tensor printing";
+	}
+
+	return _tensor_print_to_string(_tensor);
+}
+
+function _tensor_print_to_string (_tensor) {
 	try {
 		var logBackup = console.log;
 		var logMessages = [];
@@ -4526,7 +4545,7 @@ function tensor_print_to_string(_tensor) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
 			wrn("tensor to be printed was already disposed");
 		} else {
-			err("tensor_print_to_string failed:", e);
+			err("_tensor_print_to_string failed:", e);
 
 		}
 		return "<span class='error_msg'>Error getting tensor as string</span>";
@@ -6228,7 +6247,7 @@ function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
 						throw new Error(e);
 					}
 				}
-			} else {
+			} else if(finished_loading) {
 				err("ui_elements contains no elements. Selector: "  + item_selector);
 			}
 		} else {

@@ -646,4 +646,6 @@ $(document).ready(async function() {
 	}
 
 	finished_loading = true;
+
+	updated_page();
 });
