@@ -784,6 +784,8 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
+	log(language[lang]["got_data_creating_tensors"]);
+
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&
 		!traindata_struct[$("#dataset option:selected").text()]["has_custom_data"] &&
