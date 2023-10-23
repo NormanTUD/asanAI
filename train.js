@@ -313,6 +313,7 @@ async function get_fit_data () {
 	var callbacks = {};
 
 	callbacks["onTrainBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		current_epoch = 0;
 		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
@@ -553,6 +554,7 @@ async function get_fit_data () {
 	};
 
 	callbacks["onTrainEnd"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		favicon_default();
 		await write_model_to_latex_to_page();
 		set_document_title(original_title);
@@ -578,6 +580,8 @@ async function get_fit_data () {
 		confusion_matrix_to_page(); // async not possible
 
 		await reset_data();
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	var fit_data = {
@@ -1506,6 +1510,8 @@ async function visualize_train () {
 				res_array = array_sync(res)[0];
 
 			}
+
+			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
 			predictions_tensors.push(res_array);
 
