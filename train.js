@@ -1480,15 +1480,17 @@ async function visualize_train () {
 			var res_array;
 			if(img_elem_xpath in confusion_matrix_and_grid_cache) {
 				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
-			} else {
-				imgs.push(img_elem);
+			}
 
-				if(!img_elem) {
-					tf.engine().endScope();
-					wrn("img_elem not defined!", img_elem);
-					continue;
-				}
+			if(!img_elem) {
+				tf.engine().endScope();
+				wrn("img_elem not defined!", img_elem);
+				continue;
+			}
 
+			imgs.push(img_elem);
+
+			if(!res_array) {
 				var img_tensor = tidy(() => {
 					try {
 						var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));

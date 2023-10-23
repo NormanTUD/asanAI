@@ -1701,7 +1701,9 @@ async function confusion_matrix(classes) {
 		var res;
 		if(img_elem_xpath in confusion_matrix_and_grid_cache) {
 			res = confusion_matrix_and_grid_cache[img_elem_xpath];
-		} else {
+		}
+
+		if(!res) {
 			var img_tensor = tidy(() => {
 				try {
 					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
