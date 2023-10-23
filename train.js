@@ -705,6 +705,7 @@ async function _get_xs_and_ys (recursive=0) {
 		l("Getting data...");
 		xs_and_ys = await get_xs_and_ys();
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
+		l(language[lang]["got_data"]);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
