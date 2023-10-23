@@ -1586,6 +1586,13 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
+	for (var i = 0; i < model.layers.length; i++) {
+		insert_initializer_options(i, "kernel");
+		insert_initializer_options(i, "bias");
+
+		update_translations();
+	}
+
 	return true;
 }
 
