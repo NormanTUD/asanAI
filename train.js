@@ -1470,6 +1470,9 @@ async function visualize_train () {
 
 	for (var i = 0; i < image_elements.length; i++) {
 		var img_elem = image_elements[i];
+
+		var img_elem_xpath = get_element_xpath(img_elem);
+
 		if(i <= max) {
 			tf.engine().startScope();
 			imgs.push(img_elem);
@@ -1497,9 +1500,10 @@ async function visualize_train () {
 			}
 
 			var res = tidy(() => { return model.predict(img_tensor); });
-			predictions_tensors.push(array_sync(res)[0]);
-
 			var res_array = array_sync(res)[0];
+			predictions_tensors.push(res_array);
+
+			confusion_matrix_and_grid_cache[img_elem_xpath] = res_array;
 
 			var probability = Math.max(...res_array);
 			var category = res_array.indexOf(probability);

@@ -1695,47 +1695,55 @@ async function confusion_matrix(classes) {
 	var num_items = 0;
 
 	for (var i = 0; i < imgs.length; i++) {
-		var x = imgs[i];
-
-		var img_tensor = tidy(() => {
-			try {
-				var res = expand_dims(resizeBilinear(fromPixels(x), [height, width]));
-				res = divNoNan(res, parse_float($("#divide_by").val()));
-				return res;
-			} catch (e) {
-				err(e);
-				return null;
-			}
-		});
-
-		if(img_tensor === null) {
-			wrn("Could not load image from pixels from this element:", x);
-			await dispose(img_tensor);
-			continue;
-		}
+		var img_elem = imgs[i];
+		var img_elem_xpath = get_element_xpath(img_elem);
 
 		var res;
-		try {
-			res = tidy(() => {
-				return model.predict(img_tensor);
+		if(img_elem_xpath in confusion_matrix_and_grid_cache) {
+			log("[confusion_matrix] Using cache");
+			res = confusion_matrix_and_grid_cache[img_elem_xpath];
+		} else {
+			var img_tensor = tidy(() => {
+				try {
+					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					res = divNoNan(res, parse_float($("#divide_by").val()));
+					return res;
+				} catch (e) {
+					err(e);
+					return null;
+				}
 			});
 
-			res = tidy(() => {
-				var _res = array_sync(res)[0];
-				dispose(res); // await not possible
-				return _res;
-			});
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
+			if(img_tensor === null) {
+				wrn("Could not load image from pixels from this element:", img_elem);
+				await dispose(img_tensor);
+				continue;
 			}
 
-			dbg("Cannot predict image: " + e);
+			try {
+				res = tidy(() => {
+					return model.predict(img_tensor);
+				});
 
-			await dispose(img_tensor);
-			await dispose(res);
+				res = tidy(() => {
+					var _res = array_sync(res)[0];
+					dispose(res); // await not possible
+					return _res;
+				});
 
-			continue;
+				confusion_matrix_and_grid_cache[img_elem_xpath] = res;
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				dbg("Cannot predict image: " + e);
+
+				await dispose(img_tensor);
+				await dispose(res);
+
+				continue;
+			}
 		}
 
 		if(!res) {
@@ -1757,7 +1765,7 @@ async function confusion_matrix(classes) {
 		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 		var predicted_category = labels[predicted_index];
 
-		var src = x.src;
+		var src = img_elem.src;
 		var correct_category = extractCategoryFromURL(src);
 
 		if(!Object.keys(table_data).includes(correct_category)) {
