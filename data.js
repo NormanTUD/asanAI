@@ -1748,6 +1748,11 @@ async function confusion_matrix(classes) {
 		}
 
 		if(!res) {
+			err(`[visualize_train] Could not get res`);
+			continue;
+		}
+
+		if(!res) {
 			dbg("res is empty");
 
 			await dispose(img_tensor);

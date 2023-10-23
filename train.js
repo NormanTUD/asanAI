@@ -1508,9 +1508,6 @@ async function visualize_train () {
 
 		if(i <= max) {
 			var res_array;
-			if(0 && img_elem_xpath in confusion_matrix_and_grid_cache) {
-				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
-			}
 
 			if(!img_elem) {
 				tf.engine().endScope();
@@ -1518,30 +1515,27 @@ async function visualize_train () {
 				continue;
 			}
 
-			if(!res_array) {
-				var img_tensor = tidy(() => {
-					try {
-						var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-						res = divNoNan(res, parse_float($("#divide_by").val()));
-						return res;
-					} catch (e) {
-						err(e);
-						return null;
-					}
-				});
-
-				if(img_tensor === null) {
-					wrn("Could not load image from pixels from this element:", img_elem);
-					continue;
+			var img_tensor = tidy(() => {
+				try {
+					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					res = divNoNan(res, parse_float($("#divide_by").val()));
+					return res;
+				} catch (e) {
+					err(e);
+					return null;
 				}
+			});
 
-				var res = tidy(() => { return model.predict(img_tensor); });
-
-				res_array = array_sync(res)[0];
-				await dispose(img_tensor);
-				await dispose(res);
-
+			if(img_tensor === null) {
+				wrn("Could not load image from pixels from this element:", img_elem);
+				continue;
 			}
+
+			var res = tidy(() => { return model.predict(img_tensor); });
+
+			res_array = array_sync(res)[0];
+			await dispose(img_tensor);
+			await dispose(res);
 
 			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
@@ -1553,7 +1547,7 @@ async function visualize_train () {
 				var max_probability = Math.max(...this_predicted_array);
 				var category = this_predicted_array.indexOf(max_probability);
 
-				console.log("src:", src, "category", category, "max_probability:", max_probability, "res_array:", res_array);
+				console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
 
 				categories.push(category);
 				probabilities.push(max_probability);
