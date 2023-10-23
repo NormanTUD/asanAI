@@ -1474,6 +1474,8 @@ async function visualize_train () {
 		var img_elem = image_elements[i];
 
 		var img_elem_xpath = get_element_xpath(img_elem);
+		
+		var this_predicted_array = [];
 
 		if(i <= max) {
 			var res_array;
@@ -1516,6 +1518,7 @@ async function visualize_train () {
 
 			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
+			this_predicted_array = res_array;
 			predictions_tensors.push(res_array);
 
 			confusion_matrix_and_grid_cache[img_elem_xpath] = res_array;
@@ -1530,7 +1533,7 @@ async function visualize_train () {
 		try {
 			var src = img_elem.src;
 			if(src && img_elem.tagName == "IMG") {
-				var predicted_tensor = predictions_tensors[i];
+				var predicted_tensor = this_predicted_array;
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
 					dbg("Predicted tensor was null or undefined");
