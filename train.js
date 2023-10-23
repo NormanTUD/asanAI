@@ -322,16 +322,18 @@ async function get_fit_data () {
 
 		$("#network_has_seen_msg").hide();
 
-		confusion_matrix_and_grid_cache = {};
 		await visualize_train();
+		await confusion_matrix_to_page(); // async not possible
 
 		if(is_cosmo_mode) {
 			$("#program_looks_at_data_span").show();
 			$("#show_after_training").hide();
 		}
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onBatchBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		if(!started_training) {
 			model.stopTraining = true;
 		}
@@ -343,9 +345,11 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			await show_tab_label("training_tab_label", 1);
 		}
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onEpochBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
 		current_epoch++;
 		var max_number_epochs = get_epochs();
 		var current_time = Date.now();
@@ -373,6 +377,7 @@ async function get_fit_data () {
 
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%");
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -431,6 +436,8 @@ async function get_fit_data () {
 				await visualize_train();
 			}
 		}
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -551,6 +558,8 @@ async function get_fit_data () {
 		$("#network_has_seen_msg").show();
 
 		confusion_matrix_to_page(); // async not possible
+
+		confusion_matrix_and_grid_cache = {};
 	};
 
 	callbacks["onTrainEnd"] = async function () {
@@ -1468,7 +1477,6 @@ async function visualize_train () {
 	var total_correct = 0;
 
 	var category_overview = {};
-	var predictions_tensors = [];
 
 	for (var i = 0; i < image_elements.length; i++) {
 		var img_elem = image_elements[i];
@@ -1519,7 +1527,6 @@ async function visualize_train () {
 			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
 			this_predicted_array = res_array;
-			predictions_tensors.push(res_array);
 
 			confusion_matrix_and_grid_cache[img_elem_xpath] = res_array;
 
