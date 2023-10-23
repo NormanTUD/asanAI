@@ -152,6 +152,7 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
+
 	if(is_cosmo_mode) {
 		percentage_text = language[lang]["load_images"] + ", " + percentage + "% (" + (i + 1) + " " + language[lang]["of"] + " " + urls_length + ")";
 		set_document_title(language[lang]["load_images"] + ": " + percentage + "% - asanAI");
@@ -159,22 +160,22 @@ async function _get_set_percentage_text (percentage, i, urls_length, percentage_
 		set_document_title(language[lang]["loading_data"] + " " + language[lang]["of"] + " " + percentage_text + " - asanAI");
 	}
 
-	percentage_div.html(percentage_text);
-	await update_translations();
-
-	if(percentage > 20 && (!old_percentage || (percentage - old_percentage) >= 10)) {
+	if(percentage > 20) {
 		var remaining_items = urls_length - i;
 		var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000);
+		eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
 		old_percentage = percentage;
 
 		if(is_cosmo_mode) {
-			percentage_div.html(percentage_div.html() + ", ca. " + human_readable_time(eta) + " " + trm("left"));
+			percentage_text += ", ca. " + human_readable_time(eta) + " " + trm("left");
 		} else {
-			percentage_div.html(percentage_div.html() + " ca. " + human_readable_time(eta) + " " + trm("left"));
+			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
 		}
 	}
+
+	percentage_div.html(percentage_text);
+	await update_translations();
 
 	return old_percentage;
 }
@@ -238,7 +239,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 				if(!skip_real_image_download) {
 					try {
-						old_percentage = await _get_set_percentage_text(
+						await _get_set_percentage_text(
 							percentage, 
 							i, 
 							urls.length, 
