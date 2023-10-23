@@ -6096,7 +6096,7 @@ function disable_flatten_layer () {
 
 	if(Object.keys(model).includes("layers") || !model.layers) {
 		if(finished_loading) {
-			wrn("No layers found");
+			wrn("[disable_flatten_layer] No layers found");
 		}
 		return;
 	}
