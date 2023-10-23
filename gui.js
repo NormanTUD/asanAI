@@ -1921,7 +1921,8 @@ function get_option_for_layer_by_type(nr) {
 					} else if (item == "bias_initializer") {
 						str += bias_initializer_string;
 					} else {
-						eval("str += add_" + item + "_option(type, nr);");
+						var _code = "str += add_" + item + "_option(type, nr);";
+						eval(_code);
 					}
 				}
 			} else {
