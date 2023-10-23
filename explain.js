@@ -2474,7 +2474,7 @@ function color_compare_old_and_new_layer_data (old_data, new_data) {
 									color_diff[layer_nr][this_key][item_nr] = "#2E8B57";
 								}
 							}
-						} else (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
+						} else if (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
 							color_diff[layer_nr][this_key][item_nr] = [];
 							for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
 								try {
