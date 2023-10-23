@@ -6087,7 +6087,7 @@ function enable_every_layer () {
 function disable_flatten_layer () {
 	if(!model) {
 		if(finished_loading) {
-			wrn("No model found");
+			wrn("[disable_flatten_layer] No model found");
 		}
 		return;
 	}
