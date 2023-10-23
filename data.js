@@ -1700,7 +1700,6 @@ async function confusion_matrix(classes) {
 
 		var res;
 		if(img_elem_xpath in confusion_matrix_and_grid_cache) {
-			log("[confusion_matrix] Using cache");
 			res = confusion_matrix_and_grid_cache[img_elem_xpath];
 		} else {
 			var img_tensor = tidy(() => {

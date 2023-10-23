@@ -375,6 +375,7 @@ async function get_fit_data () {
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
+		confusion_matrix_and_grid_cache = {};
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -426,15 +427,13 @@ async function get_fit_data () {
 		if(is_cosmo_mode) {
 			$("#cosmo_training_grid_stage_explanation").show();
 			if(current_cosmo_stage == 1) {
-				confusion_matrix_and_grid_cache = {};
 				await visualize_train();
-
-				confusion_matrix_and_grid_cache = {};
 			}
 		}
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
+		confusion_matrix_and_grid_cache = {};
 		delete logs["epoch"];
 		delete logs["size"];
 
@@ -479,7 +478,6 @@ async function get_fit_data () {
 
 				$("#plotly_epoch_history").hide();
 
-				confusion_matrix_and_grid_cache = {};
 				await visualize_train();
 
 				$("#visualize_images_in_grid").show();
@@ -527,7 +525,7 @@ async function get_fit_data () {
 			} else {
 				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
 			}
-			confusion_matrix_and_grid_cache = {};
+
 			await visualize_train();
 		}
 
@@ -1477,7 +1475,6 @@ async function visualize_train () {
 			tf.engine().startScope();
 			var res_array;
 			if(img_elem_xpath in confusion_matrix_and_grid_cache) {
-				log("[visualize_train] Using cache");
 				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
 			} else {
 				imgs.push(img_elem);
