@@ -533,7 +533,7 @@ async function insert_activation_options(layer_nr) {
 
 	var activation_item = $($(".layer_options_internal")[layer_nr]).find(".activation");
 
-	if (activation_item.length) {
+	if (activation_item && activation_item.length) {
 		var activation_name = activation_item.val();
 		if (activation_name == "linear") {
 			return;
@@ -5074,7 +5074,7 @@ function show_tab_label(label, click) {
 	var auto_skip_click = label == "math_tab_label" && tab_already_open(label);
 
 	var $item = $("#" + label);
-	assert($item.length == 1, "Invalid or double $item for label " + label);
+	assert($item && $item.length == 1, "Invalid or double $item for label " + label);
 
 	if(is_cosmo_mode) {
 		if(click) {
