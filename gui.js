@@ -1025,7 +1025,7 @@ async function update_python_code(dont_reget_labels) {
 		var is = get_input_shape_with_batch_size(); is[0] = "None"; 
 
 		expert_code =
-			python_boilerplate(input_shape_is_image_val) +
+			python_boilerplate(input_shape_is_image_val, 0) +
 			labels_str +
 
 			"model = tf.keras.Sequential()\n\n" +
@@ -1268,7 +1268,7 @@ function convert_to_python_string(obj) {
 	return pythonCode;
 }
 
-function python_boilerplate (input_shape_is_image_val) {
+function python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
 	var python_code = "";
 
 	python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
@@ -1281,15 +1281,18 @@ function python_boilerplate (input_shape_is_image_val) {
 	}
 
 	python_code += "\n";
-	python_code += "import os\n";
-	python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
-	python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
-	python_code += "# Save this file as python-script and run it like this:\n";
 
-	if (input_shape_is_image_val) {
-		python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
+	if(_expert_mode) {
+		python_code += "import os\n";
+		python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
+		python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
+		python_code += "# Save this file as python-script and run it like this:\n";
 	} else {
-		python_code += "# python3 nn.py\n";
+		if (input_shape_is_image_val) {
+			python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
+		} else {
+			python_code += "# python3 nn.py\n";
+		}
 	}
 
 	python_code += "import keras\n";
@@ -1299,7 +1302,7 @@ function python_boilerplate (input_shape_is_image_val) {
 }
 
 function create_python_code (input_shape_is_image_val) {
-	var python_code = python_boilerplate(input_shape_is_image_val);
+	var python_code = python_boilerplate(input_shape_is_image_val, 1);
 
 	python_code += "model = tf.keras.models.load_model(\n";
 	python_code += "   'keras_model',\n";
