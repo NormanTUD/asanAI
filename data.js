@@ -1698,17 +1698,14 @@ async function confusion_matrix(classes) {
 		var img_elem = imgs[i];
 		var img_elem_xpath = get_element_xpath(img_elem);
 
-		var res;
-		if(img_elem_xpath in confusion_matrix_and_grid_cache) {
-			res = confusion_matrix_and_grid_cache[img_elem_xpath];
-		}
+		var predicted_tensor = confusion_matrix_and_grid_cache[img_elem_xpath];
 
-		if(!res) {
+		if(!predicted_tensor) {
 			var img_tensor = tidy(() => {
 				try {
-					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-					res = divNoNan(res, parse_float($("#divide_by").val()));
-					return res;
+					var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
+					return predicted_tensor;
 				} catch (e) {
 					err(e);
 					return null;
@@ -1722,17 +1719,17 @@ async function confusion_matrix(classes) {
 			}
 
 			try {
-				res = tidy(() => {
+				predicted_tensor = tidy(() => {
 					return model.predict(img_tensor);
 				});
 
-				res = tidy(() => {
-					var _res = array_sync(res)[0];
-					dispose(res); // await not possible
+				predicted_tensor = tidy(() => {
+					var _res = array_sync(predicted_tensor)[0];
+					dispose(predicted_tensor); // await not possible
 					return _res;
 				});
 
-				confusion_matrix_and_grid_cache[img_elem_xpath] = res;
+				confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -1741,30 +1738,30 @@ async function confusion_matrix(classes) {
 				dbg("Cannot predict image: " + e);
 
 				await dispose(img_tensor);
-				await dispose(res);
+				await dispose(predicted_tensor);
 
 				continue;
 			}
 		}
 
-		if(!res) {
-			err(`[visualize_train] Could not get res`);
+		//console.log("cached: ", predicted_tensor);
+
+		if(!predicted_tensor) {
+			err(`[confusion_matrix] Could not get predicted_tensor`);
 			continue;
 		}
 
-		if(!res) {
-			dbg("res is empty");
+		if(!predicted_tensor) {
+			dbg("predicted_tensor is empty");
 
 			await dispose(img_tensor);
-			await dispose(res);
+			await dispose(predicted_tensor);
 
 			continue;
 		}
 
 
-		assert(Array.isArray(res), `res is not an array, but ${typeof(res)}, ${JSON.stringify(res)}`);
-
-		var predicted_tensor = res;
+		assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {
 			dbg("Predicted tensor was null or undefined");
@@ -1787,8 +1784,9 @@ async function confusion_matrix(classes) {
 			table_data[correct_category][predicted_category] = 1;
 		}
 
+		//console.log("xpath:", img_elem_xpath, "predicted_index:", predicted_index, "category", predicted_category);
+
 		await dispose(img_tensor);
-		await dispose(res);
 		await dispose(predicted_tensor);
 
 		num_items++;

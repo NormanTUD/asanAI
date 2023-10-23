@@ -1547,7 +1547,7 @@ async function visualize_train () {
 				var max_probability = Math.max(...this_predicted_array);
 				var category = this_predicted_array.indexOf(max_probability);
 
-				console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
+				//console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
 
 				categories.push(category);
 				probabilities.push(max_probability);
