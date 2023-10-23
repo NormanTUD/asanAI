@@ -1590,6 +1590,9 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+	if(!finished_loading) {
+		return;
+	}
 	var updated_page_uuid = uuidv4();
 
 	const functionName = "updated_page"; // Specify the function name
