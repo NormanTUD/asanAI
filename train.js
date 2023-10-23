@@ -1475,32 +1475,41 @@ async function visualize_train () {
 
 		if(i <= max) {
 			tf.engine().startScope();
-			imgs.push(img_elem);
+			var res_array;
+			if(img_elem_xpath in confusion_matrix_and_grid_cache) {
+				log("[visualize_train] Using cache");
+				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
+			} else {
+				imgs.push(img_elem);
 
-			if(!img_elem) {
-				tf.engine().endScope();
-				wrn("img_elem not defined!", img_elem);
-				continue;
-			}
-
-			var img_tensor = tidy(() => {
-				try {
-					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-					res = divNoNan(res, parse_float($("#divide_by").val()));
-					return res;
-				} catch (e) {
-					err(e);
-					return null;
+				if(!img_elem) {
+					tf.engine().endScope();
+					wrn("img_elem not defined!", img_elem);
+					continue;
 				}
-			});
 
-			if(img_tensor === null) {
-				wrn("Could not load image from pixels from this element:", img_elem);
-				continue;
+				var img_tensor = tidy(() => {
+					try {
+						var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+						res = divNoNan(res, parse_float($("#divide_by").val()));
+						return res;
+					} catch (e) {
+						err(e);
+						return null;
+					}
+				});
+
+				if(img_tensor === null) {
+					wrn("Could not load image from pixels from this element:", img_elem);
+					continue;
+				}
+
+				var res = tidy(() => { return model.predict(img_tensor); });
+
+				res_array = array_sync(res)[0];
+
 			}
 
-			var res = tidy(() => { return model.predict(img_tensor); });
-			var res_array = array_sync(res)[0];
 			predictions_tensors.push(res_array);
 
 			confusion_matrix_and_grid_cache[img_elem_xpath] = res_array;
