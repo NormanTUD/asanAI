@@ -232,7 +232,7 @@ function removeTimestampAndLines(inputString) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[removeTimestampAndLines] " + e);
 
 		return "";
 	}
@@ -271,7 +271,7 @@ function shuffleCombo (...args) {
 			e = e.message;
 		}
 
-		err("" + e);
+		err("[shuffleCombo] " + e);
 		return args;
 	}
 }

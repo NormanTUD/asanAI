@@ -22,7 +22,7 @@ async function gui_not_in_training (set_started_training=1) {
 			tf.engine().endScope();
 		}
 	} catch (e) {
-		log("" + e);
+		log("[gui_not_in_training] " + e);
 	}
 
 	await enable_everything();
@@ -1605,7 +1605,7 @@ async function visualize_train () {
 							"warning"
 						], correct_category) % labels.length;
 				} catch (e) {
-					wrn("" + e);
+					wrn("[visualize_train] " + e);
 					return;
 				}
 

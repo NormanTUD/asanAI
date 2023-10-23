@@ -276,7 +276,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 				}
 			} else {
 				if(!shown_stop_downloading) {
-					log("Stop downloading because stop-download-button was clicked");
+					log("[get_image_data] Stop downloading because stop-download-button was clicked");
 					shown_stop_downloading = 1;
 				}
 			}
@@ -784,7 +784,7 @@ async function get_xs_and_ys () {
 		$("#reset_data").hide();
 	}
 
-	log(language[lang]["got_data_creating_tensors"]);
+	log("[get_xs_and_ys] " + language[lang]["got_data_creating_tensors"]);
 
 	if(
 		["categoricalCrossentropy", "binaryCrossentropy"].includes(loss) &&

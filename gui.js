@@ -1643,11 +1643,11 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 				await set_input_shape(last_good, 1);
 			}
 		} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
-			wrn("" + e);
+			wrn("[updated_page] " + e);
 		} else if(("" + e).includes("out of memory")) {
 			await write_error("" + e);
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
-			wrn("" + e);
+			wrn("[updated_page] " + e);
 		} else if(("" + e).includes("model.layers[i]")) {
 			dbg("model.layers[i] (" + i + ") is undefined");
 		} else if (("" + e).includes("model.layers is undefined")) {
@@ -2345,7 +2345,7 @@ async function show_layers(number) {
 			e = e.message;
 		}
 
-		wrn("" + e);
+		wrn("[show_layers] " + e);
 	}
 }
 
@@ -6717,7 +6717,7 @@ function get_last_element_of_class_end_y(name) {
 			e = e.message;
 		}
 
-		wrn("" + e);
+		wrn("[get_last_element_of_class_end_y] " + e);
 	}
 
 	return 0;
