@@ -1756,6 +1756,9 @@ async function confusion_matrix(classes) {
 			continue;
 		}
 
+
+		assert(Array.isArray(res), `res is not an array, but ${typeof(res)}, ${JSON.stringify(res)}`);
+
 		var predicted_tensor = res;
 
 		if(predicted_tensor === null || predicted_tensor === undefined) {

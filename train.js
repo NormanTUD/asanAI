@@ -1485,9 +1485,30 @@ async function visualize_train () {
 		
 		var this_predicted_array = [];
 
+
+		var src;
+		try {
+			src = img_elem.src;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = message;
+			}
+
+			e = "" + e;
+
+			throw new Error(e);
+
+			continue;
+		}
+
+		if(!src) {
+			err("[visualize_train] Cannot use images without src tags");
+			continue;
+		}
+
 		if(i <= max) {
 			var res_array;
-			if(img_elem_xpath in confusion_matrix_and_grid_cache) {
+			if(0 && img_elem_xpath in confusion_matrix_and_grid_cache) {
 				res_array = confusion_matrix_and_grid_cache[img_elem_xpath];
 			}
 
@@ -1496,8 +1517,6 @@ async function visualize_train () {
 				wrn("img_elem not defined!", img_elem);
 				continue;
 			}
-
-			imgs.push(img_elem);
 
 			if(!res_array) {
 				var img_tensor = tidy(() => {
@@ -1528,18 +1547,25 @@ async function visualize_train () {
 
 			this_predicted_array = res_array;
 
-			confusion_matrix_and_grid_cache[img_elem_xpath] = res_array;
+			if(this_predicted_array) {
+				confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
 
-			var probability = Math.max(...res_array);
-			var category = res_array.indexOf(probability);
+				var max_probability = Math.max(...this_predicted_array);
+				var category = this_predicted_array.indexOf(max_probability);
 
-			categories.push(category);
-			probabilities.push(probability);
+				console.log("src:", src, "category", category, "max_probability:", max_probability, "res_array:", res_array);
+
+				categories.push(category);
+				probabilities.push(max_probability);
+				imgs.push(img_elem);
+			} else {
+				err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
+			}
 		}
 
 		try {
-			var src = img_elem.src;
-			if(src && img_elem.tagName == "IMG") {
+			var tag_name = img_elem.tagName;
+			if(src && tag_name == "IMG") {
 				var predicted_tensor = this_predicted_array;
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
@@ -1609,6 +1635,8 @@ async function visualize_train () {
 					category_overview[predicted_category]["wrong"]++;
 				}
 				category_overview[predicted_category]["total"]++;
+			} else {
+				err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
 			}
 		} catch (e) {
 			console.log(e);
