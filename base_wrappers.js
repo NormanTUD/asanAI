@@ -291,7 +291,7 @@ async function dispose (item) { // start_tensors
 			await nextFrame();
 		} else {
 			/*
-			wrn("item was empty in dispose():"); // not a real async
+			wrn("[dispose] item was empty in dispose():"); // not a real async
 			console.trace();
 			*/
 		}
