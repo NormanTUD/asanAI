@@ -238,9 +238,9 @@ function removeTimestampAndLines(inputString) {
 	}
 }
 
-var get_stack_trace = function() {
+var get_stack_trace = function(force=0) {
 	var s = "";
-	if(!debug) {
+	if(!debug && force == 0) {
 		return "Use debug to enable tensor debugging.";
 	}
 
