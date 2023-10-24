@@ -84,7 +84,7 @@ function log_test (name) {
 		var this_num_tensors = current_mem["numTensors"];
 		if(this_num_tensors > last_num_tensors) {
 			if(!expect_memory_leak) {
-				wrn("There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
+				wrn("[log_test] There seems to be a memory leak in the last function. Before it, there were " + last_num_tensors + " Tensors defined, now it's " + this_num_tensors + ". This test-name: " + name);
 			}
 		}
 	}
@@ -304,7 +304,7 @@ async function run_tests () {
 					e = e.message;
 				}
 
-				err("" + e);
+				err("[run_tests] " + e);
 			}
 
 			try {
@@ -318,7 +318,7 @@ async function run_tests () {
 					e = e.message;
 				}
 
-				err("" + e);
+				err("[run_tests] " + e);
 			}
 
 			try {
@@ -332,7 +332,7 @@ async function run_tests () {
 					e = e.message;
 				}
 
-				err("" + e);
+				err("[run_tests] " + e);
 			}
 
 			try {
@@ -347,7 +347,7 @@ async function run_tests () {
 					e = e.message;
 				}
 
-				err("" + e);
+				err("[run_tests] " + e);
 			}
 
 			log_test("Testing initializer");
@@ -430,7 +430,7 @@ async function run_tests () {
 				res = array_sync(model.predict(tensor([[3, 3, 3]])))[0][0];
 				test_equal("trained nn: x1+x2+x3=y (3,3,3 = 9, got " + res +")", Math.abs(res - 9) < 10, true);
 			} catch (e) {
-				err("ERROR while predicting in test mode:", e);
+				err("[run_tests] ERROR while predicting in test mode:", e);
 			}
 
 			log_test("Test Training images");
@@ -629,7 +629,7 @@ async function run_tests () {
 			log_test("Tests ended");
 		} catch (e) {
 			l("ERROR while testing: " + e);
-			err("ERROR while testing: ", e);
+			err("[run_tests] ERROR while testing: ", e);
 		}
 	}
 
