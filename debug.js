@@ -4,6 +4,11 @@ var _full_debug_log = [];
 
 var printed_msgs = [];
 
+function get_latest_caller(full_stacktrace) {
+	full_stacktrace = full_stacktrace.split('@')[2].split(/\n/).pop()
+	return full_stacktrace
+}
+
 function log_once (...args) {
 	var md5 = JSON.stringify(args);
 
@@ -21,8 +26,17 @@ function logt(...msg) {
 	console.trace();
 }
 
+function _clean_func_name(arg) {
+	arg = arg.replace(/^\[[^\]]*\] /, "");
+	arg = arg.replace(/^\[\] /, "");
+
+	return arg;
+}
+
 function info (...args) {
-	args.forEach(arg => console.info(arg));
+	var function_name = get_latest_caller(get_stack_trace(1))
+
+	args.forEach(arg => console.info(`[${function_name}] ${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[INFO] " + arg);
@@ -44,7 +58,9 @@ function info (...args) {
 }
 
 function err (...args) {
-	args.forEach(arg => console.error(arg));
+	var function_name = get_latest_caller(get_stack_trace(1))
+
+	args.forEach(arg => console.error(`[${function_name}] ${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#128721; ERROR] " + arg);
@@ -66,7 +82,9 @@ function err (...args) {
 }
 
 function wrn (...args) {
-	args.forEach(arg => console.warn(arg));
+	var function_name = get_latest_caller(get_stack_trace(1))
+
+	args.forEach(arg => console.warn(`[${function_name}] ${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#9888; WARN] " + arg);
@@ -88,7 +106,9 @@ function wrn (...args) {
 }
 
 function dbg (...args) {
-	args.forEach(arg => console.debug(arg));
+	var function_name = get_latest_caller(get_stack_trace(1))
+
+	args.forEach(arg => console.debug(`[${function_name}] ${_clean_func_name(arg)}`));
 
 	if(enable_log_trace) {
 		console.trace();
