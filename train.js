@@ -1050,7 +1050,7 @@ async function run_neural_network (recursive=0) {
 				err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
 				while (!model) {
-					dbg("Waiting for model...");
+					dbg("[run_neural_network] Waiting for model...");
 					delay(500);
 				}
 				wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
@@ -1268,7 +1268,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
 
 		if(!category_overview) {
-			dbg("category_overview was empty");
+			dbg("[draw_images_in_grid] category_overview was empty");
 			continue;
 		}
 
@@ -1282,7 +1282,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		}
 
 		if(!Object.keys(category_overview).includes(__key)) {
-			//dbg("category_overview did not contain key " + __key);
+			//dbg("[draw_images_in_grid] category_overview did not contain key " + __key);
 			continue;
 		}
 
@@ -1363,7 +1363,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 function extractCategoryFromURL(_url) {
 	if(!_url) {
-		dbg(`extractCategoryFromURL(${_url})`);
+		dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url})`);
 		return null;
 	}
 	try {
@@ -1563,7 +1563,7 @@ async function visualize_train () {
 				var predicted_tensor = this_predicted_array;
 
 				if(predicted_tensor === null || predicted_tensor === undefined) {
-					dbg("Predicted tensor was null or undefined");
+					dbg("[visualize_train] Predicted tensor was null or undefined");
 					return;
 				}
 
