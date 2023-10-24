@@ -1655,23 +1655,23 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
 			wrn("[updated_page] " + e);
 		} else if(("" + e).includes("model.layers[i]")) {
-			dbg("model.layers[i] (" + i + ") is undefined");
+			dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
 		} else if (("" + e).includes("model.layers is undefined")) {
-			dbg("model.layers is undefined");
+			dbg("[updated_page] model.layers is undefined");
 		} else if (("" + e).includes("model is undefined")) {
-			dbg("model is undefined");
+			dbg("[updated_page] model is undefined");
 		} else if (("" + e).includes("model.input is undefined")) {
-			dbg("model.input is undefined");
+			dbg("[updated_page] model.input is undefined");
 		} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
 			dbg("[updated_page] " + e);
 		} else if (("" + e).includes("targetShape is undefined")) {
 			dbg("[updated_page] " + e);
 		} else if (("" + e).includes("code is undefined")) {
-			dbg("This error may happen when the whole DOM is deleted: " + e);
+			dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
 		} else if (("" + e).includes("fcnn is undefined")) {
-			dbg("This error may happen when you did not include d3 or three.js: " + e);
+			dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
 		} else if (("" + e).includes("e is null")) {
-			dbg("This error may happen when switching models: " + e);
+			dbg("[updated_page] This error may happen when switching models: " + e);
 		} else {
 			throw new Error("" + e);
 		}
@@ -1848,7 +1848,7 @@ function set_batch_size(val) {
 function set_epochs(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
 	val = parse_int(val);
-	dbg("Setting epochs to " + val);
+	dbg("[set_epochs] Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
 	$(document.getElementById("epochs")).trigger("change");
 
@@ -2415,7 +2415,7 @@ async function set_config(index) {
 				var trigger_height_change = 0;
 
 				if (config["width"]) {
-					dbg("Setting width");
+					dbg("[set_config] Setting width");
 					$("#width").val(config["width"]);
 					trigger_height_change++;
 					width = config["width"];
@@ -2423,7 +2423,7 @@ async function set_config(index) {
 				}
 
 				if (config["height"]) {
-					dbg("Setting height");
+					dbg("[set_config] Setting height");
 					$("#height").val(config["height"]);
 					trigger_height_change++;
 					height = config["height"];
@@ -2438,18 +2438,18 @@ async function set_config(index) {
 
 				if (config["max_number_of_files_per_category"]) {
 					assert(typeof(config["max_number_of_files_per_category"]) == "number", "max_number_of_files_per_category is not a number");
-					dbg("Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
+					dbg("[set_config] Setting max_number_of_files_per_category to " + config["max_number_of_files_per_category"]);
 					$("#max_number_of_files_per_category").val(config["max_number_of_files_per_category"]);
 				} else {
-					dbg("No max_number_of_files_per_category found in config");
+					dbg("[set_config] No max_number_of_files_per_category found in config");
 				}
 
 				if (config["divide_by"]) {
 					assert(typeof(config["divide_by"]) == "number", "divide_by is not a number");
-					dbg("Setting divide_by to " + config["divide_by"]);
+					dbg("[set_config] Setting divide_by to " + config["divide_by"]);
 					$("#divide_by").val(config["divide_by"]);
 				} else {
-					dbg("Setting divide_by to 1");
+					dbg("[set_config] Setting divide_by to 1");
 					$("#divide_by").val(1);
 				}
 
@@ -2584,7 +2584,7 @@ async function set_config(index) {
 				var layer_settings = $(".layer_setting");
 				for (var i = 0; i < keras_layers.length; i++) {
 					var layer_type = $($(layer_settings[i]).find(".layer_type")[0]);
-					dbg(language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
+					dbg("[set_config] " + language[lang]["setting_layer"] + " " + i + " -> " + python_names_to_js_names[keras_layers[i]["class_name"]]);
 					layer_type.val(python_names_to_js_names[keras_layers[i]["class_name"]]);
 					layer_type.trigger("change");
 					layer_type.trigger("slide");
@@ -2608,7 +2608,7 @@ async function set_config(index) {
 						"rate"
 					];
 
-					dbg(language[lang]["setting_options_for_layer"] + " " + i);
+					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + i);
 
 					datapoints.forEach(function (item_name) {
 						if (item_name in keras_layers[i]["config"] && item_name != "kernel_size" && item_name != "strides" && item_name != "pool_size") {
@@ -2652,7 +2652,7 @@ async function set_config(index) {
 				}
 			} else {
 				for (var i = 0; i < config["model_structure"].length; i++) {
-					dbg(language[lang]["setting_options_for_layer"] + " " + i);
+					dbg("[set_config] " + language[lang]["setting_options_for_layer"] + " " + i);
 					var layer_type = $($(".layer_type")[i]); //$($($(".layer_setting")[i]).find(".layer_type")[0]);
 					layer_type.val(config["model_structure"][i]["type"]);
 					layer_type.trigger("change");
@@ -5631,10 +5631,10 @@ async function init_webcams () {
 
 function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
-		dbg(language[lang]["showing_augmentation"]);
+		dbg("[show_hide_augment_tab] " + language[lang]["showing_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
 	} else {
-		dbg(language[lang]["hiding_augmentation"]);
+		dbg("[show_hide_augment_tab] " + language[lang]["hiding_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
 }
