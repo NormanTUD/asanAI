@@ -2719,11 +2719,11 @@ async function set_config(index) {
 		disable_all_non_selected_layer_types();
 
 		if (!index) {
-			dbg("Saving current status");
+			dbg("[set_config] Saving current status");
 			await save_current_status();
 		}
 
-		dbg(language[lang]["getting_labels"]);
+		dbg("[set_config] " + language[lang]["getting_labels"]);
 		await get_label_data();
 
 		is_setting_config = false;
@@ -2741,7 +2741,7 @@ async function set_config(index) {
 		//console.log("block 2.6");
 		await write_descriptions();
 
-		//dbg(language[lang]["updating_predictions"]);
+		//dbg("[set_config] " + language[lang]["updating_predictions"]);
 		//await show_prediction(1, 1);
 
 		//console.log("block 2.7");
@@ -3808,7 +3808,7 @@ function reset_view() {
 
 async function change_data_origin() {
 	currently_running_change_data_origin = 1;
-	dbg(language[lang]["changed_data_source"]);
+	dbg("[change_data_origin] " + language[lang]["changed_data_source"]);
 	//if($("#reinit_weights_on_data_source_change").is(":checked") && $("#data_origin").val() != "default") {
 	//	force_reinit(1);
 	//}
@@ -3831,13 +3831,13 @@ async function change_data_origin() {
 		var _config = await _get_configuration()
 
 		if(Object.keys(_config).includes("input_shape")) {
-			dbg("Setting input shape to: " + _config.input_shape);
+			dbg("[change_data_origin] Setting input shape to: " + _config.input_shape);
 
 			await set_input_shape(_config.input_shape);
 		}
 
 		if(Object.keys(_config).includes("output_shape")) {
-			dbg("Output shape detect as: " + _config.output_shape);
+			dbg("[change_data_origin] Output shape detect as: " + _config.output_shape);
 
 			var output_shape = JSON.parse(_config.output_shape)
 
@@ -4863,10 +4863,10 @@ function move_element_to_another_div(element, new_element_id) {
 
 function allow_edit_input_shape() {
 	if ($("#auto_input_shape").is(":checked")) {
-		dbg(language[lang]["input_shape_is_read_only"]);
+		dbg("[allow_edit] " + language[lang]["input_shape_is_read_only"]);
 		$("#inputShape").attr("readonly", true);
 	} else {
-		dbg(language[lang]["input_shape_is_writable"]);
+		dbg("[allow_edit] " + language[lang]["input_shape_is_writable"]);
 		$("#inputShape").attr("readonly", false);
 	}
 }
@@ -5469,7 +5469,7 @@ function l(msg) {
 	msg = "" + msg;
 
 	if(!msg) {
-		dbg("msg is empty");
+		dbg("[l] msg is empty");
 		return;
 	}
 
@@ -5595,11 +5595,11 @@ async function init_webcams () {
 	available_webcams = available_webcam_data[0];
 	available_webcams_ids = available_webcam_data[1];
 
-	dbg("Number of available cams: " + available_webcams.length);
+	dbg("[init_webcams] Number of available cams: " + available_webcams.length);
 
 	if(available_webcams.length) {
-		dbg("Webcam(s) were found. Enabling webcam related features.");
-		dbg("List of found webcams: " + available_webcams.join(", "));
+		dbg("[init_webcams] Webcam(s) were found. Enabling webcam related features.");
+		dbg("[init_webcams] List of found webcams: " + available_webcams.join(", "));
 		$(".only_when_webcam").show();
 
 		if(await hasBothFrontAndBack()) {
@@ -6459,7 +6459,7 @@ function model_is_ok () {
 		if(color == red) {
 			wrn("[model_is_ok] " + msg);
 		} else if (color == orange) {
-			dbg(msg);
+			dbg("[model_is_ok] " + msg);
 		}
 
 		l(msg);

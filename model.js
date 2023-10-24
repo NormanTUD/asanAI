@@ -87,32 +87,32 @@ async function _create_model () {
 		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid })
 
 		if(("" + e).includes("undefined has no properties")) {
-			wrn("Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
+			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
 			return;
 		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
-			throw new Error("" + e);
+			throw new Error("[create_model] " + e);
 		} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
-			throw new Error("" + e);
+			throw new Error("[create_model] " + e);
 		} else if(("" + e).includes("targetShape is undefined")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("ReferenceError")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("The channel dimension of the input should be defined")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("model is undefined")) {
-			wrn("Currently, the model is undefined. This may be fatal, but may also not be");
+			wrn("[create_model] Currently, the model is undefined. This may be fatal, but may also not be");
 		} else if(("" + e).includes("model.layers[i] is undefined")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("Inputs to DepthwiseConv2D should have rank") || ("" + e).includes("Inputs to SeparableConv2D should have rank")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("Cannot read properties of undefined (reading 'layers')")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 			return;
 		} else if(("" + e).includes("Cannot read properties of undefined")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 			return;
 		} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 			return;
 		} else if(
 			("" + e).includes("Convolution layer expected config.filters to be a 'number' > 0 but got undefined") ||
@@ -121,7 +121,7 @@ async function _create_model () {
 			("" + e).includes("Expected units to be a positive integer, but got undefined") ||
 			("" + e).includes("have a defined dimension but the layer received an input with shape")
 		) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 			return;
 		} else {
 			await except("ERROR1", "" + e);
@@ -220,7 +220,7 @@ async function compile_model (recursion_level=0) {
 	}
 
 	if(!model) {
-		wrn("No model to compile!");
+		wrn("[compile_model] No model to compile!");
 		return;
 	}
 
@@ -247,14 +247,14 @@ async function compile_model (recursion_level=0) {
 				set_layer_background(i, "red")
 			}
 		} else if (("" + e).includes("model is empty")) {
-			err("" + e)
+			err("[compile_model] " + e)
 			return;
 		} else if (("" + e).includes("e is null")) {
-			err("" + e)
+			err("[compile_model] " + e)
 			await delay(1000);
 			return await compile_model(recursion_level + 1);
 		} else if (("" + e).includes("model.compile is not a function")) {
-			err("" + e);
+			err("[compile_model] " + e);
 			return;
 		} else {
 			if(e) {
@@ -275,7 +275,7 @@ async function compile_model (recursion_level=0) {
 		$("#outputShape").val(JSON.stringify(model.outputShape));
 	} catch (e) {
 		if(("" + e).includes("model is undefined")) {
-			wrn("model is undefined while compile_model");
+			wrn("[compile_model] model is undefined while compile_model");
 		} else {
 			throw new Error(e);
 		}
@@ -287,7 +287,7 @@ async function compile_model (recursion_level=0) {
 
 function get_weight_type_name_from_option_name (on) {
 	if(typeof(on) != "string") {
-		wrn(`get_weight_type_name_from_option_name(on = ${on}), typeof(on) = ${typeof(on)}`);
+		wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(on = ${on}), typeof(on) = ${typeof(on)}`);
 		return;
 	}
 
@@ -396,7 +396,7 @@ function get_data_for_layer (type, i, first_layer) {
 			} else {
 				if(value == "") {
 					if(!option_name.includes("constraint")) {
-						wrn("Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
+						wrn("[get_data_for_layer] Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
 					}
 				} else {
 					data[get_js_name(option_name)] = is_numeric(value) ? parse_float(value) : value;
@@ -434,7 +434,7 @@ async function get_model_structure(is_fake_model = 0) {
 
 				first_layer = false;
 			} catch (e) {
-				wrn("Failed to add layer type ", type, ": ", e);
+				wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
 				header("DATA:");
 				log(data);
 				$($(".warning_container")[i]).show();
@@ -739,7 +739,7 @@ function _check_data (data, type) {
 	try {
 		if(typeof(data) == "object" && "units" in data && typeof(data["units"]) == "undefined") {
 			if(finished_loading) {
-				wrn("units was not defined. Using 2 as default");
+				wrn("[_check_data] units was not defined. Using 2 as default");
 			}
 			data["units"] = 2;
 		}
@@ -944,17 +944,17 @@ async function create_model (old_model, fake_model_structure, force) {
 		await dispose_old_model_tensors(model_uuid);
 	} catch (e) {
 		if(("" + e).includes("Negative dimension size caused by adding layer")) {
-			wrn(`Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
+			wrn(`[create_model] Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
 		} else if(("" + e).includes("Input shape contains 0")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 		} else if(("" + e).includes("is not fully defined")) {
-			wrn("" + e);
+			wrn("[create_model] " + e);
 			return;
 		} else if(("" + e).includes("Input 0 is incompatible with layer")) {
-			wrn("Model could not be created because of problems with the input layer.");
+			wrn("[create_model] Model could not be created because of problems with the input layer.");
 			return;
 		} else {
-			throw new Error(e);
+			throw new Error("[create_model] " +e);
 		}
 
 		return;
@@ -1064,9 +1064,9 @@ async function _add_layers_to_model (model_structure, fake_model_structure, i, m
 		try {
 			if(!await _add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
 				if(!fake_model_structure) {
-					err(`Failed to add layer type ${type}`);
+					err(`[_add_layers_to_model] Failed to add layer type ${type}`);
 				} else {
-					info(`Failed to add layer type ${type} (but ok because fake_model)`);
+					dbg(`[_add_layers_to_model] Failed to add layer type ${type} (but ok because fake_model)`);
 				}
 			}
 		} catch (e) {
@@ -1746,14 +1746,13 @@ function model_output_shape_looks_like_classification () {
 function layer_has_multiple_nodes () {
 	if(!model) {
 		if(finished_loading) {
-			wrn("no model in layer_has_multiple_nodes");
+			wrn("[layer_has_multiple_nodes] no model in layer_has_multiple_nodes");
 		}
 	}
 
 	if(!Object.keys(model).includes("layers")) {
 		if(finished_loading) {
-
-			wrn("no model.layers in layer_has_multiple_nodes");
+			wrn("[layer_has_multiple_nodes] no model.layers in layer_has_multiple_nodes");
 		}
 	}
 
