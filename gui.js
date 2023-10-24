@@ -178,7 +178,7 @@ function set_item_value(layer, classname, value) {
 
 	var layer_settings = $(".layer_setting");
 	if(layer >= layer_settings.length) {
-		wrn(`Layer ${layer} was too high. Max number is ${layer_settings.length - 1}`);
+		wrn(`[set_item_value] Layer ${layer} was too high. Max number is ${layer_settings.length - 1}`);
 
 		return;
 	}
@@ -1575,7 +1575,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		} catch (e) {
 			if(("" + e).includes("but got array with shape")) {
 				var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-				wrn(_err);
+				wrn("[updated_page_internal] " + _err);
 				l(_err);
 			} else {
 				throw new Error(e);
@@ -1866,7 +1866,7 @@ function get_number_of_layers() {
 		return parse_int(document.getElementById("number_of_layers").value);
 	} catch (e) {
 		if(("" + e).includes("getElementById(...) is null")) {
-			wrn("Was the $('#number_of_layers') element removed?");
+			wrn("[get_number_of_layers] Was the $('#number_of_layers') element removed?");
 		} else {
 			throw new Error(e);
 		}
@@ -4496,7 +4496,7 @@ function ensure_shape_array(shape) {
 	} else if (typeof (shape) == "object") {
 		return shape;
 	}
-	wrn("Is neither shape nor object: ", shape);
+	wrn("[ensure_shape_array] Is neither shape nor object: ", shape);
 }
 
 function output_shape_is_same(output_shape_data, output_shape_network) {
@@ -4547,9 +4547,9 @@ function _tensor_print_to_string (_tensor) {
 		return logMessages.join("\n");
 	} catch (e) {
 		if(("" + e).includes("Error: Tensor is disposed")) {
-			wrn("tensor to be printed was already disposed");
+			wrn("[_tensor_print_to_string] tensor to be printed was already disposed");
 		} else {
-			err("_tensor_print_to_string failed:", e);
+			err("[_tensor_print_to_string] _tensor_print_to_string failed:", e);
 
 		}
 		return "<span class='error_msg'>Error getting tensor as string</span>";
@@ -4905,7 +4905,7 @@ function human_readable_time(seconds, start="", end="") {
 			params.push(end);
 		}
 
-		wrn("Seconds is very large:", seconds, "Please check the source of that", params);
+		wrn("[human_readable_time] Seconds is very large:", seconds, "Please check the source of that", params);
 		console.trace();
 
 		return null;
@@ -5623,14 +5623,13 @@ async function init_webcams () {
 			$(".only_when_multiple_webcams").hide();
 		}
 	} else {
-		wrn("No webcams were found. Disabling webcam related features.");
+		wrn("[init_webcams] No webcams were found. Disabling webcam related features.");
 		$(".only_when_webcam").hide();
 		$(".only_when_multiple_webcams").hide();
 		$(".only_when_front_and_back_camera").hide();
 	}
 
 	l("Done checking webcams");
-
 }
 
 function show_hide_augment_tab () {
@@ -5695,7 +5694,7 @@ async function download_model_for_training (m) {
 
 function clear_attrament (idname) {
 	if(!atrament_data) {
-		wrn("atrament_data not defined");
+		wrn("[clear_attrament] atrament_data not defined");
 		return;
 	}
 
@@ -5841,7 +5840,7 @@ function get_drawing_board_on_page (indiv, idname, customfunc) {
 			try {
 				eval(customfunc);
 			} catch (e) {
-				wrn("Cannot run custom atrament function, probably because the model was undefined: " + e);
+				wrn("[get_drawing_board_on_page] Cannot run custom atrament function, probably because the model was undefined: " + e);
 				console.trace();
 			}
 		}
@@ -5996,9 +5995,8 @@ async function change_last_responsible_layer_for_image_output () {
 			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
 		}
 	} else {
-		wrn("Last layer number could not be found. Do you have any Dense or Conv2d layers?");
+		wrn("[change_last_responsible_layer_for_image_output] Last layer number could not be found. Do you have any Dense or Conv2d layers?");
 	}
-
 }
 
 function show_bars_instead_of_numbers () {
@@ -6053,7 +6051,7 @@ function allow_editable_labels () {
 		try {
 			var tmp_label = labels[label_index];
 			if(tmp_label === undefined) {
-				wrn("tmp_label undefined");
+				wrn("[allow_editable_labels] tmp_label undefined");
 				return;
 			}
 
@@ -6076,13 +6074,12 @@ function allow_editable_labels () {
 			}
 		} catch (e) {
 			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
-				wrn("This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
+				wrn("[allow_editable_labels] This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
 			} else {
 				err(e);
 			}
 		}
 	});
-
 }
 
 function enable_every_layer () {
@@ -6532,7 +6529,7 @@ function show_overlay(text, title="") {
 		return overlay;
 	} catch (error) {
 		log("An error occurred:", error);
-		wrn("Failed to display overlay.");
+		wrn("[show_overlay] Failed to display overlay.");
 	}
 }
 
@@ -6582,7 +6579,7 @@ function set_get(paramName, paramValue) {
 		history.replaceState(null, "", newUrl); // Update the URL without reloading the page
 	} catch (error) {
 		// Handle error: Log and warn about the error
-		wrn("Error updating URL:", error);
+		wrn("[set_get] Error updating URL:", error);
 		// You can add more intelligent handling here if needed
 	}
 }
@@ -6690,7 +6687,7 @@ function create_centered_window_with_text(parameter) {
 
 function get_last_element_of_class_end_y(name) {
 	if(document.body === null) {
-		wrn("document.body is null!");
+		wrn("[get_last_element_of_class_end_y] document.body is null!");
 		return;
 	}
 
@@ -6698,7 +6695,7 @@ function get_last_element_of_class_end_y(name) {
 	var descs = $("." + name);
 
 	if (!descs) {
-		wrn("descs not defined");
+		wrn("[get_last_element_of_class_end_y] descs not defined");
 		return 0;
 	}
 
@@ -7158,17 +7155,17 @@ function get_fcnn_data () {
 	var meta_infos = [];
 
 	if(!model) {
-		wrn("Model not found for restart_fcnn");
+		wrn("[get_fcnn_data] Model not found for restart_fcnn");
 		return;
 	}
 
 	if(!Object.keys(model).includes("layers")) {
-		wrn("model.layers not found for restart_fcnn");
+		wrn("[get_fcnn_data] model.layers not found for restart_fcnn");
 		return;
 	}
 
 	if(model.layers.length == 0) {
-		wrn("model.layers.length is 0");
+		wrn("[get_fcnn_data] model.layers.length is 0");
 		return;
 	}
 

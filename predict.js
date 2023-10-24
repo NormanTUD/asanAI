@@ -2,7 +2,7 @@
 
 function __predict (data, __model) {
 	if(!data) {
-		err("data undefined");
+		err("[__predict] data undefined");
 		return;
 	}
 
@@ -11,7 +11,7 @@ function __predict (data, __model) {
 	}
 
 	if(!__model) {
-		err("Cannot predict without a model");
+		err("[__predict] Cannot predict without a model");
 		return;
 	}
 
@@ -21,7 +21,7 @@ function __predict (data, __model) {
 
 	for (var k = 0; k < res_sync.length; k++) {
 		if(isNaN(res_sync[k])) {
-			err("Output contains NaN");
+			err("[__predict] Output contains NaN");
 		}
 	}
 
@@ -131,7 +131,7 @@ async function _get_tensor_img(item) {
 
 function set_item_natural_width (item) {
 	if(document.body === null) {
-		wrn("document.body is null!");
+		wrn("[set_item_natural_width] document.body is null!");
 		return;
 	}
 
@@ -181,7 +181,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 	}
 
 	if(!set_item_natural_width(item)) {
-		err("Setting item to natural height failed. Returning.");
+		err("[predict_demo] Setting item to natural height failed. Returning.");
 		return;
 	}
 	//log("Tensors 4: " + tf.memory()["numTensors"]);
@@ -198,18 +198,18 @@ async function predict_demo (item, nr, tried_again = 0) {
 	var tensor_img = await _get_tensor_img(item);
 
 	if(!tensor_img) {
-		err("tensor_img was empty");
+		err("[predict_demo] tensor_img was empty");
 		await dispose(tensor_img);
 		return;
 	}
 
 	if(!model) {
-		wrn("Model is undefined");
+		wrn("[predict_demo] Model is undefined");
 		return;
 	}
 
 	if(!Object.keys(model.layers).includes("0")) {
-		wrn("Does not include first layer");
+		wrn("[predict_demo] Does not include first layer");
 		return;
 	}
 
@@ -219,7 +219,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 
 	if(!model) {
 		if(finished_loading) {
-			err("No model");
+			err("[predict_demo] No model");
 		}
 		await dispose(tensor_img);
 		return;
@@ -416,7 +416,7 @@ function get_show_green () {
 
 async function _predict_table(predictions_tensor, desc) {
 	if(!predictions_tensor) {
-		wrn("predictions_tensor was empty");
+		wrn("[_predict_table] predictions_tensor was empty");
 		return;
 	}
 
@@ -800,7 +800,7 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	if(!model) {
-		err("No model given for show_prediction");
+		err("[show_prediction] No model given for show_prediction");
 		$(".show_when_has_examples").hide();
 		$("#example_predictions").hide();
 		$(".show_when_predicting").hide();
@@ -922,11 +922,11 @@ async function _print_predictions_text(count, example_predict_data) {
 	var html_contents = "";
 
 	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
-		err("example_predict_data is not an object or empty");
+		err("[_print_predictions_text] example_predict_data is not an object or empty");
 	}
 
 	if(!example_predict_data || example_predict_data.length == 0) {
-		wrn("No example predict data found");
+		wrn("[_print_predictions_text] No example predict data found");
 		return;
 	}
 
@@ -963,9 +963,9 @@ async function _print_predictions_text(count, example_predict_data) {
 				if(("" + e).includes("already disposed")) {
 					dbg("Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
 				} else if(("" + e).includes("Total size of new array must be unchanged")) {
-					dbg("Total size of new array must be unchanged. Did you use reshape somewhere?");
+					dbg("[_print_predictions_text] Total size of new array must be unchanged. Did you use reshape somewhere?");
 				} else if(("" + e).includes("to have shape")) {
-					dbg("Wrong input shape for _print_predictions_text: " + e);
+					dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
 				} else {
 					_predict_error(e);
 					await dispose(_tensor);
@@ -1535,7 +1535,7 @@ async function predict_handdrawn () {
 
 	if(!predict_data) {
 		await dispose(predict_data);
-		err("no predict data");
+		err("[predict_handdrawn] No predict data");
 		return;
 	}
 

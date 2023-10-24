@@ -712,7 +712,7 @@ async function _get_xs_and_ys (recursive=0) {
 		}
 
 		if(("" + e).includes("n is undefined") && recursive == 0) {
-			wrn("Error '" + e + "'. Trying to get xs and ys again...");
+			wrn("[_get_xs_and_ys] Error '" + e + "'. Trying to get xs and ys again...");
 			return await _get_xs_and_ys(recursive + 1);
 		} else {
 			var explanation = explain_error_msg("" + e);
@@ -963,7 +963,7 @@ async function repair_output_shape (tries_classification_but_receives_other=0) {
 		}
 
 		if(("" + e).includes("model.layers is undefined")) {
-			wrn("model.layers is undefined");
+			wrn("[repair_output_shape] model.layers is undefined");
 		} else {
 			throw new Error(e);
 		}
@@ -976,12 +976,12 @@ async function run_neural_network (recursive=0) {
 	await wait_for_updated_page(2);
 
 	if(!model) {
-		err("No model");
+		err("[run_neural_network] No model");
 		return;
 	}
 
 	if(model.layers.length == 0) {
-		err("No layers");
+		err("[run_neural_network] No layers");
 		return;
 	}
 
@@ -1002,7 +1002,7 @@ async function run_neural_network (recursive=0) {
 	var xs_and_ys = await _get_xs_and_ys();
 
 	if(!xs_and_ys) {
-		err("Could not get xs_and_ys");
+		err("[run_neural_network] Could not get xs_and_ys");
 		return;
 	}
 
@@ -1044,16 +1044,16 @@ async function run_neural_network (recursive=0) {
 		} catch (e) {
 			log(e);
 			if(("" + e).includes("is already disposed")) {
-				err("Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
+				err("[run_neural_network] Model was already disposed, this may be the case when, during the training, the model is re-created and something is tried to be predicted. USUALLY, not always, this is a harmless error.");
 				// input expected a batch of elements where each example has shape [2] (i.e.,tensor shape [*,2]) but the input received an input with 5 examples, each with shape [3] (tensor shape [5,3])
 			} else if (("" + e).includes("input expected a batch of elements where each example has shape")) {
-				err("Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
+				err("[run_neural_network] Error: " + e + ". This may mean that you got the file from CSV mode but have not waited long enough to parse the file.");
 			} else if (("" + e).includes("n is undefined")) {
 				while (!model) {
 					dbg("Waiting for model...");
 					delay(500);
 				}
-				wrn("Error: " + e + ". This may mean the model was not yet compiled");
+				wrn("[run_neural_network] Error: " + e + ". This may mean the model was not yet compiled");
 
 				if(!recursive) {
 					await run_neural_network(1);
@@ -1071,12 +1071,12 @@ async function run_neural_network (recursive=0) {
 
 						if(old_loss != new_loss) {
 							$("#loss").val(new_loss).trigger("change");
-							wrn("Autoset metric to " + new_loss);
+							wrn("[run_neural_network] Autoset metric to " + new_loss);
 						}
 
 						if(old_metric != new_metric) {
 							$("#metric").val(new_metric).trigger("change");
-							wrn("Autoset metric to " + new_metric);
+							wrn("[run_neural_network] Autoset metric to " + new_metric);
 						}
 						try {
 							repaired = await repair_output_shape(1);
@@ -1133,12 +1133,12 @@ async function run_neural_network (recursive=0) {
 					}
 				} else {
 					if(("" + e).includes("model is null") || ("" + e).includes("model is undefined")) {
-						info("Model is null or undefined. Recompiling model...");
+						info("[run_neural_network] Model is null or undefined. Recompiling model...");
 						model = await create_model();
 						await compile_model();
-						info("Model was null or undefined. Recompiling model done!");
+						info("[run_neural_network] Model was null or undefined. Recompiling model done!");
 					} else if(("" + e).includes("but got array with shape")) {
-						wrn("Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
+						wrn("[run_neural_network] Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
 					} else {
 						await write_error("" + e);
 
@@ -1339,7 +1339,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			//log("DEBUG:", image, imageX, imageY, w, h);
 			ctx.drawImage(image, imageX, imageY, w, h);
 		} else {
-			wrn("Canvas not defined. canvasIndex + 1:", canvasIndex);
+			wrn("[draw_images_in_grid] Canvas not defined. canvasIndex + 1:", canvasIndex);
 		}
 	}
 
@@ -1355,7 +1355,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			}
 			$(`<span style="display: table-cell; border-left: 1px solid #000; height: 400px"></span>`).appendTo($(containerId));
 		} else {
-			wrn("Canvas could not be appended!");
+			wrn("[draw_images_in_grid] Canvas could not be appended!");
 		}
 	}
 
@@ -1469,7 +1469,7 @@ async function visualize_train () {
 
 	var image_elements = $("#photos").find("img,canvas");
 	if(!image_elements.length) {
-		err("could not find image_elements");
+		err("[visualize_train] could not find image_elements");
 		return;
 	}
 
@@ -1511,7 +1511,7 @@ async function visualize_train () {
 
 			if(!img_elem) {
 				tf.engine().endScope();
-				wrn("img_elem not defined!", img_elem);
+				wrn("[visualize_train] img_elem not defined!", img_elem);
 				continue;
 			}
 
@@ -1527,7 +1527,7 @@ async function visualize_train () {
 			});
 
 			if(img_tensor === null) {
-				wrn("Could not load image from pixels from this element:", img_elem);
+				wrn("[visualize_train] Could not load image from pixels from this element:", img_elem);
 				continue;
 			}
 

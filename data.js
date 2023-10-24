@@ -40,7 +40,7 @@ function numpy_str_to_tf_tensor (numpy_str, max_values) {
 			} else if (tensor_type == "string") {
 				new_items = new_items.map(String);
 			} else {
-				wrn("Unknown tensor_type: " + tensor_type);
+				wrn("[numpy_str_to_tf_tensor] Unknown tensor_type: " + tensor_type);
 			}
 			data[k].push(new_items);
 		}
@@ -256,7 +256,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 
 						//log("tf_data:", tf_data);
 						if(!tf_data && !dont_load_into_tf) {
-							wrn("tf_data is empty, though it shouldn't be");
+							wrn("[get_image_data] tf_data is empty, though it shouldn't be");
 						}
 					} catch (e) {
 						err(e);
@@ -1670,25 +1670,25 @@ async function get_own_tensor (element) {
 async function confusion_matrix(classes) {
 	if(!classes.length) {
 		if(current_epoch < 2) {
-			wrn("confusion_matrix: No classes found");
+			wrn("[confusion_matrix] No classes found");
 		}
 		return "";
 	}
 
 	if(!is_classification) {
-		wrn("confusion_matrix: Only works with classification");
+		wrn("[confusion_matrix] Only works with classification");
 		return "";
 	}
 
 	if(!model) {
-		wrn("confusion_matrix: model not defined. Cannot continue");
+		wrn("[confusion_matrix] model not defined. Cannot continue");
 	}
 	
 	var imgs = $("#photos").find("img,canvas");
 
 	if(!imgs.length) {
 		if(current_epoch == 1) {
-			wrn("confusion_matrix: No images found");
+			wrn("[confusion_matrix] No images found");
 		}
 		return "";
 	}
@@ -1716,7 +1716,7 @@ async function confusion_matrix(classes) {
 			});
 
 			if(img_tensor === null) {
-				wrn("Could not load image from pixels from this element:", img_elem);
+				wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
 				await dispose(img_tensor);
 				continue;
 			}
@@ -1796,7 +1796,7 @@ async function confusion_matrix(classes) {
 	}
 
 	if(!num_items) {
-		wrn("confusion_matrix: Could not get any items!");
+		wrn("[confusion_matrix] Could not get any items!");
 		return "";
 	}
 
