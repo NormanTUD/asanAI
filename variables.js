@@ -1465,7 +1465,7 @@ try {
 		enable_cosmo_debugger = true;
 	}
 } catch (e) {
-	wrn("[variables.js]" e);
+	wrn("[variables.js]" + e);
 }
 
 var idleTime = 0;
