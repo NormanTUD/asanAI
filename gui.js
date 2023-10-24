@@ -3850,7 +3850,7 @@ async function change_data_origin() {
 			if(last_layer_type == "dense") {
 				set_item_value(last_layer_nr, "units", units);
 			} else {
-				wrn(`Last layer type is ${last_layer_type}, not dense, cannot set Units.`);
+				wrn(`[change_data_origin] Last layer type is ${last_layer_type}, not dense, cannot set Units.`);
 			}
 		}
 
@@ -3986,7 +3986,6 @@ async function change_data_origin() {
 	} catch (e) {
 		err(e);
 	}
-
 }
 
 function auto_adjust_number_of_neurons(n) {
@@ -4594,7 +4593,7 @@ async function write_error(e, fn, hide_swal) {
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
 		await update_translations();
 		await write_descriptions();
-		wrn(msg);
+		wrn("[write_error] "+ msg);
 		console.trace();
 
 		if(!hide_swal) {
@@ -4614,8 +4613,6 @@ async function write_error(e, fn, hide_swal) {
 
 	if(typeof(fn) == "function") {
 		fn();
-	} else {
-		wrn("fn is not a function:", fn);
 	}
 
 	await enable_everything();
@@ -6460,7 +6457,7 @@ function model_is_ok () {
 
 	if(last_model_ok_status != _content) {
 		if(color == red) {
-			wrn(msg);
+			wrn("[model_is_ok] " + msg);
 		} else if (color == orange) {
 			dbg(msg);
 		}
