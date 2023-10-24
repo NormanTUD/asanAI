@@ -35,7 +35,7 @@ function test_not_equal (name, is, should_be) {
 		//log("%c" + name + " OK", "background: green; color: white");
 		return true;
 	} else {
-		err(name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
+		err("[test_not_equal] " + name + " ERROR. Is: " + JSON.stringify(is) + ", should not be: " + JSON.stringify(should_be));
 		num_tests_failed++;
 		return false;
 	}
@@ -48,7 +48,7 @@ function test_equal (name, is, should_be) {
 		return true;
 	} else {
 		var res_str = name + ":\nERROR. Is: \n" + JSON.stringify(is) + "\nShould be:\n" + JSON.stringify(should_be);
-		err(res_str);
+		err("[test_equal] " + res_str);
 		num_tests_failed++;
 		return false;
 	}
@@ -369,7 +369,7 @@ async function run_tests () {
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 			} catch (e) {
-				err(e);
+				err("[run_tests] " + e);
 				console.trace();
 			}
 

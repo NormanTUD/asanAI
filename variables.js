@@ -42,7 +42,7 @@ function get_input_shape_as_string () {
 			return "[]";
 		}
 	} catch (e) {
-		wrn(e);
+		wrn("[get_input_shape_as_string] " + e);
 		return "[]";
 	}
 }
@@ -665,7 +665,7 @@ function get_name_case_independent (name, from_hash) {
 			e = e.message;
 		}
 
-		err(e);
+		err("[get_name_case_independent] " + e);
 	}
 	return null;
 }
@@ -1284,7 +1284,7 @@ for (var i = 0; i < valid_initializer_types.length; i++) {
 		try {
 			$.globalEval(func);
 		} catch (e) {
-			err(e);
+			err("[variables.js] " + e);
 		}
 	}
 }
@@ -1367,7 +1367,7 @@ for (var i = 0; i < general_options_keys.length; i++) {
 	try {
 		$.globalEval(func);
 	} catch (e) {
-		err(e);
+		err("[variables.js] " + e);
 	}
 }
 
@@ -1465,7 +1465,7 @@ try {
 		enable_cosmo_debugger = true;
 	}
 } catch (e) {
-	wrn(e);
+	wrn("[variables.js]" e);
 }
 
 var idleTime = 0;

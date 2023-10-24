@@ -111,7 +111,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 			output_shape = input_shape;
 		}
 	} else {
-		err("layer is empty");
+		err("[get_network_type_result_by_array] layer is empty");
 	}
 
 	return [res, layer, input_shape, output_shape];
@@ -492,7 +492,7 @@ async function start_test_training(fn, epochs, start, end, step, shuffle, optimi
 	try {
 		callbacks = { "onBatchEnd": await get_live_tracking_on_batch_end("current_model", epochs, JSON.stringify(t_x), JSON.stringify(t_y), true, "training_data") };
 	} catch (e) {
-		err(e);
+		err("[start_test_training] " + e);
 	}
 
 	tf.engine().endScope();

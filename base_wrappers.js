@@ -149,7 +149,7 @@ function tf_add (...args) {
 	var first_tensor = args[0];
 	var second_arg = args[1];
 	if(!Object.keys(second_arg).includes("isDisposedInternal")) {
-		err("Error: second argument to tf_add is wrong. See stacktrace.");
+		err("[tf_add] Error: second argument to tf_add is wrong. See stacktrace.");
 		return;
 	}
 	var res = first_tensor.add(second_arg, ...args);
@@ -927,7 +927,7 @@ function _clean_custom_tensors () {
 			if(("" + e).includes("_custom_tensors[key] is undefined")) {
 				//
 			} else {
-				wrn(e);
+				wrn("[_clean_custom_tensors] " + e);
 			}
 		}
 	}
@@ -941,7 +941,7 @@ function parse_int (...args) {
 	var res = parseInt(...args);
 
 	if(isNaN(res)) {
-		wrn("NaN detected in parse_int, args: " + JSON.stringify(args));
+		wrn("[parse_int] NaN detected in parse_int, args: " + JSON.stringify(args));
 		console.trace();
 	}
 
@@ -952,7 +952,7 @@ function parse_float (...args) {
 	var res = parseFloat(...args);
 
 	if(isNaN(res)) {
-		wrn("NaN detected in parse_int, args: " + JSON.stringify(args));
+		wrn("[parse_float] NaN detected in parse_int, args: " + JSON.stringify(args));
 		console.trace();
 	}
 
