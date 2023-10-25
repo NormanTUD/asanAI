@@ -27,6 +27,9 @@ function logt(...msg) {
 }
 
 function _clean_func_name(arg) {
+	if(!arg) {
+		return "";
+	}
 	arg = arg.replace(/^\[[^\]]*\] /, "");
 	arg = arg.replace(/^\[\] /, "");
 
@@ -760,7 +763,7 @@ function taint_privacy () {
 		return;
 	}
 
-	console.info("Privacy is tainted. Bug reports will no longer contain screenshots");
+	info("Privacy is tainted. Bug reports will no longer contain screenshots");
 	privacy_is_tainted = true;
 }
 
