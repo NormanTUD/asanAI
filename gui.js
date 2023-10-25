@@ -547,7 +547,9 @@ async function insert_activation_options(layer_nr) {
 			}
 		}
 	} else {
-		log("[insert_activation_options] Layer " + layer_nr + " does not seem to have a activation setting");
+		if(get_layer_type_array()[layer_nr] != "flatten") {
+			log("[insert_activation_options] Layer " + layer_nr + " does not seem to have a activation setting");
+		}
 	}
 
 	await updated_page();
@@ -581,7 +583,9 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 			insert_regularizer_option_trs(layer_nr, regularizer_type, options[i]);
 		}
 	} else {
-		log("[insert_regularizer_options] Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
+		if(get_layer_type_array()[layer_nr] != "flatten") {
+			log("[insert_regularizer_options] Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
+		}
 	}
 	await updated_page();
 }
@@ -614,7 +618,9 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 			log("[insert_initializer_options] initializer_name:", initializer_name);
 		}
 	} else {
-		log("[insert_initializer_options] Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
+		if(get_layer_type_array()[layer_nr] != "flatten") {
+			log("[insert_initializer_options] Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
+		}
 	}
 
 	//await updated_page();
@@ -6449,7 +6455,7 @@ function model_is_ok () {
 		if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
 			_content += "&updownarrow;";
 			if(finished_loading) {
-				log_once(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
+				dbg(`The description boxes and the layers have a different length: ${last_layer_setting_end_y}/${last_description_end_y}`);
 			}
 			write_descriptions(); // await not possible
 		}
