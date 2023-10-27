@@ -4628,8 +4628,13 @@ class asanAI {
 
 		if(Object.keys(_plotly_data).length) {
 			if(Object.keys(_plotly_data).includes("div")) {
-				this.#plotly_div = _plotly_data["div"];
-				_callbacks = this._get_callbacks();
+				if($("#" + _plotly_data["div"]).length) {
+					this.err(`#${_plotly_data["div"]} could not be found.`);
+					return;
+				} else {
+					this.#plotly_div = _plotly_data["div"];
+					_callbacks = this._get_callbacks();
+				}
 			} else {
 				this.err(`_plotly_data is defined but does not include div-option`);
 				return;

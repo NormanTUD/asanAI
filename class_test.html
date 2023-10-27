@@ -41,6 +41,7 @@
 
 		<pre>====</pre>
 		<div id="test_images"></div>
+		<div id="plotly_history"></div>
 		<pre>====</pre>
 
 		<div class="float-container">
@@ -247,7 +248,7 @@
 
 				console.log(loaded_data);
 			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 1000, shuffle: true});
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 1000, shuffle: true}, {'div': 'plotly_history'});
 
 				if(history) {
 					console.log("history:", history);
