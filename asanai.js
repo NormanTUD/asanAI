@@ -2,6 +2,7 @@
 
 class asanAI {
 	#current_epoch = 0;
+	#original_title = document.title;
 	#max_epoch = 30;
 	#plotly_div = "";
 	#this_training_start_time = null;
@@ -4188,7 +4189,7 @@ class asanAI {
 			}
 
 			//if($("#math_tab").is(":visible")) {
-			//	await write_model_to_latex_to_page();
+			//	await asanai_this.#write_model_to_latex_to_page();
 			//}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
@@ -4332,10 +4333,8 @@ class asanAI {
 		callbacks["onTrainEnd"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#favicon_default();
-			await write_model_to_latex_to_page();
-			asanai_this.#set_document_title(original_title);
-			await restart_fcnn();
-			await restart_lenet();
+			await asanai_this.#write_model_to_latex_to_page();
+			asanai_this.#set_document_title(asanai_this.#original_title);
 
 			$("#tiny_graph").hide();
 
@@ -4343,7 +4342,7 @@ class asanAI {
 
 			asanai_this.#confusion_matrix_to_page(); // async not possible
 
-			await reset_data();
+			//await reset_data();
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 		};
@@ -5226,5 +5225,107 @@ class asanAI {
 			document.getElementsByTagName("head")[0].appendChild(link);
 		}
 		link.href = path;
+	}
+
+	#can_be_shown_in_latex () {
+		if(!this.#model) {
+			this.wrn("Hiding Math tab because there is no model. This might be a bug.");
+			return false;
+		}
+
+		if(!Object.keys(this.#model).includes("layers")) {
+			dbg("model does not include layers. Cannot be shown in LaTeX");
+			return false;
+		}
+
+		if(!Object.keys(this.#model["layers"]).includes("0")) {
+			dbg("model does not include layers. Cannot be shown in LaTeX");
+			return false;
+		}
+
+		if(this.#model.layers[0].input.shape.length != 2) {
+			return false;
+		}
+
+		if(this.#model.layers[this.#model.layers.length - 1].input.shape.length != 2) {
+			l("Hiding math tab because the output tensor has too many dimensions. It has " + this.#model.layers[this.#model.layers.length - 1].input.shape.length + ". Must be 2.");
+			return false;
+		}
+
+		for (var i = 0; i < this.#model.layers.length; i++) {
+			var this_layer_type = $($(".layer_type")[i]).val();
+			var valid_layers = [
+				"dense",
+				"flatten",
+				"reshape",
+				"elu",
+				"leakyReLU",
+				"reLU",
+				"softmax",
+				"thresholdedReLU",
+				"dropout",
+				"batchNormalization",
+				"DebugLayer",
+				"gaussianNoise",
+			];
+			if(!(valid_layers.includes(this_layer_type))) {
+				l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	async #write_model_to_latex_to_page (reset_prev_layer_data, force) {
+		if(!this.#can_be_shown_in_latex()) {
+			this.err(`Cannot be shown in LaTeX`);
+			return;
+		}
+
+		if(!force && $("#math_tab_label").css("display") == "none") {
+			return;
+		}
+
+		if(reset_prev_layer_data) {
+			prev_layer_data = [];
+		}
+
+		var latex = model_to_latex();
+
+		if(latex) {
+			$("#math_tab_code").html(latex);
+
+			try {
+				var math_tab_code_elem = $("#math_tab_code")[0];
+
+				var xpath = get_element_xpath(math_tab_code_elem);
+				var new_md5 = await md5($(math_tab_code_elem).html());
+				var old_md5 = math_items_hashes[xpath];
+
+				if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
+					try {
+						await _temml();
+					} catch (e) {
+						if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
+							info("" + e);
+						} else if (("" + e).includes("too many function arguments")) {
+							err("TEMML: " + e);
+						} else {
+							throw new Error(e);
+						}
+					}
+					math_items_hashes[xpath] = new_md5;
+				}
+			} catch (e) {
+				if(("" + e).includes("can't assign to property")) {
+					wrn("failed temml:", e);
+				} else {
+					await write_error(e);
+				}
+			}
+		} else {
+			hide_tab_label("math_tab_label");
+		}
 	}
 }
