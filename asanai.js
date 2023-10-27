@@ -13,6 +13,16 @@ class asanAI {
 	#last_batch_time = null;
 	#last_batch_plot_time = null;
 
+	#training_logs_epoch = {
+		"loss": {
+			"x": [],
+			"y": [],
+			"type": "scatter",
+			"mode": this.#get_plotly_type(),
+			"name": "Loss"
+		}
+	}
+
 	#training_logs_batch = {
 		"loss": {
 			"x": [],
@@ -20,6 +30,16 @@ class asanAI {
 			"type": "scatter",
 			"mode": this.#get_plotly_type(),
 			"name": "Loss"
+		}
+	}
+
+	#time_per_batch = {
+		"time": {
+			"x": [],
+			"y": [],
+			"type": "scatter",
+			"mode": this.#get_plotly_type(),
+			"name": "Time per batch (in seconds)"
 		}
 	}
 
@@ -3279,7 +3299,7 @@ class asanAI {
 				}
 
 				if(("" + e).includes("tf is null")) {
-					err("tf is null");
+					this.err("tf is null");
 				} else {
 					throw new Error(e);
 				}
@@ -3957,7 +3977,7 @@ class asanAI {
 
 		var image_elements = $("#photos").find("img,canvas");
 		if(!image_elements.length) {
-			err("[visualize_train] could not find image_elements");
+			this.err("[visualize_train] could not find image_elements");
 			return;
 		}
 
@@ -3990,7 +4010,7 @@ class asanAI {
 			}
 
 			if(!src) {
-				err("[visualize_train] Cannot use images without src tags");
+				this.err("[visualize_train] Cannot use images without src tags");
 				continue;
 			}
 
@@ -3999,7 +4019,7 @@ class asanAI {
 
 				if(!img_elem) {
 					tf.engine().endScope();
-					wrn("[visualize_train] img_elem not defined!", img_elem);
+					this.wrn("[visualize_train] img_elem not defined!", img_elem);
 					continue;
 				}
 
@@ -4009,13 +4029,13 @@ class asanAI {
 						res = divNoNan(res, parse_float($("#divide_by").val()));
 						return res;
 					} catch (e) {
-						err(e);
+						this.err(e);
 						return null;
 					}
 				});
 
 				if(img_tensor === null) {
-					wrn("[visualize_train] Could not load image from pixels from this element:", img_elem);
+					this.wrn("[visualize_train] Could not load image from pixels from this element:", img_elem);
 					continue;
 				}
 
@@ -4041,7 +4061,7 @@ class asanAI {
 					probabilities.push(max_probability);
 					imgs.push(img_elem);
 				} else {
-					err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
+					this.err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
 				}
 			}
 
@@ -4051,7 +4071,7 @@ class asanAI {
 					var predicted_tensor = this_predicted_array;
 
 					if(predicted_tensor === null || predicted_tensor === undefined) {
-						dbg("[visualize_train] Predicted tensor was null or undefined");
+						this.dbg("[visualize_train] Predicted tensor was null or undefined");
 						return;
 					}
 
@@ -4088,7 +4108,7 @@ class asanAI {
 								"warning"
 							], correct_category) % labels.length;
 					} catch (e) {
-						wrn("[visualize_train] " + e);
+						this.wrn("[visualize_train] " + e);
 						return;
 					}
 
@@ -4113,7 +4133,7 @@ class asanAI {
 					}
 					category_overview[predicted_category]["total"]++;
 				} else {
-					err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
+					this.err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
 				}
 			} catch (e) {
 				console.log(e);
@@ -4141,6 +4161,15 @@ class asanAI {
 		var asanai_this = this;
 
 		callbacks["onTrainBegin"] = async function () {
+			var $plotly_div = $("#" + asanai_this.#plotly_div);
+
+			if($plotly_div.length == 0) {
+				asanai_this.err(`[onTrainBegin] Plotly div could not be found`);
+				return;
+			}
+
+			$plotly_div.html(`<div id="plotly_batch_history"></div><div id="plotly_time_per_batch"></div><div id="plotly_epoch_history"></div>`)
+
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#current_epoch = 0;
 			asanai_this.#this_training_start_time = Date.now();
@@ -4158,7 +4187,7 @@ class asanAI {
 				model.stopTraining = true;
 			}
 
-			//if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
+			//if($("#math_tab").is(":visible")) {
 			//	await write_model_to_latex_to_page();
 			//}
 
@@ -4201,8 +4230,8 @@ class asanAI {
 				asanai_this.#last_batch_time = +new Date();
 			} else {
 				var current_time = +new Date();
-				time_per_batch["time"]["x"].push(batchNr);
-				time_per_batch["time"]["y"].push((current_time - asanai_this.#last_batch_time) / 1000);
+				asanai_this.#time_per_batch["time"]["x"].push(batchNr);
+				asanai_this.#time_per_batch["time"]["y"].push((current_time - asanai_this.#last_batch_time) / 1000);
 				asanai_this.#last_batch_time = current_time;
 			}
 
@@ -4211,15 +4240,15 @@ class asanAI {
 			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
 					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 				} else {
 					Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+					Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 				}
 				asanai_this.#last_batch_plot_time = Date.now();
 			}
 
-			if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+			if($("#predict_tab").is(":visible")) {
 				if($("#predict_own_data").val()) {
 					await predict($("#predict_own_data").val());
 				}
@@ -4239,19 +4268,19 @@ class asanAI {
 
 			var epochNr = 1;
 			var loss = logs["loss"];
-			if(training_logs_epoch["loss"]["x"].length) {
-				epochNr = Math.max(...training_logs_epoch["loss"]["x"]) + 1;
+			if(asanai_this.#training_logs_epoch["loss"]["x"].length) {
+				epochNr = Math.max(...asanai_this.#training_logs_epoch["loss"]["x"]) + 1;
 			}
-			training_logs_epoch["loss"]["x"].push(epochNr);
-			training_logs_epoch["loss"]["y"].push(loss);
+			asanai_this.#training_logs_epoch["loss"]["x"].push(epochNr);
+			asanai_this.#training_logs_epoch["loss"]["y"].push(loss);
 
 			var other_key_name = "val_loss";
 
-			var this_plot_data = [training_logs_epoch["loss"]];
+			var this_plot_data = [asanai_this.#training_logs_epoch["loss"]];
 
 			if(Object.keys(logs).includes(other_key_name)) {
 				if(epochNr == 1) {
-					training_logs_epoch[other_key_name] = {
+					asanai_this.#training_logs_epoch[other_key_name] = {
 						"x": [],
 						"y": [],
 						"type": "scatter",
@@ -4261,12 +4290,12 @@ class asanAI {
 				}
 
 				loss = logs[other_key_name];
-				training_logs_epoch[other_key_name]["x"].push(epochNr);
-				training_logs_epoch[other_key_name]["y"].push(loss);
-				training_logs_epoch[other_key_name]["mode"] = asanai_this.#get_plotly_type();
-				training_logs_epoch[other_key_name]["name"] = other_key_name;
+				asanai_this.#training_logs_epoch[other_key_name]["x"].push(epochNr);
+				asanai_this.#training_logs_epoch[other_key_name]["y"].push(loss);
+				asanai_this.#training_logs_epoch[other_key_name]["mode"] = asanai_this.#get_plotly_type();
+				asanai_this.#training_logs_epoch[other_key_name]["name"] = other_key_name;
 
-				this_plot_data.push(training_logs_epoch[other_key_name]);
+				this_plot_data.push(asanai_this.#training_logs_epoch[other_key_name]);
 			}
 
 			$("#plotly_epoch_history").parent().show();
@@ -4281,13 +4310,13 @@ class asanAI {
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
 			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+			Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 			asanai_this.#last_batch_plot_time = false;
 
-			if(training_logs_epoch["loss"].x.length >= 2) {
-				var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
+			if(asanai_this.#training_logs_epoch["loss"].x.length >= 2) {
+				var vl = Object.keys(asanai_this.#training_logs_epoch).includes("val_loss") ? asanai_this.#training_logs_epoch["val_loss"].y : null;
 				var th = 18;
-				var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, asanai_this.#parse_int(0.9 * th));
+				var plotCanvas = create_tiny_plot(asanai_this.#training_logs_epoch["loss"].x, asanai_this.#training_logs_epoch["loss"].y, vl, th * 2, asanai_this.#parse_int(0.9 * th));
 				$("#tiny_graph").html("");
 				$("#tiny_graph").append(plotCanvas).show();
 			} else {
@@ -4339,7 +4368,7 @@ class asanAI {
 				params.push(end);
 			}
 
-			wrn("[human_readable_time] Seconds is very large:", seconds, "Please check the source of that", params);
+			this.wrn("[human_readable_time] Seconds is very large:", seconds, "Please check the source of that", params);
 			console.trace();
 
 			return null;
@@ -4416,25 +4445,25 @@ class asanAI {
 	async #confusion_matrix(classes) {
 		if(!classes.length) {
 			if(this.#current_epoch < 2) {
-				wrn("[confusion_matrix] No classes found");
+				this.wrn("[confusion_matrix] No classes found");
 			}
 			return "";
 		}
 
 		if(!this.#is_classification) {
-			wrn("[confusion_matrix] Only works with classification");
+			this.wrn("[confusion_matrix] Only works with classification");
 			return "";
 		}
 
 		if(!this.#model) {
-			wrn("[confusion_matrix] model not defined. Cannot continue");
+			this.wrn("[confusion_matrix] model not defined. Cannot continue");
 		}
 		
 		var imgs = $("#photos").find("img,canvas");
 
 		if(!imgs.length) {
 			if(this.#current_epoch == 1) {
-				wrn("[confusion_matrix] No images found");
+				this.wrn("[confusion_matrix] No images found");
 			}
 			return "";
 		}
@@ -4456,13 +4485,13 @@ class asanAI {
 						predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
 						return predicted_tensor;
 					} catch (e) {
-						err(e);
+						this.err(e);
 						return null;
 					}
 				});
 
 				if(img_tensor === null) {
-					wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
+					this.wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
 					await dispose(img_tensor);
 					continue;
 				}
@@ -4484,7 +4513,7 @@ class asanAI {
 						e = e.message;
 					}
 
-					dbg("Cannot predict image: " + e);
+					this.dbg("Cannot predict image: " + e);
 
 					await dispose(img_tensor);
 					await dispose(predicted_tensor);
@@ -4496,12 +4525,12 @@ class asanAI {
 			//console.log("cached: ", predicted_tensor);
 
 			if(!predicted_tensor) {
-				err(`[confusion_matrix] Could not get predicted_tensor`);
+				this.err(`[confusion_matrix] Could not get predicted_tensor`);
 				continue;
 			}
 
 			if(!predicted_tensor) {
-				dbg("predicted_tensor is empty");
+				this.dbg("predicted_tensor is empty");
 
 				await dispose(img_tensor);
 				await dispose(predicted_tensor);
@@ -4513,7 +4542,7 @@ class asanAI {
 			assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 			if(predicted_tensor === null || predicted_tensor === undefined) {
-				dbg("Predicted tensor was null or undefined");
+				this.dbg("Predicted tensor was null or undefined");
 				continue;
 			}
 
@@ -4542,7 +4571,7 @@ class asanAI {
 		}
 
 		if(!num_items) {
-			wrn("[confusion_matrix] Could not get any items!");
+			this.wrn("[confusion_matrix] Could not get any items!");
 			return "";
 		}
 
