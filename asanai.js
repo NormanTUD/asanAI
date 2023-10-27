@@ -2,6 +2,8 @@
 
 class asanAI {
 	#math_items_hashes = {};
+	#learning_rate = 0.01;
+	#epsilon = 0.0001;
 	#decimal_points_math_mode = 3;
 	#prev_layer_data = [];
 	#current_epoch = 0;
@@ -394,6 +396,12 @@ class asanAI {
 
 		if("optimizer" in optimizer_config) {
 			this.#optimizer = optimizer_config["optimizer"];
+		}
+
+		if("learning_rate" in optimizer_config) {
+			this.#learning_rate = optimizer_config["learning_rate"];
+			optimizer_config["learningRate"] = optimizer_config["learning_rate"];
+			delete optimizer_config["learning_rate"];
 		}
 
 		var model_uuid = this.#uuidv4();
@@ -5431,11 +5439,11 @@ class asanAI {
 			},
 			"eta": {
 				"name": "Learning rate",
-				"origin": "learningRate_OPTIMIZERNAME"
+				"origin": "asanai_this.#learning_rate"
 			},
 			"epsilon": {
 				"name": "Epsilon",
-				"origin": "epsilon_OPTIMIZERNAME"
+				"origin": "asanai_this.#epsilon"
 			}
 		};
 
@@ -5450,7 +5458,7 @@ class asanAI {
 				"variables": {
 					"\\eta": {
 						"name": "Learning rate",
-						"origin": "learningRate_sgd"
+						"origin": "asanai_this.#learning_rate"
 					},
 					"\\theta": default_vars["theta"],
 					"\\nabla": default_vars["nabla_operator"],
@@ -5853,8 +5861,8 @@ class asanAI {
 					if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
 						str += " = " + this_optimizer.variables[thisvarname]["value"];
 					} else if(origin !== undefined) {
-						origin = origin.replace("OPTIMIZERNAME", optimizer);
-						var valofparam = $("#" + origin).val();
+						var valofparam;
+						eval(`valofparam = ${origin}`);
 						str += " = " + valofparam;
 					}
 					str += "</div><br>";
