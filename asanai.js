@@ -1,6 +1,8 @@
 "use strict";
 
 class asanAI {
+	#decimal_points_math_mode = 3;
+	#prev_layer_data = [];
 	#current_epoch = 0;
 	#original_title = document.title;
 	#max_epoch = 30;
@@ -3902,7 +3904,7 @@ class asanAI {
 
 		this.#printed_msgs.push(md5);
 
-		log(...args);
+		this.log(...args);
 	}
 
 	#get_last_layer_activation_function () {
@@ -4189,7 +4191,7 @@ class asanAI {
 			}
 
 			//if($("#math_tab").is(":visible")) {
-			//	await asanai_this.#write_model_to_latex_to_page();
+			//	await asanai_this.#write_model_to_latex_to_page(asanai_this);
 			//}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
@@ -4333,7 +4335,7 @@ class asanAI {
 		callbacks["onTrainEnd"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#favicon_default();
-			await asanai_this.#write_model_to_latex_to_page();
+			await asanai_this.#write_model_to_latex_to_page(asanai_this);
 			asanai_this.#set_document_title(asanai_this.#original_title);
 
 			$("#tiny_graph").hide();
@@ -4481,7 +4483,7 @@ class asanAI {
 				var img_tensor = tidy(() => {
 					try {
 						var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-						predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
+						predicted_tensor = divNoNan(predicted_tensor, this.#parse_float($("#divide_by").val()));
 						return predicted_tensor;
 					} catch (e) {
 						this.err(e);
@@ -5257,20 +5259,21 @@ class asanAI {
 		*/
 
 		for (var i = 0; i < this.#model.layers.length; i++) {
-			var this_layer_type = $($(".layer_type")[i]).val();
+			var this_layer_type = this.#model.layers[i].getClassName().toLowerCase();
 			var valid_layers = [
+				"conv2d",
 				"dense",
 				"flatten",
 				"reshape",
 				"elu",
-				"leakyReLU",
-				"reLU",
+				"leakyrelu",
+				"relu",
 				"softmax",
-				"thresholdedReLU",
+				"thresholdedrelu",
 				"dropout",
-				"batchNormalization",
-				"DebugLayer",
-				"gaussianNoise",
+				"batchnormalization",
+				"debuglayer",
+				"gaussiannoise"
 			];
 			if(!(valid_layers.includes(this_layer_type))) {
 				this.log("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
@@ -5281,7 +5284,573 @@ class asanAI {
 		return true;
 	}
 
-	async #write_model_to_latex_to_page (reset_prev_layer_data, force) {
+	model_to_latex (asanai_this = this) {
+		var layers = this.#model.layers;
+
+		var input_shape = this.#model.layers[0].input.shape;
+
+		/*
+		if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
+			l("Math mode works only in input shape [n] (or [null, n] with batch)");
+			return;
+		}
+		*/
+
+		var output_shape = this.#model.layers[this.#model.layers.length - 1].outputShape;
+
+		/*
+		if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
+			l("Math mode works only in output shape [n] (or [null, n] with batch)");
+			return;
+		}
+		*/
+
+		var activation_function_equations = {
+			"sigmoid": {
+				"equation": "\\mathrm{sigmoid}\\left(x\\right) = \\sigma\\left(x\\right) = \\frac{1}{1+e^{-x}}",
+				"equation_no_function_name": "\\sigma\\left(REPLACEME\\right) = \\frac{1}{1+e^{-REPLACEME}}",
+				"lower_limit": 0,
+				"upper_limit": 1,
+				"math_ml": 1
+			},
+			"tanh": {
+				"equation": "\\mathrm{tanh}\\left(x\\right) = \\frac{e^x-e^{-x}}{e^x+e^{-x}}",
+				"equation_no_function_name": "\\frac{e^REPLACEME-e^{-REPLACEME}}{e^REPLACEME+e^{-REPLACEME}}",
+				"lower_limit": -1,
+				"upper_limit": 1
+			},
+			"relu": {
+				"equation": "\\mathrm{relu}\\left(x\\right) = \\mathrm{max}\\left(0, x\\right)",
+				"equation_no_function_name": "\\mathrm{max}\\left(0, REPLACEME\\right)",
+				"lower_limit": 0
+			},
+			"thresholdedReLU": {
+				"equation": "\\mathrm{thresholdedReLU}\\left(x\\right) = \\begin{cases}\nx & x > \\theta \\\\ \n 0 & \\mathrm{otherwise}\n\\end{cases}\n",
+				"equation_no_function_name": "\\begin{cases}\nx & x > \\theta \\\\ \n 0 & \\mathrm{otherwise}\n\\end{cases}\n"
+			},
+			"LeakyReLU": {
+				"equation": "\\mathrm{LeakyReLU}\\left(x\\right) = \\mathrm{max}\\left(\\alpha \\cdot x, x\\right)",
+				"equation_no_function_name": "\\mathrm{max}\\left(ALPHAREPL \\cdot REPLACEME, REPLACEME\\right)"
+			},
+			"elu": {
+				"equation": "\\mathrm{elu}\\left(x\\right) = \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
+				"equation_no_function_name": "\\left\\{\n\\begin{array}{ll}\nREPLACEME & REPLACEME \\geq 0 \\\\\n\\alpha\\left(e^REPLACEME - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right."
+			},
+			"softplus": {
+				"equation": "\\mathrm{softplus}\\left(x\\right) = \\ln\\left(1 + e^x\\right)",
+				"equation_no_function_name": "\\ln\\left(1 + e^REPLACEME\\right)",
+				"lower_limit": 0
+			},
+			"softmax": {
+				"equation": "\\mathrm{softmax}\\left(x\\right) = \\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
+				"equation_no_function_name": "\\frac{e^{z_j}}{\\sum^K_{k=1} e^{z_k}}",
+				"lower_limit": 0,
+				"upper_limit": 1,
+			},
+			"softsign": {
+				"equation": "\\mathrm{softsign}\\left(x\\right) = \\frac{x}{\\left(1 + \\left| x \\right| \\right)}",
+				"equation_no_function_name": "\\frac{REPLACEME}{\\left(1 + \\left| REPLACEME \\right| \\right)}",
+				"lower_limit": -1,
+				"upper_limit": 1
+			},
+			"selu": {
+				"equation": "\\mathrm{selu}\\left(x\\right) = \\mathrm{scale} \\cdot \\mathrm{elu}\\left(x, \\alpha\\right) = \\mathrm{scale} \\cdot \\left\\{\n\\begin{array}{ll}\nx & x \\geq 0 \\\\\n\\alpha\\left(e^x - 1\\right)& \\, x \\lt 0 \\\\\n\\end{array}\n\\right.",
+				"equation_no_function_name": "\\mathrm{scale} \\cdot \\left\\{\n\\begin{array}{ll}\nREPLACEME & REPLACEME \\geq 0 \\\\\n\\alpha\\left(e^REPLACEME - 1\\right)& \\, REPLACEME \\lt 0 \\\\\n\\end{array}\n\\right."
+			},
+			"relu6": {
+				"equation": "\\mathrm{relu6}\\left(x\\right) = \\mathrm{min}\\left(\\mathrm{max}\\left(0, x\\right),6\\right)",
+				"equation_no_function_name": "\\mathrm{min}\\left(\\mathrm{max}\\left(0, REPLACEME\\right),6\\right)",
+				"lower_limit": 0,
+				"upper_limit": 6
+			}
+		};
+
+		var loss_equations = {
+			"meanAbsoluteError": "\\mathrm{MAE} = \\frac{1}{n} \\sum_{i=1}^n \\left|y_i - \\hat{y}_i\\right|",
+			"meanSquaredError": "\\mathrm{MSE} = \\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2",
+			"rmse": "\\mathrm{RMSE} = \\sqrt{\\mathrm{MSE}} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n \\left(y_i - \\hat{y}_i\\right)^2}",
+			"categoricalCrossentropy": "\\text{Categorical Crossentropy:} -\\sum_{i=1}^n y_i \\log\\left(\\hat{y}_i\\right)",
+			"binaryCrossentropy": "\\text{Binary Crossentropy:} -\\frac{1}{n} \\sum_{i=1}^n y_i \\cdot \\log\\left(\\hat{y}_i\\right) + 1\\left(-y_i\\right) \\cdot \\log\\left(1 - \\hat{y}_i\\right)",
+			"meanSquaredLogarithmicError": "\\text{Mean Squared Logarithmic Error:} \\frac{1}{n} \\sum_{i=0}^n \\left(log\\left(y_i + 1\\right)- \\log\\left(\\hat{y}_i + 1\\right)\\right)^2",
+			"poisson": "\\text{Poisson:} \\frac{1}{n} \\sum_{i=0}^n \\left(\\hat{x}_i - y_i\\cdot \\log\\left(\\hat{y}_i\\right)\\right)",
+			"squaredHinge": "\\text{Squared Hinge:} \\sum_{i=0}^n \\left(\\mathrm{max}\\left(0, 1 - y_i \\cdot \\hat{y}_i\\right)^ 2\\right)",
+			"logcosh": "\\text{logcosh:} \\sum_{i=0}^n \\log(\\cosh\\left(\\hat{y}_i - y_i\\right))",
+			"meanAbsolutePercentageError": "\\text{MAPE} = \\frac{1}{n} \\sum_{t=1}^{n} \\left|\\frac{\\hat{y} - y}{\\hat{y}}\\right|"
+		};
+
+		var default_vars = {
+			"g": {
+				"name": "Gradient estimate"
+			},
+			"nabla_operator": {
+				"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
+				"value": "\\begin{align} \\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix} \\end{align}"
+			},
+			"theta": {
+				"name": "Weights"
+			},
+			"eta": {
+				"name": "Learning rate",
+				"origin": "learningRate_OPTIMIZERNAME"
+			},
+			"epsilon": {
+				"name": "Epsilon",
+				"origin": "epsilon_OPTIMIZERNAME"
+			}
+		};
+
+		var optimizer_equations = {
+			"sgd": {
+				"equations": [
+					"g = \\nabla_{\\theta}J(\\theta; x, y)",
+					"\\Delta\\theta = -\\eta \\cdot g",
+					"\\theta = \\theta + \\Delta\\cdot g"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\eta": {
+						"name": "Learning rate",
+						"origin": "learningRate_sgd"
+					},
+					"\\theta": default_vars["theta"],
+					"\\nabla": default_vars["nabla_operator"],
+					"J": {
+						"name": "Loss function"
+					},
+					"g": {
+						"name": "Gradient"
+					},
+					"x": {
+						"name": "Input values"
+					},
+					"y": {
+						"name": "Output values"
+					}
+				}
+			},
+			"momentum": {
+				"equations": [
+					"\\Delta\\theta_t = -\\gamma v_{t-1} - \\eta g_t"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\eta": default_vars["eta"],
+					"\\theta": default_vars["theta"]
+				}
+			},
+			"nag": {
+				"equations": [
+					"\\Delta\\theta_t = -\\gamma v_{t-1} - \\eta \\nabla_\\theta J(\\theta - \\gamma v_{t-1})"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\theta": default_vars["theta"],
+					"\\nabla": default_vars["nabla_operator"],
+					"\\eta": default_vars["eta"],
+				}
+			},
+			"adagrad": {
+				"equations": [
+					"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{G}} \\bigodot g"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\eta": default_vars["eta"],
+					"g": default_vars["g"],
+					"\\theta": default_vars["theta"]
+				}
+			},
+			"adadelta": {
+				"equations": [
+					"\\Delta\\theta_t = - \\frac{\\mathrm{rmsprop}\\left[\\Delta\\theta\\right]_{t-1}}{\\mathrm{rmsprop}\\left[g_t\\right]}g_t"
+				],
+				"dependencies": ["rmsprop"],
+				"variables": {
+					"\\eta": default_vars["eta"],
+					"g": default_vars["g"],
+					"g_t": {
+						"name": "Gradient at time t along } \\theta^j \\text{ "
+					},
+					"\\theta": default_vars["theta"],
+					"\\epsilon": default_vars["epsilon"]
+				}
+			},
+			"adamax": {
+				"equations": [
+					"\\theta = \\theta + \\alpha \\sum^m_{i=1}\\left(y^\\left(i\\right) - h_\\theta\\left(x^{\\left(i\\right)}\\right)\\right)x^{\\left(i\\right)}, \\quad \\text{Repeat until converge}"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\theta": default_vars["theta"],
+					"\\alpha": {
+						"name": "Initial accumulator value"
+					}
+				}
+			},
+			"rmsprop": {
+				"equations": [
+					"\\Delta\\theta = - \\frac{\\eta}{\\sqrt{E\\left[g²\\right]+\\epsilon}}"
+				],
+				"dependencies": [],
+				"variables": {
+					"g": default_vars["g"],
+					"\\eta": default_vars["eta"],
+					"\\epsilon": default_vars["epsilon"]
+				}
+			},
+			"adam": {
+				"equations": [
+					"v_t = \\beta_1 * \\cdot v_{t - 1} - \\left(1 - \\beta_1\\right) * g_t",
+					"s_t = \\beta_2 * \\cdot s_{t - 1} - \\left(1 - \\beta_2\\right) * g^2_t",
+					"\\Delta\\theta = - \\eta\\frac{v_t}{\\sqrt{s_t+\\epsilon}} * g_t",
+					"\\theta_{t+1} = \\theta_t + \\Delta\\theta_t"
+				],
+				"dependencies": [],
+				"variables": {
+					"\\theta": {
+						"name": "Weights"
+					},
+					"\\eta": default_vars["eta"],
+					"\\epsilon": default_vars["epsilon"],
+					"g_t": {
+						"name": "Gradient at time t along } \\theta^j \\text{ "
+					},
+					"v_t": {
+						"name": "Exponential average of gradients along }\\theta_j \\text{ "
+					},
+					"s_t": {
+						"name": "Exponential average of squares of gradients along }\\theta_j \\text{ "
+					},
+					"\\beta_1, \\beta_2": {
+						"name": "Hyperparameter"
+					}
+				}
+			}
+		};
+
+		var activation_string = "";
+		var str = "";
+		var layer_data = this.#get_layer_data();
+
+		var y_layer = [];
+
+		for (var i = 0; i < output_shape[1]; i++) {
+			y_layer.push(["y_{" + i + "}"]);
+		}
+
+		var colors = [];
+		if(asanai_this.#prev_layer_data.length) {
+			colors = this.#color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(asanai_this.#prev_layer_data)), JSON.parse(JSON.stringify(layer_data)));
+		} else {
+			colors = this.#color_compare_old_and_new_layer_data(JSON.parse(JSON.stringify(layer_data)), JSON.parse(JSON.stringify(layer_data)));
+		}
+
+		var input_layer = [];
+
+		for (var i = 0; i < input_shape[1]; i++) {
+			input_layer.push(["x_{" + i + "}"]);
+		}
+
+		var shown_activation_equations = [];
+
+		for (var i = 0; i < this.#model.layers.length; i++) {
+			var this_layer_type = this.#model.layers[i].getClassName().toLowerCase();
+			if(i == 0) {
+				str += "<h2>Layers:</h2>";
+			}
+
+			str += "<div class='temml_me'> \\text{Layer " + i + " (" + this_layer_type + "):} \\qquad ";
+
+			if(this_layer_type == "dense") {
+				var activation_name = this.#model.layers[i].activation.constructor.className;
+
+				if(activation_name == "linear") {
+					//
+				} else if(Object.keys(activation_function_equations).includes(activation_name)) {
+					if(!shown_activation_equations.includes(activation_name)) {
+						var this_activation_string = activation_function_equations[activation_name]["equation"];
+
+						var this_activation_array = [];
+
+						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+							this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+						}
+
+						if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+							this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+						}
+
+						if(this_activation_array.length) {
+							this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+						}
+
+						activation_string += "<div class='temml_me'>" + this_activation_string + "</div><br>\n";
+
+						shown_activation_equations.push(activation_name);
+					}
+				} else {
+					this.err("Activation name '" + activation_name + "' not found");
+				}
+
+				var activation_start = "";
+
+				if(activation_name != "linear") {
+					activation_start = "\\mathrm{\\underbrace{" + activation_name + "}_{\\mathrm{Activation}}}\\left(";
+				}
+
+				var kernel_name = "\\text{Weight Matrix}^{" + asanai_this.#array_size(layer_data[i].kernel).join(" \\times ") + "}";
+
+				if(i == layer_data.length - 1) {
+					str += asanai_this.#array_to_latex(y_layer, "Output") + " = " + activation_start;
+					if(i == 0) {
+						str += asanai_this.#a_times_b(asanai_this.#array_to_latex(input_layer, "Input"), asanai_this.#array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					} else {
+						var repeat_nr = i - 1;
+						if(repeat_nr < 0) {
+							repeat_nr = 0;
+						}
+						str += asanai_this.#a_times_b(asanai_this.#_get_h(repeat_nr), asanai_this.#array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					}
+				} else {
+					str += asanai_this.#_get_h(i) + " = " + activation_start;
+					if(i == 0) {
+						str += asanai_this.#a_times_b(asanai_this.#array_to_latex(input_layer, "Input"), asanai_this.#array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					} else {
+						str += asanai_this.#a_times_b(asanai_this.#_get_h(i - 1), asanai_this.#array_to_latex_color(layer_data[i].kernel, kernel_name, colors[i].kernel));
+					}
+				}
+
+				try {
+					if("bias" in layer_data[i] && layer_data[i].bias.length) {
+						str += " + " + asanai_this.#array_to_latex_color([layer_data[i].bias], "Bias", [colors[i].bias], 1);
+					}
+				} catch (e) {
+					asanai_this.err(e);
+				}
+
+				if(activation_name != "linear") {
+					str += "\\right)";
+				}
+			} else if (this_layer_type == "flatten") {
+				var original_input_shape = JSON.stringify(this.#model.layers[i].getInputAt(0).shape.filter(Number));
+				var original_output_shape = JSON.stringify(this.#model.layers[i].getOutputAt(0).shape.filter(Number));
+				str += this.#_get_h(i) + " = " + this.#_get_h(i == 0 ? 0 : i - 1) + " \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+			} else if (this_layer_type == "reshape") {
+				var original_input_shape = JSON.stringify(this.#model.layers[i].getInputAt(0).shape.filter(Number));
+				var original_output_shape = JSON.stringify(this.#model.layers[i].getOutputAt(0).shape.filter(Number));
+				var general_reshape_string = "_{\\text{Shape: " + original_input_shape + "}} \\xrightarrow{\\text{Reshape}} \\text{New Shape: }" + original_output_shape;
+				if(i > 1) {
+					str += this.#_get_h(i) + " = " + this.#_get_h(i - 1) + general_reshape_string;
+				} else {
+					str += this.#array_to_latex(input_layer, "Input") + " = h" + general_reshape_string;
+				}
+			} else if (["elu", "leakyReLU", "reLU", "softmax", "thresholdedReLU"].includes(this_layer_type)) {
+				var activation_name = this_layer_type;
+				if(activation_name == "leakyReLU") {
+					activation_name = "LeakyReLU";
+				} else if(activation_name == "reLU") {
+					activation_name = "relu";
+				}
+
+				var prev_layer_name = "";
+
+				if(i == 0) {
+					prev_layer_name += this.#array_to_latex(input_layer, "Input");
+				} else {
+					prev_layer_name += this.#_get_h(i - 1);
+				}
+
+				if(i == layer_data.length - 1) {
+					str += this.#array_to_latex(y_layer, "Output") + " = ";
+				} else {
+					str += this.#_get_h(i) + " = ";
+				}
+
+				if(Object.keys(activation_function_equations).includes(activation_name)) {
+					var this_activation_string = activation_function_equations[activation_name]["equation_no_function_name"];
+
+					this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+					var alpha = asanai_this.#parse_float(get_item_value(i, "alpha"));
+					if(typeof(alpha) == "number") {
+						this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
+						this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
+					}
+
+					var theta = asanai_this.#parse_float(get_item_value(i, "theta"));
+					if(typeof(theta) == "number") {
+						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+					}
+
+					var max_value_item = $($(".layer_setting")[i]).find(".max_value");
+
+					this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
+
+					var this_activation_array = [];
+
+					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+						this_activation_array.push("\\text{Lower-limit: } " + activation_function_equations[activation_name]["lower_limit"]);
+					}
+
+					if(Object.keys(activation_function_equations[activation_name]).includes("upper_limit")) {
+						this_activation_array.push("\\text{Upper-limit: } " + activation_function_equations[activation_name]["upper_limit"]);
+					}
+
+					if(max_value_item.length) {
+						var max_value = max_value_item.val();
+						this_activation_array.push("\\text{Capped at maximally " + max_value + "}");
+					}
+
+					if(this_activation_array.length) {
+						this_activation_string = this_activation_string + "\\qquad (" + this_activation_array.join(", ") + ")";
+					}
+
+					str += this_activation_string + "\n";
+				} else {
+					//log("Activation name '" + activation_name + "' not found");
+				}
+			} else if (this_layer_type == "batchNormalization") {
+				// not used
+				//x* = (x - E[x]) / sqrt(var(x))
+
+				var prev_layer_name = "";
+
+				var outname = "";
+
+				if(i == layer_data.length - 1) {
+					outname = this.#array_to_latex(y_layer, "Output") + " \\longrightarrow ";
+				} else {
+					outname += this.#_get_h(i) + " \\longrightarrow ";
+				}
+
+				var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
+
+				var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
+
+				var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+
+				var beta_string = "";
+				var gamma_string = "";
+				if("beta" in layer_data[i]) {
+					beta_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].beta, parse_int($("#decimal_points_math_mode").val())));
+					beta_string = "\\displaystyle " + beta_string;
+				}
+				if("gamma" in layer_data[i]) {
+					gamma_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].gamma, parse_int($("#decimal_points_math_mode").val())));
+					gamma_string = "\\displaystyle " + gamma_string;
+				}
+
+				var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_string + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_string + "}}_{\\text{Scaling\\&shifting}}";
+
+				var between_equations = ",\\qquad ";
+				var skip_between_equations = ",\\\\[10pt]\\\\\n";
+
+				str += "\\begin{array}{c}\n";
+				str += "\\displaystyle " + mini_batch_mean + between_equations;
+				str += "\\displaystyle " + mini_batch_variance + between_equations;
+				str += "\\displaystyle " + x_equation + skip_between_equations;
+				str += "\\displaystyle " + outname + y_equation;
+				str += "\\end{array}\n";
+			} else if (this_layer_type == "dropout") {
+				var dropout_rate = asanai_this.#parse_int(asanai_this.#parse_float($($(".layer_setting")[i]).find(".dropout_rate").val()) * 100);
+				str += "\\text{Setting " + dropout_rate + "\\% of the input values to 0 randomly}";
+			} else if (this_layer_type == "DebugLayer") {
+				str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
+			} else if (this_layer_type == "gaussianNoise") {
+				str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+			} else if (this_layer_type == "conv1d") {
+				str += this.#_get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + this.#_get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			} else if (this_layer_type == "conv1d") {
+				str += this.#_get_h(i + 1) + "\\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K}" + this.#_get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
+			} else if (this_layer_type == "conv2d") {
+				str += this.#_get_h(i + 1) + " = \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + this.#_get_h(i) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right) + \\text{bias}(k)";
+			} else if (this_layer_type == "conv3d") {
+				str += this.#_get_h(i + 1) + " \\sum_{i=1}^{N} \\sum_{j=1}^{M} \\sum_{l=1}^{P} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} \\sum_{r=1}^{R} " + this.#_get_h(i) + "(x+i, y+j, z+l, c) \\times \\text{kernel}(p, q, r, c, k) \\right) + \\text{bias}(k)";
+			} else if (this_layer_type == "maxPooling1D") {
+				str += this.#_get_h(i + 1) + "\\max_{i=1}^{N}" + this.#_get_h(i) + "(x+i)";
+			} else if (this_layer_type == "maxPooling2D") {
+				str += this.#_get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} " + this.#_get_h(i) + "(x+i, y+j)";
+			} else if (this_layer_type == "maxPooling3D") {
+				str += this.#_get_h(i + 1) + "\\max_{i=1}^{N} \\max_{j=1}^{M} \\max_{l=1}^{P} " + this.#_get_h(i) + "(x+i, y+j, z+l)";
+			} else {
+				str += "\\mathrm{(The equations for this layer are not yet defined)}";
+				this.log("Invalid layer type for layer " + i + ": " + this_layer_type);
+			}
+
+			str += "</div><br>";
+			/*
+			if(i != model.layers.length - 1) {
+				str += "<hr class='full_width_hr'>";
+			}
+			*/
+		}
+
+		if(Object.keys(loss_equations).includes($("#loss").val())) {
+			str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[$("#loss").val()] + "</div><br>";
+		}
+
+		var optimizer = $("#optimizer").val();
+		if(Object.keys(optimizer_equations).includes(optimizer)) {
+			var this_optimizer = optimizer_equations[optimizer];
+
+			var dependencies = this_optimizer["dependencies"];
+
+			str += "<h2>Optimizer:</h2>\n";
+
+			if(this_optimizer.variables) {
+				var varnames = Object.keys(this_optimizer.variables);
+				//log("a", this_optimizer.variables);
+				for (var m = 0; m < varnames.length; m++) {
+					//log("b", this_optimizer.variables[varnames[m]]);
+					var thisvarname = varnames[m];
+					if(!m) {
+						str += "<h3>Variables and definitions:</h3>\n";
+					}
+
+					var origin = this_optimizer.variables[thisvarname]["origin"];
+
+					str += "<div class='temml_me'> \\displaystyle \\text{" + this_optimizer.variables[thisvarname]["name"] + ": } " + thisvarname;
+					if(Object.keys(this_optimizer.variables[thisvarname]).includes("value")) {
+						str += " = " + this_optimizer.variables[thisvarname]["value"];
+					} else if(origin !== undefined) {
+						origin = origin.replace("OPTIMIZERNAME", optimizer);
+						var valofparam = $("#" + origin).val();
+						str += " = " + valofparam;
+					}
+					str += "</div><br>";
+
+					if(Object.keys(this_optimizer.variables).includes("example")) {
+						str += "<div class='temml_me'> \\displaystyle " + this_optimizer.variables.example + " </div><br>";
+					}
+				}
+
+				str += "<h3>Equations for optimizers:</h3>\n";
+			}
+
+			for (var m = 0; m < dependencies.length; m++) {
+				if(dependencies[m] != optimizer) {
+					str += "<div class='temml_me'>\\displaystyle \\text{" + dependencies[m] + ": }" + optimizer_equations[dependencies[m]]["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+				}
+			}
+
+			str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
+		} else {
+			this.log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+		}
+
+		this.#prev_layer_data = layer_data;
+
+		if(activation_string && str) {
+			return "<h2>Activation functions:</h2> " + activation_string + str;
+		} else {
+			if(str) {
+				return str;
+			}
+		}
+
+	}
+
+	async #write_model_to_latex_to_page (reset_prev_layer_data, force, asanai_this) {
 		if(!this.#can_be_shown_in_latex()) {
 			this.err(`Cannot be shown in LaTeX`);
 			return;
@@ -5292,10 +5861,10 @@ class asanAI {
 		}
 
 		if(reset_prev_layer_data) {
-			prev_layer_data = [];
+			this.#prev_layer_data = [];
 		}
 
-		var latex = model_to_latex();
+		var latex = this.model_to_latex(asanai_this);
 
 		if(latex) {
 			$("#math_tab_code").html(latex);
@@ -5312,9 +5881,9 @@ class asanAI {
 						await _temml();
 					} catch (e) {
 						if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
-							info("" + e);
+							this.info("" + e);
 						} else if (("" + e).includes("too many function arguments")) {
-							err("TEMML: " + e);
+							this.err("TEMML: " + e);
 						} else {
 							throw new Error(e);
 						}
@@ -5331,5 +5900,310 @@ class asanAI {
 		} else {
 			hide_tab_label("math_tab_label");
 		}
+	}
+
+	#color_compare_old_and_new_layer_data (old_data, new_data) {
+		this.assert(old_data.length == new_data.length, "Old data and new data are vastly different. Have you changed the number of layers without resetting prev_layer_data?");
+
+		var default_color = "#ffffff";
+		var darkmode = 0;
+		if(this.#is_dark_mode) {
+			darkmode = 1;
+		}
+
+		if(darkmode) {
+			default_color = "#353535";
+		}
+
+		var color_diff = [];
+
+		for (var layer_nr = 0; layer_nr < old_data.length; layer_nr++) {
+			var this_old_layer = old_data[layer_nr];
+			var this_new_layer = new_data[layer_nr];
+
+			this.assert(Object.keys(this_old_layer).join(",") == Object.keys(this_new_layer).join(","), "Old data and new data for layer " + layer_nr + " have different length data sets");
+
+			var keys = Object.keys(this_old_layer);
+
+			color_diff[layer_nr] = {};
+
+			for (var key_nr = 0; key_nr < keys.length; key_nr++) {
+				var this_key = keys[key_nr];
+
+				if(!(this_old_layer[this_key].length == this_new_layer[this_key].length)) {
+					//wrn("Keys are not equal for layer data of " + layer_nr + ", key: " + this_key);
+					continue;
+				}
+
+				color_diff[layer_nr][this_key] = [];
+
+				var this_old_sub_array = this_old_layer[this_key];
+				var this_new_sub_array = this_new_layer[this_key];
+
+				for (var item_nr = 0; item_nr < this_old_sub_array.length; item_nr++) {
+					if(Object.keys(this_new_sub_array).includes("" + item_nr)) {
+						if(Object.keys(this_old_sub_array).includes("" + item_nr)) {
+							var this_new_item = this_new_sub_array[item_nr];
+							var this_old_item = this_old_sub_array[item_nr];
+
+							if(typeof(this_old_item) == "number") { // sub array is all numbers
+								if(this_old_item == this_new_item) {
+									color_diff[layer_nr][this_key][item_nr] = default_color;
+								} else {
+									if(this_old_item > this_new_item) {
+										color_diff[layer_nr][this_key][item_nr] = "#cf1443";
+									} else if(this_old_item < this_new_item) {
+										color_diff[layer_nr][this_key][item_nr] = "#2E8B57";
+									}
+								}
+							} else if (Array.isArray(this_old_item)) { // sub array contains more arrays (kernels most probably))
+								color_diff[layer_nr][this_key][item_nr] = [];
+								for (var kernel_nr = 0; kernel_nr < this_old_item.length; kernel_nr++) {
+									try {
+										if(this_old_item[kernel_nr] == this_new_item[kernel_nr]) {
+											color_diff[layer_nr][this_key][item_nr][kernel_nr] = default_color;
+										} else {
+											if(this_old_item[kernel_nr] > this_new_item[kernel_nr]) {
+												color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#cf1443";
+											} else if(this_old_item[kernel_nr] < this_new_item[kernel_nr]) {
+												color_diff[layer_nr][this_key][item_nr][kernel_nr] = "#2E8B57";
+											}
+										}
+									} catch (e) {
+										wrn(e);
+										console.trace();
+									}
+								}
+							} else {
+								this.err(`[color_compare_old_and_new_layer_data] this_old_item is neither a number nor an array.`);
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		return color_diff;
+	}
+
+	#array_to_latex (array, desc, newline_instead_of_ampersand) {
+		var str = "";
+		str = "\\underbrace{\\begin{pmatrix}\n";
+
+		var joiner = " & ";
+		if(newline_instead_of_ampersand) {
+			joiner = " \\\\\n";
+		}
+
+		var arr = [];
+
+		for (var i = 0; i < array.length; i++) {
+			array[i] = this.#array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val()));
+			arr.push(array[i].join(joiner));
+		}
+
+		str += arr.join("\\\\\n");
+
+		str += "\n\\end{pmatrix}}";
+		if(desc) {
+			str += "_{\\mathrm{" + desc + "}}\n";
+		}
+
+		return str;
+	}
+
+	#a_times_b (a, b) {
+		var res = a + " \\times " + b;
+
+		return res;
+	}
+
+	#_get_h (i) {
+		var res = "h_{\\text{Shape: }" + this.#get_layer_output_shape_as_string(i) + "}" + "'".repeat(i);
+
+		return res;
+	}
+
+	#get_layer_data() {
+		if(!this.#model) {
+			this.wrn("this.#model not found for restart_fcnn");
+			return;
+		}
+
+		if(!Object.keys(this.#model).includes("layers")) {
+			this.wrn("this.#model.layers not found for restart_fcnn");
+			return;
+		}
+
+		if(this.#model.layers.length == 0) {
+			this.err("this.#model.layers.length is 0");
+			return;
+		}
+
+		var layer_data = [];
+
+		var possible_weight_names = ["kernel", "bias", "beta", "gamma", "moving_mean", "moving_variance"];
+
+		for (var i = 0; i < this.#model.layers.length; i++) {
+			var this_layer_weights = {};
+
+			for (var n = 0; n < possible_weight_names.length; n++) {
+				this_layer_weights[possible_weight_names[n]] = [];
+			}
+
+			try {
+				if("weights" in this.#model.layers[i]) {
+					for (var k = 0; k < this.#model.layers[i].weights.length; k++) {
+						var wname = this.get_weight_name_by_layer_and_weight_index(i, k);
+						if(possible_weight_names.includes(wname)) {
+							this_layer_weights[wname] = Array.from(this.array_sync(this.#model.layers[i].weights[k].val));
+						} else {
+							this.err("Invalid wname: " + wname);
+							log(model.layers[i].weights[k]);
+						}
+					}
+				}
+			} catch (e) {
+				if(("" + e).includes("Tensor is disposed")) {
+					this.dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+				} else {
+					this.err(e);
+				}
+			}
+
+			layer_data.push(this_layer_weights);
+		}
+
+		return layer_data;
+	}
+
+	get_weight_name_by_layer_and_weight_index (layer, index) {
+		this.assert(typeof(layer) == "number", layer + " is not a number");
+		this.assert(typeof(index) == "number", index + " is not a number");
+
+		var original_name = this.#model.layers[layer].weights[index].name;
+
+		var matches = /^.*\/(.*?)(?:_\d+)?$/.exec(original_name);
+		if(matches === null) {
+			this.err("matches is null. Could not determine name from " + original_name);
+		} else if(1 in matches) {
+			return matches[1];
+		} else {
+			this.err("Could not determine name from " + original_name + ", matches: ");
+			this.log(matches);
+			console.trace();
+		}
+
+		return null;
+	}
+
+	#get_layer_output_shape_as_string (i) {
+		this.assert(typeof(i) == "number", i + " is not a number");
+		this.assert(i < this.#model.layers.length, i + " is larger than " + (this.#model.layers.length - 1));
+		if(Object.keys(this.#model).includes("layers")) {
+			try {
+				var str = this.#model.layers[i].outputShape.toString();
+				str = str.replace(/^,|,$/g,"");
+				str = "[" + str + "]";
+				return str;
+			} catch (e) {
+				this.err(e);
+			}
+		} else {
+			log("Layers not in this.#model");
+		}
+	}
+
+	#array_size (ar) {
+		var row_count = ar.length;
+		var row_sizes = [];
+
+		for(var i = 0; i < row_count; i++){
+			row_sizes.push(ar[i].length);
+		}
+
+		var res = [row_count, Math.min.apply(null, row_sizes)];
+
+		return res;
+	}
+
+	#array_to_latex_color (original_array, desc, color=null, newline_instead_of_ampersand=0) {
+		if(!color) {
+			return this.#array_to_latex(original_array, desc, newline_instead_of_ampersand);
+		}
+
+		var array = JSON.parse(JSON.stringify(original_array));
+		var str = "\\underbrace{\\begin{pmatrix}\n";
+
+		var joiner = " & ";
+		if(newline_instead_of_ampersand) {
+			joiner = " \\\\\n";
+		}
+
+		var arr = [];
+
+		for (var i = 0; i < array.length; i++) {
+			try {
+				array[i] = this.#array_to_fixed(array[i], this.#decimal_points_math_mode));
+			} catch (e) {
+				this.err("ERROR in math mode (e, array, i, color):", e, array, i, color);
+			}
+
+			try {
+				array[i] = this.#array_to_color(array[i], color[i]);
+				arr.push(array[i].join(joiner));
+			} catch (e) {
+				this.err("ERROR in math mode (e, array, i, color):", e, array, i, color);
+			}
+		}
+
+		str += arr.join("\\\\\n");
+
+		str += "\n\\end{pmatrix}}";
+		if(desc) {
+			str += "_{\\mathrm{" + desc + "}}\n";
+		}
+
+		return str;
+	}
+
+	#array_to_fixed (array, fixnr) {
+		if(fixnr == 0) {
+			return array;
+		}
+		var x = 0;
+		var len = array.length;
+		while(x < len) {
+			if(this.#looks_like_number(array[x])) {
+				array[x] = this.#parse_float(this.#parse_float(array[x]).toFixed(fixnr));
+			}
+			x++;
+		}
+
+		return array;
+	}
+
+	#array_to_color (array, color) {
+		var x = 0;
+		var len = array.length;
+		var new_array = [];
+		while(x < len) {
+			var this_color = "";
+
+			if(color && Object.keys(color).includes("" + x)) {
+				this_color = color[x];
+			}
+
+			if(this_color == "#353535" || this_color == "#ffffff" || this_color == "white" || this_color == "black" || !this_color) {
+				new_array.push(array[x]);
+			} else {
+				new_array.push("\\colorbox{" + this_color + "}{" + array[x] + "}");
+			}
+
+			x++;
+		}
+
+		return new_array;
 	}
 }
