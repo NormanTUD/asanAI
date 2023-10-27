@@ -2029,7 +2029,7 @@ class asanAI {
 	}
 
 	get_elements_by_xpath (STR_XPATH) {
-		this.assert(typeof(STR_XPATH) == "string", "[get_element_xpath] Parameter is not string, but " + typeof(STR_XPATH));
+		this.assert(typeof(STR_XPATH) == "string", "[get_elements_by_xpath] Parameter is not string, but " + typeof(STR_XPATH));
 
 		var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
 		var xnodes = [];
@@ -3992,7 +3992,7 @@ class asanAI {
 		for (var i = 0; i < image_elements.length; i++) {
 			var img_elem = image_elements[i];
 
-			var img_elem_xpath = get_element_xpath(img_elem);
+			var img_elem_xpath = this.#get_element_xpath(img_elem);
 			
 			var this_predicted_array = [];
 
@@ -4475,7 +4475,7 @@ class asanAI {
 
 		for (var i = 0; i < imgs.length; i++) {
 			var img_elem = imgs[i];
-			var img_elem_xpath = get_element_xpath(img_elem);
+			var img_elem_xpath = this.#get_element_xpath(img_elem);
 
 			var predicted_tensor = this.#confusion_matrix_and_grid_cache[img_elem_xpath];
 
@@ -5872,7 +5872,9 @@ class asanAI {
 			try {
 				var math_tab_code_elem = $("#math_tab_code")[0];
 
-				var xpath = get_element_xpath(math_tab_code_elem);
+				this.assert(math_tab_code_elem, "math_tab_code_elem could not be found");
+
+				var xpath = this.#get_element_xpath(math_tab_code_elem);
 				var new_md5 = await md5($(math_tab_code_elem).html());
 				var old_md5 = math_items_hashes[xpath];
 
@@ -5891,14 +5893,16 @@ class asanAI {
 					math_items_hashes[xpath] = new_md5;
 				}
 			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
 				if(("" + e).includes("can't assign to property")) {
 					this.wrn("failed temml:", e);
 				} else {
-					await write_error(e);
+					this.err(e);
 				}
 			}
-		} else {
-			hide_tab_label("math_tab_label");
 		}
 	}
 
