@@ -5999,7 +5999,7 @@ class asanAI {
 		var arr = [];
 
 		for (var i = 0; i < array.length; i++) {
-			array[i] = this.#array_to_fixed(array[i], parse_int($("#decimal_points_math_mode").val()));
+			array[i] = this.#array_to_fixed(array[i], this.#decimal_points_math_mode);
 			arr.push(array[i].join(joiner));
 		}
 
@@ -6145,7 +6145,7 @@ class asanAI {
 
 		for (var i = 0; i < array.length; i++) {
 			try {
-				array[i] = this.#array_to_fixed(array[i], this.#decimal_points_math_mode));
+				array[i] = this.#array_to_fixed(array[i], this.#decimal_points_math_mode);
 			} catch (e) {
 				this.err("ERROR in math mode (e, array, i, color):", e, array, i, color);
 			}
