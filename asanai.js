@@ -2,9 +2,14 @@
 
 class asanAI {
 	#current_epoch = 0;
+	#max_epoch = 30;
 	#plotly_div = "";
 	#this_training_start_time = null;
 	#max_number_of_images_in_grid = 50;
+	#is_classification = true;
+	#lang = "en";
+	#language = {}
+	#started_training = false;
 
 	#printed_msgs = [];
 	#confusion_matrix_and_grid_cache = {};
@@ -215,6 +220,14 @@ class asanAI {
 				delete args["labels"];
 			}
 
+			if(Object.keys(args).includes("translations_file")) {
+				this.load_languages(args["translations_file"])
+
+				delete args["translations_file"];
+			} else {
+				this.load_languages();
+			}
+
 			if(Object.keys(args).includes("model")) {
 				this.set_model(args.model);
 
@@ -281,6 +294,22 @@ class asanAI {
 			}
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
+		}
+	}
+
+	load_languages (filename = 'translations.json') {
+		try {
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', filename, false);
+			xhr.send();
+
+			if (xhr.status === 200) {
+				this.#language = JSON.parse(xhr.responseText);
+			} else {
+				throw new Error(`Failed to load JSON file: ${filename}`);
+			}
+		} catch (error) {
+			throw new Error(`Failed to load ${filename}.`);
 		}
 	}
 
@@ -1952,9 +1981,15 @@ class asanAI {
 
 		this.#model = _m;
 
+		if(this.#model.output.shape.length == 2) {
+			this.#is_classification = true;
+		}
+
 		this.#redo_what_has_to_be_redone(_restart_webcam);
 
 		this.#currently_switching_models = false;
+
+
 		return this.#model;
 	}
 
@@ -3837,6 +3872,27 @@ class asanAI {
 		log(...args);
 	}
 
+	#get_last_layer_activation_function () {
+		if(!this.#model) {
+			this.wrn("this.#model not found for restart_fcnn");
+			return;
+		}
+
+		if(!Object.keys(this.#model).includes("layers")) {
+			this.wrn("this.#model.layers not found for restart_fcnn");
+			return;
+		}
+
+		if(this.#model.layers.length == 0) {
+			this.err("this.#model.layers.length is 0");
+			return;
+		}
+
+		var last_layer_activation = this.#model.layers[this.#model.layers.length - 1].getConfig().activation;
+
+		return last_layer_activation;
+	}
+
 	async #visualize_train () {
 		if(!$("#visualize_images_in_grid").is(":checked")) {
 			$("#canvas_grid_visualization").html("");
@@ -3849,7 +3905,7 @@ class asanAI {
 			return;
 		}
 
-		if(!is_classification) {
+		if(!this.#is_classification) {
 			this.#log_once("Train visualization only works for classification problems.");
 			$("#canvas_grid_visualization").html("");
 			return;
@@ -3861,7 +3917,7 @@ class asanAI {
 			return;
 		}
 
-		if(get_last_layer_activation_function() != "softmax") {
+		if(this.#get_last_layer_activation_function() != "softmax") {
 			this.#log_once("Train visualization only works when the last layer is softmax.");
 			$("#canvas_grid_visualization").html("");
 			return;
@@ -4086,7 +4142,7 @@ class asanAI {
 
 		callbacks["onBatchBegin"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
-			if(!started_training) {
+			if(!asanai_this.#started_training) {
 				model.stopTraining = true;
 			}
 
@@ -4100,18 +4156,18 @@ class asanAI {
 		callbacks["onEpochBegin"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#current_epoch++;
-			var max_number_epochs = get_epochs();
+			var max_number_epochs = asanai_this.#max_epoch;
 			var current_time = Date.now();
 			var epoch_time = (current_time - asanai_this.#this_training_start_time) / asanai_this.#current_epoch;
 			var epochs_left = max_number_epochs - asanai_this.#current_epoch;
-			var seconds_left = parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
-			var time_estimate = human_readable_time(seconds_left);
+			var seconds_left = asanai_this.#parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+			var time_estimate = asanai_this.#human_readable_time(seconds_left);
 
 			//$("#training_progress_bar").show();
 
 			asanai_this.#set_document_title("[" + asanai_this.#current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI");
 
-			var percentage = parse_int((asanai_this.#current_epoch / max_number_epochs) * 100);
+			var percentage = asanai_this.#parse_int((asanai_this.#current_epoch / max_number_epochs) * 100);
 			$("#training_progressbar>div").css("width", percentage + "%");
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 		};
@@ -4140,13 +4196,13 @@ class asanAI {
 
 			var this_plot_data = [training_logs_batch["loss"]];
 
-			if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+			if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
-					Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+					Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
+					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
 				} else {
-					Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+					Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
+					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
 				}
 				last_batch_plot_time = Date.now();
 			}
@@ -4204,22 +4260,22 @@ class asanAI {
 			$("#plotly_epoch_history").parent().show();
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
-				Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["epochs"]));
 			} else {
-				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["epochs"]));
 			}
 
 			await asanai_this.#visualize_train();
 
 			var this_plot_data = [training_logs_batch["loss"]];
-			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
+			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
 			last_batch_plot_time = false;
 
 			if(training_logs_epoch["loss"].x.length >= 2) {
 				var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
 				var th = 18;
-				var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, parse_int(0.9 * th));
+				var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, asanai_this.#parse_int(0.9 * th));
 				$("#tiny_graph").html("");
 				$("#tiny_graph").append(plotCanvas).show();
 			} else {
@@ -4254,6 +4310,74 @@ class asanAI {
 		return callbacks;
 	}
 
+	#human_readable_time(seconds, start="", end="") {
+		if (!seconds) {
+			return this.#language[this.#lang]["one_second"];
+		}
+
+		if(seconds > 86400 * 365) {
+			var params = [];
+			if(start != "") {
+				params.push("Start:");
+				params.push(start);
+			}
+
+			if(end != "") {
+				params.push("End:");
+				params.push(end);
+			}
+
+			wrn("[human_readable_time] Seconds is very large:", seconds, "Please check the source of that", params);
+			console.trace();
+
+			return null;
+		}
+
+		var levels = [
+			[Math.floor(seconds / 31536000), this.#language[this.#lang]["years"]],
+			[Math.floor((seconds % 31536000) / 86400), this.#language[this.#lang]["days"]],
+			[Math.floor(((seconds % 31536000) % 86400) / 3600), this.#language[this.#lang]["hours"]],
+			[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), this.#language[this.#lang]["minutes"]],
+			[(((seconds % 31536000) % 86400) % 3600) % 60, this.#language[this.#lang]["seconds"]],
+		];
+
+		var returntext = "";
+
+		if (levels[0][0] !== 0) {
+			returntext += levels[0][0] + " " + (levels[0][0] === 1 ? levels[0][1].substr(0, levels[0][1].length - 1) : levels[0][1]);
+		}
+
+		if (levels[1][0] !== 0) {
+			if (returntext) {
+				returntext += ", ";
+			}
+			returntext += levels[1][0] + " " + (levels[1][0] === 1 ? levels[1][1].substr(0, levels[1][1].length - 1) : levels[1][1]);
+		}
+
+		if (levels[2][0] !== 0) {
+			if (returntext) {
+				returntext += ", ";
+			}
+			returntext += levels[2][0] + " " + (levels[2][0] === 1 ? levels[2][1].substr(0, levels[2][1].length - 1) : levels[2][1]);
+		}
+
+		if (levels[3][0] !== 0) {
+			if (returntext) {
+				returntext += ", ";
+			}
+			returntext += levels[3][0] + " " + (levels[3][0] === 1 ? levels[3][1].substr(0, levels[3][1].length - 1) : levels[3][1]);
+		}
+
+		if (levels[4][0] !== 0) {
+			if (returntext) {
+				returntext += ", ";
+			}
+			returntext += levels[4][0] + " " + (levels[4][0] === 1 ? levels[4][1].substr(0, levels[4][1].length - 1) : levels[4][1]);
+		}
+
+		return returntext;
+	}
+
 	async #confusion_matrix_to_page () {
 		var labels = this.get_labels();
 
@@ -4261,7 +4385,7 @@ class asanAI {
 			return;
 		}
 
-		if(!is_classification) {
+		if(!this.#is_classification) {
 			return;
 		}
 
@@ -4279,25 +4403,25 @@ class asanAI {
 
 	async #confusion_matrix(classes) {
 		if(!classes.length) {
-			if(current_epoch < 2) {
+			if(this.#current_epoch < 2) {
 				wrn("[confusion_matrix] No classes found");
 			}
 			return "";
 		}
 
-		if(!is_classification) {
+		if(!this.#is_classification) {
 			wrn("[confusion_matrix] Only works with classification");
 			return "";
 		}
 
-		if(!model) {
+		if(!this.#model) {
 			wrn("[confusion_matrix] model not defined. Cannot continue");
 		}
 		
 		var imgs = $("#photos").find("img,canvas");
 
 		if(!imgs.length) {
-			if(current_epoch == 1) {
+			if(this.#current_epoch == 1) {
 				wrn("[confusion_matrix] No images found");
 			}
 			return "";
@@ -4462,6 +4586,13 @@ class asanAI {
 		if(!Object.keys(args).includes("epochs")) {
 			this.err(`[fit]: third argument, args, seems not to contain epochs. Must at least contain epochs and batchSize`);
 			return;
+		} else {
+			if(this.#looks_like_number(args["epochs"])) {
+				this.#max_epoch = this.#parse_int(args["epochs"]);
+			} else {
+				this.err(`Epochs does not look like a number`);
+				return;
+			}
 		}
 
 		if(!Object.keys(args).includes("batchSize")) {
@@ -4537,6 +4668,7 @@ class asanAI {
 		}
 
 		try {
+			this.#started_training = true;
 			var history = this.#model.fit(_x, _y, args);
 
 			this.#redo_what_has_to_be_redone(false);
@@ -4550,10 +4682,12 @@ class asanAI {
 			if(("" + e).includes("e is null")) {
 				return false;
 			} else {
+				this.#started_training = false;
 				throw new Error(e);
 			}
 		}
 
+		this.#started_training = false;
 		this.set_model(this.#model);
 
 		return history;

@@ -80,7 +80,11 @@
 				];
 
 
-				asanai = new asanAI({model_data: model_data, optimizer_config: optimizer_config});
+				asanai = new asanAI({
+					model_data: model_data,
+					optimizer_config: optimizer_config,
+					translations_file: "translations.php?print=1"
+				});
 
 				asanai.show_status_bar();
 				//asanai.show_ribbon(); // yet tbd
