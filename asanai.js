@@ -4255,6 +4255,8 @@ class asanAI {
 	}
 
 	async #confusion_matrix_to_page () {
+		var labels = this.get_labels();
+
 		if(!labels && labels.length != 0) {
 			return;
 		}
