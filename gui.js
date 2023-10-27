@@ -2588,8 +2588,13 @@ async function set_config(index) {
 			assert(Array.isArray(first_layer_batch_input_shape), "first_layer_batch_input_shape is not an array");
 
 			if(first_layer_batch_input_shape.length == 4 && first_layer_batch_input_shape[first_layer_batch_input_shape.length - 1] == 3) {
-				change_height(first_layer_batch_input_shape[1]);
-				change_width(first_layer_batch_input_shape[2]);
+				var new_height = first_layer_batch_input_shape[1];
+				var new_width = first_layer_batch_input_shape[2];
+
+				$("#width").val(new_width).trigger("change");
+				$("#height").val(new_height).trigger("chance");
+
+				await updated_page(1);
 			}
 
 			if (!config["model_structure"]) {

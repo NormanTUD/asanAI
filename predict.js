@@ -1639,7 +1639,7 @@ async function predict_handdrawn () {
 	var predictions_tensor = null;
 	try {
 		try {
-			predictions_tensor = await __predict([predict_data]);
+			predictions_tensor = await __predict(predict_data);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
