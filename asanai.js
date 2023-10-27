@@ -90,6 +90,8 @@ class asanAI {
 	#images_to_repredict_divs = [];
 	#custom_tensors = {};
 
+	#optimizer = null;
+
 	ribbon_data = {
 		"ribbon": {
 			"tabs": [
@@ -235,7 +237,6 @@ class asanAI {
 		}
 	}
 
-
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
@@ -375,6 +376,10 @@ class asanAI {
 		if(model_data.length == 0) {
 			this.err(`[create_model_from_model_data] model_data has no layers`);
 			return;
+		}
+
+		if("optimizer" in optimizer_config) {
+			this.#optimizer = optimizer_config["optimizer"];
 		}
 
 		var model_uuid = this.#uuidv4();
@@ -5794,7 +5799,7 @@ class asanAI {
 			str += "<h2>Loss:</h2><div class='temml_me'>" + loss_equations[$("#loss").val()] + "</div><br>";
 		}
 
-		var optimizer = $("#optimizer").val();
+		var optimizer = this.#optimizer;
 		if(Object.keys(optimizer_equations).includes(optimizer)) {
 			var this_optimizer = optimizer_equations[optimizer];
 
@@ -5840,7 +5845,8 @@ class asanAI {
 
 			str += "<div class='temml_me'> \\displaystyle \\text{" + optimizer + ": }" + this_optimizer["equations"].join(" </div><br>\n<div class='temml_me'> ") + " </div><br>";
 		} else {
-			this.log("<h2>Unknown optimizer: " + optimizer + "</h2>");
+			this.err("Unknown optimizer: " + optimizer);
+			return;
 		}
 
 		this.#prev_layer_data = layer_data;
@@ -6239,9 +6245,9 @@ class asanAI {
 			await delay(200);
 		}
 
-		try {
-			$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
-			$(".temml_me").each((i, e) => {
+		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+		$(".temml_me").each((i, e) => {
+			try {
 				if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
 					var original_latex = e.textContent;
 
@@ -6263,10 +6269,11 @@ class asanAI {
 						create_centered_window_with_text(original_latex);
 					});
 				}
-			});
-		} catch (e) {
-			this.err("" + e);
-		}
+			} catch (e) {
+				this.err("" + e);
+			}
+		});
+
 		$("#temml_blocker").remove();
 	}
 }
