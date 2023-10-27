@@ -1649,3 +1649,6 @@ var last_fcnn_hash = "";
 var debug = false;
 
 var confusion_matrix_and_grid_cache = {};
+
+var old_x_str = "";
+var old_y_str = "";

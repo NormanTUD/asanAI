@@ -4460,13 +4460,28 @@ async function show_csv_file(disabled_show_head_data) {
 
 		shape_preview = shape_preview_color + shape_preview + "</div>";
 
-		shape_preview += "<br>X: <pre>" + _tensor_print_to_string(parsed_data.x) + "</pre>";
+		var x_str = _tensor_print_to_string(parsed_data.x);
+		var y_str = _tensor_print_to_string(parsed_data.y);
+
+		if(x_str.includes("error_msg") && old_x_str) {
+			x_str = old_x_str;
+		}
+
+		if(y_str.includes("error_msg") && old_y_str) {
+			y_str = old_y_str;
+		}
+
+		old_x_str = x_str;
+		old_y_str = y_str;
+
+		shape_preview += "<br>X: <pre>" + x_str + "</pre>";
 
 		if (parsed_data.x.dtype == "string") {
 			csv_allow_training = false;
 		}
 
-		shape_preview += "<br>Y: <pre>" + _tensor_print_to_string(parsed_data.y) + "</pre>";
+		shape_preview += "<br>Y: <pre>" + y_str + "</pre>";
+
 		if (parsed_data.y.dtype == "string") {
 			csv_allow_training = false;
 		}
