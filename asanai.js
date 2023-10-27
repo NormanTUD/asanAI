@@ -4204,7 +4204,6 @@ class asanAI {
 			asanai_this.#current_epoch = 0;
 			asanai_this.#this_training_start_time = Date.now();
 
-			console.log("onTrainBegin");
 			await asanai_this.#visualize_train();
 			await asanai_this.#confusion_matrix_to_page(); // async not possible
 
@@ -4278,8 +4277,12 @@ class asanAI {
 					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
 					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 				} else {
-					Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-					Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+					try {
+						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
+						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+					} catch (e) {
+						err("" + e);
+					}
 				}
 				asanai_this.#last_batch_plot_time = Date.now();
 			}
@@ -6298,9 +6301,11 @@ class asanAI {
 
 					$("#tmp_equation").remove();
 
+					var asanai_this = this;
+
 					$(e).on("contextmenu", function(ev) {
 						ev.preventDefault();
-						this.create_centered_window_with_text(original_latex);
+						asanai_this.create_centered_window_with_text(original_latex);
 					});
 				}
 			} catch (e) {
@@ -6346,7 +6351,7 @@ class asanAI {
 
 		// Create the "Copy to Clipboard" button
 		const copyButton = document.createElement('button');
-		copyButton.textContent = language[lang]['copy_to_clipboard'];
+		copyButton.textContent = this.#language[lang]['copy_to_clipboard'];
 		copyButton.style.width = '100%';
 		copyButton.style.marginTop = '10px';
 
