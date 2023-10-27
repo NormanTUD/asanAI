@@ -3665,50 +3665,52 @@ class asanAI {
 
 	load_image_urls_to_div_and_tensor (divname, urls_and_categories, one_hot = 1, shuffle = 1) {
 		if(!this.#model) {
-			this.err(`[load_image_urls_into_div] Cannot continue without a loaded model`);
+			this.err(`[load_image_urls_to_div_and_tensor] Cannot continue without a loaded model`);
 			return;
 		}
 
 		if(!this.#model.layers) {
-			this.err(`[load_image_urls_into_div] Cannot continue with a model without layers`);
+			this.err(`[load_image_urls_to_div_and_tensor] Cannot continue with a model without layers`);
 			return;
 		}
 
 		if(!Array.isArray(this.#model.input.shape)) {
-			this.err(`[load_image_urls_into_div] this.#model.input.shape is not an array`);
+			this.err(`[load_image_urls_to_div_and_tensor] this.#model.input.shape is not an array`);
 			return;
 		}
 
 		if(this.#model.input.shape.length != 4) {
-			this.err(`[load_image_urls_into_div] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.join(", ")}]`);
+			this.err(`[load_image_urls_to_div_and_tensor] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.join(", ")}]`);
 			return;
 		}
 
 		if(!this.#model_height) {
-			this.err(`[load_image_urls_into_div] this.#model_height has no value`);
+			this.err(`[load_image_urls_to_div_and_tensor] this.#model_height has no value`);
 			return;
 		}
 
 		if(!this.#model_width) {
-			this.err(`[load_image_urls_into_div] this.#model_width has no value`);
+			this.err(`[load_image_urls_to_div_and_tensor] this.#model_width has no value`);
 			return;
 		}
 
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`[#load_image_urls_to_div_and_tensor] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
 		if(!Array.isArray(urls_and_categories)) {
-			this.err(`[load_image_urls_into_div] urls_and_categories is not an array`);
+			this.err(`[load_image_urls_to_div_and_tensor] urls_and_categories is not an array`);
 			return;
 		}
 
 		if(!urls_and_categories.length) {
-			this.err(`[load_image_urls_into_div] urls_and_categories is empty`);
+			this.err(`[load_image_urls_to_div_and_tensor] urls_and_categories is empty`);
 			return;
 		}
+
+		this.#image_url_tensor_div = divname;
 
 		var urls = [];
 		var categories = [];
@@ -3752,12 +3754,12 @@ class asanAI {
 		this.assert(unique_categories.length <= categories.length, `unique_categories.length = ${unique_categories.length} is larger than categories.length = ${categories.length}, which should never occur.`);
 
 		if(!urls.length) {
-			this.err("[load_image_urls_into_div] urls-array is empty");
+			this.err("[load_image_urls_to_div_and_tensor] urls-array is empty");
 			return;
 		}
 
 		if(!urls.length) {
-			this.err("[load_image_urls_into_div] categories-array is empty");
+			this.err("[load_image_urls_to_div_and_tensor] categories-array is empty");
 			return;
 		}
 
@@ -4073,10 +4075,12 @@ class asanAI {
 					continue;
 				}
 
+				var asanai_this = this;
+
 				var img_tensor = tidy(() => {
 					try {
-						var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-						res = divNoNan(res, parse_float($("#divide_by").val()));
+						var res = asanai_this.#expand_dims(asanai_this.#resizeImage(asanai_this.from_pixels(img_elem), [asanai_this.#model_height, asanai_this.#model_width]));
+						res = asanai_this.divNoNan(res, asanai_this.#divide_by);
 						return res;
 					} catch (e) {
 						this.err(e);
@@ -4091,9 +4095,9 @@ class asanAI {
 
 				var res = tidy(() => { return model.predict(img_tensor); });
 
-				res_array = array_sync(res)[0];
-				await dispose(img_tensor);
-				await dispose(res);
+				res_array = this.array_sync(res)[0];
+				await this.dispose(img_tensor);
+				await this.dispose(res);
 
 				this.assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
@@ -4127,7 +4131,7 @@ class asanAI {
 
 					var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
 
-					var correct_category = extractCategoryFromURL(src);
+					var correct_category = this.#extractCategoryFromURL(src);
 					if(correct_category === undefined || correct_category === null) {
 						continue;				
 					}
@@ -4491,15 +4495,20 @@ class asanAI {
 			return;
 		}
 
+		var $confusion_matrix = $(".confusion_matrix");
+
+		if($confusion_matrix.length == 0) {
+			this.err(`[confusion_matrix_to_page] .confusion_matrix not found!`);
+			return;
+		}
+
 		var confusion_matrix_html = await this.#confusion_matrix(labels);
 
 		if(confusion_matrix_html) {
 			var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
-			$("#confusion_matrix").html(str);
-			$("#confusion_matrix_training").html(str);
+			$confusion_matrix.html(str);
 		} else {
-			$("#confusion_matrix").html("");
-			$("#confusion_matrix_training").html("");
+			$confusion_matrix.html("");
 		}
 	}
 
@@ -4521,7 +4530,6 @@ class asanAI {
 		}
 		
 		var $find_images_here = $("#" + this.#image_url_tensor_div);
-		console.log("selector: ", "#" + this.#image_url_tensor_div);
 		if($find_images_here.length == 0) {
 			this.err(`[confusion_matrix] #${this.#image_url_tensor_div} cannot be found!`);
 			return;
@@ -4546,10 +4554,11 @@ class asanAI {
 			var predicted_tensor = this.#confusion_matrix_and_grid_cache[img_elem_xpath];
 
 			if(!predicted_tensor) {
-				var img_tensor = tidy(() => {
+				var asanai_this = this;
+				var img_tensor = this.tidy(() => {
 					try {
-						var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
-						predicted_tensor = divNoNan(predicted_tensor, this.#parse_float($("#divide_by").val()));
+						var predicted_tensor = asanai_this.#expand_dims(asanai_this.#resizeImage(asanai_this.from_pixels(img_elem), [asanai_this.#model_height, asanai_this.#model_width]));
+						predicted_tensor = asanai_this.divNoNan(predicted_tensor, asanai_this.#divide_by);
 						return predicted_tensor;
 					} catch (e) {
 						this.err(e);
@@ -4559,18 +4568,19 @@ class asanAI {
 
 				if(img_tensor === null) {
 					this.wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
-					await dispose(img_tensor);
+					await this.dispose(img_tensor);
 					continue;
 				}
 
 				try {
-					predicted_tensor = tidy(() => {
-						return model.predict(img_tensor);
+					var asanai_this = this;
+					predicted_tensor = this.tidy(() => {
+						return asanai_this.#model.predict(img_tensor);
 					});
 
-					predicted_tensor = tidy(() => {
-						var _res = array_sync(predicted_tensor)[0];
-						dispose(predicted_tensor); // await not possible
+					predicted_tensor = this.tidy(() => {
+						var _res = asanai_this.array_sync(predicted_tensor)[0];
+						asanai_this.dispose(predicted_tensor); // await not possible
 						return _res;
 					});
 
@@ -4582,8 +4592,8 @@ class asanAI {
 
 					this.dbg("Cannot predict image: " + e);
 
-					await dispose(img_tensor);
-					await dispose(predicted_tensor);
+					await this.dispose(img_tensor);
+					await this.dispose(predicted_tensor);
 
 					continue;
 				}
@@ -4599,8 +4609,8 @@ class asanAI {
 			if(!predicted_tensor) {
 				this.dbg("predicted_tensor is empty");
 
-				await dispose(img_tensor);
-				await dispose(predicted_tensor);
+				await this.dispose(img_tensor);
+				await this.dispose(predicted_tensor);
 
 				continue;
 			}
@@ -4614,10 +4624,10 @@ class asanAI {
 			}
 
 			var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
-			var predicted_category = labels[predicted_index];
+			var predicted_category = this.get_labels[predicted_index];
 
 			var src = img_elem.src;
-			var correct_category = extractCategoryFromURL(src);
+			var correct_category = this.#extractCategoryFromURL(src);
 
 			if(!Object.keys(table_data).includes(correct_category)) {
 				table_data[correct_category] = {};
@@ -4631,8 +4641,8 @@ class asanAI {
 
 			//console.log("xpath:", img_elem_xpath, "predicted_index:", predicted_index, "category", predicted_category);
 
-			await dispose(img_tensor);
-			await dispose(predicted_tensor);
+			await this.dispose(img_tensor);
+			await this.dispose(predicted_tensor);
 
 			num_items++;
 		}
@@ -6399,5 +6409,26 @@ class asanAI {
 
 		// Append the window to the body to display it
 		document.body.appendChild(windowDiv);
+	}
+
+	#extractCategoryFromURL(_url) {
+		if(!_url) {
+			this.dbg(`[extractCategoryFromURL] extractCategoryFromURL(${_url})`);
+			return null;
+		}
+		try {
+			const categoryMatch = _url.match(/\/([^/]+)\/[^/]+?$/);
+
+			if (categoryMatch) {
+				const category = categoryMatch[1];
+				return category;
+			} else {
+				console.warn("Category not found in the URL:", _url);
+				return null; // Or handle the error in your specific way
+			}
+		} catch (error) {
+			this.error("Error while extracting category:", error);
+			return null; // Or handle the error in your specific way
+		}
 	}
 }
