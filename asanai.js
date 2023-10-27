@@ -5234,23 +5234,27 @@ class asanAI {
 		}
 
 		if(!Object.keys(this.#model).includes("layers")) {
-			dbg("model does not include layers. Cannot be shown in LaTeX");
+			this.dbg("model does not include layers. Cannot be shown in LaTeX");
 			return false;
 		}
 
 		if(!Object.keys(this.#model["layers"]).includes("0")) {
-			dbg("model does not include layers. Cannot be shown in LaTeX");
+			this.dbg("model does not include layers. Cannot be shown in LaTeX");
 			return false;
 		}
 
+		/*
 		if(this.#model.layers[0].input.shape.length != 2) {
 			return false;
 		}
+		*/
 
+		/*
 		if(this.#model.layers[this.#model.layers.length - 1].input.shape.length != 2) {
-			l("Hiding math tab because the output tensor has too many dimensions. It has " + this.#model.layers[this.#model.layers.length - 1].input.shape.length + ". Must be 2.");
+			this.log("Hiding math tab because the output tensor has too many dimensions. It has " + this.#model.layers[this.#model.layers.length - 1].input.shape.length + ". Must be 2.");
 			return false;
 		}
+		*/
 
 		for (var i = 0; i < this.#model.layers.length; i++) {
 			var this_layer_type = $($(".layer_type")[i]).val();
@@ -5269,7 +5273,7 @@ class asanAI {
 				"gaussianNoise",
 			];
 			if(!(valid_layers.includes(this_layer_type))) {
-				l("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
+				this.log("Hiding math tab because " + this_layer_type + " is not in " + valid_layers.join(", "));
 				return false;
 			}
 		}
@@ -5319,7 +5323,7 @@ class asanAI {
 				}
 			} catch (e) {
 				if(("" + e).includes("can't assign to property")) {
-					wrn("failed temml:", e);
+					this.wrn("failed temml:", e);
 				} else {
 					await write_error(e);
 				}
