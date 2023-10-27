@@ -24,15 +24,25 @@ async function __predict (data, __model, recursion = 0) {
 	try {
 		res = __model.predict(data);
 	} catch (e) {
-		err("" + e);
-		await compile_model();
-		if(Object.keys(data).includes("isDisposedInternal")) {
-			if(data["isDisposedInternal"]) {
-				console.log("data is already disposed:", data);
-				console.trace();
-			}
+		if(Object.keys(e).includes("message")) {
+			e = "" + e.message;
 		}
-		res = await __predict(data, model, recursion + 1);
+
+		err("" + e);
+		if(!("" + e).includes("but got array with shape")) {
+			await compile_model();
+			if(warn_if_tensor_is_disposed(data)) {
+				res = await __predict(data, model, recursion + 1);
+			} else {
+				err("Cannot predict since the data about to be predicted is already disposed.");
+				await dispose(data);
+				return;
+			}
+		} else {
+			err(`Wrong input shape for prediction. Data: [${data.shape.join(", ")}], model: [${model.input.shape.join(", ")}]`);
+			await dispose(data);
+			return;
+		}
 	}
 
 	var res_sync = array_sync(res).flat();
@@ -1567,6 +1577,10 @@ async function predict_handdrawn () {
 		return;
 	}
 
+	if(is_setting_config) {
+		return;
+	}
+
 	if(!model) {
 		throw new Error("[predict_handdrawn] model is undefined or null");
 		return;
@@ -1627,36 +1641,34 @@ async function predict_handdrawn () {
 	var divided_data = null;
 
 	if(divide_by != 1) {
+		warn_if_tensor_is_disposed(predict_data);
 		divided_data = tidy(() => {
 			return divNoNan(predict_data, divide_by);
 		});
 
+		warn_if_tensor_is_disposed(predict_data);
 		await dispose(predict_data);
 
 		predict_data = divided_data;
+		warn_if_tensor_is_disposed(predict_data);
 	}
 
 	var predictions_tensor = null;
 	try {
-		try {
+			warn_if_tensor_is_disposed(predict_data);
 			predictions_tensor = await __predict(predict_data);
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			if(("" + e).includes("Sequential model cannot be built: model is empty")) {
-				err("[predict_handdrawn] " + e);
-				return;
-			} else {
-				throw new Error(e);
-			}
-		}
 	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
 		if(("" + e).includes("is already disposed")) {
 			dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
 		} else if (("" + e).includes("float32 tensor, but got")) {
 			err("[predict_handdrawn] " + e);
+		} else if(("" + e).includes("Sequential model cannot be built: model is empty")) {
+			err("[predict_handdrawn] " + e);
+			return;
 		} else if(("" + e).includes("but got array with shape")) {
 			var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
 			dbg("[predict_handdrawn] " + _err);
@@ -1770,4 +1782,18 @@ async function repredict () {
 	await show_prediction(0, 1);
 	await predict_webcam();
 	await predict_handdrawn();
+}
+
+function warn_if_tensor_is_disposed (tensor) {
+	if(!Object.keys(tensor).includes("isDisposedInternal")) {
+		err(`Given object is not a tensor`);
+		return false;
+	}
+
+	if(tensor.isDisposedInternal) {
+		err(`Tensor is already disposed, where it shouldn't be.`);
+		return false;
+	}
+
+	return true;
 }
