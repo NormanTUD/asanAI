@@ -3884,9 +3884,18 @@ class asanAI {
 	}
 
 	load_image_urls_into_div (divname, ...urls) {
+		if(!divname) {
+			this.err(`[load_image_urls_into_div] cannot use empty div.`);
+			return;
+		}
+
+		if(urls.length == 0) {
+			this.warn(`[load_image_urls_into_div]: Empty url list`);
+		}
+
 		var $div = $("#" + divname);
 		if(!$div.length) {
-			this.err(`[#load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
+			this.err(`[load_image_urls_into_div] cannot use non-existant div. I cannot find #${divname}`);
 			return;
 		}
 
@@ -4512,6 +4521,7 @@ class asanAI {
 		}
 		
 		var $find_images_here = $("#" + this.#image_url_tensor_div);
+		console.log("selector: ", "#" + this.#image_url_tensor_div);
 		if($find_images_here.length == 0) {
 			this.err(`[confusion_matrix] #${this.#image_url_tensor_div} cannot be found!`);
 			return;
