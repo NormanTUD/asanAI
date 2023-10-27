@@ -1832,13 +1832,13 @@ class asanAI {
 			if(Object.keys(msgs[i]).includes("message")) {
 				msgs[i] = msgs[i].message;
 			}
-
-			console.warn(msgs[i]);
 		}
 
 		msg = msgs.join("\n");
 
 		$("#__status__bar__log").html("[WARN] " + msg);
+
+		console.warn(...msgs);
 
 		return msg;
 	}
@@ -3966,7 +3966,7 @@ class asanAI {
 				this_predicted_array = res_array;
 
 				if(this_predicted_array) {
-					confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
+					this.#confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
 
 					var max_probability = Math.max(...this_predicted_array);
 					var category = this_predicted_array.indexOf(max_probability);
@@ -4080,7 +4080,7 @@ class asanAI {
 		}
 	}
 
-	_get_callbacks () {
+	#_get_callbacks () {
 		var callbacks = {};
 
 		callbacks["onTrainBegin"] = async function () {
@@ -4088,6 +4088,7 @@ class asanAI {
 			this.#current_epoch = 0;
 			this.#this_training_start_time = Date.now();
 
+			console.log("onTrainBegin");
 			await this.#visualize_train();
 			await this.#confusion_matrix_to_page(); // async not possible
 
@@ -4414,7 +4415,7 @@ class asanAI {
 			var img_elem = imgs[i];
 			var img_elem_xpath = get_element_xpath(img_elem);
 
-			var predicted_tensor = confusion_matrix_and_grid_cache[img_elem_xpath];
+			var predicted_tensor = this.#confusion_matrix_and_grid_cache[img_elem_xpath];
 
 			if(!predicted_tensor) {
 				var img_tensor = tidy(() => {
@@ -4445,7 +4446,7 @@ class asanAI {
 						return _res;
 					});
 
-					confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
+					this.#confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
 				} catch (e) {
 					if(Object.keys(e).includes("message")) {
 						e = e.message;
@@ -4624,8 +4625,6 @@ class asanAI {
 			}
 		}
 
-		var _callbacks = {};
-
 		if(Object.keys(_plotly_data).length) {
 			if(Object.keys(_plotly_data).includes("div")) {
 				if(!$("#" + _plotly_data["div"]).length) {
@@ -4633,7 +4632,7 @@ class asanAI {
 					return;
 				} else {
 					this.#plotly_div = _plotly_data["div"];
-					_callbacks = this._get_callbacks();
+					args["callbacks"] = this.#_get_callbacks();
 				}
 			} else {
 				this.err(`_plotly_data is defined but does not include div-option`);
@@ -4642,7 +4641,7 @@ class asanAI {
 		}
 
 		try {
-			var history = this.#model.fit(_x, _y, args, _callbacks);
+			var history = this.#model.fit(_x, _y, args);
 
 			this.#redo_what_has_to_be_redone(false);
 
