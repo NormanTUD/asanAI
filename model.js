@@ -1570,17 +1570,26 @@ function get_weights_as_string (m) {
 }
 
 function download(filename, text) {
-	var element = document.createElement("a");
-	element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
-	element.setAttribute("download", filename);
+	try {
+		var blob = new Blob([text], { type: 'text/plain' });
+		var url = URL.createObjectURL(blob);
 
-	element.style.display = "none";
-	document.body.appendChild(element);
+		var element = document.createElement('a');
+		element.setAttribute('href', url);
+		element.setAttribute('download', filename);
 
-	element.click();
+		element.style.display = 'none';
+		document.body.appendChild(element);
 
-	document.body.removeChild(element);
+		element.click();
 
+		document.body.removeChild(element);
+
+		URL.revokeObjectURL(url);
+	} catch (error) {
+		console.error('Error in download:', error);
+		// You can add additional error handling logic here
+	}
 }
 
 function download_weights_json () {
