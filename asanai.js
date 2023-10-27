@@ -6351,7 +6351,7 @@ class asanAI {
 
 		// Create the "Copy to Clipboard" button
 		const copyButton = document.createElement('button');
-		copyButton.textContent = this.#language[lang]['copy_to_clipboard'];
+		copyButton.textContent = this.#language[this.#lang]['copy_to_clipboard'];
 		copyButton.style.width = '100%';
 		copyButton.style.marginTop = '10px';
 
