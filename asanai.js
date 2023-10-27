@@ -4628,7 +4628,7 @@ class asanAI {
 
 		if(Object.keys(_plotly_data).length) {
 			if(Object.keys(_plotly_data).includes("div")) {
-				if($("#" + _plotly_data["div"]).length) {
+				if(!$("#" + _plotly_data["div"]).length) {
 					this.err(`#${_plotly_data["div"]} could not be found.`);
 					return;
 				} else {
