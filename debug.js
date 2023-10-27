@@ -30,8 +30,13 @@ function _clean_func_name(arg) {
 	if(!arg) {
 		return "";
 	}
-	arg = arg.replace(/^\[[^\]]*\]\s*/, "");
-	arg = arg.replace(/^\[\]\s*/, "");
+	
+	try {
+		arg = arg.replace(/^\[[^\]]*\]\s*/, "");
+		arg = arg.replace(/^\[\]\s*/, "");
+	} catch (e) {
+		console.warn(`Error in _clean_func_name: ${e.message}`);
+	}
 
 	return arg;
 }
