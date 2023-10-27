@@ -247,6 +247,10 @@ class asanAI {
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
 		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
 
+		if(typeof(hashwasm) == "undefined") {
+			throw new Error("Please load md5.umd.min.js");
+		}
+
 		if(args.length == 1) {
 			args = args[0];
 			if(Object.keys(args).includes("labels")) {
@@ -5875,7 +5879,7 @@ class asanAI {
 				this.assert(math_tab_code_elem, "math_tab_code_elem could not be found");
 
 				var xpath = this.#get_element_xpath(math_tab_code_elem);
-				var new_md5 = await md5($(math_tab_code_elem).html());
+				var new_md5 = await this.#md5($(math_tab_code_elem).html());
 				var old_md5 = math_items_hashes[xpath];
 
 				if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
@@ -6209,5 +6213,19 @@ class asanAI {
 		}
 
 		return new_array;
+	}
+
+	async #md5 (content) {
+		try {
+			var res = await hashwasm.md5(content);
+
+			return res;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("[md5] " + e);
+		}
 	}
 }
