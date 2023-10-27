@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	#image_url_tensor_div = null;
 	#math_items_hashes = {};
 	#learning_rate = 0.01;
 	#epsilon = 0.0001;
@@ -3889,6 +3890,8 @@ class asanAI {
 			return;
 		}
 
+		this.#image_url_tensor_div = divname;
+
 		this.assert(Array.isArray(urls), `urls is not an array but ${typeof(urls)}`);
 
 		while (this.get_shape_from_array(urls).length > 1) {
@@ -4508,7 +4511,12 @@ class asanAI {
 			this.wrn("[confusion_matrix] model not defined. Cannot continue");
 		}
 		
-		var imgs = $("#photos").find("img,canvas");
+		var $find_images_here = $("#" + this.#image_url_tensor_div);
+		if($find_images_here.length == 0) {
+			this.err(`[confusion_matrix] #${this.#image_url_tensor_div} cannot be found!`);
+			return;
+		}
+		var imgs = $find_images_here.find("img,canvas");
 
 		if(!imgs.length) {
 			if(this.#current_epoch == 1) {
