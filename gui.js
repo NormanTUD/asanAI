@@ -2591,6 +2591,9 @@ async function set_config(index) {
 				var new_height = first_layer_batch_input_shape[1];
 				var new_width = first_layer_batch_input_shape[2];
 
+				width = new_width;
+				height = new_height;
+
 				$("#width").val(new_width).trigger("change");
 				$("#height").val(new_height).trigger("chance");
 
