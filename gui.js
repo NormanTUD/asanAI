@@ -2881,9 +2881,6 @@ async function chose_dataset(no_set_config) {
 	model = await _create_model();
 	await compile_model();
 
-	await show_prediction(1, 1);
-
-
 	await delay(500);
 	await show_prediction(1, 1);
 
@@ -4452,7 +4449,7 @@ async function show_csv_file(disabled_show_head_data) {
 		//shape_preview_color += "black";
 		if (is_same) {
 			if (auto_adjust) {
-				await updated_page();
+				await updated_page(null, null, null, 1);
 			}
 			//shape_preview_color += "green";
 		} else {
