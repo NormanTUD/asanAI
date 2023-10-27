@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	#math_items_hashes = {};
 	#decimal_points_math_mode = 3;
 	#prev_layer_data = [];
 	#current_epoch = 0;
@@ -5880,7 +5881,7 @@ class asanAI {
 
 				var xpath = this.#get_element_xpath(math_tab_code_elem);
 				var new_md5 = await this.#md5($(math_tab_code_elem).html());
-				var old_md5 = math_items_hashes[xpath];
+				var old_md5 = this.#math_items_hashes[xpath];
 
 				if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 					try {
@@ -5894,7 +5895,7 @@ class asanAI {
 							throw new Error(e);
 						}
 					}
-					math_items_hashes[xpath] = new_md5;
+					this.#math_items_hashes[xpath] = new_md5;
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -6227,5 +6228,9 @@ class asanAI {
 
 			err("[md5] " + e);
 		}
+	}
+
+	info (...args) {
+		args.forEach(arg => console.info(arg));
 	}
 }
