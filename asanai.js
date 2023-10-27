@@ -2381,7 +2381,7 @@ class asanAI {
 
 			if(this.#draw_internal_states) {
 				if(i == 0 && this.#show_sliders) {
-					var __parent = $("#" + this.#internal_states_div);
+					var __parent = $("#" + this.#internal_states_div).parent();
 					if(__parent.length && $("#" + this.#internal_states_div).find(".show_internals_slider").length == 0) {
 						var _html = this.#show_internals_slider(
 							this.#pixel_size,
