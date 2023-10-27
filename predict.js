@@ -1018,7 +1018,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 		if(tensor_shape_matches_model(_tensor)) {
 			try {
-				res = await __predict([_tensor]);
+				res = await __predict(_tensor);
 
 				var res_array = array_sync(res);
 

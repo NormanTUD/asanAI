@@ -6896,7 +6896,7 @@ function get_example_csv () {
 function load_shoe_example () {
 	var example_shoe_str = get_example_csv();
 
-	$("#csv_file").text(example_shoe_str).trigger("change");
+	$("#csv_file").val(example_shoe_str).trigger("change");
 }
 
 // get_kernel_images not yet used
