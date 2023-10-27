@@ -2024,7 +2024,7 @@ class asanAI {
 		}
 	}
 
-	set_model (_m) {
+	async set_model (_m) {
 		if(!this.is_model(_m)) {
 			throw new Error("[set_model] Given item is not a valid model");
 			return;
@@ -2048,6 +2048,9 @@ class asanAI {
 
 		this.#currently_switching_models = false;
 
+		var asanai_this = this;
+
+		await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 
 		return this.#model;
 	}
@@ -4206,6 +4209,8 @@ class asanAI {
 			await asanai_this.#confusion_matrix_to_page(); // async not possible
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 		};
 
 		callbacks["onBatchBegin"] = async function () {
@@ -4219,6 +4224,8 @@ class asanAI {
 			//}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 		};
 
 		callbacks["onEpochBegin"] = async function () {
@@ -4238,6 +4245,8 @@ class asanAI {
 			var percentage = asanai_this.#parse_int((asanai_this.#current_epoch / max_number_epochs) * 100);
 			$("#training_progressbar>div").css("width", percentage + "%");
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 		};
 
 		callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -4286,6 +4295,8 @@ class asanAI {
 			}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 		};
 
 		callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -4354,12 +4365,14 @@ class asanAI {
 			asanai_this.#confusion_matrix_to_page(); // async not possible
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
+
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 		};
 
 		callbacks["onTrainEnd"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			asanai_this.#favicon_default();
-			await asanai_this.#write_model_to_latex_to_page(asanai_this);
+			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 			asanai_this.#set_document_title(asanai_this.#original_title);
 
 			$("#tiny_graph").hide();
@@ -4754,7 +4767,7 @@ class asanAI {
 		}
 
 		this.#started_training = false;
-		this.set_model(this.#model);
+		await this.set_model(this.#model);
 
 		return history;
 	}
@@ -4848,16 +4861,16 @@ class asanAI {
 		return this.#default_bar_color;
 	}
 
-	set_max_bar_color(color) {
+	async set_max_bar_color(color) {
 		if(this.is_valid_web_color(color)) {
 			if(this.get_max_bar_color() != color) {
 				this.#max_bar_color = color;
 				if(this.#model) {
-					this.set_model(this.#model);
+					await this.set_model(this.#model);
 				}
 
 				if(this.get_bar_background_color() == color) {
-					this.wrn(`[set_default_bar_color] New max bar color is the same as the background. You will not be able to see max bars.`);
+					this.wrn(`[set_max_bar_color] New max bar color is the same as the background. You will not be able to see max bars.`);
 				}
 			} else {
 				this.wrn(`[set_max_bar_color] Color stayed the same. Not changing.`);
@@ -4867,12 +4880,12 @@ class asanAI {
 		}
 	}
 
-	set_default_bar_color(color) {
+	async set_default_bar_color(color) {
 		if(this.is_valid_web_color(color)) {
 			if(this.get_default_bar_color() != color) {
 				this.#default_bar_color = color;
 				if(this.#model) {
-					this.set_model(this.#model);
+					await this.set_model(this.#model);
 				}
 
 				if(this.get_bar_background_color() == color) {
@@ -4890,12 +4903,12 @@ class asanAI {
 		return this.#bar_background_color;
 	}
 
-	set_bar_background_color (color) {
+	async set_bar_background_color (color) {
 		if(this.is_valid_web_color(color)) {
 			if(this.get_bar_background_color() != color) {
 				this.#bar_background_color = color;
 				if(this.#model) {
-					this.set_model(this.#model);
+					await this.set_model(this.#model);
 				}
 
 				if(color == this.get_max_bar_color()) {
@@ -5910,7 +5923,7 @@ class asanAI {
 
 				if(new_md5 != old_md5 || force || !$math_tab_code.is(":visible")) {
 					try {
-						await this.#_temml();
+						await this._temml();
 					} catch (e) {
 						if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 							this.info("" + e);
@@ -5934,6 +5947,8 @@ class asanAI {
 				}
 			}
 		}
+
+		await this._temml();
 	}
 
 	#color_compare_old_and_new_layer_data (old_data, new_data) {
@@ -6259,7 +6274,7 @@ class asanAI {
 		args.forEach(arg => console.info(arg));
 	}
 
-	async #_temml () {
+	async _temml () {
 		while ($("#temml_blocker").length) {
 			await delay(200);
 		}

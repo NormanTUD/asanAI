@@ -72,7 +72,7 @@
 			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy" }
 			var asanai;
 
-			$(document).ready(function() {
+			$(document).ready(async function() {
 				var model_data = [
 					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu", kernelInitializer: "glorotUniform"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu", biasInitializer: "ones"}},
@@ -93,9 +93,9 @@
 				//asanai.show_ribbon(); // yet tbd
 				asanai.set_asanai_name("asanai");
 
-				asanai.set_default_bar_color("yellow")
-				asanai.set_max_bar_color("#ff00aa")
-				asanai.set_bar_background_color("orange")
+				await asanai.set_default_bar_color("yellow")
+				await asanai.set_max_bar_color("#ff00aa")
+				await asanai.set_bar_background_color("orange")
 
 				asanai.set_divide_by(255);
 
