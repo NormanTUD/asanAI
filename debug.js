@@ -32,10 +32,11 @@ function _clean_func_name(arg) {
 	}
 	
 	try {
+		arg = "" + arg;
 		arg = arg.replace(/^\[[^\]]*\]\s*/, "");
 		arg = arg.replace(/^\[\]\s*/, "");
 	} catch (e) {
-		console.warn(`Error in _clean_func_name: ${e.message}`);
+		console.error(`Error in _clean_func_name: ${e.message}`);
 	}
 
 	return arg;

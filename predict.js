@@ -627,7 +627,16 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			});
 		}
 
+		if(!model.input) {
+			err("Model has no input");
+			return;
+		}
+
 		var mi = model.input.shape;
+		if(!mi) {
+			err("Cannot get model.input.shape");
+			return;
+		}
 		mi[0] = 1;
 
 		var predictions_tensor = null;
@@ -639,7 +648,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			//log(`prod_pred_shape: ${prod_pred_shape}, prod_mod_shape: ${prod_mod_shape}`);
 
 			if(prod_pred_shape == prod_mod_shape) {
-				var model_shape_one = model.input.shape;
+				var model_shape_one = mi;
 				if(model_shape_one[0] === null) { model_shape_one[0] = 1; }
 
 				if(predict_data.shape.join(",") != model_shape_one) {
