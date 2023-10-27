@@ -1006,6 +1006,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 	for (var i = 0; i < example_predict_data.length; i++) {
 		var _tensor = tensor(example_predict_data[i]);
+		warn_if_tensor_is_disposed(_tensor);
 		var res;
 
 		while (!model) {
@@ -1018,7 +1019,10 @@ async function _print_predictions_text(count, example_predict_data) {
 
 		if(tensor_shape_matches_model(_tensor)) {
 			try {
+				warn_if_tensor_is_disposed(_tensor);
 				res = await __predict(_tensor);
+
+				warn_if_tensor_is_disposed(res);
 
 				var res_array = array_sync(res);
 
