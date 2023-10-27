@@ -2574,12 +2574,22 @@ async function set_config(index) {
 
 					$(".overlay").remove();
 
-					if (("" + e).includes("keras")) {
-						err("[set_config] " + e);
+					if (("" + e).includes("config.keras.config")) {
+						err("[set_config] Keras configuration could not be found!");
+						return;
 					} else {
 						throw new Error(e);
 					}
 				}
+			}
+
+			var first_layer_batch_input_shape = keras_layers[0]["config"]["batch_input_shape"]
+
+			assert(Array.isArray(first_layer_batch_input_shape), "first_layer_batch_input_shape is not an array");
+
+			if(first_layer_batch_input_shape.length == 4 && first_layer_batch_input_shape[first_layer_batch_input_shape.length - 1] == 3) {
+				change_height(first_layer_batch_input_shape[1]);
+				change_width(first_layer_batch_input_shape[2]);
 			}
 
 			if (!config["model_structure"]) {
