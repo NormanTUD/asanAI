@@ -1,12 +1,12 @@
 "use strict";
 
-function __predict (data, __model, recursion = 0) {
+async function __predict (data, __model, recursion = 0) {
 	if(!data) {
 		err("[__predict] data undefined");
 		return;
 	}
 
-	if(recursion > 10) {
+	if(recursion > 2) {
 		err("[__predict] too many retries for predict.");
 		return;
 	}
@@ -25,7 +25,14 @@ function __predict (data, __model, recursion = 0) {
 		res = __model.predict(data);
 	} catch (e) {
 		err("" + e);
-		res = _predict(data, __model, recursion + 1);
+		await compile_model();
+		if(Object.keys(data).includes("isDisposedInternal")) {
+			if(data["isDisposedInternal"]) {
+				console.log("data is already disposed:", data);
+				console.trace();
+			}
+		}
+		res = await __predict(data, model, recursion + 1);
 	}
 
 	var res_sync = array_sync(res).flat();
@@ -298,7 +305,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 	var predictions_tensor;
 
 	try {
-		predictions_tensor = tidy(() => { return __predict(tensor_img); });
+		predictions_tensor = await __predict(tensor_img);
 
 		await _predict_result(predictions_tensor, nr);
 
@@ -610,6 +617,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 			predict_data = tensor(data);
 		}
 
+		if(predict_data["isDisposedInternal"]) {
+			err("[predict] predict_data is already disposed!");
+			return;
+		}
+
 		if(!predict_data) {
 			await dispose(predict_data);
 
@@ -633,9 +645,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		if(divide_by != 1) {
 			predict_data = tidy(() => {
 				var res = divNoNan(predict_data, divide_by);
-				dispose(res); // await not possible
 				return res;
 			});
+		}
+
+		if(predict_data["isDisposedInternal"]) {
+			err("[predict] predict_data is already disposed!");
+			return;
 		}
 
 		if(!model.input) {
@@ -653,6 +669,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		var predictions_tensor = null;
 		$("#predict_error").html("").hide();
 		try {
+			if(predict_data["isDisposedInternal"]) {
+				err("[predict] predict_data is already disposed!");
+				return;
+			}
+
 			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
 			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
 
@@ -672,6 +693,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 						return new_data;
 					});
+				}
+
+				if(predict_data["isDisposedInternal"]) {
+					err("[predict] predict_data is already disposed!");
+					return;
 				}
 			} else if(Math.max(prod_pred_shape, prod_mod_shape) % Math.min(prod_mod_shape, prod_pred_shape) == 0) {
 				var _max = Math.max(prod_pred_shape, prod_mod_shape);
@@ -697,6 +723,11 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 						return new_data;
 					});
 				}
+
+				if(predict_data["isDisposedInternal"]) {
+					err("[predict] predict_data is already disposed!");
+					return;
+				}
 			} else {
 				await dispose(predict_data);
 
@@ -707,8 +738,13 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				return;
 			}
 
+			if(predict_data["isDisposedInternal"]) {
+				err("[predict] predict_data is already disposed!");
+				return;
+			}
+
 			try {
-				predictions_tensor = __predict(predict_data);
+				predictions_tensor = await __predict(predict_data);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
@@ -972,7 +1008,7 @@ async function _print_predictions_text(count, example_predict_data) {
 
 		if(tensor_shape_matches_model(_tensor)) {
 			try {
-				res = __predict([_tensor]);
+				res = await __predict([_tensor]);
 
 				var res_array = array_sync(res);
 
@@ -1219,9 +1255,7 @@ async function predict_webcam () {
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = tidy(() => {
-			return __predict([predict_data]);
-		});
+		predictions_tensor = await __predict([predict_data]);
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
 			dbg("[predict_webcam] Model Tensor already disposed");
@@ -1605,9 +1639,7 @@ async function predict_handdrawn () {
 	var predictions_tensor = null;
 	try {
 		try {
-			predictions_tensor = tidy(() => {
-				return __predict([predict_data]);
-			});
+			predictions_tensor = await __predict([predict_data]);
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
