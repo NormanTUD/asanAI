@@ -4428,7 +4428,9 @@ async function show_csv_file(disabled_show_head_data) {
 		if (!y_between_0_and_1) {
 			if ($("#auto_set_last_layer_activation").is(":checked")) {
 				var activations = $(".activation");
-				$(activations[activations.length - 1]).val("linear").trigger("change");
+				if($(activations[activations.length - 1]).val() != "linear") {
+					$(activations[activations.length - 1]).val("linear").trigger("change");
+				}
 			}
 		}
 

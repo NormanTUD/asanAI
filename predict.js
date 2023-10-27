@@ -1018,8 +1018,8 @@ async function _print_predictions_text(count, example_predict_data) {
 		var tensor_shape = _tensor.shape;
 
 		if(tensor_shape_matches_model(_tensor)) {
+			warn_if_tensor_is_disposed(_tensor);
 			try {
-				warn_if_tensor_is_disposed(_tensor);
 				res = await __predict(_tensor);
 
 				warn_if_tensor_is_disposed(res);
