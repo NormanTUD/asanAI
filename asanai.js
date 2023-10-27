@@ -10,6 +10,18 @@ class asanAI {
 	#lang = "en";
 	#language = {}
 	#started_training = false;
+	#last_batch_time = null;
+	#last_batch_plot_time = null;
+
+	#training_logs_batch = {
+		"loss": {
+			"x": [],
+			"y": [],
+			"type": "scatter",
+			"mode": this.#get_plotly_type(),
+			"name": "Loss"
+		}
+	}
 
 	#printed_msgs = [];
 	#confusion_matrix_and_grid_cache = {};
@@ -4179,32 +4191,32 @@ class asanAI {
 
 			var batchNr = 1;
 			var loss = logs["loss"];
-			if(training_logs_batch["loss"]["x"].length) {
-				batchNr = Math.max(...training_logs_batch["loss"]["x"]) + 1;
+			if(asanai_this.#training_logs_batch["loss"]["x"].length) {
+				batchNr = Math.max(...asanai_this.#training_logs_batch["loss"]["x"]) + 1;
 			}
-			training_logs_batch["loss"]["x"].push(batchNr);
-			training_logs_batch["loss"]["y"].push(loss);
+			asanai_this.#training_logs_batch["loss"]["x"].push(batchNr);
+			asanai_this.#training_logs_batch["loss"]["y"].push(loss);
 
-			if(!last_batch_time) {
-				last_batch_time = +new Date();
+			if(!asanai_this.#last_batch_time) {
+				asanai_this.#last_batch_time = +new Date();
 			} else {
 				var current_time = +new Date();
 				time_per_batch["time"]["x"].push(batchNr);
-				time_per_batch["time"]["y"].push((current_time - last_batch_time) / 1000);
-				last_batch_time = current_time;
+				time_per_batch["time"]["y"].push((current_time - asanai_this.#last_batch_time) / 1000);
+				asanai_this.#last_batch_time = current_time;
 			}
 
-			var this_plot_data = [training_logs_batch["loss"]];
+			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
 
-			if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
-					Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
-					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
+					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
+					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 				} else {
-					Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
-					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
+					Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
+					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 				}
-				last_batch_plot_time = Date.now();
+				asanai_this.#last_batch_plot_time = Date.now();
 			}
 
 			if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
@@ -4242,8 +4254,8 @@ class asanAI {
 					training_logs_epoch[other_key_name] = {
 						"x": [],
 						"y": [],
-						"type": get_scatter_type(),
-						"mode": get_plotly_layout(),
+						"type": "scatter",
+						"mode": asanai_this.#get_plotly_layout(),
 						"name": "Loss"
 					};
 				}
@@ -4251,7 +4263,7 @@ class asanAI {
 				loss = logs[other_key_name];
 				training_logs_epoch[other_key_name]["x"].push(epochNr);
 				training_logs_epoch[other_key_name]["y"].push(loss);
-				training_logs_epoch[other_key_name]["mode"] = get_plotly_type();
+				training_logs_epoch[other_key_name]["mode"] = asanai_this.#get_plotly_type();
 				training_logs_epoch[other_key_name]["name"] = other_key_name;
 
 				this_plot_data.push(training_logs_epoch[other_key_name]);
@@ -4260,17 +4272,17 @@ class asanAI {
 			$("#plotly_epoch_history").parent().show();
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
-				Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["epochs"]));
+				Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["epochs"]));
 			} else {
-				Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["epochs"]));
+				Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["epochs"]));
 			}
 
 			await asanai_this.#visualize_train();
 
-			var this_plot_data = [training_logs_batch["loss"]];
-			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(this.#language[this.#lang]["batches"]));
-			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(this.#language[this.#lang]["time_per_batch"]));
-			last_batch_plot_time = false;
+			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
+			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
+			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+			asanai_this.#last_batch_plot_time = false;
 
 			if(training_logs_epoch["loss"].x.length >= 2) {
 				var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
@@ -5069,5 +5081,38 @@ class asanAI {
 		var ribbon_element = this.generate_ribbon_from_ribbon_data(this.ribbon_data);
 		$("#ribbon_content").html(ribbon_element);
 		$('#ribbon').ribbon();
+	}
+
+	#get_plotly_layout (name="") {
+		var plotly_layout = {
+			paper_bgcolor: "rgba(0, 0, 0, 0)",
+			plot_bgcolor: "rgba(0, 0, 0, 0)",
+			gridcolor: "#7c7c7c",
+			font: {
+				family: "Courier New, monospace",
+				size: 18,
+				color: "#7f7f7f"
+			},
+			xaxis: {
+				dtick: 0,
+				showline: false,
+				showgrid: false
+			},
+			yaxis: {
+				showline: false,
+				showgrid: false
+			}
+
+		};
+
+		if(name) {
+			plotly_layout["title"] = name;
+		}
+
+		return plotly_layout;
+	}
+
+	#get_plotly_type () {
+		return "lines";
 	}
 }
