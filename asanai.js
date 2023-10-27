@@ -1,6 +1,13 @@
 "use strict";
 
 class asanAI {
+	#current_epoch = 0;
+	#plotly_div = "";
+	#this_training_start_time = null;
+	#max_number_of_images_in_grid = 50;
+
+	#printed_msgs = [];
+	#confusion_matrix_and_grid_cache = {};
 	#_enable_debug = false;
 	#write_tensors_info_div = "";
 	#status_bar_background_color = "#262626";
@@ -3736,6 +3743,40 @@ class asanAI {
 		return res;
 	}
 
+	#set_document_title (t) {
+		if(t != document.title) {
+			document.title = t;
+		}
+	}
+
+	async #input_shape_is_image (is_from_webcam=0) {
+		if(!this.#model) {
+			this.err(`cannot find this.#model`);
+			return;
+		}
+
+		if(!this.#model.input) {
+			this.err(`cannot find this.#model.input`);
+			return;
+		}
+
+		if(!this.#model.input.shape) {
+			this.err(`cannot find this.#model.input.shape`);
+			return;
+		}
+
+		if(!this.#model.input.shape.length) {
+			this.err(`could find this.#model.input.shape.length but is 0`);
+			return;
+		}
+
+		var shape = this.#model.input.shape;
+		if(shape.length == 3 && shape[2] == 3) {
+			return true;
+		}
+		return false;
+	}
+
 	load_image_urls_into_div (divname, ...urls) {
 		var $div = $("#" + divname);
 		if(!$div.length) {
@@ -3784,7 +3825,738 @@ class asanAI {
 		return imgs;
 	}
 
-	async fit (_x, _y, args={}) {
+	#log_once (...args) {
+		var md5 = JSON.stringify(args);
+
+		if(this.#printed_msgs.includes(md5)) {
+			return;
+		}
+
+		this.#printed_msgs.push(md5);
+
+		log(...args);
+	}
+
+	async #visualize_train () {
+		if(!$("#visualize_images_in_grid").is(":checked")) {
+			$("#canvas_grid_visualization").html("");
+			return;
+		}
+
+		if($("#data_origin").val() != "default") {
+			this.#log_once("Train visualization only works for default data.");
+			$("#canvas_grid_visualization").html("");
+			return;
+		}
+
+		if(!is_classification) {
+			this.#log_once("Train visualization only works for classification problems.");
+			$("#canvas_grid_visualization").html("");
+			return;
+		}
+
+		if(!await this.#input_shape_is_image()) {
+			this.#log_once("Train visualization only works for images.");
+			$("#canvas_grid_visualization").html("");
+			return;
+		}
+
+		if(get_last_layer_activation_function() != "softmax") {
+			this.#log_once("Train visualization only works when the last layer is softmax.");
+			$("#canvas_grid_visualization").html("");
+			return;
+		}
+
+		var imgs = [];
+		var categories = [];
+		var probabilities = [];
+
+		var max = this.#max_number_of_images_in_grid;
+
+		if(max == 0) {
+			return;
+		}
+
+		$("#plotly_epoch_history").show();
+
+		if(!labels.length) {
+			$("#canvas_grid_visualization").html("");
+
+			await nextFrame();
+
+			if(is_cosmo_mode) {
+				await fit_to_window();
+			}
+
+			return;
+		}
+
+		var image_elements = $("#photos").find("img,canvas");
+		if(!image_elements.length) {
+			err("[visualize_train] could not find image_elements");
+			return;
+		}
+
+		var total_wrong = 0;
+		var total_correct = 0;
+
+		var category_overview = {};
+
+		for (var i = 0; i < image_elements.length; i++) {
+			var img_elem = image_elements[i];
+
+			var img_elem_xpath = get_element_xpath(img_elem);
+			
+			var this_predicted_array = [];
+
+
+			var src;
+			try {
+				src = img_elem.src;
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = message;
+				}
+
+				e = "" + e;
+
+				throw new Error(e);
+
+				continue;
+			}
+
+			if(!src) {
+				err("[visualize_train] Cannot use images without src tags");
+				continue;
+			}
+
+			if(i <= max) {
+				var res_array;
+
+				if(!img_elem) {
+					tf.engine().endScope();
+					wrn("[visualize_train] img_elem not defined!", img_elem);
+					continue;
+				}
+
+				var img_tensor = tidy(() => {
+					try {
+						var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+						res = divNoNan(res, parse_float($("#divide_by").val()));
+						return res;
+					} catch (e) {
+						err(e);
+						return null;
+					}
+				});
+
+				if(img_tensor === null) {
+					wrn("[visualize_train] Could not load image from pixels from this element:", img_elem);
+					continue;
+				}
+
+				var res = tidy(() => { return model.predict(img_tensor); });
+
+				res_array = array_sync(res)[0];
+				await dispose(img_tensor);
+				await dispose(res);
+
+				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
+
+				this_predicted_array = res_array;
+
+				if(this_predicted_array) {
+					confusion_matrix_and_grid_cache[img_elem_xpath] = this_predicted_array;
+
+					var max_probability = Math.max(...this_predicted_array);
+					var category = this_predicted_array.indexOf(max_probability);
+
+					//console.log("xpath:", img_elem_xpath, "category", category, "max_probability:", max_probability, "this_predicted_array:", this_predicted_array);
+
+					categories.push(category);
+					probabilities.push(max_probability);
+					imgs.push(img_elem);
+				} else {
+					err(`[visualize_train] Cannot find prediction for image with xpath ${img_elem_xpath}`);
+				}
+			}
+
+			try {
+				var tag_name = img_elem.tagName;
+				if(src && tag_name == "IMG") {
+					var predicted_tensor = this_predicted_array;
+
+					if(predicted_tensor === null || predicted_tensor === undefined) {
+						dbg("[visualize_train] Predicted tensor was null or undefined");
+						return;
+					}
+
+					var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
+
+					var correct_category = extractCategoryFromURL(src);
+					if(correct_category === undefined || correct_category === null) {
+						continue;				
+					}
+
+					var predicted_category = labels[predicted_index];
+
+					if(is_cosmo_mode) {
+						predicted_category = language[lang][predicted_category];
+					}
+
+					var correct_index = -1;
+
+					try {
+						correct_index = findIndexByKey(
+							[
+								...labels, 
+								...cosmo_categories, 
+								...original_labels, 
+								"Brandschutz", 
+								"Gebot", 
+								"Verbot", 
+								"Rettung", 
+								"Warnung", 
+								"Fire prevention", 
+								"Mandatory", 
+								"Prohibition", 
+								"Rescue", 
+								"Warning",
+								"fire",
+								"mandatory",
+								"prohibition",
+								"rescue",
+								"warning"
+							], correct_category) % labels.length;
+					} catch (e) {
+						wrn("[visualize_train] " + e);
+						return;
+					}
+
+					if(!Object.keys(category_overview).includes(predicted_category)) {
+						category_overview[predicted_category] = {
+							wrong: 0,
+							correct: 0,
+							total: 0
+						};
+					}
+
+					//log("predicted_category " + predicted_category + " detected from " + src + ", predicted_index = " + predicted_index + ", correct_index = " + correct_index);
+
+					if(predicted_index == correct_index) {
+						total_correct++;
+
+						category_overview[predicted_category]["correct"]++;
+					} else {
+						total_wrong++;
+
+						category_overview[predicted_category]["wrong"]++;
+					}
+					category_overview[predicted_category]["total"]++;
+				} else {
+					err(`[visualize_train] Cannot use img element, src: ${src}, tagName: ${tag_name}`);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+
+		}
+
+		for (var i = 0; i < Object.keys(category_overview).length; i++) {
+			var category = Object.keys(category_overview)[i];
+			category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
+		}
+
+		if(imgs.length && categories.length && probabilities.length) {
+			draw_images_in_grid(imgs, categories, probabilities, category_overview);
+		} else {
+			$("#canvas_grid_visualization").html("");
+		}
+
+		await nextFrame();
+
+		if(is_cosmo_mode) {
+			await fit_to_window();
+		}
+	}
+
+	_get_callbacks () {
+		var callbacks = {};
+
+		callbacks["onTrainBegin"] = async function () {
+			this.#confusion_matrix_and_grid_cache = {};
+			this.#current_epoch = 0;
+			this.#this_training_start_time = Date.now();
+
+			await this.#visualize_train();
+			await this.#confusion_matrix_to_page(); // async not possible
+
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		callbacks["onBatchBegin"] = async function () {
+			this.#confusion_matrix_and_grid_cache = {};
+			if(!started_training) {
+				model.stopTraining = true;
+			}
+
+			//if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
+			//	await write_model_to_latex_to_page();
+			//}
+
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		callbacks["onEpochBegin"] = async function () {
+			this.#confusion_matrix_and_grid_cache = {};
+			this.#current_epoch++;
+			var max_number_epochs = get_epochs();
+			var current_time = Date.now();
+			var epoch_time = (current_time - this.#this_training_start_time) / this.#current_epoch;
+			var epochs_left = max_number_epochs - this.#current_epoch;
+			var seconds_left = parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+			var time_estimate = human_readable_time(seconds_left);
+
+			//$("#training_progress_bar").show();
+
+			this.#set_document_title("[" + this.#current_epoch + "/" + max_number_epochs + ", " + time_estimate  + "] asanAI");
+
+			if(is_cosmo_mode) {
+				time_estimate = human_readable_time(parse_int(seconds_left * 2.5));
+				if(max_number_epochs && this.#current_epoch > 0 && time_estimate && seconds_left >= 0) {
+					$("#current_epoch_cosmo_display").html(this.#current_epoch);
+					$("#max_epoch_cosmo_display").html(max_number_epochs);
+					$("#time_estimate_cosmo").html(time_estimate);
+					$("#show_cosmo_epoch_status").show();
+				} else {
+					$("#show_cosmo_epoch_status").hide();
+				}
+				idleTime = 0;
+			}
+
+			var percentage = parse_int((this.#current_epoch / max_number_epochs) * 100);
+			$("#training_progressbar>div").css("width", percentage + "%");
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		callbacks["onBatchEnd"] = async function (batch, logs) {
+			this.#confusion_matrix_and_grid_cache = {};
+			delete logs["batch"];
+			delete logs["size"];
+
+			var batchNr = 1;
+			var loss = logs["loss"];
+			if(training_logs_batch["loss"]["x"].length) {
+				batchNr = Math.max(...training_logs_batch["loss"]["x"]) + 1;
+			}
+			training_logs_batch["loss"]["x"].push(batchNr);
+			training_logs_batch["loss"]["y"].push(loss);
+
+			if(!last_batch_time) {
+				last_batch_time = +new Date();
+			} else {
+				var current_time = +new Date();
+				time_per_batch["time"]["x"].push(batchNr);
+				time_per_batch["time"]["y"].push((current_time - last_batch_time) / 1000);
+				last_batch_time = current_time;
+			}
+
+			var this_plot_data = [training_logs_batch["loss"]];
+
+			if(!is_cosmo_mode) {
+				$("#plotly_batch_history").parent().show();
+				$("#plotly_time_per_batch").parent().show();
+			}
+
+			if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+				if(batchNr == 1) {
+					Plotly.newPlot("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+					Plotly.newPlot("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+				} else {
+					Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+					Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+				}
+				last_batch_plot_time = Date.now();
+			}
+
+			if(!is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+				if($("#predict_own_data").val()) {
+					await predict($("#predict_own_data").val());
+				}
+				await show_prediction(0, 1);
+				if(await this.#input_shape_is_image()) {
+					await repredict();
+				}
+			}
+
+			if(is_cosmo_mode) {
+				$("#cosmo_training_grid_stage_explanation").show();
+				if(current_cosmo_stage == 1) {
+					await this.#visualize_train();
+				}
+			}
+
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		callbacks["onEpochEnd"] = async function (batch, logs) {
+			this.#confusion_matrix_and_grid_cache = {};
+			delete logs["epoch"];
+			delete logs["size"];
+
+			var epochNr = 1;
+			var loss = logs["loss"];
+			if(training_logs_epoch["loss"]["x"].length) {
+				epochNr = Math.max(...training_logs_epoch["loss"]["x"]) + 1;
+			}
+			training_logs_epoch["loss"]["x"].push(epochNr);
+			training_logs_epoch["loss"]["y"].push(loss);
+
+			var other_key_name = "val_loss";
+
+			var this_plot_data = [training_logs_epoch["loss"]];
+
+			if(Object.keys(logs).includes(other_key_name)) {
+				if(epochNr == 1) {
+					training_logs_epoch[other_key_name] = {
+						"x": [],
+						"y": [],
+						"type": get_scatter_type(),
+						"mode": get_plotly_layout(),
+						"name": "Loss"
+					};
+				}
+
+				loss = logs[other_key_name];
+				training_logs_epoch[other_key_name]["x"].push(epochNr);
+				training_logs_epoch[other_key_name]["y"].push(loss);
+				training_logs_epoch[other_key_name]["mode"] = get_plotly_type();
+				training_logs_epoch[other_key_name]["name"] = other_key_name;
+
+				this_plot_data.push(training_logs_epoch[other_key_name]);
+			}
+
+			$("#plotly_epoch_history").parent().show();
+			if(is_cosmo_mode) {
+				if(current_cosmo_stage == 1 || current_cosmo_stage == 2) {
+					$("#cosmo_training_predictions_explanation").hide();
+					$("#cosmo_training_grid_stage_explanation").show();
+					$("#cosmo_training_plotly_explanation").hide();
+
+					$("#plotly_epoch_history").hide();
+
+					await this.#visualize_train();
+
+					$("#visualize_images_in_grid").show();
+				/*
+				} else if(current_cosmo_stage == 2) {
+					$("#visualize_images_in_grid").hide();
+
+					$("#cosmo_training_predictions_explanation").show();
+					$("#cosmo_training_grid_stage_explanation").hide();
+					$("#cosmo_training_plotly_explanation").hide();
+
+					$("#plotly_epoch_history").hide();
+
+					var elem = $("#example_predictions")[0];
+					var to = $("#training_tab")[0];
+					move_element_to_another_div(elem, to)
+
+					await repredict();
+					await update_translations();
+
+				*/
+				} else {
+					$("#visualize_images_in_grid").hide();
+
+					$("#cosmo_training_predictions_explanation").hide();
+					$("#cosmo_training_grid_stage_explanation").hide();
+					$("#cosmo_training_plotly_explanation").show();
+
+					if(epochNr == 0 || epochNr == 1) {
+						Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+					} else {
+						Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+					}
+
+					$("#plotly_epoch_history").show();
+					$("#visualize_images_in_grid").html("").hide();
+					$("#canvas_grid_visualization").html("").hide();
+				}
+
+				await fit_to_window();
+			} else {
+				$("#plotly_epoch_history").show();
+				if(epochNr == 1) {
+					Plotly.newPlot("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				} else {
+					Plotly.update("plotly_epoch_history", this_plot_data, get_plotly_layout(language[lang]["epochs"]));
+				}
+
+				await this.#visualize_train();
+			}
+
+			var this_plot_data = [training_logs_batch["loss"]];
+			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+			last_batch_plot_time = false;
+
+			if(is_cosmo_mode) {
+				await fit_to_window();
+			}
+
+			if(training_logs_epoch["loss"].x.length >= 2) {
+				var vl = Object.keys(training_logs_epoch).includes("val_loss") ? training_logs_epoch["val_loss"].y : null;
+				var th = 18;
+				var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, parse_int(0.9 * th));
+				$("#tiny_graph").html("");
+				$("#tiny_graph").append(plotCanvas).show();
+			} else {
+				$("#tiny_graph").html("").hide();
+			}
+			$("#network_has_seen_msg").show();
+
+			this.#confusion_matrix_to_page(); // async not possible
+
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		callbacks["onTrainEnd"] = async function () {
+			this.#confusion_matrix_and_grid_cache = {};
+			favicon_default();
+			await write_model_to_latex_to_page();
+			this.#set_document_title(original_title);
+			await restart_fcnn();
+			await restart_lenet();
+
+			$("#tiny_graph").hide();
+
+			if(0 && is_cosmo_mode) {
+				if(current_cosmo_stage == 1) {
+					var elem = $("#example_predictions")[0];
+					var to = $("#example_predictions_parent")[0];
+					log("moving", elem, "to", to);
+					move_element_to_another_div(elem, to);
+				}
+			}
+
+			$("#network_has_seen_msg").hide();
+			if(is_cosmo_mode) {
+				$("#show_after_training").show();
+			}
+
+			this.#confusion_matrix_to_page(); // async not possible
+
+			await reset_data();
+
+			this.#confusion_matrix_and_grid_cache = {};
+		};
+
+		return callbacks;
+	}
+
+	async #confusion_matrix_to_page () {
+		if(!labels && labels.length != 0) {
+			return;
+		}
+
+		if(!is_classification) {
+			return;
+		}
+
+		if(is_cosmo_mode) {
+			return;
+		}
+
+		var confusion_matrix_html = await this.#confusion_matrix(labels);
+
+		if(confusion_matrix_html) {
+			var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
+			$("#confusion_matrix").html(str);
+			$("#confusion_matrix_training").html(str);
+		} else {
+			$("#confusion_matrix").html("");
+			$("#confusion_matrix_training").html("");
+		}
+	}
+
+	async #confusion_matrix(classes) {
+		if(!classes.length) {
+			if(current_epoch < 2) {
+				wrn("[confusion_matrix] No classes found");
+			}
+			return "";
+		}
+
+		if(!is_classification) {
+			wrn("[confusion_matrix] Only works with classification");
+			return "";
+		}
+
+		if(!model) {
+			wrn("[confusion_matrix] model not defined. Cannot continue");
+		}
+		
+		var imgs = $("#photos").find("img,canvas");
+
+		if(!imgs.length) {
+			if(current_epoch == 1) {
+				wrn("[confusion_matrix] No images found");
+			}
+			return "";
+		}
+		
+		var table_data = {};
+		
+		var num_items = 0;
+
+		for (var i = 0; i < imgs.length; i++) {
+			var img_elem = imgs[i];
+			var img_elem_xpath = get_element_xpath(img_elem);
+
+			var predicted_tensor = confusion_matrix_and_grid_cache[img_elem_xpath];
+
+			if(!predicted_tensor) {
+				var img_tensor = tidy(() => {
+					try {
+						var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+						predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
+						return predicted_tensor;
+					} catch (e) {
+						err(e);
+						return null;
+					}
+				});
+
+				if(img_tensor === null) {
+					wrn("[confusion_matrix] Could not load image from pixels from this element:", img_elem);
+					await dispose(img_tensor);
+					continue;
+				}
+
+				try {
+					predicted_tensor = tidy(() => {
+						return model.predict(img_tensor);
+					});
+
+					predicted_tensor = tidy(() => {
+						var _res = array_sync(predicted_tensor)[0];
+						dispose(predicted_tensor); // await not possible
+						return _res;
+					});
+
+					confusion_matrix_and_grid_cache[img_elem_xpath] = predicted_tensor;
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					dbg("Cannot predict image: " + e);
+
+					await dispose(img_tensor);
+					await dispose(predicted_tensor);
+
+					continue;
+				}
+			}
+
+			//console.log("cached: ", predicted_tensor);
+
+			if(!predicted_tensor) {
+				err(`[confusion_matrix] Could not get predicted_tensor`);
+				continue;
+			}
+
+			if(!predicted_tensor) {
+				dbg("predicted_tensor is empty");
+
+				await dispose(img_tensor);
+				await dispose(predicted_tensor);
+
+				continue;
+			}
+
+
+			assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
+
+			if(predicted_tensor === null || predicted_tensor === undefined) {
+				dbg("Predicted tensor was null or undefined");
+				continue;
+			}
+
+			var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
+			var predicted_category = labels[predicted_index];
+
+			var src = img_elem.src;
+			var correct_category = extractCategoryFromURL(src);
+
+			if(!Object.keys(table_data).includes(correct_category)) {
+				table_data[correct_category] = {};
+			}
+
+			if(Object.keys(table_data[correct_category]).includes(predicted_category)) {
+				table_data[correct_category][predicted_category]++;
+			} else {
+				table_data[correct_category][predicted_category] = 1;
+			}
+
+			//console.log("xpath:", img_elem_xpath, "predicted_index:", predicted_index, "category", predicted_category);
+
+			await dispose(img_tensor);
+			await dispose(predicted_tensor);
+
+			num_items++;
+		}
+
+		if(!num_items) {
+			wrn("[confusion_matrix] Could not get any items!");
+			return "";
+		}
+
+		var str = `<table class="confusion_matrix_table">` ;
+		for (var i = 0; i <= classes.length; i++) {
+			if(i == 0) {
+				str += `<tr>`;
+				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+				for (var j =  0; j < classes.length; j++) {
+					str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
+				}
+				str += `</tr>`;
+			} else {
+				str += `<tr>`;
+				for (var j =  0; j <= classes.length; j++) {
+					if(j == 0) {
+						str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
+					} else {
+						var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
+						if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
+							text = table_data[classes[i - 1]][classes[j - 1]];
+						}
+						if(classes[i - 1] == classes[j - 1]) {
+							if(text == `0`) {
+								str += `<td class="confusion_matrix_tx">${text}</td>`;
+							} else {
+								str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
+							}
+						} else {
+							if(text == `0`) {
+								str += `<td class="confusion_matrix_tx">${text}</td>`;
+							} else {
+								str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
+							}
+						}
+					}
+				}
+				str += `</tr>`;
+			}
+		}
+		str += `</table>`;
+
+		return str;
+
+	}
+
+	async fit (_x, _y, args={}, _plotly_data={}) {
 		if(!Object.keys(args).length) {
 			this.err(`[fit]: third argument, args, seems to be empty. Must at least contain epochs and batchSize`);
 			return;
@@ -3852,8 +4624,20 @@ class asanAI {
 			}
 		}
 
+		var _callbacks = {};
+
+		if(Object.keys(_plotly_data).length) {
+			if(Object.keys(_plotly_data).includes("div")) {
+				this.#plotly_div = _plotly_data["div"];
+				_callbacks = this._get_callbacks();
+			} else {
+				this.err(`_plotly_data is defined but does not include div-option`);
+				return;
+			}
+		}
+
 		try {
-			var history = this.#model.fit(_x, _y, args);
+			var history = this.#model.fit(_x, _y, args, _callbacks);
 
 			this.#redo_what_has_to_be_redone(false);
 

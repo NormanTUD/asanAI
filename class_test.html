@@ -37,6 +37,7 @@
 		<button onclick="test_model_switch()">Test model switch 1</button>
 		<button onclick="test_model_switch_two()">Test model switch 2</button>
 		<button onclick="test_model_switch_three()">Test model switch 3</button>
+		<button onclick="load_test_images_and_train()">Load test images and train</button>
 
 		<pre>====</pre>
 		<div id="test_images"></div>
@@ -171,7 +172,7 @@
 				console.log(loaded_data);
 			}
 
-			async function load_test_images_and_train () {
+			async function new_model_load_test_images_and_train () {
 				var new_model_struct = [
 					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [50, 50, 3], activation: "relu"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu"}},
@@ -204,6 +205,44 @@
 
 					["traindata/signs/mandatory/120px-DIN_4844-2_D-M003.svg.png", "mandatory"],
 					["traindata/signs/mandatory/120px-DIN_4844-2_D-M009.svg.png", "mandatory"]
+				]);
+
+				console.log(loaded_data);
+			
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 1000, shuffle: true});
+
+				if(history) {
+					console.log("history:", history);
+				} else {
+					console.error("training failed");
+				}
+
+				await asanai.dispose(loaded_data.x);
+				await asanai.dispose(loaded_data.y);
+			}
+
+			async function load_test_images_and_train () {
+				var loaded_data = asanai.load_image_urls_to_div_and_tensor("test_images", [
+					["traindata/signs/example/a_fire.png", "fire"],
+					//["traindata/signs/example/b_mandatory.png", "mandatory"],
+					["traindata/signs/example/c_prohibition.png", "prohibition"],
+					["traindata/signs/example/d_rescue.png", "rescue"],
+					["traindata/signs/example/e_warning.png", "warning"],
+
+					["traindata/signs/warning/120px-D-W028_Warnung_vor_Rutschgefahr.svg.png", "warning"],
+					["traindata/signs/warning/120px-Laser-symbol-text-bn.svg.png", "warning"],
+
+					["traindata/signs/prohibition/120px-DIN_4844-2_D-P022.svg.png", "prohibition"],
+					["traindata/signs/prohibition/120px-DIN_4844-2_D-P006.svg.png", "prohibition"],
+
+					["traindata/signs/fire/116px-Fire_Class_B.svg.png", "fire"],
+					["traindata/signs/fire/120px-F001.svg.png", "fire"],
+
+					["traindata/signs/rescue/120px-E003.svg.png", "rescue"],
+					["traindata/signs/rescue/120px-E004.svg.png", "rescue"],
+
+					//["traindata/signs/mandatory/120px-DIN_4844-2_D-M003.svg.png", "mandatory"],
+					//["traindata/signs/mandatory/120px-DIN_4844-2_D-M009.svg.png", "mandatory"]
 				]);
 
 				console.log(loaded_data);
