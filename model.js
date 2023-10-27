@@ -1450,6 +1450,15 @@ async function set_weights_from_string (string, no_warning, no_error, m) {
 		}
 
 		err("" + e);
+
+		if(("" + e).includes("JSON.parse:")) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'The weights.json file you uploaded did not contain valid JSON. Do not use the .bin-file. Use the .json-file.'
+			})
+			err("" + e);
+		}
 	}
 }
 
