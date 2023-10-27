@@ -1,8 +1,13 @@
 "use strict";
 
-function __predict (data, __model) {
+function __predict (data, __model, recursion = 0) {
 	if(!data) {
 		err("[__predict] data undefined");
+		return;
+	}
+
+	if(recursion > 10) {
+		err("[__predict] too many retries for predict.");
 		return;
 	}
 
@@ -15,7 +20,13 @@ function __predict (data, __model) {
 		return;
 	}
 
-	var res = __model.predict(data);
+	var res;
+	try {
+		res = __model.predict(data);
+	} catch (e) {
+		err("" + e);
+		res = _predict(data, __model, recursion + 1);
+	}
 
 	var res_sync = array_sync(res).flat();
 
@@ -643,7 +654,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 		$("#predict_error").html("").hide();
 		try {
 			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
-			var prod_mod_shape = number_of_elements_in_tensor_shape(model.input.shape);
+			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
 
 			//log(`prod_pred_shape: ${prod_pred_shape}, prod_mod_shape: ${prod_mod_shape}`);
 
@@ -670,7 +681,7 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 
 				var elements = (_max - _modulo) / _min;
 
-				var model_shape_one = model.input.shape;
+				var model_shape_one = mi;
 				model_shape_one[0] = elements;
 
 				//console.log(model_shape_one);
@@ -690,13 +701,21 @@ async function predict (item, force_category, dont_write_to_predict_tab) {
 				await dispose(predict_data);
 
 				var pd_nr = number_of_elements_in_tensor_shape(predict_data.shape);
-				var is_nr = number_of_elements_in_tensor_shape(model.input.shape);
+				var is_nr = number_of_elements_in_tensor_shape(mi);
 
 				throw(`Could not reshape data for model (predict_data.shape/model.input.shape: [${pd_nr}], [${is_nr}]`);
 				return;
 			}
 
-			predictions_tensor = __predict(predict_data);
+			try {
+				predictions_tensor = __predict(predict_data);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
+			}
 
 			await dispose(predict_data);
 		} catch (e) {
