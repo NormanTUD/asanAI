@@ -5885,7 +5885,7 @@ class asanAI {
 
 				if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 					try {
-						await _temml();
+						await this.#_temml();
 					} catch (e) {
 						if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 							this.info("" + e);
@@ -5903,7 +5903,7 @@ class asanAI {
 				}
 
 				if(("" + e).includes("can't assign to property")) {
-					this.wrn("failed temml:", e);
+					this.err("failed temml:", e);
 				} else {
 					this.err(e);
 				}
@@ -5979,7 +5979,7 @@ class asanAI {
 											}
 										}
 									} catch (e) {
-										wrn(e);
+										this.wrn(e);
 										console.trace();
 									}
 								}
@@ -6232,5 +6232,41 @@ class asanAI {
 
 	info (...args) {
 		args.forEach(arg => console.info(arg));
+	}
+
+	async #_temml () {
+		while ($("#temml_blocker").length) {
+			await delay(200);
+		}
+
+		try {
+			$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+			$(".temml_me").each((i, e) => {
+				if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+					var original_latex = e.textContent;
+
+					$(e)[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
+
+					var tmp_element = $("<span id='tmp_equation' style='display: none'></span>");
+					$(tmp_element).appendTo($(body));
+
+					temml.render(original_latex, tmp_element[0]);
+
+					$(e)[0].innerHTML = tmp_element[0].innerHTML;
+					$(e).attr("data-rendered", 1);
+					$(e).attr("data-latex", original_latex);
+
+					$("#tmp_equation").remove();
+
+					$(e).on("contextmenu", function(ev) {
+						ev.preventDefault();
+						create_centered_window_with_text(original_latex);
+					});
+				}
+			});
+		} catch (e) {
+			this.err("" + e);
+		}
+		$("#temml_blocker").remove();
 	}
 }
