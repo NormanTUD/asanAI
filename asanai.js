@@ -16,6 +16,7 @@ class asanAI {
 	#started_training = false;
 	#last_batch_time = null;
 	#last_batch_plot_time = null;
+	#math_tab_code_div = null;
 
 	#training_logs_epoch = {
 		"loss": {
@@ -325,6 +326,19 @@ class asanAI {
 				}
 			}
 
+			if(Object.keys(args).includes("math_tab_code_div")) {
+				if(typeof(args.math_tab_code_div) == "string") {
+					if($("#" + args.math_tab_code_div).length) {
+						this.#math_tab_code_div = args.math_tab_code_div;
+
+						delete args["math_tab_code_div"];
+					} else {
+						throw new Error(`#${args.math_tab_code_div} could not be found`);
+					}
+				} else {
+					throw new Error("math_tab_code_div is not a string");
+				}
+			}
 
 			var ignored_keys = Object.keys(args);
 
@@ -5862,6 +5876,10 @@ class asanAI {
 	}
 
 	async #write_model_to_latex_to_page (reset_prev_layer_data, force, asanai_this) {
+		if(!this.#math_tab_code_div) {
+			//this.err(`math_tab_code_div not defined`);
+			return;
+		}
 		if(!this.#can_be_shown_in_latex()) {
 			this.err(`Cannot be shown in LaTeX`);
 			return;
@@ -5878,10 +5896,11 @@ class asanAI {
 		var latex = this.model_to_latex(asanai_this);
 
 		if(latex) {
-			$("#math_tab_code").html(latex);
+			var $math_tab_code = $("#" + this.#math_tab_code_div);
+			$math_tab_code.html(latex);
 
 			try {
-				var math_tab_code_elem = $("#math_tab_code")[0];
+				var math_tab_code_elem = $math_tab_code[0];
 
 				this.assert(math_tab_code_elem, "math_tab_code_elem could not be found");
 
@@ -5889,7 +5908,7 @@ class asanAI {
 				var new_md5 = await this.#md5($(math_tab_code_elem).html());
 				var old_md5 = this.#math_items_hashes[xpath];
 
-				if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
+				if(new_md5 != old_md5 || force || !$math_tab_code.is(":visible")) {
 					try {
 						await this.#_temml();
 					} catch (e) {
