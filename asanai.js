@@ -4331,7 +4331,7 @@ class asanAI {
 
 		callbacks["onTrainEnd"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
-			favicon_default();
+			asanai_this.#favicon_default();
 			await write_model_to_latex_to_page();
 			asanai_this.#set_document_title(original_title);
 			await restart_fcnn();
@@ -5210,5 +5210,21 @@ class asanAI {
 		}
 
 		return canvas; // Return the canvas element
+	}
+
+	#favicon_default() {
+		this.#change_favicon("favicon.ico");
+	}
+
+	#change_favicon(path) {
+		assert(typeof (path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof (path));
+
+		var link = document.querySelector("link[rel~='icon']");
+		if (!link) {
+			link = document.createElement("link");
+			link.rel = "icon";
+			document.getElementsByTagName("head")[0].appendChild(link);
+		}
+		link.href = path;
 	}
 }
