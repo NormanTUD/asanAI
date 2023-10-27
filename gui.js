@@ -3689,6 +3689,8 @@ async function upload_weights(evt) {
 
 	$("#predictcontainer").show();
 	$('a[href="#predict_tab"]').click();
+
+	await repredict()
 }
 
 var handle_x_file = async function (evt) {
