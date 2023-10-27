@@ -4045,7 +4045,7 @@ class asanAI {
 				await dispose(img_tensor);
 				await dispose(res);
 
-				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
+				this.assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
 
 				this_predicted_array = res_array;
 
@@ -4539,7 +4539,7 @@ class asanAI {
 			}
 
 
-			assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
+			this.assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
 
 			if(predicted_tensor === null || predicted_tensor === undefined) {
 				this.dbg("Predicted tensor was null or undefined");
@@ -5217,7 +5217,7 @@ class asanAI {
 	}
 
 	#change_favicon(path) {
-		assert(typeof (path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof (path));
+		this.assert(typeof (path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof (path));
 
 		var link = document.querySelector("link[rel~='icon']");
 		if (!link) {
