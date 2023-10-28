@@ -20,6 +20,11 @@ async function __predict (data, __model, recursion = 0) {
 		return;
 	}
 
+	if(!Object.keys(__model).includes("input")) {
+		err("[__predict] Model has no input");
+		return;
+	}
+
 	var res;
 	try {
 		res = __model.predict(data);
