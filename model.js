@@ -195,7 +195,7 @@ async function compile_model (recursion_level=0) {
 
 	if(!model) {
 		if(finished_loading) {
-			err("model not given");
+			wrn("model not given");
 		}
 
 		if(global_model_data) {
@@ -1528,12 +1528,12 @@ function get_weights_as_string (m) {
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		err("given model is not a model");
+		wrn("given model is not a model");
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		err("getWeights is not defined");
+		wrn("getWeights is not defined");
 		return false;
 	}
 
