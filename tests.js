@@ -457,8 +457,6 @@ async function run_tests () {
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
-			$("#validationSplit").val(0);
-			$("#max_number_of_files_per_category").val(2);
 			await set_epochs(50);
 			await train_neural_network();
 
