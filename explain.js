@@ -720,9 +720,27 @@ function write_layer_identification (nr, text) {
 }
 
 function get_layer_identification (i) {
+	assert(typeof(i) == "number", "i is not a number");
+
 	if(model === null || model === undefined) {
 		model_is_ok();
-		return;
+		return "";
+	}
+
+	if(!model) {
+		return "";
+	}
+
+	if(!Object.keys(model).includes("layers")) {
+		return "";
+	}
+
+	if(!model.layers.length) {
+		return "";
+	}
+
+	if(i >= model.layers.length) {
+		return "";
 	}
 
 	if(model.layers[i] && Object.keys(model.layers[i]).length >= 1) {
@@ -805,7 +823,7 @@ async function identify_layers () {
 				e = e.message;
 			}
 
-			if(e.includes("model is null")) {
+			if(("" + e).includes("model is null")) {
 				err("" + e);
 			} else {
 				throw new Error(e);

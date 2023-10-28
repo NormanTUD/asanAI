@@ -28,8 +28,23 @@ async function __predict (data, __model, recursion = 0) {
 			e = "" + e.message;
 		}
 
-		err("" + e);
-		if(!("" + e).includes("but got array with shape")) {
+		if(("" + e).includes("but got array with shape")) {
+			var dis = data.shape.join(", ");
+			if(!__model || Object.keys(__model).includes("input")) {
+				var mis = __model.input.shape.join(", ");
+
+				err(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
+			} else {
+				err(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
+			}
+
+			await dispose(data);
+			return;
+		} else if(("" + e).includes("is already disposed") && ("" + e).includes("LayersVariable")) {
+			wrn(`Model was already disposed`);
+			await dispose(data);
+			return;
+		} else {
 			await compile_model();
 			if(warn_if_tensor_is_disposed(data)) {
 				res = await __predict(data, model, recursion + 1);
@@ -38,10 +53,6 @@ async function __predict (data, __model, recursion = 0) {
 				await dispose(data);
 				return;
 			}
-		} else {
-			err(`Wrong input shape for prediction. Data: [${data.shape.join(", ")}], model: [${model.input.shape.join(", ")}]`);
-			await dispose(data);
-			return;
 		}
 	}
 
@@ -1014,47 +1025,55 @@ async function _print_predictions_text(count, example_predict_data) {
 			await delay(200);
 		}
 
-		var model_input_shape = model.input.shape.filter(n=>n);
-		var tensor_shape = _tensor.shape;
+		while (!Object.keys(model).includes("layers")) {
+			log("Waiting for model...");
+			await delay(200);
+		}
 
-		if(tensor_shape_matches_model(_tensor)) {
-			warn_if_tensor_is_disposed(_tensor);
-			try {
-				res = await __predict(_tensor);
 
-				warn_if_tensor_is_disposed(res);
+		if(_tensor && is_tf_tensor(_tensor)) {
+			if(tensor_shape_matches_model(_tensor)) {
+				warn_if_tensor_is_disposed(_tensor);
+				try {
+					warn_if_tensor_is_disposed(_tensor);
+					res = await __predict(_tensor);
 
-				var res_array = array_sync(res);
+					var res_array = array_sync(res);
 
-				var network_name =  create_network_name();
-				var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
-				var latex_output = await _arbitrary_array_to_latex(res_array);
+					var network_name =  create_network_name();
+					var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
+					var latex_output = await _arbitrary_array_to_latex(res_array);
 
-				html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
-				count++;
-				$("#predict_error").html("");
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
+					html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+					count++;
+					$("#predict_error").html("");
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					if(("" + e).includes("already disposed")) {
+						dbg("[_print_predictions_text] Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+					} else if(("" + e).includes("Total size of new array must be unchanged")) {
+						dbg("[_print_predictions_text] Total size of new array must be unchanged. Did you use reshape somewhere?");
+					} else if(("" + e).includes("to have shape")) {
+						dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
+					} else if(("" + e).includes("is already disposed")) {
+						wrn(`Model or layer was already disposed, not predicting.`);
+					} else {
+						_predict_error(e);
+						await dispose(_tensor);
+						await dispose(res);
+
+						return;
+					}
 				}
 
-				if(("" + e).includes("already disposed")) {
-					dbg("[_print_predictions_text] Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
-				} else if(("" + e).includes("Total size of new array must be unchanged")) {
-					dbg("[_print_predictions_text] Total size of new array must be unchanged. Did you use reshape somewhere?");
-				} else if(("" + e).includes("to have shape")) {
-					dbg("[_print_predictions_text] Wrong input shape for _print_predictions_text: " + e);
-				} else {
-					_predict_error(e);
-					await dispose(_tensor);
-					await dispose(res);
-
-					return;
-				}
+			} else {
+				log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
 			}
-
 		} else {
-			log("tensor shape does not match model shape. Not predicting example text. Input shape/tensor shape:" + JSON.stringify(get_input_shape()) + ", " + JSON.stringify(_tensor.shape));
+			wrn(`The tensor about to be predicted was empty.`);
 		}
 
 		await dispose(_tensor);
@@ -1789,6 +1808,11 @@ async function repredict () {
 }
 
 function warn_if_tensor_is_disposed (tensor) {
+	if(!tensor) {
+		err(`Given object is not a tensor`);
+		return false;
+	}
+
 	if(!Object.keys(tensor).includes("isDisposedInternal")) {
 		err(`Given object is not a tensor`);
 		return false;
