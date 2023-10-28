@@ -5,8 +5,26 @@ var _full_debug_log = [];
 var printed_msgs = [];
 
 function get_latest_caller(full_stacktrace) {
-	full_stacktrace = full_stacktrace.split('@')[2].split(/\n/).pop()
-	return full_stacktrace
+	var isChrome = navigator. userAgent. includes("Chrome") && navigator
+
+	if(isChrome) {
+		return "";
+	}
+
+	if(!full_stacktrace) {
+		return "";
+	}
+
+	try {
+		full_stacktrace = full_stacktrace.split('@')[2].split(/\n/).pop()
+		return full_stacktrace
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("" + e);
+	}
 }
 
 function log_once (...args) {

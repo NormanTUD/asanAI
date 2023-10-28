@@ -66,6 +66,8 @@
 		_js("libs/md5.umd.min.js");
 		_js("libs/jquery.js");
 		_js("libs/jquery-ui.js");
+
+		_js("translations.js", 1, 1);
 		_js("debug.js");
 		_js("variables.js");
 
@@ -77,7 +79,6 @@
 		_js("libs/confetti.browser.min.js", 1, 1);
 
 		_js("safety.js");
-		_js("translations.js", 1, 1);
 		_js("tests.js");
 		_js("model.js");
 		_js("explain.js");
