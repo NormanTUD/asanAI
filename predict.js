@@ -1062,7 +1062,10 @@ async function _print_predictions_text(count, example_predict_data) {
 					try {
 						network_name =  create_network_name();
 						latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
-						latex_output = await _arbitrary_array_to_latex(res);
+						if(res) {
+							var res_array = tidy(() => { return array_sync(res); });
+							latex_output = await _arbitrary_array_to_latex(res_array);
+						}
 					} catch (e) {
 						if(Object.keys(e).includes("message")) {
 							e = e.message;

@@ -96,6 +96,12 @@ function log_test (name) {
 }
 
 async function run_tests () {
+	if(is_running_test) {
+		err("Cannot run 2 tests at the same time");
+		return;
+	}
+
+	is_running_test = true;
 	mem_history = [];
 	log_test("Tests started");
 	num_tests = num_tests_failed = 0;
@@ -638,6 +644,8 @@ async function run_tests () {
 	tf.engine().endScope();
 
 	test_summary();
+
+	is_running_test = false;
 
 	return num_tests_failed;
 }

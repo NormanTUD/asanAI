@@ -3156,7 +3156,8 @@ function _arbitrary_array_to_latex (arr) {
 
 			str += "\\end{pmatrix}\n";
 		} else {
-			log("OBJECTs NOT IMPLEMENTED YET");
+			console.log("OBJECTs NOT IMPLEMENTED YET:", arr);
+			console.trace();
 		}
 	} else if (typeof(arr) == "function") {
 		//log("_arbitrary_array_to_latex was called with function argument");

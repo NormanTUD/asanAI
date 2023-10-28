@@ -568,7 +568,11 @@ function set_last_layer_activation_function (activation_function) {
 async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
-	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
+	var max_layer = get_number_of_layers();
+	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
+		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		return;
+	}
 
 	$($(".layer_options_internal")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").remove();
 
@@ -593,7 +597,11 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
-	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
+	var max_layer = get_number_of_layers();
+	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
+		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+		return;
+	}
 
 	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
 
@@ -7258,10 +7266,14 @@ async function restart_fcnn () {
 		return;
 	}
 
+	if(is_running_test) {
+		return;
+	}
+
 	var fcnn_data = get_fcnn_data();
 
 	if(!fcnn_data) {
-		err("Could not get FCNN data");
+		wrn("Could not get FCNN data");
 		return;
 	}
 
