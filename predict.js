@@ -1635,141 +1635,146 @@ function draw_bars_or_numbers (i, predictions, max) {
 }
 
 async function predict_handdrawn () {
-	if(has_zero_output_shape) {
-		return;
-	}
-
-	if(!await input_shape_is_image()) {
-		return;
-	}
-
-	if(is_setting_config) {
-		return;
-	}
-
-	if(!model) {
-		throw new Error("[predict_handdrawn] model is undefined or null");
-		return;
-	}
-
-	if(!Object.keys(atrament_data).includes("sketcher")) {
-		if(sketcher_warning >= 1 && finished_loading) {
-			dbg("[predict_handdrawn] Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
-		}
-		sketcher_warning++;
-
-		return;
-	}
-
-	var predict_data;
 	try {
-		predict_data = tidy(() => {
-			return expand_dims(resizeNearestNeighbor(
-				fromPixels(atrament_data.sketcher.canvas),
-				[height, width]
-			));
-		});
-	} catch (e) {
-		await write_error("" + e);
-		await dispose(predict_data);
-		return;
-	}
+		if(has_zero_output_shape) {
+			return;
+		}
 
-	if(!predict_data) {
-		await dispose(predict_data);
-		err("[predict_handdrawn] No predict data");
-		return;
-	}
+		if(!await input_shape_is_image()) {
+			return;
+		}
 
-	if(waiting_updated_page_uuids.length < 1) {
-		var new_predict_handdrawn_hash = await get_current_status_hash();
+		if(is_setting_config) {
+			return;
+		}
 
-		if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
-			var as = array_sync(predict_data);
-			var stringified = JSON.stringify(as);
-			var new_handdrawn_image_hash = await md5(stringified);
+		if(!model) {
+			throw new Error("[predict_handdrawn] model is undefined or null");
+			return;
+		}
 
-			if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
-				info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+		if(!Object.keys(atrament_data).includes("sketcher")) {
+			if(sketcher_warning >= 1 && finished_loading) {
+				dbg("[predict_handdrawn] Sketcher is not (yet?) defined. Not predicting handdrawn. If this occurs more than once, it may imply a bug.");
+			}
+			sketcher_warning++;
 
-				await dispose(predict_data);
+			return;
+		}
 
-				return;
+		var predict_data;
+		try {
+			predict_data = tidy(() => {
+				return expand_dims(resizeNearestNeighbor(
+					fromPixels(atrament_data.sketcher.canvas),
+					[height, width]
+				));
+			});
+		} catch (e) {
+			await write_error("" + e);
+			await dispose(predict_data);
+			return;
+		}
+
+		if(!predict_data) {
+			await dispose(predict_data);
+			err("[predict_handdrawn] No predict data");
+			return;
+		}
+
+		if(waiting_updated_page_uuids.length < 1) {
+			var new_predict_handdrawn_hash = await get_current_status_hash();
+
+			if(last_predict_handdrawn_hash == new_predict_handdrawn_hash) {
+				var as = array_sync(predict_data);
+				var stringified = JSON.stringify(as);
+				var new_handdrawn_image_hash = await md5(stringified);
+
+				if(last_handdrawn_image_hash == new_handdrawn_image_hash) {
+					info("[predict_handdrawn] Handdrawn image hash or status hash has not changed. Not repredict handdrawn");
+
+					await dispose(predict_data);
+
+					return;
+				}
 			}
 		}
-	}
-	
-	last_predict_handdrawn_hash = new_predict_handdrawn_hash;
-	last_handdrawn_image_hash = new_handdrawn_image_hash;
+		
+		last_predict_handdrawn_hash = new_predict_handdrawn_hash;
+		last_handdrawn_image_hash = new_handdrawn_image_hash;
 
-	var divide_by = parse_float($("#divide_by").val());
+		var divide_by = parse_float($("#divide_by").val());
 
-	var divided_data = null;
+		var divided_data = null;
 
-	if(divide_by != 1) {
-		warn_if_tensor_is_disposed(predict_data);
-		divided_data = tidy(() => {
-			return divNoNan(predict_data, divide_by);
-		});
-
-		warn_if_tensor_is_disposed(predict_data);
-		await dispose(predict_data);
-
-		predict_data = divided_data;
-		warn_if_tensor_is_disposed(predict_data);
-	}
-
-	var predictions_tensor = null;
-	try {
+		if(divide_by != 1) {
 			warn_if_tensor_is_disposed(predict_data);
-			predictions_tensor = await __predict(predict_data);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
+			divided_data = tidy(() => {
+				return divNoNan(predict_data, divide_by);
+			});
+
+			warn_if_tensor_is_disposed(predict_data);
+			await dispose(predict_data);
+
+			predict_data = divided_data;
+			warn_if_tensor_is_disposed(predict_data);
 		}
 
-		if(("" + e).includes("is already disposed")) {
-			dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
-		} else if (("" + e).includes("float32 tensor, but got")) {
-			err("[predict_handdrawn] " + e);
-		} else if(("" + e).includes("Sequential model cannot be built: model is empty")) {
-			err("[predict_handdrawn] " + e);
+		var predictions_tensor = null;
+		try {
+				warn_if_tensor_is_disposed(predict_data);
+				predictions_tensor = await __predict(predict_data);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("is already disposed")) {
+				dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
+			} else if (("" + e).includes("float32 tensor, but got")) {
+				err("[predict_handdrawn] " + e);
+			} else if(("" + e).includes("Sequential model cannot be built: model is empty")) {
+				err("[predict_handdrawn] " + e);
+				return;
+			} else if(("" + e).includes("but got array with shape")) {
+				var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+				dbg("[predict_handdrawn] " + _err);
+			} else if(("" + e).includes("n is undefined")) {
+				dbg("[predict_handdrawn] Model weights probably already disposed, this is usually not harmful");
+			} else if(("" + e).includes("Unsupported input rank by")) {
+				dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
+			} else {
+				l("Predict data shape:", predict_data.shape);
+				err(e);
+				l("Error (443): " + e);
+			}
+
+			await dispose(predictions_tensor);
+			await dispose(predict_data);
+			await dispose(divided_data);
+
 			return;
-		} else if(("" + e).includes("but got array with shape")) {
-			var _err = e + ". This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-			dbg("[predict_handdrawn] " + _err);
-		} else if(("" + e).includes("n is undefined")) {
-			dbg("[predict_handdrawn] Model weights probably already disposed, this is usually not harmful");
-		} else if(("" + e).includes("Unsupported input rank by")) {
-			dbg("[predict_handdrawn] Warning: " + e + ", this most probably means that a layer was being removed while you were in prediction");
-		} else {
-			l("Predict data shape:", predict_data.shape);
-			err(e);
-			l("Error (443): " + e);
+		}
+
+		await draw_heatmap(predictions_tensor, predict_data);
+
+		await _predict_handdrawn(predictions_tensor);
+
+		try {
+			await _temml();
+		} catch (e) {
+			wrn(e);
 		}
 
 		await dispose(predictions_tensor);
 		await dispose(predict_data);
 		await dispose(divided_data);
 
-		return;
-	}
-
-	await draw_heatmap(predictions_tensor, predict_data);
-
-	await _predict_handdrawn(predictions_tensor);
-
-	try {
-		await _temml();
+		allow_editable_labels();
 	} catch (e) {
-		wrn(e);
+		console.error("ERROR I AM LOOKING FOR!");
+		console.error(e);
 	}
-
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
-	await dispose(divided_data);
-
-	allow_editable_labels();
 }
 
 async function _predict_handdrawn(predictions_tensor) {
