@@ -1522,18 +1522,18 @@ function get_weights_as_string (m) {
 
 	if(!m) {
 		if(finished_loading) {
-			err("Could not get model...");
+			wrn("Could not get model...");
 		}
 		return false;
 	}
 
 	if(!Object.keys(m).includes("_callHook")) {
-		err("model does not include _callHook");
+		err("given model is not a model");
 		return false;
 	}
 
 	if(!typeof(m.getWeights) == "function") {
-		err("model.getWeights is not a function");
+		err("getWeights is not defined");
 		return false;
 	}
 

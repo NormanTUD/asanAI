@@ -35,7 +35,7 @@ async function __predict (data, __model, recursion = 0) {
 
 				err(`Wrong input shape for prediction. Data: [${dis}], model: [${mis}]`);
 			} else {
-				err(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
+				wrn(`Wrong input shape for prediction. Data: [${dis}], model: [not determinable]`);
 			}
 
 			await dispose(data);

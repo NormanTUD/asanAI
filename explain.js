@@ -3162,7 +3162,9 @@ function _arbitrary_array_to_latex (arr) {
 		//log("_arbitrary_array_to_latex was called with function argument");
 		//console.trace();
 	} else {
-		wrn("Unknown type: " + typeof(arr));
+		if(arr) {
+			wrn("Unknown type: " + typeof(arr));
+		}
 	}
 	return str;
 }
