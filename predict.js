@@ -1035,16 +1035,54 @@ async function _print_predictions_text(count, example_predict_data) {
 			if(tensor_shape_matches_model(_tensor)) {
 				warn_if_tensor_is_disposed(_tensor);
 				try {
-					warn_if_tensor_is_disposed(_tensor);
-					res = await __predict(_tensor);
+					var network_name, latex_input, latex_output;
 
-					var res_array = array_sync(res);
+					try {
+						warn_if_tensor_is_disposed(_tensor);
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
 
-					var network_name =  create_network_name();
-					var latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
-					var latex_output = await _arbitrary_array_to_latex(res_array);
+						err("A:" + e);
+						throw new Error("A:" + e)
+					}
 
-					html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+					try {
+						res = await __predict(_tensor);
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						err("B:" + e);
+						throw new Error("B:" + e)
+					}
+
+					try {
+						network_name =  create_network_name();
+						latex_input = await _arbitrary_array_to_latex(example_predict_data[i]);
+						latex_output = await _arbitrary_array_to_latex(res);
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						err("C:" + e);
+						throw new Error("C:" + e)
+					}
+
+					try {
+						html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+					} catch (e) {
+						if(Object.keys(e).includes("message")) {
+							e = e.message;
+						}
+
+						err("E:" + e);
+						throw new Error("E:" + e)
+					}
+
 					count++;
 					$("#predict_error").html("");
 				} catch (e) {
@@ -1532,7 +1570,9 @@ function tensor_shape_matches_model (_tensor, m = model) {
 	assert(typeof(_tensor) == "object", "Tensor is not an object");
 	assert(Object.keys(_tensor).includes("shape"), "Tensor has no shape key");
 
-	var res = true;
+	if(!Object.keys(m).includes("layers")) {
+		return false;
+	}
 
 	var input_layer_shape = eval(JSON.stringify(m.layers[0].input.shape.filter(n => n)));
 
