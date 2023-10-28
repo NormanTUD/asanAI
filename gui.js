@@ -1644,6 +1644,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 			console.warn("Could not find index of " + updated_page_uuid);
 		}
 	} catch (e) {
+		var original_e = e;
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
 		if (index !== -1) {
@@ -1687,6 +1688,8 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		} else if (("" + e).includes("e is null")) {
 			dbg("[updated_page] This error may happen when switching models: " + e);
 		} else {
+			err("" + e);
+			console.error("Stack:", original_e.stack);
 			throw new Error("" + e);
 		}
 
