@@ -457,6 +457,8 @@ async function run_tests () {
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
+			$("#validationSplit").val(0);
+			$("#max_number_of_files_per_category").val(2);
 			await set_epochs(50);
 			await train_neural_network();
 
@@ -499,6 +501,8 @@ async function run_tests () {
 			if(array_contains_nan) {
 				log(results);
 			}
+
+			test_equal("testing if confusion matrix contains red values", (await confusion_matrix(labels)).includes("#F51137"), false);
 
 			for (var i = 0; i < results.length; i++) {
 				var this_result = results[i];
