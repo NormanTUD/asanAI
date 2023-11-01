@@ -17,7 +17,7 @@ sub dier {
 my $repo_path = '.';
 
 # Define the date range (default: last 7 days)
-my $yesterday = DateTime->now->subtract(days => 7);
+my $yesterday = DateTime->now->subtract(days => 31);
 my $today = DateTime->now;
 
 # Create a CSV object for writing timetable.csv
