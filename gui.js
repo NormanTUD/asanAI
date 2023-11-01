@@ -6169,14 +6169,21 @@ async function create_zip_with_custom_images () {
 			filename = uuidv4();
 		}
 		var path = label + "/" + filename + ".png";
-		try {
-			await zipWriter.add(path, new zip.BlobReader(blob));
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
 
-			err(`Trying to add canvas to '${path}': ` + e);
+		if(!blob) {
+			err(`canvas-blob could not be found!`);
+		} else {
+			var blob_reader = new zip.BlobReader(blob);
+
+			try {
+				await zipWriter.add(path, blob_reader);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(`Trying to add canvas to '${path}': ` + e);
+			}
 		}
 	}
 
@@ -6197,7 +6204,7 @@ async function create_zip_with_custom_images () {
 		var path = label + "/" + filename + ".png";
 
 		if(!blob) {
-			err(`blob could not be found!`);
+			err(`img-blob could not be found!`);
 		} else {
 			var blob_reader = new zip.BlobReader(blob);
 
