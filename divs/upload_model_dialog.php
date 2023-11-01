@@ -8,15 +8,15 @@
 				</tr>
 				<tr>
 					<td>2. Upload labels TFD trained model (<span class='tt'>labels.json</span>)</td>
-					<td><input accept="application/octet-stream" type="file" id="upload_labels"></td>
+					<td><input accept="application/json" type="file" id="upload_labels"></td>
 				</tr>
 				<tr>
 					<td>3. Upload Model weights from TFD trained model (<span class='tt'>weights.json</span>)</td>
-					<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights"></td>
+					<td><input accept="application/json" type="file" id="upload_tfjs_weights"></td>
 				</tr>
 				<tr class="hide_when_no_conv_visualizations">
 					<td>4. Upload custom image data (<span class='tt'>custom_images.zip</span>)</td>
-					<td><input accept="application/octet-stream" type="file" id="upload_custom_images"></td>
+					<td><input accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" type="file" id="upload_custom_images"></td>
 				</tr>
 			</table>
 
