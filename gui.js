@@ -7622,6 +7622,7 @@ async function read_zip (content) {
 		}
 	}
 
+	set_labels(old_labels);
 
 	for (var li = 0; li < new_labels.length; li++) {
 		var this_label = new_labels[li];
