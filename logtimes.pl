@@ -109,21 +109,30 @@ close $timetable_fh;
 close $table2_fh;
 
 while ($original_start_time <= $end_time) {
-	my $current_month = $start_time->strftime('%m');
-	my $current_year = $start_time->year;
+	my $current_month = $original_start_time->strftime('%m');
+	my $current_year = $original_start_time->year;
 
 	# Use the control variable to set the output color
 	my $color_control = 1;
-	my $colored_output;
-	if ($color_control == 1) {
-		$colored_output = colored($current_month, 'white on_red');
-	} elsif ($color_control == 2) {
-		$colored_output = colored($current_month, 'reset');
-	} else {
-		$colored_output = $current_month;
-	}
 
-	print $colored_output . "\n";
+	my @monate = (
+		"Januar",
+		"Februar",
+		"März",
+		"April", 
+		"Mai",
+		"Juni",
+		"Juli",
+		"August" ,
+		"September", 
+		"Oktober", 
+		"November", 
+		"Dezember" 
+	);
+
+	my $monat_name = $monate[$current_month - 1];
+
+	print $monat_name . "\n";
 
 	my @calendar = calendar($current_month, $current_year);
 
@@ -132,7 +141,6 @@ while ($original_start_time <= $end_time) {
 		foreach my $day (@$week) {
 			if (defined $day) {
 				my $key = sprintf("%4d-%02d-%02d", $current_year, $current_month, $day);
-				die Dumper \%global_working_hours;
 				my $wh = $global_working_hours{$key};
 				if($wh) {
 					if(length($day) == 1) {
@@ -151,7 +159,7 @@ while ($original_start_time <= $end_time) {
 	}
 
 	# Increment the month
-	$original_start_time->add(months => 1);
+	$original_start_time->add(months => 1, days => 1);
 }
 
 # Output total working hours and commits count
