@@ -1,4 +1,4 @@
-<div id="save_dialog" class="popup" style="display: none;">
+<div id="upload_dialog" class="popup" style="display: none;">
 	<div class="popup_body less_transparent_glass_box">
 		<div> 
 			<table>
@@ -17,7 +17,7 @@
 
 			</table>
 
-			<button class="close_button" onclick="close_popup('save_dialog')"><span class="TRANSLATEME_close"></span></button>
+			<button class="close_button" onclick="close_popup('upload_dialog')"><span class="TRANSLATEME_close"></span></button>
 		</div>
 	</div>
 </div>
