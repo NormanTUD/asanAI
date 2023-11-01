@@ -65,6 +65,8 @@ async function train_neural_network () {
 			}
 		}
 
+		stop_downloading_data = true;
+
 		if(model.isTraining) {
 			model.stopTraining = true;
 			model.stopTraining = true;
@@ -76,6 +78,8 @@ async function train_neural_network () {
 		l("Stopped training");
 	} else {
 		l("Started training");
+
+		stop_downloading_data = false;
 
 		if(is_cosmo_mode) {
 			$(".cosmo_next_button_span").css("visibility", "hidden");
