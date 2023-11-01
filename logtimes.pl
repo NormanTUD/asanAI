@@ -56,6 +56,7 @@ while ($start_time <= $end_time) {
 	my $end_of_day = $start_time->clone()->set(hour => 23, minute => 59, second => 59);
 
 	my $repo = Git::Repository->new(work_tree => $repo_path);
+	# "--date=format:'%Y-%m-%d'", 
 	my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
 
 	if (@commits) {
