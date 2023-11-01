@@ -111,7 +111,6 @@ my $chart = Chart::Gnuplot->new(
     ylabel => 'Commits'
 );
 $chart->set('timefmt' => '%Y-%m-%d', 'format x' => '%b %d');
-dier(@plot_commits);
 $chart->plot(
     Chart::Gnuplot::DataSet->new(
         xdata => \@plot_dates,
@@ -122,5 +121,5 @@ $chart->plot(
 );
 
 # Clean up temporary files
-#unlink 'timetable.csv';
-#unlink 'table2.csv';
+unlink 'timetable.csv';
+unlink 'table2.csv';
