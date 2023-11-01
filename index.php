@@ -231,6 +231,7 @@
 		_js("libs/jscolor.js", 1, 1);
 		_js("bottom.js");
 		_js("libs/html2canvas.min.js");
+		_js("libs/jszip.min.js");
 ?>
 	</body>
 </html>
