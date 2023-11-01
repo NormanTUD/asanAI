@@ -75,7 +75,7 @@ async function set_labels (arr, force_allow_empty=0) {
 		var model_number_output_categories = mos[1];
 		var new_number_output_neurons = arr.length;
 
-		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
+		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons && !is_setting_config) {
 			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
 			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
@@ -85,6 +85,10 @@ async function set_labels (arr, force_allow_empty=0) {
 
 			if(!new_number_output_neurons) {
 				msg += "New number of output neurons is 0 or undefined. ";
+			}
+
+			if(is_setting_config) {
+				msg += "Do not change neurons while is_setting_config is true. ";
 			}
 
 			if(model_number_output_categories == new_number_output_neurons) {
