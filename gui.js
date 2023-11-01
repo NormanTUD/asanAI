@@ -7482,7 +7482,7 @@ async function download_model_and_weights_and_labels () {
 	await download_weights_json();
 }
 
-function read_zip (content, sync_type="base64") {
+async function read_zip (content, sync_type="base64") {
 	if(!content) {
 		err("No content");
 		return;
@@ -7500,11 +7500,16 @@ function read_zip (content, sync_type="base64") {
 		return;
 	}
 
+	/*
 	var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 	if(!base64regex.test(content)) {
 		err(`It seems like the content you provided was not in base64.`);
 		return;
 	}
+	*/
+
+	content = await getBase64(content);
+	console.log("typeof(content) = " + typeof(content), ", content:", content);
 
 	var new_zip = new JSZip();
 	new_zip.loadAsync(content, {"base64": true}).then(function(zip) {
@@ -7514,8 +7519,9 @@ function read_zip (content, sync_type="base64") {
 		var images_to_categories = {};
 		
 		zip.forEach((relPath, file) => {
-			alert(relPath);
-			return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
+			console.log("relPath:", relPath, "file:", file);
+			//alert(relPath);
+			//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
 		});
 	});
 }

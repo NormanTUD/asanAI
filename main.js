@@ -514,7 +514,7 @@ $(document).ready(async function() {
 			}
 
 			try {
-				var base_64_string = await blobToBase64(reader.result);
+				var base_64_string = reader.result;
 				var zip_contents = await read_zip(base_64_string);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -533,7 +533,6 @@ $(document).ready(async function() {
 			}
 		};
 
-		console.log("reader:", reader);
 		reader.readAsText(evt.target.files[0]);
 	}
 
