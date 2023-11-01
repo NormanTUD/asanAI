@@ -7492,6 +7492,9 @@ async function download_model_and_weights_and_labels () {
 	save_model();
 	await download_labels_json();
 	await download_weights_json();
+	if($("#data_origin").val() == "image") {
+		create_and_download_zip();
+	}
 }
 
 function read_zip_to_category (zip) {
