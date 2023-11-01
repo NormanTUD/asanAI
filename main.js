@@ -476,13 +476,23 @@ $(document).ready(async function() {
 
 			var filecontent = evt.target.result;
 			try {
-				var zip_contents = await read_zip(filecontent, 0, 1);
+				var zip_contents = await read_zip(btoa(filecontent));
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				throw new Error(e);
+				err("ABC:" + e);
+				
+				if(("" + e).includes("Corrupted zip")) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
+					})
+				} else {
+					throw new Error(e);
+				}
 			}
 		};
 

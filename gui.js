@@ -7500,8 +7500,16 @@ function read_zip (content, sync_type="base64") {
 		return;
 	}
 
+	var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+	if(!base64regex.test(content)) {
+		err(`It seems like the content you provided was not in base64.`);
+		return;
+	}
+
+	console.log(content);
+
 	var new_zip = new JSZip();
-	new_zip.loadAsync(content).then(function(zip) {
+	new_zip.loadAsync(content, {"base64": true}).then(function(zip) {
 		// you now have every files contained in the loaded zip
 		//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
 
