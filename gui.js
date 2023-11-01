@@ -96,6 +96,7 @@ async function set_labels (arr, force_allow_empty=0) {
 			}
 
 			dbg(msg);
+			//console.trace();
 		}
 	} else {
 		var msg = "";
@@ -4311,7 +4312,7 @@ function add_image_to_category (img, category) {
 	imgDiv.append(html);
 }
 
-async function add_new_category() {
+async function add_new_category(disable_init_own_image_files=0) {
 	var n = $(".own_image_label").length;
 
 	var imgDiv = $(".own_images");
@@ -4380,7 +4381,9 @@ async function add_new_category() {
 
 	imgDiv = $(".own_images")[n];
 
-	await init_own_image_files();
+	if(!disable_init_own_image_files) {
+		await init_own_image_files();
+	}
 
 	auto_adjust_number_of_neurons($(".own_image_label").length);
 
@@ -7491,6 +7494,31 @@ async function download_model_and_weights_and_labels () {
 	await download_weights_json();
 }
 
+function read_zip_to_category (zip) {
+	var _promise = _read_zip_to_category(zip);
+
+	upload_imgs_promises.push(_promise);
+
+	return _promise;
+
+}
+
+async function _read_zip_to_category (zip) {
+	// you now have every files contained in the loaded zip
+
+	zip.forEach(async (relPath, file) => {
+		var category = relPath.replace(/\/.*/, "");
+		var filename = relPath.replace(/.*\//, "");
+
+			var file_contents_base64 = await file.async("base64");
+
+			if(!Object.keys(uploaded_images_to_categories).includes(category)) {
+				uploaded_images_to_categories[category] = [];
+			}
+			uploaded_images_to_categories[category].push(file_contents_base64);
+		});
+}
+
 async function read_zip (content) {
 	if(!content) {
 		err("No content");
@@ -7501,19 +7529,32 @@ async function read_zip (content) {
 
 	var new_zip = new JSZip();
 
-	new_zip.loadAsync(content).then(async function(zip) {
-		// you now have every files contained in the loaded zip
-		
-		zip.forEach(async (relPath, file) => {
-			var category = relPath.replace(/\/.*/, "");
-			var filename = relPath.replace(/.*\//, "");
+	new_zip.loadAsync(content).then(read_zip_to_category);
 
-			var file_contents_base64 = await file.async("base64");
+	Promise.all(upload_imgs_promises);
+	upload_imgs_promises = [];
 
-			if(!Object.keys(uploaded_images_to_categories).includes(category)) {
-				uploaded_images_to_categories[category] = [];
+	dbg("Upload done, results available in uploaded_images_to_categories");
+
+	$("#data_origin").val("image");
+	await change_data_origin(1);
+
+
+
+	var number_of_categories = Object.keys(uploaded_images_to_categories).length;
+
+	while ($(".delete_category_button").length != number_of_categories) {
+		log(`while (${$(".delete_category_button").length} != ${number_of_categories}) {`);
+		if($(".delete_category_button").length > number_of_categories) {
+			while ($(".delete_category_button").length != 1) {
+				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1]
+				
+				$last_delete_button.click();
+
+				await delay(1000);
 			}
-			uploaded_images_to_categories[category].push(file_contents_base64);
-		});
-	});
+		} else {
+			await add_new_category();
+		}
+	}
 }

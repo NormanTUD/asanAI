@@ -1656,3 +1656,4 @@ var old_y_str = "";
 var is_running_test = false;
 
 var uploaded_images_to_categories = {};
+var upload_imgs_promises = [];
