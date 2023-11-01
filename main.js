@@ -600,6 +600,14 @@ $(document).ready(async function() {
 						title: 'Oops...',
 						text: 'The zip file you uploaded seems to be corrupt or only partially uploaded.'
 					});
+					return;
+				} else if (("" + e).includes("is this a zip file")) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'It seems like uploading the file has failed..'
+					});
+					return;
 				} else {
 					throw new Error("Error while reading zip: " + e);
 				}
