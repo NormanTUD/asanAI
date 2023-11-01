@@ -117,7 +117,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 }
 
-function load_labels_from_json_string (json) {
+async function load_labels_from_json_string (json) {
 	var struct;
 
 	try {
@@ -135,7 +135,7 @@ function load_labels_from_json_string (json) {
 		}
 	}
 
-	set_labels(struct);
+	await set_labels(struct);
 }
 
 function download_labels_json () {
