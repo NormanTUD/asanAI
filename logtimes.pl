@@ -49,6 +49,7 @@ while ($yesterday->add(days => 1) <= $today) {
 	my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_time");
 
 	if (@commits) {
+		@commits = reverse @commits;
 		my @commit_times;
 		my $commits_count = 0;
 		foreach my $commit (@commits) {
