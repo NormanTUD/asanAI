@@ -17,7 +17,7 @@ sub dier {
 my $repo_path = '.';
 
 # Define the date range (default: last 7 days)
-my $yesterday = DateTime->now->subtract(days => 1);
+my $yesterday = DateTime->now->subtract(days => 7);
 my $today = DateTime->now;
 
 # Create a CSV object for writing timetable.csv
@@ -101,6 +101,5 @@ $chart->plot(
 );
 
 # Clean up temporary files
-unlink 'timetable.csv';
-unlink 'table2.csv';
-
+#unlink 'timetable.csv';
+#unlink 'table2.csv';
