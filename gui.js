@@ -6100,20 +6100,42 @@ function get_canvas_blob(canvas) {
 
 function get_img_blob(img) {
 	return new Promise(function(resolve, reject) {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext('2d');
+		var $img = $(img);
 
-		canvas.width = img.width;
-		canvas.height = img.height;
-		ctx.drawImage(img, 0, 0);
+		// Überprüfen, ob das Bild vollständig geladen ist
+		if (img.complete) {
+			canvas.width = $img.width();
+			canvas.height = $img.height();
 
-		canvas.toBlob(function(blob) {
-			if (blob) {
-				resolve(blob);
-			} else {
-				reject("Error creating blob from the image");
-			}
-		});
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+			get_canvas_blob(canvas)
+				.then(function (blob) {
+					resolve(blob);
+				})
+				.catch(function (error) {
+					reject(error);
+				});
+		} else {
+			img.onload = function () {
+				canvas.width = $img.width() * 2;
+				canvas.height = $img.height() * 2;
+
+				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+				$("body").append(canvas);
+
+				get_canvas_blob(canvas)
+					.then(function (blob) {
+						resolve(blob);
+					})
+					.catch(function (error) {
+						reject(error);
+					});
+			};
+		}
 	});
 }
 
