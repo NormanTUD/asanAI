@@ -6176,7 +6176,7 @@ async function create_zip_with_custom_images () {
 				e = e.message;
 			}
 
-			err(`Trying to add canvas to ${path}: ${e}`);
+			err(`Trying to add canvas to ${path}: ` + e);
 		}
 	}
 
@@ -6202,7 +6202,7 @@ async function create_zip_with_custom_images () {
 				e = e.message;
 			}
 
-			err(`Trying to add img to ${path}: ${e}`);
+			err(`Trying to add img to ${path}: ` + e);
 		}
 	}
 
