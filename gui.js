@@ -116,7 +116,7 @@ async function set_labels (arr, force_allow_empty=0) {
 			msg += "Last layer must be of type dense. ";
 		}
 
-		err("Cannot autoset layer. Errors: " + msg);
+		dbg("Cannot autoset layer. Errors: " + msg);
 
 		return;
 	}
