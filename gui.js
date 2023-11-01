@@ -7602,7 +7602,7 @@ async function read_zip (content) {
 	while ($(".delete_category_button").length != number_of_categories) {
 		if($(".delete_category_button").length > number_of_categories) {
 			while ($(".delete_category_button").length != 1) {
-				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1]
+				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
 				
 				$last_delete_button.click();
 
