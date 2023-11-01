@@ -67,6 +67,7 @@ async function set_labels (arr, force_allow_empty=0) {
 	if(old_array_string != new_array_string) {
 		labels = arr;
 		dbg("Set labels = [" + arr.join(", ") + "]");
+		console.trace();
 	} else {
 		dbg("Not changing labels, they stayed the same.");
 	}
@@ -4312,7 +4313,7 @@ function add_image_to_category (img, category) {
 	imgDiv.append(html);
 }
 
-async function add_new_category(disable_init_own_image_files=0) {
+async function add_new_category(disable_init_own_image_files=0, do_not_reset_labels=0) {
 	var n = $(".own_image_label").length;
 
 	var imgDiv = $(".own_images");
@@ -4375,7 +4376,7 @@ async function add_new_category(disable_init_own_image_files=0) {
 			this_label = cosmo_categories[label_nr % cosmo_categories.length];
 		}
 
-		$("<form method=\"post\" enctype=\"multipart/form-data\"><input onkeyup=\"rename_labels(1)\" class=\"own_image_label\" value=\"" + this_label + "\" /><input type=\"file\" class=\"own_image_files\" multiple accept=\"image/*\"><br/></form>").prependTo($(".own_image_upload_container")[n]);
+		$("<form method=\"post\" enctype=\"multipart/form-data\"><input onkeyup=\"rename_labels()\" class=\"own_image_label\" value=\"" + this_label + "\" /><input type=\"file\" class=\"own_image_files\" multiple accept=\"image/*\"><br/></form>").prependTo($(".own_image_upload_container")[n]);
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 
@@ -4396,7 +4397,9 @@ async function add_new_category(disable_init_own_image_files=0) {
 
 	alter_text_webcam_series();
 
-	await rename_labels();
+	if(!do_not_reset_labels) {
+		await rename_labels(do_not_reset_labels);
+	}
 
 	await add_cosmo_point("added_custom_category");
 
@@ -4464,8 +4467,10 @@ function add_canvas_layer(canvas, transparency, base_id) {
 	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
 }
 
-async function rename_labels() {
-	await reset_labels();
+async function rename_labels(do_not_reset_labels=0) {
+	if(!do_not_reset_labels) {
+		await reset_labels();
+	}
 	$(".own_image_label").each(function (i, x) {
 		labels.push($(x).val());
 	});
@@ -7534,12 +7539,12 @@ async function download_model_and_weights_and_labels () {
 	await download_labels_json();
 	await download_weights_json();
 	if($("#data_origin").val() == "image") {
-		create_and_download_zip();
+		await create_and_download_zip();
 	}
 }
 
 function read_zip_to_category (zip) {
-	var _promise = _read_zip_to_category(zip);
+	var _promise = _read_zip_to_category(zip); // promised will be awaited globally
 
 	upload_imgs_promises.push(_promise);
 
@@ -7623,7 +7628,7 @@ async function read_zip (content) {
 		
 		var this_category_id = labels.indexOf(this_label)
 		if(this_category_id == -1) {
-			err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}`);
+			err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 		} else {
 			$($(".own_image_label")[this_category_id]).val(this_label).trigger("keyup");
 
