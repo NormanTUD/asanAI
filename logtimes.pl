@@ -142,9 +142,10 @@ while ($original_start_time <= $end_time) {
 			if (defined $day) {
 				my $key = sprintf("%4d-%02d-%02d", $current_year, $current_month, $day);
 				my $wh = $global_working_hours{$key};
+				my $before = " [";
 				if($wh) {
 					if(length($day) == 1) {
-						print $day . "  [".$wh."] |  ";
+						print $day . $before." ".$wh."] |  ";
 					} else {
 						print $day . " [".$wh."] |  ";
 					}
@@ -152,7 +153,7 @@ while ($original_start_time <= $end_time) {
 					print $day . " [00] |  ";
 				}
 			} else {
-				print "    |        ";
+				print "     |      ";
 			}
 		}
 		print "\n";
