@@ -7,6 +7,7 @@ use Text::CSV;
 use DateTime;
 use DateTime::Format::Strptime;
 use Chart::Gnuplot;
+use Calendar::Simple;
 use Data::Dumper;
 
 sub dier {
@@ -21,7 +22,12 @@ my $start_date = shift || '2022-01-01';
 my $end_date = shift || '2022-12-31';
 
 my $start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
+my $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($end_date);
+
+use Calendar::Simple;
+use DateTime::Format::Strptime;
+use Term::ANSIColor;
 
 # Create a CSV object for writing timetable.csv
 my $csv_timetable = Text::CSV->new({ binary => 1, eol => $/ });
@@ -97,6 +103,45 @@ while ($start_time <= $end_time) {
 
 close $timetable_fh;
 close $table2_fh;
+
+while ($original_start_time <= $end_time) {
+	my $current_month = $start_time->strftime('%m');
+	my $current_year = $start_time->year;
+
+	# Use the control variable to set the output color
+	my $color_control = 1;
+	my $colored_output;
+	if ($color_control == 1) {
+		$colored_output = colored($current_month, 'white on_red');
+	} elsif ($color_control == 2) {
+		$colored_output = colored($current_month, 'reset');
+	} else {
+		$colored_output = $current_month;
+	}
+
+	print $colored_output . "\n";
+
+	my @calendar = calendar($current_month, $current_year);
+
+	# Iterate through the days in the calendar
+	foreach my $week (@calendar) {
+		foreach my $day (@$week) {
+			if (defined $day) {
+				if(length($day) == 1) {
+					print $day . "  [00] ";
+				} else {
+					print $day . " [00] ";
+				}
+			} else {
+				print "    ";
+			}
+		}
+		print "\n";
+	}
+
+	# Increment the month
+	$original_start_time->add(months => 1);
+}
 
 # Output total working hours and commits count
 print "Total Working Hours: $total_working_hours hours\n";
