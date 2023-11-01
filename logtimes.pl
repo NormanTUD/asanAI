@@ -51,20 +51,24 @@ while ($yesterday->add(days => 1) <= $today) {
 	if (@commits) {
 		@commits = reverse @commits;
 		my @commit_times;
+		my @commit_times_full;
 		my @commit_hashes;
 		my $commits_count = 0;
 		foreach my $commit (@commits) {
 			my ($timestamp, $hash) = split(/,/, $commit);
 			my $commit_time = DateTime->from_epoch(epoch => $timestamp);
 			push @commit_times, $commit_time->strftime('%H:%M');
+			push @commit_times_full, $commit_time->strftime('%H:%M');
 			push @commit_hashes, $hash;
 			$commits_count++;
 		}
 
 		my $first_commit_time = $commit_times[0];
+		my $first_commit_time_full = $commit_times[0];
 		my $first_commit_hash = $commit_hashes[0];
 
 		my $last_commit_time = $commit_times[-1];
+		my $last_commit_time_full = $commit_times[-1];
 		my $last_commit_hash = $commit_hashes[-1];
 
 		my $working_hours = $end_time->subtract_datetime($first_commit_time);
