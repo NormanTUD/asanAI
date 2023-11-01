@@ -95,7 +95,7 @@ async function set_labels (arr, force_allow_empty=0) {
 }
 
 function reset_labels () {
-	labels = [];
+	set_labels([], 1);
 }
 
 function enable_train () {

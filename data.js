@@ -480,7 +480,7 @@ async function get_xs_and_ys () {
 		xy_data.x = tensor(xy_data.x);
 		xy_data.y = tensor(xy_data.y);
 
-		labels = xy_data.keys;
+		set_labels(xy_data.keys);
 
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 			$("#photos").show();
@@ -1202,7 +1202,7 @@ async function get_x_y_from_csv () {
 	var x_headers = headers_data["x"];
 	var y_headers = headers_data["y"];
 
-	labels = y_headers;
+	set_labels(y_headers);
 
 	var parsed = parse_csv_file(csv);
 
