@@ -843,6 +843,9 @@ async function _add_layer_to_model (type, data, fake_model_structure, i, new_mod
 			e = e.message;
 		}
 
+		err("!!!!!!!!!!!!!!!!");
+		err("" + e);
+
 		if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
 			if(
 				("" + e).includes("Negative dimension size caused by adding layer") ||

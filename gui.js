@@ -2708,6 +2708,11 @@ async function set_config(index) {
 					if(is) {
 						is = remove_empty(is);
 						is = Object.values(is);
+
+						if(is[0] == 1 && is.length == 4) {
+							is.shift();
+						}
+
 						await set_input_shape("[" + is.join(", ") + "]");
 					} else {
 						l("ERROR: keras not found in config");
@@ -3167,6 +3172,10 @@ async function set_input_shape(val, force=0) {
 	if(force && await input_shape_is_image()) {
 		var new_input_shape = val;
 		new_input_shape = new_input_shape.replace("[", "").replace("]", "").split(", ");
+
+		if(new_input_shape.length == 4 && new_input_shape[0] == 1) {
+			new_input_shape.shift();
+		}
 
 		var new_height = new_input_shape[0];
 		var new_width = new_input_shape[1];
