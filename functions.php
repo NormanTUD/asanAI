@@ -491,6 +491,11 @@
 
 	function get_git_hash () {
 		$rev = "";
+		if(file_exists("git_hash")) {
+			$rev = chop(file_get_contents(".git/refs/heads/master"));
+			return $rev;
+		}
+
 		$git = shell_exec("git rev-parse HEAD");
 		if($rev) {
 			$rev = chop($git);

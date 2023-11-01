@@ -90,6 +90,25 @@ if ! command -v wget &>/dev/null; then
 	}
 fi
 
+if ! command -v git &>/dev/null; then
+	# Update package lists
+	if [[ $UPDATED_PACKAGES == 0 ]]; then
+		sudo apt update || {
+			echo "apt-get update failed. Are you online?"
+			exit 3
+		}
+
+		UPDATED_PACKAGES=1
+	fi
+
+	sudo apt-get install -y git || {
+		echo "sudo apt install -y git failed"
+		exit 4
+	}
+fi
+
+git rev-parse HEAD > git_hash
+
 export LOCAL_PORT
 
 # Write environment variables to .env file
@@ -121,3 +140,5 @@ if [[ "$run_tests" -eq "1" ]]; then
 fi
 
 sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
+
+rm git_hash
