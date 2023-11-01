@@ -108,6 +108,8 @@ while ($start_time <= $end_time) {
 close $timetable_fh;
 close $table2_fh;
 
+my $_months = 0;
+
 while ($original_start_time <= $end_time) {
 	my $current_month = $original_start_time->strftime('%m');
 	my $current_year = $original_start_time->year;
@@ -161,11 +163,13 @@ while ($original_start_time <= $end_time) {
 
 	# Increment the month
 	$original_start_time->add(months => 1, days => 1);
+	$_months++;
 }
 
 # Output total working hours and commits count
 print "Total Working Hours: $total_working_hours hours\n";
 print "Total Commits Count: $total_commits_count\n";
+print "Expected working hours: ".($_months * 4 * 40)."\n";
 
 # Use Chart::Gnuplot to create a plot
 my $chart = Chart::Gnuplot->new(
