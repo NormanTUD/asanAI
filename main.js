@@ -559,6 +559,11 @@ $(document).ready(async function() {
 			return;
 		}
 
+		if(get_input_shape().length != 3 || get_input_shape()[2] != 3 || get_last_layer_activation_function() != "softmax") {
+			err("Uploading custom images is only supported for image models.");
+			return;
+		}
+
 		var reader = new FileReader();
 
 		reader.onloadend = async function(evt) {
@@ -567,7 +572,7 @@ $(document).ready(async function() {
 			}
 
 			if (evt.target.error) {
-				wrn("Error while reading weights file: " + evt.target.error);
+				wrn("Error while loading custom images zip file: " + evt.target.error);
 				return;
 			}
 

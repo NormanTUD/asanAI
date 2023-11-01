@@ -7491,45 +7491,29 @@ async function download_model_and_weights_and_labels () {
 	await download_weights_json();
 }
 
-async function read_zip (content, sync_type="base64") {
+async function read_zip (content) {
 	if(!content) {
 		err("No content");
 		return;
 	}
 
-	if(!sync_type) {
-		err("No sync type");
-		return;
-	}
-
-	var valid_sync_types = ["string", "base64", "uint8array"];
-
-	if(!valid_sync_types.includes(sync_type)) {
-		err(`Invalid sync type: ${sync_type}, valid types are: ${valid_sync_types.join(", ")}`);
-		return;
-	}
-
-	/*
-	var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-	if(!base64regex.test(content)) {
-		err(`It seems like the content you provided was not in base64.`);
-		return;
-	}
-	*/
-
-	console.log("typeof(content) = " + typeof(content), ", content:", content);
+	uploaded_images_to_categories = {};
 
 	var new_zip = new JSZip();
-	new_zip.loadAsync(content).then(function(zip) {
-		// you now have every files contained in the loaded zip
-		//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
 
-		var images_to_categories = {};
+	new_zip.loadAsync(content).then(async function(zip) {
+		// you now have every files contained in the loaded zip
 		
-		zip.forEach((relPath, file) => {
-			console.log("relPath:", relPath, "file:", file);
-			//alert(relPath);
-			//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
+		zip.forEach(async (relPath, file) => {
+			var category = relPath.replace(/\/.*/, "");
+			var filename = relPath.replace(/.*\//, "");
+
+			var file_contents_base64 = await file.async("base64");
+
+			if(!Object.keys(uploaded_images_to_categories).includes(category)) {
+				uploaded_images_to_categories[category] = [];
+			}
+			uploaded_images_to_categories[category].push(file_contents_base64);
 		});
 	});
 }
