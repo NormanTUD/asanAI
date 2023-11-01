@@ -7464,6 +7464,25 @@ function get_fcnn_data () {
 		return;
 	}
 
+	var start_layer = 0;
+
+	if($("#show_input_layer").is(":checked")) {
+		start_layer++;
+		names.push("Input Layer");
+		var last_mos = model.input.shape[model.input.shape.length - 1];
+
+		units.push(last_mos);
+
+		meta_infos.push({
+			input_shape: model.input.shape,
+			output_shape: model.input.shape,
+			layer_type: "Conv2D",
+			kernel_size_x: 3,
+			kernel_size_y: 3,
+			nr: 0
+		});
+	}
+
 	for (var i = 0; i < model.layers.length; i++) {
 		var class_name = model.layers[i].getClassName();
 		if(!["Dense", "Flatten", "Conv2D"].includes(class_name)) {
@@ -7500,7 +7519,7 @@ function get_fcnn_data () {
 
 		meta_infos.push({
 			layer_type: class_name,
-			nr: i,
+			nr: start_layer + i,
 			input_shape: input_shape_of_layer,
 			output_shape: output_shape_of_layer,
 			kernel_size_x: kernel_size_x,
