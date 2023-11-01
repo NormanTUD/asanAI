@@ -7539,10 +7539,15 @@ async function read_zip (content) {
 	$("#data_origin").val("image");
 	await change_data_origin(1);
 
-
-
-	var number_of_categories = Object.keys(uploaded_images_to_categories).length;
 	var new_labels = Object.keys(uploaded_images_to_categories);
+	var number_of_categories = new_labels.length;
+
+
+	if(!number_of_categories) {
+		err("No new labels given.");
+		return;
+	}
+
 	set_labels(new_labels);
 
 	while ($(".delete_category_button").length != number_of_categories) {
@@ -7559,6 +7564,7 @@ async function read_zip (content) {
 			await add_new_category();
 		}
 	}
+
 
 	for (var li = 0; li < new_labels.length; li++) {
 		var this_label = new_labels[li];
