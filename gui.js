@@ -61,26 +61,38 @@ async function set_labels (arr, force_allow_empty=0) {
 	var mos = last_layer.output.shape;
 	var last_layer_activation = last_layer.getConfig()["activation"];
 
+	var old_array_string = JSON.stringify(labels);
+	var new_array_string = JSON.stringify(arr);
+
+	if(old_array_string != new_array_string) {
+		labels = arr;
+		dbg("Set labels = [" + arr.join(", ") + "]");
+		console.trace();
+	} else {
+		dbg("Not changing labels, they stayed the same.");
+	}
+
 	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
-		var old_array_string = JSON.stringify(labels);
-		var new_array_string = JSON.stringify(arr);
+		var model_number_output_categories = mos[1];
+		var new_number_output_neurons = arr.length;
 
-		if(old_array_string != new_array_string) {
-			labels = arr;
+		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
+			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
-			var model_number_output_categories = mos[1];
-			var new_number_output_neurons = arr.length;
-
-			if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
-				dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
-				set_item_value(last_layer_nr, "units", new_number_output_neurons);
-
-				await repredict()
-			}
-			dbg("Set labels = [" + arr.join(", ") + "]");
-			console.trace();
+			await repredict()
 		} else {
-			dbg("Not resetting labels, they stayed the same.");
+			var msg = "";
+
+			if(!new_number_output_neurons) {
+				msg += "New number of output neurons is 0 or undefined. ";
+			}
+
+			if(model_number_output_categories == new_number_output_neurons) {
+				msg += "New number of output neurons matches the number of neurons already in the model. ";
+			}
+
+			dbg(msg);
 		}
 	} else {
 		var msg = "";
@@ -104,6 +116,31 @@ async function set_labels (arr, force_allow_empty=0) {
 
 		return;
 	}
+}
+
+function load_labels_from_json_string (json) {
+	var struct;
+
+	try {
+		struct = JSON.parse(json);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		if(("" + e).includes("SyntaxError")) {
+			err("The uploaded labels.json file does not seem to be valid JSON.");
+			return;
+		} else {
+			throw new Error(e);
+		}
+	}
+
+	set_labels(struct);
+}
+
+function download_labels_json () {
+	download("labels.json", JSON.stringify(labels))
 }
 
 async function reset_labels () {
@@ -811,7 +848,7 @@ async function _get_configuration(index) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
-			
+
 			err(e);
 
 			return null;
