@@ -1328,7 +1328,8 @@ async function predict_webcam () {
 
 	var predictions_tensor = null;
 	try {
-		predictions_tensor = await __predict([predict_data]);
+		warn_if_tensor_is_disposed(predict_data);
+		predictions_tensor = await __predict(predict_data);
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
 			dbg("[predict_webcam] Model Tensor already disposed");

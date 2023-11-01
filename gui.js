@@ -7422,6 +7422,6 @@ async function restart_fcnn () {
 async function download_model_and_weights_and_labels () {
 	await wait_for_updated_page(3);
 	save_model();
-	await download_weights_json();
 	await download_labels_json();
+	await download_weights_json();
 }
