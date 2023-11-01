@@ -4367,6 +4367,9 @@ async function add_new_category(disable_init_own_image_files=0) {
 		$(s).appendTo("#own_images_container");
 
 		var this_label = "category " + label_nr;
+		if(label_nr < labels.length) {
+			this_label = labels[label_nr];
+		}
 
 		if(is_cosmo_mode) {
 			this_label = cosmo_categories[label_nr % cosmo_categories.length];
@@ -7561,6 +7564,9 @@ async function _read_zip_to_category (zip) {
 }
 
 async function read_zip (content) {
+	var old_labels = labels;
+	var old_labels_string = JSON.stringify(old_labels);
+
 	if(!content) {
 		err("No content");
 		return;
@@ -7590,10 +7596,10 @@ async function read_zip (content) {
 	}
 
 	var new_labels_string = JSON.stringify(new_labels);
-	var old_labels_string = JSON.stringify(labels);
 
 	if(new_labels_string != old_labels_string) {
-		wrn(`New labels don't match! Old: ${old_labels_string}, new: ${new_labels_string}`);
+		//set_labels(new_labels);
+		wrn("Label-warning");
 	}
 
 	while ($(".delete_category_button").length != number_of_categories) {
@@ -7614,14 +7620,19 @@ async function read_zip (content) {
 
 	for (var li = 0; li < new_labels.length; li++) {
 		var this_label = new_labels[li];
+		
+		var this_category_id = labels.indexOf(this_label)
+		if(this_category_id == -1) {
+			err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}`);
+		} else {
+			$($(".own_image_label")[this_category_id]).val(this_label).trigger("keyup");
 
-		$($(".own_image_label")[li]).val(this_label).trigger("keyup");
+			for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
+				var _image = uploaded_images_to_categories[this_label][ii];
+				_image = "data:image/png;base64," + _image;
 
-		for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
-			var _image = uploaded_images_to_categories[this_label][ii];
-			_image = "data:image/png;base64," + _image;
-
-			add_image_to_category(_image, li);
+				add_image_to_category(_image, this_category_id);
+			}
 		}
 	}
 }
