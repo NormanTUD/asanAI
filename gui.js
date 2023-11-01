@@ -7631,7 +7631,7 @@ async function read_zip (content) {
 		if(this_category_id == -1) {
 			err(`this_category_id could not be determined for ${this_label}, labels are: ${labels.join(", ")}, old_labels are: ${old_labels_string}`);
 		} else {
-			$($(".own_image_label")[this_category_id]).val(this_label).trigger("keyup");
+			$($(".own_image_label")[this_category_id]).val(this_label);
 
 			for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
 				var _image = uploaded_images_to_categories[this_label][ii];
