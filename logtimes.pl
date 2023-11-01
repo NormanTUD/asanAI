@@ -66,9 +66,8 @@ while ($yesterday->add(days => 1) <= $today) {
 
 		my $last_commit_time = $commit_times[-1];
 		my $last_commit_hash = $commit_hashes[-1];
-		dier("$last_commit_hash - $last_commit_time");
 
-		my $working_hours = $end_time->subtract_datetime($start_time);
+		my $working_hours = $end_time->subtract_datetime($first_commit_time);
 		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
 		$total_working_hours += $working_hours->in_units('hours');
