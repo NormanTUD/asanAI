@@ -6098,10 +6098,29 @@ function get_canvas_blob(canvas) {
 	});
 }
 
+function get_img_blob(img) {
+	return new Promise(function(resolve, reject) {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+
+		canvas.width = img.width;
+		canvas.height = img.height;
+		ctx.drawImage(img, 0, 0);
+
+		canvas.toBlob(function(blob) {
+			if (blob) {
+				resolve(blob);
+			} else {
+				reject("Error creating blob from the image");
+			}
+		});
+	});
+}
+
 async function create_zip_with_custom_images () {
 	const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
 
-	var canvasses = $(".own_image_span").find("canvas,img");
+	var canvasses = $(".own_image_span").find("canvas");
 
 	for (var i = 0; i < canvasses.length; i++) {
 		var canvas = canvasses[i];
@@ -6114,6 +6133,21 @@ async function create_zip_with_custom_images () {
 
 		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
 	}
+
+	var imgs = $(".own_image_span").find("img");
+
+	for (var i = 0; i < imgs.length; i++) {
+		var img = imgs[i];
+
+		var blob = await get_img_blob(img);
+
+		var label = $(img).parent().parent().parent().find(".own_image_label").val();
+
+		var filename = img.id;
+
+		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
+	}
+
 	var res = zipWriter.close();
 	return res;
 }
