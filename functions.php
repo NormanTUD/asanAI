@@ -492,7 +492,7 @@
 	function get_git_hash () {
 		$rev = "";
 		if(file_exists("git_hash")) {
-			$rev = chomp(chop(file_get_contents("git_hash")));
+			$rev = chop(chop(file_get_contents("git_hash")));
 			return $rev;
 		}
 
