@@ -1680,7 +1680,13 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	try {
 		await identify_layers();
 	} catch (e) {
-		throw new Error(e);
+		var stack = e.stack;
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		err("identify_layers() failed with: " + e + ". Stack: ");
+		console.log(stack);
 	}
 
 	layer_structure_cache = null;
