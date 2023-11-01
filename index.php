@@ -191,7 +191,7 @@
 <?php
 				_include("divs/losses_popup.php");
 				_include("divs/sources_popup.php");
-				_include("divs/save_dialog.php");
+				_include("divs/upload_model_dialog.php");
 				_include("divs/register_dialog.php");
 				_include("divs/save_model_dialog.php");
 				_include("divs/errorcontainer.php");

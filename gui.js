@@ -7481,3 +7481,35 @@ async function download_model_and_weights_and_labels () {
 	await download_labels_json();
 	await download_weights_json();
 }
+
+function read_zip (content, sync_type="base64") {
+	if(!content) {
+		err("No content");
+		return;
+	}
+
+	if(!sync_type) {
+		err("No sync type");
+		return;
+	}
+
+	var valid_sync_types = ["string", "base64", "uint8array"];
+
+	if(!valid_sync_types.includes(sync_type)) {
+		err(`Invalid sync type: ${sync_type}, valid types are: ${valid_sync_types.join(", ")}`);
+		return;
+	}
+
+	var new_zip = new JSZip();
+	new_zip.loadAsync(content).then(function(zip) {
+		// you now have every files contained in the loaded zip
+		//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
+
+		var categories = [];
+		
+		zip.forEach((relPath, file) => {
+			alert(relPath);
+			return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
+		});
+	});
+}
