@@ -89,10 +89,22 @@ async function update_translations(force=0) {
 
 	});
 
-	if(is_cosmo_mode) {
-		if(lang != labels_lang) {
-			await cosmo_set_labels();
-			labels_lang = lang;
+	try {
+		if(is_cosmo_mode) {
+			if(lang != labels_lang) {
+				await cosmo_set_labels();
+				labels_lang = lang;
+			}
+		}
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		if(("" + e).includes("is_cosmo_mode is not found")) {
+			wrn("is_cosmo_mode. This can happen during the Initializing-stage of loading asanAI and is usually harmless.");
+		} else {
+			err("" + e);
 		}
 	}
 }
