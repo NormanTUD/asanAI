@@ -463,6 +463,32 @@ $(document).ready(async function() {
 		reader.readAsText(evt.target.files[0]);
 	}
 
+	document.getElementById("upload_custom_images").onchange = function(evt) {
+		if(!window.FileReader) return;
+		var reader = new FileReader();
+
+		reader.onload = async function(evt) {
+			if(evt.target.readyState != 2) return;
+			if(evt.target.error) {
+				alert("Error while reading weights file");
+				return;
+			}
+
+			var filecontent = evt.target.result;
+			try {
+				var zip_contents = await read_zip(filecontent, 0, 1);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				throw new Error(e);
+			}
+		};
+
+		reader.readAsText(evt.target.files[0]);
+	}
+
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
 		if(!window.FileReader) return;
 		var reader = new FileReader();

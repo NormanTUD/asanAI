@@ -14,7 +14,10 @@
 					<td>3. Upload Model weights from TFD trained model (<span class='tt'>weights.json</span>)</td>
 					<td><input accept="application/octet-stream" type="file" id="upload_tfjs_weights"></td>
 				</tr>
-
+				<tr>
+					<td>4. Upload custom image data (<span class='tt'>custom_images.zip</span>)</td>
+					<td><input accept="application/octet-stream" type="file" id="upload_custom_images"></td>
+				</tr>
 			</table>
 
 			<button class="close_button" onclick="close_popup('upload_dialog')"><span class="TRANSLATEME_close"></span></button>

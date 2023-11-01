@@ -2,7 +2,7 @@
 	<ul id="tablist">
 		<li><span class="symbol_button" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 		<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="download_model_and_weights_and_labels()">&#128190;</span></li>
-		<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_save_dialog()" style="cursor: pointer">&#128194;</span></li>
+		<li><span class="symbol_button disabled_symbol" title="Upload model" onclick="open_upload_dialog()" style="cursor: pointer">&#128194;</span></li>
 		<li><span class="symbol_button disabled_symbol" title="Undo last action" id="undo_button" onclick="undo()">&#8630;</span></li>
 		<li><span class="symbol_button disabled_symbol" title="Redo last undone action" id="redo_button" onclick="redo()">&#8631;</span></li>
 		<li><span id="custom_webcam_training_data_small" style="display: none" class="enabled_symbol only_when_webcam hide_in_cosmo_mode input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()">&#128248;</span></li>

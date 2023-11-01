@@ -3739,8 +3739,8 @@ function open_register_dialog() {
 	open_popup("register_dialog");
 }
 
-function open_save_dialog() {
-	open_popup("save_dialog");
+function open_upload_dialog() {
+	open_popup("upload_dialog");
 }
 
 function close_all_popups() {
@@ -7505,7 +7505,7 @@ function read_zip (content, sync_type="base64") {
 		// you now have every files contained in the loaded zip
 		//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
 
-		var categories = [];
+		var images_to_categories = {};
 		
 		zip.forEach((relPath, file) => {
 			alert(relPath);
