@@ -116,5 +116,5 @@ $chart->plot(
 );
 
 # Clean up temporary files
-#unlink 'timetable.csv';
-#unlink 'table2.csv';
+unlink 'timetable.csv';
+unlink 'table2.csv';
