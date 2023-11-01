@@ -128,6 +128,7 @@ async function restart_lenet(dont_click) {
 			return;
 		}
 
+		/*
 		if(!model) {
 			continue;
 		}
@@ -135,6 +136,7 @@ async function restart_lenet(dont_click) {
 		if(!model.layers) {
 			continue;
 		}
+		*/
 
 		if(Object.keys(model.layers).includes("0")) {
 			if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
