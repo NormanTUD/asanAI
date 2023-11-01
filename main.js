@@ -257,7 +257,6 @@ async function init_page_contents (chosen_dataset) {
 		document.getElementById("upload_x_file").addEventListener("change", handle_x_file, false);
 		document.getElementById("upload_y_file").addEventListener("change", handle_y_file, false);
 		document.getElementById("upload_model").addEventListener("change", upload_model, false);
-		document.getElementById("upload_weights").addEventListener("change", upload_weights, false);
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;

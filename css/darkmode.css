@@ -142,3 +142,7 @@ hr {
 #load_msg {
 	color: black;
 }
+
+.tt {
+	background-color: #232323 !important;
+}
