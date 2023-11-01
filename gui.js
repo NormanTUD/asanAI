@@ -7542,6 +7542,8 @@ async function read_zip (content) {
 
 
 	var number_of_categories = Object.keys(uploaded_images_to_categories).length;
+	var new_labels = Object.keys(uploaded_images_to_categories);
+	set_labels(new_labels);
 
 	while ($(".delete_category_button").length != number_of_categories) {
 		log(`while (${$(".delete_category_button").length} != ${number_of_categories}) {`);
@@ -7555,6 +7557,19 @@ async function read_zip (content) {
 			}
 		} else {
 			await add_new_category();
+		}
+	}
+
+	for (var li = 0; li < new_labels.length; li++) {
+		var this_label = new_labels[li];
+
+		$($(".own_image_label")[li]).val(this_label).trigger("keyup");
+
+		for (var ii = 0; ii < uploaded_images_to_categories[this_label].length; ii++) {
+			var _image = uploaded_images_to_categories[this_label][ii];
+			_image = "data:image/png;base64," + _image;
+
+			add_image_to_category(_image, li);
 		}
 	}
 }
