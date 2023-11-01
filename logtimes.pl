@@ -128,12 +128,12 @@ while ($original_start_time <= $end_time) {
 		foreach my $day (@$week) {
 			if (defined $day) {
 				if(length($day) == 1) {
-					print $day . "  [00] ";
+					print $day . "  [00] | ";
 				} else {
-					print $day . " [00] ";
+					print $day . " [00] | ";
 				}
 			} else {
-				print "    ";
+				print "    | ";
 			}
 		}
 		print "\n";
