@@ -10,15 +10,18 @@ use Chart::Gnuplot;
 use Data::Dumper;
 
 sub dier {
-	die Dumper \@_;
+    die Dumper \@_;
 }
 
 # Set the Git repository path
 my $repo_path = '.';
 
-# Define the date range (default: last 7 days)
-my $yesterday = DateTime->now->subtract(days => 31);
-my $today = DateTime->now;
+# Define the date range
+my $start_date = shift || '2022-01-01';
+my $end_date = shift || '2022-12-31';
+
+my $start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
+my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($end_date);
 
 # Create a CSV object for writing timetable.csv
 my $csv_timetable = Text::CSV->new({ binary => 1, eol => $/ });
@@ -39,55 +42,57 @@ my @plot_dates;
 my @plot_commits;
 
 # Iterate through each day in the date range
-while ($yesterday->add(days => 1) <= $today) {
-	my $current_date = $yesterday->strftime('%Y-%m-%d');
-	my $strp = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d');
-	my $start_time = DateTime->new(year => $yesterday->year, month => $yesterday->month, day => $yesterday->day, hour => 0, minute => 0, second => 0);
-	my $end_time = DateTime->new(year => $yesterday->year, month => $yesterday->month, day => $yesterday->day, hour => 23, minute => 59, second => 59);
+while ($start_time <= $end_time) {
+    my $current_date = $start_time->strftime('%Y-%m-%d');
+    my $strp = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d');
+    my $end_of_day = $start_time->clone()->set(hour => 23, minute => 59, second => 59);
 
-	my $repo = Git::Repository->new(work_tree => $repo_path);
-	my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_time");
+    my $repo = Git::Repository->new(work_tree => $repo_path);
+    my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
 
-	if (@commits) {
-		@commits = reverse @commits;
-		my @commit_times;
-		my @commit_times_full;
-		my @commit_hashes;
-		my $commits_count = 0;
-		foreach my $commit (@commits) {
-			my ($timestamp, $hash) = split(/,/, $commit);
-			my $commit_time = DateTime->from_epoch(epoch => $timestamp);
-			push @commit_times, $commit_time->strftime('%H:%M');
-			push @commit_times_full, $commit_time->strftime('%Y-%m-%d %H:%M:%S');
-			push @commit_hashes, $hash;
-			$commits_count++;
-		}
+    if (@commits) {
+        @commits = reverse @commits;
+        my @commit_times;
+        my @commit_times_full;
+        my @commit_hashes;
+        my $commits_count = 0;
 
-		my $format = DateTime::Format::Strptime->new(
-			pattern => '%Y-%m-%d %H:%M:%S',
-			on_error => 'croak',  # Error handling option
-		);
+        foreach my $commit (@commits) {
+            my ($timestamp, $hash) = split(/,/, $commit);
+            my $commit_time = DateTime->from_epoch(epoch => $timestamp);
+            push @commit_times, $commit_time->strftime('%H:%M');
+            push @commit_times_full, $commit_time->strftime('%Y-%m-%d %H:%M:%S');
+            push @commit_hashes, $hash;
+            $commits_count++;
+        }
 
-		my $first_commit_time = $commit_times[0];
-		my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
-		my $first_commit_hash = $commit_hashes[0];
+        my $format = DateTime::Format::Strptime->new(
+            pattern => '%Y-%m-%d %H:%M:%S',
+            on_error => 'croak',
+        );
 
-		my $last_commit_time = $commit_times[-1];
-		my $last_commit_time_full = $format->parse_datetime($commit_times_full[-1]);
-		my $last_commit_hash = $commit_hashes[-1];
+        my $first_commit_time = $commit_times[0];
+        my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
+        my $first_commit_hash = $commit_hashes[0];
 
-		my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
-		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
+        my $last_commit_time = $commit_times[-1];
+        my $last_commit_time_full = $format->parse_datetime($commit_times_full[-1]);
+        my $last_commit_hash = $commit_hashes[-1];
 
-		$total_working_hours += $working_hours->in_units('hours');
-		$total_commits_count += $commits_count;
+        my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
+        my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
-		$csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
-		$csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count, $first_commit_hash, $last_commit_hash]);
+        $total_working_hours += $working_hours->in_units('hours');
+        $total_commits_count += $commits_count;
 
-		push @plot_dates, $current_date;
-		push @plot_commits, $commits_count;
-	}
+        $csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
+        $csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count, $first_commit_hash, $last_commit_hash]);
+
+        push @plot_dates, $current_date;
+        push @plot_commits, $commits_count;
+    }
+
+    $start_time->add(days => 1);
 }
 
 close $timetable_fh;
@@ -99,22 +104,23 @@ print "Total Commits Count: $total_commits_count\n";
 
 # Use Chart::Gnuplot to create a plot
 my $chart = Chart::Gnuplot->new(
-	output => 'commits_plot.png',
-	title  => 'Commits per Day',
-	xdata  => 'time',
-	xlabel => 'Date',
-	ylabel => 'Commits'
+    output => 'commits_plot.png',
+    title  => 'Commits per Day',
+    xdata  => 'time',
+    xlabel => 'Date',
+    ylabel => 'Commits'
 );
 $chart->set('timefmt' => '%Y-%m-%d', 'format x' => '%b %d');
 $chart->plot(
-	Chart::Gnuplot::DataSet->new(
-		xdata => \@plot_dates,
-		ydata => \@plot_commits,
-		title => 'Commits',
-		style => 'linespoints',
-	)
+    Chart::Gnuplot::DataSet->new(
+        xdata => \@plot_dates,
+        ydata => \@plot_commits,
+        title => 'Commits',
+        style => 'linespoints',
+    )
 );
 
 # Clean up temporary files
 unlink 'timetable.csv';
 unlink 'table2.csv';
+
