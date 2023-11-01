@@ -17,8 +17,8 @@ sub dier {
 my $repo_path = '.';
 
 # Define the date range
-my $start_date = shift || '2022-01-01';
-my $end_date = shift || '2022-12-31';
+my $start_date = shift || die 'Cannot work without a start date';
+my $end_date = shift || die "Cannot work without an end-date";
 
 my $start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($end_date);
