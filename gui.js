@@ -6165,7 +6165,19 @@ async function create_zip_with_custom_images () {
 
 		var filename = canvas.id;
 
-		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
+		if(!filename) {
+			filename = uuidv4();
+		}
+		var path = label + "/" + filename + ".png";
+		try {
+			await zipWriter.add(path, new zip.BlobReader(blob));
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err(`Trying to add canvas to ${path}: ${e}`);
+		}
 	}
 
 	var imgs = $(".own_image_span").find("img");
@@ -6179,7 +6191,19 @@ async function create_zip_with_custom_images () {
 
 		var filename = img.id;
 
-		await zipWriter.add(label + "/" + filename + ".png", new zip.BlobReader(blob));
+		if(!filename) {
+			filename = uuidv4();
+		}
+		var path = label + "/" + filename + ".png";
+		try {
+			await zipWriter.add(path, new zip.BlobReader(blob));
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err(`Trying to add img to ${path}: ${e}`);
+		}
 	}
 
 	var res = zipWriter.close();
@@ -7551,7 +7575,12 @@ async function read_zip (content) {
 		return;
 	}
 
-	set_labels(new_labels);
+	var new_labels_string = JSON.stringify(new_labels);
+	var old_labels_string = JSON.stringify(labels);
+
+	if(new_labels_string != old_labels_string) {
+		wrn(`New labels don't match! Old: ${old_labels_string}, new: ${new_labels_string}`);
+	}
 
 	while ($(".delete_category_button").length != number_of_categories) {
 		log(`while (${$(".delete_category_button").length} != ${number_of_categories}) {`);
