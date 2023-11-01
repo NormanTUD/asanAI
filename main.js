@@ -445,6 +445,24 @@ $(document).ready(async function() {
 		await force_download_image_preview_data();
 	}
 
+	document.getElementById("upload_labels").onchange = function(evt) {
+		if(!window.FileReader) return;
+		var reader = new FileReader();
+
+		reader.onload = async function(evt) {
+			if(evt.target.readyState != 2) return;
+			if(evt.target.error) {
+				alert("Error while reading labels file");
+				return;
+			}
+
+			var filecontent = evt.target.result;
+			await load_labels_from_json_string(filecontent);
+		};
+
+		reader.readAsText(evt.target.files[0]);
+	}
+
 	document.getElementById("upload_tfjs_weights").onchange = function(evt) {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
@@ -452,7 +470,7 @@ $(document).ready(async function() {
 		reader.onload = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
-				alert("Error while reading file");
+				alert("Error while reading weights file");
 				return;
 			}
 
