@@ -47,6 +47,8 @@ my $total_commits_count = 0;
 my @plot_dates;
 my @plot_commits;
 
+my %global_working_hours = ();
+
 # Iterate through each day in the date range
 while ($start_time <= $end_time) {
 	my $current_date = $start_time->strftime('%Y-%m-%d');
@@ -88,6 +90,8 @@ while ($start_time <= $end_time) {
 		my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
 		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
+		$global_working_hours{$current_date} = $working_hours_formatted;
+
 		$total_working_hours += $working_hours->in_units('hours');
 		$total_commits_count += $commits_count;
 
@@ -127,13 +131,20 @@ while ($original_start_time <= $end_time) {
 	foreach my $week (@calendar) {
 		foreach my $day (@$week) {
 			if (defined $day) {
-				if(length($day) == 1) {
-					print $day . "  [00] | ";
+				my $key = sprintf("%4d-%02d-%02d", $current_year, $current_month, $day);
+				die Dumper \%global_working_hours;
+				my $wh = $global_working_hours{$key};
+				if($wh) {
+					if(length($day) == 1) {
+						print $day . "  [".$wh."] |  ";
+					} else {
+						print $day . " [".$wh."] |  ";
+					}
 				} else {
-					print $day . " [00] | ";
+					print $day . " [00] |  ";
 				}
 			} else {
-				print "    | ";
+				print "    |        ";
 			}
 		}
 		print "\n";
