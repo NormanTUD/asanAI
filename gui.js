@@ -7517,11 +7517,10 @@ async function read_zip (content, sync_type="base64") {
 	}
 	*/
 
-	content = await getBase64(content);
 	console.log("typeof(content) = " + typeof(content), ", content:", content);
 
 	var new_zip = new JSZip();
-	new_zip.loadAsync(content, {"base64": true}).then(function(zip) {
+	new_zip.loadAsync(content).then(function(zip) {
 		// you now have every files contained in the loaded zip
 		//return zip.file("hello.txt").async(sync_type); // a promise of "Hello World\n"
 
