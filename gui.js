@@ -7599,13 +7599,6 @@ async function read_zip (content) {
 		return;
 	}
 
-	var new_labels_string = JSON.stringify(new_labels);
-
-	if(new_labels_string != old_labels_string) {
-		//set_labels(new_labels);
-		wrn("Label-warning");
-	}
-
 	while ($(".delete_category_button").length != number_of_categories) {
 		log(`while (${$(".delete_category_button").length} != ${number_of_categories}) {`);
 		if($(".delete_category_button").length > number_of_categories) {
