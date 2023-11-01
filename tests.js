@@ -150,7 +150,7 @@ async function run_tests () {
 			test_equal("is_hidden_or_has_hidden_parent($('#example_test_div'))", is_hidden_or_has_hidden_parent($("#example_test_div")), false);
 
 			var old_labels = labels;
-			reset_labels();
+			await reset_labels();
 			test_equal("labels.length = 0 after reset_labels", labels.length, 0);
 			labels = old_labels;
 

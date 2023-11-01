@@ -1092,7 +1092,7 @@ async function run_neural_network (recursive=0) {
 					}
 
 				} else {
-					write_error(e);
+					await write_error(e);
 				}
 			} else if (("" + e).includes("n is undefined")) {
 				if(!recursive) {

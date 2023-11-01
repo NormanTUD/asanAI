@@ -480,7 +480,7 @@ async function get_xs_and_ys () {
 		xy_data.x = tensor(xy_data.x);
 		xy_data.y = tensor(xy_data.y);
 
-		set_labels(xy_data.keys);
+		await set_labels(xy_data.keys);
 
 		if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 			$("#photos").show();
@@ -510,7 +510,7 @@ async function get_xs_and_ys () {
 				var imageData = await get_image_data(0);
 				force_download = old_force_download;
 
-				reset_labels();
+				await reset_labels();
 
 				var this_data = [];
 
@@ -1086,8 +1086,8 @@ function get_or_insert_label (item) {
 	return labels.length - 1;
 }
 
-function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
-	reset_labels();
+async function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
+	await reset_labels();
 	var y_between_0_and_1 = true;
 	var is_incomplete = false;
 	var indices = {};
@@ -1134,7 +1134,7 @@ function get_data_struct_by_header(header, parsed, skip_nr, in_goto) {
 				}
 
 				if(!in_goto) {
-					return get_data_struct_by_header(header, parsed, skip_nr, true);
+					return await get_data_struct_by_header(header, parsed, skip_nr, true);
 				}
 
 				var element_id = get_or_insert_label(csv_element);
@@ -1202,18 +1202,18 @@ async function get_x_y_from_csv () {
 	var x_headers = headers_data["x"];
 	var y_headers = headers_data["y"];
 
-	set_labels(y_headers);
+	await set_labels(y_headers);
 
 	var parsed = parse_csv_file(csv);
 
-	var x_data = get_data_struct_by_header(x_headers, parsed, 0, false);
+	var x_data = await get_data_struct_by_header(x_headers, parsed, 0, false);
 	if(x_data.is_incomplete) {
 		l("X-Data is yet incomplete");
 		l("Y-Data is yet incomplete");
 		return "incomplete";
 	}
 
-	var y_data = get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
+	var y_data = await get_data_struct_by_header(y_headers, parsed, x_headers.length, false);
 	if(y_data.is_incomplete) {
 		l("Y-Data is yet incomplete");
 		return "incomplete";

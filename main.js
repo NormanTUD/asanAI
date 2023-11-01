@@ -57,7 +57,7 @@ async function on_resize () {
 		$("#ribbon_shower").show();
 	}
 
-	restart_fcnn();
+	await restart_fcnn();
 }
 
 function layer_types_that_dont_have_default_options () {
@@ -646,5 +646,5 @@ $(document).ready(async function() {
 
 	finished_loading = true;
 
-	updated_page();
+	await updated_page();
 });

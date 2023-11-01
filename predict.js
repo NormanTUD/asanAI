@@ -80,19 +80,18 @@ async function get_label_data () {
 			html: language[lang]["this_may_take_a_while"]
 		}, 0, 1);
 
-		reset_labels();
+		await reset_labels();
 
 		var category_counter = 0;
 		var keys = [];
 
+		var new_labels = [];
+
 		for (let [key, value] of Object.entries(imageData)) {
 			keys.push(key);
-			for (var i = 0; i < imageData[key].length; i++) {
-				var item = imageData[key][i];
-			}
-			labels[category_counter] = key;
-			category_counter++;
 		}
+
+		await set_labels(keys);
 	}
 
 }

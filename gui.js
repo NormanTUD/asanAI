@@ -34,7 +34,11 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 
 	if(!model) {
-		err("Model is not defined");
+		if(finished_loading) {
+			err("Model is not defined");
+		} else {
+			dbg("Model is not defined");
+		}
 		return;
 	}
 
@@ -94,8 +98,8 @@ async function set_labels (arr, force_allow_empty=0) {
 	}
 }
 
-function reset_labels () {
-	set_labels([], 1);
+async function reset_labels () {
+	await set_labels([], 1);
 }
 
 function enable_train () {
@@ -1688,10 +1692,10 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 	allow_editable_labels();
 
 	for (var i = 0; i < model.layers.length; i++) {
-		insert_initializer_options(i, "kernel");
-		insert_initializer_options(i, "bias");
+		await insert_initializer_options(i, "kernel");
+		await insert_initializer_options(i, "bias");
 
-		update_translations();
+		await update_translations();
 	}
 
 	return true;
@@ -2531,7 +2535,7 @@ async function set_config(index) {
 
 				if (config["labels"]) {
 					l("Setting labels from config");
-					labels = config["labels"];
+					await set_labels(config["labels"]);
 					assert(labels.length > 0, "could not get labels even though they are specified");
 				}
 
@@ -3974,7 +3978,7 @@ async function change_data_origin() {
 			show_images_per_category = 1;
 		}
 
-		reset_labels();
+		await reset_labels();
 		await get_label_data();
 
 		if(!is_cosmo_mode) {
@@ -4398,7 +4402,7 @@ function add_canvas_layer(canvas, transparency, base_id) {
 }
 
 async function rename_labels() {
-	reset_labels();
+	await reset_labels();
 	$(".own_image_label").each(function (i, x) {
 		labels.push($(x).val());
 	});
@@ -4961,7 +4965,7 @@ async function toggle_layer_view() {
 
 	await write_descriptions();
 
-	restart_fcnn();
+	await restart_fcnn();
 }
 
 function fix_viz_width () {
@@ -7088,7 +7092,7 @@ async function draw_new_fcnn(...args) {
 	args_hash = last_fcnn_hash;
 
 	var layers = args[0];
-	var labels = args[1];
+	var _labels = args[1];
 	var meta_infos = args[2];
 
 	var canvas = document.getElementById("new_fcnn_canvas");
@@ -7241,9 +7245,9 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 	}
 }
 
-function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, labels) {
+function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels) {
 	for (var i = 0; i < layers.length; i++) {
-		if (labels && labels[i]) {
+		if (_labels && _labels[i]) {
 			ctx.beginPath();
 			var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
 			ctx.font = font_size + "px Arial";
@@ -7253,7 +7257,7 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 				ctx.fillStyle = "black";
 			}
 			ctx.textAlign = "center";
-			ctx.fillText(labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24) - 5);
+			ctx.fillText(_labels[i], (i + 1) * layerSpacing, canvasHeight - (2*24) - 5);
 			ctx.closePath();
 		}
 
