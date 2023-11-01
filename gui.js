@@ -12,7 +12,7 @@ function set_loss_and_metric (loss, metric) {
 	set_metric(metric);
 }
 
-async function set_labels (arr) {
+async function set_labels (arr, force_allow_empty=0) {
 	if(!arr) {
 		err("arr is undefined or false");
 		return;
@@ -23,12 +23,12 @@ async function set_labels (arr) {
 		return;
 	}
 
-	if(!arr.length) {
+	if(!arr.length && !force_allow_empty) {
 		err("arr is an array but empty");
 		return;
 	}
 
-	if(get_shape_from_array(arr).length != 1) {
+	if(get_shape_from_array(arr).length != 1 && !force_allow_empty) {
 		err("arr is an array, but it seems to be multidimensional. It can only be one-dimensional.");
 		return;
 	}
@@ -64,10 +64,12 @@ async function set_labels (arr) {
 		var model_number_output_categories = mos[1];
 		var new_number_output_neurons = arr.length;
 
-		dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
-		set_item_value(last_layer_nr, "units", new_number_output_neurons);
+		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
+			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+			set_item_value(last_layer_nr, "units", new_number_output_neurons);
 
-		await repredict()
+			await repredict()
+		}
 	} else {
 		var msg = "";
 		if(mos[0] !== null) {
