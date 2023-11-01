@@ -67,7 +67,6 @@ async function set_labels (arr, force_allow_empty=0) {
 	if(old_array_string != new_array_string) {
 		labels = arr;
 		dbg("Set labels = [" + arr.join(", ") + "]");
-		console.trace();
 	} else {
 		dbg("Not changing labels, they stayed the same.");
 	}
