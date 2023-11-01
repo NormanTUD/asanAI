@@ -66,7 +66,6 @@ async function set_labels (arr, force_allow_empty=0) {
 		var new_array_string = JSON.stringify(arr);
 
 		if(old_array_string != new_array_string) {
-			dbg("Setting labels = [" + arr.join(", ") + "]");
 			labels = arr;
 
 			var model_number_output_categories = mos[1];
@@ -78,6 +77,8 @@ async function set_labels (arr, force_allow_empty=0) {
 
 				await repredict()
 			}
+			dbg("Set labels = [" + arr.join(", ") + "]");
+			console.trace();
 		} else {
 			dbg("Not resetting labels, they stayed the same.");
 		}
@@ -1626,7 +1627,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		throw new Error(e);
 	}
 
-	var redo_graph = await update_python_code();
+	var redo_graph = await update_python_code(1);
 
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
@@ -4001,7 +4002,7 @@ async function change_data_origin() {
 			show_tab_label("fcnn_tab_label", $("#jump_to_interesting_tab").is(":checked") ? 1 : 0);
 		}
 
-		await update_python_code();
+		await update_python_code(1);
 	} else {
 		disable_train();
 
