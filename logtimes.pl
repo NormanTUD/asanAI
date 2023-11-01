@@ -58,20 +58,25 @@ while ($yesterday->add(days => 1) <= $today) {
 			my ($timestamp, $hash) = split(/,/, $commit);
 			my $commit_time = DateTime->from_epoch(epoch => $timestamp);
 			push @commit_times, $commit_time->strftime('%H:%M');
-			push @commit_times_full, $commit_time->strftime('%H:%M');
+			push @commit_times_full, $commit_time->strftime('%Y-%m-%d %H:%M:%S');
 			push @commit_hashes, $hash;
 			$commits_count++;
 		}
 
+		my $format = DateTime::Format::Strptime->new(
+			pattern => '%Y-%m-%d %H:%M:%S',
+			on_error => 'croak',  # Error handling option
+		);
+
 		my $first_commit_time = $commit_times[0];
-		my $first_commit_time_full = $commit_times[0];
+		my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
 		my $first_commit_hash = $commit_hashes[0];
 
 		my $last_commit_time = $commit_times[-1];
-		my $last_commit_time_full = $commit_times[-1];
+		my $last_commit_time_full = $format->parse_datetime($commit_times_full[-1]);
 		my $last_commit_hash = $commit_hashes[-1];
 
-		my $working_hours = $end_time->subtract_datetime($first_commit_time);
+		my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
 		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
 		$total_working_hours += $working_hours->in_units('hours');
