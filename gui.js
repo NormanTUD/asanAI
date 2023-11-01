@@ -7506,8 +7506,6 @@ function read_zip (content, sync_type="base64") {
 		return;
 	}
 
-	console.log(content);
-
 	var new_zip = new JSZip();
 	new_zip.loadAsync(content, {"base64": true}).then(function(zip) {
 		// you now have every files contained in the loaded zip

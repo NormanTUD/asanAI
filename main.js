@@ -1,5 +1,44 @@
 "use strict";
 
+function blobToBase64(blobString) {
+	// Erstelle ein Blob-Objekt aus dem gegebenen Blob-String
+	const blob = new Blob([blobString]);
+
+	// Erstelle ein FileReader-Objekt
+	const reader = new FileReader();
+
+	// Erstelle eine Promise, die das Ergebnis zurückgibt
+	return new Promise((resolve, reject) => {
+		// Wenn der Lesevorgang abgeschlossen ist
+		reader.onloadend = () => {
+			if (reader.error) {
+				// Im Falle eines Fehlers, logge und warne
+				console.warn("Fehler beim Lesen des Blobs:", reader.error);
+				reject(reader.error);
+			} else {
+				// Konvertiere das Blob in Base64 und gib es zurück
+				const base64String = reader.result.split(',')[1];
+				resolve(base64String);
+			}
+		};
+
+		// Lese den Blob als Data-URL
+		reader.readAsDataURL(blob);
+	});
+}
+
+function getBase64(file) {
+	var fileReader = new FileReader();
+	if (file) {
+		fileReader.readAsDataURL(file);
+	}
+	return new Promise((resolve, reject) => {
+		fileReader.onloadend = function(event) {
+			resolve(event.target.result);
+		};
+	})
+}
+
 function check_all_tabs () {
 	function removeLeftOfHash(inputString) {
 		const hashIndex = inputString.indexOf('#');
@@ -449,7 +488,7 @@ $(document).ready(async function() {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
 
-		reader.onload = async function(evt) {
+		reader.onloadend = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
 				alert("Error while reading labels file");
@@ -467,23 +506,21 @@ $(document).ready(async function() {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
 
-		reader.onload = async function(evt) {
+		reader.onloadend = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
 				alert("Error while reading weights file");
 				return;
 			}
 
-			var filecontent = evt.target.result;
 			try {
-				var zip_contents = await read_zip(btoa(filecontent));
+				var base_64_string = await blobToBase64(reader.result);
+				var zip_contents = await read_zip(base_64_string);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				err("ABC:" + e);
-				
 				if(("" + e).includes("Corrupted zip")) {
 					Swal.fire({
 						icon: 'error',
@@ -496,6 +533,7 @@ $(document).ready(async function() {
 			}
 		};
 
+		console.log("reader:", reader);
 		reader.readAsText(evt.target.files[0]);
 	}
 
@@ -503,7 +541,7 @@ $(document).ready(async function() {
 		if(!window.FileReader) return;
 		var reader = new FileReader();
 
-		reader.onload = async function(evt) {
+		reader.onloadend = async function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
 				alert("Error while reading weights file");
