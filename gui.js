@@ -12,6 +12,86 @@ function set_loss_and_metric (loss, metric) {
 	set_metric(metric);
 }
 
+async function set_labels (arr) {
+	if(!arr) {
+		err("arr is undefined or false");
+		return;
+	}
+
+	if(!Array.isArray(arr)) {
+		err("arr is not an array");
+		return;
+	}
+
+	if(!arr.length) {
+		err("arr is an array but empty");
+		return;
+	}
+
+	if(get_shape_from_array(arr).length != 1) {
+		err("arr is an array, but it seems to be multidimensional. It can only be one-dimensional.");
+		return;
+	}
+
+	if(!model) {
+		err("Model is not defined");
+		return;
+	}
+
+	if(!Object.keys(model).includes("layers") || !model.layers.length) {
+		err("model.layers is not defined or empty");
+		return;
+	}
+
+	for (var i = 0; i < arr.length; i++) {
+		if(typeof(arr[i]) != "string") {
+			err(`typeof(arr[${i}]) is not a string but ${typeof(arr[i])}. Cannot continue. All values must be strings.`);
+			return;
+		}
+	}
+
+	var last_layer_nr = model.layers.length - 1;
+	var last_layer = model.layers[last_layer_nr];
+	var last_layer_type = last_layer.getClassName();
+
+	var mos = last_layer.output.shape;
+	var last_layer_activation = last_layer.getConfig()["activation"];
+
+	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
+		dbg("Setting labels = [" + arr.join(", ") + "]");
+		labels = arr;
+
+		var model_number_output_categories = mos[1];
+		var new_number_output_neurons = arr.length;
+
+		dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+		set_item_value(last_layer_nr, "units", new_number_output_neurons);
+
+		await repredict()
+	} else {
+		var msg = "";
+		if(mos[0] !== null) {
+			msg += "Batch-dimension in output shape must be null. ";
+		}
+
+		if(mos.length != 2) {
+			msg += "Output-shape length must be 2. ";
+		}
+
+		if(last_layer_activation != "softmax") {
+			msg += "Last layer must have softmax activation function to autoset layers. ";
+		}
+
+		if (last_layer_type != "Dense") {
+			msg += "Last layer must be of type dense. ";
+		}
+
+		err("Cannot autoset layer. Errors: " + msg);
+
+		return;
+	}
+}
+
 function reset_labels () {
 	labels = [];
 }
