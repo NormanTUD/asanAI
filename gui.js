@@ -62,17 +62,24 @@ async function set_labels (arr, force_allow_empty=0) {
 	var last_layer_activation = last_layer.getConfig()["activation"];
 
 	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
-		dbg("Setting labels = [" + arr.join(", ") + "]");
-		labels = arr;
+		var old_array_string = JSON.stringify(labels);
+		var new_array_string = JSON.stringify(arr);
 
-		var model_number_output_categories = mos[1];
-		var new_number_output_neurons = arr.length;
+		if(old_array_string != new_array_string) {
+			dbg("Setting labels = [" + arr.join(", ") + "]");
+			labels = arr;
 
-		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
-			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
-			set_item_value(last_layer_nr, "units", new_number_output_neurons);
+			var model_number_output_categories = mos[1];
+			var new_number_output_neurons = arr.length;
 
-			await repredict()
+			if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons) {
+				dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
+				set_item_value(last_layer_nr, "units", new_number_output_neurons);
+
+				await repredict()
+			}
+		} else {
+			dbg("Not resetting labels, they stayed the same.");
 		}
 	} else {
 		var msg = "";
