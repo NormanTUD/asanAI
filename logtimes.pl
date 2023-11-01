@@ -28,7 +28,7 @@ $csv_timetable->print($timetable_fh, ['tag', 'uhrzeit_erster_commit', 'uhrzeit_l
 # Create a CSV object for writing table2.csv
 my $csv_table2 = Text::CSV->new({ binary => 1, eol => $/ });
 open my $table2_fh, '>', 'table2.csv' or die "Could not open table2.csv: $!";
-$csv_table2->print($table2_fh, ['tag', 'arbeitszeit', 'anzahl_commits_an_dem_tag']);
+$csv_table2->print($table2_fh, ['tag', 'arbeitszeit', 'anzahl_commits_an_dem_tag', 'erster_commit', 'letzter_commit']);
 
 # Initialize total working hours and commits count
 my $total_working_hours = 0;
@@ -51,16 +51,22 @@ while ($yesterday->add(days => 1) <= $today) {
 	if (@commits) {
 		@commits = reverse @commits;
 		my @commit_times;
+		my @commit_hashes;
 		my $commits_count = 0;
 		foreach my $commit (@commits) {
 			my ($timestamp, $hash) = split(/,/, $commit);
 			my $commit_time = DateTime->from_epoch(epoch => $timestamp);
 			push @commit_times, $commit_time->strftime('%H:%M');
+			push @commit_hashes, $hash;
 			$commits_count++;
 		}
 
 		my $first_commit_time = $commit_times[0];
+		my $first_commit_hash = $commit_hashes[0];
+
 		my $last_commit_time = $commit_times[-1];
+		my $last_commit_hash = $commit_hashes[-1];
+		dier("$last_commit_hash - $last_commit_time");
 
 		my $working_hours = $end_time->subtract_datetime($start_time);
 		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
@@ -69,7 +75,7 @@ while ($yesterday->add(days => 1) <= $today) {
 		$total_commits_count += $commits_count;
 
 		$csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
-		$csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count]);
+		$csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count, $first_commit_hash, $last_commit_hash]);
 
 		push @plot_dates, $current_date;
 		push @plot_commits, $commits_count;
