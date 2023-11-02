@@ -219,7 +219,6 @@ while ($current_month == $original_start_time->month) {
         }
 
         # Reset the tables for the next week
-        $table = Text::Table->new('Day', 'Working Hours');
         @weekend_days = ();
     }
 }
