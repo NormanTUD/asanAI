@@ -299,7 +299,7 @@ while ($current_month == $original_start_time->month) {
 		$pause_col = $nice;
 		my $original = $pause_times{$current_date}{original};
 
-		if($original > 45*60) {
+		if($original > 60*60) {
 			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
 				$pause_col = colored($nice, "red");
 			}
