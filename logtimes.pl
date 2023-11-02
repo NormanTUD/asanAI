@@ -189,6 +189,7 @@ while ($current_month == $original_start_time->month) {
 }
 
 # Output total working hours and commits count
+print "\n";
 print "Expected Working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
 print "Total Commits Count: $total_commits_count\n";
