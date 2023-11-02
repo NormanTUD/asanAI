@@ -97,7 +97,7 @@ while ($start_time <= $end_time) {
 	}
 
 	if (@all_commits) {
-		@all_commits = reverse @all_commits;
+		#@all_commits = reverse @all_commits;
 		my @commit_times;
 		my @commit_times_full;
 		my @commit_hashes;
@@ -130,7 +130,7 @@ while ($start_time <= $end_time) {
 
 		$global_working_hours{$current_date} = $working_hours_formatted;
 
-		$total_working_hours += $working_hours->in_units('hours');
+		$total_working_hours += $working_hours->in_units('minutes');
 		$total_commits_count += $commits_count;
 
 		$csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
@@ -264,20 +264,22 @@ print "\b\b\b" x 100;
 print " " x 100;
 print "\b\b\b" x 100;
 
+$total_working_hours /= 60;
+
+$total_working_hours = sprintf("%.2f", $total_working_hours);
+
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
 my $over_or_undertime = $expected_working_hours - $total_working_hours;
 
-if($over_or_undertime < 0) {
-	my $overtime = $total_working_hours - $expected_working_hours;
-	print "Overtime $overtime hours\n";
-} elsif ($over_or_undertime > 0) {
-	my $undertime = $expected_working_hours - $total_working_hours;
-	print "Undertime $undertime hours\n";
-} else {
-	print "Neither over nor under time\n";
+
+if($over_or_undertime > 0) {
+	print "Overtime ".$over_or_undertime." hours\n";
+} elsif ($over_or_undertime < 0) {
+	print "Undertime ".abs($over_or_undertime)." hours\n";
 }
+
 print "Total Commits Count: $total_commits_count\n";
 
 # Print any remaining days at the end of the month
