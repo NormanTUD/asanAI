@@ -287,7 +287,7 @@ if ($table->body() || @weekend_days) {
 	print colored("Unterstunden", "on_red")."\n";
 	print colored("Wochenende", "underline")."\n";
 
-	print $month_names{$current_month}."\n";
+	print "\n\n".colored($month_names{$current_month}, 'on_magenta bold')."\n\n";
 	print $table;
 	print "\n";
 }
