@@ -318,6 +318,11 @@ while ($current_month == $original_start_time->month) {
 
 	if(($dow eq "So" || $dow eq "Sa") && $workdays{$current_date} ne "HOLIDAY") {
 		$dow = colored($dow, "on_green");
+		$number_commits = colored($number_commits, "red");
+	}
+
+	if($workdays{$current_date} ne "HOLIDAY") {
+		$number_commits = colored($number_commits, "red");
 	}
 
 	my $colored_text = colored($working_hours, $color);
