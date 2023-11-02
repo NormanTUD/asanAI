@@ -14,9 +14,9 @@ use Term::ANSIColor;
 use Text::Table;
 
 my %month_names = (
-	1 => "Jan",
-	2 => "Feb",
-	3 => "Mär",
+	1 => "Januar",
+	2 => "Februar",
+	3 => "März",
 	4 => "April",
 	5 => "Mai",
 	6 => "Juni",
