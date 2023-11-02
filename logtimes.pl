@@ -175,7 +175,7 @@ while ($current_month == $original_start_time->month) {
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('Day', 'Working Hours');
+my $table = Text::Table->new('Day', 'DOW', 'Working Hours');
 my @weekend_days;
 
 while ($current_month == $original_start_time->month) {
@@ -199,9 +199,11 @@ while ($current_month == $original_start_time->month) {
 
     # Calculate the working hours for the day
     my $working_hours = $global_working_hours{$current_date} || '0:00';
+
+    my @dow_to_d = qw/So Mo Di Mi Do Fr Sa So/;
     
     # Add day and working hours to the table
-    $table->add($day, colored($working_hours, $color));
+    $table->add($dow_to_d[$day_of_week], $day, colored($working_hours, $color));
 
     # Increment the day
     $original_start_time->add(days => 1);
