@@ -253,8 +253,6 @@ while ($current_month == $original_start_time->month) {
 		my $pause_time = $global_pause_times{$current_date};
 
 		if ($pause_time) { # in seconds
-			my $min_pause_time = 1800;
-
 			$pause_times{$current_date}{original} = $pause_time;
 			$pause_times{$current_date}{nice} = parse_duration($pause_time);
 		}
@@ -308,7 +306,7 @@ while ($current_month == $original_start_time->month) {
 		$pause_col = $nice;
 		my $original = $pause_times{$current_date}{original};
 
-		if($original < 1800) {
+		if($original > 1800) {
 			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
 				$pause_col = colored($nice, "red");
 			}
@@ -352,10 +350,17 @@ print "\b\b\b" x 100;
 print " " x 100;
 print "\b\b\b" x 100;
 
-die Dumper %global_pause_times;
+my $sum_pause_times = 0;
+for my $i (map { $global_pause_times{$_} } keys %global_pause_times) {
+	$sum_pause_times += $i;
+}
+
+my $total_working_hours_no_pauses = $total_working_hours - ($sum_pause_times / 3600);
+
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
+print "Total Working Hours exclusing pauses: $total_working_hours_no_pauses hours\n";
 my $over_or_undertime = abs($expected_working_hours) - abs($total_working_hours);
 
 if($expected_working_hours <= $total_working_hours) {
