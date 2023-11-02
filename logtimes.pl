@@ -12,6 +12,9 @@ use Date::Holidays;
 use Data::Dumper;
 use Term::ANSIColor;
 use Text::Table;
+use autodie;
+
+my $pause_threshold = 4000;
 
 my %month_names = (
 	1 => "Januar",
@@ -126,7 +129,6 @@ while ($start_time <= $end_time) {
 		@all_commits = sort { (split(/,/, $a))[0] <=> (split(/,/, $b))[0] } @all_commits;
 
 		my $prev_commit_time = (split /,/, $all_commits[0])[0];
-
 		my $current_day_pause_time = 0;
 
 		foreach my $commit (@all_commits) {
@@ -135,7 +137,6 @@ while ($start_time <= $end_time) {
 
 			# Check if this is the first commit, or the time gap is more than the pause threshold
 			my $commit_time_diff = $commit_time - $prev_commit_time;
-			my $pause_threshold = 3600;
 			if ($commit_time_diff >= $pause_threshold) {
 				$current_day_pause_time += $commit_time_diff;
 			}
@@ -170,21 +171,6 @@ while ($start_time <= $end_time) {
 	}
 
 	$start_time->add(days => 1);
-}
-
-sub log_message {
-	my ($message) = @_;
-	print "Log: $message\n";
-}
-
-sub log_pause {
-	my ($date, $duration) = @_;
-	my $hours = int($duration / 3600);
-	my $minutes = int(($duration % 3600) / 60);
-	my $formatted_duration = "$hours hours $minutes minutes";
-
-	# Log the pause duration
-	log_message("Pause detected on $date: $formatted_duration");
 }
 
 close $timetable_fh;
@@ -299,7 +285,7 @@ while ($current_month == $original_start_time->month) {
 		$pause_col = $nice;
 		my $original = $pause_times{$current_date}{original};
 
-		if($original > 60*60) {
+		if($original > $pause_threshold) {
 			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
 				$pause_col = colored($nice, "red");
 			}
