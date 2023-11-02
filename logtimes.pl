@@ -255,7 +255,8 @@ while ($current_month == $original_start_time->month) {
 		if ($pause_time) { # in seconds
 			my $min_pause_time = 1800;
 
-			$pause_times{$current_date} = parse_duration($pause_time);
+			$pause_times{$current_date}{original} = $pause_time;
+			$pause_times{$current_date}{nice} = parse_duration($pause_time);
 		}
 	}
 
@@ -303,10 +304,13 @@ while ($current_month == $original_start_time->month) {
 
 	my $pause_col = "";
 	if(exists $pause_times{$current_date}) {
-		$pause_col = $pause_times{$current_date};
-		if($pause_col < 1800) {
+		my $nice = $pause_times{$current_date}{nice};
+		$pause_col = $nice;
+		my $original = $pause_times{$current_date}{original};
+
+		if($original < 1800) {
 			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
-				$pause_col = colored($pause_col, "red");
+				$pause_col = colored($nice, "red");
 			}
 		}
 	}
@@ -318,7 +322,7 @@ while ($current_month == $original_start_time->month) {
 
 	my $dow = $dow_to_d[$day_of_week];
 
-	if(($dow eq "So" || $dow eq "Sa") && $workday{$current_date} ne "HOLIDAY") {
+	if(($dow eq "So" || $dow eq "Sa") && $workdays{$current_date} ne "HOLIDAY") {
 		$dow = colored($dow, "on_green");
 	}
 
@@ -348,6 +352,7 @@ print "\b\b\b" x 100;
 print " " x 100;
 print "\b\b\b" x 100;
 
+die Dumper %global_pause_times;
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
