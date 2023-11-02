@@ -12,6 +12,7 @@ use Date::Holidays;
 use Data::Dumper;
 use Term::ANSIColor;
 use Text::Table;
+use List::Util qw(min max);
 use autodie;
 
 my $pause_threshold = 5000;
