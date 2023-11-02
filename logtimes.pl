@@ -14,7 +14,7 @@ use Term::ANSIColor;
 use Text::Table;
 use autodie;
 
-my $pause_threshold = 4000;
+my $pause_threshold = 5000;
 
 my %month_names = (
 	1 => "Januar",
