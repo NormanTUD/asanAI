@@ -98,6 +98,7 @@ while ($start_time <= $end_time) {
 		my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
 
 		push @all_commits, @commits;
+		@all_commits = sort @all_commits;
 	}
 
 	if (@all_commits) {
