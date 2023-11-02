@@ -139,7 +139,6 @@ while ($start_time <= $end_time) {
 			if (($commit_time - $prev_commit_time) >= $pause_threshold) {
 				if ($current_pause_duration > 0) {
 					# Log the pause duration and reset the pause timer
-					print("pause duration: $current_pause_duration\n");
 					$current_pause_duration = 0;
 				}
 			} else {
