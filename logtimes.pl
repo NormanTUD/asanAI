@@ -213,8 +213,6 @@ while ($current_month == $original_start_time->month) {
 			} elsif ($workdays{$current_date} eq 'UNDERTIME') {
 				$color = 'on_red';
 			}
-
-			$number_workdays++;
 		}
 	}
 
@@ -229,6 +227,10 @@ while ($current_month == $original_start_time->month) {
 
 	if($dow =~ m#^S[ao]$#) {
 		$colored_text = colored($colored_text, "underline");
+	} else {
+		if($color ne 'on_blue' && $color ne 'green') {
+			$number_workdays++;
+		}
 	}
 
 	# Add day and working hours to the table
