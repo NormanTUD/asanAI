@@ -13,6 +13,21 @@ use Data::Dumper;
 use Term::ANSIColor;
 use Text::Table;
 
+my %month_names = (
+	1 => "Jan",
+	2 => "Feb",
+	3 => "Mär",
+	4 => "April",
+	5 => "Mai",
+	6 => "Juni",
+	7 => "Juli",
+	8 => "August",
+	9 => "September",
+	10 => "Oktober",
+	11 => "November",
+	12 => "Dezember"
+);
+
 sub dier {
 	die Dumper \@_;
 }
@@ -272,6 +287,7 @@ if ($table->body() || @weekend_days) {
 	print colored("Unterstunden", "on_red")."\n";
 	print colored("Wochenende", "underline")."\n";
 
+	print $month_names{$current_month}."\n";
 	print $table;
 	print "\n";
 }
