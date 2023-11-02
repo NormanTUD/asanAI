@@ -130,7 +130,7 @@ while ($start_time <= $end_time) {
 
 		$global_working_hours{$current_date} = $working_hours_formatted;
 
-		$total_working_hours += $working_hours->in_units('minutes');
+		$total_working_hours += abs($working_hours->in_units('hours'));
 		$total_commits_count += $commits_count;
 
 		$csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
@@ -264,19 +264,14 @@ print "\b\b\b" x 100;
 print " " x 100;
 print "\b\b\b" x 100;
 
-$total_working_hours /= 60;
-
-$total_working_hours = sprintf("%.2f", $total_working_hours);
-
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
-my $over_or_undertime = $expected_working_hours - $total_working_hours;
+my $over_or_undertime = abs($expected_working_hours) - abs($total_working_hours);
 
-
-if($over_or_undertime > 0) {
-	print "Overtime ".$over_or_undertime." hours\n";
-} elsif ($over_or_undertime < 0) {
+if($expected_working_hours <= $total_working_hours) {
+	print "Overtime ".abs($over_or_undertime)." hours\n";
+} else {
 	print "Undertime ".abs($over_or_undertime)." hours\n";
 }
 
