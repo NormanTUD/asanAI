@@ -142,7 +142,6 @@ unlink 'table2.csv';
 my %workdays = ();
 
 # Iterate through each day in the month
-my $expected_working_hours = 0;
 
 while ($current_month == $original_start_time->month) {
 	my $day = $original_start_time->day;
@@ -170,7 +169,6 @@ while ($current_month == $original_start_time->month) {
 		$workdays{$current_date} = 'HOLIDAY';
 	} else {
 		# Check for overtime or undertime (assuming 8 hours per day is normal)
-		$expected_working_hours += 8;
 		my $working_hours = $global_working_hours{$current_date};
 		if ($working_hours) {
 			my ($hours, $minutes) = split(':', $working_hours);
@@ -185,6 +183,59 @@ while ($current_month == $original_start_time->month) {
 
 	$original_start_time->add(days => 1);
 }
+
+# Reinitialize the start time for printing the calendar
+$original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
+
+# Create a table for displaying the calendar
+my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours, ');
+my @weekend_days;
+my $number_workdays = 0;
+
+while ($current_month == $original_start_time->month) {
+	my $day = $original_start_time->day;
+	my $current_date = $original_start_time->strftime('%Y-%m-%d');
+	my $day_of_week = Day_of_Week($current_year, $current_month, $day);
+
+	my $color = 'reset';
+
+	# Determine the color based on workday type
+	if (exists $workdays{$current_date}) {
+		if ($workdays{$current_date} eq 'WEEKEND') {
+			$color = 'green';
+			push @weekend_days, [$day, $global_working_hours{$current_date} || '0:00'];
+		} elsif ($workdays{$current_date} eq 'HOLIDAY') {
+			$color = 'on_blue';
+		} elsif ($workdays{$current_date} eq 'OVERTIME') {
+			$color = 'red';
+			$number_workdays++;
+		} elsif ($workdays{$current_date} eq 'UNDERTIME') {
+			$color = 'on_red';
+			$number_workdays++;
+		}
+	}
+
+	# Calculate the working hours for the day
+	my $working_hours = $global_working_hours{$current_date} || '0:00';
+
+	my @dow_to_d = qw/So Mo Di Mi Do Fr Sa Sa/;
+
+	my $dow = $dow_to_d[$day_of_week];
+
+	my $colored_text = colored($working_hours, $color);
+
+	if($dow !~ m#^S[ao]$#) {
+		$colored_text = colored($colored_text, "underline");
+	}
+
+	# Add day and working hours to the table
+	$table->add($day, $dow, $colored_text);
+
+	# Increment the day
+	$original_start_time->add(days => 1);
+}
+
+my $expected_working_hours = 0;
 
 # Output total working hours and commits count
 print "\n";
@@ -203,52 +254,13 @@ if($over_or_undertime > 0) {
 }
 print "Total Commits Count: $total_commits_count\n";
 
-# Reinitialize the start time for printing the calendar
-$original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
-
-# Create a table for displaying the calendar
-my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours, ');
-my @weekend_days;
-
-while ($current_month == $original_start_time->month) {
-	my $day = $original_start_time->day;
-	my $current_date = $original_start_time->strftime('%Y-%m-%d');
-	my $day_of_week = Day_of_Week($current_year, $current_month, $day);
-
-	my $color = 'reset';
-
-	# Determine the color based on workday type
-	if (exists $workdays{$current_date}) {
-		if ($workdays{$current_date} eq 'WEEKEND') {
-			$color = 'green';
-			push @weekend_days, [$day, $global_working_hours{$current_date} || '0:00'];
-		} elsif ($workdays{$current_date} eq 'HOLIDAY') {
-			$color = 'on_blue';
-		} elsif ($workdays{$current_date} eq 'OVERTIME') {
-			$color = 'red';
-		} elsif ($workdays{$current_date} eq 'UNDERTIME') {
-			$color = 'on_red';
-		}
-	}
-
-	# Calculate the working hours for the day
-	my $working_hours = $global_working_hours{$current_date} || '0:00';
-
-	my @dow_to_d = qw/So Mo Di Mi Do Fr Sa So/;
-
-	# Add day and working hours to the table
-	$table->add($day, $dow_to_d[$day_of_week], colored($working_hours, $color));
-
-	# Increment the day
-	$original_start_time->add(days => 1);
-}
-
 # Print any remaining days at the end of the month
 if ($table->body() || @weekend_days) {
 	print colored("Feiertag", "on_blue")."\n";
 	print colored("Wochenende", "green")."\n";
 	print colored("Überstunden", "red")."\n";
 	print colored("Unterstunden", "on_red")."\n";
+	print colored("Arbeitstag", "underline")."\n";
 
 	print $table;
 	print "\n";
