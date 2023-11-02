@@ -150,6 +150,8 @@ close $table2_fh;
 my $current_year = $original_start_time->year;
 my $current_month = $original_start_time->month;
 
+print "\n\n".colored($month_names{$current_month}, 'on_magenta bold')."\n\n";
+
 # Clean up temporary files
 unlink 'timetable.csv';
 unlink 'table2.csv';
@@ -285,8 +287,6 @@ if ($table->body() || @weekend_days) {
 	print colored("Überstunden", "on_green")."\n";
 	print colored("Unterstunden", "on_red")."\n";
 	print colored("Wochenende", "underline")."\n";
-
-	print "\n\n".colored($month_names{$current_month}, 'on_magenta bold')."\n\n";
 	print $table;
 	print "\n";
 }
