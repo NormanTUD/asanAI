@@ -224,7 +224,7 @@ while ($current_month == $original_start_time->month) {
 
 	my $colored_text = colored($working_hours, $color);
 
-	if($dow !~ m#^S[ao]$#) {
+	if($dow =~ m#^S[ao]$#) {
 		$colored_text = colored($colored_text, "underline");
 	}
 
