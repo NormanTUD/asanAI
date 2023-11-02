@@ -192,6 +192,17 @@ while ($current_month == $original_start_time->month) {
 print "\n";
 print "Expected Working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
+my $over_or_undertime = $expected_working_hours - $total_working_hours;
+
+if($over_or_undertime > 0) {
+	my $overtime = $expected_working_hours - $total_working_hours;
+	print "Overtime $overtime hours\n";
+} elsif ($over_or_undertime < 0) {
+	my $undertime = $total_working_hours - $expected_working_hours;
+	print "Overtime $undertime hours\n";
+} else {
+	print "Neither over nor under time\n";
+}
 print "Total Commits Count: $total_commits_count\n";
 
 # Reinitialize the start time for printing the calendar
