@@ -6,7 +6,6 @@ use Git::Repository;
 use Text::CSV;
 use DateTime;
 use DateTime::Format::Strptime;
-use Chart::Gnuplot;
 use Calendar::Simple;
 use Data::Dumper;
 
@@ -24,6 +23,10 @@ my $end_date = shift || '2022-12-31';
 my $start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 my $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($end_date);
+
+if(!$end_time) {
+	die("End time could not be found. Is it above the max number of days per month?");
+}
 
 use Calendar::Simple;
 use DateTime::Format::Strptime;
@@ -171,33 +174,6 @@ while ($original_start_time <= $end_time) {
 print "Total Working Hours: $total_working_hours hours\n";
 print "Total Commits Count: $total_commits_count\n";
 print "Expected working hours: ".($_months * 4 * 40)."\n";
-
-# Use Chart::Gnuplot to create a plot
-my $chart = Chart::Gnuplot->new(
-	output => 'commits_plot.png',
-	title  => 'Commits per Day',
-	xdata  => 'time',
-	xlabel => 'Date',
-	ylabel => 'Commits',
-	y2label => 'Working Hours'
-);
-$chart->set('timefmt' => '%Y-%m-%d', 'format x' => '%b %d');
-$chart->plot(
-	Chart::Gnuplot::DataSet->new(
-		xdata => \@plot_dates,
-		ydata => \@plot_commits,
-		title => 'Commits',
-		axis => 'y1',
-		style => 'linespoints',
-	),
-	Chart::Gnuplot::DataSet->new(
-		xdata => \@plot_dates,
-		ydata => [$total_working_hours] x scalar(@plot_dates),
-		title => 'Working Hours',
-		axis => 'y2',
-		style => 'lines',
-	)
-);
 
 # Clean up temporary files
 unlink 'timetable.csv';
