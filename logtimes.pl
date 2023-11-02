@@ -98,11 +98,18 @@ while ($start_time <= $end_time) {
 		print " " x 200;
 		print "\b\b\b" x 200;
 		print scalar(@all_commits)." commits found for $start_time -> $repo_path";
-		my $repo = Git::Repository->new(work_tree => $repo_path);
-		my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+		eval {
+			my $repo = Git::Repository->new(work_tree => $repo_path);
+			my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
 
-		push @all_commits, @commits;
-		@all_commits = sort @all_commits;
+			push @all_commits, @commits;
+			@all_commits = sort @all_commits;
+		};
+
+		if($@) {
+			print "\n";
+			die $@;
+		}
 	}
 
 	if (@all_commits) {
