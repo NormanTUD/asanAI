@@ -16,8 +16,11 @@ sub dier {
     die Dumper \@_;
 }
 
-# Set the Git repository path
-my $repo_path = '.';
+# Set the Git repository paths from the ~/.repos file
+my $repos_file = "$ENV{HOME}/.repos";
+open my $repos_fh, '<', $repos_file or die "Could not open $repos_file: $!";
+my @repos = <$repos_fh>;
+chomp(@repos);
 
 # Define the date range
 my $start_date = shift || die("No start date given");
@@ -53,65 +56,70 @@ my %global_working_hours = ();
 
 # Determine holidays (in this case, for Germany)
 my $holidays = Date::Holidays->new(
-	countrycode => 'DE',
-	nocheck    => 1,
-	WHERE => ['common', 'sn']
+        countrycode => 'DE',
+        nocheck    => 1,
+        WHERE => ['common', 'sn']
 );
 
 # Iterate through each day in the date range
 while ($start_time <= $end_time) {
-	my $current_date = $start_time->strftime('%Y-%m-%d');
-	my $strp = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d');
-	my $end_of_day = $start_time->clone()->set(hour => 23, minute => 59, second => 59);
+    my $current_date = $start_time->strftime('%Y-%m-%d');
+    my $strp = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d');
+    my $end_of_day = $start_time->clone()->set(hour => 23, minute => 59, second => 59);
 
-	my $repo = Git::Repository->new(work_tree => $repo_path);
-	my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+    my @all_commits = ();
 
-	if (@commits) {
-		@commits = reverse @commits;
-		my @commit_times;
-		my @commit_times_full;
-		my @commit_hashes;
-		my $commits_count = 0;
+    foreach my $repo_path (@repos) {
+        my $repo = Git::Repository->new(work_tree => $repo_path);
+        my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+        push @all_commits, @commits;
+    }
 
-		foreach my $commit (@commits) {
-			my ($timestamp, $hash) = split(/,/, $commit);
-			my $commit_time = DateTime->from_epoch(epoch => $timestamp);
-			push @commit_times, $commit_time->strftime('%H:%M');
-			push @commit_times_full, $commit_time->strftime('%Y-%m-%d %H:%M:%S');
-			push @commit_hashes, $hash;
-			$commits_count++;
-		}
+    if (@all_commits) {
+        @all_commits = reverse @all_commits;
+        my @commit_times;
+        my @commit_times_full;
+        my @commit_hashes;
+        my $commits_count = 0;
 
-		my $format = DateTime::Format::Strptime->new(
-			pattern => '%Y-%m-%d %H:%M:%S',
-			on_error => 'croak',
-		);
+        foreach my $commit (@all_commits) {
+            my ($timestamp, $hash) = split(/,/, $commit);
+            my $commit_time = DateTime->from_epoch(epoch => $timestamp);
+            push @commit_times, $commit_time->strftime('%H:%M');
+            push @commit_times_full, $commit_time->strftime('%Y-%m-%d %H:%M:%S');
+            push @commit_hashes, $hash;
+            $commits_count++;
+        }
 
-		my $first_commit_time = $commit_times[0];
-		my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
-		my $first_commit_hash = $commit_hashes[0];
+        my $format = DateTime::Format::Strptime->new(
+            pattern => '%Y-%m-%d %H:%M:%S',
+            on_error => 'croak',
+        );
 
-		my $last_commit_time = $commit_times[-1];
-		my $last_commit_time_full = $format->parse_datetime($commit_times_full[-1]);
-		my $last_commit_hash = $commit_hashes[-1];
+        my $first_commit_time = $commit_times[0];
+        my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
+        my $first_commit_hash = $commit_hashes[0];
 
-		my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
-		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
+        my $last_commit_time = $commit_times[-1];
+        my $last_commit_time_full = $format->parse_datetime($commit_times_full[-1]);
+        my $last_commit_hash = $commit_hashes[-1];
 
-		$global_working_hours{$current_date} = $working_hours_formatted;
+        my $working_hours = $last_commit_time_full->subtract_datetime($first_commit_time_full);
+        my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
-		$total_working_hours += $working_hours->in_units('hours');
-		$total_commits_count += $commits_count;
+        $global_working_hours{$current_date} = $working_hours_formatted;
 
-		$csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
-		$csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count, $first_commit_hash, $last_commit_hash]);
+        $total_working_hours += $working_hours->in_units('hours');
+        $total_commits_count += $commits_count;
 
-		push @plot_dates, $current_date;
-		push @plot_commits, $commits_count;
-	}
+        $csv_timetable->print($timetable_fh, [$current_date, $first_commit_time, $last_commit_time]);
+        $csv_table2->print($table2_fh, [$current_date, $working_hours_formatted, $commits_count, $first_commit_hash, $last_commit_hash]);
 
-	$start_time->add(days => 1);
+        push @plot_dates, $current_date;
+        push @plot_commits, $commits_count;
+    }
+
+    $start_time->add(days => 1);
 }
 
 close $timetable_fh;
@@ -120,7 +128,6 @@ close $table2_fh;
 # Define the year and month
 my $current_year = $original_start_time->year;
 my $current_month = $original_start_time->month;
-
 
 # Clean up temporary files
 unlink 'timetable.csv';
@@ -133,45 +140,45 @@ my %workdays = ();
 my $expected_working_hours = 0;
 
 while ($current_month == $original_start_time->month) {
-	my $day = $original_start_time->day;
-	my $current_date = $original_start_time->strftime('%Y-%m-%d');
-	my $current_month = $original_start_time->strftime('%m');
-	my $current_year = $original_start_time->strftime('%Y');
-	my $day_of_week = Day_of_Week($current_year, $current_month, $day);
+    my $day = $original_start_time->day;
+    my $current_date = $original_start_time->strftime('%Y-%m-%d');
+    my $current_month = $original_start_time->strftime('%m');
+    my $current_year = $original_start_time->strftime('%Y');
+    my $day_of_week = Day_of_Week($current_year, $current_month, $day);
 
-	my $dh = Date::Holidays->new(
-		countrycode => 'de'
-	);
+    my $dh = Date::Holidays->new(
+        countrycode => 'de'
+    );
 
-	my $is_holiday = $dh->is_holiday(
-		year      => $current_year,
-		month     => $current_month,
-		day       => $day,
-		regions => ['common', 'sn'],
-	);
+    my $is_holiday = $dh->is_holiday(
+        year      => $current_year,
+        month     => $current_month,
+        day       => $day,
+        regions => ['common', 'sn'],
+    );
 
-	# Check if it's a weekend (Saturday or Sunday)
-	if ($day_of_week == 6 || $day_of_week == 7) {
-		$workdays{$current_date} = 'WEEKEND';
-	} elsif ($is_holiday) {
-		# Check if it's a holiday
-		$workdays{$current_date} = 'HOLIDAY';
-	} else {
-		# Check for overtime or undertime (assuming 8 hours per day is normal)
-		$expected_working_hours += 8;
-		my $working_hours = $global_working_hours{$current_date};
-		if ($working_hours) {
-			my ($hours, $minutes) = split(':', $working_hours);
-			my $total_minutes = $hours * 60 + $minutes;
-			if ($total_minutes > 8 * 60) {
-				$workdays{$current_date} = 'OVERTIME';
-			} elsif ($total_minutes < 8 * 60) {
-				$workdays{$current_date} = 'UNDERTIME';
-			}
-		}
-	}
+    # Check if it's a weekend (Saturday or Sunday)
+    if ($day_of_week == 6 || $day_of_week == 7) {
+        $workdays{$current_date} = 'WEEKEND';
+    } elsif ($is_holiday) {
+        # Check if it's a holiday
+        $workdays{$current_date} = 'HOLIDAY';
+    } else {
+        # Check for overtime or undertime (assuming 8 hours per day is normal)
+        $expected_working_hours += 8;
+        my $working_hours = $global_working_hours{$current_date};
+        if ($working_hours) {
+            my ($hours, $minutes) = split(':', $working_hours);
+            my $total_minutes = $hours * 60 + $minutes;
+            if ($total_minutes > 8 * 60) {
+                $workdays{$current_date} = 'OVERTIME';
+            } elsif ($total_minutes < 8 * 60) {
+                $workdays{$current_date} = 'UNDERTIME';
+            }
+        }
+    }
 
-	$original_start_time->add(days => 1);
+    $original_start_time->add(days => 1);
 }
 
 # Output total working hours and commits count
