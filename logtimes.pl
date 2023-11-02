@@ -89,7 +89,11 @@ while ($start_time <= $end_time) {
 		print "\b\b\b" x 200;
 		print " " x 200;
 		print "\b\b\b" x 200;
-		print "$#all_commits commits found for $start_time -> $repo_path";
+		if($#all_commits != -1) {
+			print "$#all_commits commits found for $start_time -> $repo_path";
+		} else {
+			print "0 commits found for $start_time -> $repo_path";
+		}
 		my $repo = Git::Repository->new(work_tree => $repo_path);
 		my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
 
