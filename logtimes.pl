@@ -266,7 +266,7 @@ sub parse_duration {
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours', "Pauses", "Number commits");
+my $table = Text::Table->new('DOM, ', 'Day, ', 'No comm.,', 'Working Hours', "Pauses");
 my @weekend_days;
 my $number_workdays = 0;
 
@@ -331,7 +331,7 @@ while ($current_month == $original_start_time->month) {
 	}
 
 	# Add day and working hours to the table
-	$table->add($day, $dow, $colored_text, $pause_col, $number_commits);
+	$table->add($day, $dow, $number_commits, $colored_text, $pause_col);
 
 	# Increment the day
 	$original_start_time->add(days => 1);
