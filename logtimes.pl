@@ -60,8 +60,12 @@ my $csv_table2 = Text::CSV->new({ binary => 1, eol => $/ });
 open my $table2_fh, '>', 'table2.csv' or die "Could not open table2.csv: $!";
 $csv_table2->print($table2_fh, ['tag', 'arbeitszeit', 'anzahl_commits_an_dem_tag', 'erster_commit', 'letzter_commit']);
 
+my $pause_threshold = 3600;
+
 # Initialize total working hours and commits count
 my $total_working_hours = 0;
+my $total_pauses = 0;
+
 my $total_commits_count = 0;
 
 # Initialize Gnuplot data arrays
@@ -69,6 +73,7 @@ my @plot_dates;
 my @plot_commits;
 
 my %global_working_hours = ();
+my %global_pause_times = ();
 
 # Determine holidays (in this case, for Germany)
 my $holidays = Date::Holidays->new(
@@ -118,6 +123,34 @@ while ($start_time <= $end_time) {
 			on_error => 'croak',
 		);
 
+		@all_commits = sort { (split(/,/, $a))[0] <=> (split(/,/, $b))[0] } @all_commits;
+
+		my $prev_commit_time = (split /,/, $all_commits[0])[0];
+
+		my $current_pause_duration = 0;
+
+		my $current_day_pause_time = 0;
+
+		foreach my $commit (@all_commits) {
+			my ($timestamp, $hash) = split(/,/, $commit);
+			my $commit_time = $timestamp;
+
+			# Check if this is the first commit, or the time gap is more than the pause threshold
+			if (($commit_time - $prev_commit_time) >= $pause_threshold) {
+				if ($current_pause_duration > 0) {
+					# Log the pause duration and reset the pause timer
+					print("pause duration: $current_pause_duration\n");
+					$current_pause_duration = 0;
+				}
+			} else {
+				# Accumulate the time as working time
+				$current_pause_duration += ($commit_time - $prev_commit_time);
+				$current_day_pause_time += ($commit_time - $prev_commit_time);
+			}
+
+			$prev_commit_time = $commit_time;
+		}
+
 		my $first_commit_time = $commit_times[0];
 		my $first_commit_time_full = $format->parse_datetime($commit_times_full[0]);
 		my $first_commit_hash = $commit_hashes[0];
@@ -130,6 +163,7 @@ while ($start_time <= $end_time) {
 		my $working_hours_formatted = $working_hours->hours . ':' . sprintf("%02d", $working_hours->minutes);
 
 		$global_working_hours{$current_date} = $working_hours_formatted;
+		$global_pause_times{$current_date} = $current_day_pause_time;
 
 		$total_working_hours += abs($working_hours->in_units('hours'));
 		$total_commits_count += $commits_count;
@@ -139,9 +173,25 @@ while ($start_time <= $end_time) {
 
 		push @plot_dates, $current_date;
 		push @plot_commits, $commits_count;
+
 	}
 
 	$start_time->add(days => 1);
+}
+
+sub log_message {
+	my ($message) = @_;
+	print "Log: $message\n";
+}
+
+sub log_pause {
+	my ($date, $duration) = @_;
+	my $hours = int($duration / 3600);
+	my $minutes = int(($duration % 3600) / 60);
+	my $formatted_duration = "$hours hours $minutes minutes";
+
+	# Log the pause duration
+	log_message("Pause detected on $date: $formatted_duration");
 }
 
 close $timetable_fh;
@@ -159,6 +209,7 @@ unlink 'table2.csv';
 
 # Create a hash of workdays
 my %workdays = ();
+my %pause_times = ();
 
 # Iterate through each day in the month
 
@@ -198,16 +249,32 @@ while ($current_month == $original_start_time->month) {
 				$workdays{$current_date} = 'UNDERTIME';
 			}
 		}
+
+		my $pause_time = $global_pause_times{$current_date};
+
+		if ($pause_time) { # in seconds
+			my $min_pause_time = 1800;
+
+			$pause_times{$current_date} = parse_duration($pause_time);
+		}
 	}
 
 	$original_start_time->add(days => 1);
+}
+
+sub parse_duration {
+	my $seconds = shift;
+	my $hours = int( $seconds / (60*60) );
+	my $mins = ( $seconds / 60 ) % 60;
+	my $secs = $seconds % 60;
+	return sprintf("%02d:%02d:%02d", $hours,$mins,$secs);
 }
 
 # Reinitialize the start time for printing the calendar
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours');
+my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours', "Pauses");
 my @weekend_days;
 my $number_workdays = 0;
 
@@ -234,12 +301,26 @@ while ($current_month == $original_start_time->month) {
 		}
 	}
 
+	my $pause_col = "";
+	if(exists $pause_times{$current_date}) {
+		$pause_col = $pause_times{$current_date};
+		if($pause_col < 1800) {
+			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
+				$pause_col = colored($pause_col, "red");
+			}
+		}
+	}
+
 	# Calculate the working hours for the day
 	my $working_hours = $global_working_hours{$current_date} || '0:00';
 
 	my @dow_to_d = qw/So Mo Di Mi Do Fr Sa Sa/;
 
 	my $dow = $dow_to_d[$day_of_week];
+
+	if($dow eq "So" || $dow eq "Sa") {
+		$dow = colored($dow, "on_green");
+	}
 
 	my $colored_text = colored($working_hours, $color);
 
@@ -252,7 +333,7 @@ while ($current_month == $original_start_time->month) {
 	}
 
 	# Add day and working hours to the table
-	$table->add($day, $dow, $colored_text);
+	$table->add($day, $dow, $colored_text, $pause_col);
 
 	# Increment the day
 	$original_start_time->add(days => 1);
