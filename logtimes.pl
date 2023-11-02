@@ -254,10 +254,10 @@ print "Total Working Hours: $total_working_hours hours\n";
 my $over_or_undertime = $expected_working_hours - $total_working_hours;
 
 if($over_or_undertime < 0) {
-	my $overtime = $expected_working_hours - $total_working_hours;
+	my $overtime = $total_working_hours - $expected_working_hours;
 	print "Overtime $overtime hours\n";
 } elsif ($over_or_undertime > 0) {
-	my $undertime = $total_working_hours - $expected_working_hours;
+	my $undertime = $expected_working_hours - $total_working_hours;
 	print "Undertime $undertime hours\n";
 } else {
 	print "Neither over nor under time\n";
