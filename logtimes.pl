@@ -175,7 +175,7 @@ while ($current_month == $original_start_time->month) {
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOW', 'Day', 'Working Hours');
+my $table = Text::Table->new('DOM', 'Day', 'Working Hours');
 my @weekend_days;
 
 while ($current_month == $original_start_time->month) {
