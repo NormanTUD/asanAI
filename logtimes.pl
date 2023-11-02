@@ -70,6 +70,7 @@ while ($start_time <= $end_time) {
     my @all_commits = ();
 
     foreach my $repo_path (@repos) {
+	print "Checking $repo_path between $start_time and $end_of_day...\n";
         my $repo = Git::Repository->new(work_tree => $repo_path);
         my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
         push @all_commits, @commits;
