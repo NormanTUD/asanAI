@@ -10,6 +10,7 @@ use Date::Calc qw/Day_of_Week Days_in_Month/;
 use Date::Holidays;
 use Data::Dumper;
 use Term::ANSIColor;
+use Text::Table;
 
 sub dier {
     die Dumper \@_;
@@ -173,8 +174,9 @@ while ($current_month == $original_start_time->month) {
 # Reinitialize the start time for printing the calendar
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
-# Use the control variable to set the output color
-my $color_control = 1;
+# Create a table for displaying the calendar
+my $table = Text::Table->new('Day', 'Working Hours');
+my @weekend_days;
 
 while ($current_month == $original_start_time->month) {
     my $day = $original_start_time->day;
@@ -187,6 +189,7 @@ while ($current_month == $original_start_time->month) {
     if (exists $workdays{$current_date}) {
         if ($workdays{$current_date} eq 'WEEKEND') {
             $color = 'green';
+            push @weekend_days, [$day, $global_working_hours{$current_date} || '0:00'];
         } elsif ($workdays{$current_date} eq 'HOLIDAY') {
             $color = 'blue';
         } elsif ($workdays{$current_date} eq 'OVERTIME' || $workdays{$current_date} eq 'UNDERTIME') {
@@ -197,16 +200,38 @@ while ($current_month == $original_start_time->month) {
     # Calculate the working hours for the day
     my $working_hours = $global_working_hours{$current_date} || '0:00';
     
-    # Print the day with appropriate color and working hours
-    printf("%2d: %s, %sh | ", $day, colored($day, $color), $working_hours);
+    # Add day and working hours to the table
+    $table->add($day, colored($working_hours, $color));
 
     # Increment the day
     $original_start_time->add(days => 1);
 
     # Change line on Saturday (end of the week)
     if ($day_of_week == 6) {
+        print $table;
         print "\n";
+
+        # Display weekend days on the right
+        if (@weekend_days) {
+            my $weekend_table = Text::Table->new();
+            $weekend_table->load(@weekend_days);
+            print $weekend_table;
+        }
+
+        # Reset the tables for the next week
+        $table = Text::Table->new('Day', 'Working Hours');
+        @weekend_days = ();
     }
 }
-print "\n";
+
+# Print any remaining days at the end of the month
+if ($table->body() || @weekend_days) {
+    print $table;
+    if (@weekend_days) {
+        my $weekend_table = Text::Table->new();
+        $weekend_table->load(@weekend_days);
+        print $weekend_table;
+    }
+    print "\n";
+}
 
