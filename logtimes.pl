@@ -228,7 +228,7 @@ while ($current_month == $original_start_time->month) {
 	if($dow =~ m#^S[ao]$#) {
 		$colored_text = colored($colored_text, "underline");
 	} else {
-		if($color ne 'on_blue' && $color ne 'green') {
+		if(($color ne 'on_blue' && $color ne 'green') || $color == "reset") {
 			$number_workdays++;
 		}
 	}
