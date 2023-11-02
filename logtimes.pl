@@ -188,7 +188,7 @@ while ($current_month == $original_start_time->month) {
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours, ');
+my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours');
 my @weekend_days;
 my $number_workdays = 0;
 
@@ -207,7 +207,7 @@ while ($current_month == $original_start_time->month) {
 		} elsif ($workdays{$current_date} eq 'HOLIDAY') {
 			$color = 'on_blue';
 		} elsif ($workdays{$current_date} eq 'OVERTIME') {
-			$color = 'red';
+			$color = 'on_green';
 			$number_workdays++;
 		} elsif ($workdays{$current_date} eq 'UNDERTIME') {
 			$color = 'on_red';
@@ -235,10 +235,11 @@ while ($current_month == $original_start_time->month) {
 	$original_start_time->add(days => 1);
 }
 
-my $expected_working_hours = 0;
+my $expected_working_hours = $number_workdays * 8;
 
 # Output total working hours and commits count
 print "\n";
+print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
 my $over_or_undertime = $expected_working_hours - $total_working_hours;
@@ -256,9 +257,9 @@ print "Total Commits Count: $total_commits_count\n";
 
 # Print any remaining days at the end of the month
 if ($table->body() || @weekend_days) {
-	print colored("Feiertag", "on_blue")."\n";
 	print colored("Wochenende", "green")."\n";
-	print colored("Überstunden", "red")."\n";
+	print colored("Feiertag", "on_blue")."\n";
+	print colored("Überstunden", "on_green")."\n";
 	print colored("Unterstunden", "on_red")."\n";
 	print colored("Arbeitstag", "underline")."\n";
 
