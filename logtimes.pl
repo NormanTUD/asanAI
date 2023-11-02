@@ -141,17 +141,12 @@ while ($current_month == $original_start_time->month) {
     my $current_year = $original_start_time->strftime('%Y');
     my $day_of_week = Day_of_Week($current_year, $current_month, $day);
 
-    print("===========\n");
-    warn($current_date);
-
     my $is_holiday = Date::Holidays->is_holiday(
 	    year      => $current_year,
 	    month     => $current_month,
 	    day       => $day,
 	    countries => ['de']
     );
-    print("===========\n");
-    warn(Dumper $is_holiday);
 
     # Check if it's a weekend (Saturday or Sunday)
     if ($day_of_week == 6 || $day_of_week == 7) {
