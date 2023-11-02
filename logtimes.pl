@@ -9,6 +9,7 @@ use DateTime::Format::Strptime;
 use Date::Calc qw/Day_of_Week Days_in_Month/;
 use Date::Holidays;
 use Data::Dumper;
+use Term::ANSIColor;
 
 sub dier {
     die Dumper \@_;
@@ -28,9 +29,6 @@ my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_dat
 if(!$end_time) {
     die("End time could not be found. Is it above the max number of days per month?");
 }
-
-use DateTime::Format::Strptime;
-use Term::ANSIColor;
 
 # Create a CSV object for writing timetable.csv
 my $csv_timetable = Text::CSV->new({ binary => 1, eol => $/ });
@@ -142,11 +140,11 @@ while ($current_month == $original_start_time->month) {
     my $day_of_week = Day_of_Week($current_year, $current_month, $day);
 
     my $is_holiday = Date::Holidays->is_holiday(
-	    year      => $current_year,
-	    month     => $current_month,
-	    day       => $day,
-	    countries => ['de'],
-	    WHERE=>['common', 'sn']
+            year      => $current_year,
+            month     => $current_month,
+            day       => $day,
+            countries => ['de'],
+            WHERE=>['common', 'sn']
     );
 
     # Check if it's a weekend (Saturday or Sunday)
@@ -196,8 +194,11 @@ while ($current_month == $original_start_time->month) {
         }
     }
 
-    # Print the day with appropriate color
-    print colored($day, $color);
+    # Calculate the working hours for the day
+    my $working_hours = $global_working_hours{$current_date} || '0:00';
+    
+    # Print the day with appropriate color and working hours
+    printf("%2d: %s, %sh | ", $day, colored($day, $color), $working_hours);
 
     # Increment the day
     $original_start_time->add(days => 1);
@@ -205,8 +206,6 @@ while ($current_month == $original_start_time->month) {
     # Change line on Saturday (end of the week)
     if ($day_of_week == 6) {
         print "\n";
-    } else {
-        print " | ";
     }
 }
 print "\n";
