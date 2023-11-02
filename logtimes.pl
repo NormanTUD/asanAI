@@ -237,7 +237,7 @@ while ($current_month == $original_start_time->month) {
 # Print any remaining days at the end of the month
 if ($table->body() || @weekend_days) {
 	print colored("Feiertag", "blue")."\n";
-	print colored("Arbeitstag", "green")."\n";
+	print colored("Wochenende", "green")."\n";
 	print colored("Überstunden", "red")."\n";
 	print colored("Unterstunden", "on_red")."\n";
 
