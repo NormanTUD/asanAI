@@ -318,7 +318,7 @@ while ($current_month == $original_start_time->month) {
 
 	my $dow = $dow_to_d[$day_of_week];
 
-	if($dow eq "So" || $dow eq "Sa") {
+	if(($dow eq "So" || $dow eq "Sa") && $workday{$current_date} ne "HOLIDAY") {
 		$dow = colored($dow, "on_green");
 	}
 
