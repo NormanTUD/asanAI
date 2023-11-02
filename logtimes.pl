@@ -143,10 +143,6 @@ while ($start_time <= $end_time) {
 	$start_time->add(days => 1);
 }
 
-
-print " " x 100;
-print "\b\b\b" x 100;
-
 close $timetable_fh;
 close $table2_fh;
 
@@ -262,7 +258,12 @@ while ($current_month == $original_start_time->month) {
 my $expected_working_hours = $number_workdays * 8;
 
 # Output total working hours and commits count
-print "\n";
+
+print " " x 100;
+print "\b\b\b" x 100;
+print " " x 100;
+print "\b\b\b" x 100;
+
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
