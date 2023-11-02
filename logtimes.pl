@@ -77,6 +77,7 @@ while ($start_time <= $end_time) {
 		print "$start_time - $end_of_day: $repo_path";
 		my $repo = Git::Repository->new(work_tree => $repo_path);
 		my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+
 		push @all_commits, @commits;
 	}
 
