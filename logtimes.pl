@@ -207,13 +207,13 @@ while ($current_month == $original_start_time->month) {
 			push @weekend_days, [$day, $global_working_hours{$current_date} || '0:00'];
 		} elsif ($workdays{$current_date} eq 'HOLIDAY') {
 			$color = 'on_blue';
-		} elsif ($workdays{$current_date} eq 'OVERTIME') {
-			$color = 'on_green';
-			$number_workdays++;
-		} elsif ($workdays{$current_date} eq 'UNDERTIME') {
-			$color = 'on_red';
-			$number_workdays++;
 		} else {
+			if ($workdays{$current_date} eq 'OVERTIME') {
+				$color = 'on_green';
+			} elsif ($workdays{$current_date} eq 'UNDERTIME') {
+				$color = 'on_red';
+			}
+
 			$number_workdays++;
 		}
 	}
@@ -264,7 +264,7 @@ if ($table->body() || @weekend_days) {
 	print colored("Feiertag", "on_blue")."\n";
 	print colored("Überstunden", "on_green")."\n";
 	print colored("Unterstunden", "on_red")."\n";
-	print colored("Arbeitstag", "underline")."\n";
+	print colored("Wochenende", "underline")."\n";
 
 	print $table;
 	print "\n";
