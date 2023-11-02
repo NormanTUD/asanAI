@@ -72,6 +72,7 @@ my @plot_dates;
 my @plot_commits;
 
 my %global_working_hours = ();
+my %daily_commits = ();
 my %global_pause_times = ();
 
 # Determine holidays (in this case, for Germany)
@@ -155,6 +156,7 @@ while ($start_time <= $end_time) {
 
 		$global_working_hours{$current_date} = $working_hours_formatted;
 		$global_pause_times{$current_date} = $current_day_pause_time;
+		$daily_commits{$current_date} = scalar @all_commits;
 
 		$total_working_hours += abs($working_hours->in_units('hours'));
 		$total_commits_count += $commits_count;
@@ -264,7 +266,7 @@ sub parse_duration {
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours', "Pauses");
+my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours', "Pauses", "Number commits");
 my @weekend_days;
 my $number_workdays = 0;
 
@@ -304,6 +306,9 @@ while ($current_month == $original_start_time->month) {
 		}
 	}
 
+
+	my $number_commits = $daily_commits{$current_date};
+
 	# Calculate the working hours for the day
 	my $working_hours = $global_working_hours{$current_date} || '0:00';
 
@@ -326,7 +331,7 @@ while ($current_month == $original_start_time->month) {
 	}
 
 	# Add day and working hours to the table
-	$table->add($day, $dow, $colored_text, $pause_col);
+	$table->add($day, $dow, $colored_text, $pause_col, $number_commits);
 
 	# Increment the day
 	$original_start_time->add(days => 1);
