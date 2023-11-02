@@ -212,6 +212,8 @@ while ($current_month == $original_start_time->month) {
 		} elsif ($workdays{$current_date} eq 'UNDERTIME') {
 			$color = 'on_red';
 			$number_workdays++;
+		} else {
+			$number_workdays++;
 		}
 	}
 
