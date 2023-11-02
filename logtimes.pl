@@ -60,7 +60,6 @@ my $csv_table2 = Text::CSV->new({ binary => 1, eol => $/ });
 open my $table2_fh, '>', 'table2.csv' or die "Could not open table2.csv: $!";
 $csv_table2->print($table2_fh, ['tag', 'arbeitszeit', 'anzahl_commits_an_dem_tag', 'erster_commit', 'letzter_commit']);
 
-my $pause_threshold = 3600;
 
 # Initialize total working hours and commits count
 my $total_working_hours = 0;
@@ -127,8 +126,6 @@ while ($start_time <= $end_time) {
 
 		my $prev_commit_time = (split /,/, $all_commits[0])[0];
 
-		my $current_pause_duration = 0;
-
 		my $current_day_pause_time = 0;
 
 		foreach my $commit (@all_commits) {
@@ -136,15 +133,10 @@ while ($start_time <= $end_time) {
 			my $commit_time = $timestamp;
 
 			# Check if this is the first commit, or the time gap is more than the pause threshold
-			if (($commit_time - $prev_commit_time) >= $pause_threshold) {
-				if ($current_pause_duration > 0) {
-					# Log the pause duration and reset the pause timer
-					$current_pause_duration = 0;
-				}
-			} else {
-				# Accumulate the time as working time
-				$current_pause_duration += ($commit_time - $prev_commit_time);
-				$current_day_pause_time += ($commit_time - $prev_commit_time);
+			my $commit_time_diff = $commit_time - $prev_commit_time;
+			my $pause_threshold = 3600;
+			if ($commit_time_diff >= $pause_threshold) {
+				$current_day_pause_time += $commit_time_diff;
 			}
 
 			$prev_commit_time = $commit_time;
