@@ -128,6 +128,10 @@ while ($start_time <= $end_time) {
 	$start_time->add(days => 1);
 }
 
+
+print " " x 100;
+print "\b\b\b" x 100;
+
 close $timetable_fh;
 close $table2_fh;
 
