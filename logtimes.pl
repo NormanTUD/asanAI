@@ -293,7 +293,10 @@ while ($current_month == $original_start_time->month) {
 	}
 
 
-	my $number_commits = $daily_commits{$current_date};
+	my $number_commits = 0;
+	if(exists $daily_commits{$current_date}) {
+		$number_commits = $daily_commits{$current_date};
+	}
 
 	# Calculate the working hours for the day
 	my $working_hours = $global_working_hours{$current_date} || '0:00';
@@ -307,7 +310,7 @@ while ($current_month == $original_start_time->month) {
 		$number_commits = colored($number_commits, "red");
 	}
 
-	if($workdays{$current_date} eq "HOLIDAY") {
+	if(exists $workdays{$current_date} && $workdays{$current_date} eq "HOLIDAY") {
 		$number_commits = colored($number_commits, "red");
 	}
 
