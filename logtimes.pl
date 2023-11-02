@@ -145,7 +145,8 @@ while ($current_month == $original_start_time->month) {
 	    year      => $current_year,
 	    month     => $current_month,
 	    day       => $day,
-	    countries => ['de']
+	    countries => ['de'],
+	    WHERE=>['common', 'sn']
     );
 
     # Check if it's a weekend (Saturday or Sunday)
