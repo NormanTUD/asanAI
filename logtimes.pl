@@ -321,7 +321,7 @@ while ($current_month == $original_start_time->month) {
 		$number_commits = colored($number_commits, "red");
 	}
 
-	if($workdays{$current_date} ne "HOLIDAY") {
+	if($workdays{$current_date} eq "HOLIDAY") {
 		$number_commits = colored($number_commits, "red");
 	}
 
