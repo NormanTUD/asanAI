@@ -281,6 +281,7 @@ print "Total Commits Count: $total_commits_count\n";
 
 # Print any remaining days at the end of the month
 if ($table->body() || @weekend_days) {
+	print "\n";
 	print colored(colored("Wochenende", "green"), "underline")."\n";
 	print colored("Feiertag", "on_blue")."\n";
 	print colored("Überstunden", "on_green")."\n";
