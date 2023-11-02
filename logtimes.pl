@@ -305,7 +305,7 @@ while ($current_month == $original_start_time->month) {
 		$pause_col = $nice;
 		my $original = $pause_times{$current_date}{original};
 
-		if($original > 1800) {
+		if($original > 45*60) {
 			if(!$workdays{$current_date} eq 'WEEKEND' && $workdays{$current_date} eq 'HOLIDAY') {
 				$pause_col = colored($nice, "red");
 			}
@@ -354,7 +354,7 @@ for my $i (map { $global_pause_times{$_} } keys %global_pause_times) {
 	$sum_pause_times += $i;
 }
 
-my $total_working_hours_no_pauses = $total_working_hours - ($sum_pause_times / 3600);
+my $total_working_hours_no_pauses = $total_working_hours - int($sum_pause_times / 3600);
 
 print "Work days: $number_workdays\n";
 print "Expected working hours: $expected_working_hours hours\n";
