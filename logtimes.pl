@@ -190,7 +190,7 @@ while ($current_month == $original_start_time->month) {
 
 # Output total working hours and commits count
 print "\n";
-print "Expected Working hours: $expected_working_hours hours\n";
+print "Expected working hours: $expected_working_hours hours\n";
 print "Total Working Hours: $total_working_hours hours\n";
 my $over_or_undertime = $expected_working_hours - $total_working_hours;
 
@@ -209,7 +209,7 @@ print "Total Commits Count: $total_commits_count\n";
 $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 
 # Create a table for displaying the calendar
-my $table = Text::Table->new('DOM', 'Day', 'Working Hours');
+my $table = Text::Table->new('DOM, ', 'Day, ', 'Working Hours, ');
 my @weekend_days;
 
 while ($current_month == $original_start_time->month) {
