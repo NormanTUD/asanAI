@@ -255,4 +255,3 @@ if ($table->body() || @weekend_days) {
 	print $table;
 	print "\n";
 }
-
