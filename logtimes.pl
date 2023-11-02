@@ -20,12 +20,12 @@ sub dier {
 my $repo_path = '.';
 
 # Define the date range
-my $start_date = shift || '2022-01-01';
-my $end_date = shift || '2022-12-31';
+my $start_date = shift || die("No start date given");
 
 my $start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
 my $original_start_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
-my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($end_date);
+my $end_time = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d')->parse_datetime($start_date);
+$end_time->add(months => 1);
 
 if (!$end_time) {
     die("End time could not be found. Is it above the max number of days per month?");
