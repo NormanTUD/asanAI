@@ -2806,7 +2806,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0
 				heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
 
 				// Up-sample the heat map to the size of the input image.
-				heat_map = resizeBilinear(heat_map, [x.shape[1], x.shape[2]]);
+				heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
 
 				// Apply an RGB colormap on the heat_map. This step is necessary because
 				// the heat_map is a 1-channel (grayscale) image. It needs to be converted

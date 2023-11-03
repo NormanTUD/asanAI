@@ -590,6 +590,10 @@ async function tf_data_webcam (...args) {
 	}
 }
 
+function resize_image (...args) {
+	return resizeNearestNeighbor(...args);
+}
+
 function resizeNearestNeighbor(...args) {
 	_register_tensors(...args);
 	try {

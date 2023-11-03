@@ -1521,7 +1521,7 @@ async function visualize_train () {
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					var res = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
 					res = divNoNan(res, parse_float($("#divide_by").val()));
 					return res;
 				} catch (e) {

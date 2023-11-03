@@ -542,7 +542,7 @@ async function get_xs_and_ys () {
 				//log("this_data.length", this_data.length);
 				for (var i = 0; i < this_data.length; i++) {
 					var unresized_item = this_data[i]["item"];
-					var item = resizeNearestNeighbor(unresized_item, [height, width]);
+					var item = resize_image(unresized_item, [height, width]);
 					var this_category_counter = this_data[i]["category_counter"];
 
 					var await_outside = [];
@@ -646,7 +646,7 @@ async function get_xs_and_ys () {
 
 							var tf_img = fromPixels(img_elem);
 							var resized_img = tf_to_float(tf_img.
-								resizeNearestNeighbor([height, width])
+								resize_image([height, width])
 							);
 
 							if($("#divide_by").val() != 1) {
@@ -718,7 +718,7 @@ async function get_xs_and_ys () {
 
 							if(!id.endsWith("_layer")) {
 								var tf_img = fromPixels(img_elem);
-								var resized_img = tf.tidy(() => { return tf_to_float(resizeNearestNeighbor(tf_img, [height, width])); });
+								var resized_img = tf.tidy(() => { return tf_to_float(resize_image(tf_img, [height, width])); });
 
 								if($("#divide_by").val() != 1) {
 									resized_img = tidy(() => {
@@ -734,7 +734,7 @@ async function get_xs_and_ys () {
 
 								try {
 									var this_map_tensor = tidy(() => {
-										var res = resizeNearestNeighbor(fromPixels($("#" + id + "_layer")[0]), [model.outputShape[1], model.outputShape[2]]);
+										var res = resize_image(fromPixels($("#" + id + "_layer")[0]), [model.outputShape[1], model.outputShape[2]]);
 										return res;
 									});
 
@@ -903,7 +903,7 @@ function url_to_tf (url, dont_load_into_tf=0) {
 						var _res = tidy(() => {
 							return tf_to_float(
 								expand_dims(
-									resizeNearestNeighbor(res, [height, width])
+									resize_image(res, [height, width])
 								)
 							);
 						});
@@ -1428,7 +1428,7 @@ async function take_image_from_webcam (elem, nol, increment_counter=true) {
 
 	var category = $(elem).parent();
 	var cam_image = await cam.capture();
-	cam_image = tf_to_float(expand_dims(resizeNearestNeighbor(cam_image, [stream_height, stream_width])));
+	cam_image = tf_to_float(expand_dims(resize_image(cam_image, [stream_height, stream_width])));
 	cam_image = array_sync(cam_image)[0];
 
 	var base_id = await md5($(category).find(".own_image_label").val());
@@ -1706,7 +1706,7 @@ async function confusion_matrix(classes) {
 		if(!predicted_tensor) {
 			var img_tensor = tidy(() => {
 				try {
-					var predicted_tensor = expand_dims(resizeBilinear(fromPixels(img_elem), [height, width]));
+					var predicted_tensor = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
 					predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
 					return predicted_tensor;
 				} catch (e) {

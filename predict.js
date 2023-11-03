@@ -183,7 +183,7 @@ async function _get_tensor_img(item) {
 	try {
 		tensor_img = await tidy(() => {
 			return tf_to_float(expand_dims(
-				resizeNearestNeighbor(_divide_img_tensor(fromPixels(item)), [height, width])
+				resize_image(_divide_img_tensor(fromPixels(item)), [height, width])
 			));
 		});
 	} catch (e) {
@@ -628,7 +628,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 				predict_data = tf.tidy(() => {
 					var res = tf_to_float(
 						expand_dims(
-							resizeNearestNeighbor(
+							resize_image(
 								fromPixels(item),
 								[height, width]
 							)
@@ -1324,7 +1324,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 function _get_resized_webcam (predict_data, h, w) {
 	var res = tidy(() => {
 		var divide_by = parse_float($("#divide_by").val());
-		var r = tf_to_float(expand_dims(resizeNearestNeighbor(predict_data, [h, w])));
+		var r = tf_to_float(expand_dims(resize_image(predict_data, [h, w])));
 
 		if(divide_by != 1) {
 			r = tidy(() => { return divNoNan(r, divide_by); });
@@ -1703,7 +1703,7 @@ async function predict_handdrawn () {
 		var predict_data;
 		try {
 			predict_data = tidy(() => {
-				return expand_dims(resizeNearestNeighbor(
+				return expand_dims(resize_image(
 					fromPixels(atrament_data.sketcher.canvas),
 					[height, width]
 				));
