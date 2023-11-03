@@ -834,7 +834,7 @@ async function identify_layers () {
 
 		var activation_function_string = "";
 		try {
-			if(i in model.layers) {
+			if(model && model.layers && i in model.layers) {
 				var this_layer = $($(".layer")[i]);
 				var act = $(this_layer.find(".activation")).val();
 				if("" + act != "undefined") {
