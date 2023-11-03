@@ -48,11 +48,8 @@
 					<input id="upload_file_non_styleable" multiple type="file" accept="image/png, image/jpeg, image/png, image/jpg" onchange="load_file(event)" value='&#128444;&#128229;'>
 				</span>
 				<br>
-				<span class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">
-					<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" alt="Output Image" id="output">
-
-					<br>
-					<span id="prediction" style="display: none"></span>
+				<span id='uploaded_file_predictions' class="full_example_image_prediction display_inline_block only_show_when_predicting_image_file custom_image_data">
+					
 				</span>
 			</span>
 

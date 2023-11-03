@@ -96,23 +96,43 @@ async function get_label_data () {
 
 }
 
-var load_file = (function(event) {
-	var output = document.getElementById("output");
-	$("#output").removeAttr("src");
+function load_file (event) {
+	var files = event.target.files;
 
-	output.src = URL.createObjectURL(event.target.files[0]);
-	output.onload = async function() {
-		URL.revokeObjectURL(output.src);
-		$("#output")[0].height = $("#output")[0].naturalHeight;
-		$("#output")[0].width = $("#output")[0].naturalWidth;
+	var uploaded_file_pred = `<span class='single_pred'><img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"><br><span class="uploaded_file_prediction"></span></span>`;
 
-		await predict(output);
+	var $output = $("#uploaded_file_predictions"); 
 
-		$(".only_show_when_predicting_image_file").show();
-	};
+	var repeated_string = uploaded_file_pred + "\n";
+	for (var i = 0; i < files.length; i++) {
+		repeated_string += (uploaded_file_pred + "\n");
+	}
 
-	$("#output").show();
-});
+	$output.html(repeated_string);
+
+	for (var i = 0; i < files.length; i++) {
+		$($(".single_pred")[i]).removeAttr("src");
+
+		var output = $($(".uploaded_file_img")[i])[0];
+
+		output.src = URL.createObjectURL(files[i]);
+		output.onload = async function() {
+			URL.revokeObjectURL(output.src);
+
+			var result = await predict(output);
+
+			var $set_this = $($(".uploaded_file_prediction")[i]);
+
+			assert($set_this.length, `.uploaded_file_prediction[${i}] not found!`);
+
+			$set_this.html(result);
+
+			$(".only_show_when_predicting_image_file").show();
+		};
+	}
+
+	$output.show();
+}
 
 function _predict_error (e) {
 	err(e);
