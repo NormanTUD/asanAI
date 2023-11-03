@@ -96,9 +96,9 @@ while ($start_time <= $end_time) {
 	my @all_commits = ();
 
 	foreach my $repo_path (@repos) {
-		print "\b\b\b" x 200;
-		print " " x 200;
-		print "\b\b\b" x 200;
+		print "\b\b\b" x 150;
+		print " " x 150;
+		print "\b\b\b" x 150;
 		print scalar(@all_commits)." commits found for $start_time -> $repo_path";
 		eval {
 			my $repo = Git::Repository->new(work_tree => $repo_path);
