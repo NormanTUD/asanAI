@@ -7451,8 +7451,12 @@ function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, 
 				ctx.fillStyle = "black";
 			}
 			ctx.textAlign = "center";
-			ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - (24) - 5);
-			ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - 5);
+			if(_is) {
+				ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - (24) - 5);
+			}
+			if(_os) {
+				ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (i + 1) * layerSpacing, canvasHeight - 5);
+			}
 			ctx.closePath();
 		}
 	}
