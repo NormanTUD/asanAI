@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# TODO: Kernarbeitszeiten beachten
 $|++;
 use strict;
 use warnings;
