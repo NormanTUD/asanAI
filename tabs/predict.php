@@ -12,7 +12,7 @@
 
 	<span id="cosmo_visualize_last_layer" class="show_only_in_cosmo_mode" style="display: none"></span>
 
-	<canvas id="grad_cam_heatmap" style="position: fixed; right: 50px; bottom: 50px; display: none"></canvas>
+	<canvas id="grad_cam_heatmap" style="position: fixed; right: 50px; display: none"></canvas>
 
 	<div class="container" id="predictcontainer">
 		<div class="show_only_in_cosmo_mode">

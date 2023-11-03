@@ -2728,7 +2728,7 @@ function apply_color_map (x) {
 	return res;
 }
 
-async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2.0) {
+async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2.0) {
 	if(started_training) {
 		l("Cannot show gradCAM while training");
 		return;
@@ -2777,7 +2777,7 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			// This function runs sub-model 2 and extracts the slice of the probability
 			// output that corresponds to the desired class.
 
-			const convOutput2ClassOutput = (input) => subModel2.apply(input, {training: true}).gather([classIndex], 1);
+			const convOutput2ClassOutput = (input) => subModel2.apply(input, {training: true}).gather([class_idx], 1);
 			// This is the gradient function of the output corresponding to the desired
 			// class with respect to its input (i.e., the output of the last
 			// convolutional layer of the original model).
@@ -2797,24 +2797,24 @@ async function grad_class_activation_map(model, x, classIndex, overlayFactor = 2
 			const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
 
 			// Create heat map by averaging and collapsing over all filters.
-			let heatMap = tf_mean(scaledConvOutputValues, -1);
+			let heat_map = tf_mean(scaledConvOutputValues, -1);
 
 			// Discard negative values from the heat map and normalize it to the [0, 1]
 			// interval.
-			heatMap = tf_relu(heatMap);
-			heatMap = expand_dims(tf_div(heatMap, tf_max(heatMap)), -1);
+			heat_map = tf_relu(heat_map);
+			heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
 
 			// Up-sample the heat map to the size of the input image.
-			heatMap = resizeBilinear(heatMap, [x.shape[1], x.shape[2]]);
+			heat_map = resizeBilinear(heat_map, [x.shape[1], x.shape[2]]);
 
-			// Apply an RGB colormap on the heatMap. This step is necessary because
-			// the heatMap is a 1-channel (grayscale) image. It needs to be converted
+			// Apply an RGB colormap on the heat_map. This step is necessary because
+			// the heat_map is a 1-channel (grayscale) image. It needs to be converted
 			// into a color (RGB) one through this function call.
-			heatMap = apply_color_map(heatMap);
+			heat_map = apply_color_map(heat_map);
 
 			// To form the final output, overlay the color heat map on the input image.
-			heatMap = tf_add(tf_mul(heatMap, overlayFactor), tf_div(x, 255));
-			return tf_div(heatMap, tf_mul(tf_max(heatMap), 255));
+			heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
+			return tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
 		});
 
 		return retval;
