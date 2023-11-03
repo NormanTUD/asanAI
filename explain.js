@@ -1108,15 +1108,15 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			// interest.
 			const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
 
-			const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
+			const aux_model = tf_model({inputs: model.inputs, outputs: layerOutput});
 
 			// This function calculates the value of the convolutional layer's
 			// output at the designated filter index.
-			const lossFunction = (input) => auxModel.apply(input, {training: true}).gather([neuron], -1);
+			const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
 
-			// This returned function (`gradFunction`) calculates the gradient of the
+			// This returned function (`grad_function`) calculates the gradient of the
 			// convolutional filter's output with respect to the input image.
-			const gradFunction = grad(lossFunction);
+			const grad_function = grad(lossFunction);
 
 			// Form a random image as the starting point of the gradient ascent.
 
@@ -1134,7 +1134,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 
 				const scaledGrads = tidy(() => {
 					try {
-						const grads = gradFunction(data);
+						const grads = grad_function(data);
 
 						const _is = sqrt(tf_mean(tf_square(grads)));
 
@@ -2761,7 +2761,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
 		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
-		const auxModel = tf_model({inputs: model.inputs, outputs: layerOutput});
+		const aux_model = tf_model({inputs: model.inputs, outputs: layerOutput});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
@@ -2778,29 +2778,29 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 				// This function runs sub-model 2 and extracts the slice of the probability
 				// output that corresponds to the desired class.
 
-				function convOutput2ClassOutput (input) {
+				function conv_output_to_class_output (input) {
 					return subModel2.apply(input, {training: true}).gather([class_idx], 1);
 				}
 				// This is the gradient function of the output corresponding to the desired
 				// class with respect to its input (i.e., the output of the last
 				// convolutional layer of the original model).
-				const gradFunction = grad(convOutput2ClassOutput);
+				const grad_function = grad(conv_output_to_class_output);
 
 				// Calculate the values of the last conv layer's output.
-				const lastConvLayerOutputValues = auxModel.apply(x);
+				const last_conv_layer_output_values = aux_model.apply(x);
 				// Calculate the values of gradients of the class output w.r.t. the output
 				// of the last convolutional layer.
-				const gradValues = gradFunction(lastConvLayerOutputValues);
+				const grad_values = grad_function(last_conv_layer_output_values);
 
 				// Pool the gradient values within each filter of the last convolutional
 				// layer, resulting in a tensor of shape [numFilters].
-				const pooledGradValues = tf_mean(gradValues, [0, 1, 2]);
+				const pooledGradValues = tf_mean(grad_values, [0, 1, 2]);
 				// Scale the convlutional layer's output by the pooled gradients, using
 				// broadcasting.
-				const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
+				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooledGradValues);
 
 				// Create heat map by averaging and collapsing over all filters.
-				let heat_map = tf_mean(scaledConvOutputValues, -1);
+				let heat_map = tf_mean(scaled_conv_output_values, -1);
 
 				// Discard negative values from the heat map and normalize it to the [0, 1]
 				// interval.
