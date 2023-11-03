@@ -360,9 +360,12 @@ async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		predictions_tensor = await __predict(tensor_img);
 
-		await _predict_result(predictions_tensor, nr);
+		await _predict_result(predictions_tensor, nr, 0);
 
+		warn_if_tensor_is_disposed(predictions_tensor);
 		await draw_heatmap(predictions_tensor, tensor_img);
+
+		await dispose(predictions_tensor);
 	} catch (e) {
 		if(("" + e).includes("already disposed")) {
 			dbg("[_run_predict_and_show] Tensors already disposed. Probably the model was recompiled while predicting.");
@@ -392,7 +395,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 
 }
 
-async function _predict_result(predictions_tensor, nr) {
+async function _predict_result(predictions_tensor, nr, _dispose = 1) {
 	var desc = $($(".predict_demo_result")[nr]);
 	desc.html("");
 	if(model.outputShape.length == 4) {
@@ -404,8 +407,9 @@ async function _predict_result(predictions_tensor, nr) {
 		desc.html(latex);
 	}
 
-	await dispose(predictions_tensor);
-
+	if(_dispose) {
+		await dispose(predictions_tensor);
+	}
 }
 
 async function _predict_image (predictions_tensor, desc) {
@@ -823,6 +827,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 			return;
 		}
 
+		warn_if_tensor_is_disposed(predictions_tensor);
 		await draw_heatmap(predictions_tensor, predict_data);
 
 		predictions = predictions_tensor.dataSync();
@@ -1275,6 +1280,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		return;
 	}
 
+	warn_if_tensor_is_disposed(predictions_tensor);
 	var strongest_category = get_index_of_highest_category(predictions_tensor);
 
 	var original_disable_layer_debuggers = disable_layer_debuggers;
@@ -1383,6 +1389,7 @@ async function predict_webcam () {
 		return;
 	}
 
+	warn_if_tensor_is_disposed(predictions_tensor);
 	await draw_heatmap(predictions_tensor, predict_data, 1);
 
 	var predictions = array_sync(predictions_tensor);
@@ -1787,6 +1794,7 @@ async function predict_handdrawn () {
 			return;
 		}
 
+		warn_if_tensor_is_disposed(predictions_tensor);
 		await draw_heatmap(predictions_tensor, predict_data);
 
 		await _predict_handdrawn(predictions_tensor);
