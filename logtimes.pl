@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # TODO: Kernarbeitszeiten beachten
 $|++;
+
 use strict;
 use warnings;
 use POSIX qw/strftime/;
@@ -15,6 +16,26 @@ use Term::ANSIColor;
 use Text::Table;
 use List::Util qw(min max);
 use autodie;
+use Memoize::Storable;
+use Memoize;
+
+
+sub get_git_log_between_dates {
+	my $repo_path = shift;
+	my $start_time = shift;
+	my $end_of_day  = shift;
+
+
+	my $repo = Git::Repository->new(work_tree => $repo_path);
+	my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+
+	return @commits;
+}
+
+
+my $memoize_persistent_store = "memoized.db";
+tie my %cache => 'Memoize::Storable', $memoize_persistent_store;
+memoize 'get_git_log_between_dates', SCALAR_CACHE => [HASH => \%cache];
 
 my $pause_threshold = 5000;
 
@@ -101,8 +122,8 @@ while ($start_time <= $end_time) {
 		print "\b\b\b" x 150;
 		print scalar(@all_commits)." commits found for $start_time -> $repo_path";
 		eval {
-			my $repo = Git::Repository->new(work_tree => $repo_path);
-			my @commits = $repo->run('log', '--date=local', '--pretty=%at,%h', "--since=$start_time", "--until=$end_of_day");
+
+			my @commits = get_git_log_between_dates($repo_path, $start_time, $end_of_day);
 
 			push @all_commits, @commits;
 			@all_commits = sort @all_commits;
