@@ -786,7 +786,7 @@ async function identify_layers () {
 
 		var output_shape_string = "";
 		try {
-			if(model.layers && model.layers.length >= i) {
+			if(model && model.layers && model.layers.length >= i) {
 				try {
 					model.layers[i].input.shape;
 				} catch(e) {
