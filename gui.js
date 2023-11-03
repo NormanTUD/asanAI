@@ -3025,7 +3025,15 @@ async function chose_dataset(no_set_config) {
 	$("#predict_error").html("");
 	$("#prediction").html("");
 
-	await identify_layers();
+	try {
+		await identify_layers();
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		wrn("" + e);
+	}
 	init_download_link();
 
 	if(!is_cosmo_mode) {
