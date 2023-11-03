@@ -258,10 +258,18 @@
 						<td>asanAI debug?</td>
 						<td><input type="checkbox" value="1" onchange="debug = $(this).is(':checked');" id="enable_asanai_debug"></td>
 					</tr>
+					<tr>
+						<td>Resize method?</td>
+						<td>
+							<select id="default_resize_method">
+								<option value="nearestNeighbor" selected>nearestNeighbor</option>
+								<option value="bilinear">bilinear</option>
+							</select>
+						</td>
+					</tr>
 				</table>
-
 			</div>
-			<div class="ribbon-group-title">Weights/Shuffle/Renderer</div>
+			<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>

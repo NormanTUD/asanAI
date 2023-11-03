@@ -591,7 +591,22 @@ async function tf_data_webcam (...args) {
 }
 
 function resize_image (...args) {
-	return resizeNearestNeighbor(...args);
+	var $default_resize_method = $("#default_resize_method");
+
+	if($default_resize_method.length != 1) {
+		err("There was a problem getting #default_resize_method");
+		return;
+	}
+	
+	var val = $default_resize_method.val();
+	log("Using resize type " + val);
+	if(val == "nearestNeighbor") {
+		return resizeNearestNeighbor(...args);
+	} else if (val == "bilinear") {
+		return resizeBilinear(...args);
+	} else {
+		err(`Unknown value: ${val} (type: ${typeof(val)}`);
+	}
 }
 
 function resizeNearestNeighbor(...args) {
