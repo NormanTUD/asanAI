@@ -122,23 +122,26 @@ function load_file (event) {
 
 		var img_elem = $($(".uploaded_file_img")[i])[0];
 
-		img_elem.src = URL.createObjectURL(files[i]);
-		img_elem.onload = async function() {
+		var async_func;
+
+		eval(`async_func = async function() {
 			URL.revokeObjectURL(img_elem.src);
 
 			var result = await predict(img_elem, null, null);
 
-			var $set_this = $($(".uploaded_file_prediction")[i]);
+			var $set_this = $($(".uploaded_file_prediction")[${i}]);
 
-			assert($set_this.length, `.uploaded_file_prediction[${i}] not found!`);
+			assert($set_this.length, \`.uploaded_file_prediction[${i}] not found!\`);
 
+			//console.log("i:", ${i}, "$set_this:", $set_this, "result:", result);
 
-			console.log("$set_this:", $set_this, "result:", result);
-
-			$set_this.html(result);
+			$set_this.html(result).show();
 
 			$(".only_show_when_predicting_image_file").show();
-		};
+		}`);
+
+		img_elem.src = URL.createObjectURL(files[i]);
+		img_elem.onload = async_func;
 	}
 
 	$output.show();
