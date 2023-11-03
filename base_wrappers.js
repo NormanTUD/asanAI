@@ -599,7 +599,7 @@ function resize_image (...args) {
 	}
 	
 	var val = $default_resize_method.val();
-	log("Using resize type " + val);
+	dbg("Using resize type " + val);
 	if(val == "nearestNeighbor") {
 		return resizeNearestNeighbor(...args);
 	} else if (val == "bilinear") {
