@@ -2739,7 +2739,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 		return;
 	}
 
-	if(is_hidden_or_has_hidden_parent("#grad_cam_heatmap")) {
+	if(is_hidden_or_has_hidden_parent("#predict_tab")) {
 		l("Not wasting resources on gradCAM when the predict tab is not visible anyways.");
 		return;
 	}
