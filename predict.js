@@ -99,13 +99,20 @@ async function get_label_data () {
 function load_file (event) {
 	var files = event.target.files;
 
-	var uploaded_file_pred = `<span class='single_pred'><img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"><br><span class="uploaded_file_prediction"></span></span>`;
 
 	var $output = $("#uploaded_file_predictions"); 
 
-	var repeated_string = uploaded_file_pred + "\n";
-	for (var i = 0; i < files.length; i++) {
-		repeated_string += (uploaded_file_pred + "\n");
+	var uploaded_file_pred = 
+		`<span class='single_pred'>\n` +
+			`<img width='${width}' height='${height}' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Image" class="uploaded_file_img"\n>` +
+			`<br>` +
+			`<span class="uploaded_file_prediction"></span>` +
+		`</span>\n`;
+
+	var repeated_string = uploaded_file_pred;
+	for (var i = 0; i <= files.length; i++) {
+		var uuid = uuidv4();
+		repeated_string += uploaded_file_pred;
 	}
 
 	$output.html(repeated_string);
@@ -113,17 +120,20 @@ function load_file (event) {
 	for (var i = 0; i < files.length; i++) {
 		$($(".single_pred")[i]).removeAttr("src");
 
-		var output = $($(".uploaded_file_img")[i])[0];
+		var img_elem = $($(".uploaded_file_img")[i])[0];
 
-		output.src = URL.createObjectURL(files[i]);
-		output.onload = async function() {
-			URL.revokeObjectURL(output.src);
+		img_elem.src = URL.createObjectURL(files[i]);
+		img_elem.onload = async function() {
+			URL.revokeObjectURL(img_elem.src);
 
-			var result = await predict(output);
+			var result = await predict(img_elem, null, null);
 
 			var $set_this = $($(".uploaded_file_prediction")[i]);
 
 			assert($set_this.length, `.uploaded_file_prediction[${i}] not found!`);
+
+
+			console.log("$set_this:", $set_this, "result:", result);
 
 			$set_this.html(result);
 
@@ -589,9 +599,7 @@ function number_of_elements_in_tensor_shape (shape) {
 	return required_elements;
 }
 
-async function predict (item, force_category, dont_write_to_predict_tab) {
-	var pred_tab = "prediction";
-
+async function predict (item, force_category, dont_write_to_predict_tab, pred_tab = "prediction") {
 	$("#" + pred_tab).html("").show();
 	$("#predict_error").html("").hide();
 	var predictions = [];
