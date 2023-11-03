@@ -634,7 +634,7 @@ async function predict (item, force_category, dont_write_to_predict_tab, pred_ta
 					return res;
 				});
 
-				console.log(predict_data);
+				//console.log(predict_data);
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
