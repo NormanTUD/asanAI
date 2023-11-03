@@ -1292,7 +1292,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 		var canvas = $("#grad_cam_heatmap")[0];
 		var img = array_sync(heatmap)[0];
 
-		var max_height_width = Math.min(width, Math.floor(window.innerWidth / 5));
+		var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
 
 		var shape = get_shape_from_array(img);
 		if(shape.length != 3) {
