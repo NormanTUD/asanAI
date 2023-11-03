@@ -1097,7 +1097,7 @@ function deprocess_image(x) {
 
 /* This function performs gradient ascent on the input image to find an image that maximizes the output of the given filter in the given layer. */
 
-async function input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion = 0) {
+async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
 	var worked = 0;
 	var full_data = {};
 
@@ -1106,9 +1106,9 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			// Create an auxiliary model of which input is the same as the original
 			// model but the output is the output of the convolutional layer of
 			// interest.
-			const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
+			const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
 
-			const aux_model = tf_model({inputs: model.inputs, outputs: layerOutput});
+			const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
 			// This function calculates the value of the convolutional layer's
 			// output at the designated filter index.
@@ -1162,7 +1162,7 @@ async function input_gradient_ascent(layerIndex, neuron, iterations, start_image
 			await compile_model();
 			if(recursion > 20) {
 				await delay(recursion * 1000);
-				return await input_gradient_ascent(layerIndex, neuron, iterations, start_image, recursion + 1);
+				return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
 			} else {
 				throw new Error("Too many retries for input_gradient_ascent");
 			}
@@ -2728,7 +2728,7 @@ function apply_color_map (x) {
 	return res;
 }
 
-async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2.0) {
+async function grad_class_activation_map(model, x, class_idx, overlay_factor = 0.5) {
 	if(started_training) {
 		l("Cannot show gradCAM while training");
 		return;
@@ -2746,32 +2746,30 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 
 	try {
 		// Try to locate the last conv layer of the model.
-		let layerIndex = model.layers.length - 1;
-		while (layerIndex >= 0) {
-			if (model.layers[layerIndex].getClassName().startsWith("Conv")) {
+		let layer_idx = model.layers.length - 1;
+		while (layer_idx >= 0) {
+			if (model.layers[layer_idx].getClassName().startsWith("Conv")) {
 				break;
 			}
-			layerIndex--;
+			layer_idx--;
 		}
 
-		assert(layerIndex >= 0, "Failed to find a convolutional layer in model");
-
-		const lastConvLayer = model.layers[layerIndex];
+		assert(layer_idx >= 0, "Failed to find a convolutional layer in model");
 
 		// Get "sub-model 1", which goes from the original input to the output
 		// of the last convolutional layer.
-		const layerOutput = model.getLayer(null, layerIndex).getOutputAt(0);
-		const aux_model = tf_model({inputs: model.inputs, outputs: layerOutput});
+		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
 		// Get "sub-model 2", which goes from the output of the last convolutional
 		// layer to the original output.
-		const newInput = input({shape: layerOutput.shape.slice(1)});
-		layerIndex++;
-		let y = newInput;
-		while (layerIndex < model.layers.length) {
-			y = model.layers[layerIndex++].apply(y);
+		const new_input = input({shape: layer_output.shape.slice(1)});
+		layer_idx++;
+		let y = new_input;
+		while (layer_idx < model.layers.length) {
+			y = model.layers[layer_idx++].apply(y);
 		}
-		const subModel2 = tf_model({inputs: newInput, outputs: y});
+		const subModel2 = tf_model({inputs: new_input, outputs: y});
 
 		var retval = tidy(() => {
 			try {
@@ -2794,10 +2792,10 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 
 				// Pool the gradient values within each filter of the last convolutional
 				// layer, resulting in a tensor of shape [numFilters].
-				const pooledGradValues = tf_mean(grad_values, [0, 1, 2]);
+				const pooled_grad_values = tf_mean(grad_values, [0, 1, 2]);
 				// Scale the convlutional layer's output by the pooled gradients, using
 				// broadcasting.
-				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooledGradValues);
+				const scaled_conv_output_values = tf_mul(last_conv_layer_output_values, pooled_grad_values);
 
 				// Create heat map by averaging and collapsing over all filters.
 				let heat_map = tf_mean(scaled_conv_output_values, -1);
@@ -2817,7 +2815,9 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 
 				// To form the final output, overlay the color heat map on the input image.
 				heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-				return tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
+				var res = tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
+
+				return res;
 			} catch (e) {
 				if(("" + e).includes("already disposed")) {
 					dbg("Model weights are disposed. Probably the model was recompiled during prediction");
