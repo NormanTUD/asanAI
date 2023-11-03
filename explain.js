@@ -2822,6 +2822,7 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 		if(("" + e).includes("already disposed")) {
 			dbg("Model weights are disposed. Probably the model was recompiled during prediction");
 		} else {
+			err("ERROR in next line stack:", e.stack);
 			await write_error(e);
 		}
 		return null;
