@@ -327,8 +327,13 @@ function tidy (...args) {
 
 		return res;
 	} catch (e) {
+		var original_e = e;
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
+		}
+
+		if(Object.keys(e).includes("stack")) {
+			err("TIDY Error stack:", original_e.stack);
 		}
 
 		throw new Error(e);

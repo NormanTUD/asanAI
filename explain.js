@@ -2774,47 +2774,59 @@ async function grad_class_activation_map(model, x, class_idx, overlay_factor = 2
 		const subModel2 = tf_model({inputs: newInput, outputs: y});
 
 		var retval = tidy(() => {
-			// This function runs sub-model 2 and extracts the slice of the probability
-			// output that corresponds to the desired class.
+			try {
+				// This function runs sub-model 2 and extracts the slice of the probability
+				// output that corresponds to the desired class.
 
-			const convOutput2ClassOutput = (input) => subModel2.apply(input, {training: true}).gather([class_idx], 1);
-			// This is the gradient function of the output corresponding to the desired
-			// class with respect to its input (i.e., the output of the last
-			// convolutional layer of the original model).
-			const gradFunction = grad(convOutput2ClassOutput);
+				function convOutput2ClassOutput (input) {
+					return subModel2.apply(input, {training: true}).gather([class_idx], 1);
+				}
+				// This is the gradient function of the output corresponding to the desired
+				// class with respect to its input (i.e., the output of the last
+				// convolutional layer of the original model).
+				const gradFunction = grad(convOutput2ClassOutput);
 
-			// Calculate the values of the last conv layer's output.
-			const lastConvLayerOutputValues = auxModel.apply(x);
-			// Calculate the values of gradients of the class output w.r.t. the output
-			// of the last convolutional layer.
-			const gradValues = gradFunction(lastConvLayerOutputValues);
+				// Calculate the values of the last conv layer's output.
+				const lastConvLayerOutputValues = auxModel.apply(x);
+				// Calculate the values of gradients of the class output w.r.t. the output
+				// of the last convolutional layer.
+				const gradValues = gradFunction(lastConvLayerOutputValues);
 
-			// Pool the gradient values within each filter of the last convolutional
-			// layer, resulting in a tensor of shape [numFilters].
-			const pooledGradValues = tf_mean(gradValues, [0, 1, 2]);
-			// Scale the convlutional layer's output by the pooled gradients, using
-			// broadcasting.
-			const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
+				// Pool the gradient values within each filter of the last convolutional
+				// layer, resulting in a tensor of shape [numFilters].
+				const pooledGradValues = tf_mean(gradValues, [0, 1, 2]);
+				// Scale the convlutional layer's output by the pooled gradients, using
+				// broadcasting.
+				const scaledConvOutputValues = tf_mul(lastConvLayerOutputValues, pooledGradValues);
 
-			// Create heat map by averaging and collapsing over all filters.
-			let heat_map = tf_mean(scaledConvOutputValues, -1);
+				// Create heat map by averaging and collapsing over all filters.
+				let heat_map = tf_mean(scaledConvOutputValues, -1);
 
-			// Discard negative values from the heat map and normalize it to the [0, 1]
-			// interval.
-			heat_map = tf_relu(heat_map);
-			heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
+				// Discard negative values from the heat map and normalize it to the [0, 1]
+				// interval.
+				heat_map = tf_relu(heat_map);
+				heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
 
-			// Up-sample the heat map to the size of the input image.
-			heat_map = resizeBilinear(heat_map, [x.shape[1], x.shape[2]]);
+				// Up-sample the heat map to the size of the input image.
+				heat_map = resizeBilinear(heat_map, [x.shape[1], x.shape[2]]);
 
-			// Apply an RGB colormap on the heat_map. This step is necessary because
-			// the heat_map is a 1-channel (grayscale) image. It needs to be converted
-			// into a color (RGB) one through this function call.
-			heat_map = apply_color_map(heat_map);
+				// Apply an RGB colormap on the heat_map. This step is necessary because
+				// the heat_map is a 1-channel (grayscale) image. It needs to be converted
+				// into a color (RGB) one through this function call.
+				heat_map = apply_color_map(heat_map);
 
-			// To form the final output, overlay the color heat map on the input image.
-			heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-			return tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
+				// To form the final output, overlay the color heat map on the input image.
+				heat_map = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
+				return tf_div(heat_map, tf_mul(tf_max(heat_map), 255));
+			} catch (e) {
+				if(("" + e).includes("already disposed")) {
+					dbg("Model weights are disposed. Probably the model was recompiled during prediction");
+				} else {
+					err("ERROR in next line stack:", e.stack);
+					err("" + e);
+				}
+				return null;
+			}
 		});
 
 		return retval;
