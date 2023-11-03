@@ -109,9 +109,8 @@ function load_file (event) {
 			`<span class="uploaded_file_prediction"></span>` +
 		`</span>\n`;
 
-	var repeated_string = uploaded_file_pred;
-	for (var i = 0; i <= files.length; i++) {
-		var uuid = uuidv4();
+	var repeated_string = "";
+	for (var i = 0; i < files.length; i++) {
 		repeated_string += uploaded_file_pred;
 	}
 
@@ -125,17 +124,18 @@ function load_file (event) {
 		var async_func;
 
 		eval(`async_func = async function() {
-			URL.revokeObjectURL(img_elem.src);
+			var _img_elem = $($(".uploaded_file_img")[${i}])[0];
+			URL.revokeObjectURL(_img_elem.src);
 
-			var result = await predict(img_elem, null, null);
+			var _result = await predict(_img_elem);
 
 			var $set_this = $($(".uploaded_file_prediction")[${i}]);
 
 			assert($set_this.length, \`.uploaded_file_prediction[${i}] not found!\`);
 
-			//console.log("i:", ${i}, "$set_this:", $set_this, "result:", result);
+			//console.log("_img_elem:", _img_elem, "i:", ${i}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
 
-			$set_this.html(result).show();
+			$set_this.html(_result).show();
 
 			$(".only_show_when_predicting_image_file").show();
 		}`);
