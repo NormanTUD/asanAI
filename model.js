@@ -224,17 +224,13 @@ async function compile_model (recursion_level=0) {
 		return;
 	}
 
-	while (create_model_queue.length) {
+	while (create_model_queue.length || !model) {
 		await delay(10);
 	}
 
 	try {
-		while (!model) {
-			await delay(10);
-		}
-
-		model_config_hash = new_model_config_hash;
 		model.compile(global_model_data);
+		model_config_hash = new_model_config_hash;
 	} catch (e) {
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
