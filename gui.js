@@ -6643,9 +6643,27 @@ function set_right_border_between_example_predictions() {
 	}
 }
 
+function is_tablet () {
+	const userAgent = navigator.userAgent.toLowerCase();
+	const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+
+	return isTablet;
+}
+
+function is_touch_device () {
+	var res = (("ontouchstart" in window) ||
+		(navigator.maxTouchPoints > 0) ||
+		(navigator.msMaxTouchPoints > 0));
+
+	if(!res) {
+		res = !!window.matchMedia("(pointer: coarse)").matches;
+	}
+	return res;
+}
+
 function get_cursor_or_none (cursorname) {
 	try {
-		if(is_touch_device()) {
+		if(is_touch_device() && is_tablet()) {
 			return "none";
 		}
 	} catch (e) {

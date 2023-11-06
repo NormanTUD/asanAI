@@ -360,17 +360,6 @@ async function cosmo_mode () {
 	set_validation_split(0);
 }
 
-function is_touch_device () {
-	var res = (("ontouchstart" in window) ||
-		(navigator.maxTouchPoints > 0) ||
-		(navigator.msMaxTouchPoints > 0));
-
-	if(!res) {
-		res = !!window.matchMedia("(pointer: coarse)").matches;
-	}
-	return res;
-}
-
 function find_color_picker_container(element) {
 	// Traverse up the DOM until a color picker container is found
 	while (element && !is_color_picker_container(element)) {
