@@ -4130,7 +4130,9 @@ async function change_data_origin() {
 		hide_tab_label("own_images_tab_label");
 
 		var config = await _get_configuration();
-		$("#loss").val(config["loss"]);
+		if("loss" in config) {
+			$("#loss").val(config["loss"]);
+		}
 	} else if (show_own_csv) {
 		show_tab_label("own_csv_tab_label", 1);
 
@@ -4148,7 +4150,9 @@ async function change_data_origin() {
 		hide_tab_label("own_tensor_tab_label");
 
 		var config = await _get_configuration();
-		$("#loss").val(config["loss"]);
+		if("loss" in config) {
+			$("#loss").val(config["loss"]);
+		}
 	}
 
 	if (window.location.href.indexOf("no_webcam") == -1) {

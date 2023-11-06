@@ -541,9 +541,13 @@ async function get_fit_data () {
 			await visualize_train();
 		}
 
-		var this_plot_data = [training_logs_batch["loss"]];
-		Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-		Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+		if(training_logs_batch && "loss" in training_logs_batch) {
+			var this_plot_data = [training_logs_batch["loss"]];
+			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
+		}
+		if(time_per_batch && "time" in time_per_batch) {
+			Plotly.update("plotly_time_per_batch", [time_per_batch["time"]], get_plotly_layout(language[lang]["time_per_batch"]));
+		}
 		last_batch_plot_time = false;
 
 		if(is_cosmo_mode) {

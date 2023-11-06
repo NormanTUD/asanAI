@@ -254,7 +254,7 @@ async function compile_model (recursion_level=0) {
 			return;
 		} else {
 			if(e) {
-				err(e);
+				err("" + e);
 			} else {
 				await except("ERROR2", "Unknown error");
 			}

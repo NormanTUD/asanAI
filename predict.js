@@ -359,7 +359,12 @@ async function _run_predict_and_show (tensor_img, nr) {
 
 	try {
 		predictions_tensor = await __predict(tensor_img);
+		if(!predictions_tensor) {
+			wrn(`Predictions tensor was emtpy!`);
+			return;
+		}
 
+		warn_if_tensor_is_disposed(predictions_tensor);
 		await _predict_result(predictions_tensor, nr, 0);
 
 		warn_if_tensor_is_disposed(predictions_tensor);
