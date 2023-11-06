@@ -95,6 +95,36 @@ function log_test (name) {
 	l("Test-name: " + name);
 }
 
+async function check_maximally_activated_last_layer () {
+	var num_cat = await get_number_of_categories()
+	var lt = get_layer_type_array();
+
+	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
+
+	var real_os = get_shape_from_array(canvasses).join(",");
+	var expected_os = `${num_cat},1`;
+
+	if(real_os != expected_os) {
+		err(`The real output shape ([${real_os}]) does not match the expected output shape ([${expected_os}])`);
+		return false;
+	}
+
+	if(canvasses.length != num_cat) {
+		err(`The number of categories (${num_cat}) doesn't match the number of given canvasses (${canvasses.length})`);
+		return false;
+	}
+
+
+	for (var i = 0; i < canvasses.length; i++) {
+		if(typeof(canvasses[i][0]) != "object") {
+			err(`canvasses[${i}][0] is not an object, but ${typeof(canvasses[i][0])}`);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 async function run_tests () {
 	if(is_running_test) {
 		err("Cannot run 2 tests at the same time");
@@ -633,6 +663,8 @@ async function run_tests () {
 				log("Approximated runtime is: O(y = " + landau_linear_approx[0] + "x + " + landau_linear_approx[1] + "), should be <= O(" + a + "x + " + b + ")");
 				test_equal("Size changing test failed", false, true);
 			}
+
+			test_equal("await check_maximally_activated_last_layer()", await check_maximally_activated_last_layer(), true);
 
 			log_test("Tests ended");
 		} catch (e) {
