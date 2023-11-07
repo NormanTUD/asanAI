@@ -503,7 +503,12 @@ button:disabled:hover {
 	display: none;
 }
 
+#imprint_span {
+	line-break: normal !important;
+}
+
 #status_bar {
+	line-break: anywhere;
 	user-select: none;
 	height: 1.5em;
 	width: 100%;
