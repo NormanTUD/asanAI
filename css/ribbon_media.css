@@ -130,6 +130,10 @@
 	#memory_debugger_div {
 		display: none;
 	}
+
+	#imprint_span {
+		display: none;
+	}
 }
 
 @media only screen and (min-width: 1101px) {
@@ -154,5 +158,3 @@
 		display: block;
 	}
 }
-
-
