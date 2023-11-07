@@ -1192,3 +1192,9 @@ hr {
 .neurons_canvas_class {
 	max-width: 100%;
 }
+
+#overview_table_custom_imgs {
+	position: absolute;
+	top: 50px;
+	right: 50px;
+}

@@ -4393,7 +4393,9 @@ async function add_new_category(disable_init_own_image_files=0, do_not_reset_lab
 			this_label = cosmo_categories[label_nr % cosmo_categories.length];
 		}
 
-		$("<form method=\"post\" enctype=\"multipart/form-data\"><input onkeyup=\"rename_labels()\" class=\"own_image_label\" value=\"" + this_label + "\" /><input type=\"file\" class=\"own_image_files\" multiple accept=\"image/*\"><br/></form>").prependTo($(".own_image_upload_container")[n]);
+		var uuid_input_form = uuidv4();
+
+		$(`<form method="post" enctype="multipart/form-data"><a id="${uuid_input_form}_link"></a><input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" /><input type="file" class="own_image_files" multiple accept="image/*"><br/></form>`).prependTo($(".own_image_upload_container")[n]);
 
 		$("<div class=\"own_images\"></div>").appendTo($(".own_image_upload_container")[n]);
 
@@ -7691,4 +7693,76 @@ async function read_zip (content) {
 			}
 		}
 	}
+}
+
+function create_overview_table_for_custom_image_categories () {
+	if($("#data_origin").val() != "image") {
+		wrn(`create_overview_table_for_custom_image_categories can only be called when you have custom images.`);
+		return;
+	}
+
+	var $own_image_label = $(".own_image_label");
+
+	var data_struct = [];
+
+	for (var i = 0; i < $own_image_label.length; i++) {
+		var name = $($own_image_label[i]).val();
+
+		var position = $($own_image_label[i]).offset();
+		var _id = $own_image_label[i].id;
+
+		var _top = position.top;
+
+		var this_data_struct = {
+			name: name,
+			top: _top,
+			id: _id
+		};
+
+		data_struct.push(this_data_struct);
+	}
+
+	console.log(data_struct);
+
+	var toc = "";
+
+	for (var i = 0; i < data_struct.length; i++) {
+		var this_tr = "<tr><td>";
+
+		var name = data_struct[i]["name"];
+		var _id = data_struct[i]["id"];
+
+		this_tr += `<a href='#${_id}_link'>${name}</a>`;
+
+		this_tr += "</td></tr>"
+
+		toc += this_tr;
+	}
+
+	if (toc) {
+		toc = "<table>" + toc + "</table>";
+	}
+
+	return toc;
+}
+
+
+function add_overview_table_to_images_tab () {
+	var table = create_overview_table_for_custom_image_categories();
+
+	if(!table) {
+		return;
+	}
+
+	if($("#overview_table_custom_imgs").length) {
+		$("#overview_table_custom_imgs").html(table);
+	} else {
+
+		var table = "<div id='overview_table_custom_imgs'>" + table + "</div>";
+
+		var $own_images_tab = $("#own_images_tab");
+
+		$own_images_tab.append(table);
+	}
+
 }
