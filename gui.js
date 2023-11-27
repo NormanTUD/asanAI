@@ -5676,7 +5676,6 @@ function real_width(obj) {
 }
 
 function real_height(obj) {
-	var clone = obj.clone();
 	var h = obj.outerHeight();
 	return h;
 }
