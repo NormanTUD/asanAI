@@ -6813,7 +6813,10 @@ function model_is_ok () {
 
 		l(msg);
 
-		model_is_ok_icon.html(`<span title='${msg}'>${_content}</span>`);
+		var new_html = `<span title='${msg}'>${_content}</span>`;
+		if(new_html != model_is_ok_icon.html()) {
+			model_is_ok_icon.html(new_html);
+		}
 
 		last_model_ok_status = _content;
 	}
