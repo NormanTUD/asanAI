@@ -662,15 +662,6 @@ $(document).ready(async function() {
 		wrn("[document.ready] Function write_model_summary_wait not found: " + e);
 	}
 
-	/*
-	try {
-		//setInterval(write_descriptions, 1000);
-		setInterval(disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode, 400);
-	} catch (e) {
-		wrn("[document.ready] Function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode not found: " + e);
-	}
-	*/
-
 	allow_edit_input_shape();
 
 	copy_options();
