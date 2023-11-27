@@ -5061,8 +5061,12 @@ async function toggle_layer_view() {
 }
 
 function fix_viz_width () {
-	$("#lenet").find("svg").attr("width", $("#lenet").css("width"));
-	$("#fcnn").find("svg").attr("width", $("#fcnn").css("width"));
+	var new_width = $("#lenet").css("width");
+	var old_width = $("#lenet").find("svg").attr("width");
+
+	if(new_width != old_width) {
+		$("#lenet").find("svg").attr("width", new_width);
+	}
 }
 
 async function theme_choser () {
