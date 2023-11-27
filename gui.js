@@ -5677,10 +5677,7 @@ function real_width(obj) {
 
 function real_height(obj) {
 	var clone = obj.clone();
-	clone.css("visibility","hidden");
-	$("body").append(clone);
-	var h = clone.outerHeight();
-	clone.remove();
+	var h = obj.outerHeight();
 	return h;
 }
 
