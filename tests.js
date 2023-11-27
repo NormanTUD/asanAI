@@ -414,7 +414,14 @@ async function run_tests () {
 			await wait_for_updated_page(5);
 
 			try {
-				var kernel_initializer_correctly_set = array_sync(model.layers[0].weights[0].val)[0][0] == initializer_val;
+
+				var synched_weights = array_sync(model.layers[0].weights[0].val);
+
+				var kernel_initializer_correctly_set = synched_weights[0][0] == initializer_val;
+
+				if(!kernel_initializer_correctly_set) {
+					log(`Initializer value failed: Should be: ${initializer_val}, is: ${synched_weights[0][0]}`);
+				}
 
 				test_equal("kernel_initializer_correctly_set", kernel_initializer_correctly_set, true);
 			} catch (e) {
