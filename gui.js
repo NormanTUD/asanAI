@@ -6819,7 +6819,9 @@ function model_is_ok () {
 	}
 
 	// nasty hack to prevent both, ribbon icons and ribbon at the same time
-	$("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible") && show_ribbon();
+	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
+		show_ribbon();
+	}
 }
 
 function show_overlay(text, title="") {
