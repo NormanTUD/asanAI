@@ -3078,13 +3078,13 @@ async function cosmo_maximally_activate_last_layer () {
 }
 
 async function _temml () {
-	while ($("#temml_blocker").length) {
-		await delay(200);
-	}
-
 	try {
-		$(".temml_me").each((i, e) => {
+		$(".temml_me").each(async (i, e) => {
 			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+				while ($("#temml_blocker").length) {
+					await delay(200);
+				}
+
 				$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
 
 				var original_latex = e.textContent;
