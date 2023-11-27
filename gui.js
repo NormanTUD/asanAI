@@ -6737,7 +6737,11 @@ function model_is_ok () {
 
 	try {
 		var model_has_input = 1;
-		try { var x = model.input; } catch (e) { model_has_input = 0;}
+		try {
+			var x = model.input;
+		} catch (e) {
+			model_has_input = 0;
+		}
 
 		if(!model) {
 			color = red;
