@@ -62,8 +62,11 @@ function _clean_func_name(arg) {
 
 function info (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1))
+	if(function_name) {
+		function_name = `[${function_name}] `;
+	}
 
-	args.forEach(arg => console.info(`[${function_name}] ${_clean_func_name(arg)}`));
+	args.forEach(arg => console.info(`${function_name}${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[INFO] " + arg);
@@ -86,8 +89,11 @@ function info (...args) {
 
 function err (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1))
+	if(function_name) {
+		function_name = `[${function_name}] `;
+	}
 
-	args.forEach(arg => console.error(`[${function_name}] ${_clean_func_name(arg)}`));
+	args.forEach(arg => console.error(`${function_name}${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#128721; ERROR] " + arg);
@@ -110,8 +116,11 @@ function err (...args) {
 
 function wrn (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1))
+	if(function_name) {
+		function_name = `[${function_name}] `;
+	}
 
-	args.forEach(arg => console.warn(`[${function_name}] ${_clean_func_name(arg)}`));
+	args.forEach(arg => console.warn(`${function_name}${_clean_func_name(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
 			l("[&#9888; WARN] " + arg);
@@ -134,8 +143,11 @@ function wrn (...args) {
 
 function dbg (...args) {
 	var function_name = get_latest_caller(get_stack_trace(1))
+	if(function_name) {
+		function_name = `[${function_name}] `;
+	}
 
-	args.forEach(arg => console.debug(`[${function_name}] ${_clean_func_name(arg)}`));
+	args.forEach(arg => console.debug(`${function_name}${_clean_func_name(arg)}`));
 
 	if(enable_log_trace) {
 		console.trace();
