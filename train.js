@@ -7,6 +7,8 @@ async function gui_in_training (set_started_training=1) {
 	await disable_everything();
 	favicon_spinner();
 	await write_descriptions();
+
+	await reset_cached_loaded_images();
 }
 
 async function gui_not_in_training (set_started_training=1) {
@@ -28,6 +30,8 @@ async function gui_not_in_training (set_started_training=1) {
 	await enable_everything();
 	$(".show_after_training").show();
 	$("#program_looks_at_data_span").hide();
+
+	await reset_cached_loaded_images();
 }
 
 function reset_gui_before_training () {
@@ -1408,6 +1412,37 @@ function findIndexByKey(array, key) {
 	}
 }
 
+
+async function reset_cached_loaded_images () {
+	var keys = Object.keys(_cached_loaded_images);
+
+	for (var i = 0; i < keys.length; i++) {
+		await dispose(_cached_loaded_images[keys[i]]);
+	}
+
+	_cached_loaded_images = {};
+}
+
+function cached_load_resized_image (img_elem) {
+	var img_elem_xpath = get_element_xpath(img_elem);
+
+	if(Object.keys(_cached_loaded_images).includes(img_elem_xpath)) {
+		return _cached_loaded_images[img_elem_xpath];
+	}
+
+	var res = tidy(() => {
+		var _res = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
+
+		_res = divNoNan(_res, parse_float($("#divide_by").val()));
+
+		return _res;
+	});
+
+	_cached_loaded_images[img_elem_xpath] = res;
+
+	return res;
+}
+
 async function visualize_train () {
 	if(!$("#visualize_images_in_grid").is(":checked")) {
 		$("#canvas_grid_visualization").html("");
@@ -1525,8 +1560,7 @@ async function visualize_train () {
 
 			var img_tensor = tidy(() => {
 				try {
-					var res = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
-					res = divNoNan(res, parse_float($("#divide_by").val()));
+					var res = cached_load_resized_image(img_elem);
 					return res;
 				} catch (e) {
 					err(e);
@@ -1542,7 +1576,6 @@ async function visualize_train () {
 			var res = tidy(() => { return model.predict(img_tensor); });
 
 			res_array = array_sync(res)[0];
-			await dispose(img_tensor);
 			await dispose(res);
 
 			assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
