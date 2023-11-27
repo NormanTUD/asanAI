@@ -483,7 +483,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			pre_text = " value='" + text + "' ";
 		}
 
-		str += `<input class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
+		str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
 	} else if (type == "number") {
 		str += "<input class='input_field input_data " + classname + "' type='number' ";
 
