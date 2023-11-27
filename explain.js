@@ -2537,9 +2537,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 	};
 	*/
 
-	var onBatchEnd = null;
-
-	onBatchEnd = function (epoch, logs) {
+	var onBatchEnd = function (epoch, logs) {
 		if(typeof(old_onEpochEnd) == "function") {
 			old_onEpochEnd(epoch, logs);
 		}
