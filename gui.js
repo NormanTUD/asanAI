@@ -6730,12 +6730,6 @@ function model_is_ok () {
 	var msg = language[lang]["model_is_ok"];
 
 	try {
-
-	} catch (e) {
-		wrn(e);
-	}
-
-	try {
 		var model_has_input = 1;
 		try {
 			var x = model.input;
@@ -6791,8 +6785,8 @@ function model_is_ok () {
 		_content += "&#128461;";
 	}
 
-	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
 	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
+	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
 
 	if(last_description_end_y != 0) {
 		if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
@@ -7056,8 +7050,10 @@ function get_last_element_of_class_end_y(name) {
 			return 0;
 		}
 
-		var real_height_last_desc = real_height($(last_desc));
-		var last_desc_offset = $(last_desc).offset();
+		var $last_desc = $(last_desc);
+
+		var real_height_last_desc = real_height($last_desc);
+		var last_desc_offset = $last_desc.offset();
 
 		if(last_desc_offset && Object.keys(last_desc_offset).includes("top")) {
 			var _res = last_desc_offset.top + real_height_last_desc;
