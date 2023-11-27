@@ -3083,9 +3083,10 @@ async function _temml () {
 	}
 
 	try {
-		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
 		$(".temml_me").each((i, e) => {
 			if($(e).attr("data-rendered") != 1 && $(e).is(":visible") && e.textContent) {
+				$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
+
 				var original_latex = e.textContent;
 
 				$(e)[0].innerHTML = "<img src='_gui/loading_favicon.gif' />";
@@ -3105,12 +3106,13 @@ async function _temml () {
 					ev.preventDefault();
 					create_centered_window_with_text(original_latex);
 				});
+
+				$("#temml_blocker").remove();
 			}
 		});
 	} catch (e) {
 		wrn("" + e);
 	}
-	$("#temml_blocker").remove();
 }
 
 function arbitrary_array_to_latex (arr) {
