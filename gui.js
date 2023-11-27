@@ -416,6 +416,8 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 
 	assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only for get_tr_str_for_layer_table must be either 0 or 1, but is " + expert_mode_only);
 
+	var new_uuid = uuidv4();
+
 	var str = "<tr";
 	if(expert_mode_only) {
 		if(tr_class) {
@@ -459,7 +461,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));updated_page(null, null, this)";
 		}
 
-		str += "<select class='input_field input_data " + classname + "' _onchange='" + onchange_text + "'>";
+		str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
 		for (const [key, value] of Object.entries(data)) {
 			str += "<option value=\"" + key + "\">" + value + "</option>";
 		}
@@ -481,7 +483,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			pre_text = " value='" + text + "' ";
 		}
 
-		str += "<input class=\"input_field input_data " + classname + "\" " + pre_text + placeholder + " type=\"text\"  _onchange=\"updated_page()\" onkeyup=\"updated_page(null, null, this)\" />";
+		str += `<input class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="updated_page()" onkeyup="updated_page(null, null, this)" />`;
 	} else if (type == "number") {
 		str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -501,10 +503,10 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			str += " value=" + data["value"] + " ";
 		}
 
-		str += " _onchange='updated_page()' onkeyup=\"var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;\" />";
+		str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
 		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
-		str += "<input type='checkbox' class='input_data " + classname + "' _onchange='updated_page(null, null, this);' ";
+		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='updated_page(null, null, this);' `;
 		if ("status" in data && data["status"] == "checked") {
 			str += " checked='CHECKED' ";
 		}
@@ -2244,13 +2246,16 @@ function option_for_layer(nr) {
 	assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof (number));
 
 	var this_event = "initializer_layer_options(this)";
+
+	var option_for_layer_id = `option_for_layer_${uuidv4()}`;
+
 	var str = "";
 	str += "<tr>";
 	str += "<td style='width: 140px'>";
 	str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>";
 	str += "</td>";
 	str += "<td>";
-	str += "<select onfocus='disable_invalid_layers_event(event, this)' onchange='" + this_event + "' class='input_data layer_type'>";
+	str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
 	var last_category = "";
 	for (var key of layer_names) {
 		var this_category = layer_options[key].category;
