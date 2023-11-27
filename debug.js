@@ -76,7 +76,7 @@ function info (...args) {
 
 	var struct = {
 		"type": "info",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
@@ -100,7 +100,7 @@ function err (...args) {
 
 	var struct = {
 		"type": "err",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
@@ -124,7 +124,7 @@ function wrn (...args) {
 
 	var struct = {
 		"type": "warn",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
@@ -143,7 +143,7 @@ function dbg (...args) {
 
 	var struct = {
 		"type": "debug",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
@@ -160,7 +160,7 @@ function log_less (...args) {
 
 	var struct = {
 		"type": "log",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
@@ -186,7 +186,7 @@ function log (...args) {
 
 	var struct = {
 		"type": "log",
-		"stacktrace": get_stack_trace(),
+		"stacktrace": get_stack_trace(1),
 		"log": args,
 		"time": parse_int(Date.now() / 1000)
 	};
