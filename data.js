@@ -1706,9 +1706,8 @@ async function confusion_matrix(classes) {
 		if(!predicted_tensor) {
 			var img_tensor = tidy(() => {
 				try {
-					var predicted_tensor = expand_dims(resize_image(fromPixels(img_elem), [height, width]));
-					predicted_tensor = divNoNan(predicted_tensor, parse_float($("#divide_by").val()));
-					return predicted_tensor;
+					var res = cached_load_resized_image(img_elem);
+					return res;
 				} catch (e) {
 					err(e);
 					return null;

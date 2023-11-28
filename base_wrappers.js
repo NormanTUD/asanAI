@@ -600,9 +600,8 @@ function resize_image (...args) {
 	
 	var val = $default_resize_method.val();
 
-	dbg("Using resize type " + val);
-
 	if(enable_resize_trace) {
+		dbg("Using resize type " + val);
 		console.trace();
 	}
 
