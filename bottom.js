@@ -139,7 +139,7 @@ async function restart_lenet(dont_click) {
 		*/
 
 		try {
-			if(Object.keys(model.layers).includes("0")) {
+			if(model && model.layers && Object.keys(model.layers).includes("0")) {
 				if(layer_type in layer_options && Object.keys(layer_options[layer_type]).includes("category")) {
 					var category = layer_options[layer_type]["category"];
 
