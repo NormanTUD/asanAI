@@ -1151,6 +1151,13 @@ async function run_neural_network (recursive=0) {
 						info("[run_neural_network] Model was null or undefined. Recompiling model done!");
 					} else if(("" + e).includes("but got array with shape")) {
 						wrn("[run_neural_network] Shape error. This may happens when the width or height or changed while training or predicting. In this case, it's harmless.");
+					} else if (("" + e).includes("expects targets to be binary matrices") && !recursive) {
+						dbg(`[run_neural_network] Error: '${e}', Setting loss and metric to meanSquaredError`);
+
+						$("#loss").val("meanSquaredError");
+						$("#metric").val("meanSquaredError");
+
+						run_neural_network(1);
 					} else {
 						await write_error("" + e);
 
