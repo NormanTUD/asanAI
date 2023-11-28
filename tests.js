@@ -403,9 +403,7 @@ async function run_tests () {
 
 			var initializer_val = 123;
 
-			$($(".bias_initializer")[0]).val("glorotUniform").trigger("change");
 			$($(".bias_initializer")[0]).val("constant").trigger("change");
-			$($(".kernel_initializer")[0]).val("glorotUniform").trigger("change");
 			$($(".kernel_initializer")[0]).val("constant").trigger("change");
 			await wait_for_updated_page(3);
 
