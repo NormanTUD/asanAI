@@ -2584,6 +2584,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
+
 				err(`Error parsing x_data (${x_data_json}): ${e}`);
 				return;
 			}
@@ -2594,6 +2595,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
+
 				err(`Error parsing y_data (${y_data_json}): ${e}`);
 				return;
 			}
