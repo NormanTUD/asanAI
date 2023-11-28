@@ -2543,6 +2543,18 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 		}
 
 		try {
+
+			var debug_json = {
+				"global_model_name:": global_model_name,
+				"max_epoch:": max_epoch,
+				"x_data_json:": x_data_json,
+				"y_data_json:": y_data_json,
+				"show_loss:": show_loss,
+				"append_to_id:": append_to_id
+			};
+
+			var debug_json_stringified = JSON.stringify(debug_json);
+
 			var current_epoch = epoch + 1;
 			if(current_epoch == 1) {
 				$(`#${append_to_id}`).html("");
@@ -2563,8 +2575,28 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 				name: "Prediction"
 			};
 
-			var x_data = eval(x_data_json);
-			var y_data = eval(y_data_json);
+
+			var x_data, y_data;
+
+			try {
+				x_data = JSON.parse(x_data_json);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+				err(`Error parsing x_data (${x_data_json}): ${e}`);
+				return;
+			}
+
+			try {
+				y_data = JSON.parse(y_data_json);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+				err(`Error parsing y_data (${y_data_json}): ${e}`);
+				return;
+			}
 
 			//1) combine the arrays:
 			var list = [];
