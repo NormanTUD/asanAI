@@ -411,6 +411,7 @@ async function run_tests () {
 
 			$($(".bias_initializer_value")[0]).val(initializer_val).trigger("change");
 			$($(".kernel_initializer_value")[0]).val(initializer_val).trigger("change");
+
 			await wait_for_updated_page(5);
 
 			try {
