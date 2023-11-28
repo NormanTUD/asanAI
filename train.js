@@ -756,43 +756,72 @@ async function _get_xs_and_ys (recursive=0) {
 }
 
 async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
-	if(xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1) {
+	var x_shape_is_ok = xs_and_ys["x"].shape.length == 2 && xs_and_ys["x"].shape[1] == 1;
+	var y_shape_is_ok = xs_and_ys["y"].shape.length == 2 && xs_and_ys["y"].shape[1] == 1;
+	var model_shape_is_ok = model.input.shape.length == 2 && model.input.shape[1] == 1;
+
+	if(
+		x_shape_is_ok &&
+		y_shape_is_ok &&
+		model &&
+		model_shape_is_ok
+	) {
 		if(!model) {
+			wrn(`[_show_or_hide_simple_visualization] Model not found. Not showing simple visualization`);
+			old_onEpochEnd = undefined;
+			$("#simplest_training_data_visualization").html("").hide();
 			return;
 		}
 
-		if(
-			xs_and_ys["y"].shape.length == 2 &&
-			xs_and_ys["y"].shape[1] == 1 &&
-			model.input.shape.length == 2 &&
-			model.input.shape[1] == 1
-		) {
-			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
+		old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
-			var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
+		var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
+		var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
 
-			var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
+		var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
+			"model",
+			parse_int($("#epochs").val()),
+			x_data_json,
+			y_data_json,
+			false,
+			"simplest_training_data_visualization"
+		);
 
-			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
-				"model",
-				parse_int($("#epochs").val()),
-				x_data_json,
-				y_data_json,
-				false,
-				"simplest_training_data_visualization"
-			);
-
-			//log(new_on_batch_end_callback);
-			if(new_on_batch_end_callback) {
-				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
-				//log("tried installing new callbacks in fit_data:", fit_data);
-				$("#simplest_training_data_visualization").show();
-			} else {
-				log("Could not install new callback");
-			}
-
+		//log(new_on_batch_end_callback);
+		if(new_on_batch_end_callback) {
+			fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
+			//log("tried installing new callbacks in fit_data:", fit_data);
+			$("#simplest_training_data_visualization").show();
+		} else {
+			log("Could not install new callback");
 		}
 	} else {
+		var shown_warnings = false;
+
+		if(!model) {
+			wrn(`model is not defined`);
+			shown_warnings = true;
+		}
+
+		if(!x_shape_is_ok) {
+			wrn(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
+			shown_warnings = true;
+		}
+
+		if(!y_shape_is_ok) {
+			wrn(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
+			shown_warnings = true;
+		}
+
+		if(!model_shape_is_ok) {
+			wrn(`model-shape is wrong: [${model.input.shape.join(", ")}]`);
+			shown_warnings = true;
+		}
+
+		if (!shown_warnings) {
+			wrn(`Unknown reason for not displaying simple visualization`);
+		}
+
 		old_onEpochEnd = undefined;
 		$("#simplest_training_data_visualization").html("").hide();
 	}
