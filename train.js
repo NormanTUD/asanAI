@@ -1109,7 +1109,7 @@ async function run_neural_network (recursive=0) {
 					throw new Error(e);
 				}
 			} else if (("" + e).includes("target expected a batch of elements where each example has shape")) {
-				if(is_classification) {
+				if(is_classification && get_last_layer_activation_function() == "softmax") {
 					try {
 						var old_loss = $("#loss").val();
 						var old_metric = $("#metric").val();
