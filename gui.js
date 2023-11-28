@@ -731,6 +731,15 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	await updated_page();
 }
 
+function findInitializerElement(arr) {
+	for (let i = 0; i < arr.length; i++) {
+		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
+			return arr[i];
+		}
+	}
+	return null; // Return null if no matching element is found
+}
+
 async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
@@ -740,19 +749,47 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 		return;
 	}
 
-	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
+	var found_inputs = $($(".layer_setting")[layer_nr]).find(`.${initializer_type}_initializer_tr`).find("input");
+
+	if(found_inputs && found_inputs.length) {
+		var new_class_base = `.${initializer_type}_initializer_`;
+		var existing_classes = found_inputs[0].classList;
+
+		var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+		var initializer_name = initializer.val();
+		var options = initializer_options[initializer_name]["options"];
+
+		var new_elements = false;
+
+		for (var i = 0; i < options.length; i++) {
+			var this_class = `${new_class_base}${options[i]}`;
+
+			if($(this_class).length != 1) {
+				new_elements = true;
+			}
+
+		}
+
+
+		if(!new_elements) {
+			dbg(`Not re-doing insert_initializer_options(${layer_nr}, ${initializer_type})`);
+			return;
+		}
+	}
+
+	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find(`.${initializer_type}_initializer_tr`);
 
 	for (var i = 0; i < existing_init_elements.length; i++) {
 		$(existing_init_elements[i]).remove();
 	}
 
-	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+	initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
 
 	if (initializer.length) {
 		var initializer_name = initializer.val();
 
 		if(initializer_name) {
-			var options = initializer_options[initializer_name]["options"];
+			options = initializer_options[initializer_name]["options"];
 
 			for (var i = 0; i < options.length; i++) {
 				insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
