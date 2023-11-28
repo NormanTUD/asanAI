@@ -1138,7 +1138,6 @@ async function run_neural_network (recursive=0) {
 					} catch (e) {
 						wrn(e);
 					}
-
 				} else {
 					await write_error(e);
 				}
