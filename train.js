@@ -769,12 +769,19 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		) {
 			old_onEpochEnd = fit_data["callbacks"]["onBatchEnd"];
 
-			var new_on_batch_end_callback = await get_live_tracking_on_batch_end((
+			var x_data_json = JSON.stringify(array_sync(xs_and_ys["x"]));
+
+			var y_data_json = JSON.stringify(array_sync(xs_and_ys["y"]));
+
+			var new_on_batch_end_callback = await get_live_tracking_on_batch_end(
 				"model",
 				parse_int($("#epochs").val()),
-				JSON.stringify(array_sync(xs_and_ys["x"])),
-				JSON.stringify(array_sync(xs_and_ys["y"]))
-			), false, "simplest_training_data_visualization");
+				x_data_json,
+				y_data_json,
+				false,
+				"simplest_training_data_visualization"
+			);
+
 			//log(new_on_batch_end_callback);
 			if(new_on_batch_end_callback) {
 				fit_data["callbacks"]["onBatchEnd"] = new_on_batch_end_callback;
