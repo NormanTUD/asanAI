@@ -1214,7 +1214,7 @@ async function run_neural_network (recursive=0) {
 						$("#loss").val("meanSquaredError");
 						$("#metric").val("meanSquaredError");
 
-						run_neural_network(1);
+						await run_neural_network(1);
 					} else {
 						await write_error("" + e);
 
