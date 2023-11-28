@@ -599,7 +599,13 @@ function resize_image (...args) {
 	}
 	
 	var val = $default_resize_method.val();
+
 	dbg("Using resize type " + val);
+
+	if(enable_resize_trace) {
+		console.trace();
+	}
+
 	if(val == "nearestNeighbor") {
 		return resizeNearestNeighbor(...args);
 	} else if (val == "bilinear") {

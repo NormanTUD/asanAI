@@ -1659,3 +1659,5 @@ var uploaded_images_to_categories = {};
 var upload_imgs_promises = [];
 
 var _cached_loaded_images = {};
+
+var enable_resize_trace = false;
