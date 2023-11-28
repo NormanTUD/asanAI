@@ -814,7 +814,7 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		}
 
 		if(!model_shape_is_ok) {
-			wrn(`model-shape is wrong: [${model.input.shape.join(", ")}]`);
+			wrn(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
 			shown_warnings = true;
 		}
 
@@ -825,8 +825,30 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		old_onEpochEnd = undefined;
 		$("#simplest_training_data_visualization").html("").hide();
 	}
-
 }
+
+function model_shape_to_string (model_shape) {
+	try {
+		if (!Array.isArray(model_shape)) {
+			throw new Error('Input is not an array.');
+		}
+
+		const result = model_shape.map((element) => {
+			return element === null ? 'null' : element;
+		});
+
+		return '[' + result.join(', ') + ']';
+	} catch (error) {
+		console.error('Error:', error.message);
+		// Handle the error or rethrow it based on your requirements
+	}
+}
+
+// Beispielaufrufe
+//console.log(convertNullToString([1, null, 3])); // Ausgabe: '[1, "null", 3]'
+//console.log(convertNullToString([1, 2, 3])); // Ausgabe: '[1, 2, 3]'
+//console.log(convertNullToString([null, 1, 2, 3, 4, 5])); // Ausgabe: '["null", 1, 2, 3, 4, 5]'
+
 
 function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").parent().hide();
