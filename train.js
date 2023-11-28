@@ -1490,7 +1490,7 @@ async function reset_cached_loaded_images () {
 function cached_load_resized_image (img_elem) {
 	var img_elem_xpath = get_element_xpath(img_elem);
 
-	if(Object.keys(_cached_loaded_images).includes(img_elem_xpath)) {
+	if(Object.keys(_cached_loaded_images).includes(img_elem_xpath) && !_cached_loaded_images[img_elem_xpath].isDisposed) {
 		return _cached_loaded_images[img_elem_xpath];
 	}
 
