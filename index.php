@@ -101,6 +101,8 @@
 
 		_js("libs/plotly-latest.min.js");
 		_js("selftests.js", 1, 1);
+
+		_js("carminigame.js", 1, 1);
 ?>
 		<script>
 			var force_cpu_backend = 0;
