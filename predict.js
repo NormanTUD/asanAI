@@ -1065,7 +1065,7 @@ async function _print_predictions_text(count, example_predict_data) {
 			await delay(200);
 		}
 
-		while (!Object.keys(model).includes("layers")) {
+		while (!typeof(model) == "object" || !Object.keys(model).includes("layers")) {
 			log("Waiting for model...");
 			await delay(200);
 		}
