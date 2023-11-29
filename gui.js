@@ -760,6 +760,8 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 		var options = initializer_options[initializer_name]["options"];
 
+		var prev_classes = [];
+
 		for (var i = 0; i < existing_init_elements.length; i++) {
 			var remove = true;
 
@@ -768,8 +770,15 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 				var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
 
-				if(options.includes(this_initializer_type)) {
+				if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
 					remove = false;
+				} else {
+					prev_classes.push(this_initializer_type);
+
+				}
+
+				if(layer_nr == 0 && initializer_type == "kernel") {
+					console.log(">>>>>>>", "options:", options, "this_initializer_type:", this_initializer_type, "options.includes(this_initializer_type):", options.includes(this_initializer_type), "remove:", remove, "<<<<<<<<")
 				}
 			} catch (e) {
 
@@ -794,10 +803,12 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 		for (var i = 0; i < options.length; i++) {
 			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
 		}
+	/*
 	} else {
 		log("[insert_initializer_options] ERROR: Initializer name is empty!");
 		log("[insert_initializer_options] initializer:", initializer);
 		log("[insert_initializer_options] initializer_name:", initializer_name);
+	*/
 	}
 
 	//await updated_page();
