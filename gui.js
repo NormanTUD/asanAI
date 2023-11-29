@@ -776,10 +776,6 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 					prev_classes.push(this_initializer_type);
 
 				}
-
-				if(layer_nr == 0 && initializer_type == "kernel") {
-					console.log(">>>>>>>", "options:", options, "this_initializer_type:", this_initializer_type, "options.includes(this_initializer_type):", options.includes(this_initializer_type), "remove:", remove, "<<<<<<<<")
-				}
 			} catch (e) {
 
 			}
