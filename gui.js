@@ -764,7 +764,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 		for (var i = 0; i < options.length; i++) {
 			var this_class = `${new_class_base}${options[i]}`;
 
-			if($(this_class).length != 1) {
+			if($(this_class).length == 0) {
 				new_elements = true;
 			}
 
@@ -772,7 +772,9 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 
 		if(!new_elements) {
-			dbg(`Not re-doing insert_initializer_options(${layer_nr}, ${initializer_type})`);
+			if(layer_nr == 0) {
+				dbg(`Not re-doing insert_initializer_options(${layer_nr}, ${initializer_type}), looked for ${new_class_base}[${options.join(", ")}] as base`);
+			}
 			return;
 		}
 	}
