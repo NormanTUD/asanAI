@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+    <title>Minigame</title>
+</head>
+<body>
+<script>
+    // initialize game components
+    const game = $("<div id='game' style='overflow:hidden; z-index:0; position: absolute; width: 100%; height: 1000px; background-color: rgba(40,140,40,0.5)';></div>")
+    const scoreboard = $("<div id='scoreboard' style='z-index:15; position: absolute; left: 1000px; background-color: rgba(150,110,95,0.9); font-size: larger'>Score: 0</div>"); 
+    const scoreMsg = $("<div id='scoreMsg' style='z-index:15; position: absolute; top: 420px; width: 200px; left: 400px; background-color: rgb(200,200,20); font-size: larger; text-align: center'></div>");
+    const start = $("<div id='start' onclick='restart()' style='z-index:20; position: absolute; top: 400px; left: 400px; background-color: lightgreen; border: none; font-size: larger; width: 200px; text-align: center;';>Start Game</div>");
+    const gameArea = $("<div id='gameArea' style='overflow:hidden; z-index:1; position: absolute; width: 1000px; height: 1000px; background-color: grey';></div>");
+    const player = $("<canvas id='player' style='z-index:10; position: absolute; left: 450px; bottom: 10px; width: 96px; height: 198px;'></canvas>");
+    var obstacle = $("<canvas id='obstacle' style='z-index:10; position: absolute; top: -200px; width: 96px; height: 198px;'></canvas>");
+    const roadMarking = $("<canvas style='z-index:2; position: absolute; top: 10px; width: 8px; height: 50px; background-color: white';></canvas>");
+    $("body").append(game)
+    $("#game").append(scoreboard);
+    $("#game").append(scoreMsg);
+    $("#game").append(gameArea);
+    $("#gameArea").append(player);
+    $("#game").append(start);
+    var pos = -200
+    var posLeft = 100
+    var score = 0
+    var highScore = 0
+    const audi = new Image();
+    audi.src="vehicles/AudiCut.png"
+    audi.onload = function() {
+        var context = player.get(0).getContext("2d");
+        context.drawImage(audi,0,0,300,150)
+    }
+    const viper = new Image();
+    viper.src="vehicles/Black_viperCut.png"
+    var obstacles = []
+    for(var i=0;i<=3;i++) {
+        obstacles = obstacles.concat(obstacle.clone());
+    }
+    viper.onload = function() {
+        for(currentObstacle in obstacles) {
+        currObstacle = obstacles[currentObstacle]
+        initPos = Math.floor(Math.random() * 10) * 100
+        currObstacle.css({ left: initPos })
+        $("#gameArea").append(currObstacle);
+        // obstacle.append(viper)
+        var context = currObstacle.get(0).getContext("2d");
+        context.drawImage(viper,0,0,300,150)
+        }
+    }
+    var markings = []
+    for(var j=0;j<=12;j++) {
+        markings = markings.concat(roadMarking.clone())
+    }
+
+    initializeMarkings()
+
+    function changePlayerPos(x) {
+        if(x < gameArea.width() - player.width()) {
+            $("#player").css({
+                left: x + 'px',
+            });
+        }
+        
+    }
+    function ge(id) {
+        return document.getElementById(id);
+    }
+    function l(msg) {
+        console.log(msg)
+    }
+    function updateScoreboard() {
+        scoreboard.text("Highscore: " + highScore + "\nScore: " + score)
+    }
+    function restart() {
+        $(document).on('mousemove', function(event) {
+            var mouseX = event.pageX
+            changePlayerPos(mouseX)
+        });
+        for(currentObstacle in obstacles) {
+            pos = Math.floor(Math.random() * -5) * 200
+            obstacles[currentObstacle].css({ top: pos+'px' })
+        }
+        play()
+    }
+    function reset() {
+        $(document).unbind('mousemove')
+        $("#start").fadeIn()
+        // posLeft = Math.floor(Math.random() * 1000)
+        if(score > highScore) {
+            highScore = score
+        }
+        $("#scoreMsg").text("You reached "+score+" points.")
+        $("#scoreMsg").fadeIn()
+        score = 0
+        updateScoreboard()
+    } 
+    function moveObstacle(obstacle, speed=5) {
+        pos = obstacle.position().top+speed
+        if(pos < gameArea.height()) {
+            obstacle.css({ top: pos + 'px' })  
+        }
+        else {
+            pos = -200
+            obstacle.css({ top: pos + 'px' })  
+            score += 10
+            updateScoreboard()
+            posLeft = Math.floor(Math.random() * 10) * 100
+            if(posLeft < gameArea.width() - obstacle.width() && posLeft > 0) {
+                obstacle.css({ left: posLeft + 'px' })  
+            }
+        }
+    }
+    function moveObstacles() {
+        for(currentObstacle in obstacles) {
+            moveObstacle(obstacles[currentObstacle])
+        }
+    }
+    function moveMarkings(speed=5) {
+        for(currentMarking in markings) {
+            // mDistance = distance * currentMarking
+            marking = markings[currentMarking]
+            mPos = marking.position().top + speed
+            marking.css({ top: mPos + 'px', left: '500px' })
+            if(mPos > gameArea.height()) {
+                marking.css({ top: '0px'})
+            }
+        }
+    }
+    function initializeMarkings() {
+        const distance = 100
+        for(currentMarking in markings) {
+            marking = markings[currentMarking]
+            $("#gameArea").append(marking)
+            if(currentMarking) {
+                mDistance = distance * currentMarking
+                marking.css({ top: mDistance + 'px', left: '500px' })
+            }
+        }
+    }
+    function checkForCollisions() {
+        for(currentObstacle in obstacles) {
+            currObstacle = obstacles[currentObstacle]
+            pPos = player.position()
+            oPos = currObstacle.position()
+            if(pPos.left < oPos.left && pPos.left+player.width() > oPos.left &&
+            pPos.top < oPos.top+currObstacle.height() && pPos.top+player.height() > oPos.top) {
+                return true
+            } else if(pPos.left+player.width() > oPos.left+currObstacle.width() && 
+            pPos.left < oPos.left+currObstacle.width() && pPos.top < oPos.top+currObstacle.height() &&
+            pPos.top+player.height() > oPos.top) {
+                return true
+            }
+        }
+        return false
+    }
+    function play() {
+        $("#start").fadeOut()
+        $("#scoreMsg").fadeOut()
+        moveMarkings(7)
+        moveObstacles()
+        if(checkForCollisions()) {
+            reset()
+            return
+        }
+        window.requestAnimationFrame(play);
+    }
+</script>
+</body>
+</html>
