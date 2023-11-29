@@ -731,6 +731,15 @@ async function insert_regularizer_options(layer_nr, regularizer_type) {
 	await updated_page();
 }
 
+function findInitializerElement(arr) {
+	for (let i = 0; i < arr.length; i++) {
+		if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
+			return arr[i];
+		}
+	}
+	return null; // Return null if no matching element is found
+}
+
 async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
@@ -742,30 +751,53 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 
 	var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
 
-	for (var i = 0; i < existing_init_elements.length; i++) {
-		$(existing_init_elements[i]).remove();
-	}
-
 	var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
 
-	if (initializer.length) {
-		var initializer_name = initializer.val();
+	var initializer_name = initializer.val();
 
-		if(initializer_name) {
-			var options = initializer_options[initializer_name]["options"];
+	if(existing_init_elements.length) {
+		var number_of_removed_items = 0;
 
-			for (var i = 0; i < options.length; i++) {
-				insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
+		var options = initializer_options[initializer_name]["options"];
+
+		for (var i = 0; i < existing_init_elements.length; i++) {
+			var remove = true;
+
+			try {
+				var this_initializer_class_type = findInitializerElement($($(existing_init_elements[i])[0]).find("input")[0].classList);
+
+				var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
+
+				if(options.includes(this_initializer_type)) {
+					remove = false;
+				}
+			} catch (e) {
+
 			}
-		} else {
-			log("[insert_initializer_options] ERROR: Initializer is empty!");
-			log("[insert_initializer_options] initializer:", initializer);
-			log("[insert_initializer_options] initializer_name:", initializer_name);
+
+			if(remove) {
+				$(existing_init_elements[i]).remove();
+				number_of_removed_items++;
+			}
+		}
+
+
+		if(number_of_removed_items == 0) {
+			return;
+		}
+	}
+
+
+	if(initializer_name) {
+		var options = initializer_options[initializer_name]["options"];
+
+		for (var i = 0; i < options.length; i++) {
+			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
 		}
 	} else {
-		if(get_layer_type_array()[layer_nr] != "flatten") {
-			log("[insert_initializer_options] Layer " + layer_nr + " does not seem to have a " + initializer_type + " initializer setting");
-		}
+		log("[insert_initializer_options] ERROR: Initializer name is empty!");
+		log("[insert_initializer_options] initializer:", initializer);
+		log("[insert_initializer_options] initializer_name:", initializer_name);
 	}
 
 	//await updated_page();
