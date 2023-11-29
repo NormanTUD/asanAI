@@ -799,15 +799,7 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 		for (var i = 0; i < options.length; i++) {
 			insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
 		}
-	/*
-	} else {
-		log("[insert_initializer_options] ERROR: Initializer name is empty!");
-		log("[insert_initializer_options] initializer:", initializer);
-		log("[insert_initializer_options] initializer_name:", initializer_name);
-	*/
 	}
-
-	//await updated_page();
 }
 
 async function get_json(url) {
