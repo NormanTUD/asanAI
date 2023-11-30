@@ -1,6 +1,7 @@
 "use strict";
 
 class asanAI {
+	#waiting_updated_page_uuids = [];
 	#image_url_tensor_div = null;
 	#math_items_hashes = {};
 	#learning_rate = 0.01;
@@ -21,6 +22,121 @@ class asanAI {
 	#last_batch_plot_time = null;
 	#math_tab_code_div = null;
 	#layers_gui_div_name = null;
+
+	#finished_loading = true;
+
+	#valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean", "alpha", "beta"];
+
+	#regularizer_select = {
+		"none": "none",
+		"l1": "l1",
+		"l1l2": "l1l2",
+		"l2": "l2"
+	}
+
+	#dtypes = {
+		"float32": "float32",
+		"int32": "int32",
+		"bool": "bool",
+		//"complex64": "complex64" //,
+		//'string': 'string'
+	}
+
+	#layer_options_defaults = {
+		"alpha": 1,
+		"units": 2,
+		"dropout_rate": 0.25,
+		"rate": 0.25,
+		"max_features": 3,
+		"momentum": 0.99,
+		"axis": -1,
+		"filters": 4,
+		"dropout": 0.20,
+		"recurrent_dropout": 0,
+		"epsilon": 0.0001,
+		"depth_multiplier": 1,
+		"max_value": 1,
+		"stddev": 1,
+		"implementation": 1,
+
+		"recurrent_constraint": null,
+		"bias_constraint": null,
+		"kernel_constraint": null,
+		"depthwise_constraint": null,
+		"pointwise_constraint": null,
+		"gamma_constraint": null,
+		"beta_constraint": null,
+
+		"bias_initializer": "zeros",
+		"recurrent_initializer": "zeros",
+		"beta_initializer": "zeros",
+		"gamma_initializer": "zeros",
+		"moving_mean_initializer": "zeros",
+		"moving_variance_initializer": "zeros",
+		"pointwise_initializer": "zeros",
+		"depthwise_initializer": "zeros",
+		"kernel_initializer": "zeros",
+
+		"use_bias": true,
+		"trainable": true,
+
+		"center": true,
+		"stateful": false,
+		"unroll": true,
+		"go_backwards": false,
+		"scale": true,
+		"return_sequences": true,
+		"return_state": false,
+		"unit_forget_bias": true,
+
+		"activation": null,
+		"recurrent_activation": null,
+
+		"padding": "valid",
+		"interpolation": "nearest",
+		"dilation_rate": "",
+		"size": "1,1",
+		"strides": "[]",
+		"pool_size": "[]",
+		"kernel_size": "[]",
+
+		"kernel_size_x": "1",
+		"kernel_size_y": "1",
+		"kernel_size_z": "1",
+
+		"target_shape": this.calculate_default_target_shape
+	}
+
+	#activations = {
+		"relu": "ReLu",
+		"linear": "Linear",
+		"sigmoid": "Sigmoid",
+		"elu": "ELU",
+		"relu6": "ReLu6",
+		"selu": "SeLu",
+		"softplus": "SoftPlus",
+		"softsign": "SoftSign",
+		"softmax": "SoftMax",
+		"tanh": "tanh",
+		"LeakyReLU": "leakyReLU"
+		//"thresholdedrelu": "thresholdedReLU"
+	}
+
+	#initializers = {
+		"glorotUniform": "glorotUniform",
+		"constant": "constant",
+		"glorotNormal": "glorotNormal",
+		"heNormal": "heNormal",
+		"heUniform": "heUniform",
+		"leCunNormal": " leCunNormal",
+		"leCunUniform": "leCunUniform",
+		"ones": "ones",
+		"randomNormal": "randomNormal",
+		"randomUniform": " randomUniform",
+		"truncatedNormal": "truncatedNormal",
+		"varianceScaling": "varianceScaling",
+		"zeros": "zeros"
+	}
 
 	#training_logs_epoch = {
 		"loss": {
@@ -6610,7 +6726,7 @@ class asanAI {
 							this_layer_weights[wname] = Array.from(this.array_sync(this.#model.layers[i].weights[k].val));
 						} else {
 							this.err("Invalid wname: " + wname);
-							log(model.layers[i].weights[k]);
+							this.log(model.layers[i].weights[k]);
 						}
 					}
 				}
@@ -6661,7 +6777,7 @@ class asanAI {
 				this.err(e);
 			}
 		} else {
-			log("Layers not in this.#model");
+			this.log("Layers not in this.#model");
 		}
 	}
 
@@ -7078,13 +7194,60 @@ class asanAI {
 		return result;
 	}
 
+	#get_default_option (layer_type, option_name) {
+		this.assert(typeof(layer_type) == "string", "layer_type must be string, is " + typeof(layer_type));
+		this.assert(typeof(option_name) == "string", "option_name must be string, is " + typeof(option_name));
+
+		var match = layer_type.match(/(\d+)[dD]/);
+
+		if(match) {
+			if(typeof(this.#layer_options_defaults[option_name]) == "string" && this.#layer_options_defaults[option_name] == "[]") {
+				var number_of_match_items = parse_int(match[1]);
+				var number = 1;
+				if(option_name == "kernel_size") {
+					var number = 3;
+				}
+				var results = [];
+				for (var i = 0; i < number_of_match_items; i++) {
+					results.push(number);
+				}
+
+				return results;
+			}
+		}
+
+		return this.#layer_options_defaults[option_name];
+	}
+
+	#add_units_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Units", "units", "number", { "min": 1, "max": 128, "step": 1, "value": this.#get_default_option(type, "units") }, nr);
+	}
+
+	#add_kernel_regularizer_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Kernel-Regularizer", "kernel_regularizer", "select", this.#regularizer_select, nr, null, 0, 1);
+	}
+
+	#add_use_bias_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_use_bias'></span>", "use_bias", "checkbox", { "status": "checked" }, nr);
+	}
+
+	#get_layer_type_array () {
+		var r = [];
+
+		for (var i = 0; i < this.#model.layers.length; i++) {
+			r.push($($(".layer_type")[i]).val());
+		}
+
+		return r;
+	}
+
 	async write_descriptions (force=0) {
 		if(this.#is_hidden_or_has_hidden_parent($("#layers_container"))) {
 			$(".descriptions_of_layers").hide();
 			return;
 		}
 
-		var groups = this.#group_layers(get_layer_type_array());
+		var groups = this.#group_layers(this.#get_layer_type_array());
 
 		if(groups.length <= 0) {
 			//log("groups.length <= 0");
@@ -7197,17 +7360,196 @@ class asanAI {
 		return _name;
 	}
 
+	#get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
+		this.assert(typeof(classname) == "string", "classname is not a string");
+		this.assert(typeof(data) == "object", "data is not an object");
+		this.assert(typeof(nr) == "number", "nr is not a number");
+		this.assert(typeof(tr_class) == "string" ||tr_class === undefined || tr_class === null, "tr_class is not a string");
+
+		this.assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only for #get_tr_str_for_layer_table must be either 0 or 1, but is " + expert_mode_only);
+
+		var new_uuid = this.#uuidv4();
+
+		var str = "<tr";
+		if(expert_mode_only) {
+			if(tr_class) {
+				tr_class = tr_class + " expert_mode_only";
+			} else {
+				tr_class = "expert_mode_only";
+			}
+		}
+		if (tr_class) {
+			str += " class='" + tr_class + "'";
+		}
+		if (hidden) {
+			str += " style='display: none' ";
+		}
+		str += ">";
+
+		var help = "";
+
+		str += "<td>" + desc + help + ":</td>";
+		str += "<td>";
+		if (type == "select") {
+			var onchange_text = `${this.asanai_name}.updated_page(null, null, this);`;
+
+			var types_init_or_reg = ["initializer", "regularizer"];
+
+			for (var tk = 0; tk < this.#valid_initializer_types.length; tk++) {
+				for (var tir = 0; tir < types_init_or_reg.length; tir++) {
+					var new_name = this.#valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
+					if (classname == new_name) {
+						var _get_layer_str = `find_layer_number_by_element($(this))`;
+						var _init_type = `"${this.#valid_initializer_types[tk]}"`;
+						var _updated_page_str = `${this.asanai_name}.updated_page(null, null, this)`;
+						var _func_name = `insert_${types_init_or_reg[tir]}_options`;
+
+						onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
+					}
+				}
+			}
+
+			if (classname == "activation") {
+				//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));${this.asanai_name}.updated_page(null, null, this)";
+			}
+
+			str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
+			for (const [key, value] of Object.entries(data)) {
+				str += "<option value=\"" + key + "\">" + value + "</option>";
+			}
+			str += "</select>";
+		} else if (type == "text") {
+			var placeholder = "";
+
+			if ("placeholder" in data) {
+				placeholder = " placeholder='" + data["placeholder"] + "' ";
+			}
+
+			var pre_text = "";
+			if ("text" in data) {
+				var text = data["text"];
+				if (typeof (data["text"]) == "function") {
+					text = data["text"](nr);
+				}
+
+				pre_text = " value='" + text + "' ";
+			}
+
+			str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="${this.asanai_name}.updated_page()" onkeyup="${this.asanai_name}.updated_page(null, null, this)" />`;
+		} else if (type == "number") {
+			str += "<input class='input_field input_data " + classname + "' type='number' ";
+
+			if ("min" in data) {
+				str += " min=" + data["min"] + " ";
+			}
+
+			if ("max" in data) {
+				str += " max=" + data["max"] + " ";
+			}
+
+			if ("step" in data) {
+				str += " step=" + data["step"] + " ";
+			}
+
+			if ("value" in data) {
+				str += " value=" + data["value"] + " ";
+			}
+
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.asanai_name}.updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); ${this.asanai_name}.updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
+		} else if (type == "checkbox") {
+			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.asanai_name}.updated_page(null, null, this);' `;
+			if ("status" in data && data["status"] == "checked") {
+				str += " checked='CHECKED' ";
+			}
+			str += " />";
+
+		} else {
+			alert("Invalid table type: " + type);
+		}
+		str += "</td>";
+
+		return str;
+	}
+
+	#add_trainable_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_trainable'></span>", "trainable", "checkbox", { "status": "checked" }, nr);
+	}
+
+	#get_tr_str_for_description(desc) {
+		this.assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
+		return "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
+	}
+
+	#get_option_for_layer_by_type(nr) {
+		this.assert(typeof (nr) == "number", "#get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof (nr));
+
+		var layer_type = $($(".layer_type")[nr]);
+
+		var type = layer_type.val();
+
+		if (!type) {
+			layer_type.children().children().each(function () {
+				if ($(this).val() == "dense") {
+					$(this).prop("selected", true);
+				}
+			});
+			type = layer_type.val();
+			this.log("Cannot determine type of layer " + nr);
+			return;
+		}
+
+		var str = "";
+
+		var kernel_initializer_string = this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", this.#initializers, nr);
+		var bias_initializer_string = this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span", "bias_initializer", "select", this.#initializers, nr);
+		var activation_string = this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", this.#activations, nr);
+
+		for (var [key, value] of Object.entries(this.#layer_options)) {
+			if (key == type) {
+				if (value["description"]) {
+					str += this.#get_tr_str_for_description(value["description"]);
+				} else {
+					alert("No description given for " + key);
+				}
+
+				if (value["options"]) {
+					var options = value["options"];
+					for (var j = 0; j < options.length; j++) {
+						var item = options[j];
+						if (item == "activation") {
+							str += activation_string;
+						} else if (item == "kernel_initializer") {
+							str += kernel_initializer_string;
+						} else if (item == "bias_initializer") {
+							str += bias_initializer_string;
+						} else {
+							var asanai_this = this;
+							var _code = "str += asanai_this.#add_" + item + "_option(type, nr);";
+							eval(_code);
+						}
+					}
+				} else {
+					alert("No options given for " + key);
+				}
+			}
+		}
+
+		this.assert(typeof(str) == "string", "str is not a string in #get_option_for_layer_by_type, but " + str + ", " + typeof(str));
+
+		return str;
+	}
+
 	async set_option_for_layer_by_layer_nr(nr) {
-		assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
+		this.assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
 
 		var layer = $(".layer_options_internal")[nr];
-		layer.innerHTML = get_option_for_layer_by_type(nr);
+		layer.innerHTML = this.#get_option_for_layer_by_type(nr);
 
 		$($(".layer_options_internal")[nr]).find("select").trigger("change");
 
 		var valid_subtypes = ["initializer", "regularizer"];
-		for (var i = 0; i < valid_initializer_types.length; i++) {
-			var kn = valid_initializer_types[i];
+		for (var i = 0; i < this.#valid_initializer_types.length; i++) {
+			var kn = this.#valid_initializer_types[i];
 
 			for (var vs = 0; vs < valid_subtypes.length; vs++) {
 				var t = valid_subtypes[vs];
@@ -7244,7 +7586,14 @@ class asanAI {
 			}
 		});
 
-		await updated_page(null, 1);
+		await this.updated_page(null, 1);
+	}
+
+	async toggle_options(item) {
+		this.assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
+
+		$(item).parent().parent().parent().next().toggle();
+		await this.write_descriptions(1);
 	}
 
 	option_for_layer(nr) {
@@ -7257,7 +7606,7 @@ class asanAI {
 		var str = "";
 		str += "<tr>";
 		str += "<td style='width: 140px'>";
-		str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
 		str += "</td>";
 		str += "<td>";
 		str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
@@ -7358,9 +7707,304 @@ class asanAI {
 				e = e.message;
 			}
 
-			err("[lowercase_first_letter] " + e);
+			this.err("[lowercase_first_letter] " + e);
 
 			return null;
 		}
+	}
+
+	calculate_default_target_shape (nr) {
+		this.assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
+
+		try {
+			var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
+
+			var output = [];
+
+			for (var i = 0; i < input_shape.length; i++) {
+				if(Number.isInteger(input_shape[i])) {
+					output.push(input_shape[i]);
+				}
+			}
+
+			return output;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err("[calculate_default_target_shape] " + e);
+
+			return null;
+		}
+	}
+
+	#add_bias_regularizer_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Bias-Regularizer", "bias_regularizer", "select", this.#regularizer_select, nr, null, 0, 1);
+	}
+
+	#add_visualize_option(type, nr) {
+		this.assert(typeof(type) == "string", "type is not a number");
+		this.assert(typeof(nr) == "number", "nr is not a number");
+
+		var style = "";
+
+		var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
+
+		return res;
+	}
+
+	#add_dtype_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("DType", "dtype", "select", this.#dtypes, nr, null, 1, 1);
+	}
+
+	async updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+		if(!this.#finished_loading) {
+			return;
+		}
+		var updated_page_uuid = this.#uuidv4();
+
+		const functionName = "updated_page"; // Specify the function name
+
+		try {
+			this.#waiting_updated_page_uuids.push(updated_page_uuid);
+
+			while (this.#waiting_updated_page_uuids.length && this.#waiting_updated_page_uuids[0] != updated_page_uuid) {
+				await delay(10);
+			}
+
+			/*
+			console.log("updated_page trace:");
+			console.trace();
+			*/
+			var ret = await this.#updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
+
+			var index = this.#waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+			if (index !== -1) {
+				this.#waiting_updated_page_uuids.splice(index, 1);
+			} else {
+				console.warn("Could not find index of " + updated_page_uuid);
+			}
+		} catch (e) {
+			var original_e = e;
+			var index = this.#waiting_updated_page_uuids.indexOf(updated_page_uuid);
+
+			if (index !== -1) {
+				this.#waiting_updated_page_uuids.splice(index, 1);
+			} else {
+				console.error("Could not find index of " + updated_page_uuid);
+			}
+
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
+				var last_good = get_last_good_input_shape_as_string();
+				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+					await set_input_shape(last_good, 1);
+				}
+			} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
+				wrn("[updated_page] " + e);
+			} else if(("" + e).includes("out of memory")) {
+				await write_error("" + e);
+			} else if(("" + e).includes("Cannot read properties of undefined")) {
+				wrn("[updated_page] " + e);
+			} else if(("" + e).includes("model.layers[i]")) {
+				dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
+			} else if (("" + e).includes("model.layers is undefined")) {
+				dbg("[updated_page] model.layers is undefined");
+			} else if (("" + e).includes("model is undefined")) {
+				dbg("[updated_page] model is undefined");
+			} else if (("" + e).includes("model.input is undefined")) {
+				dbg("[updated_page] model.input is undefined");
+			} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
+				dbg("[updated_page] " + e);
+			} else if (("" + e).includes("targetShape is undefined")) {
+				dbg("[updated_page] " + e);
+			} else if (("" + e).includes("code is undefined")) {
+				dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
+			} else if (("" + e).includes("fcnn is undefined")) {
+				dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
+			} else if (("" + e).includes("e is null")) {
+				dbg("[updated_page] This error may happen when switching models: " + e);
+			} else {
+				this.err("" + e);
+				console.error("Stack:", original_e.stack);
+				throw new Error("" + e);
+			}
+
+			return false;
+		}
+
+		if(!ret) {
+			if(this.#finished_loading) {
+				//wrn("updated_page failed");
+
+				var last_good = get_last_good_input_shape_as_string();
+				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+					l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+					await set_input_shape(last_good, 1);
+				}
+			}
+		}
+
+		try {
+			await _temml();
+		} catch (e) {
+			wrn(e);
+		}
+
+		last_updated_page = Date.now();
+
+		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+	}
+
+	#has_any_warning () {
+		if($("#width").val() == "" || $("#height").val() == "") {
+			//wrn("[#has_any_warning] Width or height is empty string, returning from updated_page");
+			return true;
+		}
+
+		return false;
+	}
+
+	#rename_tmp_onchange() {
+		$("*[_onchange]").each(function (i, x) {
+			var elem = $(this);
+			elem.attr("onchange", elem.attr("_onchange"));
+			elem.removeAttr("_onchange");
+		});
+	}
+
+	#show_or_hide_bias_initializer(number_of_layers) {
+		var layer_settings = $(".layer_setting");
+		for (var i = 0; i < number_of_layers; i++) {
+			var this_layer = $(layer_settings[i]);
+			var use_bias_setting = this_layer.find(".use_bias");
+			if (use_bias_setting.length) {
+				if ($(use_bias_setting[0]).is(":checked")) {
+					this_layer.find(".bias_initializer").parent().parent().show();
+				} else {
+					this_layer.find(".bias_initializer").parent().parent().hide();
+				}
+			}
+		}
+	}
+
+	async #compile_model () {
+		this.wrn(`#compile_model not yet defined!`);
+	}
+
+	async #updated_page_internal (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) {
+		if(this.#has_any_warning()) {
+			return false;
+		}
+
+		this.#rename_tmp_onchange();
+
+		var number_of_layers = this.#model.layers.length;
+		this.#show_or_hide_bias_initializer(number_of_layers);
+
+		try {
+			await this.#compile_model();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.log(e);
+			this.log("There was an error compiling the model: " + e);
+			throw new Error(e);
+		}
+
+		var redo_graph = await update_python_code(1);
+
+		if (model && redo_graph && !no_graph_restart) {
+			await restart_fcnn(1);
+			await restart_lenet(1);
+		}
+
+		prev_layer_data = [];
+
+		try {
+			await identify_layers();
+		} catch (e) {
+			var stack = e.stack;
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("identify_layers() failed with: " + e + ". Stack: ");
+			console.log(stack);
+		}
+
+		layer_structure_cache = null;
+
+		await save_current_status();
+
+		enable_start_training_custom_tensors();
+
+		var wait_for_latex_model = Promise.resolve(1);
+
+		if (!no_update_math) {
+			wait_for_latex_model = await write_model_to_latex_to_page();
+		}
+
+		await last_shape_layer_warning();
+
+		await hide_no_conv_stuff();
+
+		var current_input_shape = get_input_shape();
+		if (cam) {
+			stop_webcam();
+		}
+
+		try {
+			await write_descriptions();
+		} catch (e) {
+			wrn(e);
+		}
+
+		allow_training();
+
+		if (!no_prediction) {
+			show_prediction(1, 1); // await not desired here
+		}
+
+		await wait_for_latex_model;
+		//await wait_for_show_hide_load_weights;
+		if(atrament_data.sketcher && await input_shape_is_image()) {
+			try {
+				await predict_handdrawn();
+			} catch (e) {
+				if(("" + e).includes("but got array with shape")) {
+					var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
+					wrn("[#updated_page_internal] " + _err);
+					l(_err);
+				} else {
+					throw new Error(e);
+				}
+			}
+		}
+
+		if(mode == "beginner") {
+			$(".expert_mode_only").hide();
+		} else {
+			$(".expert_mode_only").show();
+		}
+
+		allow_editable_labels();
+
+		for (var i = 0; i < model.layers.length; i++) {
+			await insert_initializer_options(i, "kernel");
+			await insert_initializer_options(i, "bias");
+
+			await update_translations();
+		}
+
+		return true;
 	}
 }
