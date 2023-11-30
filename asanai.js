@@ -6450,7 +6450,7 @@ class asanAI {
 			return;
 		}
 
-		if(!typeof(divname) == "string") {
+		if(typeof(divname) != "string") {
 			this.err(`divname is not a string, but ${typeof(divname)}! Cannot continue show_layers_gui without divname being a valid string that refers to the ID of an element`);
 			return;
 		}
