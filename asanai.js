@@ -2749,6 +2749,10 @@ class asanAI {
 
 		await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 
+		if(this.#layers_gui_div_name) {
+			await this.show_layers_gui();
+		}
+
 		return this.#model;
 	}
 
