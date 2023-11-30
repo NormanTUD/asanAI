@@ -7149,6 +7149,8 @@ class asanAI {
 		this.#layers_gui_div_name = divname;
 
 		await this.#update_layers_gui();
+
+		this._temml();
 	}
 
 	async #get_model_config_hash () {
@@ -7453,6 +7455,8 @@ class asanAI {
 		}
 
 		await this.#show_layers()
+
+		this._temml();
 	}
 
 	#get_item_value(layer, classname) {
@@ -9157,10 +9161,6 @@ if len(sys.argv) == 1:
 		return this.#get_tr_str_for_layer_table('Seed', 'bias_initializer_seed', 'number', { 'value': 1 }, nr, 'bias_initializer_tr');
 	}
 
-	#update_translations () {
-		this.wrn(`#update_translations not defined yet!`);
-	}
-
 	#disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
 		try {
 			if(this.#model && !(this.#model.isTraining || this.#started_training)) {
@@ -9354,7 +9354,7 @@ if len(sys.argv) == 1:
 				e = e.message;
 			}
 
-			err("[add_layer] " + e);
+			this.err("[add_layer] " + e);
 		}
 
 		$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
@@ -9384,4 +9384,116 @@ if len(sys.argv) == 1:
 
 		l("Added layer");
 	}
+
+
+	#swap_image_src_language () {
+		// Get all image elements on the page
+		const images = document.getElementsByTagName("img");
+
+		// Loop through each image element
+		for (var i = 0; i < images.length; i++) {
+			const img = images[i];
+			const currentSrc = img.getAttribute("src");
+
+			if (this.#lang === "en" && currentSrc.startsWith("lang/__de__")) {
+				// Replace 'de' with 'en'
+				const newSrc = currentSrc.replace(/__de__/, "__en__");
+				img.setAttribute("src", newSrc);
+			} else if (this.#lang === "de" && currentSrc.startsWith("lang/__en__")) {
+				// Replace 'en' with 'de'
+				const newSrc = currentSrc.replace(/__en__/, "__de__");
+				img.setAttribute("src", newSrc);
+			} else if (this.#lang === "en" && currentSrc.startsWith("presentation/de/")) {
+				// Replace 'de' with 'en'
+				const newSrc = currentSrc.replace(/\/de\//, "/en/");
+				img.setAttribute("src", newSrc);
+			} else if (this.#lang === "de" && currentSrc.startsWith("presentation/en/")) {
+				// Replace 'en' with 'de'
+				const newSrc = currentSrc.replace(/\/en\//, "/de/");
+				img.setAttribute("src", newSrc);
+			}
+		}
+	}
+
+	async set_lang(la) {
+		this.#lang = la;
+		set_cookie("lang", l, 30); // Save the language in a cookie for 30 days
+		await this.#update_translations();
+
+		this.#swap_image_src_language();
+	}
+
+	get_lang_cookie() {
+		const cookies = document.cookie.split(";");
+		for (var i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			if (cookie.startsWith(lang_cookie_name + "=")) {
+				return cookie.substring(lang_cookie_name.length + 1);
+			}
+		}
+		return "en";
+	}
+
+	set_lang_cookie(value, days) {
+		const expirationDate = new Date();
+		expirationDate.setDate(expirationDate.getDate() + days);
+		const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
+		document.cookie = lang_cookie_name + "=" + cookieValue;
+	}
+
+	async #update_translations(force=0) {
+		var elements = document.querySelectorAll("[class^=\"TRANSLATEME_\"]");
+		elements.forEach((element) => {
+			const translationKey = element.classList[0].substring(12);
+			const translation = this.#language[this.#lang][translationKey];
+			if (translation) {
+				if($(element).attr("data-lang") != this.#lang || force) {
+					element.innerHTML = translation;
+
+					$(element).attr("data-lang", this.#lang);
+				}
+			} else {
+				alert("Could not translate " + translationKey + " to " + this.#lang);
+			}
+
+		});
+	}
+
+	async update_lang(la) {
+		this.#lang = la;
+		await this.#update_translations();
+		set_lang_cookie(this.#lang, 99999);
+	}
+
+	trm (name) {
+		if(Object.keys(this.#language[this.#lang]).includes(name)) {
+			return `<span class='TRANSLATEME_${name}'></span>`;
+		}
+
+		alert(`${name} NOT FOUND`);
+
+		return `${name} NOT FOUND`;
+	}
+
+	_get_new_translations() {
+		var url = "translations.php?print=1";
+
+		function parse(data) {
+			try {
+				this.#language = JSON.parse(data);
+
+				this.#update_translations(1); // await not possible
+			} catch (e) {
+				write_error(e); // await not possible
+			}
+		}
+
+		$.ajax({
+			type: 'GET',
+			url: url,
+			dataType: 'html',
+			success: parse
+		});
+	}
+
 }
