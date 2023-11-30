@@ -2,6 +2,7 @@
 
 class asanAI {
 	#waiting_updated_page_uuids = [];
+	#number_channels = 3;
 	#image_url_tensor_div = null;
 	#math_items_hashes = {};
 	#learning_rate = 0.01;
@@ -7920,7 +7921,7 @@ class asanAI {
 			throw new Error(e);
 		}
 
-		var redo_graph = await update_python_code(1);
+		var redo_graph = await this.#update_python_code(1);
 
 		if (model && redo_graph && !no_graph_restart) {
 			await restart_fcnn(1);
@@ -8006,5 +8007,204 @@ class asanAI {
 		}
 
 		return true;
+	}
+
+	async #update_python_code(dont_reget_labels) {
+		var redo_graph = 0;
+
+		var input_shape = [this.#model_height, this.#model_width, this.#number_channels];
+
+		var loss = document.getElementById("loss").value;
+		var optimizer_type = document.getElementById("optimizer").value;
+		var metric_type = document.getElementById("metric").value;
+		var batchSize = document.getElementById("batchSize").value;
+		var data_origin = document.getElementById("data_origin").value;
+
+		var epochs = parse_int(document.getElementById("epochs").value);
+
+		$("#pythoncontainer").show();
+
+		var input_shape_is_image_val = await input_shape_is_image();
+
+		var x_shape = "";
+
+		if(input_shape_is_image_val) {
+			x_shape = "[height, width, 3]";
+		}
+
+		if (!dont_reget_labels) {
+			await get_label_data();
+		}
+
+		var layer_types = $(".layer_type");
+		var layer_settings = $(".layer_setting");
+
+		var expert_code = "";
+
+		for (var i = 0; i < get_number_of_layers(); i++) {
+			var type = $(layer_types[i]).val();
+
+			var data = {};
+
+			if (i == 0) {
+				if (input_shape_is_image_val) {
+					data["input_shape"] = x_shape;
+				} else {
+					data["input_shape"] = "get_shape('x.txt')";
+				}
+			}
+
+			if (type in layer_options) {
+				for (var j = 0; j < layer_options[type]["options"].length; j++) {
+					var option_name = layer_options[type]["options"][j];
+
+					if (option_name == "pool_size") {
+						var _pool_size_x = get_item_value(i, "pool_size_x");
+						var _pool_size_y = get_item_value(i, "pool_size_y");
+
+						if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
+							data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
+						}
+					} else if (option_name == "strides") {
+						var _strides_x = get_item_value(i, "strides_x");
+						var _strides_y = get_item_value(i, "strides_y");
+
+						if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
+							data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
+						}
+					} else if (option_name == "kernel_size") {
+						var kernel_size_x = get_item_value(i, "kernel_size_x");
+						var kernel_size_y = get_item_value(i, "kernel_size_y");
+						var kernel_size_z = get_item_value(i, "kernel_size_z");
+
+						if(kernel_size_x && kernel_size_y && kernel_size_z) {
+							data[get_python_name(option_name)] = [
+								parse_int(kernel_size_x),
+								parse_int(kernel_size_y),
+								parse_int(kernel_size_z)
+							];
+						} else if (kernel_size_x && kernel_size_y) {
+							data[get_python_name(option_name)] = [
+								parse_int(kernel_size_x),
+								parse_int(kernel_size_y)
+							];
+						} else if (kernel_size_x) {
+							data[get_python_name(option_name)] = [
+								parse_int(kernel_size_x)
+							];
+						} else {
+							await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+						}
+					} else if (option_name == "size") {
+						data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
+					} else if (option_name == "dilation_rate") {
+						var dil_rate = get_item_value(i, option_name);
+
+						dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+
+						var code_str = "[" + dil_rate + "]";
+
+						data[get_python_name(option_name)] = eval("[" + code_str + "]");
+
+					} else if (option_name == "target_shape") {
+						data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
+					} else if (option_name == "activation") {
+						if(option_name) {
+							data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
+						}
+					} else {
+						data[get_python_name(option_name)] = get_item_value(i, option_name);
+					}
+				}
+
+				redo_graph++;
+			}
+
+			valid_initializer_types.forEach((type) => {
+				["regularizer", "initializer"].forEach((func) => {
+					var item_name = type + "_" + func;
+					if (Object.keys(data).includes(item_name)) {
+						if (data[item_name] == "none") {
+							delete data[item_name];
+						}
+					}
+				});
+			});
+
+			var params = [];
+			for (const [key, value] of Object.entries(data)) {
+				if (key == "dtype" && i == 0 || key != "dtype") {
+					if (typeof (value) != "undefined" && typeof(key) != "boolean") {
+						params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
+					}
+				}
+			}
+
+			delete data["visualize"];
+
+			if(model && Object.keys(model).includes("layers")) {
+				/*
+				var cdata = convert_to_python_string(data)
+				if(cdata == "{}") {
+					cdata = "";
+				}
+				*/
+				//expert_code += `model.add(layers.${model.layers[i].getClassName()}(${cdata}))\n`;
+				try {
+					var classname = "";
+
+					if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
+						classname = model.layers[i].getClassName();
+					}
+
+					if(classname) {
+						expert_code += model_add_python_structure(classname, data);
+					} else {
+						expert_code += "# Problem getting the code for this layer";
+					}
+				} catch (e) {
+					if(("" + e).includes("model.layers[i] is undefined")) {
+						wrn("[#update_python_code] model.layers was undefined. This MAY be harmless.");
+					} else {
+						expert_code += "# ERROR while creating code: " + e;
+						log("[#update_python_code] ERROR in python expert code: " + e);
+						console.log("[#update_python_code] data:", data);
+					}
+				}
+			}
+		}
+
+		if(expert_code) {
+			var labels_str = "";
+			if(labels.length) {
+				labels_str = "labels = ['" + labels.join("', '") + "']\n";
+			}
+
+			var wh = "";
+
+			var is = get_input_shape_with_batch_size(); is[0] = "None"; 
+
+			expert_code =
+				python_boilerplate(input_shape_is_image_val, 0) +
+				labels_str +
+
+				"model = tf.keras.Sequential()\n\n" +
+
+				"from keras import layers\n" +
+
+				expert_code +
+
+				`model.build(input_shape=[${is.join(", ")}])` +
+				"\n\nmodel.summary()\n";
+		}
+
+		var python_code = create_python_code(input_shape_is_image_val);
+
+		$("#python").text(python_code).show();
+		$("#python_expert").text(expert_code).show();
+
+		await highlight_code();
+
+		return redo_graph;
 	}
 }
