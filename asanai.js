@@ -20,6 +20,7 @@ class asanAI {
 	#last_batch_time = null;
 	#last_batch_plot_time = null;
 	#math_tab_code_div = null;
+	#layers_gui_div_name = null;
 
 	#training_logs_epoch = {
 		"loss": {
@@ -6439,7 +6440,7 @@ class asanAI {
 		}
 	}
 
-	show_layers_gui (divname) {
+	show_layers_gui (divname=this.#layers_gui_div_name) {
 		if(!this.#model) {
 			this.err("Cannot show layers gui when no model is loaded.");
 			return;
@@ -6459,5 +6460,13 @@ class asanAI {
 			this.err(`Cannot find #${divname} for show_layers_gui. Not showing layer GUI.`);
 			return;
 		}
+
+		this.#layers_gui_div_name = divname;
+
+		this.#update_layers_gui();
+	}
+
+	#update_layers_gui () {
+		
 	}
 }
