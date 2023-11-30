@@ -7113,28 +7113,28 @@ class asanAI {
 			var last_layer_nr = layers[layers.length - 1];
 
 			var first_layer = $(layer[layers[0]]);
-			assert(first_layer.length, "first_layer could not be determined");
+			this.assert(first_layer.length, "first_layer could not be determined");
 
 			var last_layer = $(layer[Math.max(0, last_layer_nr - 1)]);
-			assert(last_layer.length, "last_layer could not be determined");
+			this.assert(last_layer.length, "last_layer could not be determined");
 
 			var first_layer_idx = Math.min(...group[keyname]);
-			assert(typeof(first_layer_idx) === "number", "first_layer_idx is not a number");
-			assert(!isNaN(first_layer_idx), "first_layer_idx is NaN");
+			this.assert(typeof(first_layer_idx) === "number", "first_layer_idx is not a number");
+			this.assert(!isNaN(first_layer_idx), "first_layer_idx is NaN");
 
 			var first_layer_marker = $(all_layer_markers[first_layer_idx]);
-			assert(first_layer_marker.length, "first_layer_marker could not be determined");
+			this.assert(first_layer_marker.length, "first_layer_marker could not be determined");
 
 			var first_layer_start = this.#parse_int(first_layer_marker.offset()["top"] - 6.5);
-			assert(first_layer_start, "first_layer_start could not be determined");
+			this.assert(first_layer_start, "first_layer_start could not be determined");
 
 			var last_layer_end = this.#parse_int($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
-			assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
-			assert(last_layer_end >= 0, "last_layer_end is not a number");
+			this.assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
+			this.assert(last_layer_end >= 0, "last_layer_end is not a number");
 
 			var first_layer_top = this.#parse_int(first_layer.position()["top"]);
-			assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
-			assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
+			this.assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
+			this.assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
 
 			if(keyname != "null" && keyname && keyname != "undefined") {
 				var _height = last_layer_end - first_layer_start - 13;
@@ -7197,10 +7197,60 @@ class asanAI {
 		return _name;
 	}
 
+	async set_option_for_layer_by_layer_nr(nr) {
+		assert(typeof(nr) == "number", "initializer_layer_options_by_layer_nr(" + nr + ") is not a number but " + typeof(nr));
+
+		var layer = $(".layer_options_internal")[nr];
+		layer.innerHTML = get_option_for_layer_by_type(nr);
+
+		$($(".layer_options_internal")[nr]).find("select").trigger("change");
+
+		var valid_subtypes = ["initializer", "regularizer"];
+		for (var i = 0; i < valid_initializer_types.length; i++) {
+			var kn = valid_initializer_types[i];
+
+			for (var vs = 0; vs < valid_subtypes.length; vs++) {
+				var t = valid_subtypes[vs];
+				var name = kn + "_" + t;
+				$(layer).find("." + name).trigger("change");
+			}
+		}
+
+		await this.write_descriptions();
+	}
+
+	async initializer_layer_options(thisitem) {
+		if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
+			return;
+		}
+
+		//assert(typeof(thisitem) == "object", "initializer_layer_options(" + thisitem + ") is not an object but " + typeof(thisitem));
+
+		var nr = thisitem;
+		if (typeof (nr) != "number") {
+			nr = find_layer_number_by_element(thisitem);
+		}
+
+		this.assert(typeof (nr) == "number", "found nr is not an integer but " + typeof (nr));
+
+		await this.set_option_for_layer_by_layer_nr(nr);
+
+		var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
+		$($(".layer_setting")[nr]).find("option").each(function (i, x) {
+			if (chosen_option == $(x).val()) {
+				$(x).attr("selected", "selected");
+			} else {
+				$(x).removeAttr("selected");
+			}
+		});
+
+		await updated_page(null, 1);
+	}
+
 	option_for_layer(nr) {
 		this.assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
 
-		var this_event = "initializer_layer_options(this)";
+		var this_event = `${this.#asanai_name}.initializer_layer_options(this)`;
 
 		var option_for_layer_id = `option_for_layer_${this.#uuidv4()}`;
 
@@ -7235,10 +7285,10 @@ class asanAI {
 	async show_layers(number) {
 		this.assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
 
-		var layers_container = $("#layers_container");
+		var layers_container = $("#" + this.#layers_gui_div_name);
 
 		if(!layers_container.length) {
-			this.err(`#layers_container not found!`);
+			this.err(`#${this.#layers_gui_div_name} not found!`);
 			return;
 		}
 
@@ -7273,7 +7323,7 @@ class asanAI {
 		layers_container[0].innerHTML = layers_container_str;
 
 		for (var i = 0; i < number; i++) {
-			await initializer_layer_options(i);
+			await this.initializer_layer_options(i);
 		}
 
 		$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
