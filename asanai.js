@@ -10,6 +10,8 @@ class asanAI {
 
 	#mode = "expert";
 
+	#is_repairing_output_shape = false;
+
 	#shown_has_zero_data = false;
 	#layer_structure_cache = null;
 	#has_zero_output_shape = false;
@@ -7547,7 +7549,7 @@ class asanAI {
 				for (var tir = 0; tir < types_init_or_reg.length; tir++) {
 					var new_name = this.#valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
 					if (classname == new_name) {
-						var _get_layer_str = `find_layer_number_by_element($(this))`;
+						var _get_layer_str = `${this.asanai_name}.find_layer_number_by_element($(this))`;
 						var _init_type = `"${this.#valid_initializer_types[tk]}"`;
 						var _updated_page_str = `${this.asanai_name}.updated_page(null, null, this)`;
 						var _func_name = `insert_${types_init_or_reg[tir]}_options`;
@@ -7558,7 +7560,7 @@ class asanAI {
 			}
 
 			if (classname == "activation") {
-				//onchange_text = "insert_activation_options(find_layer_number_by_element($(this)));${this.asanai_name}.updated_page(null, null, this)";
+				//onchange_text = `insert_activation_options(${this.asanai_name}.find_layer_number_by_element($(this)));${this.asanai_name}.updated_page(null, null, this)`;
 			}
 
 			str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
@@ -7718,7 +7720,7 @@ class asanAI {
 
 		var nr = thisitem;
 		if (typeof (nr) != "number") {
-			nr = find_layer_number_by_element(thisitem);
+			nr = this.find_layer_number_by_element(thisitem);
 		}
 
 		this.assert(typeof (nr) == "number", "found nr is not an integer but " + typeof (nr));
@@ -7757,7 +7759,7 @@ class asanAI {
 		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
 		str += "</td>";
 		str += "<td>";
-		str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+		str += `<select id="${option_for_layer_id}" onfocus='${this.asanai_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
 		var last_category = "";
 		for (var key of this.#layer_names) {
 			var this_category = this.#layer_options[key].category;
@@ -7889,7 +7891,7 @@ class asanAI {
 
 		var style = "";
 
-		var res = "<tr class='visualize_button' " + style + "><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(find_layer_number_by_element(this), \"" + type + "\")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>";
+		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.asanai_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
 
 		return res;
 	}
@@ -8936,7 +8938,7 @@ if len(sys.argv) == 1:
 						for (var j = 0; j < canvasses.length; j++) {
 							var this_canvas_id = canvasses[j].id;
 							if(!this_canvas_id.endsWith("_layer")) {
-								var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
+								var base_id = btoa(await this.#md5(this.#get_element_xpath(canvasses[j]))).replaceAll("=", "");
 								var new_canvas_id = base_id + "_layer";
 								if($(new_canvas_id).length == 0) {
 									log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
@@ -9324,12 +9326,12 @@ if len(sys.argv) == 1:
 
 		var real_nr = null;
 
-		var item_xpath = get_element_xpath(item);
+		var item_xpath = this.#get_element_xpath(item);
 
 		var add_layer_buttons = $(".add_layer");
 		for (var nr = 0; nr < add_layer_buttons.length; nr++) {
 			var elem = add_layer_buttons[nr];
-			if (item_xpath == get_element_xpath(elem)) {
+			if (item_xpath == this.#get_element_xpath(elem)) {
 				real_nr = nr;
 			}
 		}
@@ -9496,4 +9498,132 @@ if len(sys.argv) == 1:
 		});
 	}
 
+	find_layer_number_by_element(element) {
+		var item_parent = element;
+
+		while (!$(item_parent).hasClass("layer_setting")) {
+			item_parent = $(item_parent).parent();
+			if (this.#get_element_xpath($("body")[0]) == this.#get_element_xpath(item_parent[0])) {
+				write_error("Infinite recursion"); // cannot be async
+				return;
+			}
+		}
+
+		item_parent = $(item_parent).parent();
+
+		var item_parent_xpath = this.#get_element_xpath(item_parent[0]);
+		var nr = null;
+
+		$("#layers_container").children().each(function (counter, element) {
+			if (this.#get_element_xpath(element) == item_parent_xpath) {
+				nr = counter;
+			}
+		});
+
+		return nr;
+	}
+
+	async disable_invalid_layers_event(e, thisitem) {
+		this.assert(typeof (e) == "object", "disable_all_invalid_layers(e -> " + e + " is not an object but " + typeof (e));
+		this.assert(typeof (thisitem) == "object", "disable_all_invalid_layers(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof (thisitem));
+
+		e.preventDefault();
+		var layer_nr = null;
+
+		layer_nr = this.find_layer_number_by_element(thisitem);
+
+		await enable_valid_layer_types(layer_nr);
+	}
+
+	async enable_valid_layer_types(layer_nr) {
+		if(this.#started_training && !this.#is_repairing_output_shape) {
+			this.info("enable_valid_layer_types disabled because is in training");
+			return;
+		}
+
+		this.assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
+
+		if(this.#is_repairing_output_shape) {
+			enable_all_layer_types();
+			return;
+		}
+
+		var valid_layer_types = await this.#get_valid_layer_types(layer_nr);
+
+		var options = $($($(".layer_type")[layer_nr]).children().children());
+
+		for (var i = 0; i < options.length; i++) {
+			if (!$(options[i]).is(":selected")) {
+				$(options[i]).prop("disabled", true);
+			}
+
+			if (valid_layer_types.includes($(options[i]).prop("value"))) {
+				$(options[i]).prop("disabled", false);
+			}
+		}
+	}
+
+	enable_all_layer_types () {
+		if(!this.#model || !Object.keys(this.#model).includes("layers") || !this.#model.layers.length) {
+			err("model not found, or does not include layers or layers are empty");
+			return;
+		}
+
+		for (var layer_nr = 0; layer_nr < this.#model.layers.length; layer_nr++) {
+			var options = $($($(".layer_type")[layer_nr]).children().children());
+
+			for (var i = 0; i < options.length; i++) {
+				if (!$(options[i]).is(":selected")) {
+					$(options[i]).prop("disabled", true);
+				}
+
+				$(options[i]).prop("disabled", false);
+			}
+		}
+	}
+
+	async #get_valid_layer_types (layer_nr) {
+		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
+
+		var valid_layer_types = [];
+
+		$("body").css("cursor", "wait");
+
+		var checked_layers = false;
+
+		for (var i = 0; i < layer_names.length; i++) {
+			var layer_type = layer_names[i];
+			if(mode == "expert") {
+				valid_layer_types.push(layer_type);
+			} else {
+				if(layer_type_always_works(layer_type)) {
+					valid_layer_types.push(layer_type);
+				} else {
+					var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
+					var pb_string = "Checking " + layer_type + " (" + percent + "%)";
+					l(pb_string);
+					if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
+						//log("Testing " + layer_type);
+						var compiled_fake_model = await compile_fake_model(layer_nr, layer_type);
+						if(compiled_fake_model) {
+							valid_layer_types.push(layer_type);
+						}
+					}
+					checked_layers = true;
+				}
+				await write_descriptions();
+			}
+		}
+		await write_descriptions();
+
+		if(checked_layers) {
+			l("Checked possible layer types");
+		}
+
+		$("body").css("cursor", get_cursor_or_none("default"));
+
+		allowed_layer_cache[layer_nr] = valid_layer_types;
+
+		return valid_layer_types;
+	}
 }
