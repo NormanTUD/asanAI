@@ -6466,7 +6466,262 @@ class asanAI {
 		this.#update_layers_gui();
 	}
 
+	async #get_model_config_hash () {
+		var arr = [];
+		$("#layers_container").find("input, checkbox, select").each(function (i, x) {
+			if($(x).attr("type") == "checkbox") {
+				arr.push($(x).is(":checked"));
+			} else {
+				arr.push($(x).val());
+			}
+		});
+
+		var str = arr.join(";;;;;;;;;");
+
+		var res = await this.#md5(str);
+
+		return res;
+	}
+
+	#is_hidden_or_has_hidden_parent(element) {
+		if ($(element).css("display") == "none") {
+			return true;
+		}
+
+		var parents = $(element).parents();
+
+		for (var i = 0; i < parents.length; i++) {
+			if ($(parents[i]).css("display") == "none") {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	#group_layers (layers) {
+		var str = layers.join(";");
+
+		var char_to_group = new Array(str.length);
+		char_to_group.fill(null);
+
+		var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
+
+		var layer_names = Object.keys(layer_options);
+
+		var list_activation_layers = [];
+
+		for (var i = 0; i < layer_names.length; i++) {
+			var category = layer_options[layer_names[i]]["category"];
+			if(category == "Activation") {
+				list_activation_layers.push(layer_names[i]);
+			}
+		}
+
+		var batch_or_layer_normalization = "((?:(?:batch|layer)Normalization;?)+)";
+
+		var descs = [
+			{
+				"re": "((?:upSampling2d;?)+)",
+				"name": "Scaling up"
+			},
+			{
+				"re": "((?:lstm;)+)",
+				"name": "LSTM"
+			},
+			{
+				"re": "((?:[^;]+Pooling[0-9]D;?)+;?)",
+				"name": "<span class='TRANSLATEME_dimensionality_reduction'></span>"
+			},
+			{
+				"re": "((?:" + list_activation_layers.join("|") + ")+)",
+				"name": "<span class='TRANSLATEME_shy_activation_function'></span>"
+			},
+			{
+				"re": "((?:dropout;?)+)",
+				"name": "<span class='TRANSLATEME_shy_overfitting_prevention'></span>"
+			},
+			{
+				"re": batch_or_layer_normalization,
+				"name": "<span class='TRANSLATEME_rescale_and_recenter'></span>"
+			},
+			{
+				"re": "(" + batch_or_layer_normalization + "*(?:" + feature_extraction_base + "))",
+				"name": "<span class='TRANSLATEME_feature_extraction'></span>"
+			},
+			{
+				"re": "(" + batch_or_layer_normalization + "*(?:(?:" + feature_extraction_base + ";?)*(?:dropout?;);?))",
+				"name": "Feature ex&shy;trac&shy;tion &amp; Over&shy;fit&shy;ting pre&shy;vention"
+			},
+			{
+				"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)",
+				"name": "<span class='TRANSLATEME_classification'></span>"
+			},
+			{
+				"re": "((?:flatten;?)+;?)",
+				"name": "<span class='TRANSLATEME_flatten'></span>"
+			},
+			{
+				"re": "((?:reshape;?)+;?)",
+				"name": "<span class='TRANSLATEME_change_shape'></span>"
+			},
+			{
+				"re": "((?:(?:gaussian[^;]|alphaDropout)+;?)+;?)",
+				"name": "<span class='TRANSLATEME_simulate_real_data'></span>"
+			},
+			{
+				"re": "(DebugLayer)+",
+				"name": "Debugger"
+			}
+		];
+
+		for (var desc_i = 0; desc_i < descs.length; desc_i++) {
+			var this_re = RegExp(descs[desc_i]["re"], "ig");
+			var current_match;
+			while ((current_match = this_re.exec(str)) !== null) {
+				for (var new_index = current_match["index"]; new_index < (current_match["index"] + current_match[1].length); new_index++) {
+					char_to_group[new_index] = descs[desc_i]["name"];
+				}
+			}
+		}
+
+		var layer_to_char_start = [];
+
+		var current_layer_nr = 0;
+		for (var i = 0; i < str.length; i++) {
+			if(str[i] == ";") {
+				current_layer_nr++;
+			} else if(str[i - 1] == ";" || i == 0) {
+				layer_to_char_start[current_layer_nr] = i;
+			}
+		}
+
+		var result = [];
+
+		var last_layer_type = char_to_group[0];
+
+		var current_type_layers = [];
+
+		for (var i = 0; i < layer_to_char_start.length; i++) {
+			var layer_type = char_to_group[layer_to_char_start[i]];
+
+			if(last_layer_type != layer_type) {
+				var this_item = {};
+				this_item[last_layer_type] = current_type_layers;
+				result.push(this_item);
+
+				current_type_layers = [];
+				last_layer_type = layer_type;
+			}
+
+			current_type_layers.push(i);
+		}
+
+		var this_item = {};
+		this_item[last_layer_type] = current_type_layers;
+		result.push(this_item);
+
+		return result;
+	}
+
+	async write_descriptions (force=0) {
+		if(this.#is_hidden_or_has_hidden_parent($("#layers_container"))) {
+			$(".descriptions_of_layers").hide();
+			return;
+		}
+
+		var groups = this.#group_layers(get_layer_type_array());
+
+		if(groups.length <= 0) {
+			//log("groups.length <= 0");
+			$(".descriptions_of_layers").remove();
+			return;
+		}
+
+		$(".descriptions_of_layers").remove();
+
+		var layer = $(".layer");
+
+		if(!layer.length) {
+			//log("!layer.length!");
+			return;
+		}
+
+		var right_offset = this.#parse_int($(layer[0]).offset().left + $(layer[0]).width() + 26);
+
+		var all_layer_markers = $(".layer_start_marker");
+		this.assert(all_layer_markers.length >= 1);
+
+		for (var i = 0; i < groups.length; i++) {
+			var group = groups[i];
+			var keyname = Object.keys(groups[i])[0];
+			var layers = groups[i][keyname];
+			var last_layer_nr = layers[layers.length - 1];
+
+			var first_layer = $(layer[layers[0]]);
+			assert(first_layer.length, "first_layer could not be determined");
+
+			var last_layer = $(layer[Math.max(0, last_layer_nr - 1)]);
+			assert(last_layer.length, "last_layer could not be determined");
+
+			var first_layer_idx = Math.min(...group[keyname]);
+			assert(typeof(first_layer_idx) === "number", "first_layer_idx is not a number");
+			assert(!isNaN(first_layer_idx), "first_layer_idx is NaN");
+
+			var first_layer_marker = $(all_layer_markers[first_layer_idx]);
+			assert(first_layer_marker.length, "first_layer_marker could not be determined");
+
+			var first_layer_start = this.#parse_int(first_layer_marker.offset()["top"] - 6.5);
+			assert(first_layer_start, "first_layer_start could not be determined");
+
+			var last_layer_end = this.#parse_int($($(".layer_end_marker")[last_layer_nr]).offset()["top"]);
+			assert(typeof(last_layer_end) === "number", "last_layer_end is not a number");
+			assert(last_layer_end >= 0, "last_layer_end is not a number");
+
+			var first_layer_top = this.#parse_int(first_layer.position()["top"]);
+			assert(typeof(first_layer_top) === "number", "first_layer_top is not a number");
+			assert(first_layer_top >= 0, "first_layer_top is smaller or equal to 0");
+
+			if(keyname != "null" && keyname && keyname != "undefined") {
+				var _height = last_layer_end - first_layer_start - 13;
+				var hidden = "";
+				if(this.#is_hidden_or_has_hidden_parent($("#layers_container_left"))) {
+					hidden = "display: none;";
+				}
+
+				var new_div_html = "";
+				new_div_html = `<div class="descriptions_of_layers" style="position: absolute; top: ${first_layer_top}px; left: ${right_offset}px; height: ${_height}px; ${hidden}'">${keyname}</div>`;
+
+				$(new_div_html).appendTo("#maindiv");
+			}
+		}
+
+		$(".descriptions_of_layers").show();
+	}
+
 	#update_layers_gui () {
+		if(!this.#model) {
+			this.err("Cannot show layers gui when no model is loaded.");
+			return;
+		}
 		
+		if(!this.#layers_gui_div_name) {
+			this.err(`No this.#layers_gui_div_name given! Cannot continue show_layers_gui without this.#layers_gui_div_name parameter`);
+			return;
+		}
+
+		if(typeof(this.#layers_gui_div_name) != "string") {
+			this.err(`this.#layers_gui_div_name is not a string, but ${typeof(this.#layers_gui_div_name)}! Cannot continue show_layers_gui without this.#layers_gui_div_name being a valid string that refers to the ID of an element`);
+			return;
+		}
+
+		if(!$("#" + this.#layers_gui_div_name).length) {
+			this.err(`Cannot find #${this.#layers_gui_div_name} for show_layers_gui. Not showing layer GUI.`);
+			return;
+		}
+
+		var $layers_gui = $("#" + this.#layers_gui_div_name);
+
+		var layers = this.#model.layers;
 	}
 }
