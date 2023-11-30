@@ -7773,7 +7773,10 @@ class asanAI {
 		return str;
 	}
 
-	async show_layers(number) {
+	async show_layers() {
+
+		var number = this.#model.layers.length; 
+
 		this.assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
 
 		var layers_container = $("#" + this.#layers_gui_div_name);
