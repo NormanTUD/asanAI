@@ -242,6 +242,453 @@ class asanAI {
 		}
 	}
 
+	#layer_names = [];
+
+	#js_names_to_python_names = {
+		"dtype": "dtype",
+		"trainable": "trainable",
+		"dilationRate": "dilation_rate",
+		"padding": "padding",
+		"kernelSize": "kernel_size",
+		"poolSize": "pool_size",
+		"biasInitializer": "bias_initializer",
+		"alpha": "alpha",
+		"axis": "axis",
+		"momentum": "momentum",
+		"epsilon": "epsilon",
+		"stddev": "stddev",
+		"implementation": "implementation",
+		"stateful": "stateful",
+		"center": "center",
+		"scale": "scale",
+		"strides": "strides",
+		"maxValue": "max_value",
+		"betaConstraint": "beta_constraint",
+		"rate": "dropout_rate",
+		"movingVarianceInitializer": "moving_variance_initializer",
+		"size": "size",
+		"interpolation": "interpolation",
+		"dropout": "dropout",
+		"gammaConstraint": "gamma_constraint",
+		"activityRegularizer": "activity_regularizer",
+		"kernelRegularizer": "kernel_regularizer",
+		"biasRegularizer": "bias_regularizer",
+		"dense": "Dense",
+		"true": "True",
+		"false": "False",
+		"inputShape": "input_shape",
+		"activation": "activation",
+		"glorotUniform": "glorot_uniform",
+		"binaryCrossentropy": "binary_crossentropy",
+		"categoricalCrossentropy": "categorical_crossentropy",
+		"heUniform":"he_uniform",
+		"movingMeanInitializer": "moving_mean_initializer",
+		"glorotNormal": "glorot_normal",
+		"SoftMax": "softmax",
+		"flatten": "Flatten",
+		"heNormal": "he_normal",
+		"leCunNormal": "le_cun_normal",
+		"leCunUniform": "le_cun_uniform",
+		"randomNormal": "random_normal",
+		"randomUniform": "random_uniform",
+		//"truncatedNormal": "truncated_normal",
+		"varianceScaling": "variance_scaling",
+		"conv1d": "Conv1D",
+		"conv2d": "Conv2D",
+		"conv2dTranspose": "Conv2DTranspose",
+		"depthwiseConv2d": "DepthwiseConv2D",
+		"conv3d": "Conv3D",
+		"embedding": "Embedding",
+		"dropout": "Dropout",
+		"batchNormalization": "BatchNormalization",
+		"maxPooling1d": "MaxPooling1D",
+		"maxPooling2d": "MaxPooling2D",
+		"globalMaxPooling1d": "GlobalMaxPooling1D",
+		"globalMaxPooling2d": "GlobalMaxPooling2D",
+		"globalAveragePooling1d": "GlobalAveragePooling1D",
+		"globalAveragePooling2d": "GlobalAveragePooling2D",
+		"averagePooling1d": "AveragePooling1D",
+		"averagePooling2d": "AveragePooling2D",
+		"softmax": "SoftMax",
+		"kernelInitializer": "kernel_initializer",
+		"meanSquaredError": "mean_squared_error",
+		"useBias": "use_bias",
+		"recurrentInitializer": "recurrent_initializer",
+		"kernelRegularizer": "kernel_regularizer",
+		"recurrentConstraint": "recurrent_constraint",
+		"biasConstraint": "bias_constraint",
+		"recurrentDropout": "recurrent_dropout",
+		"returnSequences": "return_sequences",
+		"recurrentActivation": "recurrent_activation",
+		"unroll": "unroll",
+		"unitForgetBias": "unit_forget_bias",
+		"kernelConstraint": "kernel_constraint",
+		"returnState": "return_state",
+		"goBackwards": "go_backwards",
+		"depthMultiplier": "depth_multiplier",
+		"depthwiseInitializer": "depthwise_initializer",
+		"depthwiseConstraint": "depthwise_constraint",
+		"pointwiseInitializer": "pointwise_initializer",
+		"pointwiseConstraint": "pointwise_constraint",
+		"betaInitializer": "beta_initializer",
+		"gammaInitializer": "gamma_initializer",
+		"filters": "filters",
+		"units": "units",
+		"targetShape": "target_shape",
+		"GaussianNoise": "gaussianNoise",
+		"gaussianNoise": "GaussianNoise",
+		"gaussianDropout": "GaussianDropout",
+		"GaussianDropout": "gaussianDropout"
+	};
+
+	#layer_options = {
+		"dense": {
+			"description": "<span class=\"TRANSLATEME_dense_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"units",
+				"activation",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"visualize",
+				"dtype"
+			],
+			"category": "Basic"
+		},
+		"flatten": {
+			"description": "<span class=\"TRANSLATEME_flatten_description\" \/>",
+			"options": [
+				"visualize"
+			],
+			"category": "Basic"
+		},
+		"dropout": {
+			"description": "<span class=\"TRANSLATEME_dropout_description\" \/>",
+			"options": [
+				"dropout_rate",
+				"dtype",
+				"seed"
+			],
+			"category": "Basic"
+		},
+		"reshape": {
+			"description": "<span class=\"TRANSLATEME_reshape_description\" \/>",
+			"options": [
+				"target_shape",
+				"dtype"
+			],
+			"category": "Basic"
+		},
+		"elu": {
+			"description": "<span class=\"TRANSLATEME_elu_description\" \/>",
+			"options": [
+				"alpha",
+				"dtype"
+			],
+			"category": "Activation"
+		},
+		"leakyReLU": {
+			"description": "<span class=\"TRANSLATEME_leakyReLU_description\" \/>",
+			"options": [
+				"alpha",
+				"dtype"
+			],
+			"category": "Activation"
+		},
+		"reLU": {
+			"description": "<span class=\"TRANSLATEME_reLU_description\" \/>",
+			"options": [
+				"max_value",
+				"dtype"
+			],
+			"category": "Activation"
+		},
+		"softmax": {
+			"description": "<span class=\"TRANSLATEME_softmax_description\" \/>",
+			"options": [
+				"axis",
+				"dtype"
+			],
+			"category": "Activation"
+		},
+		"thresholdedReLU": {
+			"description": "<span class=\"TRANSLATEME_thresholdedReLU_description\" \/>",
+			"options": [
+				"theta"
+			],
+			"category": "Activation"
+		},
+		/*
+		"batchNormalization": {
+			"description": "<span class=\"TRANSLATEME_batchNormalization_description\" \/>",
+			"options": [
+				"trainable",
+				"center",
+				"scale",
+				"axis",
+				"epsilon",
+				"gamma_initializer",
+				"gamma_constraint",
+				"beta_initializer",
+				"beta_constraint",
+				"moving_mean_initializer",
+				"moving_variance_initializer",
+				"dtype"
+			],
+			"category": "Normalization"
+		},
+		*/
+		"layerNormalization": {
+			"description": "<span class=\"TRANSLATEME_layerNormalization_description\" \/>",
+			"options": [
+				"center",
+				"scale",
+				"axis",
+				"epsilon",
+				"beta_initializer",
+				"gamma_initializer",
+				"dtype"
+			],
+			"category": "Normalization"
+		},
+		"conv1d": {
+			"description": "<span class=\"TRANSLATEME_conv1d_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"activation",
+				"padding",
+				"filters",
+				"kernel_size",
+				"strides",
+				"dilation_rate",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"conv2d": {
+			"description": "<span class=\"TRANSLATEME_conv2d_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"activation",
+				"padding",
+				"filters",
+				"kernel_size",
+				"strides",
+				"dilation_rate",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"conv2dTranspose": {
+			"description": "<span class=\"TRANSLATEME_conv2dTranspose_description\" \/>",
+			"options": [
+				"filters",
+				"kernel_size",
+				"strides",
+				"padding",
+				"dilation_rate",
+				"activation",
+				"use_bias",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_constraint",
+				"bias_constraint",
+				"trainable",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"conv3d": {
+			"description": "<span class=\"TRANSLATEME_conv3d_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"activation",
+				"padding",
+				"filters",
+				"kernel_size",
+				"strides",
+				"dilation_rate",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"depthwiseConv2d": {
+			"description": "<span class=\"TRANSLATEME_depthwiseConv2d_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"activation",
+				"kernel_size",
+				"strides",
+				"depth_multiplier",
+				"depthwise_initializer",
+				"depthwise_constraint",
+				"padding",
+				"dilation_rate",
+				"kernel_initializer",
+				"bias_initializer",
+				"kernel_constraint",
+				"bias_constraint",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"separableConv2d": {
+			"description": "<span class=\"TRANSLATEME_separableConv2d_description\" \/>",
+			"options": [
+				"trainable",
+				"use_bias",
+				"depth_multiplier",
+				"depthwise_initializer",
+				"pointwise_initializer",
+				"depthwise_constraint",
+				"pointwise_constraint",
+				"filters",
+				"kernel_size",
+				"strides",
+				"padding",
+				"dilation_rate",
+				"activation",
+				"bias_initializer",
+				"bias_constraint",
+				"kernel_regularizer",
+				"bias_regularizer",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"upSampling2d": {
+			"description": "<span class=\"TRANSLATEME_upSampling2d_description\" \/>",
+			"options": [
+				"trainable",
+				"size",
+				"interpolation",
+				"visualize",
+				"dtype"
+			],
+			"category": "Convolutional"
+		},
+		"averagePooling1d": {
+			"description": "<span class=\"TRANSLATEME_averagePooling1d_description\" \/>",
+			"options": [
+				"padding",
+				"pool_size",
+				"strides",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"averagePooling2d": {
+			"description": "<span class=\"TRANSLATEME_averagePooling2d_description\" \/>",
+			"options": [
+				"padding",
+				"pool_size",
+				"strides",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"averagePooling3d": {
+			"description": "<span class=\"TRANSLATEME_averagePooling3d_description\" \/>",
+			"options": [
+				"padding",
+				"pool_size",
+				"strides",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"maxPooling1d": {
+			"description": "<span class=\"TRANSLATEME_maxPooling1d_description\" \/>",
+			"options": [
+				"pool_size",
+				"strides",
+				"padding",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"maxPooling2d": {
+			"description": "<span class=\"TRANSLATEME_maxPooling2d_description\" \/>",
+			"options": [
+				"pool_size",
+				"strides",
+				"padding",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"maxPooling3d": {
+			"description": "<span class=\"TRANSLATEME_maxPooling3d_description\" \/>",
+			"options": [
+				"pool_size",
+				"strides",
+				"padding",
+				"dtype"
+			],
+			"category": "Pooling"
+		},
+		"alphaDropout": {
+			"description": "<span class=\"TRANSLATEME_alphaDropout_description\" \/>",
+			"options": [
+				"rate",
+				"seed",
+				"dtype"
+			],
+			"category": "Noise"
+		},
+		"gaussianDropout": {
+			"description": "<span class=\"TRANSLATEME_gaussianDropout_description\" \/>",
+			"options": [
+				"rate",
+				"dtype"
+			],
+			"category": "Noise"
+		},
+		"gaussianNoise": {
+			"description": "<span class=\"TRANSLATEME_gaussianNoise_description\" \/>",
+			"options": [
+				"stddev",
+				"seed",
+				"dtype"
+			],
+			"category": "Noise"
+		},
+		"DebugLayer": {
+			"description": "<span class=\"TRANSLATEME_DebugLayer_description\" \/>",
+			"options": [],
+			"category": "Debug",
+			"custom": 1
+		}
+	}
+
+	#python_names_to_js_names = {};
+
 	constructor (...args) {
 		var last_tested_tf_version = "4.11.0";
 		var last_tested_jquery_version = "3.6.0";
@@ -253,6 +700,13 @@ class asanAI {
 		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
 		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
 		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
+
+
+		for (var key of Object.keys(this.#js_names_to_python_names)) {
+			this.#python_names_to_js_names[this.#js_names_to_python_names[key]] = this.#lowercase_first_letter(key);
+		}
+
+		this.#layer_names = Object.keys(this.#layer_options);
 
 		if(typeof(hashwasm) == "undefined") {
 			throw new Error("Please load md5.umd.min.js");
@@ -6507,12 +6961,12 @@ class asanAI {
 
 		var feature_extraction_base = "(?:(?:depthwise|separable)?conv.d(?:transpose)?;?)+;?(?:(?:batch|layer)Normalization;)*;?(?:[^;]+Pooling.d;?)*";
 
-		var layer_names = Object.keys(layer_options);
+		var layer_names = Object.keys(this.#layer_options);
 
 		var list_activation_layers = [];
 
 		for (var i = 0; i < layer_names.length; i++) {
-			var category = layer_options[layer_names[i]]["category"];
+			var category = this.#layer_options[layer_names[i]]["category"];
 			if(category == "Activation") {
 				list_activation_layers.push(layer_names[i]);
 			}
@@ -6723,5 +7177,140 @@ class asanAI {
 		var $layers_gui = $("#" + this.#layers_gui_div_name);
 
 		var layers = this.#model.layers;
+	}
+
+	#get_python_name(_name) {
+		if(typeof(_name) == "boolean") {
+			if(_name) {
+				return "True";
+			}
+			return "False";
+		}
+
+		if(Array.isArray(_name)) {
+			return _name;
+		}
+
+		if (_name in this.#js_names_to_python_names) {
+			return this.#js_names_to_python_names[_name];
+		}
+		return _name;
+	}
+
+	option_for_layer(nr) {
+		this.assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
+
+		var this_event = "initializer_layer_options(this)";
+
+		var option_for_layer_id = `option_for_layer_${this.#uuidv4()}`;
+
+		var str = "";
+		str += "<tr>";
+		str += "<td style='width: 140px'>";
+		str += "<button style='cursor: context-menu' class='show_data layer_options_button' onclick='toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>";
+		str += "</td>";
+		str += "<td>";
+		str += `<select id="${option_for_layer_id}" onfocus='disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+		var last_category = "";
+		for (var key of this.#layer_names) {
+			var this_category = this.#layer_options[key].category;
+			if (last_category != this_category) {
+				if (last_category != "") {
+					str += "</optgroup>";
+				}
+				str += "<optgroup label=\"" + this_category + "\">";
+				last_category = this_category;
+			}
+			str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + this.#get_python_name(key) + "</option>";
+		}
+		str += "</optgroup>";
+		str += "</select>";
+		str += "</td>";
+		str += "</tr>";
+		str += "<tbody class='layer_options_internal' style='display: none'></tbody>";
+
+		return str;
+	}
+
+	async show_layers(number) {
+		this.assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
+
+		var layers_container = $("#layers_container");
+
+		if(!layers_container.length) {
+			this.err(`#layers_container not found!`);
+			return;
+		}
+
+		var layers_container_str = "";
+		var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
+
+		var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
+		var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
+
+		for (var i = 0; i < number; i++) {
+			layers_container_str +=
+				"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
+				"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
+				remove +
+				add +
+				"<span class='layer_nr_desc'></span>" +
+				"<span class='layer_identifier'></span>" +
+				"<table class='configtable'>" +
+				this.option_for_layer(i) +
+				"</table>" +
+				"</div>" +
+				"<span class='layer_end_marker'></span>" +
+				"</li>"
+			;
+
+			layer_visualizations_tab_str +=
+				"<div class='layer_data'></div>" +
+			"<br>";
+			
+		}
+
+		layers_container[0].innerHTML = layers_container_str;
+
+		for (var i = 0; i < number; i++) {
+			await initializer_layer_options(i);
+		}
+
+		$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
+
+		sortable_layers_container(layers_container);
+
+		$(".train_neural_network_button").show();
+
+		try {
+			lenet.resize();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			wrn("[show_layers] " + e);
+		}
+	}
+
+	#lowercase_first_letter (string) {
+		if(typeof(string) != "string") {
+			wrn(`[lowercase_first_letter] lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
+			string = "" + string;
+		}
+
+		try {
+			var res = string.charAt(0).toLowerCase() + string.slice(1);
+
+			return res;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("[lowercase_first_letter] " + e);
+
+			return null;
+		}
 	}
 }
