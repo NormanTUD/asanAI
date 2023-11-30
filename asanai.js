@@ -2381,7 +2381,8 @@ class asanAI {
 
 			if(this.#draw_internal_states) {
 				if(i == 0 && this.#show_sliders) {
-					var __parent = $("#" + this.#internal_states_div).parent();
+					var $internal_states_div = $("#" + this.#internal_states_div);
+					var __parent = $internal_states_div.parent();
 					if(__parent.length && $("#show_internals_slider").length == 0) {
 						var _html = this.#get_internals_slider(
 							this.#pixel_size,
@@ -2390,7 +2391,7 @@ class asanAI {
 							this.#kernel_pixel_size_max
 						);
 
-						__parent.append($(_html));
+						$internal_states_div.append($(_html));
 					} else {
 						this.dbg(`[predict] Could not find $("#" + this.#internal_states_div) = $("#${this.#internal_states_div}")`);
 					}
