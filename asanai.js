@@ -17,6 +17,10 @@ class asanAI {
 	#y_file = null;
 	#y_shape = null;
 
+	#csv_allow_training = false;
+	#has_missing_values = false;
+	#atrament_data = {};
+
 	#waiting_updated_page_uuids = [];
 	#number_channels = 3;
 	#image_url_tensor_div = null;
@@ -57,6 +61,96 @@ class asanAI {
 		"bool": "bool",
 		//"complex64": "complex64" //,
 		//'string': 'string'
+	}
+
+	#initializer_options = {
+		"constant": {
+			"description": "Initializer that generates values initialized to some constant.",
+			"options": [
+				"value"
+			]
+		},
+		"glorotNormal": {
+			"description": "Glorot normal initializer, also called Xavier normal initializer. It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(2 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor. Reference: Glorot & Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf",
+			"options": [
+				"seed"
+			]
+		},
+		"glorotUniform": {
+			"description": "Glorot uniform initializer, also called Xavier uniform initializer. It draws samples from a uniform distribution within [-limit, limit] where limit is sqrt(6 / (fan_in + fan_out)) where fan_in is the number of input units in the weight tensor and fan_out is the number of output units in the weight tensor Reference: Glorot & Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf.",
+			"options": [
+				"seed"
+			]
+		},
+		"heNormal": {
+			"description": "He normal initializer. It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(2 / fanIn) where fanIn is the number of input units in the weight tensor. Reference: He et al., http://arxiv.org/abs/1502.01852",
+			"options": [
+				"seed"
+			]
+		},
+		"heUniform": {
+			"description": "He uniform initializer. It draws samples from a uniform distribution within [-limit, limit] where limit is sqrt(6 / fan_in) where fanIn is the number of input units in the weight tensor. Reference: He et al., http://arxiv.org/abs/1502.01852",
+			"options": [
+				"seed"
+			]
+		},
+		"identity": {
+			"description": "Initializer that generates the identity matrix. Only use for square 2D matrices.",
+			"options": [
+				"gain"
+			]
+		},
+		"leCunNormal": {
+			"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor.", // TODO References
+			"options": [
+				"seed"
+			]
+		},
+		"leCunUniform": {
+			"description": "LeCun uniform initializer. It draws samples from a uniform distribution in the interval [-limit, limit] with limit = sqrt(3 / fanIn), where fanIn is the number of input units in the weight tensor.",
+			"options": [
+				"seed"
+			]
+		},
+		"ones": {
+			"description": "Initializer that generates tensors initialized to 1.",
+			"options": []
+		},
+		"orthogonal": {
+			"description": "Initializer that generates a random orthogonal matrix.", // TODO References
+			"options": [
+				"gain", "seed"
+			]
+		},
+		"randomNormal": {
+			"description": "Initializer that generates random values initialized to a normal distribution.",
+			"options": [
+				"mean", "stddev", "seed"
+			]
+		},
+		"randomUniform": {
+			"description": "Initializer that generates random values initialized to a uniform distribution. Values will be distributed uniformly between the configured minval and maxval.",
+			"options": [
+				"minval", "maxval", "seed"
+			]
+		},
+		"truncatedNormal": {
+			"description": "Initializer that generates random values initialized to a truncated normal. distribution. These values are similar to values from a RandomNormal except that values more than two standard deviations from the mean are discarded and re-drawn. This is the recommended initializer for neural network weights and filters.",
+			"options": [
+				"mean", "stddev", "seed"
+			]
+		},
+		"varianceScaling": {
+			"description": "Initializer capable of adapting its scale to the shape of weights. With distribution=NORMAL, samples are drawn from a truncated normal distribution centered on zero, with stddev = sqrt(scale / n) where n is:number of input units in the weight tensor, if mode = FAN_IN; number of output units, if mode = FAN_OUT. average of the numbers of input and output units, if mode = FAN_AVG. With distribution=UNIFORM, samples are drawn from a uniform distribution within [-limit, limit], with limit = sqrt(3 * scale / n).",
+			"options": [
+				"scale", "mode", "distribution", "seed"
+			]
+		},
+		"zeros": {
+			"description": "Initializer that generates tensors initialized to 0.",
+			"options": []
+
+		}
 	}
 
 	#layer_options_defaults = {
@@ -4576,7 +4670,7 @@ class asanAI {
 			return;
 		}
 
-		if($("#data_origin").val() != "default") {
+		if(this.#data_origin != "default") {
 			this.#log_once("Train visualization only works for default data.");
 			$("#canvas_grid_visualization").html("");
 			return;
@@ -7734,13 +7828,13 @@ class asanAI {
 				e = e.message;
 			}
 
-			wrn("[show_layers] " + e);
+			this.wrn("[show_layers] " + e);
 		}
 	}
 
 	#lowercase_first_letter (string) {
 		if(typeof(string) != "string") {
-			wrn(`[lowercase_first_letter] lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
+			this.wrn(`[lowercase_first_letter] lowercase_first_letter(string = ${string}), typeof: ${typeof(string)}`);
 			string = "" + string;
 		}
 
@@ -7853,29 +7947,29 @@ class asanAI {
 					await set_input_shape(last_good, 1);
 				}
 			} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
-				wrn("[updated_page] " + e);
+				this.wrn("[updated_page] " + e);
 			} else if(("" + e).includes("out of memory")) {
 				await write_error("" + e);
 			} else if(("" + e).includes("Cannot read properties of undefined")) {
-				wrn("[updated_page] " + e);
+				this.wrn("[updated_page] " + e);
 			} else if(("" + e).includes("model.layers[i]")) {
-				dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
+				this.dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
 			} else if (("" + e).includes("model.layers is undefined")) {
-				dbg("[updated_page] model.layers is undefined");
+				this.dbg("[updated_page] model.layers is undefined");
 			} else if (("" + e).includes("model is undefined")) {
-				dbg("[updated_page] model is undefined");
+				this.dbg("[updated_page] model is undefined");
 			} else if (("" + e).includes("model.input is undefined")) {
-				dbg("[updated_page] model.input is undefined");
+				this.dbg("[updated_page] model.input is undefined");
 			} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
-				dbg("[updated_page] " + e);
+				this.dbg("[updated_page] " + e);
 			} else if (("" + e).includes("targetShape is undefined")) {
-				dbg("[updated_page] " + e);
+				this.dbg("[updated_page] " + e);
 			} else if (("" + e).includes("code is undefined")) {
-				dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
+				this.dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
 			} else if (("" + e).includes("fcnn is undefined")) {
-				dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
+				this.dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
 			} else if (("" + e).includes("e is null")) {
-				dbg("[updated_page] This error may happen when switching models: " + e);
+				this.dbg("[updated_page] This error may happen when switching models: " + e);
 			} else {
 				this.err("" + e);
 				console.error("Stack:", original_e.stack);
@@ -7900,12 +7994,10 @@ class asanAI {
 		try {
 			await _temml();
 		} catch (e) {
-			wrn(e);
+			this.wrn(e);
 		}
 
-		last_updated_page = Date.now();
-
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+		this.#disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 	}
 
 	#has_any_warning () {
@@ -7999,31 +8091,31 @@ class asanAI {
 		//await hide_no_conv_stuff();
 
 		var current_input_shape = this.#get_input_shape();
-		if (cam) {
+		if (this.#camera) {
 			stop_webcam();
 		}
 
 		try {
 			await this.write_descriptions();
 		} catch (e) {
-			wrn(e);
+			this.wrn(e);
 		}
 
-		allow_training();
+		this.#allow_training();
 
 		if (!no_prediction) {
-			show_prediction(1, 1); // await not desired here
+			this.#redo_what_has_to_be_redone();
 		}
 
 		await wait_for_latex_model;
 		//await wait_for_show_hide_load_weights;
-		if(atrament_data.sketcher && await this.#input_shape_is_image()) {
+		if(this.#atrament_data.sketcher && await this.#input_shape_is_image()) {
 			try {
 				await predict_handdrawn();
 			} catch (e) {
 				if(("" + e).includes("but got array with shape")) {
 					var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
-					wrn("[#updated_page_internal] " + _err);
+					this.wrn("[#updated_page_internal] " + _err);
 					l(_err);
 				} else {
 					throw new Error(e);
@@ -8031,19 +8123,13 @@ class asanAI {
 			}
 		}
 
-		if(mode == "beginner") {
-			$(".expert_mode_only").hide();
-		} else {
-			$(".expert_mode_only").show();
-		}
+		this.#allow_editable_labels();
 
-		allow_editable_labels();
+		for (var i = 0; i < this.#model.layers.length; i++) {
+			await this.#insert_initializer_options(i, "kernel");
+			await this.#insert_initializer_options(i, "bias");
 
-		for (var i = 0; i < model.layers.length; i++) {
-			await insert_initializer_options(i, "kernel");
-			await insert_initializer_options(i, "bias");
-
-			await update_translations();
+			await this.#update_translations();
 		}
 
 		return true;
@@ -8669,7 +8755,7 @@ if len(sys.argv) == 1:
 						output_shape_string = output_shape_string.replace("null,", "");
 					}
 				} else {
-					dbg(`#identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+					this.dbg(`#identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 				}
 
 				if(this.#has_zero_output_shape) {
@@ -8776,7 +8862,7 @@ if len(sys.argv) == 1:
 
 					first_layer = false;
 				} catch (e) {
-					wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
+					this.wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
 					header("DATA:");
 					log(data);
 					$($(".warning_container")[i]).show();
@@ -8786,8 +8872,8 @@ if len(sys.argv) == 1:
 
 				traindebug("tf.layers." + type + "(", data, ")");
 			} else {
-				if(finished_loading) {
-					wrn(`get_model_structure is empty for layer ${i}`)
+				if(this.#finished_loading) {
+					this.wrn(`get_model_structure is empty for layer ${i}`)
 				}
 			}
 		}
@@ -8800,7 +8886,7 @@ if len(sys.argv) == 1:
 	}
 
 	#enable_start_training_custom_tensors() {
-		if (!$("#data_origin").val() == "tensordata") {
+		if (!this.#data_origin == "tensordata") {
 			return;
 		}
 
@@ -8826,7 +8912,7 @@ if len(sys.argv) == 1:
 	}
 
 	async #last_shape_layer_warning() {
-		if ($("#data_origin").val() == "image") {
+		if (this.#data_origin == "image") {
 			if (!model) {
 				log("last_layer_shape_warning is waiting for the model...");
 				while (!model) {
@@ -8876,5 +8962,275 @@ if len(sys.argv) == 1:
 		} else {
 			$("#last_layer_shape_warning").html("");
 		}
+	}
+
+	#allow_training() {
+		if (this.#_allow_training()) {
+			this.#enable_train();
+		} else {
+			this.#disable_train();
+		}
+	}
+
+	#_allow_training() {
+		if(this.#has_missing_values) {
+			return false;
+		}
+
+		if(this.#has_zero_output_shape) {
+			return false;
+		}
+
+		var data_origin = this.#data_origin;
+
+		if (data_origin == "default") {
+			return true;
+		}
+
+		if (data_origin == "image") {
+			var number_of_training_images = $(".own_images").children().length;
+			if (number_of_training_images) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (data_origin == "csv") {
+			return this.#csv_allow_training;
+		} else if (data_origin == "tensordata") {
+			if (special_reason_disable_training) {
+				return false;
+			} else {
+				if (x_file && y_file) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+	}
+
+	#allow_editable_labels () {
+		$(".label_element").each((i, x) => {
+			var label_index = this.#parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+
+			if(!labels.length) {
+				//wrn("labels is an array, but is empty.");
+				return;
+			}
+
+			try {
+				var tmp_label = labels[label_index];
+				if(tmp_label === undefined) {
+					this.wrn("[allow_editable_labels] tmp_label undefined");
+					return;
+				}
+
+				if(label_index === undefined) {
+					var tmp_label = $(x).text();
+					$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					return;
+				}
+
+				tmp_label = tmp_label.replaceAll(/'/g, "");
+				if(tmp_label) {
+					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+						$(x).find("input").val(tmp_label);
+					} else {
+						$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					}
+				} else {
+					tmp_label = $(x).text();
+					$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+				}
+			} catch (e) {
+				if(("" + e).includes("tmp_label.replaceAll is not a function")) {
+					this.wrn("[allow_editable_labels] This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
+				} else {
+					this.err(e);
+				}
+			}
+		});
+	}
+
+	async #insert_initializer_options (layer_nr, initializer_type) {
+		this.assert(this.#valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+		this.assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
+
+		var max_layer = this.#model.layers.length;
+
+		if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
+			this.dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
+			return;
+		}
+
+		var existing_init_elements = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer_tr");
+
+		var initializer = $($(".layer_options_internal")[layer_nr]).find("." + initializer_type + "_initializer");
+
+		var initializer_name = initializer.val();
+
+		if(existing_init_elements.length) {
+			var number_of_removed_items = 0;
+
+			var options = this.#initializer_options[initializer_name]["options"];
+
+			var prev_classes = [];
+
+			for (var i = 0; i < existing_init_elements.length; i++) {
+				var remove = true;
+
+				try {
+					var this_initializer_class_type = this.#findInitializerElement($($(existing_init_elements[i])[0]).find("input")[0].classList);
+
+					var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
+
+					if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
+						remove = false;
+					} else {
+						prev_classes.push(this_initializer_type);
+
+					}
+				} catch (e) {
+
+				}
+
+				if(remove) {
+					$(existing_init_elements[i]).remove();
+					number_of_removed_items++;
+				}
+			}
+
+
+			if(number_of_removed_items == 0) {
+				return;
+			}
+		}
+
+
+		if(initializer_name) {
+			var options = this.#initializer_options[initializer_name]["options"];
+
+			for (var i = 0; i < options.length; i++) {
+				this.#insert_initializer_option_trs(layer_nr, initializer_type, options[i]);
+			}
+		}
+	}
+
+	#findInitializerElement(arr) {
+		for (let i = 0; i < arr.length; i++) {
+			if (typeof arr[i] === 'string' && arr[i].includes('_initializer_')) {
+				return arr[i];
+			}
+		}
+		return null; // Return null if no matching element is found
+	}
+
+	#insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
+		this.assert(this.#valid_initializer_types.includes(initializer_type), "#insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+		this.assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...this.#valid_initializer_types].includes(option_type), "invalid option type " + option_type);
+		this.assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
+
+		var asanai_this = this;
+
+		var function_name = `asanai_this.#add_${initializer_type}_initializer_${option_type}_option`;
+
+		var eval_string = `$(${function_name}($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).
+			insertAfter($($(".layer_setting")[${layer_nr}]).
+				find(".${initializer_type}_initializer").
+				parent().
+				parent()
+			)
+		`;
+
+		//console.log(eval_string);
+
+		eval(eval_string);
+
+	}
+
+	#add_kernel_initializer_seed_option (type, nr) {
+		this.assert(typeof(type) == "string", "type is not a string #add_kernel_initializer_seed_option, but " + typeof(type) + ", " + type);
+		this.assert(typeof(nr) == "number", "nr is not a number for #add_kernel_initializer_seed_option, but " + typeof(type) + ", " + type);
+		return this.#get_tr_str_for_layer_table('Seed', 'kernel_initializer_seed', 'number', { 'value': 1 }, nr, 'kernel_initializer_tr');
+	}
+
+	#add_bias_initializer_seed_option (type, nr) {
+		this.assert(typeof(type) == "string", "type is not a string add_bias_initializer_seed_option, but " + typeof(type) + ", " + type);
+		this.assert(typeof(nr) == "number", "nr is not a number for add_bias_initializer_seed_option, but " + typeof(type) + ", " + type);
+		return this.#get_tr_str_for_layer_table('Seed', 'bias_initializer_seed', 'number', { 'value': 1 }, nr, 'bias_initializer_tr');
+	}
+
+	#update_translations () {
+		this.wrn(`#update_translations not defined yet!`);
+	}
+
+	#disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
+		try {
+			if(this.#model && !(this.#model.isTraining || this.#started_training)) {
+				this.#enable_every_layer();
+			}
+
+			if(mode == "beginner") {
+				var last_element_nr = $(".layer_setting").length - 1;
+				var last_layer_setting = $($(".layer_setting")[last_element_nr]);
+
+				$($(".configtable")[$(".configtable").length - 1]).find("input,select,button").prop("disabled", true);
+
+				last_layer_setting.find("button").prop("disabled", true);
+				last_layer_setting.find(".show_data").prop("disabled", false);
+				last_layer_setting.find(".visualize_layer_button").prop("disabled", false);
+				last_layer_setting.find(".remove_layer").prop("disabled", true);
+				last_layer_setting.find(".add_layer").prop("disabled", false);
+
+				this.#disable_flatten_layer();
+
+				//l("Disabling last layer in beginner mode");
+			}
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err("[disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode] " + e);
+		}
+
+	}
+
+	#enable_every_layer () {
+		$(".configtable").find("input,select,button").prop("disabled", false);
+		$(".layer_setting").find("button").prop("disabled", false);
+	}
+
+	#disable_flatten_layer () {
+		if(!this.#model) {
+			if(this.#finished_loading) {
+				this.wrn("[#disable_flatten_layer] No model found");
+			}
+			return;
+		}
+
+		if(!Object.keys(this.#model).includes("layers") || !this.#model.layers.length) {
+			if(this.#finished_loading) {
+				this.wrn("[#disable_flatten_layer] No layers found");
+			}
+			return;
+		}
+
+		try {
+			var flatten_layer = null;
+			for (var i = 0; i < this.#model.layers.length; i++) {
+				if(!flatten_layer && this.#model.layers[i].name.startsWith("flatten")) {
+					flatten_layer = i;
+				}
+			}
+
+			if(flatten_layer !== null) {
+				$($(".layer_setting")[flatten_layer]).find(".remove_layer").prop("disabled", true);
+			}
+		} catch (e) {
+			throw new Error(e);
+		}
+
 	}
 }
