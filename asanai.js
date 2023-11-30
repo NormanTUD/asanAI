@@ -8,6 +8,7 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
+	#has_zero_output_shape = false;
 
 	#waiting_updated_page_uuids = [];
 	#number_channels = 3;
@@ -3352,7 +3353,7 @@ class asanAI {
 				__parent.append(layer_div);
 			}
 
-			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.get_layer_identification(layer) + "</h3>").hide();
+			layer_div.html("<h3 class=\"data_flow_visualization layer_header\">Layer " + layer + " &mdash; " + layer_name + " " + this.#get_layer_identification(layer) + "</h3>").hide();
 
 			layer_div.show();
 
@@ -3527,7 +3528,7 @@ class asanAI {
 		return dim;
 	}
 
-	get_layer_identification (i) {
+	#get_layer_identification (i) {
 		if(this.#model === null || this.#model === undefined) {
 			model_is_ok();
 			return;
@@ -4890,7 +4891,7 @@ class asanAI {
 						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
 						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 					} catch (e) {
-						err("" + e);
+						this.err("" + e);
 					}
 				}
 				asanai_this.#last_batch_plot_time = Date.now();
@@ -6332,13 +6333,13 @@ class asanAI {
 
 					this_activation_string = this_activation_string.replaceAll("REPLACEME", "{" + prev_layer_name + "}");
 
-					var alpha = asanai_this.#parse_float(get_item_value(i, "alpha"));
+					var alpha = asanai_this.#parse_float(this.#get_item_value(i, "alpha"));
 					if(typeof(alpha) == "number") {
 						this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + alpha + "}");
 						this_activation_string = this_activation_string.replaceAll("\\alpha", "\\underbrace{" + alpha + "}_{\\alpha} \\cdot ");
 					}
 
-					var theta = asanai_this.#parse_float(get_item_value(i, "theta"));
+					var theta = asanai_this.#parse_float(this.#get_item_value(i, "theta"));
 					if(typeof(theta) == "number") {
 						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
 					}
@@ -6393,11 +6394,11 @@ class asanAI {
 				var beta_string = "";
 				var gamma_string = "";
 				if("beta" in layer_data[i]) {
-					beta_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].beta, parse_int($("#decimal_points_math_mode").val())));
+					beta_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].beta, this.#parse_int($("#decimal_points_math_mode").val())));
 					beta_string = "\\displaystyle " + beta_string;
 				}
 				if("gamma" in layer_data[i]) {
-					gamma_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].gamma, parse_int($("#decimal_points_math_mode").val())));
+					gamma_string = array_to_latex_matrix(asanai_this.#array_to_fixed(layer_data[i].gamma, this.#parse_int($("#decimal_points_math_mode").val())));
 					gamma_string = "\\displaystyle " + gamma_string;
 				}
 
@@ -6418,7 +6419,7 @@ class asanAI {
 			} else if (this_layer_type == "DebugLayer") {
 				str += "\\text{The debug layer does nothing to the data, but just prints it out to the developers console.}";
 			} else if (this_layer_type == "gaussianNoise") {
-				str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + get_item_value(i, "stddev") + ".}";
+				str += "\\text{Adds gaussian noise to the input (only active during training), Standard-deviation: " + this.#get_item_value(i, "stddev") + ".}";
 			} else if (this_layer_type == "conv1d") {
 				str += this.#_get_h(i + 1) + " = \\sum_{i=1}^{N} \\left( \\sum_{p=1}^{K} " + this.#_get_h(i) + "(x+i, c) \\times \\text{kernel}(p, c, k) \\right) + \\text{bias}(k)";
 			} else if (this_layer_type == "conv1d") {
@@ -6890,7 +6891,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			err("[md5] " + e);
+			this.err("[md5] " + e);
 		}
 	}
 
@@ -7209,7 +7210,7 @@ class asanAI {
 
 		if(match) {
 			if(typeof(this.#layer_options_defaults[option_name]) == "string" && this.#layer_options_defaults[option_name] == "[]") {
-				var number_of_match_items = parse_int(match[1]);
+				var number_of_match_items = this.#parse_int(match[1]);
 				var number = 1;
 				if(option_name == "kernel_size") {
 					var number = 3;
@@ -7347,6 +7348,37 @@ class asanAI {
 		var $layers_gui = $("#" + this.#layers_gui_div_name);
 
 		var layers = this.#model.layers;
+	}
+
+	#get_item_value(layer, classname) {
+		this.assert(typeof (layer) == "number", "Layer is not an integer, but " + typeof (layer));
+		this.assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
+
+		var layer_settings = $(".layer_setting");
+		var layer = $(layer_settings[layer]);
+
+		if (typeof(classname) == "string") {
+			var found = $(layer.find("." + classname)[0]);
+			if (found.attr("type") == "checkbox") {
+				return found.is(":checked");
+			} else {
+				var data = found.val();
+				return data;
+			}
+		} else {
+			for (var this_classname in classname) {
+				var found = $($layer.find("." + this_classname)[0]);
+				if (found.attr("type") == "checkbox") {
+					return found.is(":checked");
+				} else {
+					var data = found.val();
+					if (data) {
+						return data;
+					}
+				}
+			}
+			return null;
+		}
 	}
 
 	#get_python_name(_name) {
@@ -7929,22 +7961,21 @@ class asanAI {
 
 		var redo_graph = await this.#update_python_code(1);
 
-		if (model && redo_graph && !no_graph_restart) {
-			await restart_fcnn(1);
-			await restart_lenet(1);
+		if (this.#model && redo_graph && !no_graph_restart) {
+			await this.restart_fcnn(1);
 		}
 
-		prev_layer_data = [];
+		this.#prev_layer_data = [];
 
 		try {
-			await identify_layers();
+			await this.#identify_layers();
 		} catch (e) {
 			var stack = e.stack;
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
-			err("identify_layers() failed with: " + e + ". Stack: ");
+			this.err("#identify_layers() failed with: " + e + ". Stack: ");
 			console.log(stack);
 		}
 
@@ -7964,13 +7995,13 @@ class asanAI {
 
 		await hide_no_conv_stuff();
 
-		var current_input_shape = get_input_shape();
+		var current_input_shape = this.#get_input_shape();
 		if (cam) {
 			stop_webcam();
 		}
 
 		try {
-			await write_descriptions();
+			await this.write_descriptions();
 		} catch (e) {
 			wrn(e);
 		}
@@ -8065,46 +8096,46 @@ class asanAI {
 					var option_name = this.#layer_options[type]["options"][j];
 
 					if (option_name == "pool_size") {
-						var _pool_size_x = get_item_value(i, "pool_size_x");
-						var _pool_size_y = get_item_value(i, "pool_size_y");
+						var _pool_size_x = this.#get_item_value(i, "pool_size_x");
+						var _pool_size_y = this.#get_item_value(i, "pool_size_y");
 
 						if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
-							data[this.#get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
+							data[this.#get_python_name(option_name)] = [this.#parse_int(_pool_size_x), this.#parse_int(_pool_size_y)];
 						}
 					} else if (option_name == "strides") {
-						var _strides_x = get_item_value(i, "strides_x");
-						var _strides_y = get_item_value(i, "strides_y");
+						var _strides_x = this.#get_item_value(i, "strides_x");
+						var _strides_y = this.#get_item_value(i, "strides_y");
 
 						if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
-							data[this.#get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
+							data[this.#get_python_name(option_name)] = [this.#parse_int(_strides_x), this.#parse_int(_strides_y)];
 						}
 					} else if (option_name == "kernel_size") {
-						var kernel_size_x = get_item_value(i, "kernel_size_x");
-						var kernel_size_y = get_item_value(i, "kernel_size_y");
-						var kernel_size_z = get_item_value(i, "kernel_size_z");
+						var kernel_size_x = this.#get_item_value(i, "kernel_size_x");
+						var kernel_size_y = this.#get_item_value(i, "kernel_size_y");
+						var kernel_size_z = this.#get_item_value(i, "kernel_size_z");
 
 						if(kernel_size_x && kernel_size_y && kernel_size_z) {
 							data[this.#get_python_name(option_name)] = [
-								parse_int(kernel_size_x),
-								parse_int(kernel_size_y),
-								parse_int(kernel_size_z)
+								this.#parse_int(kernel_size_x),
+								this.#parse_int(kernel_size_y),
+								this.#parse_int(kernel_size_z)
 							];
 						} else if (kernel_size_x && kernel_size_y) {
 							data[this.#get_python_name(option_name)] = [
-								parse_int(kernel_size_x),
-								parse_int(kernel_size_y)
+								this.#parse_int(kernel_size_x),
+								this.#parse_int(kernel_size_y)
 							];
 						} else if (kernel_size_x) {
 							data[this.#get_python_name(option_name)] = [
-								parse_int(kernel_size_x)
+								this.#parse_int(kernel_size_x)
 							];
 						} else {
 							await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
 						}
 					} else if (option_name == "size") {
-						data[this.#get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
+						data[this.#get_python_name(option_name)] = eval("[" + this.#get_item_value(i, "size") + "]");
 					} else if (option_name == "dilation_rate") {
-						var dil_rate = get_item_value(i, option_name);
+						var dil_rate = this.#get_item_value(i, option_name);
 
 						dil_rate = dil_rate.replace(/[^0-9,]/g, "");
 
@@ -8113,20 +8144,20 @@ class asanAI {
 						data[this.#get_python_name(option_name)] = eval("[" + code_str + "]");
 
 					} else if (option_name == "target_shape") {
-						data[this.#get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
+						data[this.#get_python_name(option_name)] = eval("[" + this.#get_item_value(i, "target_shape") + "]");
 					} else if (option_name == "activation") {
 						if(option_name) {
-							data[this.#get_python_name(option_name)] = this.#get_python_name(get_item_value(i, option_name));
+							data[this.#get_python_name(option_name)] = this.#get_python_name(this.#get_item_value(i, option_name));
 						}
 					} else {
-						data[this.#get_python_name(option_name)] = get_item_value(i, option_name);
+						data[this.#get_python_name(option_name)] = this.#get_item_value(i, option_name);
 					}
 				}
 
 				redo_graph++;
 			}
 
-			valid_initializer_types.forEach((type) => {
+			this.#valid_initializer_types.forEach((type) => {
 				["regularizer", "initializer"].forEach((func) => {
 					var item_name = type + "_" + func;
 					if (Object.keys(data).includes(item_name)) {
@@ -8141,14 +8172,14 @@ class asanAI {
 			for (const [key, value] of Object.entries(data)) {
 				if (key == "dtype" && i == 0 || key != "dtype") {
 					if (typeof (value) != "undefined" && typeof(key) != "boolean") {
-						params.push(get_python_name(key) + "=" + quote_python(this.#get_python_name(value)));
+						params.push(this.#get_python_name(key) + "=" + this.#quote_python(this.#get_python_name(value)));
 					}
 				}
 			}
 
 			delete data["visualize"];
 
-			if(model && Object.keys(model).includes("layers")) {
+			if(this.#model && Object.keys(this.#model).includes("layers")) {
 				/*
 				var cdata = convert_to_python_string(data)
 				if(cdata == "{}") {
@@ -8159,21 +8190,21 @@ class asanAI {
 				try {
 					var classname = "";
 
-					if(Object.keys(model).includes("layers") && Object.keys(model.layers).includes("" + i)) {
-						classname = model.layers[i].getClassName();
+					if(Object.keys(this.#model).includes("layers") && Object.keys(this.#model.layers).includes("" + i)) {
+						classname = this.#model.layers[i].getClassName();
 					}
 
 					if(classname) {
-						expert_code += model_add_python_structure(classname, data);
+						expert_code += this.#model_add_python_structure(classname, data);
 					} else {
 						expert_code += "# Problem getting the code for this layer";
 					}
 				} catch (e) {
-					if(("" + e).includes("model.layers[i] is undefined")) {
-						wrn("[#update_python_code] model.layers was undefined. This MAY be harmless.");
+					if(("" + e).includes("this.#model.layers[i] is undefined")) {
+						this.wrn("[#update_python_code] this.#model.layers was undefined. This MAY be harmless.");
 					} else {
 						expert_code += "# ERROR while creating code: " + e;
-						log("[#update_python_code] ERROR in python expert code: " + e);
+						this.log("[#update_python_code] ERROR in python expert code: " + e);
 						console.log("[#update_python_code] data:", data);
 					}
 				}
@@ -8182,16 +8213,16 @@ class asanAI {
 
 		if(expert_code) {
 			var labels_str = "";
-			if(labels.length) {
-				labels_str = "labels = ['" + labels.join("', '") + "']\n";
+			if(this.#labels.length) {
+				labels_str = "labels = ['" + this.#labels.join("', '") + "']\n";
 			}
 
 			var wh = "";
 
-			var is = get_input_shape_with_batch_size(); is[0] = "None"; 
+			var is = this.#get_input_shape_with_batch_size(); is[0] = "None"; 
 
 			expert_code =
-				python_boilerplate(input_shape_is_image_val, 0) +
+				this.#python_boilerplate(input_shape_is_image_val, 0) +
 				labels_str +
 
 				"model = tf.keras.Sequential()\n\n" +
@@ -8204,13 +8235,490 @@ class asanAI {
 				"\n\nmodel.summary()\n";
 		}
 
-		var python_code = create_python_code(input_shape_is_image_val);
+		var python_code = this.#create_python_code(input_shape_is_image_val);
 
 		$("#python").text(python_code).show();
 		$("#python_expert").text(expert_code).show();
 
-		await highlight_code();
+		await this.#highlight_code();
 
 		return redo_graph;
+	}
+
+	#quote_python(item, nobrackets=0) {
+		if (item === undefined) {
+			return "";
+		}
+
+		if (typeof (item) == "object") {
+			return JSON.stringify(item);
+		} else {
+			if (this.#is_numeric(item)) {
+				return item;
+			} else if (!nobrackets && /^\d+(,\d+)*$/.test(item)) {
+				return "[" + item + "]";
+			} else if (item == "True" || item == "False") {
+				return item;
+			} else if (!nobrackets && item.includes("get_shape")) {
+				return item;
+			} else if (!nobrackets && item.startsWith("[")) {
+				return item;
+			} else {
+				return "\"" + item + "\"";
+			}
+		}
+
+		return item;
+	}
+
+	#is_numeric(str) {
+		if (typeof str != "string") return false;
+		if (str == "") return false;
+		return !isNaN(str) && !isNaN(this.#parse_float(str));
+	}
+
+	#model_add_python_structure (layer_type, data) {
+		this.assert(layer_type, "layer_type is not defined");
+		this.assert(data, "data is not defined");
+
+		if(Object.keys(data).includes("dropout_rate")) {
+			data["rate"] = data["dropout_rate"];
+			delete data["dropout_rate"]
+		}
+
+		var str = "";
+		if(layer_type == "Conv2D") {
+			return `model.add(layers.Conv2D(
+	${data.filters},
+	(${data.kernel_size}),
+${this.#python_data_to_string(data, ["filters", "kernel_size"])}
+))\n`;
+		} else if(layer_type == "Dense") {
+			return `model.add(layers.Dense(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "UpSampling2D") {
+			str += `model.add(layers.UpSampling2D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "SeparableConv1D") {
+			str += `model.add(layers.SeparableConv1D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "BatchNormalization") {
+			str += `model.add(layers.BatchNormalization(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "ThresholdedReLU") {
+			str += `model.add(layers.ThresholdedReLU(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "Softmax") {
+			str += `model.add(layers.Softmax(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "ReLU") {
+			str += `model.add(layers.ReLU(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "Conv2DTranspose") {
+			str += `model.add(layers.Conv2DTranspose(
+	${data.filters},
+	(${data.kernel_size}),
+${this.#python_data_to_string(data, ["kernel_size", "filters"])}
+))\n`;
+		} else if (layer_type == "AlphaDropout") {
+			str += `model.add(layers.AlphaDropout(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "Dropout") {
+			str += `model.add(layers.Dropout(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "GaussianDropout") {
+			str += `model.add(layers.GaussianDropout(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "GaussianNoise") {
+			str += `model.add(layers.GaussianNoise(stddev=${data.stddev}, seed=${this.#or_none(data.seed)}))\n`;
+		} else if (layer_type.startsWith("GlobalAveragePooling")) {
+			str += `model.add(layers.${layer_type}(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type.startsWith("GlobalMaxPooling")) {
+			str += `model.add(layers.${layer_type}(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "LayerNormalization") {
+			str += `model.add(layers.LayerNormalization(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "Reshape") {
+			str += `model.add(layers.Reshape(
+	target_shape=[${data.target_shape}]
+))\n`;
+		} else if (layer_type == "MaxPooling3D") {
+			str += `model.add(layers.MaxPooling3D(
+	(${data.pool_size[0]}, ${data.pool_size[1]}, ${data.pool_size[2]}),
+${this.#python_data_to_string(data, ["pool_size"])}
+))\n`;
+		} else if (layer_type == "MaxPooling2D") {
+			str += `model.add(layers.MaxPooling2D(
+${this.#python_data_to_string(data, ["pool_size"])}
+))\n`;
+		} else if (layer_type == "MaxPooling1D") {
+			str += `model.add(layers.${layer_type}(
+	(${data.pool_size[0]}),
+${this.#python_data_to_string(data, ["pool_size"])}
+))\n`;
+		} else if (layer_type == "AveragePooling1D") {
+			str += `model.add(layers.AveragePooling1D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "SeparableConv2D") {
+			str += `model.add(layers.SeparableConv2D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "AveragePooling2D") {
+			str += `model.add(layers.AveragePooling2D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "AveragePooling3D") {
+			str += `model.add(layers.AveragePooling3D(
+${this.#python_data_to_string(data)}
+))\n`;
+
+		} else if (layer_type == "LeakyReLU") {
+			str += `model.add(layers.LeakyReLU(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "ELU") {
+			str += `model.add(layers.ELU(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "DepthwiseConv1D") {
+			str += `model.add(layers.DepthwiseConv1D(
+${this.#python_data_to_string(data)}
+))\n`;
+		} else if (layer_type == "DepthwiseConv2D") {
+			str += `model.add(layers.DepthwiseConv2D(
+	(${data.kernel_size}),
+${this.#python_data_to_string(data, ['kernel_size'])}
+))\n`;
+		} else if(layer_type == "Flatten") {
+			return "model.add(layers.Flatten())\n";
+		} else if(layer_type == "DebugLayer") {
+			return "# Debug layer are custom to asanAI and are not available in TensorFlow\n";
+		} else {
+			return "# NOT YET IMPLEMENTED: " + layer_type + "\n";
+		}
+		return str;
+	}
+
+	#python_data_to_string (_data, _except=[]) {
+		this.assert(typeof(_data) == "object", "_data is not an object for python_data_to_string");
+		this.assert(typeof(_except) == "object", "_except is not an object for python_data_to_string");
+
+		var strings = [];
+		var string = "";
+
+		var keys = Object.keys(_data);
+
+		_except.push("input_shape");
+
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+
+			if(!_except.includes(key)) {
+				if(key == "strides" || key == "dilation_rate" || key == "pool_size") {
+					this.assert(typeof(_data[key]) == "object", "_data[key] for " + key + " is not an object!");
+					strings.push(`\t${key}=(${_data[key].join(", ")})`);
+				} else if(key == "use_bias" || key == "trainable") {
+					var true_or_false = 0;
+					if(_data[key] == "True" || _data[key] == "true" || _data[key] == "1" || _data[key] == 1) {
+						true_or_false = 1;
+					}
+					strings.push(`\t${key}=${true_or_false ? "True" : "False"}`);
+				} else if(key == "size") {
+					strings.push(`\tsize=${this.#or_none(data.size, "(", ")")}`);
+				} else {
+					if(typeof(_data[key]) == "string") {
+						strings.push(`\t${key}=${this.#or_none(_data[key])}`);
+					} else {
+						strings.push(`\t${key}=${this.#or_none(_data[key])}`);
+					}
+				}
+			}
+		}
+
+		string = strings.join(",\n");
+
+		return string;
+	}
+
+	#or_none (str, prepend = "\"", append = "\"") {
+		if(str) {
+			if(("" + str).match(/^[+-]?\d+(?:\.\d+)$/)) {
+				return this.#parse_float(str);
+			} else if(("" + str).match(/^[+-]?\d+$/)) {
+				return this.#parse_int(str);
+			}
+			return prepend + this.#get_python_name(str) + append;
+		}
+		return "None";
+	}
+
+	#get_input_shape_with_batch_size() {
+		var shape = this.#get_input_shape();
+		shape.unshift(this.#parse_int(this.#batch_size));
+		var res = shape;
+		return res;
+	}
+
+	#get_input_shape() {
+		return this.#model.input.shape.filter(n => n);
+	}
+
+	#python_boilerplate (input_shape_is_image_val, _expert_mode=0) {
+		var python_code = "";
+
+		python_code += "# This generated code is licensed under WTFPL. You can do whatever you want with it, without any restrictions.\n";
+		python_code += "# python3 -m venv asanaienv\n";
+		python_code += "# source asanaienv/bin/activate\n";
+		python_code += "# pip3 install tensorflow tensorflowjs protobuf==3.20.0 ";
+
+		if (input_shape_is_image_val) {
+			python_code += " scikit-image opencv-python ";
+		}
+
+		python_code += "\n";
+		python_code += "import sys\n";
+
+		if(_expert_mode) {
+			python_code += "import os\n";
+			python_code += "if not os.path.exists('keras_model') and os.path.exists('model.json'):\n";
+			python_code += "    os.system('tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras_saved_model model.json keras_model')\n";
+			python_code += "# Save this file as python-script and run it like this:\n";
+			python_code += "if not os.path.exists('keras_model'):\n"
+			python_code += "    print('keras_model cannot be found')\n"
+			python_code += "    sys.exit(1)\n"
+		} else {
+			if (input_shape_is_image_val) {
+				python_code += "# python3 nn.py file_1.jpg file_2.jpg file_3.jpg\n";
+			} else {
+				python_code += "# python3 nn.py\n";
+			}
+		}
+
+		python_code += "import keras\n";
+		python_code += "import tensorflow as tf\n";
+
+		return python_code;
+	}
+
+	#create_python_code (input_shape_is_image_val) {
+		var python_code = this.#python_boilerplate(input_shape_is_image_val, 1);
+
+		python_code += "model = tf.keras.models.load_model(\n";
+		python_code += "   'keras_model',\n";
+		python_code += "   custom_objects=None,\n";
+		python_code += "   compile=True\n";
+		python_code += ")\n\n";
+		python_code += "model.summary()\n";
+
+		if (input_shape_is_image_val) {
+			python_code += "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n";
+			python_code += "from PIL import Image\n";
+			python_code += "import numpy as np\n";
+			python_code += "from skimage import transform\n";
+
+			python_code += "labels = ['" + labels.join("', '") + "']\n";
+			python_code += "height = " + height + "\n";
+			python_code += "width = " + width + "\n";
+			python_code += "divideby = " + $("#divide_by").val() + "\n";
+
+			python_code += "def load(filename):\n";
+			python_code += "    np_image = Image.open(filename)\n";
+			python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
+			python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
+			python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
+			python_code += "    return np_image\n";
+
+			python_code += "def load_frame(filename):\n";
+			python_code += "    np_image = cv2.cvtColor(filename, cv2.COLOR_BGR2RGB)\n";
+			python_code += "    np_image = np.array(np_image).astype('float32')/divideby\n";
+			python_code += "    np_image = transform.resize(np_image, (height, width, 3))\n";
+			python_code += "    np_image = np.expand_dims(np_image, axis=0)\n";
+			python_code += "    return np_image\n";
+
+			python_code += "for a in range(1, len(sys.argv)):\n";
+			python_code += "    image = load(sys.argv[a])\n";
+			python_code += "    print(sys.argv[a] + ':')\n";
+			python_code += "    prediction = model.predict(image)\n";
+			python_code += "    for i in range(0, len(prediction)):\n";
+			python_code += "        for j in range(0, len(prediction[i])):\n";
+			python_code += "            print(labels[j] + ': ' + str(prediction[i][j]))\n";
+		} else {
+			python_code += "import re\n";
+			python_code += "from pprint import pprint\n";
+			python_code += "import numpy as np\n";
+			python_code += "def get_shape (filename):\n";
+			python_code += "    with open(filename) as f:\n";
+			python_code += "        first_line = f.readline()\n";
+			python_code += "        match = re.search(r'shape: \\((.*)\\)', first_line)\n";
+			python_code += "        return eval('[' + match[1] + ']')\n";
+			python_code += "x = np.loadtxt('x.txt').reshape(get_shape('x.txt'))\n";
+			python_code += "pprint(model.predict(x))\n";
+		}
+
+		if(input_shape_is_image_val) {
+			python_code += `
+if len(sys.argv) == 1:
+    import cv2
+
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        if not ret:
+            import sys
+            print("Could not load frame from webcam. Is the webcam currently in use?")
+            sys.exit(1)
+
+        # Preprocess the frame
+        image = load_frame(frame)
+
+        # Make predictions
+        predictions = model.predict(image)
+
+        highest_index = np.argmax(predictions[0])
+
+        # Get the class with highest probability
+
+        # Add label to the frame
+        for i in range(0, len(labels)):
+            prediction = labels[i]
+            text = str(prediction) + " (" + str(predictions[0][i]) + ")"
+            x = 10
+            y = (i + 1) * 30
+            color = (255, 0, 0)
+            if i == highest_index:
+                color = (0, 255, 0)
+            cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+
+        # Display the resulting frame
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
+`;
+		}
+
+		return python_code;
+	}
+
+	async #highlight_code () {
+		if(typeof(Prism) == "undefined") {
+			this.wrn(`Prism not found! Cannot do syntax highlighting!`);
+			return;
+		}
+
+
+		Prism.highlightAll();
+	}
+
+	async #identify_layers () {
+		var number_of_layers = $("div.container.layer").length;
+
+		//console.trace();
+		this.#has_zero_output_shape = false;
+
+		var failed = 0;
+		for (var i = 0; i < number_of_layers; i++) {
+			$($(".layer_nr_desc")[i]).html(i + ":&nbsp;");
+			var new_str = this.#get_layer_identification(i);
+
+			if(new_str != "") {
+				new_str = new_str + ",&nbsp;";
+			}
+
+			var output_shape_string = "";
+			try {
+				if(this.#model && this.#model.layers && this.#model.layers.length >= i) {
+					try {
+						this.#model.layers[i].input.shape;
+					} catch(e) {
+						this.err("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					}
+
+					var shape = JSON.stringify(this.#model.layers[i].getOutputAt(0).shape);
+					if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
+						output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
+						output_shape_string = output_shape_string.replace("null,", "");
+						this.#has_zero_output_shape = true;
+					} else {
+						output_shape_string = "Output:&nbsp;" + shape;
+						output_shape_string = output_shape_string.replace("null,", "");
+					}
+				} else {
+					dbg(`#identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+				}
+
+				if(this.#has_zero_output_shape) {
+					var basemsg = "ERROR: There are zeroes in the output shape. ";
+					var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
+
+					disable_train();
+
+					throw new Error(msg);
+
+					return;
+				} else {
+					enable_train();
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				if(("" + e).includes("model is null")) {
+					this.err("" + e);
+				} else {
+					throw new Error(e);
+				}
+
+				return;
+			}
+
+			var activation_function_string = "";
+			try {
+				if(this.#model && this.#model.layers && i in this.#model.layers) {
+					var this_layer = $($(".layer")[i]);
+					var act = $(this_layer.find(".activation")).val();
+					if("" + act != "undefined") {
+						activation_function_string = ", " + act;
+					}
+				}
+			} catch (e) {
+				throw new Error(e);
+			}
+
+			if(layer_is_red(i)) {
+				failed++;
+				write_layer_identification(i, "<span class='layer_identifier_activation'></span>");
+			} else {
+				write_layer_identification(i + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+			}
+		}
+
+		if(!this.#has_zero_output_shape) {
+			shown_has_zero_data = false;
+		}
+
 	}
 }
