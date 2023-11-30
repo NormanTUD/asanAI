@@ -6438,4 +6438,28 @@ class asanAI {
 			return null; // Or handle the error in your specific way
 		}
 	}
+
+	show_layers_gui (divname) {
+		if(!this.#model) {
+			this.err("Cannot show layers gui when no model is loaded.");
+			return;
+		}
+		
+		if(!divname) {
+			this.err(`No divname given! Cannot continue show_layers_gui without divname parameter`);
+			return;
+		}
+
+		if(!typeof(divname) == "string") {
+			this.err(`divname is not a string, but ${typeof(divname)}! Cannot continue show_layers_gui without divname being a valid string that refers to the ID of an element`);
+			return;
+		}
+
+		if(!$("#" + divname).length) {
+			this.err(`Cannot find #${divname} for show_layers_gui. Not showing layer GUI.`);
+			return;
+		}
+
+		this.log(`Using #${divname} to show layers gui`);
+	}
 }
