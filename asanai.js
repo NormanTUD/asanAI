@@ -1,6 +1,14 @@
 "use strict";
 
 class asanAI {
+	#loss = "categoricalCrossentropy";
+	#metric = 'categoricalCrossentropy';
+	#optimizer = 'adam';
+	#batch_size = 10;
+	#data_origin = "default";
+	#epochs = 10;
+
+
 	#waiting_updated_page_uuids = [];
 	#number_channels = 3;
 	#image_url_tensor_div = null;
@@ -211,8 +219,6 @@ class asanAI {
 	#images_to_repredict = [];
 	#images_to_repredict_divs = [];
 	#custom_tensors = {};
-
-	#optimizer = null;
 
 	ribbon_data = {
 		"ribbon": {
@@ -7977,7 +7983,7 @@ class asanAI {
 
 		await wait_for_latex_model;
 		//await wait_for_show_hide_load_weights;
-		if(atrament_data.sketcher && await input_shape_is_image()) {
+		if(atrament_data.sketcher && await this.#input_shape_is_image()) {
 			try {
 				await predict_handdrawn();
 			} catch (e) {
@@ -8014,17 +8020,17 @@ class asanAI {
 
 		var input_shape = [this.#model_height, this.#model_width, this.#number_channels];
 
-		var loss = document.getElementById("loss").value;
-		var optimizer_type = document.getElementById("optimizer").value;
-		var metric_type = document.getElementById("metric").value;
-		var batchSize = document.getElementById("batchSize").value;
-		var data_origin = document.getElementById("data_origin").value;
+		var loss = this.#loss;
+		var optimizer_type = this.#optimizer;
+		var metric_type = this.#metric;
+		var batchSize = this.#batch_size
+		var data_origin = this.#data_origin;
 
-		var epochs = parse_int(document.getElementById("epochs").value);
+		var epochs = this.#parse_int(this.#epochs);
 
 		$("#pythoncontainer").show();
 
-		var input_shape_is_image_val = await input_shape_is_image();
+		var input_shape_is_image_val = await this.#input_shape_is_image();
 
 		var x_shape = "";
 
@@ -8041,7 +8047,7 @@ class asanAI {
 
 		var expert_code = "";
 
-		for (var i = 0; i < get_number_of_layers(); i++) {
+		for (var i = 0; i < this.#model.layers.length; i++) {
 			var type = $(layer_types[i]).val();
 
 			var data = {};
@@ -8054,23 +8060,23 @@ class asanAI {
 				}
 			}
 
-			if (type in layer_options) {
-				for (var j = 0; j < layer_options[type]["options"].length; j++) {
-					var option_name = layer_options[type]["options"][j];
+			if (type in this.#layer_options) {
+				for (var j = 0; j < this.#layer_options[type]["options"].length; j++) {
+					var option_name = this.#layer_options[type]["options"][j];
 
 					if (option_name == "pool_size") {
 						var _pool_size_x = get_item_value(i, "pool_size_x");
 						var _pool_size_y = get_item_value(i, "pool_size_y");
 
 						if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
-							data[get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
+							data[this.#get_python_name(option_name)] = [parse_int(_pool_size_x), parse_int(_pool_size_y)];
 						}
 					} else if (option_name == "strides") {
 						var _strides_x = get_item_value(i, "strides_x");
 						var _strides_y = get_item_value(i, "strides_y");
 
 						if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
-							data[get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
+							data[this.#get_python_name(option_name)] = [parse_int(_strides_x), parse_int(_strides_y)];
 						}
 					} else if (option_name == "kernel_size") {
 						var kernel_size_x = get_item_value(i, "kernel_size_x");
@@ -8078,25 +8084,25 @@ class asanAI {
 						var kernel_size_z = get_item_value(i, "kernel_size_z");
 
 						if(kernel_size_x && kernel_size_y && kernel_size_z) {
-							data[get_python_name(option_name)] = [
+							data[this.#get_python_name(option_name)] = [
 								parse_int(kernel_size_x),
 								parse_int(kernel_size_y),
 								parse_int(kernel_size_z)
 							];
 						} else if (kernel_size_x && kernel_size_y) {
-							data[get_python_name(option_name)] = [
+							data[this.#get_python_name(option_name)] = [
 								parse_int(kernel_size_x),
 								parse_int(kernel_size_y)
 							];
 						} else if (kernel_size_x) {
-							data[get_python_name(option_name)] = [
+							data[this.#get_python_name(option_name)] = [
 								parse_int(kernel_size_x)
 							];
 						} else {
 							await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
 						}
 					} else if (option_name == "size") {
-						data[get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
+						data[this.#get_python_name(option_name)] = eval("[" + get_item_value(i, "size") + "]");
 					} else if (option_name == "dilation_rate") {
 						var dil_rate = get_item_value(i, option_name);
 
@@ -8104,16 +8110,16 @@ class asanAI {
 
 						var code_str = "[" + dil_rate + "]";
 
-						data[get_python_name(option_name)] = eval("[" + code_str + "]");
+						data[this.#get_python_name(option_name)] = eval("[" + code_str + "]");
 
 					} else if (option_name == "target_shape") {
-						data[get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
+						data[this.#get_python_name(option_name)] = eval("[" + get_item_value(i, "target_shape") + "]");
 					} else if (option_name == "activation") {
 						if(option_name) {
-							data[get_python_name(option_name)] = get_python_name(get_item_value(i, option_name));
+							data[this.#get_python_name(option_name)] = this.#get_python_name(get_item_value(i, option_name));
 						}
 					} else {
-						data[get_python_name(option_name)] = get_item_value(i, option_name);
+						data[this.#get_python_name(option_name)] = get_item_value(i, option_name);
 					}
 				}
 
@@ -8135,7 +8141,7 @@ class asanAI {
 			for (const [key, value] of Object.entries(data)) {
 				if (key == "dtype" && i == 0 || key != "dtype") {
 					if (typeof (value) != "undefined" && typeof(key) != "boolean") {
-						params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
+						params.push(get_python_name(key) + "=" + quote_python(this.#get_python_name(value)));
 					}
 				}
 			}
