@@ -7121,7 +7121,7 @@ class asanAI {
 		}
 	}
 
-	show_layers_gui (divname=this.#layers_gui_div_name) {
+	async show_layers_gui (divname=this.#layers_gui_div_name) {
 		if(!this.#model) {
 			this.err("Cannot show layers gui when no model is loaded.");
 			return;
@@ -7144,7 +7144,7 @@ class asanAI {
 
 		this.#layers_gui_div_name = divname;
 
-		this.#update_layers_gui();
+		await this.#update_layers_gui();
 	}
 
 	async #get_model_config_hash () {
@@ -7427,7 +7427,7 @@ class asanAI {
 		$(".descriptions_of_layers").show();
 	}
 
-	#update_layers_gui () {
+	async #update_layers_gui () {
 		if(!this.#model) {
 			this.err("Cannot show layers gui when no model is loaded.");
 			return;
@@ -7448,9 +7448,7 @@ class asanAI {
 			return;
 		}
 
-		var $layers_gui = $("#" + this.#layers_gui_div_name);
-
-		var layers = this.#model.layers;
+		await this.#show_layers()
 	}
 
 	#get_item_value(layer, classname) {
@@ -7773,8 +7771,7 @@ class asanAI {
 		return str;
 	}
 
-	async show_layers() {
-
+	async #show_layers() {
 		var number = this.#model.layers.length; 
 
 		this.assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
