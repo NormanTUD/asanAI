@@ -2039,6 +2039,12 @@ class asanAI {
 			return;
 		}
 
+		if(this.#model) {
+			await this.dispose(this.#model);
+
+			this.#clean_custom_tensors();
+		}
+
 		this.#currently_switching_models = true;
 
 		var _restart_webcam = 0;
