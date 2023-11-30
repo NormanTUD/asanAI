@@ -6459,7 +6459,5 @@ class asanAI {
 			this.err(`Cannot find #${divname} for show_layers_gui. Not showing layer GUI.`);
 			return;
 		}
-
-		this.log(`Using #${divname} to show layers gui`);
 	}
 }
