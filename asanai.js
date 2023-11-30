@@ -8,6 +8,8 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
+	#mode = "expert";
+
 	#shown_has_zero_data = false;
 	#layer_structure_cache = null;
 	#has_zero_output_shape = false;
@@ -7784,8 +7786,8 @@ class asanAI {
 		var layers_container_str = "";
 		var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
-		var remove = "<button class='add_remove_layer_button remove_layer' disabled='' onclick='remove_layer(this)'>-</button>&thinsp;";
-		var add = "<button class='add_remove_layer_button add_layer' onclick='add_layer(this)'>+</button>&nbsp;";
+		var remove = `<button class='add_remove_layer_button remove_layer' disabled='' onclick='${this.asanai_name}.remove_layer(this)'>-</button>&thinsp;`;
+		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.asanai_name}.add_layer(this)'>+</button>&nbsp;`;
 
 		for (var i = 0; i < number; i++) {
 			layers_container_str +=
@@ -7817,19 +7819,9 @@ class asanAI {
 
 		$("#layer_visualizations_tab").html(layer_visualizations_tab_str);
 
-		sortable_layers_container(layers_container);
+		this.#sortable_layers_container(layers_container);
 
 		$(".train_neural_network_button").show();
-
-		try {
-			lenet.resize();
-		} catch (e) {
-			if(Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			this.wrn("[show_layers] " + e);
-		}
 	}
 
 	#lowercase_first_letter (string) {
@@ -7992,7 +7984,7 @@ class asanAI {
 		}
 
 		try {
-			await _temml();
+			await this._temml();
 		} catch (e) {
 			this.wrn(e);
 		}
@@ -9171,7 +9163,7 @@ if len(sys.argv) == 1:
 				this.#enable_every_layer();
 			}
 
-			if(mode == "beginner") {
+			if(this.#mode == "beginner") {
 				var last_element_nr = $(".layer_setting").length - 1;
 				var last_layer_setting = $($(".layer_setting")[last_element_nr]);
 
@@ -9232,5 +9224,160 @@ if len(sys.argv) == 1:
 			throw new Error(e);
 		}
 
+	}
+
+	#sortable_layers_container(layers_container) {
+		this.assert(typeof (layers_container) == "object", "layers_container is not an object but " + typeof (layers_container));
+
+		var error_div = $("#error");
+
+		layers_container.sortable({
+			cursor: "move",
+			handle: "div",
+			helper: "clone",
+			forcePlaceholderSize: true,
+			placeholder: "placeholder",
+			start: function (e, ui) {
+				ui.placeholder.height(ui.item.height());
+				ui.placeholder.css("visibility", "visible");
+				$(".descriptions_of_layers").hide();
+			},
+			update: async function (e, ui) {
+				try {
+					await this.#compile_model();
+					error_div.html("");
+					error_div.parent().hide();
+				} catch (e) {
+					if (mode == "beginner") {
+						$("#layers_container").sortable("cancel");
+						alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
+						try {
+							await this.#compile_model();
+						} catch (e) {
+							log(e);
+						}
+						error_div.html("");
+						error_div.parent().hide();
+					} else {
+						error_div.html(e);
+						error_div.parent().show();
+					}
+				}
+
+				$(".descriptions_of_layers").show();
+				await this.updated_page();
+			},
+			axis: "y",
+			revert: true
+		});
+
+		layers_container.droppable({
+			tolerance: "pointer"
+		});
+
+	}
+
+	async remove_layer(item) {
+		this.assert(typeof (item) == "object", "item is not an object but " + typeof (item));
+
+		var number_of_layers = this.#model.layers.length;
+
+		if (old_value > 1) {
+			$($(item).parent()[0]).parent().remove();
+
+			layer_structure_cache = null;
+
+			await updated_page();
+			disable_all_non_selected_layer_types();
+
+			if (get_number_of_layers() == 1) {
+				$(".remove_layer").prop("disabled", true).hide();
+			} else {
+				$(".remove_layer").prop("disabled", false).show();
+			}
+			await save_current_status();
+		} else {
+			Swal.fire({
+				icon: "error",
+				title: "Oops [2]...",
+				text: "You cannot remove the last remaining layer of your model.",
+			});
+		}
+
+		await write_descriptions();
+		//rename_labels();
+		await predict_handdrawn();
+
+		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+		l("Removed layer");
+	}
+
+	async add_layer(item) {
+		assert(typeof (item) == "object", "item is not an object but " + typeof (item));
+
+		layer_structure_cache = null;
+
+		var real_nr = null;
+
+		var item_xpath = get_element_xpath(item);
+
+		var add_layer_buttons = $(".add_layer");
+		for (var nr = 0; nr < add_layer_buttons.length; nr++) {
+			var elem = add_layer_buttons[nr];
+			if (item_xpath == get_element_xpath(elem)) {
+				real_nr = nr;
+			}
+		}
+
+		assert(real_nr !== null, "real_nr is null!");
+
+		var nr_of_layer = (get_number_of_layers() - 1);
+
+		var item_parent_parent = $(item).parent().parent();
+
+		var plus_or_minus_one = 1;
+
+		try {
+			if(real_nr == nr_of_layer) { // insert before last layer
+				item_parent_parent.clone().insertBefore(item_parent_parent);
+				plus_or_minus_one = 0;
+			} else {
+				item_parent_parent.clone().insertAfter(item_parent_parent);
+			}
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err("[add_layer] " + e);
+		}
+
+		$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
+
+		var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
+		var new_layer_type = previous_layer_type;
+		if (new_layer_type == "flatten") {
+			new_layer_type = "dense";
+		}
+		$($($($(".layer_setting")[real_nr + plus_or_minus_one])).find(".layer_type")[0]).val(new_layer_type).trigger("change");
+
+		await updated_page();
+
+		await write_descriptions();
+
+		$(".remove_layer").prop("disabled", false);
+		$(".remove_layer").show();
+
+		$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled")
+
+		await save_current_status();
+
+		await rename_labels();
+		await predict_handdrawn();
+
+		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+		l("Added layer");
 	}
 }
