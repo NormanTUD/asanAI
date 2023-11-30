@@ -2382,8 +2382,8 @@ class asanAI {
 			if(this.#draw_internal_states) {
 				if(i == 0 && this.#show_sliders) {
 					var __parent = $("#" + this.#internal_states_div).parent();
-					if(__parent.length && $("#" + this.#internal_states_div).find(".show_internals_slider").length == 0) {
-						var _html = this.#show_internals_slider(
+					if(__parent.length && $("#show_internals_slider").length == 0) {
+						var _html = this.#get_internals_slider(
 							this.#pixel_size,
 							this.#pixel_size_max,
 							this.#kernel_pixel_size,
@@ -2634,13 +2634,13 @@ class asanAI {
 		this.#internal_states_div = "";
 	}
 
-	#show_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
+	#get_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
 		if(!this.#asanai_name) {
-			this.err(`[#show_internals_slider] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+			this.err(`[#get_internals_slider] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 			return;
 		}
 
-		var html = `<div class='show_internals_slider'>`
+		var html = `<div id='show_internals_slider'>`
 		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_name}.set_pixel_size($(this).val())">`;
 		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_name}.set_kernel_pixel_size($(this).val())">`;
 		html += `</div>`;
