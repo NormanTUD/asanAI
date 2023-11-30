@@ -8,7 +8,14 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
+	#shown_has_zero_data = false;
+	#layer_structure_cache = null;
 	#has_zero_output_shape = false;
+	#special_reason_disable_training = false;
+
+	#x_file = null;
+	#y_file = null;
+	#y_shape = null;
 
 	#waiting_updated_page_uuids = [];
 	#number_channels = 3;
@@ -7494,7 +7501,7 @@ class asanAI {
 				str += " value=" + data["value"] + " ";
 			}
 
-			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.asanai_name}.updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); ${this.asanai_name}.updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.asanai_name}.updated_page()' onkeyup="${this.asanai_name}.updated_page(null, null, this);" />`;
 		} else if (type == "checkbox") {
 			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.asanai_name}.updated_page(null, null, this);' `;
 			if ("status" in data && data["status"] == "checked") {
@@ -7979,21 +7986,17 @@ class asanAI {
 			console.log(stack);
 		}
 
-		layer_structure_cache = null;
+		this.#layer_structure_cache = null;
 
-		await save_current_status();
-
-		enable_start_training_custom_tensors();
+		this.#enable_start_training_custom_tensors();
 
 		var wait_for_latex_model = Promise.resolve(1);
 
-		if (!no_update_math) {
-			wait_for_latex_model = await write_model_to_latex_to_page();
-		}
+		wait_for_latex_model = await this.#write_model_to_latex_to_page();
 
-		await last_shape_layer_warning();
+		await this.#last_shape_layer_warning();
 
-		await hide_no_conv_stuff();
+		//await hide_no_conv_stuff();
 
 		var current_input_shape = this.#get_input_shape();
 		if (cam) {
@@ -8673,13 +8676,13 @@ if len(sys.argv) == 1:
 					var basemsg = "ERROR: There are zeroes in the output shape. ";
 					var msg = basemsg + "The input shape will be resettet the the last known working configuration.";
 
-					disable_train();
+					this.#disable_train();
 
 					throw new Error(msg);
 
 					return;
 				} else {
-					enable_train();
+					this.#enable_train();
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -8708,17 +8711,170 @@ if len(sys.argv) == 1:
 				throw new Error(e);
 			}
 
-			if(layer_is_red(i)) {
+			if(this.#layer_is_red(i)) {
 				failed++;
-				write_layer_identification(i, "<span class='layer_identifier_activation'></span>");
+				this.#write_layer_identification(i, "<span class='layer_identifier_activation'></span>");
 			} else {
-				write_layer_identification(i + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
+				this.#write_layer_identification(i + failed, new_str + output_shape_string + "<span class='layer_identifier_activation'>" + activation_function_string + "</span>");
 			}
 		}
 
 		if(!this.#has_zero_output_shape) {
-			shown_has_zero_data = false;
+			this.#shown_has_zero_data = false;
 		}
 
+	}
+
+	#enable_train () {
+		$(".train_neural_network_button").prop("disabled", false);
+	}
+
+	#disable_train () {
+		$(".train_neural_network_button").prop("disabled", true);
+	}
+
+	#layer_is_red (layer_nr) {
+		this.assert(typeof(layer_nr) == "number", "layer_nr is not a number but " + layer_nr + "(" + typeof(layer_nr) + ")");
+		var color = $($("div.container.layer")[layer_nr]).css("background-color")
+
+		if(color == "rgb(255, 0, 0)") {
+			return true;
+		}
+
+		return false;
+	}
+
+	#write_layer_identification (nr, text) {
+		if(text.length) {
+			$($(".layer_identifier")[nr]).html(text);
+		} else {
+			$($(".layer_identifier")[nr]).html("");
+		}
+
+	}
+
+	async get_model_structure(is_fake_model = 0) {
+		var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
+		var structure = [];
+
+		var num_of_layers = this.#model.layers.length;
+
+		this.assert(num_of_layers >= 1, "number of layers must be at least 1 or more");
+
+		for (var i = 0; i < num_of_layers; i++) {
+			var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
+			var type = $(layer_type).val();
+			if(typeof(type) !== "undefined" && type) {
+				var data = get_data_for_layer(type, i, first_layer);
+
+				try {
+					var layer_info = {
+						"type": type,
+						"data": data
+					};
+					structure.push(layer_info);
+
+					first_layer = false;
+				} catch (e) {
+					wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
+					header("DATA:");
+					log(data);
+					$($(".warning_container")[i]).show();
+					$($(".warning_layer")[i]).html(e);
+
+				}
+
+				traindebug("tf.layers." + type + "(", data, ")");
+			} else {
+				if(finished_loading) {
+					wrn(`get_model_structure is empty for layer ${i}`)
+				}
+			}
+		}
+
+		await this.write_descriptions();
+
+		this.#layer_structure_cache = JSON.stringify(structure);
+
+		return structure;
+	}
+
+	#enable_start_training_custom_tensors() {
+		if (!$("#data_origin").val() == "tensordata") {
+			return;
+		}
+
+		this.#enable_train();
+
+		if (this.#x_file && this.#y_file) {
+			var last_layer_warning_container = $($(".warning_container")[this.#model.layers.length]);
+			if (eval($("#outputShape").val()).join(",") == get_full_shape_without_batch(this.#y_file).join(",")) {
+				this.#special_reason_disable_training = false;
+				last_layer_warning_container.html("").hide();
+			} else {
+				this.#special_reason_disable_training = true;
+				last_layer_warning_container.html(
+					"The last layer's output shape does not conform with the provided Y-data's shape. " +
+					"Try changing the number of neurons, so that the output becomes [null" +
+					get_full_shape_without_batch(this.#y_file).join(",") + "]"
+				);
+
+				last_layer_warning_container.show();
+				disable_train();
+			}
+		}
+	}
+
+	async #last_shape_layer_warning() {
+		if ($("#data_origin").val() == "image") {
+			if (!model) {
+				log("last_layer_shape_warning is waiting for the model...");
+				while (!model) {
+					await delay(200);
+				}
+			}
+			if (model.outputShape.length == 2) {
+				is_classification = true;
+				delete_custom_drawing_layer();
+				$("#last_layer_shape_warning").html("");
+			} else {
+				if (model.outputShape.length != 4) {
+					var n = $(".own_image_label").length;
+					$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is neither 2 (for classification) nor 4 (for segmentation). Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
+				} else {
+					$("#last_layer_shape_warning").html("");
+					var all_current_custom_images = $(".own_image_span");
+					for (var i = 0; i < all_current_custom_images.length; i++) {
+						var canvasses = $(all_current_custom_images[i]).find("img,canvas");
+
+						for (var j = 0; j < canvasses.length; j++) {
+							var this_canvas_id = canvasses[j].id;
+							if(!this_canvas_id.endsWith("_layer")) {
+								var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
+								var new_canvas_id = base_id + "_layer";
+								if($(new_canvas_id).length == 0) {
+									log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
+									add_canvas_layer(canvasses[j], 0.5, base_id);
+								}
+							}
+						}
+					}
+
+					is_classification = false;
+
+					if($("#loss").val() != "meanSquaredError") {
+						set_loss("meanSquaredError", 1);
+					}
+
+					if($("#metric").val() != "meanSquaredError") {
+						set_metric("meanSquaredError", 1);
+					}
+
+					await change_last_responsible_layer_for_image_output();
+				}
+			}
+		} else {
+			$("#last_layer_shape_warning").html("");
+		}
 	}
 }
