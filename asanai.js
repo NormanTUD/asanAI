@@ -290,7 +290,7 @@ class asanAI {
 	#last_tensor_size_cpu = 0;
 	#last_num_global_tensors = 0;
 	#last_tensor_size_gpu = 0;
-	#asanai_name = null;
+	#asanai_name = "asanai";
 	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
 	#kernel_pixel_size_max = 50;
