@@ -11,6 +11,8 @@ class asanAI {
 	#mode = "beginner";
 	#allowed_layer_cache = [];
 
+	#_custom_tensors = {};
+
 	#is_repairing_output_shape = false;
 
 	#shown_has_zero_data = false;
@@ -48,6 +50,10 @@ class asanAI {
 	#last_batch_plot_time = null;
 	#math_tab_code_div = null;
 	#layers_gui_div_name = null;
+
+	#debug = false;
+
+	#disable_show_python_and_create_model = false;
 
 	#finished_loading = true;
 
@@ -8979,7 +8985,7 @@ if len(sys.argv) == 1:
 				} catch (e) {
 					this.wrn("[get_model_structure] Failed to add layer type ", type, ": ", e);
 					header("DATA:");
-					log(data);
+					this.log(data);
 					$($(".warning_container")[i]).show();
 					$($(".warning_layer")[i]).html(e);
 
@@ -9029,7 +9035,7 @@ if len(sys.argv) == 1:
 	async #last_shape_layer_warning() {
 		if (this.#data_origin == "image") {
 			if (!model) {
-				log("last_layer_shape_warning is waiting for the this.#model...");
+				this.log("last_layer_shape_warning is waiting for the this.#model...");
 				while (!model) {
 					await this.delay(200);
 				}
@@ -9054,7 +9060,7 @@ if len(sys.argv) == 1:
 								var base_id = btoa(await this.#md5(this.#get_element_xpath(canvasses[j]))).replaceAll("=", "");
 								var new_canvas_id = base_id + "_layer";
 								if($(new_canvas_id).length == 0) {
-									log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
+									this.log("Drawing layer for custom image " + this_canvas_id + ", new_canvas_id: " + new_canvas_id);
 									add_canvas_layer(canvasses[j], 0.5, base_id);
 								}
 							}
@@ -9373,7 +9379,7 @@ if len(sys.argv) == 1:
 						try {
 							await this.#compile_model();
 						} catch (e) {
-							log(e);
+							this.log(e);
 						}
 						error_div.html("");
 						error_div.parent().hide();
@@ -9433,7 +9439,7 @@ if len(sys.argv) == 1:
 	}
 
 	async add_layer(item) {
-		assert(typeof (item) == "object", "item is not an object but " + typeof (item));
+		this.assert(typeof (item) == "object", "item is not an object but " + typeof (item));
 
 		layer_structure_cache = null;
 
@@ -9449,7 +9455,7 @@ if len(sys.argv) == 1:
 			}
 		}
 
-		assert(real_nr !== null, "real_nr is null!");
+		this.assert(real_nr !== null, "real_nr is null!");
 
 		var nr_of_layer = (get_number_of_layers() - 1);
 
@@ -9992,7 +9998,7 @@ if len(sys.argv) == 1:
 
 			try {
 				var tmp_model_data;
-				[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
+				[fake_model, tmp_model_data] = await this.create_model(null, fake_model_structure, 0, layer_nr);
 
 				ret = tidy(() => {
 					try {
@@ -10004,18 +10010,18 @@ if len(sys.argv) == 1:
 					}
 				});
 
-				await dispose(tmp_model_data);
+				await this.dispose(tmp_model_data);
 			} catch(e) {
 				this.err(e);
 
 				ret = false;
 			}
 
-			if(model.output.shape.join(",") != fake_model.output.shape.join(",")) {
+			if(this.#model.output.shape.join(",") != fake_model.output.shape.join(",")) {
 				ret = false;
 			}
 
-			await dispose(fake_model);
+			await this.dispose(fake_model);
 
 		} catch (e) {
 			this.wrn(e);
@@ -10163,5 +10169,529 @@ if len(sys.argv) == 1:
 		}
 
 		return option_hash;
+	}
+
+	async create_model (old_model, fake_model_structure, force, i=-1) {
+		if(this.#has_missing_values) {
+			l("Not creating model because some values are missing (create model)");
+			if(old_model) {
+				return old_model;
+			}
+
+			this.err("No model found, but has missing values");
+
+			return [old_model, null];
+		}
+
+		if(!force && this.#disable_show_python_and_create_model) {
+			return [old_model, null];
+		}
+
+		$(".warning_container").hide();
+
+		var model_structure = fake_model_structure;
+		if(model_structure === undefined) {
+			model_structure = await this.get_model_structure();
+		}
+
+		this.assert(typeof(model_structure) == "object", "model_structure is not an object");
+
+		var model_uuid = "";
+
+		if(fake_model_structure) {
+			model_uuid = "FAKE_MODEL";
+		} else {
+			model_uuid = this.#uuidv4();
+		}
+
+		var new_model;
+		try {
+			new_model = await this.#_add_layers_to_model(model_structure, fake_model_structure, i, model_uuid);
+
+			await this.#dispose_old_model_tensors(model_uuid);
+		} catch (e) {
+			if(("" + e).includes("Negative dimension size caused by adding layer")) {
+				wrn(`[create_model] Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
+			} else if(("" + e).includes("Input shape contains 0")) {
+				wrn("[create_model] " + e);
+			} else if(("" + e).includes("is not fully defined")) {
+				wrn("[create_model] " + e);
+				return;
+			} else if(("" + e).includes("Input 0 is incompatible with layer")) {
+				wrn("[create_model] Model could not be created because of problems with the input layer.");
+				return;
+			} else {
+				throw new Error("[create_model] " + e);
+			}
+
+			return;
+		}
+
+		$(".warning_container").html("").hide();
+
+		if(this.#model && this.#model.layers && this.#model.layers.length) {
+			if(i in this.#model.layers) {
+				try {
+					var ok = 1;
+					try {
+						this.#model.layers[i].input.shape;
+						ok = 0;
+					} catch (er) { // ignore delibaretly, when it fails, its ok
+						wrn("" + er);
+					}
+
+					if(!ok) {
+						throw new Error(`this.#model.layers[${i}] is a multibound head`);
+					}
+				} catch(e) {
+					this.err(e);
+					wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+				}
+			}
+		}
+
+		enable_train();
+
+		if(typeof(fake_model_structure) == "undefined") {
+			$("#html").text(await get_html_from_model());
+		}
+
+		current_layer_status_hash = await get_current_layer_container_status_hash();
+
+		if(!fake_model_structure) {
+			this.dbg("[create_model] " + language[lang]["model_compiled_successfully"]);
+		}
+
+		if(old_model) {
+			var old_model_has_layers = 1;
+			try { var x = old_model.layers; } catch (e) { old_model_has_layers = 0; }
+
+			try {
+				if(old_model_has_layers && old_model.layers && old_model.layers.length) {
+					for (var k = 0; k < old_model.layers.length; k++) {
+						for (var j = 0; j < old_model.layers[k].weights.length; j++) {
+							await this.dispose(old_model.layers[k].weights[j].val);
+						}
+					}
+				} else {
+					if(finished_loading) {
+						info("Old layers had no layers defined");
+					}
+				}
+			} catch (e) {
+				throw new Error(e);
+			}
+
+			await this.dispose(old_model);
+		}
+
+		var model_data = await get_model_data();
+
+		if(!fake_model_structure) {
+			last_known_good_input_shape = get_input_shape_as_string();
+		}
+
+		return [new_model, model_data];
+	}
+
+	async #get_layers_container_md5() {
+		await this.delay(1);
+		var layers_container_str = "";
+		$("#layers_container").find("select,input,checkbox").each(function (i, x) {
+			x = $(x);
+			layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
+		});
+
+		var res = await this.#md5(layers_container_str);
+
+		return res;
+	}
+
+	async #_add_layers_to_model (model_structure, fake_model_structure, i, model_uuid) {
+		var new_model = this.tf_sequential(model_uuid);
+		for (var i = 0; i < model_structure.length; i++) {
+			var type = model_structure[i]["type"];
+			var data = model_structure[i]["data"];
+
+			data = this.#_check_data(data, type);
+
+			this.#_set_layer_gui(data, fake_model_structure, i);
+
+			try {
+				if(!await this.#_add_layer_to_model(type, data, fake_model_structure, i, new_model, model_uuid)) {
+					if(!fake_model_structure) {
+						this.err(`[#_add_layers_to_model] Failed to add layer type ${type}`);
+					} else {
+						this.dbg(`[#_add_layers_to_model] Failed to add layer type ${type} (but ok because fake_model)`);
+					}
+				}
+			} catch (e) {
+				var msg = "" + e;
+				msg = msg.replace(/^(Error:\s*)+/, "Error: ");
+				$($(".warning_container")[i]).html(msg).show();
+				await this.#write_descriptions();
+				throw new Error(e);
+			}
+		}
+
+		return new_model;
+	}
+
+	async #_add_layer_to_model (type, data, fake_model_structure, i, new_model, model_uuid) {
+		try {
+			if(layer_options[type]["custom"]) {
+				if(i == 0) {
+					data["inputShape"] = get_input_shape();
+				} else {
+					delete data["inputShape"];
+				}
+				var model_add_code = `new_model.add(new ${type}(${JSON.stringify(data)}))`;
+				eval(model_add_code);
+			} else {
+				//console.log("adding ", tf.layers[type], ", data: ", data);
+				var new_layer = tf.layers[type](data);
+
+				new_model.add(new_layer);
+
+				var added_layer = new_model.layers[new_model.layers.length - 1];
+
+				if(added_layer["bias"]) {
+					this.#_custom_tensors["" + added_layer.bias.id] = ["UUID:" + model_uuid, added_layer.bias, "[bias in #_add_layer_to_model]"];
+					this.#_clean_custom_tensors();
+				}
+
+				if(added_layer["kernel"]) {
+					this.#_custom_tensors["" + added_layer.kernel.id] = ["UUID:" + model_uuid, added_layer.kernel, "[kernel in #_add_layer_to_model]"];
+					this.#_clean_custom_tensors();
+				}
+
+				if(new_model && new_model.layers) {
+					var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
+					if(new_output_shape) {
+						for (j in new_output_shape) {
+							if(new_output_shape[j] === 0) {
+								if(new_output_shape.shape) {
+									this.log("New output-shape:", new_output_shape.shape);
+								}
+								throw new Error("Input shape contains 0 at layer " + j);
+							}
+						}
+
+						try {
+							var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
+							throw new Error(`Layer ${i} has more than one output head!`);
+						} catch (e) {
+							if(("" + e).includes("Has Multi-Output")) {
+								throw new Error(e);
+							}
+						}
+					}
+				}
+			}
+			set_layer_background(i, "");
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			/*
+			this.err("!!!!!!!!!!!!!!!!");
+			this.err("" + e);
+			*/
+
+			if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
+				if(
+					("" + e).includes("Negative dimension size caused by adding layer") ||
+					("" + e).includes("Has Multi-Output") ||
+					("" + e).includes("Input shape contains 0") ||
+					("" + e).includes("is incompatible with layer") ||
+					("" + e).includes("targetShape is undefined") ||
+					("" + e).includes("is not fully defined") ||
+					("" + e).includes("The dilationRate argument must be an integer") ||
+					("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
+				) {
+					set_layer_background(i, "red");
+					set_model_layer_warning(i, "" + e);
+				} else {
+					set_model_layer_warning(i, "" + e);
+					l("ERROR: " + e);
+					console.log("ORIGINAL e: ", e);
+					this.log(type);
+					this.log(data);
+					throw new Error(e);
+				}
+
+				await this.dispose(new_model);
+			}
+
+			return false;
+		}
+
+		return new_model;
+	}
+
+	#_clean_custom_tensors () {
+		var keys = Object.keys(this.#_custom_tensors);
+
+		if(!keys.length) {
+			return;
+		}
+		var disposed_keys = [];
+
+		for (var i in keys) {
+			var key = keys[i];
+
+			try {
+				if(!Object.keys(this.#_custom_tensors).includes(key) || this.#_custom_tensors[key][1].isDisposedInternal || this.#_custom_tensors[key][1].isDisposed) {
+					disposed_keys.push(key);
+				}
+			} catch (e) {
+				if(("" + e).includes("this.#_custom_tensors[key] is undefined")) {
+					//
+				} else {
+					wrn("[_clean_custom_tensors] " + e);
+				}
+			}
+		}
+
+		for (var i in disposed_keys) {
+			is_cosmo_mode && delete this.#_custom_tensors[disposed_keys[i]];
+		}
+	}
+
+	#_check_data (data, type) {
+		if(!data) {
+			this.err("Data is undefined");
+			return;
+		}
+
+		var has_keys = Object.keys(data);
+
+		try {
+			if(has_keys.includes("dropout_rate") && type == "dropout") {
+				var tmp = data["dropout_rate"];
+				delete data["dropout_rate"];
+				data["rate"] = tmp;
+				has_keys = Object.keys(data);
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			if(typeof(data) == "object" && ["lstm", "gru", "simpleRNN"].includes(type) && has_keys.includes("rate")) {
+				var tmp = data["rate"];
+				delete data["rate"];
+				data["dropout"] = tmp;
+				has_keys = Object.keys(data);
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			if(typeof(data) == "object" && "targetShape" in data && ["string", "number"].includes(typeof(data["targetShape"]))) {
+				data["targetShape"] = eval("[" + data["targetShape"] + "]");
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			if(typeof(data) == "object" && "size" in data && typeof(data["size"]) == "string") {
+				data["size"] = eval("[" + data["size"] + "]");
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			if(typeof(data) == "object" && "dilationRate" in data && data["dilationRate"].length == 0) {
+				data["dilationRate"] = null;
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			if(typeof(data) == "object" && "units" in data && typeof(data["units"]) == "undefined") {
+				if(finished_loading) {
+					wrn("[#_check_data] units was not defined. Using 2 as default");
+				}
+				data["units"] = 2;
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+
+			["strides", "kernelSize"].forEach(function (correction_name) {
+				if(typeof(data) == "object" && correction_name in data && (isNaN(data[correction_name][0]) || typeof(data[correction_name][0]) == "undefined")) {
+					data[correction_name] = [];
+					for (var k = 0; k < data[correction_name].length; k++) {
+						data[correction_name][k] = 1;
+					}
+				}
+			});
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			data = this.#check_initializers(data, has_keys);
+
+			if(type == "rnn") {
+				// never worked...
+				var lstm_cells = [];
+				for (var index = 0; index < data["units"]; index++) {
+					lstm_cells.push(tf.layers.RNNCell({units: data["units"]}));
+				}
+				data["cell"] = lstm_cells;
+				this.log(data);
+			}
+		} catch (e) {
+			this.err(e);
+		}
+
+		try {
+			data = this.#remove_empty(data);
+		} catch (e) {
+			this.err(e);
+		}
+
+		return data;
+	}
+
+	#check_initializers (data, has_keys) {
+		this.#valid_initializer_types.forEach((init_or_regularizer_type) => {
+			["Regularizer", "Initializer"].forEach((regularizer_or_init) => {
+				var keyname = this.#get_key_name_camel_case(init_or_regularizer_type + regularizer_or_init);
+				if(regularizer_or_init == "Initializer") {
+					if(has_keys.includes(keyname)) {
+						var original_name = data[keyname]["name"];
+						if(typeof(original_name) == "string") {
+							var options_stringified = JSON.stringify(data[keyname]["config"]);
+							if(original_name) {
+								try {
+									data[keyname] = eval(`tf.initializers.${original_name}(${options_stringified})`);
+								} catch (e) {
+									this.err(e);
+									console.trace();
+								}
+							} else {
+								data[keyname] = null;
+							}
+						//} else {
+						//	log("original_name (A):", original_name);
+						}
+					}
+				} else if(regularizer_or_init == "Regularizer") {
+					if(has_keys.includes(keyname)) {
+						var original_name = data[keyname]["name"];
+						this.assert(typeof(original_name) == "string", "original_name is not string (B)");
+						var options_stringified = JSON.stringify(data[keyname]["config"]);
+						if(typeof(original_name) == "string") {
+							if(original_name && original_name != "none") {
+								try {
+									data[keyname] = eval(`tf.regularizers.${original_name}(${options_stringified})`);
+								} catch (e) {
+									this.err(e);
+									console.trace();
+								}
+							} else {
+								data[keyname] = null;
+							}
+						//} else {
+						//	log("original_name (B):", original_name);
+						}
+					}
+				} else {
+					log("Invalid regularizer_or_init: " + regularizer_or_init);
+				}
+			});
+		});
+
+		return data;
+	}
+
+	#_set_layer_gui (data, fake_model_structure, i) {
+		this.assert(typeof(data) == "object", "data is not an object");
+		this.assert(typeof(i) == "number", "i is not a number");
+
+		var data_keys = Object.keys(data);
+		for (var k = 0; k < data_keys.length; k++) {
+			var this_key = data_keys[k];
+			var layer_setting = $($(".layer_setting")[i]);
+			var current_setting = layer_setting.find("." + this.#js_names_to_python_names[this_key]);
+			if(!fake_model_structure && !this.#is_valid_parameter(this_key, data[this_key], i)) {
+				this.log(`INVALID PARAMETER FOR LAYER ${i}: ` + this_key + ": ", data[this_key], " (" + typeof(data[this_key]) + ")");
+				current_setting.css("background-color", "red");
+			} else {
+				current_setting.css("background-color", "");
+			}
+		}
+
+	}
+
+	#is_valid_parameter (keyname, value, layer) {
+		this.assert(typeof(keyname) == "string", "keyname " + keyname + " is not a string but " + typeof(keyname));
+		this.assert(["string", "number", "boolean", "object"].includes(typeof(value)), value + " is not a string/number/boolean but " + typeof(value));
+		this.assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
+
+		if(
+			(["units", "filters"].includes(keyname) && typeof(value) == "number") ||
+			(["kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
+			(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
+			(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
+			(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ["constant", "glorotNormal", "glorotUniform", "heNormal", "heUniform", "identity", "leCunNormal", "leCunUniform", "ones", "orthogonal", "randomNormal", "randomUniform", "truncatedNormal", "varianceScaling", "zeros", "string", "l1", "l2", "l1l2"].includes(value)) ||
+			(keyname == "dtype" && ["float32", "int32", "bool", "complex64", "string"].includes(value)) ||
+			(keyname == "padding" && ["valid", "same", "causal"].includes(value)) ||
+			(["activation", "recurrentActivation"].includes(keyname) && ["LeakyReLU", "elu", "hardSigmoid", "linear", "relu", "relu6",  "selu", "sigmoid", "softmax", "softplus", "softsign", "tanh", "swish", "mish"].includes(value)) ||
+			(["kernelSize", "poolSize", "strides", "dilationRate", "size"].includes(keyname) && (is_number_array(value) || typeof(value) == "number")) ||
+			(keyname == "implementation" && [1, 2].includes(value)) ||
+			(keyname == "biasConstraint" && ["maxNorm", "minNorm"].includes(value)) ||
+			(keyname == "interpolation" && ["nearest", "bilinear"].includes(value)) ||
+			(keyname == "inputShape" && layer == 0 && (typeof(value) == "object" || is_number_array(value))) ||
+			(keyname == "targetShape" && is_number_array(value)) ||
+			(["alpha", "stddev", "depthMultiplier"].includes(keyname) && typeof(value) == "number") ||
+			(keyname == "axis" && typeof(value) == "number" && parse_int(value) == value) ||
+			(["recurrentDropout", "dropout", "rate", "dropout_rate"].includes(keyname) && typeof(value) == "number" && value >= 0 && value <= 1) ||
+			(["epsilon"].includes(keyname) && typeof(value) == "number" && value >= 0) ||
+			(["theta"].includes(keyname) && typeof(value) == "number") ||
+			(["maxValue", "momentum"].includes(keyname) && typeof(value) == "number") ||
+			(["seed"].includes(keyname) && typeof(value) == "number") ||
+			(["cell"].includes(keyname) && typeof(value).includes("object"))
+		) {
+			return true;
+		}
+
+		//log("keyname: ", keyname, "value: ", value, "layer:", layer);
+
+		return false;
+	}
+
+	async #dispose_old_model_tensors (model_uuid) {
+		var disposable = [];
+
+		Object.keys(this.#_custom_tensors).forEach((i, e) => {
+			if(
+				(this.#_custom_tensors[i][2].match(/(?:kernel|bias) in _add_layer_to_model/) ||
+				this.#_custom_tensors[i][2].match(/model in tf_sequential/)) &&
+				!this.#_custom_tensors[i][2].match(/FAKE/)
+			) {
+				if(this.#_custom_tensors[i][0].match(/UUID:/) && !this.#_custom_tensors[i][0].includes(model_uuid)) {
+					disposable.push(this.#_custom_tensors[i][1]);
+				}
+			}
+		});
+
+		for (var i in disposable) {
+			if(i != "last") {
+				await this.dispose(disposable[i]);
+			}
+		}
+
+		this.#_clean_custom_tensors();
 	}
 }
