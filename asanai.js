@@ -8,6 +8,27 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
+	#current_layer_status_hash = "";
+
+	#validation_split = 0;
+
+	#model_data_structure = {
+		"sgd": ["learningRate", "momentum"],
+		"rmsprop": ["learningRate", "rho", "epsilon", "momentum"],
+		"adam": ["learningRate", "beta1", "beta2", "epsilon"],
+		"adagrad": ["learningRate", "initialAccumulatorValue", "epsilon"],
+		"adadelta": ["learningRate", "rho", "epsilon"],
+		"adamax": ["learningRate", "beta1", "beta2", "epsilon"]
+	}
+	
+	#metric_shortnames = {
+		"mse": "meanSquaredError",
+		"mape": "meanAbsolutePercentageError",
+		"mae": "meanAbsoluteError"
+	}
+	
+	#global_model_data = undefined;
+
 	#mode = "beginner";
 	#allowed_layer_cache = [];
 
@@ -7167,7 +7188,7 @@ class asanAI {
 
 	async #get_model_config_hash () {
 		var arr = [];
-		$("#layers_container").find("input, checkbox, select").each(function (i, x) {
+		$("#" + this.#layers_gui_div_name).find("input, checkbox, select").each(function (i, x) {
 			if($(x).attr("type") == "checkbox") {
 				arr.push($(x).is(":checked"));
 			} else {
@@ -7371,7 +7392,7 @@ class asanAI {
 	}
 
 	async #write_descriptions (force=0) {
-		if(this.#is_hidden_or_has_hidden_parent($("#layers_container"))) {
+		if(this.#is_hidden_or_has_hidden_parent($("#" + this.#layers_gui_div_name))) {
 			$(".descriptions_of_layers").hide();
 			return;
 		}
@@ -9374,7 +9395,7 @@ if len(sys.argv) == 1:
 					error_div.parent().hide();
 				} catch (e) {
 					if (this.#mode == "beginner") {
-						$("#layers_container").sortable("cancel");
+						$("#" + this.#layers_gui_div_name).sortable("cancel");
 						alert("Dropping this layer there causes the this.#model.compile command to fail. Reverting this drop:\n" + e);
 						try {
 							await this.#compile_model();
@@ -9665,7 +9686,7 @@ if len(sys.argv) == 1:
 		var item_parent_xpath = this.#get_element_xpath(item_parent[0]);
 		var nr = null;
 
-		$("#layers_container").children().each(function (counter, element) {
+		$("#" + this.#layers_gui_div_name).children().each(function (counter, element) {
 			if (this.#get_element_xpath(element) == item_parent_xpath) {
 				nr = counter;
 			}
@@ -10211,14 +10232,14 @@ if len(sys.argv) == 1:
 			await this.#dispose_old_model_tensors(model_uuid);
 		} catch (e) {
 			if(("" + e).includes("Negative dimension size caused by adding layer")) {
-				wrn(`[create_model] Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
+				this.wrn(`[create_model] Trying to add the layer ${i} failed, probably because the input size is too small or there are too many stacked layers.`);
 			} else if(("" + e).includes("Input shape contains 0")) {
-				wrn("[create_model] " + e);
+				this.wrn("[create_model] " + e);
 			} else if(("" + e).includes("is not fully defined")) {
-				wrn("[create_model] " + e);
+				this.wrn("[create_model] " + e);
 				return;
 			} else if(("" + e).includes("Input 0 is incompatible with layer")) {
-				wrn("[create_model] Model could not be created because of problems with the input layer.");
+				this.wrn("[create_model] Model could not be created because of problems with the input layer.");
 				return;
 			} else {
 				throw new Error("[create_model] " + e);
@@ -10237,29 +10258,29 @@ if len(sys.argv) == 1:
 						this.#model.layers[i].input.shape;
 						ok = 0;
 					} catch (er) { // ignore delibaretly, when it fails, its ok
-						wrn("" + er);
+						this.wrn("" + er);
 					}
 
 					if(!ok) {
-						throw new Error(`this.#model.layers[${i}] is a multibound head`);
+						//throw new Error(`this.#model.layers[${i}] is a multibound head`);
 					}
 				} catch(e) {
 					this.err(e);
-					wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
+					this.wrn("Model has multi-node inputs. It should not have!!! Continuing anyway, but please, debug this!!!");
 				}
 			}
 		}
 
-		enable_train();
+		this.#enable_train();
 
 		if(typeof(fake_model_structure) == "undefined") {
-			$("#html").text(await get_html_from_model());
+			$("#html").text(await this.#get_html_from_model());
 		}
 
-		current_layer_status_hash = await get_current_layer_container_status_hash();
+		this.#current_layer_status_hash = await this.#get_current_layer_container_status_hash();
 
 		if(!fake_model_structure) {
-			this.dbg("[create_model] " + language[lang]["model_compiled_successfully"]);
+			this.dbg("[create_model] " + this.#language[this.#lang]["model_compiled_successfully"]);
 		}
 
 		if(old_model) {
@@ -10274,7 +10295,7 @@ if len(sys.argv) == 1:
 						}
 					}
 				} else {
-					if(finished_loading) {
+					if(this.#finished_loading) {
 						info("Old layers had no layers defined");
 					}
 				}
@@ -10285,7 +10306,7 @@ if len(sys.argv) == 1:
 			await this.dispose(old_model);
 		}
 
-		var model_data = await get_model_data();
+		var model_data = await this.#get_model_data();
 
 		if(!fake_model_structure) {
 			last_known_good_input_shape = get_input_shape_as_string();
@@ -10297,7 +10318,7 @@ if len(sys.argv) == 1:
 	async #get_layers_container_md5() {
 		await this.delay(1);
 		var layers_container_str = "";
-		$("#layers_container").find("select,input,checkbox").each(function (i, x) {
+		$("#" + this.#layers_gui_div_name).find("select,input,checkbox").each(function (i, x) {
 			x = $(x);
 			layers_container_str += x.attr("class") + "=" + x.val() + ";;;";
 		});
@@ -10449,7 +10470,7 @@ if len(sys.argv) == 1:
 				if(("" + e).includes("this.#_custom_tensors[key] is undefined")) {
 					//
 				} else {
-					wrn("[_clean_custom_tensors] " + e);
+					this.wrn("[_clean_custom_tensors] " + e);
 				}
 			}
 		}
@@ -10516,7 +10537,7 @@ if len(sys.argv) == 1:
 		try {
 			if(typeof(data) == "object" && "units" in data && typeof(data["units"]) == "undefined") {
 				if(finished_loading) {
-					wrn("[#_check_data] units was not defined. Using 2 as default");
+					this.wrn("[#_check_data] units was not defined. Using 2 as default");
 				}
 				data["units"] = 2;
 			}
@@ -10607,7 +10628,7 @@ if len(sys.argv) == 1:
 						}
 					}
 				} else {
-					log("Invalid regularizer_or_init: " + regularizer_or_init);
+					this.log("Invalid regularizer_or_init: " + regularizer_or_init);
 				}
 			});
 		});
@@ -10693,5 +10714,216 @@ if len(sys.argv) == 1:
 		}
 
 		this.#_clean_custom_tensors();
+	}
+
+
+	async #get_html_from_model () {
+		var html = "";
+
+		html += "<html>" + "\n";
+		html += "	<head>\n";
+		html += "		<meta charset='UTF-8'>\n";
+		html += "		<title>Example Network</title>\n";
+		html += "		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
+		html += "		<script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
+		html += "		<!--<link href='main.css' rel='stylesheet' />-->\n";
+		html += "	</head>\n";
+		html += "	<body>\n";
+		html += "		<script type='text/javascript'>\n";
+		html += "			var model;\n";
+		html += "			var labels = ['" + labels.join("', '") + "'];\n";
+		html += "			var divide_by = " + $("#divide_by").val() + ";\n";
+		html += "			async function load_model () {\n";
+		html += "				model = await tf.loadLayersModel('./model.json');\n";
+		html += "			}\n";
+		var input_shape_is_image_val = await this.#input_shape_is_image();
+		if(input_shape_is_image_val) {
+			html += "			var load_file = (function(event) {\n";
+			html += "				var output = document.getElementById('output');\n";
+			html += "				$('#output').removeAttr('src');\n";
+			html += "				output.src = URL.createObjectURL(event.target.files[0]);\n";
+			html += "				output.onload = async function() {\n";
+			html += "					await load_model();\n";
+			html += "					URL.revokeObjectURL(output.src);\n";
+			html += "					var img = $('#output')[0];\n";
+			html += "					img.height = model.layers[0].input.shape[1];\n";
+			html += "					img.width = model.layers[0].input.shape[2];\n";
+			html += "					var tensor = tf.browser.fromPixels(img);\n";
+			html += "					tensor = tf.divNoNan(tensor, divide_by);\n";
+			html += "					var results_tensor = await model.predict(tensor.expandDims());\n";
+			html += "					var results = results_tensor.dataSync();\n";
+			html += "					var html = '<pre>';\n";
+			html += "					for (var i = 0; i < results.length; i++) {\n";
+			html += "						var label = labels[i % labels.length];\n";
+			html += "						html += label + ': ' + results[i] + \"\\n\";\n";
+			html += "					}\n";
+			html += "					html += '</pre>';\n";
+			html += "					$('#results').html(html);\n";
+			html += "					$('#results_container').show();\n";
+			html += "				};\n";
+			html += "				$('#output').show();\n";
+			html += "			});\n";
+		} else {
+			html += "			async function predict() {\n";
+			html +=	"				await load_model();\n";
+			html += "				var input = $('#inputtensor').val()\n";
+			html += "				var tensor = tf.tensor(eval(input));\n";
+			html += "				tensor = tf.divNoNan(tensor, divide_by);\n";
+			html += "				var prediction_tensor = await model.predict(tensor);\n";
+			html += "				var results = await prediction_tensor.dataSync();\n";
+			html += "				var html = '<pre>';\n";
+			html += "				for (var i = 0; i < results.length; i++) {\n";
+			html += "					var label = labels[i % labels.length];\n";
+			html += "					if(label) {\n";
+			html += "						html += label + ': ' + results[i] + \"\\n\";\n";
+			html += "					} else {\n";
+			html += "						html += results[i] + '\\n';\n";
+			html += "					}\n";
+			html += "				}\n";
+			html += "				html += '</pre>';\n";
+			html += "				$('#results').html(html);\n";
+			html += "			}\n";
+		}
+		html += "			</script>\n";
+		if(input_shape_is_image_val) {
+			html += "				<input type='file' id='upload_img' onchange='load_file(event)' />\n";
+			html += "			<div id='results_container' style='display: none'>\n";
+			html += "				<img id='output' />\n";
+			html += "				<div id='results'></div>\n";
+			html += "			</div>\n";
+		} else {
+			html += "			<textarea style='width: 500px; height: 200px;' id='inputtensor'></textarea><br>\n";
+			html += "			<button onclick='predict()'>Predict</button>\n";
+			html += "			<div id='results'></div>\n";
+			html +=	"			<script>\n";
+			html +=	"				async function write_placeholder() {\n";
+			html +=	"					await load_model();\n";
+			html +=	"					var shape = model.layers[0].input.shape;\n";
+			html +=	"					shape.shift();\n";
+			html += "					$('#inputtensor').attr('placeholder', 'Shape: [[' + shape.join(', ') + ']]');\n";
+			html +=	"				}\n";
+			html +=	"				write_placeholder();\n";
+			html +=	"			</script>\n";
+		}
+		html += "        </body>\n";
+		html += "</html>" + "\n";
+
+		return html;
+	}
+
+	async #get_current_layer_container_status_hash() {
+		var html = $("#" + this.#layers_gui_div_name).html();
+
+		html = html.replaceAll(" disabled=\"\"", "");
+
+		var res = await this.#md5(html);
+
+		return res;
+	}
+
+	async #get_model_data (optimizer_name_only) {
+		if(this.#global_model_data) {
+			var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
+			for (var i = 0; i < model_data_tensors.length; i++) {
+				await dispose(model_data_tensors[i]);
+			}
+		}
+
+		var loss = this.#loss;
+		var optimizer_type = this.#optimizer;
+		var metric_type = this.#metric;
+
+		if(Object.values(this.#metric_shortnames).includes(metric_type)) {
+			metric_type = this.#get_key_by_value(this.#metric_shortnames, metric_type);
+		}
+
+		var epochs = this.#epochs;
+		var batchSize = this.#batch_size
+		var validationSplit = this.#validation_split;
+		var divide_by = this.#divide_by;
+
+		if(this.#looks_like_number(epochs)) {
+			epochs = this.#parse_int(epochs);
+		} else {
+			this.#finished_loading && this.wrn("#epochs doesnt look like a number");
+		}
+
+		if(this.#looks_like_number(batchSize)) {
+			batchSize = this.#parse_int(batchSize);
+		} else {
+			this.#finished_loading && this.wrn("#batchSize doesnt look like a number");
+		}
+
+		if(this.#looks_like_number(validationSplit)) {
+			validationSplit = this.#parse_int(validationSplit);
+		} else {
+			this.#finished_loading && this.wrn("#validation_split doesnt look like a number");
+		}
+
+		if(this.#looks_like_number(divide_by)) {
+			divide_by = this.#parse_float(divide_by);
+		} else {
+			this.#finished_loading && this.wrn("#divide_by doesnt look like a number");
+		}
+
+		this.#global_model_data = {
+			loss: loss,
+			optimizer_name: optimizer_type,
+			optimizer: optimizer_type,
+			metrics: metric_type,
+			metric: metric_type,
+			epochs: epochs,
+			batchSize: batchSize,
+			validationSplit: validationSplit,
+			divide_by: divide_by,
+			labels: this.#labels
+		};
+
+		if(!this.#is_hidden_or_has_hidden_parent($("#height"))) {
+			this.#global_model_data["width"] = this.#model_width;
+			this.#global_model_data["height"] = this.#model_height;
+		}
+
+		var optimizer_data_names = this.#model_data_structure[optimizer_type];
+
+		for (var i = 0; i < optimizer_data_names.length; i++) {
+			var optimizer_data_id = optimizer_data_names[i] + "_" + optimizer_type;
+			var optimizer_data = $("#" + optimizer_data_id).val();
+			this.#global_model_data[optimizer_data_names[i]] = this.#parse_float(optimizer_data);
+		}
+
+		var optimizer_constructors = {
+			"adadelta": "adadelta(this.#global_model_data['learningRate'], this.#global_model_data['rho'], this.#global_model_data['epsilon'])",
+			"adagrad": "adagrad(this.#global_model_data['learningRate'], this.#global_model_data['initialAccumulatorValue'])",
+			"adam": "adam(this.#global_model_data['learningRate'], this.#global_model_data['beta1'], this.#global_model_data['beta2'], this.#global_model_data['epsilon'])",
+			"adamax": "adamax(this.#global_model_data['learningRate'], this.#global_model_data['beta1'], this.#global_model_data['beta2'], this.#global_model_data['epsilon'], this.#global_model_data['decay'])",
+			"rmsprop": "rmsprop(this.#global_model_data['learningRate'], this.#global_model_data['decay'], this.#global_model_data['momentum'], this.#global_model_data['epsilon'], this.#global_model_data['centered'])",
+			"sgd": "sgd(this.#global_model_data['learningRate'])"
+		};
+
+		if(!optimizer_name_only) {
+			this.#global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[this.#global_model_data["optimizer"]]); });
+		}
+
+		return this.#global_model_data;
+	}
+
+	#find_tensors_with_is_disposed_internal(obj, tensorList = []) {
+		if (typeof obj === "object") {
+			if (obj.isDisposedInternal !== undefined) {
+				tensorList.push(obj);
+			}
+			for (const key in obj) {
+				this.#find_tensors_with_is_disposed_internal(obj[key], tensorList);
+			}
+		}
+
+		return tensorList;
+	}
+
+	#get_key_by_value(object, value) {
+		var res = Object.keys(object).find(key => object[key] === value);
+
+		return res;
 	}
 }
