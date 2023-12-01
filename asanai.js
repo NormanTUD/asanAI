@@ -9362,7 +9362,7 @@ if len(sys.argv) == 1:
 			this.err("[add_layer] " + e);
 		}
 
-		$("#number_of_layers").val(parse_int($("#number_of_layers").val()) + 1);
+		$("#number_of_layers").val(this.#parse_int($("#number_of_layers").val()) + 1);
 
 		var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
 		var new_layer_type = previous_layer_type;
@@ -9635,11 +9635,11 @@ if len(sys.argv) == 1:
 
 		var t_xpath = this.#get_element_xpath(t);
 
-		labels[nr] = name;
+		this.#labels[nr] = name;
 
 		$(".label_element").each((i, x) => {
 			if(1 || this.#get_element_xpath(x) != t_xpath) {
-				var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+				var label_index = this.#parse_int($(x).parent().parent().find(".label_element").index(x)) % this.#labels.length;
 
 				if(label_index == nr) {
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
@@ -9653,6 +9653,6 @@ if len(sys.argv) == 1:
 
 		$($(".own_image_label")[nr]).val(name);
 
-		await update_python_code(1);
+		await this.#update_python_code(1);
 	}
 }
