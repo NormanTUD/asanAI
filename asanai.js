@@ -8,7 +8,8 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
-	#mode = "expert";
+	#mode = "beginner";
+	#allowed_layer_cache = [];
 
 	#is_repairing_output_shape = false;
 
@@ -219,7 +220,7 @@ class asanAI {
 		"kernel_size_y": "1",
 		"kernel_size_z": "1",
 
-		"target_shape": this.calculate_default_target_shape
+		"target_shape": this.#calculate_default_target_shape
 	}
 
 	#activations = {
@@ -1065,7 +1066,7 @@ class asanAI {
 		}
 
 		if(!optimizer_config) {
-			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the model.");
+			this.err("[create_model_from_model_data] optimizer_config cannot be left empty. It is needed for compiling the this.#model.");
 			return;
 		}
 
@@ -1230,8 +1231,8 @@ class asanAI {
 			var kernel_size_x, kernel_size_y;
 
 			try {
-				kernel_size_x = model.layers[i].kernelSize[0]
-				kernel_size_y = model.layers[i].kernelSize[1];
+				kernel_size_x = this.#model.layers[i].kernelSize[0]
+				kernel_size_y = this.#model.layers[i].kernelSize[1];
 			} catch (e) {}
 
 			var input_shape_of_layer = "";
@@ -3021,12 +3022,12 @@ class asanAI {
 		}
 
 		if(!this.#model.input) {
-			this.err("[predict] Cannot predict without a model.input");
+			this.err("[predict] Cannot predict without a this.#model.input");
 			return;		
 		}
 
 		if(!this.#model.input.shape) {
-			this.err("[predict] Cannot predict without a model.input.shape");
+			this.err("[predict] Cannot predict without a this.#model.input.shape");
 			return;		
 		}
 
@@ -4791,7 +4792,7 @@ class asanAI {
 					continue;
 				}
 
-				var res = tidy(() => { return model.predict(img_tensor); });
+				var res = tidy(() => { return this.#model.predict(img_tensor); });
 
 				res_array = this.array_sync(res)[0];
 				await this.dispose(img_tensor);
@@ -6005,7 +6006,7 @@ class asanAI {
 
 	#can_be_shown_in_latex () {
 		if(!this.#model) {
-			this.wrn("Hiding Math tab because there is no model. This might be a bug.");
+			this.wrn("Hiding Math tab because there is no this.#model. This might be a bug.");
 			return false;
 		}
 
@@ -6065,7 +6066,7 @@ class asanAI {
 
 		/*
 		if(!$("#allow_math_mode_for_all_layers").is(":checked") && input_shape.length != 2) {
-			l("Math mode works only in input shape [n] (or [null, n] with batch)");
+			this.log("Math mode works only in input shape [n] (or [null, n] with batch)");
 			return;
 		}
 		*/
@@ -6074,7 +6075,7 @@ class asanAI {
 
 		/*
 		if(!$("#allow_math_mode_for_all_layers").is(":checked") && output_shape.length != 2) {
-			l("Math mode works only in output shape [n] (or [null, n] with batch)");
+			this.log("Math mode works only in output shape [n] (or [null, n] with batch)");
 			return;
 		}
 		*/
@@ -6501,7 +6502,7 @@ class asanAI {
 
 				var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
 
-				var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
+				var x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + this.#model.layers[i].epsilon + "\\right)}}}_\\text{Normalize}";
 
 				var beta_string = "";
 				var gamma_string = "";
@@ -6553,7 +6554,7 @@ class asanAI {
 
 			str += "</div><br>";
 			/*
-			if(i != model.layers.length - 1) {
+			if(i != this.#model.layers.length - 1) {
 				str += "<hr class='full_width_hr'>";
 			}
 			*/
@@ -7363,7 +7364,7 @@ class asanAI {
 		return r;
 	}
 
-	async write_descriptions (force=0) {
+	async #write_descriptions (force=0) {
 		if(this.#is_hidden_or_has_hidden_parent($("#layers_container"))) {
 			$(".descriptions_of_layers").hide();
 			return;
@@ -7711,7 +7712,7 @@ class asanAI {
 			}
 		}
 
-		await this.write_descriptions();
+		await this.#write_descriptions();
 	}
 
 	async initializer_layer_options(thisitem) {
@@ -7746,7 +7747,7 @@ class asanAI {
 		this.assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
 
 		$(item).parent().parent().parent().next().toggle();
-		await this.write_descriptions(1);
+		await this.#write_descriptions(1);
 	}
 
 	option_for_layer(nr) {
@@ -7858,11 +7859,11 @@ class asanAI {
 		}
 	}
 
-	calculate_default_target_shape (nr) {
-		this.assert(typeof(nr) == "number", `calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
+	#calculate_default_target_shape (nr) {
+		this.assert(typeof(nr) == "number", `#calculate_default_target_shape(nr = ${nr}), nr is not a number, but ${typeof(nr)}`);
 
 		try {
-			var input_shape = model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
+			var input_shape = this.#model.layers[Math.max(0, nr - 1)].getOutputAt(0).shape;
 
 			var output = [];
 
@@ -7878,7 +7879,7 @@ class asanAI {
 				e = e.message;
 			}
 
-			this.err("[calculate_default_target_shape] " + e);
+			this.err("[#calculate_default_target_shape] " + e);
 
 			return null;
 		}
@@ -7947,7 +7948,7 @@ class asanAI {
 
 			if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 				var last_good = get_last_good_input_shape_as_string();
-				l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+				this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
 					await set_input_shape(last_good, 1);
 				}
@@ -7990,7 +7991,7 @@ class asanAI {
 
 				var last_good = get_last_good_input_shape_as_string();
 				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-					l("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
+					this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 					await set_input_shape(last_good, 1);
 				}
 			}
@@ -8101,7 +8102,7 @@ class asanAI {
 		}
 
 		try {
-			await this.write_descriptions();
+			await this.#write_descriptions();
 		} catch (e) {
 			this.wrn(e);
 		}
@@ -8121,7 +8122,7 @@ class asanAI {
 				if(("" + e).includes("but got array with shape")) {
 					var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
 					this.wrn("[#updated_page_internal] " + _err);
-					l(_err);
+					this.log(_err);
 				} else {
 					throw new Error(e);
 				}
@@ -8760,7 +8761,7 @@ if len(sys.argv) == 1:
 						output_shape_string = output_shape_string.replace("null,", "");
 					}
 				} else {
-					this.dbg(`#identify_layers: i = ${i} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
+					this.dbg(`#identify_layers: i = ${i} is not in this.#model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 				}
 
 				if(this.#has_zero_output_shape) {
@@ -8883,7 +8884,7 @@ if len(sys.argv) == 1:
 			}
 		}
 
-		await this.write_descriptions();
+		await this.#write_descriptions();
 
 		this.#layer_structure_cache = JSON.stringify(structure);
 
@@ -8919,7 +8920,7 @@ if len(sys.argv) == 1:
 	async #last_shape_layer_warning() {
 		if (this.#data_origin == "image") {
 			if (!model) {
-				log("last_layer_shape_warning is waiting for the model...");
+				log("last_layer_shape_warning is waiting for the this.#model...");
 				while (!model) {
 					await this.delay(200);
 				}
@@ -9257,9 +9258,9 @@ if len(sys.argv) == 1:
 					error_div.html("");
 					error_div.parent().hide();
 				} catch (e) {
-					if (mode == "beginner") {
+					if (this.#mode == "beginner") {
 						$("#layers_container").sortable("cancel");
-						alert("Dropping this layer there causes the model.compile command to fail. Reverting this drop:\n" + e);
+						alert("Dropping this layer there causes the this.#model.compile command to fail. Reverting this drop:\n" + e);
 						try {
 							await this.#compile_model();
 						} catch (e) {
@@ -9309,17 +9310,17 @@ if len(sys.argv) == 1:
 			Swal.fire({
 				icon: "error",
 				title: "Oops [2]...",
-				text: "You cannot remove the last remaining layer of your model.",
+				text: "You cannot remove the last remaining layer of your this.#model.",
 			});
 		}
 
-		await write_descriptions();
+		await this.#write_descriptions();
 		//rename_labels();
 		await predict_handdrawn();
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-		l("Removed layer");
+		this.log("Removed layer");
 	}
 
 	async add_layer(item) {
@@ -9373,7 +9374,7 @@ if len(sys.argv) == 1:
 
 		await updated_page();
 
-		await write_descriptions();
+		await this.#write_descriptions();
 
 		$(".remove_layer").prop("disabled", false);
 		$(".remove_layer").show();
@@ -9387,7 +9388,7 @@ if len(sys.argv) == 1:
 
 		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
-		l("Added layer");
+		this.log("Added layer");
 	}
 
 
@@ -9502,6 +9503,38 @@ if len(sys.argv) == 1:
 	}
 
 	find_layer_number_by_element(element) {
+		function isChildElement(child, _parent) {
+			let currentElement = child;
+
+			while (currentElement !== null) {
+				if (currentElement === _parent) {
+					return true;
+				}
+				currentElement = currentElement.parentElement;
+			}
+
+			return false;
+		}
+
+		var element_xpath = this.#get_element_xpath(element);
+
+		this.assert(typeof(element_xpath) == "string", `find_layer_number_by_element: xpath from element is not type string but ${typeof(element_xpath)}`);
+
+		var layer_setting = $(".layer_setting");
+
+		for (var i = 0; i < layer_setting.length; i++) {
+			var _ls = layer_setting[i];
+
+			if(isChildElement(element, _ls)) {
+				return i;
+			}
+		}
+
+		this.err(`find_layer_number_by_element could not find xpath from element!`);
+
+		return;
+
+		/*
 		var item_parent = element;
 
 		while (!$(item_parent).hasClass("layer_setting")) {
@@ -9524,6 +9557,7 @@ if len(sys.argv) == 1:
 		});
 
 		return nr;
+		*/
 	}
 
 	async disable_invalid_layers_event(e, thisitem) {
@@ -9535,16 +9569,16 @@ if len(sys.argv) == 1:
 
 		layer_nr = this.find_layer_number_by_element(thisitem);
 
-		await enable_valid_layer_types(layer_nr);
+		await this.#enable_valid_layer_types(layer_nr);
 	}
 
-	async enable_valid_layer_types(layer_nr) {
+	async #enable_valid_layer_types(layer_nr) {
 		if(this.#started_training && !this.#is_repairing_output_shape) {
-			this.info("enable_valid_layer_types disabled because is in training");
+			this.info("#enable_valid_layer_types disabled because is in training");
 			return;
 		}
 
-		this.assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
+		this.assert(typeof (layer_nr) == "number", "#enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
 
 		if(this.#is_repairing_output_shape) {
 			enable_all_layer_types();
@@ -9585,6 +9619,12 @@ if len(sys.argv) == 1:
 		}
 	}
 
+	#layer_type_always_works (layer_type) {
+		var res = !!(["dense", "reshape", "dropout", "GaussianNoise", "gaussianDropout", "DebugLayer"].includes(layer_type) || ["Activation", "Noise"].includes(this.#layer_options[layer_type].category));
+
+		return res;
+	}
+
 	async #get_valid_layer_types (layer_nr) {
 		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 
@@ -9594,18 +9634,18 @@ if len(sys.argv) == 1:
 
 		var checked_layers = false;
 
-		for (var i = 0; i < layer_names.length; i++) {
-			var layer_type = layer_names[i];
-			if(mode == "expert") {
+		for (var i = 0; i < this.#layer_names.length; i++) {
+			var layer_type = this.#layer_names[i];
+			if(this.#mode == "expert") {
 				valid_layer_types.push(layer_type);
 			} else {
-				if(layer_type_always_works(layer_type)) {
+				if(this.#layer_type_always_works(layer_type)) {
 					valid_layer_types.push(layer_type);
 				} else {
-					var percent = (((i + 1) / layer_names.length) * 100).toFixed(0);
+					var percent = (((i + 1) / this.#layer_names.length) * 100).toFixed(0);
 					var pb_string = "Checking " + layer_type + " (" + percent + "%)";
-					l(pb_string);
-					if(heuristic_layer_possibility_check(layer_nr, layer_type)) {
+					this.log(pb_string);
+					if(this.#heuristic_layer_possibility_check(layer_nr, layer_type)) {
 						//log("Testing " + layer_type);
 						var compiled_fake_model = await compile_fake_model(layer_nr, layer_type);
 						if(compiled_fake_model) {
@@ -9614,18 +9654,18 @@ if len(sys.argv) == 1:
 					}
 					checked_layers = true;
 				}
-				await write_descriptions();
+				await this.#write_descriptions();
 			}
 		}
-		await write_descriptions();
+		await this.#write_descriptions();
 
 		if(checked_layers) {
-			l("Checked possible layer types");
+			this.log("Checked possible layer types");
 		}
 
-		$("body").css("cursor", get_cursor_or_none("default"));
+		$("body").css("cursor", this.#get_cursor_or_none("default"));
 
-		allowed_layer_cache[layer_nr] = valid_layer_types;
+		this.#allowed_layer_cache[layer_nr] = valid_layer_types;
 
 		return valid_layer_types;
 	}
@@ -9654,5 +9694,99 @@ if len(sys.argv) == 1:
 		$($(".own_image_label")[nr]).val(name);
 
 		await this.#update_python_code(1);
+	}
+
+	#_heuristic_layer_possibility_check(layer_type, layer_input_shape) {
+		if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
+			if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
+				if(layer_input_shape.length == 2) {
+					return true;
+				}
+				return false;
+			} else if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "globalMaxPooling2d", "maxPooling2d"].includes(layer_type)) {
+				if(layer_input_shape.length == 3) {
+					return true;
+				}
+				return false;
+			} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+				if(layer_input_shape.length == 4) {
+					return true;
+				}
+				return false;
+			}
+		} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+			if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+				if(layer_input_shape.length == 3) {
+					return true;
+				}
+				return false;
+			}
+
+		} else if(["gru"].includes(layer_type)) {
+			if(layer_type == "gru" && layer_input_shape.length < 2) {
+				return false;
+			}
+		} else if(["ZeroPadding2D"].includes(layer_type)) {
+			if(layer_type == "gru" && layer_input_shape.length != 4) {
+				return false;
+			}
+		}
+
+		if(mode == "beginner" && ["reshape"].includes(layer_type)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	#heuristic_layer_possibility_check (layer_nr, layer_type) {
+		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
+		this.assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+
+		var layer_input_shape = this.#calculate_default_target_shape(layer_nr);
+
+		if(layer_type == "flatten") {
+			if(layer_input_shape.length > 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		var res = this.#_heuristic_layer_possibility_check(layer_type, layer_input_shape);
+
+		return res;
+	}
+
+	#is_touch_device () {
+		var res = (("ontouchstart" in window) ||
+			(navigator.maxTouchPoints > 0) ||
+			(navigator.msMaxTouchPoints > 0));
+
+		if(!res) {
+			res = !!window.matchMedia("(pointer: coarse)").matches;
+		}
+		return res;
+	}
+
+	#is_tablet () {
+		const userAgent = navigator.userAgent.toLowerCase();
+		const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+
+		return isTablet;
+	}
+
+	#get_cursor_or_none (cursorname) {
+		try {
+			if(this.#is_touch_device() && this.#is_tablet()) {
+				return "none";
+			}
+		} catch (e) {
+			if(("" + e).includes("#is_touch_device is not defined")) {
+				return cursorname;
+			}
+		}
+
+		return cursorname;
 	}
 }
