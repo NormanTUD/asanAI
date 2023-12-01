@@ -2972,6 +2972,8 @@ class asanAI {
 			return image_tensor;
 		});
 
+		console.log(data);
+
 		var result = this.predict(data);
 
 		if(write_to_div) {
@@ -4152,7 +4154,7 @@ class asanAI {
 
 	#_show_images_in_output (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
-			this.err("[#_show_images_in_output] predctions tensor (first parameter) is not a tensor");
+			this.err("[#_show_images_in_output] predictions tensor (first parameter) is not a tensor");
 			return;
 		}
 
@@ -4204,7 +4206,7 @@ class asanAI {
 
 	#_show_output (predictions_tensor, write_to_div) {
 		if(!this.is_tf_tensor(predictions_tensor)) {
-			this.err("[#_show_output] predctions tensor (first parameter) is not a tensor");
+			this.err("[#_show_output] predictions tensor (first parameter) is not a tensor");
 			return;
 		}
 
