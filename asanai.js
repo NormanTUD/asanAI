@@ -4895,7 +4895,7 @@ class asanAI {
 
 		for (var i = 0; i < Object.keys(category_overview).length; i++) {
 			var category = Object.keys(category_overview)[i];
-			category_overview[category]["percentage_correct"] = parseInt((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
+			category_overview[category]["percentage_correct"] = this.#parse_int((category_overview[category]["correct"] / category_overview[category]["total"]) * 100);
 		}
 
 		if(imgs.length && categories.length && probabilities.length) {
