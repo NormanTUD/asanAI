@@ -309,7 +309,7 @@ class asanAI {
 	#divide_by = 1;
 	#labels = [];
 	#bar_width = 100;
-	show_and_predict_webcam_in_div_div = null;
+	#show_and_predict_webcam_in_div_div = null;
 	#currently_switching_models = false;
 	#num_channels = 3;
 	#default_bar_color = "orange";
@@ -2780,7 +2780,7 @@ class asanAI {
 		this.#camera = null;
 
 		$(this.#last_video_element).hide();
-		$("#" + this.show_and_predict_webcam_in_div_div).hide();
+		$("#" + this.#show_and_predict_webcam_in_div_div).hide();
 
 		if(item) {
 			$(item).text("Start webcam");
@@ -2806,7 +2806,7 @@ class asanAI {
 		}
 
 		$(this.#last_video_element).show();
-		$("#" + this.show_and_predict_webcam_in_div_div).show();
+		$("#" + this.#show_and_predict_webcam_in_div_div).show();
 
 		if(item) {
 			$(item).text("Stop webcam");
@@ -3115,7 +3115,7 @@ class asanAI {
 		return output;
 	}
 
-	async show_and_predict_webcam_in_div(divname=this.show_and_predict_webcam_in_div_div, _w, _h) {
+	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
 		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
 
@@ -3131,7 +3131,7 @@ class asanAI {
 			return;
 		}
 
-		this.show_and_predict_webcam_in_div_div = divname;
+		this.#show_and_predict_webcam_in_div_div = divname;
 
 		this.webcam_prediction_div_name = divname;
 
