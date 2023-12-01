@@ -9033,7 +9033,7 @@ if len(sys.argv) == 1:
 
 				if(label_index === undefined) {
 					var tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 					return;
 				}
 
@@ -9042,11 +9042,11 @@ if len(sys.argv) == 1:
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(tmp_label);
 					} else {
-						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 					}
 				} else {
 					tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 				}
 			} catch (e) {
 				if(("" + e).includes("tmp_label.replaceAll is not a function")) {
@@ -9628,5 +9628,31 @@ if len(sys.argv) == 1:
 		allowed_layer_cache[layer_nr] = valid_layer_types;
 
 		return valid_layer_types;
+	}
+
+	async update_label_by_nr (t, nr) {
+		var name = $(t).val();
+
+		var t_xpath = get_element_xpath(t);
+
+		labels[nr] = name;
+
+		$(".label_element").each((i, x) => {
+			if(1 || get_element_xpath(x) != t_xpath) {
+				var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+
+				if(label_index == nr) {
+					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
+						$(x).find("input").val(name);
+					} else {
+						$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='${this.asanai_name}.update_label_by_nr(${label_index}, $(this).val())' />`);
+					}
+				}
+			}
+		});
+
+		$($(".own_image_label")[nr]).val(name);
+
+		await update_python_code(1);
 	}
 }
