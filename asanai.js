@@ -1891,7 +1891,7 @@ class asanAI {
 	async dispose (item) { // start_tensors
 		try {
 			//console.trace();
-			//log(item);
+			//console.log(item);
 			if(item) {
 				var tensor_id = item.id;
 				tf.dispose(item);
@@ -2724,7 +2724,7 @@ class asanAI {
 		}
 
 		if(this.#model) {
-			await this.dispose(this.#model);
+			//await this.dispose(this.#model);
 
 			this.#clean_custom_tensors();
 		}
@@ -9017,15 +9017,15 @@ if len(sys.argv) == 1:
 
 	#allow_editable_labels () {
 		$(".label_element").each((i, x) => {
-			var label_index = this.#parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
+			var label_index = this.#parse_int($(x).parent().parent().find(".label_element").index(x)) % this.#labels.length;
 
-			if(!labels.length) {
+			if(!this.#labels.length) {
 				//wrn("labels is an array, but is empty.");
 				return;
 			}
 
 			try {
-				var tmp_label = labels[label_index];
+				var tmp_label = this.#labels[label_index];
 				if(tmp_label === undefined) {
 					this.wrn("[allow_editable_labels] tmp_label undefined");
 					return;
@@ -9033,7 +9033,7 @@ if len(sys.argv) == 1:
 
 				if(label_index === undefined) {
 					var tmp_label = $(x).text();
-					$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 					return;
 				}
 
@@ -9042,11 +9042,11 @@ if len(sys.argv) == 1:
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(tmp_label);
 					} else {
-						$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 					}
 				} else {
 					tmp_label = $(x).text();
-					$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
 				}
 			} catch (e) {
 				if(("" + e).includes("tmp_label.replaceAll is not a function")) {
