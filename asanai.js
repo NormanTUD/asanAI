@@ -2681,7 +2681,7 @@ class asanAI {
 		return this.#model;
 	}
 
-	#redo_what_has_to_be_redone (_restart_webcam) {
+	async #redo_what_has_to_be_redone (_restart_webcam) {
 		if(this.#model.input.shape.length == 4) {
 			this.#model_height = this.#model.input.shape[1];
 			this.#model_width = this.#model.input.shape[2];
@@ -2707,7 +2707,7 @@ class asanAI {
 				if($(this_img_element).length) {
 					var this_div_element = this.#images_to_repredict_divs[i];
 
-					this.predict_image(this_img_element, this_div_element, false, false);
+					await this.predict_image(this_img_element, this_div_element, false, false);
 				} else {
 					this.err(`[set_model] Cannot find element by xpath for reprediction: ${this_img_element_xpath}`);
 				}
@@ -2743,7 +2743,7 @@ class asanAI {
 			this.#is_classification = true;
 		}
 
-		this.#redo_what_has_to_be_redone(_restart_webcam);
+		await this.#redo_what_has_to_be_redone(_restart_webcam);
 
 		this.#currently_switching_models = false;
 
@@ -2898,7 +2898,7 @@ class asanAI {
 		}
 	}
 
-	predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
+	async predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
 		this.assert(typeof(_add_to_repredict) == "boolean", "_add_to_repredict is not a boolean");
 		this.assert(typeof(_add_on_click_repredict) == "boolean", "_add_on_click_repredict is not a boolean");
 		this.assert(img_element_or_div, "img_element_or_div is empty");
@@ -2972,17 +2972,15 @@ class asanAI {
 			return image_tensor;
 		});
 
-		console.log(data);
-
 		var result = this.predict(data);
 
-		if(write_to_div) {
-			this.#_show_output(result, write_to_div);
+		if(result) {
+			if(write_to_div) {
+				this.#_show_output(result, write_to_div);
+			}
+		} else {
+			this.wrn(`result was empty (type: ${typeof(result)})`);
 		}
-
-		var result_array  = this.tidy(() => { return this.array_sync(result) });
-		this.dispose(data);
-		this.dispose(result);
 
 		if(_add_to_repredict) {
 			var _xpath = this.#get_element_xpath(img_element_or_div);
@@ -3009,6 +3007,9 @@ class asanAI {
 				}
 			}
 		}
+
+		this.dispose(data);
+		this.dispose(result);
 
 		return result;
 	}
@@ -5486,7 +5487,7 @@ class asanAI {
 			this.#started_training = true;
 			var history = this.#model.fit(_x, _y, args);
 
-			this.#redo_what_has_to_be_redone(false);
+			await this.#redo_what_has_to_be_redone(false);
 
 			return history;
 		} catch (e) {
@@ -7012,7 +7013,7 @@ class asanAI {
 
 	async _temml () {
 		while ($("#temml_blocker").length) {
-			await delay(200);
+			await this.delay(200);
 		}
 
 		$("<span display='style:none' id='temml_blocker'></span>").appendTo($("body"));
@@ -8108,7 +8109,7 @@ class asanAI {
 		this.#allow_training();
 
 		if (!no_prediction) {
-			this.#redo_what_has_to_be_redone();
+			await this.#redo_what_has_to_be_redone();
 		}
 
 		await wait_for_latex_model;
@@ -8920,7 +8921,7 @@ if len(sys.argv) == 1:
 			if (!model) {
 				log("last_layer_shape_warning is waiting for the model...");
 				while (!model) {
-					await delay(200);
+					await this.delay(200);
 				}
 			}
 			if (model.outputShape.length == 2) {
