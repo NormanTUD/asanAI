@@ -8194,14 +8194,14 @@ class asanAI {
 						var _pool_size_x = this.#get_item_value(i, "pool_size_x");
 						var _pool_size_y = this.#get_item_value(i, "pool_size_y");
 
-						if(looks_like_number(_pool_size_x) && looks_like_number(_pool_size_y)) {
+						if(this.#looks_like_number(_pool_size_x) && this.#looks_like_number(_pool_size_y)) {
 							data[this.#get_python_name(option_name)] = [this.#parse_int(_pool_size_x), this.#parse_int(_pool_size_y)];
 						}
 					} else if (option_name == "strides") {
 						var _strides_x = this.#get_item_value(i, "strides_x");
 						var _strides_y = this.#get_item_value(i, "strides_y");
 
-						if(looks_like_number(_strides_x) && looks_like_number(_strides_y)) {
+						if(this.#looks_like_number(_strides_x) && this.#looks_like_number(_strides_y)) {
 							data[this.#get_python_name(option_name)] = [this.#parse_int(_strides_x), this.#parse_int(_strides_y)];
 						}
 					} else if (option_name == "kernel_size") {
@@ -8571,6 +8571,11 @@ ${this.#python_data_to_string(data, ['kernel_size'])}
 	}
 
 	#get_input_shape() {
+		if(!this.#model) {
+			this.err(`this.#model`);
+			return;
+		}
+
 		return this.#model.input.shape.filter(n => n);
 	}
 
@@ -8845,6 +8850,110 @@ if len(sys.argv) == 1:
 
 	}
 
+	get_data_for_layer (type, i, first_layer) {
+		this.assert(typeof(type) == "string", type + " is not a string but " + typeof(type));
+		this.assert(typeof(i) == "number", i + " is not a number but " + typeof(i));
+		this.assert(typeof(first_layer) == "boolean", first_layer + " is not a boolean but " + typeof(first_layer));
+
+		var data = {
+			"name": type + "_" + (i + 1)
+		};
+
+		if(i == 0 || first_layer) {
+			data["inputShape"] = this.#get_input_shape();
+		}
+
+		for (var j = 0; j < this.#layer_options[type]["options"].length; j++) {
+			var option_name = this.#layer_options[type]["options"][j];
+			this.assert(typeof(option_name) == "string", option_name + " is not string but " + typeof(option_name));
+
+			if(["pool_size", "kernel_size", "strides"].includes(option_name)) {
+				if(type.endsWith("1d")) {
+					data[this.#get_js_name(option_name)] = [this.#parse_int(this.#get_item_value(i, option_name + "_x"))];
+				} else if(type.endsWith("2d")) {
+					data[this.#get_js_name(option_name)] = [this.#parse_int(this.#get_item_value(i, option_name + "_x")), this.#parse_int(this.#get_item_value(i, option_name + "_y"))];
+				} else if(type.endsWith("3d")) {
+					data[this.#get_js_name(option_name)] = [this.#parse_int(this.#get_item_value(i, option_name + "_x")), this.#parse_int(this.#get_item_value(i, option_name + "_y")), this.#parse_int(this.#get_item_value(i, option_name + "_z"))];
+				} else if(type.endsWith("2dTranspose")) {
+					data[this.#get_js_name(option_name)] = [this.#parse_int(this.#get_item_value(i, option_name + "_x")), this.#parse_int(this.#get_item_value(i, option_name + "_y"))];
+				} else {
+					alert("Unknown layer type: " + type);
+				}
+			} else if(["trainable", "use_bias"].includes(option_name) ) {
+				try {
+					data[this.#get_js_name(option_name)] = this.#get_item_value(i, option_name);
+				} catch (e) {
+					if(Object.keys(e).includes("message")) {
+						e = e.message;
+					}
+
+					if(("" + e).includes("identifier starts immediately after numeric literal")) {
+						err("" + e);
+					} else {
+						throw new Error(e);
+					}
+				}
+
+			} else if(["size", "dilation_rate"].includes(option_name)) {
+				var dil_rate = this.#get_item_value(i, option_name);
+
+				dil_rate = dil_rate.replace(/[^0-9,]/g, "");
+
+				var code_str = "[" + dil_rate + "]";
+
+				data[this.#get_js_name(option_name)] = eval(code_str);
+
+			} else if(option_name == "rate") {
+				data["rate"] = this.#parse_float(this.#get_item_value(i, "dropout"));
+
+			} else if(["epsilon", "momentum", "dropout_rate"].includes(option_name)) {
+				data[this.#get_js_name(option_name)] = this.#parse_float(this.#get_item_value(i, option_name));
+
+			} else if(option_name == "activation" && $($($($(".layer_setting")[i]).find("." + option_name)[0])).val() == "None") {
+				// Do nothing if activation = None
+				data["activation"] = null;
+
+			} else if (this.#valid_initializer_types.includes(this.#get_key_name_camel_case(this.get_weight_type_name_from_option_name(option_name))) && option_name.includes("nitializer")) {
+				var weight_type = this.get_weight_type_name_from_option_name(option_name);
+
+				var initializer_name = this.#get_item_value(i, weight_type + "_initializer");
+				if(initializer_name) {
+					var initializer_config = this.get_layer_initializer_config(i, weight_type);
+					var initializer_config_string = JSON.stringify(initializer_config);
+					data[this.#get_key_name_camel_case(weight_type) + "Initializer"] = {"name": initializer_name, "config": initializer_config};
+				}
+			} else if (this.#valid_initializer_types.includes(this.#get_key_name_camel_case(this.get_weight_type_name_from_option_name(option_name))) && option_name.includes("egularizer")) {
+				var weight_type = this.get_weight_type_name_from_option_name(option_name);
+				var regularizer_name = this.#get_item_value(i, weight_type + "_regularizer");
+				if(regularizer_name) {
+					var regularizer_config = this.#get_layer_regularizer_config(i, weight_type);
+					var regularizer_config_string = JSON.stringify(regularizer_config);
+					data[this.#get_key_name_camel_case(weight_type) + "Regularizer"] = {"name": regularizer_name, "config": regularizer_config};
+				}
+
+			} else {
+				var elem = $($($(".layer_setting")[i]).find("." + option_name)[0]);
+				var value = $(elem).val();
+
+				if($(elem).is(":checkbox")) {
+					data[this.#get_js_name(option_name)] = value == "on" ? true : false;
+				} else {
+					if(value == "") {
+						if(!option_name.includes("constraint")) {
+							this.wrn("[get_data_for_layer] Something may be wrong here! Value for '" + option_name.toString() + "' is ''");
+						}
+					} else {
+						data[this.#get_js_name(option_name)] = this.#is_numeric(value) ? this.#parse_float(value) : value;
+					}
+				}
+			}
+		}
+
+		delete data["visualize"];
+
+		return data;
+	}
+
 	async get_model_structure(is_fake_model = 0) {
 		var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 		var structure = [];
@@ -8857,7 +8966,7 @@ if len(sys.argv) == 1:
 			var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
 			var type = $(layer_type).val();
 			if(typeof(type) !== "undefined" && type) {
-				var data = get_data_for_layer(type, i, first_layer);
+				var data = this.get_data_for_layer(type, i, first_layer);
 
 				try {
 					var layer_info = {
@@ -8876,7 +8985,7 @@ if len(sys.argv) == 1:
 
 				}
 
-				traindebug("tf.layers." + type + "(", data, ")");
+				this.dbg("tf.layers." + type + "(", data, ")");
 			} else {
 				if(this.#finished_loading) {
 					this.wrn(`get_model_structure is empty for layer ${i}`)
@@ -9647,7 +9756,7 @@ if len(sys.argv) == 1:
 					this.log(pb_string);
 					if(this.#heuristic_layer_possibility_check(layer_nr, layer_type)) {
 						//log("Testing " + layer_type);
-						var compiled_fake_model = await compile_fake_model(layer_nr, layer_type);
+						var compiled_fake_model = await this.#compile_fake_model(layer_nr, layer_type);
 						if(compiled_fake_model) {
 							valid_layer_types.push(layer_type);
 						}
@@ -9732,7 +9841,7 @@ if len(sys.argv) == 1:
 			}
 		}
 
-		if(mode == "beginner" && ["reshape"].includes(layer_type)) {
+		if(this.#mode == "beginner" && ["reshape"].includes(layer_type)) {
 			return false;
 		}
 
@@ -9788,5 +9897,271 @@ if len(sys.argv) == 1:
 		}
 
 		return cursorname;
+	}
+
+	async get_fake_data_for_layertype (layer_nr, layer_type) {
+		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
+		this.assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+		this.assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
+
+		await this.write_descriptions();
+
+		var data = {};
+
+		var options = layer_options[layer_type]["options"];
+
+		if(layer_nr == 0) {
+			data["inputShape"] = this.#get_input_shape();
+		}
+
+		for (var i = 0; i < options.length; i++) {
+			var this_option = options[i];
+
+			var js_option_name = undefined;
+			if (this_option in this.#python_names_to_js_names) {
+				js_option_name = this.#python_names_to_js_names[this_option];
+			} else if (this_option.startsWith("strides")) {
+				js_option_name = "strides";
+			} else if (this_option.startsWith("kernel_size")) {
+				js_option_name = "kernelSize";
+			} else if (this_option == "dropout") {
+				js_option_name = "rate";
+			} else if (this_option.startsWith("pool_size")) {
+				js_option_name = "poolSize";
+			} else if (this_option == "dropout_rate") {
+				js_option_name = "dropoutRate";
+			} else if(this_option == "visualize") {
+				// left emtpy on purpose
+			}
+
+			if(js_option_name) {
+				var default_value = this.#get_default_option(layer_type, js_names_to_python_names[js_option_name]);
+
+				if(js_option_name === undefined) {
+					this.wrn("Cannot map " + this_option + " to js_option_name");
+				} else {
+					if(js_option_name == "dilationRate") {
+						data[js_option_name] = eval(default_value);
+					} else if (typeof(default_value) == "function") {
+						data[js_option_name] = default_value(i);
+					} else {
+						data[js_option_name] = default_value;
+					}
+				}
+
+				data = this.#remove_empty(data);
+			}
+		}
+
+		return data;
+	}
+
+	async #create_fake_model_structure (layer_nr, layer_type) {
+		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
+		this.assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
+
+		var fake_model_structure = await this.get_model_structure();
+
+		fake_model_structure[layer_nr]["type"] = layer_type;
+		fake_model_structure[layer_nr]["data"] = await this.get_fake_data_for_layertype(layer_nr, layer_type);
+
+		return fake_model_structure;
+	}
+
+	async #compile_fake_model(layer_nr, layer_type) {
+		this.assert(typeof(layer_nr) == "number", layer_nr + " is not a number but " + typeof(layer_nr));
+		this.assert(typeof(layer_type) == "string", layer_type + " is not a string but " + typeof(layer_type));
+
+		var fake_model_structure;
+
+		try {
+			fake_model_structure = await this.#create_fake_model_structure(layer_nr, layer_type);
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.wrn(e);
+			return false;
+		}
+
+		var ret = false;
+
+		try {
+			var fake_model;
+
+			try {
+				var tmp_model_data;
+				[fake_model, tmp_model_data] = await create_model(null, fake_model_structure);
+
+				ret = tidy(() => {
+					try {
+						fake_model.compile(tmp_model_data);
+
+						return true;
+					} catch (e) {
+						return false;
+					}
+				});
+
+				await dispose(tmp_model_data);
+			} catch(e) {
+				err(e);
+
+				ret = false;
+			}
+
+			if(model.output.shape.join(",") != fake_model.output.shape.join(",")) {
+				ret = false;
+			}
+
+			await dispose(fake_model);
+
+		} catch (e) {
+			this.wrn(e);
+			ret = false;
+		}
+
+		return ret;
+	}
+
+	#remove_empty(obj) {
+		var res = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+
+		return res;
+	}
+
+	#get_js_name(_name) {
+		if(typeof(_name) == "boolean") {
+			if(_name) {
+				return "true";
+			}
+			return "false";
+		}
+
+		if(Array.isArray(_name)) {
+			return _name;
+		}
+
+		if (_name in this.#python_names_to_js_names) {
+			return this.#python_names_to_js_names[_name];
+		}
+		return _name;
+	}
+
+	get_weight_type_name_from_option_name (on) {
+		if(typeof(on) != "string") {
+			this.wrn(`[get_weight_type_name_from_option_name] get_weight_type_name_from_option_name(on = ${on}), typeof(on) = ${typeof(on)}`);
+			return;
+		}
+
+		if(on.match(/_/)) {
+			for (var i = 0; i < this.#valid_initializer_types.length; i++) {
+				var v = this.#valid_initializer_types[i];
+				var re = new RegExp("^" + v + "(?:_.*)?$");
+				if(on.match(re)) {
+					return v;
+				}
+			}
+		} else {
+			return on;
+		}
+
+		return on;
+	}
+
+	get_layer_initializer_config(layer_nr, initializer_type) {
+		this.assert(
+			this.#valid_initializer_types.includes(initializer_type),
+			"insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)"
+		);
+
+		this.assert(typeof (layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
+
+		var starts_with_string = initializer_type + "_initializer_";
+
+		var this_initializer_options = $($(".layer_setting")[layer_nr]).find("." + initializer_type + "_initializer_tr").find(".input_data");
+
+		var option_hash = {};
+
+		for (var i = 0; i < this_initializer_options.length; i++) {
+			var this_option = this_initializer_options[i];
+			var classList = this_option.className.split(/\s+/);
+
+			for (var j = 0; j < classList.length; j++) {
+				if (classList[j].startsWith(starts_with_string)) {
+					var option_name = classList[j];
+					option_name = option_name.replace(starts_with_string, "");
+					var value = this.#get_item_value(layer_nr, classList[j]);
+
+					if (this.#looks_like_number(value)) {
+						value = this.#parse_float(value);
+					}
+
+					if (value !== "") {
+						option_hash[option_name] = this.#is_numeric(value) ? this.#parse_float(value) : value;
+					}
+				}
+			}
+		}
+
+		return option_hash;
+	}
+
+	#get_key_name_camel_case(keyname) {
+		this.assert(typeof(keyname) == "string", `keyname "${keyname}" is not a string, but ${typeof(keyname)}`);
+
+		var letters = keyname.split("");
+		var results = [];
+
+		var next_is_camel_case = false;
+		for (var i = 0; i < letters.length; i++) {
+			if(letters[i] == "_") {
+				next_is_camel_case = true;
+			} else {
+				if(next_is_camel_case) {
+					results.push(letters[i].toUpperCase());
+					next_is_camel_case = false;
+				} else {
+					results.push(letters[i]);
+				}
+			}
+		}
+
+		return results.join("");
+	}
+
+	#get_layer_regularizer_config(layer_nr, regularizer_type) {
+		this.assert(this.#valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+		this.assert(typeof (layer_nr) == "number", "#get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
+
+		var starts_with_string = regularizer_type + "_regularizer_";
+
+		var this_regularizer_options = $($(".layer_setting")[layer_nr]).find("." + regularizer_type + "_regularizer_tr").find(".input_data");
+
+		var option_hash = {};
+
+		for (var i = 0; i < this_regularizer_options.length; i++) {
+			var this_option = this_regularizer_options[i];
+			var classList = this_option.className.split(/\s+/);
+
+			for (var j = 0; j < classList.length; j++) {
+				if (classList[j].startsWith(starts_with_string)) {
+					var option_name = classList[j];
+					option_name = option_name.replace(starts_with_string, "");
+					var value = this.#get_item_value(layer_nr, classList[j]);
+
+					if (this.#looks_like_number(value)) {
+						value = this.#parse_float(value);
+					}
+
+					if (value != "") {
+						option_hash[option_name] = value;
+					}
+				}
+			}
+		}
+
+		return option_hash;
 	}
 }
