@@ -8888,7 +8888,7 @@ if len(sys.argv) == 1:
 					}
 
 					if(("" + e).includes("identifier starts immediately after numeric literal")) {
-						err("" + e);
+						this.err("" + e);
 					} else {
 						throw new Error(e);
 					}
@@ -9711,7 +9711,7 @@ if len(sys.argv) == 1:
 
 	enable_all_layer_types () {
 		if(!this.#model || !Object.keys(this.#model).includes("layers") || !this.#model.layers.length) {
-			err("model not found, or does not include layers or layers are empty");
+			this.err("model not found, or does not include layers or layers are empty");
 			return;
 		}
 
@@ -9902,13 +9902,13 @@ if len(sys.argv) == 1:
 	async get_fake_data_for_layertype (layer_nr, layer_type) {
 		this.assert(typeof(layer_nr) == "number", layer_nr + " is not an number but " + typeof(layer_nr));
 		this.assert(typeof(layer_type) == "string", layer_type + " is not an string but " + typeof(layer_type));
-		this.assert(Object.keys(layer_options).includes(layer_type), "Unknown layer type " + layer_type);
+		this.assert(Object.keys(this.#layer_options).includes(layer_type), "Unknown layer type " + layer_type);
 
-		await this.write_descriptions();
+		await this.#write_descriptions();
 
 		var data = {};
 
-		var options = layer_options[layer_type]["options"];
+		var options = this.#layer_options[layer_type]["options"];
 
 		if(layer_nr == 0) {
 			data["inputShape"] = this.#get_input_shape();
@@ -9935,7 +9935,7 @@ if len(sys.argv) == 1:
 			}
 
 			if(js_option_name) {
-				var default_value = this.#get_default_option(layer_type, js_names_to_python_names[js_option_name]);
+				var default_value = this.#get_default_option(layer_type, this.#js_names_to_python_names[js_option_name]);
 
 				if(js_option_name === undefined) {
 					this.wrn("Cannot map " + this_option + " to js_option_name");
@@ -10006,7 +10006,7 @@ if len(sys.argv) == 1:
 
 				await dispose(tmp_model_data);
 			} catch(e) {
-				err(e);
+				this.err(e);
 
 				ret = false;
 			}
