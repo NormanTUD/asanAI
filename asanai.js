@@ -8063,7 +8063,7 @@ class asanAI {
 		var redo_graph = await this.#update_python_code(1);
 
 		if (this.#model && redo_graph && !no_graph_restart) {
-			await this.restart_fcnn(1);
+			await this.restart_fcnn();
 		}
 
 		this.#prev_layer_data = [];
