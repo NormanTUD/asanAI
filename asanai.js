@@ -7544,7 +7544,7 @@ class asanAI {
 		str += "<td>" + desc + help + ":</td>";
 		str += "<td>";
 		if (type == "select") {
-			var onchange_text = `${this.asanai_name}.updated_page(null, null, this);`;
+			var onchange_text = `${this.#asanai_name}.updated_page(null, null, this);`;
 
 			var types_init_or_reg = ["initializer", "regularizer"];
 
@@ -7552,9 +7552,9 @@ class asanAI {
 				for (var tir = 0; tir < types_init_or_reg.length; tir++) {
 					var new_name = this.#valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
 					if (classname == new_name) {
-						var _get_layer_str = `${this.asanai_name}.find_layer_number_by_element($(this))`;
+						var _get_layer_str = `${this.#asanai_name}.find_layer_number_by_element($(this))`;
 						var _init_type = `"${this.#valid_initializer_types[tk]}"`;
-						var _updated_page_str = `${this.asanai_name}.updated_page(null, null, this)`;
+						var _updated_page_str = `${this.#asanai_name}.updated_page(null, null, this)`;
 						var _func_name = `insert_${types_init_or_reg[tir]}_options`;
 
 						onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
@@ -7563,7 +7563,7 @@ class asanAI {
 			}
 
 			if (classname == "activation") {
-				//onchange_text = `insert_activation_options(${this.asanai_name}.find_layer_number_by_element($(this)));${this.asanai_name}.updated_page(null, null, this)`;
+				//onchange_text = `insert_activation_options(${this.#asanai_name}.find_layer_number_by_element($(this)));${this.#asanai_name}.updated_page(null, null, this)`;
 			}
 
 			str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
@@ -7588,7 +7588,7 @@ class asanAI {
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="${this.asanai_name}.updated_page()" onkeyup="${this.asanai_name}.updated_page(null, null, this)" />`;
+			str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="${this.#asanai_name}.updated_page()" onkeyup="${this.#asanai_name}.updated_page(null, null, this)" />`;
 		} else if (type == "number") {
 			str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -7608,9 +7608,9 @@ class asanAI {
 				str += " value=" + data["value"] + " ";
 			}
 
-			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.asanai_name}.updated_page()' onkeyup="${this.asanai_name}.updated_page(null, null, this);" />`;
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.#asanai_name}.updated_page()' onkeyup="${this.#asanai_name}.updated_page(null, null, this);" />`;
 		} else if (type == "checkbox") {
-			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.asanai_name}.updated_page(null, null, this);' `;
+			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.#asanai_name}.updated_page(null, null, this);' `;
 			if ("status" in data && data["status"] == "checked") {
 				str += " checked='CHECKED' ";
 			}
@@ -7762,7 +7762,7 @@ class asanAI {
 		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
 		str += "</td>";
 		str += "<td>";
-		str += `<select id="${option_for_layer_id}" onfocus='${this.asanai_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+		str += `<select id="${option_for_layer_id}" onfocus='${this.#asanai_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
 		var last_category = "";
 		for (var key of this.#layer_names) {
 			var this_category = this.#layer_options[key].category;
@@ -7799,8 +7799,8 @@ class asanAI {
 		var layers_container_str = "";
 		var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
-		var remove = `<button class='add_remove_layer_button remove_layer' disabled='' onclick='${this.asanai_name}.remove_layer(this)'>-</button>&thinsp;`;
-		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.asanai_name}.add_layer(this)'>+</button>&nbsp;`;
+		var remove = `<button class='add_remove_layer_button remove_layer' disabled='' onclick='${this.#asanai_name}.remove_layer(this)'>-</button>&thinsp;`;
+		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.#asanai_name}.add_layer(this)'>+</button>&nbsp;`;
 
 		for (var i = 0; i < number; i++) {
 			layers_container_str +=
@@ -7894,7 +7894,7 @@ class asanAI {
 
 		var style = "";
 
-		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.asanai_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
+		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.#asanai_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
 
 		return res;
 	}
@@ -9033,7 +9033,7 @@ if len(sys.argv) == 1:
 
 				if(label_index === undefined) {
 					var tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 					return;
 				}
 
@@ -9042,11 +9042,11 @@ if len(sys.argv) == 1:
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(tmp_label);
 					} else {
-						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 					}
 				} else {
 					tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
 				}
 			} catch (e) {
 				if(("" + e).includes("tmp_label.replaceAll is not a function")) {
@@ -9633,19 +9633,19 @@ if len(sys.argv) == 1:
 	async update_label_by_nr (t, nr) {
 		var name = $(t).val();
 
-		var t_xpath = get_element_xpath(t);
+		var t_xpath = this.#get_element_xpath(t);
 
 		labels[nr] = name;
 
 		$(".label_element").each((i, x) => {
-			if(1 || get_element_xpath(x) != t_xpath) {
+			if(1 || this.#get_element_xpath(x) != t_xpath) {
 				var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
 
 				if(label_index == nr) {
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(name);
 					} else {
-						$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='${this.asanai_name}.update_label_by_nr(${label_index}, $(this).val())' />`);
+						$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='${this.#asanai_name}.update_label_by_nr(${label_index}, $(this).val())' />`);
 					}
 				}
 			}
