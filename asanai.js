@@ -7780,8 +7780,8 @@ class asanAI {
 		await this.#write_descriptions(1);
 	}
 
-	option_for_layer(nr) {
-		this.assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
+	#option_for_layer(nr) {
+		this.assert(typeof (nr) == "number", "#option_for_layer(" + nr + ") is not a number but " + typeof(number));
 
 		var this_event = `${this.#asanai_object_name}.initializer_layer_options(this)`;
 
@@ -7834,6 +7834,8 @@ class asanAI {
 		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.#asanai_object_name}.add_layer(this)'>+</button>&nbsp;`;
 
 		for (var i = 0; i < number; i++) {
+			var this_layer_option = this.#option_for_layer(i);
+
 			layers_container_str +=
 				"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
 					"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
@@ -7842,7 +7844,7 @@ class asanAI {
 						"<span class='layer_nr_desc'></span>" +
 						"<span class='layer_identifier'></span>" +
 						"<table class='configtable'>" +
-							this.option_for_layer(i) +
+							this_layer_option +
 						"</table>" +
 					"</div>" +
 					"<span class='layer_end_marker'></span>" +
