@@ -7206,7 +7206,7 @@ class asanAI {
 
 		this.#layers_gui_div_name = divname;
 
-		await this.#update_layers_gui();
+		await this.#show_layers()
 
 		this._temml();
 	}
@@ -7492,29 +7492,7 @@ class asanAI {
 	}
 
 	async #update_layers_gui () {
-		if(!this.#model) {
-			this.err("Cannot show layers gui when no model is loaded.");
-			return;
-		}
-		
-		if(!this.#layers_gui_div_name) {
-			this.err(`No this.#layers_gui_div_name given! Cannot continue show_layers_gui without this.#layers_gui_div_name parameter`);
-			return;
-		}
 
-		if(typeof(this.#layers_gui_div_name) != "string") {
-			this.err(`this.#layers_gui_div_name is not a string, but ${typeof(this.#layers_gui_div_name)}! Cannot continue show_layers_gui without this.#layers_gui_div_name being a valid string that refers to the ID of an element`);
-			return;
-		}
-
-		if(!$("#" + this.#layers_gui_div_name).length) {
-			this.err(`Cannot find #${this.#layers_gui_div_name} for show_layers_gui. Not showing layer GUI.`);
-			return;
-		}
-
-		await this.#show_layers()
-
-		this._temml();
 	}
 
 	#get_item_value(layer, classname) {
