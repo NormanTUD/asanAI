@@ -322,7 +322,7 @@ class asanAI {
 	#last_tensor_size_cpu = 0;
 	#last_num_global_tensors = 0;
 	#last_tensor_size_gpu = 0;
-	#asanai_name = "asanai";
+	#asanai_object_name = "asanai";
 	#bar_background_color = "#909090";
 	#fcnn_div_name = null;
 	#kernel_pixel_size_max = 50;
@@ -974,18 +974,18 @@ class asanAI {
 		if(args.length == 1) {
 			args = args[0];
 
-			if(!Object.keys(args).includes("asanai_name")) {
-				throw new Error(`asanai_name must be set!`);
+			if(!Object.keys(args).includes("asanai_object_name")) {
+				throw new Error(`asanai_object_name must be set!`);
 			}
 
-			if(Object.keys(args).includes("asanai_name")) {
-				if(typeof(args.asanai_name) != "string") {
-					throw new Error(`asanai_name must be a string!`);
+			if(Object.keys(args).includes("asanai_object_name")) {
+				if(typeof(args.asanai_object_name) != "string") {
+					throw new Error(`asanai_object_name must be a string!`);
 				}
 
-				this.#set_asanai_name(args.asanai_name);
+				this.#set_asanai_object_name(args.asanai_object_name);
 
-				delete args["asanai_name"];
+				delete args["asanai_object_name"];
 			}
 
 			if(Object.keys(args).includes("labels")) {
@@ -3057,11 +3057,11 @@ class asanAI {
 			} else {
 				var write_to_div_id = $(write_to_div).attr("id");
 				if(write_to_div_id) {
-					if(!this.#asanai_name) {
-						this.err(`[predict_image] To call this function, run "asanai_object.#set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+					if(!this.#asanai_object_name) {
+						this.err(`[predict_image] To call this function, run "asanai_object.#set_asanai_object_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 						return;
 					} else {
-						$(img_element_or_div).attr("onclick", `${this.#asanai_name}.predict_image(this, ${write_to_div_id})`);
+						$(img_element_or_div).attr("onclick", `${this.#asanai_object_name}.predict_image(this, ${write_to_div_id})`);
 					}
 				} else {
 					this.err(`[predict_image] Could not attach onclick handler to element: write_to_div element has no ID`);
@@ -3394,14 +3394,14 @@ class asanAI {
 	}
 
 	#get_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
-		if(!this.#asanai_name) {
-			this.err(`[#get_internals_slider] To call this function, run "asanai_object.#set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+		if(!this.#asanai_object_name) {
+			this.err(`[#get_internals_slider] To call this function, run "asanai_object.#set_asanai_object_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 			return;
 		}
 
 		var html = `<div id='show_internals_slider'>`
-		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_name}.set_pixel_size($(this).val())">`;
-		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_name}.set_kernel_pixel_size($(this).val())">`;
+		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_object_name}.set_pixel_size($(this).val())">`;
+		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_object_name}.set_kernel_pixel_size($(this).val())">`;
 		html += `</div>`;
 
 		return html;
@@ -5736,12 +5736,12 @@ class asanAI {
 		return this.#images_to_repredict;
 	}
 
-	get_asanai_name () {
-		return this.#asanai_name;
+	get_asanai_object_name () {
+		return this.#asanai_object_name;
 	}
 
-	#set_asanai_name (name) {
-		this.#asanai_name = name;
+	#set_asanai_object_name (name) {
+		this.#asanai_object_name = name;
 	}
 
 	show_status_bar () {
@@ -7597,7 +7597,7 @@ class asanAI {
 		str += "<td>" + desc + help + ":</td>";
 		str += "<td>";
 		if (type == "select") {
-			var onchange_text = `${this.#asanai_name}.updated_page(null, null, this);`;
+			var onchange_text = `${this.#asanai_object_name}.updated_page(null, null, this);`;
 
 			var types_init_or_reg = ["initializer", "regularizer"];
 
@@ -7605,9 +7605,9 @@ class asanAI {
 				for (var tir = 0; tir < types_init_or_reg.length; tir++) {
 					var new_name = this.#valid_initializer_types[tk] + "_" + types_init_or_reg[tir];
 					if (classname == new_name) {
-						var _get_layer_str = `${this.#asanai_name}.find_layer_number_by_element($(this))`;
+						var _get_layer_str = `${this.#asanai_object_name}.find_layer_number_by_element($(this))`;
 						var _init_type = `"${this.#valid_initializer_types[tk]}"`;
-						var _updated_page_str = `${this.#asanai_name}.updated_page(null, null, this)`;
+						var _updated_page_str = `${this.#asanai_object_name}.updated_page(null, null, this)`;
 						var _func_name = `insert_${types_init_or_reg[tir]}_options`;
 
 						onchange_text = `${_func_name}(${_get_layer_str}, ${_init_type});${_updated_page_str}`;
@@ -7616,7 +7616,7 @@ class asanAI {
 			}
 
 			if (classname == "activation") {
-				//onchange_text = `insert_activation_options(${this.#asanai_name}.find_layer_number_by_element($(this)));${this.#asanai_name}.updated_page(null, null, this)`;
+				//onchange_text = `insert_activation_options(${this.#asanai_object_name}.find_layer_number_by_element($(this)));${this.#asanai_object_name}.updated_page(null, null, this)`;
 			}
 
 			str += `<select id="select_${new_uuid}" class='input_field input_data ${classname}' _onchange='${onchange_text}'>`;
@@ -7641,7 +7641,7 @@ class asanAI {
 				pre_text = " value='" + text + "' ";
 			}
 
-			str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="${this.#asanai_name}.updated_page()" onkeyup="${this.#asanai_name}.updated_page(null, null, this)" />`;
+			str += `<input id="text_field_${uuidv4()}" class="input_field input_data ${classname}" ${pre_text} ${placeholder} type="text"  _onchange="${this.#asanai_object_name}.updated_page()" onkeyup="${this.#asanai_object_name}.updated_page(null, null, this)" />`;
 		} else if (type == "number") {
 			str += "<input class='input_field input_data " + classname + "' type='number' ";
 
@@ -7661,9 +7661,9 @@ class asanAI {
 				str += " value=" + data["value"] + " ";
 			}
 
-			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.#asanai_name}.updated_page()' onkeyup="${this.#asanai_name}.updated_page(null, null, this);" />`;
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='${this.#asanai_object_name}.updated_page()' onkeyup="${this.#asanai_object_name}.updated_page(null, null, this);" />`;
 		} else if (type == "checkbox") {
-			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.#asanai_name}.updated_page(null, null, this);' `;
+			str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='${this.#asanai_object_name}.updated_page(null, null, this);' `;
 			if ("status" in data && data["status"] == "checked") {
 				str += " checked='CHECKED' ";
 			}
@@ -7805,17 +7805,17 @@ class asanAI {
 	option_for_layer(nr) {
 		this.assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
 
-		var this_event = `${this.#asanai_name}.initializer_layer_options(this)`;
+		var this_event = `${this.#asanai_object_name}.initializer_layer_options(this)`;
 
 		var option_for_layer_id = `option_for_layer_${this.#uuidv4()}`;
 
 		var str = "";
 		str += "<tr>";
 		str += "<td style='width: 140px'>";
-		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
+		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_object_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
 		str += "</td>";
 		str += "<td>";
-		str += `<select id="${option_for_layer_id}" onfocus='${this.#asanai_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+		str += `<select id="${option_for_layer_id}" onfocus='${this.#asanai_object_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
 		var last_category = "";
 		for (var key of this.#layer_names) {
 			var this_category = this.#layer_options[key].category;
@@ -7852,8 +7852,8 @@ class asanAI {
 		var layers_container_str = "";
 		var layer_visualizations_tab_str = $("#layer_visualizations_tab").html();
 
-		var remove = `<button class='add_remove_layer_button remove_layer' disabled='' onclick='${this.#asanai_name}.remove_layer(this)'>-</button>&thinsp;`;
-		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.#asanai_name}.add_layer(this)'>+</button>&nbsp;`;
+		var remove = `<button class='add_remove_layer_button remove_layer' disabled='' onclick='${this.#asanai_object_name}.remove_layer(this)'>-</button>&thinsp;`;
+		var add = `<button class='add_remove_layer_button add_layer' onclick='${this.#asanai_object_name}.add_layer(this)'>+</button>&nbsp;`;
 
 		for (var i = 0; i < number; i++) {
 			layers_container_str +=
@@ -7947,7 +7947,7 @@ class asanAI {
 
 		var style = "";
 
-		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.#asanai_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
+		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.#asanai_object_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
 
 		return res;
 	}
@@ -9195,7 +9195,7 @@ if len(sys.argv) == 1:
 
 				if(label_index === undefined) {
 					var tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_object_name}.update_label_by_nr(this, ${label_index})' />`);
 					return;
 				}
 
@@ -9204,11 +9204,11 @@ if len(sys.argv) == 1:
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(tmp_label);
 					} else {
-						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+						$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_object_name}.update_label_by_nr(this, ${label_index})' />`);
 					}
 				} else {
 					tmp_label = $(x).text();
-					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_name}.update_label_by_nr(this, ${label_index})' />`);
+					$(x).html(`<input id="${this.#uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='${this.#asanai_object_name}.update_label_by_nr(this, ${label_index})' />`);
 				}
 			} catch (e) {
 				if(("" + e).includes("tmp_label.replaceAll is not a function")) {
@@ -9846,7 +9846,7 @@ if len(sys.argv) == 1:
 					if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
 						$(x).find("input").val(name);
 					} else {
-						$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='${this.#asanai_name}.update_label_by_nr(${label_index}, $(this).val())' />`);
+						$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='${this.#asanai_object_name}.update_label_by_nr(${label_index}, $(this).val())' />`);
 					}
 				}
 			}
@@ -10972,7 +10972,7 @@ if len(sys.argv) == 1:
 				<tr>
 					<td><span class="TRANSLATEME_optimizer"></span></td>
 					<td>
-						<select id="optimizer" onchange='${this.#asanai_name}.change_optimizer()' style="width: 100px">
+						<select id="optimizer" onchange='${this.#asanai_object_name}.change_optimizer()' style="width: 100px">
 							<option value="adam">adam</option>
 							<option value="adadelta">adadelta</option>
 							<option value="adagrad">adagrad</option>
