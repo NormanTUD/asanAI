@@ -7858,16 +7858,16 @@ class asanAI {
 		for (var i = 0; i < number; i++) {
 			layers_container_str +=
 				"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
-				"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
-				remove +
-				add +
-				"<span class='layer_nr_desc'></span>" +
-				"<span class='layer_identifier'></span>" +
-				"<table class='configtable'>" +
-				this.option_for_layer(i) +
-				"</table>" +
-				"</div>" +
-				"<span class='layer_end_marker'></span>" +
+					"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
+						remove +
+						add +
+						"<span class='layer_nr_desc'></span>" +
+						"<span class='layer_identifier'></span>" +
+						"<table class='configtable'>" +
+							this.option_for_layer(i) +
+						"</table>" +
+					"</div>" +
+					"<span class='layer_end_marker'></span>" +
 				"</li>"
 			;
 
@@ -9017,6 +9017,7 @@ if len(sys.argv) == 1:
 		for (var i = 0; i < num_of_layers; i++) {
 			var layer_type = $($($(".layer_setting")[i]).find(".layer_type")[0]);
 			var type = $(layer_type).val();
+
 			if(typeof(type) !== "undefined" && type) {
 				var data = this.get_data_for_layer(type, i, first_layer);
 
