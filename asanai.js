@@ -973,6 +973,21 @@ class asanAI {
 
 		if(args.length == 1) {
 			args = args[0];
+
+			if(!Object.keys(args).includes("asanai_name")) {
+				throw new Error(`asanai_name must be set!`);
+			}
+
+			if(Object.keys(args).includes("asanai_name")) {
+				if(typeof(args.asanai_name) != "string") {
+					throw new Error(`asanai_name must be a string!`);
+				}
+
+				this.#set_asanai_name(args.asanai_name);
+
+				delete args["asanai_name"];
+			}
+
 			if(Object.keys(args).includes("labels")) {
 				this.set_labels(args.labels);
 
@@ -3043,7 +3058,7 @@ class asanAI {
 				var write_to_div_id = $(write_to_div).attr("id");
 				if(write_to_div_id) {
 					if(!this.#asanai_name) {
-						this.err(`[predict_image] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+						this.err(`[predict_image] To call this function, run "asanai_object.#set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 						return;
 					} else {
 						$(img_element_or_div).attr("onclick", `${this.#asanai_name}.predict_image(this, ${write_to_div_id})`);
@@ -3380,7 +3395,7 @@ class asanAI {
 
 	#get_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
 		if(!this.#asanai_name) {
-			this.err(`[#get_internals_slider] To call this function, run "asanai_object.set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+			this.err(`[#get_internals_slider] To call this function, run "asanai_object.#set_asanai_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 			return;
 		}
 
@@ -5725,15 +5740,15 @@ class asanAI {
 		return this.#asanai_name;
 	}
 
-	set_asanai_name (name) {
+	#set_asanai_name (name) {
 		if(eval(`window.${name}`)) {
 			if(window[name].constructor.name == "asanAI") {
 				this.#asanai_name = name;
 			} else {
-				this.err(`[set_asanai_name] Variable ${name} could be found but is not an asanAI class.`);
+				this.err(`[#set_asanai_name] Variable ${name} could be found but is not an asanAI class.`);
 			}
 		} else {
-			this.err(`[set_asanai_name] Could not find global variable ${name}. Cannot use it as asanAI name.`);
+			this.err(`[#set_asanai_name] Could not find global variable ${name}. Cannot use it as asanAI name.`);
 		}
 	}
 
@@ -10966,7 +10981,7 @@ if len(sys.argv) == 1:
 				<tr>
 					<td><span class="TRANSLATEME_optimizer"></span></td>
 					<td>
-						<select id="optimizer" onchange='${this.asanai_name}.change_optimizer()' style="width: 100px">
+						<select id="optimizer" onchange='${this.#asanai_name}.change_optimizer()' style="width: 100px">
 							<option value="adam">adam</option>
 							<option value="adadelta">adadelta</option>
 							<option value="adagrad">adagrad</option>
