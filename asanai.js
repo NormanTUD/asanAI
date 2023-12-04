@@ -6713,7 +6713,7 @@ class asanAI {
 
 				if(new_md5 != old_md5 || force || !$math_tab_code.is(":visible")) {
 					try {
-						await this._temml();
+						await this.#_temml();
 					} catch (e) {
 						if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 							this.info("" + e);
@@ -6738,7 +6738,7 @@ class asanAI {
 			}
 		}
 
-		await this._temml();
+		await this.#_temml();
 	}
 
 	#color_compare_old_and_new_layer_data (old_data, new_data) {
@@ -7064,7 +7064,7 @@ class asanAI {
 		args.forEach(arg => console.info(arg));
 	}
 
-	async _temml () {
+	async #_temml () {
 		while ($("#temml_blocker").length) {
 			await this.delay(200);
 		}
@@ -7208,7 +7208,7 @@ class asanAI {
 
 		await this.#show_layers()
 
-		this._temml();
+		this.#_temml();
 	}
 
 	async #get_model_config_hash () {
@@ -7779,7 +7779,7 @@ class asanAI {
 		$(item).parent().parent().parent().next().toggle();
 		await this.#write_descriptions(1);
 
-		this._temml();
+		this.#_temml();
 	}
 
 	#option_for_layer(nr) {
@@ -8032,7 +8032,7 @@ class asanAI {
 		}
 
 		try {
-			await this._temml();
+			await this.#_temml();
 		} catch (e) {
 			this.wrn(e);
 		}
