@@ -11117,6 +11117,8 @@ if len(sys.argv) == 1:
 		</div>`;
 
 		$("#" + this.#optimizer_table_div_name).html(html);
+
+		this.change_optimizer();
 	}
 
 	async change_optimizer() {
