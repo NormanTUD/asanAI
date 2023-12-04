@@ -45,6 +45,8 @@
 		<button onclick="test_model_switch_three()">Test model switch 3</button>
 		<button onclick="load_test_images_and_train()">Load test images and train</button>
 
+		<div id="optimizer_div"></div>
+
 		<div id="layers_gui"></div>
 
 		<pre>====</pre>
@@ -96,6 +98,7 @@
 					model_data: model_data,
 					optimizer_config: optimizer_config,
 					translations_file: "translations.php?print=1",
+					optimizer_table_div_name: "optimizer_div",
 					//math_tab_code_div: "math_tab_code"
 				});
 

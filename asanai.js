@@ -8,6 +8,8 @@ class asanAI {
 	#data_origin = "default";
 	#epochs = 10;
 
+	#optimizer_table_div_name = "";
+
 	#current_layer_status_hash = "";
 
 	#validation_split = 0;
@@ -991,6 +993,20 @@ class asanAI {
 				delete args["model"];
 			}
 
+			if(Object.keys(args).includes("optimizer_table_div_name")) {
+				this.#optimizer_table_div_name = args["optimizer_table_div_name"];
+
+				if(typeof(args["optimizer_table_div_name"]) != "string") {
+					throw new Error(`optimizer_table_div_name must be a string, is ${typeof(args["optimizer_table_div_name"])}!`);
+				}
+
+				if(!$("#" + this.#optimizer_table_div_name).length) {
+					throw new Error(`#${this.#optimizer_table_div_name} could not be found!`);
+				}
+
+				delete args["optimizer_table_div_name"];
+			}
+
 			if(Object.keys(args).includes("model_data")) {
 				if(!Object.keys(args).includes("optimizer_config")) {
 					throw new Error("model_data must be used together with optimizer_config. Can only find model_data, but not optimizer_config");
@@ -1065,6 +1081,8 @@ class asanAI {
 		} else if (args.length > 1) {
 			throw new error("All arguments must be passed to asanAI in a JSON-like structure as a single parameter");
 		}
+
+		this.#write_optimizer_table_to_page();
 	}
 
 	load_languages (filename = 'translations.json') {
@@ -10886,8 +10904,13 @@ if len(sys.argv) == 1:
 
 		var optimizer_data_names = this.#model_data_structure[optimizer_type];
 
+		if(!$("#" + this.#optimizer_table_div_name)) {
+			this.#write_optimizer_table_to_page();
+		}
+
 		for (var i = 0; i < optimizer_data_names.length; i++) {
 			var optimizer_data_id = optimizer_data_names[i] + "_" + optimizer_type;
+			this.log("Trying to find #" + optimizer_data_id);
 			var optimizer_data = $("#" + optimizer_data_id).val();
 			this.#global_model_data[optimizer_data_names[i]] = this.#parse_float(optimizer_data);
 		}
@@ -10925,5 +10948,168 @@ if len(sys.argv) == 1:
 		var res = Object.keys(object).find(key => object[key] === value);
 
 		return res;
+	}
+
+	#write_optimizer_table_to_page () {
+		if(!this.#optimizer_table_div_name) {
+			this.err(`No optimizer_table_div_name set! Cannot continue.`);
+			return;
+		}
+
+		if(!$("#" + this.#optimizer_table_div_name).length) {
+			this.err(`#${this.#optimizer_table_div_name} cannot be found. Cannot continue.`);
+			return;
+		}
+
+		var html = `<div id="optimizer_table_div">
+			<table>
+				<tr>
+					<td><span class="TRANSLATEME_optimizer"></span></td>
+					<td>
+						<select id="optimizer" onchange='${this.asanai_name}.change_optimizer()' style="width: 100px">
+							<option value="adam">adam</option>
+							<option value="adadelta">adadelta</option>
+							<option value="adagrad">adagrad</option>
+							<option value="adamax">adamax</option>
+							<option value="rmsprop">rmsprop</option>
+							<option value="sgd">sgd</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+
+			<br>
+
+			<div id="optimizer_table">
+				<div class="optimizer_metadata" style="display: none;" id="sgd_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_sgd"></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="adagrad_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_adagrad"></td>
+						<tr>
+						</tr>
+							<td>Initial accumulator value</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.1" id="initialAccumulatorValue_adagrad"></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="adam_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adam"></td>
+
+							<td>&beta;<sub>1</sub></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adam"></td>
+						</tr>
+
+						<tr>
+							<td>&beta;<sub>2</sub></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adam"></td>
+
+							<td>&epsilon;</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adam"></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="adadelta_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.001" id="learningRate_adadelta"></td>
+
+							<td>&rho;</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.95" id="rho_adadelta"></td>
+						</tr>
+
+						<tr>
+
+							<td>&epsilon;</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adadelta"></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="adamax_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.002" id="learningRate_adamax"></td>
+
+							<td>&beta;<sub>1</sub></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.9" id="beta1_adamax"></td>
+
+							<td>&epsilon;</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_adamax"></td>
+						</tr>
+						<tr>
+
+							<td>&beta;<sub>2</sub></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.999" id="beta2_adamax"></td>
+
+							<td>Decay</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0" id="decay_adamax"></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="rmsprop_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.00000000001" value="0.01" id="learningRate_rmsprop"></td>
+
+							<td>Decay</td>
+							<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.000001" value="0.9" id="decay_rmsprop"></td>
+						</tr>
+						<tr>
+							<td>Momentum</td>
+							<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0" id="momentum_rmsprop"></td>
+
+							<td>&epsilon;</td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.0001" id="epsilon_rmsprop"></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="optimizer_metadata" style="display: none;" id="momentum_metadata">
+					<table>
+						<tr>
+							<td><span class='TRANSLATEME_learning_rate' /></td>
+							<td><input class="optimizer_metadata_input" type="number" step="0.000001" value="0.01" id="learningRate_momentum"></td>
+
+							<td>Momentum</td>
+							<td><input class="optimizer_metadata_input" type="number" min="0" max="1" step="0.01" value="0.9" id="momentum_momentum"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>`;
+
+		$("#" + this.#optimizer_table_div_name).html(html);
+	}
+
+	async change_optimizer() {
+		var type = $("#optimizer").val();
+		$(".optimizer_metadata").hide();
+
+		$("#" + type + "_metadata").show();
+
+		await this.updated_page();
 	}
 }
