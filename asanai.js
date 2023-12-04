@@ -1931,7 +1931,7 @@ class asanAI {
 				await this.#next_frame();
 			} else {
 				/*
-				this.wrn("item was empty in dispose():"); // not a real async
+				this.wrn("item was empty in this.dispose():"); // not a real async
 				console.trace();
 				*/
 			}
@@ -4803,7 +4803,7 @@ class asanAI {
 
 				var asanai_this = this;
 
-				var img_tensor = tidy(() => {
+				var img_tensor = this.tidy(() => {
 					try {
 						var res = asanai_this.#expand_dims(asanai_this.#resizeImage(asanai_this.from_pixels(img_elem), [asanai_this.#model_height, asanai_this.#model_width]));
 						res = asanai_this.divNoNan(res, asanai_this.#divide_by);
@@ -4819,7 +4819,7 @@ class asanAI {
 					continue;
 				}
 
-				var res = tidy(() => { return this.#model.predict(img_tensor); });
+				var res = this.tidy(() => { return this.#model.predict(img_tensor); });
 
 				res_array = this.array_sync(res)[0];
 				await this.dispose(img_tensor);
@@ -10021,7 +10021,7 @@ if len(sys.argv) == 1:
 				var tmp_model_data;
 				[fake_model, tmp_model_data] = await this.create_model(null, fake_model_structure, 0, layer_nr);
 
-				ret = tidy(() => {
+				ret = this.tidy(() => {
 					try {
 						fake_model.compile(tmp_model_data);
 
@@ -10825,7 +10825,7 @@ if len(sys.argv) == 1:
 		if(this.#global_model_data) {
 			var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
 			for (var i = 0; i < model_data_tensors.length; i++) {
-				await dispose(model_data_tensors[i]);
+				await this.dispose(model_data_tensors[i]);
 			}
 		}
 
@@ -10902,7 +10902,7 @@ if len(sys.argv) == 1:
 		};
 
 		if(!optimizer_name_only) {
-			this.#global_model_data["optimizer"] = tidy(() => { return eval("tf.train." + optimizer_constructors[this.#global_model_data["optimizer"]]); });
+			this.#global_model_data["optimizer"] = this.tidy(() => { return eval("tf.train." + optimizer_constructors[this.#global_model_data["optimizer"]]); });
 		}
 
 		return this.#global_model_data;
