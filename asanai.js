@@ -7976,7 +7976,7 @@ class asanAI {
 			this.#waiting_updated_page_uuids.push(updated_page_uuid);
 
 			while (this.#waiting_updated_page_uuids.length && this.#waiting_updated_page_uuids[0] != updated_page_uuid) {
-				await delay(10);
+				await this.delay(10);
 			}
 
 			/*
