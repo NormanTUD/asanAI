@@ -10063,6 +10063,10 @@ if len(sys.argv) == 1:
 				ret = false;
 			}
 
+			if(!Object.keys(fake_model).includes("output") || !Object.keys(fake_model.output).includes("shape")) {
+				return false;
+			}
+
 			if(this.#model.output.shape.join(",") != fake_model.output.shape.join(",")) {
 				ret = false;
 			}
