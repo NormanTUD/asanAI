@@ -7778,6 +7778,8 @@ class asanAI {
 
 		$(item).parent().parent().parent().next().toggle();
 		await this.#write_descriptions(1);
+
+		this._temml();
 	}
 
 	#option_for_layer(nr) {
