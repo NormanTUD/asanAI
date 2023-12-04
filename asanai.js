@@ -10917,7 +10917,6 @@ if len(sys.argv) == 1:
 
 		for (var i = 0; i < optimizer_data_names.length; i++) {
 			var optimizer_data_id = optimizer_data_names[i] + "_" + optimizer_type;
-			this.log("Trying to find #" + optimizer_data_id);
 			var optimizer_data = $("#" + optimizer_data_id).val();
 			this.#global_model_data[optimizer_data_names[i]] = this.#parse_float(optimizer_data);
 		}
