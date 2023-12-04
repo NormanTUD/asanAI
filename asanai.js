@@ -7791,26 +7791,26 @@ class asanAI {
 
 		var str = "";
 		str += "<tr>";
-		str += "<td style='width: 140px'>";
-		str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_object_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
-		str += "</td>";
-		str += "<td>";
-		str += `<select id="${option_for_layer_id}" onfocus='${this.#asanai_object_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
-		var last_category = "";
-		for (var key of this.#layer_names) {
-			var this_category = this.#layer_options[key].category;
-			if (last_category != this_category) {
-				if (last_category != "") {
-					str += "</optgroup>";
+			str += "<td style='width: 140px'>";
+				str += `<button style='cursor: context-menu' class='show_data layer_options_button' onclick='${this.#asanai_object_name}.toggle_options(this)'>&#9881;&nbsp;<span class='TRANSLATEME_settings'></span></button>`;
+			str += "</td>";
+			str += "<td>";
+				str += `<select id="${option_for_layer_id}" onfocus='${this.#asanai_object_name}.disable_invalid_layers_event(event, this)' onchange='${this_event}' class='input_data layer_type'>`;
+				var last_category = "";
+				for (var key of this.#layer_names) {
+					var this_category = this.#layer_options[key].category;
+					if (last_category != this_category) {
+						if (last_category != "") {
+							str += "</optgroup>";
+						}
+						str += "<optgroup label=\"" + this_category + "\">";
+						last_category = this_category;
+					}
+					str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + this.#get_python_name(key) + "</option>";
 				}
-				str += "<optgroup label=\"" + this_category + "\">";
-				last_category = this_category;
-			}
-			str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + this.#get_python_name(key) + "</option>";
-		}
-		str += "</optgroup>";
-		str += "</select>";
-		str += "</td>";
+				str += "</optgroup>";
+				str += "</select>";
+			str += "</td>";
 		str += "</tr>";
 		str += "<tbody class='layer_options_internal' style='display: none'></tbody>";
 
