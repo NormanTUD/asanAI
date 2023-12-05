@@ -7803,7 +7803,7 @@ class asanAI {
 						if (last_category != "") {
 							str += "</optgroup>";
 						}
-						str += "<optgroup label=\"" + this_category + "\">";
+						str += `<optgroup label="${this_category}">`;
 						last_category = this_category;
 					}
 					str += "<option class='layer_type_selector_" + key + "' value='" + key + "'>" + this.#get_python_name(key) + "</option>";
