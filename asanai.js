@@ -9450,7 +9450,7 @@ if len(sys.argv) == 1:
 		if (old_value > 1) {
 			$($(item).parent()[0]).parent().remove();
 
-			layer_structure_cache = null;
+			this.#layer_structure_cache = null;
 
 			await updated_page();
 			disable_all_non_selected_layer_types();
@@ -9481,7 +9481,7 @@ if len(sys.argv) == 1:
 	async add_layer(item) {
 		this.assert(typeof (item) == "object", "item is not an object but " + typeof (item));
 
-		layer_structure_cache = null;
+		this.#layer_structure_cache = null;
 
 		var real_nr = null;
 
