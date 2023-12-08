@@ -11125,4 +11125,25 @@ if len(sys.argv) == 1:
 
 		return res;
 	}
+
+	#add_stddev_option (type, nr) {
+		var style = "";
+
+		var current_input_shape = this.#get_input_shape();
+		if (current_input_shape.length != 3) {
+			style = ` style="display: none" `;
+		}
+
+		var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+
+		return res;
+	}
+
+	#add_theta_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("&theta;", "theta", "number", { "step": 1, "value": -1 }, nr);
+	}
+
+	#add_axis_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": this.#get_default_option(type, "axis") }, nr);
+	}
 }
