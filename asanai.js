@@ -11170,4 +11170,59 @@ if len(sys.argv) == 1:
 			throw new Error(`set_mode must be either 'beginner' or 'expert', you chose '${mode_name}', which is invalid.`);
 		}
 	}
+
+	#add_center_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Center?", "center", "checkbox", { "status": "checked" }, nr);
+	}
+
+	#add_scale_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Scale?", "scale", "checkbox", { "status": "checked" }, nr);
+	}
+
+	#add_padding_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Padding", "padding", "select", { "valid": "valid", "same": "same" }, nr);
+	}
+
+	#add_filters_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("<span class='TRANSLATEME_filters'></span>", "filters", "number", { "min": 1, "max": 256, "step": 1, "value": this.#get_default_option(type, "filters") }, nr);
+	}
+
+	#get_dimensionality_from_layer_name(layer_type) {
+		var match = layer_type.match(/(\d+)[dD]/);
+
+		if (match) {
+			return parse_int(match[1]);
+		}
+
+		return null;
+	}
+
+	#add_kernel_size_option(type, nr) {
+		var str = "";
+		var dimensionality = this.#get_dimensionality_from_layer_name(type);
+
+		assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+
+		var letter_code = "x".charCodeAt();
+		for (var i = 0; i < dimensionality; i++) {
+			var letter = String.fromCharCode(letter_code);
+			str += this.#get_tr_str_for_layer_table(
+				"<span class='TRANSLATEME_kernel_size'></span> " + letter,
+				"kernel_size_" + letter, "number",
+				{ "min": 1, "max": 4096, "step": 1, "value": this.#get_default_option(type, "kernel_size")[i] },
+				nr
+			);
+			letter_code++;
+		}
+
+		return str;
+	}
+
+	#add_depth_multiplier_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Depth multiplier", "depth_multiplier", "number", { "min": 0, "step": 1, "value": this.#get_default_option(type, "depth_multiplier") }, nr);
+	}
+
+	#add_size_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Size", "size", "text", { "text": "3,3", "placeholder": "2 comma-seperated numbers" }, nr);
+	}
 }
