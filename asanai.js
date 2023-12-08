@@ -5764,6 +5764,7 @@ class asanAI {
 		css += `bottom: 0px; `;
 		css += `margin: 0px; `;
 		css += `border: 1px groove #626262; `;
+		css += `z-index: 99; `;
 		css += `padding-bottom: 5px; `;
 
 		var $element = $(`<div style='${css}'><span id='__status__bar__log'></span><span style='right: 0px; position: fixed;' id='__status__bar__memory_debuger'></span></div>`);
