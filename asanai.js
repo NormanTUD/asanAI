@@ -964,7 +964,7 @@ class asanAI {
 	#python_names_to_js_names = {};
 
 	constructor (...args) {
-		var last_tested_tf_version = "4.11.0";
+		var last_tested_tf_version = "4.14.0";
 		var last_tested_jquery_version = "3.6.0";
 		var last_tested_plotly_version = "2.14.0";
 		var last_tested_temml_version = "0.10.14";
