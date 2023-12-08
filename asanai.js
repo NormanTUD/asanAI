@@ -9452,7 +9452,7 @@ if len(sys.argv) == 1:
 
 			this.#layer_structure_cache = null;
 
-			await updated_page();
+			await this.updated_page();
 			disable_all_non_selected_layer_types();
 
 			if (this.#get_number_of_layers() == 1) {
@@ -9473,7 +9473,7 @@ if len(sys.argv) == 1:
 		//rename_labels();
 		await predict_handdrawn();
 
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+		this.#disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 		this.log("Removed layer");
 	}
@@ -9518,8 +9518,6 @@ if len(sys.argv) == 1:
 			this.err("[add_layer] " + e);
 		}
 
-		$("#number_of_layers").val(this.#parse_int($("#number_of_layers").val()) + 1);
-
 		var previous_layer_type = $($($($(".layer_setting")[real_nr])).find(".layer_type")[0]).val();
 		var new_layer_type = previous_layer_type;
 		if (new_layer_type == "flatten") {
@@ -9527,7 +9525,7 @@ if len(sys.argv) == 1:
 		}
 		$($($($(".layer_setting")[real_nr + plus_or_minus_one])).find(".layer_type")[0]).val(new_layer_type).trigger("change");
 
-		await updated_page();
+		await this.updated_page();
 
 		await this.#write_descriptions();
 
@@ -9536,12 +9534,10 @@ if len(sys.argv) == 1:
 
 		$($(".remove_layer")[real_nr + plus_or_minus_one]).removeAttr("disabled")
 
-		await save_current_status();
+		//await rename_labels();
+		//await predict_handdrawn();
 
-		await rename_labels();
-		await predict_handdrawn();
-
-		disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+		this.#disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 		this.log("Added layer");
 	}
