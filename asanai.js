@@ -81,6 +81,14 @@ class asanAI {
 		bilinear: "bilinear"
 	}
 
+	#constraints = {
+		"": "None",
+		"maxNorm": "maxNorm",
+		"minMaxNorm": "minMaxNorm",
+		"nonNeg": "nonNeg",
+		"unitNorm": "unitNorm"
+	}
+
 	#disable_show_python_and_create_model = false;
 
 	#finished_loading = true;
@@ -11292,5 +11300,25 @@ if len(sys.argv) == 1:
 
 	#add_depthwise_initializer_option (type, nr) {
 		return this.#get_tr_str_for_layer_table("Depthwise Initializer", "depthwise_initializer", "select", this.#initializers, nr);
+	}
+
+	#add_kernel_constraint_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Kernel Constraint", "kernel_constraint", "select", this.#constraints, nr);
+	}
+
+	#add_depthwise_constraint_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Depthwise Constraint", "depthwise_constraint", "select", this.#constraints, nr);
+	}
+
+	#add_pointwise_initializer_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Pointwise Initializer", "pointwise_initializer", "select", this.#initializers, nr);
+	}
+
+	#add_bias_constraint_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Bias Constraint", "bias_constraint", "select", this.#constraints, nr);
+	}
+
+	#add_pointwise_constraint_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Pointwise Constraint", "pointwise_constraint", "select", this.#constraints, nr);
 	}
 }
