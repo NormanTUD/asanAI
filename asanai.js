@@ -10217,7 +10217,7 @@ if len(sys.argv) == 1:
 
 	async create_model (old_model, fake_model_structure, force, i=-1) {
 		if(this.#has_missing_values) {
-			l("Not creating model because some values are missing (create model)");
+			this.log("Not creating model because some values are missing (create model)");
 			if(old_model) {
 				return old_model;
 			}
@@ -10458,7 +10458,7 @@ if len(sys.argv) == 1:
 					set_model_layer_warning(i, "" + e);
 				} else {
 					set_model_layer_warning(i, "" + e);
-					l("ERROR: " + e);
+					this.err("ERROR: " + e);
 					console.log("ORIGINAL e: ", e);
 					this.log(type);
 					this.log(data);
@@ -11342,8 +11342,8 @@ if len(sys.argv) == 1:
 		}
 
 		var types_in_order = "";
-		if(this.#get_number_of_layers() - 1 == layer && labels && labels.length) {
-			types_in_order = " (" + labels.join(", ") + ")";
+		if(this.#get_number_of_layers() - 1 == layer && this.#labels && this.#labels.length) {
+			types_in_order = " (" + this.#labels.join(", ") + ")";
 		}
 
 		var times = [];
@@ -11354,11 +11354,6 @@ if len(sys.argv) == 1:
 			$("#generate_images_msg_wrapper").hide();
 			$("#generate_images_msg").html("");
 
-			if(stop_generating_images) {
-				info("Stopped generating images because the stop generating images button was clicked");
-				continue;
-			}
-
 			var start = Date.now();
 
 			var currentURL = window.location.href;
@@ -11366,10 +11361,10 @@ if len(sys.argv) == 1:
 
 			var tries_left = 3;
 
-			var base_msg = `${this.#language[lang]["generating_image_for_neuron"]} ${i + 1} ${this.#language[lang]["of"]} ${neurons}`;
+			var base_msg = `${this.#language[this.#lang]["generating_image_for_neuron"]} ${i + 1} ${this.#language[this.#lang]["of"]} ${neurons}`;
 
 			try {
-				l(base_msg);
+				this.log(base_msg);
 				canvasses.push(await this.#draw_maximally_activated_neuron(layer, neurons - i - 1));
 			} catch (e) {
 				this.#currently_generating_images = false;
@@ -11379,7 +11374,7 @@ if len(sys.argv) == 1:
 						while (tries_left) {
 							await this.delay(200);
 							try {
-								l(`${base_msg} ${this.#language[lang]["failed_try_again"]}...`);
+								this.log(`${base_msg} ${this.#language[this.#lang]["failed_try_again"]}...`);
 								canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 							} catch (e) {
 								if(("" + e).includes("already disposed")) {
@@ -11417,17 +11412,9 @@ if len(sys.argv) == 1:
 		var ruler = "";
 		var br = "";
 
-		if(is_cosmo_mode) {
-			type_h2 = "span";
-			ruler = "<hr class='cosmo_hr'>";
-			br = "<br>";
-		}
-
 		$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
 
-		l(this.#language[lang]["done_generating_images"]);
-
-		stop_generating_images = false;
+		this.log(this.#language[this.#lang]["done_generating_images"]);
 
 		this.#currently_generating_images = false;
 
@@ -11554,10 +11541,6 @@ if len(sys.argv) == 1:
 				}
 
 				for (var i = 0; i < iterations; i++) {
-					if(stop_generating_images) {
-						continue;
-					}
-
 					const scaledGrads = tidy(() => {
 						try {
 							const grads = grad_function(data);
