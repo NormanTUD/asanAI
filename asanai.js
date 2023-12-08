@@ -76,6 +76,11 @@ class asanAI {
 
 	#debug = false;
 
+	#interpolation = {
+		nearest: "nearest",
+		bilinear: "bilinear"
+	}
+
 	#disable_show_python_and_create_model = false;
 
 	#finished_loading = true;
@@ -11191,7 +11196,7 @@ if len(sys.argv) == 1:
 		var match = layer_type.match(/(\d+)[dD]/);
 
 		if (match) {
-			return parse_int(match[1]);
+			return this.#parse_int(match[1]);
 		}
 
 		return null;
@@ -11201,7 +11206,7 @@ if len(sys.argv) == 1:
 		var str = "";
 		var dimensionality = this.#get_dimensionality_from_layer_name(type);
 
-		assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+		this.assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
 
 		var letter_code = "x".charCodeAt();
 		for (var i = 0; i < dimensionality; i++) {
@@ -11224,5 +11229,68 @@ if len(sys.argv) == 1:
 
 	#add_size_option (type, nr) {
 		return this.#get_tr_str_for_layer_table("Size", "size", "text", { "text": "3,3", "placeholder": "2 comma-seperated numbers" }, nr);
+	}
+
+	#add_epsilon_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("&epsilon; multiplier", "epsilon", "number", { "min": -1, "max": 1, "step": 0.0001, "value": this.#get_default_option(type, "epsilon") }, nr);
+	}
+
+	#add_beta_initializer_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("&beta; Initializer", "beta_initializer", "select", this.#initializers, nr);
+	}
+
+	#add_gamma_initializer_option (type, nr) {
+		this.assert(typeof(type) == "string", "type is not a string add_gamma_initializer_option, but " + typeof(type) + ", " + type);
+		this.assert(typeof(nr) == "number", "nr is not a number for add_gamma_initializer_option, but " + typeof(type) + ", " + type);
+
+		return this.#get_tr_str_for_layer_table('gamma Initializer', 'gamma_initializer', 'select', this.#initializers, nr, 'gamma_initializer_tr');
+	}
+
+	#add_strides_option (type, nr) {
+		var str = "";
+		var dimensionality = this.#get_dimensionality_from_layer_name(type);
+
+		this.assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+
+		var letter_code = "x".charCodeAt();
+		for (var i = 0; i < dimensionality; i++) {
+			var letter = String.fromCharCode(letter_code);
+			str += this.#get_tr_str_for_layer_table("Strides " + letter, "strides_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": this.#get_default_option(type, "strides")[i] }, nr);
+			letter_code++;
+		}
+
+		return str;
+	}
+
+	#add_pool_size_option (type, nr) {
+		this.assert(typeof(type) == "string", "type is not a number");
+		this.assert(typeof(nr) == "number", "nr is not a number");
+
+		var str = "";
+
+		var dimensionality = this.#get_dimensionality_from_layer_name(type);
+
+		this.assert(typeof(dimensionality) == "number", `get_dimensionality_from_layer_name does not return a number for type '${type}'`);
+
+		var letter_code = "x".charCodeAt();
+		for (var i = 0; i < dimensionality; i++) {
+			var letter = String.fromCharCode(letter_code);
+			str += this.#get_tr_str_for_layer_table("Pool-Size " + letter, "pool_size_" + letter, "number", { "min": 1, "max": 4096, "step": 1, "value": this.#get_default_option(type, "pool_size")[i] }, nr);
+			letter_code++;
+		}
+
+		return str;
+	}
+
+	#add_interpolation_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Interpolation", "interpolation", "select", this.#interpolation, nr);
+	}
+
+	#add_dilation_rate_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Dilation-Rate", "dilation_rate", "text", { "text": "", "placeholder": "1-3 numbers" }, nr);
+	}
+
+	#add_depthwise_initializer_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Depthwise Initializer", "depthwise_initializer", "select", this.#initializers, nr);
 	}
 }
