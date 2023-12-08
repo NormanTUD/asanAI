@@ -8000,7 +8000,7 @@ class asanAI {
 			} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
 				this.wrn("[updated_page] " + e);
 			} else if(("" + e).includes("out of memory")) {
-				await write_error("" + e);
+				await this.#write_error("" + e);
 			} else if(("" + e).includes("Cannot read properties of undefined")) {
 				this.wrn("[updated_page] " + e);
 			} else if(("" + e).includes("model.layers[i]")) {
@@ -8270,7 +8270,7 @@ class asanAI {
 								this.#parse_int(kernel_size_x)
 							];
 						} else {
-							await write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
+							await this.#write_error(`Neither (kernel_size_x && kernel_size_y && kernel_size_z) nor (kernel_size_x && kernel_size_z) nor (kernel_size_x). Kernel-Data: ${JSON.stringify({kernel_size_x: kernel_size_x, kernel_size_y: kernel_size_y, kernel_size_z: kernel_size_z, })}`);
 						}
 					} else if (option_name == "size") {
 						data[this.#get_python_name(option_name)] = eval("[" + this.#get_item_value(i, "size") + "]");
@@ -9645,7 +9645,7 @@ if len(sys.argv) == 1:
 
 				this.#update_translations(1); // await not possible
 			} catch (e) {
-				write_error(e); // await not possible
+				this.#write_error(e); // await not possible
 			}
 		}
 
@@ -9695,7 +9695,7 @@ if len(sys.argv) == 1:
 		while (!$(item_parent).hasClass("layer_setting")) {
 			item_parent = $(item_parent).parent();
 			if (this.#get_element_xpath($("body")[0]) == this.#get_element_xpath(item_parent[0])) {
-				write_error("Infinite recursion"); // cannot be async
+				this.#write_error("Infinite recursion"); // cannot be async
 				return;
 			}
 		}
@@ -11501,7 +11501,7 @@ if len(sys.argv) == 1:
 				}
 			}
 		} catch (e) {
-			await write_error(e);
+			await this.#write_error(e);
 			return false;
 		}
 
@@ -11614,5 +11614,10 @@ if len(sys.argv) == 1:
 		full_data["worked"] = worked;
 
 		return full_data;
+	}
+
+	#write_error (...args) {
+		console.warn("write_error is not yet fully implemented! It will get redirected to the console.error function only by now!");
+		console.error(...args);
 	}
 }
