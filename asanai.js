@@ -8989,7 +8989,7 @@ if len(sys.argv) == 1:
 		return data;
 	}
 
-	async get_model_structure(is_fake_model = 0) {
+	async get_model_structure() {
 		var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 		var structure = [];
 
@@ -10375,7 +10375,7 @@ if len(sys.argv) == 1:
 		try {
 			if(layer_options[type]["custom"]) {
 				if(i == 0) {
-					data["inputShape"] = get_input_shape();
+					data["inputShape"] = this.#get_input_shape();
 				} else {
 					delete data["inputShape"];
 				}
@@ -11107,5 +11107,22 @@ if len(sys.argv) == 1:
 		$("#" + type + "_metadata").show();
 
 		await this.updated_page();
+	}
+
+	#add_rate_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout", "number", { "min": 0, "max": 1, "step": 0.1, "value": this.#get_default_option(type, "dropout") }, nr);
+	}
+
+	#add_seed_option (type, nr) {
+		var style = "";
+
+		var current_input_shape = this.#get_input_shape();
+		if (current_input_shape.length != 3) {
+			style = ` style="display: none" `;
+		}
+
+		var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+
+		return res;
 	}
 }
