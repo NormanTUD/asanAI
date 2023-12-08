@@ -1,6 +1,8 @@
 "use strict";
 
 class asanAI {
+	#currently_generating_images = false;
+
 	#loss = "categoricalCrossentropy";
 	#metric = 'categoricalCrossentropy';
 	#optimizer = 'adam';
@@ -1945,7 +1947,6 @@ class asanAI {
 
 	async #next_frame(...args) {
 		this.#_register_tensors(...args);
-		await tf.nextFrame(...args);
 	}
 
 	shuffleCombo (...args) {
@@ -4794,8 +4795,6 @@ class asanAI {
 		if(!labels.length) {
 			$("#canvas_grid_visualization").html("");
 
-			await nextFrame();
-
 			return;
 		}
 
@@ -4977,8 +4976,6 @@ class asanAI {
 		} else {
 			$("#canvas_grid_visualization").html("");
 		}
-
-		await nextFrame();
 	}
 
 	#_get_callbacks () {
@@ -7943,7 +7940,7 @@ class asanAI {
 
 		var style = "";
 
-		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='draw_maximally_activated_layer(${this.#asanai_object_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
+		var res = `<tr class='visualize_button' ${style}><td><span class='TRANSLATEME_visualize_this_layer'></span>?</td><td><button class='visualize_layer_button' onclick='${this.#asanai_object_name}.draw_maximally_activated_layer(${this.#asanai_object_name}.find_layer_number_by_element(this), "${type}")'><span class='TRANSLATEME_visualize_layer'></span></button></td></tr>`;
 
 		return res;
 	}
@@ -9458,7 +9455,7 @@ if len(sys.argv) == 1:
 			await updated_page();
 			disable_all_non_selected_layer_types();
 
-			if (get_number_of_layers() == 1) {
+			if (this.#get_number_of_layers() == 1) {
 				$(".remove_layer").prop("disabled", true).hide();
 			} else {
 				$(".remove_layer").prop("disabled", false).show();
@@ -9500,7 +9497,7 @@ if len(sys.argv) == 1:
 
 		this.assert(real_nr !== null, "real_nr is null!");
 
-		var nr_of_layer = (get_number_of_layers() - 1);
+		var nr_of_layer = (this.#get_number_of_layers() - 1);
 
 		var item_parent_parent = $(item).parent().parent();
 
@@ -11320,5 +11317,319 @@ if len(sys.argv) == 1:
 
 	#add_pointwise_constraint_option (type, nr) {
 		return this.#get_tr_str_for_layer_table("Pointwise Constraint", "pointwise_constraint", "select", this.#constraints, nr);
+	}
+
+	async draw_maximally_activated_layer (layer, type, is_recursive = 0) {
+		if(this.#currently_generating_images) {
+			this.log("Cannot predict 2 layers at the same time. Waiting until done...");
+
+			while (this.#currently_generating_images) {
+				await this.delay(500);
+			}
+
+		}
+
+		var canvasses = [];
+
+		this.#currently_generating_images = true;
+
+		var neurons = this.#_get_neurons_last_layer(layer, type);
+
+		if(typeof(neurons) == "boolean" && !neurons)  {
+			this.#currently_generating_images = false;
+			err("Cannot determine number of neurons in last layer");
+			return;
+		}
+
+		var types_in_order = "";
+		if(this.#get_number_of_layers() - 1 == layer && labels && labels.length) {
+			types_in_order = " (" + labels.join(", ") + ")";
+		}
+
+		var times = [];
+
+		$("#stop_generating_images_button").show();
+
+		for (var i = 0; i < neurons; i++) {
+			$("#generate_images_msg_wrapper").hide();
+			$("#generate_images_msg").html("");
+
+			if(stop_generating_images) {
+				info("Stopped generating images because the stop generating images button was clicked");
+				continue;
+			}
+
+			var start = Date.now();
+
+			var currentURL = window.location.href;
+			var urlParams = new URLSearchParams(window.location.search);
+
+			var tries_left = 3;
+
+			var base_msg = `${this.#language[lang]["generating_image_for_neuron"]} ${i + 1} ${this.#language[lang]["of"]} ${neurons}`;
+
+			try {
+				l(base_msg);
+				canvasses.push(await this.#draw_maximally_activated_neuron(layer, neurons - i - 1));
+			} catch (e) {
+				this.#currently_generating_images = false;
+
+				if(("" + e).includes("already disposed")) {
+					if(!is_recursive) {
+						while (tries_left) {
+							await this.delay(200);
+							try {
+								l(`${base_msg} ${this.#language[lang]["failed_try_again"]}...`);
+								canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
+							} catch (e) {
+								if(("" + e).includes("already disposed")) {
+									err("" + e);
+								} else {
+									throw new Error(e);
+								}
+							}
+							tries_left--;
+						}
+
+						if(tries_left) {
+
+						}
+					} else {
+						log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+					}
+				} else {
+					throw new Error(e);
+				}
+			}
+
+			var end = Date.now();
+
+			var time = ((end - start) / 1000) + 1;
+
+			times.push(time);
+		}
+
+		$("#stop_generating_images_button").hide();
+		$("#generate_images_msg_wrapper").hide();
+		$("#generate_images_msg").html("");
+
+		var type_h2 = "h2";
+		var ruler = "";
+		var br = "";
+
+		if(is_cosmo_mode) {
+			type_h2 = "span";
+			ruler = "<hr class='cosmo_hr'>";
+			br = "<br>";
+		}
+
+		$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
+
+		l(this.#language[lang]["done_generating_images"]);
+
+		stop_generating_images = false;
+
+		this.#currently_generating_images = false;
+
+		return canvasses;
+	}
+
+	#_get_neurons_last_layer (layer, type) {
+		var neurons = 1;
+
+		if(!Object.keys(this.#model).includes("layers")) {
+			this.wrn("Cannot get model.layers");
+			return false;
+		}
+
+		if(!Object.keys(this.#model.layers).includes("" + layer)) {
+			this.wrn(`Cannot get model.layers[${layer}]`);
+			return false;
+		}
+
+		if(type == "conv2d") {
+			neurons = this.#model.layers[layer].filters;
+		} else if (type == "dense") {
+			neurons = this.#model.layers[layer].units;
+		} else if (type == "flatten") {
+			neurons = 1;
+		} else {
+			dbg("Unknown layer " + layer);
+			return false;
+		}
+
+		return neurons;
+	}
+
+	#get_number_of_layers () {
+		return this.#model.layers.length;
+	}
+
+	async #draw_maximally_activated_neuron (layer, neuron) {
+		var current_input_shape = this.#get_input_shape();
+
+		var canvasses = [];
+
+		try {
+			var start_image = undefined;
+			var iterations = this.#parse_int($("#max_activation_iterations").val());
+			if(!iterations) {
+				log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+				iterations = 30;
+			}
+
+			var full_data = await this.#input_gradient_ascent(layer, neuron, iterations, start_image);
+
+			if(full_data["worked"]) {
+				if(Object.keys(full_data).includes("data")) {
+					var _tensor = tensor(full_data["data"]);
+					var t_str = _tensor_print_to_string(_tensor);
+					log("Maximally activated tensors:", t_str);
+					$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
+					await dispose(_tensor);
+				} else if (Object.keys(full_data).includes("image")) {
+					var data = full_data["image"][0];
+					var to_class = is_cosmo_mode ? "current_images" : "maximally_activated_class";
+					var canvas = get_canvas_in_class(layer, to_class, 0, 1);
+					var _uuid = canvas.id;
+
+					canvasses.push(canvas);
+
+					var data_hash = {
+						layer: layer,
+						neuron: neuron,
+						model_hash: await get_model_config_hash()
+					};
+
+					this.#scaleNestedArray(data);
+					var res = this.#draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+
+					if(res) {
+						if(!is_cosmo_mode) {
+							$("#maximally_activated_content").prepend(canvas);
+						}
+					} else {
+						log("Res: ", res);
+					}
+				}
+			}
+		} catch (e) {
+			await write_error(e);
+			return false;
+		}
+
+		return canvasses;
+	}
+
+	async #input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion = 0) {
+		var worked = 0;
+		var full_data = {};
+
+		var asanai_this = this;
+
+		try {
+			var generated_data = tidy(() => {
+				// Create an auxiliary model of which input is the same as the original
+				// model but the output is the output of the convolutional layer of
+				// interest.
+				const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+
+				const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
+
+				// This function calculates the value of the convolutional layer's
+				// output at the designated filter index.
+				const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
+
+				// This returned function (`grad_function`) calculates the gradient of the
+				// convolutional filter's output with respect to the input image.
+				const grad_function = grad(lossFunction);
+
+				// Form a random image as the starting point of the gradient ascent.
+
+				var new_input_shape = asanai_this.#get_input_shape_with_batch_size();
+				new_input_shape.shift();
+				var data = asanai_this.#randomUniform([1, ...new_input_shape], 0, 1);
+				if(typeof(start_image) != "undefined") {
+					data = start_image;
+				}
+
+				for (var i = 0; i < iterations; i++) {
+					if(stop_generating_images) {
+						continue;
+					}
+
+					const scaledGrads = tidy(() => {
+						try {
+							const grads = grad_function(data);
+
+							const _is = asanai_this.sqrt(asanai_this.tf_mean(asanai_this.tf_square(grads)));
+
+							const norm = asanai_this.tf_add(_is, asanai_this.tf_constant_shape(tf.backend().epsilon(), _is));
+							// Important trick: scale the gradient with the magnitude (norm)
+							// of the gradient.
+							return asanai_this.tf_div(grads, norm);
+						} catch (e) {
+							if(Object.keys(e).includes("message")) {
+								e = e.message;
+							}
+
+							err("Inside scaledGrads creation error:" + e);
+						}
+					});
+
+					data = tf_add(data, scaledGrads);
+					worked = 1;
+				}
+
+				return data;
+			});
+		} catch (e) {
+			if(("" + e).includes("is already disposed")) {
+				await compile_model();
+				if(recursion > 20) {
+					await delay(recursion * 1000);
+					return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
+				} else {
+					throw new Error("Too many retries for input_gradient_ascent");
+				}
+			} else {
+				throw new Error("Error 12: " + e);
+			}
+		}
+
+		if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
+			try {
+				full_data["image"] = tidy(() => {
+					return array_sync(tidy(() => {
+						var dp = deprocess_image(generated_data);
+
+						if(!dp) {
+							err("deprocess image returned empty");
+							full_data["worked"] = 0;
+						}
+
+						return dp;
+					}));
+				});
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				console.log("generated_data: ", generated_data);
+
+				err("" + e);
+
+				full_data["worked"] = 0;
+			}
+		} else {
+			full_data["data"] = array_sync(generated_data);
+		}
+
+		await dispose(generated_data);
+
+		full_data["worked"] = worked;
+
+		return full_data;
 	}
 }
