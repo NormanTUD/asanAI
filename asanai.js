@@ -11146,4 +11146,20 @@ if len(sys.argv) == 1:
 	#add_axis_option (type, nr) {
 		return this.#get_tr_str_for_layer_table("Axis", "axis", "number", { "min": -1, "max": 1000, "step": 1, "value": this.#get_default_option(type, "axis") }, nr);
 	}
+
+	#add_max_value_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Max-Value", "max_value", "number", { "step": 1, "value": this.#get_default_option(type, "max_value") }, nr);
+	}
+
+	#add_alpha_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("&alpha;", "alpha", "number", { "max": 100, "step": 0.01, "value": this.#get_default_option(type, "alpha") }, nr);
+	}
+
+	#add_dropout_rate_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Dropout rate (0 to 1)", "dropout_rate", "number", { "min": 0, "max": 1, "step": 0.05, "value": this.#get_default_option(type, "dropout_rate") }, nr);
+	}
+
+	#add_target_shape_option (type, nr) {
+		return this.#get_tr_str_for_layer_table("Target-Shape", "target_shape", "text", { "text": this.#calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr);
+	}
 }
