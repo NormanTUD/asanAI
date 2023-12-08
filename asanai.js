@@ -11162,4 +11162,12 @@ if len(sys.argv) == 1:
 	#add_target_shape_option (type, nr) {
 		return this.#get_tr_str_for_layer_table("Target-Shape", "target_shape", "text", { "text": this.#calculate_default_target_shape(nr), "placeholder": "Array-Shape" }, nr);
 	}
+
+	set_mode (mode_name) {
+		if(["beginner", "expert"].includes(mode_name)) {
+			this.#mode = mode_name;
+		} else {
+			throw new Error(`set_mode must be either 'beginner' or 'expert', you chose '${mode_name}', which is invalid.`);
+		}
+	}
 }
