@@ -743,6 +743,7 @@ function findInitializerElement(arr) {
 async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
+
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
 		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
