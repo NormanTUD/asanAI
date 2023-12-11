@@ -1779,14 +1779,18 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
+	await insert_initializers();
+
+	return true;
+}
+
+async function insert_initializers () {
 	for (var i = 0; i < model.layers.length; i++) {
 		await insert_initializer_options(i, "kernel");
 		await insert_initializer_options(i, "bias");
-
-		await update_translations();
 	}
 
-	return true;
+	await update_translations();
 }
 
 async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
