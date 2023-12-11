@@ -1442,9 +1442,10 @@ async function predict_maximally_activated (item, force_category) {
 	}
 
 	var $item = $(item);
-	var next_item = $item.next();
+	var next_item = $item.next().next();
 
-	if(next_item.length && next_item[0].tagName.toLowerCase() == "PRE") {
+	log(">>>>>", "item:", $item, "next_item:", next_item, "<<<<<");
+	if(next_item.length && next_item[0].tagName.toLowerCase() == "pre") {
 		next_item.remove();
 	}
 
