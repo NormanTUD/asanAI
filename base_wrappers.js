@@ -379,6 +379,8 @@ function tf_sequential(model_uuid) {
 
 	_clean_custom_tensors();
 
+	res["uuid"] = model_uuid;
+
 	return res;
 }
 
