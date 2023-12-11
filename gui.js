@@ -2927,7 +2927,6 @@ async function set_config(index) {
 		} catch (e) {
 			err(e);
 			l("ERROR: Failed to load. Failed to load model and/or weights");
-			$(".overlay").remove();
 
 			$(".overlay").remove();
 			return;
