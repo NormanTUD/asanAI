@@ -503,7 +503,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			str += " value=" + data["value"] + " ";
 		}
 
-		if(classname.includes("_initializer_")) {
+		if(classname.includes("_initializer_") && (classname.includes("kernel") || classname.includes("bias"))) {
 			//updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
 			str += `id='get_tr_str_for_layer_table_${new_uuid}'  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" />`;
 		} else {
