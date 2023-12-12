@@ -1780,14 +1780,22 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
-	await insert_initializers();
+	await insert_kernel_initializers();
+	await insert_bias_initializers();
 
 	return true;
 }
 
-async function insert_initializers () {
+async function insert_kernel_initializers () {
 	for (var i = 0; i < model.layers.length; i++) {
 		await insert_initializer_options(i, "kernel");
+	}
+
+	await update_translations();
+}
+
+async function insert_bias_initializers () {
+	for (var i = 0; i < model.layers.length; i++) {
 		await insert_initializer_options(i, "bias");
 	}
 
