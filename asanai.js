@@ -3,6 +3,12 @@
 class asanAI {
 	#currently_generating_images = false;
 
+	#create_model_queue = [];
+
+	#model_is_trained = false;
+
+	#model_config_hash = "";
+
 	#loss = "categoricalCrossentropy";
 	#metric = 'categoricalCrossentropy';
 	#optimizer = 'adam';
@@ -5577,6 +5583,8 @@ class asanAI {
 		this.#started_training = false;
 		await this.set_model(this.#model);
 
+		this.#model_is_trained = true;
+
 		return history;
 	}
 
@@ -8083,81 +8091,88 @@ class asanAI {
 		}
 	}
 
+	async compile_model () {
+		this.#compile_model();
+	}
+
 	async #compile_model (recursion_level=0) {
 		if(recursion_level > 3) {
-			err("recursion level for compile_model too high");
+			this.err("recursion level for #compile_model too high");
 			return;
 		}
 
-		assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+		this.assert(this.#get_number_of_layers() >= 1, "Need at least 1 layer.");
 
-		var new_model_config_hash = await get_model_config_hash();
-		assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
+		var new_model_config_hash = await this.#get_model_config_hash();
+		this.assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
-		var recreate_model = await _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash);
+		var current_status_hash = await this.#get_current_status_hash();
+		var recreate_model = await this.#_get_recreate_model(current_status_hash, this.#model_config_hash, new_model_config_hash);
 
-		if(!model) {
+		if(!this.#model) {
 			if(finished_loading) {
-				wrn("model not given");
+				this.wrn("model not given");
 			}
 
-			if(global_model_data) {
-				var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
+			if(this.#global_model_data) {
+				var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
 				for (var i = 0; i < model_data_tensors.length; i++) {
-					await dispose(model_data_tensors[i]);
+					await this.dispose(model_data_tensors[i]);
 				}
 			}
 
 			try {
-				[model, global_model_data] = await create_model(model, await get_model_structure());
+				[this.#model, this.#global_model_data] = await create_model(model, await get_model_structure());
 			} catch (e) {
 				throw new Error(e);
 			}
 		}
 
 		if(recreate_model) {
-			model_is_trained = false;
-			reset_summary();
-			await _create_model();
-			await last_shape_layer_warning();
+			this.#model_is_trained = false;
+			await this.#_create_model();
+			await this.#last_shape_layer_warning();
 		}
 
-		if(!model) {
-			wrn("[compile_model] No model to compile!");
+		if(!this.#model) {
+			this.wrn("[compile_model] No model to compile!");
 			return;
 		}
 
-		while (create_model_queue.length || !model) {
+		while (this.#create_model_queue.length || !this.#model) {
 			await delay(10);
 		}
 
 		try {
-			model.compile(global_model_data);
-			model_config_hash = new_model_config_hash;
+			this.#model.compile(this.#global_model_data);
+			this.#model_config_hash = new_model_config_hash;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
 			if(("" + e).includes("model is empty")) {
+				this.err("" + e);
+				/*
 				set_model_layer_warning(0, "" + e);
 
 				for (var i = 0; i < $("#layer_setting").length; i++) {
 					set_layer_background(i, "red")
 				}
+				*/
 			} else if (("" + e).includes("model is empty")) {
-				err("[compile_model] " + e)
+				this.err("[compile_model] " + e)
 				return;
 			} else if (("" + e).includes("e is null")) {
-				err("[compile_model] " + e)
+				this.err("[compile_model] " + e)
 				await delay(1000);
-				return await compile_model(recursion_level + 1);
+				return await this.#compile_model(recursion_level + 1);
 			} else if (("" + e).includes("model.compile is not a function")) {
-				err("[compile_model] " + e);
+				this.err("[compile_model] " + e);
 				return;
 			} else {
 				if(e) {
-					err("" + e);
+					this.err("" + e);
 				} else {
 					await except("ERROR2", "Unknown error");
 				}
@@ -8166,25 +8181,23 @@ class asanAI {
 			}
 		}
 
+		/*
 		for (var i = 0; i < $("#layer_setting").length; i++) {
 			set_layer_background(i, "")
 		}
+		*/
 
 		try {
 			$("#outputShape").val(JSON.stringify(model.outputShape));
 		} catch (e) {
 			if(("" + e).includes("model is undefined")) {
-				wrn("[compile_model] model is undefined while compile_model");
+				this.wrn("[compile_model] model is undefined while #compile_model");
 			} else {
 				throw new Error(e);
 			}
 		}
 
-		write_model_summary_wait();
-	}
-
-	async #compile_model () {
-		this.wrn(`#compile_model not yet defined!`);
+		//write_model_summary_wait();
 	}
 
 	async #updated_page_internal (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) {
@@ -9494,7 +9507,7 @@ if len(sys.argv) == 1:
 	#sortable_layers_container(layers_container) {
 		this.assert(typeof (layers_container) == "object", "layers_container is not an object but " + typeof (layers_container));
 
-		var error_div = $("#error");
+		var _error_div = $("#error");
 
 		layers_container.sortable({
 			cursor: "move",
@@ -9510,8 +9523,8 @@ if len(sys.argv) == 1:
 			update: async function (e, ui) {
 				try {
 					await this.#compile_model();
-					error_div.html("");
-					error_div.parent().hide();
+					_error_div.html("");
+					_error_div.parent().hide();
 				} catch (e) {
 					if (this.#mode == "beginner") {
 						$("#" + this.#layers_gui_div_name).sortable("cancel");
@@ -9521,11 +9534,11 @@ if len(sys.argv) == 1:
 						} catch (e) {
 							this.log(e);
 						}
-						error_div.html("");
-						error_div.parent().hide();
+						_error_div.html("");
+						_error_div.parent().hide();
 					} else {
-						error_div.html(e);
-						error_div.parent().show();
+						_error_div.html(e);
+						_error_div.parent().show();
 					}
 				}
 
@@ -11433,7 +11446,7 @@ if len(sys.argv) == 1:
 
 		if(typeof(neurons) == "boolean" && !neurons)  {
 			this.#currently_generating_images = false;
-			err("Cannot determine number of neurons in last layer");
+			this.err("Cannot determine number of neurons in last layer");
 			return;
 		}
 
@@ -11474,7 +11487,7 @@ if len(sys.argv) == 1:
 								canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 							} catch (e) {
 								if(("" + e).includes("already disposed")) {
-									err("" + e);
+									this.err("" + e);
 								} else {
 									throw new Error(e);
 								}
@@ -11611,7 +11624,7 @@ if len(sys.argv) == 1:
 		var asanai_this = this;
 
 		try {
-			var generated_data = tidy(() => {
+			var generated_data = asanai_this.tidy(() => {
 				// Create an auxiliary model of which input is the same as the original
 				// model but the output is the output of the convolutional layer of
 				// interest.
@@ -11637,7 +11650,7 @@ if len(sys.argv) == 1:
 				}
 
 				for (var i = 0; i < iterations; i++) {
-					const scaledGrads = tidy(() => {
+					const scaledGrads = asanai_this.tidy(() => {
 						try {
 							const grads = grad_function(data);
 
@@ -11652,7 +11665,7 @@ if len(sys.argv) == 1:
 								e = e.message;
 							}
 
-							err("Inside scaledGrads creation error:" + e);
+							this.err("Inside scaledGrads creation error:" + e);
 						}
 					});
 
@@ -11664,7 +11677,7 @@ if len(sys.argv) == 1:
 			});
 		} catch (e) {
 			if(("" + e).includes("is already disposed")) {
-				await compile_model();
+				await this.#compile_model();
 				if(recursion > 20) {
 					await delay(recursion * 1000);
 					return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1);
@@ -11677,13 +11690,14 @@ if len(sys.argv) == 1:
 		}
 
 		if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
+			var asanai_this = this;
 			try {
-				full_data["image"] = tidy(() => {
-					return array_sync(tidy(() => {
+				full_data["image"] = this.tidy(() => {
+					return asanai_this.array_sync(tidy(() => {
 						var dp = deprocess_image(generated_data);
 
 						if(!dp) {
-							err("deprocess image returned empty");
+							this.err("deprocess image returned empty");
 							full_data["worked"] = 0;
 						}
 
@@ -11697,12 +11711,12 @@ if len(sys.argv) == 1:
 
 				console.log("generated_data: ", generated_data);
 
-				err("" + e);
+				this.err("" + e);
 
 				full_data["worked"] = 0;
 			}
 		} else {
-			full_data["data"] = array_sync(generated_data);
+			full_data["data"] = this.array_sync(generated_data);
 		}
 
 		await dispose(generated_data);
@@ -11715,5 +11729,230 @@ if len(sys.argv) == 1:
 	#write_error (...args) {
 		console.warn("write_error is not yet fully implemented! It will get redirected to the console.error function only by now!");
 		console.error(...args);
+	}
+
+	async #_get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash) {
+		var recreate_model = false;
+
+		if(model_config_hash != new_model_config_hash) {
+			recreate_model = true;
+		}
+
+		if(this.#model_is_trained) {
+			if(model_config_hash == new_model_config_hash) {
+				recreate_model = false;
+			} else {
+				recreate_model = true;
+				if(recreate_model) {
+					this.#model_is_trained = false;
+				}
+			}
+		}
+
+		return recreate_model;
+	}
+
+	async #get_current_status_hash(use_weights=1) {
+		var html_code = "";
+
+		var allitems = [];
+		allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("input"));
+		allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("checkbox"));
+		allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("select"));
+		allitems = Array.prototype.concat.apply(allitems, document.getElementsByTagName("textarea"));
+
+		allitems.forEach(function (x) {
+			var item = $(x);
+			html_code += ";;;;;;;" + x.id + ";;;;" + x.className + "=" + x.value + ";;;;" + x.checked;
+		});
+
+		if(use_weights) {
+			html_code += this.#get_weights_as_string();
+		}
+
+		var new_status_hash = await this.#md5(html_code);
+
+		return new_status_hash;
+	}
+
+	#get_weights_as_string (m) {
+		if(!m) {
+			m = this.#model;
+		}
+
+		if(!m) {
+			if(finished_loading) {
+				this.wrn("Could not get model...");
+			}
+			return false;
+		}
+
+		if(!Object.keys(m).includes("_callHook")) {
+			this.wrn("given model is not a model");
+			return false;
+		}
+
+		if(!typeof(m.getWeights) == "function") {
+			this.wrn("getWeights is not defined");
+			return false;
+		}
+
+		var res;
+
+		if(m) {
+			var asanai_this = this;
+
+			this.tidy(() => {
+				try {
+					var weights = m.getWeights();
+
+					var weights_array = [];
+
+					for (var i = 0; i < weights.length; i++) {
+						if(!weights[i].isDisposed) {
+							weights_array[i] = asanai_this.array_sync(weights[i]);
+						} else {
+							this.wrn(`weights[${i}] is disposed`);
+						}
+					}
+
+					res = JSON.stringify(weights_array);
+				} catch (e) {
+					if(("" + e).includes("already disposed")) {
+						if(finished_loading) {
+							//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
+						}
+					} else if(("" + e).includes("e is undefined")) {
+						this.wrn("e is undefined in get_weights_as_string. This has happened to me when rebuilding the model after it was set to null. If this happened here, it is most probably harmless");
+					} else if(("" + e).includes("getWeights is not a function")) {
+						this.wrn("getWeights is not a function. The model may have been undefined while attempting this.");
+					} else {
+						this.err(e);
+						console.trace();
+					}
+				}
+			});
+		} else {
+			res = false;
+		}
+
+		return res;
+	}
+
+	async #_create_model () {
+		var _create_model_uuid = this.#uuidv4();
+
+		while (this.#create_model_queue.length) {
+			await delay(50);
+		}
+
+		this.#create_model_queue.push(_create_model_uuid);
+
+		if(this.#has_missing_values) {
+			this.log(this.#language[this.#lang]["not_creating_model_because_values_are_missing"]);
+			return model;
+		}
+
+		try {
+			try {
+				if(global_model_data) {
+					var model_data_tensors = this.#find_tensors_with_is_disposed_internal(global_model_data);
+					for (var i = 0; i < model_data_tensors.length; i++) {
+						await this.dispose(model_data_tensors[i]);
+					}
+				}
+
+				if(model && Object.keys(model).includes("layers") && model.layers.length) {
+					for (var i = 0; i < model.layers.length; i++) {
+						await this.dispose(model.layers[i].bias);
+						await this.dispose(model.layers[i].kernel);
+					}
+
+					await dispose(model);
+				}
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(e);
+			}
+
+			[model, global_model_data] = await create_model(model);
+
+			/*
+			if(can_be_shown_in_latex()) {
+				$("#math_mode_settings").show();
+			} else {
+				$("#math_mode_settings").hide();
+			}
+			*/
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.#create_model_queue = this.#create_model_queue.filter(function(e) { return e !== _create_model_uuid })
+
+			if(("" + e).includes("undefined has no properties")) {
+				this.wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
+				return;
+			} else if(("" + e).includes("Input 0 is incompatible with layer")) {
+				throw new Error("[create_model] " + e);
+			} else if(("" + e).includes("BaseConv expects config.kernelSize to be number")) {
+				throw new Error("[create_model] " + e);
+			} else if(("" + e).includes("targetShape is undefined")) {
+				this.wrn("[create_model] " + e);
+			} else if(("" + e).includes("ReferenceError")) {
+				this.wrn("[create_model] " + e);
+			} else if(("" + e).includes("The channel dimension of the input should be defined")) {
+				this.wrn("[create_model] " + e);
+			} else if(("" + e).includes("model is undefined")) {
+				this.wrn("[create_model] Currently, the model is undefined. This may be fatal, but may also not be");
+			} else if(("" + e).includes("model.layers[i] is undefined")) {
+				this.wrn("[create_model] " + e);
+			} else if(("" + e).includes("Inputs to DepthwiseConv2D should have rank") || ("" + e).includes("Inputs to SeparableConv2D should have rank")) {
+				this.wrn("[create_model] " + e);
+			} else if(("" + e).includes("Cannot read properties of undefined (reading 'layers')")) {
+				this.wrn("[create_model] " + e);
+				return;
+			} else if(("" + e).includes("Cannot read properties of undefined")) {
+				this.wrn("[create_model] " + e);
+				return;
+			} else if(("" + e).includes("identifier starts immediately after numeric literal")) {
+				this.wrn("[create_model] " + e);
+				return;
+			} else if(
+				("" + e).includes("Convolution layer expected config.filters to be a 'number' > 0 but got undefined") ||
+				("" + e).includes("The kernelSize argument must be an integer or tuple of 2 integers") ||
+				("" + e).includes("The strides argument must be an integer or tuple of 2 integers") ||
+				("" + e).includes("Expected units to be a positive integer, but got undefined") ||
+				("" + e).includes("have a defined dimension but the layer received an input with shape")
+			) {
+				this.wrn("[create_model] " + e);
+				return;
+			} else {
+				await except("ERROR1", "" + e);
+				if(mode == "beginner") {
+					Swal.fire({
+						icon: "error",
+						title: "Oops [4]...",
+						text: "" + e
+					});
+				} else {
+					l("ERROR: " + e);
+				}
+			}
+		}
+
+		this.#create_model_queue = this.#create_model_queue.filter(function(e) { return e !== _create_model_uuid })
+
+		/*
+		if(!disable_layer_debuggers && model) {
+			add_layer_debuggers();
+		}
+		*/
+
+		//add_optimizer_debugger();
 	}
 }
