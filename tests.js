@@ -498,17 +498,21 @@ async function run_tests () {
 
 			$("#dataset").val("signs").trigger("change");
 			log("Waiting 3 seconds...");
+
 			await wait_for_updated_page(3);
 			await _set_initializers();
+
 			log("Done waiting 3 seconds...");
 
 			$("#model_dataset").val("signs").trigger("change");
 			log("Waiting 3 seconds...");
+
 			await wait_for_updated_page(3);
 			await _set_initializers();
 
 			$("#learningRate_adam").val("0.001").trigger("change");
-			await set_epochs(50);
+
+			await set_epochs(100);
 			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
