@@ -1780,8 +1780,8 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
-	await insert_bias_initializers();
 	await insert_kernel_initializers();
+	await insert_bias_initializers();
 
 	return true;
 }
