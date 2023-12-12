@@ -272,8 +272,8 @@ async function get_current_status_hash(use_weights=1) {
 /* This function returns the value of an item in a given layer, specified by classname. If the item is a checkbox, it returns whether or not the box is checked. Otherwise, it returns the value of the item. */
 
 function get_item_value(layer, classname) {
-	assert(typeof (layer) == "number", "Layer is not an integer, but " + typeof (layer));
-	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
+	assert(typeof(layer) == "number", "Layer is not an integer, but " + typeof(layer));
+	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
 
 	var layer_settings = $(".layer_setting");
 	var layer = $(layer_settings[layer]);
@@ -307,9 +307,9 @@ function set_item_value(layer, classname, value) {
 		return;
 	}
 
-	assert(typeof (layer) == "number", "Layer is not an integer, but " + typeof (layer));
-	assert(typeof (classname) == "string", "classname '" + classname + "' is not a string, but " + typeof (classname));
-	assert(["string", "number", "boolean"].includes(typeof (value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof (value));
+	assert(typeof(layer) == "number", "Layer is not an integer, but " + typeof(layer));
+	assert(typeof(classname) == "string", "classname '" + classname + "' is not a string, but " + typeof(classname));
+	assert(["string", "number", "boolean"].includes(typeof(value)), "value '" + value + "' for " + classname + " is not a string or number, but " + typeof(value));
 
 	var layer_settings = $(".layer_setting");
 	if(layer >= layer_settings.length) {
@@ -336,7 +336,7 @@ function set_item_value(layer, classname, value) {
 }
 
 function get_tr_str_for_description(desc) {
-	assert(typeof (desc) == "string", desc + " is not string but " + typeof (desc));
+	assert(typeof(desc) == "string", desc + " is not string but " + typeof(desc));
 	return "<tr><td><span class='TRANSLATEME_description'></span>:</td><td><span class='typeset_me'>" + desc + "</span></td></tr>";
 }
 
@@ -351,7 +351,7 @@ function quote_python(item, nobrackets=0) {
 		return "";
 	}
 
-	if (typeof (item) == "object") {
+	if (typeof(item) == "object") {
 		return JSON.stringify(item);
 	} else {
 		if (is_numeric(item)) {
@@ -476,7 +476,7 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 		var pre_text = "";
 		if ("text" in data) {
 			var text = data["text"];
-			if (typeof (data["text"]) == "function") {
+			if (typeof(data["text"]) == "function") {
 				text = data["text"](nr);
 			}
 
@@ -615,7 +615,7 @@ function add_strides_option(type, nr) {
 
 function insert_activation_option_trs(layer_nr, option_type) {
 	assert(["alpha", "max_value", "axis", "theta", "alpha_initializer", "alpha_regularizer", "alpha_constraint", "shared_axes"].includes(option_type), "invalid option type " + option_type);
-	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
 	if (option_type != "none") {
 		var eval_string = `$(add_activation_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".activation")[${layer_nr}]).parent().parent());`;
@@ -629,7 +629,7 @@ function insert_activation_option_trs(layer_nr, option_type) {
 function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
 	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
-	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
 	if (option_type != "none") {
 		var eval_string = `$(add_${regularizer_type}_regularizer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${regularizer_type}_regularizer").parent().parent())`;
@@ -643,7 +643,7 @@ function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) 
 function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
 	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...valid_initializer_types].includes(option_type), "invalid option type " + option_type);
-	assert(typeof (layer_nr) == "number", "Layer number's type must be number, is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
 	var function_name = `add_${initializer_type}_initializer_${option_type}_option`;
 
@@ -663,7 +663,7 @@ function insert_initializer_option_trs(layer_nr, initializer_type, option_type) 
 
 async function insert_activation_options(layer_nr) {
 	// TODO NOT YET USED
-	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 	assert(layer_nr >= 0 && layer_nr <= get_number_of_layers(), "Invalid layer number");
 
 	$($(".layer_options_internal")[layer_nr]).find(".activation_tr").remove();
@@ -704,7 +704,7 @@ function set_last_layer_activation_function (activation_function) {
 
 async function insert_regularizer_options(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
-	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
 		dbg(`Invalid layer number: max_layer: ${max_layer}, layer_nr: ${layer_nr}`);
@@ -742,7 +742,7 @@ function findInitializerElement(arr) {
 
 async function insert_initializer_options (layer_nr, initializer_type) {
 	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
-	assert(typeof (layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
 
 	var max_layer = get_number_of_layers();
 	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
@@ -840,7 +840,7 @@ async function get_cached_json(url) {
 /* This function gets the configuration for the index passed in. If no index is passed in, it gets the configuration for the currently selected dataset. */
 
 async function _get_configuration(index) {
-	assert(["string", "undefined"].includes(typeof (index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
+	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	var data = undefined;
 
@@ -1157,7 +1157,7 @@ async function update_python_code(dont_reget_labels) {
 		var params = [];
 		for (const [key, value] of Object.entries(data)) {
 			if (key == "dtype" && i == 0 || key != "dtype") {
-				if (typeof (value) != "undefined" && typeof(key) != "boolean") {
+				if (typeof(value) != "undefined" && typeof(key) != "boolean") {
 					params.push(get_python_name(key) + "=" + quote_python(get_python_name(value)));
 				}
 			}
@@ -1984,7 +1984,7 @@ function reset_summary() {
 }
 
 function set_optimizer(val, trigger_change = 1) {
-	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
+	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
 	l(language[lang]["set_optimizer_to"] + val);
 	$("#optimizer").val(val);
 	if(trigger_change) {
@@ -2000,7 +2000,7 @@ function set_metric(val, trigger_change = 1) {
 	}
 
 	assert(metrics.includes(val), metric + " is not a valid metric. It must be in " + metrics.join(", "));
-	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
+	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
 
 	if($("#metric").val() != val) {
 		$("#metric").val(val);
@@ -2013,7 +2013,7 @@ function set_metric(val, trigger_change = 1) {
 function set_loss(val, trigger_change = 1) {
 	l(language[lang]["set_loss_to"] + val);
 	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
-	assert(typeof (val) == "string", val + " is not an string but " + typeof (val));
+	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
 
 	if($("#loss").val() != val) {
 		$("#loss").val(val);
@@ -2032,7 +2032,7 @@ function get_batch_size() {
 }
 
 function set_batch_size(val) {
-	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
+	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
 
 	l("Set batchsize to " + val);
@@ -2042,7 +2042,7 @@ function set_batch_size(val) {
 }
 
 function set_epochs(val) {
-	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof (val));
+	assert(typeof(val) == "number" || is_numeric(val), val + " is not numeric but " + typeof(val));
 	val = parse_int(val);
 	dbg("[set_epochs] Setting epochs to " + val);
 	document.getElementById("epochs").value = val;
@@ -2052,7 +2052,7 @@ function set_epochs(val) {
 }
 
 function set_number_of_layers(val) {
-	assert(typeof (val) == "number", val + " is not an integer but " + typeof (val));
+	assert(typeof(val) == "number", val + " is not an integer but " + typeof(val));
 	document.getElementById("number_of_layers").value = val;
 	return val;
 }
@@ -2070,13 +2070,13 @@ function get_number_of_layers() {
 }
 
 function init_epochs(val) {
-	assert(typeof (val) == "number", "init_epochs(" + val + ") is not an integer but " + typeof (val));
+	assert(typeof(val) == "number", "init_epochs(" + val + ") is not an integer but " + typeof(val));
 	l("Initializing epochs to " + val);
 	set_epochs(val);
 }
 
 async function init_number_of_layers(val) {
-	assert(typeof (val) == "number", "init_number_of_layers(" + val + ") is not an integer but " + typeof (val));
+	assert(typeof(val) == "number", "init_number_of_layers(" + val + ") is not an integer but " + typeof(val));
 
 	await set_number_of_layers(val);
 
@@ -2087,7 +2087,7 @@ async function init_number_of_layers(val) {
 }
 
 function get_option_for_layer_by_type(nr) {
-	assert(typeof (nr) == "number", "get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof (nr));
+	assert(typeof(nr) == "number", "get_option_for_layer_by_type(" + nr + ") is not a number, but " + typeof(nr));
 
 	var layer_type = $($(".layer_type")[nr]);
 
@@ -2154,11 +2154,11 @@ async function initializer_layer_options(thisitem) {
 	layer_structure_cache = null;
 
 	var nr = thisitem;
-	if (typeof (nr) != "number") {
+	if (typeof(nr) != "number") {
 		nr = find_layer_number_by_element(thisitem);
 	}
 
-	assert(typeof (nr) == "number", "found nr is not an integer but " + typeof (nr));
+	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
 
 	await set_option_for_layer_by_layer_nr(nr);
 
@@ -2198,15 +2198,15 @@ async function set_option_for_layer_by_layer_nr(nr) {
 }
 
 async function toggle_options(item) {
-	assert(typeof (item) == "object", "toggle_options(" + item + ") is not an object but " + typeof (item));
+	assert(typeof(item) == "object", "toggle_options(" + item + ") is not an object but " + typeof(item));
 
 	$(item).parent().parent().parent().next().toggle();
 	await write_descriptions(1);
 }
 
 async function disable_invalid_layers_event(e, thisitem) {
-	assert(typeof (e) == "object", "disable_all_invalid_layers(e -> " + e + " is not an object but " + typeof (e));
-	assert(typeof (thisitem) == "object", "disable_all_invalid_layers(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof (thisitem));
+	assert(typeof(e) == "object", "disable_all_invalid_layers(e -> " + e + " is not an object but " + typeof(e));
+	assert(typeof(thisitem) == "object", "disable_all_invalid_layers(e, thisitem -> " + thisitem + " is not an [object HTMLSelectElement] but " + typeof(thisitem));
 
 	e.preventDefault();
 	var layer_nr = null;
@@ -2223,7 +2223,7 @@ async function disable_all_invalid_layers() {
 }
 
 async function disable_all_invalid_layers_from(start) {
-	assert(typeof (start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof (start));
+	assert(typeof(start) == "number", "disable_all_invalid_layers_from(" + start + ") is not a number but " + typeof(start));
 
 	favicon_spinner();
 	for (var i = start; i < get_number_of_layers(); i++) {
@@ -2256,7 +2256,7 @@ async function enable_valid_layer_types(layer_nr) {
 		info("enable_valid_layer_types disabled because is in training");
 		return;
 	}
-	assert(typeof (layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof(layer_nr));
 
 	if(is_repairing_output_shape) {
 		enable_all_layer_types();
@@ -2279,7 +2279,7 @@ async function enable_valid_layer_types(layer_nr) {
 }
 
 function option_for_layer(nr) {
-	assert(typeof (nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof (number));
+	assert(typeof(nr) == "number", "option_for_layer(" + nr + ") is not a number but " + typeof(number));
 
 	var this_event = "initializer_layer_options(this)";
 
@@ -2314,7 +2314,7 @@ function option_for_layer(nr) {
 }
 
 async function remove_layer(item) {
-	assert(typeof (item) == "object", "item is not an object but " + typeof (item));
+	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	var number_of_layers_element = document.getElementById("number_of_layers");
 	var old_value = parse_int(number_of_layers_element.value);
@@ -2351,7 +2351,7 @@ async function remove_layer(item) {
 }
 
 function get_element_xpath(element) {
-	assert(typeof (element) == "object", "item is not an object but " + typeof (element));
+	assert(typeof(element) == "object", "item is not an object but " + typeof(element));
 
 	const idx = (sib, name) => sib
 		? idx(sib.previousElementSibling, name || sib.localName) + (sib.localName == name)
@@ -2365,7 +2365,7 @@ function get_element_xpath(element) {
 }
 
 async function add_layer(item) {
-	assert(typeof (item) == "object", "item is not an object but " + typeof (item));
+	assert(typeof(item) == "object", "item is not an object but " + typeof(item));
 
 	layer_structure_cache = null;
 
@@ -2433,7 +2433,7 @@ async function add_layer(item) {
 }
 
 function sortable_layers_container(layers_container) {
-	assert(typeof (layers_container) == "object", "layers_container is not an object but " + typeof (layers_container));
+	assert(typeof(layers_container) == "object", "layers_container is not an object but " + typeof(layers_container));
 
 	var error_div = $("#error");
 
@@ -2499,7 +2499,7 @@ function disable_all_non_selected_layer_types() {
 }
 
 async function show_layers(number) {
-	assert(typeof (number) == "number", "show_layer(" + number + ") is not a number but " + typeof (number));
+	assert(typeof(number) == "number", "show_layer(" + number + ") is not a number but " + typeof(number));
 
 	var layers_container = $("#layers_container");
 
@@ -2560,9 +2560,9 @@ function reset_photo_gallery() {
 }
 
 function set_xyz_values(j, name, values) {
-	assert(typeof (j) == "number", "j must be number, is: " + typeof (number));
-	assert(typeof (name) == "string", "name must be string, is: " + typeof (number));
-	assert(typeof (values) == "object", "name must be object, is: " + typeof (number));
+	assert(typeof(j) == "number", "j must be number, is: " + typeof(number));
+	assert(typeof(name) == "string", "name must be string, is: " + typeof(number));
+	assert(typeof(values) == "object", "name must be object, is: " + typeof(number));
 
 	var letter = "x";
 	for (var i = 0; i < values.length; i++) {
@@ -2572,7 +2572,7 @@ function set_xyz_values(j, name, values) {
 }
 
 async function set_config(index) {
-	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof (index) + " (" + index + ")");
+	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
 	//console.log("block 1");
 
@@ -2890,7 +2890,7 @@ async function set_config(index) {
 							} else if (["dilationRate"].includes(keys[j])) {
 								set_item_value(i, get_python_name(keys[j]), value.join(","));
 							} else {
-								if ((typeof (value)).includes("object")) {
+								if ((typeof(value)).includes("object")) {
 									if (Object.keys(value).includes("name")) {
 										value = value["name"];
 									}
@@ -3222,7 +3222,7 @@ async function clean_gui() {
 }
 
 async function set_input_shape(val, force=0) {
-	assert(typeof (val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof (val));
+	assert(typeof(val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof(val));
 
 	if(force && await input_shape_is_image()) {
 		var new_input_shape = val;
@@ -3288,7 +3288,7 @@ async function change_metrics() {
 }
 
 function change_favicon(path) {
-	assert(typeof (path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof (path));
+	assert(typeof(path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof(path));
 
 	var link = document.querySelector("link[rel~='icon']");
 	if (!link) {
@@ -3327,7 +3327,7 @@ async function enable_everything() {
 }
 
 function detect_kernel_initializer(original_kernel_initializer_data) {
-	assert(typeof (original_kernel_initializer_data) == "object", "Parameter for detect_kernel_initializer(" + original_kernel_initializer_data + ") is not an array, but " + typeof (original_kernel_initializer_data));
+	assert(typeof(original_kernel_initializer_data) == "object", "Parameter for detect_kernel_initializer(" + original_kernel_initializer_data + ") is not an array, but " + typeof(original_kernel_initializer_data));
 
 	var kernel_initializer_data = original_kernel_initializer_data["config"];
 
@@ -3440,7 +3440,7 @@ async function set_all_activation_functions() {
 }
 
 function last_index(array) {
-	assert(typeof (array) == "object", "last_index(" + array + ") is not an array but " + typeof (array));
+	assert(typeof(array) == "object", "last_index(" + array + ") is not an array but " + typeof(array));
 	return array.length - 1;
 }
 
@@ -3530,17 +3530,17 @@ async function redo() {
 }
 
 function enable_symbol(name) {
-	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
+	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
+	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
 	el.classList.remove("disabled_symbol");
 	el.classList.add("enabled_symbol");
 }
 
 function disable_symbol(name) {
-	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
+	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
+	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
 	el.classList.remove("enabled_symbol");
 	el.classList.add("disabled_symbol");
 }
@@ -3814,9 +3814,9 @@ function close_all_popups() {
 }
 
 function open_popup(name) {
-	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
+	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof (el) == "object", "document.getElementById(" + name + ") is not an object");
+	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
 
 	var visible = $($(".popup_body:visible")[0]).parent().attr("id");
 
@@ -3834,9 +3834,9 @@ function open_popup(name) {
 }
 
 function close_popup(name) {
-	assert(typeof (name) == "string", name + " is not a string but " + typeof (name));
+	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof (el) == "object", "document.getElementById(" + name + " is not an object");
+	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
 	el.style.display = "none";
 }
 
@@ -4754,9 +4754,9 @@ function get_generated_encoding(nr, max) {
 }
 
 function ensure_shape_array(shape) {
-	if (typeof (shape) == "string") {
+	if (typeof(shape) == "string") {
 		return eval(shape);
-	} else if (typeof (shape) == "object") {
+	} else if (typeof(shape) == "object") {
 		return shape;
 	}
 	wrn("[ensure_shape_array] Is neither shape nor object: ", shape);
@@ -4916,7 +4916,7 @@ function find_layer_number_by_element(element) {
 
 function get_layer_regularizer_config(layer_nr, regularizer_type) {
 	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
-	assert(typeof (layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "get_layer_regularizer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof(layer_nr));
 
 	var starts_with_string = regularizer_type + "_regularizer_";
 
@@ -4954,7 +4954,7 @@ function get_layer_initializer_config(layer_nr, initializer_type) {
 		"insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)"
 	);
 
-	assert(typeof (layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof (layer_nr));
+	assert(typeof(layer_nr) == "number", "get_layer_initializer_config(" + layer_nr + "), layer_nr is not an integer but " + typeof(layer_nr));
 
 	var starts_with_string = initializer_type + "_initializer_";
 
@@ -5478,7 +5478,7 @@ function summary_to_table(lines) {
 		if (i == 0) {
 			d_or_h = "h";
 		}
-		if (typeof (new_array[i]) == "object") {
+		if (typeof(new_array[i]) == "object") {
 			table += "<tr><t" + d_or_h + ">" + new_array[i].join("</t" + d_or_h + "><t" + d_or_h + ">") + "</t" + d_or_h + "></tr>\n";
 		} else {
 			table += "<tr><td colspan=" + colspan_nr + ">" + new_array[i] + "</td></tr>\n";
