@@ -278,7 +278,6 @@ async function compile_model (recursion_level=0) {
 	}
 
 	write_model_summary_wait();
-
 }
 
 function get_weight_type_name_from_option_name (on) {
