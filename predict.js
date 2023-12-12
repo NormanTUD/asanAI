@@ -1799,7 +1799,10 @@ async function predict_handdrawn () {
 			return;
 		}
 
-		warn_if_tensor_is_disposed(predictions_tensor);
+		if(!warn_if_tensor_is_disposed(predictions_tensor)) {
+			return;
+		}
+
 		await draw_heatmap(predictions_tensor, predict_data);
 
 		await _predict_handdrawn(predictions_tensor);
