@@ -503,7 +503,13 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 			str += " value=" + data["value"] + " ";
 		}
 
-		str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
+		if(classname.includes("_initializer_")) {
+			//updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  onchange='updated_page(null, null, null, null, 1)' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this, null, 1); no_update_math=original_no_update_math;" />`;
+		} else {
+			str += `id='get_tr_str_for_layer_table_${new_uuid}'  _onchange='updated_page()' onkeyup="var original_no_update_math=no_update_math; no_update_math = is_hidden_or_has_hidden_parent('#math_tab_code') ? 1 : 0; is_hidden_or_has_hidden_parent('#math_tab_code'); updated_page(null, null, this); no_update_math=original_no_update_math;" />`;
+		}
+
 		var original_no_update_math = no_update_math;
 	} else if (type == "checkbox") {
 		str += `<input id='checkbox_${new_uuid}' type='checkbox' class='input_data ${classname}' _onchange='updated_page(null, null, this);' `;
@@ -796,7 +802,6 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 			return;
 		}
 	}
-
 
 	if(initializer_name) {
 		var options = initializer_options[initializer_name]["options"];
@@ -1684,7 +1689,7 @@ function _has_any_warning () {
 	return false;
 }
 
-var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction) => {
+var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
 	if(_has_any_warning()) {
 		return false;
 	}
@@ -1784,8 +1789,10 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	allow_editable_labels();
 
-	await insert_kernel_initializers();
-	await insert_bias_initializers();
+	if(!no_update_initializers) {
+		await insert_kernel_initializers();
+		await insert_bias_initializers();
+	}
 
 	return true;
 }
@@ -1806,7 +1813,7 @@ async function insert_bias_initializers () {
 	await update_translations();
 }
 
-async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction) {
+async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_types, item, no_prediction, no_update_initializers) {
 	if(!finished_loading) {
 		return;
 	}
@@ -1825,7 +1832,7 @@ async function updated_page(no_graph_restart, disable_auto_enable_valid_layer_ty
 		console.log("updated_page trace:");
 		console.trace();
 		*/
-		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction);
+		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
 
 		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
 
