@@ -1661,5 +1661,3 @@ var upload_imgs_promises = [];
 var _cached_loaded_images = {};
 
 var enable_resize_trace = false;
-
-var initializer_setter_cache = {};
