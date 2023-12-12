@@ -8143,7 +8143,7 @@ class asanAI {
 
 		var current_input_shape = this.#get_input_shape();
 		if (this.#camera) {
-			stop_webcam();
+			this.stop_camera();
 		}
 
 		try {
