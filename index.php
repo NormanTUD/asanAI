@@ -106,6 +106,8 @@
 		//_js("carminigame.js", 1, 1);
 ?>
 		<script>
+			var start_loading_time = Date.now();
+
 			var force_cpu_backend = 0;
 
 			function get_backend() {
