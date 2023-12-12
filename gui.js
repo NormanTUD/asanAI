@@ -767,18 +767,25 @@ async function insert_initializer_options (layer_nr, initializer_type) {
 			var remove = true;
 
 			try {
-				var this_initializer_class_type = findInitializerElement($($(existing_init_elements[i])[0]).find("input")[0].classList);
+				var found_element = $(existing_init_elements[i]);
+				if(found_element.length) {
+					var found_input_element = $(found_element[0]).find("input");
+					if(found_input_element.length) {
+						var class_list = found_input_element[0].classList;
+						var this_initializer_class_type = findInitializerElement(class_list);
 
-				var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
+						var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
 
-				if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
-					remove = false;
-				} else {
-					prev_classes.push(this_initializer_type);
+						if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
+							remove = false;
+						} else {
+							prev_classes.push(this_initializer_type);
 
+						}
+					}
 				}
 			} catch (e) {
-
+				err(e);
 			}
 
 			if(remove) {
