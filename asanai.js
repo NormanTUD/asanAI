@@ -8083,6 +8083,106 @@ class asanAI {
 		}
 	}
 
+	async #compile_model (recursion_level=0) {
+		if(recursion_level > 3) {
+			err("recursion level for compile_model too high");
+			return;
+		}
+
+		assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+
+		var new_model_config_hash = await get_model_config_hash();
+		assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
+
+		var recreate_model = await _get_recreate_model(current_status_hash, model_config_hash, new_model_config_hash);
+
+		if(!model) {
+			if(finished_loading) {
+				wrn("model not given");
+			}
+
+			if(global_model_data) {
+				var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
+				for (var i = 0; i < model_data_tensors.length; i++) {
+					await dispose(model_data_tensors[i]);
+				}
+			}
+
+			try {
+				[model, global_model_data] = await create_model(model, await get_model_structure());
+			} catch (e) {
+				throw new Error(e);
+			}
+		}
+
+		if(recreate_model) {
+			model_is_trained = false;
+			reset_summary();
+			await _create_model();
+			await last_shape_layer_warning();
+		}
+
+		if(!model) {
+			wrn("[compile_model] No model to compile!");
+			return;
+		}
+
+		while (create_model_queue.length || !model) {
+			await delay(10);
+		}
+
+		try {
+			model.compile(global_model_data);
+			model_config_hash = new_model_config_hash;
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			if(("" + e).includes("model is empty")) {
+				set_model_layer_warning(0, "" + e);
+
+				for (var i = 0; i < $("#layer_setting").length; i++) {
+					set_layer_background(i, "red")
+				}
+			} else if (("" + e).includes("model is empty")) {
+				err("[compile_model] " + e)
+				return;
+			} else if (("" + e).includes("e is null")) {
+				err("[compile_model] " + e)
+				await delay(1000);
+				return await compile_model(recursion_level + 1);
+			} else if (("" + e).includes("model.compile is not a function")) {
+				err("[compile_model] " + e);
+				return;
+			} else {
+				if(e) {
+					err("" + e);
+				} else {
+					await except("ERROR2", "Unknown error");
+				}
+
+				return;
+			}
+		}
+
+		for (var i = 0; i < $("#layer_setting").length; i++) {
+			set_layer_background(i, "")
+		}
+
+		try {
+			$("#outputShape").val(JSON.stringify(model.outputShape));
+		} catch (e) {
+			if(("" + e).includes("model is undefined")) {
+				wrn("[compile_model] model is undefined while compile_model");
+			} else {
+				throw new Error(e);
+			}
+		}
+
+		write_model_summary_wait();
+	}
+
 	async #compile_model () {
 		this.wrn(`#compile_model not yet defined!`);
 	}
@@ -8724,39 +8824,39 @@ if len(sys.argv) == 1:
     cap = cv2.VideoCapture(0)
 
     while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
+	# Capture frame-by-frame
+	ret, frame = cap.read()
 
-        if not ret:
-            import sys
-            print("Could not load frame from webcam. Is the webcam currently in use?")
-            sys.exit(1)
+	if not ret:
+	    import sys
+	    print("Could not load frame from webcam. Is the webcam currently in use?")
+	    sys.exit(1)
 
-        # Preprocess the frame
-        image = load_frame(frame)
+	# Preprocess the frame
+	image = load_frame(frame)
 
-        # Make predictions
-        predictions = model.predict(image)
+	# Make predictions
+	predictions = model.predict(image)
 
-        highest_index = np.argmax(predictions[0])
+	highest_index = np.argmax(predictions[0])
 
-        # Get the class with highest probability
+	# Get the class with highest probability
 
-        # Add label to the frame
-        for i in range(0, len(labels)):
-            prediction = labels[i]
-            text = str(prediction) + " (" + str(predictions[0][i]) + ")"
-            x = 10
-            y = (i + 1) * 30
-            color = (255, 0, 0)
-            if i == highest_index:
-                color = (0, 255, 0)
-            cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+	# Add label to the frame
+	for i in range(0, len(labels)):
+	    prediction = labels[i]
+	    text = str(prediction) + " (" + str(predictions[0][i]) + ")"
+	    x = 10
+	    y = (i + 1) * 30
+	    color = (255, 0, 0)
+	    if i == highest_index:
+		color = (0, 255, 0)
+	    cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
-        # Display the resulting frame
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+	# Display the resulting frame
+	cv2.imshow('frame', frame)
+	if cv2.waitKey(1) & 0xFF == ord('q'):
+	    break
 
     # When everything done, release the capture
     cap.release()
