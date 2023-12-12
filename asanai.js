@@ -8097,7 +8097,6 @@ class asanAI {
 
 	async #compile_model (recursion_level=0) {
 		this.wrn(`compile_model not yet fully implemented!`);
-		return;
 
 
 		if(recursion_level > 3) {
@@ -8144,7 +8143,7 @@ class asanAI {
 		}
 
 		while (this.#create_model_queue.length || !this.#model) {
-			await delay(10);
+			await this.delay(10);
 		}
 
 		try {
@@ -8172,7 +8171,7 @@ class asanAI {
 				return;
 			} else if (("" + e).includes("e is null")) {
 				this.err("[compile_model] " + e)
-				await delay(1000);
+				await this.delay(1000);
 				return await this.#compile_model(recursion_level + 1);
 			} else if (("" + e).includes("model.compile is not a function")) {
 				this.err("[compile_model] " + e);
@@ -8194,6 +8193,7 @@ class asanAI {
 		}
 		*/
 
+		/*
 		try {
 			$("#outputShape").val(JSON.stringify(model.outputShape));
 		} catch (e) {
@@ -8203,6 +8203,7 @@ class asanAI {
 				throw new Error(e);
 			}
 		}
+		*/
 
 		//write_model_summary_wait();
 	}
@@ -11589,7 +11590,7 @@ if len(sys.argv) == 1:
 					var t_str = _tensor_print_to_string(_tensor);
 					log("Maximally activated tensors:", t_str);
 					$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
-					await dispose(_tensor);
+					await this.dispose(_tensor);
 				} else if (Object.keys(full_data).includes("image")) {
 					var data = full_data["image"][0];
 					var to_class = is_cosmo_mode ? "current_images" : "maximally_activated_class";
@@ -11726,7 +11727,7 @@ if len(sys.argv) == 1:
 			full_data["data"] = this.array_sync(generated_data);
 		}
 
-		await dispose(generated_data);
+		await this.dispose(generated_data);
 
 		full_data["worked"] = worked;
 
@@ -11862,30 +11863,30 @@ if len(sys.argv) == 1:
 
 		try {
 			try {
-				if(global_model_data) {
-					var model_data_tensors = this.#find_tensors_with_is_disposed_internal(global_model_data);
+				if(this.#global_model_data) {
+					var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
 					for (var i = 0; i < model_data_tensors.length; i++) {
 						await this.dispose(model_data_tensors[i]);
 					}
 				}
 
-				if(model && Object.keys(model).includes("layers") && this.#model.layers.length) {
+				if(this.#model && Object.keys(this.#model).includes("layers") && this.#model.layers.length) {
 					for (var i = 0; i < this.#model.layers.length; i++) {
-						await this.dispose(model.layers[i].bias);
-						await this.dispose(model.layers[i].kernel);
+						await this.dispose(this.#model.layers[i].bias);
+						await this.dispose(this.#model.layers[i].kernel);
 					}
 
-					await dispose(model);
+					await this.dispose(this.#model);
 				}
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				err(e);
+				this.err(e);
 			}
 
-			[model, global_model_data] = await create_model(model);
+			[this.#model, this.#global_model_data] = await this.create_model(this.#model);
 
 			/*
 			if(can_be_shown_in_latex()) {
