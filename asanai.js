@@ -2879,7 +2879,7 @@ class asanAI {
 				}
 
 				if(("" + e).includes("The fetching process for the")) {
-					this.err("[start_camera] This error may happen when switching models: " + e);
+					this.err("[start_camera] This error may happen when switching #models: " + e);
 				} else {
 					throw new Error("" + e);
 				}
@@ -5014,7 +5014,7 @@ class asanAI {
 		callbacks["onBatchBegin"] = async function () {
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 			if(!asanai_this.#started_training) {
-				model.stopTraining = true;
+				asanai_this.#model.stopTraining = true;
 			}
 
 			//if($("#math_tab").is(":visible")) {
@@ -8012,13 +8012,13 @@ class asanAI {
 			} else if(("" + e).includes("Cannot read properties of undefined")) {
 				this.wrn("[updated_page] " + e);
 			} else if(("" + e).includes("model.layers[i]")) {
-				this.dbg("[updated_page] model.layers[i] (" + i + ") is undefined");
+				this.dbg("[updated_page] #model.layers[i] (" + i + ") is undefined");
 			} else if (("" + e).includes("model.layers is undefined")) {
-				this.dbg("[updated_page] model.layers is undefined");
+				this.dbg("[updated_page] #model.layers is undefined");
 			} else if (("" + e).includes("model is undefined")) {
 				this.dbg("[updated_page] model is undefined");
 			} else if (("" + e).includes("model.input is undefined")) {
-				this.dbg("[updated_page] model.input is undefined");
+				this.dbg("[updated_page] #model.input is undefined");
 			} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
 				this.dbg("[updated_page] " + e);
 			} else if (("" + e).includes("targetShape is undefined")) {
@@ -8028,7 +8028,7 @@ class asanAI {
 			} else if (("" + e).includes("fcnn is undefined")) {
 				this.dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
 			} else if (("" + e).includes("e is null")) {
-				this.dbg("[updated_page] This error may happen when switching models: " + e);
+				this.dbg("[updated_page] This error may happen when switching #models: " + e);
 			} else {
 				this.err("" + e);
 				console.error("Stack:", original_e.stack);
@@ -8096,6 +8096,10 @@ class asanAI {
 	}
 
 	async #compile_model (recursion_level=0) {
+		this.wrn(`compile_model not yet fully implemented!`);
+		return;
+
+
 		if(recursion_level > 3) {
 			this.err("recursion level for #compile_model too high");
 			return;
@@ -8116,13 +8120,13 @@ class asanAI {
 
 			if(this.#global_model_data) {
 				var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
-				for (var i = 0; i < model_data_tensors.length; i++) {
+				for (var i = 0; i < this.model_data_tensors.length; i++) {
 					await this.dispose(model_data_tensors[i]);
 				}
 			}
 
 			try {
-				[this.#model, this.#global_model_data] = await create_model(model, await get_model_structure());
+				[this.#model, this.#global_model_data] = await this.create_model(model, await this.get_model_structure());
 			} catch (e) {
 				throw new Error(e);
 			}
@@ -8135,7 +8139,7 @@ class asanAI {
 		}
 
 		if(!this.#model) {
-			this.wrn("[compile_model] No model to compile!");
+			this.wrn("[compile_model] No #model to compile!");
 			return;
 		}
 
@@ -8144,7 +8148,10 @@ class asanAI {
 		}
 
 		try {
-			this.#model.compile(this.#global_model_data);
+			var gmd = this.#global_model_data;
+			gmd = await this.#get_model_data();
+
+			this.#model.compile(gmd);
 			this.#model_config_hash = new_model_config_hash;
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
@@ -8174,7 +8181,7 @@ class asanAI {
 				if(e) {
 					this.err("" + e);
 				} else {
-					await except("ERROR2", "Unknown error");
+					await this.#except("ERROR2", "Unknown error");
 				}
 
 				return;
@@ -8191,7 +8198,7 @@ class asanAI {
 			$("#outputShape").val(JSON.stringify(model.outputShape));
 		} catch (e) {
 			if(("" + e).includes("model is undefined")) {
-				this.wrn("[compile_model] model is undefined while #compile_model");
+				this.wrn("[compile_model] #model is undefined while #compile_model");
 			} else {
 				throw new Error(e);
 			}
@@ -8218,7 +8225,7 @@ class asanAI {
 			}
 
 			this.log(e);
-			this.log("There was an error compiling the model: " + e);
+			this.log("There was an error compiling the #model: " + e);
 			throw new Error(e);
 		}
 
@@ -11534,12 +11541,12 @@ if len(sys.argv) == 1:
 		var neurons = 1;
 
 		if(!Object.keys(this.#model).includes("layers")) {
-			this.wrn("Cannot get model.layers");
+			this.wrn("Cannot get #model.layers");
 			return false;
 		}
 
 		if(!Object.keys(this.#model.layers).includes("" + layer)) {
-			this.wrn(`Cannot get model.layers[${layer}]`);
+			this.wrn(`Cannot get #model.layers[${layer}]`);
 			return false;
 		}
 
@@ -11628,9 +11635,9 @@ if len(sys.argv) == 1:
 				// Create an auxiliary model of which input is the same as the original
 				// model but the output is the output of the convolutional layer of
 				// interest.
-				const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+				const layer_output = asanai_this.#model.getLayer(null, layer_idx).getOutputAt(0);
 
-				const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
+				const aux_model = tf_model({inputs: asanai_this.#model.inputs, outputs: layer_output});
 
 				// This function calculates the value of the convolutional layer's
 				// output at the designated filter index.
@@ -11689,7 +11696,7 @@ if len(sys.argv) == 1:
 			}
 		}
 
-		if(model.input.shape.length == 4 && model.input.shape[3] == 3) {
+		if(model.input.shape.length == 4 && this.#model.input.shape[3] == 3) {
 			var asanai_this = this;
 			try {
 				full_data["image"] = this.tidy(() => {
@@ -11782,7 +11789,7 @@ if len(sys.argv) == 1:
 
 		if(!m) {
 			if(finished_loading) {
-				this.wrn("Could not get model...");
+				this.wrn("Could not get #model...");
 			}
 			return false;
 		}
@@ -11850,7 +11857,7 @@ if len(sys.argv) == 1:
 
 		if(this.#has_missing_values) {
 			this.log(this.#language[this.#lang]["not_creating_model_because_values_are_missing"]);
-			return model;
+			return this.#model;
 		}
 
 		try {
@@ -11862,8 +11869,8 @@ if len(sys.argv) == 1:
 					}
 				}
 
-				if(model && Object.keys(model).includes("layers") && model.layers.length) {
-					for (var i = 0; i < model.layers.length; i++) {
+				if(model && Object.keys(model).includes("layers") && this.#model.layers.length) {
+					for (var i = 0; i < this.#model.layers.length; i++) {
 						await this.dispose(model.layers[i].bias);
 						await this.dispose(model.layers[i].kernel);
 					}
@@ -11895,7 +11902,7 @@ if len(sys.argv) == 1:
 			this.#create_model_queue = this.#create_model_queue.filter(function(e) { return e !== _create_model_uuid })
 
 			if(("" + e).includes("undefined has no properties")) {
-				this.wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
+				this.wrn("[create_model] Trying to work on undefined #model. This may be the case when this function is called, but the model is currently being rebuilt.");
 				return;
 			} else if(("" + e).includes("Input 0 is incompatible with layer")) {
 				throw new Error("[create_model] " + e);
@@ -11932,7 +11939,7 @@ if len(sys.argv) == 1:
 				this.wrn("[create_model] " + e);
 				return;
 			} else {
-				await except("ERROR1", "" + e);
+				await this.#except("ERROR1", "" + e);
 				if(mode == "beginner") {
 					Swal.fire({
 						icon: "error",
@@ -11954,5 +11961,21 @@ if len(sys.argv) == 1:
 		*/
 
 		//add_optimizer_debugger();
+	}
+
+	async #except (errname, e) {
+		$(".overlay").remove();
+
+		await this.#write_descriptions();
+		//await enable_everything();
+
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		this.wrn(errname + ": " + e + ". Resetting #model.");
+		console.trace();
+		await this.#write_error(e);
+		throw new Error(e);
 	}
 }
