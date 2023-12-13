@@ -3774,8 +3774,6 @@ class asanAI {
 
 	set_kernel_pixel_size (_new) {
 		if(this.#looks_like_number(_new)) {
-			this.#kernel_pixel_size = this.#parse_int(_new);
-
 			if(this.#kernel_pixel_size == this.#parse_int(_new)) {
 				this.wrn(`[set_kernel_pixel_size] Size has not changed.`);
 			} else {
