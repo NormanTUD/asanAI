@@ -3169,7 +3169,8 @@ class asanAI {
 							this.#kernel_pixel_size_max
 						);
 
-						$internal_states_div.append($(_html));
+						//$internal_states_div.parent().prepend($(_html));
+						$(_html).insertBefore($internal_states_div);
 					}
 				}
 
@@ -3409,6 +3410,7 @@ class asanAI {
 	hide_internals () {
 		this.#draw_internal_states = false;
 		$("#" + this.#internal_states_div).html("");
+		$("#show_internals_slider").delete();
 		this.#internal_states_div = "";
 	}
 
