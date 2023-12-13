@@ -4984,12 +4984,46 @@ class asanAI {
 		}
 	}
 
+	reset_training_logs () {
+		this.#training_logs_epoch = {
+			"loss": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": this.#get_plotly_type(),
+				"name": "Loss"
+			}
+		}
+
+		this.#training_logs_batch = {
+			"loss": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": this.#get_plotly_type(),
+				"name": "Loss"
+			}
+		}
+
+		this.#time_per_batch = {
+			"time": {
+				"x": [],
+				"y": [],
+				"type": "scatter",
+				"mode": this.#get_plotly_type(),
+				"name": "Time per batch (in seconds)"
+			}
+		}
+	}
+
 	#_get_callbacks () {
 		var callbacks = {};
 
 		var asanai_this = this;
 
 		callbacks["onTrainBegin"] = async function () {
+			asanai_this.reset_training_logs();
+
 			var $plotly_div = $("#" + asanai_this.#plotly_div);
 
 			if($plotly_div.length == 0) {
@@ -5080,7 +5114,7 @@ class asanAI {
 						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
 						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
 					} catch (e) {
-						this.err("" + e);
+						asanai_this.err("" + e);
 					}
 				}
 				asanai_this.#last_batch_plot_time = Date.now();
@@ -5117,6 +5151,8 @@ class asanAI {
 			var other_key_name = "val_loss";
 
 			var this_plot_data = [asanai_this.#training_logs_epoch["loss"]];
+
+			console.log("this_plot_data:", this_plot_data);
 
 			if(Object.keys(logs).includes(other_key_name)) {
 				if(epochNr == 1) {
