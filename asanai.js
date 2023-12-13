@@ -4423,17 +4423,21 @@ class asanAI {
 	set_labels (_l) {
 		if(Array.isArray(_l)) {
 			if(this.#get_dim(_l).length == 1) {
-				this.#labels = _l;
+				if(JSON.stringify(_l) == JSON.stringify(this.#labels)) {
+					this.wrn(`Given labels are the same as the ones set earlier. Not re-setting them.`);
+				} else {
+					this.#labels = _l;
 
-				if(this.#model) {
-					if(this.#model.output.shape.length == 2) {
-						var num_labels = this.#model.output.shape[1];
+					if(this.#model) {
+						if(this.#model.output.shape.length == 2) {
+							var num_labels = this.#model.output.shape[1];
 
-						if(this.#labels.length != num_labels) {
-							this.wrn(`Your model expects ${num_labels}, but you have set ${this.#labels.length} labels.`);
+							if(this.#labels.length != num_labels) {
+								this.wrn(`Your model expects ${num_labels}, but you have set ${this.#labels.length} labels.`);
+							}
+
+							this.#redo_what_has_to_be_redone();
 						}
-
-						this.#redo_what_has_to_be_redone();
 					}
 				}
 			} else {
