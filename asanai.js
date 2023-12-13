@@ -3,6 +3,8 @@
 class asanAI {
 	#currently_generating_images = false;
 
+	#last_known_good_input_shape = null;
+
 	#create_model_queue = [];
 
 	#model_is_trained = false;
@@ -17,8 +19,6 @@ class asanAI {
 	#epochs = 10;
 
 	#optimizer_table_div_name = "";
-
-	#current_layer_status_hash = "";
 
 	#validation_split = 0;
 
@@ -8002,7 +8002,7 @@ class asanAI {
 			if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 				var last_good = get_last_good_input_shape_as_string();
 				this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
-				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+				if(last_good && last_good != "[]" && last_good != this.#get_input_shape_as_string()) {
 					await set_input_shape(last_good, 1);
 				}
 			} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
@@ -8043,7 +8043,7 @@ class asanAI {
 				//wrn("updated_page failed");
 
 				var last_good = get_last_good_input_shape_as_string();
-				if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
+				if(last_good && last_good != "[]" && last_good != this.#get_input_shape_as_string()) {
 					this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 					await set_input_shape(last_good, 1);
 				}
@@ -8097,6 +8097,7 @@ class asanAI {
 
 	async #compile_model (recursion_level=0) {
 		this.wrn(`compile_model not yet fully implemented!`);
+		return;
 
 
 		if(recursion_level > 3) {
@@ -8798,7 +8799,7 @@ ${this.#python_data_to_string(data, ['kernel_size'])}
 			python_code += "import numpy as np\n";
 			python_code += "from skimage import transform\n";
 
-			python_code += "labels = ['" + labels.join("', '") + "']\n";
+			python_code += "labels = ['" + this.#labels.join("', '") + "']\n";
 			python_code += "height = " + height + "\n";
 			python_code += "width = " + width + "\n";
 			python_code += "divideby = " + $("#divide_by").val() + "\n";
@@ -9155,7 +9156,7 @@ if len(sys.argv) == 1:
 				this.dbg("tf.layers." + type + "(", data, ")");
 			} else {
 				if(this.#finished_loading) {
-					this.wrn(`get_model_structure is empty for layer ${i}`)
+					this.wrn(`[get_model_structure] Empty for layer ${i}`)
 				}
 			}
 		}
@@ -10413,12 +10414,6 @@ if len(sys.argv) == 1:
 
 		this.#enable_train();
 
-		if(typeof(fake_model_structure) == "undefined") {
-			$("#html").text(await this.#get_html_from_model());
-		}
-
-		this.#current_layer_status_hash = await this.#get_current_layer_container_status_hash();
-
 		if(!fake_model_structure) {
 			this.dbg("[create_model] " + this.#language[this.#lang]["model_compiled_successfully"]);
 		}
@@ -10449,7 +10444,7 @@ if len(sys.argv) == 1:
 		var model_data = await this.#get_model_data();
 
 		if(!fake_model_structure) {
-			last_known_good_input_shape = get_input_shape_as_string();
+			this.#last_known_good_input_shape = this.#get_input_shape_as_string();
 		}
 
 		return [new_model, model_data];
@@ -10854,101 +10849,6 @@ if len(sys.argv) == 1:
 		}
 
 		this.#_clean_custom_tensors();
-	}
-
-
-	async #get_html_from_model () {
-		var html = "";
-
-		html += "<html>" + "\n";
-		html += "	<head>\n";
-		html += "		<meta charset='UTF-8'>\n";
-		html += "		<title>Example Network</title>\n";
-		html += "		<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>\n";
-		html += "		<script src='https://code.jquery.com/jquery-3.6.0.js'></script>\n";
-		html += "		<!--<link href='main.css' rel='stylesheet' />-->\n";
-		html += "	</head>\n";
-		html += "	<body>\n";
-		html += "		<script type='text/javascript'>\n";
-		html += "			var model;\n";
-		html += "			var labels = ['" + labels.join("', '") + "'];\n";
-		html += "			var divide_by = " + $("#divide_by").val() + ";\n";
-		html += "			async function load_model () {\n";
-		html += "				model = await tf.loadLayersModel('./model.json');\n";
-		html += "			}\n";
-		var input_shape_is_image_val = await this.#input_shape_is_image();
-		if(input_shape_is_image_val) {
-			html += "			var load_file = (function(event) {\n";
-			html += "				var output = document.getElementById('output');\n";
-			html += "				$('#output').removeAttr('src');\n";
-			html += "				output.src = URL.createObjectURL(event.target.files[0]);\n";
-			html += "				output.onload = async function() {\n";
-			html += "					await load_model();\n";
-			html += "					URL.revokeObjectURL(output.src);\n";
-			html += "					var img = $('#output')[0];\n";
-			html += "					img.height = model.layers[0].input.shape[1];\n";
-			html += "					img.width = model.layers[0].input.shape[2];\n";
-			html += "					var tensor = tf.browser.fromPixels(img);\n";
-			html += "					tensor = tf.divNoNan(tensor, divide_by);\n";
-			html += "					var results_tensor = await model.predict(tensor.expandDims());\n";
-			html += "					var results = results_tensor.dataSync();\n";
-			html += "					var html = '<pre>';\n";
-			html += "					for (var i = 0; i < results.length; i++) {\n";
-			html += "						var label = labels[i % labels.length];\n";
-			html += "						html += label + ': ' + results[i] + \"\\n\";\n";
-			html += "					}\n";
-			html += "					html += '</pre>';\n";
-			html += "					$('#results').html(html);\n";
-			html += "					$('#results_container').show();\n";
-			html += "				};\n";
-			html += "				$('#output').show();\n";
-			html += "			});\n";
-		} else {
-			html += "			async function predict() {\n";
-			html +=	"				await load_model();\n";
-			html += "				var input = $('#inputtensor').val()\n";
-			html += "				var tensor = tf.tensor(eval(input));\n";
-			html += "				tensor = tf.divNoNan(tensor, divide_by);\n";
-			html += "				var prediction_tensor = await model.predict(tensor);\n";
-			html += "				var results = await prediction_tensor.dataSync();\n";
-			html += "				var html = '<pre>';\n";
-			html += "				for (var i = 0; i < results.length; i++) {\n";
-			html += "					var label = labels[i % labels.length];\n";
-			html += "					if(label) {\n";
-			html += "						html += label + ': ' + results[i] + \"\\n\";\n";
-			html += "					} else {\n";
-			html += "						html += results[i] + '\\n';\n";
-			html += "					}\n";
-			html += "				}\n";
-			html += "				html += '</pre>';\n";
-			html += "				$('#results').html(html);\n";
-			html += "			}\n";
-		}
-		html += "			</script>\n";
-		if(input_shape_is_image_val) {
-			html += "				<input type='file' id='upload_img' onchange='load_file(event)' />\n";
-			html += "			<div id='results_container' style='display: none'>\n";
-			html += "				<img id='output' />\n";
-			html += "				<div id='results'></div>\n";
-			html += "			</div>\n";
-		} else {
-			html += "			<textarea style='width: 500px; height: 200px;' id='inputtensor'></textarea><br>\n";
-			html += "			<button onclick='predict()'>Predict</button>\n";
-			html += "			<div id='results'></div>\n";
-			html +=	"			<script>\n";
-			html +=	"				async function write_placeholder() {\n";
-			html +=	"					await load_model();\n";
-			html +=	"					var shape = model.layers[0].input.shape;\n";
-			html +=	"					shape.shift();\n";
-			html += "					$('#inputtensor').attr('placeholder', 'Shape: [[' + shape.join(', ') + ']]');\n";
-			html +=	"				}\n";
-			html +=	"				write_placeholder();\n";
-			html +=	"			</script>\n";
-		}
-		html += "        </body>\n";
-		html += "</html>" + "\n";
-
-		return html;
 	}
 
 	async #get_current_layer_container_status_hash() {
@@ -11862,30 +11762,30 @@ if len(sys.argv) == 1:
 		}
 
 		try {
-			try {
-				if(this.#global_model_data) {
-					var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
-					for (var i = 0; i < model_data_tensors.length; i++) {
-						await this.dispose(model_data_tensors[i]);
-					}
+			if(this.#global_model_data) {
+				var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
+				for (var i = 0; i < model_data_tensors.length; i++) {
+					await this.dispose(model_data_tensors[i]);
 				}
-
-				if(this.#model && Object.keys(this.#model).includes("layers") && this.#model.layers.length) {
-					for (var i = 0; i < this.#model.layers.length; i++) {
-						await this.dispose(this.#model.layers[i].bias);
-						await this.dispose(this.#model.layers[i].kernel);
-					}
-
-					await this.dispose(this.#model);
-				}
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				this.err(e);
 			}
 
+			if(this.#model && Object.keys(this.#model).includes("layers") && this.#model.layers.length) {
+				for (var i = 0; i < this.#model.layers.length; i++) {
+					await this.dispose(this.#model.layers[i].bias);
+					await this.dispose(this.#model.layers[i].kernel);
+				}
+
+				await this.dispose(this.#model);
+			}
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			this.err(e);
+		}
+
+		try {
 			[this.#model, this.#global_model_data] = await this.create_model(this.#model);
 
 			/*
@@ -11974,9 +11874,46 @@ if len(sys.argv) == 1:
 			e = e.message;
 		}
 
-		this.wrn(errname + ": " + e + ". Resetting #model.");
+		this.wrn(errname + ": " + e);
 		console.trace();
+
 		await this.#write_error(e);
 		throw new Error(e);
+	}
+
+	#get_input_shape_as_string () {
+		var is = [];
+		try {
+			if(this.#model) {
+				try {
+					var is_full = this.#model.input.shape;
+
+					if(is_full) {
+						for (var i = 0; i < is_full.length; i++) {
+							if(i != 0) {
+								is.push(is_full[i]);
+							}
+						}
+					}
+				} catch (e) {
+					if(("" + e).includes("model.input is undefined") || ("" + e).includes("model.input.shape is undefined")) {
+						is = this.#get_input_shape();
+					} else {
+						throw new Error(e);
+					}
+				}
+			} else {
+				is = this.#get_input_shape();
+			}
+
+			if(is.length) {
+				return "[" + is.join(", ") + "]";
+			} else {
+				return "[]";
+			}
+		} catch (e) {
+			wrn("[get_input_shape_as_string] " + e);
+			return "[]";
+		}
 	}
 }
