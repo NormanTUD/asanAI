@@ -4432,6 +4432,8 @@ class asanAI {
 						if(this.#labels.length != num_labels) {
 							this.wrn(`Your model expects ${num_labels}, but you have set ${this.#labels.length} labels.`);
 						}
+
+						this.#redo_what_has_to_be_redone();
 					}
 				}
 			} else {
