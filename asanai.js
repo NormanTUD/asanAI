@@ -3420,7 +3420,7 @@ class asanAI {
 			return;
 		}
 
-		var html = `<div id='show_internals_slider'>`
+		var html = `<div id='show_internals_slider' style='user-select: none'>`
 		html += `Pixel-Size: <input type="range" min="1" max="${pixel_max}" value="${pixel_val}" onchange="${this.#asanai_object_name}.set_pixel_size($(this).val())">`;
 		html += `Kernel-Pixel-Size: <input type="range" min="1" max="${kernel_max}" value="${kernel_val}" onchange="${this.#asanai_object_name}.set_kernel_pixel_size($(this).val())">`;
 		html += `</div>`;
