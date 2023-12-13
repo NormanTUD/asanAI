@@ -3169,10 +3169,9 @@ class asanAI {
 						);
 
 						$internal_states_div.append($(_html));
-					} else {
-						this.dbg(`[predict] Could not find #${this.#internal_states_div}`);
 					}
 				}
+
 				try {
 					var asanai_this = this;
 					this.tidy(() => {
