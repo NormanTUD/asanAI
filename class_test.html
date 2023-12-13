@@ -267,7 +267,7 @@
 
 				console.log(loaded_data);
 			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 2, batchSize: 1000, shuffle: true}, {'div': 'plotly_history'});
+				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
 				if(history) {
 					console.log("history:", history);
