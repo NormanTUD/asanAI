@@ -5152,8 +5152,6 @@ class asanAI {
 
 			var this_plot_data = [asanai_this.#training_logs_epoch["loss"]];
 
-			console.log("this_plot_data:", this_plot_data);
-
 			if(Object.keys(logs).includes(other_key_name)) {
 				if(epochNr == 1) {
 					asanai_this.#training_logs_epoch[other_key_name] = {
