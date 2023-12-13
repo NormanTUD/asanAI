@@ -3060,7 +3060,7 @@ class asanAI {
 				this.#_show_output(result, write_to_div);
 			}
 		} else {
-			this.wrn(`result was empty (type: ${typeof(result)})`);
+			this.wrn(`[predict_image] result was empty (type: ${typeof(result)})`);
 		}
 
 		if(_add_to_repredict) {
