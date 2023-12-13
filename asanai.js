@@ -10436,7 +10436,7 @@ if len(sys.argv) == 1:
 					}
 				} else {
 					if(this.#finished_loading) {
-						info("Old layers had no layers defined");
+						this.info("Old layers had no layers defined");
 					}
 				}
 			} catch (e) {
