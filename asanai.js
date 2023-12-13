@@ -3162,7 +3162,7 @@ class asanAI {
 					var $internal_states_div = $("#" + this.#internal_states_div);
 					var __parent = $internal_states_div.parent();
 					if(__parent.length && $("#show_internals_slider").length == 0) {
-						var _html = this.#get_internals_slider(
+						var _html = this.#get_internals_slider_html_code(
 							this.#pixel_size,
 							this.#pixel_size_max,
 							this.#kernel_pixel_size,
@@ -3413,9 +3413,9 @@ class asanAI {
 		this.#internal_states_div = "";
 	}
 
-	#get_internals_slider (pixel_val, pixel_max, kernel_val, kernel_max) {
+	#get_internals_slider_html_code (pixel_val, pixel_max, kernel_val, kernel_max) {
 		if(!this.#asanai_object_name) {
-			this.err(`[#get_internals_slider] To call this function, run "asanai_object.#set_asanai_object_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
+			this.err(`[#get_internals_slider_html_code] To call this function, run "asanai_object.#set_asanai_object_name('asanai_object')". This is needed to define onclick functions that go back to this class, and I cannot determine the object's variable name by myself.`);
 			return;
 		}
 
