@@ -4613,7 +4613,7 @@ class asanAI {
 
 			var last_layer_activation = this.#model.layers[this.#model.layers.length - 1].getConfig().activation;
 			
-			if(last_layer_activation != "") {
+			if(last_layer_activation != "softmax") {
 				this.wrn("[load_image_urls_to_div_and_tensor] The last layer is not softmax, but you chose one hot encoding. Though this is possible, usually, it is not what you want. Set the last layer's activation function to softmax.");
 			}
 		}
