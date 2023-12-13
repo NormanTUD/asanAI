@@ -3160,6 +3160,7 @@ class asanAI {
 			if(this.#draw_internal_states) {
 				if(i == 0 && this.#show_sliders) {
 					var $internal_states_div = $("#" + this.#internal_states_div);
+
 					if($("#show_internals_slider").length == 0) {
 						var _html = this.#get_internals_slider_html_code(
 							this.#pixel_size,
