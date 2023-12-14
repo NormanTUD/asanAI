@@ -5303,7 +5303,7 @@ class asanAI {
 			}
 
 			var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
-			var predicted_category = this.get_labels[predicted_index];
+			var predicted_category = this.get_labels()[predicted_index];
 
 			var src = img_elem.src;
 			var correct_category = this.#extractCategoryFromURL(src);
