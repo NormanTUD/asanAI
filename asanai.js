@@ -3411,7 +3411,6 @@ class asanAI {
 		this.#draw_internal_states = false;
 		$("#" + this.#internal_states_div).html("");
 		$("#show_internals_slider").remove();
-		this.#internal_states_div = "";
 	}
 
 	#get_internals_slider_html_code (pixel_val, pixel_max, kernel_val, kernel_max) {
@@ -3428,7 +3427,7 @@ class asanAI {
 		return html;
 	}
 
-	show_internals (divname="", show_sliders=false) {
+	show_internals (divname=this.#internal_states_div, show_sliders=true) {
 		if(!this.#model) {
 			this.dbg("No model found");
 
