@@ -826,7 +826,7 @@ class asanAI {
 
 	constructor (...args) {
 		var last_tested_tf_version = "4.14.0";
-		var last_tested_jquery_version = "3.6.0";
+		var last_tested_jquery_version = "3.7.1";
 		var last_tested_plotly_version = "2.14.0";
 		var last_tested_temml_version = "0.10.18";
 
