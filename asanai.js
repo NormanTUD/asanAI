@@ -3410,7 +3410,7 @@ class asanAI {
 	hide_internals () {
 		this.#draw_internal_states = false;
 		$("#" + this.#internal_states_div).html("");
-		$("#show_internals_slider").delete();
+		$("#show_internals_slider").remove();
 		this.#internal_states_div = "";
 	}
 
