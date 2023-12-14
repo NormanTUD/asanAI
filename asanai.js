@@ -8051,7 +8051,7 @@ class asanAI {
 			if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
 				var last_good = get_last_good_input_shape_as_string();
 				this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
-				if(last_good && last_good != "[]" && last_good != this.#get_input_shape_as_string()) {
+				if(last_good && last_good != "[]" && last_good != this.get_input_shape_as_string()) {
 					await set_input_shape(last_good, 1);
 				}
 			} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')")) {
@@ -8092,7 +8092,7 @@ class asanAI {
 				//wrn("updated_page failed");
 
 				var last_good = get_last_good_input_shape_as_string();
-				if(last_good && last_good != "[]" && last_good != this.#get_input_shape_as_string()) {
+				if(last_good && last_good != "[]" && last_good != this.get_input_shape_as_string()) {
 					this.log("The input size was too small. Restoring input size to the last known good configuration: " + last_good);
 					await set_input_shape(last_good, 1);
 				}
@@ -8312,7 +8312,7 @@ class asanAI {
 
 		//await hide_no_conv_stuff();
 
-		var current_input_shape = this.#get_input_shape();
+		var current_input_shape = this.get_input_shape();
 		if (this.#camera) {
 			this.stop_camera();
 		}
@@ -8530,7 +8530,7 @@ class asanAI {
 
 			var wh = "";
 
-			var is = this.#get_input_shape_with_batch_size(); is[0] = "None"; 
+			var is = this.get_input_shape_with_batch_size(); is[0] = "None"; 
 
 			expert_code =
 				this.#python_boilerplate(input_shape_is_image_val, 0) +
@@ -8779,14 +8779,14 @@ ${this.#python_data_to_string(data, ['kernel_size'])}
 		return "None";
 	}
 
-	#get_input_shape_with_batch_size() {
-		var shape = this.#get_input_shape();
+	get_input_shape_with_batch_size() {
+		var shape = this.get_input_shape();
 		shape.unshift(this.#parse_int(this.#batch_size));
 		var res = shape;
 		return res;
 	}
 
-	#get_input_shape() {
+	get_input_shape() {
 		if(!this.#model) {
 			this.err(`this.#model`);
 			return;
@@ -9076,7 +9076,7 @@ if len(sys.argv) == 1:
 		};
 
 		if(i == 0 || first_layer) {
-			data["inputShape"] = this.#get_input_shape();
+			data["inputShape"] = this.get_input_shape();
 		}
 
 		for (var j = 0; j < this.#layer_options[type]["options"].length; j++) {
@@ -10124,7 +10124,7 @@ if len(sys.argv) == 1:
 		var options = this.#layer_options[layer_type]["options"];
 
 		if(layer_nr == 0) {
-			data["inputShape"] = this.#get_input_shape();
+			data["inputShape"] = this.get_input_shape();
 		}
 
 		for (var i = 0; i < options.length; i++) {
@@ -10493,7 +10493,7 @@ if len(sys.argv) == 1:
 		var model_data = await this.#get_model_data();
 
 		if(!fake_model_structure) {
-			this.#last_known_good_input_shape = this.#get_input_shape_as_string();
+			this.#last_known_good_input_shape = this.get_input_shape_as_string();
 		}
 
 		return [new_model, model_data];
@@ -10546,7 +10546,7 @@ if len(sys.argv) == 1:
 		try {
 			if(layer_options[type]["custom"]) {
 				if(i == 0) {
-					data["inputShape"] = this.#get_input_shape();
+					data["inputShape"] = this.get_input_shape();
 				} else {
 					delete data["inputShape"];
 				}
@@ -11192,7 +11192,7 @@ if len(sys.argv) == 1:
 	#add_seed_option (type, nr) {
 		var style = "";
 
-		var current_input_shape = this.#get_input_shape();
+		var current_input_shape = this.get_input_shape();
 		if (current_input_shape.length != 3) {
 			style = ` style="display: none" `;
 		}
@@ -11205,7 +11205,7 @@ if len(sys.argv) == 1:
 	#add_stddev_option (type, nr) {
 		var style = "";
 
-		var current_input_shape = this.#get_input_shape();
+		var current_input_shape = this.get_input_shape();
 		if (current_input_shape.length != 3) {
 			style = ` style="display: none" `;
 		}
@@ -11519,7 +11519,7 @@ if len(sys.argv) == 1:
 	}
 
 	async #draw_maximally_activated_neuron (layer, neuron) {
-		var current_input_shape = this.#get_input_shape();
+		var current_input_shape = this.get_input_shape();
 
 		var canvasses = [];
 
@@ -11599,7 +11599,7 @@ if len(sys.argv) == 1:
 
 				// Form a random image as the starting point of the gradient ascent.
 
-				var new_input_shape = asanai_this.#get_input_shape_with_batch_size();
+				var new_input_shape = asanai_this.get_input_shape_with_batch_size();
 				new_input_shape.shift();
 				var data = asanai_this.#randomUniform([1, ...new_input_shape], 0, 1);
 				if(typeof(start_image) != "undefined") {
@@ -11930,7 +11930,7 @@ if len(sys.argv) == 1:
 		throw new Error(e);
 	}
 
-	#get_input_shape_as_string () {
+	get_input_shape_as_string () {
 		var is = [];
 		try {
 			if(this.#model) {
@@ -11946,13 +11946,13 @@ if len(sys.argv) == 1:
 					}
 				} catch (e) {
 					if(("" + e).includes("model.input is undefined") || ("" + e).includes("model.input.shape is undefined")) {
-						is = this.#get_input_shape();
+						is = this.get_input_shape();
 					} else {
 						throw new Error(e);
 					}
 				}
 			} else {
-				is = this.#get_input_shape();
+				is = this.get_input_shape();
 			}
 
 			if(is.length) {
