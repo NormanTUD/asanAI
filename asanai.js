@@ -828,7 +828,7 @@ class asanAI {
 		var last_tested_tf_version = "4.14.0";
 		var last_tested_jquery_version = "3.6.0";
 		var last_tested_plotly_version = "2.14.0";
-		var last_tested_temml_version = "0.10.14";
+		var last_tested_temml_version = "0.10.18";
 
 
 		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");

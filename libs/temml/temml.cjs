@@ -478,7 +478,7 @@ class TextNode$1 {
   }
 }
 
-/**
+/*
  * This node represents an image embed (<img>) element.
  */
 class Img {
@@ -523,7 +523,7 @@ class Img {
       markup += ` style="${utils.escape(styles)}"`;
     }
 
-    markup += "/>";
+    markup += ">";
     return markup;
   }
 }
@@ -699,6 +699,34 @@ var mathMLTree = {
  * This file provides support for building horizontal stretchy elements.
  */
 
+// TODO: Remove when Chromium stretches \widetilde & \widehat
+const estimatedWidth = node => {
+  let width = 0;
+  if (node.body) {
+    for (const item of node.body) {
+      width += estimatedWidth(item);
+    }
+  } else if (node.type === "supsub") {
+    width += estimatedWidth(node.base);
+    if (node.sub) { width += 0.7 * estimatedWidth(node.sub); }
+    if (node.sup) { width += 0.7 * estimatedWidth(node.sup); }
+  } else if (node.type === "mathord" || node.type === "textord") {
+    for (const ch of node.text.split('')) {
+      const codePoint = ch.codePointAt(0);
+      if ((0x60 < codePoint && codePoint < 0x7B) || (0x03B0 < codePoint && codePoint < 0x3CA)) {
+        width += 0.56; // lower case latin or greek. Use advance width of letter n
+      } else if (0x2F < codePoint && codePoint < 0x3A) {
+        width += 0.50; // numerals.
+      } else {
+        width += 0.92; // advance width of letter M
+      }
+    }
+  } else {
+    width += 1.0;
+  }
+  return width
+};
+
 const stretchyCodePoint = {
   widehat: "^",
   widecheck: "ˇ",
@@ -756,8 +784,27 @@ const mathMLnode = function(label) {
   return node
 };
 
+const crookedWides = ["\\widetilde", "\\widehat", "\\widecheck", "\\utilde"];
+
+// TODO: Remove when Chromium stretches \widetilde & \widehat
+const accentNode = (group) => {
+  const mo = mathMLnode(group.label);
+  if (crookedWides.includes(group.label)) {
+    const width = estimatedWidth(group.base);
+    if (1 < width && width < 1.6) {
+      mo.classes.push("tml-crooked-2");
+    } else if (1.6 <= width && width < 2.5) {
+      mo.classes.push("tml-crooked-3");
+    } else if (2.5 <= width) {
+      mo.classes.push("tml-crooked-4");
+    }
+  }
+  return mo
+};
+
 var stretchy = {
-  mathMLnode
+  mathMLnode,
+  accentNode
 };
 
 /**
@@ -973,6 +1020,10 @@ defineSymbol(math, mathord, "\u21af", "\\lightning", true);
 defineSymbol(math, mathord, "\u220E", "\\QED", true);
 defineSymbol(math, mathord, "\u2030", "\\permil", true);
 defineSymbol(text, textord, "\u2030", "\\permil");
+defineSymbol(math, mathord, "\u2609", "\\astrosun", true);
+defineSymbol(math, mathord, "\u263c", "\\sun", true);
+defineSymbol(math, mathord, "\u263e", "\\leftmoon", true);
+defineSymbol(math, mathord, "\u263d", "\\rightmoon", true);
 
 // AMS Negated Binary Relations
 defineSymbol(math, rel, "\u226e", "\\nless", true);
@@ -1051,6 +1102,8 @@ defineSymbol(math, textord, "\u2127", "\\mho");
 defineSymbol(math, textord, "\u2132", "\\Finv", true);
 defineSymbol(math, textord, "\u2141", "\\Game", true);
 defineSymbol(math, textord, "\u2035", "\\backprime");
+defineSymbol(math, textord, "\u2036", "\\backdprime");
+defineSymbol(math, textord, "\u2037", "\\backtrprime");
 defineSymbol(math, textord, "\u25b2", "\\blacktriangle");
 defineSymbol(math, textord, "\u25bc", "\\blacktriangledown");
 defineSymbol(math, textord, "\u25a0", "\\blacksquare");
@@ -1254,6 +1307,9 @@ defineSymbol(text, textord, "\u2423", "\\textvisiblespace", true);
 defineSymbol(math, textord, "\u2220", "\\angle", true);
 defineSymbol(math, textord, "\u221e", "\\infty", true);
 defineSymbol(math, textord, "\u2032", "\\prime");
+defineSymbol(math, textord, "\u2033", "\\dprime");
+defineSymbol(math, textord, "\u2034", "\\trprime");
+defineSymbol(math, textord, "\u2057", "\\qprime");
 defineSymbol(math, textord, "\u25b3", "\\triangle");
 defineSymbol(text, textord, "\u0391", "\\Alpha", true);
 defineSymbol(text, textord, "\u0392", "\\Beta", true);
@@ -1308,7 +1364,7 @@ defineSymbol(math, open, "\u00ac", "\\lnot");
 defineSymbol(math, textord, "\u22a4", "\\top");
 defineSymbol(math, textord, "\u22a5", "\\bot");
 defineSymbol(math, textord, "\u2205", "\\emptyset");
-defineSymbol(math, textord, "\u00f8", "\\varnothing");
+defineSymbol(math, textord, "\u2300", "\\varnothing");
 defineSymbol(math, mathord, "\u03b1", "\\alpha", true);
 defineSymbol(math, mathord, "\u03b2", "\\beta", true);
 defineSymbol(math, mathord, "\u03b3", "\\gamma", true);
@@ -1369,6 +1425,8 @@ defineSymbol(math, bin, "\u2228", "\\vee", true);
 defineSymbol(math, open, "\u27e6", "\\llbracket", true); // stmaryrd/semantic packages
 defineSymbol(math, close, "\u27e7", "\\rrbracket", true);
 defineSymbol(math, open, "\u27e8", "\\langle", true);
+defineSymbol(math, open, "\u27ea", "\\lAngle", true);
+defineSymbol(math, open, "\u2989", "\\llangle", true);
 defineSymbol(math, open, "|", "\\lvert");
 defineSymbol(math, open, "\u2016", "\\lVert");
 defineSymbol(math, textord, "!", "\\oc"); // cmll package
@@ -1380,6 +1438,8 @@ defineSymbol(math, close, "?", "?");
 defineSymbol(math, close, "!", "!");
 defineSymbol(math, close, "‼", "‼");
 defineSymbol(math, close, "\u27e9", "\\rangle", true);
+defineSymbol(math, close, "\u27eb", "\\rAngle", true);
+defineSymbol(math, close, "\u298a", "\\rrangle", true);
 defineSymbol(math, close, "|", "\\rvert");
 defineSymbol(math, close, "\u2016", "\\rVert");
 defineSymbol(math, open, "\u2983", "\\lBrace", true); // stmaryrd/semantic packages
@@ -1433,7 +1493,8 @@ defineSymbol(math, punct, ";", ";");
 defineSymbol(math, bin, "\u22bc", "\\barwedge", true);
 defineSymbol(math, bin, "\u22bb", "\\veebar", true);
 defineSymbol(math, bin, "\u2299", "\\odot", true);
-defineSymbol(math, bin, "\u2295", "\\oplus", true);
+// Firefox turns ⊕ into an emoji. So append \uFE0E. Define Unicode character in macros, not here.
+defineSymbol(math, bin, "\u2295\uFE0E", "\\oplus");
 defineSymbol(math, bin, "\u2297", "\\otimes", true);
 defineSymbol(math, textord, "\u2202", "\\partial", true);
 defineSymbol(math, bin, "\u2298", "\\oslash", true);
@@ -1460,6 +1521,8 @@ defineSymbol(math, close, "]", "\\rbrack", true);
 defineSymbol(text, textord, "]", "\\rbrack", true);
 defineSymbol(math, open, "(", "\\lparen", true);
 defineSymbol(math, close, ")", "\\rparen", true);
+defineSymbol(math, open, "⦇", "\\llparenthesis", true);
+defineSymbol(math, close, "⦈", "\\rrparenthesis", true);
 defineSymbol(text, textord, "<", "\\textless", true); // in T1 fontenc
 defineSymbol(text, textord, ">", "\\textgreater", true); // in T1 fontenc
 defineSymbol(math, open, "\u230a", "\\lfloor", true);
@@ -1497,6 +1560,7 @@ defineSymbol(math, op, "\u2211", "\\sum");
 defineSymbol(math, op, "\u2a02", "\\bigotimes");
 defineSymbol(math, op, "\u2a01", "\\bigoplus");
 defineSymbol(math, op, "\u2a00", "\\bigodot");
+defineSymbol(math, op, "\u2a09", "\\bigtimes");
 defineSymbol(math, op, "\u222e", "\\oint");
 defineSymbol(math, op, "\u222f", "\\oiint");
 defineSymbol(math, op, "\u2230", "\\oiiint");
@@ -1616,6 +1680,8 @@ defineSymbol(text, textord, "\u20ac", "\\euro", true);
 defineSymbol(text, textord, "\u20ac", "\\texteuro");
 defineSymbol(math, textord, "\u00a9", "\\copyright", true);
 defineSymbol(text, textord, "\u00a9", "\\textcopyright");
+defineSymbol(math, textord, "\u2300", "\\diameter", true);
+defineSymbol(text, textord, "\u2300", "\\diameter");
 
 // Italic Greek
 defineSymbol(math, textord, "𝛤", "\\varGamma");
@@ -1907,7 +1973,7 @@ const makeText = function(text, mode, style) {
 
 const consolidateText = mrow => {
   // If possible, consolidate adjacent <mtext> elements into a single element.
-  if (mrow.type !== "mrow") { return mrow }
+  if (mrow.type !== "mrow" && mrow.type !== "mstyle") { return mrow }
   if (mrow.children.length === 0) { return mrow } // empty group, e.g., \text{}
   if (!mrow.children[0].attributes || mrow.children[0].type !== "mtext") { return mrow }
   const variant = mrow.children[0].attributes.mathvariant || "";
@@ -1943,6 +2009,9 @@ const consolidateText = mrow => {
   const L = mtext.children[0].text.length;
   if (L > 0 && mtext.children[0].text.charAt(L - 1) === " ") {
     mtext.children[0].text = mtext.children[0].text.slice(0, -1) + "\u00a0";
+  }
+  for (const [key, value] of Object.entries(mrow.attributes)) {
+    mtext.attributes[key] = value;
   }
   return mtext
 };
@@ -1997,6 +2066,14 @@ const makeRow = function(body) {
   if (body.length === 1 && !(body[0] instanceof DocumentFragment)) {
     return body[0];
   } else {
+    // Suppress spacing on <mo> nodes at both ends of the row.
+    if (body[0] instanceof MathNode && body[0].type === "mo" && !body[0].attributes.fence) {
+      body[0].attributes.lspace = "0em";
+    }
+    const end = body.length - 1;
+    if (body[end] instanceof MathNode && body[end].type === "mo" && !body[end].attributes.fence) {
+      body[end].attributes.rspace = "0em";
+    }
     return new mathMLTree.MathNode("mrow", body);
   }
 };
@@ -2078,13 +2155,8 @@ const taggedExpression = (expression, tag, style, leqno) => {
 
   expression = new mathMLTree.MathNode("mtd", [expression]);
   const rowArray = [glue$1(), expression, glue$1()];
-  if (leqno) {
-    rowArray[0].children.push(tag);
-    rowArray[0].style.textAlign = "-webkit-left";
-  } else {
-    rowArray[2].children.push(tag);
-    rowArray[2].style.textAlign = "-webkit-right";
-  }
+  rowArray[leqno ? 0 : 2].classes.push(leqno ? "tml-left" : "tml-right");
+  rowArray[leqno ? 0 : 2].children.push(tag);
   const mtr = new mathMLTree.MathNode("mtr", rowArray, ["tml-tageqn"]);
   const table = new mathMLTree.MathNode("mtable", [mtr]);
   table.style.width = "100%";
@@ -2131,9 +2203,7 @@ function buildMathML(tree, texExpression, style, settings) {
   }
   if (settings.displayMode) {
     math.setAttribute("display", "block");
-    math.style.display = math.children.length === 1 && math.children[0].type === "mtable"
-      ? "inline"
-      : "block math"; // necessary in Chromium.
+    math.style.display = "block math"; // necessary in Chromium.
     // Firefox and Safari do not recognize display: "block math".
     // Set a class so that the CSS file can set display: block.
     math.classes = ["tml-display"];
@@ -2141,9 +2211,18 @@ function buildMathML(tree, texExpression, style, settings) {
   return math;
 }
 
+const smalls = "acegıȷmnopqrsuvwxyzαγεηικμνοπρςστυχωϕ𝐚𝐜𝐞𝐠𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐮𝐯𝐰𝐱𝐲𝐳";
+const talls = "ABCDEFGHIJKLMNOPQRSTUVWXYZbdfhkltΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩβδλζφθψ"
+             + "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐛𝐝𝐟𝐡𝐤𝐥𝐭";
+const longSmalls = new Set(["\\alpha", "\\gamma", "\\delta", "\\epsilon", "\\eta", "\\iota",
+  "\\kappa", "\\mu", "\\nu", "\\pi", "\\rho", "\\sigma", "\\tau", "\\upsilon", "\\chi", "\\psi",
+  "\\omega", "\\imath", "\\jmath"]);
+const longTalls = new Set(["\\Gamma", "\\Delta", "\\Sigma", "\\Omega", "\\beta", "\\delta",
+  "\\lambda", "\\theta", "\\psi"]);
+
 const mathmlBuilder$a = (group, style) => {
   const accentNode = group.isStretchy
-    ? stretchy.mathMLnode(group.label)
+    ? stretchy.accentNode(group)
     : new mathMLTree.MathNode("mo", [makeText(group.label, group.mode)]);
 
   if (group.label === "\\vec") {
@@ -2151,6 +2230,13 @@ const mathmlBuilder$a = (group, style) => {
   } else {
     accentNode.style.mathStyle = "normal";
     accentNode.style.mathDepth = "0";
+    if (needWebkitShift.has(group.label) &&  utils.isCharacterBox(group.base)) {
+      let shift = "";
+      const ch = group.base.text;
+      if (smalls.indexOf(ch) > -1 || longSmalls.has(ch)) { shift = "tml-xshift"; }
+      if (talls.indexOf(ch) > -1  || longTalls.has(ch))  { shift = "tml-capshift"; }
+      if (shift) { accentNode.classes.push(shift); }
+    }
   }
   if (!group.isStretchy) {
     accentNode.setAttribute("stretchy", "false");
@@ -2163,25 +2249,34 @@ const mathmlBuilder$a = (group, style) => {
   return node;
 };
 
-const NON_STRETCHY_ACCENT_REGEX = new RegExp(
-  [
-    "\\acute",
-    "\\grave",
-    "\\ddot",
-    "\\dddot",
-    "\\ddddot",
-    "\\tilde",
-    "\\bar",
-    "\\breve",
-    "\\check",
-    "\\hat",
-    "\\vec",
-    "\\dot",
-    "\\mathring"
-  ]
-    .map((accent) => `\\${accent}`)
-    .join("|")
-);
+const nonStretchyAccents = new Set([
+  "\\acute",
+  "\\grave",
+  "\\ddot",
+  "\\dddot",
+  "\\ddddot",
+  "\\tilde",
+  "\\bar",
+  "\\breve",
+  "\\check",
+  "\\hat",
+  "\\vec",
+  "\\dot",
+  "\\mathring"
+]);
+
+const needWebkitShift = new Set([
+  "\\acute",
+  "\\bar",
+  "\\breve",
+  "\\check",
+  "\\dot",
+  "\\ddot",
+  "\\grave",
+  "\\hat",
+  "\\mathring",
+  "\\'", "\\^", "\\~", "\\=", "\\u", "\\.", '\\"', "\\r", "\\H", "\\v"
+]);
 
 // Accents
 defineFunction({
@@ -2219,7 +2314,7 @@ defineFunction({
   handler: (context, args) => {
     const base = normalizeArgument(args[0]);
 
-    const isStretchy = !NON_STRETCHY_ACCENT_REGEX.test(context.funcName);
+    const isStretchy = !nonStretchyAccents.has(context.funcName);
 
     return {
       type: "accent",
@@ -2257,7 +2352,6 @@ defineFunction({
       mode: mode,
       label: context.funcName,
       isStretchy: false,
-      isShifty: true,
       base: base
     };
   },
@@ -2287,7 +2381,7 @@ defineFunction({
     };
   },
   mathmlBuilder: (group, style) => {
-    const accentNode = stretchy.mathMLnode(group.label);
+    const accentNode = stretchy.accentNode(group);
     accentNode.style["math-depth"] = 0;
     const node = new mathMLTree.MathNode("munder", [
       buildGroup$1(group.base, style),
@@ -3525,6 +3619,10 @@ const delimiters = [
   "\\lbrace",
   "\\}",
   "\\rbrace",
+  "⦇",
+  "\\llparenthesis",
+  "⦈",
+  "\\rrparenthesis",
   "\\lfloor",
   "\\rfloor",
   "\u230a",
@@ -3539,6 +3637,14 @@ const delimiters = [
   "\u27e8",
   "\\rangle",
   "\u27e9",
+  "\\lAngle",
+  "\u27ea",
+  "\\rAngle",
+  "\u27eb",
+  "\\llangle",
+  "⦉",
+  "\\rrangle",
+  "⦊",
   "\\lt",
   "\\gt",
   "\\lvert",
@@ -3660,9 +3766,9 @@ defineFunction({
       // defaults.
       node.setAttribute("fence", "false");
     }
-    if (group.delim === "\u2216" || group.delim.indexOf("arrow") > -1) {
-      // \backslash is not in the operator dictionary,
-      // so we have to explicitly set stretchy to true.
+    if (group.delim === "\u2216" || group.delim === "\\vert" ||
+        group.delim === "|" || group.delim.indexOf("arrow") > -1) {
+      // We have to explicitly set stretchy to true.
       node.setAttribute("stretchy", "true");
     }
     node.setAttribute("symmetric", "true"); // Needed for tall arrows in Firefox.
@@ -3824,10 +3930,20 @@ const mathmlBuilder$8 = (group, style) => {
       node.style.borderBottom = "0.065em solid";
       break
     case "\\cancel":
-      node.classes.push("cancel");
+      node.style.background = `linear-gradient(to top left,
+rgba(0,0,0,0) 0%,
+rgba(0,0,0,0) calc(50% - 0.06em),
+rgba(0,0,0,1) 50%,
+rgba(0,0,0,0) calc(50% + 0.06em),
+rgba(0,0,0,0) 100%);`;
       break
     case "\\bcancel":
-      node.classes.push("bcancel");
+      node.style.background = `linear-gradient(to top right,
+rgba(0,0,0,0) 0%,
+rgba(0,0,0,0) calc(50% - 0.06em),
+rgba(0,0,0,1) 50%,
+rgba(0,0,0,0) calc(50% + 0.06em),
+rgba(0,0,0,0) 100%);`;
       break
     /*
     case "\\longdiv":
@@ -3843,7 +3959,10 @@ const mathmlBuilder$8 = (group, style) => {
       node.style.marginRight = "0.03889em";
       break
     case "\\sout":
-      node.style["text-decoration"] = "line-through 0.08em solid";
+      node.style.backgroundImage = 'linear-gradient(black, black)';
+      node.style.backgroundRepeat = 'no-repeat';
+      node.style.backgroundSize = '100% 1.5px';
+      node.style.backgroundPosition = '0 center';
       break
     case "\\boxed":
       // \newcommand{\boxed}[1]{\fbox{\m@th$\displaystyle#1$}} from amsmath.sty
@@ -3871,7 +3990,18 @@ const mathmlBuilder$8 = (group, style) => {
       break
     }
     case "\\xcancel":
-      node.classes.push("xcancel");
+      node.style.background = `linear-gradient(to top left,
+rgba(0,0,0,0) 0%,
+rgba(0,0,0,0) calc(50% - 0.06em),
+rgba(0,0,0,1) 50%,
+rgba(0,0,0,0) calc(50% + 0.06em),
+rgba(0,0,0,0) 100%),
+linear-gradient(to top right,
+rgba(0,0,0,0) 0%,
+rgba(0,0,0,0) calc(50% - 0.06em),
+rgba(0,0,0,1) 50%,
+rgba(0,0,0,0) calc(50% + 0.06em),
+rgba(0,0,0,0) 100%);`;
       break
   }
   if (group.backgroundColor) {
@@ -4083,8 +4213,9 @@ const getTag = (group, style, rowNum) => {
     return tag
   } else {
     // AMS automatcally numbered equaton.
-    // Insert a class so the element can be populated by a post-processor.
-    tag = new mathMLTree.MathNode("mtext", [], ["tml-eqn"]);
+    // Insert a class so the element can be populated by a CSS counter.
+    // WebKit will display the CSS counter only inside a span.
+    tag = new mathMLTree.MathNode("mtext", [new Span(["tml-eqn"])]);
   }
   return tag
 };
@@ -4281,7 +4412,7 @@ const mathmlBuilder$7 = function(group, style) {
         const align = i === 0 ? "left" : i === numRows - 1 ? "right" : "center";
         mtd.setAttribute("columnalign", align);
         if (align !== "center") {
-          mtd.style.textAlign = "-webkit-" + align;
+          mtd.classes.push("tml-" + align);
         }
       }
       row.push(mtd);
@@ -4292,34 +4423,108 @@ const mathmlBuilder$7 = function(group, style) {
       const tag = getTag(group, style.withLevel(cellLevel), i);
       if (group.leqno) {
         row[0].children.push(tag);
-        row[0].style.textAlign = "-webkit-left";
+        row[0].classes.push("tml-left");
       } else {
         row[row.length - 1].children.push(tag);
-        row[row.length - 1].style.textAlign = "-webkit-right";
+        row[row.length - 1].classes.push("tml-right");
       }
     }
     const mtr = new mathMLTree.MathNode("mtr", row, []);
     // Write horizontal rules
     if (i === 0 && hlines[0].length > 0) {
       if (hlines[0].length === 2) {
-        mtr.classes.push("tml-top-double");
+        mtr.children.forEach(cell => { cell.style.borderTop = "0.15em double"; });
       } else {
-        mtr.classes.push(hlines[0][0] ? "tml-top-dashed" : "tml-top-solid");
+        mtr.children.forEach(cell => {
+          cell.style.borderTop = hlines[0][0] ? "0.06em dashed" : "0.06em solid";
+        });
       }
     }
     if (hlines[i + 1].length > 0) {
       if (hlines[i + 1].length === 2) {
-        mtr.classes.push("tml-hline-double");
+        mtr.children.forEach(cell => { cell.style.borderBottom = "0.15em double"; });
       } else {
-        mtr.classes.push(hlines[i + 1][0] ? "tml-hline-dashed" : "tml-hline-solid");
+        mtr.children.forEach(cell => {
+          cell.style.borderBottom = hlines[i + 1][0] ? "0.06em dashed" : "0.06em solid";
+        });
       }
     }
     tbl.push(mtr);
   }
-  let table = new mathMLTree.MathNode("mtable", tbl);
+
   if (group.envClasses.length > 0) {
-    table.classes = group.envClasses.map(e => "tml-" + e);
+    const pad = group.envClasses.includes("jot")
+      ? "0.7" // 0.5ex + 0.09em top & bot padding
+      : group.envClasses.includes("small")
+      ? "0.35"
+      : "0.5"; // 0.5ex default top & bot padding
+    const sidePadding = group.envClasses.includes("abut")
+      ? "0"
+      : group.envClasses.includes("cases")
+      ? "0"
+      : group.envClasses.includes("small")
+      ? "0.1389"
+      : group.envClasses.includes("cd")
+      ? "0.25"
+      : "0.4"; // default side padding
+
+    const numCols = tbl.length === 0 ? 0 : tbl[0].children.length;
+
+    const sidePad = (j, hand) => {
+      if (j === 0 && hand === 0) { return "0" }
+      if (j === numCols - 1 && hand === 1) { return "0" }
+      if (group.envClasses[0] !== "align") { return sidePadding }
+      if (hand === 1) { return "0" }
+      if (group.addEqnNum) {
+        return (j % 2) ? "1" : "0"
+      } else {
+        return (j % 2) ? "0" : "1"
+      }
+    };
+
+    // Padding
+    for (let i = 0; i < tbl.length; i++) {
+      for (let j = 0; j < tbl[i].children.length; j++) {
+        tbl[i].children[j].style.padding = `${pad}ex ${sidePad(j, 1)}em ${pad}ex ${sidePad(j, 0)}em`;
+      }
+    }
+
+    // Justification
+    const align = group.envClasses.includes("align") || group.envClasses.includes("alignat");
+    for (let i = 0; i < tbl.length; i++) {
+      const row = tbl[i];
+      if (align) {
+        for (let j = 0; j < row.children.length; j++) {
+          // Chromium does not recognize text-align: left. Use -webkit-
+          // TODO: Remove -webkit- when Chromium no longer needs it.
+          row.children[j].classes = ["tml-" + (j % 2 ? "left" : "right")];
+        }
+        if (group.addEqnNum) {
+          const k = group.leqno ? 0 : row.children.length - 1;
+          row.children[k].classes = ["tml-" + (group.leqno ? "left" : "right")];
+        }
+      }
+      if (row.children.length > 1 && group.envClasses.includes("cases")) {
+        row.children[1].style.padding = row.children[1].style.padding.replace(/0em$/, "1em");
+      }
+
+      if (group.envClasses.includes("cases") || group.envClasses.includes("subarray")) {
+        for (const cell of row.children) {
+          cell.classes.push("tml-left");
+        }
+      }
+    }
+  } else {
+    // Set zero padding on side of the matrix
+    for (let i = 0; i < tbl.length; i++) {
+      tbl[i].children[0].style.paddingLeft = "0em";
+      if (tbl[i].children.length === tbl[0].children.length) {
+        tbl[i].children[tbl[i].children.length - 1].style.paddingRight = "0em";
+      }
+    }
   }
+
+  let table = new mathMLTree.MathNode("mtable", tbl);
   if (group.scriptLevel === "display") { table.setAttribute("displaystyle", "true"); }
 
   if (group.addEqnNum || group.envClasses.includes("multline")) {
@@ -4360,7 +4565,7 @@ const mathmlBuilder$7 = function(group, style) {
         iCol += 1;
         for (const row of table.children) {
           if (colAlign.trim() !== "center" && iCol < row.children.length) {
-            row.children[iCol].style.textAlign = "-webkit-" + colAlign.trim();
+            row.children[iCol].classes = ["tml-" + colAlign.trim()];
           }
         }
         prevTypeWasAlign = true;
@@ -4399,6 +4604,8 @@ const mathmlBuilder$7 = function(group, style) {
     align = "left " + (align.length > 0 ? align : "center ") + "right ";
   }
   if (align) {
+    // Firefox reads this attribute, not the -webkit-left|right written above.
+    // TODO: When Chrome no longer needs "-webkit-", use CSS and delete the next line.
     table.setAttribute("columnalign", align.trim());
   }
 
@@ -4423,7 +4630,7 @@ const alignedHandler = function(context, args) {
       cols,
       addEqnNum: context.envName === "align" || context.envName === "alignat",
       emptySingleRow: true,
-      envClasses: ["jot", "abut"], // set row spacing & provisional column spacing
+      envClasses: ["abut", "jot"], // set row spacing & provisional column spacing
       maxNumCols: context.envName === "split" ? 2 : undefined,
       leqno: context.parser.settings.leqno
     },
@@ -4441,18 +4648,22 @@ const alignedHandler = function(context, args) {
   // binary.  This behavior is implemented in amsmath's \start@aligned.
   let numMaths;
   let numCols = 0;
-  if (args[0] && args[0].type === "ordgroup") {
+  const isAlignedAt = context.envName.indexOf("at") > -1;
+  if (args[0] && isAlignedAt) {
+    // alignat environment takes an argument w/ number of columns
     let arg0 = "";
     for (let i = 0; i < args[0].body.length; i++) {
       const textord = assertNodeType(args[0].body[i], "textord");
       arg0 += textord.text;
     }
+    if (isNaN(arg0)) {
+      throw new ParseError("The alignat enviroment requires a numeric first argument.")
+    }
     numMaths = Number(arg0);
     numCols = numMaths * 2;
   }
-  const isAligned = !numCols;
   res.body.forEach(function(row) {
-    if (!isAligned) {
+    if (isAlignedAt) {
       // Case 1
       const curMaths = row.length / 2;
       if (numMaths < curMaths) {
@@ -4480,14 +4691,10 @@ const alignedHandler = function(context, args) {
       align: align
     };
   }
-  if (context.envName === "split") ; else if (context.envName.indexOf("ed") > -1) {
-    res.envClasses.push("aligned"); // Sets justification
-  } else if (isAligned) {
-    res.envClasses[1] = context.envName === "align*"
-      ? "align-star"
-      : "align"; // Sets column spacing & justification
+  if (context.envName === "split") ; else if (isAlignedAt) {
+    res.envClasses.push("alignat"); // Sets justification
   } else {
-    res.envClasses.push("aligned"); // Sets justification
+    res.envClasses[0] = "align"; // Sets column spacing & justification
   }
   return res;
 };
@@ -4737,7 +4944,7 @@ defineEnvironment({
     }
     const res = {
       cols: [],
-      envClasses: ["jot", "abut"],
+      envClasses: ["abut", "jot"],
       addEqnNum: context.envName === "gather",
       emptySingleRow: true,
       leqno: context.parser.settings.leqno
@@ -5349,6 +5556,33 @@ defineFunction({
   },
 
   mathmlBuilder: mathmlBuilder$5
+});
+
+// \hbox is provided for compatibility with LaTeX functions that act on a box.
+// This function by itself doesn't do anything but set scriptlevel to \textstyle
+// and prevent a soft line break.
+
+defineFunction({
+  type: "hbox",
+  names: ["\\hbox"],
+  props: {
+    numArgs: 1,
+    argTypes: ["hbox"],
+    allowedInArgument: true,
+    allowedInText: false
+  },
+  handler({ parser }, args) {
+    return {
+      type: "hbox",
+      mode: parser.mode,
+      body: ordargument(args[0])
+    };
+  },
+  mathmlBuilder(group, style) {
+    const newStyle = style.withLevel(StyleLevel.TEXT);
+    const mrow = buildExpressionRow(group.body, newStyle);
+    return consolidateText(mrow)
+  }
 });
 
 const mathmlBuilder$4 = (group, style) => {
@@ -6320,7 +6554,8 @@ const singleCharBigOps = {
   "\u2a02": "\\bigotimes",
   "\u2a04": "\\biguplus",
   "\u2a05": "\\bigsqcap",
-  "\u2a06": "\\bigsqcup"
+  "\u2a06": "\\bigsqcup",
+  "\u2a09": "\\bigtimes"
 };
 
 defineFunction({
@@ -6340,6 +6575,7 @@ defineFunction({
     "\\bigodot",
     "\\bigsqcap",
     "\\bigsqcup",
+    "\\bigtimes",
     "\\smallint",
     "\u220F",
     "\u2210",
@@ -7236,7 +7472,14 @@ defineFunctionBuilders({
     }
 
     if (group.sup) {
-      children.push(buildGroup$1(group.sup, childStyle));
+      const sup = buildGroup$1(group.sup, childStyle);
+      const testNode = sup.type === "mrow" ? sup.children[0] : sup;
+      if ((testNode.type === "mo" && testNode.classes.includes("tml-prime"))
+        && group.base && group.base.text && group.base.text === "f") {
+        // Chromium does not address italic correction on prime. Prevent f′ from overlapping.
+        testNode.classes.push("prime-pad");
+      }
+      children.push(sup);
     }
 
     let nodeType;
@@ -7702,6 +7945,8 @@ const smallCaps = Object.freeze({
 
 const numberRegEx = /^\d(?:[\d,.]*\d)?$/;
 const latinRegEx = /[A-Ba-z]/;
+const primes = new Set(["\\prime", "\\dprime", "\\trprime", "\\qprime",
+  "\\backprime", "\\backdprime", "\\backtrprime"]);
 
 const italicNumber = (text, variant, tag) => {
   const mn = new mathMLTree.MathNode(tag, [text]);
@@ -7769,7 +8014,7 @@ defineFunctionBuilders({
         text.text = variantChar(text.text, variant);
       }
       node = new mathMLTree.MathNode("mtext", [text]);
-    } else if (group.text === "\\prime") {
+    } else if (primes.has(group.text)) {
       node = new mathMLTree.MathNode("mo", [text]);
       // TODO: If/when Chromium uses ssty variant for prime, remove the next line.
       node.classes.push("tml-prime");
@@ -8423,7 +8668,8 @@ defineMacro("\\char", function(context) {
 // This macro provides a better rendering.
 defineMacro("\\surd", '\\sqrt{\\vphantom{|}}');
 
-defineMacro("\\hbox", "\\text{#1}");
+// See comment for \oplus in symbols.js.
+defineMacro("\u2295", "\\oplus");
 
 // Per TeXbook p.122, "/" gets zero operator spacing.
 // And MDN recommends using U+2044 instead of / for inline
@@ -8507,6 +8753,7 @@ const dotsByToken = {
   "\\bigodot": "\\dotsb",
   "\\bigsqcap": "\\dotsb",
   "\\bigsqcup": "\\dotsb",
+  "\\bigtimes": "\\dotsb",
   "\\And": "\\dotsb",
   "\\longrightarrow": "\\dotsb",
   "\\Longrightarrow": "\\dotsb",
@@ -12703,7 +12950,6 @@ class Parser {
           loc: SourceLocation.range(nucleus),
           label: command,
           isStretchy: false,
-          isShifty: true,
           base: symbol
         };
       }
@@ -12901,7 +13147,7 @@ class Style {
  * https://mit-license.org/
  */
 
-const version = "0.10.14";
+const version = "0.10.18";
 
 function postProcess(block) {
   const labelMap = {};
@@ -12952,12 +13198,13 @@ function postProcess(block) {
 /* eslint no-console:0 */
 
 /**
+ * @type {import('./temml').render}
  * Parse and build an expression, and place that expression in the DOM node
  * given.
  */
-let render = function(expression, baseNode, options) {
+let render = function(expression, baseNode, options = {}) {
   baseNode.textContent = "";
-  const alreadyInMathElement = baseNode.tagName === "MATH";
+  const alreadyInMathElement = baseNode.tagName.toLowerCase() === "math";
   if (alreadyInMathElement) { options.wrap = "none"; }
   const math = renderToMathMLTree(expression, options);
   if (alreadyInMathElement) {
@@ -12989,6 +13236,7 @@ if (typeof document !== "undefined") {
 }
 
 /**
+ * @type {import('./temml').renderToString}
  * Parse and build an expression, and return the markup for that.
  */
 const renderToString = function(expression, options) {
@@ -12997,6 +13245,7 @@ const renderToString = function(expression, options) {
 };
 
 /**
+ * @type {import('./temml').generateParseTree}
  * Parse an expression and return the parse tree.
  */
 const generateParseTree = function(expression, options) {
@@ -13005,6 +13254,7 @@ const generateParseTree = function(expression, options) {
 };
 
 /**
+ * @type {import('./temml').definePreamble}
  * Take an expression which contains a preamble.
  * Parse it and return the macros.
  */
@@ -13037,6 +13287,7 @@ const renderError = function(error, expression, options) {
 };
 
 /**
+ * @type {import('./temml').renderToMathMLTree}
  * Generates and returns the Temml build tree. This is used for advanced
  * use cases (like rendering to custom output).
  */
@@ -13054,6 +13305,7 @@ const renderToMathMLTree = function(expression, options) {
   }
 };
 
+/** @type {import('./temml').default} */
 var temml = {
   /**
    * Current Temml version
