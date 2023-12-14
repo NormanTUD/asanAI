@@ -1535,6 +1535,10 @@ function array_to_fixed (array, fixnr) {
 }
 
 function array_to_color (array, color) {
+	if(contains_convolution()) {
+		return array;
+	}
+
 	var x = 0;
 	var len = array.length;
 	var new_array = [];
