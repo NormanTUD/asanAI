@@ -5355,17 +5355,20 @@ class asanAI {
 							text = table_data[class_vertical][class_horizontal];
 						}
 
+						var green = "#83F511";
+						var red = "#F51137";
+
 						if(class_vertical == class_horizontal) {
 							if(text == `0`) {
 								str += `<td class="confusion_matrix_tx">${text}</td>`;
 							} else {
-								str += `<td  class="confusion_matrix_tx" style='background-color: #83F511'>${text}</td>`;
+								str += `<td  class="confusion_matrix_tx" style='background-color: ${green}'>${text}</td>`;
 							}
 						} else {
 							if(text == `0`) {
 								str += `<td class="confusion_matrix_tx">${text}</td>`;
 							} else {
-								str += `<td class="confusion_matrix_tx"style='background-color: #F51137'>${text}</td>`;
+								str += `<td class="confusion_matrix_tx"style='background-color: ${red}'>${text}</td>`;
 							}
 						}
 					}
