@@ -10602,16 +10602,6 @@ if len(sys.argv) == 1:
 		this.#_clean_custom_tensors();
 	}
 
-	async #get_current_layer_container_status_hash() {
-		var html = $("#" + this.#layers_gui_div_name).html();
-
-		html = html.replaceAll(" disabled=\"\"", "");
-
-		var res = await this.#md5(html);
-
-		return res;
-	}
-
 	async #get_model_data (optimizer_name_only) {
 		if(this.#global_model_data) {
 			var model_data_tensors = this.#find_tensors_with_is_disposed_internal(this.#global_model_data);
