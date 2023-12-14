@@ -5218,6 +5218,7 @@ class asanAI {
 			if(this.#current_epoch == 1) {
 				this.wrn("[confusion_matrix] No images found");
 			}
+
 			return "";
 		}
 		
@@ -5332,6 +5333,8 @@ class asanAI {
 
 		var str = `<table class="confusion_matrix_table">` ;
 		for (var i = 0; i <= classes.length; i++) {
+			var class_vertical = classes[i - 1];
+
 			if(i == 0) {
 				str += `<tr>`;
 				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
@@ -5342,14 +5345,17 @@ class asanAI {
 			} else {
 				str += `<tr>`;
 				for (var j =  0; j <= classes.length; j++) {
+					var class_horizontal = classes[j - 1];
+
 					if(j == 0) {
-						str += `<th class="confusion_matrix_tx">${classes[i - 1]}</th>`;
+						str += `<th class="confusion_matrix_tx">${class_vertical}</th>`;
 					} else {
-						var text = `0`; // `${classes[i - 1]} &mdash; ${classes[j - 1]}`;
-						if(Object.keys(table_data).includes(classes[i - 1]) && Object.keys(table_data[classes[i - 1]]).includes(classes[j - 1])) {
-							text = table_data[classes[i - 1]][classes[j - 1]];
+						var text = `0`; // `${class_vertical} &mdash; ${class_horizontal}`;
+						if(Object.keys(table_data).includes(class_vertical) && Object.keys(table_data[class_vertical]).includes(class_horizontal)) {
+							text = table_data[class_vertical][class_horizontal];
 						}
-						if(classes[i - 1] == classes[j - 1]) {
+
+						if(class_vertical == class_horizontal) {
 							if(text == `0`) {
 								str += `<td class="confusion_matrix_tx">${text}</td>`;
 							} else {
