@@ -1543,7 +1543,7 @@ class asanAI {
 		for (var i = 0; i < args.length; i++) {
 			if(this.is_tf_tensor(args[i])) {
 				this.#custom_tensors["" + args[i].id] = [this.#get_stack_trace(), args[i], this.#tensor_print_to_string(args[i])];
-				this.#clean_custom_tensors();
+				this.clean_custom_tensors();
 			}
 		}
 	}
@@ -1562,7 +1562,7 @@ class asanAI {
 		var res = first_tensor.toInt();
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1573,7 +1573,7 @@ class asanAI {
 		var res = first_tensor.toFloat();
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1584,7 +1584,7 @@ class asanAI {
 		var res = first_tensor.toTensor(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1594,7 +1594,7 @@ class asanAI {
 		var res = tf.mean(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1604,7 +1604,7 @@ class asanAI {
 		var res = tf.relu(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1615,7 +1615,7 @@ class asanAI {
 		var res = first_tensor.concat(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1625,7 +1625,7 @@ class asanAI {
 		var res = tf.expandDims(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1635,7 +1635,7 @@ class asanAI {
 		var res = tf.transpose(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1646,7 +1646,7 @@ class asanAI {
 		var res = tf.sub(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1656,7 +1656,7 @@ class asanAI {
 		var res = tf.min(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1666,7 +1666,7 @@ class asanAI {
 		var res = tf.max(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1683,7 +1683,7 @@ class asanAI {
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1693,7 +1693,7 @@ class asanAI {
 		var res = tf.mul(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1703,7 +1703,7 @@ class asanAI {
 		var res = tf.div(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1720,7 +1720,7 @@ class asanAI {
 		var res = tf.reshape(...args);
 
 		this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1731,7 +1731,7 @@ class asanAI {
 
 		this.#custom_tensors["" + res.values.id] = [this.#get_stack_trace(), res.values, this.#tensor_print_to_string(res.values)];
 		this.#custom_tensors["" + res.indices.id] = [this.#get_stack_trace(), res.indices, this.#tensor_print_to_string(res.indices)];
-		this.#clean_custom_tensors();
+		this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1844,7 +1844,7 @@ class asanAI {
 				*/
 			}
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
@@ -1877,7 +1877,7 @@ class asanAI {
 		try {
 			var res = tf.tidy(...args);
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -1921,14 +1921,14 @@ class asanAI {
 				asanai_this.wrn(e);
 			}
 
-			asanai_this.#clean_custom_tensors();
+			asanai_this.clean_custom_tensors();
 
 			return r;
 		};
 
 		asanai_this.#custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"];
 
-		asanai_this.#clean_custom_tensors();
+		asanai_this.clean_custom_tensors();
 
 		return res;
 	}
@@ -1940,7 +1940,7 @@ class asanAI {
 
 			//this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -1963,7 +1963,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -1984,7 +1984,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, "[input]"];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2005,7 +2005,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2026,7 +2026,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2047,7 +2047,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2068,7 +2068,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2089,7 +2089,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2110,7 +2110,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2129,7 +2129,7 @@ class asanAI {
 		try {
 			var res = await tf.data.webcam(...args);
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2154,7 +2154,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, "[#resizeNearestNeighbor]"];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2175,7 +2175,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, "[resizeBilinear]"];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2196,7 +2196,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2217,7 +2217,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2238,7 +2238,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2259,7 +2259,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2280,7 +2280,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res; 
 		} catch (e) {
@@ -2301,7 +2301,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2322,7 +2322,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2343,7 +2343,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2364,7 +2364,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.dataId.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2385,7 +2385,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2423,7 +2423,7 @@ class asanAI {
 
 			this.#custom_tensors["" + res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2444,7 +2444,7 @@ class asanAI {
 
 			this.#custom_tensors[res.id] = [this.#get_stack_trace(), res, this.#tensor_print_to_string(res)];
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 
 			return res;
 		} catch (e) {
@@ -2458,7 +2458,7 @@ class asanAI {
 		}
 	}
 
-	#clean_custom_tensors () {
+	clean_custom_tensors () {
 		var keys = Object.keys(this.#custom_tensors);
 
 		if(!keys.length) {
@@ -2662,7 +2662,7 @@ class asanAI {
 		if(this.#model) {
 			//await this.dispose(this.#model);
 
-			this.#clean_custom_tensors();
+			this.clean_custom_tensors();
 		}
 
 		this.#currently_switching_models = true;
