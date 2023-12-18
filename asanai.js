@@ -3184,7 +3184,12 @@ class asanAI {
 						asanai_this.err("" + e);
 						asanai_this.err(`Input shape of the model: [${asanai_this.#model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
 
-						return;
+						return false;
+					}
+
+					if(!res) {
+						console.log(`res was empty:`, res);
+						return false;
 					}
 
 					var prediction = asanai_this.array_sync(res);
@@ -6666,7 +6671,10 @@ class asanAI {
 					for (var k = 0; k < this.#model.layers[i].weights.length; k++) {
 						var wname = this.get_weight_name_by_layer_and_weight_index(i, k);
 						if(possible_weight_names.includes(wname)) {
-							this_layer_weights[wname] = Array.from(this.array_sync(this.#model.layers[i].weights[k].val));
+							var asanai_this = this;
+							this_layer_weights[wname] = this.tidy(() => {
+								return Array.from(asanai_this.array_sync(this.#model.layers[i].weights[k].val));
+							});
 						} else {
 							this.err("Invalid wname: " + wname);
 							this.log(model.layers[i].weights[k]);

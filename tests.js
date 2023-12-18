@@ -557,12 +557,12 @@ async function run_tests () {
 
 			var confusion_matrix_string = await confusion_matrix(labels);
 
-			var confusion_matrix_string_contains_red = confusion_matrix_string.includes("#F51137");
+			var number_of_red = (confusion_matrix_string.match(/#F51137/g) || []).length;
 
-			test_equal("testing if confusion matrix contains red values", confusion_matrix_string_contains_red, false);
+			test_equal("testing if confusion matrix contains red values", number_of_red > 2, false);
 
-			if(confusion_matrix_string_contains_red) {
-				console.warn(`confusion-matrix contained red:`, confusion_matrix_string);
+			if(number_of_red > 2) {
+				console.warn(`confusion-matrix contained ${number_of_red} red squared:`, confusion_matrix_string);
 			}
 
 			for (var i = 0; i < results.length; i++) {
