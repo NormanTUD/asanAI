@@ -4449,7 +4449,7 @@ class asanAI {
 
 			var img_id = `load_images_into_div_image_${_uuid}`;
 
-			var img = $(`<img id='${img_id}' width=${width} height=${height} src='${url}' />`);
+			var img = $(`<img class='load_images_into_div_image_element' id='${img_id}' width=${width} height=${height} src='${url}' />`);
 
 			imgs.push(img[0]);
 
@@ -4458,7 +4458,8 @@ class asanAI {
 			var asanai_this = this;
 
 			var img_array = this.tidy(() => {
-				var _t = asanai_this.array_sync(asanai_this.from_pixels(img[0], asanai_this.num_channels));
+				var __from_pixels = asanai_this.from_pixels(img[0], asanai_this.num_channels);
+				var _t = asanai_this.array_sync(__from_pixels);
 
 				return _t;
 			});
