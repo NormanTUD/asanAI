@@ -1543,9 +1543,10 @@ class asanAI {
 		for (var i = 0; i < args.length; i++) {
 			if(this.is_tf_tensor(args[i])) {
 				this.#custom_tensors["" + args[i].id] = [this.#get_stack_trace(), args[i], this.#tensor_print_to_string(args[i])];
-				this.clean_custom_tensors();
 			}
 		}
+
+		this.clean_custom_tensors();
 	}
 
 	array_sync (...args) {
@@ -6673,7 +6674,12 @@ class asanAI {
 						if(possible_weight_names.includes(wname)) {
 							var asanai_this = this;
 							this_layer_weights[wname] = this.tidy(() => {
-								return Array.from(asanai_this.array_sync(this.#model.layers[i].weights[k].val));
+								var __res = asanai_this.array_sync(this.#model.layers[i].weights[k].val);
+								var ___res = Array.from(__res);
+
+								asanai_this.dispose(__res);
+
+								return ___res;
 							});
 						} else {
 							this.err("Invalid wname: " + wname);
