@@ -263,18 +263,20 @@
 					//["traindata/signs/mandatory/120px-DIN_4844-2_D-M009.svg.png", "mandatory"]
 				]);
 
-				//console.log(loaded_data);
-			
-				var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
+				if(loaded_data) {
+					var history = await asanai.fit(loaded_data.x, loaded_data.y, {epochs: 5, batchSize: 20, shuffle: true}, {'div': 'plotly_history'});
 
-				if(history) {
-					console.log("history:", history);
+					if(history) {
+						console.log("history:", history);
+					} else {
+						console.error("Training failed");
+					}
+
+					await asanai.dispose(loaded_data.x);
+					await asanai.dispose(loaded_data.y);
 				} else {
-					console.error("Training failed");
+					console.warn(`loaded_data was undefined! Something went wrong using asanai.load_image_urls_to_div_and_tensor`);
 				}
-
-				await asanai.dispose(loaded_data.x);
-				await asanai.dispose(loaded_data.y);
 			}
 		</script>
 	</body>
