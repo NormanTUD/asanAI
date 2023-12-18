@@ -512,7 +512,7 @@ async function run_tests () {
 
 			$("#learningRate_adam").val("0.001").trigger("change");
 
-			await set_epochs(100);
+			await set_epochs(150);
 			await train_neural_network();
 
 			$("#show_bars_instead_of_numbers").prop("checked", false);
@@ -555,7 +555,15 @@ async function run_tests () {
 				log(results);
 			}
 
-			test_equal("testing if confusion matrix contains red values", (await confusion_matrix(labels)).includes("#F51137"), false);
+			var confusion_matrix_string = await confusion_matrix(labels);
+
+			var confusion_matrix_string_contains_red = confusion_matrix_string.includes("#F51137");
+
+			test_equal("testing if confusion matrix contains red values", confusion_matrix_string_contains_red, false);
+
+			if(confusion_matrix_string_contains_red) {
+				console.warn(`confusion-matrix contained red:`, confusion_matrix_string);
+			}
 
 			for (var i = 0; i < results.length; i++) {
 				var this_result = results[i];
