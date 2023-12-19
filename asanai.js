@@ -2692,6 +2692,11 @@ class asanAI {
 			await this.show_layers_gui();
 		}
 
+
+		if(this.#internal_states_div) {
+			this.show_internals()
+		}
+
 		return this.#model;
 	}
 
