@@ -3080,6 +3080,7 @@ class asanAI {
 
 	async show_and_predict_webcam_in_div(divname=this.#show_and_predict_webcam_in_div_div, _w, _h) {
 		var $divname = $("#" + divname);
+
 		this.assert(divname.length != 1, `[show_and_predict_webcam_in_div] div by id ${divname} could not be found`);	
 
 		if(!this.#model) {
@@ -3110,6 +3111,12 @@ class asanAI {
 
 		var $video_element = $divname.find("#" + divname + "_webcam_element");
 		var $desc = $divname.find(".desc");
+
+		var $stop_start_webcam_button = $(".stop_start_webcam_button");
+		if(!$stop_start_webcam_button.length) {
+			$stop_start_webcam_button = $(`<button class='stop_start_webcam_button' onclick="${this.#asanai_object_name}.toggle_webcam(this)">Stop webcam</button>`);
+			$stop_start_webcam_button.insertBefore($divname);
+		}
 
 		if($video_element.length > 1) {
 			this.wrn(`More than one video element found #${divname}. Using the first one`);
