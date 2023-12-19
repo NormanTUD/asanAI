@@ -2821,8 +2821,13 @@ class asanAI {
 		return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	}
 
-	#hide_images_to_be_predicted () {
+	#hide_images_to_be_predicted (msg="") {
 		var elements = [];
+
+		if(!msg) {
+			msg = `ERROR: Cannot show image!`;
+		}
+
 		for (var i = 0; i < this.#images_to_repredict.length; i++) {
 			var _xpath = this.#images_to_repredict[i];
 			var _elements = this.get_element_by_xpath(_xpath);
@@ -2831,7 +2836,16 @@ class asanAI {
 		}
 
 		for (var i = 0; i < elements.length; i++) {
+			var message = $(`<span class='cannot_show_image_message'>${msg}</span>`);
+
+			var next_element = $(elements[i]).next();
+			var prev_element = $(elements[i]).prev();
+
 			$(elements[i]).hide();
+
+			if(!next_element.hasClass(`cannot_show_image_message`) && !prev_element.hasClass(`cannot_show_image_message`)) {
+				message.insertAfter($(elements[i]));
+			}
 		}
 	}
 
@@ -2891,11 +2905,14 @@ class asanAI {
 		var model_input_shape = this.#model.input.shape;
 
 		if(this.#model.input.shape.length != 4) {
-			this.err(`[predict_image] Input shape does not have 4 elements, it is like this: [${this.#model.input.shape.join(", ")}]`);
+			var msg = `Input shape does not have 4 elements, it is like this: [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}]. Cannot predict it as an image.`;
+			this.err(`[predict_image] ${msg}`);
 
-			this.#hide_images_to_be_predicted()
+			this.#hide_images_to_be_predicted(`${msg}`)
 
 			return;
+		} else {
+			$(".cannot_show_image_message").hide();
 		}
 
 		this.#show_images_to_be_predicted()
