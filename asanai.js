@@ -3,6 +3,8 @@
 class asanAI {
 	#currently_generating_images = false;
 
+	#show_internals_slider_value = true;
+
 	#last_known_good_input_shape = null;
 
 	#create_model_queue = [];
@@ -3312,7 +3314,7 @@ class asanAI {
 		return html;
 	}
 
-	show_internals (divname=this.#internal_states_div, show_sliders=true) {
+	show_internals (divname=this.#internal_states_div, show_sliders=this.#show_internals_slider_value) {
 		if(!this.#model) {
 			this.dbg("No model found");
 
@@ -3323,6 +3325,8 @@ class asanAI {
 			this.err("[show_internals] second parameter, show_sliders, must either be true or false)");
 			return;
 		}
+
+		this.#show_internals_slider_value = show_sliders;
 
 		this.#show_sliders = show_sliders;
 
