@@ -2847,6 +2847,8 @@ class asanAI {
 				message.insertAfter($(elements[i]));
 			}
 		}
+
+		this.hide_internals();
 	}
 
 	async predict_image (img_element_or_div, write_to_div="", _add_to_repredict=true, _add_on_click_repredict=false) {
