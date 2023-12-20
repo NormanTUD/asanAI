@@ -3,6 +3,8 @@
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#maximally_activated_neuron_class = "maximally_activated_class";
+
 	#currently_generating_images = false;
 
 	#show_internals_slider_value = true;
@@ -10418,7 +10420,7 @@ if len(sys.argv) == 1:
 		}
 
 		for (var i in disposed_keys) {
-			is_cosmo_mode && delete this.#_custom_tensors[disposed_keys[i]];
+			delete this.#_custom_tensors[disposed_keys[i]];
 		}
 	}
 
@@ -11133,7 +11135,12 @@ if len(sys.argv) == 1:
 		return this.#get_tr_str_for_layer_table("Pointwise Constraint", "pointwise_constraint", "select", this.#constraints, nr);
 	}
 
-	async draw_maximally_activated_layer (layer, type, is_recursive = 0) {
+	async draw_maximally_activated_layer (layer, type = "", is_recursive = 0) {
+
+		if(type == "") {
+			type = this.get_model().layers[layer].getClassName().toLowerCase();
+		}
+
 		if(this.#currently_generating_images) {
 			this.log("Cannot predict 2 layers at the same time. Waiting until done...");
 
@@ -11290,8 +11297,14 @@ if len(sys.argv) == 1:
 					await this.dispose(_tensor);
 				} else if (Object.keys(full_data).includes("image")) {
 					var data = full_data["image"][0];
-					var to_class = is_cosmo_mode ? "current_images" : "maximally_activated_class";
-					var canvas = get_canvas_in_class(layer, to_class, 0, 1);
+					var to_class = this.#maximally_activated_neuron_class;
+
+					if(!$("." + to_class).length) {
+						this.err(`.${this.#maximally_activated_neuron_class} not found. Returning...`);
+						return;
+					}
+
+					var canvas = this.#get_canvas_in_class(layer, to_class, 0, 1);
 					var _uuid = canvas.id;
 
 					canvasses.push(canvas);
@@ -11299,16 +11312,19 @@ if len(sys.argv) == 1:
 					var data_hash = {
 						layer: layer,
 						neuron: neuron,
-						model_hash: await get_model_config_hash()
+						model_hash: await this.#get_model_config_hash()
 					};
 
 					this.#scaleNestedArray(data);
 					var res = this.#draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 
 					if(res) {
-						if(!is_cosmo_mode) {
-							$("#maximally_activated_content").prepend(canvas);
+						if(!$("#maximally_activated_content").length) {
+							this.err(`#maximally_activated_content not found. Returning...`);
+							return;
 						}
+
+						$("#maximally_activated_content").prepend(canvas);
 					} else {
 						this.log("Res: ", res);
 					}
@@ -11719,26 +11735,26 @@ if len(sys.argv) == 1:
 	#deprocess_image(x) {
 		this.assert(Object.keys("isDisposedInternal"), "x for deprocess image is not a tensor but " + typeof(x));
 
-		var res = tidy(() => {
+		var asanai_this = this;
+
+		var res = this.tidy(() => {
 			try {
-				const {mean, variance} = tf_moments(x);
-				x = tf_sub(x, mean);
+				const {mean, variance} = asanai_this.tf_moments(x);
+				x = asanai_this.tf_sub(x, mean);
 				// Add a small positive number (EPSILON) to the denominator to prevent
 				// division-by-zero.
-				x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(tf.backend().epsilon(), x)), x);
+				x = asanai_this.tf_add(asanai_this.tf_div(x, asanai_this.sqrt(variance), asanai_this.#tf_constant_shape(tf.backend().epsilon(), x)), x);
 				// Clip to [0, 1].
-				x = tf_add(x, tf_constant_shape(0.5, x));
-				x = clipByValue(x, 0, 1);
-				x = tf_mul(x, tf_constant_shape(255, x));
-				return tidy(() => {
-					return clipByValue(x, 0, 255).asType("int32");
-				});
+				x = asanai_this.tf_add(x, asanai_this.#tf_constant_shape(0.5, x));
+				x = asanai_this.#clipByValue(x, 0, 1);
+				x = asanai_this.tf_mul(x, asanai_this.#tf_constant_shape(255, x));
+				return asanai_this.#clipByValue(x, 0, 255).asType("int32");
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
 					e = e.message;
 				}
 
-				err("" + e);
+				asanai_this.err("" + e);
 
 				return null;
 			}
