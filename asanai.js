@@ -1,6 +1,8 @@
 "use strict";
 
 class asanAI {
+	#max_activation_iterations = 5;
+
 	#currently_generating_images = false;
 
 	#show_internals_slider_value = true;
@@ -11202,7 +11204,7 @@ if len(sys.argv) == 1:
 
 						}
 					} else {
-						log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
+						this.log("Already disposed in draw_maximally_activated_layer in a recursive step. Ignore this probably.");
 					}
 				} else {
 					throw new Error(e);
@@ -11271,9 +11273,9 @@ if len(sys.argv) == 1:
 
 		try {
 			var start_image = undefined;
-			var iterations = this.#parse_int($("#max_activation_iterations").val());
+			var iterations = this.#parse_int(this.#max_activation_iterations);
 			if(!iterations) {
-				log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+				this.log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 				iterations = 30;
 			}
 
@@ -11283,7 +11285,7 @@ if len(sys.argv) == 1:
 				if(Object.keys(full_data).includes("data")) {
 					var _tensor = tensor(full_data["data"]);
 					var t_str = _tensor_print_to_string(_tensor);
-					log("Maximally activated tensors:", t_str);
+					this.log("Maximally activated tensors:", t_str);
 					$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 					await this.dispose(_tensor);
 				} else if (Object.keys(full_data).includes("image")) {
@@ -11308,7 +11310,7 @@ if len(sys.argv) == 1:
 							$("#maximally_activated_content").prepend(canvas);
 						}
 					} else {
-						log("Res: ", res);
+						this.log("Res: ", res);
 					}
 				}
 			}
@@ -11333,7 +11335,7 @@ if len(sys.argv) == 1:
 				// interest.
 				const layer_output = asanai_this.#model.getLayer(null, layer_idx).getOutputAt(0);
 
-				const aux_model = tf_model({inputs: asanai_this.#model.inputs, outputs: layer_output});
+				const aux_model = this.tf_model({inputs: asanai_this.#model.inputs, outputs: layer_output});
 
 				// This function calculates the value of the convolutional layer's
 				// output at the designated filter index.
@@ -11341,7 +11343,7 @@ if len(sys.argv) == 1:
 
 				// This returned function (`grad_function`) calculates the gradient of the
 				// convolutional filter's output with respect to the input image.
-				const grad_function = grad(lossFunction);
+				const grad_function = this.grad(lossFunction);
 
 				// Form a random image as the starting point of the gradient ascent.
 
@@ -11359,7 +11361,7 @@ if len(sys.argv) == 1:
 
 							const _is = asanai_this.sqrt(asanai_this.tf_mean(asanai_this.tf_square(grads)));
 
-							const norm = asanai_this.tf_add(_is, asanai_this.tf_constant_shape(tf.backend().epsilon(), _is));
+							const norm = asanai_this.tf_add(_is, asanai_this.#tf_constant_shape(tf.backend().epsilon(), _is));
 							// Important trick: scale the gradient with the magnitude (norm)
 							// of the gradient.
 							return asanai_this.tf_div(grads, norm);
@@ -11372,7 +11374,7 @@ if len(sys.argv) == 1:
 						}
 					});
 
-					data = tf_add(data, scaledGrads);
+					data = this.tf_add(data, scaledGrads);
 					worked = 1;
 				}
 
@@ -11392,20 +11394,18 @@ if len(sys.argv) == 1:
 			}
 		}
 
-		if(model.input.shape.length == 4 && this.#model.input.shape[3] == 3) {
+		if(this.#model.input.shape.length == 4 && this.#model.input.shape[3] == 3) {
 			var asanai_this = this;
 			try {
 				full_data["image"] = this.tidy(() => {
-					return asanai_this.array_sync(tidy(() => {
-						var dp = deprocess_image(generated_data);
+					var dp = asanai_this.#deprocess_image(generated_data);
 
-						if(!dp) {
-							this.err("deprocess image returned empty");
-							full_data["worked"] = 0;
-						}
+					if(!dp) {
+						this.err("deprocess image returned empty");
+						full_data["worked"] = 0;
+					}
 
-						return dp;
-					}));
+					return asanai_this.array_sync(dp);
 				});
 			} catch (e) {
 				if(Object.keys(e).includes("message")) {
@@ -11710,5 +11710,40 @@ if len(sys.argv) == 1:
 			wrn("[get_input_shape_as_string] " + e);
 			return "[]";
 		}
+	}
+
+	#tf_constant_shape (val, x) {
+		return tf.ones(x.shape).mul(val);
+	}
+
+	#deprocess_image(x) {
+		this.assert(Object.keys("isDisposedInternal"), "x for deprocess image is not a tensor but " + typeof(x));
+
+		var res = tidy(() => {
+			try {
+				const {mean, variance} = tf_moments(x);
+				x = tf_sub(x, mean);
+				// Add a small positive number (EPSILON) to the denominator to prevent
+				// division-by-zero.
+				x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(tf.backend().epsilon(), x)), x);
+				// Clip to [0, 1].
+				x = tf_add(x, tf_constant_shape(0.5, x));
+				x = clipByValue(x, 0, 1);
+				x = tf_mul(x, tf_constant_shape(255, x));
+				return tidy(() => {
+					return clipByValue(x, 0, 255).asType("int32");
+				});
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err("" + e);
+
+				return null;
+			}
+		});
+
+		return res;
 	}
 }
