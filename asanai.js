@@ -3675,6 +3675,7 @@ class asanAI {
 				this.wrn(`[set_kernel_pixel_size] Size has not changed.`);
 			} else {
 				this.#kernel_pixel_size = this.#parse_int(_new);
+				this.#redo_what_has_to_be_redone()
 			}
 		} else {
 			throw new Error(`[set_kernel_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
@@ -3691,6 +3692,7 @@ class asanAI {
 				this.wrn(`[set_pixel_size] Size has not changed.`);
 			} else {
 				this.#pixel_size = this.#parse_int(_new);
+				this.#redo_what_has_to_be_redone()
 			}
 		} else {
 			throw new Error(`[set_pixel_size] The parameter given (${_new}, type: ${typeof(_new)}) is not a number and does not does not look like a number.`);
