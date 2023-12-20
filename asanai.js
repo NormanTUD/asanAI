@@ -2699,6 +2699,8 @@ class asanAI {
 			this.show_internals()
 		}
 
+		this.log(this.#language[this.#lang]["model_was_set"]);
+
 		return this.#model;
 	}
 
