@@ -9673,7 +9673,7 @@ if len(sys.argv) == 1:
 		this.assert(typeof (layer_nr) == "number", "#enable_valid_layer_types(" + layer_nr + ") is not a number but " + typeof (layer_nr));
 
 		if(this.#is_repairing_output_shape) {
-			enable_all_layer_types();
+			this.#enable_all_layer_types();
 			return;
 		}
 
@@ -9692,7 +9692,7 @@ if len(sys.argv) == 1:
 		}
 	}
 
-	enable_all_layer_types () {
+	#enable_all_layer_types () {
 		if(!this.#model || !Object.keys(this.#model).includes("layers") || !this.#model.layers.length) {
 			this.err("model not found, or does not include layers or layers are empty");
 			return;
