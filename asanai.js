@@ -2782,7 +2782,7 @@ class asanAI {
 		this.assert(Array.isArray(model_shape), "model_shape is not an array");
 
 		if(tensor_shape.length != model_shape.length) {
-			this.wrn(`#tensor_shape_fits_input_shape failed. Different number of values: tensor_shape: [${tensor_shape.join(", ")}], model_shape: [${model_shape.join(", ")}]`);
+			this.wrn(`#tensor_shape_fits_input_shape failed. Different number of values: tensor_shape: [${tensor_shape.map(item => item === null ? "null" : item).join(", ")}], model_shape: [${model_shape.map(item => item === null ? "null" : item).join(", ")}]`);
 			return false;
 		}
 
@@ -3005,7 +3005,7 @@ class asanAI {
 		}
 
 		if(!this.#tensor_shape_fits_input_shape(_tensor.shape, this.#model.input.shape)) {
-			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.join(", ")}], model_shape: [${this.#model.input.shape.join(", ")}].`)
+			this.err(`[predict] Tensor does not fit model shape. Not predicting. Tensor shape: [${_tensor.shape.map(item => item === null ? "null" : item).join(", ")}], model_shape: [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}].`)
 			return;
 		}
 
@@ -3097,7 +3097,7 @@ class asanAI {
 
 		if(!this.#model.input.shape.length == 4) {
 			this.#started_webcam = false;
-			this.err(`[show_and_predict_webcam_in_div] Model input shape but be image like [b, h, w, c], but is: ${this.#model.input.shape.join(", ")}`);
+			this.err(`[show_and_predict_webcam_in_div] Model input shape but be image like [b, h, w, c], but is: ${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}`);
 			return;
 		}
 
@@ -3222,7 +3222,7 @@ class asanAI {
 						}
 
 						asanai_this.err("" + e);
-						asanai_this.err(`Input shape of the model: [${asanai_this.#model.input.shape.join(", ")}]. Input shape of the data: [${resized.shape.join(", ")}]`);
+						asanai_this.err(`Input shape of the model: [${asanai_this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}]. Input shape of the data: [${resized.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 
 						return false;
 					}
@@ -3867,7 +3867,7 @@ class asanAI {
 
 		var kernel_shape = this.#get_dim(pixels);
 
-		this.assert(kernel_shape.length == 3, `kernel is not an image, it has shape [${kernel_shape.join(", ")}]`);
+		this.assert(kernel_shape.length == 3, `kernel is not an image, it has shape [${kernel_shape.map(item => item === null ? "null" : item).join(", ")}]`);
 
 		var [_height, _width, channels] = [pixels.length, pixels[0].length, pixels[0][0].length]; // Destructure the dimensions
 
@@ -4165,7 +4165,7 @@ class asanAI {
 		}
 
 		if(!predictions_tensor.shape.length == 4) {
-			this.err(`[#_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.join(", ")}]`);
+			this.err(`[#_show_images_in_output] predictions tensor does not have 4 elements in length, but [${predictions_tensor.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 			return;
 		}
 
@@ -4221,7 +4221,7 @@ class asanAI {
 		} else if(this.#model.output.shape.length == 4) {
 			this.#_show_images_in_output(predictions_tensor, write_to_div)
 		} else {
-			var error = `Unimplemented output shape: [${this.#model.output.shape.join(", ")}]`;
+			var error = `Unimplemented output shape: [${this.#model.output.shape.map(item => item === null ? "null" : item).join(", ")}]`;
 			this.err(error);
 			$(write_to_div).html(error);
 		}
@@ -5468,7 +5468,7 @@ class asanAI {
 		}
 
 		if(this.#model.input.shape.length != _x.shape.length) {
-			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_y.shape.join(", ")}] in length`);
+			this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}] differs from _x.shape [${_y.shape.map(item => item === null ? "null" : item).join(", ")}] in length`);
 			return;
 		} else {
 			var mis = this.#model.input.shape;
@@ -5483,13 +5483,13 @@ class asanAI {
 			}
 
 			if(!matches) {
-				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.join(", ")}] differs from _x.shape [${_x.shape.join(", ")}]`);
+				this.err(`[fit] Cannot fit, because the input shape of the model [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}] differs from _x.shape [${_x.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 				return;
 			}
 		}
 
 		if(this.#model.output.shape.length != _y.shape.length) {
-			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}] in length`);
+			this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.map(item => item === null ? "null" : item).join(", ")}] differs from _y.shape [${_y.shape.map(item => item === null ? "null" : item).join(", ")}] in length`);
 			return;
 		} else {
 			var mos = this.#model.output.shape;
@@ -5504,7 +5504,7 @@ class asanAI {
 			}
 
 			if(!matches) {
-				this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.join(", ")}] differs from _y.shape [${_y.shape.join(", ")}]`);
+				this.err(`[fit] Cannot fit, because the output shape of the model [${this.#model.output.shape.map(item => item === null ? "null" : item).join(", ")}] differs from _y.shape [${_y.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 				return;
 			}
 		}
@@ -9997,7 +9997,7 @@ if len(sys.argv) == 1:
 				return false;
 			}
 
-			if(this.#model.output.shape.join(",") != fake_model.output.shape.join(",")) {
+			if(this.#model.output.shape.map(item => item === null ? "null" : item).join(",") != fake_model.output.shape.map(item => item === null ? "null" : item).join(",")) {
 				ret = false;
 			}
 
