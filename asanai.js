@@ -11763,6 +11763,28 @@ if len(sys.argv) == 1:
 		return res;
 	}
 
+	get_epochs () {
+		return this.#epochs;
+	}
+
+	set_epochs (new_nr) {
+		if(this.#looks_like_number(new_nr) && ("" + this.#parse_int(new_nr)) == ("" + new_nr)) {
+			if(this.#epochs == new_nr) {
+				this.wrn(`epochs: stayed the same. Not changing.`);
+			} else {
+				this.#epochs = this.#parse_int(new_nr);
+			}
+
+			return new_nr;
+		} else {
+			throw new Error(`set_epochs: ${new_nr} (type: ${typeof(new_nr)}) does not look like a valid number. Must be an integer!`);
+		}
+	}
+
+	get_max_activation_iterations () {
+		return this.#max_activation_iterations;
+	}
+
 	set_max_activation_iterations (new_nr) {
 		if(this.#looks_like_number(new_nr) && ("" + this.#parse_int(new_nr)) == ("" + new_nr)) {
 			if(this.#max_activation_iterations == new_nr) {
