@@ -4376,7 +4376,7 @@ class asanAI {
 		}
 
 		if(this.#model.input.shape.length != 4) {
-			this.err(`[load_image_urls_to_div_and_tensor] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.join(", ")}]`);
+			this.err(`[load_image_urls_to_div_and_tensor] this.#model.input must be an array with 4 elements, but is [${this.#model.input.shape.map(item => item === null ? "null" : item).join(", ")}]`);
 			return;
 		}
 
