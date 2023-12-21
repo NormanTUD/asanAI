@@ -994,7 +994,7 @@ class asanAI {
 				throw new Error(`Failed to load JSON file: ${filename}`);
 			}
 		} catch (error) {
-			throw new Error(`Failed to load ${filename}.`);
+			throw new Error(`Failed to load ${filename}. Make sure you downloaded the proper file from asanai.scads.ai or the source code of asanAI at https://github.com/NormanTUD/asanAI and include it in your directory. Without this file, asanAI.js will not work.`);
 		}
 	}
 
