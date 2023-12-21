@@ -5090,8 +5090,7 @@ class asanAI {
 				this_plot_data.push(asanai_this.#training_logs_epoch[other_key_name]);
 			}
 
-			$("#plotly_epoch_history").parent().show();
-			$("#plotly_epoch_history").show();
+			$("#plotly_epoch_history").show().parent().show();
 			if(epochNr == 1) {
 				Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
 			} else {
