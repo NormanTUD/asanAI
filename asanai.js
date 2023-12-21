@@ -80,7 +80,7 @@ class asanAI {
 	#this_training_start_time = null;
 	#max_number_of_images_in_grid = 50;
 	#is_classification = true;
-	#lang = "en";
+	#lang = this.get_lang_cookie();
 	#language = {}
 	#started_training = false;
 	#last_batch_time = null;
@@ -11866,5 +11866,9 @@ if len(sys.argv) == 1:
 		} else {
 			throw new Error(`set_loss: ${new_loss} (type: ${typeof(new_loss)}) is not a valid loss. Valid losses are: ${valid_losses.join(", ")}.`);
 		}
+	}
+
+	get_lang () {
+		return this.#lang;
 	}
 }
