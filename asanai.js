@@ -5387,7 +5387,7 @@ class asanAI {
 
 			if(i == 0) {
 				str += `<tr>`;
-				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>Correct category</i> &rarr;<br><i>Predicted category</i> &darr;</th>`;
+				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>${this.#language[this.#lang]["correct_category"]}</i> &rarr;<br><i>${this.#language[this.#lang]["predicted_category"]}</i> &darr;</th>`;
 				for (var j =  0; j < classes.length; j++) {
 					str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
 				}
@@ -9494,9 +9494,23 @@ if len(sys.argv) == 1:
 		}
 	}
 
+	#set_cookie(name, value, days = 365) {
+		var expires = "";
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+			expires = "; expires=" + date.toUTCString();
+		}
+
+		// Set SameSite and secure attributes
+		var cookieOptions = "; SameSite=None; secure";
+
+		document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
+	}
+
 	async set_lang(la) {
 		this.#lang = la;
-		set_cookie("lang", l, 30); // Save the language in a cookie for 30 days
+		this.#set_cookie("lang", la, 30); // Save the language in a cookie for 30 days
 		await this.#update_translations();
 
 		this.#swap_image_src_language();

@@ -1,6 +1,8 @@
 <?php
 	$GLOBALS['translations'] = array(
 		'en' => array(
+			"predicted_category" => "Predicted category",
+			"correct_category" => "Correct category",
 			"model_was_set" => "Model was set properly",
 			'example_csv_shoe_size' => 'Load example shoe data (0 = male, 1 = female)',
 			'we_want_to_train_this_model_5_categories' => 'The computer should now learn to classify the images into one of the five categories.',
@@ -305,6 +307,8 @@
 		),
 
 		'de' => array(
+			"predicted_category" => "Vorhergesagte Kategorie",
+			"correct_category" => "Richtige Kategorie",
 			"model_was_set" => "Modell erfolgreich gesetzt",
 			'example_csv_shoe_size' => 'Schuhbeispiel-CSV laden (0 = männlich, 1 = weiblich)',
 			'Brandschutz' => 'Brandschutz',
