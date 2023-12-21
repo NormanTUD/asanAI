@@ -9533,7 +9533,7 @@ if len(sys.argv) == 1:
 		return "en";
 	}
 
-	set_lang_cookie(value, days) {
+	#set_lang_cookie(value, days) {
 		const expirationDate = new Date();
 		expirationDate.setDate(expirationDate.getDate() + days);
 		const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
