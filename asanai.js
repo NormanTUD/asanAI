@@ -9558,10 +9558,10 @@ if len(sys.argv) == 1:
 		});
 	}
 
-	async update_lang(la) {
+	async #update_lang(la) {
 		this.#lang = la;
 		await this.#update_translations();
-		set_lang_cookie(this.#lang, 99999);
+		this.#set_lang_cookie(this.#lang, 99999);
 	}
 
 	trm (name) {
