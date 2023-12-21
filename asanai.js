@@ -11295,8 +11295,8 @@ if len(sys.argv) == 1:
 
 			if(full_data["worked"]) {
 				if(Object.keys(full_data).includes("data")) {
-					var _tensor = tensor(full_data["data"]);
-					var t_str = _tensor_print_to_string(_tensor);
+					var _tensor = this.tensor(full_data["data"]);
+					var t_str = this.#_tensor_print_to_string(_tensor);
 					this.log("Maximally activated tensors:", t_str);
 					$("#maximally_activated_content").prepend(`<input style='width: 100%' value='Maximally activated tensors for Layer ${layer}, Neuron ${neuron}:' /><pre>${t_str}</pre>`);
 					await this.dispose(_tensor);
@@ -11876,5 +11876,30 @@ if len(sys.argv) == 1:
 		}
 
 		throw new Error(`Translation key "${key}" cannot be found!`);
+	}
+
+	#_tensor_print_to_string (_tensor) {
+		try {
+			var logBackup = console.log;
+			var logMessages = [];
+
+			console.log = function () {
+				logMessages.push.apply(logMessages, arguments);
+			};
+
+			_tensor.print(1);
+
+			console.log = logBackup;
+
+			return logMessages.join("\n");
+		} catch (e) {
+			if(("" + e).includes("Error: Tensor is disposed")) {
+				wrn("[#_tensor_print_to_string] tensor to be printed was already disposed");
+			} else {
+				err("[#_tensor_print_to_string] #_tensor_print_to_string failed:", e);
+
+			}
+			return "<span class='error_msg'>Error getting tensor as string</span>";
+		}
 	}
 }
