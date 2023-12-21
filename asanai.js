@@ -3625,7 +3625,6 @@ class asanAI {
 
 	#get_layer_identification (i) {
 		if(this.#model === null || this.#model === undefined) {
-			model_is_ok();
 			return;
 		}
 
@@ -5045,7 +5044,7 @@ class asanAI {
 				}
 				await show_prediction(0, 1);
 				if(await asanai_this.#input_shape_is_image()) {
-					await repredict();
+					await this.#redo_what_has_to_be_redone()
 				}
 			}
 
@@ -8145,10 +8144,6 @@ class asanAI {
 			x_shape = "[height, width, 3]";
 		}
 
-		if (!dont_reget_labels) {
-			await get_label_data();
-		}
-
 		var layer_types = $(".layer_type");
 		var layer_settings = $(".layer_setting");
 
@@ -8544,14 +8539,14 @@ ${this.#python_data_to_string(data, ['kernel_size'])}
 		return "None";
 	}
 
-	get_input_shape_with_batch_size() {
+	get_input_shape_with_batch_size () {
 		var shape = this.get_input_shape();
 		shape.unshift(this.#parse_int(this.#batch_size));
 		var res = shape;
 		return res;
 	}
 
-	get_input_shape() {
+	get_input_shape () {
 		if(!this.#model) {
 			this.err(`this.#model`);
 			return;
@@ -8935,7 +8930,7 @@ if len(sys.argv) == 1:
 		return data;
 	}
 
-	async get_model_structure() {
+	async get_model_structure () {
 		var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 		var structure = [];
 
@@ -9526,7 +9521,7 @@ if len(sys.argv) == 1:
 		}
 	}
 
-	get_lang_cookie() {
+	get_lang_cookie () {
 		const cookies = document.cookie.split(";");
 		for (var i = 0; i < cookies.length; i++) {
 			const cookie = cookies[i].trim();
@@ -9578,7 +9573,7 @@ if len(sys.argv) == 1:
 		return `${name} NOT FOUND`;
 	}
 
-	_get_new_translations() {
+	_get_new_translations () {
 		var url = "translations.php?print=1";
 
 		function parse(data) {
