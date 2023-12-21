@@ -3,6 +3,8 @@
 class asanAI {
 	#max_activation_iterations = 5;
 
+	#lang_cookie_name = "asanai_language_cookie";
+
 	#maximally_activated_neuron_class = "maximally_activated_class";
 
 	#currently_generating_images = false;
@@ -9524,8 +9526,8 @@ if len(sys.argv) == 1:
 		const cookies = document.cookie.split(";");
 		for (var i = 0; i < cookies.length; i++) {
 			const cookie = cookies[i].trim();
-			if (cookie.startsWith(lang_cookie_name + "=")) {
-				return cookie.substring(lang_cookie_name.length + 1);
+			if (cookie.startsWith(this.#lang_cookie_name + "=")) {
+				return cookie.substring(this.#lang_cookie_name.length + 1);
 			}
 		}
 		return "en";
@@ -9535,7 +9537,7 @@ if len(sys.argv) == 1:
 		const expirationDate = new Date();
 		expirationDate.setDate(expirationDate.getDate() + days);
 		const cookieValue = encodeURIComponent(value) + "; expires=" + expirationDate.toUTCString() + "; path=/";
-		document.cookie = lang_cookie_name + "=" + cookieValue;
+		document.cookie = this.#lang_cookie_name + "=" + cookieValue;
 	}
 
 	async #update_translations(force=0) {
