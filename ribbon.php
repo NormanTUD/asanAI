@@ -272,155 +272,157 @@
 			<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
 		</div>
 
-		<div class="ribbon-group-sep"></div>
-		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
-			<div class="ribbon-toolbar">
-				<table>
-					<tr>
-						<td>
-							<table>
-								<tr>
-									<td><span class='TRANSLATEME_kernel_initializer'></span></td>
-									<td>
-										<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 120px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td><span class='TRANSLATEME_bias_initializer'></span></td>
-									<td>
-										<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 120px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td><span class="TRANSLATEME_activation_functions"></span></td>
-									<td>
-										<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 120px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>&rdca; <span class='TRANSLATEME_except_last_layer'></span></td>
-									<td>
-										<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 120px">
-											<option value="none">&mdash;</option>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<td>
-							<table>
-								<tr>
-									<td colspan=2>
-										<select class="set_all_initializers_input" id="change_initializers_selector" onchange="change_all_initializers()" style="width: 120px">
-											<option value="glorotUniform">glorotUniform</option>
-											<option value="constant">constant</option>
-											<option value="glorotNormal">glorotNormal</option>
-											<option value="heNormal">heNormal</option>
-											<option value="heUniform">heUniform</option>
-											<option value="leCunNormal">leCunNormal</option>
-											<option value="leCunUniform">leCunUniform</option>
-											<option value="ones">ones</option>
-											<option value="randomNormal">randomNormal</option>
-											<option value="randomUniform">randomUniform</option>
-											<option value="truncatedNormal">truncatedNormal</option>
-											<option value="varianceScaling">varianceScaling</option>
-											<option value="zeros">zeros</option>
-										</select>
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_mean" style="display: none">
-									<td>
-										Mean:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
-									<td>
-										Value:
-									</td>
-									<td>
-										<input type="number" step="1" class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
-									<td>
-										Distribution:
-									</td>
-									<td>
-										<select class="set_all_initializers_input" id="set_all_initializers_value_distribution" onchange="change_all_initializers()">
-											<option value="normal">normal</option>
-											<option value="uniform">uniform</option>
-											<option value="truncatedNormal">truncatedNormal</option>
-										</select>
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_mode" style="display: none">
-									<td>
-										Mode:
-									</td>
-									<td>
-										<select class="set_all_initializers_input" id="set_all_initializers_value_mode" onchange="change_all_initializers()">
-											<option value="fanIn">fanIn</option>
-											<option value="fanOut">fanOut</option>
-											<option value="fanAvg">fanAvg</option>
-										</select>
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_scale" style="display: none">
-									<td>
-										Scale:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" type="number" step="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
-									<td>
-										Maxval:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" type="number" step="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
-									<td>
-										Minval:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" type="number" step="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
-									<td>
-										Stddev:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" type="number" step="1" />
-									</td>
-								</tr>
-								<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
-									<td>
-										Seed:
-									</td>
-									<td>
-										<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" type="number" step="1" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
+		<div class="expert_mode_only">
+			<div class="ribbon-group-sep"></div>
+			<div class="ribbon-group-sep-hr"><hr></div>
+			<div class="ribbon-group">
+				<div class="ribbon-toolbar">
+					<table>
+						<tr>
+							<td>
+								<table>
+									<tr>
+										<td><span class='TRANSLATEME_kernel_initializer'></span></td>
+										<td>
+											<select id="set_all_kernel_initializers" onchange="set_all_kernel_initializers()" style="width: 120px">
+												<option value="none">&mdash;</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><span class='TRANSLATEME_bias_initializer'></span></td>
+										<td>
+											<select id="set_all_bias_initializers" onchange="set_all_bias_initializers()" style="width: 120px">
+												<option value="none">&mdash;</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><span class="TRANSLATEME_activation_functions"></span></td>
+										<td>
+											<select id="set_all_activation_functions" onchange="set_all_activation_functions()" style="width: 120px">
+												<option value="none">&mdash;</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>&rdca; <span class='TRANSLATEME_except_last_layer'></span></td>
+										<td>
+											<select id="set_all_activation_functions_except_last_layer" onchange="set_all_activation_functions_except_last_layer()" style="width: 120px">
+												<option value="none">&mdash;</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table>
+									<tr>
+										<td colspan=2>
+											<select class="set_all_initializers_input" id="change_initializers_selector" onchange="change_all_initializers()" style="width: 120px">
+												<option value="glorotUniform">glorotUniform</option>
+												<option value="constant">constant</option>
+												<option value="glorotNormal">glorotNormal</option>
+												<option value="heNormal">heNormal</option>
+												<option value="heUniform">heUniform</option>
+												<option value="leCunNormal">leCunNormal</option>
+												<option value="leCunUniform">leCunUniform</option>
+												<option value="ones">ones</option>
+												<option value="randomNormal">randomNormal</option>
+												<option value="randomUniform">randomUniform</option>
+												<option value="truncatedNormal">truncatedNormal</option>
+												<option value="varianceScaling">varianceScaling</option>
+												<option value="zeros">zeros</option>
+											</select>
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_mean" style="display: none">
+										<td>
+											Mean:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
+										<td>
+											Value:
+										</td>
+										<td>
+											<input type="number" step="1" class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
+										<td>
+											Distribution:
+										</td>
+										<td>
+											<select class="set_all_initializers_input" id="set_all_initializers_value_distribution" onchange="change_all_initializers()">
+												<option value="normal">normal</option>
+												<option value="uniform">uniform</option>
+												<option value="truncatedNormal">truncatedNormal</option>
+											</select>
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_mode" style="display: none">
+										<td>
+											Mode:
+										</td>
+										<td>
+											<select class="set_all_initializers_input" id="set_all_initializers_value_mode" onchange="change_all_initializers()">
+												<option value="fanIn">fanIn</option>
+												<option value="fanOut">fanOut</option>
+												<option value="fanAvg">fanAvg</option>
+											</select>
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_scale" style="display: none">
+										<td>
+											Scale:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" type="number" step="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
+										<td>
+											Maxval:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" type="number" step="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
+										<td>
+											Minval:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" type="number" step="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
+										<td>
+											Stddev:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" type="number" step="1" />
+										</td>
+									</tr>
+									<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
+										<td>
+											Seed:
+										</td>
+										<td>
+											<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" type="number" step="1" />
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers"></span></div>
 			</div>
-			<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers"></span></div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>
