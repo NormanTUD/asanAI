@@ -837,10 +837,10 @@ class asanAI {
 		var last_tested_temml_version = "0.10.18";
 
 
-		this.tf_version = this.get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
-		this.jquery_version = this.get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
-		this.plotly_version = this.get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
-		this.plotly_version = this.get_version(`temml.version`, last_tested_temml_version, "temml");
+		this.tf_version = this.#get_version(`tf.version["tfjs-core"]`, last_tested_tf_version, "tensorflow.js");
+		this.jquery_version = this.#get_version(`jQuery().jquery`, last_tested_jquery_version, "jQuery");
+		this.plotly_version = this.#get_version(`Plotly.version`, last_tested_plotly_version, "Plotly");
+		this.temml_version = this.#get_version(`temml.version`, last_tested_temml_version, "temml");
 
 
 		for (var key of Object.keys(this.#js_names_to_python_names)) {
@@ -1498,7 +1498,7 @@ class asanAI {
 		return true;
 	}
 
-	get_version (code, last_tested, name) {
+	#get_version (code, last_tested, name) {
 		code = "try { " + code + "} catch (e) { }";
 		try {
 			var res = eval(code);
