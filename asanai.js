@@ -5536,7 +5536,12 @@ class asanAI {
 				e = e.message;
 			}
 
-			if(("" + e).includes("e is null")) {
+			e = "" + e;
+
+			if(e.includes("e is null")) {
+				return false;
+			} else if(e.includes("Cannot start training because another fit")) {
+				this.wrn(`A fit is already ongoing. Can only fit one model at a time.`);
 				return false;
 			} else {
 				this.#started_training = false;
@@ -11793,6 +11798,28 @@ if len(sys.argv) == 1:
 		return this.#loss;
 	}
 
+	set_metric (new_loss) {
+		var valid_metrices = [
+			"meanAbsoluteError",
+			"meanSquaredError",
+			"rmse",
+			"categoricalCrossentropy",
+			"binaryCrossentropy",
+			"meanSquaredLogarithmicError",
+			"poisson",
+			"squaredHinge",
+			"logcosh",
+			"meanAbsolutePercentageError",
+		];
+
+		if(valid_metrices.includes(new_metric)) {
+			this.#metric = new_metric;
+
+			return this.#metric;
+		} else {
+			throw new Error(`set_metric: ${new_metric} (type: ${typeof(new_metric)}) is not a valid metric. Valid metrices are: ${valid_metrices.join(", ")}.`);
+		}
+	}
 
 	set_loss (new_loss) {
 		var valid_losses = [
