@@ -2703,7 +2703,7 @@ class asanAI {
 			this.show_internals()
 		}
 
-		this.log(this.#language[this.#lang]["model_was_set"]);
+		this.log(this.#tr("model_was_set"));
 
 		return this.#model;
 	}
@@ -5025,12 +5025,12 @@ class asanAI {
 
 			if(!asanai_this.#last_batch_plot_time || (Date.now() - asanai_this.#last_batch_plot_time) > (asanai_this.#parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 				if(batchNr == 1) {
-					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+					Plotly.newPlot("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+					Plotly.newPlot("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 				} else {
 					try {
-						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+						Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+						Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 					} catch (e) {
 						asanai_this.err("" + e);
 					}
@@ -5093,16 +5093,16 @@ class asanAI {
 			$("#plotly_epoch_history").parent().show();
 			$("#plotly_epoch_history").show();
 			if(epochNr == 1) {
-				Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["epochs"]));
+				Plotly.newPlot("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
 			} else {
-				Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["epochs"]));
+				Plotly.update("plotly_epoch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("epochs")));
 			}
 
 			await asanai_this.#visualize_train();
 
 			var this_plot_data = [asanai_this.#training_logs_batch["loss"]];
-			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["batches"]));
-			Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#language[asanai_this.#lang]["time_per_batch"]));
+			Plotly.update("plotly_batch_history", this_plot_data, asanai_this.#get_plotly_layout(asanai_this.#tr("batches")));
+			Plotly.update("plotly_time_per_batch", [asanai_this.#time_per_batch["time"]], asanai_this.#get_plotly_layout(asanai_this.#tr("time_per_batch")));
 			asanai_this.#last_batch_plot_time = false;
 
 			if(asanai_this.#training_logs_epoch["loss"].x.length >= 2) {
@@ -5145,7 +5145,7 @@ class asanAI {
 
 	#human_readable_time(seconds, start="", end="") {
 		if (!seconds) {
-			return this.#language[this.#lang]["one_second"];
+			return this.#tr("one_second");
 		}
 
 		if(seconds > 86400 * 365) {
@@ -5167,11 +5167,11 @@ class asanAI {
 		}
 
 		var levels = [
-			[Math.floor(seconds / 31536000), this.#language[this.#lang]["years"]],
-			[Math.floor((seconds % 31536000) / 86400), this.#language[this.#lang]["days"]],
-			[Math.floor(((seconds % 31536000) % 86400) / 3600), this.#language[this.#lang]["hours"]],
-			[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), this.#language[this.#lang]["minutes"]],
-			[(((seconds % 31536000) % 86400) % 3600) % 60, this.#language[this.#lang]["seconds"]],
+			[Math.floor(seconds / 31536000), this.#tr(years)],
+			[Math.floor((seconds % 31536000) / 86400), this.#tr(days)],
+			[Math.floor(((seconds % 31536000) % 86400) / 3600), this.#tr("hours")],
+			[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), this.#tr("minutes")],
+			[(((seconds % 31536000) % 86400) % 3600) % 60, this.#tr("seconds")],
 		];
 
 		var returntext = "";
@@ -5388,7 +5388,7 @@ class asanAI {
 
 			if(i == 0) {
 				str += `<tr>`;
-				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>${this.#language[this.#lang]["correct_category"]}</i> &rarr;<br><i>${this.#language[this.#lang]["predicted_category"]}</i> &darr;</th>`;
+				str += `<th class='confusion_matrix_tx' style='text-align: right'><i>${this.#tr("correct_category")}</i> &rarr;<br><i>${this.#tr("predicted_category")}</i> &darr;</th>`;
 				for (var j =  0; j < classes.length; j++) {
 					str += `<th class='confusion_matrix_tx'>${classes[j]}</th>`;
 				}
@@ -6970,7 +6970,7 @@ class asanAI {
 
 		// Create the "Copy to Clipboard" button
 		const copyButton = document.createElement('button');
-		copyButton.textContent = this.#language[this.#lang]['copy_to_clipboard'];
+		copyButton.textContent = this.#tr('copy_to_clipboard');
 		copyButton.style.width = '100%';
 		copyButton.style.marginTop = '10px';
 
@@ -10234,7 +10234,7 @@ if len(sys.argv) == 1:
 		this.#enable_train();
 
 		if(!fake_model_structure) {
-			this.dbg("[create_model] " + this.#language[this.#lang]["model_compiled_successfully"]);
+			this.dbg("[create_model] " + this.#tr("model_compiled_successfully"));
 		}
 
 		if(old_model) {
@@ -11188,7 +11188,7 @@ if len(sys.argv) == 1:
 
 			var tries_left = 3;
 
-			var base_msg = `${this.#language[this.#lang]["generating_image_for_neuron"]} ${i + 1} ${this.#language[this.#lang]["of"]} ${neurons}`;
+			var base_msg = `${this.#tr("generating_image_for_neuron")} ${i + 1} ${this.#tr("of")} ${neurons}`;
 
 			try {
 				this.log(base_msg);
@@ -11201,7 +11201,7 @@ if len(sys.argv) == 1:
 						while (tries_left) {
 							await this.delay(200);
 							try {
-								this.log(`${base_msg} ${this.#language[this.#lang]["failed_try_again"]}...`);
+								this.log(`${base_msg} ${this.#tr("failed_try_again")}...`);
 								canvasses.push(await draw_maximally_activated_layer(layer, type, 1));
 							} catch (e) {
 								if(("" + e).includes("already disposed")) {
@@ -11241,7 +11241,7 @@ if len(sys.argv) == 1:
 
 		$("#maximally_activated_content").prepend(`<${type_h2} class='h2_maximally_activated_layer_contents'>${ruler}<input class="hide_in_cosmo_mode" style='width: 100%' value='Layer ${layer + types_in_order}' /></${type_h2}>${br}`);
 
-		this.log(this.#language[this.#lang]["done_generating_images"]);
+		this.log(this.#tr("done_generating_images"));
 
 		this.#currently_generating_images = false;
 
@@ -11574,7 +11574,7 @@ if len(sys.argv) == 1:
 		this.#create_model_queue.push(_create_model_uuid);
 
 		if(this.#has_missing_values) {
-			this.log(this.#language[this.#lang]["not_creating_model_because_values_are_missing"]);
+			this.log(this.#tr("not_creating_model_because_values_are_missing"));
 			return this.#model;
 		}
 
@@ -11865,5 +11865,17 @@ if len(sys.argv) == 1:
 
 	get_lang () {
 		return this.#lang;
+	}
+
+	#tr(key) {
+		if(!Object.keys(this.#language).includes(this.#lang)) {
+			throw new Error(`${this.#lang} cannot be found in this.#language! Valid keys are ${Object.keys(this.#language).join(", ")}`);
+		}
+
+		if(Object.keys(this.#language[this.#lang]).includes(key)) {
+			return this.#language [this.#lang][key];
+		}
+
+		throw new Error(`Translation key "${key}" cannot be found!`);
 	}
 }
