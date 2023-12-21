@@ -9,8 +9,6 @@ class asanAI {
 
 	#show_internals_slider_value = true;
 
-	#last_known_good_input_shape = null;
-
 	#create_model_queue = [];
 
 	#model_is_trained = false;
@@ -9037,18 +9035,6 @@ if len(sys.argv) == 1:
 							}
 						}
 					}
-
-					is_classification = false;
-
-					if($("#loss").val() != "meanSquaredError") {
-						set_loss("meanSquaredError", 1);
-					}
-
-					if($("#metric").val() != "meanSquaredError") {
-						set_metric("meanSquaredError", 1);
-					}
-
-					await change_last_responsible_layer_for_image_output();
 				}
 			}
 		} else {
@@ -10251,10 +10237,6 @@ if len(sys.argv) == 1:
 		}
 
 		var model_data = await this.#get_model_data();
-
-		if(!fake_model_structure) {
-			this.#last_known_good_input_shape = this.get_input_shape_as_string();
-		}
 
 		return [new_model, model_data];
 	}
@@ -11796,6 +11778,42 @@ if len(sys.argv) == 1:
 			return new_nr;
 		} else {
 			throw new Error(`set_max_activation_iterations: ${new_nr} (type: ${typeof(new_nr)}) does not look like a valid number. Must be an integer!`);
+		}
+	}
+
+	get_model_is_trained () {
+		return this.#model_is_trained;
+	}
+
+	get_model_config_hash () {
+		return this.#model_config_hash;
+	}
+
+	get_loss () {
+		return this.#loss;
+	}
+
+
+	set_loss (new_loss) {
+		var valid_losses = [
+			"meanAbsoluteError",
+			"meanSquaredError",
+			"rmse",
+			"categoricalCrossentropy",
+			"binaryCrossentropy",
+			"meanSquaredLogarithmicError",
+			"poisson",
+			"squaredHinge",
+			"logcosh",
+			"meanAbsolutePercentageError",
+		];
+
+		if(valid_losses.includes(new_loss)) {
+			this.#loss = new_loss;
+
+			return this.#loss;
+		} else {
+			throw new Error(`set_loss: ${new_loss} (type: ${typeof(new_loss)}) is not a valid loss. Valid losses are: ${valid_losses.join(", ")}.`);
 		}
 	}
 }
