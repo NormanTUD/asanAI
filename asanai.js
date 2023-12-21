@@ -11872,7 +11872,7 @@ if len(sys.argv) == 1:
 		}
 
 		if(Object.keys(this.#language[this.#lang]).includes(key)) {
-			return this.#language [this.#lang][key];
+			return this.#language[this.#lang][key];
 		}
 
 		throw new Error(`Translation key "${key}" cannot be found!`);
