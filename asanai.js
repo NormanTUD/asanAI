@@ -9511,14 +9511,18 @@ if len(sys.argv) == 1:
 	}
 
 	async set_lang(la) {
-		if(Object.keys(this.#language).includes(la)) {
-			this.#lang = la;
-			this.#set_cookie("lang", la, 30); // Save the language in a cookie for 30 days
-			await this.#update_translations();
+		if(typeof(la) == "string") {
+			if(Object.keys(this.#language).includes(la)) {
+				this.#lang = la;
+				this.#set_cookie("lang", la, 30); // Save the language in a cookie for 30 days
+				await this.#update_translations();
 
-			this.#swap_image_src_language();
+				this.#swap_image_src_language();
+			} else {
+				throw new Error(`Language "${la}" could not be found!`);
+			}
 		} else {
-			throw new Error(`Language "${la}" could not be found!`);
+			throw new Error(`set_lang: parameter must be string, but is ${typeof(la)}`);
 		}
 	}
 
