@@ -238,7 +238,6 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 				if(black_and_white) {
 					red = green = blue = colors[j][i];
 				} else {
-					log(colors);
 					red = colors[j][i][0];
 					green = colors[j][i][1];
 					blue = colors[j][i][2];
