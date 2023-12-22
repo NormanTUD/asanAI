@@ -112,7 +112,7 @@ html .ui-button.ui-state-disabled:active {
 }
 
 #tablist {
-	background: #8cc0da; 
+	background: linear-gradient(0deg, rgba(238,249,255,1) 0%, rgba(216,236,247,1) 11%, rgba(140,192,218,1) 100%);
 }
 
 #math_tab {
