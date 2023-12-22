@@ -3935,14 +3935,14 @@ class asanAI {
 
 		this.#model.summary(200);
 
-		$div.html(this.summary_to_table(logMessages));
+		$div.html(this.#summary_to_table(logMessages));
 
 		console.log = logBackup;
 
 		this.#model_summary_div = divname;
 	}
 
-	summary_to_table(lines) {
+	#summary_to_table(lines) {
 		var new_array = [];
 
 		var colspan_nr = 0;
