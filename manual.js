@@ -292,7 +292,7 @@ function add_table (layer_type, config, onchange, uuid) {
 				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + python_names_to_js_names[layer_option] + "</td><td>" + selecter + "</td></tr>");
 			} else {
 				log(layer_option + " does not yet exist");
-				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>Diese Layer-Option existiert noch nicht</td></tr>");
+				$("#" + uuid + "_layer_gui").html($("#" + uuid + "_layer_gui").html() + "<tr><td>" + layer_option + "</td><td>This layer option does not yet exist</td></tr>");
 			}
 		}
 	}
