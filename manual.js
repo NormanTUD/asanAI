@@ -121,18 +121,37 @@ function get_element (item) {
 	if($(item).is(":checkbox")) {
 		return $(item).is(":checked");
 	} else if ($(item).is("input")) {
-		if($(item).hasClass("kernelSize") || $(item).hasClass("dilationRate") || $(item).hasClass("kernelSize") || $(item).hasClass("strides") || $(item).hasClass("size")) {
+		if(
+			$(item).hasClass("poolSize") ||
+			$(item).hasClass("kernelSize") ||
+			$(item).hasClass("dilationRate") ||
+			$(item).hasClass("kernelSize") ||
+			$(item).hasClass("strides") ||
+			$(item).hasClass("size")
+		) {
 			var str = $(item).val();
 			var values = str.split(/\s*,\s*/);
 			values = values.map(function (x) {
-				return parse_int(x);
+				if(looks_like_number(x)) {
+					return parse_int(x);
+				} else {
+					err(`${x} does not look like a number (type: ${typeof(x)})`);
+					return null;
+				}
 			});
 
 			return values;
 		} else if ($(item).hasClass("rate") || $(item).hasClass("stddev")) {
 			return parse_float($(item).val());
 		} else {
-			return parse_int($(item).val());
+			var new_nr = $(item).val();
+			if(looks_like_number(new_nr)) {
+				return parse_int(new_nr);
+			} else {
+				err(`${new_nr} does not look like a number (type: ${typeof(new_nr)})`);
+				console.log("item:", item);
+				return null;
+			}
 		}
 	} else if ($(item).is("select")) {
 		return $(item).val();
