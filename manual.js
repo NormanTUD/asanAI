@@ -339,7 +339,7 @@ function add_html_for_layer_types (layer_type) {
 		</script>
 	</div>
 	<span id="${shapes_id}"></span>
-	<div id="${uuid}_error"></div>
+	<div class='error_msg' id="${uuid}_error"></div>
 	<table id="${uuid}_layer_gui"></table>`;
 
 	$("#" + div_to_add_to).html(html);
