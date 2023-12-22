@@ -38,6 +38,7 @@ function visualizeNumbersOnCanvas(
 
 function normalize_to_rgb_min_max (x, min, max) {
 	assert(typeof(x) == "number", "x is not a number");
+
 	if(typeof(max) != "number" || typeof(min) != "number") {
 		return x;
 	}
@@ -45,12 +46,13 @@ function normalize_to_rgb_min_max (x, min, max) {
 	var multiplicator = x - min;
 	var divisor = max - min;
 
+	//log("x:", x, "min:", min, "multiplicator:", multiplicator, "divisor:", divisor);
+
 	if(divisor == 0) {
 		return val;
 	}
 
 	var to_be_parsed_as_int = 255 * multiplicator / divisor;
-
 
 	var val = parse_int(to_be_parsed_as_int);
 
@@ -215,13 +217,14 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 	var max = 0;
 
 	if(denormalize) {
-		for (var x = 0, i = 0; i < width; x += pixel_size, i++) {
+		for (var x = 0, i = 0; i < _width; x += pixel_size, i++) {
 			for (var y = 0, j = 0; j < _height; y += pixel_size, j++) {
 				var red, green, blue;
 
 				if(black_and_white) {
 					red = green = blue = colors[j][i];
 				} else {
+					log(colors);
 					red = colors[j][i][0];
 					green = colors[j][i][1];
 					blue = colors[j][i][2];

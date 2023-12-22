@@ -79,7 +79,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 	}
 
 	try {
-		log(config, kwargs);
+		//log(config, kwargs);
 		eval("layer = tf.layers." + layer_type + "(config)");
 		$("#" + uuid + "_error").html("");
 	} catch (e) {
@@ -98,7 +98,7 @@ async function get_network_type_result_by_array (layer_type, array, config, expa
 		var res;
 
 		try {
-			log(layer_type, config, _tensor, kwargs);
+			//log(layer_type, config, _tensor, kwargs);
 			input_shape = _tensor.shape;
 			var tensor_res = await layer.apply(_tensor, kwargs);
 			res = array_sync(tensor_res);
@@ -413,7 +413,16 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 							for (var channel_id = 0; channel_id < layer_kernel_tensor.shape[1]; channel_id++) {
 								var id = uuidv4();
 								$("<canvas class='kernel_images' id='" + id + "'></canvas>").appendTo(internal_canvas_div);
-								draw_grid($("#" + id)[0], kernel_pixel_size, layer_kernel[filter_id][channel_id], 1, 1);
+
+								var grid_element = $("#" + id)[0];
+
+								var pixel_value = layer_kernel[filter_id][channel_id];
+
+								assert(typeof(grid_element) == "object", "grid_element is not an object, but " + typeof(grid_element));
+								assert(typeof(kernel_pixel_size) == "number", "kernel_pixel_size is not a number, but " + typeof(kernel_pixel_size)); 
+								assert(Array.isArray(pixel_value), "pixel_value is not an array, but " + typeof(pixel_value)); 
+
+								draw_grid(grid_element, kernel_pixel_size, pixel_value, 1, 1);
 
 								var kernel_canvasses_id = uuid + "_kernel_canvasses";
 								$("#" + kernel_canvasses_id).show();
@@ -427,8 +436,16 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 		for (var i = 0; i < _tensor.shape[0]; i++) {
 			var id = uuidv4();
 			$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
-			draw_grid($("#" + id)[0], 1, array_sync(_tensor)[i], 1, 1, "", "");
-			await toPixels(_tensor, canvas);
+
+			var canvas = $("#" + id)[0];
+
+			var pixels = array_sync(_tensor)[i];
+
+			console.log("pixels:", pixels);
+
+			//draw_grid(canvas, 1, pixels, 1, 1, "", "");
+
+			await toPixels(tensor(array_sync(_tensor)[i]), canvas);
 		}
 	}
 
@@ -525,6 +542,7 @@ await start_test_training(), TODO
 toc();
 
 add_html_for_layer_types("conv2d");
+/*
 add_html_for_layer_types("upSampling2d");
 add_html_for_layer_types("maxPooling2d");
 add_html_for_layer_types("averagePooling2d");
@@ -535,3 +553,4 @@ add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
 add_html_for_layer_types("separableConv2d");
 add_html_for_layer_types("depthwiseConv2d");
+*/
