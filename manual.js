@@ -311,7 +311,7 @@ function add_html_for_layer_types (layer_type) {
 	$("#" + div_to_add_to).html("");
 
 	var html = `<div class="center_vertically">
-		\\( \\Bigg[ \\) <img id="${base_img_id}" src="manual/before_averagePooling.png"> <span id="${kernel_canvasses_id}" style="display: none"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> </span>\\( \\Bigg] \\rightarrow \\Bigg[ \\)   <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
+		\\( \\Bigg[ \\) <img id="${base_img_id}" src="manual/example.jpg"> <span id="${kernel_canvasses_id}" style="display: none"> \\( \\cdot \\Bigg[ \\) <span id="${internal_canvasses_id}"></span> </span>\\( \\Bigg] \\rightarrow \\Bigg[ \\)   <span id="${out_canvasses_id}"></span> \\( \\Bigg] \\)
 		<br>
 		<script>
 			$(document).ready(function(){
