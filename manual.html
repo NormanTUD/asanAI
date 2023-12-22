@@ -1722,14 +1722,17 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<h3>How to chose an optimizer</h3>
 
-			Choosing the appropriate optimizer for a neural network depends on various characteristics of the data and the model, such as the complexity of the model, the size of the dataset, the nature of the problem, the desired training speed and the desired accuracy. Here are some general guidelines for selecting an optimizer based on the characteristics of the data and the problem:
+			Choosing the appropriate optimizer for a neural network depends on various characteristics of the data and the model, such as the complexity of the model, the size of the dataset, the nature of the problem, the desired training speed and the desired accuracy. Here are some general guidelines for selecting an optimizer based on the characteristics of the data and the problem:<br>
 
-    For simple and shallow models, with small or moderate size datasets, the basic optimizers like stochastic gradient descent (SGD) or mini-batch gradient descent can work well.
-    For more complex models, with large or high-dimensional datasets, advanced optimizers like Adam, Adagrad, or Adadelta can work well.
-    For problems with a lot of noise in the data, or for models with sparse data, optimizers like RMSprop or Adamax can work well.
-    For problems with a lot of local minima, optimizers like Nadam, which combine Adam with Nesterov momentum, can work well.
+			For simple and shallow models, with small or moderate size datasets, the basic optimizers like stochastic gradient descent (SGD) or mini-batch gradient descent can work well.<br>
 
-It's important to note that these are general guidelines, and the best optimizer for a particular dataset and neural network architecture may vary depending on the specific problem you're trying to solve. It's also important to keep in mind that other factors such as initialization methods, data preprocessing techniques and network architectures can also have a big impact on the performance of a neural network. It's also common to use a combination of optimizers, for example use a momentum optimizer for the first few epochs and then switch to a adaptive optimizer to fine-tune the network
+			For more complex models, with large or high-dimensional datasets, advanced optimizers like Adam, Adagrad, or Adadelta can work well.<br>
+
+			For problems with a lot of noise in the data, or for models with sparse data, optimizers like RMSprop or Adamax can work well.<br>
+
+			For problems with a lot of local minima, optimizers like Nadam, which combine Adam with Nesterov momentum, can work well.
+
+			It's important to note that these are general guidelines, and the best optimizer for a particular dataset and neural network architecture may vary depending on the specific problem you're trying to solve. It's also important to keep in mind that other factors such as initialization methods, data preprocessing techniques and network architectures can also have a big impact on the performance of a neural network. It's also common to use a combination of optimizers, for example use a momentum optimizer for the first few epochs and then switch to a adaptive optimizer to fine-tune the network
 
 			<h3>adam</h3>
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
