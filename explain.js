@@ -43,6 +43,14 @@ function normalize_to_rgb_min_max (x, min, max) {
 		return x;
 	}
 
+	assert(typeof(x) == "number", "x is not a number, but " + typeof(x));
+	assert(typeof(min) == "number", "min is not a number, but " + typeof(min));
+	assert(typeof(max) == "number", "max is not a number, but " + typeof(max));
+
+	assert(!isNaN(x), "x is NaN");
+	assert(!isNaN(min), "min is NaN");
+	assert(!isNaN(max), "max is NaN");
+
 	var multiplicator = x - min;
 	var divisor = max - min;
 
@@ -51,6 +59,12 @@ function normalize_to_rgb_min_max (x, min, max) {
 	if(divisor == 0) {
 		return val;
 	}
+
+	assert(typeof(multiplicator) == "number", "multiplicator is not a number, but " + typeof(multiplicator));
+	assert(typeof(divisor) == "number", "divisor is not a number, but " + typeof(divisor));
+
+	assert(!isNaN(divisor), "divisor is NaN");
+	assert(!isNaN(multiplicator), "multiplicator is NaN");
 
 	var to_be_parsed_as_int = 255 * multiplicator / divisor;
 
@@ -254,9 +268,17 @@ function draw_grid (canvas, pixel_size, colors, denormalize, black_and_white, on
 			}
 
 			if(denormalize) {
-				red = normalize_to_rgb_min_max(red, min, max);
-				green = normalize_to_rgb_min_max(green, min, max);
-				blue = normalize_to_rgb_min_max(blue, min, max);
+				if(red) {
+					red = normalize_to_rgb_min_max(red, min, max);
+				}
+
+				if(green) {
+					green = normalize_to_rgb_min_max(green, min, max);
+				}
+
+				if(blue) {
+					blue = normalize_to_rgb_min_max(blue, min, max);
+				}
 			}
 
 			var color = "rgb(" + red + "," + green + "," + blue + ")";
