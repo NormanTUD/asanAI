@@ -443,7 +443,15 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 			//draw_grid(canvas, 1, pixels, 1, 1, "", "");
 
-			await toPixels(tensor(array_sync(_tensor)[i]), canvas);
+			var min = tf.min(_tensor);
+			var max = tf.max(_tensor);
+		
+			var normalized_tensor = tf.div(
+				tf.sub(_tensor, min),
+				tf.sub(max, min)
+			);
+
+			await toPixels(tensor(array_sync(normalized_tensor)[i]), canvas);
 		}
 	}
 
@@ -540,7 +548,6 @@ await start_test_training(), TODO
 toc();
 
 add_html_for_layer_types("conv2d");
-/*
 add_html_for_layer_types("upSampling2d");
 add_html_for_layer_types("maxPooling2d");
 add_html_for_layer_types("averagePooling2d");
@@ -551,4 +558,3 @@ add_html_for_layer_types("gaussianNoise");
 add_html_for_layer_types("conv2dTranspose");
 add_html_for_layer_types("separableConv2d");
 add_html_for_layer_types("depthwiseConv2d");
-*/
