@@ -4070,7 +4070,7 @@ class asanAI {
 				gpu_color = "#ff0000";
 			}
 
-			var debug_string = `Tensors: ` + asanai_this.colorize(num_tensors, tensor_color) + ", RAM: " + asanai_this.colorize(ram_mb, cpu_color) + "MB";
+			var debug_string = `${asanai_this.trm("tensors")}: ` + asanai_this.colorize(num_tensors, tensor_color) + ", RAM: " + asanai_this.colorize(ram_mb, cpu_color) + "MB";
 
 			if(gpu_mb.toString().match(/^\d+(?:\.\d+)?$/)) {
 				debug_string = debug_string + ", GPU: " + asanai_this.colorize(gpu_mb, gpu_color) + "MB";
@@ -4097,6 +4097,8 @@ class asanAI {
 			asanai_this.#last_num_global_tensors = num_tensors;
 			asanai_this.#last_tensor_size_cpu = ram_mb;
 			asanai_this.#last_tensor_size_gpu = gpu_mb;
+
+			asanai_this.#update_translations();
 		}
 
 		self.write_tensor_interval = setInterval(_tensor_debugger , 200);
