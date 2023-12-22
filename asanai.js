@@ -3990,7 +3990,7 @@ class asanAI {
 
 		table += "</table>\n";
 
-		return "<center>" + table + "</center>";
+		return table;
 	}
 
 	write_tensors_info(divname=this.#write_tensors_info_div, time=200) {
