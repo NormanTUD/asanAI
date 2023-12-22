@@ -51,6 +51,7 @@
 		<button onclick="load_test_images_and_train()">Load test images and train</button><br>
 
 		<button onclick='asanai.draw_maximally_activated_layer(0)'>Draw maximally activated neuron for first layer</button><br>
+		<button onclick='maximally_activate_all_neurons()'>Maximally activate all neurons</button><br>
 
 		<div class="maximally_activated_class"></div>
 		<div id="maximally_activated_content"></div>
@@ -291,6 +292,16 @@
 					await asanai.dispose(loaded_data.y);
 				} else {
 					console.warn(`loaded_data was undefined! Something went wrong using asanai.load_image_urls_to_div_and_tensor`);
+				}
+			}
+
+			function maximally_activate_all_neurons () {
+				var model = asanai.get_model();
+
+				var layers = model.layers;
+
+				for (var i = 0; i < layers.length; i++) {
+					asanai.draw_maximally_activated_layer(i);
 				}
 			}
 		</script>
