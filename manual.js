@@ -441,8 +441,6 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 
 			var pixels = array_sync(_tensor)[i];
 
-			console.log("pixels:", pixels);
-
 			//draw_grid(canvas, 1, pixels, 1, 1, "", "");
 
 			await toPixels(tensor(array_sync(_tensor)[i]), canvas);
