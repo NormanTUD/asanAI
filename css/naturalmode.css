@@ -175,3 +175,7 @@ hr {
 	color: black !important;
 	background-color: white !important;
 }
+
+.disabled_symbol {
+	color: #ffffff;
+}

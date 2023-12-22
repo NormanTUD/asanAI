@@ -146,3 +146,7 @@ hr {
 .tt {
 	background-color: #232323 !important;
 }
+
+.disabled_symbol {
+	color: #ffffff;
+}
