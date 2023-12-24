@@ -6011,6 +6011,11 @@ function invert_elements_in_dark_mode () {
 		el.addClass("dark_mode_inverted");
 	}
 
+	if(is_dark_mode) {
+		$("#asanai_main_logo").attr("src", "_gui/logo_small_dark.png");
+	} else {
+		$("#asanai_main_logo").attr("src", "_gui/logo_small.png");
+	}
 }
 
 function green_marker (element) {
