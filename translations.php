@@ -303,7 +303,11 @@
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initializing page contents",
 			"initializing_set_options_for_all" => "Initializing 'set options for all'",
-			"got_data_creating_tensors" => "Got data, creating tensors..."
+			"got_data_creating_tensors" => "Got data, creating tensors...",
+			"started_training" => "Started training",
+			"compiling model" => "Compiling model",
+			"compiled_model" => "Compiled model",
+			"finished_training" => "Finished training"
 		),
 
 		'de' => array(
@@ -609,7 +613,11 @@
 			"initializing_tabs" => "Initialisiere Tabs",
 			"initializing_page_contents" => "Initialisiere Seiteninhalte",
 			"initializing_set_options_for_all" => "Initialisiere 'Setze Optionen für alle Layer'",
-			"got_data_creating_tensors" => "Daten geholt, erstelle Tensoren..."
+			"got_data_creating_tensors" => "Daten geholt, erstelle Tensoren...",
+			"started_training" => "Training gestartet",
+			"compiling model" => "Kompiliere Modell",
+			"compiled_model" => "Modell kompiliert",
+			"finished_training" => "Training beendet"
 		)
 	);
 
