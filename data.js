@@ -276,7 +276,7 @@ async function get_image_data(skip_real_image_download, dont_show_swal=0, ignore
 				}
 			} else {
 				if(!shown_stop_downloading) {
-					log("[get_image_data] Stop downloading because stop-download-button was clicked");
+					log(language[lang]["stopped_downloading_because_button_was_clicked"]);
 					shown_stop_downloading = 1;
 				}
 			}

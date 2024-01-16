@@ -307,7 +307,8 @@
 			"started_training" => "Started training",
 			"compiling model" => "Compiling model",
 			"compiled_model" => "Compiled model",
-			"finished_training" => "Finished training"
+			"finished_training" => "Finished training",
+			"stopped_downloading_because_button_was_clicked" => "Stop downloading because stop-download-button was clicked"
 		),
 
 		'de' => array(
@@ -617,7 +618,8 @@
 			"started_training" => "Training gestartet",
 			"compiling model" => "Kompiliere Modell",
 			"compiled_model" => "Modell kompiliert",
-			"finished_training" => "Training beendet"
+			"finished_training" => "Training beendet",
+			"stopped_downloading_because_button_was_clicked" => "Download gestoppt, weil der Download-Stoppen-Button geklickt wurde"
 		)
 	);
 
