@@ -79,7 +79,7 @@ async function train_neural_network () {
 		set_document_title(original_title);
 		await gui_not_in_training();
 		$(".overlay").remove();
-		l("Stopped training");
+		l(language[lang]["stopped_training"]);
 	} else {
 		l("Started training");
 
