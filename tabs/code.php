@@ -8,13 +8,13 @@
 	<div id="html_tab" class="tab">
 		<br>
 		<span class="user_select_none">
+			<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 			<button onclick="save_model()">
 				<span class="TRANSLATEME_download_model_data"></span>
 			</button>
 		</span>
 		<br>
 		<pre><code class="language-html" id="html" style="width: 99%"></code></pre>
-		<button onclick="copy_id_to_clipboard('html')"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 	</div>
 
 	<div id="python_tab" class="tab">
