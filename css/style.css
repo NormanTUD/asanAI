@@ -150,9 +150,8 @@ body {
 
 .side_by_side_container {
 	width: 99%;
-	margin: auto;
+	margin: 10px;
 	margin-bottom: 30px;
-	padding: 2vw;
 }
 
 .left_side {
