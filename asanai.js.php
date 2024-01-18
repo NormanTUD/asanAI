@@ -5,6 +5,8 @@
 
 	$class_test_split = preg_split("/\r\n|\n|\r/", $class_test);
 
+	print '"use strict;"'."\n\n";
+
 	foreach ($class_test_split as $ct_line) {
 		if(preg_match('/script src=["\']([^"\']*?)["\']/', $ct_line, $matches)) {
 			$fn = $matches[1];
