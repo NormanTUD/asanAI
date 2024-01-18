@@ -9,7 +9,7 @@
 		if(preg_match('/script src=["\']([^"\']*?)["\']/', $ct_line, $matches)) {
 			$fn = $matches[1];
 			if(file_exists($fn)) {
-				print file_get_contents($fn)."\n\n";
+				print file_get_contents($fn).";\n\n";
 			} else {
 				die("$fn could not be found!");
 			}
