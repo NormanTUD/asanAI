@@ -100,9 +100,20 @@
 			// You can also build a GUI for this.
 
 			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 }
+
+			// This variable will hold the asanAI object. Each object can have exactly one model loaded.
+			// But you can have as many objects as you wish, or, e.g., save them in an array or a dictionary
+			// or whatever you like or need, just like normal variables/objects (which it absolutely is).
+
 			var asanai;
 
+			// When the site has fully loaded, initialize the objects
 			$(document).ready(async function() {
+
+				// Default model:
+				// 2 Conv layers, one flatten, 2 dense layers, last one having 4 categories and SoftMax activation function.
+				// This allows classification of images into 4 categories.
+
 				var model_data = [
 					{conv2d: {filters: 4, kernelSize: [3, 3], inputShape: [20, 20, 3], activation: "relu", kernelInitializer: "glorotUniform"}},
 					{conv2d: {filters: 4, kernelSize: [3, 3], activation: "relu", biasInitializer: "ones"}},
@@ -111,34 +122,52 @@
 					{dense: {units: 4, activation: "softmax"}}
 				];
 
-
+				// Declaration of asanAI-object, which was previously globally defined.
+				
 				asanai = new asanAI({
-					model_data: model_data,
-					optimizer_config: optimizer_config,
-					translations_file: "translations.php?print=1",
-					optimizer_table_div_name: "optimizer_div",
-					asanai_object_name: "asanai",
-					//math_tab_code_div: "math_tab_code"
+					model_data: model_data,					// The default model structure that should be loaded 
+					optimizer_config: optimizer_config,			// The config for the optimizer (which trains the model)
+					translations_file: "translations.php?print=1",		// A file containing translations, i. e. in german and english in this case
+					optimizer_table_div_name: "optimizer_div",		// A div, in which the settings for the optimizer should be written, so the user may change them
+					asanai_object_name: "asanai",				// The name of the variable containing the asanAI object.
+												// This is important for things like "onclick"-events and needs to be changed when you use other variable names than
+												// `var asanai`.
+					//math_tab_code_div: "math_tab_code"			// When commented in, this looks for a div with the id `math_tab_code`, and automatically writes the math mode contents to it.
 				});
 
+				// This sets the mode, there is expert and beginner. This is not used anywhere (yet)
 				asanai.set_mode("expert");
 
+				// This enables the status bar at the bottom, where a tensor debugger is shown, and also the messages via log, warn and error are shown.
 				asanai.show_status_bar();
 
+				// This is optional, but lets you allow colors of the bars in predictions
 				await asanai.set_default_bar_color("yellow")
 				await asanai.set_max_bar_color("#ff00aa")
 				await asanai.set_bar_background_color("orange")
 
+				// This sets the maximum amount of iterations for "layer visualization images". 
 				asanai.set_max_activation_iterations(4)
 
+				// This sets the number the input is divided by by default, so that, for example, images. whose values are between 0 and 255, get shrinked to 0 and 1.
+				// This makes training more effective in many cases.
 				asanai.set_divide_by(255);
 
+				// With this, you can set the labels that are used all throughout the GUI whenever it shows which categories are there or predicts something
 				asanai.set_labels(["erste kategorie", "zweite kategorie", "dritte kategorie", "vierte kategorie"]);
 
+				// The first parameter to show_internals is the id-name of a div, in which the internals are printed. 
+				// Internals are that which you see as input/output of each layer/neuron, which are visualized to make it easier to understand what the network does.
+				// The second parameter allows you to enable (1) or disable (0) the size sliders for neurons/outputs
 				asanai.show_internals("internal_states", 1);
+
+				// Hide internals, when called, hides the internals again after they've been shown
 				//asanai.hide_internals();
 
+				// draw_fcnn shows the FCNN style visualization the a div with the provided ID.
 				asanai.draw_fcnn("fcnn_div");
+
+				// Shows the output of model.summary in a div.
 				asanai.write_model_summary("summary")
 
 				asanai.show_and_predict_webcam_in_div("webcam_prediction");
