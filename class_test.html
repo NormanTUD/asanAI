@@ -94,6 +94,11 @@
 		<br><br>
 
 		<script>
+			// Defines the optimizer that should be used for training.
+			// Can be specified for each model seperately and on-demand, but I chose to do it here, because
+			// then I don't need to define it in other places.
+			// You can also build a GUI for this.
+
 			var optimizer_config = { optimizer: "adam", loss: "categoricalCrossentropy", "learningRate": 0.001 }
 			var asanai;
 
