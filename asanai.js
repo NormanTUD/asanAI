@@ -5168,8 +5168,8 @@ class asanAI {
 		}
 
 		var levels = [
-			[Math.floor(seconds / 31536000), this.#tr(years)],
-			[Math.floor((seconds % 31536000) / 86400), this.#tr(days)],
+			[Math.floor(seconds / 31536000), this.#tr("years")],
+			[Math.floor((seconds % 31536000) / 86400), this.#tr("days")],
 			[Math.floor(((seconds % 31536000) % 86400) / 3600), this.#tr("hours")],
 			[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), this.#tr("minutes")],
 			[(((seconds % 31536000) % 86400) % 3600) % 60, this.#tr("seconds")],
