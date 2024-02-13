@@ -6,7 +6,7 @@ LOCAL_PORT=""
 
 # Help message
 help_message() {
-	echo "Usage: display_mongodb_gui.sh [OPTIONS]"
+	echo "Usage: docker.sh [OPTIONS]"
 	echo "Options:"
 	echo "  --local-port       Local port to bind for the GUI"
 	echo "  --run_tests        Run tests before starting"
