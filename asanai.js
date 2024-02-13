@@ -5168,8 +5168,8 @@ class asanAI {
 		}
 
 		var levels = [
-			[Math.floor(seconds / 31536000), this.#tr(years)],
-			[Math.floor((seconds % 31536000) / 86400), this.#tr(days)],
+			[Math.floor(seconds / 31536000), this.#tr("years")],
+			[Math.floor((seconds % 31536000) / 86400), this.#tr("days")],
 			[Math.floor(((seconds % 31536000) % 86400) / 3600), this.#tr("hours")],
 			[Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), this.#tr("minutes")],
 			[(((seconds % 31536000) % 86400) % 3600) % 60, this.#tr("seconds")],
@@ -6959,7 +6959,7 @@ class asanAI {
 		closeButton.style.top = '5px';
 		closeButton.style.right = '5px';
 		closeButton.style.border = 'none';
-		closeButton.style.backgroundColor = 'transparent';
+		closeButton.style.backgroundColor = 'red';
 		closeButton.style.cursor = 'pointer';
 
 		// Create the readonly textarea

@@ -79,7 +79,7 @@ async function train_neural_network () {
 		set_document_title(original_title);
 		await gui_not_in_training();
 		$(".overlay").remove();
-		l("Stopped training");
+		l(language[lang]["stopped_training"]);
 	} else {
 		l("Started training");
 
@@ -799,27 +799,27 @@ async function _show_or_hide_simple_visualization (fit_data, xs_and_ys) {
 		var shown_warnings = false;
 
 		if(!model) {
-			wrn(`model is not defined`);
+			dbg(`model is not defined`);
 			shown_warnings = true;
 		}
 
 		if(!x_shape_is_ok) {
-			wrn(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
+			dbg(`x-shape is wrong: [${xs_and_ys["x"].shape.join(", ")}]`);
 			shown_warnings = true;
 		}
 
 		if(!y_shape_is_ok) {
-			wrn(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
+			dbg(`y-shape is wrong: [${xs_and_ys["y"].shape.join(", ")}]`);
 			shown_warnings = true;
 		}
 
 		if(!model_shape_is_ok) {
-			wrn(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
+			dbg(`model-shape is wrong: ${model_shape_to_string(model.input.shape)}`);
 			shown_warnings = true;
 		}
 
 		if (!shown_warnings) {
-			wrn(`Unknown reason for not displaying simple visualization`);
+			dbg(`Unknown reason for not displaying simple visualization`);
 		}
 
 		old_onEpochEnd = undefined;
@@ -1099,9 +1099,15 @@ async function run_neural_network (recursive=0) {
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 		try {
+			l(language[lang]["compiling_model"]);
 			await compile_model();
+
+
+			l(language[lang]["started_training"]);
+
 			h = await model.fit(xs_and_ys["x"], xs_and_ys["y"], fit_data);
-			l("Finished model.fit");
+
+			l(language[lang]["finished_training"]);
 
 			await nextFrame();
 

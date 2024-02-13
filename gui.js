@@ -7050,7 +7050,7 @@ function create_centered_window_with_text(parameter) {
 	closeButton.style.top = '5px';
 	closeButton.style.right = '5px';
 	closeButton.style.border = 'none';
-	closeButton.style.backgroundColor = 'transparent';
+	closeButton.style.backgroundColor = 'red';
 	closeButton.style.cursor = 'pointer';
 
 	// Create the readonly textarea
