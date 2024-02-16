@@ -4644,6 +4644,25 @@ function show_head_data(head) {
 	$("#csv_header_overview").html(html);
 }
 
+function get_csv_header_selections () {
+	var header_elements = [];
+	$(".header_select").each(function (i, e) {
+		header_elements.push(($(e).val())) ;
+	});
+
+	return header_elements;
+}
+
+function has_x_and_y_in_csv_headers () {
+	var headers = get_csv_header_selections();
+
+	if(headers.includes("Y") && headers.includes("X")) {
+		return true;
+	}
+
+	return false;
+}
+
 async function show_csv_file(disabled_show_head_data) {
 	var csv = $("#csv_file").val();
 
@@ -4656,100 +4675,106 @@ async function show_csv_file(disabled_show_head_data) {
 	$(".hide_when_no_csv").hide();
 
 	if (head.length > 1 && data.data.length >= 1) {
-		if (!disabled_show_head_data) {
-			show_head_data(head);
-		}
+		var has_x_and_y = has_x_and_y_in_csv_headers();
+		if(has_x_and_y || get_csv_header_selections().length == 0) {
+			if (!disabled_show_head_data) {
+				show_head_data(head);
+			}
 
-		var parsed_data = await get_x_y_from_csv();
+			var parsed_data = await get_x_y_from_csv();
 
-		if(typeof parsed_data == "string" && parsed_data == "incomplete") {
-			return;
-		}
+			if(typeof parsed_data == "string" && parsed_data == "incomplete") {
+				return;
+			}
 
-		var y_between_0_and_1 = parsed_data["y_between_0_and_1"];
+			var y_between_0_and_1 = parsed_data["y_between_0_and_1"];
 
-		if (!y_between_0_and_1) {
-			if ($("#auto_set_last_layer_activation").is(":checked")) {
-				var activations = $(".activation");
-				if($(activations[activations.length - 1]).val() != "linear") {
-					$(activations[activations.length - 1]).val("linear").trigger("change");
+			if (!y_between_0_and_1) {
+				if ($("#auto_set_last_layer_activation").is(":checked")) {
+					var activations = $(".activation");
+					if($(activations[activations.length - 1]).val() != "linear") {
+						$(activations[activations.length - 1]).val("linear").trigger("change");
+					}
 				}
 			}
-		}
 
-		var new_input_shape = parsed_data.x.shape.slice(1);
-		await set_input_shape("[" + new_input_shape.toString() + "]");
-		var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
-		if(auto_adjust) {
-			if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
-				auto_adjust_number_of_neurons(parsed_data.number_of_categories);
-			}
-		}
-
-		var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
-
-		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
-		var shape_preview_color = "<div>";
-		csv_allow_training = true;
-		//shape_preview_color += "black";
-		if (is_same) {
-			if (auto_adjust) {
-				await updated_page(null, null, null, 1);
-			}
-			//shape_preview_color += "green";
-		} else {
-			//shape_preview_color += "red";
-			//csv_allow_training = false;
-		}
-		//shape_preview_color += ">";
-
-		shape_preview = shape_preview_color + shape_preview + "</div>";
-
-		var x_str = _tensor_print_to_string(parsed_data.x);
-		var y_str = _tensor_print_to_string(parsed_data.y);
-
-		if(x_str.includes("error_msg") && old_x_str) {
-			x_str = old_x_str;
-		}
-
-		if(y_str.includes("error_msg") && old_y_str) {
-			y_str = old_y_str;
-		}
-
-		old_x_str = x_str;
-		old_y_str = y_str;
-
-		shape_preview += "<br>X: <pre>" + x_str + "</pre>";
-
-		if (parsed_data.x.dtype == "string") {
-			csv_allow_training = false;
-		}
-
-		shape_preview += "<br>Y: <pre>" + y_str + "</pre>";
-
-		if (parsed_data.y.dtype == "string") {
-			csv_allow_training = false;
-		}
-
-		if (csv_allow_training) {
-			await hide_error();
-		}
-
-		if($("#auto_one_hot_y").is(":checked")) {
-			if(labels.length) {
-				shape_preview += "Generated encodings:<br>";
-				for (var k = 0; k < labels.length; k++) {
-					shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
+			var new_input_shape = parsed_data.x.shape.slice(1);
+			await set_input_shape("[" + new_input_shape.toString() + "]");
+			var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
+			if(auto_adjust) {
+				if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
+					auto_adjust_number_of_neurons(parsed_data.number_of_categories);
 				}
-				l("Generated encodings");
+			}
+
+			var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
+
+			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
+			var shape_preview_color = "<div>";
+			csv_allow_training = true;
+			//shape_preview_color += "black";
+			if (is_same) {
+				if (auto_adjust) {
+					await updated_page(null, null, null, 1);
+				}
+				//shape_preview_color += "green";
 			} else {
-				l("Auto-encoding enabled, but no labels given");
+				//shape_preview_color += "red";
+				//csv_allow_training = false;
 			}
+			//shape_preview_color += ">";
+
+			shape_preview = shape_preview_color + shape_preview + "</div>";
+
+			var x_str = _tensor_print_to_string(parsed_data.x);
+			var y_str = _tensor_print_to_string(parsed_data.y);
+
+			if(x_str.includes("error_msg") && old_x_str) {
+				x_str = old_x_str;
+			}
+
+			if(y_str.includes("error_msg") && old_y_str) {
+				y_str = old_y_str;
+			}
+
+			old_x_str = x_str;
+			old_y_str = y_str;
+
+			shape_preview += "<br>X: <pre>" + x_str + "</pre>";
+
+			if (parsed_data.x.dtype == "string") {
+				csv_allow_training = false;
+			}
+
+			shape_preview += "<br>Y: <pre>" + y_str + "</pre>";
+
+			if (parsed_data.y.dtype == "string") {
+				csv_allow_training = false;
+			}
+
+			if (csv_allow_training) {
+				await hide_error();
+			}
+
+			if($("#auto_one_hot_y").is(":checked")) {
+				if(labels.length) {
+					shape_preview += "Generated encodings:<br>";
+					for (var k = 0; k < labels.length; k++) {
+						shape_preview += labels[k] + ": " + get_generated_encoding(k, labels.length) + "<br>";
+					}
+					l("Generated encodings");
+				} else {
+					l("Auto-encoding enabled, but no labels given");
+				}
+			}
+
+			$("#x_y_shape_preview").html(shape_preview);
+			$(".hide_when_no_csv").show();
+		} else {
+			log("CSV headers must have X and Y values.")
+			$("#csv_header_overview").html("");
+			csv_allow_training = false;
 		}
-
-		$("#x_y_shape_preview").html(shape_preview);
-		$(".hide_when_no_csv").show();
-
 	} else {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
