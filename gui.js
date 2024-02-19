@@ -6753,6 +6753,10 @@ function is_tablet () {
 }
 
 function is_touch_device () {
+	if(is_touch_device_cache !== null) {
+		return is_touch_device_cache;
+	}
+
 	var res = (("ontouchstart" in window) ||
 		(navigator.maxTouchPoints > 0) ||
 		(navigator.msMaxTouchPoints > 0));
@@ -6760,6 +6764,9 @@ function is_touch_device () {
 	if(!res) {
 		res = !!window.matchMedia("(pointer: coarse)").matches;
 	}
+
+	is_touch_device_cache = res;
+
 	return res;
 }
 
